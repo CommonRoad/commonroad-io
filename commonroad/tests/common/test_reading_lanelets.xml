@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+<commonRoad affiliation="TU Munich" author="PrinceOfZAM" benchmarkID="ZAM_test_0-0-1" commonRoadVersion="2018b" date="2018-10-25" source="unittest" tags="original" timeStepSize="0.1">
+  <lanelet id="100">
+    <leftBound>
+      <point>
+        <x>0.0</x>
+        <y>0.0</y>
+      </point>
+      <point>
+        <x>1.0</x>
+        <y>0.0</y>
+      </point>
+      <point>
+        <x>2.0</x>
+        <y>0.0</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>0.0</x>
+        <y>2.0</y>
+      </point>
+      <point>
+        <x>1.0</x>
+        <y>2.0</y>
+      </point>
+      <point>
+        <x>2.0</x>
+        <y>2.0</y>
+      </point>
+    </rightBound>
+    <predecessor ref="101"/>
+    <successor ref="101"/>
+    <adjacentLeft drivingDir="opposite" ref="101"/>
+    <adjacentRight drivingDir="same" ref="101"/>
+    <speedLimit>10.0</speedLimit>
+  </lanelet>
+  <lanelet id="101">
+    <leftBound>
+      <point>
+        <x>0.0</x>
+        <y>0.0</y>
+      </point>
+      <point>
+        <x>1.0</x>
+        <y>0.0</y>
+      </point>
+      <point>
+        <x>2.0</x>
+        <y>0.0</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>0.0</x>
+        <y>2.0</y>
+      </point>
+      <point>
+        <x>1.0</x>
+        <y>2.0</y>
+      </point>
+      <point>
+        <x>2.0</x>
+        <y>2.0</y>
+      </point>
+    </rightBound>
+    <predecessor ref="100"/>
+    <successor ref="100"/>
+    <adjacentLeft drivingDir="opposite" ref="100"/>
+    <adjacentRight drivingDir="same" ref="100"/>
+    <speedLimit>10.0</speedLimit>
+  </lanelet>
+</commonRoad>

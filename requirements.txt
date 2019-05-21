@@ -1,0 +1,5 @@
+numpy>=1.13
+shapely>=1.6.4
+matplotlib>=2.2.2
+lxml>=4.2.2
+networkx>=2.2
