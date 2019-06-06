@@ -6,7 +6,7 @@ import enum
 import pathlib
 import io
 import os
-from typing import Union, List
+from typing import Union, List, Dict
 import numpy as np
 import decimal
 import warnings
@@ -819,7 +819,7 @@ class StateXMLNode:
         state_node = etree.Element('goalState')
         if hasattr(state, 'position') or len(goal_lanelet_ids) > 0:
             position = etree.Element('position')
-            position = cls._write_goal_position(position, state.position)
+            position = cls._write_goal_position(position, state.position, goal_lanelet_ids)
             state_node.append(position)
 
         if hasattr(state, 'orientation'):
@@ -856,7 +856,7 @@ class StateXMLNode:
 
     @classmethod
     def _write_goal_position(
-        cls, node: etree.Element, position: Union[Shape, int, list]
+        cls, node: etree.Element, position: Union[Shape, int, list], goal_lanelet_ids: List[int],
     ) -> etree.Element:
         """
         Create XML-Node for a goal position
@@ -864,23 +864,27 @@ class StateXMLNode:
         :param position: either (list of) shape elements or lanelet ids specifying the goal position
         :return: node
         """
-        if (
-            isinstance(position, Rectangle)
-            or isinstance(position, Circle)
-            or isinstance(position, Polygon)
-        ):
-            node.extend(ShapeXMLNode.create_node(position))
-        elif isinstance(position, ShapeGroup):
-            node.extend(ShapeXMLNode.create_node(position))
+        if len(goal_lanelet_ids) > 0:
+            for id in goal_lanelet_ids:
+                lanelet = etree.Element('lanelet')
+                lanelet.set('ref', str(id))
+                node.append(lanelet)
         elif isinstance(position, int):
             lanelet = etree.Element('lanelet')
             lanelet.set('ref', str(position))
             node.append(lanelet)
+        elif(
+            isinstance(position, Rectangle)
+            or isinstance(position, Circle)
+            or isinstance(position, Polygon)
+            ):
+            node.extend(ShapeXMLNode.create_node(position))
+        elif isinstance(position, ShapeGroup):
+            node.extend(ShapeXMLNode.create_node(position))
         elif type(position) is list:
-            for p in position:
-                node = cls._write_goal_position(node, p)
+            raise ValueError('A goal state cannot contain multiple items. Use a list of goal states instead.')
         else:
-            raise Exception()
+            raise ValueError('Case should not occur, position={}, goal_lanelet_ids={}.'.format(position,goal_lanelet_ids))
         return node
 
     @classmethod
