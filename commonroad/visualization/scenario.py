@@ -408,7 +408,7 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
                     str(lanelet.lanelet_id),
                     bbox={'facecolor': center_bound_color, 'pad': 2},
                     horizontalalignment='center', verticalalignment='center',
-                    zorder=10.2)
+                    zorder=30.2)
 
     if draw_right_bound:
         ax.add_collection(collections.PathCollection(right_paths, edgecolor=right_bound_color, facecolor='none',

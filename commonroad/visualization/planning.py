@@ -263,7 +263,6 @@ def draw_goal_state(obj: State, plot_limits: List[Union[int,float]], ax: mpl.axe
             commonroad.visualization.draw_dispatch_cr.draw_object(obj.position, plot_limits, ax, draw_params,
                                                                   draw_func, handles, call_stack)
 
-
 # default function dict, which assigns drawing functions to object classes
 draw_func_dict = {commonroad.planning.planning_problem.GoalRegion: draw_goal_region,
                   commonroad.planning.planning_problem.PlanningProblem: draw_planning_problem,
