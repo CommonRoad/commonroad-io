@@ -146,3 +146,29 @@ If you want to execute the available tutorials, following commands are necessary
 		   $ pip install -e .[tutorials]
 
 
+Gitlab CI/CD
+==============
+
+To set up Gitlab CI/CD, follow these instructions:
+
+
+#. Activate Pipelines in Settings->General->Visibility, project features, permissions
+
+#. Under Settings->CI/CD you can make adjustments.
+
+#. Set up a new gitlab runner (necessary Token and Address are at Settings->CI/CD->Runners)
+
+ * Generally the document describing the install process is at https://docs.gitlab.com/runner/install/
+ 
+ * In the case of CommonRoad, gitlab-runner is running inside a docker container: https://docs.gitlab.com/runner/install/docker.html
+ 
+ * The following two commands (quite similar to the instructions) were used to set up several docker containers with gitlab-runners:
+ 
+    .. code-block:: console
+
+        $ docker run -d --name <project-name>-gitlab-runner --restart always -v /var/run/docker.sock:/var/run/docker.sock -v <project-name>-data:/etc/gitlab-runner gitlab/gitlab-runner:latest
+
+        $ docker run --rm -t -i -v <project-name>-data:/etc/gitlab-runner gitlab/gitlab-runner register
+ 
+  The first command starts the runner with name <project-name>-gitlab-runner and mounts a new volume which contains the gitlab-runner configuration.
+  The second command runs a temporary container for the registration process, which saves the result in the shared docker volume <project-name>-data.
