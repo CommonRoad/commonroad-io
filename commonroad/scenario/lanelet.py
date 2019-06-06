@@ -634,7 +634,7 @@ class LaneletNetwork:
         assert is_natural_number(
             lanelet_id), '<LaneletNetwork/find_lanelet_by_id>: provided id is not valid! id = {}'.format(lanelet_id)
 
-        return self._lanelets[lanelet_id]
+        return self._lanelets[lanelet_id] if lanelet_id in self._lanelets else None
 
     def add_lanelet(self, lanelet: Lanelet):
         """
