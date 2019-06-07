@@ -50,7 +50,7 @@ def float_to_str(f):
     without resorting to scientific notation
     """
     d1 = ctx.create_decimal(repr(f))
-    return '{:.2f}'.format(d1)
+    return '{:.4f}'.format(d1)
 
 
 def create_exact_node_float(value: Union[int, float]) -> etree.Element:
