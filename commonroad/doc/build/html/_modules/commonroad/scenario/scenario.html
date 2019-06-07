@@ -1,0 +1,567 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>commonroad.scenario.scenario &mdash; CommonRoad_io 2019.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> CommonRoad_io
+          
+
+          
+            
+            <img src="../../../_static/commonroad_white150.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2019.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/index.html">User Manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/getting_started.html">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#reading-files">Reading Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#scenario">Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#lanelet-network">Lanelet Network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#obstacles">Obstacles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#dynamic-obstacle-prediction">Dynamic Obstacle Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#trajectory-prediction">Trajectory Prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#set-based-prediction">Set Based Prediction</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#planning-problems">Planning Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#writing-files">Writing Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#solution-writer">Solution Writer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/visualization.html">Visualization Manual</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#draw-params"><code class="docutils literal notranslate"><span class="pre">draw_params</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/visualization.html#passing-custom-draw-params">Passing custom <code class="docutils literal notranslate"><span class="pre">draw_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#plot-limits"><code class="docutils literal notranslate"><span class="pre">plot_limits</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#example-plot-with-matplotlib">Example plot with <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#speed-up-plotting-for-real-time-applications">Speed up plotting for real-time applications</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">CommonRoad_io API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#modules">Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/scenario.html">Module Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.scenario">Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.lanelet">Road network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#obstacles">Obstacles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.trajectory">States and Trajectories</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/prediction.html">Module Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#prediction-class"><code class="docutils literal notranslate"><span class="pre">Prediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#trajectoryprediction-class"><code class="docutils literal notranslate"><span class="pre">TrajectoryPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#setbasedprediction-class"><code class="docutils literal notranslate"><span class="pre">SetBasedPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#occupancy-class"><code class="docutils literal notranslate"><span class="pre">Occupancy</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/planning.html">Module Planning</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/planning.html#module-commonroad.planning.planning_problem">Planning Problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/planning.html#module-commonroad.planning.goal">Goal Region</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/geometry.html">Module Geometry</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-commonroad.geometry.shape">Shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-geometry.transform">Transform</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/common.html">Module Common</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.file_reader">File Reader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.file_writer">File Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.solution_writer">Solution Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/visualization.html">Module Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/visualization.html#module-commonroad.visualization.draw_dispatch_cr">draw_dispatch_cr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/visualization.html#module-commonroad.visualization.plot_helper">plot_Helper</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CommonRoad_io</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>commonroad.scenario.scenario</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for commonroad.scenario.scenario</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">commonroad.common.util</span> <span class="k">import</span> <span class="n">Interval</span>
+<span class="kn">from</span> <span class="nn">commonroad.common.validity</span> <span class="k">import</span> <span class="n">is_real_number</span><span class="p">,</span> <span class="n">is_real_number_vector</span><span class="p">,</span> <span class="n">is_valid_orientation</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.lanelet</span> <span class="k">import</span> <span class="n">Lanelet</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.lanelet</span> <span class="k">import</span> <span class="n">LaneletNetwork</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.obstacle</span> <span class="k">import</span> <span class="n">ObstacleRole</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.obstacle</span> <span class="k">import</span> <span class="n">ObstacleType</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.obstacle</span> <span class="k">import</span> <span class="n">StaticObstacle</span><span class="p">,</span> <span class="n">DynamicObstacle</span><span class="p">,</span> <span class="n">Obstacle</span>
+<span class="kn">from</span> <span class="nn">commonroad.prediction.prediction</span> <span class="k">import</span> <span class="n">Occupancy</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Stefanie Manzinger, Moritz Klischat&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;TUM Cyber-Physical Systems Group&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Priority Program SPP 1835 Cooperative Interacting Automobiles&quot;</span><span class="p">]</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2019.1&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Stefanie Manzinger&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad@in.tum.de&quot;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Released&quot;</span>
+
+
+<div class="viewcode-block" id="Scenario"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.scenario.Scenario">[docs]</a><span class="k">class</span> <span class="nc">Scenario</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Class which describes a Scenario entity according to the CommonRoad specification. Each scenario is described by</span>
+<span class="sd">     a road network consisting of lanelets (see :class:`commonroad.scenario.lanelet.LaneletNetwork`) and a set of</span>
+<span class="sd">     obstacles which can be either static or dynamic (see :class:`commonroad.scenario.obstacle.Obstacle`).&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">benchmark_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor of a Scenario object</span>
+
+<span class="sd">        :param dt: global time step size of the time-discrete scenario</span>
+<span class="sd">        :param benchmark_id: unique CommonRoad benchmark ID of the scenario</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">dt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">benchmark_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">benchmark_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lanelet_network</span><span class="p">:</span> <span class="n">LaneletNetwork</span> <span class="o">=</span> <span class="n">LaneletNetwork</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_static_obstacles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">StaticObstacle</span><span class="p">]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_obstacles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DynamicObstacle</span><span class="p">]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_id_set</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Global time step size of the time-discrete scenario.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span>
+
+    <span class="nd">@dt</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">dt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">is_real_number</span><span class="p">(</span><span class="n">dt</span><span class="p">),</span> <span class="s1">&#39;&lt;Scenario/dt&gt; argument &quot;dt&quot; of wrong type. &#39;</span> \
+                                   <span class="s1">&#39;Expected a real number. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">=</span> <span class="n">dt</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">benchmark_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Unique benchmark ID of a scenario as specified in the CommonRoad XML-file.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_benchmark_id</span>
+
+    <span class="nd">@benchmark_id</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">benchmark_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">benchmark_id</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">benchmark_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="s1">&#39;&lt;Scenario/benchmark_id&gt; argument &quot;benchmark_id&quot; of wrong type. &#39;</span> \
+                                              <span class="s1">&#39;Expected type: </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">benchmark_id</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_benchmark_id</span> <span class="o">=</span> <span class="n">benchmark_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lanelet_network</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LaneletNetwork</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Road network composed of lanelets.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lanelet_network</span>
+
+    <span class="nd">@lanelet_network</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">lanelet_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lanelet_network</span><span class="p">:</span> <span class="n">LaneletNetwork</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lanelet_network</span><span class="p">,</span> <span class="n">LaneletNetwork</span><span class="p">),</span> <span class="s1">&#39;&lt;Scenario/lanelet_network&gt; argument &quot;lanelet_network&quot;&#39;</span> \
+                                                            <span class="s1">&#39; of wrong type. Expected type: </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> \
+                                                            <span class="o">%</span> <span class="p">(</span><span class="n">LaneletNetwork</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">lanelet_network</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lanelet_network</span> <span class="o">=</span> <span class="n">lanelet_network</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dynamic_obstacles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DynamicObstacle</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot; Returns a list of all dynamic obstacles in the scenario.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_obstacles</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">static_obstacles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">StaticObstacle</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot; Returns a list of all static obstacles in the scenario.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_static_obstacles</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">obstacles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Obstacle</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot; Returns a list of all static and dynamic obstacles in the scenario.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_static_obstacles</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_obstacles</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+<div class="viewcode-block" id="Scenario.add_objects"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.scenario.Scenario.add_objects">[docs]</a>    <span class="k">def</span> <span class="nf">add_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scenario_object</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Obstacle</span><span class="p">,</span> <span class="n">Lanelet</span><span class="p">,</span> <span class="n">LaneletNetwork</span><span class="p">]],</span>
+                                                 <span class="n">Obstacle</span><span class="p">,</span> <span class="n">Lanelet</span><span class="p">,</span> <span class="n">LaneletNetwork</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot; Function to add objects, e.g., lanelets, dynamic and static obstacles, to the scenario.</span>
+
+<span class="sd">            :param scenario_object: object(s) to be added to the scenario</span>
+<span class="sd">            :raise ValueError: a value error is raised if the type of scenario_object is invalid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">scenario_object</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_objects</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">,</span> <span class="n">StaticObstacle</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mark_object_id_as_used</span><span class="p">(</span><span class="n">scenario_object</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_static_obstacles</span><span class="p">[</span><span class="n">scenario_object</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">scenario_object</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">,</span> <span class="n">DynamicObstacle</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mark_object_id_as_used</span><span class="p">(</span><span class="n">scenario_object</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_obstacles</span><span class="p">[</span><span class="n">scenario_object</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">scenario_object</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">,</span> <span class="n">LaneletNetwork</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">lanelet</span> <span class="ow">in</span> <span class="n">scenario_object</span><span class="o">.</span><span class="n">lanelets</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_mark_object_id_as_used</span><span class="p">(</span><span class="n">lanelet</span><span class="o">.</span><span class="n">lanelet_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lanelet_network</span><span class="p">:</span> <span class="n">LaneletNetwork</span> <span class="o">=</span> <span class="n">scenario_object</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">,</span> <span class="n">Lanelet</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mark_object_id_as_used</span><span class="p">(</span><span class="n">scenario_object</span><span class="o">.</span><span class="n">lanelet_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lanelet_network</span><span class="o">.</span><span class="n">add_lanelet</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;&lt;Scenario/add_objects&gt; argument &quot;scenario_object&quot; of wrong type. &#39;</span>
+                             <span class="s1">&#39;Expected types: </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">, and </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span>
+                             <span class="o">%</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">Obstacle</span><span class="p">,</span> <span class="n">Lanelet</span><span class="p">,</span> <span class="n">LaneletNetwork</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="Scenario.remove_obstacle"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.scenario.Scenario.remove_obstacle">[docs]</a>    <span class="k">def</span> <span class="nf">remove_obstacle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obstacle</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Obstacle</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Obstacle</span><span class="p">]]):</span>
+        <span class="sd">&quot;&quot;&quot; Removes a static, dynamic or a list of obstacles from the scenario. If the obstacle ID is not assigned,</span>
+<span class="sd">        a warning message is given.</span>
+
+<span class="sd">        :param obstacle: obstacle to be removed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obstacle</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span><span class="n">Obstacle</span><span class="p">)),</span> <span class="s1">&#39;&lt;Scenario/remove_obstacle&gt; argument &quot;obstacle&quot; of wrong type. &#39;</span> \
+                                               <span class="s1">&#39;Expected type: </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">Obstacle</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">obstacle</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obstacle</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">obstacle</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">remove_obstacle</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static_obstacles</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static_obstacles</span><span class="p">[</span><span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_id_set</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_obstacles</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_obstacles</span><span class="p">[</span><span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_id_set</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;&lt;Scenario/remove_obstacle&gt; Cannot remove obstacle with ID </span><span class="si">%s</span><span class="s1">, &#39;</span>
+                          <span class="s1">&#39;since it is not contained in the scenario.&#39;</span> <span class="o">%</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scenario.generate_object_id"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.scenario.Scenario.generate_object_id">[docs]</a>    <span class="k">def</span> <span class="nf">generate_object_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Generates a unique ID which is not assigned to any object in the scenario.</span>
+
+<span class="sd">            :return: unique object ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_set</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="Scenario.occupancies_at_time_step"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.scenario.Scenario.occupancies_at_time_step">[docs]</a>    <span class="k">def</span> <span class="nf">occupancies_at_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_step</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Occupancy</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot; Returns the occupancies of all static and dynamic obstacles at a specific time step.</span>
+
+<span class="sd">            :param time_step: occupancies of obstacles at this time step</span>
+<span class="sd">            :return: list of occupancies of the obstacles</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time_step</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s1">&#39;&lt;Scenario/occupancies_at_time&gt; argument &quot;time_step&quot; of wrong type. &#39;</span> \
+                                           <span class="s1">&#39;Expected type: </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">time_step</span><span class="p">))</span>
+        <span class="n">occupancies</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">obstacle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">occupancy_at_time</span><span class="p">(</span><span class="n">time_step</span><span class="p">):</span>
+                <span class="n">occupancies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obstacle</span><span class="o">.</span><span class="n">occupancy_at_time</span><span class="p">(</span><span class="n">time_step</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">occupancies</span></div>
+
+<div class="viewcode-block" id="Scenario.obstacle_by_id"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.scenario.Scenario.obstacle_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">obstacle_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obstacle_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Obstacle</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds an obstacle for a given obstacle_id</span>
+
+<span class="sd">        :param obstacle_id: ID of the queried obstacle</span>
+<span class="sd">        :return: the obstacle object if the ID exists, otherwise None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obstacle_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s1">&#39;&lt;Scenario/obstacle_by_id&gt; argument &quot;obstacle_id&quot; of wrong type. &#39;</span> \
+                                             <span class="s1">&#39;Expected type: </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">obstacle_id</span><span class="p">))</span>
+        <span class="n">obstacle</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">obstacle_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static_obstacles</span><span class="p">:</span>
+            <span class="n">obstacle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static_obstacles</span><span class="p">[</span><span class="n">obstacle_id</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">obstacle_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_obstacles</span><span class="p">:</span>
+            <span class="n">obstacle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_obstacles</span><span class="p">[</span><span class="n">obstacle_id</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;&lt;Scenario/obstacle_by_id&gt; Obstacle with ID </span><span class="si">%s</span><span class="s1"> is not contained in the scenario.&#39;</span>
+                          <span class="o">%</span> <span class="n">obstacle_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obstacle</span></div>
+
+<div class="viewcode-block" id="Scenario.obstacles_by_role_and_type"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.scenario.Scenario.obstacles_by_role_and_type">[docs]</a>    <span class="k">def</span> <span class="nf">obstacles_by_role_and_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obstacle_role</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ObstacleRole</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                   <span class="n">obstacle_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ObstacleType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Obstacle</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Filters the obstacles by their role and type.</span>
+
+<span class="sd">        :param obstacle_role: obstacle role as defined in CommonRoad, e.g., static or dynamic</span>
+<span class="sd">        :param obstacle_type: obstacle type as defined in CommonRoad, e.g., car, train, or bus</span>
+<span class="sd">        :return: list of all obstacles satisfying the given obstacle_role and obstacle_type</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obstacle_role</span><span class="p">,</span> <span class="p">(</span><span class="n">ObstacleRole</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))),</span> \
+            <span class="s1">&#39;&lt;Scenario/obstacles_by_role_and_type&gt; argument &quot;obstacle_role&quot; of wrong type. Expected types: &#39;</span> \
+            <span class="s1">&#39; </span><span class="si">%s</span><span class="s1"> or </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ObstacleRole</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">obstacle_role</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obstacle_type</span><span class="p">,</span> <span class="p">(</span><span class="n">ObstacleType</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))),</span> \
+            <span class="s1">&#39;&lt;Scenario/obstacles_by_role_and_type&gt; argument &quot;obstacle_type&quot; of wrong type. Expected types: &#39;</span> \
+            <span class="s1">&#39; </span><span class="si">%s</span><span class="s1"> or </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ObstacleType</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">obstacle_type</span><span class="p">))</span>
+        <span class="n">obstacle_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">obstacle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">((</span><span class="n">obstacle_role</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_role</span> <span class="o">==</span> <span class="n">obstacle_role</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">obstacle_type</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_type</span> <span class="o">==</span> <span class="n">obstacle_type</span><span class="p">)):</span>
+                <span class="n">obstacle_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obstacle</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obstacle_list</span></div>
+
+<div class="viewcode-block" id="Scenario.obstacles_by_position_intervals"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.scenario.Scenario.obstacles_by_position_intervals">[docs]</a>    <span class="k">def</span> <span class="nf">obstacles_by_position_intervals</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">position_intervals</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Interval</span><span class="p">],</span>
+            <span class="n">obstacle_role</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">ObstacleRole</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">ObstacleRole</span><span class="o">.</span><span class="n">DYNAMIC</span><span class="p">,</span> <span class="n">ObstacleRole</span><span class="o">.</span><span class="n">STATIC</span><span class="p">),</span>
+            <span class="n">time_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Obstacle</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns obstacles which center is located within in the given x-/y-position intervals.</span>
+
+<span class="sd">        :param position_intervals: list of intervals for x- and y-coordinates [interval_x,  interval_y]</span>
+<span class="sd">        :param obstacle_role: tuple containing the desired obstacle roles</span>
+<span class="sd">        :return: list of obstacles in the position intervals</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">contained_in_interval</span><span class="p">(</span><span class="n">position</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">position_intervals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="n">position_intervals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">time_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">time_step</span><span class="o">=</span><span class="mi">0</span>
+
+        <span class="n">obstacle_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ObstacleRole</span><span class="o">.</span><span class="n">STATIC</span> <span class="ow">in</span> <span class="n">obstacle_role</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">obstacle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">static_obstacles</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">contained_in_interval</span><span class="p">(</span><span class="n">obstacle</span><span class="o">.</span><span class="n">initial_state</span><span class="o">.</span><span class="n">position</span><span class="p">):</span>
+                    <span class="n">obstacle_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obstacle</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ObstacleRole</span><span class="o">.</span><span class="n">DYNAMIC</span> <span class="ow">in</span> <span class="n">obstacle_role</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">obstacle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamic_obstacles</span><span class="p">:</span>
+                <span class="n">occ</span> <span class="o">=</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">occupancy_at_time</span><span class="p">(</span><span class="n">time_step</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">occ</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">occ</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s1">&#39;center&#39;</span><span class="p">):</span>
+                        <span class="n">obstacle_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obstacle</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">contained_in_interval</span><span class="p">(</span><span class="n">occ</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">center</span><span class="p">):</span>
+                        <span class="n">obstacle_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obstacle</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obstacle_list</span></div>
+
+<div class="viewcode-block" id="Scenario.translate_rotate"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.scenario.Scenario.translate_rotate">[docs]</a>    <span class="k">def</span> <span class="nf">translate_rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">translation</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Translates and rotates all objects, e.g., obstacles and road network, in the scenario.</span>
+
+<span class="sd">            :param translation: translation vector [x_off, y_off] in x- and y-direction</span>
+<span class="sd">            :param angle: rotation angle in radian (counter-clockwise)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">is_real_number_vector</span><span class="p">(</span><span class="n">translation</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s1">&#39;&lt;Scenario/translate_rotate&gt;: argument &quot;translation&quot; is &#39;</span> \
+                                                      <span class="s1">&#39;not a vector of real numbers of length 2. translation = </span><span class="si">{}</span><span class="s1">.&#39;</span>\
+                                                      <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">translation</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">is_valid_orientation</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="s1">&#39;&lt;Scenario/translate_rotate&gt;: argument &quot;orientation&quot; is not valid. &#39;</span> \
+                                            <span class="s1">&#39;angle = </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lanelet_network</span><span class="o">.</span><span class="n">translate_rotate</span><span class="p">(</span><span class="n">translation</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">obstacle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span><span class="p">:</span>
+            <span class="n">obstacle</span><span class="o">.</span><span class="n">translate_rotate</span><span class="p">(</span><span class="n">translation</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_is_object_id_used</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Checks if an ID is already assigned to an object in the scenario.</span>
+
+<span class="sd">            :param object_id: object ID to be checked</span>
+<span class="sd">            :return: True, if the object ID is already assigned, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">object_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id_set</span>
+
+    <span class="k">def</span> <span class="nf">_mark_object_id_as_used</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Checks if an ID is assigned to an object in the scenario. If the ID is already assigned an error is</span>
+<span class="sd">        raised, otherwise, the ID is added to the set of assigned IDs.</span>
+
+<span class="sd">        :param object_id: object ID to be checked</span>
+<span class="sd">        :raise ValueError:  if the object ID is already assigned to another object in the scenario.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_object_id_used</span><span class="p">(</span><span class="n">object_id</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ID </span><span class="si">%s</span><span class="s2"> is already used.&quot;</span> <span class="o">%</span> <span class="n">object_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_id_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">object_id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">traffic_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">traffic_str</span> <span class="o">+=</span> <span class="s2">&quot;Scenario:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">traffic_str</span> <span class="o">+=</span> <span class="s2">&quot;- Benchmark ID: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_benchmark_id</span><span class="p">)</span>
+        <span class="n">traffic_str</span> <span class="o">+=</span> <span class="s2">&quot;- Time step size: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dt</span><span class="p">)</span>
+        <span class="n">traffic_str</span> <span class="o">+=</span> <span class="s2">&quot;- Number of Obstacles: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span><span class="p">))</span>
+        <span class="n">traffic_str</span> <span class="o">+=</span> <span class="s2">&quot;- Lanelets:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">traffic_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lanelet_network</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">traffic_str</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Moritz Klischat, Stefanie Manzinger, Christina Miller, Christian Pek.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'2019.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

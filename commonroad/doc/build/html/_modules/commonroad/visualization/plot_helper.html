@@ -1,0 +1,396 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>commonroad.visualization.plot_helper &mdash; CommonRoad_io 2019.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> CommonRoad_io
+          
+
+          
+            
+            <img src="../../../_static/commonroad_white150.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2019.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/index.html">User Manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/getting_started.html">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#reading-files">Reading Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#scenario">Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#lanelet-network">Lanelet Network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#obstacles">Obstacles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#dynamic-obstacle-prediction">Dynamic Obstacle Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#trajectory-prediction">Trajectory Prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#set-based-prediction">Set Based Prediction</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#planning-problems">Planning Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#writing-files">Writing Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#solution-writer">Solution Writer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/visualization.html">Visualization Manual</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#draw-params"><code class="docutils literal notranslate"><span class="pre">draw_params</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/visualization.html#passing-custom-draw-params">Passing custom <code class="docutils literal notranslate"><span class="pre">draw_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#plot-limits"><code class="docutils literal notranslate"><span class="pre">plot_limits</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#example-plot-with-matplotlib">Example plot with <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#speed-up-plotting-for-real-time-applications">Speed up plotting for real-time applications</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">CommonRoad_io API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#modules">Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/scenario.html">Module Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.scenario">Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.lanelet">Road network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#obstacles">Obstacles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.trajectory">States and Trajectories</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/prediction.html">Module Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#prediction-class"><code class="docutils literal notranslate"><span class="pre">Prediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#trajectoryprediction-class"><code class="docutils literal notranslate"><span class="pre">TrajectoryPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#setbasedprediction-class"><code class="docutils literal notranslate"><span class="pre">SetBasedPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#occupancy-class"><code class="docutils literal notranslate"><span class="pre">Occupancy</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/planning.html">Module Planning</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/planning.html#module-commonroad.planning.planning_problem">Planning Problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/planning.html#module-commonroad.planning.goal">Goal Region</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/geometry.html">Module Geometry</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-commonroad.geometry.shape">Shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-geometry.transform">Transform</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/common.html">Module Common</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.file_reader">File Reader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.file_writer">File Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.solution_writer">Solution Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/visualization.html">Module Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/visualization.html#module-commonroad.visualization.draw_dispatch_cr">draw_dispatch_cr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/visualization.html#module-commonroad.visualization.plot_helper">plot_Helper</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CommonRoad_io</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>commonroad.visualization.plot_helper</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for commonroad.visualization.plot_helper</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">commonroad.common.util</span> <span class="k">import</span> <span class="n">Interval</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.scenario</span> <span class="k">import</span> <span class="n">Scenario</span>
+<span class="kn">from</span> <span class="nn">commonroad.visualization.draw_dispatch_cr</span> <span class="k">import</span> <span class="n">draw_object</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Moritz Klischat&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;TUM Cyber-Physical Systems Group&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2019.1&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Moritz Klischat&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad@in.tum.de&quot;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Released&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Example for a fast updating of dynamic obstacles with matplotlib:</span>
+<span class="sd"># 1. set backend for matplotlib (Qt5Agg or TkAgg recommended) directly after importing matplotlib for the first time</span>
+<span class="sd">import matplotlib</span>
+<span class="sd">matplotlib.use(&#39;Qt5Agg&#39;)</span>
+<span class="sd">import os</span>
+<span class="sd">from commonroad.common.file_reader import CommonRoadFileReader</span>
+
+<span class="sd"># 2. example function:</span>
+<span class="sd">def example_plot():        </span>
+<span class="sd">    filename = os.getcwd() + &#39;/scenarios/NGSIM/US101/USA_US101-4_1_T-1.xml&#39;</span>
+<span class="sd">    scenario, planning_problem_set = CommonRoadFileReader(filename).open()</span>
+<span class="sd">    from commonroad.visualization.plot_helper import *</span>
+<span class="sd">    </span>
+<span class="sd">    set_non_blocking()  # ensures interactive plotting is activated</span>
+<span class="sd">    plt.style.use(&#39;classic&#39;)</span>
+<span class="sd">    inch_in_cm = 2.54</span>
+<span class="sd">    figsize = [30, 8]</span>
+<span class="sd">    </span>
+<span class="sd">    fig = plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))</span>
+<span class="sd">    fig.gca().axis(&#39;equal&#39;)</span>
+<span class="sd">    handles = {}  # collects handles of obstacle patches, plotted by matplotlib</span>
+<span class="sd">    </span>
+<span class="sd">    # inital plot including the lanelet network</span>
+<span class="sd">    draw_object(scenario, handles=handles)</span>
+<span class="sd">    fig.canvas.draw()</span>
+<span class="sd">    plt.gca().autoscale()</span>
+<span class="sd">    </span>
+<span class="sd">    # loop where obstacle positions are updated</span>
+<span class="sd">    for i in range(0, nrun):</span>
+<span class="sd">        # ...</span>
+<span class="sd">        # change positions of obstacles</span>
+<span class="sd">        # ...</span>
+<span class="sd">        redraw_obstacles(scenario, handles=handles, figure_handle=fig, plot_limits=None, draw_params={&#39;time_begin&#39;:i})</span>
+<span class="sd">    </span>
+<span class="sd">    print((time.time()-t1)/nrun)</span>
+<span class="sd">        </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="set_non_blocking"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.plot_helper.set_non_blocking">[docs]</a><span class="k">def</span> <span class="nf">set_non_blocking</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ensures that interactive plotting is enabled for non-blocking plotting.</span>
+
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">ion</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">mpl</span><span class="o">.</span><span class="n">is_interactive</span><span class="p">():</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;The current backend of matplotlib does not support interactive mode: &#39;</span>
+                      <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">())</span> <span class="o">+</span> <span class="s1">&#39;. Select another backend with: </span><span class="se">\&quot;</span><span class="s1">matplotlib.use(</span><span class="se">\&#39;</span><span class="s1">TkAgg</span><span class="se">\&#39;</span><span class="s1">)</span><span class="se">\&quot;</span><span class="s1">&#39;</span><span class="p">,</span>
+                      <span class="ne">UserWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="redraw_obstacles"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.plot_helper.redraw_obstacles">[docs]</a><span class="k">def</span> <span class="nf">redraw_obstacles</span><span class="p">(</span><span class="n">scenario</span><span class="p">:</span> <span class="n">Scenario</span><span class="p">,</span> <span class="n">handles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="n">List</span><span class="p">[</span><span class="n">mpl</span><span class="o">.</span><span class="n">patches</span><span class="o">.</span><span class="n">Patch</span><span class="p">]],</span> <span class="n">figure_handle</span><span class="p">:</span> <span class="n">mpl</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">Figure</span><span class="p">,</span>
+                     <span class="n">draw_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_limits</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="nb">float</span><span class="p">]],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function is used for fast updating dynamic obstacles of an already drawn plot. Saves about 80% time compared to a complete plot.</span>
+<span class="sd">    Deletes all dynamic obstacles which are specified in handles and draws dynamic obstacles of a scenario.</span>
+
+<span class="sd">    :param scenario: scenario from which obstacle should be plotted</span>
+<span class="sd">    :param handles: dict of obstacle_ids and corresponding patch handles (generated by draw_object function)</span>
+<span class="sd">    :param plot_limits: axis limits for plot [x_min, x_max, y_min, y_max]</span>
+<span class="sd">    :param figure_handle: figure handle of current plot</span>
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#remove dynamic obstacle from current plot</span>
+    <span class="k">for</span> <span class="n">handles_i</span> <span class="ow">in</span> <span class="n">handles</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">handle</span> <span class="ow">in</span> <span class="n">handles_i</span><span class="p">:</span>
+            <span class="n">handle</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+    <span class="n">handles</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+    <span class="c1"># redraw dynamic obstacles</span>
+    <span class="k">if</span> <span class="n">plot_limits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">draw_object</span><span class="p">(</span><span class="n">scenario</span><span class="o">.</span><span class="n">obstacles_by_position_intervals</span><span class="p">([</span><span class="n">Interval</span><span class="p">(</span><span class="n">plot_limits</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">plot_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                                                              <span class="n">Interval</span><span class="p">(</span><span class="n">plot_limits</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">plot_limits</span><span class="p">[</span><span class="mi">3</span><span class="p">])]),</span>
+                    <span class="n">draw_params</span><span class="o">=</span><span class="n">draw_params</span><span class="p">,</span> <span class="n">plot_limits</span><span class="o">=</span><span class="n">plot_limits</span><span class="p">,</span> <span class="n">handles</span><span class="o">=</span><span class="n">handles</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">draw_object</span><span class="p">(</span><span class="n">scenario</span><span class="o">.</span><span class="n">obstacles</span><span class="p">,</span> <span class="n">draw_params</span><span class="o">=</span><span class="n">draw_params</span><span class="p">,</span> <span class="n">plot_limits</span><span class="o">=</span><span class="n">plot_limits</span><span class="p">,</span> <span class="n">handles</span><span class="o">=</span><span class="n">handles</span><span class="p">)</span>
+
+    <span class="c1"># update plot</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">figure_handle</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">handles_i</span> <span class="ow">in</span> <span class="n">handles</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">handle</span> <span class="ow">in</span> <span class="n">handles_i</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">draw_artist</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span> <span class="o">==</span><span class="s1">&#39;TkAgg&#39;</span><span class="p">:</span>
+        <span class="n">figure_handle</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+
+    <span class="k">elif</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span> <span class="o">==</span><span class="s1">&#39;Qt5Agg&#39;</span><span class="p">:</span>
+        <span class="n">figure_handle</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">figure_handle</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;&lt;plot_helper/redraw_dynamic_obstacles&gt; Backend for matplotlib needs to be </span><span class="se">\&#39;</span><span class="s1">Qt5Agg</span><span class="se">\&#39;</span><span class="s1"> or </span><span class="se">\&#39;</span><span class="s1">TkAgg</span><span class="se">\&#39;</span><span class="s1"> but is&#39;</span>
+                        <span class="s1">&#39;</span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">())</span>
+
+    <span class="n">figure_handle</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">flush_events</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Moritz Klischat, Stefanie Manzinger, Christina Miller, Christian Pek.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'2019.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
