@@ -1,0 +1,591 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Module Prediction &mdash; CommonRoad_io 2019.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Module Planning" href="planning.html" />
+    <link rel="prev" title="Module Scenario" href="scenario.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> CommonRoad_io
+          
+
+          
+            
+            <img src="../_static/commonroad_white150.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2019.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user/getting_started.html">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user/getting_started.html#reading-files">Reading Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user/getting_started.html#scenario">Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user/getting_started.html#lanelet-network">Lanelet Network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user/getting_started.html#obstacles">Obstacles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../user/getting_started.html#dynamic-obstacle-prediction">Dynamic Obstacle Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user/getting_started.html#trajectory-prediction">Trajectory Prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user/getting_started.html#set-based-prediction">Set Based Prediction</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../user/getting_started.html#planning-problems">Planning Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user/getting_started.html#writing-files">Writing Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user/getting_started.html#solution-writer">Solution Writer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user/visualization.html">Visualization Manual</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user/visualization.html#draw-params"><code class="docutils literal notranslate"><span class="pre">draw_params</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user/visualization.html#passing-custom-draw-params">Passing custom <code class="docutils literal notranslate"><span class="pre">draw_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../user/visualization.html#plot-limits"><code class="docutils literal notranslate"><span class="pre">plot_limits</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user/visualization.html#example-plot-with-matplotlib">Example plot with <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user/visualization.html#speed-up-plotting-for-real-time-applications">Speed up plotting for real-time applications</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">CommonRoad_io API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="scenario.html">Module Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="scenario.html#module-commonroad.scenario.scenario">Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenario.html#module-commonroad.scenario.lanelet">Road network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenario.html#obstacles">Obstacles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenario.html#module-commonroad.scenario.trajectory">States and Trajectories</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Module Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#prediction-class"><code class="docutils literal notranslate"><span class="pre">Prediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#trajectoryprediction-class"><code class="docutils literal notranslate"><span class="pre">TrajectoryPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setbasedprediction-class"><code class="docutils literal notranslate"><span class="pre">SetBasedPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#occupancy-class"><code class="docutils literal notranslate"><span class="pre">Occupancy</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="planning.html">Module Planning</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="planning.html#module-commonroad.planning.planning_problem">Planning Problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="planning.html#module-commonroad.planning.goal">Goal Region</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="geometry.html">Module Geometry</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="geometry.html#module-commonroad.geometry.shape">Shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geometry.html#module-geometry.transform">Transform</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="common.html">Module Common</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="common.html#module-commonroad.common.file_reader">File Reader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="common.html#module-commonroad.common.file_writer">File Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="common.html#module-commonroad.common.solution_writer">Solution Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="common.html#module-commonroad.common.util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="visualization.html">Module Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="visualization.html#module-commonroad.visualization.draw_dispatch_cr">draw_dispatch_cr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="visualization.html#module-commonroad.visualization.plot_helper">plot_Helper</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CommonRoad_io</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">CommonRoad_io API</a> &raquo;</li>
+        
+      <li>Module Prediction</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/prediction.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-prediction">
+<h1>Module Prediction<a class="headerlink" href="#module-prediction" title="Permalink to this headline">¶</a></h1>
+<p>The CommonRoad XML-specification provides three possibilities to describe the movement of dynamic obstacles over time: known behavior, unknown behavior bounded by sets, and unknown behavior described by probability distributions. Known behaviour and unknown behavior bounded by sets are described by the class <code class="xref py py-class docutils literal notranslate"><span class="pre">TrajectoryPrediction</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">SetBasedPrediction</span></code>. Unknown behavior described by probability distributions is not supported in version 2019.1 and will be added in a future release.</p>
+<span class="target" id="module-commonroad.prediction.prediction"></span><img src="../_images/inheritance-65b8878baba09ba2dff291c04f3e1d22c063833b.png" alt="Inheritance diagram of SetBasedPrediction, TrajectoryPrediction" usemap="#inheritance530414f049" class="inheritance"/>
+<map id="inheritance530414f049" name="inheritance530414f049">
+<area shape="rect" id="node1" href="#commonroad.prediction.prediction.Prediction" target="_top" title="Base class for a prediction module." alt="" coords="5,31,91,56"/>
+<area shape="rect" id="node2" href="#commonroad.prediction.prediction.SetBasedPrediction" target="_top" title="Class to represent the future behavior of obstacles by bounded occupancy sets." alt="" coords="139,5,285,31"/>
+<area shape="rect" id="node3" href="#commonroad.prediction.prediction.TrajectoryPrediction" target="_top" title="Class to represent the predicted movement of an obstacle using a trajectory. A trajectory is modeled as a" alt="" coords="139,55,285,80"/>
+</map><div class="section" id="prediction-class">
+<h2><code class="docutils literal notranslate"><span class="pre">Prediction</span></code> class<a class="headerlink" href="#prediction-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="commonroad.prediction.prediction.Prediction">
+<em class="property">class </em><code class="descclassname">commonroad.prediction.prediction.</code><code class="descname">Prediction</code><span class="sig-paren">(</span><em>initial_time_step</em>, <em>occupancy_set</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/prediction/prediction.html#Prediction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.prediction.prediction.Prediction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for a prediction module.</p>
+<dl class="attribute">
+<dt id="commonroad.prediction.prediction.Prediction.initial_time_step">
+<code class="descname">initial_time_step</code><a class="headerlink" href="#commonroad.prediction.prediction.Prediction.initial_time_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initial time step of the prediction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="commonroad.prediction.prediction.Prediction.occupancy_at_time_step">
+<code class="descname">occupancy_at_time_step</code><span class="sig-paren">(</span><em>time_step</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/prediction/prediction.html#Prediction.occupancy_at_time_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.prediction.prediction.Prediction.occupancy_at_time_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Occupancy at a specific time step.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>time_step</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – discrete time step</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <a class="reference internal" href="#commonroad.prediction.prediction.Occupancy" title="commonroad.prediction.prediction.Occupancy"><code class="xref py py-class docutils literal notranslate"><span class="pre">Occupancy</span></code></a>]</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">occupancy at time_step if time_step is within the time interval of the prediction; otherwise, None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="commonroad.prediction.prediction.Prediction.occupancy_set">
+<code class="descname">occupancy_set</code><a class="headerlink" href="#commonroad.prediction.prediction.Prediction.occupancy_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of occupancies over time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#commonroad.prediction.prediction.Occupancy" title="commonroad.prediction.prediction.Occupancy"><code class="xref py py-class docutils literal notranslate"><span class="pre">Occupancy</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="trajectoryprediction-class">
+<h2><code class="docutils literal notranslate"><span class="pre">TrajectoryPrediction</span></code> class<a class="headerlink" href="#trajectoryprediction-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="commonroad.prediction.prediction.TrajectoryPrediction">
+<em class="property">class </em><code class="descclassname">commonroad.prediction.prediction.</code><code class="descname">TrajectoryPrediction</code><span class="sig-paren">(</span><em>trajectory</em>, <em>shape</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/prediction/prediction.html#TrajectoryPrediction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.prediction.prediction.TrajectoryPrediction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to represent the predicted movement of an obstacle using a trajectory. A trajectory is modeled as a
+state sequence over time. The occupancy of an obstacle along a trajectory is uniquely defined given its shape.</p>
+<dl class="attribute">
+<dt id="commonroad.prediction.prediction.TrajectoryPrediction.initial_time_step">
+<code class="descname">initial_time_step</code><a class="headerlink" href="#commonroad.prediction.prediction.TrajectoryPrediction.initial_time_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initial time step of the prediction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="commonroad.prediction.prediction.TrajectoryPrediction.occupancy_at_time_step">
+<code class="descname">occupancy_at_time_step</code><span class="sig-paren">(</span><em>time_step</em><span class="sig-paren">)</span><a class="headerlink" href="#commonroad.prediction.prediction.TrajectoryPrediction.occupancy_at_time_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Occupancy at a specific time step.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>time_step</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – discrete time step</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <a class="reference internal" href="#commonroad.prediction.prediction.Occupancy" title="commonroad.prediction.prediction.Occupancy"><code class="xref py py-class docutils literal notranslate"><span class="pre">Occupancy</span></code></a>]</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">occupancy at time_step if time_step is within the time interval of the prediction; otherwise, None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="commonroad.prediction.prediction.TrajectoryPrediction.occupancy_set">
+<code class="descname">occupancy_set</code><a class="headerlink" href="#commonroad.prediction.prediction.TrajectoryPrediction.occupancy_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of occupancies over time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#commonroad.prediction.prediction.Occupancy" title="commonroad.prediction.prediction.Occupancy"><code class="xref py py-class docutils literal notranslate"><span class="pre">Occupancy</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="commonroad.prediction.prediction.TrajectoryPrediction.shape">
+<code class="descname">shape</code><a class="headerlink" href="#commonroad.prediction.prediction.TrajectoryPrediction.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shape of the predicted object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="geometry.html#commonroad.geometry.shape.Shape" title="commonroad.geometry.shape.Shape"><code class="xref py py-class docutils literal notranslate"><span class="pre">Shape</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="commonroad.prediction.prediction.TrajectoryPrediction.trajectory">
+<code class="descname">trajectory</code><a class="headerlink" href="#commonroad.prediction.prediction.TrajectoryPrediction.trajectory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicted trajectory of the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="scenario.html#commonroad.scenario.trajectory.Trajectory" title="commonroad.scenario.trajectory.Trajectory"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trajectory</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="commonroad.prediction.prediction.TrajectoryPrediction.translate_rotate">
+<code class="descname">translate_rotate</code><span class="sig-paren">(</span><em>translation</em>, <em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/prediction/prediction.html#TrajectoryPrediction.translate_rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.prediction.prediction.TrajectoryPrediction.translate_rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translates and rotates all states of the trajectory and re-computes the translated and rotated occupancy
+set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</li>
+<li><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="setbasedprediction-class">
+<h2><code class="docutils literal notranslate"><span class="pre">SetBasedPrediction</span></code> class<a class="headerlink" href="#setbasedprediction-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="commonroad.prediction.prediction.SetBasedPrediction">
+<em class="property">class </em><code class="descclassname">commonroad.prediction.prediction.</code><code class="descname">SetBasedPrediction</code><span class="sig-paren">(</span><em>initial_time_step</em>, <em>occupancy_set</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/prediction/prediction.html#SetBasedPrediction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.prediction.prediction.SetBasedPrediction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to represent the future behavior of obstacles by bounded occupancy sets.</p>
+<dl class="attribute">
+<dt id="commonroad.prediction.prediction.SetBasedPrediction.initial_time_step">
+<code class="descname">initial_time_step</code><a class="headerlink" href="#commonroad.prediction.prediction.SetBasedPrediction.initial_time_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initial time step of the prediction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="commonroad.prediction.prediction.SetBasedPrediction.occupancy_at_time_step">
+<code class="descname">occupancy_at_time_step</code><span class="sig-paren">(</span><em>time_step</em><span class="sig-paren">)</span><a class="headerlink" href="#commonroad.prediction.prediction.SetBasedPrediction.occupancy_at_time_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Occupancy at a specific time step.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>time_step</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – discrete time step</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <a class="reference internal" href="#commonroad.prediction.prediction.Occupancy" title="commonroad.prediction.prediction.Occupancy"><code class="xref py py-class docutils literal notranslate"><span class="pre">Occupancy</span></code></a>]</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">occupancy at time_step if time_step is within the time interval of the prediction; otherwise, None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="commonroad.prediction.prediction.SetBasedPrediction.occupancy_set">
+<code class="descname">occupancy_set</code><a class="headerlink" href="#commonroad.prediction.prediction.SetBasedPrediction.occupancy_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of occupancies over time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#commonroad.prediction.prediction.Occupancy" title="commonroad.prediction.prediction.Occupancy"><code class="xref py py-class docutils literal notranslate"><span class="pre">Occupancy</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="commonroad.prediction.prediction.SetBasedPrediction.translate_rotate">
+<code class="descname">translate_rotate</code><span class="sig-paren">(</span><em>translation</em>, <em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/prediction/prediction.html#SetBasedPrediction.translate_rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.prediction.prediction.SetBasedPrediction.translate_rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translates and rotates the occupancy set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</li>
+<li><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="occupancy-class">
+<h2><code class="docutils literal notranslate"><span class="pre">Occupancy</span></code> class<a class="headerlink" href="#occupancy-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="commonroad.prediction.prediction.Occupancy">
+<em class="property">class </em><code class="descclassname">commonroad.prediction.prediction.</code><code class="descname">Occupancy</code><span class="sig-paren">(</span><em>time_step</em>, <em>shape</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/prediction/prediction.html#Occupancy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.prediction.prediction.Occupancy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class describing an occupied area in the position domain. The occupied area can be defined for a certain time
+step or a time interval.</p>
+<dl class="attribute">
+<dt id="commonroad.prediction.prediction.Occupancy.shape">
+<code class="descname">shape</code><a class="headerlink" href="#commonroad.prediction.prediction.Occupancy.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shape representing an occupied area in the position domain.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="geometry.html#commonroad.geometry.shape.Shape" title="commonroad.geometry.shape.Shape"><code class="xref py py-class docutils literal notranslate"><span class="pre">Shape</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="commonroad.prediction.prediction.Occupancy.time_step">
+<code class="descname">time_step</code><a class="headerlink" href="#commonroad.prediction.prediction.Occupancy.time_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>The occupied area is either defined for a certain time step or a time interval.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <a class="reference internal" href="common.html#commonroad.common.util.Interval" title="commonroad.common.util.Interval"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interval</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="commonroad.prediction.prediction.Occupancy.translate_rotate">
+<code class="descname">translate_rotate</code><span class="sig-paren">(</span><em>translation</em>, <em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/prediction/prediction.html#Occupancy.translate_rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.prediction.prediction.Occupancy.translate_rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translates and rotates the occupied area.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</li>
+<li><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="planning.html" class="btn btn-neutral float-right" title="Module Planning" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="scenario.html" class="btn btn-neutral" title="Module Scenario" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Moritz Klischat, Stefanie Manzinger, Christina Miller, Christian Pek.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'2019.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
