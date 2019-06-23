@@ -315,8 +315,10 @@ __status__ = "in development"
                     minOccurs="1" maxOccurs="unbounded" />
                 <xs:element name="obstacle" type="obstacle"
                     minOccurs="0" maxOccurs="unbounded" />
+				<!-- Don't make planningProblem mandatory as it should be
+					 possible to only write scenario to file.-->
                 <xs:element name="planningProblem" type="planningProblem"
-                    minOccurs="1" maxOccurs="unbounded" />
+                    minOccurs="0" maxOccurs="unbounded" />
             </xs:sequence>
             <xs:attribute name="commonRoadVersion" use="required">
                 <xs:simpleType>
