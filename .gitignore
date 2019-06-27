@@ -219,3 +219,6 @@ commonroad/doc/build/*
 
 # pytest
 .coverage
+
+#spot
+*spot_prediction.py
