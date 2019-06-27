@@ -28,6 +28,7 @@ For getting started, we recommend our `tutorials <https://commonroad.in.tum.de/t
 Additional Tools
 ================
 Based on CommonRoad_io, we have developed a list of tools for implementing motion-planning algorithms:
+
 * `Collision Checker <https://gitlab.lrz.de/tum-cps/commonroad-collision-checker>`_
 * `CommonRoad-SUMO Interface <https://gitlab.lrz.de/tum-cps/commonroad-sumo-interface>`_
 * `OpenDRIVE to Lanelet converter <https://pypi.org/project/opendrive2lanelet>`_
