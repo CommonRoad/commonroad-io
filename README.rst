@@ -12,7 +12,7 @@ CommonRoad_io
 =============
 
 The CommonRoad_io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tool of the CommonRoad Framework.
-With CommonRoad_io, those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`_ .
+With CommonRoad_io, those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`_.
 
 The software is written in Python 3.6 and tested on MacOs and Linux. The usage of the Anaconda_ Python distribution is strongly recommended.
 
@@ -21,7 +21,17 @@ The software is written in Python 3.6 and tested on MacOs and Linux. The usage o
 Documentation
 =============
 
-The full documentation of the API and introducing examples can be found under `commonroad-io.readthedocs.io <https://commonroad-io.readthedocs.io>`_
+The full documentation of the API and introducing examples can be found under `commonroad.in.tum.de <https://commonroad.in.tum.de/static/docs/commonroad-io/index.html>`_.
+
+For getting started, we recommend our `tutorials <https://commonroad.in.tum.de/tutorials/>`_.
+
+Additional Tools
+================
+Based on CommonRoad_io, we have developed a list of tools for implementing motion-planning algorithms:
+* `Collision Checker <https://gitlab.lrz.de/tum-cps/commonroad-collision-checker>`_
+* `CommonRoad-SUMO Interface <https://gitlab.lrz.de/tum-cps/commonroad-sumo-interface>`_
+* `OpenDRIVE to Lanelet converter <https://pypi.org/project/opendrive2lanelet>`_
+* `Vehicle Models <https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models/tree/master/Python>`_
 
 Requirements
 ============
