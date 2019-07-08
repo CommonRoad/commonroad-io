@@ -53,6 +53,7 @@ class CommonRoadFileReader:
         self._tree = None
         self._dt = None
         self._benchmark_id = None
+        self._meta_data = None
 
     def open(self) -> Tuple[Scenario, PlanningProblemSet]:
         """
@@ -81,7 +82,7 @@ class CommonRoadFileReader:
 
         :return: object of class scenario containing the road network and the obstacles
         """
-        scenario = ScenarioFactory.create_from_xml_node(self._tree, self._dt, self._benchmark_id)
+        scenario = ScenarioFactory.create_from_xml_node(self._tree, self._dt, self._benchmark_id, self._meta_data)
         return scenario
 
     def _open_planning_problem_set(self, lanelet_network: LaneletNetwork) \
@@ -107,6 +108,10 @@ class CommonRoadFileReader:
                                                                                    commonroad_version)
         self._dt = self._get_dt()
         self._benchmark_id = self._get_benchmark_id()
+        self._meta_data = {'author': self._get_author(),
+                           'affiliation': self._get_affiliation(),
+                           'source': self._get_source(),
+                           'tags': self._get_tags()}
 
     def _parse_file(self):
         """ Parses the CommonRoad XML-file into element tree."""
@@ -124,18 +129,34 @@ class CommonRoadFileReader:
         """ Reads the CommonRoad version of the XML-file."""
         return self._tree.getroot().get('commonRoadVersion')
 
+    def _get_author(self) -> str:
+        """ Reads the affiliation of the author of the scenario."""
+        return self._tree.getroot().get('author')
+
+    def _get_affiliation(self) -> str:
+        """ Reads the affiliation of the author of the scenario."""
+        return self._tree.getroot().get('affiliation')
+
+    def _get_source(self) -> str:
+        """ Reads the source of the scenario."""
+        return self._tree.getroot().get('source')
+
+    def _get_tags(self) -> str:
+        """ Reads the source of the scenario."""
+        return self._tree.getroot().get('tags')
+
 
 class ScenarioFactory:
     """ Class to create an object of class Scenario from an XML element."""
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, dt: float, benchmark_id: str):
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, dt: float, benchmark_id: str, meta_data: dict={}):
         """
         :param xml_node: XML element
         :param dt: time step size of the scenario
         :param benchmark_id: unique CommonRoad benchmark ID
         :return:
         """
-        scenario = Scenario(dt, benchmark_id)
+        scenario = Scenario(dt, benchmark_id, **meta_data)
         scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
         scenario.add_objects(cls._obstacles(xml_node))
         return scenario

@@ -194,10 +194,10 @@ def split_velocity_to_xy(trajectory: Trajectory) -> Trajectory:
     trajectory = copy.deepcopy(trajectory)
 
     for state in trajectory.state_list:
-        v_temp = np.array([state.velocity,0.0])
+        v_temp = np.array([[state.velocity,0.0]])
         v_temp = rotate_translate(v_temp,np.array([0.0, 0.0]),state.orientation)
-        state.velocity = v_temp[0]
-        state.velocity_y = v_temp[1]
+        state.velocity = v_temp[0,0]
+        state.velocity_y = v_temp[0,1]
 
     return trajectory
 

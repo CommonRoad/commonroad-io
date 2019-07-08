@@ -26,7 +26,8 @@ class Scenario:
     """ Class which describes a Scenario entity according to the CommonRoad specification. Each scenario is described by
      a road network consisting of lanelets (see :class:`commonroad.scenario.lanelet.LaneletNetwork`) and a set of
      obstacles which can be either static or dynamic (see :class:`commonroad.scenario.obstacle.Obstacle`)."""
-    def __init__(self, dt: float, benchmark_id: str):
+    def __init__(self, dt: float, benchmark_id: str,
+                 author: str = None, tags: List[str] = None, affiliation: str = None, source: str = None):
         """
         Constructor of a Scenario object
 
@@ -41,6 +42,12 @@ class Scenario:
         self._dynamic_obstacles: Dict[int, DynamicObstacle] = defaultdict()
 
         self._id_set: Set[int] = set()
+
+        # meta data
+        self.author = author
+        self.tags = tags
+        self.affiliation = affiliation
+        self.source = source
 
     @property
     def dt(self) -> float:
