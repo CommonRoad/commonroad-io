@@ -347,6 +347,15 @@ class Trajectory:
 
     @classmethod
     def interpolate_state_list_for_step_size(cls, states: list, time: np.ndarray, dT: float, N: float, t_0 = 0) -> 'Trajectory':
+        """
+        This method interpolates a given state list with continuous time vector at given discrete time steps. The interpolation is done in a linear fashion.
+        :param states: The list of states to interpolate
+        :param time: The vector of continuous time points (corresponding to the states)
+        :param dT: The discrete time step (as specified in a scenario)
+        :param N: The number of interpolated points. It must hold (t_0+N*dT)\in time interval
+        :param t_0: The initial time of the interpolation (default 0). It must hold t\in time interval
+        :return: Trajectory with the interpolated states at the specified discrete time steps
+        """
         assert is_positive(dT), '<Trajectory/interpolate_state_list>: Time step size must be a positive number! dT = {}'.format(dT)
         assert isinstance(states, list) and all(isinstance(x, State) for x in states), '<Trajectory/interpolate_state_list>: Provided state list is not in the correct format! State list = {}'.format(states)
         assert is_real_number_vector(time) , '<Trajectory/interpolate_state_list>: Provided time vector is not in the correct format! time = {}'.format(time)
