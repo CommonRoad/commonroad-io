@@ -108,6 +108,32 @@ class TestTrajectory(unittest.TestCase):
         self.assertEqual(trajectory.state_at_time_step(9), states[3])
         self.assertEqual(trajectory.state_at_time_step(10), states[4])
 
+    def test_interpolate_states(self):
+        states = list()
+        states.append(State(**{'time_step': 5, 'position': np.array([0, 0]), 'velocity': 0, 'orientation': 10}))
+        states.append(State(**{'time_step': 5, 'position': np.array([5, 5]), 'velocity': 5, 'orientation': 15}))
+        states.append(State(**{'time_step': 5, 'position': np.array([10, 10]), 'velocity': 10, 'orientation': 20}))
+        time = np.array([0,5,10])
+
+        traj_new = Trajectory.interpolate_state_list_for_step_size(states, time, 2.5, 4)
+        x_t = np.interp(np.arange(0,2.5*4+2.5,2.5), time, [0, 5, 10])
+        for i, x in enumerate(traj_new.state_list):
+            self.assertEqual(x.velocity, x_t[i])
+            self.assertEqual(x.time_step, i)
+            self.assertEqual(x.position[0], x_t[i])
+            self.assertEqual(x.position[1], x_t[i])
+            self.assertEqual(x.orientation, 10+x_t[i])
+
+        traj_new = Trajectory.interpolate_state_list_for_step_size(states, time, 2.5, 2, t_0=5)
+        x_t = np.interp(np.arange(5, 2.5 * 4 + 2.5, 2.5), time, [0, 5, 10])
+        for i, x in enumerate(traj_new.state_list):
+            self.assertEqual(x.velocity, x_t[i])
+            self.assertEqual(x.time_step, i)
+            self.assertEqual(x.position[0], x_t[i])
+            self.assertEqual(x.position[1], x_t[i])
+            self.assertEqual(x.orientation, 10 + x_t[i])
+
+
 
 if __name__ == '__main__':
     unittest.main()

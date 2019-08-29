@@ -10,15 +10,16 @@ from commonroad.common.validity import (
     is_real_number,
     ValidTypes,
     is_natural_number,
+    is_positive,
 )
 from commonroad.geometry.shape import Shape
 from commonroad.common.util import make_valid_orientation
 
-__author__ = "Stefanie Manzinger"
+__author__ = "Stefanie Manzinger, Christian Pek"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2019.1"
-__maintainer__ = "Stefanie Manzinger"
+__version__ = "2019.2"
+__maintainer__ = "Stefanie Manzinger, Christian Pek"
 __email__ = "commonroad@in.tum.de"
 __status__ = "Released"
 
@@ -343,6 +344,89 @@ class Trajectory:
             self._state_list[i] = self._state_list[i].translate_rotate(
                 translation, angle
             )
+
+    @classmethod
+    def interpolate_state_list_for_step_size(cls, states: list, time: np.ndarray, dT: float, N: float, t_0 = 0) -> 'Trajectory':
+        assert is_positive(dT), '<Trajectory/interpolate_state_list>: Time step size must be a positive number! dT = {}'.format(dT)
+        assert isinstance(states, list) and all(isinstance(x, State) for x in states), '<Trajectory/interpolate_state_list>: Provided state list is not in the correct format! State list = {}'.format(states)
+        assert is_real_number_vector(time) , '<Trajectory/interpolate_state_list>: Provided time vector is not in the correct format! time = {}'.format(time)
+        assert len(states) == len(time), '<Trajectory/interpolate_state_list>: Provided time and state lists do not share the same length! Time = {} / States = {}'.format(len(time), len(states))
+        assert is_positive(N) and is_natural_number(N), '<Trajectory/interpolate_state_list>: Provided state horizon must be a positive Integer! N = {}'.format(N)
+        assert is_real_number(t_0), '<Trajectory/interpolate_state_list>: Provided initial time must be a real number! t_0 = {}'.format(t_0)
+        assert any(time <= t_0) and any(t_0 <= time), '<Trajectory/interpolate_state_list>: Provided initial time is not within time vector! t_0 = {}'.format(t_0)
+        assert any(t_0+N*dT <= time), '<Trajectory/interpolate_state_list>: Provided end time is not within time vector! t_h = {}'.format(t_0+N*dT)
+
+        # prepare interpolation by determining all slots with values
+        slots = list()
+        values = list()
+        for s in State.__slots__:
+            # check if state has attribute s
+            if hasattr(states[0], s):
+                slots.append(s)
+                values.append([])
+
+        # create interpolation vector
+        t_i = np.arange(t_0, t_0+N*dT+dT,dT)
+        values_i = list()
+
+        for s in slots:
+            values = list()
+            multiple = False
+            # go through all states
+            for x in states:
+                if hasattr(x, s):
+                    val = getattr(x, s)
+                    assert is_real_number(val) or is_real_number_vector(val),'<Trajectory/interpolate_state_list>: Currently, this method only supports states with real numbers! val = {}'.format(val)
+                    # check if slot is defined for multiple values
+                    if not multiple and hasattr(val, 'shape'):
+                        if len(val) > 1:
+                            multiple = True
+                            for i in range(len(val)):
+                                values.append([])
+                    if multiple:
+                        for i, v in enumerate(val):
+                            values[i].append(v)
+
+                    else:
+                        values.append(val)
+                else:
+                    raise ValueError('<Trajectory/interpolate_state_list>: States do not share the same amount of variables!')
+
+            # do the interpolation
+            if multiple:
+                temp = list()
+                for v in values:
+                    temp.append(np.interp(t_i, time, v))
+                # stack values again
+                values_i.append(np.array(temp).transpose())
+
+            else:
+                values_i.append(np.interp(t_i, time, values))
+
+
+        # create new trajectory
+        states_new = list()
+        for i in range(len(t_i)):
+            variables = dict()
+            for j, s in enumerate(slots):
+                variables[s] = values_i[j][i]
+            variables['time_step'] = i
+            states_new.append(State(**variables))
+
+        return Trajectory(states_new[0].time_step, states_new)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     def __str__(self):
         traffic_str = '\n'
