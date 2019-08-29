@@ -4,7 +4,8 @@ import numpy as np
 from typing import Union
 from abc import ABC, abstractmethod
 
-from commonroad.common.validity import is_valid_orientation, is_real_number_vector, is_real_number
+from commonroad.common.validity import is_valid_orientation, is_real_number_vector, is_real_number, ValidTypes
+from commonroad.common.util import AngleInterval
 from commonroad.geometry.shape import Shape
 from commonroad.prediction.prediction import Prediction, Occupancy
 from commonroad.scenario.trajectory import State
@@ -225,8 +226,24 @@ class DynamicObstacle(Obstacle):
         occupancy = None
 
         if time_step == self.initial_state.time_step:
+            # ToDo: uncertain states; change this
+            if isinstance(self.initial_state.position, Shape):
+                position = self.initial_state.position.center
+            elif isinstance(self.initial_state.position, ValidTypes.ARRAY):
+                position = self.initial_state.position
+            else:
+                raise TypeError('<DynamicObstacle/occupancy_at_time> Expected instance of %s or %s. Got '
+                                '%s instead.' % (ValidTypes.ARRAY, Shape, self.initial_state.position.__class__))
+            if isinstance(self.initial_state.orientation, ValidTypes.NUMBERS):
+                orientation = self.initial_state.orientation
+            elif isinstance(self.initial_state.orientation, AngleInterval):
+                orientation = 0.5*(self.initial_state.orientation.start + self.initial_state.orientation.end)
+            else:
+                raise TypeError('<DynamicObstacle/occupancy_at_time> Expected instance of %s or %s. Got %s '
+                                'instead.' % (ValidTypes.NUMBERS, AngleInterval,
+                                              self.initial_state.orientation.__class__))
             shape = self.obstacle_shape.rotate_translate_local(
-                self.initial_state.position, self.initial_state.orientation)
+                position, orientation)
             occupancy = Occupancy(time_step, shape)
         elif time_step > self.initial_state.time_step and self._prediction is not None:
             occupancy = self._prediction.occupancy_at_time_step(time_step)
