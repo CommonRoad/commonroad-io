@@ -5,14 +5,13 @@ from typing import Union, List, Set, Dict, Tuple
 import numpy as np
 
 from commonroad.common.util import Interval
-from commonroad.common.validity import is_real_number, is_real_number_vector, is_valid_orientation, ValidTypes
+from commonroad.common.validity import is_real_number, is_real_number_vector, is_valid_orientation
 from commonroad.scenario.lanelet import Lanelet
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.obstacle import ObstacleRole
 from commonroad.scenario.obstacle import ObstacleType
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Obstacle
 from commonroad.prediction.prediction import Occupancy
-from commonroad.geometry.shape import Shape
 
 __author__ = "Stefanie Manzinger, Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -20,7 +19,7 @@ __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
 __version__ = "2019.1"
 __maintainer__ = "Stefanie Manzinger"
 __email__ = "commonroad@in.tum.de"
-__status__ = "in development"
+__status__ = "Released"
 
 
 class Scenario:
@@ -226,12 +225,6 @@ class Scenario:
         :return: list of obstacles in the position intervals
         """
         def contained_in_interval(position: np.ndarray):
-            # ToDo: possibly change such that not only the center of uncertain states is used
-            if isinstance(position, Shape):
-                position = position.center
-            elif not isinstance(position, ValidTypes.ARRAY):
-                raise TypeError('<DynamicObstacle/occupancy_at_time> Expected instance of %s or %s. Got '
-                                '%s instead.' % (ValidTypes.ARRAY, Shape, position.__class__))
             if position_intervals[0].contains(position[0]) and position_intervals[1].contains(position[1]):
                 return True
             return False
