@@ -24,7 +24,7 @@ __credits__ = [""]
 __version__ = "2019.1"
 __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad@in.tum.de"
-__status__ = "Released"
+__status__ = "in development"
 
 
 def create_default_draw_params() -> dict:
@@ -244,9 +244,17 @@ def draw_trajectories(obj: Union[List[Trajectory],Trajectory], plot_limits: Unio
                     break
 
     if len(coordinates) > 0:
-        coordinates = np.array(coordinates)
-        collection = collections.EllipseCollection(np.ones([coordinates.shape[0],1]) * 0.13,
-                                                   np.ones([coordinates.shape[0],1]) * 0.13,
+        # ToDo: possibly change such that not only the center of uncertain states is used
+        center_positions = list()
+        for i in range(len(coordinates)):
+            if isinstance(coordinates[i], Shape):
+                center_positions.append(coordinates[i].center)
+            else:
+                center_positions.append(coordinates[i])
+        coordinates = np.array(center_positions)
+
+        collection = collections.EllipseCollection(np.ones([coordinates.shape[0], 1]) * 1,  # ToDo: check scaling factor
+                                                   np.ones([coordinates.shape[0], 1]) * 1,  # ToDo: check scaling factor
                                                    np.zeros([coordinates.shape[0],1]),
                                                    offsets=coordinates,
                                                    units='xy',
