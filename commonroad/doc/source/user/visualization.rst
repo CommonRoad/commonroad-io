@@ -109,7 +109,7 @@ Passing custom ``draw_params``
 In case no ``draw_params`` is passed to :meth:`~commonroad.visualization.draw_dispatch_cr.draw_object`, the default parameters are applied. To set a parameter manually, this needs to be done in accordance to the structure above. If for instance a complete scenario is plotted and the ``face_color`` of a dynamic obstacle should be set to black, this parameter can be specified by::
 
 	draw_params = {'scenario': {'dynamic_obstacle': {'shape': {'facecolor':'#000000'}}}}
-	draw_object(scenario,draw_params)
+	draw_object(scenario, draw_params=draw_params)
 
 
 When the parameter of an object is extracted from ``draw_params``, the search starts at the lowest level of the ``dict``'s hierarchy. Therefore, it is sufficient to start with the specification on the lowest level of the dict, that unambiguously defines a parameter. Therefore, the expression above can be simplified to ::
