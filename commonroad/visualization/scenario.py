@@ -507,13 +507,13 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
                 draw_car(inital_state.position[0], inital_state.position[1], inital_state.orientation, 2.5,
                          ax, zorder=30)
 
-        if trajectory and show_label:
+        if show_label:
             if time_begin == 0:
                 initial_position = o.initial_state.position
                 handles.setdefault(DynamicObstacle, []).append(
                     ax.text(initial_position[0] + 0.5, initial_position[1], str(o.obstacle_id),
                         clip_on=True, zorder=1000))
-            else:
+            elif trajectory:
                 begin_state = o.prediction.trajectory.state_at_time_step(time_begin)
                 if begin_state is not None:
                     initial_position = o.prediction.trajectory.state_at_time_step(time_begin).position
