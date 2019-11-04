@@ -1,8 +1,8 @@
 # all paths need to be specified relative to file batch_processing.py
 # path to folder with selected CommonRoad scenarios
-input_path: ../
+input_path: 
 # output directory for CommonRoad solution files
-output_path: ../
+output_path: 
 # overwrite solution file if it already exists
 overwrite: True
 # timeout trajectory planner [s]
@@ -11,9 +11,9 @@ timeout: 10000
 # name of function which calls the trajectory planner
 # Inputs: scenario and planning problem set
 # Output: dictionary, key: planning problem ID, value: commonroad trajectory
-trajectory_planner_path: /../tprs/
-trajectory_planner_module_name: solve_commonroad_scenario
-trajectory_planner_function_name: solve_commonroad_scenario
+trajectory_planner_path: 
+trajectory_planner_module_name: 
+trajectory_planner_function_name: 
 # benchmark evaluation default parameters
 default:
   # vehicle model, e.g., kinematic single-track model
