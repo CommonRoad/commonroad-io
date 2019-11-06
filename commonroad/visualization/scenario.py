@@ -46,7 +46,6 @@ def create_default_draw_params() -> dict:
                             'draw_icon': False,
                             'draw_bounding_box': True,
                             'show_label': False,
-                            'trajectory_steps': 40,
                             'zorder': 20,
                             'occupancy': {
                                 'draw_occupancies': 0,  # -1= never, 0= if prediction of vehicle is set-based, 1=always
@@ -79,7 +78,9 @@ def create_default_draw_params() -> dict:
                                 'rectangle': basic_shape_parameters_dynamic,
                                 'circle': basic_shape_parameters_dynamic
                             },
-                             'trajectory': {'facecolor': '#000000'}
+                             'trajectory': {'facecolor': '#000000',
+                                            'marker_size': 0.13,
+                                            'z_order': 24}
                         },
                         'static_obstacle': {
                            'shape': {
@@ -212,30 +213,26 @@ def draw_trajectories(obj: Union[List[Trajectory],Trajectory], plot_limits: Unio
     try:
         facecolor = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,('trajectory', 'facecolor'))
+        marker_size = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack, ('trajectory', 'marker_size'))
+        z_order = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack, ('trajectory', 'z_order'))
         time_begin = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,('time_begin',))
         time_end = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack, tuple(['time_end']))
-        if 'dynamic_obstacle' in call_stack:
-            trajectory_steps = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                draw_params, call_stack,tuple(['trajectory_steps']))
-        else:
-            trajectory_steps = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                draw_params, call_stack, tuple(['time_end'])) - time_begin
     except KeyError:
         print("Cannot find stylesheet for trajectory. Called through:")
         print(call_stack)
 
-    if trajectory_steps == 0 or time_begin==time_end:
+    if time_begin==time_end:
         return []
 
     patchlist = list()
     coordinates =list()
 
-    time_max = min(time_end, time_begin + trajectory_steps)
-
     for traj in obj:
-        for time_step in range(time_begin, time_max):
+        for time_step in range(time_begin, time_end):
             tmp = traj.state_at_time_step(time_step)
             if tmp is not None:
                 coordinates.append(tmp.position)
@@ -245,12 +242,12 @@ def draw_trajectories(obj: Union[List[Trajectory],Trajectory], plot_limits: Unio
 
     if len(coordinates) > 0:
         coordinates = np.array(coordinates)
-        collection = collections.EllipseCollection(np.ones([coordinates.shape[0],1]) * 0.13,
-                                                   np.ones([coordinates.shape[0],1]) * 0.13,
+        collection = collections.EllipseCollection(np.ones([coordinates.shape[0],1]) * marker_size,
+                                                   np.ones([coordinates.shape[0],1]) * marker_size,
                                                    np.zeros([coordinates.shape[0],1]),
                                                    offsets=coordinates,
                                                    units='xy',
-                                                   zorder=24, transOffset=ax.transData, facecolor=facecolor)
+                                                   zorder=z_order, transOffset=ax.transData, facecolor=facecolor)
         ax.add_collection(collection)
     else:
         collection = None
@@ -342,6 +339,7 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
         print("Cannot find stylesheet for lanelet. Called through:")
         print(call_stack)
 
+    # direction arrow
     codes_direction = [Path.MOVETO,
              Path.LINETO,
              Path.LINETO,
@@ -357,7 +355,7 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
                         [0, 0, 1]])
 
     def direction(x, y, angle):
-
+        """Returns path of arrow shape"""
         transform = np.array([[np.cos(angle), -np.sin(angle), x],
                               [np.sin(angle), np.cos(angle), y],
                               [0, 0, 1]])
@@ -369,19 +367,17 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
         return path
 
     vertices_fill = list()
-    right_bound_list = np.empty((0,2))
     coordinates_left_border_vertices = np.empty((0,2))
     coordinates_right_border_vertices = np.empty((0,2))
-    coordinates_center_border_vertices = np.empty((0,2))
     direction_list = list()
     center_paths = list()
     left_paths=list()
     right_paths = list()
 
-
+    # collect paths for drawing
     for lanelet in obj:
         if draw_start_and_direction:
-            center = lanelet.center_vertices[0] # 0.5 * (lanelet.left_vertices[0] + lanelet.right_vertices[0])
+            center = lanelet.center_vertices[0]
             tan_vec = np.array(lanelet.right_vertices[0]) - np.array(lanelet.left_vertices[0])
             direction_list.append(direction(center[0], center[1],
                     np.arctan2(tan_vec[1], tan_vec[0]) + 0.5 * np.pi))
@@ -410,6 +406,7 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
                     horizontalalignment='center', verticalalignment='center',
                     zorder=30.2)
 
+    # draw paths and collect axis handles
     if draw_right_bound:
         ax.add_collection(collections.PathCollection(right_paths, edgecolor=right_bound_color, facecolor='none',
                                                      lw=draw_linewidth, zorder=10, antialiased=antialiased))
@@ -481,12 +478,9 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
                 tmp = o.occupancy_at_time(time_step)
                 if tmp is not None:
                     occupancy_list.append(tmp)
-                    # patch_list = draw_occupancy(tmp, None, ax, draw_params, draw_func, handles, call_stack)
-                    # handles.setdefault(obj.obstacle_id,[]).append(patch_list)
 
         # get trajectory
         if isinstance(o.prediction, commonroad.prediction.prediction.TrajectoryPrediction):
-            # trajectories_list.append(o.prediction.trajectory)
             trajectory = o.prediction.trajectory
 
         # get shape
@@ -533,9 +527,6 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
         time_end = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('time_end',))
-        trajectory_steps = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-            draw_params, call_stack,
-            ('dynamic_obstacle', 'trajectory_steps'))
         draw_icon = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('dynamic_obstacle', 'draw_icon'))
@@ -551,8 +542,6 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
     except KeyError:
         warnings.warn("Cannot find stylesheet for dynamic_obstacle. Called through:")
         print(call_stack)
-
-    # time_max = min(time_end, time_begin + trajectory_steps)
 
     call_stack = tuple(list(call_stack) + ['dynamic_obstacle'])
 
@@ -595,6 +584,7 @@ def draw_occupancies(obj: Union[List[Occupancy], Occupancy], plot_limits: Union[
     if type(obj) is Occupancy:
         obj = [obj]
 
+    # collect occupancy shape(s)
     shape_list = list()
     if not 'dynamic_obstacle' in call_stack:
         time_begin = commonroad.visualization.draw_dispatch_cr._retrieve_value(
@@ -605,7 +595,7 @@ def draw_occupancies(obj: Union[List[Occupancy], Occupancy], plot_limits: Union[
             ('time_end',))
 
         for occupancy in obj:
-            if time_begin <= occupancy.time_step and time_end >= occupancy.time_step:
+            if time_begin <= occupancy.time_step <= time_end:
                 shape_list.append(occupancy.shape)
     else:
         for occupancy in obj:
@@ -642,7 +632,7 @@ def shape_batch_dispatcher(obj: List[Shape], plot_limits: Union[List[Union[int,f
                            draw_params: dict, draw_func: Dict[type,Callable], handles: Dict[int,List[mpl.patches.Patch]],
                            call_stack: Tuple[str,...]) -> List[mpl.collections.Collection]:
     """
-    Orders a list of shapes by their type and draws them in a batch.
+    Groups a list of shapes by their type and draws them each in a batch.
     :param obj: list of shapes to be plotted
     :param ax: axes object from matplotlib
     :param draw_params: parameters for plotting given by a nested dict that recreates the structure of an object,

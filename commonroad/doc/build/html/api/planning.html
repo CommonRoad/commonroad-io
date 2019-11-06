@@ -17,34 +17,38 @@
   
 
   
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Module Geometry" href="geometry.html" />
     <link rel="prev" title="Module Prediction" href="prediction.html" /> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -233,84 +237,70 @@
 <h3><code class="docutils literal notranslate"><span class="pre">PlanningProblem</span></code> class<a class="headerlink" href="#planningproblem-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="commonroad.planning.planning_problem.PlanningProblem">
-<em class="property">class </em><code class="descclassname">commonroad.planning.planning_problem.</code><code class="descname">PlanningProblem</code><span class="sig-paren">(</span><em>planning_problem_id</em>, <em>initial_state</em>, <em>goal_region</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/planning_problem.html#PlanningProblem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblem" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
+<em class="property">class </em><code class="sig-prename descclassname">commonroad.planning.planning_problem.</code><code class="sig-name descname">PlanningProblem</code><span class="sig-paren">(</span><em class="sig-param">planning_problem_id</em>, <em class="sig-param">initial_state</em>, <em class="sig-param">goal_region</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/planning_problem.html#PlanningProblem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblem" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
 <dt id="commonroad.planning.planning_problem.PlanningProblem.goal">
-<code class="descname">goal</code><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblem.goal" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">goal</code><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblem.goal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Region that has to be reached</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#commonroad.planning.goal.GoalRegion" title="commonroad.planning.goal.GoalRegion"><code class="xref py py-class docutils literal notranslate"><span class="pre">GoalRegion</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#commonroad.planning.goal.GoalRegion" title="commonroad.planning.goal.GoalRegion"><code class="xref py py-class docutils literal notranslate"><span class="pre">GoalRegion</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="commonroad.planning.planning_problem.PlanningProblem.goal_reached">
-<code class="descname">goal_reached</code><span class="sig-paren">(</span><em>trajectory</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/planning_problem.html#PlanningProblem.goal_reached"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblem.goal_reached" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">goal_reached</code><span class="sig-paren">(</span><em class="sig-param">trajectory</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/planning_problem.html#PlanningProblem.goal_reached"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblem.goal_reached" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if the goal region defined in the planning problem is reached by any state of a given trajectory</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>trajectory</strong> (<a class="reference internal" href="scenario.html#commonroad.scenario.trajectory.Trajectory" title="commonroad.scenario.trajectory.Trajectory"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trajectory</span></code></a>) – trajectory to test</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Tuple: (True, index of first state in trajectory.state_list that reaches goal) if one state reaches
-the goal. (False, -1) if no state reaches the goal.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>trajectory</strong> (<a class="reference internal" href="scenario.html#commonroad.scenario.trajectory.Trajectory" title="commonroad.scenario.trajectory.Trajectory"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trajectory</span></code></a>) – trajectory to test</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Tuple: (True, index of first state in trajectory.state_list that reaches goal) if one state reaches
+the goal. (False, -1) if no state reaches the goal.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="commonroad.planning.planning_problem.PlanningProblem.initial_state">
-<code class="descname">initial_state</code><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblem.initial_state" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">initial_state</code><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblem.initial_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initial state of the ego vehicle</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="scenario.html#commonroad.scenario.trajectory.State" title="commonroad.scenario.trajectory.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="scenario.html#commonroad.scenario.trajectory.State" title="commonroad.scenario.trajectory.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="commonroad.planning.planning_problem.PlanningProblem.planning_problem_id">
-<code class="descname">planning_problem_id</code><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblem.planning_problem_id" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">planning_problem_id</code><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblem.planning_problem_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Id of the planning problem</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="commonroad.planning.planning_problem.PlanningProblem.translate_rotate">
-<code class="descname">translate_rotate</code><span class="sig-paren">(</span><em>translation</em>, <em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/planning_problem.html#PlanningProblem.translate_rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblem.translate_rotate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">translate_rotate</code><span class="sig-paren">(</span><em class="sig-param">translation</em>, <em class="sig-param">angle</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/planning_problem.html#PlanningProblem.translate_rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblem.translate_rotate" title="Permalink to this definition">¶</a></dt>
 <dd><p>translate and rotates the planning problem with given translation and angle around the origin (0, 0)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</li>
-<li><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</p></li>
+<li><p><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -320,70 +310,59 @@ the goal. (False, -1) if no state reaches the goal.</td>
 <h3><code class="docutils literal notranslate"><span class="pre">PlanningProblemSet</span></code> class<a class="headerlink" href="#planningproblemset-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="commonroad.planning.planning_problem.PlanningProblemSet">
-<em class="property">class </em><code class="descclassname">commonroad.planning.planning_problem.</code><code class="descname">PlanningProblemSet</code><span class="sig-paren">(</span><em>planning_problem_list=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/planning_problem.html#PlanningProblemSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblemSet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">commonroad.planning.planning_problem.</code><code class="sig-name descname">PlanningProblemSet</code><span class="sig-paren">(</span><em class="sig-param">planning_problem_list=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/planning_problem.html#PlanningProblemSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblemSet" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="commonroad.planning.planning_problem.PlanningProblemSet.add_planning_problem">
-<code class="descname">add_planning_problem</code><span class="sig-paren">(</span><em>planning_problem</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/planning_problem.html#PlanningProblemSet.add_planning_problem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblemSet.add_planning_problem" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_planning_problem</code><span class="sig-paren">(</span><em class="sig-param">planning_problem</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/planning_problem.html#PlanningProblemSet.add_planning_problem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblemSet.add_planning_problem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds the given planning problem to self.planning_problem_list</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>planning_problem</strong> (<a class="reference internal" href="#commonroad.planning.planning_problem.PlanningProblem" title="commonroad.planning.planning_problem.PlanningProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanningProblem</span></code></a>) – Planning problem to add</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>planning_problem</strong> (<a class="reference internal" href="#commonroad.planning.planning_problem.PlanningProblem" title="commonroad.planning.planning_problem.PlanningProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanningProblem</span></code></a>) – Planning problem to add</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="commonroad.planning.planning_problem.PlanningProblemSet.find_planning_problem_by_id">
-<code class="descname">find_planning_problem_by_id</code><span class="sig-paren">(</span><em>planning_problem_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/planning_problem.html#PlanningProblemSet.find_planning_problem_by_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblemSet.find_planning_problem_by_id" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">find_planning_problem_by_id</code><span class="sig-paren">(</span><em class="sig-param">planning_problem_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/planning_problem.html#PlanningProblemSet.find_planning_problem_by_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblemSet.find_planning_problem_by_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Searches in planning_problem_dict for a planning problem with the given id. Returns the planning problem or
 raises error, if id cannot be found.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>planning_problem_id</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – id to find</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#commonroad.planning.planning_problem.PlanningProblem" title="commonroad.planning.planning_problem.PlanningProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanningProblem</span></code></a></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Planning problem with id planning_problem_id, Raises key error, if id not in the dict.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>planning_problem_id</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – id to find</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#commonroad.planning.planning_problem.PlanningProblem" title="commonroad.planning.planning_problem.PlanningProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanningProblem</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Planning problem with id planning_problem_id, Raises key error, if id not in the dict.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="commonroad.planning.planning_problem.PlanningProblemSet.planning_problem_dict">
-<code class="descname">planning_problem_dict</code><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblemSet.planning_problem_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">planning_problem_dict</code><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblemSet.planning_problem_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dict that contains all PlanningProblems that are added. Keys: Ids of planning problems</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <a class="reference internal" href="#commonroad.planning.planning_problem.PlanningProblem" title="commonroad.planning.planning_problem.PlanningProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanningProblem</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <a class="reference internal" href="#commonroad.planning.planning_problem.PlanningProblem" title="commonroad.planning.planning_problem.PlanningProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanningProblem</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="commonroad.planning.planning_problem.PlanningProblemSet.translate_rotate">
-<code class="descname">translate_rotate</code><span class="sig-paren">(</span><em>translation</em>, <em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/planning_problem.html#PlanningProblemSet.translate_rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblemSet.translate_rotate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">translate_rotate</code><span class="sig-paren">(</span><em class="sig-param">translation</em>, <em class="sig-param">angle</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/planning_problem.html#PlanningProblemSet.translate_rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.planning_problem.PlanningProblemSet.translate_rotate" title="Permalink to this definition">¶</a></dt>
 <dd><p>translate and rotates the planning problem set with given translation and angle around the origin (0, 0)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</li>
-<li><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</p></li>
+<li><p><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -396,69 +375,58 @@ raises error, if id cannot be found.</p>
 <h3><code class="docutils literal notranslate"><span class="pre">GoalRegion</span></code> class<a class="headerlink" href="#goalregion-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="commonroad.planning.goal.GoalRegion">
-<em class="property">class </em><code class="descclassname">commonroad.planning.goal.</code><code class="descname">GoalRegion</code><span class="sig-paren">(</span><em>state_list</em>, <em>lanelets_of_goal_position=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/goal.html#GoalRegion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.goal.GoalRegion" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">commonroad.planning.goal.</code><code class="sig-name descname">GoalRegion</code><span class="sig-paren">(</span><em class="sig-param">state_list</em>, <em class="sig-param">lanelets_of_goal_position=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/goal.html#GoalRegion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.goal.GoalRegion" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="commonroad.planning.goal.GoalRegion.is_reached">
-<code class="descname">is_reached</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/goal.html#GoalRegion.is_reached"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.goal.GoalRegion.is_reached" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">is_reached</code><span class="sig-paren">(</span><em class="sig-param">state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/goal.html#GoalRegion.is_reached"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.goal.GoalRegion.is_reached" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if a given state is inside the goal region.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state</strong> (<a class="reference internal" href="scenario.html#commonroad.scenario.trajectory.State" title="commonroad.scenario.trajectory.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>) – state with exact values</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True, if state fulfills all requirements of the goal region. False if at least one requirement of the         goal region is not fulfilled.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="scenario.html#commonroad.scenario.trajectory.State" title="commonroad.scenario.trajectory.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>) – state with exact values</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True, if state fulfills all requirements of the goal region. False if at least one requirement of the         goal region is not fulfilled.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="commonroad.planning.goal.GoalRegion.lanelets_of_goal_position">
-<code class="descname">lanelets_of_goal_position</code><a class="headerlink" href="#commonroad.planning.goal.GoalRegion.lanelets_of_goal_position" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">lanelets_of_goal_position</code><a class="headerlink" href="#commonroad.planning.goal.GoalRegion.lanelets_of_goal_position" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dict that contains all lanelet ids and lanelets of the goal position.         None, if goal position is not a lanelet</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]]</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="commonroad.planning.goal.GoalRegion.state_list">
-<code class="descname">state_list</code><a class="headerlink" href="#commonroad.planning.goal.GoalRegion.state_list" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">state_list</code><a class="headerlink" href="#commonroad.planning.goal.GoalRegion.state_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>List that contains all goal states</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="scenario.html#commonroad.scenario.trajectory.State" title="commonroad.scenario.trajectory.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="scenario.html#commonroad.scenario.trajectory.State" title="commonroad.scenario.trajectory.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="commonroad.planning.goal.GoalRegion.translate_rotate">
-<code class="descname">translate_rotate</code><span class="sig-paren">(</span><em>translation</em>, <em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/goal.html#GoalRegion.translate_rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.goal.GoalRegion.translate_rotate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">translate_rotate</code><span class="sig-paren">(</span><em class="sig-param">translation</em>, <em class="sig-param">angle</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/planning/goal.html#GoalRegion.translate_rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.planning.goal.GoalRegion.translate_rotate" title="Permalink to this definition">¶</a></dt>
 <dd><p>translate and rotates the goal region with given translation and angle around the origin (0, 0)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</li>
-<li><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</p></li>
+<li><p><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -478,7 +446,7 @@ raises error, if id cannot be found.</p>
         <a href="geometry.html" class="btn btn-neutral float-right" title="Module Geometry" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="prediction.html" class="btn btn-neutral" title="Module Prediction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="prediction.html" class="btn btn-neutral float-left" title="Module Prediction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -487,7 +455,7 @@ raises error, if id cannot be found.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Moritz Klischat, Stefanie Manzinger, Christina Miller, Christian Pek.
+        &copy; Copyright 2019, Moritz Klischat, Stefanie Manzinger, Christina Miller, Christian Pek
 
     </p>
   </div>
@@ -504,33 +472,16 @@ raises error, if id cannot be found.</p>
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'2019.1',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

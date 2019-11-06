@@ -17,33 +17,37 @@
   
 
   
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="Module Common" href="common.html" /> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -231,35 +235,31 @@
 <span id="draw-dispatch-cr"></span><h2>draw_dispatch_cr<a class="headerlink" href="#module-commonroad.visualization.draw_dispatch_cr" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="commonroad.visualization.draw_dispatch_cr.draw_object">
-<code class="descclassname">commonroad.visualization.draw_dispatch_cr.</code><code class="descname">draw_object</code><span class="sig-paren">(</span><em>obj</em>, <em>plot_limits=None</em>, <em>ax=None</em>, <em>draw_params=None</em>, <em>draw_func=None</em>, <em>handles=None</em>, <em>call_stack=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/visualization/draw_dispatch_cr.html#draw_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.visualization.draw_dispatch_cr.draw_object" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">commonroad.visualization.draw_dispatch_cr.</code><code class="sig-name descname">draw_object</code><span class="sig-paren">(</span><em class="sig-param">obj</em>, <em class="sig-param">plot_limits=None</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">draw_params=None</em>, <em class="sig-param">draw_func=None</em>, <em class="sig-param">handles=None</em>, <em class="sig-param">call_stack=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/visualization/draw_dispatch_cr.html#draw_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.visualization.draw_dispatch_cr.draw_object" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main function for drawing objects from the scenario and planning modules.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>obj</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, <a class="reference internal" href="scenario.html#commonroad.scenario.scenario.Scenario" title="commonroad.scenario.scenario.Scenario"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scenario</span></code></a>, <a class="reference internal" href="scenario.html#commonroad.scenario.trajectory.Trajectory" title="commonroad.scenario.trajectory.Trajectory"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trajectory</span></code></a>, <a class="reference internal" href="scenario.html#commonroad.scenario.lanelet.LaneletNetwork" title="commonroad.scenario.lanelet.LaneletNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">LaneletNetwork</span></code></a>, <a class="reference internal" href="scenario.html#commonroad.scenario.lanelet.Lanelet" title="commonroad.scenario.lanelet.Lanelet"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lanelet</span></code></a>, <a class="reference internal" href="scenario.html#commonroad.scenario.obstacle.Obstacle" title="commonroad.scenario.obstacle.Obstacle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Obstacle</span></code></a>, <a class="reference internal" href="geometry.html#commonroad.geometry.shape.Shape" title="commonroad.geometry.shape.Shape"><code class="xref py py-class docutils literal notranslate"><span class="pre">Shape</span></code></a>, <a class="reference internal" href="planning.html#commonroad.planning.goal.GoalRegion" title="commonroad.planning.goal.GoalRegion"><code class="xref py py-class docutils literal notranslate"><span class="pre">GoalRegion</span></code></a>, <a class="reference internal" href="planning.html#commonroad.planning.planning_problem.PlanningProblem" title="commonroad.planning.planning_problem.PlanningProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanningProblem</span></code></a>, <a class="reference internal" href="planning.html#commonroad.planning.planning_problem.PlanningProblemSet" title="commonroad.planning.planning_problem.PlanningProblemSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanningProblemSet</span></code></a>, <a class="reference internal" href="scenario.html#commonroad.scenario.trajectory.State" title="commonroad.scenario.trajectory.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>, <a class="reference internal" href="prediction.html#commonroad.prediction.prediction.Occupancy" title="commonroad.prediction.prediction.Occupancy"><code class="xref py py-class docutils literal notranslate"><span class="pre">Occupancy</span></code></a>]) – the object or list of objects (with all the same type) to be plotted</li>
-<li><strong>plot_limits</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]]) – list of [x_min, x_max, y_min, y_max that defines the plotted area of the scenario</li>
-<li><strong>ax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]) – axes object from matplotlib</li>
-<li><strong>draw_params</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>]) – parameters for plotting given by a nested dict that recreates the structure of an object,
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, <a class="reference internal" href="scenario.html#commonroad.scenario.scenario.Scenario" title="commonroad.scenario.scenario.Scenario"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scenario</span></code></a>, <a class="reference internal" href="scenario.html#commonroad.scenario.trajectory.Trajectory" title="commonroad.scenario.trajectory.Trajectory"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trajectory</span></code></a>, <a class="reference internal" href="scenario.html#commonroad.scenario.lanelet.LaneletNetwork" title="commonroad.scenario.lanelet.LaneletNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">LaneletNetwork</span></code></a>, <a class="reference internal" href="scenario.html#commonroad.scenario.lanelet.Lanelet" title="commonroad.scenario.lanelet.Lanelet"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lanelet</span></code></a>, <a class="reference internal" href="scenario.html#commonroad.scenario.obstacle.Obstacle" title="commonroad.scenario.obstacle.Obstacle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Obstacle</span></code></a>, <a class="reference internal" href="geometry.html#commonroad.geometry.shape.Shape" title="commonroad.geometry.shape.Shape"><code class="xref py py-class docutils literal notranslate"><span class="pre">Shape</span></code></a>, <a class="reference internal" href="planning.html#commonroad.planning.goal.GoalRegion" title="commonroad.planning.goal.GoalRegion"><code class="xref py py-class docutils literal notranslate"><span class="pre">GoalRegion</span></code></a>, <a class="reference internal" href="planning.html#commonroad.planning.planning_problem.PlanningProblem" title="commonroad.planning.planning_problem.PlanningProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanningProblem</span></code></a>, <a class="reference internal" href="planning.html#commonroad.planning.planning_problem.PlanningProblemSet" title="commonroad.planning.planning_problem.PlanningProblemSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanningProblemSet</span></code></a>, <a class="reference internal" href="scenario.html#commonroad.scenario.trajectory.State" title="commonroad.scenario.trajectory.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>, <a class="reference internal" href="prediction.html#commonroad.prediction.prediction.Occupancy" title="commonroad.prediction.prediction.Occupancy"><code class="xref py py-class docutils literal notranslate"><span class="pre">Occupancy</span></code></a>]) – the object or list of objects (with all the same type) to be plotted</p></li>
+<li><p><strong>plot_limits</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]]) – list of [x_min, x_max, y_min, y_max that defines the plotted area of the scenario</p></li>
+<li><p><strong>ax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]) – axes object from matplotlib</p></li>
+<li><p><strong>draw_params</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>]) – parameters for plotting given by a nested dict that recreates the structure of an object,
 see documentation for full overview over the structure. If parameters are not set,
 the default setting are used. An example for specifying the color of circle obstacles:
-{‘scenario’: {‘static_obstacle’:{‘shape’:{‘circle’:{‘facecolor’:#3399ff, edgecolor’: ‘#0066cc’}}}}}</li>
-<li><strong>draw_func</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]]) – specify the drawing function (usually not necessary to change default)</li>
-<li><strong>handles</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Patch</span></code>]]]) – dict that assign to every object_id of all plotted obstacles the corresponding patch handles</li>
-<li><strong>call_stack</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, …]]) – tuple of string containing the call stack, which allows for differentiation of plotting styles
-depending on the call stack of draw_object, (usually ‘None’!)</li>
+{‘scenario’: {‘static_obstacle’:{‘shape’:{‘circle’:{‘facecolor’:#3399ff, edgecolor’: ‘#0066cc’}}}}}</p></li>
+<li><p><strong>draw_func</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]]) – specify the drawing function (usually not necessary to change default)</p></li>
+<li><p><strong>handles</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Patch</span></code>]]]) – dict that assign to every object_id of all plotted obstacles the corresponding patch handles</p></li>
+<li><p><strong>call_stack</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, …]]) – tuple of string containing the call stack, which allows for differentiation of plotting styles
+depending on the call stack of draw_object, (usually ‘None’!)</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Patch</span></code>]]</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Returns matplotlib patch object for draw_funcs that actually draw a patch (used internally for creating handles dict)</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Patch</span></code>]]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns matplotlib patch object for draw_funcs that actually draw a patch (used internally for creating handles dict)</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -267,45 +267,39 @@ depending on the call stack of draw_object, (usually ‘None’!)</li>
 <span id="plot-helper"></span><h2>plot_Helper<a class="headerlink" href="#module-commonroad.visualization.plot_helper" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="commonroad.visualization.plot_helper.set_non_blocking">
-<code class="descclassname">commonroad.visualization.plot_helper.</code><code class="descname">set_non_blocking</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/visualization/plot_helper.html#set_non_blocking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.visualization.plot_helper.set_non_blocking" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">commonroad.visualization.plot_helper.</code><code class="sig-name descname">set_non_blocking</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/visualization/plot_helper.html#set_non_blocking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.visualization.plot_helper.set_non_blocking" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ensures that interactive plotting is enabled for non-blocking plotting.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="commonroad.visualization.plot_helper.redraw_obstacles">
-<code class="descclassname">commonroad.visualization.plot_helper.</code><code class="descname">redraw_obstacles</code><span class="sig-paren">(</span><em>scenario</em>, <em>handles</em>, <em>figure_handle</em>, <em>draw_params=None</em>, <em>plot_limits=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/visualization/plot_helper.html#redraw_obstacles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.visualization.plot_helper.redraw_obstacles" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">commonroad.visualization.plot_helper.</code><code class="sig-name descname">redraw_obstacles</code><span class="sig-paren">(</span><em class="sig-param">scenario</em>, <em class="sig-param">handles</em>, <em class="sig-param">figure_handle</em>, <em class="sig-param">draw_params=None</em>, <em class="sig-param">plot_limits=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/visualization/plot_helper.html#redraw_obstacles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.visualization.plot_helper.redraw_obstacles" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is used for fast updating dynamic obstacles of an already drawn plot. Saves about 80% time compared to a complete plot.
 Deletes all dynamic obstacles which are specified in handles and draws dynamic obstacles of a scenario.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>scenario</strong> (<a class="reference internal" href="scenario.html#commonroad.scenario.scenario.Scenario" title="commonroad.scenario.scenario.Scenario"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scenario</span></code></a>) – scenario from which obstacle should be plotted</li>
-<li><strong>handles</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Patch</span></code>]]) – dict of obstacle_ids and corresponding patch handles (generated by draw_object function)</li>
-<li><strong>plot_limits</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]]) – axis limits for plot [x_min, x_max, y_min, y_max]</li>
-<li><strong>figure_handle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code>) – figure handle of current plot</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scenario</strong> (<a class="reference internal" href="scenario.html#commonroad.scenario.scenario.Scenario" title="commonroad.scenario.scenario.Scenario"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scenario</span></code></a>) – scenario from which obstacle should be plotted</p></li>
+<li><p><strong>handles</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Patch</span></code>]]) – dict of obstacle_ids and corresponding patch handles (generated by draw_object function)</p></li>
+<li><p><strong>plot_limits</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]]) – axis limits for plot [x_min, x_max, y_min, y_max]</p></li>
+<li><p><strong>figure_handle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code>) – figure handle of current plot</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -320,7 +314,7 @@ Deletes all dynamic obstacles which are specified in handles and draws dynamic o
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="common.html" class="btn btn-neutral" title="Module Common" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="common.html" class="btn btn-neutral float-left" title="Module Common" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -329,7 +323,7 @@ Deletes all dynamic obstacles which are specified in handles and draws dynamic o
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Moritz Klischat, Stefanie Manzinger, Christina Miller, Christian Pek.
+        &copy; Copyright 2019, Moritz Klischat, Stefanie Manzinger, Christina Miller, Christian Pek
 
     </p>
   </div>
@@ -346,33 +340,16 @@ Deletes all dynamic obstacles which are specified in handles and draws dynamic o
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'2019.1',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

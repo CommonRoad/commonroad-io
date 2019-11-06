@@ -47,7 +47,7 @@ def _create_default_draw_params() -> dict:
     :return: nested dict, containing the settings
     """
 
-    draw_params = {'time_begin': 0, 'time_end': 50, 'antialiased': True}
+    draw_params = {'time_begin': 0, 'time_end': 200, 'antialiased': True}
     if 'commonroad.visualization.scenario' in sys.modules.keys():
         draw_params.update(
             commonroad.visualization.scenario.create_default_draw_params())

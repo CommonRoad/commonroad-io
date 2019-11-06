@@ -13,23 +13,26 @@ All objects of the scenario and planning problems can be visualized with the fun
 ---------------
 
 When settings of a plot should be changed with ``draw_params``, they have to be passed as a nested ``dict`` that refers to the hierarchy in which the objects are plotted. The complete structure of ``draw_params`` is given by the default parameters: ::
-	
+
     {'time_begin': 0,
      'time_end': 50,
      'antialiased': True,
      'scenario':
             {'dynamic_obstacle':
-                {'occupancy':
-                    {'draw_occupancies': 0,
-                     'shape': shape_parameters
-                    },
-                 'shape': shape_parameters,
+                {'shape': shape_parameters,
                  'draw_shape': True,
                  'draw_icon': False,
                  'draw_bounding_box': True,
                  'show_label': False,
-                 'trajectory_steps': 40,
-                 'zorder': 20
+                 'zorder': 20,
+								 'occupancy':
+										 {'draw_occupancies': 0,
+											'shape': shape_parameters
+										 },
+								 'trajectory':
+                    {'facecolor': '#000000',
+                     'marker_size': 0.13,
+                     'z_order': 24}
                 },
             'static_obstacle':
                 {'shape': shape_parameters},
@@ -100,7 +103,7 @@ The defaults for ``shape_parameters`` are::
 				}
 			    }
 
-Notice that specifying the the type of a shape in ``shape_parameters`` is optional and can be omitted. 
+Notice that specifying the the type of a shape in ``shape_parameters`` is optional and can be omitted.
 
 
 Passing custom ``draw_params``
@@ -133,12 +136,12 @@ Example plot with ``matplotlib``
 .. _matplotlib-API: https://matplotlib.org/api
 
 The drawing function is used in combination with maplotlib. Therefore, every command from the matplotlib-API_ can be combined with ``draw_object``. A simple example for plotting scenario and the corresponding planning problem set with default parameters would be::
-	
+
 	import os
 	import matplotlib.pyplot as plt
 	from commonroad.common.file_reader import CommonRoadFileReader
 	from commonroad.visualization.draw_dispatch_cr import draw_object
-	filename = os.getcwd() + /scenarios/NGSIM/US101/USA_US101-2_1_T-1.xml'
+	filename = os.getcwd() + /commonroad-scenarios/scenarios/NGSIM/US101/USA_US101-2_1_T-1.xml'
 	scenario, planning_problem_set = CommonRoadFileReader(filename).open()
 
 	plt.style.use('classic')
@@ -154,31 +157,13 @@ The drawing function is used in combination with maplotlib. Therefore, every com
 
 .. plot::
    :align: center
-	
-	#import os
-	#import matplotlib.pyplot as plt
-	#from commonroad.common.file_reader import CommonRoadFileReader
-	#from commonroad.visualization.draw_dispatch_cr import draw_object
-	#filename = os.getcwd() + '/../../../../../../scenarios/hand-crafted/DEU_Muc-1_1_T-1.xml'
-	#scenario, planning_problem_set = CommonRoadFileReader(filename).open()
 
-	#plt.style.use('classic')
-	#inch_in_cm = 2.54
-	#figsize = [20, 8]
-	#plot_limits = [-80, 80, -60, 30]
-	#plt.figure(figsize=(8,4.5))
-	#plt.gca().axis('equal')
 
-	#draw_object(scenario, plot_limits=plot_limits)
-	#draw_object(planning_problem_set, plot_limits=plot_limits)
-	#plt.tight_layout()
-	#plt.show()
-	
 	import os
 	import matplotlib.pyplot as plt
 	from commonroad.common.file_reader import CommonRoadFileReader
 	from commonroad.visualization.draw_dispatch_cr import draw_object
-	filename = os.getcwd() + '/../../../../../../../scenarios/NGSIM/US101/USA_US101-2_1_T-1.xml'
+	filename = os.getcwd() + '/../files/USA_US101-2_1_T-1.xml'
 	scenario, planning_problem_set = CommonRoadFileReader(filename).open()
 
 	plt.style.use('classic')
@@ -203,7 +188,7 @@ Plotting of a typical scenario can be too slow when using for real-time applicat
 Furthermore the number of plotted graphic elements should be minimized. These parameters help to improve run time considerably (ordered by impact)::
 
 	draw_params = {'lanelet': {'draw_start_and_direction': False, 'draw_center_bound': False},
-		       'dynamic_obstacle': {'trajectory_steps': 15}}
+		       'dynamic_obstacle': {'show_label': True}}
 
 Additionally the plotted area should be restricted by using ``draw_object`` 's option ``plot_limits``. Effectively update rates of more than 20 frames/s are possible even for complex scenarios.
 
@@ -212,9 +197,9 @@ A minimal example would be::
 	import matplotlib as mpl
 	mpl.use('Qt5Agg') # sets the backend for matplotlib
 	import mpl.pyplot as plt
-	from commonroad.visualization.plot_helper import * 
+	from commonroad.visualization.plot_helper import *
 
-	filename = os.getcwd() + /scenarios/NGSIM/US101/USA_US101-2_1_T-1.xml'
+	filename = os.getcwd() + /commonroad-scenarios/scenarios/NGSIM/US101/USA_US101-2_1_T-1.xml'
 	scenario, planning_problem_set = CommonRoadFileReader(filename).open()
 
 	set_non_blocking() # ensures interactive plotting is activated
@@ -223,11 +208,11 @@ A minimal example would be::
 	figsize = [30, 8]
 	fig = plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
 	handles = {}  # collects handles of obstacles for fast updating of figures
-	
-	# inital plot including the lanelet network		
+
+	# inital plot including the lanelet network
 	draw_object(scenario, handles=handles)
 	fig.canvas.draw()
-	
+
 	# loop where obstacle positions are modified
 	for i in range(0,100):
 		#...
