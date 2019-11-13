@@ -579,7 +579,7 @@ class LaneletNetwork:
     """
 
     def __init__(self):
-        self._lanelets: Dict = {}
+        self._lanelets: Dict[int,Lanelet] = {}
 
     @property
     def lanelets(self) -> List[Lanelet]:

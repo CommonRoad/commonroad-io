@@ -1,6 +1,7 @@
 from typing import Dict, Callable, Tuple, Union, Any
 import commonroad.geometry.shape
 import matplotlib as mpl
+import matplotlib.cm as cm
 import matplotlib.patches as patches
 import matplotlib.collections as collections
 import commonroad.prediction.prediction
@@ -93,12 +94,13 @@ def create_default_draw_params() -> dict:
                             'lanelet': {'left_bound_color': '#555555',
                                        'right_bound_color': '#555555',
                                        'center_bound_color': '#dddddd',
+                                       'unique_colors': False,  # colorizes center_vertices and labels of each lanelet differently
                                        'draw_left_bound': True,
                                        'draw_right_bound': True,
                                        'draw_center_bound': True,
                                        'draw_border_vertices': False,
                                        'draw_start_and_direction': True,
-                                       'show_label': False,
+                                       'show_label': False,  # show lanelet_id
                                        'draw_linewidth': 0.5,
                                        'fill_lanelet': True,
                                        'facecolor': '#c7c7c7'}},
@@ -304,6 +306,9 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
         center_bound_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('lanelet', 'center_bound_color'))
+        unique_colors = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('lanelet', 'unique_colors'))
         show_label = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('lanelet', 'show_label'))
@@ -366,6 +371,13 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
         path = Path(ptr_trans, codes_direction)
         return path
 
+
+    # select unique colors from colormap for each lanelet's center_line
+    colormap = None
+    if unique_colors is True:
+        norm = mpl.colors.Normalize(vmin=0, vmax=len(obj))
+        colormap = cm.ScalarMappable(norm=norm, cmap=cm.jet)
+
     vertices_fill = list()
     coordinates_left_border_vertices = np.empty((0,2))
     coordinates_right_border_vertices = np.empty((0,2))
@@ -375,12 +387,20 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
     right_paths = list()
 
     # collect paths for drawing
-    for lanelet in obj:
+    for i_lanelet, lanelet in enumerate(obj):
+        if unique_colors:
+            # set center bound color to unique value
+            center_bound_color = colormap.to_rgba(i_lanelet)
+
         if draw_start_and_direction:
             center = lanelet.center_vertices[0]
             tan_vec = np.array(lanelet.right_vertices[0]) - np.array(lanelet.left_vertices[0])
-            direction_list.append(direction(center[0], center[1],
-                    np.arctan2(tan_vec[1], tan_vec[0]) + 0.5 * np.pi))
+            if unique_colors is False:
+                direction_list.append(direction(center[0], center[1], np.arctan2(tan_vec[1], tan_vec[0]) + 0.5 * np.pi))
+            else:
+                direction_list = [direction(center[0], center[1], np.arctan2(tan_vec[1], tan_vec[0]) + 0.5 * np.pi)]
+                ax.add_collection(collections.PathCollection(direction_list, color=center_bound_color,
+                                                             lw=0.5, zorder=10.1, antialiased=antialiased))
 
         if draw_border_vertices or draw_left_bound:
             if draw_border_vertices:
@@ -393,7 +413,13 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
             right_paths.append(Path(lanelet.right_vertices, closed=False))
 
         if draw_center_bound:
-            center_paths.append(Path(lanelet.center_vertices, closed=False))
+            if unique_colors is False:
+                center_paths.append(Path(lanelet.center_vertices, closed=False))
+            else:
+                center_paths = [Path(lanelet.center_vertices, closed=False)]
+                ax.add_collection(
+                    collections.PathCollection(center_paths, edgecolor=center_bound_color, facecolor='none',
+                                               lw=draw_linewidth, zorder=10, antialiased=antialiased))
 
         if fill_lanelet:
             vertices_fill.append(np.concatenate((lanelet.right_vertices, np.flip(lanelet.left_vertices, 0))))
@@ -413,12 +439,13 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
     if draw_left_bound:
         ax.add_collection(collections.PathCollection(left_paths, edgecolor=left_bound_color, facecolor='none',
                                                      lw=draw_linewidth, zorder=10, antialiased=antialiased))
-    if draw_center_bound:
-        ax.add_collection(collections.PathCollection(center_paths, edgecolor=center_bound_color, facecolor='none',
-                                       lw=draw_linewidth, zorder=10,  antialiased=antialiased))
-    if draw_start_and_direction:
-        ax.add_collection(collections.PathCollection(direction_list, color=center_bound_color,
-                                  lw=0.5, zorder=10.1, antialiased=antialiased))
+    if unique_colors is False:
+        if draw_center_bound:
+            ax.add_collection(collections.PathCollection(center_paths, edgecolor=center_bound_color, facecolor='none',
+                                           lw=draw_linewidth, zorder=10,  antialiased=antialiased))
+        if draw_start_and_direction:
+            ax.add_collection(collections.PathCollection(direction_list, color=center_bound_color,
+                                      lw=0.5, zorder=10.1, antialiased=antialiased))
 
     collection_tmp = collections.PolyCollection(vertices_fill, transOffset=ax.transData, facecolor=facecolor, edgecolor='none', antialiaseds=antialiased)
     ax.add_collection(collection_tmp)
