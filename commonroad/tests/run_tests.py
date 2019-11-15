@@ -4,6 +4,7 @@ import sys
 
 if __name__ == "__main__":
     print(os.getcwd())
+    errors = 0
     failures = 0
     tests = 0
     for x in os.walk(os.getcwd()):
@@ -12,6 +13,7 @@ if __name__ == "__main__":
             all_tests = unittest.TestLoader().discover(x[0], pattern='test_*.py')
             b = unittest.TextTestRunner().run(all_tests)
             failures += len(b.failures)
+            errors += len(b.errors)
             tests += b.testsRun
 
-    print('Executed {} tests and got {} fails'.format(tests, failures))
+    print('Executed {} tests; got {} fails and {} errors'.format(tests, failures, errors))
