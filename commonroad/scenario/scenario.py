@@ -157,17 +157,23 @@ class Scenario:
         """
         return max(self._id_set) + 1
 
-    def occupancies_at_time_step(self, time_step: int) -> List[Occupancy]:
+    def occupancies_at_time_step(self, time_step: int, obstacle_role: Union[None, ObstacleRole] = None) \
+            -> List[Occupancy]:
         """ Returns the occupancies of all static and dynamic obstacles at a specific time step.
 
             :param time_step: occupancies of obstacles at this time step
+            :param obstacle_role: obstacle role as defined in CommonRoad, e.g., static or dynamic
             :return: list of occupancies of the obstacles
         """
         assert isinstance(time_step, int), '<Scenario/occupancies_at_time> argument "time_step" of wrong type. ' \
                                            'Expected type: %s. Got type: %s.' % (int, type(time_step))
+        assert isinstance(obstacle_role, (ObstacleRole, type(None))), \
+            '<Scenario/obstacles_by_role_and_type> argument "obstacle_role" of wrong type. Expected types: ' \
+            ' %s or %s. Got type: %s.' % (ObstacleRole, None, type(obstacle_role))
         occupancies = list()
         for obstacle in self.obstacles:
-            if obstacle.occupancy_at_time(time_step):
+            if ((obstacle_role is None or obstacle.obstacle_role == obstacle_role) and
+                    obstacle.occupancy_at_time(time_step)):
                 occupancies.append(obstacle.occupancy_at_time(time_step))
         return occupancies
 
