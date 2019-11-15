@@ -140,7 +140,7 @@ class TestVisualization(unittest.TestCase):
 
         draw_object(object, draw_params)
         plt.gca().autoscale()
-        plt.show(block=True)
+        plt.show(block=False)
         time.sleep(1)
         plt.close('all')
 
@@ -173,7 +173,7 @@ class TestVisualization(unittest.TestCase):
             # plt.tight_layout()
             draw_object(planning_problem_set,draw_params=draw_params, plot_limits=[-50,60,-50,50])
             # draw_object(scenario.dynamic_obstacles[0],draw_params=draw_params)
-            plt.show()
+            plt.show(block=False)
             tt+=time.time()-t1
 
             # plt.close()

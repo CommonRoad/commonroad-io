@@ -142,6 +142,8 @@ class TestLanelet(unittest.TestCase):
         polygon = lanelet.convert_to_polygon()
         self.assertTrue(isinstance(polygon, Polygon))
         vertices = np.append(right_vertices, np.flip(left_vertices, axis=0), axis=0)
+        vertices = np.concatenate((vertices, np.array([[0, 0]])), axis=0)
+        vertices = vertices[::-1]
         np.testing.assert_array_almost_equal(polygon.vertices, vertices)
 
     def test_merge_lanelets(self):

@@ -119,7 +119,9 @@ class Rectangle(Shape):
 
     @property
     def vertices(self) -> np.ndarray:
-        """ Vertices of the rectangle: [[x_0, y_0], [x_1, y_1], ...]."""
+        """ Vertices of the rectangle: [[x_0, y_0], [x_1, y_1], ...]. The vertices are sorted clockwise and the
+            first and last point are the same.
+        """
         return self._vertices
 
     @vertices.setter
@@ -177,9 +179,10 @@ class Rectangle(Shape):
         """ Computes the vertices of the rectangle."""
         vertices = np.array(
                    [[- 0.5 * self._length, - 0.5 * self._width],
-                    [+ 0.5 * self._length, - 0.5 * self._width],
+                    [- 0.5 * self._length, + 0.5 * self._width],
                     [+ 0.5 * self._length, + 0.5 * self._width],
-                    [- 0.5 * self._length, + 0.5 * self._width]])
+                    [+ 0.5 * self._length, - 0.5 * self._width],
+                    [- 0.5 * self._length, - 0.5 * self._width]])
         return rotate_translate(vertices, self._center, self._orientation)
 
     def __str__(self):
@@ -286,10 +289,15 @@ class Polygon(Shape):
         """
         self.vertices: np.ndarray = vertices
         self._shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self._vertices)
+        # ensure that vertices are sorted clockwise and the first and last point are the same
+        self._vertices = np.array(shapely.geometry.polygon.orient(
+            self._shapely_polygon, sign=-1.0).exterior.coords)
 
     @property
     def vertices(self) -> np.ndarray:
-        """ Array of ordered vertices of the polygon [[x_0, y_0], [x_1, y_1], ...]."""
+        """ Vertices of the polygon [[x_0, y_0], [x_1, y_1], ...]. The vertices are sorted clockwise and the
+            first and last point are the same.
+        """
         return self._vertices
 
     @vertices.setter
