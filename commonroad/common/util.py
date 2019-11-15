@@ -80,6 +80,10 @@ class Interval:
     def overlaps(self, interval: 'Interval') -> bool:
         return np.greater_equal(self.end, interval.start) and np.greater_equal(interval.end, self.start)
 
+    @property
+    def length(self):
+        return self.end - self.start
+
     def __str__(self):
         info_str = "Interval\n"
         info_str += "start: {}\n".format(self._start)

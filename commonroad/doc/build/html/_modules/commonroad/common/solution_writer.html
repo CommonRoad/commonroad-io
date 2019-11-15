@@ -17,32 +17,36 @@
   
 
   
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
-
-  
-  <script src="../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -231,7 +235,9 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 
+<span class="kn">from</span> <span class="nn">commonroad.geometry.transform</span> <span class="k">import</span> <span class="n">rotate_translate</span>
 <span class="kn">from</span> <span class="nn">commonroad.scenario.trajectory</span> <span class="k">import</span> <span class="n">Trajectory</span>
 <span class="kn">from</span> <span class="nn">commonroad.common.validity</span> <span class="k">import</span> <span class="n">is_real_number_vector</span>
 
@@ -384,8 +390,14 @@
 <span class="k">class</span> <span class="nc">PMTrajectoryXMLNode</span><span class="p">:</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">:</span> <span class="n">Trajectory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">et</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
-        <span class="n">mandatory_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;position&#39;</span><span class="p">,</span> <span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="s1">&#39;velocity_y&#39;</span><span class="p">,</span> <span class="s1">&#39;time_step&#39;</span><span class="p">]</span>
-        <span class="n">is_valid_trajectory</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">mandatory_fields</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mandatory_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;position&#39;</span><span class="p">,</span> <span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="s1">&#39;velocity_y&#39;</span><span class="p">,</span> <span class="s1">&#39;time_step&#39;</span><span class="p">]</span>
+            <span class="n">is_valid_trajectory</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">mandatory_fields</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+            <span class="n">mandatory_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;position&#39;</span><span class="p">,</span> <span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="s1">&#39;orientation&#39;</span><span class="p">,</span> <span class="s1">&#39;time_step&#39;</span><span class="p">]</span>
+            <span class="n">is_valid_trajectory</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">mandatory_fields</span><span class="p">)</span>
+            <span class="n">trajectory</span> <span class="o">=</span> <span class="n">split_velocity_to_xy</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span>
+
 
         <span class="n">trajectory_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;pmTrajectory&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">state_list</span><span class="p">:</span>
@@ -403,6 +415,17 @@
             <span class="n">time_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">time_step</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">trajectory_node</span>
 
+<span class="k">def</span> <span class="nf">split_velocity_to_xy</span><span class="p">(</span><span class="n">trajectory</span><span class="p">:</span> <span class="n">Trajectory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Trajectory</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Converts trajectory from [v,orientation] ot [v_x,v_y]&quot;&quot;&quot;</span>
+    <span class="n">trajectory</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">state_list</span><span class="p">:</span>
+        <span class="n">v_temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="p">,</span><span class="mf">0.0</span><span class="p">]])</span>
+        <span class="n">v_temp</span> <span class="o">=</span> <span class="n">rotate_translate</span><span class="p">(</span><span class="n">v_temp</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span><span class="n">state</span><span class="o">.</span><span class="n">orientation</span><span class="p">)</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="n">v_temp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">velocity_y</span> <span class="o">=</span> <span class="n">v_temp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">trajectory</span>
 
 <span class="k">class</span> <span class="nc">STTrajectoryXMLNode</span><span class="p">:</span>
     <span class="nd">@classmethod</span>
@@ -599,7 +622,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Moritz Klischat, Stefanie Manzinger, Christina Miller, Christian Pek.
+        &copy; Copyright 2019, Moritz Klischat, Stefanie Manzinger, Christina Miller, Christian Pek
 
     </p>
   </div>
@@ -616,33 +639,16 @@
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../../',
-            VERSION:'2019.1',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

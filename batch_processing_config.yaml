@@ -1,0 +1,33 @@
+# all paths need to be specified relative to file batch_processing.py
+# path to folder with selected CommonRoad scenarios
+input_path: 
+# output directory for CommonRoad solution files
+output_path: 
+# overwrite solution file if it already exists
+overwrite: True
+# timeout trajectory planner [s]
+timeout: 10000
+
+# name of function which calls the trajectory planner
+# Inputs: scenario and planning problem set
+# Output: dictionary, key: planning problem ID, value: commonroad trajectory
+trajectory_planner_path: 
+trajectory_planner_module_name: 
+trajectory_planner_function_name: 
+# benchmark evaluation default parameters
+default:
+  # vehicle model, e.g., kinematic single-track model
+  vehicle_model: KS
+    # vehicle type, e.g, BMW 320i
+  vehicle_type: BMW_320i
+    # cost function
+  cost_function: JB1
+
+# specific parameters for a single CommonRoad scenario
+USA_US101-6_2_T-1:
+  # vehicle model, e.g., kinematic single-track model
+  vehicle_model: PM
+  # vehicle type, e.g, BMW 320i
+  vehicle_type: VW_VANAGON
+  # cost function
+  cost_function: SM3

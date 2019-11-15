@@ -17,32 +17,36 @@
   
 
   
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
-
-  
-  <script src="../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -275,6 +279,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_benchmark_id</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_meta_data</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="CommonRoadFileReader.open"><a class="viewcode-back" href="../../../api/common.html#commonroad.common.file_reader.CommonRoadFileReader.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Scenario</span><span class="p">,</span> <span class="n">PlanningProblemSet</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -303,7 +308,7 @@
 
 <span class="sd">        :return: object of class scenario containing the road network and the obstacles</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">scenario</span> <span class="o">=</span> <span class="n">ScenarioFactory</span><span class="o">.</span><span class="n">create_from_xml_node</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_benchmark_id</span><span class="p">)</span>
+        <span class="n">scenario</span> <span class="o">=</span> <span class="n">ScenarioFactory</span><span class="o">.</span><span class="n">create_from_xml_node</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_benchmark_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta_data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">scenario</span>
 
     <span class="k">def</span> <span class="nf">_open_planning_problem_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lanelet_network</span><span class="p">:</span> <span class="n">LaneletNetwork</span><span class="p">)</span> \
@@ -329,6 +334,10 @@
                                                                                    <span class="n">commonroad_version</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dt</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_benchmark_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_benchmark_id</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_meta_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;author&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_author</span><span class="p">(),</span>
+                           <span class="s1">&#39;affiliation&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_affiliation</span><span class="p">(),</span>
+                           <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_source</span><span class="p">(),</span>
+                           <span class="s1">&#39;tags&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_tags</span><span class="p">()}</span>
 
     <span class="k">def</span> <span class="nf">_parse_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Parses the CommonRoad XML-file into element tree.&quot;&quot;&quot;</span>
@@ -344,20 +353,36 @@
 
     <span class="k">def</span> <span class="nf">_get_commonroad_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Reads the CommonRoad version of the XML-file.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;commonRoadVersion&#39;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;commonRoadVersion&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_author</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Reads the affiliation of the author of the scenario.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;author&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_affiliation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Reads the affiliation of the author of the scenario.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;affiliation&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_source</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Reads the source of the scenario.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Reads the source of the scenario.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tags&#39;</span><span class="p">)</span></div>
 
 
 <span class="k">class</span> <span class="nc">ScenarioFactory</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Class to create an object of class Scenario from an XML element.&quot;&quot;&quot;</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_from_xml_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">xml_node</span><span class="p">:</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">benchmark_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_from_xml_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">xml_node</span><span class="p">:</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">benchmark_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_data</span><span class="p">:</span> <span class="nb">dict</span><span class="o">=</span><span class="p">{}):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param xml_node: XML element</span>
 <span class="sd">        :param dt: time step size of the scenario</span>
 <span class="sd">        :param benchmark_id: unique CommonRoad benchmark ID</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">scenario</span> <span class="o">=</span> <span class="n">Scenario</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">benchmark_id</span><span class="p">)</span>
+        <span class="n">scenario</span> <span class="o">=</span> <span class="n">Scenario</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">benchmark_id</span><span class="p">,</span> <span class="o">**</span><span class="n">meta_data</span><span class="p">)</span>
         <span class="n">scenario</span><span class="o">.</span><span class="n">add_objects</span><span class="p">(</span><span class="n">LaneletNetworkFactory</span><span class="o">.</span><span class="n">create_from_xml_node</span><span class="p">(</span><span class="n">xml_node</span><span class="p">))</span>
         <span class="n">scenario</span><span class="o">.</span><span class="n">add_objects</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_obstacles</span><span class="p">(</span><span class="n">xml_node</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">scenario</span>
@@ -887,7 +912,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Moritz Klischat, Stefanie Manzinger, Christina Miller, Christian Pek.
+        &copy; Copyright 2019, Moritz Klischat, Stefanie Manzinger, Christina Miller, Christian Pek
 
     </p>
   </div>
@@ -904,33 +929,16 @@
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../../',
-            VERSION:'2019.1',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

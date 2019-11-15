@@ -65,6 +65,8 @@ class TestVisualization(unittest.TestCase):
 
             occ = Occupancy(1,rect)
             draw_object(occ)
+
+        plt.close('all')
 #        assert (len(record_warnings)==0)
 
     def test_plotting_non_plottable_object(self):
@@ -91,6 +93,7 @@ class TestVisualization(unittest.TestCase):
             draw_object(problem.initial_state)
 
         assert (len(record_warnings) == 0)
+        plt.close('all')
 
     def test_parameter_retrieval(self):
         # test overloading of parameters
@@ -139,21 +142,21 @@ class TestVisualization(unittest.TestCase):
         plt.gca().autoscale()
         plt.show(block=True)
         time.sleep(1)
-        plt.close()
+        plt.close('all')
 
     def test_visual_appearance(self):
         tt=0
         nrun=1
-        plt.clf()
-        plt.ioff()
-        set_non_blocking()
+        plt.close('all')
+        # plt.ioff()
+        # set_non_blocking()
         full_path = os.path.dirname(os.path.abspath(__file__))
-        filename = full_path + '/../common/test_reading_all.xml'
+        filename = full_path + '/../common/USA_US101-3_3_T-1.xml'
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         scenario: Scenario = scenario
-        plt.autoscale(False)
+        # plt.autoscale(False)
 
-        for i in range(0,nrun):
+        for i in range(0, nrun):
             plt.style.use('classic')
             inch_in_cm = 2.54
             figsize = [20, 15]
@@ -162,20 +165,21 @@ class TestVisualization(unittest.TestCase):
             plt.gca().autoscale_view(False, False, False)
 
             t1 = time.time()
-            draw_params = {'planning_problem_set':{'draw_ids':[list(planning_problem_set.planning_problem_dict.keys())[0]]},'time_begin':5,'time_end':40,
-                'dynamic_obstacle': {'occupancy': {'draw_occupancies': 1, 'shape': {'rectangle': {'facecolor': 'g'}}}}}
-            draw_object(scenario, draw_params=draw_params,plot_limits=[-50,60,-50,50])
+            draw_params = {'planning_problem_set':{'draw_ids':[list(planning_problem_set.planning_problem_dict.keys())[0]]},'time_begin':15,'time_end':25,
+                'dynamic_obstacle': {'occupancy': {'draw_occupancies': 0, 'shape': {'rectangle': {'facecolor': 'g'}}}}}
+            draw_object(scenario, draw_params=draw_params, plot_limits=[-50,60,-50,50])
             plt.gca().axis('equal')
             # plt.gca().autoscale()
             # plt.tight_layout()
-            draw_object(planning_problem_set,draw_params=draw_params,plot_limits=[-50,60,-50,50])
+            draw_object(planning_problem_set,draw_params=draw_params, plot_limits=[-50,60,-50,50])
             # draw_object(scenario.dynamic_obstacles[0],draw_params=draw_params)
             plt.show()
             tt+=time.time()-t1
 
-            plt.close()
+            # plt.close()
 
         print('time: {}'.format(tt/nrun))
+
 
 # #
 #     def plot_limits(self, lims):
