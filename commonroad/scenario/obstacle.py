@@ -59,6 +59,7 @@ class Obstacle(ABC):
         self.obstacle_type: ObstacleType = obstacle_type
         self.obstacle_shape: Shape = obstacle_shape
         self.initial_state: State = initial_state
+        self._initial_occupancy_shape: Shape = self._compute_initial_occupancy_shape()
 
     @property
     def obstacle_id(self) -> int:
@@ -131,6 +132,27 @@ class Obstacle(ABC):
                                                  'Expected types: %s. Got type: %s.' % (State, type(initial_state))
         self._initial_state = initial_state
 
+    def _compute_initial_occupancy_shape(self) -> Shape:
+        """ Computes the initial occupancy of the obstacle given its shape and initial state. """
+        if isinstance(self.initial_state.position, Shape):
+            position = self.initial_state.position.center
+        elif isinstance(self.initial_state.position, ValidTypes.ARRAY):
+            position = self.initial_state.position
+        else:
+            raise TypeError('<Obstacle/occupancy_at_time> Expected instance of %s or %s. Got '
+                            '%s instead.' % (ValidTypes.ARRAY, Shape, self.initial_state.position.__class__))
+        if isinstance(self.initial_state.orientation, ValidTypes.NUMBERS):
+            orientation = self.initial_state.orientation
+        elif isinstance(self.initial_state.orientation, AngleInterval):
+            orientation = 0.5 * (self.initial_state.orientation.start + self.initial_state.orientation.end)
+        else:
+            raise TypeError('<Obstacle/occupancy_at_time> Expected instance of %s or %s. Got %s '
+                            'instead.' % (ValidTypes.NUMBERS, AngleInterval,
+                                          self.initial_state.orientation.__class__))
+        shape = self.obstacle_shape.rotate_translate_local(
+            position, orientation)
+        return shape
+
     @abstractmethod
     def occupancy_at_time(self, time_step: int) -> Union[None, Occupancy]:
         pass
@@ -167,6 +189,7 @@ class StaticObstacle(Obstacle):
         assert is_valid_orientation(angle), '<StaticObstacle/translate_rotate>: argument angle must be within the ' \
                                             'interval [-2pi, 2pi]. angle = %s' % angle
         self.initial_state = self._initial_state.translate_rotate(translation, angle)
+        self._initial_occupancy_shape = self._compute_initial_occupancy_shape()
 
     def occupancy_at_time(self, time_step: int) -> Occupancy:
         """
@@ -175,9 +198,7 @@ class StaticObstacle(Obstacle):
         :param time_step: discrete time step
         :return: occupancy of the static obstacle at time step
         """
-        shape = self.obstacle_shape.rotate_translate_local(
-            self.initial_state.position, self.initial_state.orientation)
-        return Occupancy(time_step=time_step, shape=shape)
+        return Occupancy(time_step, self._initial_occupancy_shape)
 
     def __str__(self):
         obs_str = 'Static Obstacle:\n'
@@ -227,25 +248,7 @@ class DynamicObstacle(Obstacle):
         occupancy = None
 
         if time_step == self.initial_state.time_step:
-            # ToDo: uncertain states; change this
-            if isinstance(self.initial_state.position, Shape):
-                position = self.initial_state.position.center
-            elif isinstance(self.initial_state.position, ValidTypes.ARRAY):
-                position = self.initial_state.position
-            else:
-                raise TypeError('<DynamicObstacle/occupancy_at_time> Expected instance of %s or %s. Got '
-                                '%s instead.' % (ValidTypes.ARRAY, Shape, self.initial_state.position.__class__))
-            if isinstance(self.initial_state.orientation, ValidTypes.NUMBERS):
-                orientation = self.initial_state.orientation
-            elif isinstance(self.initial_state.orientation, AngleInterval):
-                orientation = 0.5*(self.initial_state.orientation.start + self.initial_state.orientation.end)
-            else:
-                raise TypeError('<DynamicObstacle/occupancy_at_time> Expected instance of %s or %s. Got %s '
-                                'instead.' % (ValidTypes.NUMBERS, AngleInterval,
-                                              self.initial_state.orientation.__class__))
-            shape = self.obstacle_shape.rotate_translate_local(
-                position, orientation)
-            occupancy = Occupancy(time_step, shape)
+            occupancy = Occupancy(time_step, self._initial_occupancy_shape)
         elif time_step > self.initial_state.time_step and self._prediction is not None:
             occupancy = self._prediction.occupancy_at_time_step(time_step)
         return occupancy
@@ -265,6 +268,7 @@ class DynamicObstacle(Obstacle):
         if self._prediction is not None:
             self.prediction.translate_rotate(translation, angle)
         self._initial_state = self._initial_state.translate_rotate(translation, angle)
+        self._initial_occupancy_shape = self._compute_initial_occupancy_shape()
 
     def __str__(self):
         obs_str = 'Dynamic Obstacle:\n'
