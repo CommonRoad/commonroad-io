@@ -78,8 +78,7 @@ class TestLaneletNetwork(unittest.TestCase):
         np.testing.assert_array_almost_equal(actual_lanelet_found.center_vertices, self.lanelet.center_vertices)
         np.testing.assert_array_almost_equal(actual_lanelet_found.left_vertices, self.lanelet.left_vertices)
         self.assertEqual(actual_lanelet_found.lanelet_id, self.lanelet.lanelet_id)
-        with self.assertRaises(KeyError):
-            print(self.lanelet_network.find_lanelet_by_id(2))
+        self.assertEqual(self.lanelet_network.find_lanelet_by_id(2), None)
 
     def test_add_lanelet(self):
         right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
