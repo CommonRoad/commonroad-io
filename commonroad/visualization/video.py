@@ -26,10 +26,8 @@ def create_scenario_video(obj: Union[plottable_types, List[plottable_types]], ti
         plt.clf()
         plt.gca().set_aspect('equal')
         ax = plt.gca()
-        draw_params = {
-            'time_begin': time_begin + frame,
-            'time_end': time_begin + min(frame_count,frame+duration)
-        }
+        draw_params.update({'time_begin': time_begin + frame,
+                            'time_end': time_begin + min(frame_count, frame + duration)})
         draw_object(obj, ax=ax, draw_params=draw_params, plot_limits=plot_limits)
         # Set limits to assure that each frame has the same size
 
