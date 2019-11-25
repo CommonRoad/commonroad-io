@@ -3,6 +3,7 @@ import numpy as np
 from commonroad.scenario.obstacle import *
 from commonroad.geometry.shape import *
 from commonroad.prediction.prediction import *
+from commonroad.scenario.lanelet import Lanelet
 
 class TestObstacle(unittest.TestCase):
     def test_initialize_static_obstacle(self):
@@ -21,6 +22,8 @@ class TestObstacle(unittest.TestCase):
         np.testing.assert_equal(static_obstacle.obstacle_shape.vertices, shape.vertices)
 
     def test_initialize_dynamic_obstacle(self):
+        initial_lanelet_ids = {1, 2}
+
         obstacle_id = 100
         obstacle_type = ObstacleType.CAR
         obstacle_role = ObstacleRole.DYNAMIC
@@ -34,14 +37,15 @@ class TestObstacle(unittest.TestCase):
         initial_state = state_list[0]
         shape = Rectangle(5.1, 2.6, np.array([0, 0]), 0)
 
-        static_obstacle = DynamicObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type, prediction=prediction,
-                                          initial_state=initial_state, obstacle_shape=shape)
-        np.testing.assert_equal(static_obstacle.obstacle_id, obstacle_id)
-        self.assertEqual(obstacle_type, static_obstacle.obstacle_type)
-        self.assertEqual(static_obstacle.obstacle_role, obstacle_role)
-        self.assertEqual(static_obstacle.prediction.trajectory.state_list, state_list)
-        self.assertEqual(static_obstacle.initial_state, initial_state)
-        np.testing.assert_equal(static_obstacle.obstacle_shape.vertices, shape.vertices)
+        dynamic_obstacle = DynamicObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type, prediction=prediction,
+                                          initial_state=initial_state, obstacle_shape=shape,
+                                          initial_lanelet_ids=initial_lanelet_ids)
+        np.testing.assert_equal(dynamic_obstacle.obstacle_id, obstacle_id)
+        self.assertEqual(obstacle_type, dynamic_obstacle.obstacle_type)
+        self.assertEqual(dynamic_obstacle.obstacle_role, obstacle_role)
+        self.assertEqual(dynamic_obstacle.prediction.trajectory.state_list, state_list)
+        self.assertEqual(dynamic_obstacle.initial_state, initial_state)
+        np.testing.assert_equal(dynamic_obstacle.obstacle_shape.vertices, shape.vertices)
 
     def test_transform_static_obstacle(self):
         rectangle = Rectangle(4.3, 8.9, np.array((2.5, - 1.8)), 1.7)

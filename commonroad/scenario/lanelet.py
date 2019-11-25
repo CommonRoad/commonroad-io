@@ -24,6 +24,8 @@ class LineMarking(enum.Enum):
     """
     DASHED = 1
     SOLID = 2
+    BROAD_DASHED = 3
+    BROAD_SOLID = 4
 
 
 class Lanelet:
@@ -122,6 +124,9 @@ class Lanelet:
 
         # create empty polygon
         self._polygon = None
+
+        self._dynamic_obstacles_on_lanelet = {}
+        self._static_obstacles_on_lanelet = set()
 
     @property
     def distance(self) -> np.ndarray:
@@ -313,6 +318,28 @@ class Lanelet:
         else:
             warnings.warn('<Lanelet/adj_right_same_direction>: adj_right_same_direction of lanelet is immutable')
 
+    @property
+    def dynamic_obstacles_on_lanelet(self) -> Dict[int, Set[int]]:
+        return self._dynamic_obstacles_on_lanelet
+
+    @dynamic_obstacles_on_lanelet.setter
+    def dynamic_obstacles_on_lanelet(self, obstacle_ids: Dict[int, Set[int]]):
+        assert isinstance(obstacle_ids, dict), \
+            '<Lanelet/obstacles_on_lanelet>: provided dictionary of ids is not a ' \
+            'dictionary! type = {}'.format(type(obstacle_ids))
+        self._dynamic_obstacles_on_lanelet = obstacle_ids
+
+    @property
+    def static_obstacles_on_lanelet(self) -> Set[int]:
+        return self._static_obstacles_on_lanelet
+
+    @static_obstacles_on_lanelet.setter
+    def static_obstacles_on_lanelet(self, obstacle_ids: Set[int]):
+        assert isinstance(obstacle_ids, set), \
+            '<Lanelet/obstacles_on_lanelet>: provided list of ids is not a ' \
+            'set! type = {}'.format(type(obstacle_ids))
+        self._static_obstacles_on_lanelet = obstacle_ids
+
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """
         This method translates and rotates a lanelet
@@ -454,6 +481,41 @@ class Lanelet:
 
         return res
 
+    @staticmethod
+    def _merge_static_obstacles_on_lanelet(obstacles_on_lanelet1: Set[int], obstacles_on_lanelet2: Set[int]):
+        """
+        Merges obstacle IDs of static obstacles on two lanelets
+
+        :param obstacles_on_lanelet1: Obstacle IDs on the first lanelet
+        :param obstacles_on_lanelet2: Obstacle IDs on the second lanelet
+        :return: Merged obstacle IDs of static obstacles on lanelets
+        """
+        for obs_id in obstacles_on_lanelet2:
+            if obs_id not in obstacles_on_lanelet1:
+                obstacles_on_lanelet1.add(obs_id)
+        return obstacles_on_lanelet1
+
+    @staticmethod
+    def _merge_dynamic_obstacles_on_lanelet(obstacles_on_lanelet1: Dict[int, Set[int]],
+                                            obstacles_on_lanelet2: Dict[int, Set[int]]):
+        """
+        Merges obstacle IDs of static obstacles on two lanelets
+
+        :param static_obstacles_on_lanelet1: Obstacle IDs on the first lanelet
+        :param lanelet2: Obstacle IDs on the second lanelet
+        :return: Merged obstacle IDs of static obstacles on lanelets
+        """
+        if len(obstacles_on_lanelet2.items()) > 0:
+            for time_step, ids in obstacles_on_lanelet2.items():
+                for obs_id in ids:
+                    if obstacles_on_lanelet1.get(time_step) is not None:
+                        if obs_id not in obstacles_on_lanelet1[time_step]:
+                            obstacles_on_lanelet1[time_step].add(obs_id)
+                    else:
+                        obstacles_on_lanelet1[time_step] = {obs_id}
+
+        return obstacles_on_lanelet1
+
     @classmethod
     def merge_lanelets(cls, lanelet1: 'Lanelet', lanelet2: 'Lanelet') -> 'Lanelet':
         """
@@ -492,9 +554,16 @@ class Lanelet:
         lanelet_id = int(str(pred.lanelet_id) + str(suc.lanelet_id))
         predecessor = pred.predecessor
         successor = suc.successor
+        static_obstacles_on_lanelet = cls._merge_static_obstacles_on_lanelet(lanelet1.static_obstacles_on_lanelet,
+                                                                             lanelet2.static_obstacles_on_lanelet)
+        dynamic_obstacles_on_lanelet = cls._merge_dynamic_obstacles_on_lanelet(lanelet1.dynamic_obstacles_on_lanelet,
+                                                                               lanelet2.dynamic_obstacles_on_lanelet)
 
-        return Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor=predecessor,
+        new_lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor=predecessor,
                        successor=successor)
+        new_lanelet.static_obstacles_on_lanelet = static_obstacles_on_lanelet
+        new_lanelet.dynamic_obstacles_on_lanelet = dynamic_obstacles_on_lanelet
+        return new_lanelet
 
     @classmethod
     def all_lanelets_by_merging_successors_from_lanelet(cls, lanelet: 'Lanelet', network: 'LaneletNetwork',
@@ -568,6 +637,13 @@ class Lanelet:
             
         return merged_lanelets, merge_jobs_final
 
+    def add_dynamic_obstacle_to_lanelet(self, obstacle_id: int, time_step: int):
+        if self.dynamic_obstacles_on_lanelet.get(time_step) is None:
+            self.dynamic_obstacles_on_lanelet[time_step] = set()
+        self.dynamic_obstacles_on_lanelet[time_step].add(obstacle_id)
+
+    def add_static_obstacle_to_lanelet(self, obstacle_id: int):
+        self.static_obstacles_on_lanelet.add(obstacle_id)
 
     def __str__(self):
         return 'Lanelet with id:' + str(self.lanelet_id)

@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Union, List, Tuple
+from typing import Union, List, Tuple, Dict, Set
 from xml.etree import ElementTree
 import numpy as np
 
@@ -158,11 +158,11 @@ class ScenarioFactory:
         """
         scenario = Scenario(dt, benchmark_id, **meta_data)
         scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
-        scenario.add_objects(cls._obstacles(xml_node))
+        scenario.add_objects(cls._obstacles(xml_node, scenario.lanelet_network))
         return scenario
 
     @classmethod
-    def _obstacles(cls, xml_node: ElementTree.Element) -> List[Obstacle]:
+    def _obstacles(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) -> List[Obstacle]:
         """
         Reads all obstacles specified in a CommonRoad XML-file.
         :param xml_node: XML element
@@ -171,7 +171,7 @@ class ScenarioFactory:
         """
         obstacles = list()
         for o in xml_node.findall('obstacle'):
-            obstacles.append(ObstacleFactory.create_from_xml_node(o))
+            obstacles.append(ObstacleFactory.create_from_xml_node(o, lanelet_network))
         return obstacles
 
 
@@ -337,12 +337,12 @@ class LaneletFactory:
 
 class ObstacleFactory:
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) \
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) \
             -> Obstacle:
         if xml_node.find('role').text == 'static':
-            return StaticObstacleFactory.create_from_xml_node(xml_node)
+            return StaticObstacleFactory.create_from_xml_node(xml_node, lanelet_network)
         elif xml_node.find('role').text == 'dynamic':
-            return DynamicObstacleFactory.create_from_xml_node(xml_node)
+            return DynamicObstacleFactory.create_from_xml_node(xml_node, lanelet_network)
         else:
             raise ValueError('Role of obstacle is unknown. Valid roles: {}. '
                              'Got role: {}'.format(ObstacleRole, xml_node.find('role').text))
@@ -411,32 +411,68 @@ class ObstacleFactory:
 
 class StaticObstacleFactory:
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> StaticObstacle:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) -> StaticObstacle:
         obstacle_type = ObstacleFactory.read_type(xml_node)
         obstacle_id = ObstacleFactory.read_id(xml_node)
         shape = ObstacleFactory.read_shape(xml_node.find('shape'))
         initial_state = ObstacleFactory.read_initial_state(xml_node.find('initialState'))
+        initial_lanelet_ids = lanelet_network.find_lanelet_by_position([np.array([initial_state.position[0],
+                                                                                  initial_state.position[1]])])[0]
+        for l_id in initial_lanelet_ids:
+            lanelet_network.find_lanelet_by_id(l_id).add_static_obstacle_to_lanelet(obstacle_id=obstacle_id)
         return StaticObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
-                              obstacle_shape=shape, initial_state=initial_state)
+                              obstacle_shape=shape, initial_state=initial_state,
+                              initial_lanelet_ids=set(initial_lanelet_ids))
 
 
 class DynamicObstacleFactory:
+
+    @staticmethod
+    def find_obstacle_lanelets(initial_state: State, state_list: List[State], lanelet_network: LaneletNetwork,
+                               obstacle_id: int) -> Dict[int, Set[int]]:
+        """
+        Extracts for each state the corresponding lanelets
+
+        :param initial_state: initial CommonRoad state
+        :param state_list: trajectory state list
+        :param lanelet_network: CommonRoad lanelet network
+        :param obstacle_id: ID of obstacle
+        :return: list of IDs of all predecessor lanelets
+        """
+        compl_state_list = [initial_state] + state_list
+        lanelet_ids_per_state = {}
+        for state in compl_state_list:
+            lanelet_ids = lanelet_network.find_lanelet_by_position([np.array([state.position[0],
+                                                                              state.position[1]])])[0]
+            lanelet_ids_per_state[state.time_step] = set(lanelet_ids)
+            for l_id in lanelet_ids:
+                lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle_id,
+                                                                                         time_step=state.time_step)
+
+        return lanelet_ids_per_state
+
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> DynamicObstacle:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) -> DynamicObstacle:
         obstacle_type = ObstacleFactory.read_type(xml_node)
         obstacle_id = ObstacleFactory.read_id(xml_node)
         shape = ObstacleFactory.read_shape(xml_node.find('shape'))
         initial_state = ObstacleFactory.read_initial_state(xml_node.find('initialState'))
+        initial_lanelet_ids = lanelet_network.find_lanelet_by_position([np.array([initial_state.position[0],
+                                                                                  initial_state.position[1]])])[0]
 
         if xml_node.find('trajectory') is not None:
             trajectory = TrajectoryFactory.create_from_xml_node(xml_node.find('trajectory'))
-            prediction = TrajectoryPrediction(trajectory, shape)
+            lanelet_assignment = cls.find_obstacle_lanelets(initial_state, trajectory.state_list, lanelet_network,
+                                                            obstacle_id)
+            prediction = TrajectoryPrediction(trajectory, shape, lanelet_assignment)
         elif xml_node.find('occupancySet') is not None:
             prediction = SetBasedPredictionFactory.create_from_xml_node(xml_node.find('occupancySet'))
         else:
             prediction = None
         return DynamicObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
-                               obstacle_shape=shape, initial_state=initial_state, prediction=prediction)
+                               obstacle_shape=shape, initial_state=initial_state, prediction=prediction,
+                               initial_lanelet_ids=set(initial_lanelet_ids))
+
 
 
 class TrajectoryFactory:

@@ -217,6 +217,18 @@ class TestFileReader(unittest.TestCase):
         exp_lanelet_zero_succesor = self.scenario.lanelet_network.lanelets[0].successor
         exp_lanelet_zero_speed_limit = self.scenario.lanelet_network.lanelets[0].speed_limit
 
+        exp_static_obstacles_on_lanelet_zero = {self.scenario.static_obstacles[0].obstacle_id}
+        exp_static_obstacles_on_lanelet_one = {self.scenario.static_obstacles[0].obstacle_id}
+        exp_dynamic_obstacles_on_lanelet_zero = {0: {self.scenario.dynamic_obstacles[1].obstacle_id},
+                                                 1: {self.scenario.dynamic_obstacles[1].obstacle_id}}
+        exp_dynamic_obstacles_on_lanelet_one = {0: {self.scenario.dynamic_obstacles[1].obstacle_id},
+                                                1: {self.scenario.dynamic_obstacles[1].obstacle_id}}
+        exp_lanelet_of_static_obstacle = {100, 101}
+        exp_lanelet_of_dynamic_obstacle_initial = {100, 101}
+        exp_lanelet_of_dynamic_obstacle_prediction = {0: {100, 101},
+                                                      1: {100, 101}}
+
+
         exp_planning_problem_id = self.planning_problem_set.planning_problem_dict[1000].planning_problem_id
         exp_planning_problem_initial_state_velocity = self.planning_problem_set.planning_problem_dict[1000].initial_state.velocity
         exp_planning_problem_initial_state_slip_angle = self.planning_problem_set.planning_problem_dict[1000].initial_state.slip_angle
@@ -269,6 +281,21 @@ class TestFileReader(unittest.TestCase):
         self.assertEqual(exp_lanelet_zero_predecessor, xml_file[0].lanelet_network.lanelets[0].predecessor)
         self.assertEqual(exp_lanelet_zero_succesor, xml_file[0].lanelet_network.lanelets[0].successor)
         self.assertEqual(exp_lanelet_zero_speed_limit, xml_file[0].lanelet_network.lanelets[0].speed_limit)
+
+        self.assertSetEqual(exp_static_obstacles_on_lanelet_zero,
+                            xml_file[0].lanelet_network.lanelets[0].static_obstacles_on_lanelet)
+        self.assertSetEqual(exp_static_obstacles_on_lanelet_one,
+                            xml_file[0].lanelet_network.lanelets[1].static_obstacles_on_lanelet)
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
+                         xml_file[0].lanelet_network.lanelets[0].dynamic_obstacles_on_lanelet)
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_one,
+                         xml_file[0].lanelet_network.lanelets[1].dynamic_obstacles_on_lanelet)
+        self.assertSetEqual(exp_lanelet_of_static_obstacle,
+                            xml_file[0].obstacle_by_id(0).initial_lanelet_ids)
+        self.assertSetEqual(exp_lanelet_of_dynamic_obstacle_initial,
+                            xml_file[0].obstacle_by_id(2).initial_lanelet_ids)
+        self.assertEqual(exp_lanelet_of_dynamic_obstacle_prediction,
+                         xml_file[0].obstacle_by_id(2).prediction.lanelet_assignment)
 
         self.assertEqual(exp_planning_problem_id, xml_file[1].planning_problem_dict[1000].planning_problem_id)
         self.assertEqual(exp_planning_problem_initial_state_velocity, xml_file[1].planning_problem_dict[1000].initial_state.velocity)

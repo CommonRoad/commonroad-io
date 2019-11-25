@@ -1,13 +1,14 @@
 import enum
 import warnings
 import numpy as np
-from typing import Union
+from typing import Union, List, Set
 from abc import ABC, abstractmethod
 
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector, is_real_number
 from commonroad.geometry.shape import Shape
 from commonroad.prediction.prediction import Prediction, Occupancy
 from commonroad.scenario.trajectory import State
+
 
 __author__ = "Stefanie Manzinger, Christian Pek"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -45,19 +46,22 @@ class Obstacle(ABC):
     """ Superclass for dynamic and static obstacles holding common properties defined in CommonRoad."""
 
     def __init__(self, obstacle_id: int, obstacle_role: ObstacleRole,
-                 obstacle_type: ObstacleType, obstacle_shape: Shape, initial_state: State):
+                 obstacle_type: ObstacleType, obstacle_shape: Shape, initial_state: State,
+                 initial_lanelet_ids: Union[None, Set[int]] = None):
         """
         :param obstacle_id: unique ID of the obstacle
         :param obstacle_role: obstacle role as defined in CommonRoad
         :param obstacle_type: obstacle type as defined in CommonRoad (e.g. PARKED_VEHICLE)
         :param obstacle_shape: occupied area of the obstacle
         :param initial_state: initial state of the obstacle
+        :param initial_lanelet_ids: initial IDs of lanelets the obstacle is on
         """
         self.obstacle_id: int = obstacle_id
         self.obstacle_role: ObstacleRole = obstacle_role
         self.obstacle_type: ObstacleType = obstacle_type
         self.obstacle_shape: Shape = obstacle_shape
         self.initial_state: State = initial_state
+        self.initial_lanelet_ids: Union[None, Set[int]] = initial_lanelet_ids
 
     @property
     def obstacle_id(self) -> int:
@@ -130,6 +134,23 @@ class Obstacle(ABC):
                                                  'Expected types: %s. Got type: %s.' % (State, type(initial_state))
         self._initial_state = initial_state
 
+    @property
+    def initial_lanelet_ids(self) -> Union[None, Set[int]]:
+        """ Initial lanelets of obstacle, e.g., obtained through localization."""
+        return self._initial_lanelet_ids
+
+    @initial_lanelet_ids.setter
+    def initial_lanelet_ids(self, initial_lanelet_ids: Union[None, Set[int]]):
+        assert isinstance(initial_lanelet_ids, (set, type(None))), \
+            '<Obstacle/initial_lanelet_ids>: argument initial_lanelet_ids of wrong type. ' \
+            'Expected types: %s. Got type: %s.' % ((set, type(None)), type(initial_lanelet_ids))
+        if initial_lanelet_ids is not None:
+            for lanelet_id in initial_lanelet_ids:
+                assert isinstance(lanelet_id, int), \
+                    '<Obstacle/initial_lanelet_ids>: argument initial_lanelet of wrong type. ' \
+                    'Expected types: %s. Got type: %s.' % (int, type(lanelet_id))
+        self._initial_lanelet_ids = initial_lanelet_ids
+
     @abstractmethod
     def occupancy_at_time(self, time_step: int) -> Union[None, Occupancy]:
         pass
@@ -143,15 +164,17 @@ class StaticObstacle(Obstacle):
     """ Class representing static obstacles as defined in CommonRoad."""
 
     def __init__(self, obstacle_id: int, obstacle_type: ObstacleType,
-                 obstacle_shape: Shape, initial_state: State):
+                 obstacle_shape: Shape, initial_state: State, initial_lanelet_ids: Union[None, Set[int]] = None):
         """
             :param obstacle_id: unique ID of the obstacle
             :param obstacle_type: type of obstacle (e.g. PARKED_VEHICLE)
             :param obstacle_shape: shape of the static obstacle
             :param initial_state: initial state of the static obstacle
+            :param initial_lanelet_ids: initial IDs of lanelets the obstacle is on
         """
         Obstacle.__init__(self, obstacle_id=obstacle_id, obstacle_role=ObstacleRole.STATIC,
-                          obstacle_type=obstacle_type, obstacle_shape=obstacle_shape, initial_state=initial_state)
+                          obstacle_type=obstacle_type, obstacle_shape=obstacle_shape, initial_state=initial_state,
+                          initial_lanelet_ids=initial_lanelet_ids)
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ First translates the static obstacle, then rotates the static obstacle around the origin.
@@ -192,16 +215,18 @@ class DynamicObstacle(Obstacle):
 
     def __init__(self, obstacle_id: int, obstacle_type: ObstacleType,
                  obstacle_shape: Shape, initial_state: State,
-                 prediction: Union[None, Prediction] = None):
+                 prediction: Union[None, Prediction] = None, initial_lanelet_ids: Union[None, Set[int]] = None):
         """
             :param obstacle_id: unique ID of the obstacle
             :param obstacle_type: type of obstacle (e.g. Bus)
             :param obstacle_shape: shape of the dynamic obstacle
             :param initial_state: initial state of the dynamic obstacle
             :param prediction: predicted movement of the dynamic obstacle
+            :param initial_lanelet_ids: initial IDs of lanelets the obstacle is on
         """
         Obstacle.__init__(self, obstacle_id=obstacle_id, obstacle_role=ObstacleRole.DYNAMIC,
-                          obstacle_type=obstacle_type, obstacle_shape=obstacle_shape, initial_state=initial_state)
+                          obstacle_type=obstacle_type, obstacle_shape=obstacle_shape, initial_state=initial_state,
+                          initial_lanelet_ids=initial_lanelet_ids)
         self.prediction: Prediction = prediction
 
     @property

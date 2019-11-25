@@ -105,7 +105,6 @@ class TestLanelet(unittest.TestCase):
             lanelet.interpolate_position(-1.0)
 
     def test_get_obstacles(self):
-        print("TEST")
         right_vertices = np.array([[0, 0], [10, 0], [20, 0], [30, 0]])
         left_vertices = np.array([[0, 4], [10, 4], [20, 4], [30, 4]])
         center_vertices = np.array([[0, 2], [10, 2], [20, 2], [30, 2]])
@@ -161,6 +160,17 @@ class TestLanelet(unittest.TestCase):
         lanelet2 = Lanelet(left_vertices2, center_vertices2, right_vertices2, 2,
                            predecessor=[1], successor=[10, 11])
 
+        lanelet1.add_static_obstacle_to_lanelet(100)
+        lanelet2.add_static_obstacle_to_lanelet(101)
+
+        lanelet1.add_dynamic_obstacle_to_lanelet(102, 0)
+        lanelet2.add_dynamic_obstacle_to_lanelet(103, 0)
+        lanelet1.add_dynamic_obstacle_to_lanelet(102, 1)
+        lanelet2.add_dynamic_obstacle_to_lanelet(103, 1)
+        lanelet1.add_dynamic_obstacle_to_lanelet(102, 2)
+        lanelet2.add_dynamic_obstacle_to_lanelet(103, 2)
+        lanelet2.add_dynamic_obstacle_to_lanelet(103, 3)
+
         merged_lanelet = Lanelet.merge_lanelets(lanelet1, lanelet2)
         self.assertListEqual(merged_lanelet.predecessor, [5, 7])
         self.assertListEqual(merged_lanelet.successor, [10, 11])
@@ -170,6 +180,11 @@ class TestLanelet(unittest.TestCase):
                                              np.append(left_vertices1, left_vertices2[1:], axis=0))
         np.testing.assert_array_almost_equal(merged_lanelet.center_vertices,
                                              np.append(center_vertices1, center_vertices2[1:], axis=0))
+
+        # merging of obstacle assignment
+        self.assertSetEqual(merged_lanelet.static_obstacles_on_lanelet, {100, 101})
+        self.assertEqual(merged_lanelet.dynamic_obstacles_on_lanelet, {0: {102, 103}, 1: {102, 103},
+                                                                       2: {102, 103}, 3: {103}})
 
         # merging works also in reverse order
         merged_lanelet = Lanelet.merge_lanelets(lanelet2, lanelet1)

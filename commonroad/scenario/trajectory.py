@@ -92,6 +92,10 @@ class State:
             obstacles to provide additional information, e.g., for motion prediction, even though acceleration is often
             used as an input for vehicle models. Exact values are given as real number, uncertain values are given as
             :class:`commonroad.common.util.Interval`
+        :ivar jerk: acceleration :math:`j`. We optionally include jerk as a state variable for
+            obstacles to provide additional information, e.g., for motion prediction, even though jerk is often
+            used as an input for vehicle models. Exact values are given as real number, uncertain values are given as
+            :class:`commonroad.common.util.Interval`
         :ivar time_step: the discrete time step. Exact values are given as integers, uncertain values are given as
             :class:`commonroad.common.util.Interval`
 
@@ -136,6 +140,7 @@ class State:
         'delta_y_f',
         'delta_y_r',
         'acceleration',
+        'jerk',
         'time_step',
     ]
 
