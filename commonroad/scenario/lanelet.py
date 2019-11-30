@@ -468,12 +468,14 @@ class Lanelet:
                         vertices.append(sh.center)
                     else:
                         vertices.append(sh.vertices)
+                        vertices = np.append(vertices, [o_shape.center], axis=0)
             else:
                 # distinguish between type of shape (circle has no vertices)
                 if isinstance(o_shape, Circle):
                     vertices = o_shape.center
                 else:
                     vertices = o_shape.vertices
+                    vertices = np.append(vertices, [o_shape.center], axis=0)
 
             # check if obstacle is in lane
             if any(self.contains_points(np.array(vertices))):

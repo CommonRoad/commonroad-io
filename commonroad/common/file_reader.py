@@ -429,7 +429,7 @@ class DynamicObstacleFactory:
 
     @staticmethod
     def find_obstacle_lanelets(initial_state: State, state_list: List[State], lanelet_network: LaneletNetwork,
-                               obstacle_id: int) -> Dict[int, Set[int]]:
+                               obstacle_id: int, shape: Shape) -> Dict[int, Set[int]]:
         """
         Extracts for each state the corresponding lanelets
 
@@ -441,9 +441,10 @@ class DynamicObstacleFactory:
         """
         compl_state_list = [initial_state] + state_list
         lanelet_ids_per_state = {}
+        rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
+
         for state in compl_state_list:
-            lanelet_ids = lanelet_network.find_lanelet_by_position([np.array([state.position[0],
-                                                                              state.position[1]])])[0]
+            lanelet_ids = lanelet_network.find_lanelet_by_position([np.array(rotated_shape.vertices)])
             lanelet_ids_per_state[state.time_step] = set(lanelet_ids)
             for l_id in lanelet_ids:
                 lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle_id,
@@ -463,7 +464,7 @@ class DynamicObstacleFactory:
         if xml_node.find('trajectory') is not None:
             trajectory = TrajectoryFactory.create_from_xml_node(xml_node.find('trajectory'))
             lanelet_assignment = cls.find_obstacle_lanelets(initial_state, trajectory.state_list, lanelet_network,
-                                                            obstacle_id)
+                                                            obstacle_id, shape)
             prediction = TrajectoryPrediction(trajectory, shape, lanelet_assignment)
         elif xml_node.find('occupancySet') is not None:
             prediction = SetBasedPredictionFactory.create_from_xml_node(xml_node.find('occupancySet'))
