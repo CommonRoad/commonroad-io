@@ -40,6 +40,42 @@ def read_value_exact_or_interval(xml_node: ElementTree.Element)\
     return value
 
 
+def get_relevant_vertices_of_shape(shape: Shape) -> List[np.ndarray]:
+    """
+    Extracts boundary and center vertices of a shape.
+
+    :return: List of vertices
+    """
+
+    # vertices to check
+    vertices = []
+
+    # distinguish between shape and shapegroup and extract vertices
+    if isinstance(shape, ShapeGroup):
+        for sh in shape.shapes:
+            # distinguish between type of shape (circle has no vertices)
+            if isinstance(sh, Circle):
+                vertices.append(sh.center)
+                for ang in np.arange(0, 1, 0.1):
+                    vert = sh.radius * np.array([np.cos(ang*np.pi), np.sin(ang*np.pi)])
+                    vertices.append(vert)
+            else:
+                vertices += vertices + list(shape.vertices)
+                vertices.append(shape.center)
+    else:
+        # distinguish between type of shape (circle has no vertices)
+        if isinstance(shape, Circle):
+            vertices.append(shape.center)
+            for ang in np.arange(0, 1, 0.1):
+                vert = shape.radius * np.array([np.cos(ang*np.pi), np.sin(ang*np.pi)])
+                vertices.append(vert)
+        else:
+            vertices += vertices + list(shape.vertices)
+            vertices.append(shape.center)
+
+    return vertices
+
+
 class CommonRoadFileReader:
     """ Class which reads CommonRoad XML-files. The XML-files are composed of
     (1) a formal representation of the road network,
@@ -414,10 +450,17 @@ class StaticObstacleFactory:
     def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) -> StaticObstacle:
         obstacle_type = ObstacleFactory.read_type(xml_node)
         obstacle_id = ObstacleFactory.read_id(xml_node)
-        shape = ObstacleFactory.read_shape(xml_node.find('shape'))
         initial_state = ObstacleFactory.read_initial_state(xml_node.find('initialState'))
-        initial_lanelet_ids = lanelet_network.find_lanelet_by_position([np.array([initial_state.position[0],
-                                                                                  initial_state.position[1]])])[0]
+        shape = ObstacleFactory.read_shape(xml_node.find('shape'))
+        # shape orientation and position values must be zero for obstacles
+        shape.center[0] = 0
+        shape.center[1] = 0
+        shape.orientation = 0
+
+        rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
+        initial_lanelet_ids = \
+            lanelet_network.find_lanelet_by_position(get_relevant_vertices_of_shape(rotated_shape))
+        initial_lanelet_ids = [y for x in initial_lanelet_ids for y in x]   # flatten list of lists
         for l_id in initial_lanelet_ids:
             lanelet_network.find_lanelet_by_id(l_id).add_static_obstacle_to_lanelet(obstacle_id=obstacle_id)
         return StaticObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
@@ -441,14 +484,15 @@ class DynamicObstacleFactory:
         """
         compl_state_list = [initial_state] + state_list
         lanelet_ids_per_state = {}
-        rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
 
         for state in compl_state_list:
-            lanelet_ids = lanelet_network.find_lanelet_by_position([np.array(rotated_shape.vertices)])
-            lanelet_ids_per_state[state.time_step] = set(lanelet_ids)
+            rotated_shape = shape.rotate_translate_local(state.position, state.orientation)
+            lanelet_ids = lanelet_network.find_lanelet_by_position(get_relevant_vertices_of_shape(rotated_shape))
+            lanelet_ids = [y for x in lanelet_ids for y in x]  # flatten list of lists
             for l_id in lanelet_ids:
                 lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle_id,
                                                                                          time_step=state.time_step)
+            lanelet_ids_per_state[state.time_step] = set(lanelet_ids)
 
         return lanelet_ids_per_state
 
@@ -458,10 +502,21 @@ class DynamicObstacleFactory:
         obstacle_id = ObstacleFactory.read_id(xml_node)
         shape = ObstacleFactory.read_shape(xml_node.find('shape'))
         initial_state = ObstacleFactory.read_initial_state(xml_node.find('initialState'))
-        initial_lanelet_ids = lanelet_network.find_lanelet_by_position([np.array([initial_state.position[0],
-                                                                                  initial_state.position[1]])])[0]
+        # shape orientation and position values must be zero for obstacles
+        shape.center[0] = 0
+        shape.center[1] = 0
+        shape.orientation = 0
+        initial_lanelet_ids = []
 
         if xml_node.find('trajectory') is not None:
+            rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
+
+            initial_lanelet_ids = \
+                lanelet_network.find_lanelet_by_position(get_relevant_vertices_of_shape(rotated_shape))
+            initial_lanelet_ids = [y for x in initial_lanelet_ids for y in x]  # flatten list of lists
+            for l_id in initial_lanelet_ids:
+                lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle_id,
+                                                                                         time_step=initial_state.time_step)
             trajectory = TrajectoryFactory.create_from_xml_node(xml_node.find('trajectory'))
             lanelet_assignment = cls.find_obstacle_lanelets(initial_state, trajectory.state_list, lanelet_network,
                                                             obstacle_id, shape)
@@ -473,7 +528,6 @@ class DynamicObstacleFactory:
         return DynamicObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
                                obstacle_shape=shape, initial_state=initial_state, prediction=prediction,
                                initial_lanelet_ids=set(initial_lanelet_ids))
-
 
 
 class TrajectoryFactory:

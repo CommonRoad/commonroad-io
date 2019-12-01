@@ -69,7 +69,7 @@ class TestFileWriter(unittest.TestCase):
         scenario.add_objects([static_obs, lanelet_network])
 
         goal_region = GoalRegion([State(time_step=Interval(0,1),velocity=Interval(0.0,1),position=rectangle),
-                                  State(time_step=Interval(1,2),velocity=Interval(0.0,1),position=circ)],{0:[101,102],1:list([102])})
+                                  State(time_step=Interval(1,2),velocity=Interval(0.0,1),position=circ)],{0:[100,101],1:list([101])})
         planning_problem = PlanningProblem(1000, State(velocity=0.1, position=np.array([[0],[0]]),  orientation=0,
                                                        yaw_rate=0, slip_angle=0, time_step=0), goal_region)
         planning_problem_set = PlanningProblemSet(list([planning_problem]))
