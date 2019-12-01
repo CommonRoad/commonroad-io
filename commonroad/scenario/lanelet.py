@@ -6,7 +6,7 @@ import networkx as nx
 
 import commonroad.geometry.transform
 from commonroad.common.validity import *
-from commonroad.geometry.shape import Polygon, ShapeGroup, Circle
+from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape
 from commonroad.scenario.obstacle import Obstacle
 
 __author__ = "Christian Pek"
@@ -799,6 +799,30 @@ class LaneletNetwork:
                 if poly.contains_point(point):
                     mapped.append(lanelet_id)
             res.append(mapped)
+
+        return res
+
+    def find_lanelet_by_shape(self, shape: Shape) -> List[int]:
+        """
+        Finds the lanelet id of a given shape
+
+        :param shape: The shape to check
+        :return: A list of lanelet ids. If the position could not be matched to a lanelet, an empty list is returned
+        """
+        assert isinstance(shape, (Circle, Polygon, Rectangle)), '<Lanelet/find_lanelet_by_shape>: ' \
+                                                                'provided shape is not a shape! ' \
+                                                                'type = {}'.format(type(shape))
+
+        # output list
+        res = []
+
+        # look at each lanelet
+        polygons = [(l.lanelet_id, l.convert_to_polygon()) for l in self.lanelets]
+
+
+        for lanelet_id, poly in polygons:
+            if poly.shapely_object.intersects(shape.shapely_object):
+                res.append(lanelet_id)
 
         return res
 

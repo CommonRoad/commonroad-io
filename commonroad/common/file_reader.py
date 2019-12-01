@@ -40,42 +40,6 @@ def read_value_exact_or_interval(xml_node: ElementTree.Element)\
     return value
 
 
-def get_relevant_vertices_of_shape(shape: Shape) -> List[np.ndarray]:
-    """
-    Extracts boundary and center vertices of a shape.
-
-    :return: List of vertices
-    """
-
-    # vertices to check
-    vertices = []
-
-    # distinguish between shape and shapegroup and extract vertices
-    if isinstance(shape, ShapeGroup):
-        for sh in shape.shapes:
-            # distinguish between type of shape (circle has no vertices)
-            if isinstance(sh, Circle):
-                vertices.append(sh.center)
-                for ang in np.arange(0, 1, 0.1):
-                    vert = sh.radius * np.array([np.cos(ang*np.pi), np.sin(ang*np.pi)])
-                    vertices.append(vert)
-            else:
-                vertices += vertices + list(shape.vertices)
-                vertices.append(shape.center)
-    else:
-        # distinguish between type of shape (circle has no vertices)
-        if isinstance(shape, Circle):
-            vertices.append(shape.center)
-            for ang in np.arange(0, 1, 0.1):
-                vert = shape.radius * np.array([np.cos(ang*np.pi), np.sin(ang*np.pi)])
-                vertices.append(vert)
-        else:
-            vertices += vertices + list(shape.vertices)
-            vertices.append(shape.center)
-
-    return vertices
-
-
 class CommonRoadFileReader:
     """ Class which reads CommonRoad XML-files. The XML-files are composed of
     (1) a formal representation of the road network,
@@ -458,9 +422,7 @@ class StaticObstacleFactory:
         shape.orientation = 0
 
         rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
-        initial_lanelet_ids = \
-            lanelet_network.find_lanelet_by_position(get_relevant_vertices_of_shape(rotated_shape))
-        initial_lanelet_ids = [y for x in initial_lanelet_ids for y in x]   # flatten list of lists
+        initial_lanelet_ids = lanelet_network.find_lanelet_by_shape(rotated_shape)
         for l_id in initial_lanelet_ids:
             lanelet_network.find_lanelet_by_id(l_id).add_static_obstacle_to_lanelet(obstacle_id=obstacle_id)
         return StaticObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
@@ -486,9 +448,8 @@ class DynamicObstacleFactory:
         lanelet_ids_per_state = {}
 
         for state in compl_state_list:
-            rotated_shape = shape.rotate_translate_local(state.position, state.orientation)
-            lanelet_ids = lanelet_network.find_lanelet_by_position(get_relevant_vertices_of_shape(rotated_shape))
-            lanelet_ids = [y for x in lanelet_ids for y in x]  # flatten list of lists
+            rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
+            lanelet_ids = lanelet_network.find_lanelet_by_shape(rotated_shape)
             for l_id in lanelet_ids:
                 lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle_id,
                                                                                          time_step=state.time_step)
@@ -510,10 +471,7 @@ class DynamicObstacleFactory:
 
         if xml_node.find('trajectory') is not None:
             rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
-
-            initial_lanelet_ids = \
-                lanelet_network.find_lanelet_by_position(get_relevant_vertices_of_shape(rotated_shape))
-            initial_lanelet_ids = [y for x in initial_lanelet_ids for y in x]  # flatten list of lists
+            initial_lanelet_ids = lanelet_network.find_lanelet_by_shape(rotated_shape)
             for l_id in initial_lanelet_ids:
                 lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle_id,
                                                                                          time_step=initial_state.time_step)

@@ -206,6 +206,7 @@ class Circle(Shape):
         """
         self.radius: float = radius
         self.center: np.ndarray = center
+        self._shapely_circle: shapely.geometry = shapely.geometry.Point(center[0], center[1]).buffer(radius / 2)
 
     @property
     def radius(self) -> float:
@@ -235,6 +236,10 @@ class Circle(Shape):
             self._center = center
         else:
             warnings.warn('<Circle/center>: center of circle is immutable.')
+
+    @property
+    def shapely_object(self) -> shapely.geometry.Polygon:
+        return self._shapely_circle
 
     def translate_rotate(self, translation: np.ndarray, angle: float) -> 'Circle':
         """ A new circle is created by first translating and then rotating the current circle around the origin.
