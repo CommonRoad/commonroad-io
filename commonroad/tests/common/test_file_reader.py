@@ -20,7 +20,7 @@ class TestFileReader(unittest.TestCase):
         self.filename_obstacle = self.cwd_path + '/test_reading_obstacles.xml'
         self.filename_planning_problem = self.cwd_path + '/test_reading_planning_problem.xml'
 
-        rectangle = Rectangle(4.3, 8.9, center=np.array([2.5, -1.8]), orientation=1.7)
+        rectangle = Rectangle(4.3, 8.9, center=np.array([0.1, 0.5]), orientation=1.7)
         polygon = Polygon(
             np.array([np.array((0.0, 0.0)), np.array((0.0, 1.0)), np.array((1.0, 1.0)), np.array((1.0, 0.0))]))
         circ = Circle(2.0, np.array([0.0, 0.0]))

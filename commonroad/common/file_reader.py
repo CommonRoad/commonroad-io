@@ -416,10 +416,6 @@ class StaticObstacleFactory:
         obstacle_id = ObstacleFactory.read_id(xml_node)
         initial_state = ObstacleFactory.read_initial_state(xml_node.find('initialState'))
         shape = ObstacleFactory.read_shape(xml_node.find('shape'))
-        # shape orientation and position values must be zero for obstacles
-        shape.center[0] = 0
-        shape.center[1] = 0
-        shape.orientation = 0
 
         rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
         initial_lanelet_ids = lanelet_network.find_lanelet_by_shape(rotated_shape)
@@ -463,10 +459,6 @@ class DynamicObstacleFactory:
         obstacle_id = ObstacleFactory.read_id(xml_node)
         shape = ObstacleFactory.read_shape(xml_node.find('shape'))
         initial_state = ObstacleFactory.read_initial_state(xml_node.find('initialState'))
-        # shape orientation and position values must be zero for obstacles
-        shape.center[0] = 0
-        shape.center[1] = 0
-        shape.orientation = 0
         initial_lanelet_ids = []
 
         if xml_node.find('trajectory') is not None:
