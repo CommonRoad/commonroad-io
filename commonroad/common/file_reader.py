@@ -444,7 +444,7 @@ class DynamicObstacleFactory:
         lanelet_ids_per_state = {}
 
         for state in compl_state_list:
-            rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
+            rotated_shape = shape.rotate_translate_local(state.position, state.orientation)
             lanelet_ids = lanelet_network.find_lanelet_by_shape(rotated_shape)
             for l_id in lanelet_ids:
                 lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle_id,
