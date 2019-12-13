@@ -6,7 +6,7 @@ __maintainer__ = "Behtarin Ferdousi"
 __email__ = "commonroad@in.tum.de"
 __status__ = "Development"
 
-from typing import List
+from typing import List, Set
 
 from commonroad.scenario.lanelet import Lanelet
 
@@ -14,10 +14,10 @@ from commonroad.scenario.lanelet import Lanelet
 class IntersectionIncomingElement:
     """ Class for incoming element in an intersection"""
     def __init(self, incoming_id: int,
-               incoming_lanelets: List[Lanelet],
-               successors_right: List[Lanelet] = None,
-               successors_straight: List[Lanelet] = None,
-               successors_left: List[Lanelet] = None,
+               incoming_lanelets: Set[int] = None,
+               successors_right: Set[int]= None,
+               successors_straight: Set[int] = None,
+               successors_left: Set[int] = None,
                is_left_of=None
                ):
         if is_left_of is None:
@@ -39,9 +39,10 @@ class IntersectionCrossingElement:
 
 class Intersection:
     """ Class to represent intersection"""
-    def __init__(self, intersection_id: int,
+    def __init__(self, id: int,
                  incomings: List[IntersectionIncomingElement],
                  crossings: List[IntersectionCrossingElement] = None):
+        self.id = id
         self.incomings = incomings
         self.crossings = crossings
 

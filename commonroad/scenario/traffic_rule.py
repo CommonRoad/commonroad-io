@@ -61,8 +61,8 @@ class TrafficSignElement:
 class TrafficSign:
     """Class to represent traffic sign"""
     def __init__(self, id: int,
-                 position: Point,
                  traffic_sign_elements: List[TrafficSignElement],
+                 position: Point = None,
                  virtual: bool = False):
         self.id = id
         self.position = position
@@ -85,7 +85,7 @@ class TrafficLightCycleElement:
 class TrafficLight:
     """ Class to represent Traffic Light"""
     def __init__(self, id: int,
-                 cycle: TrafficSignElement,
+                 cycle: TrafficLightCycleElement,
                  offset: int = 0,
                  position: Point = None,
                  direction: Direction = Direction.FORWARD,

@@ -697,15 +697,15 @@ class LaneletNetwork:
 
     @property
     def intersections(self):
-        return List(self._intersections.values())
+        return list(self._intersections.values())
 
     @property
     def traffic_signs(self):
-        return List(self._traffic_signs.values())
+        return list(self._traffic_signs.values())
 
     @property
     def traffic_lights(self):
-        return List(self._traffic_lights.values())
+        return list(self._traffic_lights.values())
 
     @classmethod
     def create_from_lanelet_list(cls, lanelets: list):
