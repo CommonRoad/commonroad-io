@@ -79,8 +79,11 @@ def create_default_draw_params() -> dict:
                                 'rectangle': basic_shape_parameters_dynamic,
                                 'circle': basic_shape_parameters_dynamic
                             },
-                             'trajectory': {'facecolor': '#000000',
-                                            'marker_size': 0.13,
+                             'trajectory': {'draw_trajectory':True,
+                                            'facecolor': '#000000',
+                                            'draw_continuous': False,
+                                            'unique_colors': False,
+                                            'line_width': 0.17,
                                             'z_order': 24}
                         },
                         'static_obstacle': {
@@ -215,8 +218,13 @@ def draw_trajectories(obj: Union[List[Trajectory],Trajectory], plot_limits: Unio
     try:
         facecolor = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,('trajectory', 'facecolor'))
-        marker_size = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-            draw_params, call_stack, ('trajectory', 'marker_size'))
+        unique_colors = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('trajectory', 'unique_colors'))
+        line_width = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack, ('trajectory', 'line_width'))
+        draw_continuous = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack, ('trajectory', 'draw_continuous'))
         z_order = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack, ('trajectory', 'z_order'))
         time_begin = commonroad.visualization.draw_dispatch_cr._retrieve_value(
@@ -230,31 +238,69 @@ def draw_trajectories(obj: Union[List[Trajectory],Trajectory], plot_limits: Unio
     if time_begin==time_end:
         return []
 
+    # select unique colors from colormap for each lanelet's center_line
+    colormap = None
+    if unique_colors is True:
+        norm = mpl.colors.Normalize(vmin=0, vmax=len(obj))
+        colormap = cm.ScalarMappable(norm=norm, cmap=cm.brg)
+
     patchlist = list()
-    coordinates =list()
+    traj_list =list()
 
     for traj in obj:
+        traj_points = list()
         for time_step in range(time_begin, time_end):
             tmp = traj.state_at_time_step(time_step)
             if tmp is not None:
-                coordinates.append(tmp.position)
+                traj_points.append(tmp.position)
             else:
                 if time_begin > traj.initial_time_step:
                     break
+        traj_list.append(traj_points)
 
-    if len(coordinates) > 0:
-        coordinates = np.array(coordinates)
-        collection = collections.EllipseCollection(np.ones([coordinates.shape[0],1]) * marker_size,
-                                                   np.ones([coordinates.shape[0],1]) * marker_size,
-                                                   np.zeros([coordinates.shape[0],1]),
-                                                   offsets=coordinates,
-                                                   units='xy',
-                                                   zorder=z_order, transOffset=ax.transData, facecolor=facecolor)
-        ax.add_collection(collection)
+    if len(traj_list) > 0:
+        if draw_continuous is True:
+            paths = []
+            for traj in traj_list:
+                paths.append(Path(traj, closed=False))
+            if unique_colors is True:
+                collection = []
+                for i_p, path in enumerate(paths):
+                    facecolor = colormap.to_rgba(i_p)
+                    collection.append(collections.PathCollection([path], color=facecolor, lw=line_width, zorder=z_order,
+                                               facecolor='none'))
+                    ax.add_collection(collection[-1])
+            else:
+                collection = [collections.PathCollection(paths, color=facecolor, lw=line_width, zorder=z_order, facecolor='none')]
+        else:
+            if unique_colors is True:
+                collection = []
+                for i_p, traj in enumerate(traj_list):
+                    facecolor = colormap.to_rgba(i_p)
+                    traj = np.array(traj)
+                    collection.append(collections.EllipseCollection(np.ones([traj.shape[0],1]) * line_width,
+                                                           np.ones([traj.shape[0],1]) * line_width,
+                                                           np.zeros([traj.shape[0],1]),
+                                                           offsets=traj,
+                                                           units='xy',
+                                                           linewidths=0,
+                                                       zorder=z_order, transOffset=ax.transData, facecolor=facecolor))
+                    ax.add_collection(collection[-1])
+            else:
+                traj_list = np.array(np.concatenate(traj_list))
+                collection = [collections.EllipseCollection(np.ones([traj_list.shape[0],1]) * line_width,
+                                                           np.ones([traj_list.shape[0],1]) * line_width,
+                                                           np.zeros([traj_list.shape[0],1]),
+                                                           offsets=traj_list,
+                                                           units='xy',
+                                                           linewidths=0,
+                                                       zorder=z_order, transOffset=ax.transData, facecolor=facecolor)]
+        if draw_continuous is False:
+            ax.add_collection(collection[0])
     else:
         collection = None
 
-    return [collection]
+    return collection
 
 
 def draw_lanelet_network(obj: LaneletNetwork , plot_limits: Union[List[Union[int,float]], None],
@@ -447,7 +493,7 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
             ax.add_collection(collections.PathCollection(direction_list, color=center_bound_color,
                                       lw=0.5, zorder=10.1, antialiased=antialiased))
 
-    collection_tmp = collections.PolyCollection(vertices_fill, transOffset=ax.transData, facecolor=facecolor, edgecolor='none', antialiaseds=antialiased)
+    collection_tmp = collections.PolyCollection(vertices_fill, transOffset=ax.transData, facecolor=facecolor, edgecolor='none', antialiased=antialiased)
     ax.add_collection(collection_tmp)
 
     if draw_border_vertices:
@@ -494,7 +540,7 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
 
         # draw occupancies
         if (draw_occupancies == 1 or
-                (draw_occupancies == 0 and isinstance(o.prediction, commonroad.prediction.prediction.SetBasedPrediction))):
+                (draw_occupancies == 0 and type(o.prediction) == commonroad.prediction.prediction.SetBasedPrediction)):
             if draw_shape:
                 # occupancy already plotted
                 time_begin_occ = time_begin + 1
@@ -507,7 +553,7 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
                     occupancy_list.append(tmp)
 
         # get trajectory
-        if isinstance(o.prediction, commonroad.prediction.prediction.TrajectoryPrediction):
+        if draw_trajectory and type(o.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:
             trajectory = o.prediction.trajectory
 
         # get shape
@@ -519,7 +565,7 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
                 shape = occ.shape
 
         # draw car icon
-        if draw_icon and isinstance(o.prediction, commonroad.prediction.prediction.TrajectoryPrediction):
+        if draw_icon and type(o.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:
             if time_begin == 0:
                 inital_state = o.initial_state
             else:
@@ -534,7 +580,7 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
                 handles.setdefault(DynamicObstacle, []).append(
                     ax.text(initial_position[0] + 0.5, initial_position[1], str(o.obstacle_id),
                         clip_on=True, zorder=1000))
-            elif trajectory:
+            elif type(o.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:
                 begin_state = o.prediction.trajectory.state_at_time_step(time_begin)
                 if begin_state is not None:
                     initial_position = o.prediction.trajectory.state_at_time_step(time_begin).position
@@ -566,6 +612,9 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
         draw_occupancies = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('dynamic_obstacle', 'occupancy', 'draw_occupancies'))
+        draw_trajectory = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('dynamic_obstacle', 'trajectory', 'draw_trajectory'))
     except KeyError:
         warnings.warn("Cannot find stylesheet for dynamic_obstacle. Called through:")
         print(call_stack)
@@ -844,7 +893,7 @@ def draw_rectangle(obj: Union[Rectangle,List[Rectangle]], plot_limits: Union[Lis
         vertices.append(np.array(rect.vertices))
 
     collection = collections.PolyCollection(vertices, closed=True, zorder=zorder, transOffset=ax.transData,
-                                            facecolor=facecolor, edgecolor=edgecolor, alpha=opacity, antialiaseds=antialiased, linewidth=linewidth)
+                                            facecolor=facecolor, edgecolor=edgecolor, alpha=opacity, antialiased=antialiased, linewidth=linewidth)
     ax.add_collection(collection)
 
     return [collection]

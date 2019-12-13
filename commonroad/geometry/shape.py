@@ -1,3 +1,4 @@
+import itertools
 import warnings
 import abc
 import numpy as np
@@ -286,6 +287,13 @@ class Polygon(Shape):
         """
         self.vertices: np.ndarray = vertices
         self._shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self._vertices)
+        perimeter = self._shapely_polygon.exterior.coords
+        new_coords = []
+        two_tours = itertools.chain(perimeter, perimeter)
+        new_coords.append(next(two_tours))
+        while len(new_coords) < len(perimeter):
+            new_coords.append(next(two_tours))
+        self._shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(new_coords)
 
     @property
     def vertices(self) -> np.ndarray:

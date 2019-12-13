@@ -129,10 +129,10 @@ class CommonRoadFileWriter:
         self,
         scenario: Scenario,
         planning_problem_set: PlanningProblemSet,
-        author: str,
-        affiliation: str,
-        source: str,
-        tags: str,
+        author: str = None,
+        affiliation: str = None,
+        source: str = None,
+        tags: str = None,
         decimal_precision: int = 8,
     ):
         """
@@ -147,13 +147,18 @@ class CommonRoadFileWriter:
                 required maneuver etc., see commonroad.in.tum.de for full list))
         :param decimal_precision: number of decimal places used when writing float values
         """
+        assert not (author is None and scenario.author is None)
+        assert not (affiliation is None and scenario.affiliation is None)
+        assert not (source is None and scenario.source is None)
+        assert not (tags is None and scenario.tags is None)
+
         self.scenario = scenario
         self.planning_problem_set = planning_problem_set
         self._root_node = etree.Element('commonRoad')
-        self.author = author
-        self.affiliation = affiliation
-        self.source = source
-        self.tags = tags
+        self.author = author if author is not None else scenario.author
+        self.affiliation = affiliation if affiliation is not None else scenario.affiliation
+        self.source = source if source is not None else scenario.source
+        self.tags = tags if tags is not None else scenario.tags
 
         # set decimal precision
         ctx.prec = decimal_precision
