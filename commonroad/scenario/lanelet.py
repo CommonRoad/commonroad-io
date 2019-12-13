@@ -128,6 +128,9 @@ class Lanelet:
         self._dynamic_obstacles_on_lanelet = {}
         self._static_obstacles_on_lanelet = set()
 
+        self._traffic_signs = set()
+        self._traffic_lights = set()
+
     @property
     def distance(self) -> np.ndarray:
         return self._distance
@@ -339,6 +342,28 @@ class Lanelet:
             '<Lanelet/obstacles_on_lanelet>: provided list of ids is not a ' \
             'set! type = {}'.format(type(obstacle_ids))
         self._static_obstacles_on_lanelet = obstacle_ids
+
+    @property
+    def traffic_signs(self) -> Set[int]:
+        return self._traffic_signs
+
+    @traffic_signs.setter
+    def traffic_signs(self, traffic_sign_ids: Set[int]):
+        assert isinstance(traffic_sign_ids, set), \
+            '<Lanelet/traffic_signs>: provided list of ids is not a ' \
+            'set! type = {}'.format(type(traffic_sign_ids))
+        self._traffic_signs = traffic_sign_ids
+
+    @property
+    def traffic_lights(self) -> Set[int]:
+        return self._traffic_lights
+
+    @traffic_lights.setter
+    def traffic_lights(self, traffic_light_ids: Set[int]):
+        assert isinstance(traffic_light_ids, set), \
+            '<Lanelet/traffic_lights>: provided list of ids is not a ' \
+            'set! type = {}'.format(type(traffic_light_ids))
+        self._traffic_signs = traffic_light_ids
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """
@@ -658,6 +683,9 @@ class LaneletNetwork:
 
     def __init__(self):
         self._lanelets: Dict = {}
+        self._intersections: Dict = {}
+        self._traffic_signs: Dict = {}
+        self._traffic_lights: Dict = {}
 
     @property
     def lanelets(self) -> List[Lanelet]:
@@ -666,6 +694,18 @@ class LaneletNetwork:
     @lanelets.setter
     def lanelets(self, lanelets: list):
         warnings.warn('<LaneletNetwork/lanelets>: lanelets of network are immutable')
+
+    @property
+    def intersections(self):
+        return List(self._intersections.values())
+
+    @property
+    def traffic_signs(self):
+        return List(self._traffic_signs.values())
+
+    @property
+    def traffic_lights(self):
+        return List(self._traffic_lights.values())
 
     @classmethod
     def create_from_lanelet_list(cls, lanelets: list):
