@@ -482,15 +482,16 @@ class LaneletXMLNode:
                 adjacent_right.set('drivingDir', 'opposite')
             lanelet_node.append(adjacent_right)
 
-        if lanelet.speed_limit:
-            speed_limit = etree.Element('speedLimit')
-            if np.isinf(lanelet.speed_limit):
-                return lanelet_node
-                # speed_limit.text = str('INF')
-            else:
-                speed_limit.text = str(lanelet.speed_limit)
-
-            lanelet_node.append(speed_limit)
+        if lanelet.traffic_signs:
+            for traffic_sign in lanelet.traffic_signs:
+                traffic_sign_node = etree.Element('trafficSignRef')
+                traffic_sign_node.set('ref', str(traffic_sign))
+                lanelet_node.append(traffic_sign_node)
+        if lanelet.traffic_lights:
+            for traffic_light in lanelet.traffic_lights:
+                traffic_light_node = etree.Element('trafficLightRef')
+                traffic_light_node.set('ref', str(traffic_light))
+                lanelet_node.append(traffic_light_node)
 
         return lanelet_node
 
@@ -552,11 +553,11 @@ class ObstacleXMLNode:
     def create_obstacle_node_header(
         cls, obstacle_id: int, obstacle_role: ObstacleRole, obstacle_type: ObstacleType
     ):
-        obstacle_node = etree.Element('obstacle')
+        obstacle_node = etree.Element(cls._obstacle_role_enum_to_string(obstacle_role)+'Obstacle')
         obstacle_node.set('id', str(obstacle_id))
-        role_node = etree.Element('role')
-        role_node.text = cls._obstacle_role_enum_to_string(obstacle_role)
-        obstacle_node.append(role_node)
+        # role_node = etree.Element('role')
+        # role_node.text = cls._obstacle_role_enum_to_string(obstacle_role)
+        # obstacle_node.append(role_node)
         type_node = etree.Element('type')
         type_node.text = cls._obstacle_type_enum_to_string(obstacle_type)
         obstacle_node.append(type_node)
@@ -1123,7 +1124,7 @@ class TrafficSignXMLNode:
     @classmethod
     def create_node(cls, traffic_sign: TrafficSign) -> etree.Element:
         traffic_sign_node = etree.Element('trafficSign')
-        traffic_sign_node.set('id', traffic_sign.id)
+        traffic_sign_node.set('id', str(traffic_sign.id))
         for element in traffic_sign.traffic_sign_elements:
             element_node = etree.Element('trafficSignElement')
             sign_id_node = etree.Element('trafficSignID')
@@ -1143,8 +1144,9 @@ class TrafficSignXMLNode:
 
         if traffic_sign.virtual is not None:
             virtual_node = etree.Element('virtual')
-            virtual_node.text = str(traffic_sign.virtual)
+            virtual_node.text = str(traffic_sign.virtual).lower()
             traffic_sign_node.append(virtual_node)
+        return traffic_sign_node
 
 class TrafficLightXMLNode:
     @classmethod
@@ -1168,7 +1170,7 @@ class TrafficLightXMLNode:
             traffic_light_node.append(position_node)
         if traffic_light.active is not None:
             active_node = etree.Element('active')
-            active_node.text = str(traffic_light.active)
+            active_node.text = str(traffic_light.active).lower()
             traffic_light_node.append(active_node)
         return traffic_light_node
 

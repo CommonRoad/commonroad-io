@@ -51,11 +51,11 @@ class TestFileReader(unittest.TestCase):
                                        prediction=traj_pred, obstacle_shape=rectangle)
         lanelet1 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                            np.array([[0.0, 2], [1.0, 2], [2, 2]]), 100,
-                           [101], [101], 101, False, 101, True, 10.0,
+                           [101], [101], 101, False, 101, True,
                            LineMarking.DASHED, LineMarking.DASHED)
         lanelet2 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                            np.array([[0.0, 2], [1.0, 2], [2, 2]]), 101,
-                           [100], [100], 100, False, 100, True, 10.0,
+                           [100], [100], 100, False, 100, True,
                            LineMarking.DASHED, LineMarking.DASHED)
 
         self.lanelet_network = LaneletNetwork().create_from_lanelet_list(list([lanelet1, lanelet2]))
@@ -81,7 +81,7 @@ class TestFileReader(unittest.TestCase):
         exp_lanelet_zero_adj_right_same_direction = self.scenario.lanelet_network.lanelets[0].adj_right_same_direction
         exp_lanelet_zero_predecessor = self.scenario.lanelet_network.lanelets[0].predecessor
         exp_lanelet_zero_succesor = self.scenario.lanelet_network.lanelets[0].successor
-        exp_lanelet_zero_speed_limit = self.scenario.lanelet_network.lanelets[0].speed_limit
+        #exp_lanelet_zero_speed_limit = self.scenario.lanelet_network.lanelets[0].speed_limit
 
         np.testing.assert_array_equal(exp_lanelet_zero_center_vertices,
                                       lanelets[0].lanelet_network.lanelets[0].center_vertices)
@@ -97,7 +97,7 @@ class TestFileReader(unittest.TestCase):
                          lanelets[0].lanelet_network.lanelets[0].adj_right_same_direction)
         self.assertEqual(exp_lanelet_zero_predecessor, lanelets[0].lanelet_network.lanelets[0].predecessor)
         self.assertEqual(exp_lanelet_zero_succesor, lanelets[0].lanelet_network.lanelets[0].successor)
-        self.assertEqual(exp_lanelet_zero_speed_limit, lanelets[0].lanelet_network.lanelets[0].speed_limit)
+        #self.assertEqual(exp_lanelet_zero_speed_limit, lanelets[0].lanelet_network.lanelets[0].speed_limit)
 
     def test_open_obstacles(self):
         obstacles = CommonRoadFileReader(self.filename_obstacle).open()
@@ -215,7 +215,7 @@ class TestFileReader(unittest.TestCase):
         exp_lanelet_zero_adj_right_same_direction = self.scenario.lanelet_network.lanelets[0].adj_right_same_direction
         exp_lanelet_zero_predecessor = self.scenario.lanelet_network.lanelets[0].predecessor
         exp_lanelet_zero_succesor = self.scenario.lanelet_network.lanelets[0].successor
-        exp_lanelet_zero_speed_limit = self.scenario.lanelet_network.lanelets[0].speed_limit
+        #exp_lanelet_zero_speed_limit = self.scenario.lanelet_network.lanelets[0].speed_limit
 
         exp_static_obstacles_on_lanelet_zero = {self.scenario.static_obstacles[0].obstacle_id}
         exp_static_obstacles_on_lanelet_one = {self.scenario.static_obstacles[0].obstacle_id}
@@ -280,7 +280,7 @@ class TestFileReader(unittest.TestCase):
         self.assertEqual(exp_lanelet_zero_adj_right_same_direction, xml_file[0].lanelet_network.lanelets[0].adj_right_same_direction)
         self.assertEqual(exp_lanelet_zero_predecessor, xml_file[0].lanelet_network.lanelets[0].predecessor)
         self.assertEqual(exp_lanelet_zero_succesor, xml_file[0].lanelet_network.lanelets[0].successor)
-        self.assertEqual(exp_lanelet_zero_speed_limit, xml_file[0].lanelet_network.lanelets[0].speed_limit)
+        #self.assertEqual(exp_lanelet_zero_speed_limit, xml_file[0].lanelet_network.lanelets[0].speed_limit)
 
         self.assertSetEqual(exp_static_obstacles_on_lanelet_zero,
                             xml_file[0].lanelet_network.lanelets[0].static_obstacles_on_lanelet)

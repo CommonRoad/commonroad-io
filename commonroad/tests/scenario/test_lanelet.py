@@ -4,6 +4,7 @@ from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork
 from commonroad.geometry.shape import Polygon, Rectangle
 from commonroad.prediction.prediction import Trajectory, TrajectoryPrediction
 from commonroad.scenario.obstacle import State, DynamicObstacle, StaticObstacle, ObstacleType
+from commonroad.scenario.traffic_rule import TrafficSignElement, TrafficSign, TrafficSignID
 
 
 class TestLanelet(unittest.TestCase):
@@ -18,13 +19,14 @@ class TestLanelet(unittest.TestCase):
         adjacent_right = 4
         adjacent_right_same_dir = True
         adjacent_left_same_dir = False
-        speed_limit = 15
         line_marking_right = LineMarking.SOLID
         line_marking_left = LineMarking.DASHED
-
+        traffic_sign_max_speed = TrafficSignElement(TrafficSignID.MAXSPEED.value, [15])
+        traffic_sign = TrafficSign(1, [traffic_sign_max_speed])
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
-                          adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir, speed_limit,
-                          line_marking_left, line_marking_right)
+                          adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir,
+                          line_marking_left, line_marking_right, set([traffic_sign.id]))
+
 
         s1 = np.sqrt(1.25)
         s2 = np.sqrt(2.0)
@@ -44,6 +46,7 @@ class TestLanelet(unittest.TestCase):
         self.assertEqual(lanelet.adj_right_same_direction, adjacent_right_same_dir)
         self.assertEqual(lanelet.line_marking_left_vertices, line_marking_left)
         self.assertEqual(lanelet.line_marking_right_vertices, line_marking_right)
+        self.assertSetEqual(lanelet.traffic_signs, set([traffic_sign.id]))
 
     def test_translate_rotate(self):
         right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])

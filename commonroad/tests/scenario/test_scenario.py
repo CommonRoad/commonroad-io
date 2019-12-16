@@ -4,6 +4,7 @@ from commonroad.prediction.prediction import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario
+from commonroad.scenario.traffic_rule import TrafficSign, TrafficSignElement, TrafficSignID
 from commonroad.scenario.trajectory import *
 from commonroad.common.util import Interval
 
@@ -24,17 +25,19 @@ class TestScenario(unittest.TestCase):
 
         self.lanelet1 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                            np.array([[0.0, 2], [1.0, 2], [2, 2]]), 100,
-                           [101], [101], 101, False, 101, True, 10.0,
-                           LineMarking.DASHED, LineMarking.DASHED)
+                           [101], [101], 101, False, 101, True,
+                           LineMarking.DASHED, LineMarking.DASHED, set([1]))
         self.lanelet1.add_static_obstacle_to_lanelet(0)
         self.lanelet2 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                            np.array([[0.0, 2], [1.0, 2], [2, 2]]), 101,
-                           [100], [100], 100, False, 100, True, 10.0,
-                           LineMarking.DASHED, LineMarking.DASHED)
+                           [100], [100], 100, False, 100, True,
+                           LineMarking.DASHED, LineMarking.DASHED, set([1]))
         self.lanelet1.add_dynamic_obstacle_to_lanelet(2, 0)
         self.lanelet1.add_dynamic_obstacle_to_lanelet(2, 1)
         self.lanelet_network = LaneletNetwork().create_from_lanelet_list(list([self.lanelet1, self.lanelet2]))
-
+        traffic_sign_max_speed = TrafficSignElement(TrafficSignID.MAXSPEED.value, [10.0])
+        traffic_sign = TrafficSign(1, [traffic_sign_max_speed])
+        self.lanelet_network.add_traffic_sign(traffic_sign)
         self.set_pred = SetBasedPrediction(0, occupancy_list)
 
         states = list()
@@ -286,12 +289,12 @@ class TestScenario(unittest.TestCase):
                                      initial_lanelet_ids={100, 101})
         lanelet1 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                                 np.array([[0.0, 2], [1.0, 2], [2, 2]]), 100,
-                                [101], [101], 101, False, 101, True, 10.0,
+                                [101], [101], 101, False, 101, True,
                                 LineMarking.DASHED, LineMarking.DASHED)
 
         lanelet2 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                                 np.array([[0.0, 2], [1.0, 2], [2, 2]]), 101,
-                                [100], [100], 100, False, 100, True, 10.0,
+                                [100], [100], 100, False, 100, True,
                                 LineMarking.DASHED, LineMarking.DASHED)
 
         self.scenario.add_objects(lanelet1)
@@ -314,7 +317,7 @@ class TestScenario(unittest.TestCase):
     def test_mark_object_id_as_used(self):
         lanelet1 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                            np.array([[0.0, 2], [1.0, 2], [2, 2]]), 100,
-                           [101], [101], 101, False, 101, True, 10.0,
+                           [101], [101], 101, False, 101, True,
                            LineMarking.DASHED, LineMarking.DASHED)
 
         self.scenario.add_objects(self.static_obs)

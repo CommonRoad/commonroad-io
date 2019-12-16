@@ -3,6 +3,7 @@ import numpy as np
 from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.geometry.shape import Rectangle
+from commonroad.scenario.traffic_rule import TrafficSignElement, TrafficSign, TrafficSignID
 from commonroad.scenario.trajectory import State
 
 __author__ = "Moritz Untersperger"
@@ -27,16 +28,19 @@ class TestLaneletNetwork(unittest.TestCase):
         self.adjacent_right = 4
         self.adjacent_right_same_dir = True
         self.adjacent_left_same_dir = False
-        self.speed_limit = 15
         self.line_marking_right = LineMarking.SOLID
         self.line_marking_left = LineMarking.DASHED
+        traffic_sign_max_speed = TrafficSignElement(TrafficSignID.MAXSPEED.value, [15])
+        self.traffic_sign = TrafficSign(1, [traffic_sign_max_speed])
+
 
         self.lanelet = Lanelet(self.left_vertices, self.center_vertices, self.right_vertices, self.lanelet_id, self.predecessor, self.successor,
-                               self.adjacent_left, self.adjacent_left_same_dir, self.adjacent_right, self.adjacent_right_same_dir, self.speed_limit,
-                               self.line_marking_left, self.line_marking_right)
+                               self.adjacent_left, self.adjacent_left_same_dir, self.adjacent_right, self.adjacent_right_same_dir,
+                               self.line_marking_left, self.line_marking_right, set([self.traffic_sign.id]))
 
         self.lanelet_network = LaneletNetwork()
         self.lanelet_network.add_lanelet(self.lanelet)
+        self.lanelet_network.add_traffic_sign(self.traffic_sign)
 
     def test_initialize_lanelets(self):
         s1 = np.sqrt(1.25)
