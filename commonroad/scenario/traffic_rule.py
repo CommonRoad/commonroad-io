@@ -88,7 +88,7 @@ class TrafficLightCycleElement:
 class TrafficLight:
     """ Class to represent Traffic Light"""
     def __init__(self, id: int,
-                 cycle: TrafficLightCycleElement,
+                 cycle: List[TrafficLightCycleElement],
                  offset: int = 0,
                  position: Point = None,
                  direction: Direction = Direction.ALL,
