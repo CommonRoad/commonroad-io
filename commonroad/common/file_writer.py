@@ -1090,13 +1090,13 @@ class IntersectionXMLNode:
 
             if incoming.successors_straight:
                 for successor_right in incoming.successors_right:
-                    successor_right_node = etree.Element('successorRight')
+                    successor_right_node = etree.Element('successorsRight')
                     successor_right_node.set('ref', str(successor_right))
                     incoming_node.append(successor_right_node)
 
             if incoming.successors_straight:
                 for successor_straight in incoming.successors_straight:
-                    successor_straight_node = etree.Element('successorStraight')
+                    successor_straight_node = etree.Element('successorsStraight')
                     successor_straight_node.set('ref', str(successor_straight))
                     incoming_node.append(successor_straight_node)
 
