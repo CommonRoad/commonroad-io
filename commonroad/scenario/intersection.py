@@ -18,10 +18,8 @@ class IntersectionIncomingElement:
                successors_right: Set[int]= None,
                successors_straight: Set[int] = None,
                successors_left: Set[int] = None,
-               is_left_of=None
+               is_left_of: Set[int] = None
                ):
-        if is_left_of is None:
-            is_left_of = []
         self.incoming_id = incoming_id
         self.incoming_lanelets = incoming_lanelets
         self.successors_right = successors_right
