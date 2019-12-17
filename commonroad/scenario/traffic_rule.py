@@ -7,7 +7,7 @@ __email__ = "commonroad@in.tum.de"
 __status__ = "Development"
 
 import enum
-from typing import List, Union
+from typing import List, Union, Set
 
 from shapely.geometry import Point
 
@@ -64,7 +64,7 @@ class TrafficSignElement:
 class TrafficSign:
     """Class to represent traffic sign"""
     def __init__(self, id: int,
-                 traffic_sign_elements: List[TrafficSignElement],
+                 traffic_sign_elements: Set[TrafficSignElement],
                  position: Point = None,
                  virtual: bool = False):
         self.id = id
