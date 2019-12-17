@@ -1088,26 +1088,30 @@ class IntersectionXMLNode:
                 incoming_lanelet_node.set('ref', str(incoming_lanelet))
                 incoming_node.append(incoming_lanelet_node)
 
-            for successor_right in incoming.successors_right:
-               successor_right_node = etree.Element('successorRight')
-               successor_right_node.set('ref', str(successor_right))
-               incoming_node.append(successor_right_node)
+            if incoming.successors_straight:
+                for successor_right in incoming.successors_right:
+                    successor_right_node = etree.Element('successorRight')
+                    successor_right_node.set('ref', str(successor_right))
+                    incoming_node.append(successor_right_node)
 
-            for successor_straight in incoming.successors_straight:
-                successor_straight_node = etree.Element('successorStraight')
-                successor_straight_node.set('ref', str(successor_straight))
-                incoming_node.append(successor_straight_node)
+            if incoming.successors_straight:
+                for successor_straight in incoming.successors_straight:
+                    successor_straight_node = etree.Element('successorStraight')
+                    successor_straight_node.set('ref', str(successor_straight))
+                    incoming_node.append(successor_straight_node)
 
-            for successor_left in incoming.successors_left:
-                successor_left_node = etree.Element('successorsLeft')
-                successor_left_node.set('ref', str(successor_left))
-                incoming_node.append(successor_left_node)
+            if incoming.successors_left:
+                for successor_left in incoming.successors_left:
+                    successor_left_node = etree.Element('successorsLeft')
+                    successor_left_node.set('ref', str(successor_left))
+                    incoming_node.append(successor_left_node)
 
-            for is_left_of in incoming.is_left_of:
-                is_left_of_node = etree.Element('isLeftOf')
-                is_left_of_node.set('ref', str(is_left_of))
-                incoming_node.append(is_left_of_node)
-            intersection_node.append(incoming_node)
+            if incoming.is_left_of:
+                for is_left_of in incoming.is_left_of:
+                    is_left_of_node = etree.Element('isLeftOf')
+                    is_left_of_node.set('ref', str(is_left_of))
+                    incoming_node.append(is_left_of_node)
+                intersection_node.append(incoming_node)
 
         for crossing in intersection.crossings:
             crossing_node = etree.Element('crossing')
