@@ -220,7 +220,6 @@ class LaneletFactory:
             predecessor=predecessors, successor=successors,
             adjacent_left=adjacent_left, adjacent_left_same_direction=adjacent_left_same_direction,
             adjacent_right=adjacent_right, adjacent_right_same_direction=adjacent_right_same_direction,
-            speed_limit=speed_limit,
             line_marking_left_vertices=line_marking_left_vertices,
             line_marking_right_vertices=line_marking_right_vertices)
 

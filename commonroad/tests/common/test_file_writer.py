@@ -10,6 +10,7 @@ from commonroad.prediction.prediction import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario
+from commonroad.scenario.traffic_rule import TrafficSign, TrafficSignElement, TrafficSignID
 from commonroad.scenario.trajectory import *
 
 
@@ -49,7 +50,7 @@ class TestFileWriter(unittest.TestCase):
 
         traj_pred = TrajectoryPrediction(trajectory, rectangle)
 
-        static_obs = StaticObstacle(0,ObstacleType(0), obstacle_shape=circ, initial_state=init_state)
+        static_obs = StaticObstacle(3,ObstacleType(0), obstacle_shape=circ, initial_state=init_state)
         dyn_set_obs = DynamicObstacle(1,ObstacleType(0),
                                       initial_state=traj_pred.trajectory.state_at_time_step(0),
                                       prediction=set_pred, obstacle_shape=rectangle)
@@ -57,14 +58,17 @@ class TestFileWriter(unittest.TestCase):
                                        initial_state=traj_pred.trajectory.state_at_time_step(0),
                                        prediction=traj_pred, obstacle_shape=rectangle)
         lanelet1 = Lanelet(np.array([[12345.12, 0.0], [1.0,0.0],[2,0]]), np.array([[0.0, 1],[1.0,1],[2,1]]), np.array([[0.0, 2], [1.0,2],[2,2]]), 100,
-                [101], [101], 101, False, 101, True, 10.0,
-                          LineMarking.DASHED, LineMarking.SOLID)
+                [101], [101], 101, False, 101, True,
+                          LineMarking.DASHED, LineMarking.SOLID, [1])
         lanelet2 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                           np.array([[0.0, 2], [1.0, 2], [2, 2]]), 101,
-                          [100], [100], 100, False, 100, True, 10.0,
-                          LineMarking.SOLID, LineMarking.DASHED)
+                          [100], [100], 100, False, 100, True,
+                          LineMarking.SOLID, LineMarking.DASHED, [1])
+        traffic_sign_max_speed = TrafficSignElement(TrafficSignID.MAXSPEED.value, [10.0])
+        traffic_sign = TrafficSign(1, [traffic_sign_max_speed])
 
         lanelet_network = LaneletNetwork().create_from_lanelet_list(list([lanelet1, lanelet2]))
+        lanelet_network.add_traffic_sign(traffic_sign)
         scenario = Scenario(0.1,'ZAM_test_0-0-1')
         scenario.add_objects([static_obs, lanelet_network])
 
@@ -73,12 +77,10 @@ class TestFileWriter(unittest.TestCase):
         planning_problem = PlanningProblem(1000, State(velocity=0.1, position=np.array([[0],[0]]),  orientation=0,
                                                        yaw_rate=0, slip_angle=0, time_step=0), goal_region)
         planning_problem_set = PlanningProblemSet(list([planning_problem]))
-
         filename = self.out_path + '/test_writing_shapes.xml'
         CommonRoadFileWriter(scenario,planning_problem_set, 'PrinceOfZAM','TU Munich','unittest','original').\
             write_to_file(filename=filename,overwrite_existing_file=OverwriteExistingFile.ALWAYS)
         assert self.validate_with_xsd(self.out_path + '/test_writing_shapes.xml')
-
         # test overwriting
         CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'unittest', 'should_not_appear'). \
             write_to_file(filename=filename,

@@ -17,6 +17,8 @@ __maintainer__ = "Christian Pek"
 __email__ = "Christian.Pek@tum.de"
 __status__ = "released"
 
+from commonroad.scenario.traffic_rule import TrafficSign, TrafficLight
+
 
 class LineMarking(enum.Enum):
     """
@@ -40,8 +42,11 @@ class Lanelet:
                  predecessor=None, successor=None,
                  adjacent_left=None, adjacent_left_same_direction=None,
                  adjacent_right=None, adjacent_right_same_direction=None,
-                 speed_limit=np.infty, line_marking_left_vertices=None,
-                 line_marking_right_vertices=None):
+                 line_marking_left_vertices=None,
+                 line_marking_right_vertices=None,
+                 traffic_sign=None,
+                 traffic_light=None,
+                 ):
         """
         Constructor of a Lanelet object
         :param left_vertices: The vertices of the left boundary of the Lanelet described as a
@@ -59,9 +64,10 @@ class Lanelet:
         :param adjacent_right: The adjacent right lanelet (None if not existing)
         :param adjacent_right_same_direction: True if the adjacent right lanelet has the same driving direction,
         false otherwise (None if no right adjacent lanelet exists)
-        :param speed_limit: The speed limit of the lanelet
         :param line_marking_left_vertices: The type of line marking of the left boundary
         :param line_marking_right_vertices: The type of line marking of the right boundary
+        :param traffic_sign: Traffic signs to be applied
+        :param traffic_light: Traffic lights to follow
         """
 
         # Set required properties
@@ -111,10 +117,6 @@ class Lanelet:
             self.adj_right = adjacent_right
             self.adj_right_same_direction = adjacent_right_same_direction
 
-        # Set speed limit
-        self._speed_limit = None
-        self.speed_limit = speed_limit
-
         self._distance = [0.0]
         for i in range(1, len(self.center_vertices)):
             self._distance.append(self._distance[i - 1] +
@@ -127,6 +129,16 @@ class Lanelet:
 
         self._dynamic_obstacles_on_lanelet = {}
         self._static_obstacles_on_lanelet = set()
+
+        # Set Traffic Rules
+        if traffic_sign is None:
+            self._traffic_signs = set()
+        else:
+            self._traffic_signs = traffic_sign
+        if traffic_light is None:
+            self._traffic_lights = set()
+        else:
+            self._traffic_lights = traffic_light
 
     @property
     def distance(self) -> np.ndarray:
@@ -148,20 +160,6 @@ class Lanelet:
         else:
             warnings.warn('<Lanelet/lanelet_id>: lanelet_id of lanelet is immutable')
 
-    @property
-    def speed_limit(self) -> float:
-        return self._speed_limit
-
-    @speed_limit.setter
-    def speed_limit(self, limit: float):
-        if self._speed_limit is None:
-            assert is_valid_velocity(limit, 0.,
-                                     None), '<Lanelet/speed_limit>: provided speed_limit is not valid! ' \
-                                            'limit = {}'.format(
-                limit)
-            self._speed_limit = limit
-        else:
-            warnings.warn('<Lanelet/speed_limit> speed_limit of lanelet is immutable')
 
     @property
     def left_vertices(self) -> np.ndarray:
@@ -339,6 +337,28 @@ class Lanelet:
             '<Lanelet/obstacles_on_lanelet>: provided list of ids is not a ' \
             'set! type = {}'.format(type(obstacle_ids))
         self._static_obstacles_on_lanelet = obstacle_ids
+
+    @property
+    def traffic_signs(self) -> Set[int]:
+        return self._traffic_signs
+
+    @traffic_signs.setter
+    def traffic_signs(self, traffic_sign_ids: Set[int]):
+        assert isinstance(traffic_sign_ids, set), \
+            '<Lanelet/traffic_signs>: provided list of ids is not a ' \
+            'set! type = {}'.format(type(traffic_sign_ids))
+        self._traffic_signs = traffic_sign_ids
+
+    @property
+    def traffic_lights(self) -> Set[int]:
+        return self._traffic_lights
+
+    @traffic_lights.setter
+    def traffic_lights(self, traffic_light_ids: Set[int]):
+        assert isinstance(traffic_light_ids, set), \
+            '<Lanelet/traffic_lights>: provided list of ids is not a ' \
+            'set! type = {}'.format(type(traffic_light_ids))
+        self._traffic_signs = traffic_light_ids
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """
@@ -658,6 +678,9 @@ class LaneletNetwork:
 
     def __init__(self):
         self._lanelets: Dict = {}
+        self._intersections: Dict = {}
+        self._traffic_signs: Dict = {}
+        self._traffic_lights: Dict = {}
 
     @property
     def lanelets(self) -> List[Lanelet]:
@@ -666,6 +689,18 @@ class LaneletNetwork:
     @lanelets.setter
     def lanelets(self, lanelets: list):
         warnings.warn('<LaneletNetwork/lanelets>: lanelets of network are immutable')
+
+    @property
+    def intersections(self):
+        return list(self._intersections.values())
+
+    @property
+    def traffic_signs(self):
+        return list(self._traffic_signs.values())
+
+    @property
+    def traffic_lights(self):
+        return list(self._traffic_lights.values())
 
     @classmethod
     def create_from_lanelet_list(cls, lanelets: list):
@@ -738,6 +773,57 @@ class LaneletNetwork:
             flag = True
 
         return flag
+
+    def add_traffic_sign(self, traffic_sign: TrafficSign):
+        """
+        Adds a traffic sign to the LaneletNetwork
+
+        :param traffic_sign: The traffic sign to add
+        :return: True if the traffic sign has successfully been added to the network, false otherwise
+        """
+
+        assert isinstance(traffic_sign,
+                          TrafficSign), '<LaneletNetwork/add_traffic_sign>: provided traffic sign is not of type traffic_sign! type = {}'.format(
+            type(traffic_sign))
+
+        # flag if added to lanelet network
+        flag = False
+
+        # check if traffic already exists in network and warn user
+        if traffic_sign.id in self._traffic_signs.keys():
+            warnings.warn('Traffic Sign already exists in network! No changes are made.')
+            return False
+        else:
+            self._traffic_signs[traffic_sign.id] = traffic_sign
+            flag = True
+
+        return flag
+
+    def add_traffic_light(self, traffic_light: TrafficLight):
+        """
+        Adds a traffic light to the LaneletNetwork
+
+        :param traffic_light: The traffic light to add
+        :return: True if the traffic light has successfully been added to the network, false otherwise
+        """
+
+        assert isinstance(traffic_light,
+                          TrafficLight), '<LaneletNetwork/add_traffic_light>: provided traffic light is not of type traffic_light! type = {}'.format(
+            type(traffic_light))
+
+        # flag if added to lanelet network
+        flag = False
+
+        # check if traffic already exists in network and warn user
+        if traffic_light.id in self._traffic_lights.keys():
+            warnings.warn('Traffic Light already exists in network! No changes are made.')
+            return False
+        else:
+            self._traffic_lights[traffic_light.id] = traffic_light
+            flag = True
+
+        return flag
+
 
     def add_lanelets_from_network(self, lanelet_network: 'LaneletNetwork'):
         """
