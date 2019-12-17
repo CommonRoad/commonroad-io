@@ -160,20 +160,6 @@ class Lanelet:
         else:
             warnings.warn('<Lanelet/lanelet_id>: lanelet_id of lanelet is immutable')
 
-    @property
-    def speed_limit(self) -> float:
-        return self._speed_limit
-
-    @speed_limit.setter
-    def speed_limit(self, limit: float):
-        if self._speed_limit is None:
-            assert is_valid_velocity(limit, 0.,
-                                     None), '<Lanelet/speed_limit>: provided speed_limit is not valid! ' \
-                                            'limit = {}'.format(
-                limit)
-            self._speed_limit = limit
-        else:
-            warnings.warn('<Lanelet/speed_limit> speed_limit of lanelet is immutable')
 
     @property
     def left_vertices(self) -> np.ndarray:
