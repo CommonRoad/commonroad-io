@@ -27,10 +27,13 @@ class Direction(enum.Enum):
     """
     Enum for all the possible directions for a traffic signal
     """
-    LEFT = "left"
     RIGHT = "right"
-    FORWARD = "forward"
-    BACKWARD = "backward"
+    STRAIGHT = "straight"
+    LEFT = "left"
+    LEFT_STRAIGHT = "leftStraight"
+    STRAIGHT_RIGHT = "straightRight"
+    LEFT_RIGHT = "leftRight"
+    ALL = "all"
 
 
 @enum.unique
@@ -88,7 +91,7 @@ class TrafficLight:
                  cycle: TrafficLightCycleElement,
                  offset: int = 0,
                  position: Point = None,
-                 direction: Direction = Direction.FORWARD,
+                 direction: Direction = Direction.ALL,
                  active: bool = True):
         self.id = id
         self.cycle = cycle
