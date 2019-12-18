@@ -34,6 +34,16 @@ class TestCommonroadSolutionWriter(unittest.TestCase):
         self.trajectory_st = Trajectory(0, st_state_list)
         self.invalid_trajectory = Trajectory(0, invalid_trajectory_list)
 
+        for i in range(10):
+            self.pm_input_list.append(State(**{'position': [i, -i], 'velocity': i*.2, 'velocity_y': i*0.001, 'time_step': i}))
+            input = State(**{'steering_angle': 0.1, 'velocity': i*.2, 'orientation': i*0.001, 'steering_angle': 0.0,
+                             'time_step': i})
+            self.input_list.append(ks_state)
+            st_state = State(**{'position': [i, -i], 'velocity': i*.2, 'orientation': i*0.001, 'steering_angle': 0.0,
+                                'yaw_rate': i*0.2, 'slip_angle': 0.1, 'time_step': i})
+            st_state_list.append(st_state)
+            invalid_trajectory_list.append(State(**{'position': [i, -i], 'velocity': i*.2, 'time_step': i}))
+
         self.pm_input_list = np.array([[1.0, 3.5, 0.0], [2.0, 2.5, 0.1], [3.0, 1.5, 0.2]])
         self.input_list = np.array([[0.5, 0.0, 0.0], [1.0, 0.1, 0.1], [1.5, 0.1, 0.2]])
         self.invalid_input_list = np.array([[0.5, 0.0], [1.0, 0.1], [1.5, 0.1]])
@@ -68,6 +78,15 @@ class TestCommonroadSolutionWriter(unittest.TestCase):
 
         with self.assertRaises(AssertionError):
             csw.add_solution_input_vector(self.invalid_input_list, 1)
+
+    def test_against_xsd(self):
+        csw = CommonRoadSolutionWriter('/home/klischat/Downloads/', scenario_id='test_scenario', step_size=0.1,
+                                       vehicle_model=VehicleModel.ST, cost_function=CostFunction.WX1,
+                                       vehicle_type=VehicleType.VW_VANAGON)
+        # csw.add_solution_trajectory(self.trajectory_st, 5)
+        csw.add_solution_input_vector(self.input_list, 5)
+        csw.write_to_file(overwrite=True)
+        csw.check_validity_of_solution_file()
 
     def test_write_traejctory_and_input(self):
         """

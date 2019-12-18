@@ -4,12 +4,12 @@ Solution writer for uploading motion plans to commonroad.in.tum.de
 import xml.etree.ElementTree as et
 from xml.dom import minidom
 import numpy as np
-from typing import List
+from typing import List, Union
 from enum import Enum, unique
-import os
 import warnings
 import datetime
 import copy
+from lxml import etree, objectify
 
 from commonroad.geometry.transform import rotate_translate
 from commonroad.scenario.trajectory import Trajectory
@@ -51,11 +51,16 @@ class CostFunction(Enum):
     SM2 = 4
     SM3 = 5
 
+import os, platform, subprocess, re
+
+delete_from_cpu_name = ['(R)', '(TM)']
+
 
 class CommonRoadSolutionWriter:
     def __init__(self, output_dir: str, scenario_id: str, step_size: float,
                  vehicle_type: VehicleType=VehicleType.FORD_ESCORT, vehicle_model: VehicleModel=VehicleModel.KS,
-                 cost_function: CostFunction=CostFunction.JB1):
+                 cost_function: CostFunction=CostFunction.JB1, computation_time: float=None,
+                 processor_name: Union[str, None] = 'auto'):
         """
         Write solution xml files to upload at commonroad.in.tum.de.
 
@@ -67,6 +72,9 @@ class CommonRoadSolutionWriter:
         :param vehicle_type: Vehicle that is used for evaluating the trajectory (also used for benchmark ID)
         :param vehicle_model: The states that are necessary for this vehicle model are written to the xml file
         :param cost_function: this cost function is written to the benchmark ID. Note: not checked for existence here.
+        :param computation_time: computation time required to obtain solution (optional)
+        :param processor_name: name of processor time required to obtain solution (optional). Determined automatically
+        if set to 'auto'.
         """
 
         if cost_function not in CostFunction:
@@ -77,7 +85,10 @@ class CommonRoadSolutionWriter:
         self.benchmark_id = self._create_benchmark_id(scenario_id, vehicle_type, vehicle_model, cost_function)
         self.output_path = os.path.join(output_dir, 'solution_' + self.benchmark_id + '.xml')
         self.root_node = et.Element('CommonRoadSolution')
-        self._write_header()
+
+        if processor_name == 'auto':
+            processor_name = self._get_processor_name()
+        self._write_header(computation_time, processor_name)
 
     def add_solution_trajectory(self,  trajectory: Trajectory, planning_problem_id: int):
         """
@@ -129,9 +140,14 @@ class CommonRoadSolutionWriter:
         input_vector_node.set('planningProblem', str(planning_problem_id))
         self.root_node.append(input_vector_node)
 
-    def _write_header(self):
+    def _write_header(self, computation_time: float, processor_name: Union[str, None]):
         self.root_node.set('benchmark_id', self.benchmark_id)
         self.root_node.set('date', datetime.datetime.today().strftime('%Y-%m-%d'))
+        if computation_time is not None:
+            self.root_node.set('computation_time', "{:.4f}".format(computation_time))
+
+        if isinstance(processor_name, str):
+            self.root_node.set('processor_name', processor_name)
 
     def write_to_file(self, overwrite: bool=False):
         """
@@ -146,11 +162,35 @@ class CommonRoadSolutionWriter:
                           .format(self.output_path))
         else:
             with open(self.output_path, 'w') as f:
-                f.write(self._dump(self.root_node))
+                f.write(self._dump())
 
-    @staticmethod
-    def _dump(root_node):
-        rough_string = et.tostring(root_node, encoding='utf-8')
+    def check_validity_of_solution_file(self):
+        """Check the validity of a generated xml_string with the CommonRoadSolution_schema.xsd schema.
+        Throw an error if it is not valid.
+        """
+        with open(
+                os.path.dirname(os.path.abspath(__file__)) + '/CommonRoadSolution_schema.xsd',
+                'rb',
+        ) as schema_file:
+            schema = etree.XMLSchema(etree.parse(schema_file))
+
+        parser = objectify.makeparser(schema=schema, encoding='utf-8')
+
+        try:
+            etree.fromstring(et.tostring(self.root_node, encoding='utf-8'), parser)
+        except etree.XMLSyntaxError as error:
+            raise Exception(
+                'Could not produce valid CommonRoadSolution file! Error: {}'.format(error.msg)
+            )
+
+
+    def _dump(self):
+        # rough_string = etree.tostring(
+        #     self.root_node, pretty_print=True, encoding='unicode'
+        # )
+        # return rough_string
+
+        rough_string = et.tostring(self.root_node, encoding='utf-8')
         parsed = minidom.parseString(rough_string)
         return parsed.toprettyxml(indent="  ")
 
@@ -160,6 +200,31 @@ class CommonRoadSolutionWriter:
         return '{0}{1}:{2}:{3}:{4}'.format(vehicle_model.name, vehicle_type.value, cost_function.name, scenario_id,
                                            SCENARIO_VERSION)
 
+    @staticmethod
+    def _get_processor_name():
+        # TODO: compare cpu name with list also used on the web server
+        def strip_substrings(string: str):
+            for del_str in delete_from_cpu_name:
+                string = string.replace(del_str, '')
+            return string
+
+        if platform.system() == "Windows":
+            name_tmp = platform.processor()
+            for del_str in delete_from_cpu_name:
+                name_tmp.replace(del_str, '')
+            return strip_substrings(name_tmp)
+        elif platform.system() == "Darwin":
+            os.environ['PATH'] = os.environ['PATH'] + os.pathsep + '/usr/sbin'
+            command = "sysctl -n machdep.cpu.brand_string"
+            return subprocess.check_output(command).strip()
+        elif platform.system() == "Linux":
+            command = "cat /proc/cpuinfo"
+            all_info = str(subprocess.check_output(command, shell=True).strip())
+            for line in all_info.split("\\n"):
+                if "model name" in line:
+                    name_tmp = re.sub(".*model name.*: ", "", line, 1)
+                    return strip_substrings(name_tmp)
+        return None
 
 class PMTrajectoryXMLNode:
     @classmethod
@@ -291,7 +356,7 @@ class MBTrajectoryXMLNode:
             slip_angle_node = et.SubElement(state_node, 'slipAngle')
             slip_angle_node.text = str(np.float64(state.slip_angle))
             time_node = et.SubElement(state_node, 'time')
-            time_node.text = str(state.time_step * step_size)
+            time_node.text = str(state.time_step)
 
             roll_angle_node = et.SubElement(state_node, 'rollAngle')
             roll_angle_node.text = str(state.roll_angle)
@@ -351,15 +416,16 @@ class PMInputVectorXMLNode:
         assert (input_vector.shape[1]==3), '<PMInputVectorXMLNode/create_node>: input_vector contains' \
                                                           'lists of length 3: xAcceleration: float, yAcceleration: ' \
                                                           'float, time: float.'
-        input_node = et.Element('pmInputVector')
+        input_vector_node = et.Element('pmInputVector')
         for state in input_vector:
+            input_node = et.SubElement(input_vector_node, 'input')
             x_acceleration_node = et.SubElement(input_node, 'xAcceleration')
             x_acceleration_node.text = str(state[0])
             y_acceleration_node = et.SubElement(input_node, 'yAcceleration')
             y_acceleration_node.text = str(state[1])
             time_node = et.SubElement(input_node, 'time')
             time_node.text = str(state[2])
-        return input_node
+        return input_vector_node
 
 
 class InputVectorXMLNode:
@@ -368,15 +434,16 @@ class InputVectorXMLNode:
         assert (input_vector.shape[1]==3), '<InputVectorXMLNode/create_node>: input_vector contains' \
                                                            'lists of length 3: acceleration: float, ' \
                                                            'steeringAngleSpeed: float, time: float.'
-        input_node = et.Element('inputVector')
+        input_vector_node = et.Element('inputVector')
         for state in input_vector:
+            input_node = et.SubElement(input_vector_node, 'input')
             acceleration_node = et.SubElement(input_node, 'acceleration')
             acceleration_node.text = str(state[0])
             steering_angle_speed_node = et.SubElement(input_node, 'steeringAngleSpeed')
             steering_angle_speed_node.text = str(state[1])
             time_node = et.SubElement(input_node, 'time')
             time_node.text = str(state[2])
-        return input_node
+        return input_vector_node
 
 
 def is_valid_trajectory(trajectory: Trajectory, mandatory_fields: List):
