@@ -59,11 +59,11 @@ class TestFileWriter(unittest.TestCase):
                                        prediction=traj_pred, obstacle_shape=rectangle)
         lanelet1 = Lanelet(np.array([[12345.12, 0.0], [1.0,0.0],[2,0]]), np.array([[0.0, 1],[1.0,1],[2,1]]), np.array([[0.0, 2], [1.0,2],[2,2]]), 100,
                 [101], [101], 101, False, 101, True,
-                          LineMarking.DASHED, LineMarking.SOLID,{LaneletType.HIGHWAY}, None, None, [1])
+                          LineMarking.DASHED, LineMarking.SOLID,None, {LaneletType.HIGHWAY}, None, None, {1})
         lanelet2 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                            np.array([[0.0, 2], [1.0, 2], [2, 2]]), 101,
                            [100], [100], 100, False, 100, True,
-                           LineMarking.SOLID, LineMarking.DASHED, {LaneletType.HIGHWAY}, None, None, [1])
+                           LineMarking.SOLID, LineMarking.DASHED, None, {LaneletType.HIGHWAY}, None, None, {1})
         traffic_sign_max_speed = TrafficSignElement(TrafficSignID.MAXSPEED.value, [10.0])
         traffic_sign = TrafficSign(1, {traffic_sign_max_speed})
 

@@ -25,7 +25,7 @@ class TestLanelet(unittest.TestCase):
         traffic_sign = TrafficSign(1, {traffic_sign_max_speed})
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
                           adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir,
-                          line_marking_left, line_marking_right, None, None, None, {traffic_sign.id})
+                          line_marking_left, line_marking_right, None, None, None, None, {traffic_sign.id})
 
 
         s1 = np.sqrt(1.25)

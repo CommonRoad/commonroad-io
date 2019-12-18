@@ -26,17 +26,17 @@ class TestScenario(unittest.TestCase):
         self.lanelet1 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                            np.array([[0.0, 2], [1.0, 2], [2, 2]]), 100,
                            [101], [101], 101, False, 101, True,
-                           LineMarking.DASHED, LineMarking.DASHED,None, None, None, set([1]))
+                           LineMarking.DASHED, LineMarking.DASHED,None, None, None,None, {1})
         self.lanelet1.add_static_obstacle_to_lanelet(0)
         self.lanelet2 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                            np.array([[0.0, 2], [1.0, 2], [2, 2]]), 101,
                            [100], [100], 100, False, 100, True,
-                           LineMarking.DASHED, LineMarking.DASHED, None, None, None, set([1]))
+                           LineMarking.DASHED, LineMarking.DASHED, None, None, None, None,{1})
         self.lanelet1.add_dynamic_obstacle_to_lanelet(2, 0)
         self.lanelet1.add_dynamic_obstacle_to_lanelet(2, 1)
         self.lanelet_network = LaneletNetwork().create_from_lanelet_list(list([self.lanelet1, self.lanelet2]))
         traffic_sign_max_speed = TrafficSignElement(TrafficSignID.MAXSPEED.value, [10.0])
-        traffic_sign = TrafficSign(1, [traffic_sign_max_speed])
+        traffic_sign = TrafficSign(1, {traffic_sign_max_speed})
         self.lanelet_network.add_traffic_sign(traffic_sign)
         self.set_pred = SetBasedPrediction(0, occupancy_list)
 

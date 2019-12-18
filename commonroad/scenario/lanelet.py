@@ -3,6 +3,7 @@ import enum
 from typing import *
 import numpy as np
 import networkx as nx
+from shapely.geometry import Point
 
 import commonroad.geometry.transform
 from commonroad.common.validity import *
@@ -63,6 +64,21 @@ class RoadUser(enum.Enum):
     TRAIN = 'train'
 
 
+class StopLine:
+    """Class which describes the stop line of a lanelet"""
+    def __init__(self, start: Point, end: Point,
+               line_marking: LineMarking = None,
+               traffic_sign_ref: int = None,
+               traffic_light_ref: int = None):
+        self.start = start
+        self.end = end
+        self.line_marking = line_marking
+        self.traffic_sign_ref = traffic_sign_ref
+        self.traffic_light_ref = traffic_light_ref
+
+    def __str__(self):
+        return f'StopLine From {self.start} to  {self.end}'
+
 
 class Lanelet:
     """
@@ -78,6 +94,7 @@ class Lanelet:
                  adjacent_right=None, adjacent_right_same_direction=None,
                  line_marking_left_vertices=None,
                  line_marking_right_vertices=None,
+                 stop_line=None,
                  lanelet_type = None,
                  user_one_way = None,
                  user_bidirectional = None,
@@ -103,6 +120,7 @@ class Lanelet:
         false otherwise (None if no right adjacent lanelet exists)
         :param line_marking_left_vertices: The type of line marking of the left boundary
         :param line_marking_right_vertices: The type of line marking of the right boundary
+        :param stop_line: The stop line of the lanelet
         :param lanelet_type: The types of lanelet applicable here
         :param user_one_way: type of users that will use the lanelet as one-way
         :param user_bidirectional: type of users that will use the lanelet as bidirectional way
@@ -170,30 +188,33 @@ class Lanelet:
         self._dynamic_obstacles_on_lanelet = {}
         self._static_obstacles_on_lanelet = set()
 
+        self._stop_line = None
+        if stop_line:
+            self.stop_line = stop_line
+
         if lanelet_type is None:
-            self._lanelet_type = set([LaneletType.HIGHWAY])
+            self._lanelet_type = {LaneletType.HIGHWAY}
         else:
-            self._lanelet_type = lanelet_type
+            self._lanelet_type = None
+            self.lanelet_type = lanelet_type
 
-        if user_one_way is None:
-            self._user_one_way = set()
-        else:
-            self._user_one_way = user_one_way
+        self._user_one_way = None
+        if user_one_way is not None:
+            self.user_one_way = user_one_way
 
-        if user_bidirectional is None:
-            self._user_bidirectional = set()
-        else:
-            self._user_bidirectional = user_bidirectional
+        self._user_bidirectional = None
+        if user_bidirectional is not None:
+            self.user_bidirectional = user_bidirectional
 
         # Set Traffic Rules
         if traffic_sign is None:
             self._traffic_signs = set()
         else:
-            self._traffic_signs = traffic_sign
+            self.traffic_signs = traffic_sign
         if traffic_light is None:
             self._traffic_lights = set()
         else:
-            self._traffic_lights = traffic_light
+            self.traffic_lights = traffic_light
 
     @property
     def distance(self) -> np.ndarray:
@@ -394,7 +415,21 @@ class Lanelet:
         self._static_obstacles_on_lanelet = obstacle_ids
 
     @property
-    def lanelet_type(self) -> LaneletType:
+    def stop_line(self) -> StopLine:
+        return self._stop_line
+
+    @stop_line.setter
+    def stop_line(self, stop_line: StopLine):
+        if self._stop_line is None:
+            assert isinstance(stop_line, StopLine),\
+                '<Lanelet/stop_line>: ''Provided type is not valid! type = {}'.format(type(stop_line))
+            self._stop_line = stop_line
+        else:
+            warnings.warn(
+                '<Lanelet/stop_line>: stop_line of lanelet is immutable!')
+
+    @property
+    def lanelet_type(self) -> Set[LaneletType]:
         return self._lanelet_type
 
     @lanelet_type.setter

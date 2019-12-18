@@ -17,7 +17,7 @@ from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.intersection import Intersection
-from commonroad.scenario.lanelet import Lanelet, LineMarking
+from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine
 from commonroad.scenario.obstacle import (
     ObstacleRole,
     ObstacleType,
@@ -482,6 +482,10 @@ class LaneletXMLNode:
                 adjacent_right.set('drivingDir', 'opposite')
             lanelet_node.append(adjacent_right)
 
+        if lanelet.stop_line:
+            stop_line_node = LaneletStopLineXMLNode.create_node(lanelet.stop_line)
+            lanelet_node.append(stop_line_node)
+
         if lanelet.lanelet_type:
             for lanelet_type_element in lanelet.lanelet_type:
                 lanelet_type_node = etree.Element('type')
@@ -502,14 +506,12 @@ class LaneletXMLNode:
 
         if lanelet.traffic_signs:
             for traffic_sign in lanelet.traffic_signs:
-                traffic_sign_node = etree.Element('trafficSignRef')
-                traffic_sign_node.set('ref', str(traffic_sign))
+                traffic_sign_node = TrafficSignXMLNode.create_ref_node(traffic_sign)
                 lanelet_node.append(traffic_sign_node)
 
         if lanelet.traffic_lights:
             for traffic_light in lanelet.traffic_lights:
-                traffic_light_node = etree.Element('trafficLightRef')
-                traffic_light_node.set('ref', str(traffic_light))
+                traffic_light_node = TrafficLightXMLNode.create_ref_node(traffic_light)
                 lanelet_node.append(traffic_light_node)
 
         return lanelet_node
@@ -1171,6 +1173,13 @@ class TrafficSignXMLNode:
             traffic_sign_node.append(virtual_node)
         return traffic_sign_node
 
+    @classmethod
+    def create_ref_node(cls, traffic_sign_ref) -> etree.Element:
+        traffic_sign_ref_node = etree.Element('trafficSignRef')
+        traffic_sign_ref_node.set('ref', str(traffic_sign_ref))
+        return traffic_sign_ref_node
+
+
 class TrafficLightXMLNode:
     @classmethod
     def create_node(cls, traffic_light: TrafficLight) -> etree.Element:
@@ -1197,6 +1206,12 @@ class TrafficLightXMLNode:
             traffic_light_node.append(active_node)
         return traffic_light_node
 
+    @classmethod
+    def create_ref_node(cls, traffic_light_ref) -> etree.Element:
+        traffic_light_ref_node = etree.Element('trafficSignRef')
+        traffic_light_ref_node.set('ref', str(traffic_light_ref))
+        return traffic_light_ref_node
+
 
 class TrafficLightCycleElementXMLNode:
     @classmethod
@@ -1204,3 +1219,42 @@ class TrafficLightCycleElementXMLNode:
         element_node = etree.Element(str(cycle_element.state.value))
         element_node.text = str(cycle_element.duration)
         return element_node
+
+
+class LineMarkingXMLNode:
+    @classmethod
+    def _line_marking_enum_to_string(cls, line_marking):
+        return str(line_marking.name.lower())
+
+    @classmethod
+    def create_node(cls, line_marking) -> etree.Element:
+        line_marking_node = etree.Element('lineMarking')
+        line_marking_node.text = cls._line_marking_enum_to_string(line_marking)
+        return line_marking_node
+
+
+class LaneletStopLineXMLNode:
+    @classmethod
+    def create_node(cls, stop_line : StopLine) -> etree.Element:
+        stop_line_node = etree.Element('stopLine')
+
+        start_node = Point(stop_line.start.x, stop_line.start.y).create_node()
+        stop_line_node.append(start_node)
+        end_node = Point(stop_line.end.x, stop_line.end.y).create_node()
+        stop_line_node.append(end_node)
+
+        if stop_line.line_marking:
+            line_marking_node = LineMarkingXMLNode.create_node(stop_line.line_marking)
+            stop_line_node.append(line_marking_node)
+
+        if stop_line.traffic_sign_ref:
+            traffic_sign_ref_node = TrafficSignXMLNode.create_ref_node(stop_line.traffic_sign_ref)
+            stop_line_node.append(traffic_sign_ref_node)
+
+        if stop_line.traffic_light_ref:
+            traffic_light_ref_node = TrafficLightXMLNode.create_ref_node(stop_line.traffic_light_ref)
+            stop_line_node.append(traffic_light_ref_node)
+
+        return stop_line_node
+
+
