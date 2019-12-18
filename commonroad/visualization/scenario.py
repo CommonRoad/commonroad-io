@@ -256,7 +256,9 @@ def draw_trajectories(obj: Union[List[Trajectory],Trajectory], plot_limits: Unio
             else:
                 if time_begin > traj.initial_time_step:
                     break
-        traj_list.append(traj_points)
+
+        if traj_points:
+            traj_list.append(traj_points)
 
     if len(traj_list) > 0:
         if draw_continuous is True:
@@ -287,7 +289,10 @@ def draw_trajectories(obj: Union[List[Trajectory],Trajectory], plot_limits: Unio
                                                        zorder=z_order, transOffset=ax.transData, facecolor=facecolor))
                     ax.add_collection(collection[-1])
             else:
-                traj_list = np.array(np.concatenate(traj_list))
+                try:
+                    traj_list = np.array(np.concatenate(traj_list))
+                except:
+                    dsdf=0
                 collection = [collections.EllipseCollection(np.ones([traj_list.shape[0],1]) * line_width,
                                                            np.ones([traj_list.shape[0],1]) * line_width,
                                                            np.zeros([traj_list.shape[0],1]),
