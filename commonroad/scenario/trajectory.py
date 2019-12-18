@@ -38,6 +38,8 @@ class State:
             values are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar steering_angle: steering angle :math:`\delta` of front wheels. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
+        :ivar steering_angle_speed: steering angle speed :math:`\dot{\delta}` of front wheels. Exact values are given as real number,
+            uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar yaw_rate: yaw rate :math:`\dot{\Psi}`. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar slip_angle: slip angle :math:`\\beta`. Exact values are given as real number,
@@ -110,6 +112,7 @@ class State:
         'orientation',
         'velocity',
         'steering_angle',
+        'steering_angle_speed'
         'yaw_rate',
         'slip_angle',
         'roll_angle',
