@@ -184,6 +184,7 @@ class StaticObstacle(Obstacle):
         obs_str += '\ninitial state: {}'.format(self.initial_state)
         return obs_str
 
+
 class DynamicObstacle(Obstacle):
     """ Class representing dynamic obstacles as defined in CommonRoad. Each dynamic obstacle has stored its predicted
     movement in future time steps.

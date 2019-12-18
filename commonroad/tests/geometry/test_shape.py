@@ -10,6 +10,7 @@ __maintainer__ = "Moritz Untersperger"
 __email__ = "commonroad@in.tum.de"
 __status__ = "Released"
 
+
 class TestRectangle(unittest.TestCase):
 
     def test_rotate_90deg(self):
@@ -17,7 +18,7 @@ class TestRectangle(unittest.TestCase):
         rotation_angle = np.pi/2
 
         homogeneous_initial_vector = Rectangle(1, 1)
-        expected_transposed_vertices = np.array([[0.5, -0.5], [0.5, 0.5], [-0.5, 0.5], [-0.5, -0.5]])
+        expected_transposed_vertices = np.array([[0.5, -0.5], [-0.5, -0.5], [-0.5, 0.5], [0.5, 0.5], [0.5, -0.5]])
 
         transposed_vector = homogeneous_initial_vector.translate_rotate(translation, rotation_angle)
 
@@ -25,13 +26,12 @@ class TestRectangle(unittest.TestCase):
             for tv_item, etv_item in zip(tv, etv):
                 self.assertAlmostEqual(tv_item, etv_item)
 
-
     def test_translate(self):
         translation = np.array([5.52, -2.2])
         rotation_angle = 0
 
         homogeneous_initial_vector = Rectangle(1, 1)
-        expected_transposed_vertices = np.array([[5.02, -2.7], [6.02, -2.7], [6.02, -1.7], [5.02, -1.7]])
+        expected_transposed_vertices = np.array([[5.02, -2.7], [5.02, -1.7], [6.02, -1.7], [6.02, -2.7], [5.02, -2.7]])
 
         transposed_vector = homogeneous_initial_vector.translate_rotate(translation, rotation_angle)
 
@@ -49,7 +49,7 @@ class TestRectangle(unittest.TestCase):
     def test__compute_vertices(self):
 
         initial_rectangle = Rectangle(1, 1)
-        expected_computed_vertices = np.array([[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]])
+        expected_computed_vertices = np.array([[-0.5, -0.5], [-0.5, 0.5], [0.5, 0.5], [0.5, -0.5], [-0.5, -0.5]])
 
         computed_vertices = initial_rectangle._compute_vertices()
 
@@ -99,7 +99,7 @@ class TestPolygon(unittest.TestCase):
         rotation_angle = np.pi / 2
 
         homogeneous_initial_vector = Polygon(np.array([[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]]))
-        expected_transposed_vertices = np.array([[0.5, -0.5], [0.5, 0.5], [-0.5, 0.5], [-0.5, -0.5]])
+        expected_transposed_vertices = np.array([[0.5, -0.5], [-0.5, -0.5], [-0.5, 0.5], [0.5, 0.5], [0.5, -0.5]])
 
         transposed_vector = homogeneous_initial_vector.translate_rotate(translation, rotation_angle)
 
@@ -112,7 +112,7 @@ class TestPolygon(unittest.TestCase):
         rotation_angle = 0
 
         homogeneous_initial_vector = Polygon(np.array([[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]]))
-        expected_transposed_vertices = np.array([[5.02, -2.7], [6.02, -2.7], [6.02, -1.7], [5.02, -1.7]])
+        expected_transposed_vertices = np.array([[5.02, -2.7], [5.02, -1.7], [6.02, -1.7], [6.02, -2.7], [5.02, -2.7]])
 
         transposed_vector = homogeneous_initial_vector.translate_rotate(translation, rotation_angle)
 
@@ -142,8 +142,8 @@ class TestShapeGroup(unittest.TestCase):
         shape_group.append(initial_shape_three)
         shape_group = ShapeGroup(shape_group)
 
-        expected_transposed_vertices_one = np.array([[0.5, -0.5], [0.5, 0.5], [-0.5, 0.5], [-0.5, -0.5]])
-        expected_transposed_vertices_two = np.array([[0.5, -0.5], [0.5, 0.5], [-0.5, 0.5], [-0.5, -0.5]])
+        expected_transposed_vertices_one = np.array([[0.5, -0.5], [-0.5, -0.5], [-0.5, 0.5], [0.5, 0.5], [0.5, -0.5]])
+        expected_transposed_vertices_two = np.array([[0.5, -0.5], [-0.5, -0.5], [-0.5, 0.5], [0.5, 0.5], [0.5, -0.5]])
         expected_transposed_center_three = np.array([0.0, 0.0])
         expected_transposed = list()
         expected_transposed.append(expected_transposed_vertices_one)
@@ -173,8 +173,8 @@ class TestShapeGroup(unittest.TestCase):
         shape_group.append(initial_shape_three)
         shape_group = ShapeGroup(shape_group)
 
-        expected_transposed_vertices_one = np.array([[5.02, -2.7], [6.02, -2.7], [6.02, -1.7], [5.02, -1.7]])
-        expected_transposed_vertices_two = np.array([[5.02, -2.7], [6.02, -2.7], [6.02, -1.7], [5.02, -1.7]])
+        expected_transposed_vertices_one = np.array([[5.02, -2.7], [5.02, -1.7], [6.02, -1.7], [6.02, -2.7], [5.02, -2.7]])
+        expected_transposed_vertices_two = np.array([[5.02, -2.7], [5.02, -1.7], [6.02, -1.7], [6.02, -2.7], [5.02, -2.7]])
         expected_transposed_center_three = np.array([5.52, -2.2])
         expected_transposed = list()
         expected_transposed.append(expected_transposed_vertices_one)
