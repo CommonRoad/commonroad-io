@@ -482,11 +482,30 @@ class LaneletXMLNode:
                 adjacent_right.set('drivingDir', 'opposite')
             lanelet_node.append(adjacent_right)
 
+        if lanelet.lanelet_type:
+            for lanelet_type_element in lanelet.lanelet_type:
+                lanelet_type_node = etree.Element('type')
+                lanelet_type_node.text = str(lanelet_type_element.value)
+                lanelet_node.append(lanelet_type_node)
+
+        if lanelet.user_one_way:
+            for user_one_way in lanelet.user_one_way:
+                user_one_way_node = etree.Element('userOneWay')
+                user_one_way_node.text = str(user_one_way.value)
+                lanelet_node.append(user_one_way_node)
+
+        if lanelet.user_bidirectional:
+            for user in lanelet.user_bidirectional:
+                user_node = etree.Element('userBidirectional')
+                user_node.text = str(user.value)
+                lanelet_node.append(user_node)
+
         if lanelet.traffic_signs:
             for traffic_sign in lanelet.traffic_signs:
                 traffic_sign_node = etree.Element('trafficSignRef')
                 traffic_sign_node.set('ref', str(traffic_sign))
                 lanelet_node.append(traffic_sign_node)
+
         if lanelet.traffic_lights:
             for traffic_light in lanelet.traffic_lights:
                 traffic_light_node = etree.Element('trafficLightRef')

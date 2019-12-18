@@ -30,6 +30,40 @@ class LineMarking(enum.Enum):
     BROAD_SOLID = 4
 
 
+class LaneletType(enum.Enum):
+    """
+    Enum describing different types of lanelets
+    """
+    URBAN = 'urban'
+    COUNTRY = 'country'
+    HIGHWAY = 'highway'
+    DRIVE_WAY='driveWay'
+    MAIN_CARRIAGE_WAY = 'mainCarriageWay'
+    ACCESS_RAMP = 'accessRamp'
+    EXIT_RAMP = 'exitRamp'
+    SHOULDER = 'shoulder'
+    BUS_LANE = 'busLane'
+    BUS_STOP = 'busStop'
+    BIKE_LANE = 'bikeLane'
+    SIDEWALK = 'sidewalk'
+    CROSSWALK = 'crosswalk'
+
+
+class RoadUser(enum.Enum):
+    """
+    Enum describing different types of road users
+    """
+    VEHICLE = 'vehicle'
+    CAR = 'car'
+    TRUCK = 'truck'
+    BUS = 'bus'
+    PRIORITY_VEHICLE = 'priorityVehicle'
+    BICYCLE = 'bicycle'
+    PEDESTRIAN = 'pedestrian'
+    TRAIN = 'train'
+
+
+
 class Lanelet:
     """
     Class which describes a Lanelet entity according to the CommonRoad specification. Each lanelet is described by a
@@ -44,6 +78,9 @@ class Lanelet:
                  adjacent_right=None, adjacent_right_same_direction=None,
                  line_marking_left_vertices=None,
                  line_marking_right_vertices=None,
+                 lanelet_type = None,
+                 user_one_way = None,
+                 user_bidirectional = None,
                  traffic_sign=None,
                  traffic_light=None,
                  ):
@@ -66,6 +103,9 @@ class Lanelet:
         false otherwise (None if no right adjacent lanelet exists)
         :param line_marking_left_vertices: The type of line marking of the left boundary
         :param line_marking_right_vertices: The type of line marking of the right boundary
+        :param lanelet_type: The types of lanelet applicable here
+        :param user_one_way: type of users that will use the lanelet as one-way
+        :param user_bidirectional: type of users that will use the lanelet as bidirectional way
         :param traffic_sign: Traffic signs to be applied
         :param traffic_light: Traffic lights to follow
         """
@@ -129,6 +169,21 @@ class Lanelet:
 
         self._dynamic_obstacles_on_lanelet = {}
         self._static_obstacles_on_lanelet = set()
+
+        if lanelet_type is None:
+            self._lanelet_type = set([LaneletType.HIGHWAY])
+        else:
+            self._lanelet_type = lanelet_type
+
+        if user_one_way is None:
+            self._user_one_way = set()
+        else:
+            self._user_one_way = user_one_way
+
+        if user_bidirectional is None:
+            self._user_bidirectional = set()
+        else:
+            self._user_bidirectional = user_bidirectional
 
         # Set Traffic Rules
         if traffic_sign is None:
@@ -339,6 +394,51 @@ class Lanelet:
         self._static_obstacles_on_lanelet = obstacle_ids
 
     @property
+    def lanelet_type(self) -> LaneletType:
+        return self._lanelet_type
+
+    @lanelet_type.setter
+    def lanelet_type(self, lanelet_type: Set[LaneletType]):
+        if self._lanelet_type is None:
+            assert isinstance(lanelet_type, set) and all(isinstance(elem, LaneletType) for elem in lanelet_type), \
+                '<Lanelet/lanelet_type>: ''Provided type is not valid! type = {}'.format(type(lanelet_type))
+            self._lanelet_type = lanelet_type
+        else:
+            warnings.warn(
+                '<Lanelet/lanelet_type>: type of lanelet is immutable!')
+
+    @property
+    def user_one_way(self) -> Set[RoadUser]:
+        return self._user_one_way
+
+    @user_one_way.setter
+    def user_one_way(self, user_one_way: Set[RoadUser]):
+        if self._user_one_way is None:
+            assert isinstance(user_one_way, set) and all(isinstance(elem, RoadUser) for elem in user_one_way),\
+                '<Lanelet/user_one_way>: ''Provided type is not valid! type = {}'.format(
+                type(user_one_way))
+            self._user_one_way = user_one_way
+        else:
+            warnings.warn(
+                '<Lanelet/user_one_way>: user_one_way of lanelet is immutable!')
+
+    @property
+    def user_bidirectional(self) -> Set[RoadUser]:
+        return self._user_bidirectional
+
+    @user_bidirectional.setter
+    def user_bidirectional(self, user_bidirectional: Set[RoadUser]):
+        if self._user_bidirectional is None:
+            assert isinstance(user_bidirectional, set) and \
+                   all(isinstance(elem, RoadUser) for elem in user_bidirectional), \
+                '<Lanelet/user_bidirectional>: ''Provided type is not valid! type = {}'.format(
+                    type(user_bidirectional))
+            self._user_bidirectional = user_bidirectional
+        else:
+            warnings.warn(
+                '<Lanelet/user_bidirectional>: user_bidirectional of lanelet is immutable!')
+
+    @property
     def traffic_signs(self) -> Set[int]:
         return self._traffic_signs
 
@@ -358,7 +458,7 @@ class Lanelet:
         assert isinstance(traffic_light_ids, set), \
             '<Lanelet/traffic_lights>: provided list of ids is not a ' \
             'set! type = {}'.format(type(traffic_light_ids))
-        self._traffic_signs = traffic_light_ids
+        self._traffic_lights = traffic_light_ids
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """
