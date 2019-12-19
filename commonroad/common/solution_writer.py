@@ -113,7 +113,7 @@ class CommonRoadSolutionWriter:
         trajectory_node.set('planningProblem', str(planning_problem_id))
         self.root_node.append(trajectory_node)
 
-    def add_solution_input_vector(self, input_vector: np.ndarray, planning_problem_id: int):
+    def add_solution_input_vector(self, input_vector: Trajectory, planning_problem_id: int):
         """
         Add an input vector to the xml tree
 
@@ -126,9 +126,6 @@ class CommonRoadSolutionWriter:
         :param input_vector: list of states, each state is a list of the three above named values
         :param planning_problem_id: Id of the planning problem that is solved with the trajectory.
         """
-        assert all([is_real_number_vector(input_vector_i,length=3) for input_vector_i in input_vector]),\
-            '<CommonRoadSolutionWriter/add_solution_input_vector>: input_vector has to be numpy vector of real numbers with shape=[n,3]'
-
         input_vector_node = None
         if self.vehicle_model == VehicleModel.PM:
             input_vector_node = PMInputVectorXMLNode.create_node(input_vector)
@@ -412,37 +409,37 @@ class MBTrajectoryXMLNode:
 
 class PMInputVectorXMLNode:
     @classmethod
-    def create_node(cls, input_vector: np.ndarray) -> et.Element:
-        assert (input_vector.shape[1]==3), '<PMInputVectorXMLNode/create_node>: input_vector contains' \
-                                                          'lists of length 3: xAcceleration: float, yAcceleration: ' \
-                                                          'float, time: float.'
+    def create_node(cls, trajectory: Trajectory) -> et.Element:
+        mandatory_fields = ['acceleration', 'orientation', 'time_step']
+        is_valid_trajectory(trajectory, mandatory_fields)
+
         input_vector_node = et.Element('pmInputVector')
-        for state in input_vector:
+        for state in trajectory.state_list:
             input_node = et.SubElement(input_vector_node, 'input')
             x_acceleration_node = et.SubElement(input_node, 'xAcceleration')
-            x_acceleration_node.text = str(state[0])
+            x_acceleration_node.text = str(state.acceleration * np.cos(state.orientation))
             y_acceleration_node = et.SubElement(input_node, 'yAcceleration')
-            y_acceleration_node.text = str(state[1])
+            y_acceleration_node.text = str(state.acceleration * np.sin(state.orientation))
             time_node = et.SubElement(input_node, 'time')
-            time_node.text = str(state[2])
+            time_node.text = str(state.time_step)
         return input_vector_node
 
 
 class InputVectorXMLNode:
     @classmethod
-    def create_node(cls, input_vector: np.ndarray) -> et.Element:
-        assert (input_vector.shape[1]==3), '<InputVectorXMLNode/create_node>: input_vector contains' \
-                                                           'lists of length 3: acceleration: float, ' \
-                                                           'steeringAngleSpeed: float, time: float.'
+    def create_node(cls, trajectory: Trajectory) -> et.Element:
+        mandatory_fields = ['acceleration', 'steering_angle_speed', 'time_step']
+        is_valid_trajectory(trajectory, mandatory_fields)
+
         input_vector_node = et.Element('inputVector')
-        for state in input_vector:
+        for state in trajectory.state_list:
             input_node = et.SubElement(input_vector_node, 'input')
             acceleration_node = et.SubElement(input_node, 'acceleration')
-            acceleration_node.text = str(state[0])
+            acceleration_node.text = str(state.acceleration)
             steering_angle_speed_node = et.SubElement(input_node, 'steeringAngleSpeed')
-            steering_angle_speed_node.text = str(state[1])
+            steering_angle_speed_node.text = str(state.steering_angle_speed)
             time_node = et.SubElement(input_node, 'time')
-            time_node.text = str(state[2])
+            time_node.text = str(state.time_step)
         return input_vector_node
 
 

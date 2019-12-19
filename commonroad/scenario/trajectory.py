@@ -112,7 +112,7 @@ class State:
         'orientation',
         'velocity',
         'steering_angle',
-        'steering_angle_speed'
+        'steering_angle_speed',
         'yaw_rate',
         'slip_angle',
         'roll_angle',
