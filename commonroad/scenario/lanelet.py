@@ -192,25 +192,35 @@ class Lanelet:
         if stop_line:
             self.stop_line = stop_line
 
-        self._lanelet_type = set()
-        if lanelet_type is not None:
+        self._lanelet_type = None
+        if lanelet_type is None:
+            self._lanelet_type = set()
+        else:
             self.lanelet_type = lanelet_type
 
-        self._user_one_way = set()
-        if user_one_way is not None:
+        self._user_one_way = None
+        if user_one_way is None:
+            self._user_one_way = set()
+        else:
             self.user_one_way = user_one_way
 
-        self._user_bidirectional = set()
-        if user_bidirectional is not None:
+        self._user_bidirectional = None
+        if user_bidirectional is None:
+            self._user_bidirectional = set()
+        else:
             self.user_bidirectional = user_bidirectional
 
         # Set Traffic Rules
-        self._traffic_signs = set()
-        if traffic_sign is not None:
+        self._traffic_signs = None
+        if traffic_sign is None:
+            self._traffic_signs = set()
+        else:
             self.traffic_signs = traffic_sign
 
-        self._traffic_lights = set()
-        if traffic_light is not None:
+        self._traffic_lights = None
+        if traffic_light is None:
+            self._traffic_lights = set()
+        else:
             self.traffic_lights = traffic_light
 
     @property
@@ -445,7 +455,7 @@ class Lanelet:
 
     @user_one_way.setter
     def user_one_way(self, user_one_way: Set[RoadUser]):
-        if self._user_one_way is None or len(self._user_one_way) == 0:
+        if self._user_one_way is None :
             assert isinstance(user_one_way, set) and all(isinstance(elem, RoadUser) for elem in user_one_way),\
                 '<Lanelet/user_one_way>: ''Provided type is not valid! type = {}'.format(
                 type(user_one_way))
@@ -460,7 +470,7 @@ class Lanelet:
 
     @user_bidirectional.setter
     def user_bidirectional(self, user_bidirectional: Set[RoadUser]):
-        if self._user_bidirectional is None or len(self._user_bidirectional) == 0:
+        if self._user_bidirectional is None:
             assert isinstance(user_bidirectional, set) and \
                    all(isinstance(elem, RoadUser) for elem in user_bidirectional), \
                 '<Lanelet/user_bidirectional>: ''Provided type is not valid! type = {}'.format(
@@ -476,10 +486,14 @@ class Lanelet:
 
     @traffic_signs.setter
     def traffic_signs(self, traffic_sign_ids: Set[int]):
-        assert isinstance(traffic_sign_ids, set), \
-            '<Lanelet/traffic_signs>: provided list of ids is not a ' \
-            'set! type = {}'.format(type(traffic_sign_ids))
-        self._traffic_signs = traffic_sign_ids
+        if self._traffic_signs is None:
+            assert isinstance(traffic_sign_ids, set), \
+                '<Lanelet/traffic_signs>: provided list of ids is not a ' \
+                'set! type = {}'.format(type(traffic_sign_ids))
+            self._traffic_signs = traffic_sign_ids
+        else:
+            warnings.warn(
+                '<Lanelet/traffic_signs>: traffic_signs of lanelet is immutable!')
 
     @property
     def traffic_lights(self) -> Set[int]:
@@ -487,10 +501,14 @@ class Lanelet:
 
     @traffic_lights.setter
     def traffic_lights(self, traffic_light_ids: Set[int]):
-        assert isinstance(traffic_light_ids, set), \
-            '<Lanelet/traffic_lights>: provided list of ids is not a ' \
-            'set! type = {}'.format(type(traffic_light_ids))
-        self._traffic_lights = traffic_light_ids
+        if self._traffic_lights is None:
+            assert isinstance(traffic_light_ids, set), \
+                '<Lanelet/traffic_lights>: provided list of ids is not a ' \
+                'set! type = {}'.format(type(traffic_light_ids))
+            self._traffic_lights = traffic_light_ids
+        else:
+            warnings.warn(
+                '<Lanelet/traffic_lights>: traffic_lights of lanelet is immutable!')
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """
