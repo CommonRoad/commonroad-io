@@ -199,11 +199,15 @@ class Lanelet:
             self.lanelet_type = lanelet_type
 
         self._user_one_way = None
-        if user_one_way is not None:
+        if user_one_way is None:
+            self._user_one_way = set()
+        else:
             self.user_one_way = user_one_way
 
         self._user_bidirectional = None
-        if user_bidirectional is not None:
+        if user_bidirectional is None:
+            self._user_bidirectional = set()
+        else:
             self.user_bidirectional = user_bidirectional
 
         # Set Traffic Rules
