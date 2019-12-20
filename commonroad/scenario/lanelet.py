@@ -3,6 +3,7 @@ import enum
 from typing import *
 import numpy as np
 import networkx as nx
+from shapely.geometry import Point
 
 import commonroad.geometry.transform
 from commonroad.common.validity import *
@@ -30,6 +31,55 @@ class LineMarking(enum.Enum):
     BROAD_SOLID = 4
 
 
+class LaneletType(enum.Enum):
+    """
+    Enum describing different types of lanelets
+    """
+    URBAN = 'urban'
+    COUNTRY = 'country'
+    HIGHWAY = 'highway'
+    DRIVE_WAY='driveWay'
+    MAIN_CARRIAGE_WAY = 'mainCarriageWay'
+    ACCESS_RAMP = 'accessRamp'
+    EXIT_RAMP = 'exitRamp'
+    SHOULDER = 'shoulder'
+    BUS_LANE = 'busLane'
+    BUS_STOP = 'busStop'
+    BIKE_LANE = 'bikeLane'
+    SIDEWALK = 'sidewalk'
+    CROSSWALK = 'crosswalk'
+
+
+class RoadUser(enum.Enum):
+    """
+    Enum describing different types of road users
+    """
+    VEHICLE = 'vehicle'
+    CAR = 'car'
+    TRUCK = 'truck'
+    BUS = 'bus'
+    PRIORITY_VEHICLE = 'priorityVehicle'
+    BICYCLE = 'bicycle'
+    PEDESTRIAN = 'pedestrian'
+    TRAIN = 'train'
+
+
+class StopLine:
+    """Class which describes the stop line of a lanelet"""
+    def __init__(self, start: Point, end: Point,
+               line_marking: LineMarking = None,
+               traffic_sign_ref: int = None,
+               traffic_light_ref: int = None):
+        self.start = start
+        self.end = end
+        self.line_marking = line_marking
+        self.traffic_sign_ref = traffic_sign_ref
+        self.traffic_light_ref = traffic_light_ref
+
+    def __str__(self):
+        return f'StopLine From {self.start} to  {self.end}'
+
+
 class Lanelet:
     """
     Class which describes a Lanelet entity according to the CommonRoad specification. Each lanelet is described by a
@@ -44,6 +94,10 @@ class Lanelet:
                  adjacent_right=None, adjacent_right_same_direction=None,
                  line_marking_left_vertices=None,
                  line_marking_right_vertices=None,
+                 stop_line=None,
+                 lanelet_type = None,
+                 user_one_way = None,
+                 user_bidirectional = None,
                  traffic_sign=None,
                  traffic_light=None,
                  ):
@@ -66,6 +120,10 @@ class Lanelet:
         false otherwise (None if no right adjacent lanelet exists)
         :param line_marking_left_vertices: The type of line marking of the left boundary
         :param line_marking_right_vertices: The type of line marking of the right boundary
+        :param stop_line: The stop line of the lanelet
+        :param lanelet_type: The types of lanelet applicable here
+        :param user_one_way: type of users that will use the lanelet as one-way
+        :param user_bidirectional: type of users that will use the lanelet as bidirectional way
         :param traffic_sign: Traffic signs to be applied
         :param traffic_light: Traffic lights to follow
         """
@@ -130,15 +188,40 @@ class Lanelet:
         self._dynamic_obstacles_on_lanelet = {}
         self._static_obstacles_on_lanelet = set()
 
+        self._stop_line = None
+        if stop_line:
+            self.stop_line = stop_line
+
+        self._lanelet_type = None
+        if lanelet_type is None:
+            self._lanelet_type = set()
+        else:
+            self.lanelet_type = lanelet_type
+
+        self._user_one_way = None
+        if user_one_way is None:
+            self._user_one_way = set()
+        else:
+            self.user_one_way = user_one_way
+
+        self._user_bidirectional = None
+        if user_bidirectional is None:
+            self._user_bidirectional = set()
+        else:
+            self.user_bidirectional = user_bidirectional
+
         # Set Traffic Rules
+        self._traffic_signs = None
         if traffic_sign is None:
             self._traffic_signs = set()
         else:
-            self._traffic_signs = traffic_sign
+            self.traffic_signs = traffic_sign
+
+        self._traffic_lights = None
         if traffic_light is None:
             self._traffic_lights = set()
         else:
-            self._traffic_lights = traffic_light
+            self.traffic_lights = traffic_light
 
     @property
     def distance(self) -> np.ndarray:
@@ -339,15 +422,78 @@ class Lanelet:
         self._static_obstacles_on_lanelet = obstacle_ids
 
     @property
+    def stop_line(self) -> StopLine:
+        return self._stop_line
+
+    @stop_line.setter
+    def stop_line(self, stop_line: StopLine):
+        if self._stop_line is None:
+            assert isinstance(stop_line, StopLine),\
+                '<Lanelet/stop_line>: ''Provided type is not valid! type = {}'.format(type(stop_line))
+            self._stop_line = stop_line
+        else:
+            warnings.warn(
+                '<Lanelet/stop_line>: stop_line of lanelet is immutable!')
+
+    @property
+    def lanelet_type(self) -> Set[LaneletType]:
+        return self._lanelet_type
+
+    @lanelet_type.setter
+    def lanelet_type(self, lanelet_type: Set[LaneletType]):
+        if self._lanelet_type is None or len(self._lanelet_type) == 0:
+            assert isinstance(lanelet_type, set) and all(isinstance(elem, LaneletType) for elem in lanelet_type), \
+                '<Lanelet/lanelet_type>: ''Provided type is not valid! type = {}'.format(type(lanelet_type))
+            self._lanelet_type = lanelet_type
+        else:
+            warnings.warn(
+                '<Lanelet/lanelet_type>: type of lanelet is immutable!')
+
+    @property
+    def user_one_way(self) -> Set[RoadUser]:
+        return self._user_one_way
+
+    @user_one_way.setter
+    def user_one_way(self, user_one_way: Set[RoadUser]):
+        if self._user_one_way is None :
+            assert isinstance(user_one_way, set) and all(isinstance(elem, RoadUser) for elem in user_one_way),\
+                '<Lanelet/user_one_way>: ''Provided type is not valid! type = {}'.format(
+                type(user_one_way))
+            self._user_one_way = user_one_way
+        else:
+            warnings.warn(
+                '<Lanelet/user_one_way>: user_one_way of lanelet is immutable!')
+
+    @property
+    def user_bidirectional(self) -> Set[RoadUser]:
+        return self._user_bidirectional
+
+    @user_bidirectional.setter
+    def user_bidirectional(self, user_bidirectional: Set[RoadUser]):
+        if self._user_bidirectional is None:
+            assert isinstance(user_bidirectional, set) and \
+                   all(isinstance(elem, RoadUser) for elem in user_bidirectional), \
+                '<Lanelet/user_bidirectional>: ''Provided type is not valid! type = {}'.format(
+                    type(user_bidirectional))
+            self._user_bidirectional = user_bidirectional
+        else:
+            warnings.warn(
+                '<Lanelet/user_bidirectional>: user_bidirectional of lanelet is immutable!')
+
+    @property
     def traffic_signs(self) -> Set[int]:
         return self._traffic_signs
 
     @traffic_signs.setter
     def traffic_signs(self, traffic_sign_ids: Set[int]):
-        assert isinstance(traffic_sign_ids, set), \
-            '<Lanelet/traffic_signs>: provided list of ids is not a ' \
-            'set! type = {}'.format(type(traffic_sign_ids))
-        self._traffic_signs = traffic_sign_ids
+        if self._traffic_signs is None:
+            assert isinstance(traffic_sign_ids, set), \
+                '<Lanelet/traffic_signs>: provided list of ids is not a ' \
+                'set! type = {}'.format(type(traffic_sign_ids))
+            self._traffic_signs = traffic_sign_ids
+        else:
+            warnings.warn(
+                '<Lanelet/traffic_signs>: traffic_signs of lanelet is immutable!')
 
     @property
     def traffic_lights(self) -> Set[int]:
@@ -355,10 +501,14 @@ class Lanelet:
 
     @traffic_lights.setter
     def traffic_lights(self, traffic_light_ids: Set[int]):
-        assert isinstance(traffic_light_ids, set), \
-            '<Lanelet/traffic_lights>: provided list of ids is not a ' \
-            'set! type = {}'.format(type(traffic_light_ids))
-        self._traffic_signs = traffic_light_ids
+        if self._traffic_lights is None:
+            assert isinstance(traffic_light_ids, set), \
+                '<Lanelet/traffic_lights>: provided list of ids is not a ' \
+                'set! type = {}'.format(type(traffic_light_ids))
+            self._traffic_lights = traffic_light_ids
+        else:
+            warnings.warn(
+                '<Lanelet/traffic_lights>: traffic_lights of lanelet is immutable!')
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """
