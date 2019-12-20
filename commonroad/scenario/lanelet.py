@@ -192,32 +192,25 @@ class Lanelet:
         if stop_line:
             self.stop_line = stop_line
 
-        self._lanelet_type = None
-        if lanelet_type is None:
-            self._lanelet_type = set()
-        else:
+        self._lanelet_type = set()
+        if lanelet_type is not None:
             self.lanelet_type = lanelet_type
 
-        self._user_one_way = None
-        if user_one_way is None:
-            self._user_one_way = set()
-        else:
+        self._user_one_way = set()
+        if user_one_way is not None:
             self.user_one_way = user_one_way
 
-        self._user_bidirectional = None
-        if user_bidirectional is None:
-            self._user_bidirectional = set()
-        else:
+        self._user_bidirectional = set()
+        if user_bidirectional is not None:
             self.user_bidirectional = user_bidirectional
 
         # Set Traffic Rules
-        if traffic_sign is None:
-            self._traffic_signs = set()
-        else:
+        self._traffic_signs = set()
+        if traffic_sign is not None:
             self.traffic_signs = traffic_sign
-        if traffic_light is None:
-            self._traffic_lights = set()
-        else:
+
+        self._traffic_lights = set()
+        if traffic_light is not None:
             self.traffic_lights = traffic_light
 
     @property
@@ -438,7 +431,7 @@ class Lanelet:
 
     @lanelet_type.setter
     def lanelet_type(self, lanelet_type: Set[LaneletType]):
-        if self._lanelet_type is None:
+        if self._lanelet_type is None or len(self._lanelet_type) == 0:
             assert isinstance(lanelet_type, set) and all(isinstance(elem, LaneletType) for elem in lanelet_type), \
                 '<Lanelet/lanelet_type>: ''Provided type is not valid! type = {}'.format(type(lanelet_type))
             self._lanelet_type = lanelet_type
@@ -452,7 +445,7 @@ class Lanelet:
 
     @user_one_way.setter
     def user_one_way(self, user_one_way: Set[RoadUser]):
-        if self._user_one_way is None:
+        if self._user_one_way is None or len(self._user_one_way) == 0:
             assert isinstance(user_one_way, set) and all(isinstance(elem, RoadUser) for elem in user_one_way),\
                 '<Lanelet/user_one_way>: ''Provided type is not valid! type = {}'.format(
                 type(user_one_way))
@@ -467,7 +460,7 @@ class Lanelet:
 
     @user_bidirectional.setter
     def user_bidirectional(self, user_bidirectional: Set[RoadUser]):
-        if self._user_bidirectional is None:
+        if self._user_bidirectional is None or len(self._user_bidirectional) == 0:
             assert isinstance(user_bidirectional, set) and \
                    all(isinstance(elem, RoadUser) for elem in user_bidirectional), \
                 '<Lanelet/user_bidirectional>: ''Provided type is not valid! type = {}'.format(
