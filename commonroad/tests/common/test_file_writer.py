@@ -2,12 +2,14 @@ import logging
 import os
 import unittest
 
+from shapely.geometry import Point
+
 from commonroad.common.file_writer import CommonRoadFileWriter, OverwriteExistingFile
 from commonroad.geometry.shape import *
 from lxml import etree
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
 from commonroad.prediction.prediction import *
-from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType
+from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, StopLine
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.traffic_rule import TrafficSign, TrafficSignElement, TrafficSignID
@@ -57,9 +59,10 @@ class TestFileWriter(unittest.TestCase):
         dyn_traj_obs = DynamicObstacle(2, ObstacleType(0),
                                        initial_state=traj_pred.trajectory.state_at_time_step(0),
                                        prediction=traj_pred, obstacle_shape=rectangle)
+        lanelet1_stopline = StopLine(Point(12345.12, 0.0), Point(0.0, 1), LineMarking.SOLID)
         lanelet1 = Lanelet(np.array([[12345.12, 0.0], [1.0,0.0],[2,0]]), np.array([[0.0, 1],[1.0,1],[2,1]]), np.array([[0.0, 2], [1.0,2],[2,2]]), 100,
                 [101], [101], 101, False, 101, True,
-                          LineMarking.DASHED, LineMarking.SOLID,None, {LaneletType.HIGHWAY}, None, None, {1})
+                          LineMarking.DASHED, LineMarking.SOLID,lanelet1_stopline, {LaneletType.HIGHWAY}, None, None, {1})
         lanelet2 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                            np.array([[0.0, 2], [1.0, 2], [2, 2]]), 101,
                            [100], [100], 100, False, 100, True,
