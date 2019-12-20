@@ -192,10 +192,8 @@ class Lanelet:
         if stop_line:
             self.stop_line = stop_line
 
-        if lanelet_type is None:
-            self._lanelet_type = {LaneletType.HIGHWAY}
-        else:
-            self._lanelet_type = None
+        self._lanelet_type = set()
+        if lanelet_type is not None:
             self.lanelet_type = lanelet_type
 
         self._user_one_way = None
