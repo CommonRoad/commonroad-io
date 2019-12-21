@@ -49,7 +49,7 @@ class TestFileWriter(unittest.TestCase):
 
         traj_pred = TrajectoryPrediction(trajectory, rectangle)
 
-        static_obs = StaticObstacle(0,ObstacleType(0), obstacle_shape=circ, initial_state=init_state)
+        static_obs = StaticObstacle(3,ObstacleType(0), obstacle_shape=circ, initial_state=init_state)
         dyn_set_obs = DynamicObstacle(1,ObstacleType(0),
                                       initial_state=traj_pred.trajectory.state_at_time_step(0),
                                       prediction=set_pred, obstacle_shape=rectangle)
@@ -57,11 +57,11 @@ class TestFileWriter(unittest.TestCase):
                                        initial_state=traj_pred.trajectory.state_at_time_step(0),
                                        prediction=traj_pred, obstacle_shape=rectangle)
         lanelet1 = Lanelet(np.array([[12345.12, 0.0], [1.0,0.0],[2,0]]), np.array([[0.0, 1],[1.0,1],[2,1]]), np.array([[0.0, 2], [1.0,2],[2,2]]), 100,
-                [101], [101], 101, False, 101, True, 10.0,
+                [101], [101], 101, False, 101, True,
                           LineMarking.DASHED, LineMarking.SOLID)
         lanelet2 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                           np.array([[0.0, 2], [1.0, 2], [2, 2]]), 101,
-                          [100], [100], 100, False, 100, True, 10.0,
+                          [100], [100], 100, False, 100, True,
                           LineMarking.SOLID, LineMarking.DASHED)
 
         lanelet_network = LaneletNetwork().create_from_lanelet_list(list([lanelet1, lanelet2]))
@@ -86,7 +86,6 @@ class TestFileWriter(unittest.TestCase):
         CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'unittest', 'overwritten'). \
             write_to_file(filename=filename,
                           overwrite_existing_file=OverwriteExistingFile.ALWAYS)
-
 
     def validate_with_xsd(self, xml_path: str) -> bool:
         xmlschema_doc = etree.parse(self.xsd_path)
