@@ -219,5 +219,5 @@ class TrajectoryPrediction(Prediction):
         for k, state in enumerate(self._trajectory.state_list):
             occupied_region = self._shape.rotate_translate_local(
                 state.position, state.orientation)
-            occupancy_set.append(Occupancy(self._trajectory.initial_time_step + k, occupied_region))
+            occupancy_set.append(Occupancy(state.time_step, occupied_region))
         return occupancy_set

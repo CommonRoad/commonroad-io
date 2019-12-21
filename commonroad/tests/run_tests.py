@@ -16,4 +16,8 @@ if __name__ == "__main__":
             errors += len(b.errors)
             tests += b.testsRun
 
-    print('Executed {} tests; got {} fails and {} errors'.format(tests, failures, errors))
+    print(
+        'Executed {} tests; got {} fails and {} errors'.format(tests, failures, errors)
+    )
+    if errors > 0 or failures > 0:
+        exit(1)
