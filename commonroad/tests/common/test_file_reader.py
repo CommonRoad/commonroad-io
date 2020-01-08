@@ -523,22 +523,22 @@ class TestFileReader(unittest.TestCase):
         self.assertEqual(exp_traffic_light_201_direction, xml_file[0].lanelet_network.traffic_lights[0].direction)
         self.assertEqual(exp_traffic_light_201_active, xml_file[0].lanelet_network.traffic_lights[0].active)
         self.assertEqual(exp_traffic_light_201_time_offset, xml_file[0].lanelet_network.traffic_lights[0].time_offset)
-        # self.assertEqual(exp_traffic_light_201_cycle_0_state,
-        #                  xml_file[0].lanelet_network.traffic_lights[0].cycle[0].state)
-        # self.assertEqual(exp_traffic_light_201_cycle_0_duration,
-        #                  xml_file[0].lanelet_network.traffic_lights[0].cycle[0].duration)
-        # self.assertEqual(exp_traffic_light_201_cycle_1_state,
-        #                  xml_file[0].lanelet_network.traffic_lights[0].cycle[1].state)
-        # self.assertEqual(exp_traffic_light_201_cycle_1_duration,
-        #                  xml_file[0].lanelet_network.traffic_lights[0].cycle[1].duration)
-        # self.assertEqual(exp_traffic_light_201_cycle_2_state,
-        #                  xml_file[0].lanelet_network.traffic_lights[0].cycle[2].state)
-        # self.assertEqual(exp_traffic_light_201_cycle_2_duration,
-        #                  xml_file[0].lanelet_network.traffic_lights[0].cycle[2].duration)
-        # self.assertEqual(exp_traffic_light_201_cycle_3_state,
-        #                  xml_file[0].lanelet_network.traffic_lights[0].cycle[3].state)
-        # self.assertEqual(exp_traffic_light_201_cycle_3_duration,
-        #                  xml_file[0].lanelet_network.traffic_lights[0].cycle[3].duration)
+        self.assertEqual(exp_traffic_light_201_cycle_0_state,
+                         xml_file[0].lanelet_network.traffic_lights[0].cycle[0].state)
+        self.assertEqual(exp_traffic_light_201_cycle_0_duration,
+                         xml_file[0].lanelet_network.traffic_lights[0].cycle[0].duration)
+        self.assertEqual(exp_traffic_light_201_cycle_1_state,
+                         xml_file[0].lanelet_network.traffic_lights[0].cycle[1].state)
+        self.assertEqual(exp_traffic_light_201_cycle_1_duration,
+                         xml_file[0].lanelet_network.traffic_lights[0].cycle[1].duration)
+        self.assertEqual(exp_traffic_light_201_cycle_2_state,
+                         xml_file[0].lanelet_network.traffic_lights[0].cycle[2].state)
+        self.assertEqual(exp_traffic_light_201_cycle_2_duration,
+                         xml_file[0].lanelet_network.traffic_lights[0].cycle[2].duration)
+        self.assertEqual(exp_traffic_light_201_cycle_3_state,
+                         xml_file[0].lanelet_network.traffic_lights[0].cycle[3].state)
+        self.assertEqual(exp_traffic_light_201_cycle_3_duration,
+                         xml_file[0].lanelet_network.traffic_lights[0].cycle[3].duration)
 
         self.assertSetEqual(exp_intersection_301_incoming_zero_incoming_lanelets,
                             xml_file[0].lanelet_network.intersections[0].incomings[0].incoming_lanelets)

@@ -565,12 +565,12 @@ class TrafficLightCycleFactory:
         :return: list of objects of class TrafficLightCycleElement according to the CommonRoad specification.
         """
         traffic_ligth_cycle_elements = []
-        traffic_light_states = [e.value for e in TrafficLightState]
-        for state in traffic_light_states:
-            if xml_node.find(state) is not None:
-                duration = int(xml_node.find(state).text)
-                traffic_ligth_cycle_elements.append(TrafficLightCycleElement(state=TrafficLightState(state),
-                                                                             duration=duration))
+        for cycleElement in xml_node.findall('cycleElement'):
+            state = cycleElement.find('color').text
+            duration = int(cycleElement.find('duration').text)
+            traffic_ligth_cycle_elements.append(TrafficLightCycleElement(state=TrafficLightState(state),
+                                                                         duration=duration))
+
         return traffic_ligth_cycle_elements
 
 

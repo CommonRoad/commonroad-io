@@ -375,16 +375,23 @@ __status__ = "in development"
     </xs:sequence>
     <xs:attribute name="id" type="xs:positiveInteger" use="required" />
   </xs:complexType>
+  <xs:simpleType name="trafficLightColor">
+   <xs:restriction base="xs:string">
+    <xs:enumeration value="red"/>
+	<xs:enumeration value="redYellow"/>
+    <xs:enumeration value="green"/>
+	<xs:enumeration value="yellow"/>
+   </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="trafficCycleElement">
+  	<xs:sequence>
+  	  <xs:element name="duration" type="xs:positiveInteger"/>
+  	  <xs:element name="color" type="trafficLightColor"/>
+  	</xs:sequence>
+  </xs:complexType>
   <xs:complexType name="trafficLightCycle">
     <xs:sequence>
-      <xs:sequence>
-        <xs:choice minOccurs="1" maxOccurs="unbounded">
-    	  <xs:element name="red" type="xs:positiveInteger" minOccurs="0" maxOccurs="unbounded"/>
-          <xs:element name="redYellow" type="xs:positiveInteger" minOccurs="0" maxOccurs="unbounded"/>
-          <xs:element name="green" type="xs:positiveInteger" minOccurs="0" maxOccurs="unbounded"/>
-          <xs:element name="yellow" type="xs:positiveInteger" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:choice>
-      </xs:sequence>
+      <xs:element name="cycleElement" type="trafficCycleElement" maxOccurs="unbounded"/>
       <xs:element name="timeOffset" type="xs:positiveInteger" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>

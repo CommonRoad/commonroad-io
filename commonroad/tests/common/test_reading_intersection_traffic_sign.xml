@@ -1596,10 +1596,22 @@
   </trafficSign>
   <trafficLight id="201">
         <cycle>
-            <red>15</red>
-            <redYellow>4</redYellow>
-            <green>15</green>
-            <yellow>4</yellow>
+          <cycleElement>
+            <duration>15</duration>
+            <color>red</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
+            <color>redYellow</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>15</duration>
+            <color>green</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
+            <color>yellow</color>
+          </cycleElement>
         </cycle>
         <position>
           <point>
@@ -1612,10 +1624,22 @@
   </trafficLight>
     <trafficLight id="202">
         <cycle>
-            <red>15</red>
-            <redYellow>4</redYellow>
-            <green>15</green>
-            <yellow>4</yellow>
+          <cycleElement>
+            <duration>15</duration>
+            <color>red</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
+            <color>redYellow</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>15</duration>
+            <color>green</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
+            <color>yellow</color>
+          </cycleElement>
         </cycle>
         <position>
           <point>
@@ -1627,11 +1651,23 @@
         <active>true</active>
   </trafficLight>
     <trafficLight id="203">
-        <cycle>
-            <green>15</green>
-            <yellow>4</yellow>
-            <red>15</red>
-            <redYellow>4</redYellow>
+      <cycle>
+          <cycleElement>
+            <duration>15</duration>
+            <color>green</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
+            <color>yellow</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>15</duration>
+            <color>red</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
+            <color>redYellow</color>
+          </cycleElement>
         </cycle>
         <position>
           <point>
@@ -1643,12 +1679,24 @@
         <active>true</active>
   </trafficLight>
     <trafficLight id="204">
-        <cycle>
-            <green>15</green>
-            <yellow>4</yellow>
-            <red>15</red>
-            <redYellow>4</redYellow>
-        </cycle>
+      <cycle>
+          <cycleElement>
+            <duration>15</duration>
+            <color>green</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
+            <color>yellow</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>15</duration>
+            <color>red</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
+            <color>redYellow</color>
+          </cycleElement>
+      </cycle>
         <position>
           <point>
             <x>168.6607857447963</x>
