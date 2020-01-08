@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<commonRoad affiliation="TU Munich" author="PrinceOfZAM" benchmarkID="ZAM_test_0-0-1" commonRoadVersion="2018b" date="2018-10-25" source="unittest" tags="original" timeStepSize="0.1">
+<commonRoad affiliation="TU Munich" author="PrinceOfZAM" benchmarkID="ZAM_test_0-0-1" commonRoadVersion="2020a" date="2020-01-07" source="unittest" tags="original" timeStepSize="0.1">
   <lanelet id="100">
     <leftBound>
       <point>
@@ -14,6 +14,7 @@
         <x>2.0</x>
         <y>0.0</y>
       </point>
+      <lineMarking>dashed</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -28,11 +29,15 @@
         <x>2.0</x>
         <y>2.0</y>
       </point>
+      <lineMarking>solid</lineMarking>
     </rightBound>
     <predecessor ref="101"/>
     <successor ref="101"/>
     <adjacentLeft drivingDir="opposite" ref="101"/>
     <adjacentRight drivingDir="same" ref="101"/>
+    <type>highway</type>
+    <type>mainCarriageWay</type>
+    <userOneWay>vehicle</userOneWay>
   </lanelet>
   <lanelet id="101">
     <leftBound>
@@ -48,6 +53,7 @@
         <x>2.0</x>
         <y>0.0</y>
       </point>
+      <lineMarking>broad_dashed</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -62,15 +68,24 @@
         <x>2.0</x>
         <y>2.0</y>
       </point>
+      <lineMarking>broad_solid</lineMarking>
     </rightBound>
     <predecessor ref="100"/>
     <successor ref="100"/>
     <adjacentLeft drivingDir="opposite" ref="100"/>
     <adjacentRight drivingDir="same" ref="100"/>
-    <speedLimit>10.0</speedLimit>
+    <type>urban</type>
+    <type>busLane</type>
+    <userBidirectional>bus</userBidirectional>
+    <trafficSignRef ref="201"/>
   </lanelet>
-  <obstacle id="0">
-    <role>static</role>
+  <trafficSign id="201">
+    <trafficSignElement>
+      <trafficSignID>274</trafficSignID>
+      <additionalValue>10</additionalValue>
+    </trafficSignElement>
+  </trafficSign>
+  <staticObstacle id="3">
     <type>unknown</type>
     <shape>
       <circle>
@@ -95,9 +110,8 @@
         <exact>0</exact>
       </time>
     </initialState>
-  </obstacle>
-  <obstacle id="1">
-    <role>dynamic</role>
+  </staticObstacle>
+  <dynamicObstacle id="1">
     <type>unknown</type>
     <shape>
       <rectangle>
@@ -122,27 +136,11 @@
     <occupancySet>
       <occupancy>
         <shape>
-          <rectangle>
-            <length>4.3</length>
-            <width>8.9</width>
-            <orientation>1.7</orientation>
-            <center>
-              <x>0.1</x>
-              <y>0.5</y>
-            </center>
-          </rectangle>
-        </shape>
-        <time>
-          <exact>0</exact>
-        </time>
-      </occupancy>
-      <occupancy>
-        <shape>
           <circle>
             <radius>2.0</radius>
             <center>
-              <x>10.0</x>
-              <y>0.0</y>
+              <x>0.1</x>
+              <y>0.5</y>
             </center>
           </circle>
         </shape>
@@ -180,7 +178,7 @@
           <circle>
             <radius>2.0</radius>
             <center>
-              <x>10.0</x>
+              <x>0.0</x>
               <y>0.0</y>
             </center>
           </circle>
@@ -190,9 +188,8 @@
         </time>
       </occupancy>
     </occupancySet>
-  </obstacle>
-  <obstacle id="2">
-    <role>dynamic</role>
+  </dynamicObstacle>
+  <dynamicObstacle id="2">
     <type>unknown</type>
     <shape>
       <rectangle>
@@ -214,21 +211,15 @@
         <exact>0</exact>
       </time>
     </initialState>
+    <initialSignalState>
+      <time>
+        <exact>0</exact>
+      </time>
+      <horn>true</horn>
+      <brakingLights>false</brakingLights>
+      <hazardWarningLights>true</hazardWarningLights>
+    </initialSignalState>
     <trajectory>
-      <state>
-        <position>
-          <point>
-            <x>0.0</x>
-            <y>0.0</y>
-          </point>
-        </position>
-        <orientation>
-          <exact>0.0</exact>
-        </orientation>
-        <time>
-          <exact>0</exact>
-        </time>
-      </state>
       <state>
         <position>
           <point>
@@ -244,7 +235,17 @@
         </time>
       </state>
     </trajectory>
-  </obstacle>
+    <signalSeries>
+      <signalState>
+        <time>
+          <exact>1</exact>
+        </time>
+        <horn>false</horn>
+        <brakingLights>true</brakingLights>
+        <hazardWarningLights>false</hazardWarningLights>
+      </signalState>
+    </signalSeries>
+  </dynamicObstacle>
   <planningProblem id="1000">
     <initialState>
       <position>

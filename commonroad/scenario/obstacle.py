@@ -1,7 +1,7 @@
 import enum
 import warnings
 import numpy as np
-from typing import Union, List, Set
+from typing import Union, Set, List
 from abc import ABC, abstractmethod
 
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector, is_real_number
@@ -22,24 +22,54 @@ __status__ = "Released"
 @enum.unique
 class ObstacleRole(enum.Enum):
     """ Enum containing all possible obstacle roles defined in CommonRoad."""
-    STATIC = 1
-    DYNAMIC = 2
+    STATIC = "static"
+    DYNAMIC = "dynamic"
 
 
 @enum.unique
 class ObstacleType(enum.Enum):
     """ Enum containing all possible obstacle types defined in CommonRoad."""
-    UNKNOWN = 0
-    CAR = 1
-    TRUCK = 2
-    BUS = 3
-    BICYCLE = 4
-    PEDESTRIAN = 5
-    PRIORITY_VEHICLE = 6
-    PARKED_VEHICLE = 7
-    CONSTRUCTION_ZONE = 8
-    TRAIN = 9
-    ROAD_BOUNDARY = 10
+    UNKNOWN = "unknown"
+    CAR = "car"
+    TRUCK = "truck"
+    BUS = "bus"
+    BICYCLE = "bicycle"
+    PEDESTRIAN = "pedestrian"
+    PRIORITY_VEHICLE = "priority_vehicle"
+    PARKED_VEHICLE = "parked_vehicle"
+    CONSTRUCTION_ZONE = "construction_zone"
+    TRAIN = "train"
+    ROAD_BOUNDARY = "road_boundary"
+
+
+class SignalState:
+    """ A signal state is a boolean value indicating the activity of the signal source at a time step.
+        The possible signal state elements are defined as slots:
+
+        :ivar horn: boolean indicating activity of horn
+        :ivar indicator_left: boolean indicating activity of left indicator
+        :ivar indicator_right: boolean indicating activity of right indicator
+        :ivar braking_lights: boolean indicating activity of braking lights
+        :ivar hazard_warning_lights: boolean indicating activity of hazard warning lights
+        :ivar flashing_blue_lights: boolean indicating activity of flashing blue lights (police, ambulance)
+        :ivar time_step: the discrete time step. Exact values are given as integers, uncertain values are given as
+              :class:`commonroad.common.util.Interval`
+    """
+
+    __slots__ = [
+        'horn',
+        'indicator_left',
+        'indicator_right',
+        'braking_lights',
+        'hazard_warning_lights',
+        'flashing_blue_lights',
+        'time_step',
+    ]
+
+    def __init__(self, **kwargs):
+        """ Elements of state vector are determined during runtime."""
+        for (field, value) in kwargs.items():
+            setattr(self, field, value)
 
 
 class Obstacle(ABC):
@@ -47,7 +77,8 @@ class Obstacle(ABC):
 
     def __init__(self, obstacle_id: int, obstacle_role: ObstacleRole,
                  obstacle_type: ObstacleType, obstacle_shape: Shape, initial_state: State,
-                 initial_lanelet_ids: Union[None, Set[int]] = None):
+                 initial_lanelet_ids: Union[None, Set[int]] = None,
+                 initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None):
         """
         :param obstacle_id: unique ID of the obstacle
         :param obstacle_role: obstacle role as defined in CommonRoad
@@ -55,6 +86,8 @@ class Obstacle(ABC):
         :param obstacle_shape: occupied area of the obstacle
         :param initial_state: initial state of the obstacle
         :param initial_lanelet_ids: initial IDs of lanelets the obstacle is on
+        :param initial_signal_state: initial signal state of obstacle
+        :param signal_series: list of signal states over time
         """
         self.obstacle_id: int = obstacle_id
         self.obstacle_role: ObstacleRole = obstacle_role
@@ -62,6 +95,8 @@ class Obstacle(ABC):
         self.obstacle_shape: Shape = obstacle_shape
         self.initial_state: State = initial_state
         self.initial_lanelet_ids: Union[None, Set[int]] = initial_lanelet_ids
+        self.initial_signal_state: Union[None, SignalState] = initial_signal_state
+        self.signal_series: List[SignalState] = signal_series
 
     @property
     def obstacle_id(self) -> int:
@@ -143,13 +178,45 @@ class Obstacle(ABC):
     def initial_lanelet_ids(self, initial_lanelet_ids: Union[None, Set[int]]):
         assert isinstance(initial_lanelet_ids, (set, type(None))), \
             '<Obstacle/initial_lanelet_ids>: argument initial_lanelet_ids of wrong type. ' \
-            'Expected types: %s. Got type: %s.' % ((set, type(None)), type(initial_lanelet_ids))
+            'Expected types: %s, %s. Got type: %s.' % (set, type(None), type(initial_lanelet_ids))
         if initial_lanelet_ids is not None:
             for lanelet_id in initial_lanelet_ids:
                 assert isinstance(lanelet_id, int), \
                     '<Obstacle/initial_lanelet_ids>: argument initial_lanelet of wrong type. ' \
                     'Expected types: %s. Got type: %s.' % (int, type(lanelet_id))
         self._initial_lanelet_ids = initial_lanelet_ids
+
+    @property
+    def initial_signal_state(self) -> SignalState:
+        """ Signal state as defined in CommonRoad."""
+        return self._initial_signal_state
+
+    @initial_signal_state.setter
+    def initial_signal_state(self, initial_signal_state: SignalState):
+        assert isinstance(initial_signal_state, (SignalState, type(None))), '<Obstacle/initial_signal_state>: ' \
+                                                              'argument initial_signal_state of wrong ' \
+                                                              'type. Expected types: %s, %s. Got type: %s.' \
+                                                              % (SignalState, type(None), type(initial_signal_state))
+        if not hasattr(self, '_initial_signal_state'):
+            self._initial_signal_state = initial_signal_state
+        else:
+            warnings.warn('<Obstacle/initial_signal_state>: Initial obstacle signal state is immutable.')
+
+    @property
+    def signal_series(self) -> List[SignalState]:
+        """ Signal series as defined in CommonRoad."""
+        return self._signal_series
+
+    @signal_series.setter
+    def signal_series(self, signal_series: List[SignalState]):
+        assert isinstance(signal_series, (list, type(None))), '<Obstacle/initial_signal_state>: ' \
+                                                              'argument initial_signal_state of wrong ' \
+                                                              'type. Expected types: %s, %s. Got type: %s.' \
+                                                              % (list, type(None), type(signal_series))
+        if not hasattr(self, '_signal_series'):
+            self._signal_series = signal_series
+        else:
+            warnings.warn('<Obstacle/signal_series>: Obstacle signal series is immutable.')
 
     @abstractmethod
     def occupancy_at_time(self, time_step: int) -> Union[None, Occupancy]:
@@ -159,22 +226,40 @@ class Obstacle(ABC):
     def translate_rotate(self, translation: np.ndarray, angle: float):
         pass
 
+    def signal_state_at_time_step(self, time_step: int) -> Union[SignalState, None]:
+        """
+        Extracts signal state at a time step
+
+        :param time_step: time step of interest
+        :returns signal state or None if time step does not exist
+        """
+        signal_state = None
+        for state in self.signal_series:
+            if state.time_step == time_step:
+                signal_state = state
+
+        return signal_state
+
 
 class StaticObstacle(Obstacle):
     """ Class representing static obstacles as defined in CommonRoad."""
 
     def __init__(self, obstacle_id: int, obstacle_type: ObstacleType,
-                 obstacle_shape: Shape, initial_state: State, initial_lanelet_ids: Union[None, Set[int]] = None):
+                 obstacle_shape: Shape, initial_state: State, initial_lanelet_ids: Union[None, Set[int]] = None,
+                 initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None):
         """
             :param obstacle_id: unique ID of the obstacle
             :param obstacle_type: type of obstacle (e.g. PARKED_VEHICLE)
             :param obstacle_shape: shape of the static obstacle
             :param initial_state: initial state of the static obstacle
             :param initial_lanelet_ids: initial IDs of lanelets the obstacle is on
+            :param initial_signal_state: initial signal state of static obstacle
+            :param signal_series: list of signal states over time
         """
         Obstacle.__init__(self, obstacle_id=obstacle_id, obstacle_role=ObstacleRole.STATIC,
                           obstacle_type=obstacle_type, obstacle_shape=obstacle_shape, initial_state=initial_state,
-                          initial_lanelet_ids=initial_lanelet_ids)
+                          initial_lanelet_ids=initial_lanelet_ids, initial_signal_state=initial_signal_state,
+                          signal_series=signal_series)
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ First translates the static obstacle, then rotates the static obstacle around the origin.
@@ -215,7 +300,8 @@ class DynamicObstacle(Obstacle):
 
     def __init__(self, obstacle_id: int, obstacle_type: ObstacleType,
                  obstacle_shape: Shape, initial_state: State,
-                 prediction: Union[None, Prediction] = None, initial_lanelet_ids: Union[None, Set[int]] = None):
+                 prediction: Union[None, Prediction] = None, initial_lanelet_ids: Union[None, Set[int]] = None,
+                 initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None):
         """
             :param obstacle_id: unique ID of the obstacle
             :param obstacle_type: type of obstacle (e.g. Bus)
@@ -223,10 +309,13 @@ class DynamicObstacle(Obstacle):
             :param initial_state: initial state of the dynamic obstacle
             :param prediction: predicted movement of the dynamic obstacle
             :param initial_lanelet_ids: initial IDs of lanelets the obstacle is on
+            :param initial_signal_state: initial signal state of dynamic obstacle
+            :param signal_series: list of signal states over time
         """
         Obstacle.__init__(self, obstacle_id=obstacle_id, obstacle_role=ObstacleRole.DYNAMIC,
                           obstacle_type=obstacle_type, obstacle_shape=obstacle_shape, initial_state=initial_state,
-                          initial_lanelet_ids=initial_lanelet_ids)
+                          initial_lanelet_ids=initial_lanelet_ids, initial_signal_state=initial_signal_state,
+                          signal_series=signal_series)
         self.prediction: Prediction = prediction
 
     @property

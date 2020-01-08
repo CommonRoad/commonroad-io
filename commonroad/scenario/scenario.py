@@ -36,6 +36,7 @@ class Scenario:
         """
         self.dt: float = dt
         self.benchmark_id: str = benchmark_id
+        self.country = benchmark_id[0:3]
         self.lanelet_network: LaneletNetwork = LaneletNetwork()
 
         self._static_obstacles: Dict[int, StaticObstacle] = defaultdict()

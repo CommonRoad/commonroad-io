@@ -1,7 +1,6 @@
 <?xml version="1.0" ?>
-<commonRoad affiliation="TU Munich" author="PrinceOfZAM" benchmarkID="ZAM_test_0-0-1" commonRoadVersion="2018b" date="2018-10-25" source="unittest" tags="original" timeStepSize="0.1">
-  <obstacle id="0">
-    <role>static</role>
+<commonRoad affiliation="TU Munich" author="PrinceOfZAM" benchmarkID="ZAM_test_0-0-1" commonRoadVersion="2020a" date="2020-01-07" source="unittest" tags="original" timeStepSize="0.1">
+  <staticObstacle id="3">
     <type>unknown</type>
     <shape>
       <circle>
@@ -26,9 +25,8 @@
         <exact>0</exact>
       </time>
     </initialState>
-  </obstacle>
-  <obstacle id="1">
-    <role>dynamic</role>
+  </staticObstacle>
+  <dynamicObstacle id="1">
     <type>unknown</type>
     <shape>
       <rectangle>
@@ -121,9 +119,8 @@
         </time>
       </occupancy>
     </occupancySet>
-  </obstacle>
-  <obstacle id="2">
-    <role>dynamic</role>
+  </dynamicObstacle>
+  <dynamicObstacle id="2">
     <type>unknown</type>
     <shape>
       <rectangle>
@@ -150,20 +147,6 @@
         <position>
           <point>
             <x>0.0</x>
-            <y>0.0</y>
-          </point>
-        </position>
-        <orientation>
-          <exact>0.0</exact>
-        </orientation>
-        <time>
-          <exact>0</exact>
-        </time>
-      </state>
-      <state>
-        <position>
-          <point>
-            <x>0.0</x>
             <y>1.0</y>
           </point>
         </position>
@@ -175,5 +158,5 @@
         </time>
       </state>
     </trajectory>
-  </obstacle>
+  </dynamicObstacle>
 </commonRoad>

@@ -1,12 +1,11 @@
 import unittest
 import numpy as np
-from shapely.geometry import Point
 
 from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork, StopLine
 from commonroad.geometry.shape import Polygon, Rectangle
 from commonroad.prediction.prediction import Trajectory, TrajectoryPrediction
-from commonroad.scenario.obstacle import State, DynamicObstacle, StaticObstacle, ObstacleType
-from commonroad.scenario.traffic_rule import TrafficSignElement, TrafficSign, TrafficSignID
+from commonroad.scenario.obstacle import State, DynamicObstacle, ObstacleType
+from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany
 
 
 class TestLanelet(unittest.TestCase):
@@ -23,12 +22,13 @@ class TestLanelet(unittest.TestCase):
         adjacent_left_same_dir = False
         line_marking_right = LineMarking.SOLID
         line_marking_left = LineMarking.DASHED
-        stop_line = StopLine(start= Point(0,0), end= Point(0,1), line_marking=LineMarking.SOLID)
-        traffic_sign_max_speed = TrafficSignElement(TrafficSignID.MAXSPEED.value, [15])
-        traffic_sign = TrafficSign(1, {traffic_sign_max_speed})
+        stop_line = StopLine(start=np.array([0, 0]), end=np.array([0, 1]), line_marking=LineMarking.SOLID)
+        traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAXSPEED.value, ["15"])
+        traffic_sign = TrafficSign(1, [traffic_sign_max_speed])
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
                           adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir,
-                          line_marking_left, line_marking_right, stop_line, None, None, None, {traffic_sign.id})
+                          line_marking_left, line_marking_right, stop_line, None, None, None,
+                          {traffic_sign.traffic_sign_id})
 
 
         s1 = np.sqrt(1.25)
@@ -49,7 +49,7 @@ class TestLanelet(unittest.TestCase):
         self.assertEqual(lanelet.adj_right_same_direction, adjacent_right_same_dir)
         self.assertEqual(lanelet.line_marking_left_vertices, line_marking_left)
         self.assertEqual(lanelet.line_marking_right_vertices, line_marking_right)
-        self.assertSetEqual(lanelet.traffic_signs, {traffic_sign.id})
+        self.assertSetEqual(lanelet.traffic_signs, {traffic_sign.traffic_sign_id})
         self.assertEqual(lanelet.stop_line, stop_line)
 
     def test_translate_rotate(self):

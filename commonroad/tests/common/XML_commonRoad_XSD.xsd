@@ -253,6 +253,8 @@ __status__ = "in development"
     <xs:restriction base="xs:string">
       <xs:enumeration value="dashed"/>
       <xs:enumeration value="solid"/>
+      <xs:enumeration value="broad_dashed"/>
+      <xs:enumeration value="broad_solid"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="bound">
@@ -297,16 +299,10 @@ __status__ = "in development"
       <xs:enumeration value="crosswalk"/>
       <xs:enumeration value="busLane"/>
       <xs:enumeration value="bicycleLane"/>
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:simpleType name="laneletSubtype">
-    <xs:restriction base="xs:string">
       <xs:enumeration value="exitRamp"/>
       <xs:enumeration value="mainCarriageWay"/>
       <xs:enumeration value="accessRamp"/>
       <xs:enumeration value="driveWay"/>
-      <xs:enumeration value="oneWayExceptBicycle"/>
-      <xs:enumeration value="bidirectionalLane"/>
       <xs:enumeration value="busStop"/>
       <xs:enumeration value="unknown"/>
     </xs:restriction>
@@ -349,6 +345,8 @@ __status__ = "in development"
       <xs:enumeration value="274"/>
 	  <xs:enumeration value="301"/>
 	  <xs:enumeration value="306"/>
+      <xs:enumeration value="310"/>
+      <xs:enumeration value="720"/>
 	  <xs:enumeration value="1002-10"/>
 	  <xs:enumeration value="1002-12"/>
 	  <xs:enumeration value="1002-13"/>
@@ -364,9 +362,9 @@ __status__ = "in development"
   </xs:simpleType>
   <xs:complexType name="trafficSign">
     <xs:sequence>
-      <xs:element name= "trafficSignElement">
+      <xs:element name= "trafficSignElement" maxOccurs="unbounded">
         <xs:complexType>
-          <xs:sequence maxOccurs="unbounded">
+          <xs:sequence>
             <xs:element name="trafficSignID" type="trafficSignID"/>
             <xs:element name="additionalValue" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
           </xs:sequence>
@@ -400,6 +398,10 @@ __status__ = "in development"
             <xs:enumeration value="right"/>
             <xs:enumeration value="straight"/>
             <xs:enumeration value="left"/>
+            <xs:enumeration value="leftStraight"/>
+            <xs:enumeration value="straightRight"/>
+            <xs:enumeration value="leftRight"/>
+            <xs:enumeration value="all"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
@@ -472,7 +474,7 @@ __status__ = "in development"
       <xs:element name="type" type="obstacleTypeDynamic"/>
       <xs:element name="shape" type="shape"/>
       <xs:element name="initialState" type="initialState"/>
-      <xs:element name="initialSignalState" type="initialSignalState"/>
+      <xs:element name="initialSignalState" type="initialSignalState" minOccurs="0"/>
       <xs:choice>
         <xs:element name="trajectory">
           <xs:complexType>
@@ -540,7 +542,7 @@ __status__ = "in development"
       <xs:attribute name="commonRoadVersion" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:enumeration value="2018b"/>
+            <xs:enumeration value="2020a"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>

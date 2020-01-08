@@ -6,7 +6,7 @@ import enum
 import pathlib
 import io
 import os
-from typing import Union, List, Dict
+from typing import Union, List
 import numpy as np
 import decimal
 import warnings
@@ -28,7 +28,7 @@ from commonroad.scenario.obstacle import (
     Shape,
 )
 from commonroad.scenario.scenario import Scenario
-from commonroad.scenario.traffic_rule import TrafficSign, TrafficLight, TrafficLightCycleElement
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficLightCycleElement
 from commonroad.scenario.trajectory import Trajectory, State
 
 __author__ = "Stefanie Manzinger, Moritz Klischat"
@@ -40,7 +40,7 @@ __email__ = "commonroad@in.tum.de"
 __status__ = "Released"
 
 
-SCENARIO_VERSION = '2018b'
+SCENARIO_VERSION = '2020a'
 
 # create a new context for this task
 ctx = decimal.Context()
@@ -1099,7 +1099,7 @@ class IntersectionXMLNode:
         :return:
         """
         intersection_node = etree.Element('intersection')
-        intersection_node.set('id', str(intersection.id))
+        intersection_node.set('id', str(intersection.intersection_id))
 
         for incoming in intersection.incomings:
             incoming_node = etree.Element('incoming')
@@ -1127,20 +1127,19 @@ class IntersectionXMLNode:
                     successor_left_node.set('ref', str(successor_left))
                     incoming_node.append(successor_left_node)
 
-            if incoming.is_left_of:
-                for is_left_of in incoming.is_left_of:
+            if incoming.incomings_left:
+                for is_left_of in incoming.incomings_left:
                     is_left_of_node = etree.Element('isLeftOf')
                     is_left_of_node.set('ref', str(is_left_of))
                     incoming_node.append(is_left_of_node)
                 intersection_node.append(incoming_node)
 
-        for crossing in intersection.crossings:
-            crossing_node = etree.Element('crossing')
-            for crossing_lanelet in crossing.crossing_lanelet:
-                crossing_lanelet_node = etree.Element('crossingLanelet')
-                crossing_lanelet_node.set('ref', str(crossing_lanelet))
-                crossing_node.append(crossing_lanelet_node)
-            intersection_node.append(crossing_node)
+        crossing_node = etree.Element('crossing')
+        for crossing_lanelet in intersection.crossings:
+            crossing_lanelet_node = etree.Element('crossingLanelet')
+            crossing_lanelet_node.set('ref', str(crossing_lanelet))
+            crossing_node.append(crossing_lanelet_node)
+        intersection_node.append(crossing_node)
 
         return intersection_node
 
@@ -1149,11 +1148,11 @@ class TrafficSignXMLNode:
     @classmethod
     def create_node(cls, traffic_sign: TrafficSign) -> etree.Element:
         traffic_sign_node = etree.Element('trafficSign')
-        traffic_sign_node.set('id', str(traffic_sign.id))
+        traffic_sign_node.set('id', str(traffic_sign.traffic_sign_id))
         for element in traffic_sign.traffic_sign_elements:
             element_node = etree.Element('trafficSignElement')
             sign_id_node = etree.Element('trafficSignID')
-            sign_id_node.text = str(element.traffic_sign_id)
+            sign_id_node.text = str(element.traffic_sign_element_id)
             element_node.append(sign_id_node)
             for value in element.additional_values:
                 value_node = etree.Element('additionalValue')
@@ -1163,8 +1162,8 @@ class TrafficSignXMLNode:
 
         if traffic_sign.position is not None:
             position_node = etree.Element('position')
-            position_node.append(Point(traffic_sign.position.x,
-                                       traffic_sign.position.y).create_node())
+            position_node.append(Point(traffic_sign.position[0],
+                                       traffic_sign.position[1]).create_node())
             traffic_sign_node.append(position_node)
 
         if traffic_sign.virtual is not None:
@@ -1184,21 +1183,21 @@ class TrafficLightXMLNode:
     @classmethod
     def create_node(cls, traffic_light: TrafficLight) -> etree.Element:
         traffic_light_node = etree.Element('trafficLight')
-        traffic_light_node.set('id', str(traffic_light.id))
+        traffic_light_node.set('id', str(traffic_light.traffic_light_id))
         cycle_node = etree.Element('cycle')
         for state in traffic_light.cycle:
             element_node = TrafficLightCycleElementXMLNode.create_node(state)
             cycle_node.append(element_node)
-        if traffic_light.offset is not None:
+        if traffic_light.time_offset is not None:
             offset_node = etree.Element('timeOffset')
-            offset_node.text = str(traffic_light.offset)
+            offset_node.text = str(traffic_light.time_offset)
             cycle_node.append(offset_node)
         traffic_light_node.append(cycle_node)
 
         if traffic_light.position is not None:
             position_node = etree.Element('position')
-            position_node.append(Point(traffic_light.position.x,
-                                       traffic_light.position.y).create_node())
+            position_node.append(Point(traffic_light.position[0],
+                                       traffic_light.position[0]).create_node())
             traffic_light_node.append(position_node)
         if traffic_light.active is not None:
             active_node = etree.Element('active')

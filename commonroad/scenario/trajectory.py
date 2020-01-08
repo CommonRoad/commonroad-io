@@ -285,15 +285,6 @@ class Trajectory:
             for state in state_list
             if hasattr(state, 'time_step')
         ), '<Trajectory/state_list>: Element time_step of each state must be an integer.'
-        assert (
-            self.initial_time_step == state_list[0].time_step
-            if hasattr(state_list[0], 'time_step')
-            else True
-        ), (
-            '<Trajectory/state_list>: time_step of first state in state_list is different from initial_time_step. '
-            'initial_time_step = %s. time_step of first state in state_list = %s.'
-            % (self.initial_time_step, state_list[0].time_step)
-        )
         assert all(
             state_list[0].attributes == state.attributes for state in state_list
         ), (
