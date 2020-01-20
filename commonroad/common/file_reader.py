@@ -184,15 +184,15 @@ class ScenarioFactory:
             if hasattr(LaneletFactory, '_speed_limits'):
                 for key, value in LaneletFactory._speed_limits.items():
                     if "DEU" in benchmark_id or "ZAM" in benchmark_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDGermany.MAXSPEED.value, key)
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDGermany.MAXSPEED.value, [str(key)])
                     elif "USA" in benchmark_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDUsa.MAXSPEED.value, key)
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDUsa.MAXSPEED.value, [str(key)])
                     elif "CHN" in benchmark_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDChina.MAXSPEED.value, key)
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDChina.MAXSPEED.value, [str(key)])
                     elif "ESP" in benchmark_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAXSPEED.value, key)
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAXSPEED.value, [str(key)])
                     elif "RUS" in benchmark_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAXSPEED.value, key)
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAXSPEED.value, [str(key)])
                     else:
                         raise ValueError('Country could not be evaluated.')
                     traffic_sign = TrafficSign(scenario.generate_object_id(), [traffic_sign_element], None, True)
