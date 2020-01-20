@@ -35,11 +35,11 @@ class ObstacleType(enum.Enum):
     BUS = "bus"
     BICYCLE = "bicycle"
     PEDESTRIAN = "pedestrian"
-    PRIORITY_VEHICLE = "priority_vehicle"
-    PARKED_VEHICLE = "parked_vehicle"
-    CONSTRUCTION_ZONE = "construction_zone"
+    PRIORITY_VEHICLE = "priorityVehicle"
+    PARKED_VEHICLE = "parkedVehicle"
+    CONSTRUCTION_ZONE = "constructionZone"
     TRAIN = "train"
-    ROAD_BOUNDARY = "road_boundary"
+    ROAD_BOUNDARY = "roadBoundary"
 
 
 class SignalState:
