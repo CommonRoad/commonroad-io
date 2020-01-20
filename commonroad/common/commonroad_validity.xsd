@@ -312,6 +312,7 @@ website="commonroad.in.tum.de"
                     <xs:restriction base="xs:string">
                         <xs:enumeration value="2018a" />
 						<xs:enumeration value="2018b" />
+                        <xs:enumeration value="2020a" />
                     </xs:restriction>
                 </xs:simpleType>
             </xs:attribute>

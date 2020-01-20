@@ -18,11 +18,36 @@ class SupportedTrafficSignCountry(enum.Enum):
 
 @enum.unique
 class TrafficSignIDGermany(enum.Enum):
+    MINSPEED = '275'
     MAXSPEED = '274'
     OVERTAKING = '276'
     CITYLIMIT = '310'
     GIVEWAY = '205'
     STOP = '206'
+    UNKNOWN = ''
+
+
+@enum.unique
+class TrafficSignIDUsa(enum.Enum):
+    MAXSPEED = '274'
+    UNKNOWN = ''
+
+
+@enum.unique
+class TrafficSignIDChina(enum.Enum):
+    MAXSPEED = '274'
+    UNKNOWN = ''
+
+
+@enum.unique
+class TrafficSignIDSpain(enum.Enum):
+    MAXSPEED = '274'
+    UNKNOWN = ''
+
+
+@enum.unique
+class TrafficSignIDRussia(enum.Enum):
+    MAXSPEED = '274'
     UNKNOWN = ''
 
 
@@ -55,7 +80,7 @@ class TrafficSignElement:
     """ Class to represent each traffic sign element"""
     def __init__(self, traffic_sign_element_id: str, additional_values: List[str]):
         """
-        :param traffic_sign_element_id: ID of traffic sign element
+        :param traffic_sign_element_id: ID of traffic sign element (must be element of a traffic sign element enum)
         :param additional_values: list of additional values of a traffic sign element, e.g. velocity, time, city name
         """
         self._traffic_sign_element_id = traffic_sign_element_id
@@ -107,21 +132,6 @@ class TrafficSign:
     @property
     def virtual(self) -> bool:
         return self._virtual
-
-    def speed_limit(self, country: SupportedTrafficSignCountry) -> float:
-        """
-        Returns minimum speed limit of all traffic sign elements
-
-        :returns minimum speed limit
-        """
-        speed_limits = []
-        if country is SupportedTrafficSignCountry.GERMANY:
-            for el in self.traffic_sign_elements:
-                if el.traffic_sign_element_id == TrafficSignIDGermany.MAXSPEED or TrafficSignIDGermany.CITYLIMIT:
-                    speed_limits.append(float(el.additional_values[0]))
-
-        return min(speed_limits)
-
 
     def __str__(self):
         return f"Sign At {self._position} with {self._traffic_sign_elements} "

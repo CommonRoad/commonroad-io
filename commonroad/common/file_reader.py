@@ -13,7 +13,8 @@ from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicOb
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.trajectory import State, Trajectory
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLight, TrafficLightCycleElement, \
-    TrafficLightState, TrafficLightDirection
+    TrafficLightState, TrafficLightDirection, TrafficSignIDGermany, TrafficSignIDUsa, TrafficSignIDChina, \
+    TrafficSignIDRussia, TrafficSignIDSpain
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 
 __author__ = "Stefanie Manzinger"
@@ -97,7 +98,8 @@ class CommonRoadFileReader:
 
         :return: object of class scenario containing the road network and the obstacles
         """
-        scenario = ScenarioFactory.create_from_xml_node(self._tree, self._dt, self._benchmark_id, self._meta_data)
+        scenario = ScenarioFactory.create_from_xml_node(self._tree, self._dt, self._benchmark_id,
+                                                        self._commonroad_version, self._meta_data)
         return scenario
 
     def _open_planning_problem_set(self, lanelet_network: LaneletNetwork) \
@@ -124,6 +126,7 @@ class CommonRoadFileReader:
                                                                                           commonroad_version)
         self._dt = self._get_dt()
         self._benchmark_id = self._get_benchmark_id()
+        self._commonroad_version = commonroad_version
         self._meta_data = {'author': self._get_author(),
                            'affiliation': self._get_affiliation(),
                            'source': self._get_source(),
@@ -165,17 +168,57 @@ class CommonRoadFileReader:
 class ScenarioFactory:
     """ Class to create an object of class Scenario from an XML element."""
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, dt: float, benchmark_id: str, meta_data: dict={}):
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, dt: float, benchmark_id: str, commonroad_version: str,
+                             meta_data: dict={}):
         """
         :param xml_node: XML element
         :param dt: time step size of the scenario
         :param benchmark_id: unique CommonRoad benchmark ID
+        :param commonroad_version: CommonRoad version of the file
         :return:
         """
         scenario = Scenario(dt, benchmark_id, **meta_data)
         scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
-        scenario.add_objects(cls._obstacles(xml_node, scenario.lanelet_network))
+        if commonroad_version == '2018b':
+            scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network))
+            if hasattr(LaneletFactory, '_speed_limits'):
+                for key, value in LaneletFactory._speed_limits.items():
+                    if "DEU" in benchmark_id or "ZAM" in benchmark_id:
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDGermany.MAXSPEED.value, key)
+                    elif "USA" in benchmark_id:
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDUsa.MAXSPEED.value, key)
+                    elif "CHN" in benchmark_id:
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDChina.MAXSPEED.value, key)
+                    elif "ESP" in benchmark_id:
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAXSPEED.value, key)
+                    elif "RUS" in benchmark_id:
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAXSPEED.value, key)
+                    else:
+                        raise ValueError('Country could not be evaluated.')
+                    traffic_sign = TrafficSign(scenario.generate_object_id(), [traffic_sign_element], None, True)
+                    scenario.lanelet_network.add_traffic_sign(traffic_sign, value)
+                delattr(LaneletFactory, '_speed_limits')
+        else:
+            scenario.add_objects(cls._obstacles(xml_node, scenario.lanelet_network))
         return scenario
+
+    @classmethod
+    def _obstacles_2018b(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) -> List[Obstacle]:
+        """
+        Reads all obstacles specified in a CommonRoad XML-file.
+        :param xml_node: XML element
+        :param dt: time step size of the scenario
+        :return: list of static and dynamic obstacles specified in the CommonRoad XML-file
+        """
+        obstacles = list()
+        for o in xml_node.findall('obstacle'):
+            if o.find('role').text == 'static':
+                obstacles.append(StaticObstacleFactory.create_from_xml_node(o, lanelet_network))
+            elif o.find('role').text == 'dynamic':
+                obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network))
+            else:
+                raise ValueError('Role of obstacle is unknown. Got role: {}'.format(xml_node.find('role').text))
+        return obstacles
 
     @classmethod
     def _obstacles(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) -> List[Obstacle]:
@@ -185,7 +228,7 @@ class ScenarioFactory:
         :param dt: time step size of the scenario
         :return: list of static and dynamic obstacles specified in the CommonRoad XML-file
         """
-        obstacles = list()
+        obstacles = []
         for o in xml_node.findall('staticObstacle'):
             obstacles.append(StaticObstacleFactory.create_from_xml_node(o, lanelet_network))
         for o in xml_node.findall('dynamicObstacle'):
@@ -247,6 +290,13 @@ class LaneletFactory:
         user_bidirectional = cls._user_bidirectional(xml_node)
         traffic_signs = cls._traffic_signs(xml_node)
         traffic_lights = cls._traffic_lights(xml_node)
+
+        if cls._speed_limit_exists(xml_node) is not None:
+            speed_limit = cls._speed_limit_exists(xml_node)
+            if hasattr(cls, '_speed_limits') and cls._speed_limits.get(speed_limit) is not None:
+                cls._speed_limits[speed_limit].add(lanelet_id)
+            else:
+                cls._speed_limits = {speed_limit: {lanelet_id}}
 
         return Lanelet(
             left_vertices=left_vertices, center_vertices=center_vertices, right_vertices=right_vertices,
@@ -327,6 +377,19 @@ class LaneletFactory:
             else:
                 adjacent_right_same_direction = False
         return adjacent_right, adjacent_right_same_direction
+
+    @classmethod
+    def _speed_limit_exists(cls, xml_node: ElementTree.Element) -> Union[float, None]:
+        """
+        Evaluates if a speed limit element from a previous CommonRoad version exists
+        :param xml_node: XML element
+        :return: boolean indicating if speed limit element exists
+        """
+        speed_limit = None
+        if xml_node.find('speedLimit') is not None:
+            speed_limit = float(xml_node.find('speedLimit').text)
+            return speed_limit
+        return speed_limit
 
     @classmethod
     def _lanelet_type(cls, xml_node: ElementTree.Element) -> Union[Set[LaneletType], None]:
