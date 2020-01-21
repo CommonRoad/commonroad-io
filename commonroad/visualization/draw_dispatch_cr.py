@@ -4,6 +4,7 @@ from typing import Dict, Callable, Tuple, Any
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import commonroad
 from commonroad.geometry.shape import *
 from commonroad.planning.planning_problem import GoalRegion, PlanningProblemSet, \
@@ -226,6 +227,16 @@ def _retrieve_alternate_value(style_sheet: dict, call_stack: Tuple[str, ...], va
         raise KeyError
     return value
 
+
+def _add_legend(legend: Dict[str,str], draw_params):
+    handles = []
+    for obj_name, text in legend.items():
+        color = _retrieve_value(draw_params, (), obj_name)
+        handles.append(mpatches.Patch(color=color, label=text))
+
+    plt.legend(handles=handles)
+
+
 plottable_types=Union[list, Scenario, Trajectory, LaneletNetwork, Lanelet, Obstacle, ShapeGroup, Shape,
                       GoalRegion, PlanningProblem, PlanningProblemSet, State, Occupancy]
 
@@ -235,7 +246,8 @@ def draw_object(obj: Union[plottable_types, List[plottable_types]],
                 draw_params: Union[None, dict] = None,
                 draw_func: Union[None, Dict[type,Callable]] = None,
                 handles: Dict[int, List[mpl.patches.Patch]] = None,
-                call_stack: Union[None,Tuple[str,...]] = None) -> Union[None, List[mpl.patches.Patch]]:
+                call_stack: Union[None,Tuple[str,...]] = None,
+                legend: Union[Dict[Tuple[str,...],str],None]=None)-> Union[None, List[mpl.patches.Patch]]:
     """
     Main function for drawing objects from the scenario and planning modules.
 
@@ -250,6 +262,7 @@ def draw_object(obj: Union[plottable_types, List[plottable_types]],
     :param handles: dict that assign to every object_id of all plotted obstacles the corresponding patch handles
     :param call_stack: tuple of string containing the call stack, which allows for differentiation of plotting styles
            depending on the call stack of draw_object, (usually 'None'!)
+   :param legend: names of objects that should appear in the legend
     :return: Returns matplotlib patch object for draw_funcs that actually draw a patch (used internally for creating handles dict)
     """
 
@@ -282,6 +295,9 @@ def draw_object(obj: Union[plottable_types, List[plottable_types]],
 
     if call_stack is None:
         call_stack = tuple()
+
+    if legend is not None:
+        _add_legend(legend, draw_params)
 
     if type(obj) is list:
         if len(obj)==0:
