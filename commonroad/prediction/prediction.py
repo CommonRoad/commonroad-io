@@ -1,5 +1,5 @@
 import abc
-from typing import Union, List
+from typing import Union, List, Dict, Set
 import numpy as np
 
 from commonroad.common.util import Interval
@@ -151,14 +151,15 @@ class SetBasedPrediction(Prediction):
 class TrajectoryPrediction(Prediction):
     """ Class to represent the predicted movement of an obstacle using a trajectory. A trajectory is modeled as a
     state sequence over time. The occupancy of an obstacle along a trajectory is uniquely defined given its shape."""
-    def __init__(self, trajectory: Trajectory, shape: Shape):
+    def __init__(self, trajectory: Trajectory, shape: Shape,
+                 lanelet_assignment: Union[None, Dict[int, Set[int]]] = None):
         """
         :param trajectory: predicted trajectory of the obstacle
         :param shape: shape of the obstacle
         """
         self.shape: Shape = shape
         self.trajectory: Trajectory = trajectory
-
+        self.lanelet_assignment: Dict[int, Set[int]] = lanelet_assignment
         Prediction.__init__(self, self._trajectory.initial_time_step, self._create_occupancy_set())
 
     @property
@@ -184,6 +185,19 @@ class TrajectoryPrediction(Prediction):
                                                    % (Trajectory, type(trajectory))
         self._trajectory = trajectory
 
+    @property
+    def lanelet_assignment(self) -> Union[None, Dict[int, Set[int]]]:
+        """ Predicted lanelet assignment of obstacle."""
+        return self._lanelet_assignment
+
+    @lanelet_assignment.setter
+    def lanelet_assignment(self, lanelet_assignment: Union[None, Dict[int, Set[int]]]):
+        if lanelet_assignment is not None:
+            assert isinstance(lanelet_assignment, dict), '<TrajectoryPrediction/lanelet_assignment>: ' \
+                                                         'argument "lanelet_assignment" of wrong type. Expected type: ' \
+                                                         '%s. Got type: %s.' % (Dict, type(lanelet_assignment))
+        self._lanelet_assignment = lanelet_assignment
+
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ Translates and rotates all states of the trajectory and re-computes the translated and rotated occupancy
         set.
@@ -205,5 +219,5 @@ class TrajectoryPrediction(Prediction):
         for k, state in enumerate(self._trajectory.state_list):
             occupied_region = self._shape.rotate_translate_local(
                 state.position, state.orientation)
-            occupancy_set.append(Occupancy(self._trajectory.initial_time_step + k, occupied_region))
+            occupancy_set.append(Occupancy(state.time_step, occupied_region))
         return occupancy_set

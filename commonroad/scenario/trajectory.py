@@ -38,6 +38,8 @@ class State:
             values are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar steering_angle: steering angle :math:`\delta` of front wheels. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
+        :ivar steering_angle_speed: steering angle speed :math:`\dot{\delta}` of front wheels. Exact values are given as real number,
+            uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar yaw_rate: yaw rate :math:`\dot{\Psi}`. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar slip_angle: slip angle :math:`\\beta`. Exact values are given as real number,
@@ -92,6 +94,10 @@ class State:
             obstacles to provide additional information, e.g., for motion prediction, even though acceleration is often
             used as an input for vehicle models. Exact values are given as real number, uncertain values are given as
             :class:`commonroad.common.util.Interval`
+        :ivar jerk: acceleration :math:`j`. We optionally include jerk as a state variable for
+            obstacles to provide additional information, e.g., for motion prediction, even though jerk is often
+            used as an input for vehicle models. Exact values are given as real number, uncertain values are given as
+            :class:`commonroad.common.util.Interval`
         :ivar time_step: the discrete time step. Exact values are given as integers, uncertain values are given as
             :class:`commonroad.common.util.Interval`
 
@@ -110,6 +116,7 @@ class State:
         'orientation',
         'velocity',
         'steering_angle',
+        'steering_angle_speed',
         'yaw_rate',
         'slip_angle',
         'roll_angle',
@@ -136,6 +143,7 @@ class State:
         'delta_y_f',
         'delta_y_r',
         'acceleration',
+        'jerk',
         'time_step',
     ]
 
@@ -277,15 +285,6 @@ class Trajectory:
             for state in state_list
             if hasattr(state, 'time_step')
         ), '<Trajectory/state_list>: Element time_step of each state must be an integer.'
-        assert (
-            self.initial_time_step == state_list[0].time_step
-            if hasattr(state_list[0], 'time_step')
-            else True
-        ), (
-            '<Trajectory/state_list>: time_step of first state in state_list is different from initial_time_step. '
-            'initial_time_step = %s. time_step of first state in state_list = %s.'
-            % (self.initial_time_step, state_list[0].time_step)
-        )
         assert all(
             state_list[0].attributes == state.attributes for state in state_list
         ), (

@@ -11,7 +11,7 @@ from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.obstacle import ObstacleRole
 from commonroad.scenario.obstacle import ObstacleType
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Obstacle
-from commonroad.prediction.prediction import Occupancy
+from commonroad.prediction.prediction import Occupancy, SetBasedPrediction
 
 __author__ = "Stefanie Manzinger, Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -36,6 +36,7 @@ class Scenario:
         """
         self.dt: float = dt
         self.benchmark_id: str = benchmark_id
+        self.country = benchmark_id[0:3]
         self.lanelet_network: LaneletNetwork = LaneletNetwork()
 
         self._static_obstacles: Dict[int, StaticObstacle] = defaultdict()
@@ -112,9 +113,11 @@ class Scenario:
         elif isinstance(scenario_object, StaticObstacle):
             self._mark_object_id_as_used(scenario_object.obstacle_id)
             self._static_obstacles[scenario_object.obstacle_id] = scenario_object
+            self._add_static_obstacle_to_lanelets(scenario_object.obstacle_id, scenario_object.initial_lanelet_ids)
         elif isinstance(scenario_object, DynamicObstacle):
             self._mark_object_id_as_used(scenario_object.obstacle_id)
             self._dynamic_obstacles[scenario_object.obstacle_id] = scenario_object
+            self._add_dynamic_obstacle_to_lanelets(scenario_object)
         elif isinstance(scenario_object, LaneletNetwork):
             for lanelet in scenario_object.lanelets:
                 self._mark_object_id_as_used(lanelet.lanelet_id)
@@ -127,23 +130,91 @@ class Scenario:
                              'Expected types: %s, %s, %s, and %s. Got type: %s.'
                              % (list, Obstacle, Lanelet, LaneletNetwork, type(scenario_object)))
 
+    def _add_static_obstacle_to_lanelets(self, obstacle_id: int, lanelet_ids: Set[int]):
+        """ Adds a static obstacle reference to all lanelets the obstacle is on.
+
+        :param obstacle_id: obstacle ID to be removed
+        :param lanelet_ids: list of lanelet IDs on which the obstacle is on
+        """
+        if lanelet_ids is None or len(self.lanelet_network.lanelets) == 0:
+            return
+        for l_id in lanelet_ids:
+            self.lanelet_network.find_lanelet_by_id(l_id).static_obstacles_on_lanelet.add(obstacle_id)
+
+    def _remove_static_obstacle_from_lanelets(self, obstacle_id: int, lanelet_ids: Set[int]):
+        """ Adds a static obstacle reference to all lanelets the obstacle is on.
+
+        :param obstacle_id: obstacle ID to be added
+        :param lanelet_ids: list of lanelet IDs on which the obstacle is on
+        """
+        if lanelet_ids is None:
+            return
+        for l_id in lanelet_ids:
+            self.lanelet_network.find_lanelet_by_id(l_id).static_obstacles_on_lanelet.remove(obstacle_id)
+
+    def _remove_dynamic_obstacle_from_lanelets(self, obstacle: DynamicObstacle):
+        """ Removes a dynamic obstacle reference from all lanelets the obstacle is on.
+
+        :param obstacle: obstacle to be removed
+        """
+        if isinstance(obstacle.prediction, SetBasedPrediction) or len(self.lanelet_network.lanelets) == 0:
+            return
+        # delete obstacle references from initial time step
+        if obstacle.initial_lanelet_ids is not None:
+            for lanelet_id in obstacle.initial_lanelet_ids:
+                lanelet_dict = self.lanelet_network.find_lanelet_by_id(lanelet_id).dynamic_obstacles_on_lanelet
+                lanelet_dict[obstacle.initial_state.time_step].discard(obstacle.obstacle_id)
+
+        # delete obstacle references from prediction
+        if obstacle.prediction is not None and obstacle.prediction.lanelet_assignment is not None:
+            for time_step, ids in obstacle.prediction.lanelet_assignment.items():
+                for lanelet_id in ids:
+                    lanelet_dict = self.lanelet_network.find_lanelet_by_id(lanelet_id).dynamic_obstacles_on_lanelet
+                    lanelet_dict[time_step].discard(obstacle.obstacle_id)
+
+    def _add_dynamic_obstacle_to_lanelets(self, obstacle: DynamicObstacle):
+        """ Adds a dynamic obstacle reference to all lanelets the obstacle is on.
+
+        :param obstacle: obstacle to be added
+        """
+        if isinstance(obstacle.prediction, SetBasedPrediction) or len(self.lanelet_network.lanelets) == 0:
+            return
+        # add obstacle references to initial time step
+        if obstacle.initial_lanelet_ids is not None:
+            for lanelet_id in obstacle.initial_lanelet_ids:
+                lanelet_dict = self.lanelet_network.find_lanelet_by_id(lanelet_id).dynamic_obstacles_on_lanelet
+                if lanelet_dict.get(obstacle.initial_state.time_step) is None:
+                    lanelet_dict[obstacle.initial_state.time_step] = set()
+                lanelet_dict[obstacle.initial_state.time_step].add(obstacle.obstacle_id)
+
+        # add obstacle references to prediction
+        if obstacle.prediction is not None and obstacle.prediction.lanelet_assignment is not None:
+            for time_step, ids in obstacle.prediction.lanelet_assignment.items():
+                for lanelet_id in ids:
+                    lanelet_dict = self.lanelet_network.find_lanelet_by_id(lanelet_id).dynamic_obstacles_on_lanelet
+                    if lanelet_dict.get(time_step) is None:
+                        lanelet_dict[time_step] = set()
+                    lanelet_dict[time_step].add(obstacle.obstacle_id)
+
     def remove_obstacle(self, obstacle: Union[Obstacle, List[Obstacle]]):
         """ Removes a static, dynamic or a list of obstacles from the scenario. If the obstacle ID is not assigned,
         a warning message is given.
 
         :param obstacle: obstacle to be removed
         """
-        assert isinstance(obstacle, (list,Obstacle)), '<Scenario/remove_obstacle> argument "obstacle" of wrong type. ' \
-                                               'Expected type: %s. Got type: %s.' % (Obstacle, type(obstacle))
+        assert isinstance(obstacle, (list, Obstacle)), '<Scenario/remove_obstacle> argument "obstacle" of wrong type. '\
+                                                       'Expected type: %s. Got type: %s.' % (Obstacle, type(obstacle))
         if isinstance(obstacle, list):
             for obs in obstacle:
                 self.remove_obstacle(obs)
             return
 
         if obstacle.obstacle_id in self._static_obstacles:
+            self._remove_static_obstacle_from_lanelets(obstacle.obstacle_id, obstacle.initial_lanelet_ids)
             del self._static_obstacles[obstacle.obstacle_id]
             self._id_set.remove(obstacle.obstacle_id)
         elif obstacle.obstacle_id in self._dynamic_obstacles:
+            self._remove_dynamic_obstacle_from_lanelets(obstacle)
             del self._dynamic_obstacles[obstacle.obstacle_id]
             self._id_set.remove(obstacle.obstacle_id)
         else:
@@ -157,17 +228,23 @@ class Scenario:
         """
         return max(self._id_set) + 1
 
-    def occupancies_at_time_step(self, time_step: int) -> List[Occupancy]:
+    def occupancies_at_time_step(self, time_step: int, obstacle_role: Union[None, ObstacleRole] = None) \
+            -> List[Occupancy]:
         """ Returns the occupancies of all static and dynamic obstacles at a specific time step.
 
             :param time_step: occupancies of obstacles at this time step
+            :param obstacle_role: obstacle role as defined in CommonRoad, e.g., static or dynamic
             :return: list of occupancies of the obstacles
         """
         assert isinstance(time_step, int), '<Scenario/occupancies_at_time> argument "time_step" of wrong type. ' \
                                            'Expected type: %s. Got type: %s.' % (int, type(time_step))
+        assert isinstance(obstacle_role, (ObstacleRole, type(None))), \
+            '<Scenario/obstacles_by_role_and_type> argument "obstacle_role" of wrong type. Expected types: ' \
+            ' %s or %s. Got type: %s.' % (ObstacleRole, None, type(obstacle_role))
         occupancies = list()
         for obstacle in self.obstacles:
-            if obstacle.occupancy_at_time(time_step):
+            if ((obstacle_role is None or obstacle.obstacle_role == obstacle_role) and
+                    obstacle.occupancy_at_time(time_step)):
                 occupancies.append(obstacle.occupancy_at_time(time_step))
         return occupancies
 
