@@ -398,11 +398,11 @@ class TestFileReader(unittest.TestCase):
         self.assertEqual(exp_dynamic_obstacles_on_lanelet_one,
                          xml_file[0].lanelet_network.lanelets[1].dynamic_obstacles_on_lanelet)
         self.assertSetEqual(exp_lanelet_of_static_obstacle,
-                            xml_file[0].obstacle_by_id(3).initial_lanelet_ids)
+                            xml_file[0].obstacle_by_id(3).initial_shape_lanelet_ids)
         self.assertSetEqual(exp_lanelet_of_dynamic_obstacle_initial,
-                            xml_file[0].obstacle_by_id(2).initial_lanelet_ids)
+                            xml_file[0].obstacle_by_id(2).initial_shape_lanelet_ids)
         self.assertEqual(exp_lanelet_of_dynamic_obstacle_prediction,
-                         xml_file[0].obstacle_by_id(2).prediction.lanelet_assignment)
+                         xml_file[0].obstacle_by_id(2).prediction.shape_lanelet_assignment)
 
         self.assertEqual(exp_traffic_sign_id, xml_file[0].lanelet_network.traffic_signs[0].traffic_sign_id)
         np.testing.assert_array_equal(exp_traffic_sign_position,

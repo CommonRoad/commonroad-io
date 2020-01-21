@@ -152,14 +152,16 @@ class TrajectoryPrediction(Prediction):
     """ Class to represent the predicted movement of an obstacle using a trajectory. A trajectory is modeled as a
     state sequence over time. The occupancy of an obstacle along a trajectory is uniquely defined given its shape."""
     def __init__(self, trajectory: Trajectory, shape: Shape,
-                 lanelet_assignment: Union[None, Dict[int, Set[int]]] = None):
+                 center_lanelet_assignment: Union[None, Dict[int, Set[int]]] = None,
+                 shape_lanelet_assignment: Union[None, Dict[int, Set[int]]] = None):
         """
         :param trajectory: predicted trajectory of the obstacle
         :param shape: shape of the obstacle
         """
         self.shape: Shape = shape
         self.trajectory: Trajectory = trajectory
-        self.lanelet_assignment: Dict[int, Set[int]] = lanelet_assignment
+        self.shape_lanelet_assignment: Dict[int, Set[int]] = shape_lanelet_assignment
+        self.center_lanelet_assignment: Dict[int, Set[int]] = center_lanelet_assignment
         Prediction.__init__(self, self._trajectory.initial_time_step, self._create_occupancy_set())
 
     @property
@@ -186,17 +188,32 @@ class TrajectoryPrediction(Prediction):
         self._trajectory = trajectory
 
     @property
-    def lanelet_assignment(self) -> Union[None, Dict[int, Set[int]]]:
-        """ Predicted lanelet assignment of obstacle."""
-        return self._lanelet_assignment
+    def shape_lanelet_assignment(self) -> Union[None, Dict[int, Set[int]]]:
+        """ Predicted lanelet assignment of obstacle shape."""
+        return self._shape_lanelet_assignment
 
-    @lanelet_assignment.setter
-    def lanelet_assignment(self, lanelet_assignment: Union[None, Dict[int, Set[int]]]):
-        if lanelet_assignment is not None:
-            assert isinstance(lanelet_assignment, dict), '<TrajectoryPrediction/lanelet_assignment>: ' \
-                                                         'argument "lanelet_assignment" of wrong type. Expected type: ' \
-                                                         '%s. Got type: %s.' % (Dict, type(lanelet_assignment))
-        self._lanelet_assignment = lanelet_assignment
+    @shape_lanelet_assignment.setter
+    def shape_lanelet_assignment(self, shape_lanelet_assignment: Union[None, Dict[int, Set[int]]]):
+        if shape_lanelet_assignment is not None:
+            assert isinstance(shape_lanelet_assignment, dict), '<TrajectoryPrediction/shape_lanelet_assignment>: ' \
+                                                         'argument "shape_lanelet_assignment" of wrong type. ' \
+                                                               'Expected type: %s. Got' \
+                                                               ' type: %s.' % (Dict, type(shape_lanelet_assignment))
+        self._shape_lanelet_assignment = shape_lanelet_assignment
+
+    @property
+    def center_lanelet_assignment(self) -> Union[None, Dict[int, Set[int]]]:
+        """ Predicted lanelet assignment of obstacle center."""
+        return self._center_lanelet_assignment
+
+    @center_lanelet_assignment.setter
+    def center_lanelet_assignment(self, center_lanelet_assignment: Union[None, Dict[int, Set[int]]]):
+        if center_lanelet_assignment is not None:
+            assert isinstance(center_lanelet_assignment, dict), '<TrajectoryPrediction/center_lanelet_assignment>: ' \
+                                                         'argument "center_lanelet_assignment" of wrong type. ' \
+                                                         'Expected type: ' \
+                                                         '%s. Got type: %s.' % (Dict, type(center_lanelet_assignment))
+        self._center_lanelet_assignment = center_lanelet_assignment
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ Translates and rotates all states of the trajectory and re-computes the translated and rotated occupancy

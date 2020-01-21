@@ -50,16 +50,16 @@ class TestScenario(unittest.TestCase):
         self.traj_pred = TrajectoryPrediction(trajectory, self.rectangle, {0: {100, 101}, 1: {100, 101}})
 
         self.static_obs_on_lanelet = StaticObstacle(0, ObstacleType("unknown"), obstacle_shape=self.circ,
-                                                    initial_state=self.init_state, initial_lanelet_ids={100, 101})
+                                                    initial_state=self.init_state, initial_shape_lanelet_ids={100, 101})
         self.static_obs = StaticObstacle(0, ObstacleType("unknown"), obstacle_shape=self.circ,
-                                         initial_state=self.init_state, initial_lanelet_ids={100, 101})
+                                         initial_state=self.init_state, initial_shape_lanelet_ids={100, 101})
         self.dyn_set_obs = DynamicObstacle(1, ObstacleType("unknown"),
                                            initial_state=self.traj_pred.trajectory.state_at_time_step(0),
                                            prediction=self.set_pred, obstacle_shape=self.rectangle)
         self.dyn_traj_obs = DynamicObstacle(2, ObstacleType("unknown"),
                                             initial_state=self.traj_pred.trajectory.state_at_time_step(0),
                                             prediction=self.traj_pred, obstacle_shape=self.rectangle,
-                                            initial_lanelet_ids={100, 101})
+                                            initial_shape_lanelet_ids={100, 101})
 
         self.scenario = Scenario(0.1, 'test')
 
@@ -285,9 +285,9 @@ class TestScenario(unittest.TestCase):
 
     def test_is_object_id_used(self):
         static_obs1 = StaticObstacle(10, ObstacleType("unknown"), obstacle_shape=self.circ,
-                                     initial_state=self.init_state, initial_lanelet_ids={100, 101})
+                                     initial_state=self.init_state, initial_shape_lanelet_ids={100, 101})
         static_obs2 = StaticObstacle(-10, ObstacleType("unknown"), obstacle_shape=self.circ,
-                                     initial_state=self.init_state, initial_lanelet_ids={100, 101})
+                                     initial_state=self.init_state, initial_shape_lanelet_ids={100, 101})
         lanelet1 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                                 np.array([[0.0, 2], [1.0, 2], [2, 2]]), 100,
                                 [101], [101], 101, False, 101, True,

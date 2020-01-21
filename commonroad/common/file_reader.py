@@ -730,26 +730,30 @@ class StaticObstacleFactory(ObstacleFactory):
         shape = StaticObstacleFactory.read_shape(xml_node.find('shape'))
 
         rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
-        initial_lanelet_ids = lanelet_network.find_lanelet_by_shape(rotated_shape)
-        for l_id in initial_lanelet_ids:
+        initial_shape_lanelet_ids = lanelet_network.find_lanelet_by_shape(rotated_shape)
+        initial_center_lanelet_ids = lanelet_network.find_lanelet_by_position([initial_state.position])[0]
+        for l_id in initial_shape_lanelet_ids:
             lanelet_network.find_lanelet_by_id(l_id).add_static_obstacle_to_lanelet(obstacle_id=obstacle_id)
         return StaticObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
                               obstacle_shape=shape, initial_state=initial_state,
-                              initial_lanelet_ids=set(initial_lanelet_ids), initial_signal_state=initial_signal_state,
+                              initial_center_lanelet_ids=set(initial_center_lanelet_ids),
+                              initial_shape_lanelet_ids=set(initial_shape_lanelet_ids),
+                              initial_signal_state=initial_signal_state,
                               signal_series=signal_series)
 
 
 class DynamicObstacleFactory(ObstacleFactory):
     @staticmethod
-    def find_obstacle_lanelets(initial_state: State, state_list: List[State], lanelet_network: LaneletNetwork,
-                               obstacle_id: int, shape: Shape) -> Dict[int, Set[int]]:
+    def find_obstacle_shape_lanelets(initial_state: State, state_list: List[State], lanelet_network: LaneletNetwork,
+                                     obstacle_id: int, shape: Shape) -> Dict[int, Set[int]]:
         """
-        Extracts for each state the corresponding lanelets
+        Extracts for each shape the corresponding lanelets it is on
 
         :param initial_state: initial CommonRoad state
         :param state_list: trajectory state list
         :param lanelet_network: CommonRoad lanelet network
         :param obstacle_id: ID of obstacle
+        :param shape: shape of obstacle
         :return: list of IDs of all predecessor lanelets
         """
         compl_state_list = [initial_state] + state_list
@@ -765,6 +769,27 @@ class DynamicObstacleFactory(ObstacleFactory):
 
         return lanelet_ids_per_state
 
+    @staticmethod
+    def find_obstacle_center_lanelets(initial_state: State, state_list: List[State], lanelet_network: LaneletNetwork,
+                                     obstacle_id: int) -> Dict[int, Set[int]]:
+        """
+        Extracts for each shape the corresponding lanelets it is on
+
+        :param initial_state: initial CommonRoad state
+        :param state_list: trajectory state list
+        :param lanelet_network: CommonRoad lanelet network
+        :param obstacle_id: ID of obstacle
+        :return: list of IDs of all predecessor lanelets
+        """
+        compl_state_list = [initial_state] + state_list
+        lanelet_ids_per_state = {}
+
+        for state in compl_state_list:
+            lanelet_ids = lanelet_network.find_lanelet_by_position([state.position])[0]
+            lanelet_ids_per_state[state.time_step] = set(lanelet_ids)
+
+        return lanelet_ids_per_state
+
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) -> DynamicObstacle:
         obstacle_type = DynamicObstacleFactory.read_type(xml_node)
@@ -773,25 +798,31 @@ class DynamicObstacleFactory(ObstacleFactory):
         initial_state = DynamicObstacleFactory.read_initial_state(xml_node.find('initialState'))
         initial_signal_state = StaticObstacleFactory.read_initial_signal_state(xml_node.find('initialSignalState'))
         signal_series = SignalSeriesFactory.create_from_xml_node((xml_node.find('signalSeries')))
-        initial_lanelet_ids = []
+        initial_center_lanelet_ids = []
+        initial_shape_lanelet_ids = []
 
         if xml_node.find('trajectory') is not None:
             rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
-            initial_lanelet_ids = lanelet_network.find_lanelet_by_shape(rotated_shape)
-            for l_id in initial_lanelet_ids:
-                lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle_id,
-                                                                                         time_step=initial_state.time_step)
+            initial_shape_lanelet_ids = lanelet_network.find_lanelet_by_shape(rotated_shape)
+            initial_center_lanelet_ids = lanelet_network.find_lanelet_by_position([initial_state.position])[0]
+            for l_id in initial_shape_lanelet_ids:
+                lanelet_network.find_lanelet_by_id(l_id).\
+                    add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle_id, time_step=initial_state.time_step)
             trajectory = TrajectoryFactory.create_from_xml_node(xml_node.find('trajectory'))
-            lanelet_assignment = cls.find_obstacle_lanelets(initial_state, trajectory.state_list, lanelet_network,
-                                                            obstacle_id, shape)
-            prediction = TrajectoryPrediction(trajectory, shape, lanelet_assignment)
+            shape_lanelet_assignment = cls.find_obstacle_shape_lanelets(initial_state, trajectory.state_list,
+                                                                        lanelet_network, obstacle_id, shape)
+            center_lanelet_assignment = cls.find_obstacle_center_lanelets(initial_state, trajectory.state_list,
+                                                                          lanelet_network, obstacle_id)
+            prediction = TrajectoryPrediction(trajectory, shape, center_lanelet_assignment, shape_lanelet_assignment)
         elif xml_node.find('occupancySet') is not None:
             prediction = SetBasedPredictionFactory.create_from_xml_node(xml_node.find('occupancySet'))
         else:
             prediction = None
         return DynamicObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
                                obstacle_shape=shape, initial_state=initial_state, prediction=prediction,
-                               initial_lanelet_ids=set(initial_lanelet_ids), initial_signal_state=initial_signal_state,
+                               initial_center_lanelet_ids=set(initial_center_lanelet_ids),
+                               initial_shape_lanelet_ids=set(initial_shape_lanelet_ids),
+                               initial_signal_state=initial_signal_state,
                                signal_series=signal_series)
 
 
