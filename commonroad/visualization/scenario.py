@@ -99,6 +99,8 @@ def create_default_draw_params() -> dict:
                             'draw_intersection': True,
                             'intersection': {'draw_incoming_lanelets': True,
                                              'incoming_lanelets_color': '#24b582',
+                                             'draw_crossings': True,
+                                             'crossings_color': '#b62a55',
                                              'draw_successors': True,
                                              'successors_left_color': 'red',
                                              'successors_straight_color': 'blue',
@@ -380,6 +382,12 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet], intersections
             incoming_lanelets_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
                 ('lanelet_network', 'intersection', 'incoming_lanelets_color'))
+            draw_crossings = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'intersection', 'draw_crossings'))
+            crossings_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'intersection', 'crossings_color'))
             draw_successors = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
                 ('lanelet_network', 'intersection', 'draw_successors'))
@@ -441,6 +449,7 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet], intersections
         print(call_stack)
 
     incoming_lanelets = set()
+    crossings = set()
     all_successors = set()
     successors_left = set()
     successors_straight = set()
@@ -451,6 +460,10 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet], intersections
             incomings: List[set] = [incoming.incoming_lanelets for intersection in intersections
                                     for incoming in intersection.incomings]
             incoming_lanelets: Set[int] = set.union(*incomings)
+
+        if draw_crossings:
+            tmp_list: List[set] = [intersection.crossings for intersection in intersections]
+            crossings: Set[int] = set.union(*tmp_list)
 
         if draw_successors:
             tmp_list: List[set] = [incoming.successors_left for intersection in intersections
@@ -500,6 +513,7 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet], intersections
         colormap = cm.ScalarMappable(norm=norm, cmap=cm.jet)
 
     incoming_vertices_fill = list()
+    crossing_vertices_fill = list()
     succ_left_paths = list()
     succ_straight_paths = list()
     succ_right_paths = list()
@@ -557,13 +571,19 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet], intersections
 
         is_incoming_lanelet = draw_intersection and draw_incoming_lanelets and\
                               (lanelet.lanelet_id in incoming_lanelets)
+        is_crossing = draw_intersection and draw_crossings and\
+                              (lanelet.lanelet_id in crossings)
         if fill_lanelet:
-            if not is_incoming_lanelet:
+            if not is_incoming_lanelet and not is_crossing:
                 vertices_fill.append(np.concatenate((lanelet.right_vertices, np.flip(lanelet.left_vertices, 0))))
 
         # collect incoming lanelets in separate list for plotting in different color
         if is_incoming_lanelet:
-            incoming_vertices_fill.append(np.concatenate((lanelet.right_vertices, np.flip(lanelet.left_vertices, 0))))
+            incoming_vertices_fill.append(
+                np.concatenate((lanelet.right_vertices, np.flip(lanelet.left_vertices, 0))))
+        elif is_crossing:
+            crossing_vertices_fill.append(
+                np.concatenate((lanelet.right_vertices, np.flip(lanelet.left_vertices, 0))))
 
         # stor position of label
         if show_label:
@@ -606,6 +626,11 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet], intersections
     if incoming_vertices_fill:
         collection_tmp = collections.PolyCollection(incoming_vertices_fill, transOffset=ax.transData,
                                                     facecolor=incoming_lanelets_color, edgecolor='none', zorder=9.1,
+                                                    antialiased=antialiased)
+        ax.add_collection(collection_tmp)
+    if crossing_vertices_fill:
+        collection_tmp = collections.PolyCollection(crossing_vertices_fill, transOffset=ax.transData,
+                                                    facecolor=crossings_color, edgecolor='none', zorder=9.2,
                                                     antialiased=antialiased)
         ax.add_collection(collection_tmp)
 

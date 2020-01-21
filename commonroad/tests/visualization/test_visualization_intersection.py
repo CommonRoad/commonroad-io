@@ -2,6 +2,7 @@ import os
 import time
 import unittest
 import matplotlib as mpl
+mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
@@ -34,5 +35,5 @@ class TestVisualization(unittest.TestCase):
         plt.draw()
         plt.autoscale()
         plt.axis('equal')
-        plt.show()
-        # plt.pause(50)
+        plt.pause(50)
+        print('done')
