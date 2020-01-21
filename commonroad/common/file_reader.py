@@ -672,13 +672,13 @@ class IntersectionIncomingFactory:
         incomings_left = set()
         for incoming_lanelet_ref in xml_node.findall('incomingLanelet'):
             incoming_lanelets.add(int(incoming_lanelet_ref.get('ref')))
-        for successor_right_ref in xml_node.findall('incomingLanelet'):
+        for successor_right_ref in xml_node.findall('successorsRight'):
             successors_right.add(int(successor_right_ref.get('ref')))
-        for successor_straight_ref in xml_node.findall('incomingLanelet'):
+        for successor_straight_ref in xml_node.findall('successorsStraight'):
             successors_straight.add(int(successor_straight_ref.get('ref')))
-        for successor_left_ref in xml_node.findall('incomingLanelet'):
+        for successor_left_ref in xml_node.findall('successorsLeft'):
             successors_left.add(int(successor_left_ref.get('ref')))
-        for incoming_left_ref in xml_node.findall('incomingLanelet'):
+        for incoming_left_ref in xml_node.findall('isLeftOf'):
             incomings_left.add(int(incoming_left_ref.get('ref')))
 
         return IntersectionIncomingElement(incoming_id=incoming_id, incoming_lanelets=incoming_lanelets,

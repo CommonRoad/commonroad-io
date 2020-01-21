@@ -1708,24 +1708,32 @@
   </trafficLight>
   <intersection id="301">
     <incoming id="302">
-      <incomingLanelet ref="24"/>
-      <incomingLanelet ref="28"/>
-      <incomingLanelet ref="30"/>
+      <incomingLanelet ref="13"/>
+      <successorsRight ref="26"/>
+      <successorsStraight ref="22"/>
+      <successorsLeft ref="20"/>
+      <isLeftOf ref="304"/>
     </incoming>
     <incoming id="303">
-      <incomingLanelet ref="21"/>
-      <incomingLanelet ref="25"/>
-      <incomingLanelet ref="29"/>
+      <incomingLanelet ref="14"/>
+      <successorsRight ref="30"/>
+      <successorsStraight ref="24"/>
+      <successorsLeft ref="28"/>
+      <isLeftOf ref="302"/>
     </incoming>
     <incoming id="304">
-      <incomingLanelet ref="23"/>
-      <incomingLanelet ref="27"/>
-      <incomingLanelet ref="31"/>
+      <incomingLanelet ref="17"/>
+      <successorsRight ref="27"/>
+      <successorsStraight ref="23"/>
+      <successorsLeft ref="31"/>
+      <isLeftOf ref="305"/>
     </incoming>
     <incoming id="305">
-      <incomingLanelet ref="20"/>
-      <incomingLanelet ref="22"/>
-      <incomingLanelet ref="26"/>
+      <incomingLanelet ref="18"/>
+      <successorsRight ref="29"/>
+      <successorsStraight ref="21"/>
+      <successorsLeft ref="25"/>
+      <isLeftOf ref="303"/>
     </incoming>
   </intersection>
   <planningProblem id="4000">

@@ -114,12 +114,11 @@ class TestFileReader(unittest.TestCase):
                                                                               duration=15),
                                                      TrafficLightCycleElement(state=TrafficLightState.YELLOW,
                                                                               duration=4)])
-
         self.intersection_301 = \
-            Intersection(301, [IntersectionIncomingElement(302, {24, 28, 30}, set(), set(), set(), set()),
-                               IntersectionIncomingElement(302, {21, 25, 29}, set(), set(), set(), set()),
-                               IntersectionIncomingElement(302, {23, 27, 31}, set(), set(), set(), set()),
-                               IntersectionIncomingElement(302, {20, 22, 26}, set(), set(), set(), set())])
+            Intersection(301, [IntersectionIncomingElement(302, {13}, {26}, {22}, {20}, {304}),
+                               IntersectionIncomingElement(303, {14}, {30}, {24}, {28}, {302}),
+                               IntersectionIncomingElement(304, {17}, {27}, {23}, {31}, {305}),
+                               IntersectionIncomingElement(305, {18}, {29}, {21}, {25}, {305})])
 
     def test_open_lanelets(self):
         lanelets = CommonRoadFileReader(self.filename_lanelets).open()
@@ -465,9 +464,14 @@ class TestFileReader(unittest.TestCase):
         exp_traffic_light_201_cycle_3_state = self.traffic_light_201.cycle[3].state
         exp_traffic_light_201_cycle_3_duration = self.traffic_light_201.cycle[3].duration
 
-        exp_intersection_301_incoming_zero_incoming_lanelets = self.intersection_301.incomings[0].incoming_lanelets
         exp_intersection_301_id = self.intersection_301.intersection_id
         exp_intersection_301_incoming_zero_id = self.intersection_301.incomings[0].incoming_id
+        exp_intersection_301_incoming_zero_incoming_lanelets = self.intersection_301.incomings[0].incoming_lanelets
+        exp_intersection_301_incoming_zero_successors_left = self.intersection_301.incomings[0].successors_left
+        exp_intersection_301_incoming_zero_successors_right = self.intersection_301.incomings[0].successors_right
+        exp_intersection_301_incoming_zero_successors_straight = self.intersection_301.incomings[0].successors_straight
+        exp_intersection_301_incoming_zero_incomings_left = self.intersection_301.incomings[0].incomings_left
+
 
         xml_file = CommonRoadFileReader(self.filename_urban).open()
 
@@ -546,6 +550,14 @@ class TestFileReader(unittest.TestCase):
                             xml_file[0].lanelet_network.intersections[0].intersection_id)
         self.assertEqual(exp_intersection_301_incoming_zero_id,
                             xml_file[0].lanelet_network.intersections[0].incomings[0].incoming_id)
+        self.assertSetEqual(exp_intersection_301_incoming_zero_successors_left,
+                            xml_file[0].lanelet_network.intersections[0].incomings[0].successors_left)
+        self.assertSetEqual(exp_intersection_301_incoming_zero_successors_right,
+                            xml_file[0].lanelet_network.intersections[0].incomings[0].successors_right)
+        self.assertSetEqual(exp_intersection_301_incoming_zero_successors_straight,
+                            xml_file[0].lanelet_network.intersections[0].incomings[0].successors_straight)
+        self.assertSetEqual(exp_intersection_301_incoming_zero_incomings_left,
+                            xml_file[0].lanelet_network.intersections[0].incomings[0].incomings_left)
 
     # def test_open_all_scenarios(self):
     #     scenarios = self.cwd_path
