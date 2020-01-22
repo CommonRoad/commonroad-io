@@ -228,11 +228,21 @@ def _retrieve_alternate_value(style_sheet: dict, call_stack: Tuple[str, ...], va
     return value
 
 
-def _add_legend(legend: Dict[str,str], draw_params):
+def _add_legend(legend: Dict[Tuple[str,...], str], draw_params):
+    """
+    Adds legend with color of objects specified by legend.keys() and texts specified by legend.values().
+    :param legend: color of objects specified by path in legend.keys() and texts specified by legend.values()
+    :param draw_params: draw parameters used for plotting (color is extracted using path in legend.keys())
+    :return:
+    """
     handles = []
     for obj_name, text in legend.items():
-        color = _retrieve_value(draw_params, (), obj_name)
-        handles.append(mpatches.Patch(color=color, label=text))
+        try:
+            color = _retrieve_value(draw_params, (), obj_name)
+        except:
+            color = None
+        if color is not None:
+            handles.append(mpatches.Patch(color=color, label=text))
 
     plt.legend(handles=handles)
 

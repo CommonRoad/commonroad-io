@@ -37,10 +37,20 @@ When settings of a plot should be changed with ``draw_params``, they have to be 
             'static_obstacle':
                 {'shape': shape_parameters},
             'lanelet_network':
-                {'lanelet':
+                {'draw_intersection': False,
+                'intersection': {'draw_incoming_lanelets': True,
+                                 'incoming_lanelets_color': '#24b582',
+                                 'draw_crossings': True,
+                                 'crossings_color': '#b62a55',
+                                 'draw_successors': True,
+                                 'successors_left_color': 'red',
+                                 'successors_straight_color': 'blue',
+                                 'successors_right_color': '#ccff00'},
+                'lanelet':
                     {'left_bound_color': '#555555',
                      'right_bound_color': '#555555',
                      'center_bound_color': '#dddddd',
+                     'unique_colors': False,  # colorizes center_vertices and labels of each lanelet differently
                      'draw_left_bound': True,
                      'draw_right_bound': True,
                      'draw_center_bound': True,

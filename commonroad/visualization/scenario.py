@@ -1,15 +1,19 @@
+import os
 from typing import Dict, Callable, Tuple, Union, Any, Set
 import commonroad.geometry.shape
 import matplotlib as mpl
 import matplotlib.cm as cm
 import matplotlib.patches as patches
 import matplotlib.collections as collections
+# import pylustrator
+
 import commonroad.prediction.prediction
 import commonroad.scenario.obstacle
 import commonroad.visualization.draw_dispatch_cr
 from commonroad.common.util import Interval
 from commonroad.geometry.shape import *
 from commonroad.scenario.intersection import Intersection
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDGermany
 from matplotlib.path import Path
 from commonroad.prediction.prediction import Occupancy
 from commonroad.scenario.lanelet import LaneletNetwork, Lanelet
@@ -28,6 +32,7 @@ __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad@in.tum.de"
 __status__ = "Released"
 
+traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
 
 def create_default_draw_params() -> dict:
     basic_shape_parameters_static = {'opacity': 1.0,
@@ -96,7 +101,9 @@ def create_default_draw_params() -> dict:
                            }
                         },
                         'lanelet_network': {
-                            'draw_intersection': True,
+                            'draw_traffic_signs': False,
+                            'draw_signs_in_lanelet': True,
+                            'draw_intersection': False,
                             'intersection': {'draw_incoming_lanelets': True,
                                              'incoming_lanelets_color': '#24b582',
                                              'draw_crossings': True,
@@ -340,18 +347,30 @@ def draw_lanelet_network(obj: LaneletNetwork , plot_limits: Union[List[Union[int
     lanelets = obj.lanelets
 
     _draw_lanelets_intersection(
-        lanelets, obj.intersections, None, ax, draw_params, draw_func, handles, call_stack)
+        lanelets, obj._traffic_signs, obj.intersections, None, ax, draw_params, draw_func, handles, call_stack)
 
 
 def draw_lanelet_list(obj: Union[LaneletNetwork,List[Lanelet]] , plot_limits: Union[List[Union[int,float]], None],
                          ax: mpl.axes.Axes, draw_params: dict, draw_func: Dict[type,Callable],
                          handles: Dict[int,List[mpl.patches.Patch]], call_stack: Tuple[str,...]) -> None:
 
-    _draw_lanelets_intersection(obj.lanelets, None, plot_limits, ax, draw_params, draw_func, handles,
+    _draw_lanelets_intersection(obj.lanelets, None, None, plot_limits, ax, draw_params, draw_func, handles,
                                 call_stack)
 
 
-def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet], intersections: Union[List[Intersection],None],
+# def draw_traffic_sign(sign: TrafficSign):
+#     for element in sign.traffic_sign_elements:
+#         path = os.path.join(traffic_sign_path, element.traffic_sign_element_id + '.svg')
+#         print(path)
+#         try:
+#             pylustrator.load(path, offset=[0.5, 0.5])
+#         except:
+#             pass
+
+
+def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
+                                traffic_signs: Union[Dict[int,TrafficSign],None],
+                                intersections: Union[List[Intersection],None],
                                 plot_limits: Union[List[Union[int,float]], None],
                                 ax: mpl.axes.Axes, draw_params: dict, draw_func: Dict[type,Callable],
                                 handles: Dict[int,List[mpl.patches.Patch]], call_stack: Tuple[str,...]) -> None:
@@ -368,6 +387,16 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet], intersections
         obj = [obj]
 
     try:
+        if traffic_signs is not None:
+            draw_traffic_signs = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'draw_traffic_signs'))
+            draw_signs_in_lanelet = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'draw_signs_in_lanelet'))
+        else:
+            draw_traffic_signs = False
+
         if intersections is not None:
             draw_intersection = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
@@ -449,6 +478,8 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet], intersections
         print(call_stack)
 
     incoming_lanelets = set()
+    incomings_left = {}
+    incomings_id = {}
     crossings = set()
     all_successors = set()
     successors_left = set()
@@ -460,6 +491,11 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet], intersections
             incomings: List[set] = [incoming.incoming_lanelets for intersection in intersections
                                     for incoming in intersection.incomings]
             incoming_lanelets: Set[int] = set.union(*incomings)
+            for intersection in intersections:
+                for incoming in intersection.incomings:
+                    for l_id in incoming.incoming_lanelets:
+                        incomings_left[l_id] = incoming.incomings_left
+                        incomings_id[l_id] = incoming.incoming_id
 
         if draw_crossings:
             tmp_list: List[set] = [intersection.crossings for intersection in intersections]
@@ -477,6 +513,12 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet], intersections
             successors_right: Set[int] = set.union(*tmp_list)
             all_successors = set.union(successors_straight, successors_right, successors_left)
 
+    # traffic_sign_svgs = {}
+    # if draw_traffic_signs:
+
+    #     for id, sign in traffic_signs.items():
+    #         if sign in traffic_sign_svgs:
+    #             traffic_sign_svgs[sign] =
 
     # direction arrow
     codes_direction = [Path.MOVETO,
@@ -585,13 +627,42 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet], intersections
             crossing_vertices_fill.append(
                 np.concatenate((lanelet.right_vertices, np.flip(lanelet.left_vertices, 0))))
 
-        # stor position of label
-        if show_label:
-            text_pos = lanelet.interpolate_position(0.5 * lanelet.distance[-1])[0]
-            ax.text(text_pos[0], text_pos[1],
-                    str(lanelet.lanelet_id),
+        if show_label or draw_incoming_lanelets or draw_traffic_signs:
+            strings = []
+            if show_label:
+                strings.append(str(lanelet.lanelet_id))
+            if is_incoming_lanelet:
+                strings.append('inc_id: ' + str(incomings_id[lanelet.lanelet_id]))
+                strings.append('inc_left: ' + str(incomings_left[lanelet.lanelet_id]))
+            if draw_traffic_signs:
+                traffic_signs_tmp = [traffic_signs[id] for id in lanelet.traffic_signs]
+                if draw_signs_in_lanelet is True and traffic_signs_tmp:
+                    str_tmp = 'traffic signs: '
+                    add_str = ''
+                    for sign in traffic_signs_tmp:
+                        for el in sign.traffic_sign_elements:
+                            #TrafficSignIDGermany(el.traffic_sign_element_id).name would give the name
+                            str_tmp += add_str + el.traffic_sign_element_id
+                            add_str = ', '
+
+                    strings.append(str_tmp)
+
+                else:
+                    raise NotImplementedError()
+
+            string = ', '.join(strings)
+            print(strings)
+            # compute normal angle of label box
+            clr_positions = lanelet.interpolate_position(0.5 * lanelet.distance[-1])
+            normal_vector = np.array(clr_positions[1]) - np.array(clr_positions[2])
+            angle = np.rad2deg(np.arctan2(normal_vector[1], normal_vector[0])) - 90
+            angle = angle if Interval(-90,90).contains(angle) else angle - 180
+
+            ax.text(clr_positions[0][0], clr_positions[0][1],
+                    string,
                     bbox={'facecolor': center_bound_color, 'pad': 2},
                     horizontalalignment='center', verticalalignment='center',
+                    rotation=angle,
                     zorder=30.2)
 
     # draw paths and collect axis handles
