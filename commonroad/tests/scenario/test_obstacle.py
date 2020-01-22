@@ -39,7 +39,7 @@ class TestObstacle(unittest.TestCase):
 
         dynamic_obstacle = DynamicObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type, prediction=prediction,
                                           initial_state=initial_state, obstacle_shape=shape,
-                                          initial_lanelet_ids=initial_lanelet_ids)
+                                          initial_shape_lanelet_ids=initial_lanelet_ids)
         np.testing.assert_equal(dynamic_obstacle.obstacle_id, obstacle_id)
         self.assertEqual(obstacle_type, dynamic_obstacle.obstacle_type)
         self.assertEqual(dynamic_obstacle.obstacle_role, obstacle_role)

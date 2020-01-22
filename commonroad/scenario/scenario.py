@@ -113,7 +113,8 @@ class Scenario:
         elif isinstance(scenario_object, StaticObstacle):
             self._mark_object_id_as_used(scenario_object.obstacle_id)
             self._static_obstacles[scenario_object.obstacle_id] = scenario_object
-            self._add_static_obstacle_to_lanelets(scenario_object.obstacle_id, scenario_object.initial_lanelet_ids)
+            self._add_static_obstacle_to_lanelets(scenario_object.obstacle_id,
+                                                  scenario_object.initial_shape_lanelet_ids)
         elif isinstance(scenario_object, DynamicObstacle):
             self._mark_object_id_as_used(scenario_object.obstacle_id)
             self._dynamic_obstacles[scenario_object.obstacle_id] = scenario_object
@@ -160,14 +161,14 @@ class Scenario:
         if isinstance(obstacle.prediction, SetBasedPrediction) or len(self.lanelet_network.lanelets) == 0:
             return
         # delete obstacle references from initial time step
-        if obstacle.initial_lanelet_ids is not None:
-            for lanelet_id in obstacle.initial_lanelet_ids:
+        if obstacle.initial_shape_lanelet_ids is not None:
+            for lanelet_id in obstacle.initial_shape_lanelet_ids:
                 lanelet_dict = self.lanelet_network.find_lanelet_by_id(lanelet_id).dynamic_obstacles_on_lanelet
                 lanelet_dict[obstacle.initial_state.time_step].discard(obstacle.obstacle_id)
 
         # delete obstacle references from prediction
-        if obstacle.prediction is not None and obstacle.prediction.lanelet_assignment is not None:
-            for time_step, ids in obstacle.prediction.lanelet_assignment.items():
+        if obstacle.prediction is not None and obstacle.prediction.shape_lanelet_assignment is not None:
+            for time_step, ids in obstacle.prediction.shape_lanelet_assignment.items():
                 for lanelet_id in ids:
                     lanelet_dict = self.lanelet_network.find_lanelet_by_id(lanelet_id).dynamic_obstacles_on_lanelet
                     lanelet_dict[time_step].discard(obstacle.obstacle_id)
@@ -180,16 +181,16 @@ class Scenario:
         if isinstance(obstacle.prediction, SetBasedPrediction) or len(self.lanelet_network.lanelets) == 0:
             return
         # add obstacle references to initial time step
-        if obstacle.initial_lanelet_ids is not None:
-            for lanelet_id in obstacle.initial_lanelet_ids:
+        if obstacle.initial_shape_lanelet_ids is not None:
+            for lanelet_id in obstacle.initial_shape_lanelet_ids:
                 lanelet_dict = self.lanelet_network.find_lanelet_by_id(lanelet_id).dynamic_obstacles_on_lanelet
                 if lanelet_dict.get(obstacle.initial_state.time_step) is None:
                     lanelet_dict[obstacle.initial_state.time_step] = set()
                 lanelet_dict[obstacle.initial_state.time_step].add(obstacle.obstacle_id)
 
         # add obstacle references to prediction
-        if obstacle.prediction is not None and obstacle.prediction.lanelet_assignment is not None:
-            for time_step, ids in obstacle.prediction.lanelet_assignment.items():
+        if obstacle.prediction is not None and obstacle.prediction.shape_lanelet_assignment is not None:
+            for time_step, ids in obstacle.prediction.shape_lanelet_assignment.items():
                 for lanelet_id in ids:
                     lanelet_dict = self.lanelet_network.find_lanelet_by_id(lanelet_id).dynamic_obstacles_on_lanelet
                     if lanelet_dict.get(time_step) is None:
@@ -210,7 +211,7 @@ class Scenario:
             return
 
         if obstacle.obstacle_id in self._static_obstacles:
-            self._remove_static_obstacle_from_lanelets(obstacle.obstacle_id, obstacle.initial_lanelet_ids)
+            self._remove_static_obstacle_from_lanelets(obstacle.obstacle_id, obstacle.initial_shape_lanelet_ids)
             del self._static_obstacles[obstacle.obstacle_id]
             self._id_set.remove(obstacle.obstacle_id)
         elif obstacle.obstacle_id in self._dynamic_obstacles:
