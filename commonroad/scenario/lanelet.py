@@ -929,7 +929,7 @@ class LaneletNetwork:
 
         return self._lanelets[lanelet_id] if lanelet_id in self._lanelets else None
 
-    def find_traffic_sign_by_id_and_country(self, traffic_sign_id: int) -> Lanelet:
+    def find_traffic_sign_by_id(self, traffic_sign_id: int) -> TrafficSign:
         """
         Finds a traffic sign for a given traffic_sign_id
 

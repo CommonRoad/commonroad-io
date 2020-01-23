@@ -197,6 +197,20 @@ class TrafficLight:
     def cycle(self) -> List[TrafficLightCycleElement]:
         return self._cycle
 
+    def get_state_at_time_step(self, time_step: int) -> TrafficLightState:
+        time_step_mod = ((time_step - self.time_offset) % (self.cycle_init_timesteps[-1] - self.time_offset))\
+                        + self.time_offset
+        i_cycle = np.argmax(time_step_mod < self.cycle_init_timesteps) - 1
+        return self.cycle[i_cycle].state
+
+    @property
+    def cycle_init_timesteps(self):
+        if not hasattr(self, '_cycle_init_timesteps'):
+            durations = [cycle_el.duration for cycle_el in self._cycle]
+            self._cycle_init_timesteps = np.cumsum(durations) + self.time_offset
+            self._cycle_init_timesteps = np.insert(self._cycle_init_timesteps, 0, self.time_offset)
+        return self._cycle_init_timesteps
+
     @property
     def time_offset(self) -> int:
         return self._time_offset
