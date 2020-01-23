@@ -1108,7 +1108,7 @@ class IntersectionXMLNode:
 
         for incoming in intersection.incomings:
             incoming_node = etree.Element('incoming')
-            incoming_node.set('id', incoming.incoming_id)
+            incoming_node.set('id', str(incoming.incoming_id))
             for incoming_lanelet in incoming.incoming_lanelets:
                 incoming_lanelet_node = etree.Element('incomingLanelet')
                 incoming_lanelet_node.set('ref', str(incoming_lanelet))
@@ -1137,14 +1137,15 @@ class IntersectionXMLNode:
                     is_left_of_node = etree.Element('isLeftOf')
                     is_left_of_node.set('ref', str(is_left_of))
                     incoming_node.append(is_left_of_node)
-                intersection_node.append(incoming_node)
+            intersection_node.append(incoming_node)
 
-        crossing_node = etree.Element('crossing')
-        for crossing_lanelet in intersection.crossings:
-            crossing_lanelet_node = etree.Element('crossingLanelet')
-            crossing_lanelet_node.set('ref', str(crossing_lanelet))
-            crossing_node.append(crossing_lanelet_node)
-        intersection_node.append(crossing_node)
+        if intersection.crossings is not None:
+            crossing_node = etree.Element('crossing')
+            for crossing_lanelet in intersection.crossings:
+                crossing_lanelet_node = etree.Element('crossingLanelet')
+                crossing_lanelet_node.set('ref', str(crossing_lanelet))
+                crossing_node.append(crossing_lanelet_node)
+            intersection_node.append(crossing_node)
 
         return intersection_node
 
