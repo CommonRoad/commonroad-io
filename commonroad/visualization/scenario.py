@@ -1,4 +1,5 @@
 import os
+from collections import defaultdict
 from typing import Dict, Callable, Tuple, Union, Any, Set
 import commonroad.geometry.shape
 import matplotlib as mpl
@@ -13,7 +14,7 @@ import commonroad.visualization.draw_dispatch_cr
 from commonroad.common.util import Interval
 from commonroad.geometry.shape import *
 from commonroad.scenario.intersection import Intersection
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDGermany
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDGermany, TrafficLight, TrafficLightState
 from matplotlib.path import Path
 from commonroad.prediction.prediction import Occupancy
 from commonroad.scenario.lanelet import LaneletNetwork, Lanelet
@@ -21,8 +22,7 @@ from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, Obstac
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.trajectory import Trajectory
 
-from commonroad.visualization.util import draw_polygon_as_patch, draw_polygon_collection_as_patch
-
+from commonroad.visualization.util import draw_polygon_as_patch, draw_polygon_collection_as_patch, LineDataUnits
 
 __author__ = "Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -101,15 +101,20 @@ def create_default_draw_params() -> dict:
                            }
                         },
                         'lanelet_network': {
+                            'draw_traffic_lights': True,
+                            'traffic_light': {'red_color': 'red',
+                                              'yellow_color': '#feb609',
+                                              'green_color': '#00aa16',
+                                              'red_yellow_color': '#fe4009ff'},
                             'draw_traffic_signs': False,
-                            'draw_signs_in_lanelet': True,
-                            'draw_intersection': False,
+                            'draw_signs_in_lanelet': True,  # Todo: False not implemented
+                            'draw_intersections': False,
                             'intersection': {'draw_incoming_lanelets': True,
-                                             'incoming_lanelets_color': '#24b582',
+                                             'incoming_lanelets_color': '#3ecbcf',
                                              'draw_crossings': True,
                                              'crossings_color': '#b62a55',
                                              'draw_successors': True,
-                                             'successors_left_color': 'red',
+                                             'successors_left_color': '#ff00ff',
                                              'successors_straight_color': 'blue',
                                              'successors_right_color': '#ccff00'},
                             'lanelet': {'left_bound_color': '#555555',
@@ -140,6 +145,14 @@ def create_default_draw_params() -> dict:
     draw_params['scenario']['lanelet'] = draw_params['scenario']['lanelet_network']['lanelet']
 
     return draw_params
+
+
+def traffic_light_color_dict(traffic_light_state: TrafficLightState, params:dict):
+    """Retrieve color code for traffic light state."""
+    return {TrafficLightState.RED: params['red_color'],
+            TrafficLightState.YELLOW: params['yellow_color'],
+            TrafficLightState.GREEN: params['green_color'],
+            TrafficLightState.RED_YELLOW: params['red_yellow_color']}[traffic_light_state]
 
 
 def draw_scenario(obj: Scenario, plot_limits: Union[List[Union[int,float]], None], ax: mpl.axes.Axes,
@@ -347,15 +360,19 @@ def draw_lanelet_network(obj: LaneletNetwork , plot_limits: Union[List[Union[int
     lanelets = obj.lanelets
 
     _draw_lanelets_intersection(
-        lanelets, obj._traffic_signs, obj.intersections, None, ax, draw_params, draw_func, handles, call_stack)
+        lanelets, obj._traffic_lights, obj._traffic_signs, obj.intersections,
+        None, ax, draw_params, draw_func, handles, call_stack)
 
 
-def draw_lanelet_list(obj: Union[LaneletNetwork,List[Lanelet]] , plot_limits: Union[List[Union[int,float]], None],
+def draw_lanelet_list(obj: List[Lanelet] , plot_limits: Union[List[Union[int,float]], None],
                          ax: mpl.axes.Axes, draw_params: dict, draw_func: Dict[type,Callable],
                          handles: Dict[int,List[mpl.patches.Patch]], call_stack: Tuple[str,...]) -> None:
+        """
+        Draws list of lanelets.
+        """
+        _draw_lanelets_intersection(obj, None, None, None, plot_limits, ax, draw_params, draw_func, handles,
+                                    call_stack)
 
-    _draw_lanelets_intersection(obj.lanelets, None, None, plot_limits, ax, draw_params, draw_func, handles,
-                                call_stack)
 
 
 # def draw_traffic_sign(sign: TrafficSign):
@@ -369,6 +386,7 @@ def draw_lanelet_list(obj: Union[LaneletNetwork,List[Lanelet]] , plot_limits: Un
 
 
 def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
+                                traffic_lights: Union[Dict[int, TrafficLight], None],
                                 traffic_signs: Union[Dict[int,TrafficSign],None],
                                 intersections: Union[List[Intersection],None],
                                 plot_limits: Union[List[Union[int,float]], None],
@@ -387,6 +405,19 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
         obj = [obj]
 
     try:
+        time_begin = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack, ('time_begin',))
+        if traffic_lights is not None:
+            draw_traffic_lights = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'draw_traffic_lights'))
+
+            traffic_light_colors = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'traffic_light'))
+        else:
+            draw_traffic_lights = False
+
         if traffic_signs is not None:
             draw_traffic_signs = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
@@ -395,16 +426,16 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
                 draw_params, call_stack,
                 ('lanelet_network', 'draw_signs_in_lanelet'))
         else:
-            draw_traffic_signs = False
+            draw_traffic_signs=draw_signs_in_lanelet = False
 
         if intersections is not None:
-            draw_intersection = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_intersections = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
-                ('lanelet_network', 'draw_intersection'))
+                ('lanelet_network', 'draw_intersections'))
         else:
-            draw_intersection = False
+            draw_intersections = False
 
-        if draw_intersection is True:
+        if draw_intersections is True:
             draw_incoming_lanelets = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
                 ('lanelet_network', 'intersection', 'draw_incoming_lanelets'))
@@ -429,6 +460,8 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
             successors_right_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
                 ('lanelet_network', 'intersection', 'successors_right_color'))
+        else:
+            draw_incoming_lanelets=draw_crossings=draw_successors = False
 
         left_bound_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
@@ -485,7 +518,7 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
     successors_left = set()
     successors_straight = set()
     successors_right = set()
-    if draw_intersection:
+    if draw_intersections:
         # collect incoming lanelets
         if draw_incoming_lanelets:
             incomings: List[set] = [incoming.incoming_lanelets for intersection in intersections
@@ -594,15 +627,28 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
                 coordinates_right_border_vertices = np.vstack((coordinates_right_border_vertices, lanelet.right_vertices))
             right_paths.append(Path(lanelet.right_vertices, closed=False))
 
-        is_successor = draw_intersection and draw_successors and lanelet.lanelet_id in all_successors
-        if draw_center_bound and not is_successor:
-            if unique_colors is False:
-                center_paths.append(Path(lanelet.center_vertices, closed=False))
-            else:
-                center_paths = [Path(lanelet.center_vertices, closed=False)]
-                ax.add_collection(
-                    collections.PathCollection(center_paths, edgecolor=center_bound_color, facecolor='none',
-                                               lw=draw_linewidth, zorder=10, antialiased=antialiased))
+        has_traffic_light = draw_traffic_lights and lanelet.traffic_lights
+        if has_traffic_light:
+            for light_id in lanelet.traffic_lights: # TODO: how to plot multiple traffic lights for one lanelet?
+                light_state = traffic_lights[light_id].get_state_at_time_step(time_begin)
+                break
+
+            if light_state:
+                linewidth_metres = 0.75
+                # dashed line for red_yellow
+                linestyle = '--' if light_state == TrafficLightState.RED_YELLOW else '-'
+                dashes = (5, 5) if linestyle == '--' else (None, None)
+
+                # cut off in the beginning, because linewidth_metres is added later
+                tmp_center = lanelet.center_vertices.copy()
+                tmp_center[0,:] = lanelet.interpolate_position(linewidth_metres)[0]
+                zorder = 10.05 if light_state == TrafficLightState.GREEN else 10.0
+                line = LineDataUnits(tmp_center[:,0], tmp_center[:,1], zorder=zorder, linewidth=linewidth_metres, alpha=0.7,
+                                     color=traffic_light_color_dict(light_state, traffic_light_colors), linestyle=linestyle, dashes=dashes)
+                ax.add_line(line)
+
+        # draw colored center bound. Hierarchy or colors: successors > usual center bound
+        is_successor = draw_intersections and draw_successors and lanelet.lanelet_id in all_successors
         if is_successor:
             if lanelet.lanelet_id in successors_left:
                 succ_left_paths.append(Path(lanelet.center_vertices, closed=False))
@@ -611,9 +657,18 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
             else:
                 succ_right_paths.append(Path(lanelet.center_vertices, closed=False))
 
-        is_incoming_lanelet = draw_intersection and draw_incoming_lanelets and\
+        elif draw_center_bound:
+            if unique_colors is False:
+                center_paths.append(Path(lanelet.center_vertices, closed=False))
+            else:
+                center_paths = [Path(lanelet.center_vertices, closed=False)]
+                ax.add_collection(
+                    collections.PathCollection(center_paths, edgecolor=center_bound_color, facecolor='none',
+                                               lw=draw_linewidth, zorder=10, antialiased=antialiased))
+
+        is_incoming_lanelet = draw_intersections and draw_incoming_lanelets and\
                               (lanelet.lanelet_id in incoming_lanelets)
-        is_crossing = draw_intersection and draw_crossings and\
+        is_crossing = draw_intersections and draw_crossings and\
                               (lanelet.lanelet_id in crossings)
         if fill_lanelet:
             if not is_incoming_lanelet and not is_crossing:
@@ -651,7 +706,6 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
                     raise NotImplementedError()
 
             string = ', '.join(strings)
-            print(strings)
             # compute normal angle of label box
             clr_positions = lanelet.interpolate_position(0.5 * lanelet.distance[-1])
             normal_vector = np.array(clr_positions[1]) - np.array(clr_positions[2])
