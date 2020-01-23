@@ -94,6 +94,19 @@ class TrafficSignElement:
     def additional_values(self) -> List[str]:
         return self._additional_values
 
+    def __eq__(self, other: 'TrafficSignElement'):
+        if self.traffic_sign_element_id == other.traffic_sign_element_id \
+                and self.additional_values == other.additional_values:
+            return True
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(str(self. _traffic_sign_element_id) + str(self.additional_values))
+
     def __str__(self):
         return f"Sign Element with id {self._traffic_sign_element_id} and values {self._additional_values} "
 
