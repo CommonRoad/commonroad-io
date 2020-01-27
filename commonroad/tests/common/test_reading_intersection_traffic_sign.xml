@@ -239,6 +239,7 @@
   </lanelet>
   <lanelet id="18">
     <leftBound>
+      <lineMarking>dashed</lineMarking>
       <point>
         <x>235.1554711997493</x>
         <y>-80.059386273706</y>
@@ -265,6 +266,7 @@
       </point>
     </leftBound>
     <rightBound>
+      <lineMarking>broad_solid</lineMarking>
       <point>
         <x>236.2707606031303</x>
         <y>-77.82194810769872</y>

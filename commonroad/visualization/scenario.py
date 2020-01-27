@@ -123,6 +123,7 @@ def create_default_draw_params() -> dict:
                                        'unique_colors': False,  # colorizes center_vertices and labels of each lanelet differently
                                        'draw_stop_line':True,
                                        'stop_line_color':'#ffffff',
+                                       'draw_line_markings':True,
                                        'draw_left_bound': True,
                                        'draw_right_bound': True,
                                        'draw_center_bound': True,
@@ -151,9 +152,9 @@ def create_default_draw_params() -> dict:
 
 def line_marking_to_linestyle(line_marking:LineMarking) -> Tuple:
     """:returns Tuple[line_style, dashes, line_width] for matplotlib plotting options."""
-    return {LineMarking.DASHED: ('--', (5,5), 0.3,),
-            LineMarking.SOLID: ('-', (None,None), 0.3),
-            LineMarking.BROAD_DASHED: ('--',(5,5), 0.5),
+    return {LineMarking.DASHED: ('--', (10,10), 0.25,),
+            LineMarking.SOLID: ('-', (None,None), 0.25),
+            LineMarking.BROAD_DASHED: ('--',(10,10), 0.5),
             LineMarking.BROAD_SOLID: ('-', (None,None), 0.5)}[line_marking]
 
 
@@ -491,6 +492,9 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
         stop_line_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('lanelet', 'stop_line_color'))
+        draw_line_markings = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('lanelet', 'draw_line_markings'))
         show_label = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('lanelet', 'show_label'))
@@ -626,29 +630,59 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
                 ax.add_collection(collections.PathCollection(direction_list, color=center_bound_color,
                                                              lw=0.5, zorder=10.1, antialiased=antialiased))
 
+        # left bound
         if draw_border_vertices or draw_left_bound:
             if draw_border_vertices:
                 coordinates_left_border_vertices = np.vstack((coordinates_left_border_vertices,lanelet.left_vertices))
-            left_paths.append(Path(lanelet.left_vertices, closed=False))
 
+            if draw_line_markings and lanelet.line_marking_left_vertices is not None:
+                linestyle, dashes, linewidth_metres  = line_marking_to_linestyle(lanelet.line_marking_left_vertices)
+                tmp_left = lanelet.left_vertices.copy()
+                tmp_left[0, :] = lanelet.interpolate_position(linewidth_metres/2)[2]
+                tmp_left[-1, :] = lanelet.interpolate_position(lanelet.distance[-1] - linewidth_metres / 2)[2]
+                line = LineDataUnits(tmp_left[:, 0], tmp_left[:, 1], zorder=20, linewidth=linewidth_metres,
+                              alpha=1.0,
+                              color=left_bound_color, linestyle=linestyle,
+                              dashes=dashes)
+                ax.add_line(line)
+            else:
+                left_paths.append(Path(lanelet.left_vertices, closed=False))
+
+        # right bound
         if draw_border_vertices or draw_right_bound:
+
             if draw_border_vertices:
                 coordinates_right_border_vertices = np.vstack((coordinates_right_border_vertices, lanelet.right_vertices))
-            right_paths.append(Path(lanelet.right_vertices, closed=False))
 
+            if draw_line_markings and lanelet.line_marking_right_vertices is not None:
+                linestyle, dashes, linewidth_metres = line_marking_to_linestyle(lanelet.line_marking_right_vertices)
+                tmp_right = lanelet.right_vertices.copy()
+                tmp_right[0, :] = lanelet.interpolate_position(linewidth_metres/2)[1]
+                tmp_right[-1, :] = lanelet.interpolate_position(lanelet.distance[-1] - linewidth_metres / 2)[1]
+                line = LineDataUnits(tmp_right[:, 0], tmp_right[:, 1], zorder=10.5, linewidth=linewidth_metres,
+                                     alpha=1.0,
+                                     color=right_bound_color, linestyle=linestyle,
+                                     dashes=dashes)
+                ax.add_line(line)
+            else:
+                right_paths.append(Path(lanelet.right_vertices, closed=False))
+
+        # stop line
         if draw_stop_line and lanelet.stop_line:
             stop_line = np.vstack([lanelet.stop_line.start, lanelet.stop_line.end])
             linestyle, dashes, linewidth_metres = line_marking_to_linestyle(lanelet.stop_line.line_marking)
-            vec = stop_line[1,:] - stop_line[0,:]
+            # cut off in the beginning, because linewidth_metres is added later
+            vec = stop_line[1, :] - stop_line[0, :]
             tangent = vec / np.linalg.norm(vec)
-            stop_line[0, :] += linewidth_metres * tangent/2
-            stop_line[1, :] -= linewidth_metres * tangent/2
+            stop_line[0, :] += linewidth_metres * tangent / 2
+            stop_line[1, :] -= linewidth_metres * tangent / 2
             line = LineDataUnits(stop_line[:, 0], stop_line[:, 1], zorder=11, linewidth=linewidth_metres,
                                  alpha=1.0,
                                  color=stop_line_color, linestyle=linestyle,
                                  dashes=dashes)
             ax.add_line(line)
 
+        # visualize traffic light state through colored center bound
         has_traffic_light = draw_traffic_lights and lanelet.traffic_lights
         if has_traffic_light:
             for light_id in lanelet.traffic_lights: # TODO: how to plot multiple traffic lights for one lanelet?

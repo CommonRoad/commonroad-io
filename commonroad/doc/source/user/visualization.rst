@@ -62,6 +62,9 @@ When settings of a plot should be changed with ``draw_params``, they have to be 
                       'right_bound_color': '#555555',
                       'center_bound_color': '#dddddd',
                       'unique_colors': False,  # colorizes center_vertices and labels of each lanelet differently
+                      'draw_stop_line':True,
+                      'stop_line_color':'#ffffff',
+                      'draw_line_markings':True,
                       'draw_left_bound': True,
                       'draw_right_bound': True,
                       'draw_center_bound': True,

@@ -1,6 +1,6 @@
 import os
-# import  matplotlib as mpl
-# mpl.use('TkAgg')
+import  matplotlib as mpl
+mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import unittest
 from commonroad.common.file_reader import CommonRoadFileReader
@@ -11,14 +11,18 @@ class TestVisualization(unittest.TestCase):
     def setUp(self):
         self.full_path = os.path.dirname(os.path.abspath(__file__))
         self.filename_urban = os.path.join(self.full_path,  '../common/test_reading_intersection_traffic_sign.xml')
+        self.filename_lanelet = os.path.join(self.full_path, '../common/test_reading_lanelets.xml')
 
     def test_intersection_plot(self):
         "Uses all options for plotting objects related to intersections or trafic sign/lights."
         scenario, pp = CommonRoadFileReader(self.filename_urban).open()
         plt.close('all')
         plt.figure()
+        mpl.rcParams['lines.scale_dashes'] = False
         draw_object(scenario.lanelet_network,
-                    draw_params={'time_begin': 20, 'lanelet_network':{'draw_intersections':True, 'draw_traffic_signs':True}},
+                    draw_params={'time_begin': 20, 'lanelet_network':{'draw_intersections':True, 'draw_traffic_signs':True},
+                                 'lanelet':{'draw_lane_marking':True,
+                                            'show_label':True}},
                     legend={('lanelet_network','intersection','incoming_lanelets_color'):'Incoming lanelets',
                             ('lanelet_network','intersection','successors_left_color'):'Successors left',
                             ('lanelet_network','intersection','successors_straight_color'):'Successors straight',
@@ -30,8 +34,20 @@ class TestVisualization(unittest.TestCase):
         plt.autoscale()
         plt.axis('equal')
         # plt.pause(50)
-        # plt.show()
+        plt.show()
 
+    # def test_lane_markings(self):
+    #     scenario, pp = CommonRoadFileReader(self.filename_lanelet).open()
+    #     plt.close('all')
+    #     plt.figure()
+    #     draw_object(scenario.lanelet_network,
+    #                 draw_params={'time_begin': 20, 'lanelet_network':{'draw_intersections':False, 'draw_traffic_signs':False},
+    #                              'lanelet':{'draw_lane_marking':True}})
+    #
+    #     plt.autoscale()
+    #     plt.axis('equal')
+    #     # plt.pause(50)
+    #     plt.show()
 # def test_read_svg():
 #     path = '/home/klischat/GIT_REPOS/commonroad-io/commonroad/visualization/traffic_signs/306.svg'
 #     path2 = '/home/klischat/GIT_REPOS/commonroad-io/commonroad/visualization/traffic_signs/310.svg'
