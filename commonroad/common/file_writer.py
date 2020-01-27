@@ -1114,7 +1114,7 @@ class IntersectionXMLNode:
                 incoming_lanelet_node.set('ref', str(incoming_lanelet))
                 incoming_node.append(incoming_lanelet_node)
 
-            if incoming.successors_straight:
+            if incoming.successors_right:
                 for successor_right in incoming.successors_right:
                     successor_right_node = etree.Element('successorsRight')
                     successor_right_node.set('ref', str(successor_right))
