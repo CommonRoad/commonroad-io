@@ -1,4 +1,6 @@
 import os
+# import  matplotlib as mpl
+# mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import unittest
 from commonroad.common.file_reader import CommonRoadFileReader
@@ -28,8 +30,7 @@ class TestVisualization(unittest.TestCase):
         plt.autoscale()
         plt.axis('equal')
         # plt.pause(50)
-        plt.show()
-        print('done')
+        # plt.show()
 
 # def test_read_svg():
 #     path = '/home/klischat/GIT_REPOS/commonroad-io/commonroad/visualization/traffic_signs/306.svg'

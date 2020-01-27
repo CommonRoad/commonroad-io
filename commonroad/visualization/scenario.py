@@ -17,7 +17,7 @@ from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDGermany, TrafficLight, TrafficLightState
 from matplotlib.path import Path
 from commonroad.prediction.prediction import Occupancy
-from commonroad.scenario.lanelet import LaneletNetwork, Lanelet
+from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, ObstacleRole
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.trajectory import Trajectory
@@ -121,6 +121,8 @@ def create_default_draw_params() -> dict:
                                        'right_bound_color': '#555555',
                                        'center_bound_color': '#dddddd',
                                        'unique_colors': False,  # colorizes center_vertices and labels of each lanelet differently
+                                       'draw_stop_line':True,
+                                       'stop_line_color':'#ffffff',
                                        'draw_left_bound': True,
                                        'draw_right_bound': True,
                                        'draw_center_bound': True,
@@ -145,6 +147,14 @@ def create_default_draw_params() -> dict:
     draw_params['scenario']['lanelet'] = draw_params['scenario']['lanelet_network']['lanelet']
 
     return draw_params
+
+
+def line_marking_to_linestyle(line_marking:LineMarking) -> Tuple:
+    """:returns Tuple[line_style, dashes, line_width] for matplotlib plotting options."""
+    return {LineMarking.DASHED: ('--', (5,5), 0.3,),
+            LineMarking.SOLID: ('-', (None,None), 0.3),
+            LineMarking.BROAD_DASHED: ('--',(5,5), 0.5),
+            LineMarking.BROAD_SOLID: ('-', (None,None), 0.5)}[line_marking]
 
 
 def traffic_light_color_dict(traffic_light_state: TrafficLightState, params:dict):
@@ -475,6 +485,12 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
         unique_colors = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('lanelet', 'unique_colors'))
+        draw_stop_line = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('lanelet', 'draw_stop_line'))
+        stop_line_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('lanelet', 'stop_line_color'))
         show_label = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('lanelet', 'show_label'))
@@ -545,13 +561,6 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
                                     for incoming in intersection.incomings]
             successors_right: Set[int] = set.union(*tmp_list)
             all_successors = set.union(successors_straight, successors_right, successors_left)
-
-    # traffic_sign_svgs = {}
-    # if draw_traffic_signs:
-
-    #     for id, sign in traffic_signs.items():
-    #         if sign in traffic_sign_svgs:
-    #             traffic_sign_svgs[sign] =
 
     # direction arrow
     codes_direction = [Path.MOVETO,
@@ -626,6 +635,19 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
             if draw_border_vertices:
                 coordinates_right_border_vertices = np.vstack((coordinates_right_border_vertices, lanelet.right_vertices))
             right_paths.append(Path(lanelet.right_vertices, closed=False))
+
+        if draw_stop_line and lanelet.stop_line:
+            stop_line = np.vstack([lanelet.stop_line.start, lanelet.stop_line.end])
+            linestyle, dashes, linewidth_metres = line_marking_to_linestyle(lanelet.stop_line.line_marking)
+            vec = stop_line[1,:] - stop_line[0,:]
+            tangent = vec / np.linalg.norm(vec)
+            stop_line[0, :] += linewidth_metres * tangent/2
+            stop_line[1, :] -= linewidth_metres * tangent/2
+            line = LineDataUnits(stop_line[:, 0], stop_line[:, 1], zorder=11, linewidth=linewidth_metres,
+                                 alpha=1.0,
+                                 color=stop_line_color, linestyle=linestyle,
+                                 dashes=dashes)
+            ax.add_line(line)
 
         has_traffic_light = draw_traffic_lights and lanelet.traffic_lights
         if has_traffic_light:
