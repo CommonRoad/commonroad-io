@@ -14,7 +14,7 @@ class TestVisualization(unittest.TestCase):
         self.filename_lanelet = os.path.join(self.full_path, '../common/test_reading_lanelets.xml')
 
     def test_intersection_plot(self):
-        "Uses all options for plotting objects related to intersections or trafic sign/lights."
+        "Uses all options for plotting objects related to intersections or traffic sign/lights."
         scenario, pp = CommonRoadFileReader(self.filename_urban).open()
         plt.close('all')
         plt.figure()
@@ -33,21 +33,8 @@ class TestVisualization(unittest.TestCase):
 
         plt.autoscale()
         plt.axis('equal')
-        # plt.pause(50)
         plt.show()
 
-    # def test_lane_markings(self):
-    #     scenario, pp = CommonRoadFileReader(self.filename_lanelet).open()
-    #     plt.close('all')
-    #     plt.figure()
-    #     draw_object(scenario.lanelet_network,
-    #                 draw_params={'time_begin': 20, 'lanelet_network':{'draw_intersections':False, 'draw_traffic_signs':False},
-    #                              'lanelet':{'draw_lane_marking':True}})
-    #
-    #     plt.autoscale()
-    #     plt.axis('equal')
-    #     # plt.pause(50)
-    #     plt.show()
 # def test_read_svg():
 #     path = '/home/klischat/GIT_REPOS/commonroad-io/commonroad/visualization/traffic_signs/306.svg'
 #     path2 = '/home/klischat/GIT_REPOS/commonroad-io/commonroad/visualization/traffic_signs/310.svg'
@@ -56,3 +43,6 @@ class TestVisualization(unittest.TestCase):
 #     pylustrator.load(path2, offset=[10, 0.5])
 #
 #     plt.show()
+
+if __name__ == '__main__':
+    unittest.main()
