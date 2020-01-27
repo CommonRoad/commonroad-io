@@ -1,6 +1,6 @@
 import os
-import  matplotlib as mpl
-mpl.use('TkAgg')
+import matplotlib as mpl
+# mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import unittest
 from commonroad.common.file_reader import CommonRoadFileReader
