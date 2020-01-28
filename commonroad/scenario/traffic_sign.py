@@ -183,7 +183,10 @@ class TrafficLight:
         :param active: boolean indicating if traffic light is currently active
         """
         self._traffic_light_id = traffic_light_id
-        self._cycle = cycle
+        if len(cycle) == 0:
+            self._cycle = get_default_cycle()
+        else:
+            self._cycle = cycle
         self._time_offset = time_offset
         self._position = position
         self._direction = direction
@@ -226,3 +229,12 @@ class TrafficLight:
     @property
     def active(self) -> bool:
         return self._active
+
+
+def get_default_cycle():
+    cycle = [(TrafficLightState.RED, 60),
+             (TrafficLightState.RED_YELLOW, 10),
+             (TrafficLightState.GREEN, 60),
+             (TrafficLightState.YELLOW, 10)]
+    cycle_element_list = [TrafficLightCycleElement(state[0], state[1]) for state in cycle]
+    return cycle_element_list
