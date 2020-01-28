@@ -1213,7 +1213,7 @@ class TrafficLightXMLNode:
 
     @classmethod
     def create_ref_node(cls, traffic_light_ref) -> etree.Element:
-        traffic_light_ref_node = etree.Element('trafficSignRef')
+        traffic_light_ref_node = etree.Element('trafficLightRef')
         traffic_light_ref_node.set('ref', str(traffic_light_ref))
         return traffic_light_ref_node
 
