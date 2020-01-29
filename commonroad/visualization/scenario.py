@@ -345,7 +345,7 @@ def draw_trajectories(obj: Union[List[Trajectory],Trajectory], plot_limits: Unio
         if draw_continuous is False:
             ax.add_collection(collection[0])
     else:
-        collection = None
+        collection = []
 
     return collection
 
