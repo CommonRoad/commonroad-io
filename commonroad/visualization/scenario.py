@@ -757,9 +757,7 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
                             add_str = ', '
 
                     strings.append(str_tmp)
-
-                else:
-                    raise NotImplementedError()
+                # TODO: implement svg plotting
 
             string = ', '.join(strings)
             # compute normal angle of label box
