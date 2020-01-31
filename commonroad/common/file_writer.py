@@ -50,7 +50,7 @@ def float_to_str(f):
     without resorting to scientific notation
     """
     d1 = ctx.create_decimal(repr(f))
-    return '{}'.format(d1)
+    return format(d1, 'f')
 
 
 def create_exact_node_float(value: Union[int, float]) -> etree.Element:
@@ -126,14 +126,14 @@ class OverwriteExistingFile(enum.Enum):
 
 class CommonRoadFileWriter:
     def __init__(
-        self,
-        scenario: Scenario,
-        planning_problem_set: PlanningProblemSet,
-        author: str,
-        affiliation: str,
-        source: str,
-        tags: str,
-        decimal_precision: int = 8,
+            self,
+            scenario: Scenario,
+            planning_problem_set: PlanningProblemSet,
+            author: str = None,
+            affiliation: str = None,
+            source: str = None,
+            tags: str = None,
+            decimal_precision: int = 8,
     ):
         """
         Initialize the FileWriter with a scenario and tags for the xml-header
@@ -147,13 +147,18 @@ class CommonRoadFileWriter:
                 required maneuver etc., see commonroad.in.tum.de for full list))
         :param decimal_precision: number of decimal places used when writing float values
         """
+        assert not (author is None and scenario.author is None)
+        assert not (affiliation is None and scenario.affiliation is None)
+        assert not (source is None and scenario.source is None)
+        assert not (tags is None and scenario.tags is None)
+
         self.scenario = scenario
         self.planning_problem_set = planning_problem_set
         self._root_node = etree.Element('commonRoad')
-        self.author = author
-        self.affiliation = affiliation
-        self.source = source
-        self.tags = tags
+        self.author = author if author is not None else scenario.author
+        self.affiliation = affiliation if affiliation is not None else scenario.affiliation
+        self.source = source if source is not None else scenario.source
+        self.tags = tags if tags is not None else scenario.tags
 
         # set decimal precision
         ctx.prec = decimal_precision
@@ -261,12 +266,14 @@ class CommonRoadFileWriter:
         self,
         filename: Union[str, None] = None,
         overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+        check_validity: bool = False
     ):
         """
         Write a scenario including planning-problem. If file already exists, it will be overwritten of skipped
 
         :param filename: filename of the xml output file. If 'None', the Benchmark ID is taken
         :param overwrite_existing_file: Specify whether an already existing file should be overwritten or skipped
+        :param check_validity: check xml file against .xsd definition
         :return:
         """
         if filename is None:
@@ -294,6 +301,8 @@ class CommonRoadFileWriter:
         self._write_header()
         self._add_all_objects_from_scenario()
         self._add_all_planning_problems_from_planning_problem_set()
+        if check_validity:
+            self.check_validity_of_commonroad_file(self._dump())
         file.write(self._dump())
         file.close()
 
