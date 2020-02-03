@@ -13,21 +13,21 @@ class IntersectionIncomingElement:
     """ Class for incoming element in an intersection"""
     def __init__(self, incoming_id: int, incoming_lanelets: Set[int] = None, successors_right: Set[int] = None,
                  successors_straight: Set[int] = None, successors_left: Set[int] = None,
-                 incomings_left: Set[int] = None):
+                 left_of: int = None):
         """
         :param incoming_id: incoming element ID
         :param incoming_lanelets: set of IDs of incoming lanelets
         :param successors_right: set of IDs of incoming lanelets which turn right
         :param successors_straight: set of IDs of incoming lanelets which go straight
         :param successors_left: set of IDs of incoming lanelets which turn left
-        :param incomings_left: set of incoming elements on the left side
+        :param left_of: incoming element ID left of this incoming element
         """
         self._incoming_id = incoming_id
         self._incoming_lanelets = incoming_lanelets
         self._successors_right = successors_right
         self._successors_straight = successors_straight
         self._successors_left = successors_left
-        self._incomings_left = incomings_left
+        self._left_of = left_of
 
     @property
     def incoming_id(self) -> int:
@@ -50,8 +50,8 @@ class IntersectionIncomingElement:
         return self._successors_left
 
     @property
-    def incomings_left(self) -> Set[int]:
-        return self._incomings_left
+    def left_of(self) -> int:
+        return self._left_of
 
 
 class Intersection:

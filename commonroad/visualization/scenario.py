@@ -547,7 +547,7 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
             for intersection in intersections:
                 for incoming in intersection.incomings:
                     for l_id in incoming.incoming_lanelets:
-                        incomings_left[l_id] = incoming.incomings_left
+                        incomings_left[l_id] = incoming.left_of
                         incomings_id[l_id] = incoming.incoming_id
 
         if draw_crossings:

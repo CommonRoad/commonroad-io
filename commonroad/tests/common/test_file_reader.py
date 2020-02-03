@@ -115,10 +115,10 @@ class TestFileReader(unittest.TestCase):
                                                      TrafficLightCycleElement(state=TrafficLightState.YELLOW,
                                                                               duration=4)])
         self.intersection_301 = \
-            Intersection(301, [IntersectionIncomingElement(302, {13}, {26}, {22}, {20}, {304}),
-                               IntersectionIncomingElement(303, {14}, {30}, {24}, {28}, {302}),
-                               IntersectionIncomingElement(304, {17}, {27}, {23}, {31}, {305}),
-                               IntersectionIncomingElement(305, {18}, {29}, {21}, {25}, {305})])
+            Intersection(301, [IntersectionIncomingElement(302, {13}, {26}, {22}, {20}, 304),
+                               IntersectionIncomingElement(303, {14}, {30}, {24}, {28}, 302),
+                               IntersectionIncomingElement(304, {17}, {27}, {23}, {31}, 305),
+                               IntersectionIncomingElement(305, {18}, {29}, {21}, {25}, 305)])
 
     def test_open_lanelets(self):
         lanelets = CommonRoadFileReader(self.filename_lanelets).open()
@@ -470,7 +470,7 @@ class TestFileReader(unittest.TestCase):
         exp_intersection_301_incoming_zero_successors_left = self.intersection_301.incomings[0].successors_left
         exp_intersection_301_incoming_zero_successors_right = self.intersection_301.incomings[0].successors_right
         exp_intersection_301_incoming_zero_successors_straight = self.intersection_301.incomings[0].successors_straight
-        exp_intersection_301_incoming_zero_incomings_left = self.intersection_301.incomings[0].incomings_left
+        exp_intersection_301_incoming_zero_left_of = self.intersection_301.incomings[0].left_of
 
 
         xml_file = CommonRoadFileReader(self.filename_urban).open()
@@ -556,8 +556,8 @@ class TestFileReader(unittest.TestCase):
                             xml_file[0].lanelet_network.intersections[0].incomings[0].successors_right)
         self.assertSetEqual(exp_intersection_301_incoming_zero_successors_straight,
                             xml_file[0].lanelet_network.intersections[0].incomings[0].successors_straight)
-        self.assertSetEqual(exp_intersection_301_incoming_zero_incomings_left,
-                            xml_file[0].lanelet_network.intersections[0].incomings[0].incomings_left)
+        self.assertEqual(exp_intersection_301_incoming_zero_left_of,
+                         xml_file[0].lanelet_network.intersections[0].incomings[0].left_of)
 
     # def test_open_all_scenarios(self):
     #     scenarios = self.cwd_path

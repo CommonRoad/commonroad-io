@@ -669,7 +669,7 @@ class IntersectionIncomingFactory:
         successors_right = set()
         successors_straight = set()
         successors_left = set()
-        incomings_left = set()
+        left_of = None
         for incoming_lanelet_ref in xml_node.findall('incomingLanelet'):
             incoming_lanelets.add(int(incoming_lanelet_ref.get('ref')))
         for successor_right_ref in xml_node.findall('successorsRight'):
@@ -678,12 +678,12 @@ class IntersectionIncomingFactory:
             successors_straight.add(int(successor_straight_ref.get('ref')))
         for successor_left_ref in xml_node.findall('successorsLeft'):
             successors_left.add(int(successor_left_ref.get('ref')))
-        for incoming_left_ref in xml_node.findall('isLeftOf'):
-            incomings_left.add(int(incoming_left_ref.get('ref')))
+        for left_of_ref in xml_node.findall('isLeftOf'):
+            left_of = int(left_of_ref.get('ref'))
 
         return IntersectionIncomingElement(incoming_id=incoming_id, incoming_lanelets=incoming_lanelets,
                                            successors_right=successors_right, successors_straight=successors_straight,
-                                           successors_left=successors_left, incomings_left=incomings_left)
+                                           successors_left=successors_left, left_of=left_of)
 
 
 class ObstacleFactory(ABC):

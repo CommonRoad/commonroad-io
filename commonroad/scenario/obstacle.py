@@ -40,6 +40,7 @@ class ObstacleType(enum.Enum):
     CONSTRUCTION_ZONE = "constructionZone"
     TRAIN = "train"
     ROAD_BOUNDARY = "roadBoundary"
+    Vehicle = "vehicle"
 
 
 class SignalState:
