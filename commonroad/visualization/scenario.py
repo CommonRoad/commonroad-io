@@ -27,9 +27,9 @@ from commonroad.visualization.util import draw_polygon_as_patch, draw_polygon_co
 __author__ = "Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = [""]
-__version__ = "2019.1"
+__version__ = "2020.1"
 __maintainer__ = "Moritz Klischat"
-__email__ = "commonroad@in.tum.de"
+__email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
@@ -753,7 +753,7 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
                     for sign in traffic_signs_tmp:
                         for el in sign.traffic_sign_elements:
                             #TrafficSignIDGermany(el.traffic_sign_element_id).name would give the name
-                            str_tmp += add_str + el.traffic_sign_element_id
+                            str_tmp += add_str + el.traffic_sign_element_id.value
                             add_str = ', '
 
                     strings.append(str_tmp)

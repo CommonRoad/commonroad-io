@@ -11,12 +11,12 @@ from commonroad.scenario.obstacle import Obstacle
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
 from commonroad.scenario.intersection import Intersection
 
-__author__ = "Christian Pek"
+__author__ = "Christian Pek, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW CAR@TUM"]
-__version__ = "2019.1"
+__version__ = "2020.1"
 __maintainer__ = "Christian Pek"
-__email__ = "Christian.Pek@tum.de"
+__email__ = "commonroad-i06@in.tum.de"
 __status__ = "released"
 
 

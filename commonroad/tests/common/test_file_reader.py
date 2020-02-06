@@ -408,7 +408,7 @@ class TestFileReader(unittest.TestCase):
         np.testing.assert_array_equal(exp_traffic_sign_position,
                                       xml_file[0].lanelet_network.traffic_signs[0].position)
         self.assertEqual(exp_traffic_sign_element_id,
-                         xml_file[0].lanelet_network.traffic_signs[0].traffic_sign_elements[0].traffic_sign_element_id)
+                         xml_file[0].lanelet_network.traffic_signs[0].traffic_sign_elements[0].traffic_sign_element_id.value)
         self.assertEqual(exp_traffic_sign_element_additional_value,
                          xml_file[0].lanelet_network.traffic_signs[0].traffic_sign_elements[0].additional_values[0])
         self.assertEqual(exp_traffic_sign_virtual, xml_file[0].lanelet_network.traffic_signs[0].virtual)
@@ -507,7 +507,8 @@ class TestFileReader(unittest.TestCase):
         np.testing.assert_array_equal(exp_traffic_sign_101_position,
                                       xml_file[0].lanelet_network.traffic_signs[0].position)
         self.assertEqual(exp_traffic_sign_101_element_id,
-                         xml_file[0].lanelet_network.traffic_signs[0].traffic_sign_elements[0].traffic_sign_element_id)
+                         xml_file[0].lanelet_network.traffic_signs[0].traffic_sign_elements[0].
+                         traffic_sign_element_id.value)
         self.assertEqual(exp_traffic_sign_101_additional_value,
                          xml_file[0].lanelet_network.traffic_signs[0].traffic_sign_elements[0].additional_values[0])
         self.assertEqual(exp_traffic_sign_101_virtual, xml_file[0].lanelet_network.traffic_signs[0].virtual)
@@ -516,9 +517,11 @@ class TestFileReader(unittest.TestCase):
         np.testing.assert_array_equal(exp_traffic_sign_105_position,
                                       xml_file[0].lanelet_network.traffic_signs[4].position)
         self.assertEqual(exp_traffic_sign_105_element_id_zero,
-                         xml_file[0].lanelet_network.traffic_signs[4].traffic_sign_elements[0].traffic_sign_element_id)
+                         xml_file[0].lanelet_network.traffic_signs[4].traffic_sign_elements[0].
+                         traffic_sign_element_id. value)
         self.assertEqual(exp_traffic_sign_105_element_id_one,
-                         xml_file[0].lanelet_network.traffic_signs[4].traffic_sign_elements[1].traffic_sign_element_id)
+                         xml_file[0].lanelet_network.traffic_signs[4].traffic_sign_elements[1].
+                         traffic_sign_element_id.value)
         self.assertEqual(exp_traffic_sign_105_virtual, xml_file[0].lanelet_network.traffic_signs[4].virtual)
 
         self.assertEqual(exp_traffic_light_201_id, xml_file[0].lanelet_network.traffic_lights[0].traffic_light_id)
@@ -582,6 +585,7 @@ class TestFileReader(unittest.TestCase):
     #     for scenario in os.listdir(cooperative):
     #         full_path = cooperative + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
+
 
 if __name__ == '__main__':
     unittest.main()

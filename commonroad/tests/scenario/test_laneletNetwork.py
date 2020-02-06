@@ -9,9 +9,9 @@ from commonroad.scenario.trajectory import State
 __author__ = "Moritz Untersperger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2019.1"
+__version__ = "2020.1"
 __maintainer__ = "Moritz Untersperger"
-__email__ = "commonroad@in.tum.de"
+__email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 

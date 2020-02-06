@@ -1,10 +1,10 @@
-__author__ = "Behtarin Ferdousi"
+__author__ = "Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = []
+__credits__ = ["CAR@TUM"]
 __version__ = "2020.1"
-__maintainer__ = "Behtarin Ferdousi"
-__email__ = "commonroad@in.tum.de"
-__status__ = "Development"
+__maintainer__ = "Sebastian Maierhofer"
+__email__ = "commonroad-i06@in.tum.de"
+__status__ = "Release"
 
 import enum
 from typing import List
@@ -14,6 +14,25 @@ import numpy as np
 @enum.unique
 class SupportedTrafficSignCountry(enum.Enum):
     GERMANY = 'DEU'
+    USA = "USA"
+    CHINA = "CHN"
+    SPAIN = "ESP"
+    RUSSIA = "RUS"
+    ZAMUNDA = "ZAM"  # default if
+
+
+@enum.unique
+class TrafficSignIDZamunda(enum.Enum):
+    # default traffic sign IDs (similar to German IDs)
+    MINSPEED = '275'
+    MAXSPEED = '274'
+    OVERTAKING = '276'
+    CITYLIMIT = '310'
+    GIVEWAY = '205'
+    STOP = '206'
+    PRIORITY = '306'
+    GREEN_ARROW = '720'
+    UNKNOWN = ''
 
 
 @enum.unique
@@ -24,12 +43,14 @@ class TrafficSignIDGermany(enum.Enum):
     CITYLIMIT = '310'
     GIVEWAY = '205'
     STOP = '206'
+    PRIORITY = '306'
+    GREEN_ARROW = '720'
     UNKNOWN = ''
 
 
 @enum.unique
 class TrafficSignIDUsa(enum.Enum):
-    MAXSPEED = '274'
+    MAXSPEED = 'R2-1'
     UNKNOWN = ''
 
 
@@ -78,7 +99,7 @@ class TrafficLightState(enum.Enum):
 
 class TrafficSignElement:
     """ Class to represent each traffic sign element"""
-    def __init__(self, traffic_sign_element_id: str, additional_values: List[str]):
+    def __init__(self, traffic_sign_element_id: enum, additional_values: List[str]):
         """
         :param traffic_sign_element_id: ID of traffic sign element (must be element of a traffic sign element enum)
         :param additional_values: list of additional values of a traffic sign element, e.g. velocity, time, city name
@@ -87,7 +108,7 @@ class TrafficSignElement:
         self._additional_values = additional_values
 
     @property
-    def traffic_sign_element_id(self) -> str:
+    def traffic_sign_element_id(self) -> enum:
         return self._traffic_sign_element_id
 
     @property
@@ -232,6 +253,11 @@ class TrafficLight:
 
 
 def get_default_cycle():
+    """
+    Defines default cycle in case no cycle is provided
+
+    _:returns traffic light cycle element
+    """
     cycle = [(TrafficLightState.RED, 60),
              (TrafficLightState.RED_YELLOW, 10),
              (TrafficLightState.GREEN, 60),

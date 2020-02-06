@@ -14,15 +14,16 @@ from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.trajectory import State, Trajectory
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLight, TrafficLightCycleElement, \
     TrafficLightState, TrafficLightDirection, TrafficSignIDGermany, TrafficSignIDUsa, TrafficSignIDChina, \
-    TrafficSignIDRussia, TrafficSignIDSpain
+    TrafficSignIDRussia, TrafficSignIDSpain, TrafficSignIDZamunda, SupportedTrafficSignCountry
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
+import warnings
 
-__author__ = "Stefanie Manzinger"
+__author__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2019.1"
-__maintainer__ = "Stefanie Manzinger"
-__email__ = "commonroad@in.tum.de"
+__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles", "CAR@TUM"]
+__version__ = "2020.1"
+__maintainer__ = "Stefanie Manzinger, Sebastian Maierhofer"
+__email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 
@@ -178,26 +179,27 @@ class ScenarioFactory:
         :return:
         """
         scenario = Scenario(dt, benchmark_id, **meta_data)
+        LaneletFactory._speed_limits = {}
         scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
         if commonroad_version == '2018b':
             scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network))
-            if hasattr(LaneletFactory, '_speed_limits'):
-                for key, value in LaneletFactory._speed_limits.items():
-                    if "DEU" in benchmark_id or "ZAM" in benchmark_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDGermany.MAXSPEED.value, [str(key)])
-                    elif "USA" in benchmark_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDUsa.MAXSPEED.value, [str(key)])
-                    elif "CHN" in benchmark_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDChina.MAXSPEED.value, [str(key)])
-                    elif "ESP" in benchmark_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAXSPEED.value, [str(key)])
-                    elif "RUS" in benchmark_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAXSPEED.value, [str(key)])
-                    else:
-                        raise ValueError('Country could not be evaluated.')
-                    traffic_sign = TrafficSign(scenario.generate_object_id(), [traffic_sign_element], None, True)
-                    scenario.lanelet_network.add_traffic_sign(traffic_sign, value)
-                delattr(LaneletFactory, '_speed_limits')
+            for key, value in LaneletFactory._speed_limits.items():
+                if SupportedTrafficSignCountry.GERMANY.value in benchmark_id:
+                    traffic_sign_element = TrafficSignElement(TrafficSignIDGermany.MAXSPEED.value, [str(key)])
+                elif SupportedTrafficSignCountry.USA.value in benchmark_id:
+                    traffic_sign_element = TrafficSignElement(TrafficSignIDUsa.MAXSPEED.value, [str(key)])
+                elif SupportedTrafficSignCountry.CHINA.value in benchmark_id:
+                    traffic_sign_element = TrafficSignElement(TrafficSignIDChina.MAXSPEED.value, [str(key)])
+                elif SupportedTrafficSignCountry.SPAIN.value in benchmark_id:
+                    traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAXSPEED.value, [str(key)])
+                elif SupportedTrafficSignCountry.RUSSIA.value in benchmark_id:
+                    traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAXSPEED.value, [str(key)])
+                else:
+                    traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAXSPEED.value, [str(key)])
+                    warnings.warn("Unknown country: Default traffic sign IDs are used.")
+                traffic_sign = TrafficSign(scenario.generate_object_id(), [traffic_sign_element], None, True)
+                scenario.lanelet_network.add_traffic_sign(traffic_sign, value)
+                LaneletFactory._speed_limits = {}
         else:
             scenario.add_objects(cls._obstacles(xml_node, scenario.lanelet_network))
         return scenario
@@ -249,8 +251,9 @@ class LaneletNetworkFactory:
             lanelets.append(LaneletFactory.create_from_xml_node(lanelet_node))
         lanelet_network = LaneletNetwork.create_from_lanelet_list(lanelets)
 
+        country = cls._find_country(xml_node._root.attrib["benchmarkID"])
         for traffic_sign_node in xml_node.findall('trafficSign'):
-            lanelet_network.add_traffic_sign(TrafficSignFactory.create_from_xml_node(traffic_sign_node), [])
+            lanelet_network.add_traffic_sign(TrafficSignFactory.create_from_xml_node(traffic_sign_node, country), [])
 
         for traffic_light_node in xml_node.findall('trafficLight'):
             lanelet_network.add_traffic_light(TrafficLightFactory.create_from_xml_node(traffic_light_node), [])
@@ -259,6 +262,29 @@ class LaneletNetworkFactory:
             lanelet_network.add_intersection(IntersectionFactory.create_from_xml_node(intersection_node))
 
         return lanelet_network
+
+    @staticmethod
+    def _find_country(benchmark_id: str) -> SupportedTrafficSignCountry:
+        """
+        Extracts country from benchmark ID
+        :param benchmark_id: CommonRoad benchmark ID
+        :return: supported traffic sign country enum
+        """
+        if SupportedTrafficSignCountry.GERMANY.value in benchmark_id:
+            return SupportedTrafficSignCountry.GERMANY
+        elif SupportedTrafficSignCountry.USA.value in benchmark_id:
+            return SupportedTrafficSignCountry.USA
+        elif SupportedTrafficSignCountry.CHINA.value in benchmark_id:
+            return SupportedTrafficSignCountry.CHINA
+        elif SupportedTrafficSignCountry.SPAIN.value in benchmark_id:
+            return SupportedTrafficSignCountry.SPAIN
+        elif SupportedTrafficSignCountry.RUSSIA.value in benchmark_id:
+            return SupportedTrafficSignCountry.RUSSIA
+        elif SupportedTrafficSignCountry.ZAMUNDA.value in benchmark_id:
+            return SupportedTrafficSignCountry.ZAMUNDA
+        else:
+            warnings.warn("Unknown country: Default traffic sign IDs are used.")
+            return SupportedTrafficSignCountry.ZAMUNDA
 
 
 class LaneletFactory:
@@ -517,9 +543,10 @@ class LaneletFactory:
 class TrafficSignFactory:
     """ Class to create an object of class TrafficSign from an XML element."""
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> TrafficSign:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, country: SupportedTrafficSignCountry) -> TrafficSign:
         """
         :param xml_node: XML element
+        :param country: country where traffic sign stands
         :return: object of class TrafficSign according to the CommonRoad specification.
         """
         traffic_sign_id = int(xml_node.get('id'))
@@ -530,7 +557,7 @@ class TrafficSignFactory:
 
         traffic_sign_elements = []
         for element in xml_node.findall('trafficSignElement'):
-            traffic_sign_elements.append(TrafficSignElementFactory.create_from_xml_node(element))
+            traffic_sign_elements.append(TrafficSignElementFactory.create_from_xml_node(element, country))
 
         if xml_node.get('virtual') is not None:
             if xml_node.get('virtual').text == "true":
@@ -549,12 +576,29 @@ class TrafficSignFactory:
 class TrafficSignElementFactory:
     """ Class to create an object of class TrafficSignElement from an XML element."""
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> TrafficSignElement:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element,
+                             country: SupportedTrafficSignCountry) -> TrafficSignElement:
         """
         :param xml_node: XML element
+        :param country: country where traffic sign stands
         :return: object of class TrafficSignElement according to the CommonRoad specification.
         """
-        traffic_sign_element_id = xml_node.find('trafficSignID').text
+        if country is SupportedTrafficSignCountry.GERMANY:
+            traffic_sign_element_id = TrafficSignIDGermany(xml_node.find('trafficSignID').text)
+        elif country is SupportedTrafficSignCountry.ZAMUNDA:
+            traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find('trafficSignID').text)
+        elif country is SupportedTrafficSignCountry.USA:
+            traffic_sign_element_id = TrafficSignIDUsa(xml_node.find('trafficSignID').text)
+        elif country is SupportedTrafficSignCountry.CHINA:
+            traffic_sign_element_id = TrafficSignIDChina(xml_node.find('trafficSignID').text)
+        elif country is SupportedTrafficSignCountry.SPAIN:
+            traffic_sign_element_id = TrafficSignIDSpain(xml_node.find('trafficSignID').text)
+        elif country is SupportedTrafficSignCountry.RUSSIA:
+            traffic_sign_element_id = TrafficSignIDRussia(xml_node.find('trafficSignID').text)
+        else:
+            warnings.warn("Unknown country: Default traffic sign IDs are used.")
+            traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find('trafficSignID').text)
+
         additional_values = []
         for additional_value in xml_node.findall('additionalValue'):
             additional_values.append(additional_value.text)

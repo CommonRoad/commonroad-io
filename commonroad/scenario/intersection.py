@@ -1,10 +1,10 @@
-__author__ = "Behtarin Ferdousi"
+__author__ = "Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = []
+__credits__ = ["CAR@TUM"]
 __version__ = "2020.1"
-__maintainer__ = "Behtarin Ferdousi"
-__email__ = "commonroad@in.tum.de"
-__status__ = "Development"
+__maintainer__ = "Sebastian Maierhofer"
+__email__ = "commonroad-i06@in.tum.de"
+__status__ = "Release"
 
 from typing import List, Set
 
