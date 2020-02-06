@@ -439,7 +439,7 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
         else:
             draw_traffic_signs=draw_signs_in_lanelet = False
 
-        if intersections is not None:
+        if intersections is not None and len(intersections) > 0:
             draw_intersections = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
                 ('lanelet_network', 'draw_intersections'))
