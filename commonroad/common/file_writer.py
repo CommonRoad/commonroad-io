@@ -1132,11 +1132,11 @@ class IntersectionXMLNode:
                     successor_left_node.set('ref', str(successor_left))
                     incoming_node.append(successor_left_node)
 
-            if incoming.incomings_left:
-                for is_left_of in incoming.incomings_left:
-                    is_left_of_node = etree.Element('isLeftOf')
-                    is_left_of_node.set('ref', str(is_left_of))
-                    incoming_node.append(is_left_of_node)
+            if incoming.left_of:
+                is_left_of_node = etree.Element('isLeftOf')
+                is_left_of_node.set('ref', str(incoming.left_of))
+                incoming_node.append(is_left_of_node)
+                
             intersection_node.append(incoming_node)
 
         if intersection.crossings is not None:
