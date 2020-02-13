@@ -41,6 +41,7 @@ class ObstacleType(enum.Enum):
     TRAIN = "train"
     ROAD_BOUNDARY = "roadBoundary"
     Vehicle = "vehicle"
+    MOTORCYCLE = "motorcycle"
 
 
 class SignalState:
