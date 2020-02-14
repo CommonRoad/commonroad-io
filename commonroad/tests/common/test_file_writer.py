@@ -89,7 +89,7 @@ class TestFileWriter(unittest.TestCase):
                                                      overwrite_existing_file=OverwriteExistingFile.SKIP)
         CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', [Tag.URBAN],
                              location).write_to_file(filename=filename,
-                                                     92yagoverwrite_existing_file=OverwriteExistingFile.ALWAYS)
+                                                     overwrite_existing_file=OverwriteExistingFile.ALWAYS)
 
     def validate_with_xsd(self, xml_path: str) -> bool:
         xmlschema_doc = etree.parse(self.xsd_path)
