@@ -3,6 +3,7 @@ import warnings
 from collections import defaultdict
 from typing import Union, List, Set, Dict, Tuple
 import numpy as np
+import enum
 
 from commonroad.common.util import Interval
 from commonroad.common.validity import is_real_number, is_real_number_vector, is_valid_orientation
@@ -13,7 +14,7 @@ from commonroad.scenario.obstacle import ObstacleType
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Obstacle
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction
 
-__author__ = "Stefanie Manzinger, Moritz Klischat"
+__author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
 __version__ = "2020.1"
@@ -22,21 +23,147 @@ __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 
+@enum.unique
+class Tag(enum.Enum):
+    """ Enum containing all possible tags of a CommonRoad scenario."""
+    INTERSTATE = "interstate"
+    URBAN = "urban"
+    HIGHWAY = "highway"
+    COMFORT = "comfort"
+    CRITICAL = "critical"
+    EVASIVE = "evasive"
+    CUT_IN = "cut_in"
+    ILLEGAL_CUTIN = "illegal_cutin"
+    INTERSECTION = "intersection"
+    LANE_CHANGE = "lane_change"
+    LANE_FOLLOWING = "lane_following"
+    MERGING_LANES = "merging_lanes"
+    MULTI_LANE = "multi_lane"
+    NO_ONCOMING_TRAFFIC = "no_oncoming_traffic"
+    PARALLEL_LANES = "parallel_lanes"
+    RACE_TRACK = "race_track"
+    ROUNDABOUT = "roundabout"
+    RURAL = "rural"
+    SIMULATED = "simulated"
+    SINGLE_LANE = "single_lane"
+    SLIP_ROAD = "slip_road"
+    SPEED_LIMIT = "speed_limit"
+    TRAFFIC_JAM = "traffic_jam"
+    TURN_LEFT = "turn_left"
+    TURN_RIGHT = "turn_right"
+    TWO_LANE = "two_lane"
+
+
+class GeoTransformation:
+    def __init__(self, geo_reference: str = None, x_translation: float = None, y_translation: float = None,
+                 z_rotation: float = None, scaling: float = None):
+        """
+        Constructor of a location object
+
+        :param geo_reference: proj-string describing transformation from geodetic to projected Cartesian coordinates
+        :param x_translation: translation value for x-coordinates
+        :param y_translation: translation value for y-coordinates
+        :param z_rotation: rotation value around origin
+        :param scaling: multiplication value of x- and y-coordinates
+        """
+        self._geo_reference = geo_reference
+        self._x_translation = x_translation
+        self._y_translation = y_translation
+        self._z_rotation = z_rotation
+        self._scaling = scaling
+
+    @property
+    def geo_reference(self) -> str:
+        return self._geo_reference
+
+    @property
+    def x_translation(self) -> float:
+        return self._x_translation
+
+    @property
+    def y_translation(self) -> float:
+        return self._y_translation
+
+    @property
+    def z_rotation(self) -> float:
+        return self._z_rotation
+
+    @property
+    def scaling(self) -> float:
+        return self._scaling
+
+
+class Location:
+    def __init__(self, country: str = "", province_state: str = "", gps_latitude: float = "", gps_longitude: float = "",
+                 zipcode: str = "", name: str = None, geo_transformation: GeoTransformation = None):
+        """
+        Constructor of a location object
+
+        :param country: country where the road network is located
+        :param province_state: province or state where the road network is located
+        :param gps_latitude: GPS latitude coordinate
+        :param gps_longitude: GPS longitude coordinate
+        :param zipcode: zipcode where the road network is located
+        :param name: city or village name where the road network is located
+        :param geo_transformation: description of geometric transformation during scenario generation
+        """
+        self._country = country
+        self._province_state = province_state
+        self._gps_latitude = gps_latitude
+        self._gps_longitude = gps_longitude
+        self._zipcode = zipcode
+        self._name = name
+        self._geo_transformation = geo_transformation
+
+    @property
+    def country(self) -> str:
+        return self._country
+
+    @property
+    def province_state(self) -> str:
+        return self._province_state
+
+    @property
+    def gps_latitude(self) -> float:
+        return self._gps_latitude
+
+    @property
+    def gps_longitude(self) -> float:
+        return self._gps_longitude
+
+    @property
+    def zipcode(self) -> str:
+        return self._zipcode
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def geo_transformation(self) -> GeoTransformation:
+        return self._geo_transformation
+
+
 class Scenario:
     """ Class which describes a Scenario entity according to the CommonRoad specification. Each scenario is described by
      a road network consisting of lanelets (see :class:`commonroad.scenario.lanelet.LaneletNetwork`) and a set of
      obstacles which can be either static or dynamic (see :class:`commonroad.scenario.obstacle.Obstacle`)."""
     def __init__(self, dt: float, benchmark_id: str,
-                 author: str = None, tags: List[str] = None, affiliation: str = None, source: str = None):
+                 author: str = None, tags: List[Tag] = None, affiliation: str = None, source: str = None,
+                 location: Location = None):
         """
         Constructor of a Scenario object
 
         :param dt: global time step size of the time-discrete scenario
         :param benchmark_id: unique CommonRoad benchmark ID of the scenario
+        :param author: authors of the CommonRoad scenario
+        :param tags: tags describing and classifying the scenario
+        :param affiliation: institution of the authors
+        :param source: source of the scenario, e.g. generated by a map converter and a traffic simulator
+        :param location: location object of the scenario
         """
         self.dt: float = dt
         self.benchmark_id: str = benchmark_id
-        self.country = benchmark_id[0:3]
         self.lanelet_network: LaneletNetwork = LaneletNetwork()
 
         self._static_obstacles: Dict[int, StaticObstacle] = defaultdict()
@@ -49,6 +176,7 @@ class Scenario:
         self.tags = tags
         self.affiliation = affiliation
         self.source = source
+        self.location = location
 
     @property
     def dt(self) -> float:

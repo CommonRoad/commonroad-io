@@ -10,7 +10,7 @@ from commonroad.planning.planning_problem import PlanningProblemSet, PlanningPro
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
 from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, SignalState
-from commonroad.scenario.scenario import Scenario
+from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location
 from commonroad.scenario.trajectory import State, Trajectory
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLight, TrafficLightCycleElement, \
     TrafficLightState, TrafficLightDirection, TrafficSignIDGermany, TrafficSignIDUsa, TrafficSignIDChina, \
@@ -128,10 +128,16 @@ class CommonRoadFileReader:
         self._dt = self._get_dt()
         self._benchmark_id = self._get_benchmark_id()
         self._commonroad_version = commonroad_version
-        self._meta_data = {'author': self._get_author(),
-                           'affiliation': self._get_affiliation(),
-                           'source': self._get_source(),
-                           'tags': self._get_tags()}
+        if commonroad_version == '2018b':
+            self._meta_data = {'author': self._get_author(),
+                               'affiliation': self._get_affiliation(),
+                               'source': self._get_source(),
+                               'tags': self._get_tags(),
+                               'location': self._get_location(self._benchmark_id)}
+        else:
+            self._meta_data = {'author': self._get_author(),
+                               'affiliation': self._get_affiliation(),
+                               'source': self._get_source()}
 
     def _parse_file(self):
         """ Parses the CommonRoad XML-file into element tree."""
@@ -150,7 +156,7 @@ class CommonRoadFileReader:
         return self._tree.getroot().get('commonRoadVersion')
 
     def _get_author(self) -> str:
-        """ Reads the affiliation of the author of the scenario."""
+        """ Reads the author of the scenario."""
         return self._tree.getroot().get('author')
 
     def _get_affiliation(self) -> str:
@@ -161,27 +167,41 @@ class CommonRoadFileReader:
         """ Reads the source of the scenario."""
         return self._tree.getroot().get('source')
 
-    def _get_tags(self) -> str:
-        """ Reads the source of the scenario."""
-        return self._tree.getroot().get('tags')
+    def _get_tags(self) -> List[Tag]:
+        """ Reads the tags of the scenario."""
+        tags_string = self._tree.getroot().get('tags')
+        splits = tags_string.split()
+        tags = []
+        for tag in splits:
+            tags.append(Tag(tag))
+        return tags
+
+    @staticmethod
+    def _get_location(benchmark_id: str) -> Location:
+        """ Reads the tags of the scenario."""
+        return Location(benchmark_id[:3])
 
 
 class ScenarioFactory:
     """ Class to create an object of class Scenario from an XML element."""
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element, dt: float, benchmark_id: str, commonroad_version: str,
-                             meta_data: dict={}):
+                             meta_data: dict):
         """
         :param xml_node: XML element
         :param dt: time step size of the scenario
         :param benchmark_id: unique CommonRoad benchmark ID
         :param commonroad_version: CommonRoad version of the file
-        :return:
+        :return: CommonRoad scenario
         """
+        if commonroad_version != '2018b':
+            meta_data["tags"] = TagsFactory.create_from_xml_node(xml_node)
+            meta_data["location"] = LocationFactory.create_from_xml_node(xml_node)
         scenario = Scenario(dt, benchmark_id, **meta_data)
-        LaneletFactory._speed_limits = {}
+
         scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
         if commonroad_version == '2018b':
+            LaneletFactory._speed_limits = {}
             scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network))
             for key, value in LaneletFactory._speed_limits.items():
                 if SupportedTrafficSignCountry.GERMANY.value in benchmark_id:
@@ -236,6 +256,66 @@ class ScenarioFactory:
         for o in xml_node.findall('dynamicObstacle'):
             obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network))
         return obstacles
+
+
+class TagsFactory:
+    """ Class to create a tag list from an XML element."""
+    @classmethod
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> List[Tag]:
+        """
+        :param xml_node: XML element
+        :return: list of tags
+        """
+        tags = []
+        tag_element = xml_node.find('tags')
+        for elem in Tag:
+            if tag_element.find(elem.value) is not None:
+                tags.append(tag_element.find(elem.value))
+        return tags
+
+
+class LocationFactory:
+    """ Class to create a tag list from an XML element."""
+    @classmethod
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Location:
+        """
+        :param xml_node: XML element
+        :return: location object
+        """
+        location_element = xml_node.find('location')
+        country = location_element.find('country')
+        province_state = location_element.find('provinceState').text
+        gps_latitude = float(location_element.find('gpsLatitude').text)
+        gps_longitude = float(location_element.find('gpsLongitude').text)
+        zipcode = location_element.find('zipcode').text
+        if location_element.find('name') is not None:
+            name = location_element.find('name').text
+        else:
+            name = None
+        if xml_node.find('geoTransformation') is not None:
+            geo_transformation = GeoTransformationFactory.create_from_xml_node(xml_node.find('geoTransformation'))
+        else:
+            geo_transformation = None
+
+        return Location(country, province_state, gps_latitude, gps_longitude, zipcode, name, geo_transformation)
+
+
+class GeoTransformationFactory:
+    """ Class to create a tag list from an XML element."""
+
+    @classmethod
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> GeoTransformation:
+        """
+        :param xml_node: XML element
+        :return: GeoTransformation object
+        """
+        geo_reference = xml_node.find('geoReference').text
+        x_translation = float(xml_node.find('xTranslation').text)
+        y_translation = float(xml_node.find('yTranslation').text)
+        z_rotation = float(xml_node.find('zRotation').text)
+        scaling = float(xml_node.find('scaling').text)
+
+        return GeoTransformation(geo_reference, x_translation, y_translation, z_rotation, scaling)
 
 
 class LaneletNetworkFactory:

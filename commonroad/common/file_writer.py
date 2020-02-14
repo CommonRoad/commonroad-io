@@ -18,20 +18,13 @@ from commonroad.planning.planning_problem import PlanningProblemSet, PlanningPro
 from commonroad.prediction.prediction import SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine
-from commonroad.scenario.obstacle import (
-    ObstacleRole,
-    ObstacleType,
-    DynamicObstacle,
-    StaticObstacle,
-    Obstacle,
-    Occupancy,
-    Shape,
-)
-from commonroad.scenario.scenario import Scenario
+from commonroad.scenario.obstacle import ObstacleRole, ObstacleType, DynamicObstacle, StaticObstacle, Obstacle, \
+    Occupancy, Shape
+from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficLightCycleElement
 from commonroad.scenario.trajectory import Trajectory, State
 
-__author__ = "Stefanie Manzinger, Moritz Klischat"
+__author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
 __version__ = "2020.1"
@@ -134,7 +127,8 @@ class CommonRoadFileWriter:
         author: str = None,
         affiliation: str = None,
         source: str = None,
-        tags: str = None,
+        tags: List[Tag] = None,
+        location: Location = None,
         decimal_precision: int = 8,
     ):
         """
@@ -145,7 +139,7 @@ class CommonRoadFileWriter:
         :param author: author's name
         :param affiliation: affiliation of the author
         :param source: source of dataset (d.h. database, handcrafted, etc.)
-        :param tags: keywords describing the scenario (e.g. road type(one-lane road, multilane),
+        :param tags: list of keywords describing the scenario (e.g. road type(one-lane road, multilane),
                 required maneuver etc., see commonroad.in.tum.de for full list))
         :param decimal_precision: number of decimal places used when writing float values
         """
@@ -160,7 +154,9 @@ class CommonRoadFileWriter:
         self.author = author if author is not None else scenario.author
         self.affiliation = affiliation if affiliation is not None else scenario.affiliation
         self.source = source if source is not None else scenario.source
+        self.location = location if location is not None else scenario.location
         self.tags = tags if tags is not None else scenario.tags
+
 
         # set decimal precision
         ctx.prec = decimal_precision
@@ -220,11 +216,9 @@ class CommonRoadFileWriter:
 
     @tags.setter
     def tags(self, tags):
-        assert isinstance(
-            tags, str
-        ), '<CommonRoadFileWriter/tags> tags must be a string, but has type {}'.format(
-            type(tags)
-        )
+        for tag in tags:
+            assert isinstance(tag, Tag), '<CommonRoadFileWriter/tags> tag must ' \
+                                         'be a enum of type Tag, but has type {}'.format(type(tag))
         self._tags = tags
 
     def _write_header(self):
@@ -233,7 +227,6 @@ class CommonRoadFileWriter:
         self._root_node.set('author', self.author)
         self._root_node.set('affiliation', self.affiliation)
         self._root_node.set('source', self.source)
-        self._root_node.set('tags', self.tags)
 
         try:
             if self.scenario.benchmark_id:
@@ -245,6 +238,8 @@ class CommonRoadFileWriter:
         self._root_node.set('date', datetime.datetime.today().strftime('%Y-%m-%d'))
 
     def _add_all_objects_from_scenario(self):
+        self._root_node.append(LocationXMLNode.create_node(self.location))
+        self._root_node.append(TagXMLNode.create_node(self.tags))
         for l in self.scenario.lanelet_network.lanelets:
             self._root_node.append(LaneletXMLNode.create_node(l))
         for sign in self.scenario.lanelet_network.traffic_signs:
@@ -412,6 +407,85 @@ class CommonRoadFileWriter:
             )
 
 
+class LocationXMLNode:
+    @classmethod
+    def create_node(cls, location: Location) -> etree.Element:
+        """
+        Create XML-Node for a location
+        :param location: location object
+        :return: node
+        """
+        location_node = etree.Element('location')
+        country_node = etree.Element("country")
+        country_node.text = location.country
+        location_node.append(country_node)
+        province_state_node = etree.Element("provinceState")
+        province_state_node.text = location.province_state
+        location_node.append(province_state_node)
+        gps_latitude_node = etree.Element("gpsLatitude")
+        gps_latitude_node.text = location.gps_latitude
+        location_node.append(gps_latitude_node)
+        gps_longitude_node = etree.Element("gpsLongitude")
+        gps_longitude_node.text = location.country
+        location_node.append(gps_longitude_node)
+        zipcode_node = etree.Element("zipcode")
+        zipcode_node.text = location.zipcode
+        location_node.append(zipcode_node)
+        if location.name is not None:
+            name_node = etree.Element("name")
+            name_node.text = location.name
+            location_node.append(name_node)
+        if location.geo_transformation is not None:
+            location_node.append(GeoTransformationXMLNode.create_node(location.geo_transformation))
+
+        return location_node
+
+
+class GeoTransformationXMLNode:
+    @classmethod
+    def create_node(cls, geo_transformation: GeoTransformation) -> etree.Element:
+        """
+        Create XML-Node for a location
+        :param geo_transformation: GeoTransformation object
+        :return: node
+        """
+        geotransform_node = etree.Element('geoTransformation')
+        geo_reference_node = etree.Element("geoReference")
+        geo_reference_node.text = geo_transformation.geo_reference
+        geotransform_node.append(geo_reference_node)
+        additional_transformation_node = etree.Element('additionalTransformation')
+        x_translation_node = etree.Element("xTranslation")
+        x_translation_node.text = geo_transformation.x_translation
+        additional_transformation_node.append(x_translation_node)
+        y_translation_node = etree.Element("yTranslation")
+        y_translation_node.text = geo_transformation.y_translation
+        additional_transformation_node.append(y_translation_node)
+        z_rotation_node = etree.Element("zRotation")
+        z_rotation_node.text = geo_transformation.z_rotation
+        additional_transformation_node.append(z_rotation_node)
+        scaling_node = etree.Element("scaling")
+        scaling_node.text = geo_transformation.scaling
+        additional_transformation_node.append(scaling_node)
+        geotransform_node.append(additional_transformation_node)
+
+        return geotransform_node
+
+
+class TagXMLNode:
+    @classmethod
+    def create_node(cls, tags: List[Tag]) -> etree.Element:
+        """
+        Create XML-Node for a tag element
+        :param tags: list of tags of the scenario
+        :return: node
+        """
+        tags_node = etree.Element('tags')
+        for tag in tags:
+            tags_node.append(etree.Element(tag.value))
+
+        return tags_node
+
+
 class LaneletXMLNode:
     @classmethod
     def create_node(cls, lanelet: Lanelet) -> etree.Element:
@@ -538,34 +612,6 @@ class ObstacleXMLNode:
             raise Exception()
 
     @classmethod
-    def _obstacle_type_enum_to_string(cls, obstacle_type: ObstacleType):
-        """
-        Create string for obstacle type
-        """
-        if obstacle_type == ObstacleType.CAR:
-            return 'car'
-        elif obstacle_type == ObstacleType.UNKNOWN:
-            return 'unknown'
-        elif obstacle_type == ObstacleType.BICYCLE:
-            return 'bicycle'
-        elif obstacle_type == ObstacleType.PEDESTRIAN:
-            return 'pedestrian'
-        elif obstacle_type == ObstacleType.PARKED_VEHICLE:
-            return 'parkedVehicle'
-        elif obstacle_type == ObstacleType.ROAD_BOUNDARY:
-            return 'roadBoundary'
-        elif obstacle_type == ObstacleType.TRUCK:
-            return 'truck'
-        elif obstacle_type == ObstacleType.BUS:
-            return 'bus'
-        elif obstacle_type == ObstacleType.PRIORITY_VEHICLE:
-            return 'priorityVehicle'
-        elif obstacle_type == ObstacleType.CONSTRUCTION_ZONE:
-            return 'constructionZone'
-        elif obstacle_type == ObstacleType.TRAIN:
-            return 'train'
-
-    @classmethod
     def _obstacle_role_enum_to_string(cls, obstacle_role: ObstacleRole):
         """
         Create string for obstalce role
@@ -585,7 +631,7 @@ class ObstacleXMLNode:
         # role_node.text = cls._obstacle_role_enum_to_string(obstacle_role)
         # obstacle_node.append(role_node)
         type_node = etree.Element('type')
-        type_node.text = cls._obstacle_type_enum_to_string(obstacle_type)
+        type_node.text = obstacle_type.value
         obstacle_node.append(type_node)
         return obstacle_node
 
@@ -919,7 +965,8 @@ class StateXMLNode:
         elif type(position) is list:
             raise ValueError('A goal state cannot contain multiple items. Use a list of goal states instead.')
         else:
-            raise ValueError('Case should not occur, position={}, goal_lanelet_ids={}.'.format(position,goal_lanelet_ids))
+            raise ValueError('Case should not occur, position={}, goal_lanelet_ids={}.'.format(position,
+                                                                                               goal_lanelet_ids))
         return node
 
     @classmethod

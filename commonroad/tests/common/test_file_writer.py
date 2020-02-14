@@ -7,9 +7,9 @@ from commonroad.geometry.shape import *
 from lxml import etree
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
 from commonroad.prediction.prediction import *
-from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking
+from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType
 from commonroad.scenario.obstacle import *
-from commonroad.scenario.scenario import Scenario
+from commonroad.scenario.scenario import Scenario, Tag, Location
 from commonroad.scenario.trajectory import *
 
 
@@ -59,11 +59,11 @@ class TestFileWriter(unittest.TestCase):
                                        prediction=traj_pred, obstacle_shape=rectangle)
         lanelet1 = Lanelet(np.array([[12345.12, 0.0], [1.0,0.0],[2,0]]), np.array([[0.0, 1],[1.0,1],[2,1]]),
                            np.array([[0.0, 2], [1.0,2],[2,2]]), 100, [101], [101], 101, False, 101, True,
-                           LineMarking.DASHED, LineMarking.SOLID)
+                           LineMarking.DASHED, LineMarking.SOLID, lanelet_type={LaneletType.URBAN})
         lanelet2 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                            np.array([[0.0, 2], [1.0, 2], [2, 2]]), 101,
                            [100], [100], 100, False, 100, True,
-                           LineMarking.SOLID, LineMarking.DASHED)
+                           LineMarking.SOLID, LineMarking.DASHED, lanelet_type={LaneletType.URBAN})
 
         lanelet_network = LaneletNetwork().create_from_lanelet_list(list([lanelet1, lanelet2]))
         scenario = Scenario(0.1,'ZAM_test_0-0-1')
@@ -77,16 +77,19 @@ class TestFileWriter(unittest.TestCase):
         planning_problem_set = PlanningProblemSet(list([planning_problem]))
 
         filename = self.out_path + '/test_writing_shapes.xml'
-        CommonRoadFileWriter(scenario,planning_problem_set, 'PrinceOfZAM','TU Munich','unittest','original').\
-            write_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS)
+        location = Location()
+        CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', [Tag.URBAN],
+                             location).write_to_file(filename=filename,
+                                                     overwrite_existing_file=OverwriteExistingFile.ALWAYS)
         assert self.validate_with_xsd(self.out_path + '/test_writing_shapes.xml')
 
         # test overwriting
-        CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'unittest',
-                             'should_not_appear').write_to_file(filename=filename,
-                                                                overwrite_existing_file=OverwriteExistingFile.SKIP)
-        CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'unittest', 'overwritten'). \
-            write_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS)
+        CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', [Tag.URBAN],
+                             location).write_to_file(filename=filename,
+                                                     overwrite_existing_file=OverwriteExistingFile.SKIP)
+        CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', [Tag.URBAN],
+                             location).write_to_file(filename=filename,
+                                                     92yagoverwrite_existing_file=OverwriteExistingFile.ALWAYS)
 
     def validate_with_xsd(self, xml_path: str) -> bool:
         xmlschema_doc = etree.parse(self.xsd_path)

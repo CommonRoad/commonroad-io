@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<commonRoad affiliation="TU Munich" author="PrinceOfZAM" benchmarkID="ZAM_test_0-0-1" commonRoadVersion="2020a" date="2018-10-25" source="unittest" tags="original" timeStepSize="0.1">
+<commonRoad affiliation="TU Munich" author="PrinceOfZAM" benchmarkID="ZAM_test_0-0-1" commonRoadVersion="2018b" date="2018-10-25" source="unittest" tags="urban" timeStepSize="0.1">
   <lanelet id="100">
     <leftBound>
       <point>
