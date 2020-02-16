@@ -6,7 +6,7 @@ import enum
 import pathlib
 import io
 import os
-from typing import Union, List
+from typing import Union, List, Set
 import numpy as np
 import decimal
 import warnings
@@ -127,7 +127,7 @@ class CommonRoadFileWriter:
         author: str = None,
         affiliation: str = None,
         source: str = None,
-        tags: List[Tag] = None,
+        tags: Set[Tag] = None,
         location: Location = None,
         decimal_precision: int = 8,
     ):
@@ -423,10 +423,10 @@ class LocationXMLNode:
         province_state_node.text = location.province_state
         location_node.append(province_state_node)
         gps_latitude_node = etree.Element("gpsLatitude")
-        gps_latitude_node.text = location.gps_latitude
+        gps_latitude_node.text = str(location.gps_latitude)
         location_node.append(gps_latitude_node)
         gps_longitude_node = etree.Element("gpsLongitude")
-        gps_longitude_node.text = location.country
+        gps_longitude_node.text = str(location.gps_longitude)
         location_node.append(gps_longitude_node)
         zipcode_node = etree.Element("zipcode")
         zipcode_node.text = location.zipcode
@@ -455,16 +455,16 @@ class GeoTransformationXMLNode:
         geotransform_node.append(geo_reference_node)
         additional_transformation_node = etree.Element('additionalTransformation')
         x_translation_node = etree.Element("xTranslation")
-        x_translation_node.text = geo_transformation.x_translation
+        x_translation_node.text = str(geo_transformation.x_translation)
         additional_transformation_node.append(x_translation_node)
         y_translation_node = etree.Element("yTranslation")
-        y_translation_node.text = geo_transformation.y_translation
+        y_translation_node.text = str(geo_transformation.y_translation)
         additional_transformation_node.append(y_translation_node)
         z_rotation_node = etree.Element("zRotation")
-        z_rotation_node.text = geo_transformation.z_rotation
+        z_rotation_node.text = str(geo_transformation.z_rotation)
         additional_transformation_node.append(z_rotation_node)
         scaling_node = etree.Element("scaling")
-        scaling_node.text = geo_transformation.scaling
+        scaling_node.text = str(geo_transformation.scaling)
         additional_transformation_node.append(scaling_node)
         geotransform_node.append(additional_transformation_node)
 
@@ -473,7 +473,7 @@ class GeoTransformationXMLNode:
 
 class TagXMLNode:
     @classmethod
-    def create_node(cls, tags: List[Tag]) -> etree.Element:
+    def create_node(cls, tags: Set[Tag]) -> etree.Element:
         """
         Create XML-Node for a tag element
         :param tags: list of tags of the scenario

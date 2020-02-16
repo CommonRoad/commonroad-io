@@ -7,7 +7,7 @@ from commonroad.planning.planning_problem import PlanningProblem, PlanningProble
 from commonroad.prediction.prediction import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
 from commonroad.scenario.obstacle import *
-from commonroad.scenario.scenario import Scenario
+from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation
 from commonroad.scenario.trajectory import *
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLightDirection, TrafficLight, \
     TrafficLightCycleElement, TrafficLightState
@@ -74,7 +74,12 @@ class TestFileReader(unittest.TestCase):
 
         self.lanelet_network = LaneletNetwork().create_from_lanelet_list(list([lanelet1, lanelet2]))
         self.lanelet_network.add_traffic_sign(traffic_sign_201, [100])
-        self.scenario = Scenario(0.1, 'ZAM_test_0-0-1')
+
+        tags = [Tag.URBAN, Tag.INTERSTATE]
+        geo_transformation = GeoTransformation("test", 0.0, 0.0, 0.0, 0.0)
+        location = Location("DEU", "DEU_BY", 0.0, 0.0, "90839", "München", geo_transformation)
+
+        self.scenario = Scenario(0.1, 'ZAM_test_0-0-1', tags=tags, location=location)
         self.scenario.add_objects([static_obs, dyn_set_obs, dyn_traj_obs, self.lanelet_network])
 
         goal_region = GoalRegion([State(time_step=Interval(0, 1), velocity=Interval(0.0, 1), position=rectangle),
@@ -119,6 +124,7 @@ class TestFileReader(unittest.TestCase):
                                IntersectionIncomingElement(303, {14}, {30}, {24}, {28}, 302),
                                IntersectionIncomingElement(304, {17}, {27}, {23}, {31}, 305),
                                IntersectionIncomingElement(305, {18}, {29}, {21}, {25}, 305)])
+
 
     def test_open_lanelets(self):
         lanelets = CommonRoadFileReader(self.filename_lanelets).open()
@@ -313,6 +319,15 @@ class TestFileReader(unittest.TestCase):
         exp_planning_problem_initial_state_yaw_rate = \
             self.planning_problem_set.planning_problem_dict[1000].initial_state.yaw_rate
 
+        exp_location_country = "DEU"
+        exp_location_state = "DE_BY"
+        exp_location_latitude = 48.262333
+        exp_location_longitude = 11.668775
+        exp_location_zip = "12345"
+        exp_location_name = "München"
+        exp_location_geo = None
+        exp_tags = {Tag.INTERSECTION, Tag.URBAN}
+
         xml_file = CommonRoadFileReader(self.filename_all).open()
 
         self.assertEqual(exp_num_lanelet_scenario,len(xml_file[0].lanelet_network.lanelets))
@@ -420,6 +435,15 @@ class TestFileReader(unittest.TestCase):
                          xml_file[1].planning_problem_dict[1000].initial_state.slip_angle)
         self.assertEqual(exp_planning_problem_initial_state_yaw_rate,
                          xml_file[1].planning_problem_dict[1000].initial_state.yaw_rate)
+
+        self.assertSetEqual(exp_tags, xml_file[0].tags)
+        self.assertEqual(exp_location_country, xml_file[0].location.country)
+        self.assertEqual(exp_location_state, xml_file[0].location.province_state)
+        self.assertEqual(exp_location_latitude, xml_file[0].location.gps_latitude)
+        self.assertEqual(exp_location_longitude, xml_file[0].location.gps_longitude)
+        self.assertEqual(exp_location_zip, xml_file[0].location.zipcode)
+        self.assertEqual(exp_location_name, xml_file[0].location.name)
+        self.assertEqual(exp_location_geo, xml_file[0].location.geo_transformation)
 
     def test_open_intersection(self):
         exp_lanelet_stop_line_20_point_1 = self.stop_line_20.start

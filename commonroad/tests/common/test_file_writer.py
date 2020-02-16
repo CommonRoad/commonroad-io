@@ -77,7 +77,8 @@ class TestFileWriter(unittest.TestCase):
         planning_problem_set = PlanningProblemSet(list([planning_problem]))
 
         filename = self.out_path + '/test_writing_shapes.xml'
-        location = Location()
+        location = Location("DEU", "DE_BY", 48.262333, 11.668775, "12345", "München", None)
+
         CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', [Tag.URBAN],
                              location).write_to_file(filename=filename,
                                                      overwrite_existing_file=OverwriteExistingFile.ALWAYS)

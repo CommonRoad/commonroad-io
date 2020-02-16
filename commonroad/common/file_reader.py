@@ -167,7 +167,7 @@ class CommonRoadFileReader:
         """ Reads the source of the scenario."""
         return self._tree.getroot().get('source')
 
-    def _get_tags(self) -> List[Tag]:
+    def _get_tags(self) -> Set[Tag]:
         """ Reads the tags of the scenario."""
         tags_string = self._tree.getroot().get('tags')
         splits = tags_string.split()
@@ -259,23 +259,23 @@ class ScenarioFactory:
 
 
 class TagsFactory:
-    """ Class to create a tag list from an XML element."""
+    """ Class to create a tag set from an XML element."""
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> List[Tag]:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Set[Tag]:
         """
         :param xml_node: XML element
-        :return: list of tags
+        :return: set of tags
         """
-        tags = []
+        tags = set()
         tag_element = xml_node.find('tags')
         for elem in Tag:
             if tag_element.find(elem.value) is not None:
-                tags.append(tag_element.find(elem.value))
+                tags.add(elem)
         return tags
 
 
 class LocationFactory:
-    """ Class to create a tag list from an XML element."""
+    """ Class to create a location from an XML element."""
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Location:
         """
@@ -283,7 +283,7 @@ class LocationFactory:
         :return: location object
         """
         location_element = xml_node.find('location')
-        country = location_element.find('country')
+        country = location_element.find('country').text
         province_state = location_element.find('provinceState').text
         gps_latitude = float(location_element.find('gpsLatitude').text)
         gps_longitude = float(location_element.find('gpsLongitude').text)
@@ -301,7 +301,7 @@ class LocationFactory:
 
 
 class GeoTransformationFactory:
-    """ Class to create a tag list from an XML element."""
+    """ Class to create a location list from an XML element."""
 
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element) -> GeoTransformation:

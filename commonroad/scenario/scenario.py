@@ -149,7 +149,7 @@ class Scenario:
      a road network consisting of lanelets (see :class:`commonroad.scenario.lanelet.LaneletNetwork`) and a set of
      obstacles which can be either static or dynamic (see :class:`commonroad.scenario.obstacle.Obstacle`)."""
     def __init__(self, dt: float, benchmark_id: str,
-                 author: str = None, tags: List[Tag] = None, affiliation: str = None, source: str = None,
+                 author: str = None, tags: Set[Tag] = None, affiliation: str = None, source: str = None,
                  location: Location = None):
         """
         Constructor of a Scenario object
