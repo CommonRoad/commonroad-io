@@ -94,13 +94,13 @@ class GeoTransformation:
 
 
 class Location:
-    def __init__(self, country: str = "", province_state: str = "", gps_latitude: float = "", gps_longitude: float = "",
+    def __init__(self, country: str = "", federal_state: str = "", gps_latitude: float = "", gps_longitude: float = "",
                  zipcode: str = "", name: str = None, geo_transformation: GeoTransformation = None):
         """
         Constructor of a location object
 
         :param country: country where the road network is located
-        :param province_state: province or state where the road network is located
+        :param federal_state: federal state where the road network is located
         :param gps_latitude: GPS latitude coordinate
         :param gps_longitude: GPS longitude coordinate
         :param zipcode: zipcode where the road network is located
@@ -108,7 +108,7 @@ class Location:
         :param geo_transformation: description of geometric transformation during scenario generation
         """
         self._country = country
-        self._province_state = province_state
+        self._federal_state = federal_state
         self._gps_latitude = gps_latitude
         self._gps_longitude = gps_longitude
         self._zipcode = zipcode
@@ -120,8 +120,8 @@ class Location:
         return self._country
 
     @property
-    def province_state(self) -> str:
-        return self._province_state
+    def federal_state(self) -> str:
+        return self._federal_state
 
     @property
     def gps_latitude(self) -> float:

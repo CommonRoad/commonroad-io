@@ -535,7 +535,7 @@ __status__ = "in development"
   <xs:complexType name="location">
     <xs:sequence minOccurs="1" maxOccurs="1">
       <xs:element name="country" type="xs:string"/>
-      <xs:element name="provinceState" type="xs:string"/>
+      <xs:element name="federalState" type="xs:string"/>
       <xs:element name="gpsLatitude" type="xs:string"/>
       <xs:element name="gpsLongitude" type="xs:string"/>
       <xs:element name="zipcode" type="xs:string"/>

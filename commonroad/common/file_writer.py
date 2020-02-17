@@ -419,9 +419,9 @@ class LocationXMLNode:
         country_node = etree.Element("country")
         country_node.text = location.country
         location_node.append(country_node)
-        province_state_node = etree.Element("provinceState")
-        province_state_node.text = location.province_state
-        location_node.append(province_state_node)
+        federal_state_node = etree.Element("federalState")
+        federal_state_node.text = location.federal_state
+        location_node.append(federal_state_node)
         gps_latitude_node = etree.Element("gpsLatitude")
         gps_latitude_node.text = str(location.gps_latitude)
         location_node.append(gps_latitude_node)

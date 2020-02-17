@@ -438,7 +438,7 @@ class TestFileReader(unittest.TestCase):
 
         self.assertSetEqual(exp_tags, xml_file[0].tags)
         self.assertEqual(exp_location_country, xml_file[0].location.country)
-        self.assertEqual(exp_location_state, xml_file[0].location.province_state)
+        self.assertEqual(exp_location_state, xml_file[0].location.federal_state)
         self.assertEqual(exp_location_latitude, xml_file[0].location.gps_latitude)
         self.assertEqual(exp_location_longitude, xml_file[0].location.gps_longitude)
         self.assertEqual(exp_location_zip, xml_file[0].location.zipcode)

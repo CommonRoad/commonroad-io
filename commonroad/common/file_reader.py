@@ -284,7 +284,7 @@ class LocationFactory:
         """
         location_element = xml_node.find('location')
         country = location_element.find('country').text
-        province_state = location_element.find('provinceState').text
+        federal_state = location_element.find('federalState').text
         gps_latitude = float(location_element.find('gpsLatitude').text)
         gps_longitude = float(location_element.find('gpsLongitude').text)
         zipcode = location_element.find('zipcode').text
@@ -297,7 +297,7 @@ class LocationFactory:
         else:
             geo_transformation = None
 
-        return Location(country, province_state, gps_latitude, gps_longitude, zipcode, name, geo_transformation)
+        return Location(country, federal_state, gps_latitude, gps_longitude, zipcode, name, geo_transformation)
 
 
 class GeoTransformationFactory:

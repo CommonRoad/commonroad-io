@@ -1,7 +1,7 @@
 <commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="PrinceOfZAM" affiliation="Technical University of Munich, Germany" source="OpenStreetMaps (OSM)" benchmarkID="ZAM_test_0-0-1" date="2019-12-29">
 <location>
     <country>DEU</country>
-    <provinceState>DE_BY</provinceState>
+    <federalState>DE_BY</federalState>
     <gpsLatitude>48.262333</gpsLatitude>
     <gpsLongitude>11.668775</gpsLongitude>
     <zipcode>98368</zipcode>

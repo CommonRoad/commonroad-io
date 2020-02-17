@@ -2,7 +2,7 @@
 <commonRoad affiliation="TU Munich" author="PrinceOfZAM" benchmarkID="ZAM_test_0-0-1" commonRoadVersion="2020a" date="2020-01-07" source="unittest" timeStepSize="0.1">
   <location>
     <country>DEU</country>
-    <provinceState>DE_BY</provinceState>
+    <federalState>DE_BY</federalState>
     <gpsLatitude>48.262333</gpsLatitude>
     <gpsLongitude>11.668775</gpsLongitude>
     <zipcode>12345</zipcode>
