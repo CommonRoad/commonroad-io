@@ -308,11 +308,11 @@ __status__ = "in development"
   </xs:simpleType>
   <xs:simpleType name="vehicleType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="unknown"/>
       <xs:enumeration value="vehicle"/>
       <xs:enumeration value="car"/>
       <xs:enumeration value="truck"/>
       <xs:enumeration value="bus"/>
+       <xs:enumeration value="motorcycle"/>
       <xs:enumeration value="bicycle"/>
       <xs:enumeration value="pedestrian"/>
       <xs:enumeration value="priorityVehicle"/>
@@ -328,11 +328,11 @@ __status__ = "in development"
       <xs:element name="adjacentLeft" type="laneletAdjacentRef" minOccurs="0"/>
       <xs:element name="adjacentRight" type="laneletAdjacentRef" minOccurs="0"/>
       <xs:element name="stopLine" type="stopLine" minOccurs="0"/>
-      <xs:element name="type" type="laneletType"/>
+      <xs:element name="laneletType" type="laneletType"/>
       <xs:element name="userOneWay" type="vehicleType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="userBidirectional" type="vehicleType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="trafficSignRef" type="trafficSignRef" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="trafficLightRef" type="trafficLightRef" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="trafficLightRef" type="trafficLightRef" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
   </xs:complexType>

@@ -79,16 +79,16 @@ class TestFileWriter(unittest.TestCase):
         filename = self.out_path + '/test_writing_shapes.xml'
         location = Location("DEU", "DE_BY", 48.262333, 11.668775, "12345", "München", None)
 
-        CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', [Tag.URBAN],
+        CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', {Tag.URBAN},
                              location).write_to_file(filename=filename,
                                                      overwrite_existing_file=OverwriteExistingFile.ALWAYS)
         assert self.validate_with_xsd(self.out_path + '/test_writing_shapes.xml')
 
         # test overwriting
-        CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', [Tag.URBAN],
+        CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', {Tag.URBAN},
                              location).write_to_file(filename=filename,
                                                      overwrite_existing_file=OverwriteExistingFile.SKIP)
-        CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', [Tag.URBAN],
+        CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', {Tag.URBAN},
                              location).write_to_file(filename=filename,
                                                      overwrite_existing_file=OverwriteExistingFile.ALWAYS)
 

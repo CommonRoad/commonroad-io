@@ -47,8 +47,8 @@
     <successor ref="101"/>
     <adjacentLeft drivingDir="opposite" ref="101"/>
     <adjacentRight drivingDir="same" ref="101"/>
-    <type>highway</type>
-    <type>mainCarriageWay</type>
+    <laneletType>highway</laneletType>
+    <laneletType>mainCarriageWay</laneletType>
     <userOneWay>vehicle</userOneWay>
   </lanelet>
   <lanelet id="101">
@@ -86,8 +86,8 @@
     <successor ref="100"/>
     <adjacentLeft drivingDir="opposite" ref="100"/>
     <adjacentRight drivingDir="same" ref="100"/>
-    <type>urban</type>
-    <type>busLane</type>
+    <laneletType>urban</laneletType>
+    <laneletType>busLane</laneletType>
     <userBidirectional>bus</userBidirectional>
     <trafficSignRef ref="201"/>
   </lanelet>

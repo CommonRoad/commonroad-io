@@ -171,9 +171,9 @@ class CommonRoadFileReader:
         """ Reads the tags of the scenario."""
         tags_string = self._tree.getroot().get('tags')
         splits = tags_string.split()
-        tags = []
+        tags = set()
         for tag in splits:
-            tags.append(Tag(tag))
+            tags.add(Tag(tag))
         return tags
 
     @staticmethod
@@ -506,7 +506,7 @@ class LaneletFactory:
         :return: set of lanelet types for a lanelet
         """
         lanelet_types = set()
-        for l_type in xml_node.findall('type'):
+        for l_type in xml_node.findall('laneletType'):
             if LaneletType(l_type.text) is not None:
                 lanelet_types.add(LaneletType(l_type.text))
             else:

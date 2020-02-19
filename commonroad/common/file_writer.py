@@ -567,7 +567,7 @@ class LaneletXMLNode:
 
         if lanelet.lanelet_type:
             for lanelet_type_element in lanelet.lanelet_type:
-                lanelet_type_node = etree.Element('type')
+                lanelet_type_node = etree.Element('laneletType')
                 lanelet_type_node.text = str(lanelet_type_element.value)
                 lanelet_node.append(lanelet_type_node)
 
