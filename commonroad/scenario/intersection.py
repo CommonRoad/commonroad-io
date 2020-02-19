@@ -6,7 +6,7 @@ __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Release"
 
-from typing import List, Set
+from typing import List, Set, Union
 
 
 class IntersectionIncomingElement:
@@ -60,11 +60,14 @@ class Intersection:
         """
         :param intersection_id: ID of intersection element
         :param incomings: set of incoming elements in intersection
-        :param crossings: set of crossing elements in intersection
+        :param crossings: set of crossing elements in intersection (currently not supported)
         """
         self._intersection_id = intersection_id
         self._incomings = incomings
-        self._crossings = crossings
+        if crossings is None:
+            self._crossings = set()
+        else:
+            self._crossings = crossings
 
     @property
     def intersection_id(self) -> int:

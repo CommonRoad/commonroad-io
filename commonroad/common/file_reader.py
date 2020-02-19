@@ -773,11 +773,11 @@ class IntersectionFactory:
         incomings = []
         for incoming_node in xml_node.findall('incoming'):
             incomings.append(IntersectionIncomingFactory.create_from_xml_node(incoming_node))
-        crossings = set()
-        for crossing_ref in xml_node.findall('crossing'):
-            crossings.add(int(crossing_ref.text))
+        # crossings = set()
+        # for crossing_ref in xml_node.findall('crossing'):
+        #     crossings.add(int(crossing_ref.text))
 
-        return Intersection(intersection_id=intersection_id, incomings=incomings, crossings=crossings)
+        return Intersection(intersection_id=intersection_id, incomings=incomings, crossings = None)
 
 
 class IntersectionIncomingFactory:

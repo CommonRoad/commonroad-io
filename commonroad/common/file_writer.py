@@ -1186,13 +1186,13 @@ class IntersectionXMLNode:
                 
             intersection_node.append(incoming_node)
 
-        if intersection.crossings is not None:
-            crossing_node = etree.Element('crossing')
-            for crossing_lanelet in intersection.crossings:
-                crossing_lanelet_node = etree.Element('crossingLanelet')
-                crossing_lanelet_node.set('ref', str(crossing_lanelet))
-                crossing_node.append(crossing_lanelet_node)
-            intersection_node.append(crossing_node)
+        # if intersection.crossings is not None:
+        #     crossing_node = etree.Element('crossing')
+        #     for crossing_lanelet in intersection.crossings:
+        #         crossing_lanelet_node = etree.Element('crossingLanelet')
+        #         crossing_lanelet_node.set('ref', str(crossing_lanelet))
+        #         crossing_node.append(crossing_lanelet_node)
+        #     intersection_node.append(crossing_node)
 
         return intersection_node
 
