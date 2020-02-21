@@ -16,7 +16,7 @@ from commonroad.scenario.trajectory import *
 class TestFileWriter(unittest.TestCase):
     def setUp(self):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
-        self.xsd_path = self.cwd_path + "/XML_commonRoad_XSD.xsd"
+        self.xsd_path = self.cwd_path + "/../../common/XML_commonRoad_XSD.xsd"
         self.out_path = self.cwd_path + "/../.pytest_cache"
         if not os.path.isdir(self.out_path):
             os.makedirs(self.out_path)

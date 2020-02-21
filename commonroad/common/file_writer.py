@@ -479,7 +479,7 @@ class TagXMLNode:
         :param tags: list of tags of the scenario
         :return: node
         """
-        tags_node = etree.Element('tags')
+        tags_node = etree.Element('scenarioTags')
         for tag in tags:
             tags_node.append(etree.Element(tag.value))
 

@@ -285,7 +285,7 @@ __status__ = "in development"
   <xs:complexType name="stopLine">
     <xs:sequence>
       <xs:element name="point" type="point" minOccurs="2" maxOccurs="2"/>
-      <xs:element name="lineMarking" type="lineMarking" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="lineMarking" type="lineMarking"/>
       <xs:element name="trafficSignRef" type="trafficSignRef" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="trafficLightRef" type="trafficLightRef" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
@@ -436,7 +436,6 @@ __status__ = "in development"
   <xs:complexType name="intersection">
     <xs:sequence>
   	  <xs:element name="incoming" type="incoming" minOccurs="1" maxOccurs="unbounded"/>
-  	  <xs:element name="crossing" type="crossing" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   	<xs:attribute name="id" type="xs:positiveInteger" use="required"/>
   </xs:complexType>
@@ -532,9 +531,15 @@ __status__ = "in development"
       <xs:element name="additionalTransformation" type="additionalTransformation"/>
     </xs:sequence>
   </xs:complexType>
+  <xs:simpleType name="country">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="DEU"/>
+      <xs:enumeration value="ZAM"/>
+    </xs:restriction>
+  </xs:simpleType>
   <xs:complexType name="location">
     <xs:sequence minOccurs="1" maxOccurs="1">
-      <xs:element name="country" type="xs:string"/>
+      <xs:element name="country" type="country"/>
       <xs:element name="federalState" type="xs:string"/>
       <xs:element name="gpsLatitude" type="xs:string"/>
       <xs:element name="gpsLongitude" type="xs:string"/>
@@ -578,7 +583,7 @@ __status__ = "in development"
     <xs:complexType>
       <xs:sequence>
 	<xs:element name="location" type="location"/>
-	<xs:element name="tags" type="tag"/>
+	<xs:element name="scenarioTags" type="tag"/>
         <xs:element name="lanelet" type="lanelet" minOccurs="1" maxOccurs="unbounded"/>
         <xs:element name="trafficSign" type="trafficSign" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="trafficLight" type="trafficLight" minOccurs="0" maxOccurs="unbounded"/>

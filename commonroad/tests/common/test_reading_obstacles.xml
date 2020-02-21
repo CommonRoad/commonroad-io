@@ -8,10 +8,10 @@
     <zipcode>98368</zipcode>
     <name>München</name>
   </location>
-   <tags>
+   <scenarioTags>
     <intersection/>
     <urban/>
-  </tags>
+  </scenarioTags>
   <staticObstacle id="3">
     <type>unknown</type>
     <shape>

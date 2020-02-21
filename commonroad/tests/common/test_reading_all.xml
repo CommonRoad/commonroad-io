@@ -8,10 +8,10 @@
     <zipcode>12345</zipcode>
     <name>München</name>
   </location>
-   <tags>
+   <scenarioTags>
     <intersection/>
     <urban/>
-  </tags>
+  </scenarioTags>
   <lanelet id="100">
     <leftBound>
       <point>

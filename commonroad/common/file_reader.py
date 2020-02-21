@@ -267,7 +267,7 @@ class TagsFactory:
         :return: set of tags
         """
         tags = set()
-        tag_element = xml_node.find('tags')
+        tag_element = xml_node.find('scenarioTags')
         for elem in Tag:
             if tag_element.find(elem.value) is not None:
                 tags.add(elem)
@@ -894,15 +894,14 @@ class DynamicObstacleFactory(ObstacleFactory):
         return lanelet_ids_per_state
 
     @staticmethod
-    def find_obstacle_center_lanelets(initial_state: State, state_list: List[State], lanelet_network: LaneletNetwork,
-                                     obstacle_id: int) -> Dict[int, Set[int]]:
+    def find_obstacle_center_lanelets(initial_state: State, state_list: List[State],
+                                      lanelet_network: LaneletNetwork) -> Dict[int, Set[int]]:
         """
         Extracts for each shape the corresponding lanelets it is on
 
         :param initial_state: initial CommonRoad state
         :param state_list: trajectory state list
         :param lanelet_network: CommonRoad lanelet network
-        :param obstacle_id: ID of obstacle
         :return: list of IDs of all predecessor lanelets
         """
         compl_state_list = [initial_state] + state_list
@@ -936,7 +935,7 @@ class DynamicObstacleFactory(ObstacleFactory):
             shape_lanelet_assignment = cls.find_obstacle_shape_lanelets(initial_state, trajectory.state_list,
                                                                         lanelet_network, obstacle_id, shape)
             center_lanelet_assignment = cls.find_obstacle_center_lanelets(initial_state, trajectory.state_list,
-                                                                          lanelet_network, obstacle_id)
+                                                                          lanelet_network)
             prediction = TrajectoryPrediction(trajectory, shape, center_lanelet_assignment, shape_lanelet_assignment)
         elif xml_node.find('occupancySet') is not None:
             prediction = SetBasedPredictionFactory.create_from_xml_node(xml_node.find('occupancySet'))

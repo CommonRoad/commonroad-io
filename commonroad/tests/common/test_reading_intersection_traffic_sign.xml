@@ -7,10 +7,10 @@
     <zipcode>98368</zipcode>
     <name>München</name>
   </location>
-   <tags>
+   <scenarioTags>
     <intersection/>
     <urban/>
-  </tags>  
+  </scenarioTags>
 <lanelet id="12">
     <leftBound>
       <point>
@@ -52,7 +52,7 @@
     <predecessor ref="30"/>
     <predecessor ref="31"/>
     <adjacentLeft ref="13" drivingDir="opposite"/>
-    <laneletlaneletType>urban</laneletlaneletType>
+    <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
     <trafficSignRef ref="112"/>
   </lanelet>
@@ -97,7 +97,7 @@
     <successor ref="26"/>
     <successor ref="22"/>
     <adjacentLeft ref="12" drivingDir="opposite"/>
-    <laneletlaneletType>urban</laneletlaneletType>
+    <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
     <trafficSignRef ref="104"/>
   </lanelet>
