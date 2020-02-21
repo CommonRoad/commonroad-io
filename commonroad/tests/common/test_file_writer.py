@@ -3,6 +3,7 @@ import os
 import unittest
 
 from commonroad.common.file_writer import CommonRoadFileWriter, OverwriteExistingFile
+from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.geometry.shape import *
 from lxml import etree
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
@@ -18,6 +19,7 @@ class TestFileWriter(unittest.TestCase):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
         self.xsd_path = self.cwd_path + "/../../common/XML_commonRoad_XSD.xsd"
         self.out_path = self.cwd_path + "/../.pytest_cache"
+        self.filename_read = self.cwd_path + "/test_reading_intersection_traffic_sign.xml"
         if not os.path.isdir(self.out_path):
             os.makedirs(self.out_path)
         else:
@@ -25,6 +27,16 @@ class TestFileWriter(unittest.TestCase):
                 for file in filenames:
                     if file.endswith('.xml'):
                         os.remove(os.path.join(dirpath, file))
+
+    def test_read_write_file(self):
+        scenario, planning_problem_set = CommonRoadFileReader(self.filename_read).open()
+        filename = self.out_path + '/test_reading_intersection_traffic_sign.xml'
+        CommonRoadFileWriter(scenario, planning_problem_set, scenario.author, scenario.affiliation,
+                             scenario.benchmark_id, scenario.tags,
+                             scenario.location).write_to_file(filename=filename,
+                                                              overwrite_existing_file=OverwriteExistingFile.ALWAYS)
+
+        assert self.validate_with_xsd(self.out_path + '/test_reading_intersection_traffic_sign.xml')
 
     def test_writing_shapes(self):
         rectangle = Rectangle(4.3, 8.9, center=np.array([2.5, -1.8]), orientation=1.7)

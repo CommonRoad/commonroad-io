@@ -507,10 +507,7 @@ class LaneletXMLNode:
             lanelet.line_marking_left_vertices, LineMarking
         ):
             line_marking_left = etree.Element('lineMarking')
-            if lanelet.line_marking_left_vertices is LineMarking.DASHED:
-                line_marking_left.text = 'dashed'
-            elif lanelet.line_marking_left_vertices is LineMarking.SOLID:
-                line_marking_left.text = 'solid'
+            line_marking_left.text = lanelet.line_marking_left_vertices.value
             left_boundary.append(line_marking_left)
 
         lanelet_node.append(left_boundary)
@@ -525,10 +522,7 @@ class LaneletXMLNode:
             lanelet.line_marking_right_vertices, LineMarking
         ):
             line_marking_right = etree.Element('lineMarking')
-            if lanelet.line_marking_right_vertices is LineMarking.DASHED:
-                line_marking_right.text = 'dashed'
-            elif lanelet.line_marking_right_vertices is LineMarking.SOLID:
-                line_marking_right.text = 'solid'
+            line_marking_right.text = lanelet.line_marking_right_vertices.value
             right_boundary.append(line_marking_right)
 
         lanelet_node.append(right_boundary)
@@ -1205,7 +1199,7 @@ class TrafficSignXMLNode:
         for element in traffic_sign.traffic_sign_elements:
             element_node = etree.Element('trafficSignElement')
             sign_id_node = etree.Element('trafficSignID')
-            sign_id_node.text = str(element.traffic_sign_element_id)
+            sign_id_node.text = str(element.traffic_sign_element_id.value)
             element_node.append(sign_id_node)
             for value in element.additional_values:
                 value_node = etree.Element('additionalValue')
@@ -1241,7 +1235,7 @@ class TrafficLightXMLNode:
         for state in traffic_light.cycle:
             element_node = TrafficLightCycleElementXMLNode.create_node(state)
             cycle_node.append(element_node)
-        if traffic_light.time_offset is not None:
+        if traffic_light.time_offset is not None and traffic_light.time_offset > 0:
             offset_node = etree.Element('timeOffset')
             offset_node.text = str(traffic_light.time_offset)
             cycle_node.append(offset_node)
@@ -1268,8 +1262,14 @@ class TrafficLightXMLNode:
 class TrafficLightCycleElementXMLNode:
     @classmethod
     def create_node(cls, cycle_element: TrafficLightCycleElement) -> etree.Element:
-        element_node = etree.Element(str(cycle_element.state.value))
-        element_node.text = str(cycle_element.duration)
+        element_node = etree.Element("cycleElement")
+        duration_node = etree.Element("duration")
+        duration_node.text = str(cycle_element.duration)
+        element_node.append(duration_node)
+        color_node = etree.Element("color")
+        color_node.text = cycle_element.state.value
+        element_node.append(color_node)
+
         return element_node
 
 
@@ -1287,12 +1287,12 @@ class LineMarkingXMLNode:
 
 class LaneletStopLineXMLNode:
     @classmethod
-    def create_node(cls, stop_line : StopLine) -> etree.Element:
+    def create_node(cls, stop_line: StopLine) -> etree.Element:
         stop_line_node = etree.Element('stopLine')
 
-        start_node = Point(stop_line.start.x, stop_line.start.y).create_node()
+        start_node = Point(stop_line.start[0], stop_line.start[1]).create_node()
         stop_line_node.append(start_node)
-        end_node = Point(stop_line.end.x, stop_line.end.y).create_node()
+        end_node = Point(stop_line.end[0], stop_line.end[1]).create_node()
         stop_line_node.append(end_node)
 
         if stop_line.line_marking:
