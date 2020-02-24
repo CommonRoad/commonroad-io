@@ -1220,4 +1220,8 @@ class PointFactory:
     def create_from_xml_node(cls, xml_node: ElementTree.Element) -> np.ndarray:
         x = float(xml_node.find('x').text)
         y = float(xml_node.find('y').text)
-        return np.array([x, y])
+        if xml_node.find('z') is None:
+            return np.array([x, y])
+        else:
+            z = float(xml_node.find('z').text)
+            return np.array([x, y, z])
