@@ -697,7 +697,8 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
 
                 # cut off in the beginning, because linewidth_metres is added later
                 tmp_center = lanelet.center_vertices.copy()
-                tmp_center[0,:] = lanelet.interpolate_position(linewidth_metres)[0]
+                if lanelet.distance[-1] > linewidth_metres:
+                    tmp_center[0,:] = lanelet.interpolate_position(linewidth_metres)[0]
                 zorder = 10.05 if light_state == TrafficLightState.GREEN else 10.0
                 line = LineDataUnits(tmp_center[:,0], tmp_center[:,1], zorder=zorder, linewidth=linewidth_metres, alpha=0.7,
                                      color=traffic_light_color_dict(light_state, traffic_light_colors), linestyle=linestyle, dashes=dashes)
