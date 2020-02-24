@@ -7,7 +7,7 @@ __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Release"
 
 import enum
-from typing import List
+from typing import List, Union
 import numpy as np
 
 
@@ -99,7 +99,9 @@ class TrafficLightState(enum.Enum):
 
 class TrafficSignElement:
     """ Class to represent each traffic sign element"""
-    def __init__(self, traffic_sign_element_id: enum, additional_values: List[str]):
+    def __init__(self, traffic_sign_element_id: Union[TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSignIDSpain,
+                                                      TrafficSignIDGermany, TrafficSignIDChina, TrafficSignIDRussia],
+                 additional_values: List[str]):
         """
         :param traffic_sign_element_id: ID of traffic sign element (must be element of a traffic sign element enum)
         :param additional_values: list of additional values of a traffic sign element, e.g. velocity, time, city name

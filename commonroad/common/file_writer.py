@@ -559,11 +559,14 @@ class LaneletXMLNode:
             stop_line_node = LaneletStopLineXMLNode.create_node(lanelet.stop_line)
             lanelet_node.append(stop_line_node)
 
-        if lanelet.lanelet_type:
+        if lanelet.lanelet_type is not None:
             for lanelet_type_element in lanelet.lanelet_type:
                 lanelet_type_node = etree.Element('laneletType')
                 lanelet_type_node.text = str(lanelet_type_element.value)
                 lanelet_node.append(lanelet_type_node)
+        else:
+            warnings.warn('<CommonRoadFileWriter/lanelet.lanelet_type> Lanelet %s has not '
+                          'lanelet type' % lanelet.lanelet_id)
 
         if lanelet.user_one_way:
             for user_one_way in lanelet.user_one_way:
