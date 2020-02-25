@@ -331,7 +331,7 @@ class LaneletNetworkFactory:
             lanelets.append(LaneletFactory.create_from_xml_node(lanelet_node))
         lanelet_network = LaneletNetwork.create_from_lanelet_list(lanelets)
 
-        country = cls._find_country(xml_node._root.attrib["benchmarkID"])
+        country = cls._find_country( xml_node)
         for traffic_sign_node in xml_node.findall('trafficSign'):
             lanelet_network.add_traffic_sign(TrafficSignFactory.create_from_xml_node(traffic_sign_node, country), [])
 
@@ -344,23 +344,28 @@ class LaneletNetworkFactory:
         return lanelet_network
 
     @staticmethod
-    def _find_country(benchmark_id: str) -> SupportedTrafficSignCountry:
+    def _find_country(xml_node: ElementTree.Element) -> SupportedTrafficSignCountry:
         """
-        Extracts country from benchmark ID
-        :param benchmark_id: CommonRoad benchmark ID
+        Extracts country from location element
+        :param xml_node: CommonRoad root xml node
         :return: supported traffic sign country enum
         """
-        if SupportedTrafficSignCountry.GERMANY.value in benchmark_id:
+        if xml_node._root.attrib["commonRoadVersion"] == "2018b":
+            country = xml_node._root.attrib["benchmarkID"][:3]
+        else:
+            country = xml_node.find('location').find('country').text
+
+        if SupportedTrafficSignCountry.GERMANY.value == country:
             return SupportedTrafficSignCountry.GERMANY
-        elif SupportedTrafficSignCountry.USA.value in benchmark_id:
+        elif SupportedTrafficSignCountry.USA.value == country:
             return SupportedTrafficSignCountry.USA
-        elif SupportedTrafficSignCountry.CHINA.value in benchmark_id:
+        elif SupportedTrafficSignCountry.CHINA.value == country:
             return SupportedTrafficSignCountry.CHINA
-        elif SupportedTrafficSignCountry.SPAIN.value in benchmark_id:
+        elif SupportedTrafficSignCountry.SPAIN.value == country:
             return SupportedTrafficSignCountry.SPAIN
-        elif SupportedTrafficSignCountry.RUSSIA.value in benchmark_id:
+        elif SupportedTrafficSignCountry.RUSSIA.value == country:
             return SupportedTrafficSignCountry.RUSSIA
-        elif SupportedTrafficSignCountry.ZAMUNDA.value in benchmark_id:
+        elif SupportedTrafficSignCountry.ZAMUNDA.value == country:
             return SupportedTrafficSignCountry.ZAMUNDA
         else:
             warnings.warn("Unknown country: Default traffic sign IDs are used.")
