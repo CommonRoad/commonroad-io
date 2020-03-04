@@ -50,7 +50,7 @@ class TrafficSigInterpreter:
         else:
             return TrafficSignIDZamunda
 
-    @lru_cache(maxsize=32)
+    @lru_cache(maxsize=1024)
     def speed_limit(self, lanelet_ids: FrozenSet[int]) -> Union[float, None]:
         """
         Extracts the maximum speed limit of provided lanelets
@@ -73,7 +73,7 @@ class TrafficSigInterpreter:
             speed_limit = min(speed_limits)
         return speed_limit
 
-    @lru_cache(maxsize=32)
+    @lru_cache(maxsize=1024)
     def required_speed(self, lanelet_ids: FrozenSet[int]) -> Union[float, None]:
         """
         Extracts the required speed a vehicle has to drive on a set of lanelets
