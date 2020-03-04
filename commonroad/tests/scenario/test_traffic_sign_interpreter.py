@@ -36,20 +36,26 @@ class TestTrafficSigInterpreter(unittest.TestCase):
         traffic_sign_one = TrafficSign(201, [TrafficSignElement(TrafficSignIDZamunda.MAXSPEED, ["20"])])
         traffic_sign_two = TrafficSign(202, [TrafficSignElement(TrafficSignIDZamunda.MAXSPEED, ["30"])])
         traffic_sign_three = TrafficSign(203, [TrafficSignElement(TrafficSignIDZamunda.MAXSPEED, ["40"])])
+        traffic_sign_four = TrafficSign(204, [TrafficSignElement(TrafficSignIDZamunda.MINSPEED, ["50"])])
 
         lanelet_network = LaneletNetwork().create_from_lanelet_list([lanelet_one, lanelet_two, lanelet_three,
                                                                      lanelet_four, lanelet_five])
         lanelet_network.add_traffic_sign(traffic_sign_one, {100})
         lanelet_network.add_traffic_sign(traffic_sign_two, {101})
         lanelet_network.add_traffic_sign(traffic_sign_three, {102})
+        lanelet_network.add_traffic_sign(traffic_sign_four, {103})
 
         self.interpreter = TrafficSigInterpreter(SupportedTrafficSignCountry.ZAMUNDA, lanelet_network)
 
     def test_speed_limit(self):
-        self.assertEqual(20, self.interpreter.speed_limit({100, 101, 102}))
-        self.assertEqual(30, self.interpreter.speed_limit({101, 102}))
-        self.assertEqual(None, self.interpreter.speed_limit({103, 104}))
-        self.assertEqual(40, self.interpreter.speed_limit({102, 104}))
+        self.assertEqual(20, self.interpreter.speed_limit(frozenset({100, 101, 102})))
+        self.assertEqual(20, self.interpreter.speed_limit(frozenset({101, 100, 102})))
+        self.assertEqual(20, self.interpreter.speed_limit(frozenset({102, 100, 101})))
+        self.assertEqual(30, self.interpreter.speed_limit(frozenset({101, 102})))
+        self.assertEqual(None, self.interpreter.speed_limit(frozenset({103, 104})))
+        self.assertEqual(40, self.interpreter.speed_limit(frozenset({102, 104})))
+        self.assertEqual(None, self.interpreter.required_speed(frozenset({102, 104})))
+        self.assertEqual(50, self.interpreter.required_speed(frozenset({103, 104})))
 
 
 if __name__ == '__main__':
