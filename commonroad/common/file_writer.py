@@ -238,7 +238,8 @@ class CommonRoadFileWriter:
         self._root_node.set('date', datetime.datetime.today().strftime('%Y-%m-%d'))
 
     def _add_all_objects_from_scenario(self):
-        self._root_node.append(LocationXMLNode.create_node(self.location))
+        if self.location is not None:
+            self._root_node.append(LocationXMLNode.create_node(self.location))
         self._root_node.append(TagXMLNode.create_node(self.tags))
         for l in self.scenario.lanelet_network.lanelets:
             self._root_node.append(LaneletXMLNode.create_node(l))
@@ -261,6 +262,7 @@ class CommonRoadFileWriter:
         rough_string = etree.tostring(
             self._root_node, pretty_print=True, encoding='unicode'
         )
+        rough_string = '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n' + rough_string
         return rough_string
         # reparsed = minidom.parseString(rough_string)
         # return reparsed.toprettyxml(indent='  ')

@@ -277,27 +277,30 @@ class TagsFactory:
 class LocationFactory:
     """ Class to create a location from an XML element."""
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Location:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Union[Location, None]:
         """
         :param xml_node: XML element
         :return: location object
         """
-        location_element = xml_node.find('location')
-        country = location_element.find('country').text
-        federal_state = location_element.find('federalState').text
-        gps_latitude = float(location_element.find('gpsLatitude').text)
-        gps_longitude = float(location_element.find('gpsLongitude').text)
-        zipcode = location_element.find('zipcode').text
-        if location_element.find('name') is not None:
-            name = location_element.find('name').text
-        else:
-            name = None
-        if xml_node.find('geoTransformation') is not None:
-            geo_transformation = GeoTransformationFactory.create_from_xml_node(xml_node.find('geoTransformation'))
-        else:
-            geo_transformation = None
+        if xml_node.find('location') is not None:
+            location_element = xml_node.find('location')
+            country = location_element.find('country').text
+            federal_state = location_element.find('federalState').text
+            gps_latitude = float(location_element.find('gpsLatitude').text)
+            gps_longitude = float(location_element.find('gpsLongitude').text)
+            zipcode = location_element.find('zipcode').text
+            if location_element.find('name') is not None:
+                name = location_element.find('name').text
+            else:
+                name = None
+            if xml_node.find('geoTransformation') is not None:
+                geo_transformation = GeoTransformationFactory.create_from_xml_node(xml_node.find('geoTransformation'))
+            else:
+                geo_transformation = None
 
-        return Location(country, federal_state, gps_latitude, gps_longitude, zipcode, name, geo_transformation)
+            return Location(country, federal_state, gps_latitude, gps_longitude, zipcode, name, geo_transformation)
+        else:
+            return None
 
 
 class GeoTransformationFactory:
