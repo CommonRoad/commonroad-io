@@ -1,9 +1,336 @@
+import os
+import random
+import re
 import unittest
+import warnings
+from glob import glob
 
+import numpy as np
 from commonroad.common.solution import StateFields, XMLStateFields, StateType, TrajectoryType, PlanningProblemSolution, \
-    Solution
+    Solution, CommonRoadSolutionWriter, CommonRoadSolutionReader
 from commonroad.common.solution_writer import VehicleModel, VehicleType, CostFunction
 from commonroad.scenario.trajectory import State, Trajectory
+
+
+class DummyDataGenerator:
+
+    @staticmethod
+    def create_random_float(lower, upper):
+        return random.uniform(lower, upper)
+
+    @staticmethod
+    def create_random_int(lower, upper):
+        return random.randint(lower, upper)
+
+    @classmethod
+    def create_random_pm_state(cls, time_step=0):
+        return State(
+            position=np.array([cls.create_random_float(-100, 100),
+                               cls.create_random_float(-100, 100)]),
+            velocity=cls.create_random_float(-5, 5),
+            velocity_y=cls.create_random_float(-5, 5),
+            time_step=time_step
+        )
+
+    @classmethod
+    def create_random_ks_state(cls, time_step=0):
+        return State(
+            position=np.array([cls.create_random_float(-100, 100),
+                               cls.create_random_float(-100, 100)]),
+            steering_angle=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            velocity=cls.create_random_float(-5, 5),
+            orientation=cls.create_random_float(-np.math.pi, np.math.pi),
+            time_step=time_step
+        )
+
+    @classmethod
+    def create_random_st_state(cls, time_step=0):
+        return State(
+            position=np.array([cls.create_random_float(-100, 100),
+                               cls.create_random_float(-100, 100)]),
+            steering_angle=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            velocity=cls.create_random_float(-5, 5),
+            orientation=cls.create_random_float(-np.math.pi, np.math.pi),
+            yaw_rate=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            slip_angle=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            time_step=time_step
+        )
+
+    @classmethod
+    def create_random_mb_state(cls, time_step=0):
+        return State(
+            position=np.array([cls.create_random_float(-100, 100),
+                               cls.create_random_float(-100, 100)]),
+            steering_angle=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            velocity=cls.create_random_float(-5, 5),
+            orientation=cls.create_random_float(-np.math.pi, np.math.pi),
+            yaw_rate=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            roll_angle=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            roll_rate=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            pitch_angle=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            pitch_rate=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            velocity_y=cls.create_random_float(-5, 5),
+            position_z=cls.create_random_float(-10, 10),
+            velocity_z=cls.create_random_float(-5, 5),
+            roll_angle_front=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            roll_rate_front=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            velocity_y_front=cls.create_random_float(-5, 5),
+            position_z_front=cls.create_random_float(-10, 10),
+            velocity_z_front=cls.create_random_float(-5, 5),
+            roll_angle_rear=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            roll_rate_rear=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            velocity_y_rear=cls.create_random_float(-5, 5),
+            position_z_rear=cls.create_random_float(-10, 10),
+            velocity_z_rear=cls.create_random_float(-5, 5),
+            left_front_wheel_angular_speed=cls.create_random_float(-5, 5),
+            right_front_wheel_angular_speed=cls.create_random_float(-5, 5),
+            left_rear_wheel_angular_speed=cls.create_random_float(-5, 5),
+            right_rear_wheel_angular_speed=cls.create_random_float(-5, 5),
+            delta_y_f=cls.create_random_float(-10, 10),
+            delta_y_r=cls.create_random_float(-10, 10),
+            time_step=time_step
+        )
+
+    @classmethod
+    def create_random_input(cls, time_step=0):
+        return State(
+            acceleration=cls.create_random_float(-5, 5),
+            steering_angle_speed=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            time_step=time_step
+        )
+
+    # @classmethod
+    # def create_random_pm_input(cls, time_step=0):
+    #     return State(
+    #         acceleration_x=cls.create_random_float(-5, 5),
+    #         acceleration_y=cls.create_random_float(-5, 5),
+    #         time_step=time_step
+    #     )
+
+    @classmethod
+    def create_random_pm_trajectory(cls, state_count=5):
+        return Trajectory(initial_time_step=0, state_list=[cls.create_random_pm_state(ts) for ts in range(state_count)])
+
+    @classmethod
+    def create_random_ks_trajectory(cls, state_count=5):
+        return Trajectory(initial_time_step=0, state_list=[cls.create_random_ks_state(ts) for ts in range(state_count)])
+
+    @classmethod
+    def create_random_st_trajectory(cls, state_count=5):
+        return Trajectory(initial_time_step=0, state_list=[cls.create_random_st_state(ts) for ts in range(state_count)])
+
+    @classmethod
+    def create_random_mb_trajectory(cls, state_count=5):
+        return Trajectory(initial_time_step=0, state_list=[cls.create_random_mb_state(ts) for ts in range(state_count)])
+
+    @classmethod
+    def create_random_input_vector(cls, input_count=5):
+        return Trajectory(initial_time_step=0, state_list=[cls.create_random_input(ts) for ts in range(input_count)])
+
+    # @classmethod
+    # def create_random_pm_input_vector(cls, input_count=5):
+    #     return Trajectory(initial_time_step=0, state_list=[cls.create_random_pm_input(ts) for ts in range(input_count)])
+
+    @classmethod
+    def create_pm_state_xml(cls, state: State):
+        return '''
+        <pmState>
+            <x>%s</x>
+            <y>%s</y>
+            <xVelocity>%s</xVelocity>
+            <yVelocity>%s</yVelocity>
+            <time>%s</time>
+        </pmState>
+        ''' % (
+            str(state.position[0]),
+            str(state.position[1]),
+            str(state.velocity),
+            str(state.velocity_y),
+            str(state.time_step)
+        )
+
+    @classmethod
+    def create_ks_state_xml(cls, state: State):
+        return '''
+        <ksState>
+            <x>%s</x>
+            <y>%s</y>
+            <steeringAngle>%s</steeringAngle>
+            <velocity>%s</velocity>
+            <orientation>%s</orientation>
+            <time>%s</time>
+        </ksState>
+        ''' % (
+            str(state.position[0]),
+            str(state.position[1]),
+            str(state.steering_angle),
+            str(state.velocity),
+            str(state.orientation),
+            str(state.time_step)
+        )
+
+    @classmethod
+    def create_st_state_xml(cls, state: State):
+        return '''
+        <stState>
+            <x>%s</x>
+            <y>%s</y>
+            <steeringAngle>%s</steeringAngle>
+            <velocity>%s</velocity>
+            <orientation>%s</orientation>
+            <yawRate>%s</yawRate>
+            <slipAngle>%s</slipAngle>
+            <time>%s</time>
+        </stState>
+        ''' % (
+            str(state.position[0]),
+            str(state.position[1]),
+            str(state.steering_angle),
+            str(state.velocity),
+            str(state.orientation),
+            str(state.yaw_rate),
+            str(state.slip_angle),
+            str(state.time_step)
+        )
+
+    @classmethod
+    def create_mb_state_xml(cls, state: State):
+        return '''
+        <mbState>
+            <x>%s</x>
+            <y>%s</y>
+            <steeringAngle>%s</steeringAngle>
+            <velocity>%s</velocity>
+            <orientation>%s</orientation>
+            <yawRate>%s</yawRate>
+            <rollAngle>%s</rollAngle>
+            <rollRate>%s</rollRate>
+            <pitchAngle>%s</pitchAngle>
+            <pitchRate>%s</pitchRate>
+            <yVelocity>%s</yVelocity>
+            <zPosition>%s</zPosition>
+            <zVelocity>%s</zVelocity>
+            <rollAngleFront>%s</rollAngleFront>
+            <rollRateFront>%s</rollRateFront>
+            <yVelocityFront>%s</yVelocityFront>
+            <zPositionFront>%s</zPositionFront>
+            <zVelocityFront>%s</zVelocityFront>
+            <rollAngleRear>%s</rollAngleRear>
+            <rollRateRear>%s</rollRateRear>
+            <yVelocityRear>%s</yVelocityRear>
+            <zPositionRear>%s</zPositionRear>
+            <zVelocityRear>%s</zVelocityRear>
+            <leftFrontWheelAngularSpeed>%s</leftFrontWheelAngularSpeed>
+            <rightFrontWheelAngularSpeed>%s</rightFrontWheelAngularSpeed>
+            <leftRearWheelAngularSpeed>%s</leftRearWheelAngularSpeed>
+            <rightRearWheelAngularSpeed>%s</rightRearWheelAngularSpeed>
+            <deltaYf>%s</deltaYf>
+            <deltaYr>%s</deltaYr>
+            <time>%s</time>
+        </mbState>
+        ''' % (
+            str(state.position[0]),
+            str(state.position[1]),
+            str(state.steering_angle),
+            str(state.velocity),
+            str(state.orientation),
+            str(state.yaw_rate),
+            str(state.roll_angle),
+            str(state.roll_rate),
+            str(state.pitch_angle),
+            str(state.pitch_rate),
+            str(state.velocity_y),
+            str(state.position_z),
+            str(state.velocity_z),
+            str(state.roll_angle_front),
+            str(state.roll_rate_front),
+            str(state.velocity_y_front),
+            str(state.position_z_front),
+            str(state.velocity_z_front),
+            str(state.roll_angle_rear),
+            str(state.roll_rate_rear),
+            str(state.velocity_y_rear),
+            str(state.position_z_rear),
+            str(state.velocity_z_rear),
+            str(state.left_front_wheel_angular_speed),
+            str(state.right_front_wheel_angular_speed),
+            str(state.left_rear_wheel_angular_speed),
+            str(state.right_rear_wheel_angular_speed),
+            str(state.delta_y_f),
+            str(state.delta_y_r),
+            str(state.time_step)
+        )
+
+    @classmethod
+    def create_input_xml(cls, state: State):
+        return '''
+        <input>
+            <steeringAngleSpeed>%s</steeringAngleSpeed>
+            <acceleration>%s</acceleration>
+            <time>%s</time>
+        </input>
+        ''' % (
+            str(state.steering_angle_speed),
+            str(state.acceleration),
+            str(state.time_step)
+        )
+
+    @classmethod
+    def create_pm_input_xml(cls, state: State):
+        return '''
+        <pmInput>
+            <xAcceleration>%s</xAcceleration>
+            <yAcceleration>%s</yAcceleration>
+            <time>%s</time>
+        </pmInput>
+        ''' % (
+            str(state.acceleration_x),
+            str(state.acceleration_y),
+            str(state.time_step)
+        )
+
+    @classmethod
+    def create_trajectory_xml(cls, trajectory_type: str, planning_problem_id: int, trajectory: Trajectory):
+        state_serializer = None
+        if trajectory_type == 'pmTrajectory': state_serializer = cls.create_pm_state_xml
+        if trajectory_type == 'stTrajectory': state_serializer = cls.create_st_state_xml
+        if trajectory_type == 'ksTrajectory': state_serializer = cls.create_ks_state_xml
+        if trajectory_type == 'mbTrajectory': state_serializer = cls.create_mb_state_xml
+        if trajectory_type == 'inputVector': state_serializer = cls.create_input_xml
+        if trajectory_type == 'pmInputVector': state_serializer = cls.create_pm_input_xml
+        return '''
+        <%s planningProblem="%s">
+            %s
+        </%s>
+        ''' % (
+            trajectory_type,
+            str(planning_problem_id),
+            ''.join([state_serializer(state) for state in trajectory.state_list]),
+            trajectory_type
+        )
+
+    @classmethod
+    def create_solution_xml(cls, solution: Solution):
+        benchmark_id = solution.benchmark_id
+        date_str = 'date="%s"' % solution.date.strftime('%Y-%m-%d')
+        processor_str = '' if solution.processor_name is None else 'processor_name="%s"' % solution.processor_name
+        computation_str = '' if solution.computation_time is None else 'computation_time="%s"' % str(
+            solution.computation_time)
+        trajectory_xmls = [
+            cls.create_trajectory_xml(pp_sol.trajectory_type.value, pp_sol.planning_problem_id, pp_sol.trajectory)
+            for pp_sol in solution.planning_problem_solutions
+        ]
+        solution_xml = '''
+        <?xml version="1.0" ?>
+        <CommonRoadSolution benchmark_id="%s" %s %s %s>
+            %s
+        </CommonRoadSolution>
+        ''' % (benchmark_id,
+               computation_str,
+               date_str,
+               processor_str,
+               ''.join(trajectory_xmls))
+        return solution_xml.strip()
 
 
 class TestStateFields(unittest.TestCase):
@@ -83,90 +410,83 @@ class TestStateType(unittest.TestCase):
         assert StateType.PM.value == 'pmState'
         assert StateType.PM.fields == StateFields.PM.value
         assert StateType.PM.xml_fields == XMLStateFields.PM.value
-        assert StateType.PM == StateType.get_state_type(self.create_dummy_state(StateFields.PM))
+        assert StateType.PM == StateType.get_state_type(DummyDataGenerator.create_random_pm_state())
 
     def test_st_state_type(self):
         assert StateType.ST.value == 'stState'
         assert StateType.ST.fields == StateFields.ST.value
         assert StateType.ST.xml_fields == XMLStateFields.ST.value
-        assert StateType.ST == StateType.get_state_type(self.create_dummy_state(StateFields.ST))
+        assert StateType.ST == StateType.get_state_type(DummyDataGenerator.create_random_st_state())
 
     def test_ks_state_type(self):
         assert StateType.KS.value == 'ksState'
         assert StateType.KS.fields == StateFields.KS.value
         assert StateType.KS.xml_fields == XMLStateFields.KS.value
-        assert StateType.KS == StateType.get_state_type(self.create_dummy_state(StateFields.KS))
+        assert StateType.KS == StateType.get_state_type(DummyDataGenerator.create_random_ks_state())
 
     def test_mb_state_type(self):
         assert StateType.MB.value == 'mbState'
         assert StateType.MB.fields == StateFields.MB.value
         assert StateType.MB.xml_fields == XMLStateFields.MB.value
-        assert StateType.MB == StateType.get_state_type(self.create_dummy_state(StateFields.MB))
+        assert StateType.MB == StateType.get_state_type(DummyDataGenerator.create_random_mb_state())
 
     def test_input_state_type(self):
         assert StateType.Input.value == 'input'
         assert StateType.Input.fields == StateFields.Input.value
         assert StateType.Input.xml_fields == XMLStateFields.Input.value
-        assert StateType.Input == StateType.get_state_type(self.create_dummy_state(StateFields.Input))
+        assert StateType.Input == StateType.get_state_type(DummyDataGenerator.create_random_input())
 
     # def test_pm_input_state_type(self):
     #     assert StateType.PMInput.value == 'pmInput'
     #     assert StateType.PMInput.fields == StateFields.PMInput.value
     #     assert StateType.PMInput.xml_fields == XMLStateFields.PMInput.value
-    #     assert StateType.PMInput == StateType.get_state_type(self.create_dummy_state(StateFields.PMInput))
+    #     assert StateType.PMInput == StateType.get_state_type(DummyDataGenerator.create_random_pm_input())
 
 
 class TestTrajectoryType(unittest.TestCase):
 
-    @staticmethod
-    def create_dummy_state(state_type: StateType, time_step: int) -> State:
-        values = {field: 0.0 for field in state_type.fields}
-        values['time_step'] = time_step
-        return State(**values)
-
-    @classmethod
-    def create_dummy_trajectory(cls, state_type: StateType, count=5) -> Trajectory:
-        state_list = [cls.create_dummy_state(state_type, time_step) for time_step in range(count)]
-        return Trajectory(initial_time_step=state_list[0].time_step, state_list=state_list)
-
     def test_pm_trajectory_type(self):
+        dummy_trajectory = DummyDataGenerator.create_random_pm_trajectory()
         assert TrajectoryType.PM.value == 'pmTrajectory'
         assert TrajectoryType.PM.state_type == StateType.PM
-        assert TrajectoryType.PM == TrajectoryType.get_trajectory_type(self.create_dummy_trajectory(StateType.PM))
+        assert TrajectoryType.PM == TrajectoryType.get_trajectory_type(dummy_trajectory)
         assert TrajectoryType.PM.valid_vehicle_model(VehicleModel.PM)
         assert not TrajectoryType.PM.valid_vehicle_model(VehicleModel.ST)
         assert not TrajectoryType.PM.valid_vehicle_model(VehicleModel.KS)
         assert not TrajectoryType.PM.valid_vehicle_model(VehicleModel.MB)
 
     def test_st_trajectory_type(self):
+        dummy_trajectory = DummyDataGenerator.create_random_st_trajectory()
         assert TrajectoryType.ST.value == 'stTrajectory'
         assert TrajectoryType.ST.state_type == StateType.ST
-        assert TrajectoryType.ST == TrajectoryType.get_trajectory_type(self.create_dummy_trajectory(StateType.ST))
+        assert TrajectoryType.ST == TrajectoryType.get_trajectory_type(dummy_trajectory)
         assert TrajectoryType.ST.valid_vehicle_model(VehicleModel.ST)
         assert not TrajectoryType.ST.valid_vehicle_model(VehicleModel.PM)
         assert not TrajectoryType.ST.valid_vehicle_model(VehicleModel.KS)
         assert not TrajectoryType.ST.valid_vehicle_model(VehicleModel.MB)
 
     def test_ks_trajectory_type(self):
+        dummy_trajectory = DummyDataGenerator.create_random_ks_trajectory()
         assert TrajectoryType.KS.value == 'ksTrajectory'
         assert TrajectoryType.KS.state_type == StateType.KS
-        assert TrajectoryType.KS == TrajectoryType.get_trajectory_type(self.create_dummy_trajectory(StateType.KS))
+        assert TrajectoryType.KS == TrajectoryType.get_trajectory_type(dummy_trajectory)
         assert TrajectoryType.KS.valid_vehicle_model(VehicleModel.KS)
         assert not TrajectoryType.KS.valid_vehicle_model(VehicleModel.PM)
         assert not TrajectoryType.KS.valid_vehicle_model(VehicleModel.ST)
         assert not TrajectoryType.KS.valid_vehicle_model(VehicleModel.MB)
 
     def test_mb_trajectory_type(self):
+        dummy_trajectory = DummyDataGenerator.create_random_mb_trajectory()
         assert TrajectoryType.MB.value == 'mbTrajectory'
         assert TrajectoryType.MB.state_type == StateType.MB
-        assert TrajectoryType.MB == TrajectoryType.get_trajectory_type(self.create_dummy_trajectory(StateType.MB))
+        assert TrajectoryType.MB == TrajectoryType.get_trajectory_type(dummy_trajectory)
         assert TrajectoryType.MB.valid_vehicle_model(VehicleModel.MB)
         assert not TrajectoryType.MB.valid_vehicle_model(VehicleModel.PM)
         assert not TrajectoryType.MB.valid_vehicle_model(VehicleModel.ST)
         assert not TrajectoryType.MB.valid_vehicle_model(VehicleModel.KS)
 
     def test_input_vector_type(self):
-        dummy_trajectory = self.create_dummy_trajectory(StateType.Input)
+        dummy_trajectory = DummyDataGenerator.create_random_input_vector()
         assert TrajectoryType.Input.value == 'inputVector'
         assert TrajectoryType.Input.state_type == StateType.Input
         assert TrajectoryType.Input == TrajectoryType.get_trajectory_type(dummy_trajectory)
@@ -176,7 +496,7 @@ class TestTrajectoryType(unittest.TestCase):
         assert not TrajectoryType.Input.valid_vehicle_model(VehicleModel.PM)
 
     # def test_pm_input_vector_type(self):
-    #     dummy_trajectory = self.create_dummy_trajectory(StateType.PMInput)
+    #     dummy_trajectory = DummyDataGenerator.create_random_pm_input_vector()
     #     assert TrajectoryType.PMInput.value == 'pmInputVector'
     #     assert TrajectoryType.PMInput.state_type == StateType.PMInput
     #     assert TrajectoryType.PMInput == TrajectoryType.get_trajectory_type(dummy_trajectory)
@@ -188,24 +508,13 @@ class TestTrajectoryType(unittest.TestCase):
 
 class TestPlanningProblemSolution(unittest.TestCase):
 
-    @staticmethod
-    def create_dummy_state(state_type: StateType, time_step: int) -> State:
-        values = {field: 0.0 for field in state_type.fields}
-        values['time_step'] = time_step
-        return State(**values)
-
-    @classmethod
-    def create_dummy_trajectory(cls, trajectory_type: TrajectoryType, count=5) -> Trajectory:
-        state_list = [cls.create_dummy_state(trajectory_type.state_type, time_step) for time_step in range(count)]
-        return Trajectory(initial_time_step=state_list[0].time_step, state_list=state_list)
-
     def test_planning_problem_solution(self):
         pp_solution = PlanningProblemSolution(
             planning_problem_id=1,
             vehicle_model=VehicleModel.PM,
             vehicle_type=VehicleType.FORD_ESCORT,
             cost_function=CostFunction.JB1,
-            trajectory=self.create_dummy_trajectory(TrajectoryType.PM)
+            trajectory=DummyDataGenerator.create_random_pm_trajectory()
         )
 
         assert pp_solution.planning_problem_id == 1
@@ -222,7 +531,7 @@ class TestPlanningProblemSolution(unittest.TestCase):
             vehicle_model=VehicleModel.PM,
             vehicle_type=VehicleType.FORD_ESCORT,
             cost_function=CostFunction.JB1,
-            trajectory=self.create_dummy_trajectory(TrajectoryType.PM)
+            trajectory=DummyDataGenerator.create_random_pm_trajectory()
         )
 
         with self.assertRaises(Exception):
@@ -234,7 +543,7 @@ class TestPlanningProblemSolution(unittest.TestCase):
             vehicle_model=VehicleModel.PM,
             vehicle_type=VehicleType.FORD_ESCORT,
             cost_function=CostFunction.JB1,
-            trajectory=self.create_dummy_trajectory(TrajectoryType.PM)
+            trajectory=DummyDataGenerator.create_random_pm_trajectory()
         )
 
         with self.assertRaises(Exception):
@@ -246,51 +555,30 @@ class TestPlanningProblemSolution(unittest.TestCase):
             vehicle_model=VehicleModel.PM,
             vehicle_type=VehicleType.FORD_ESCORT,
             cost_function=CostFunction.JB1,
-            trajectory=self.create_dummy_trajectory(TrajectoryType.PM)
+            trajectory=DummyDataGenerator.create_random_pm_trajectory()
         )
 
         with self.assertRaises(Exception):
-            pp_solution.trajectory = self.create_dummy_trajectory(TrajectoryType.KS)
+            pp_solution.trajectory = DummyDataGenerator.create_random_ks_trajectory()
 
 
 class TestSolution(unittest.TestCase):
 
-    @staticmethod
-    def create_dummy_state(state_type: StateType, time_step: int) -> State:
-        values = {field: 0.0 for field in state_type.fields}
-        values['time_step'] = time_step
-        return State(**values)
-
-    @classmethod
-    def create_dummy_trajectory(cls, trajectory_type: TrajectoryType, count=5) -> Trajectory:
-        state_list = [cls.create_dummy_state(trajectory_type.state_type, time_step) for time_step in range(count)]
-        return Trajectory(initial_time_step=state_list[0].time_step, state_list=state_list)
-
-    @classmethod
-    def create_dummy_pp_solution(cls,
-                                 pp_id: int,
-                                 vehicle_model: VehicleModel,
-                                 vehicle_type: VehicleType,
-                                 cost_function: CostFunction,
-                                 trajectory_type: TrajectoryType):
-        trajectory = cls.create_dummy_trajectory(trajectory_type)
-        return PlanningProblemSolution(pp_id, vehicle_model, vehicle_type, cost_function, trajectory)
-
     def test_solution_vehicle_ids(self):
-        pp_solution_1 = self.create_dummy_pp_solution(
-            pp_id=1,
+        pp_solution_1 = PlanningProblemSolution(
+            planning_problem_id=1,
             vehicle_model=VehicleModel.KS,
             vehicle_type=VehicleType.FORD_ESCORT,
             cost_function=CostFunction.JB1,
-            trajectory_type=TrajectoryType.KS
+            trajectory=DummyDataGenerator.create_random_ks_trajectory()
         )
 
-        pp_solution_2 = self.create_dummy_pp_solution(
-            pp_id=2,
+        pp_solution_2 = PlanningProblemSolution(
+            planning_problem_id=2,
             vehicle_model=VehicleModel.ST,
             vehicle_type=VehicleType.BMW_320i,
             cost_function=CostFunction.SA1,
-            trajectory_type=TrajectoryType.ST
+            trajectory=DummyDataGenerator.create_random_st_trajectory()
         )
 
         solution_single = Solution(scenario_id='TEST', planning_problem_solutions=[pp_solution_1])
@@ -300,20 +588,20 @@ class TestSolution(unittest.TestCase):
         assert solution_collab.vehicle_ids == ['KS1', 'ST2']
 
     def test_solution_cost_ids(self):
-        pp_solution_1 = self.create_dummy_pp_solution(
-            pp_id=1,
+        pp_solution_1 = PlanningProblemSolution(
+            planning_problem_id=1,
             vehicle_model=VehicleModel.KS,
             vehicle_type=VehicleType.FORD_ESCORT,
             cost_function=CostFunction.JB1,
-            trajectory_type=TrajectoryType.KS
+            trajectory=DummyDataGenerator.create_random_ks_trajectory()
         )
 
-        pp_solution_2 = self.create_dummy_pp_solution(
-            pp_id=2,
+        pp_solution_2 = PlanningProblemSolution(
+            planning_problem_id=2,
             vehicle_model=VehicleModel.ST,
             vehicle_type=VehicleType.BMW_320i,
             cost_function=CostFunction.SA1,
-            trajectory_type=TrajectoryType.ST
+            trajectory=DummyDataGenerator.create_random_st_trajectory()
         )
 
         solution_single = Solution(scenario_id='TEST', planning_problem_solutions=[pp_solution_1])
@@ -323,20 +611,20 @@ class TestSolution(unittest.TestCase):
         assert solution_collab.cost_ids == ['JB1', 'SA1']
 
     def test_solution_benchmark_id(self):
-        pp_solution_1 = self.create_dummy_pp_solution(
-            pp_id=1,
+        pp_solution_1 = PlanningProblemSolution(
+            planning_problem_id=1,
             vehicle_model=VehicleModel.KS,
             vehicle_type=VehicleType.FORD_ESCORT,
             cost_function=CostFunction.JB1,
-            trajectory_type=TrajectoryType.KS
+            trajectory=DummyDataGenerator.create_random_ks_trajectory()
         )
 
-        pp_solution_2 = self.create_dummy_pp_solution(
-            pp_id=2,
+        pp_solution_2 = PlanningProblemSolution(
+            planning_problem_id=2,
             vehicle_model=VehicleModel.ST,
             vehicle_type=VehicleType.BMW_320i,
             cost_function=CostFunction.SA1,
-            trajectory_type=TrajectoryType.ST
+            trajectory=DummyDataGenerator.create_random_st_trajectory()
         )
 
         solution_single = Solution(scenario_id='TEST', planning_problem_solutions=[pp_solution_1])
@@ -345,112 +633,212 @@ class TestSolution(unittest.TestCase):
         assert solution_single.benchmark_id == 'KS1:JB1:TEST:2018b'
         assert solution_collab.benchmark_id == '[KS1,ST2]:[JB1,SA1]:TEST:2018b'
 
+    def test_print(self):
+        pp_solution_1 = PlanningProblemSolution(
+            planning_problem_id=1,
+            vehicle_model=VehicleModel.MB,
+            vehicle_type=VehicleType.FORD_ESCORT,
+            cost_function=CostFunction.JB1,
+            trajectory=DummyDataGenerator.create_random_input_vector()
+        )
 
-# class TestCommonroadSolutionWriter(unittest.TestCase):
-#     def setUp(self):
-#         """set up for testing: generate state lists and trajectories for various vehicle models"""
-#         self.output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, '.pytest_cache')
-#         if not os.path.exists(self.output_dir):
-#             os.makedirs(self.output_dir)
-#         for file in os.listdir(self.output_dir):
-#             if file.endswith('.xml'):
-#                 os.remove(os.path.join(self.output_dir, file))
-#
-#         pm_state_list = list()
-#         ks_state_list = list()
-#         st_state_list = list()
-#         invalid_trajectory_list = list()
-#         for i in range(10):
-#             pm_state_list.append(State(**{'position': [i, -i], 'velocity': i*.2, 'velocity_y': i*0.001, 'time_step': i}))
-#             ks_state = State(**{'position': [i, -i], 'velocity': i*.2, 'orientation': i*0.001, 'steering_angle': 0.0,
-#                              'time_step': i})
-#             ks_state_list.append(ks_state)
-#             st_state = State(**{'position': [i, -i], 'velocity': i*.2, 'orientation': i*0.001, 'steering_angle': 0.0,
-#                                 'yaw_rate': i*0.2, 'slip_angle': 0.1, 'time_step': i})
-#             st_state_list.append(st_state)
-#             invalid_trajectory_list.append(State(**{'position': [i, -i], 'velocity': i*.2, 'time_step': i}))
-#
-#         self.trajectory_pm = Trajectory(0, pm_state_list)
-#         self.trajectory_ks = Trajectory(0, ks_state_list)
-#         self.trajectory_st = Trajectory(0, st_state_list)
-#         self.invalid_trajectory = Trajectory(0, invalid_trajectory_list)
-#
-#         pm_input_list = []
-#         input_list = []
-#         for i in range(10):
-#             pm_input = State(**{'orientation': 0.1, 'acceleration': 5.0, 'time_step': i})
-#             pm_input_list.append(pm_input)
-#             input = State(**{'steering_angle_speed': 0.1, 'acceleration': 5.0, 'time_step': i})
-#             input_list.append(input)
-#         self.input_traj = Trajectory(0, input_list)
-#         self.pm_input_traj = Trajectory(0, pm_input_list)
-#
-#     def test_write_trajectories_to_file(self):
-#         """
-#         test whether a file is generated from a state trajectory in setUp
-#         :return:
-#         """
-#         csw = CommonRoadSolutionWriter(self.output_dir, scenario_id='test_scenario', step_size=0.1)
-#         csw.add_solution_trajectory(self.trajectory_ks, 5)
-#         csw.write_to_file()
-#         benchmark_id = CommonRoadSolutionWriter._create_benchmark_id('test_scenario', VehicleType.FORD_ESCORT,
-#                                                                      VehicleModel.KS, CostFunction.JB1)
-#         assert(os.path.exists(os.path.join(self.output_dir, 'solution_' + benchmark_id + '.xml')))
-#
-#         with self.assertRaises(AssertionError):
-#             csw.add_solution_trajectory(self.invalid_trajectory, 2)
-#
-#     def test_write_input_to_file(self):
-#         """
-#         test whether a file is generated from an input trajectory in setUp
-#         :return:
-#         """
-#         csw = CommonRoadSolutionWriter(self.output_dir, scenario_id='test_scenario', step_size=0.1,
-#                                        cost_function=CostFunction.SA1)
-#         csw.add_solution_input_vector(self.input_traj, 5)
-#         csw.write_to_file()
-#         benchmark_id = CommonRoadSolutionWriter._create_benchmark_id('test_scenario', VehicleType.FORD_ESCORT,
-#                                                                      VehicleModel.KS, CostFunction.SA1)
-#         assert (os.path.exists(os.path.join(self.output_dir, 'solution_' + benchmark_id + '.xml')))
-#
-#     def test_against_xsd(self):
-#         csw = CommonRoadSolutionWriter(self.output_dir, scenario_id='test_scenario', step_size=0.1,
-#                                        vehicle_model=VehicleModel.ST, cost_function=CostFunction.WX1,
-#                                        vehicle_type=VehicleType.VW_VANAGON, computation_time=0.001)
-#         csw.add_solution_trajectory(self.trajectory_st, 5)
-#         csw.write_to_file(overwrite=True)
-#         csw.check_validity_of_solution_file()
-#
-#         csw = CommonRoadSolutionWriter(self.output_dir, scenario_id='test_scenario', step_size=0.1,
-#                                        vehicle_model=VehicleModel.ST, cost_function=CostFunction.WX1,
-#                                        vehicle_type=VehicleType.VW_VANAGON)
-#         csw.add_solution_input_vector(self.input_traj, 5)
-#         csw.write_to_file(overwrite=True)
-#         csw.check_validity_of_solution_file()
-#
-#         csw = CommonRoadSolutionWriter(self.output_dir, scenario_id='test_scenario', step_size=0.1,
-#                                        vehicle_model=VehicleModel.KS, cost_function=CostFunction.WX1,
-#                                        vehicle_type=VehicleType.VW_VANAGON)
-#         csw.add_solution_input_vector(self.input_traj, 5)
-#         csw.write_to_file(overwrite=True)
-#         csw.check_validity_of_solution_file()
-#
-#     def test_write_traejctory_and_input(self):
-#         """
-#         test to see whether a state and input trajectory can be submitted at the same time. As a result, it is not only
-#         checked whether the solution is drivable, but also whether the state and input trajectory are consistent. The
-#         latter is not tested in this unit test
-#         :return:
-#         """
-#         csw = CommonRoadSolutionWriter(self.output_dir, scenario_id='test_scenario', step_size=0.1,
-#                                        vehicle_model=VehicleModel.ST, cost_function=CostFunction.WX1,
-#                                        vehicle_type=VehicleType.VW_VANAGON)
-#         csw.add_solution_trajectory(self.trajectory_st, 5)
-#         csw.add_solution_input_vector(self.input_traj, 5)
-#         csw.write_to_file()
-#         benchmark_id = CommonRoadSolutionWriter._create_benchmark_id('test_scenario', VehicleType.VW_VANAGON,
-#                                                                      VehicleModel.ST, CostFunction.WX1)
-#         assert (os.path.exists(os.path.join(self.output_dir, 'solution_' + benchmark_id + '.xml')))
+        solution = Solution(scenario_id='TEST', planning_problem_solutions=[pp_solution_1])
+        print(CommonRoadSolutionWriter(solution).dump(pretty=True))
+
+
+class TestCommonRoadSolutionWriter(unittest.TestCase):
+
+    @staticmethod
+    def remove_whitespaces(xml_string: str):
+        return re.sub(r"\s+", "", xml_string, flags=re.UNICODE)
+
+    def setUp(self):
+        self.pp_solution1 = PlanningProblemSolution(
+            planning_problem_id=0,
+            vehicle_model=VehicleModel.PM,
+            vehicle_type=VehicleType.FORD_ESCORT,
+            cost_function=CostFunction.JB1,
+            trajectory=DummyDataGenerator.create_random_pm_trajectory()
+        )
+        self.pp_solution2 = PlanningProblemSolution(
+            planning_problem_id=1,
+            vehicle_model=VehicleModel.KS,
+            vehicle_type=VehicleType.BMW_320i,
+            cost_function=CostFunction.SA1,
+            trajectory=DummyDataGenerator.create_random_ks_trajectory()
+        )
+        self.solution_single = Solution(scenario_id='TEST', planning_problem_solutions=[self.pp_solution1])
+        self.solution_collab = Solution(scenario_id='TEST', planning_problem_solutions=[self.pp_solution1,
+                                                                                        self.pp_solution2])
+
+    def tearDown(self):
+        for file in glob('./solution_*.xml'):
+            os.remove(file)
+
+    def test_dump(self):
+        expected_solution_xml_single = DummyDataGenerator.create_solution_xml(self.solution_single)
+        expected_solution_xml_collab = DummyDataGenerator.create_solution_xml(self.solution_collab)
+        solution_xml_single = CommonRoadSolutionWriter(self.solution_single).dump()
+        solution_xml_collab = CommonRoadSolutionWriter(self.solution_collab).dump()
+
+        assert self.remove_whitespaces(solution_xml_single) == self.remove_whitespaces(expected_solution_xml_single)
+        assert self.remove_whitespaces(solution_xml_collab) == self.remove_whitespaces(expected_solution_xml_collab)
+
+    def test_dump_with_attribs(self):
+        self.solution_single.processor_name = 'TEST_CPU'
+        self.solution_collab.processor_name = 'TEST_CPU'
+        self.solution_single.computation_time = 42.042
+        self.solution_collab.computation_time = 42.042
+        expected_solution_xml_single = DummyDataGenerator.create_solution_xml(self.solution_single)
+        expected_solution_xml_collab = DummyDataGenerator.create_solution_xml(self.solution_collab)
+        solution_xml_single = CommonRoadSolutionWriter(self.solution_single).dump()
+        solution_xml_collab = CommonRoadSolutionWriter(self.solution_collab).dump()
+
+        assert self.remove_whitespaces(solution_xml_single) == self.remove_whitespaces(expected_solution_xml_single)
+        assert self.remove_whitespaces(solution_xml_collab) == self.remove_whitespaces(expected_solution_xml_collab)
+
+    def test_write_to_file(self):
+        CommonRoadSolutionWriter(self.solution_single).write_to_file()
+        CommonRoadSolutionWriter(self.solution_collab).write_to_file()
+
+        assert os.path.exists('./solution_' + self.solution_single.benchmark_id + '.xml')
+        assert os.path.exists('./solution_' + self.solution_collab.benchmark_id + '.xml')
+
+    def test_write_to_file_overwrite_not_allowed(self):
+        CommonRoadSolutionWriter(self.solution_single).write_to_file()
+        CommonRoadSolutionWriter(self.solution_collab).write_to_file()
+
+        with warnings.catch_warnings(record=True) as w:
+            CommonRoadSolutionWriter(self.solution_single).write_to_file()
+            CommonRoadSolutionWriter(self.solution_collab).write_to_file()
+
+            assert 'already exists' in str(w[-2].message)
+            assert 'already exists' in str(w[-1].message)
+
+    def test_write_to_file_invalid_output_path(self):
+        with self.assertRaises(NotADirectoryError):
+            CommonRoadSolutionWriter(self.solution_single).write_to_file(output_path='./tests/')
+
+
+class TestCommonRoadSolutionReader(unittest.TestCase):
+
+    def setUp(self):
+        self.pp_solution1 = PlanningProblemSolution(
+            planning_problem_id=0,
+            vehicle_model=VehicleModel.PM,
+            vehicle_type=VehicleType.FORD_ESCORT,
+            cost_function=CostFunction.JB1,
+            trajectory=DummyDataGenerator.create_random_pm_trajectory()
+        )
+        self.pp_solution2 = PlanningProblemSolution(
+            planning_problem_id=1,
+            vehicle_model=VehicleModel.KS,
+            vehicle_type=VehicleType.BMW_320i,
+            cost_function=CostFunction.SA1,
+            trajectory=DummyDataGenerator.create_random_ks_trajectory()
+        )
+        self.solution_single = Solution(scenario_id='TEST', planning_problem_solutions=[self.pp_solution1])
+        self.solution_collab = Solution(scenario_id='TEST', planning_problem_solutions=[self.pp_solution1,
+                                                                                        self.pp_solution2])
+
+        CommonRoadSolutionWriter(self.solution_single).write_to_file()
+        CommonRoadSolutionWriter(self.solution_collab).write_to_file()
+
+        self.solution_single_path = './solution_' + self.solution_single.benchmark_id + '.xml'
+        self.solution_collab_path = './solution_' + self.solution_collab.benchmark_id + '.xml'
+
+    def tearDown(self):
+        for file in glob('./solution_*.xml'):
+            os.remove(file)
+
+    def test_fromstring(self):
+        solution_xml_single = DummyDataGenerator.create_solution_xml(self.solution_single)
+        solution_xml_collab = DummyDataGenerator.create_solution_xml(self.solution_collab)
+
+        parsed_solution_single = CommonRoadSolutionReader.fromstring(solution_xml_single)
+        parsed_solution_collab = CommonRoadSolutionReader.fromstring(solution_xml_collab)
+
+        assert parsed_solution_single.scenario_id == self.solution_single.scenario_id
+        assert parsed_solution_collab.scenario_id == self.solution_collab.scenario_id
+        assert parsed_solution_single.date.strftime('%Y-%m-%d') == self.solution_single.date.strftime('%Y-%m-%d')
+        assert parsed_solution_collab.date.strftime('%Y-%m-%d') == self.solution_collab.date.strftime('%Y-%m-%d')
+        assert parsed_solution_single.computation_time == self.solution_single.computation_time
+        assert parsed_solution_collab.computation_time == self.solution_collab.computation_time
+        assert parsed_solution_single.processor_name == self.solution_single.processor_name
+        assert parsed_solution_collab.processor_name == self.solution_collab.processor_name
+        assert parsed_solution_single.version == self.solution_single.version
+        assert parsed_solution_collab.version == self.solution_collab.version
+        assert parsed_solution_single.vehicle_ids == self.solution_single.vehicle_ids
+        assert parsed_solution_collab.vehicle_ids == self.solution_collab.vehicle_ids
+        assert parsed_solution_single.cost_ids == self.solution_single.cost_ids
+        assert parsed_solution_collab.cost_ids == self.solution_collab.cost_ids
+        assert parsed_solution_single.planning_problem_ids == self.solution_single.planning_problem_ids
+        assert parsed_solution_collab.planning_problem_ids == self.solution_collab.planning_problem_ids
+        assert parsed_solution_single.trajectory_types == self.solution_single.trajectory_types
+        assert parsed_solution_collab.trajectory_types == self.solution_collab.trajectory_types
+        assert parsed_solution_single.benchmark_id == self.solution_single.benchmark_id
+        assert parsed_solution_collab.benchmark_id == self.solution_collab.benchmark_id
+
+    def test_fromstring_with_attribs(self):
+        self.solution_single.processor_name = 'TEST_CPU'
+        self.solution_collab.processor_name = 'TEST_CPU'
+        self.solution_single.computation_time = 42.042
+        self.solution_collab.computation_time = 42.042
+        solution_xml_single = DummyDataGenerator.create_solution_xml(self.solution_single)
+        solution_xml_collab = DummyDataGenerator.create_solution_xml(self.solution_collab)
+
+        parsed_solution_single = CommonRoadSolutionReader.fromstring(solution_xml_single)
+        parsed_solution_collab = CommonRoadSolutionReader.fromstring(solution_xml_collab)
+
+        assert parsed_solution_single.scenario_id == self.solution_single.scenario_id
+        assert parsed_solution_collab.scenario_id == self.solution_collab.scenario_id
+        assert parsed_solution_single.date.strftime('%Y-%m-%d') == self.solution_single.date.strftime('%Y-%m-%d')
+        assert parsed_solution_collab.date.strftime('%Y-%m-%d') == self.solution_collab.date.strftime('%Y-%m-%d')
+        assert parsed_solution_single.computation_time == self.solution_single.computation_time
+        assert parsed_solution_collab.computation_time == self.solution_collab.computation_time
+        assert parsed_solution_single.processor_name == self.solution_single.processor_name
+        assert parsed_solution_collab.processor_name == self.solution_collab.processor_name
+        assert parsed_solution_single.version == self.solution_single.version
+        assert parsed_solution_collab.version == self.solution_collab.version
+        assert parsed_solution_single.vehicle_ids == self.solution_single.vehicle_ids
+        assert parsed_solution_collab.vehicle_ids == self.solution_collab.vehicle_ids
+        assert parsed_solution_single.cost_ids == self.solution_single.cost_ids
+        assert parsed_solution_collab.cost_ids == self.solution_collab.cost_ids
+        assert parsed_solution_single.planning_problem_ids == self.solution_single.planning_problem_ids
+        assert parsed_solution_collab.planning_problem_ids == self.solution_collab.planning_problem_ids
+        assert parsed_solution_single.trajectory_types == self.solution_single.trajectory_types
+        assert parsed_solution_collab.trajectory_types == self.solution_collab.trajectory_types
+        assert parsed_solution_single.benchmark_id == self.solution_single.benchmark_id
+        assert parsed_solution_collab.benchmark_id == self.solution_collab.benchmark_id
+
+    def test_open(self):
+        parsed_solution_single = CommonRoadSolutionReader.open(self.solution_single_path)
+        parsed_solution_collab = CommonRoadSolutionReader.open(self.solution_collab_path)
+
+        assert parsed_solution_single.scenario_id == self.solution_single.scenario_id
+        assert parsed_solution_collab.scenario_id == self.solution_collab.scenario_id
+        assert parsed_solution_single.date.strftime('%Y-%m-%d') == self.solution_single.date.strftime('%Y-%m-%d')
+        assert parsed_solution_collab.date.strftime('%Y-%m-%d') == self.solution_collab.date.strftime('%Y-%m-%d')
+        assert parsed_solution_single.computation_time == self.solution_single.computation_time
+        assert parsed_solution_collab.computation_time == self.solution_collab.computation_time
+        assert parsed_solution_single.processor_name == self.solution_single.processor_name
+        assert parsed_solution_collab.processor_name == self.solution_collab.processor_name
+        assert parsed_solution_single.version == self.solution_single.version
+        assert parsed_solution_collab.version == self.solution_collab.version
+        assert parsed_solution_single.vehicle_ids == self.solution_single.vehicle_ids
+        assert parsed_solution_collab.vehicle_ids == self.solution_collab.vehicle_ids
+        assert parsed_solution_single.cost_ids == self.solution_single.cost_ids
+        assert parsed_solution_collab.cost_ids == self.solution_collab.cost_ids
+        assert parsed_solution_single.planning_problem_ids == self.solution_single.planning_problem_ids
+        assert parsed_solution_collab.planning_problem_ids == self.solution_collab.planning_problem_ids
+        assert parsed_solution_single.trajectory_types == self.solution_single.trajectory_types
+        assert parsed_solution_collab.trajectory_types == self.solution_collab.trajectory_types
+        assert parsed_solution_single.benchmark_id == self.solution_single.benchmark_id
+        assert parsed_solution_collab.benchmark_id == self.solution_collab.benchmark_id
+
+    def test_open_invalid_path(self):
+        with self.assertRaises(FileNotFoundError):
+            parsed_solution_single = CommonRoadSolutionReader.open(self.solution_single_path + 'invalid')
 
 
 if __name__ == '__main__':

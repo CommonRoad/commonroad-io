@@ -176,6 +176,7 @@ class SupportedCostFunctions(Enum):
 
 
 class PlanningProblemSolution:
+    # TODO Prepare proper error messages to show to the user.
 
     def __init__(self,
                  planning_problem_id: int,
@@ -392,32 +393,62 @@ class Solution:
         """
         return [pp_solution.cost_id for pp_solution in self.planning_problem_solutions]
 
+    @property
+    def planning_problem_ids(self) -> List[int]:
+        """
+        Returns the list of planning problem ids of all PlanningProblemSolutions of the Solution
+
+        Example:
+            1st PlanningProblemSolution planning_problem_id = 0
+            2nd PlanningProblemSolution planning_problem_id = 1
+
+            planning_problem_ids = [0, 1]
+
+        :return: List of planning problem ids
+        """
+        return [pp_solution.planning_problem_id for pp_solution in self.planning_problem_solutions]
+
+    @property
+    def trajectory_types(self) -> List[TrajectoryType]:
+        """
+        Returns the list of trajectory types of all PlanningProblemSolutions of the Solution
+
+        Example:
+            1st PlanningProblemSolution trajectory_type = TrajectoryType.PM
+            2nd PlanningProblemSolution trajectory_type = TrajectoryType.KS
+
+            trajectory_types = [TrajectoryType.PM, TrajectoryType.KS]
+
+        :return: List of trajectory types
+        """
+        return [pp_solution.trajectory_type for pp_solution in self.planning_problem_solutions]
+
 
 class CommonRoadSolutionReader:
+    # TODO Add parser check
+    # TODO Prepare proper error messages to show to the user.
 
     @classmethod
-    def open(cls, filepath: str, parser=None) -> Solution:
+    def open(cls, filepath: str) -> Solution:
         """
         Opens and parses the Solution XML file located on the given path.
 
         :param filepath: Path to the file.
-        :param parser: Set XML schema to parse the solution xml. Default=None
         :return: Solution
         """
-        tree = et.parse(filepath, parser)
+        tree = et.parse(filepath)
         root_node = tree.getroot()
         return cls._parse_solution(root_node)
 
     @classmethod
-    def fromstring(cls, file: str, parser=None) -> Solution:
+    def fromstring(cls, file: str) -> Solution:
         """
         Parses the given Solution XML string.
 
         :param file: xml file as string
-        :param parser: Set XML schema to parse the solution xml. Default=None
         :return: Solution
         """
-        root_node = et.fromstring(file, parser)
+        root_node = et.fromstring(file)
         return cls._parse_solution(root_node)
 
     @classmethod
@@ -445,7 +476,7 @@ class CommonRoadSolutionReader:
                                          trajectory_node: et.Element) -> PlanningProblemSolution:
         """ Parses PlanningProblemSolution from the given XML node. """
         vehicle_model, vehicle_type = cls._parse_vehicle_id(vehicle_id)
-        cost_function = CostFunction(cost_id)
+        cost_function = CostFunction[cost_id]
         pp_id, trajectory = cls._parse_trajectory(trajectory_node)
         return PlanningProblemSolution(pp_id, vehicle_model, vehicle_type, cost_function, trajectory)
 
@@ -508,6 +539,9 @@ class CommonRoadSolutionReader:
 
 
 class CommonRoadSolutionWriter:
+    # TODO Add parser check
+    # TODO Prepare proper error messages to show to the user.
+
     def __init__(self, solution: Solution):
         """
         Creates the xml file for the given solution that can be dumped as string, or written to file later on.
@@ -535,7 +569,7 @@ class CommonRoadSolutionWriter:
         root_node.set('benchmark_id', solution.benchmark_id)
         if solution.date is not None: root_node.set('date', solution.date.strftime('%Y-%m-%d'))
         if solution.processor_name is not None: root_node.set('processor_name', solution.processor_name)
-        if solution.computation_time is not None: root_node.set('computation_time', solution.computation_time)
+        if solution.computation_time is not None: root_node.set('computation_time', str(solution.computation_time))
         return root_node
 
     @classmethod
@@ -595,15 +629,15 @@ class CommonRoadSolutionWriter:
         :return:
         """
 
-        if not os.path.exists(os.path.dirname(output_path)):
-            NotADirectoryError("Directory %s does not exist." % os.path.dirname(output_path))
-
         filename = filename if filename is not None else 'solution_%s.xml' % self.solution.benchmark_id
         fullpath = os.path.join(output_path, filename) if filename is not None else os.path.join(output_path, filename)
 
+        if not os.path.exists(os.path.dirname(fullpath)):
+            raise NotADirectoryError("Directory %s does not exist." % os.path.dirname(fullpath))
+
         if os.path.exists(fullpath) and not overwrite:
             warnings.warn("File %s already exists. If you want to overwrite it set overwrite=True." % fullpath)
-            return
 
-        with open(fullpath, 'w') as f:
-            f.write(self.dump(pretty))
+        else:
+            with open(fullpath, 'w') as f:
+                f.write(self.dump(pretty))
