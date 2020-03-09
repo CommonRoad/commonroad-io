@@ -10,11 +10,35 @@ from enum import Enum, unique
 from typing import List, Tuple, Union
 from datetime import datetime
 
-from commonroad.common.solution_writer import VehicleModel, CostFunction, VehicleType, SCENARIO_VERSION
 from commonroad.scenario.trajectory import State, Trajectory
 
+SCENARIO_VERSION = '2018b'
 
-# TODO move VehicleModel, CostFunction, VehicleType, and SCENARIO_VERSION from solution_writer.py when deprecated
+
+@unique
+class VehicleType(Enum):
+    FORD_ESCORT = 1
+    BMW_320i = 2
+    VW_VANAGON = 3
+
+
+@unique
+class VehicleModel(Enum):
+    PM = 0
+    ST = 1
+    KS = 2
+    MB = 3
+
+
+@unique
+class CostFunction(Enum):
+    JB1 = 0
+    SA1 = 1
+    WX1 = 2
+    SM1 = 3
+    SM2 = 4
+    SM3 = 5
+
 
 @unique
 class StateFields(Enum):

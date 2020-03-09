@@ -5,15 +5,14 @@ import xml.etree.ElementTree as et
 from xml.dom import minidom
 import numpy as np
 from typing import List, Union
-from enum import Enum, unique
 import warnings
 import datetime
 import copy
 from lxml import etree, objectify
 
+from commonroad.common.solution import VehicleType, CostFunction, VehicleModel, SCENARIO_VERSION
 from commonroad.geometry.transform import rotate_translate
 from commonroad.scenario.trajectory import Trajectory
-from commonroad.common.validity import is_real_number_vector
 
 __author__ = "Christina Miller"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -23,34 +22,6 @@ __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad@in.tum.de"
 __status__ = "Released"
 
-
-SCENARIO_VERSION = '2018b'
-
-
-@unique
-class VehicleType(Enum):
-    FORD_ESCORT = 1
-    BMW_320i = 2
-    VW_VANAGON = 3
-
-
-@unique
-class VehicleModel(Enum):
-    PM = 0
-    ST = 1
-    KS = 2
-    MB = 3
-
-
-@unique
-class CostFunction(Enum):
-    JB1 = 0
-    SA1 = 1
-    WX1 = 2
-    SM1 = 3
-    SM2 = 4
-    SM3 = 5
-
 import os, platform, subprocess, re
 
 delete_from_cpu_name = ['(R)', '(TM)']
@@ -58,8 +29,8 @@ delete_from_cpu_name = ['(R)', '(TM)']
 
 class CommonRoadSolutionWriter:
     def __init__(self, output_dir: str, scenario_id: str, step_size: float,
-                 vehicle_type: VehicleType=VehicleType.FORD_ESCORT, vehicle_model: VehicleModel=VehicleModel.KS,
-                 cost_function: CostFunction=CostFunction.JB1, computation_time: float=None,
+                 vehicle_type: VehicleType = VehicleType.FORD_ESCORT, vehicle_model: VehicleModel = VehicleModel.KS,
+                 cost_function: CostFunction = CostFunction.JB1, computation_time: float = None,
                  processor_name: Union[str, None] = 'auto'):
         """
         Write solution xml files to upload at commonroad.in.tum.de.
@@ -90,7 +61,7 @@ class CommonRoadSolutionWriter:
             processor_name = self._get_processor_name()
         self._write_header(computation_time, processor_name)
 
-    def add_solution_trajectory(self,  trajectory: Trajectory, planning_problem_id: int):
+    def add_solution_trajectory(self, trajectory: Trajectory, planning_problem_id: int):
         """
         Add a trajectory to the xml tree.
 
@@ -146,7 +117,7 @@ class CommonRoadSolutionWriter:
         if isinstance(processor_name, str):
             self.root_node.set('processor_name', processor_name)
 
-    def write_to_file(self, overwrite: bool=False):
+    def write_to_file(self, overwrite: bool = False):
         """
         Write xml file to ouput_dir
 
@@ -179,7 +150,6 @@ class CommonRoadSolutionWriter:
             raise Exception(
                 'Could not produce valid CommonRoadSolution file! Error: {}'.format(error.msg)
             )
-
 
     def _dump(self):
         # rough_string = etree.tostring(
@@ -223,6 +193,7 @@ class CommonRoadSolutionWriter:
                     return strip_substrings(name_tmp)
         return None
 
+
 class PMTrajectoryXMLNode:
     @classmethod
     def create_node(cls, trajectory: Trajectory) -> et.Element:
@@ -233,7 +204,6 @@ class PMTrajectoryXMLNode:
             mandatory_fields = ['position', 'velocity', 'orientation', 'time_step']
             is_valid_trajectory(trajectory, mandatory_fields)
             trajectory = split_velocity_to_xy(trajectory)
-
 
         trajectory_node = et.Element('pmTrajectory')
         for state in trajectory.state_list:
@@ -251,17 +221,19 @@ class PMTrajectoryXMLNode:
             time_node.text = str(state.time_step)
         return trajectory_node
 
+
 def split_velocity_to_xy(trajectory: Trajectory) -> Trajectory:
     """Converts trajectory from [v,orientation] ot [v_x,v_y]"""
     trajectory = copy.deepcopy(trajectory)
 
     for state in trajectory.state_list:
-        v_temp = np.array([[state.velocity,0.0]])
-        v_temp = rotate_translate(v_temp,np.array([0.0, 0.0]),state.orientation)
-        state.velocity = v_temp[0,0]
-        state.velocity_y = v_temp[0,1]
+        v_temp = np.array([[state.velocity, 0.0]])
+        v_temp = rotate_translate(v_temp, np.array([0.0, 0.0]), state.orientation)
+        state.velocity = v_temp[0, 0]
+        state.velocity_y = v_temp[0, 1]
 
     return trajectory
+
 
 class STTrajectoryXMLNode:
     @classmethod
@@ -446,5 +418,5 @@ class InputVectorXMLNode:
 def is_valid_trajectory(trajectory: Trajectory, mandatory_fields: List):
     for state in trajectory.state_list:
         for field in mandatory_fields:
-            assert(hasattr(state, field)), '<PlanningProblem/initial_state> fields [{}] are mandatory. ' \
-                                           'No {} attribute found.'.format(', '.join(mandatory_fields), field)
+            assert (hasattr(state, field)), '<PlanningProblem/initial_state> fields [{}] are mandatory. ' \
+                                            'No {} attribute found.'.format(', '.join(mandatory_fields), field)
