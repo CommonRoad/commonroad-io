@@ -333,7 +333,7 @@ class Solution:
                  planning_problem_solutions: List[PlanningProblemSolution],
                  date: datetime = datetime.today(),
                  computation_time: Union[float, None] = None,
-                 processor_name: Union[str, None] = 'auto',
+                 processor_name: Union[str, None] = None,
                  version: str = SCENARIO_VERSION):
         """
         Constructor for the Solution class.

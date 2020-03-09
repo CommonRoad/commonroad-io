@@ -7,8 +7,7 @@ from glob import glob
 
 import numpy as np
 from commonroad.common.solution import StateFields, XMLStateFields, StateType, TrajectoryType, PlanningProblemSolution, \
-    Solution, CommonRoadSolutionWriter, CommonRoadSolutionReader
-from commonroad.common.solution_writer import VehicleModel, VehicleType, CostFunction
+    Solution, CommonRoadSolutionWriter, CommonRoadSolutionReader, VehicleModel, VehicleType, CostFunction
 from commonroad.scenario.trajectory import State, Trajectory
 
 
