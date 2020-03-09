@@ -36,7 +36,7 @@ class StateFields(Enum):
           'right_front_wheel_angular_speed', 'left_rear_wheel_angular_speed', 'right_rear_wheel_angular_speed',
           'delta_y_f', 'delta_y_r', 'time_step']
     Input = ['steering_angle_speed', 'acceleration', 'time_step']
-    PMInput = ['acceleration_x', 'acceleration_y', 'time_step']
+    PMInput = ['acceleration', 'acceleration_y', 'time_step']
 
 
 @unique

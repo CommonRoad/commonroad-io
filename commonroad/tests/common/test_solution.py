@@ -102,7 +102,7 @@ class DummyDataGenerator:
     @classmethod
     def create_random_pm_input(cls, time_step=0):
         return State(
-            acceleration_x=cls.create_random_float(-5, 5),
+            acceleration=cls.create_random_float(-5, 5),
             acceleration_y=cls.create_random_float(-5, 5),
             time_step=time_step
         )
@@ -284,7 +284,7 @@ class DummyDataGenerator:
             <time>%s</time>
         </pmInput>
         ''' % (
-            str(state.acceleration_x),
+            str(state.acceleration),
             str(state.acceleration_y),
             str(state.time_step)
         )
@@ -363,7 +363,7 @@ class TestStateFields(unittest.TestCase):
         assert StateFields.Input.value == ['steering_angle_speed', 'acceleration', 'time_step']
 
     def test_pm_input_fields(self):
-        assert StateFields.PMInput.value == ['acceleration_x', 'acceleration_y', 'time_step']
+        assert StateFields.PMInput.value == ['acceleration', 'acceleration_y', 'time_step']
 
 
 class TestXMLStateFields(unittest.TestCase):
