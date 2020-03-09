@@ -47,6 +47,10 @@ class CommonRoadSolutionWriter:
         :param processor_name: name of processor time required to obtain solution (optional). Determined automatically
         if set to 'auto'.
         """
+        warnings.warn(
+            'Module commonroad.common.solution_writer is deprecated. Use commonroad.common.solution module instead',
+            DeprecationWarning
+        )
 
         if cost_function not in CostFunction:
             warnings.warn('Cost function not listed. May cannot be evaluated.')
