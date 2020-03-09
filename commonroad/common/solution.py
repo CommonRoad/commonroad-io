@@ -109,8 +109,8 @@ class StateType(Enum):
         """
         attrs = state.attributes
         for state_fields in StateFields:
-            if not all([attr in state_fields.value for attr in attrs]): continue
             if not len(attrs) == len(state_fields.value): continue
+            if not all([attr in state_fields.value for attr in attrs]): continue
             return cls[state_fields.name]
         raise Exception('Given state is not valid!')
 
@@ -176,8 +176,6 @@ class SupportedCostFunctions(Enum):
 
 
 class PlanningProblemSolution:
-    # TODO Prepare proper error messages to show to the user.
-
     def __init__(self,
                  planning_problem_id: int,
                  vehicle_model: VehicleModel,

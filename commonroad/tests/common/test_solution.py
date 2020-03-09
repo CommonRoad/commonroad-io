@@ -99,13 +99,13 @@ class DummyDataGenerator:
             time_step=time_step
         )
 
-    # @classmethod
-    # def create_random_pm_input(cls, time_step=0):
-    #     return State(
-    #         acceleration_x=cls.create_random_float(-5, 5),
-    #         acceleration_y=cls.create_random_float(-5, 5),
-    #         time_step=time_step
-    #     )
+    @classmethod
+    def create_random_pm_input(cls, time_step=0):
+        return State(
+            acceleration_x=cls.create_random_float(-5, 5),
+            acceleration_y=cls.create_random_float(-5, 5),
+            time_step=time_step
+        )
 
     @classmethod
     def create_random_pm_trajectory(cls, state_count=5):
@@ -127,9 +127,9 @@ class DummyDataGenerator:
     def create_random_input_vector(cls, input_count=5):
         return Trajectory(initial_time_step=0, state_list=[cls.create_random_input(ts) for ts in range(input_count)])
 
-    # @classmethod
-    # def create_random_pm_input_vector(cls, input_count=5):
-    #     return Trajectory(initial_time_step=0, state_list=[cls.create_random_pm_input(ts) for ts in range(input_count)])
+    @classmethod
+    def create_random_pm_input_vector(cls, input_count=5):
+        return Trajectory(initial_time_step=0, state_list=[cls.create_random_pm_input(ts) for ts in range(input_count)])
 
     @classmethod
     def create_pm_state_xml(cls, state: State):
@@ -436,11 +436,11 @@ class TestStateType(unittest.TestCase):
         assert StateType.Input.xml_fields == XMLStateFields.Input.value
         assert StateType.Input == StateType.get_state_type(DummyDataGenerator.create_random_input())
 
-    # def test_pm_input_state_type(self):
-    #     assert StateType.PMInput.value == 'pmInput'
-    #     assert StateType.PMInput.fields == StateFields.PMInput.value
-    #     assert StateType.PMInput.xml_fields == XMLStateFields.PMInput.value
-    #     assert StateType.PMInput == StateType.get_state_type(DummyDataGenerator.create_random_pm_input())
+    def test_pm_input_state_type(self):
+        assert StateType.PMInput.value == 'pmInput'
+        assert StateType.PMInput.fields == StateFields.PMInput.value
+        assert StateType.PMInput.xml_fields == XMLStateFields.PMInput.value
+        assert StateType.PMInput == StateType.get_state_type(DummyDataGenerator.create_random_pm_input())
 
 
 class TestTrajectoryType(unittest.TestCase):
@@ -495,15 +495,15 @@ class TestTrajectoryType(unittest.TestCase):
         assert TrajectoryType.Input.valid_vehicle_model(VehicleModel.MB)
         assert not TrajectoryType.Input.valid_vehicle_model(VehicleModel.PM)
 
-    # def test_pm_input_vector_type(self):
-    #     dummy_trajectory = DummyDataGenerator.create_random_pm_input_vector()
-    #     assert TrajectoryType.PMInput.value == 'pmInputVector'
-    #     assert TrajectoryType.PMInput.state_type == StateType.PMInput
-    #     assert TrajectoryType.PMInput == TrajectoryType.get_trajectory_type(dummy_trajectory)
-    #     assert TrajectoryType.PMInput.valid_vehicle_model(VehicleModel.PM)
-    #     assert not TrajectoryType.PMInput.valid_vehicle_model(VehicleModel.ST)
-    #     assert not TrajectoryType.PMInput.valid_vehicle_model(VehicleModel.KS)
-    #     assert not TrajectoryType.PMInput.valid_vehicle_model(VehicleModel.MB)
+    def test_pm_input_vector_type(self):
+        dummy_trajectory = DummyDataGenerator.create_random_pm_input_vector()
+        assert TrajectoryType.PMInput.value == 'pmInputVector'
+        assert TrajectoryType.PMInput.state_type == StateType.PMInput
+        assert TrajectoryType.PMInput == TrajectoryType.get_trajectory_type(dummy_trajectory)
+        assert TrajectoryType.PMInput.valid_vehicle_model(VehicleModel.PM)
+        assert not TrajectoryType.PMInput.valid_vehicle_model(VehicleModel.ST)
+        assert not TrajectoryType.PMInput.valid_vehicle_model(VehicleModel.KS)
+        assert not TrajectoryType.PMInput.valid_vehicle_model(VehicleModel.MB)
 
 
 class TestPlanningProblemSolution(unittest.TestCase):
@@ -632,18 +632,6 @@ class TestSolution(unittest.TestCase):
 
         assert solution_single.benchmark_id == 'KS1:JB1:TEST:2018b'
         assert solution_collab.benchmark_id == '[KS1,ST2]:[JB1,SA1]:TEST:2018b'
-
-    def test_print(self):
-        pp_solution_1 = PlanningProblemSolution(
-            planning_problem_id=1,
-            vehicle_model=VehicleModel.MB,
-            vehicle_type=VehicleType.FORD_ESCORT,
-            cost_function=CostFunction.JB1,
-            trajectory=DummyDataGenerator.create_random_input_vector()
-        )
-
-        solution = Solution(scenario_id='TEST', planning_problem_solutions=[pp_solution_1])
-        print(CommonRoadSolutionWriter(solution).dump(pretty=True))
 
 
 class TestCommonRoadSolutionWriter(unittest.TestCase):
