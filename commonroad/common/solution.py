@@ -1,18 +1,20 @@
 import os
+import platform
 import re
+import subprocess
 import warnings
 from xml.dom import minidom
-
 import numpy as np
 import xml.etree.ElementTree as et
 from enum import Enum, unique
 from typing import List, Tuple, Union
-
 from datetime import datetime
 
 from commonroad.common.solution_writer import VehicleModel, CostFunction, VehicleType, SCENARIO_VERSION
 from commonroad.scenario.trajectory import State, Trajectory
 
+
+# TODO move VehicleModel, CostFunction, VehicleType, and SCENARIO_VERSION from solution_writer.py when deprecated
 
 @unique
 class StateFields(Enum):
@@ -307,7 +309,7 @@ class Solution:
                  planning_problem_solutions: List[PlanningProblemSolution],
                  date: datetime = datetime.today(),
                  computation_time: Union[float, None] = None,
-                 processor_name: Union[str, None] = None,
+                 processor_name: Union[str, None] = 'auto',
                  version: str = SCENARIO_VERSION):
         """
         Constructor for the Solution class.
@@ -317,7 +319,8 @@ class Solution:
         to the planning problems of the scenario
         :param date: The date solution was produced. Default=datetime.today()
         :param computation_time: The computation time it took for the Solution. Default=None
-        :param processor_name: The processor model used for the Solution. Default=None
+        :param processor_name: The processor model used for the Solution. Determined automatically if set to 'auto'.
+        Default=None.
         :param version: CommonRoad Version. Default=2018b (SCENARIO_VERSION constant)
         """
         self.scenario_id = scenario_id
@@ -549,6 +552,35 @@ class CommonRoadSolutionWriter:
         self.solution = solution
         self._solution_root = self._serialize_solution(self.solution)
 
+    @staticmethod
+    def _get_processor_name() -> Tuple[str, None]:
+        # TODO: compare cpu name with list also used on the web server
+
+        delete_from_cpu_name = ['(R)', '(TM)']
+
+        def strip_substrings(string: str):
+            for del_str in delete_from_cpu_name:
+                string = string.replace(del_str, '')
+            return string
+
+        if platform.system() == "Windows":
+            name_tmp = platform.processor()
+            for del_str in delete_from_cpu_name:
+                name_tmp.replace(del_str, '')
+            return strip_substrings(name_tmp)
+        elif platform.system() == "Darwin":
+            os.environ['PATH'] = os.environ['PATH'] + os.pathsep + '/usr/sbin'
+            command = "sysctl -n machdep.cpu.brand_string"
+            return subprocess.check_output(command).strip()
+        elif platform.system() == "Linux":
+            command = "cat /proc/cpuinfo"
+            all_info = str(subprocess.check_output(command, shell=True).strip())
+            for line in all_info.split("\\n"):
+                if "model name" in line:
+                    name_tmp = re.sub(".*model name.*: ", "", line, 1)
+                    return strip_substrings(name_tmp)
+        return None
+
     @classmethod
     def _serialize_solution(cls, solution: Solution) -> et.Element:
         """ Serializes the given solution. """
@@ -566,8 +598,9 @@ class CommonRoadSolutionWriter:
         root_node = et.Element('CommonRoadSolution')
         root_node.set('benchmark_id', solution.benchmark_id)
         if solution.date is not None: root_node.set('date', solution.date.strftime('%Y-%m-%d'))
-        if solution.processor_name is not None: root_node.set('processor_name', solution.processor_name)
         if solution.computation_time is not None: root_node.set('computation_time', str(solution.computation_time))
+        processor_name = cls._get_processor_name() if solution.processor_name == 'auto' else solution.processor_name
+        if processor_name is not None: root_node.set('processor_name', processor_name)
         return root_node
 
     @classmethod
