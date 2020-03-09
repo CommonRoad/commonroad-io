@@ -45,7 +45,7 @@ def float_to_str(f):
     without resorting to scientific notation
     """
     d1 = ctx.create_decimal(repr(f))
-    return '{}'.format(d1)
+    return format(d1, 'f')
 
 
 def create_exact_node_float(value: Union[int, float]) -> etree.Element:
@@ -271,12 +271,14 @@ class CommonRoadFileWriter:
         self,
         filename: Union[str, None] = None,
         overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+        check_validity: bool = False
     ):
         """
         Write a scenario including planning-problem. If file already exists, it will be overwritten of skipped
 
         :param filename: filename of the xml output file. If 'None', the Benchmark ID is taken
         :param overwrite_existing_file: Specify whether an already existing file should be overwritten or skipped
+        :param check_validity: check xml file against .xsd definition
         :return:
         """
         if filename is None:
@@ -304,6 +306,8 @@ class CommonRoadFileWriter:
         self._write_header()
         self._add_all_objects_from_scenario()
         self._add_all_planning_problems_from_planning_problem_set()
+        if check_validity:
+            self.check_validity_of_commonroad_file(self._dump())
         file.write(self._dump())
         file.close()
 
@@ -1193,7 +1197,7 @@ class IntersectionXMLNode:
                 is_left_of_node = etree.Element('isLeftOf')
                 is_left_of_node.set('ref', str(incoming.left_of))
                 incoming_node.append(is_left_of_node)
-                
+
             intersection_node.append(incoming_node)
 
         # if intersection.crossings is not None:

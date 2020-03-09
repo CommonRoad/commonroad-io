@@ -543,6 +543,11 @@ class Lanelet:
         tmp = tmp[0:2, :]
         self._right_vertices = tmp.transpose()
 
+        # recreate polygon in case it existed
+        if self._polygon is not None:
+            self._polygon = None
+            self._polygon = self.convert_to_polygon()
+
     def interpolate_position(self, distance: float) -> tuple:
         """
         Computes the interpolated positions on the center/right/left polyline of the lanelet for a given distance
