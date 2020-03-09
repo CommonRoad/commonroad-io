@@ -94,7 +94,7 @@ class State:
             obstacles to provide additional information, e.g., for motion prediction, even though acceleration is often
             used as an input for vehicle models. Exact values are given as real number, uncertain values are given as
             :class:`commonroad.common.util.Interval`
-        :ivar acceleration_y: velocity :math:`a_y` in lateral direction in the vehicle-fixed coordinate system.
+        :ivar acceleration_y: velocity :math:`a_y`.
             We optionally include acceleration as a state variable for obstacles to provide additional information,
             e.g., for motion prediction, even though acceleration is often used as an input for vehicle models. Exact
             values are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
