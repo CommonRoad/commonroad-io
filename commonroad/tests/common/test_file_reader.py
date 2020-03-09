@@ -308,7 +308,7 @@ class TestFileReader(unittest.TestCase):
         exp_traffic_sign_id = self.lanelet_network.traffic_signs[0].traffic_sign_id
         exp_traffic_sign_position = self.lanelet_network.traffic_signs[0].position
         exp_traffic_sign_element_id = \
-            self.lanelet_network.traffic_signs[0].traffic_sign_elements[0].traffic_sign_element_id
+            self.lanelet_network.traffic_signs[0].traffic_sign_elements[0].traffic_sign_element_id.value
         exp_traffic_sign_element_additional_value = \
             self.lanelet_network.traffic_signs[0].traffic_sign_elements[0].additional_values[0]
         exp_traffic_sign_virtual = self.lanelet_network.traffic_signs[0].virtual
@@ -465,15 +465,16 @@ class TestFileReader(unittest.TestCase):
 
         exp_traffic_sign_101_id = self.traffic_sign_101.traffic_sign_id
         exp_traffic_sign_101_position = self.traffic_sign_101.position
-        exp_traffic_sign_101_element_id = self.traffic_sign_101.traffic_sign_elements[0].traffic_sign_element_id
+        exp_traffic_sign_101_element_id = self.traffic_sign_101.traffic_sign_elements[0].traffic_sign_element_id.value
         exp_traffic_sign_101_additional_value = \
             self.traffic_sign_101.traffic_sign_elements[0].additional_values[0]
         exp_traffic_sign_101_virtual = self.traffic_sign_101.virtual
         exp_traffic_sign_105_id = self.traffic_sign_105.traffic_sign_id
         exp_traffic_sign_105_position = self.traffic_sign_105.position
-        exp_traffic_sign_105_element_id_zero = self.traffic_sign_105.traffic_sign_elements[0].traffic_sign_element_id
+        exp_traffic_sign_105_element_id_zero = \
+            self.traffic_sign_105.traffic_sign_elements[0].traffic_sign_element_id.value
         exp_traffic_sign_105_element_id_one = \
-            self.traffic_sign_105.traffic_sign_elements[1].traffic_sign_element_id
+            self.traffic_sign_105.traffic_sign_elements[1].traffic_sign_element_id.value
         exp_traffic_sign_105_virtual = self.traffic_sign_105.virtual
 
         exp_traffic_light_201_id = self.traffic_light_201.traffic_light_id
