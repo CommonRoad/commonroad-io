@@ -90,10 +90,14 @@ class State:
             are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar delta_y_r: rear lateral displacement :math:`\delta_{y,r}` of sprung mass due to roll. Exact values
             are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar acceleration: acceleration :math:`a`. We optionally include acceleration as a state variable for
+        :ivar acceleration: acceleration :math:`a_x`. We optionally include acceleration as a state variable for
             obstacles to provide additional information, e.g., for motion prediction, even though acceleration is often
             used as an input for vehicle models. Exact values are given as real number, uncertain values are given as
             :class:`commonroad.common.util.Interval`
+        :ivar acceleration_y: velocity :math:`a_y` in lateral direction in the vehicle-fixed coordinate system.
+            We optionally include acceleration as a state variable for obstacles to provide additional information,
+            e.g., for motion prediction, even though acceleration is often used as an input for vehicle models. Exact
+            values are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar jerk: acceleration :math:`j`. We optionally include jerk as a state variable for
             obstacles to provide additional information, e.g., for motion prediction, even though jerk is often
             used as an input for vehicle models. Exact values are given as real number, uncertain values are given as
@@ -143,6 +147,7 @@ class State:
         'delta_y_f',
         'delta_y_r',
         'acceleration',
+        'acceleration_y',
         'jerk',
         'time_step',
     ]

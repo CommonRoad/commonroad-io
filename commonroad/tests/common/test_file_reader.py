@@ -10,7 +10,7 @@ from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation
 from commonroad.scenario.trajectory import *
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLightDirection, TrafficLight, \
-    TrafficLightCycleElement, TrafficLightState
+    TrafficLightCycleElement, TrafficLightState, TrafficSignIDGermany
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 
 class TestFileReader(unittest.TestCase):
@@ -70,12 +70,12 @@ class TestFileReader(unittest.TestCase):
                            lanelet_type={LaneletType.URBAN, LaneletType.BUS_LANE}, user_bidirectional={RoadUser.BUS})
 
         traffic_sign_201 = TrafficSign(traffic_sign_id=201, position=None,
-                                       traffic_sign_elements=[TrafficSignElement("274", ["10"])], virtual=False)
+                                       traffic_sign_elements=[TrafficSignElement(TrafficSignIDGermany.MAXSPEED, ["10"])], virtual=False)
 
         self.lanelet_network = LaneletNetwork().create_from_lanelet_list(list([lanelet1, lanelet2]))
         self.lanelet_network.add_traffic_sign(traffic_sign_201, [100])
 
-        tags = [Tag.URBAN, Tag.INTERSTATE]
+        tags = {Tag.URBAN, Tag.INTERSTATE}
         geo_transformation = GeoTransformation("test", 0.0, 0.0, 0.0, 0.0)
         location = Location("DEU", "DEU_BY", 0.0, 0.0, "90839", "München", geo_transformation)
 
@@ -100,13 +100,15 @@ class TestFileReader(unittest.TestCase):
         self.lanelet_28_traffic_lights_ref = {201}
         self.traffic_sign_101 = TrafficSign(traffic_sign_id=101,
                                             position=np.array([206.9839751212892, 20.67847944866278]),
-                                            traffic_sign_elements=[TrafficSignElement("310",
+                                            traffic_sign_elements=[TrafficSignElement(TrafficSignIDGermany.CITYLIMIT,
                                                                                       ["Landeshauptstadt München"])],
                                             virtual=False)
         self.traffic_sign_105 = TrafficSign(traffic_sign_id=105,
                                             position=np.array([177.8639861239823, -48.79316329157203]),
-                                            traffic_sign_elements=[TrafficSignElement("306", []),
-                                                                   TrafficSignElement("720", [])], virtual=False)
+                                            traffic_sign_elements=[TrafficSignElement(TrafficSignIDGermany.PRIORITY,
+                                                                                      []),
+                                                                   TrafficSignElement(TrafficSignIDGermany.GREEN_ARROW,
+                                                                                      [])], virtual=False)
 
         self.traffic_light_201 = TrafficLight(traffic_light_id=201,
                                               position=np.array([177.8639861239823, -48.79316329157203]),
