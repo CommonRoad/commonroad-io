@@ -435,11 +435,11 @@ class TestStateType(unittest.TestCase):
         assert StateType.Input.xml_fields == XMLStateFields.Input.value
         assert StateType.Input == StateType.get_state_type(DummyDataGenerator.create_random_input())
 
-    def test_pm_input_state_type(self):
-        assert StateType.PMInput.value == 'pmInput'
-        assert StateType.PMInput.fields == StateFields.PMInput.value
-        assert StateType.PMInput.xml_fields == XMLStateFields.PMInput.value
-        assert StateType.PMInput == StateType.get_state_type(DummyDataGenerator.create_random_pm_input())
+    # def test_pm_input_state_type(self):
+    #     assert StateType.PMInput.value == 'pmInput'
+    #     assert StateType.PMInput.fields == StateFields.PMInput.value
+    #     assert StateType.PMInput.xml_fields == XMLStateFields.PMInput.value
+    #     assert StateType.PMInput == StateType.get_state_type(DummyDataGenerator.create_random_pm_input())
 
 
 class TestTrajectoryType(unittest.TestCase):
@@ -494,15 +494,15 @@ class TestTrajectoryType(unittest.TestCase):
         assert TrajectoryType.Input.valid_vehicle_model(VehicleModel.MB)
         assert not TrajectoryType.Input.valid_vehicle_model(VehicleModel.PM)
 
-    def test_pm_input_vector_type(self):
-        dummy_trajectory = DummyDataGenerator.create_random_pm_input_vector()
-        assert TrajectoryType.PMInput.value == 'pmInputVector'
-        assert TrajectoryType.PMInput.state_type == StateType.PMInput
-        assert TrajectoryType.PMInput == TrajectoryType.get_trajectory_type(dummy_trajectory)
-        assert TrajectoryType.PMInput.valid_vehicle_model(VehicleModel.PM)
-        assert not TrajectoryType.PMInput.valid_vehicle_model(VehicleModel.ST)
-        assert not TrajectoryType.PMInput.valid_vehicle_model(VehicleModel.KS)
-        assert not TrajectoryType.PMInput.valid_vehicle_model(VehicleModel.MB)
+    # def test_pm_input_vector_type(self):
+    #     dummy_trajectory = DummyDataGenerator.create_random_pm_input_vector()
+    #     assert TrajectoryType.PMInput.value == 'pmInputVector'
+    #     assert TrajectoryType.PMInput.state_type == StateType.PMInput
+    #     assert TrajectoryType.PMInput == TrajectoryType.get_trajectory_type(dummy_trajectory)
+    #     assert TrajectoryType.PMInput.valid_vehicle_model(VehicleModel.PM)
+    #     assert not TrajectoryType.PMInput.valid_vehicle_model(VehicleModel.ST)
+    #     assert not TrajectoryType.PMInput.valid_vehicle_model(VehicleModel.KS)
+    #     assert not TrajectoryType.PMInput.valid_vehicle_model(VehicleModel.MB)
 
 
 class TestPlanningProblemSolution(unittest.TestCase):
