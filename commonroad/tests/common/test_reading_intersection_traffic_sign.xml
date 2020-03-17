@@ -1,0 +1,1818 @@
+<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="PrinceOfZAM" affiliation="Technical University of Munich, Germany" source="OpenStreetMaps (OSM)" benchmarkID="ZAM_test_0-0-1" date="2019-12-29">
+<location>
+    <country>DEU</country>
+    <federalState>DE_BY</federalState>
+    <gpsLatitude>48.262333</gpsLatitude>
+    <gpsLongitude>11.668775</gpsLongitude>
+    <zipcode>98368</zipcode>
+    <name>München</name>
+  </location>
+   <scenarioTags>
+    <intersection/>
+    <urban/>
+  </scenarioTags>
+<lanelet id="12">
+    <leftBound>
+      <point>
+        <x>169.2560351117039</x>
+        <y>-54.95658983061205</y>
+      </point>
+      <point>
+        <x>166.7445208076897</x>
+        <y>-54.29916265920127</y>
+      </point>
+      <point>
+        <x>158.4831119268121</x>
+        <y>-51.77992630177655</y>
+      </point>
+      <point>
+        <x>136.5205750217794</x>
+        <y>-44.16804542246933</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>169.8571798114704</x>
+        <y>-52.52994997739150</y>
+      </point>
+      <point>
+        <x>167.4734748120990</x>
+        <y>-51.90779776453220</y>
+      </point>
+      <point>
+        <x>159.3017972729576</x>
+        <y>-49.41777594584944</y>
+      </point>
+      <point>
+        <x>137.3392603679249</x>
+        <y>-41.80589506654222</y>
+      </point>
+    </rightBound>
+    <predecessor ref="21"/>
+    <predecessor ref="30"/>
+    <predecessor ref="31"/>
+    <adjacentLeft ref="13" drivingDir="opposite"/>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="112"/>
+  </lanelet>
+  <lanelet id="13">
+    <leftBound>
+      <point>
+        <x>136.5205750217794</x>
+        <y>-44.16804542246933</y>
+      </point>
+      <point>
+        <x>158.4831119268121</x>
+        <y>-51.77992630177655</y>
+      </point>
+      <point>
+        <x>166.7445208076897</x>
+        <y>-54.29916265920127</y>
+      </point>
+      <point>
+        <x>169.2560351117039</x>
+        <y>-54.95658983061205</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>135.7263040332439</x>
+        <y>-46.53851804590986</y>
+      </point>
+      <point>
+        <x>157.8714921186055</x>
+        <y>-54.21008079068351</y>
+      </point>
+      <point>
+        <x>166.1889937397335</x>
+        <y>-56.7398876662016</y>
+      </point>
+      <point>
+        <x>168.6607857447963</x>
+        <y>-57.38341449560771</y>
+      </point>
+    </rightBound>
+    <successor ref="20"/>
+    <successor ref="26"/>
+    <successor ref="22"/>
+    <adjacentLeft ref="12" drivingDir="opposite"/>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="104"/>
+  </lanelet>
+  <lanelet id="14">
+    <leftBound>
+      <point>
+        <x>209.2896081866720</x>
+        <y>19.71201363560300</y>
+      </point>
+      <point>
+        <x>194.7295891334436</x>
+        <y>-15.02285324545765</y>
+      </point>
+      <point>
+        <x>180.1823263682323</x>
+        <y>-49.72698815669259</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>206.9839751212892</x>
+        <y>20.67847944866278</y>
+      </point>
+      <point>
+        <x>192.4239560680608</x>
+        <y>-14.05638743239787</y>
+      </point>
+      <point>
+        <x>177.8639861239823</x>
+        <y>-48.79316329157203</y>
+      </point>
+    </rightBound>
+    <successor ref="30"/>
+    <successor ref="28"/>
+    <successor ref="24"/>
+    <adjacentLeft ref="15" drivingDir="opposite"/>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="101"/>
+  </lanelet>
+  <lanelet id="15">
+    <leftBound>
+      <point>
+        <x>180.1823263682323</x>
+        <y>-49.72698815669259</y>
+      </point>
+      <point>
+        <x>194.7295891334436</x>
+        <y>-15.02285324545765</y>
+      </point>
+      <point>
+        <x>209.2896081866720</x>
+        <y>19.71201363560300</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>182.4756658376405</x>
+        <y>-50.72101777525641</y>
+      </point>
+      <point>
+        <x>197.0352221988264</x>
+        <y>-15.98931905851757</y>
+      </point>
+      <point>
+        <x>211.5952412520548</x>
+        <y>18.74554782254306</y>
+      </point>
+    </rightBound>
+    <predecessor ref="20"/>
+    <predecessor ref="23"/>
+    <predecessor ref="29"/>
+    <adjacentLeft ref="14" drivingDir="opposite"/>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="109"/>
+  </lanelet>
+  <lanelet id="16">
+    <leftBound>
+      <point>
+        <x>174.1617095787515</x>
+        <y>-64.10832609867704</y>
+      </point>
+      <point>
+        <x>149.2704928989475</x>
+        <y>-123.3841330506599</y>
+      </point>
+      <point>
+        <x>124.3809103162068</x>
+        <y>-182.6539046348620</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>171.8536753653425</x>
+        <y>-63.15168533332535</y>
+      </point>
+      <point>
+        <x>146.9654859669285</x>
+        <y>-122.4161748680174</y>
+      </point>
+      <point>
+        <x>122.0759033841878</x>
+        <y>-181.6859464522196</y>
+      </point>
+    </rightBound>
+    <predecessor ref="25"/>
+    <predecessor ref="26"/>
+    <predecessor ref="24"/>
+    <adjacentLeft ref="17" drivingDir="opposite"/>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="111"/>
+  </lanelet>
+  <lanelet id="17">
+    <leftBound>
+      <point>
+        <x>124.3809103162068</x>
+        <y>-182.6539046348620</y>
+      </point>
+      <point>
+        <x>149.2704928989475</x>
+        <y>-123.3841330506599</y>
+      </point>
+      <point>
+        <x>174.1617095787515</x>
+        <y>-64.10832609867704</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>126.6855461566415</x>
+        <y>-183.6227460269015</y>
+      </point>
+      <point>
+        <x>151.576079059917</x>
+        <y>-124.3507076276442</y>
+      </point>
+      <point>
+        <x>176.4678542468245</x>
+        <y>-65.07388839655903</y>
+      </point>
+    </rightBound>
+    <successor ref="27"/>
+    <successor ref="31"/>
+    <successor ref="23"/>
+    <adjacentLeft ref="16" drivingDir="opposite"/>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="103"/>
+  </lanelet>
+  <lanelet id="18">
+    <leftBound>
+      <point>
+        <x>235.1554711997493</x>
+        <y>-80.059386273706</y>
+      </point>
+      <point>
+        <x>227.4722506076081</x>
+        <y>-76.22945724505719</y>
+      </point>
+      <point>
+        <x>218.8758814680600</x>
+        <y>-72.06797714898153</y>
+      </point>
+      <point>
+        <x>209.6073473568542</x>
+        <y>-68.11967891164063</y>
+      </point>
+      <point>
+        <x>198.7907236499709</x>
+        <y>-63.93640754532616</y>
+      </point>
+      <point>
+        <x>184.5507356058114</x>
+        <y>-58.90594934212008</y>
+      </point>
+      <lineMarking>dashed</lineMarking>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>236.2707606031303</x>
+        <y>-77.82194810769872</y>
+      </point>
+      <point>
+        <x>228.5612257908311</x>
+        <y>-73.97909437424623</y>
+      </point>
+      <point>
+        <x>219.8554987720340</x>
+        <y>-69.76790107681467</y>
+      </point>
+      <point>
+        <x>210.5090090265864</x>
+        <y>-65.7879400254581</y>
+      </point>
+      <point>
+        <x>199.6231692194431</x>
+        <y>-61.57907125750761</y>
+      </point>
+      <point>
+        <x>185.2791517140859</x>
+        <y>-56.51567398336667</y>
+      </point>
+      <lineMarking>broad_solid</lineMarking>
+    </rightBound>
+    <successor ref="21"/>
+    <successor ref="25"/>
+    <successor ref="29"/>
+    <adjacentLeft ref="19" drivingDir="opposite"/>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="102"/>
+  </lanelet>
+  <lanelet id="19">
+    <leftBound>
+      <point>
+        <x>184.5507356058114</x>
+        <y>-58.90594934212008</y>
+      </point>
+      <point>
+        <x>198.7907236499709</x>
+        <y>-63.93640754532616</y>
+      </point>
+      <point>
+        <x>209.6073473568542</x>
+        <y>-68.11967891164063</y>
+      </point>
+      <point>
+        <x>218.8758814680600</x>
+        <y>-72.06797714898153</y>
+      </point>
+      <point>
+        <x>227.4722506076081</x>
+        <y>-76.22945724505719</y>
+      </point>
+      <point>
+        <x>235.1554711997493</x>
+        <y>-80.059386273706</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>183.7309923699235</x>
+        <y>-61.26717279521458</y>
+      </point>
+      <point>
+        <x>197.8835239402979</x>
+        <y>-66.26639154686661</y>
+      </point>
+      <point>
+        <x>208.6302300765518</x>
+        <y>-70.4211503841998</y>
+      </point>
+      <point>
+        <x>217.8263482333946</x>
+        <y>-74.33710656162486</y>
+      </point>
+      <point>
+        <x>226.4112288749078</x>
+        <y>-78.4943037036305</y>
+      </point>
+      <point>
+        <x>234.0613114913097</x>
+        <y>-82.30723344354027</y>
+      </point>
+    </rightBound>
+    <predecessor ref="28"/>
+    <predecessor ref="22"/>
+    <predecessor ref="27"/>
+    <adjacentLeft ref="18" drivingDir="opposite"/>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="110"/>
+  </lanelet>
+  <lanelet id="20">
+    <leftBound>
+      <point>
+        <x>169.2560351117039</x>
+        <y>-54.95658983061205</y>
+      </point>
+      <point>
+        <x>170.4610160784125</x>
+        <y>-55.20233819062774</y>
+      </point>
+      <point>
+        <x>171.7037547523768</x>
+        <y>-55.35042342925669</y>
+      </point>
+      <point>
+        <x>172.9281721670982</x>
+        <y>-55.37024419857552</y>
+      </point>
+      <point>
+        <x>174.1177180205223</x>
+        <y>-55.24258974634746</y>
+      </point>
+      <point>
+        <x>175.2557985942751</x>
+        <y>-54.94850819623128</y>
+      </point>
+      <point>
+        <x>176.3251031931524</x>
+        <y>-54.47427915492837</y>
+      </point>
+      <point>
+        <x>177.3056105994492</x>
+        <y>-53.81970204350112</y>
+      </point>
+      <point>
+        <x>178.1821191090466</x>
+        <y>-52.99623874970604</y>
+      </point>
+      <point>
+        <x>178.9465099088555</x>
+        <y>-52.03082020106945</y>
+      </point>
+      <point>
+        <x>179.6006471432836</x>
+        <y>-50.95526345446951</y>
+      </point>
+      <point>
+        <x>180.1823263682323</x>
+        <y>-49.72698815669259</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>168.6607857447963</x>
+        <y>-57.38341449560771</y>
+      </point>
+      <point>
+        <x>170.1788839471097</x>
+        <y>-57.6863674699412</y>
+      </point>
+      <point>
+        <x>171.6836793623404</x>
+        <y>-57.85034282370021</y>
+      </point>
+      <point>
+        <x>173.2236509536475</x>
+        <y>-57.85272124513595</y>
+      </point>
+      <point>
+        <x>174.7782441013721</x>
+        <y>-57.65375239049182</y>
+      </point>
+      <point>
+        <x>176.3043237776074</x>
+        <y>-57.21800041695334</y>
+      </point>
+      <point>
+        <x>177.7420275995511</x>
+        <y>-56.53396972065704</y>
+      </point>
+      <point>
+        <x>179.0367740133429</x>
+        <y>-55.62332984168901</y>
+      </point>
+      <point>
+        <x>180.1535525914125</x>
+        <y>-54.53359037656522</y>
+      </point>
+      <point>
+        <x>181.0887845353370</x>
+        <y>-53.3194859547595</y>
+      </point>
+      <point>
+        <x>181.8598256350576</x>
+        <y>-52.02582991308186</y>
+      </point>
+      <point>
+        <x>182.4756658376405</x>
+        <y>-50.72101777525641</y>
+      </point>
+    </rightBound>
+    <predecessor ref="13"/>
+    <successor ref="15"/>
+    <adjacentLeft ref="30" drivingDir="opposite"/>
+    <stopLine>
+      <point>
+        <x>169.2560351117039</x>
+        <y>-54.95658983061205</y>
+      </point>
+      <point>
+        <x>168.6607857447963</x>
+        <y>-57.38341449560771</y>
+      </point>
+      <lineMarking>solid</lineMarking>
+      <trafficLightRef ref="204"/>
+    </stopLine>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="108"/>
+    <trafficLightRef ref="204"/>
+  </lanelet>
+  <lanelet id="21">
+    <leftBound>
+      <point>
+        <x>184.5507356058114</x>
+        <y>-58.90594934212008</y>
+      </point>
+      <point>
+        <x>178.0454434381264</x>
+        <y>-57.12950865151481</y>
+      </point>
+      <point>
+        <x>169.2560351117039</x>
+        <y>-54.95658983061205</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>185.2791517140859</x>
+        <y>-56.51567398336667</y>
+      </point>
+      <point>
+        <x>178.6455936492408</x>
+        <y>-54.7026135725921</y>
+      </point>
+      <point>
+        <x>169.8571798114704</x>
+        <y>-52.52994997739150</y>
+      </point>
+    </rightBound>
+    <predecessor ref="18"/>
+    <successor ref="12"/>
+    <adjacentLeft ref="22" drivingDir="opposite"/>
+    <stopLine>
+      <point>
+        <x>184.5507356058114</x>
+        <y>-58.90594934212008</y>
+      </point>
+      <point>
+        <x>185.2791517140859</x>
+        <y>-56.51567398336667</y>
+      </point>
+      <lineMarking>solid</lineMarking>
+      <trafficLightRef ref="202"/>
+    </stopLine>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="106"/>
+    <trafficLightRef ref="202"/>
+  </lanelet>
+  <lanelet id="22">
+    <leftBound>
+      <point>
+        <x>169.2560351117039</x>
+        <y>-54.95658983061205</y>
+      </point>
+      <point>
+        <x>178.0454434381264</x>
+        <y>-57.12950865151481</y>
+      </point>
+      <point>
+        <x>184.5507356058114</x>
+        <y>-58.90594934212008</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>168.6607857447963</x>
+        <y>-57.38341449560771</y>
+      </point>
+      <point>
+        <x>177.3144781892555</x>
+        <y>-59.52236437259208</y>
+      </point>
+      <point>
+        <x>183.7309923699235</x>
+        <y>-61.26717279521458</y>
+      </point>
+    </rightBound>
+    <predecessor ref="13"/>
+    <successor ref="19"/>
+    <adjacentLeft ref="21" drivingDir="opposite"/>
+    <stopLine>
+      <point>
+        <x>169.2560351117039</x>
+        <y>-54.95658983061205</y>
+      </point>
+      <point>
+        <x>168.6607857447963</x>
+        <y>-57.38341449560771</y>
+      </point>
+      <lineMarking>solid</lineMarking>
+      <trafficLightRef ref="204"/>
+    </stopLine>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="108"/>
+    <trafficLightRef ref="204"/>
+  </lanelet>
+  <lanelet id="23">
+    <leftBound>
+      <point>
+        <x>174.1617095787515</x>
+        <y>-64.10832609867704</y>
+      </point>
+      <point>
+        <x>177.1651887890339</x>
+        <y>-56.93516696509923</y>
+      </point>
+      <point>
+        <x>180.1823263682323</x>
+        <y>-49.72698815669259</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>176.4678542468245</x>
+        <y>-65.07388839655903</y>
+      </point>
+      <point>
+        <x>179.4713063099534</x>
+        <y>-57.90047623145273</y>
+      </point>
+      <point>
+        <x>182.4756658376405</x>
+        <y>-50.72101777525641</y>
+      </point>
+    </rightBound>
+    <predecessor ref="17"/>
+    <successor ref="15"/>
+    <adjacentLeft ref="24" drivingDir="opposite"/>
+    <stopLine>
+      <point>
+        <x>174.1617095787515</x>
+        <y>-64.10832609867704</y>
+      </point>
+      <point>
+        <x>176.4678542468245</x>
+        <y>-65.07388839655903</y>
+      </point>
+      <lineMarking>solid</lineMarking>
+      <trafficLightRef ref="203"/>
+    </stopLine>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="107"/>
+    <trafficLightRef ref="203"/>
+  </lanelet>
+  <lanelet id="24">
+    <leftBound>
+      <point>
+        <x>180.1823263682323</x>
+        <y>-49.72698815669259</y>
+      </point>
+      <point>
+        <x>177.1651887890339</x>
+        <y>-56.93516696509923</y>
+      </point>
+      <point>
+        <x>174.1617095787515</x>
+        <y>-64.10832609867704</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>177.8639861239823</x>
+        <y>-48.79316329157203</y>
+      </point>
+      <point>
+        <x>174.8591040235842</x>
+        <y>-55.96978015855002</y>
+      </point>
+      <point>
+        <x>171.8536753653425</x>
+        <y>-63.15168533332535</y>
+      </point>
+    </rightBound>
+    <predecessor ref="14"/>
+    <successor ref="16"/>
+    <adjacentLeft ref="23" drivingDir="opposite"/>
+    <stopLine>
+      <point>
+        <x>180.1823263682323</x>
+        <y>-49.72698815669259</y>
+      </point>
+      <point>
+        <x>177.8639861239823</x>
+        <y>-48.79316329157203</y>
+      </point>
+      <lineMarking>solid</lineMarking>
+      <trafficLightRef ref="201"/>
+    </stopLine>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="105"/>
+    <trafficLightRef ref="201"/>
+  </lanelet>
+  <lanelet id="25">
+    <leftBound>
+      <point>
+        <x>184.5507356058114</x>
+        <y>-58.90594934212008</y>
+      </point>
+      <point>
+        <x>183.2664139548262</x>
+        <y>-58.5456918084668</y>
+      </point>
+      <point>
+        <x>181.9712781915937</x>
+        <y>-58.336398508912</y>
+      </point>
+      <point>
+        <x>180.6988962460381</x>
+        <y>-58.31490267266924</y>
+      </point>
+      <point>
+        <x>179.4711185285461</x>
+        <y>-58.51078585639087</y>
+      </point>
+      <point>
+        <x>178.3153990588813</x>
+        <y>-58.94569484341697</y>
+      </point>
+      <point>
+        <x>177.2497065699351</x>
+        <y>-59.63880693249056</y>
+      </point>
+      <point>
+        <x>176.3016768630266</x>
+        <y>-60.54536918919226</y>
+      </point>
+      <point>
+        <x>175.4791276777229</x>
+        <y>-61.61498872370953</y>
+      </point>
+      <point>
+        <x>174.7750497053085</x>
+        <y>-62.80420427672475</y>
+      </point>
+      <point>
+        <x>174.1617095787515</x>
+        <y>-64.10832609867704</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>185.2791517140859</x>
+        <y>-56.51567398336667</y>
+      </point>
+      <point>
+        <x>183.6392764874950</x>
+        <y>-56.07365347305777</y>
+      </point>
+      <point>
+        <x>181.9738542735318</x>
+        <y>-55.83639983615198</y>
+      </point>
+      <point>
+        <x>180.2539742479464</x>
+        <y>-55.85481234595071</y>
+      </point>
+      <point>
+        <x>178.538596438456</x>
+        <y>-56.19121638092909</y>
+      </point>
+      <point>
+        <x>176.9189392831974</x>
+        <y>-56.87207479748356</y>
+      </point>
+      <point>
+        <x>175.5031103568231</x>
+        <y>-57.85011979709126</y>
+      </point>
+      <point>
+        <x>174.3100658618225</x>
+        <y>-59.03424853885268</y>
+      </point>
+      <point>
+        <x>173.3229768950833</x>
+        <y>-60.34967698246827</y>
+      </point>
+      <point>
+        <x>172.5112044394763</x>
+        <y>-61.74354193065545</y>
+      </point>
+      <point>
+        <x>171.8536753653425</x>
+        <y>-63.15168533332535</y>
+      </point>
+    </rightBound>
+    <predecessor ref="18"/>
+    <successor ref="16"/>
+    <adjacentLeft ref="27" drivingDir="opposite"/>
+    <stopLine>
+      <point>
+        <x>184.5507356058114</x>
+        <y>-58.90594934212008</y>
+      </point>
+      <point>
+        <x>185.2791517140859</x>
+        <y>-56.51567398336667</y>
+      </point>
+      <lineMarking>solid</lineMarking>
+      <trafficLightRef ref="202"/>
+    </stopLine>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="106"/>
+    <trafficLightRef ref="202"/>
+  </lanelet>
+  <lanelet id="26">
+    <leftBound>
+      <point>
+        <x>169.2560351117039</x>
+        <y>-54.95658983061205</y>
+      </point>
+      <point>
+        <x>170.5239369562499</x>
+        <y>-55.33393872014226</y>
+      </point>
+      <point>
+        <x>171.7335112081807</x>
+        <y>-55.85195977318028</y>
+      </point>
+      <point>
+        <x>172.9062515619210</x>
+        <y>-56.59900942495932</y>
+      </point>
+      <point>
+        <x>173.9415928243065</x>
+        <y>-57.65671088179806</y>
+      </point>
+      <point>
+        <x>174.6362437064299</x>
+        <y>-58.98314515545866</y>
+      </point>
+      <point>
+        <x>174.9058889277303</x>
+        <y>-60.38574370077014</y>
+      </point>
+      <point>
+        <x>174.8435287256957</x>
+        <y>-61.73434736199661</y>
+      </point>
+      <point>
+        <x>174.5619558869658</x>
+        <y>-62.98723400723275</y>
+      </point>
+      <point>
+        <x>174.1617095787515</x>
+        <y>-64.10832609867704</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>168.6607857447963</x>
+        <y>-57.38341449560771</y>
+      </point>
+      <point>
+        <x>169.5653153080618</x>
+        <y>-57.64284420448436</y>
+      </point>
+      <point>
+        <x>170.4340570676339</x>
+        <y>-57.98770763672026</y>
+      </point>
+      <point>
+        <x>171.1820414222302</x>
+        <y>-58.40928547965019</y>
+      </point>
+      <point>
+        <x>171.7729833422610</x>
+        <y>-58.90054885934280</y>
+      </point>
+      <point>
+        <x>172.1946555235096</x>
+        <y>-59.5204040735085</y>
+      </point>
+      <point>
+        <x>172.4070799228108</x>
+        <y>-60.30858440494079</y>
+      </point>
+      <point>
+        <x>172.4001015551561</x>
+        <y>-61.20551500456266</y>
+      </point>
+      <point>
+        <x>172.2057523981611</x>
+        <y>-62.15158747948039</y>
+      </point>
+      <point>
+        <x>171.8536753653425</x>
+        <y>-63.15168533332535</y>
+      </point>
+    </rightBound>
+    <predecessor ref="13"/>
+    <successor ref="16"/>
+    <adjacentLeft ref="31" drivingDir="opposite"/>
+    <stopLine>
+      <point>
+        <x>169.2560351117039</x>
+        <y>-54.95658983061205</y>
+      </point>
+      <point>
+        <x>168.6607857447963</x>
+        <y>-57.38341449560771</y>
+      </point>
+      <lineMarking>solid</lineMarking>
+      <trafficLightRef ref="204"/>
+    </stopLine>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="108"/>
+    <trafficLightRef ref="204"/>
+  </lanelet>
+  <lanelet id="27">
+    <leftBound>
+      <point>
+        <x>174.1617095787515</x>
+        <y>-64.10832609867704</y>
+      </point>
+      <point>
+        <x>174.7750497053085</x>
+        <y>-62.80420427672475</y>
+      </point>
+      <point>
+        <x>175.4791276777229</x>
+        <y>-61.61498872370953</y>
+      </point>
+      <point>
+        <x>176.3016768630266</x>
+        <y>-60.54536918919226</y>
+      </point>
+      <point>
+        <x>177.2497065699351</x>
+        <y>-59.63880693249056</y>
+      </point>
+      <point>
+        <x>178.3153990588813</x>
+        <y>-58.94569484341697</y>
+      </point>
+      <point>
+        <x>179.4711185285461</x>
+        <y>-58.51078585639087</y>
+      </point>
+      <point>
+        <x>180.6988962460381</x>
+        <y>-58.31490267266924</y>
+      </point>
+      <point>
+        <x>181.9712781915937</x>
+        <y>-58.336398508912</y>
+      </point>
+      <point>
+        <x>183.2664139548262</x>
+        <y>-58.5456918084668</y>
+      </point>
+      <point>
+        <x>184.5507356058114</x>
+        <y>-58.90594934212008</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>176.4678542468245</x>
+        <y>-65.07388839655903</y>
+      </point>
+      <point>
+        <x>176.8678870831680</x>
+        <y>-64.21126305699042</y>
+      </point>
+      <point>
+        <x>177.3471134300522</x>
+        <y>-63.36713285124547</y>
+      </point>
+      <point>
+        <x>177.8974689776722</x>
+        <y>-62.60728305240775</y>
+      </point>
+      <point>
+        <x>178.5115056056524</x>
+        <y>-61.95996579886641</y>
+      </point>
+      <point>
+        <x>179.1960609175996</x>
+        <y>-61.44712976728304</y>
+      </point>
+      <point>
+        <x>179.9744850927914</x>
+        <y>-61.08628442531667</y>
+      </point>
+      <point>
+        <x>180.8352339806316</x>
+        <y>-60.89210586955029</y>
+      </point>
+      <point>
+        <x>181.7551617189561</x>
+        <y>-60.86589211766928</y>
+      </point>
+      <point>
+        <x>182.7094899977890</x>
+        <y>-60.99388398131843</y>
+      </point>
+      <point>
+        <x>183.7309923699235</x>
+        <y>-61.26717279521458</y>
+      </point>
+    </rightBound>
+    <predecessor ref="17"/>
+    <successor ref="19"/>
+    <adjacentLeft ref="25" drivingDir="opposite"/>
+    <stopLine>
+      <point>
+        <x>174.1617095787515</x>
+        <y>-64.10832609867704</y>
+      </point>
+      <point>
+        <x>176.4678542468245</x>
+        <y>-65.07388839655903</y>
+      </point>
+      <lineMarking>solid</lineMarking>
+      <trafficLightRef ref="203"/>
+    </stopLine>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="107"/>
+    <trafficLightRef ref="203"/>
+  </lanelet>
+  <lanelet id="28">
+    <leftBound>
+      <point>
+        <x>180.1823263682323</x>
+        <y>-49.72698815669259</y>
+      </point>
+      <point>
+        <x>179.7133134723802</x>
+        <y>-51.00585204959279</y>
+      </point>
+      <point>
+        <x>179.4050318786054</x>
+        <y>-52.305183272003</y>
+      </point>
+      <point>
+        <x>179.3133898104922</x>
+        <y>-53.5658875784088</y>
+      </point>
+      <point>
+        <x>179.4895856784307</x>
+        <y>-54.76674492835508</y>
+      </point>
+      <point>
+        <x>179.9847786918743</x>
+        <y>-55.88342509595261</y>
+      </point>
+      <point>
+        <x>180.8014635504798</x>
+        <y>-56.86948757047709</y>
+      </point>
+      <point>
+        <x>181.8737060652650</x>
+        <y>-57.69127768996592</y>
+      </point>
+      <point>
+        <x>183.1156739032344</x>
+        <y>-58.35267129602031</y>
+      </point>
+      <point>
+        <x>184.5507356058114</x>
+        <y>-58.90594934212008</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>177.8639861239823</x>
+        <y>-48.79316329157203</y>
+      </point>
+      <point>
+        <x>177.2730645576796</x>
+        <y>-50.46254252979493</y>
+      </point>
+      <point>
+        <x>176.9077499859655</x>
+        <y>-52.18863650588354</y>
+      </point>
+      <point>
+        <x>176.8550652669239</x>
+        <y>-54.0204647869114</y>
+      </point>
+      <point>
+        <x>177.2409436363168</x>
+        <y>-55.85926905460482</y>
+      </point>
+      <point>
+        <x>178.0955362811336</x>
+        <y>-57.520728706606</y>
+      </point>
+      <point>
+        <x>179.3038877533391</x>
+        <y>-58.87130342909607</y>
+      </point>
+      <point>
+        <x>180.7114757748025</x>
+        <y>-59.90469603088829</y>
+      </point>
+      <point>
+        <x>182.2141046553516</x>
+        <y>-60.68444591876410</y>
+      </point>
+      <point>
+        <x>183.7309923699235</x>
+        <y>-61.26717279521458</y>
+      </point>
+    </rightBound>
+    <predecessor ref="14"/>
+    <successor ref="19"/>
+    <adjacentLeft ref="29" drivingDir="opposite"/>
+    <stopLine>
+      <point>
+        <x>180.1823263682323</x>
+        <y>-49.72698815669259</y>
+      </point>
+      <point>
+        <x>177.8639861239823</x>
+        <y>-48.79316329157203</y>
+      </point>
+      <lineMarking>solid</lineMarking>
+      <trafficLightRef ref="201"/>
+    </stopLine>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="105"/>
+    <trafficLightRef ref="201"/>
+  </lanelet>
+  <lanelet id="29">
+    <leftBound>
+      <point>
+        <x>184.5507356058114</x>
+        <y>-58.90594934212008</y>
+      </point>
+      <point>
+        <x>183.1156739032344</x>
+        <y>-58.35267129602031</y>
+      </point>
+      <point>
+        <x>181.8737060652650</x>
+        <y>-57.69127768996592</y>
+      </point>
+      <point>
+        <x>180.8014635504798</x>
+        <y>-56.86948757047709</y>
+      </point>
+      <point>
+        <x>179.9847786918743</x>
+        <y>-55.88342509595261</y>
+      </point>
+      <point>
+        <x>179.4895856784307</x>
+        <y>-54.76674492835508</y>
+      </point>
+      <point>
+        <x>179.3133898104922</x>
+        <y>-53.5658875784088</y>
+      </point>
+      <point>
+        <x>179.4050318786054</x>
+        <y>-52.305183272003</y>
+      </point>
+      <point>
+        <x>179.7133134723802</x>
+        <y>-51.00585204959279</y>
+      </point>
+      <point>
+        <x>180.1823263682323</x>
+        <y>-49.72698815669259</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>185.2791517140859</x>
+        <y>-56.51567398336667</y>
+      </point>
+      <point>
+        <x>184.4718764898967</x>
+        <y>-56.20757088031462</y>
+      </point>
+      <point>
+        <x>183.6872902112067</x>
+        <y>-55.81783276736482</y>
+      </point>
+      <point>
+        <x>183.0179460206525</x>
+        <y>-55.3556793678185</y>
+      </point>
+      <point>
+        <x>182.4906268988735</x>
+        <y>-54.82256054939136</y>
+      </point>
+      <point>
+        <x>182.1213130807025</x>
+        <y>-54.18451374847514</y>
+      </point>
+      <point>
+        <x>181.9388921162526</x>
+        <y>-53.42312257589682</y>
+      </point>
+      <point>
+        <x>181.9541616788372</x>
+        <y>-52.56848003343109</y>
+      </point>
+      <point>
+        <x>182.1399155986730</x>
+        <y>-51.67200038987156</y>
+      </point>
+      <point>
+        <x>182.4756658376405</x>
+        <y>-50.72101777525641</y>
+      </point>
+    </rightBound>
+    <predecessor ref="18"/>
+    <successor ref="15"/>
+    <adjacentLeft ref="28" drivingDir="opposite"/>
+    <stopLine>
+      <point>
+        <x>184.5507356058114</x>
+        <y>-58.90594934212008</y>
+      </point>
+      <point>
+        <x>185.2791517140859</x>
+        <y>-56.51567398336667</y>
+      </point>
+      <lineMarking>solid</lineMarking>
+      <trafficLightRef ref="202"/>
+    </stopLine>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="106"/>
+    <trafficLightRef ref="202"/>
+  </lanelet>
+  <lanelet id="30">
+    <leftBound>
+      <point>
+        <x>180.1823263682323</x>
+        <y>-49.72698815669259</y>
+      </point>
+      <point>
+        <x>179.6006471432836</x>
+        <y>-50.95526345446951</y>
+      </point>
+      <point>
+        <x>178.9465099088555</x>
+        <y>-52.03082020106945</y>
+      </point>
+      <point>
+        <x>178.1821191090466</x>
+        <y>-52.99623874970604</y>
+      </point>
+      <point>
+        <x>177.3056105994492</x>
+        <y>-53.81970204350112</y>
+      </point>
+      <point>
+        <x>176.3251031931524</x>
+        <y>-54.47427915492837</y>
+      </point>
+      <point>
+        <x>175.2557985942751</x>
+        <y>-54.94850819623128</y>
+      </point>
+      <point>
+        <x>174.1177180205223</x>
+        <y>-55.24258974634746</y>
+      </point>
+      <point>
+        <x>172.9281721670982</x>
+        <y>-55.37024419857552</y>
+      </point>
+      <point>
+        <x>171.7037547523768</x>
+        <y>-55.35042342925669</y>
+      </point>
+      <point>
+        <x>170.4610160784125</x>
+        <y>-55.20233819062774</y>
+      </point>
+      <point>
+        <x>169.2560351117039</x>
+        <y>-54.95658983061205</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>177.8639861239823</x>
+        <y>-48.79316329157203</y>
+      </point>
+      <point>
+        <x>177.493828314624</x>
+        <y>-49.57984937563533</y>
+      </point>
+      <point>
+        <x>177.0358684112167</x>
+        <y>-50.35460515602259</y>
+      </point>
+      <point>
+        <x>176.5039120514134</x>
+        <y>-51.04837626684344</y>
+      </point>
+      <point>
+        <x>175.8970481776667</x>
+        <y>-51.64436096913761</y>
+      </point>
+      <point>
+        <x>175.2109118217773</x>
+        <y>-52.12876831099881</y>
+      </point>
+      <point>
+        <x>174.4391260749007</x>
+        <y>-52.49177523510624</y>
+      </point>
+      <point>
+        <x>173.6016707972557</x>
+        <y>-52.72756278575746</y>
+      </point>
+      <point>
+        <x>172.7075432450943</x>
+        <y>-52.83653935861142</y>
+      </point>
+      <point>
+        <x>171.7817932500503</x>
+        <y>-52.83138912074862</y>
+      </point>
+      <point>
+        <x>170.835034609188</x>
+        <y>-52.72484561266418</y>
+      </point>
+      <point>
+        <x>169.8571798114704</x>
+        <y>-52.52994997739150</y>
+      </point>
+    </rightBound>
+    <predecessor ref="14"/>
+    <successor ref="12"/>
+    <adjacentLeft ref="20" drivingDir="opposite"/>
+    <stopLine>
+      <point>
+        <x>180.1823263682323</x>
+        <y>-49.72698815669259</y>
+      </point>
+      <point>
+        <x>177.8639861239823</x>
+        <y>-48.79316329157203</y>
+      </point>
+      <lineMarking>solid</lineMarking>
+      <trafficLightRef ref="201"/>
+    </stopLine>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="105"/>
+    <trafficLightRef ref="201"/>
+  </lanelet>
+  <lanelet id="31">
+    <leftBound>
+      <point>
+        <x>174.1617095787515</x>
+        <y>-64.10832609867704</y>
+      </point>
+      <point>
+        <x>174.5619558869658</x>
+        <y>-62.98723400723275</y>
+      </point>
+      <point>
+        <x>174.8435287256957</x>
+        <y>-61.73434736199661</y>
+      </point>
+      <point>
+        <x>174.9058889277303</x>
+        <y>-60.38574370077014</y>
+      </point>
+      <point>
+        <x>174.6362437064299</x>
+        <y>-58.98314515545866</y>
+      </point>
+      <point>
+        <x>173.9415928243065</x>
+        <y>-57.65671088179806</y>
+      </point>
+      <point>
+        <x>172.9062515619210</x>
+        <y>-56.59900942495932</y>
+      </point>
+      <point>
+        <x>171.7335112081807</x>
+        <y>-55.85195977318028</y>
+      </point>
+      <point>
+        <x>170.5239369562499</x>
+        <y>-55.33393872014226</y>
+      </point>
+      <point>
+        <x>169.2560351117039</x>
+        <y>-54.95658983061205</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>176.4678542468245</x>
+        <y>-65.07388839655903</y>
+      </point>
+      <point>
+        <x>177.0836232504002</x>
+        <y>-63.32910985986548</y>
+      </point>
+      <point>
+        <x>177.4643424765868</x>
+        <y>-61.51942546635776</y>
+      </point>
+      <point>
+        <x>177.5070603506326</x>
+        <y>-59.58923237384351</y>
+      </point>
+      <point>
+        <x>177.0486443874534</x>
+        <y>-57.64398286275936</y>
+      </point>
+      <point>
+        <x>176.0430062011271</x>
+        <y>-55.93444774772866</y>
+      </point>
+      <point>
+        <x>174.6644516842823</x>
+        <y>-54.62645303164045</y>
+      </point>
+      <point>
+        <x>173.1051547494879</x>
+        <y>-53.67912095358866</y>
+      </point>
+      <point>
+        <x>171.4706722887339</x>
+        <y>-53.0021098402716</y>
+      </point>
+      <point>
+        <x>169.8571798114704</x>
+        <y>-52.52994997739150</y>
+      </point>
+    </rightBound>
+    <predecessor ref="17"/>
+    <successor ref="12"/>
+    <adjacentLeft ref="26" drivingDir="opposite"/>
+    <stopLine>
+      <point>
+        <x>174.1617095787515</x>
+        <y>-64.10832609867704</y>
+      </point>
+      <point>
+        <x>176.4678542468245</x>
+        <y>-65.07388839655903</y>
+      </point>
+      <lineMarking>solid</lineMarking>
+      <trafficLightRef ref="203"/>
+    </stopLine>
+    <laneletType>urban</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="107"/>
+    <trafficLightRef ref="203"/>
+  </lanelet>
+  <trafficSign id="101">
+        <trafficSignElement>
+            <trafficSignID>310</trafficSignID>
+            <additionalValue>Landeshauptstadt München</additionalValue>
+        </trafficSignElement>
+        <position>
+          <point>
+            <x>206.9839751212892</x>
+            <y>20.67847944866278</y>
+          </point>
+        </position>
+        <virtual>true</virtual>
+  </trafficSign>
+  <trafficSign id="102">
+        <trafficSignElement>
+            <trafficSignID>310</trafficSignID>
+            <additionalValue>Landeshauptstadt München</additionalValue>
+        </trafficSignElement>
+        <position>
+          <point>
+            <x>236.2707606031303</x>
+            <y>-77.82194810769872</y>
+          </point>
+        </position>
+        <virtual>true</virtual>
+  </trafficSign>
+  <trafficSign id="103">
+        <trafficSignElement>
+            <trafficSignID>310</trafficSignID>
+            <additionalValue>Landeshauptstadt München</additionalValue>
+        </trafficSignElement>
+        <position>
+          <point>
+            <x>126.6855461566415</x>
+            <y>-183.6227460269015</y>
+          </point>
+        </position>
+        <virtual>true</virtual>
+  </trafficSign>
+  <trafficSign id="104">
+        <trafficSignElement>
+            <trafficSignID>310</trafficSignID>
+            <additionalValue>Landeshauptstadt München</additionalValue>
+        </trafficSignElement>
+        <position>
+          <point>
+            <x>135.7263040332439</x>
+            <y>-46.53851804590986</y>
+          </point>
+        </position>
+        <virtual>true</virtual>
+  </trafficSign>
+  <trafficSign id="105">
+        <trafficSignElement>
+            <trafficSignID>306</trafficSignID>
+        </trafficSignElement>
+        <trafficSignElement>
+            <trafficSignID>720</trafficSignID>
+        </trafficSignElement>
+        <position>
+          <point>
+            <x>177.8639861239823</x>
+            <y>-48.79316329157203</y>
+          </point>
+        </position>
+  </trafficSign>
+  <trafficSign id="106">
+        <trafficSignElement>
+            <trafficSignID>306</trafficSignID>
+        </trafficSignElement>
+        <position>
+          <point>
+            <x>185.2791517140859</x>
+            <y>-56.51567398336667</y>
+          </point>
+        </position>
+  </trafficSign>
+  <trafficSign id="107">
+        <trafficSignElement>
+            <trafficSignID>205</trafficSignID>
+        </trafficSignElement>
+        <position>
+          <point>
+            <x>176.4678542468245</x>
+            <y>-65.07388839655903</y>
+          </point>
+        </position>
+  </trafficSign>
+  <trafficSign id="108">
+        <trafficSignElement>
+            <trafficSignID>205</trafficSignID>
+        </trafficSignElement>
+        <position>
+          <point>
+            <x>168.6607857447963</x>
+            <y>-57.38341449560771</y>
+          </point>
+        </position>
+  </trafficSign>
+  <trafficSign id="109">
+        <trafficSignElement>
+            <trafficSignID>310</trafficSignID>
+            <additionalValue>Landeshauptstadt München</additionalValue>
+        </trafficSignElement>
+        <position>
+          <point>
+            <x>183.7309923699235</x>
+            <y>-61.26717279521458</y>
+          </point>
+        </position>
+        <virtual>true</virtual>
+  </trafficSign>
+  <trafficSign id="110">
+        <trafficSignElement>
+            <trafficSignID>310</trafficSignID>
+            <additionalValue>Landeshauptstadt München</additionalValue>
+        </trafficSignElement>
+        <position>
+          <point>
+            <x>171.8536753653425</x>
+            <y>-63.15168533332535</y>
+          </point>
+        </position>
+        <virtual>true</virtual>
+  </trafficSign>
+  <trafficSign id="111">
+        <trafficSignElement>
+            <trafficSignID>310</trafficSignID>
+            <additionalValue>Landeshauptstadt München</additionalValue>
+        </trafficSignElement>
+        <position>
+          <point>
+            <x>171.8536753653425</x>
+            <y>-63.15168533332535</y>
+          </point>
+        </position>
+        <virtual>true</virtual>
+  </trafficSign>
+  <trafficSign id="112">
+        <trafficSignElement>
+            <trafficSignID>310</trafficSignID>
+            <additionalValue>Landeshauptstadt München</additionalValue>
+        </trafficSignElement>
+        <position>
+          <point>
+            <x>169.8571798114704</x>
+            <y>-52.52994997739150</y>
+          </point>
+        </position>
+        <virtual>true</virtual>
+  </trafficSign>
+  <trafficLight id="201">
+        <cycle>
+          <cycleElement>
+            <duration>15</duration>
+            <color>red</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
+            <color>redYellow</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>15</duration>
+            <color>green</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
+            <color>yellow</color>
+          </cycleElement>
+        </cycle>
+        <position>
+          <point>
+            <x>177.8639861239823</x>
+            <y>-48.79316329157203</y>
+          </point>
+        </position>
+        <direction>all</direction>
+        <active>true</active>
+  </trafficLight>
+    <trafficLight id="202">
+        <cycle>
+          <cycleElement>
+            <duration>15</duration>
+            <color>red</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
+            <color>redYellow</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>15</duration>
+            <color>green</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
+            <color>yellow</color>
+          </cycleElement>
+        </cycle>
+        <position>
+          <point>
+            <x>185.2791517140859</x>
+            <y>-56.51567398336667</y>
+          </point>
+        </position>
+        <direction>all</direction>
+        <active>true</active>
+  </trafficLight>
+    <trafficLight id="203">
+      <cycle>
+          <cycleElement>
+            <duration>15</duration>
+            <color>green</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
+            <color>yellow</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>15</duration>
+            <color>red</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
+            <color>redYellow</color>
+          </cycleElement>
+        </cycle>
+        <position>
+          <point>
+            <x>176.4678542468245</x>
+            <y>-65.07388839655903</y>
+          </point>
+        </position>
+        <direction>all</direction>
+        <active>true</active>
+  </trafficLight>
+    <trafficLight id="204">
+      <cycle>
+          <cycleElement>
+            <duration>15</duration>
+            <color>green</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
+            <color>yellow</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>15</duration>
+            <color>red</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
+            <color>redYellow</color>
+          </cycleElement>
+      </cycle>
+        <position>
+          <point>
+            <x>168.6607857447963</x>
+            <y>-57.38341449560771</y>
+          </point>
+        </position>
+        <direction>all</direction>
+        <active>true</active>
+  </trafficLight>
+  <intersection id="301">
+    <incoming id="302">
+      <incomingLanelet ref="13"/>
+      <successorsRight ref="26"/>
+      <successorsStraight ref="22"/>
+      <successorsLeft ref="20"/>
+      <isLeftOf ref="304"/>
+    </incoming>
+    <incoming id="303">
+      <incomingLanelet ref="14"/>
+      <successorsRight ref="30"/>
+      <successorsStraight ref="24"/>
+      <successorsLeft ref="28"/>
+      <isLeftOf ref="302"/>
+    </incoming>
+    <incoming id="304">
+      <incomingLanelet ref="17"/>
+      <successorsRight ref="27"/>
+      <successorsStraight ref="23"/>
+      <successorsLeft ref="31"/>
+      <isLeftOf ref="305"/>
+    </incoming>
+    <incoming id="305">
+      <incomingLanelet ref="18"/>
+      <successorsRight ref="29"/>
+      <successorsStraight ref="21"/>
+      <successorsLeft ref="25"/>
+      <isLeftOf ref="303"/>
+    </incoming>
+  </intersection>
+  <planningProblem id="4000">
+    <initialState>
+      <position>
+        <point>
+          <x>0.0</x>
+          <y>0.0</y>
+        </point>
+      </position>
+      <orientation>
+        <exact>0.0</exact>
+      </orientation>
+      <time>
+        <exact>0</exact>
+      </time>
+      <velocity>
+        <exact>0.0</exact>
+      </velocity>
+      <yawRate>
+        <exact>0.0</exact>
+      </yawRate>
+      <slipAngle>
+        <exact>0.0</exact>
+      </slipAngle>
+    </initialState>
+    <goalState>
+      <position>
+        <rectangle>
+          <length>4.3</length>
+          <width>8.9</width>
+          <orientation>1.7</orientation>
+          <center>
+            <x>2.5</x>
+            <y>-1.8</y>
+          </center>
+        </rectangle>
+      </position>
+      <time>
+        <intervalStart>0</intervalStart>
+        <intervalEnd>1</intervalEnd>
+      </time>
+      <velocity>
+        <intervalStart>0.0</intervalStart>
+        <intervalEnd>1.0</intervalEnd>
+      </velocity>
+    </goalState>
+    <goalState>
+      <position>
+        <circle>
+          <radius>2.0</radius>
+          <center>
+            <x>10.0</x>
+            <y>0.0</y>
+          </center>
+        </circle>
+      </position>
+      <time>
+        <intervalStart>1</intervalStart>
+        <intervalEnd>2</intervalEnd>
+      </time>
+      <velocity>
+        <intervalStart>0.0</intervalStart>
+        <intervalEnd>1.0</intervalEnd>
+      </velocity>
+    </goalState>
+  </planningProblem>
+</commonRoad>

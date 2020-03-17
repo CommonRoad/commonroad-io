@@ -13,9 +13,9 @@ from commonroad.common.util import make_valid_orientation
 __author__ = "Stefanie Manzinger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2019.1"
+__version__ = "2020.1"
 __maintainer__ = "Stefanie Manzinger"
-__email__ = "commonroad@in.tum.de"
+__email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 
@@ -217,6 +217,7 @@ class Circle(Shape):
         """
         self.radius: float = radius
         self.center: np.ndarray = center
+        self._shapely_circle: shapely.geometry = shapely.geometry.Point(center[0], center[1]).buffer(radius / 2)
 
     @property
     def radius(self) -> float:
@@ -246,6 +247,10 @@ class Circle(Shape):
             self._center = center
         else:
             warnings.warn('<Circle/center>: center of circle is immutable.')
+
+    @property
+    def shapely_object(self) -> shapely.geometry.Polygon:
+        return self._shapely_circle
 
     def translate_rotate(self, translation: np.ndarray, angle: float) -> 'Circle':
         """ A new circle is created by first translating and then rotating the current circle around the origin.
