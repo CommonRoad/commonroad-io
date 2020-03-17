@@ -58,7 +58,18 @@ class Rectangle(Shape):
         self.orientation: float = orientation
 
         self._vertices: np.ndarray = self._compute_vertices()
-        self._shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self._vertices)
+        self.__shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self._vertices)
+
+    @property
+    def _shapely_polygon(self) -> shapely.geometry.Polygon:
+        if self.__shapely_polygon is None:
+            self.__shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self._vertices)
+
+        return self.__shapely_polygon
+
+    @_shapely_polygon.setter
+    def _shapely_polygon(self, _shapely_polygon):
+        self.__shapely_polygon = _shapely_polygon
 
     @property
     def length(self) -> float:
