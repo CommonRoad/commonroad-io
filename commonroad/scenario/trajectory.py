@@ -322,6 +322,17 @@ class Trajectory:
             state = self._state_list[time_step - self._initial_time_step]
         return state
 
+    def states_in_time_interval(self, time_begin: int, time_end: int) -> List[Union[State, None]]:
+        """
+        Function to get the states of a trajectory at a specific time interval.
+
+        :param time_begin: first considered time step
+        :param time_end: last considered time step
+        :return: list of states
+        """
+        assert time_end >= time_begin
+        return [self.state_at_time_step(time_step) for time_step in range(time_begin,time_end+1)]
+
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ First translates each state of the trajectory, then rotates each state of the trajectory around the
         origin.
