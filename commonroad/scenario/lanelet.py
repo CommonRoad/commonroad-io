@@ -584,7 +584,7 @@ class LaneletNetwork:
     """
 
     def __init__(self):
-        self._lanelets: Dict = {}
+        self._lanelets: Dict[int,Lanelet] = {}
 
     @property
     def lanelets(self) -> List[Lanelet]:
@@ -595,11 +595,13 @@ class LaneletNetwork:
         warnings.warn('<LaneletNetwork/lanelets>: lanelets of network are immutable')
 
     @classmethod
-    def create_from_lanelet_list(cls, lanelets: list):
+    def create_from_lanelet_list(cls, lanelets: list, cleanup_ids: bool=False):
         """
         Creates a LaneletNetwork object from a given list of lanelets
 
         :param lanelets: The list of lanelets
+        :param check_ids: check whether all referred ids still exist
+        :param cleanup_ids: cleans up unused ids
         :return: The LaneletNetwork for the given list of lanelets
         """
         assert isinstance(lanelets, list) and all(isinstance(l, Lanelet) for l in
@@ -614,6 +616,8 @@ class LaneletNetwork:
         for l in lanelets:
             lanelet_network.add_lanelet(copy.deepcopy(l))
 
+        if cleanup_ids:
+            lanelet_network.cleanup_lanelet_references()
         return lanelet_network
 
     @classmethod
@@ -628,6 +632,30 @@ class LaneletNetwork:
         for l in lanelet_network.lanelets:
             new_lanelet_network.add_lanelet(copy.deepcopy(l))
         return new_lanelet_network
+
+    def cleanup_lanelet_references(self):
+        """
+        Deletes ids which do not exist in the lanelet network. Useful when cutting out lanelet networks.
+        :return:
+        """
+        exisiting_ids = set(self._lanelets.keys())
+        for l in self.lanelets:
+            l._predecessor = list(set(l._predecessor).intersection(exisiting_ids))
+            l._successor = list(set(l._successor).intersection(exisiting_ids))
+            l._adj_left = None if l._adj_left is None or l._adj_left not in exisiting_ids else l._adj_left
+            prev = copy.deepcopy(l._adj_left_same_direction)
+            l._adj_left_same_direction = None if l._adj_left_same_direction is None \
+                                                 or l.adj_left not in exisiting_ids \
+                else l._adj_left_same_direction
+            if prev != l._adj_left_same_direction:
+                print(prev,l._adj_left_same_direction)
+            l._adj_right = None if l._adj_right is None or l._adj_right not in exisiting_ids else l._adj_right
+            prev = copy.deepcopy(l._adj_right_same_direction)
+            l._adj_right_same_direction = None if l._adj_right_same_direction is None \
+                                                  or l.adj_right not in exisiting_ids \
+                else l._adj_right_same_direction
+            if prev != l._adj_right_same_direction:
+                print(prev,l._adj_right_same_direction)
 
     def find_lanelet_by_id(self, lanelet_id: int) -> Lanelet:
         """
