@@ -6,17 +6,15 @@ import networkx as nx
 
 import commonroad.geometry.transform
 from commonroad.common.validity import *
-from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape
+from commonroad.geometry.shape import Polygon, ShapeGroup, Circle
 from commonroad.scenario.obstacle import Obstacle
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
-from commonroad.scenario.intersection import Intersection
 
-__author__ = "Christian Pek, Sebastian Maierhofer"
+__author__ = "Christian Pek"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW CAR@TUM"]
-__version__ = "2020.1"
+__version__ = "2019.1"
 __maintainer__ = "Christian Pek"
-__email__ = "commonroad-i06@in.tum.de"
+__email__ = "Christian.Pek@tum.de"
 __status__ = "released"
 
 
@@ -863,7 +861,7 @@ class LaneletNetwork:
     """
 
     def __init__(self):
-        self._lanelets: Dict = {}
+        self._lanelets: Dict[int,Lanelet] = {}
         self._intersections: Dict = {}
         self._traffic_signs: Dict = {}
         self._traffic_lights: Dict = {}
@@ -889,11 +887,12 @@ class LaneletNetwork:
         return list(self._traffic_lights.values())
 
     @classmethod
-    def create_from_lanelet_list(cls, lanelets: list):
+    def create_from_lanelet_list(cls, lanelets: list, cleanup_ids: bool=False):
         """
         Creates a LaneletNetwork object from a given list of lanelets
 
         :param lanelets: The list of lanelets
+        :param cleanup_ids: cleans up unused ids
         :return: The LaneletNetwork for the given list of lanelets
         """
         assert isinstance(lanelets, list) and all(isinstance(l, Lanelet) for l in
@@ -908,6 +907,8 @@ class LaneletNetwork:
         for l in lanelets:
             lanelet_network.add_lanelet(copy.deepcopy(l))
 
+        if cleanup_ids:
+            lanelet_network.cleanup_lanelet_references()
         return lanelet_network
 
     @classmethod
@@ -922,6 +923,30 @@ class LaneletNetwork:
         for l in lanelet_network.lanelets:
             new_lanelet_network.add_lanelet(copy.deepcopy(l))
         return new_lanelet_network
+
+    def cleanup_lanelet_references(self):
+        """
+        Deletes ids which do not exist in the lanelet network. Useful when cutting out lanelet networks.
+        :return:
+        """
+        exisiting_ids = set(self._lanelets.keys())
+        for l in self.lanelets:
+            l._predecessor = list(set(l._predecessor).intersection(exisiting_ids))
+            l._successor = list(set(l._successor).intersection(exisiting_ids))
+            l._adj_left = None if l._adj_left is None or l._adj_left not in exisiting_ids else l._adj_left
+            prev = copy.deepcopy(l._adj_left_same_direction)
+            l._adj_left_same_direction = None if l._adj_left_same_direction is None \
+                                                 or l.adj_left not in exisiting_ids \
+                else l._adj_left_same_direction
+            if prev != l._adj_left_same_direction:
+                print(prev,l._adj_left_same_direction)
+            l._adj_right = None if l._adj_right is None or l._adj_right not in exisiting_ids else l._adj_right
+            prev = copy.deepcopy(l._adj_right_same_direction)
+            l._adj_right_same_direction = None if l._adj_right_same_direction is None \
+                                                  or l.adj_right not in exisiting_ids \
+                else l._adj_right_same_direction
+            if prev != l._adj_right_same_direction:
+                print(prev,l._adj_right_same_direction)
 
     def find_lanelet_by_id(self, lanelet_id: int) -> Lanelet:
         """
