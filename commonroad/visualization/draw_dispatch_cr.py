@@ -12,6 +12,7 @@ from commonroad.planning.planning_problem import GoalRegion, PlanningProblemSet,
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario
+from commonroad.scenario.traffic_sign import TrafficSign
 from commonroad.scenario.trajectory import Trajectory, State
 import commonroad.visualization.scenario
 import commonroad.visualization.planning
@@ -248,7 +249,7 @@ def _add_legend(legend: Dict[Tuple[str,...], str], draw_params):
 
 
 plottable_types=Union[list, Scenario, Trajectory, LaneletNetwork, Lanelet, Obstacle, ShapeGroup, Shape,
-                      GoalRegion, PlanningProblem, PlanningProblemSet, State, Occupancy]
+                      GoalRegion, PlanningProblem, PlanningProblemSet, State, Occupancy, TrafficSign]
 
 def draw_object(obj: Union[plottable_types, List[plottable_types]],
                 plot_limits: Union[List[Union[float,int]],None] = None,

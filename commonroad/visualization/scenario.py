@@ -15,6 +15,7 @@ from commonroad.common.util import Interval
 from commonroad.geometry.shape import *
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDGermany, TrafficLight, TrafficLightState
+from commonroad.visualization.traffic_sign import draw_traffic_sign
 from matplotlib.path import Path
 from commonroad.prediction.prediction import Occupancy
 from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, LineMarking
@@ -107,7 +108,8 @@ def create_default_draw_params() -> dict:
                                               'green_color': '#00aa16',
                                               'red_yellow_color': '#fe4009ff'},
                             'draw_traffic_signs': False,
-                            'draw_signs_in_lanelet': True,  # Todo: False not implemented
+                            'traffic_sign': {'show_label': True,
+                                             'scale_factor': 0.2},
                             'draw_intersections': False,
                             'intersection': {'draw_incoming_lanelets': True,
                                              'incoming_lanelets_color': '#3ecbcf',
@@ -385,17 +387,6 @@ def draw_lanelet_list(obj: List[Lanelet] , plot_limits: Union[List[Union[int,flo
                                     call_stack)
 
 
-
-# def draw_traffic_sign(sign: TrafficSign):
-#     for element in sign.traffic_sign_elements:
-#         path = os.path.join(traffic_sign_path, element.traffic_sign_element_id + '.svg')
-#         print(path)
-#         try:
-#             pylustrator.load(path, offset=[0.5, 0.5])
-#         except:
-#             pass
-
-
 def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
                                 traffic_lights: Union[Dict[int, TrafficLight], None],
                                 traffic_signs: Union[Dict[int,TrafficSign],None],
@@ -433,11 +424,11 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
             draw_traffic_signs = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
                 ('lanelet_network', 'draw_traffic_signs'))
-            draw_signs_in_lanelet = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            show_traffic_sign_label = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
-                ('lanelet_network', 'draw_signs_in_lanelet'))
+                ('lanelet_network', 'traffic_sign', 'show_label'))
         else:
-            draw_traffic_signs=draw_signs_in_lanelet = False
+            draw_traffic_signs=show_traffic_sign_label = False
 
         if intersections is not None and len(intersections) > 0:
             draw_intersections = commonroad.visualization.draw_dispatch_cr._retrieve_value(
@@ -746,9 +737,10 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
             if is_incoming_lanelet:
                 strings.append('inc_id: ' + str(incomings_id[lanelet.lanelet_id]))
                 strings.append('inc_left: ' + str(incomings_left[lanelet.lanelet_id]))
-            if draw_traffic_signs:
+            if draw_traffic_signs and show_traffic_sign_label is True:
                 traffic_signs_tmp = [traffic_signs[id] for id in lanelet.traffic_signs]
-                if draw_signs_in_lanelet is True and traffic_signs_tmp:
+                if traffic_signs_tmp:
+                    # add as text to label
                     str_tmp = 'traffic signs: '
                     add_str = ''
                     for sign in traffic_signs_tmp:
@@ -832,6 +824,9 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
                                                        color=right_bound_color, transOffset=ax.transData)
         ax.add_collection(collection_tmp)
 
+    if draw_traffic_signs:
+        # draw actual traffic sign
+        draw_traffic_sign(list(traffic_signs.values()), None, ax, draw_params, draw_func, handles, call_stack)
 
 def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
                            plot_limits: Union[List[Union[int,float]], None], ax: mpl.axes.Axes, draw_params: dict,
@@ -1384,6 +1379,7 @@ def draw_car(pos_x: Union[int,float], pos_y: Union[int,float], rotate: Union[int
 draw_func_dict = {commonroad.scenario.scenario.Scenario: draw_scenario,
                   commonroad.scenario.lanelet.Lanelet: draw_lanelet_list,
                   commonroad.scenario.lanelet.LaneletNetwork: draw_lanelet_network,
+                  commonroad.scenario.traffic_sign.TrafficSign: draw_traffic_sign,
                   commonroad.scenario.obstacle.DynamicObstacle: draw_dynamic_obstacles,
                   commonroad.scenario.obstacle.StaticObstacle: draw_static_obstacles,
                   commonroad.scenario.trajectory.Trajectory: draw_trajectories,
