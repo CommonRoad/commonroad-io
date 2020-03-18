@@ -1,34 +1,20 @@
 import copy
 import enum
 import os
-from collections import defaultdict
-from typing import Dict, Callable, Tuple, Union, Any, Set, Iterable
+from typing import Dict, Callable, Tuple, Union, Any
 import commonroad.geometry.shape
 import matplotlib as mpl
-import matplotlib.pyplot as plt
-import matplotlib.image as mplimage
-import matplotlib.cm as cm
 import matplotlib.patches as patches
 import matplotlib.collections as collections
-import PIL.Image
-from matplotlib.cbook import get_sample_data
-# import pylustrator
+from PIL import Image
 
 import commonroad.prediction.prediction
 import commonroad.scenario.obstacle
 import commonroad.visualization.draw_dispatch_cr
-from commonroad.common.util import Interval
 from commonroad.geometry.shape import *
-from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDGermany, TrafficLight, TrafficLightState, \
     TrafficSignIDUsa, TrafficSignIDChina, TrafficSignIDZamunda
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox, HPacker, TextArea, VPacker
-from matplotlib.path import Path
-from commonroad.prediction.prediction import Occupancy
-from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, LineMarking
-from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, ObstacleRole
-from commonroad.scenario.scenario import Scenario
-from commonroad.scenario.trajectory import Trajectory
 
 # path to traffic sign .png files
 traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
@@ -118,7 +104,7 @@ def draw_traffic_sign(traffic_signs: Union[List[TrafficSign], TrafficSign],
 
             if plot_img:
                 # plot traffic sign
-                sign_img = PIL.Image.open(path)
+                sign_img = Image.open(path)
                 boxes.append(OffsetImage(sign_img, zoom=scale_factor, zorder=zorder, interpolation='bicubic'))
 
             # already stack label and img in case both are shown (prevents misalignment with additional text)
