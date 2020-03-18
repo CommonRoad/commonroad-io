@@ -135,3 +135,95 @@ def draw_traffic_sign(traffic_signs: Union[List[TrafficSign], TrafficSign],
             ab = AnnotationBbox(hbox, traffic_sign.position, **kwargs_tmp)
             ab.zorder = 30
             ax.add_artist(ab)
+
+
+def draw_traffic_light(traffic_lights: Union[List[TrafficLight], TrafficLight],
+                      plot_limits: Union[List[Union[int,float]], None], ax: mpl.axes.Axes, draw_params: dict,
+                      draw_func: Dict[type,Callable],
+                      handles: Dict[Any,List[Union[mpl.patches.Patch,mpl.collections.Collection]]],
+                      call_stack: Tuple[str,...]) -> None:
+
+    if type(traffic_lights) is not list:
+        traffic_lights = [traffic_lights]
+
+    if len(traffic_lights) == 0:
+        return
+
+    time_begin = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+        draw_params, call_stack,
+        ('time_begin',))
+    scale_factor = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
+        draw_params, call_stack,
+        ('traffic_light', 'scale_factor'), ('scenario','lanelet_network','traffic_light', 'scale_factor'))
+    show_label = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
+        draw_params, call_stack,
+        ('traffic_light', 'show_label'), ('scenario', 'lanelet_network', 'traffic_light', 'show_label'))
+    zorder = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
+        draw_params, call_stack,
+        ('traffic_light', 'zorder'), ('scenario','lanelet_network','traffic_light', 'zorder'))
+    kwargs = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
+        draw_params, call_stack,
+        ('traffic_light', 'kwargs'), ('scenario','lanelet_network','traffic_light', 'kwargs'))
+
+    # add default AnnotationBox args if not specified by user
+    default_params = dict(xycoords='data', frameon=False)
+    for param, value in default_params.items():
+        if param not in kwargs:
+            kwargs[param] = value
+
+    #call_stack = tuple(list(call_stack) + ['traffic_light'])
+    pos_dict = additional_value_position_dict()
+    prop_dict = text_prop_dict()
+
+    # group lights at same position
+    positions = [tl.position for tl in traffic_lights]
+    ids = [tl.traffic_light_id for tl in traffic_lights]
+    mapping = {tl.traffic_light_id: tl for tl in traffic_lights}
+    groups = []
+    grouped = set()
+    i=1
+    for pos, tl_id in zip(positions[:-1], ids[:-1]):
+        group_tmp = {tl_id}
+        if tl_id in grouped: continue
+        grouped.add(tl_id)
+        for pos2, tl_id2 in zip(positions[i:], ids[:]):
+            if tl_id2 in grouped: continue
+            if np.linalg.norm(pos-pos2, ord=np.inf) < 0.8:
+                group_tmp.add(tl_id2)
+
+        groups.append(group_tmp)
+
+    if ids[-1] not in grouped:
+        groups.append({ids[-1]})
+
+    # plots all group members horizontally stacked
+    for group in groups:
+        imageboxes = []
+        for tl_id in group:
+            traffic_light = mapping[tl_id]
+            imageboxes = []
+            if traffic_light.active:
+                state = traffic_light.get_state_at_time_step(time_begin)
+                path = os.path.join(traffic_sign_path, 'traffic_light_state_' + str(state.value) + '.png')
+            else:
+                path = os.path.join(traffic_sign_path, 'traffic_light_state_inactive.png')
+
+            boxes = []  # collect matplotlib offset boxes for text and images
+            sign_img = Image.open(path)
+            boxes.append(OffsetImage(sign_img, zoom=scale_factor, zorder=zorder, interpolation='bicubic'))
+
+            if show_label:
+                boxes.append(TextArea(str(state.value)))
+
+            # stack boxes vertically
+            imageboxes.append(VPacker(children=boxes,pad=0, sep=0, align='center'))
+
+        # horizontally stack all traffic sign elements of the traffic sign
+        hbox = HPacker(children=imageboxes, pad=0, sep=0.05, align='baseline')
+        kwargs_tmp = copy.deepcopy(kwargs)
+        if 'xybox' not in kwargs_tmp:
+            kwargs_tmp['xybox'] = traffic_light.position
+
+        ab = AnnotationBbox(hbox, traffic_light.position, **kwargs_tmp)
+        ab.zorder = 30
+        ax.add_artist(ab)

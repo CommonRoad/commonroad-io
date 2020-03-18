@@ -15,7 +15,7 @@ from commonroad.common.util import Interval
 from commonroad.geometry.shape import *
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDGermany, TrafficLight, TrafficLightState
-from commonroad.visualization.traffic_sign import draw_traffic_sign
+from commonroad.visualization.traffic_sign import draw_traffic_sign, draw_traffic_light
 from matplotlib.path import Path
 from commonroad.prediction.prediction import Occupancy
 from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, LineMarking
@@ -107,7 +107,11 @@ def create_default_draw_params() -> dict:
                             'traffic_light': {'red_color': 'red',
                                               'yellow_color': '#feb609',
                                               'green_color': '#00aa16',
-                                              'red_yellow_color': '#fe4009ff'},
+                                              'red_yellow_color': '#fe4009ff',
+                                              'show_label': False,
+                                              'kwargs': {}, # further properties for AnnotationBox, see # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
+                                              'scale_factor': 0.25,
+                                              'zorder': 30},
                             'draw_traffic_signs': True,
                             'traffic_sign': {'show_traffic_signs': 'all',  # 'all' or list of TrafficSignIDs
                                              'show_label': False,
@@ -386,6 +390,9 @@ def draw_lanelet_list(obj: List[Lanelet] , plot_limits: Union[List[Union[int,flo
         """
         Draws list of lanelets.
         """
+        if isinstance(obj, Lanelet):
+            obj = [obj]
+
         _draw_lanelets_intersection(LaneletNetwork.create_from_lanelet_list(obj), None, None, None, plot_limits, ax, draw_params, draw_func, handles,
                                     call_stack)
 
@@ -830,6 +837,11 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
     if draw_traffic_signs:
         # draw actual traffic sign
         draw_traffic_sign(list(traffic_signs.values()), None, ax, draw_params, draw_func, handles, call_stack)
+
+    if draw_traffic_lights:
+        # draw actual traffic sign
+        draw_traffic_light(list(traffic_lights.values()), None, ax, draw_params, draw_func, handles, call_stack)
+
 
 def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
                            plot_limits: Union[List[Union[int,float]], None], ax: mpl.axes.Axes, draw_params: dict,
