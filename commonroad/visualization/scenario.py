@@ -107,7 +107,7 @@ def create_default_draw_params() -> dict:
                                               'yellow_color': '#feb609',
                                               'green_color': '#00aa16',
                                               'red_yellow_color': '#fe4009ff'},
-                            'draw_traffic_signs': False,
+                            'draw_traffic_signs': True,
                             'traffic_sign': {'show_traffic_signs': 'all',  # 'all' or list of TrafficSignIDs
                                              'show_label': False,
                                              'kwargs': {},   # further properties for AnnotationBox, see # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
