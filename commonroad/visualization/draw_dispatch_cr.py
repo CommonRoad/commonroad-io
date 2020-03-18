@@ -12,6 +12,7 @@ from commonroad.planning.planning_problem import GoalRegion, PlanningProblemSet,
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario
+from commonroad.scenario.traffic_sign import TrafficSign
 from commonroad.scenario.trajectory import Trajectory, State
 import commonroad.visualization.scenario
 import commonroad.visualization.planning
@@ -116,7 +117,6 @@ def _retrieve_value(style_sheet: dict, call_stack: tuple, value_path: Tuple[str,
         pass
 
     # try to retrieve from default parameters
-
     for idx_r in range(0,len(call_stack)):
         style_sheet_caller = default_draw_params
         try:
@@ -169,7 +169,7 @@ def _retrieve_alternate_value(style_sheet: dict, call_stack: Tuple[str, ...], va
         except KeyError:
             continue
 
-    for idx_r, caller in range(0, len(call_stack)):
+    for idx_r in range(0, len(call_stack)):
         style_sheet_caller = style_sheet
         try:
             for idx in range(0, len(call_stack) - idx_r):
@@ -248,7 +248,7 @@ def _add_legend(legend: Dict[Tuple[str,...], str], draw_params):
 
 
 plottable_types=Union[list, Scenario, Trajectory, LaneletNetwork, Lanelet, Obstacle, ShapeGroup, Shape,
-                      GoalRegion, PlanningProblem, PlanningProblemSet, State, Occupancy]
+                      GoalRegion, PlanningProblem, PlanningProblemSet, State, Occupancy, TrafficSign]
 
 def draw_object(obj: Union[plottable_types, List[plottable_types]],
                 plot_limits: Union[List[Union[float,int]],None] = None,

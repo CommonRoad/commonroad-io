@@ -1,5 +1,8 @@
 import os
 import matplotlib as mpl
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany, TrafficSignIDUsa
+import numpy as np
+
 # mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import unittest
@@ -20,7 +23,8 @@ class TestVisualization(unittest.TestCase):
         plt.figure()
         mpl.rcParams['lines.scale_dashes'] = False
         draw_object(scenario.lanelet_network,
-                    draw_params={'time_begin': 20, 'lanelet_network':{'draw_intersections':True, 'draw_traffic_signs':True},
+                    draw_params={'time_begin': 20, 'lanelet_network':{'draw_intersections':True, 'draw_traffic_signs':True,
+                                                                      },
                                  'lanelet':{'draw_lane_marking':True,
                                             'show_label':True}},
                     legend={('lanelet_network','intersection','incoming_lanelets_color'):'Incoming lanelets',
@@ -35,6 +39,27 @@ class TestVisualization(unittest.TestCase):
         plt.axis('equal')
         plt.show()
 
+    def test_traffic_signs(self):
+        "Uses all options for plotting objects related to intersections or traffic sign/lights."
+        scenario, pp = CommonRoadFileReader(self.filename_urban).open()
+        plt.close('all')
+        plt.figure()
+        draw_params = {'time_begin': 20,
+                                 'lanelet_network': {'draw_intersections': False, 'draw_traffic_signs': True,
+                                                     'traffic_sign':{'show_label':False,'show_traffic_signs':'all'}},
+                                 'lanelet': {'draw_lane_marking': False,
+                                             'show_label': False}}
+        draw_object(scenario.lanelet_network,
+                    draw_params=draw_params)
+        ts = TrafficSign(traffic_sign_id=100000,traffic_sign_elements=
+        [TrafficSignElement(TrafficSignIDUsa.MAXSPEED,additional_values=['50']),
+         TrafficSignElement(TrafficSignIDGermany.MAXSPEED,additional_values=['80']),
+         TrafficSignElement(TrafficSignIDGermany.OVERTAKING,additional_values=['80']),
+         TrafficSignElement(TrafficSignIDGermany.STOP,additional_values=['80'])], position=np.array([159.,-88.]),virtual=False)
+        draw_object(ts,draw_params={'traffic_sign':{'scale_factor':0.2, 'kwargs':{'arrowprops':{'arrowstyle':"simple"}}}})
+        plt.autoscale()
+        plt.axis('equal')
+        plt.show()
 # def test_read_svg():
 #     path = '/home/klischat/GIT_REPOS/commonroad-io/commonroad/visualization/traffic_signs/306.svg'
 #     path2 = '/home/klischat/GIT_REPOS/commonroad-io/commonroad/visualization/traffic_signs/310.svg'

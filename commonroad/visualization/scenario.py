@@ -15,6 +15,7 @@ from commonroad.common.util import Interval
 from commonroad.geometry.shape import *
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDGermany, TrafficLight, TrafficLightState
+from commonroad.visualization.traffic_sign import draw_traffic_sign, draw_traffic_light
 from matplotlib.path import Path
 from commonroad.prediction.prediction import Occupancy
 from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, LineMarking
@@ -22,7 +23,8 @@ from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, Obstac
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.trajectory import Trajectory
 
-from commonroad.visualization.util import draw_polygon_as_patch, draw_polygon_collection_as_patch, LineDataUnits
+from commonroad.visualization.util import draw_polygon_as_patch, draw_polygon_collection_as_patch, LineDataUnits, \
+    collect_center_line_colors
 
 __author__ = "Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -105,9 +107,17 @@ def create_default_draw_params() -> dict:
                             'traffic_light': {'red_color': 'red',
                                               'yellow_color': '#feb609',
                                               'green_color': '#00aa16',
-                                              'red_yellow_color': '#fe4009ff'},
-                            'draw_traffic_signs': False,
-                            'draw_signs_in_lanelet': True,  # Todo: False not implemented
+                                              'red_yellow_color': '#fe4009ff',
+                                              'show_label': False,
+                                              'kwargs': {}, # further properties for AnnotationBox, see # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
+                                              'scale_factor': 0.25,
+                                              'zorder': 30},
+                            'draw_traffic_signs': True,
+                            'traffic_sign': {'show_traffic_signs': 'all',  # 'all' or list of TrafficSignIDs
+                                             'show_label': False,
+                                             'kwargs': {},   # further properties for AnnotationBox, see # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
+                                             'scale_factor': 0.25,
+                                             'zorder': 30},
                             'draw_intersections': False,
                             'intersection': {'draw_incoming_lanelets': True,
                                              'incoming_lanelets_color': '#3ecbcf',
@@ -368,10 +378,9 @@ def draw_lanelet_network(obj: LaneletNetwork , plot_limits: Union[List[Union[int
     #     radius = np.sqrt((plot_limits[1]-plot_limits[0])**2 + (plot_limits[3]-plot_limits[2])**2)
     #     lanelets = obj.lanelets_in_proximity(center, radius)
     # else:
-    lanelets = obj.lanelets
 
     _draw_lanelets_intersection(
-        lanelets, obj._traffic_lights, obj._traffic_signs, obj.intersections,
+        obj, obj._traffic_lights, obj._traffic_signs, obj.intersections,
         None, ax, draw_params, draw_func, handles, call_stack)
 
 
@@ -381,22 +390,14 @@ def draw_lanelet_list(obj: List[Lanelet] , plot_limits: Union[List[Union[int,flo
         """
         Draws list of lanelets.
         """
-        _draw_lanelets_intersection(obj, None, None, None, plot_limits, ax, draw_params, draw_func, handles,
+        if isinstance(obj, Lanelet):
+            obj = [obj]
+
+        _draw_lanelets_intersection(LaneletNetwork.create_from_lanelet_list(obj), None, None, None, plot_limits, ax, draw_params, draw_func, handles,
                                     call_stack)
 
 
-
-# def draw_traffic_sign(sign: TrafficSign):
-#     for element in sign.traffic_sign_elements:
-#         path = os.path.join(traffic_sign_path, element.traffic_sign_element_id + '.svg')
-#         print(path)
-#         try:
-#             pylustrator.load(path, offset=[0.5, 0.5])
-#         except:
-#             pass
-
-
-def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
+def _draw_lanelets_intersection(obj: LaneletNetwork,
                                 traffic_lights: Union[Dict[int, TrafficLight], None],
                                 traffic_signs: Union[Dict[int,TrafficSign],None],
                                 intersections: Union[List[Intersection],None],
@@ -412,8 +413,7 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
            depending on the call stack of draw_object
     :return: None
     """
-    if type(obj) is Lanelet:
-        obj = [obj]
+    lanelets = obj.lanelets
 
     try:
         time_begin = commonroad.visualization.draw_dispatch_cr._retrieve_value(
@@ -433,11 +433,11 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
             draw_traffic_signs = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
                 ('lanelet_network', 'draw_traffic_signs'))
-            draw_signs_in_lanelet = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            show_traffic_sign_label = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
-                ('lanelet_network', 'draw_signs_in_lanelet'))
+                ('lanelet_network', 'traffic_sign', 'show_label'))
         else:
-            draw_traffic_signs=draw_signs_in_lanelet = False
+            draw_traffic_signs=show_traffic_sign_label = False
 
         if intersections is not None and len(intersections) > 0:
             draw_intersections = commonroad.visualization.draw_dispatch_cr._retrieve_value(
@@ -597,7 +597,7 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
     # select unique colors from colormap for each lanelet's center_line
     colormap = None
     if unique_colors is True:
-        norm = mpl.colors.Normalize(vmin=0, vmax=len(obj))
+        norm = mpl.colors.Normalize(vmin=0, vmax=len(lanelets))
         colormap = cm.ScalarMappable(norm=norm, cmap=cm.jet)
 
     incoming_vertices_fill = list()
@@ -614,8 +614,11 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
     left_paths=list()
     right_paths = list()
 
+    if draw_traffic_lights:
+        center_line_color_dict = collect_center_line_colors(obj, traffic_lights, time_begin)
+
     # collect paths for drawing
-    for i_lanelet, lanelet in enumerate(obj):
+    for i_lanelet, lanelet in enumerate(lanelets):
         if unique_colors:
             # set center bound color to unique value
             center_bound_color = colormap.to_rgba(i_lanelet)
@@ -683,11 +686,9 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
             ax.add_line(line)
 
         # visualize traffic light state through colored center bound
-        has_traffic_light = draw_traffic_lights and lanelet.traffic_lights
+        has_traffic_light = draw_traffic_lights and lanelet.lanelet_id in center_line_color_dict
         if has_traffic_light:
-            for light_id in lanelet.traffic_lights: # TODO: how to plot multiple traffic lights for one lanelet?
-                light_state = traffic_lights[light_id].get_state_at_time_step(time_begin)
-                break
+            light_state = center_line_color_dict[lanelet.lanelet_id]
 
             if light_state:
                 linewidth_metres = 0.75
@@ -746,9 +747,10 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
             if is_incoming_lanelet:
                 strings.append('inc_id: ' + str(incomings_id[lanelet.lanelet_id]))
                 strings.append('inc_left: ' + str(incomings_left[lanelet.lanelet_id]))
-            if draw_traffic_signs:
+            if draw_traffic_signs and show_traffic_sign_label is True:
                 traffic_signs_tmp = [traffic_signs[id] for id in lanelet.traffic_signs]
-                if draw_signs_in_lanelet is True and traffic_signs_tmp:
+                if traffic_signs_tmp:
+                    # add as text to label
                     str_tmp = 'traffic signs: '
                     add_str = ''
                     for sign in traffic_signs_tmp:
@@ -831,6 +833,14 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
                                                        offsets=coordinates_right_border_vertices,
                                                        color=right_bound_color, transOffset=ax.transData)
         ax.add_collection(collection_tmp)
+
+    if draw_traffic_signs:
+        # draw actual traffic sign
+        draw_traffic_sign(list(traffic_signs.values()), None, ax, draw_params, draw_func, handles, call_stack)
+
+    if draw_traffic_lights:
+        # draw actual traffic sign
+        draw_traffic_light(list(traffic_lights.values()), None, ax, draw_params, draw_func, handles, call_stack)
 
 
 def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
@@ -1384,6 +1394,7 @@ def draw_car(pos_x: Union[int,float], pos_y: Union[int,float], rotate: Union[int
 draw_func_dict = {commonroad.scenario.scenario.Scenario: draw_scenario,
                   commonroad.scenario.lanelet.Lanelet: draw_lanelet_list,
                   commonroad.scenario.lanelet.LaneletNetwork: draw_lanelet_network,
+                  commonroad.scenario.traffic_sign.TrafficSign: draw_traffic_sign,
                   commonroad.scenario.obstacle.DynamicObstacle: draw_dynamic_obstacles,
                   commonroad.scenario.obstacle.StaticObstacle: draw_static_obstacles,
                   commonroad.scenario.trajectory.Trajectory: draw_trajectories,

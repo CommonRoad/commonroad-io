@@ -42,10 +42,20 @@ When settings of a plot should be changed with ``draw_params``, they have to be 
                      {'red_color': 'red',
                       'yellow_color': '#feb609',
                       'green_color': '#00aa16',
-                      'red_yellow_color': '#fe4009ff'
+                      'red_yellow_color': '#fe4009ff',
+                      'show_label': False,
+                      'kwargs': {}, # further properties for AnnotationBox, see # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
+                      'scale_factor': 0.25,
+                      'zorder': 30
                       },
                  'draw_traffic_signs': False,
-                 'draw_signs_in_lanelet': True,  # Todo: False not implemented
+                 'traffic_sign':
+                     {'show_traffic_signs': 'all',  # 'all' or list of TrafficSignIDs
+                      'show_label': False,
+                      'kwargs': {},   # further properties for AnnotationBox, see https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
+                      'scale_factor': 0.25,
+                      'zorder': 30
+                     },
                  'draw_intersection': False,
                  'intersection':
                      {'draw_incoming_lanelets': True,

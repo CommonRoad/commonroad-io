@@ -890,6 +890,14 @@ class LaneletNetwork:
     def traffic_lights(self) -> List[TrafficLight]:
         return list(self._traffic_lights.values())
 
+    @property
+    def map_inc_lanelets_to_intersections(self) -> Dict[int,Intersection]:
+        """
+        :returns dict that maps lanelet ids to the intersection of which it is an incoming lanelet.
+        """
+        return {l_id: intersection for intersection in self.intersections
+                for l_id in list(intersection.map_incoming_lanelets.keys())}
+
     @classmethod
     def create_from_lanelet_list(cls, lanelets: list, cleanup_ids: bool=False):
         """
@@ -977,7 +985,7 @@ class LaneletNetwork:
 
         return self._traffic_signs[traffic_sign_id] if traffic_sign_id in self._traffic_signs else None
 
-    def find_traffic_light_by_id(self, traffic_light_id: int) -> Lanelet:
+    def find_traffic_light_by_id(self, traffic_light_id: int) -> TrafficLight:
         """
         Finds a traffic light for a given traffic_light_id
 

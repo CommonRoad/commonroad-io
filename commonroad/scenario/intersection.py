@@ -6,7 +6,7 @@ __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Release"
 
-from typing import List, Set, Union
+from typing import List, Set, Union, Dict
 
 
 class IntersectionIncomingElement:
@@ -80,3 +80,8 @@ class Intersection:
     @property
     def crossings(self) -> Set[int]:
         return self._crossings
+
+    @property
+    def map_incoming_lanelets(self) -> Dict[int,IntersectionIncomingElement]:
+        """Maps all incoming lanelet ids to IntersectionIncomingElement"""
+        return {l_id: inc for inc in self.incomings for l_id in inc.incoming_lanelets}
