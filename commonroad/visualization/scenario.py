@@ -23,7 +23,8 @@ from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, Obstac
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.trajectory import Trajectory
 
-from commonroad.visualization.util import draw_polygon_as_patch, draw_polygon_collection_as_patch, LineDataUnits
+from commonroad.visualization.util import draw_polygon_as_patch, draw_polygon_collection_as_patch, LineDataUnits, \
+    collect_center_line_colors
 
 __author__ = "Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -373,10 +374,9 @@ def draw_lanelet_network(obj: LaneletNetwork , plot_limits: Union[List[Union[int
     #     radius = np.sqrt((plot_limits[1]-plot_limits[0])**2 + (plot_limits[3]-plot_limits[2])**2)
     #     lanelets = obj.lanelets_in_proximity(center, radius)
     # else:
-    lanelets = obj.lanelets
 
     _draw_lanelets_intersection(
-        lanelets, obj._traffic_lights, obj._traffic_signs, obj.intersections,
+        obj, obj._traffic_lights, obj._traffic_signs, obj.intersections,
         None, ax, draw_params, draw_func, handles, call_stack)
 
 
@@ -386,11 +386,11 @@ def draw_lanelet_list(obj: List[Lanelet] , plot_limits: Union[List[Union[int,flo
         """
         Draws list of lanelets.
         """
-        _draw_lanelets_intersection(obj, None, None, None, plot_limits, ax, draw_params, draw_func, handles,
+        _draw_lanelets_intersection(LaneletNetwork.create_from_lanelet_list(obj), None, None, None, plot_limits, ax, draw_params, draw_func, handles,
                                     call_stack)
 
 
-def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
+def _draw_lanelets_intersection(obj: LaneletNetwork,
                                 traffic_lights: Union[Dict[int, TrafficLight], None],
                                 traffic_signs: Union[Dict[int,TrafficSign],None],
                                 intersections: Union[List[Intersection],None],
@@ -406,8 +406,7 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
            depending on the call stack of draw_object
     :return: None
     """
-    if type(obj) is Lanelet:
-        obj = [obj]
+    lanelets = obj.lanelets
 
     try:
         time_begin = commonroad.visualization.draw_dispatch_cr._retrieve_value(
@@ -591,7 +590,7 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
     # select unique colors from colormap for each lanelet's center_line
     colormap = None
     if unique_colors is True:
-        norm = mpl.colors.Normalize(vmin=0, vmax=len(obj))
+        norm = mpl.colors.Normalize(vmin=0, vmax=len(lanelets))
         colormap = cm.ScalarMappable(norm=norm, cmap=cm.jet)
 
     incoming_vertices_fill = list()
@@ -608,8 +607,11 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
     left_paths=list()
     right_paths = list()
 
+    if draw_traffic_lights:
+        center_line_color_dict = collect_center_line_colors(obj, traffic_lights, time_begin)
+
     # collect paths for drawing
-    for i_lanelet, lanelet in enumerate(obj):
+    for i_lanelet, lanelet in enumerate(lanelets):
         if unique_colors:
             # set center bound color to unique value
             center_bound_color = colormap.to_rgba(i_lanelet)
@@ -677,11 +679,9 @@ def _draw_lanelets_intersection(obj: Union[List[Lanelet],Lanelet],
             ax.add_line(line)
 
         # visualize traffic light state through colored center bound
-        has_traffic_light = draw_traffic_lights and lanelet.traffic_lights
+        has_traffic_light = draw_traffic_lights and lanelet.lanelet_id in center_line_color_dict
         if has_traffic_light:
-            for light_id in lanelet.traffic_lights: # TODO: how to plot multiple traffic lights for one lanelet?
-                light_state = traffic_lights[light_id].get_state_at_time_step(time_begin)
-                break
+            light_state = center_line_color_dict[lanelet.lanelet_id]
 
             if light_state:
                 linewidth_metres = 0.75
