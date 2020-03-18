@@ -117,7 +117,6 @@ def _retrieve_value(style_sheet: dict, call_stack: tuple, value_path: Tuple[str,
         pass
 
     # try to retrieve from default parameters
-
     for idx_r in range(0,len(call_stack)):
         style_sheet_caller = default_draw_params
         try:
@@ -170,7 +169,7 @@ def _retrieve_alternate_value(style_sheet: dict, call_stack: Tuple[str, ...], va
         except KeyError:
             continue
 
-    for idx_r, caller in range(0, len(call_stack)):
+    for idx_r in range(0, len(call_stack)):
         style_sheet_caller = style_sheet
         try:
             for idx in range(0, len(call_stack) - idx_r):

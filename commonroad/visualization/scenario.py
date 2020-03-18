@@ -108,8 +108,11 @@ def create_default_draw_params() -> dict:
                                               'green_color': '#00aa16',
                                               'red_yellow_color': '#fe4009ff'},
                             'draw_traffic_signs': False,
-                            'traffic_sign': {'show_label': True,
-                                             'scale_factor': 0.2},
+                            'traffic_sign': {'show_traffic_signs': 'all',  # 'all' or list of TrafficSignIDs
+                                             'show_label': False,
+                                             'kwargs': {},   # further properties for AnnotationBox, see # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
+                                             'scale_factor': 0.25,
+                                             'zorder': 30},
                             'draw_intersections': False,
                             'intersection': {'draw_incoming_lanelets': True,
                                              'incoming_lanelets_color': '#3ecbcf',
