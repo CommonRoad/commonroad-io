@@ -4,6 +4,7 @@ from typing import Dict, Callable, Tuple, Any
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import commonroad
 from commonroad.geometry.shape import *
 from commonroad.planning.planning_problem import GoalRegion, PlanningProblemSet, \
@@ -11,6 +12,7 @@ from commonroad.planning.planning_problem import GoalRegion, PlanningProblemSet,
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario
+from commonroad.scenario.traffic_sign import TrafficSign
 from commonroad.scenario.trajectory import Trajectory, State
 import commonroad.visualization.scenario
 import commonroad.visualization.planning
@@ -18,9 +20,9 @@ import commonroad.visualization.planning
 __author__ = "Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = [""]
-__version__ = "2019.1"
+__version__ = "2020.1"
 __maintainer__ = "Moritz Klischat"
-__email__ = "commonroad@in.tum.de"
+__email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 
@@ -115,7 +117,6 @@ def _retrieve_value(style_sheet: dict, call_stack: tuple, value_path: Tuple[str,
         pass
 
     # try to retrieve from default parameters
-
     for idx_r in range(0,len(call_stack)):
         style_sheet_caller = default_draw_params
         try:
@@ -168,7 +169,7 @@ def _retrieve_alternate_value(style_sheet: dict, call_stack: Tuple[str, ...], va
         except KeyError:
             continue
 
-    for idx_r, caller in range(0, len(call_stack)):
+    for idx_r in range(0, len(call_stack)):
         style_sheet_caller = style_sheet
         try:
             for idx in range(0, len(call_stack) - idx_r):
@@ -226,8 +227,28 @@ def _retrieve_alternate_value(style_sheet: dict, call_stack: Tuple[str, ...], va
         raise KeyError
     return value
 
+
+def _add_legend(legend: Dict[Tuple[str,...], str], draw_params):
+    """
+    Adds legend with color of objects specified by legend.keys() and texts specified by legend.values().
+    :param legend: color of objects specified by path in legend.keys() and texts specified by legend.values()
+    :param draw_params: draw parameters used for plotting (color is extracted using path in legend.keys())
+    :return:
+    """
+    handles = []
+    for obj_name, text in legend.items():
+        try:
+            color = _retrieve_value(draw_params, (), obj_name)
+        except:
+            color = None
+        if color is not None:
+            handles.append(mpatches.Patch(color=color, label=text))
+
+    plt.legend(handles=handles)
+
+
 plottable_types=Union[list, Scenario, Trajectory, LaneletNetwork, Lanelet, Obstacle, ShapeGroup, Shape,
-                      GoalRegion, PlanningProblem, PlanningProblemSet, State, Occupancy]
+                      GoalRegion, PlanningProblem, PlanningProblemSet, State, Occupancy, TrafficSign]
 
 def draw_object(obj: Union[plottable_types, List[plottable_types]],
                 plot_limits: Union[List[Union[float,int]],None] = None,
@@ -235,7 +256,8 @@ def draw_object(obj: Union[plottable_types, List[plottable_types]],
                 draw_params: Union[None, dict] = None,
                 draw_func: Union[None, Dict[type,Callable]] = None,
                 handles: Dict[int, List[mpl.patches.Patch]] = None,
-                call_stack: Union[None,Tuple[str,...]] = None) -> Union[None, List[mpl.patches.Patch]]:
+                call_stack: Union[None,Tuple[str,...]] = None,
+                legend: Union[Dict[Tuple[str,...],str],None]=None)-> Union[None, List[mpl.patches.Patch]]:
     """
     Main function for drawing objects from the scenario and planning modules.
 
@@ -250,6 +272,7 @@ def draw_object(obj: Union[plottable_types, List[plottable_types]],
     :param handles: dict that assign to every object_id of all plotted obstacles the corresponding patch handles
     :param call_stack: tuple of string containing the call stack, which allows for differentiation of plotting styles
            depending on the call stack of draw_object, (usually 'None'!)
+   :param legend: names of objects that should appear in the legend
     :return: Returns matplotlib patch object for draw_funcs that actually draw a patch (used internally for creating handles dict)
     """
 
@@ -282,6 +305,9 @@ def draw_object(obj: Union[plottable_types, List[plottable_types]],
 
     if call_stack is None:
         call_stack = tuple()
+
+    if legend is not None:
+        _add_legend(legend, draw_params)
 
     if type(obj) is list:
         if len(obj)==0:

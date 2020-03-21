@@ -1,31 +1,40 @@
-from typing import Dict, Callable, Tuple, Union, Any
+import os
+from collections import defaultdict
+from typing import Dict, Callable, Tuple, Union, Any, Set
 import commonroad.geometry.shape
 import matplotlib as mpl
+import matplotlib.cm as cm
 import matplotlib.patches as patches
 import matplotlib.collections as collections
+# import pylustrator
+
 import commonroad.prediction.prediction
 import commonroad.scenario.obstacle
 import commonroad.visualization.draw_dispatch_cr
 from commonroad.common.util import Interval
 from commonroad.geometry.shape import *
+from commonroad.scenario.intersection import Intersection
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDGermany, TrafficLight, TrafficLightState
+from commonroad.visualization.traffic_sign import draw_traffic_sign, draw_traffic_light
 from matplotlib.path import Path
 from commonroad.prediction.prediction import Occupancy
-from commonroad.scenario.lanelet import LaneletNetwork, Lanelet
+from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, ObstacleRole
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.trajectory import Trajectory
 
-from commonroad.visualization.util import draw_polygon_as_patch, draw_polygon_collection_as_patch
-
+from commonroad.visualization.util import draw_polygon_as_patch, draw_polygon_collection_as_patch, LineDataUnits, \
+    collect_center_line_colors
 
 __author__ = "Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = [""]
-__version__ = "2019.1"
+__version__ = "2020.1"
 __maintainer__ = "Moritz Klischat"
-__email__ = "commonroad@in.tum.de"
+__email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
+traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
 
 def create_default_draw_params() -> dict:
     basic_shape_parameters_static = {'opacity': 1.0,
@@ -42,6 +51,7 @@ def create_default_draw_params() -> dict:
 
     draw_params = {'scenario': {
                         'dynamic_obstacle': {
+                            'add_legend': True,
                             'draw_shape': True,
                             'draw_icon': False,
                             'draw_bounding_box': True,
@@ -78,8 +88,11 @@ def create_default_draw_params() -> dict:
                                 'rectangle': basic_shape_parameters_dynamic,
                                 'circle': basic_shape_parameters_dynamic
                             },
-                             'trajectory': {'facecolor': '#000000',
-                                            'marker_size': 0.13,
+                             'trajectory': {'draw_trajectory':True,
+                                            'facecolor': '#000000',
+                                            'draw_continuous': False,
+                                            'unique_colors': False,
+                                            'line_width': 0.17,
                                             'z_order': 24}
                         },
                         'static_obstacle': {
@@ -90,15 +103,43 @@ def create_default_draw_params() -> dict:
                            }
                         },
                         'lanelet_network': {
+                            'draw_traffic_lights': True,
+                            'traffic_light': {'red_color': 'red',
+                                              'yellow_color': '#feb609',
+                                              'green_color': '#00aa16',
+                                              'red_yellow_color': '#fe4009ff',
+                                              'show_label': False,
+                                              'kwargs': {}, # further properties for AnnotationBox, see # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
+                                              'scale_factor': 0.25,
+                                              'zorder': 30},
+                            'draw_traffic_signs': True,
+                            'traffic_sign': {'show_traffic_signs': 'all',  # 'all' or list of TrafficSignIDs
+                                             'show_label': False,
+                                             'kwargs': {},   # further properties for AnnotationBox, see # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
+                                             'scale_factor': 0.25,
+                                             'zorder': 30},
+                            'draw_intersections': False,
+                            'intersection': {'draw_incoming_lanelets': True,
+                                             'incoming_lanelets_color': '#3ecbcf',
+                                             'draw_crossings': True,
+                                             'crossings_color': '#b62a55',
+                                             'draw_successors': True,
+                                             'successors_left_color': '#ff00ff',
+                                             'successors_straight_color': 'blue',
+                                             'successors_right_color': '#ccff00'},
                             'lanelet': {'left_bound_color': '#555555',
                                        'right_bound_color': '#555555',
                                        'center_bound_color': '#dddddd',
+                                       'unique_colors': False,  # colorizes center_vertices and labels of each lanelet differently
+                                       'draw_stop_line':True,
+                                       'stop_line_color':'#ffffff',
+                                       'draw_line_markings':True,
                                        'draw_left_bound': True,
                                        'draw_right_bound': True,
                                        'draw_center_bound': True,
                                        'draw_border_vertices': False,
                                        'draw_start_and_direction': True,
-                                       'show_label': False,
+                                       'show_label': False,  # show lanelet_id
                                        'draw_linewidth': 0.5,
                                        'fill_lanelet': True,
                                        'facecolor': '#c7c7c7'}},
@@ -117,6 +158,22 @@ def create_default_draw_params() -> dict:
     draw_params['scenario']['lanelet'] = draw_params['scenario']['lanelet_network']['lanelet']
 
     return draw_params
+
+
+def line_marking_to_linestyle(line_marking:LineMarking) -> Tuple:
+    """:returns Tuple[line_style, dashes, line_width] for matplotlib plotting options."""
+    return {LineMarking.DASHED: ('--', (10,10), 0.25,),
+            LineMarking.SOLID: ('-', (None,None), 0.25),
+            LineMarking.BROAD_DASHED: ('--',(10,10), 0.5),
+            LineMarking.BROAD_SOLID: ('-', (None,None), 0.5)}[line_marking]
+
+
+def traffic_light_color_dict(traffic_light_state: TrafficLightState, params:dict):
+    """Retrieve color code for traffic light state."""
+    return {TrafficLightState.RED: params['red_color'],
+            TrafficLightState.YELLOW: params['yellow_color'],
+            TrafficLightState.GREEN: params['green_color'],
+            TrafficLightState.RED_YELLOW: params['red_yellow_color']}[traffic_light_state]
 
 
 def draw_scenario(obj: Scenario, plot_limits: Union[List[Union[int,float]], None], ax: mpl.axes.Axes,
@@ -213,8 +270,13 @@ def draw_trajectories(obj: Union[List[Trajectory],Trajectory], plot_limits: Unio
     try:
         facecolor = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,('trajectory', 'facecolor'))
-        marker_size = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-            draw_params, call_stack, ('trajectory', 'marker_size'))
+        unique_colors = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('trajectory', 'unique_colors'))
+        line_width = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack, ('trajectory', 'line_width'))
+        draw_continuous = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack, ('trajectory', 'draw_continuous'))
         z_order = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack, ('trajectory', 'z_order'))
         time_begin = commonroad.visualization.draw_dispatch_cr._retrieve_value(
@@ -228,31 +290,74 @@ def draw_trajectories(obj: Union[List[Trajectory],Trajectory], plot_limits: Unio
     if time_begin==time_end:
         return []
 
+    # select unique colors from colormap for each lanelet's center_line
+    colormap = None
+    if unique_colors is True:
+        norm = mpl.colors.Normalize(vmin=0, vmax=len(obj))
+        colormap = cm.ScalarMappable(norm=norm, cmap=cm.brg)
+
     patchlist = list()
-    coordinates =list()
+    traj_list =list()
 
     for traj in obj:
+        traj_points = list()
         for time_step in range(time_begin, time_end):
             tmp = traj.state_at_time_step(time_step)
             if tmp is not None:
-                coordinates.append(tmp.position)
+                traj_points.append(tmp.position)
             else:
                 if time_begin > traj.initial_time_step:
                     break
 
-    if len(coordinates) > 0:
-        coordinates = np.array(coordinates)
-        collection = collections.EllipseCollection(np.ones([coordinates.shape[0],1]) * marker_size,
-                                                   np.ones([coordinates.shape[0],1]) * marker_size,
-                                                   np.zeros([coordinates.shape[0],1]),
-                                                   offsets=coordinates,
-                                                   units='xy',
-                                                   zorder=z_order, transOffset=ax.transData, facecolor=facecolor)
-        ax.add_collection(collection)
-    else:
-        collection = None
+        if traj_points:
+            traj_list.append(traj_points)
 
-    return [collection]
+    if len(traj_list) > 0:
+        if draw_continuous is True:
+            paths = []
+            for traj in traj_list:
+                paths.append(Path(traj, closed=False))
+            if unique_colors is True:
+                collection = []
+                for i_p, path in enumerate(paths):
+                    facecolor = colormap.to_rgba(i_p)
+                    collection.append(collections.PathCollection([path], color=facecolor, lw=line_width, zorder=z_order,
+                                               facecolor='none'))
+                    ax.add_collection(collection[-1])
+            else:
+                collection = [collections.PathCollection(paths, color=facecolor, lw=line_width, zorder=z_order, facecolor='none')]
+        else:
+            if unique_colors is True:
+                collection = []
+                for i_p, traj in enumerate(traj_list):
+                    facecolor = colormap.to_rgba(i_p)
+                    traj = np.array(traj)
+                    collection.append(collections.EllipseCollection(np.ones([traj.shape[0],1]) * line_width,
+                                                           np.ones([traj.shape[0],1]) * line_width,
+                                                           np.zeros([traj.shape[0],1]),
+                                                           offsets=traj,
+                                                           units='xy',
+                                                           linewidths=0,
+                                                       zorder=z_order, transOffset=ax.transData, facecolor=facecolor))
+                    ax.add_collection(collection[-1])
+            else:
+                try:
+                    traj_list = np.array(np.concatenate(traj_list))
+                except:
+                    dsdf=0
+                collection = [collections.EllipseCollection(np.ones([traj_list.shape[0],1]) * line_width,
+                                                           np.ones([traj_list.shape[0],1]) * line_width,
+                                                           np.zeros([traj_list.shape[0],1]),
+                                                           offsets=traj_list,
+                                                           units='xy',
+                                                           linewidths=0,
+                                                       zorder=z_order, transOffset=ax.transData, facecolor=facecolor)]
+        if draw_continuous is False:
+            ax.add_collection(collection[0])
+    else:
+        collection = []
+
+    return collection
 
 
 def draw_lanelet_network(obj: LaneletNetwork , plot_limits: Union[List[Union[int,float]], None],
@@ -273,15 +378,32 @@ def draw_lanelet_network(obj: LaneletNetwork , plot_limits: Union[List[Union[int
     #     radius = np.sqrt((plot_limits[1]-plot_limits[0])**2 + (plot_limits[3]-plot_limits[2])**2)
     #     lanelets = obj.lanelets_in_proximity(center, radius)
     # else:
-    lanelets = obj.lanelets
 
-    commonroad.visualization.draw_dispatch_cr.draw_object(
-        lanelets, None, ax, draw_params, draw_func, handles, call_stack)
+    _draw_lanelets_intersection(
+        obj, obj._traffic_lights, obj._traffic_signs, obj.intersections,
+        None, ax, draw_params, draw_func, handles, call_stack)
 
 
-def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Union[int,float]], None],
-                  ax: mpl.axes.Axes, draw_params: dict, draw_func: Dict[type,Callable],
-                  handles: Dict[int,List[mpl.patches.Patch]], call_stack: Tuple[str,...]) -> None:
+def draw_lanelet_list(obj: List[Lanelet] , plot_limits: Union[List[Union[int,float]], None],
+                         ax: mpl.axes.Axes, draw_params: dict, draw_func: Dict[type,Callable],
+                         handles: Dict[int,List[mpl.patches.Patch]], call_stack: Tuple[str,...]) -> None:
+        """
+        Draws list of lanelets.
+        """
+        if isinstance(obj, Lanelet):
+            obj = [obj]
+
+        _draw_lanelets_intersection(LaneletNetwork.create_from_lanelet_list(obj), None, None, None, plot_limits, ax, draw_params, draw_func, handles,
+                                    call_stack)
+
+
+def _draw_lanelets_intersection(obj: LaneletNetwork,
+                                traffic_lights: Union[Dict[int, TrafficLight], None],
+                                traffic_signs: Union[Dict[int,TrafficSign],None],
+                                intersections: Union[List[Intersection],None],
+                                plot_limits: Union[List[Union[int,float]], None],
+                                ax: mpl.axes.Axes, draw_params: dict, draw_func: Dict[type,Callable],
+                                handles: Dict[int,List[mpl.patches.Patch]], call_stack: Tuple[str,...]) -> None:
     """
     :param obj: object to be plotted
     :param ax: axes object from matplotlib
@@ -291,10 +413,67 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
            depending on the call stack of draw_object
     :return: None
     """
-    if type(obj) is Lanelet:
-        obj = [obj]
+    lanelets = obj.lanelets
 
     try:
+        time_begin = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack, ('time_begin',))
+        if traffic_lights is not None:
+            draw_traffic_lights = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'draw_traffic_lights'))
+
+            traffic_light_colors = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'traffic_light'))
+        else:
+            draw_traffic_lights = False
+
+        if traffic_signs is not None:
+            draw_traffic_signs = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'draw_traffic_signs'))
+            show_traffic_sign_label = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'traffic_sign', 'show_label'))
+        else:
+            draw_traffic_signs=show_traffic_sign_label = False
+
+        if intersections is not None and len(intersections) > 0:
+            draw_intersections = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'draw_intersections'))
+        else:
+            draw_intersections = False
+
+        if draw_intersections is True:
+            draw_incoming_lanelets = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'intersection', 'draw_incoming_lanelets'))
+            incoming_lanelets_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'intersection', 'incoming_lanelets_color'))
+            draw_crossings = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'intersection', 'draw_crossings'))
+            crossings_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'intersection', 'crossings_color'))
+            draw_successors = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'intersection', 'draw_successors'))
+            successors_left_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'intersection', 'successors_left_color'))
+            successors_straight_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'intersection', 'successors_straight_color'))
+            successors_right_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'intersection', 'successors_right_color'))
+        else:
+            draw_incoming_lanelets=draw_crossings=draw_successors = False
+
         left_bound_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('lanelet', 'left_bound_color'))
@@ -304,6 +483,18 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
         center_bound_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('lanelet', 'center_bound_color'))
+        unique_colors = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('lanelet', 'unique_colors'))
+        draw_stop_line = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('lanelet', 'draw_stop_line'))
+        stop_line_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('lanelet', 'stop_line_color'))
+        draw_line_markings = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('lanelet', 'draw_line_markings'))
         show_label = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('lanelet', 'show_label'))
@@ -339,6 +530,42 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
         print("Cannot find stylesheet for lanelet. Called through:")
         print(call_stack)
 
+    incoming_lanelets = set()
+    incomings_left = {}
+    incomings_id = {}
+    crossings = set()
+    all_successors = set()
+    successors_left = set()
+    successors_straight = set()
+    successors_right = set()
+    if draw_intersections:
+        # collect incoming lanelets
+        if draw_incoming_lanelets:
+            incomings: List[set] = [incoming.incoming_lanelets for intersection in intersections
+                                    for incoming in intersection.incomings]
+            incoming_lanelets: Set[int] = set.union(*incomings)
+            for intersection in intersections:
+                for incoming in intersection.incomings:
+                    for l_id in incoming.incoming_lanelets:
+                        incomings_left[l_id] = incoming.left_of
+                        incomings_id[l_id] = incoming.incoming_id
+
+        if draw_crossings:
+            tmp_list: List[set] = [intersection.crossings for intersection in intersections]
+            crossings: Set[int] = set.union(*tmp_list)
+
+        if draw_successors:
+            tmp_list: List[set] = [incoming.successors_left for intersection in intersections
+                                    for incoming in intersection.incomings]
+            successors_left: Set[int] = set.union(*tmp_list)
+            tmp_list: List[set] = [incoming.successors_straight for intersection in intersections
+                                    for incoming in intersection.incomings]
+            successors_straight: Set[int] = set.union(*tmp_list)
+            tmp_list: List[set] = [incoming.successors_right for intersection in intersections
+                                    for incoming in intersection.incomings]
+            successors_right: Set[int] = set.union(*tmp_list)
+            all_successors = set.union(successors_straight, successors_right, successors_left)
+
     # direction arrow
     codes_direction = [Path.MOVETO,
              Path.LINETO,
@@ -366,6 +593,19 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
         path = Path(ptr_trans, codes_direction)
         return path
 
+
+    # select unique colors from colormap for each lanelet's center_line
+    colormap = None
+    if unique_colors is True:
+        norm = mpl.colors.Normalize(vmin=0, vmax=len(lanelets))
+        colormap = cm.ScalarMappable(norm=norm, cmap=cm.jet)
+
+    incoming_vertices_fill = list()
+    crossing_vertices_fill = list()
+    succ_left_paths = list()
+    succ_straight_paths = list()
+    succ_right_paths = list()
+
     vertices_fill = list()
     coordinates_left_border_vertices = np.empty((0,2))
     coordinates_right_border_vertices = np.empty((0,2))
@@ -374,36 +614,166 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
     left_paths=list()
     right_paths = list()
 
+    if draw_traffic_lights:
+        center_line_color_dict = collect_center_line_colors(obj, traffic_lights, time_begin)
+
     # collect paths for drawing
-    for lanelet in obj:
+    for i_lanelet, lanelet in enumerate(lanelets):
+        if unique_colors:
+            # set center bound color to unique value
+            center_bound_color = colormap.to_rgba(i_lanelet)
+
         if draw_start_and_direction:
             center = lanelet.center_vertices[0]
             tan_vec = np.array(lanelet.right_vertices[0]) - np.array(lanelet.left_vertices[0])
-            direction_list.append(direction(center[0], center[1],
-                    np.arctan2(tan_vec[1], tan_vec[0]) + 0.5 * np.pi))
+            if unique_colors is False:
+                direction_list.append(direction(center[0], center[1], np.arctan2(tan_vec[1], tan_vec[0]) + 0.5 * np.pi))
+            else:
+                direction_list = [direction(center[0], center[1], np.arctan2(tan_vec[1], tan_vec[0]) + 0.5 * np.pi)]
+                ax.add_collection(collections.PathCollection(direction_list, color=center_bound_color,
+                                                             lw=0.5, zorder=10.1, antialiased=antialiased))
 
+        # left bound
         if draw_border_vertices or draw_left_bound:
             if draw_border_vertices:
                 coordinates_left_border_vertices = np.vstack((coordinates_left_border_vertices,lanelet.left_vertices))
-            left_paths.append(Path(lanelet.left_vertices, closed=False))
 
+            if draw_line_markings and lanelet.line_marking_left_vertices is not None:
+                linestyle, dashes, linewidth_metres  = line_marking_to_linestyle(lanelet.line_marking_left_vertices)
+                tmp_left = lanelet.left_vertices.copy()
+                tmp_left[0, :] = lanelet.interpolate_position(linewidth_metres/2)[2]
+                tmp_left[-1, :] = lanelet.interpolate_position(lanelet.distance[-1] - linewidth_metres / 2)[2]
+                line = LineDataUnits(tmp_left[:, 0], tmp_left[:, 1], zorder=20, linewidth=linewidth_metres,
+                              alpha=1.0,
+                              color=left_bound_color, linestyle=linestyle,
+                              dashes=dashes)
+                ax.add_line(line)
+            else:
+                left_paths.append(Path(lanelet.left_vertices, closed=False))
+
+        # right bound
         if draw_border_vertices or draw_right_bound:
+
             if draw_border_vertices:
                 coordinates_right_border_vertices = np.vstack((coordinates_right_border_vertices, lanelet.right_vertices))
-            right_paths.append(Path(lanelet.right_vertices, closed=False))
 
-        if draw_center_bound:
-            center_paths.append(Path(lanelet.center_vertices, closed=False))
+            if draw_line_markings and lanelet.line_marking_right_vertices is not None:
+                linestyle, dashes, linewidth_metres = line_marking_to_linestyle(lanelet.line_marking_right_vertices)
+                tmp_right = lanelet.right_vertices.copy()
+                tmp_right[0, :] = lanelet.interpolate_position(linewidth_metres/2)[1]
+                tmp_right[-1, :] = lanelet.interpolate_position(lanelet.distance[-1] - linewidth_metres / 2)[1]
+                line = LineDataUnits(tmp_right[:, 0], tmp_right[:, 1], zorder=10.5, linewidth=linewidth_metres,
+                                     alpha=1.0,
+                                     color=right_bound_color, linestyle=linestyle,
+                                     dashes=dashes)
+                ax.add_line(line)
+            else:
+                right_paths.append(Path(lanelet.right_vertices, closed=False))
 
+        # stop line
+        if draw_stop_line and lanelet.stop_line:
+            stop_line = np.vstack([lanelet.stop_line.start, lanelet.stop_line.end])
+            linestyle, dashes, linewidth_metres = line_marking_to_linestyle(lanelet.stop_line.line_marking)
+            # cut off in the beginning, because linewidth_metres is added later
+            vec = stop_line[1, :] - stop_line[0, :]
+            tangent = vec / np.linalg.norm(vec)
+            stop_line[0, :] += linewidth_metres * tangent / 2
+            stop_line[1, :] -= linewidth_metres * tangent / 2
+            line = LineDataUnits(stop_line[:, 0], stop_line[:, 1], zorder=11, linewidth=linewidth_metres,
+                                 alpha=1.0,
+                                 color=stop_line_color, linestyle=linestyle,
+                                 dashes=dashes)
+            ax.add_line(line)
+
+        # visualize traffic light state through colored center bound
+        has_traffic_light = draw_traffic_lights and lanelet.lanelet_id in center_line_color_dict
+        if has_traffic_light:
+            light_state = center_line_color_dict[lanelet.lanelet_id]
+
+            if light_state:
+                linewidth_metres = 0.75
+                # dashed line for red_yellow
+                linestyle = '--' if light_state == TrafficLightState.RED_YELLOW else '-'
+                dashes = (5, 5) if linestyle == '--' else (None, None)
+
+                # cut off in the beginning, because linewidth_metres is added later
+                tmp_center = lanelet.center_vertices.copy()
+                if lanelet.distance[-1] > linewidth_metres:
+                    tmp_center[0,:] = lanelet.interpolate_position(linewidth_metres)[0]
+                zorder = 10.05 if light_state == TrafficLightState.GREEN else 10.0
+                line = LineDataUnits(tmp_center[:,0], tmp_center[:,1], zorder=zorder, linewidth=linewidth_metres, alpha=0.7,
+                                     color=traffic_light_color_dict(light_state, traffic_light_colors), linestyle=linestyle, dashes=dashes)
+                ax.add_line(line)
+
+        # draw colored center bound. Hierarchy or colors: successors > usual center bound
+        is_successor = draw_intersections and draw_successors and lanelet.lanelet_id in all_successors
+        if is_successor:
+            if lanelet.lanelet_id in successors_left:
+                succ_left_paths.append(Path(lanelet.center_vertices, closed=False))
+            elif lanelet.lanelet_id in successors_straight:
+                succ_straight_paths.append(Path(lanelet.center_vertices, closed=False))
+            else:
+                succ_right_paths.append(Path(lanelet.center_vertices, closed=False))
+
+        elif draw_center_bound:
+            if unique_colors is False:
+                center_paths.append(Path(lanelet.center_vertices, closed=False))
+            else:
+                center_paths = [Path(lanelet.center_vertices, closed=False)]
+                ax.add_collection(
+                    collections.PathCollection(center_paths, edgecolor=center_bound_color, facecolor='none',
+                                               lw=draw_linewidth, zorder=10, antialiased=antialiased))
+
+        is_incoming_lanelet = draw_intersections and draw_incoming_lanelets and\
+                              (lanelet.lanelet_id in incoming_lanelets)
+        is_crossing = draw_intersections and draw_crossings and\
+                              (lanelet.lanelet_id in crossings)
         if fill_lanelet:
-            vertices_fill.append(np.concatenate((lanelet.right_vertices, np.flip(lanelet.left_vertices, 0))))
+            if not is_incoming_lanelet and not is_crossing:
+                vertices_fill.append(np.concatenate((lanelet.right_vertices, np.flip(lanelet.left_vertices, 0))))
 
-        if show_label:
-            text_pos = lanelet.interpolate_position(0.5 * lanelet.distance[-1])[0]
-            ax.text(text_pos[0], text_pos[1],
-                    str(lanelet.lanelet_id),
+        # collect incoming lanelets in separate list for plotting in different color
+        if is_incoming_lanelet:
+            incoming_vertices_fill.append(
+                np.concatenate((lanelet.right_vertices, np.flip(lanelet.left_vertices, 0))))
+        elif is_crossing:
+            crossing_vertices_fill.append(
+                np.concatenate((lanelet.right_vertices, np.flip(lanelet.left_vertices, 0))))
+
+        if show_label or draw_incoming_lanelets or draw_traffic_signs:
+            strings = []
+            if show_label:
+                strings.append(str(lanelet.lanelet_id))
+            if is_incoming_lanelet:
+                strings.append('inc_id: ' + str(incomings_id[lanelet.lanelet_id]))
+                strings.append('inc_left: ' + str(incomings_left[lanelet.lanelet_id]))
+            if draw_traffic_signs and show_traffic_sign_label is True:
+                traffic_signs_tmp = [traffic_signs[id] for id in lanelet.traffic_signs]
+                if traffic_signs_tmp:
+                    # add as text to label
+                    str_tmp = 'traffic signs: '
+                    add_str = ''
+                    for sign in traffic_signs_tmp:
+                        for el in sign.traffic_sign_elements:
+                            #TrafficSignIDGermany(el.traffic_sign_element_id).name would give the name
+                            str_tmp += add_str + el.traffic_sign_element_id.value
+                            add_str = ', '
+
+                    strings.append(str_tmp)
+                # TODO: implement svg plotting
+
+            string = ', '.join(strings)
+            # compute normal angle of label box
+            clr_positions = lanelet.interpolate_position(0.5 * lanelet.distance[-1])
+            normal_vector = np.array(clr_positions[1]) - np.array(clr_positions[2])
+            angle = np.rad2deg(np.arctan2(normal_vector[1], normal_vector[0])) - 90
+            angle = angle if Interval(-90,90).contains(angle) else angle - 180
+
+            ax.text(clr_positions[0][0], clr_positions[0][1],
+                    string,
                     bbox={'facecolor': center_bound_color, 'pad': 2},
                     horizontalalignment='center', verticalalignment='center',
+                    rotation=angle,
                     zorder=30.2)
 
     # draw paths and collect axis handles
@@ -413,16 +783,40 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
     if draw_left_bound:
         ax.add_collection(collections.PathCollection(left_paths, edgecolor=left_bound_color, facecolor='none',
                                                      lw=draw_linewidth, zorder=10, antialiased=antialiased))
-    if draw_center_bound:
-        ax.add_collection(collections.PathCollection(center_paths, edgecolor=center_bound_color, facecolor='none',
-                                       lw=draw_linewidth, zorder=10,  antialiased=antialiased))
-    if draw_start_and_direction:
-        ax.add_collection(collections.PathCollection(direction_list, color=center_bound_color,
-                                  lw=0.5, zorder=10.1, antialiased=antialiased))
+    if unique_colors is False:
+        if draw_center_bound:
+            ax.add_collection(collections.PathCollection(center_paths, edgecolor=center_bound_color, facecolor='none',
+                                           lw=draw_linewidth, zorder=10,  antialiased=antialiased))
+        if draw_start_and_direction:
+            ax.add_collection(collections.PathCollection(direction_list, color=center_bound_color,
+                                      lw=0.5, zorder=10.1, antialiased=antialiased))
 
-    collection_tmp = collections.PolyCollection(vertices_fill, transOffset=ax.transData, facecolor=facecolor, edgecolor='none', antialiaseds=antialiased)
+    if successors_left:
+        ax.add_collection(collections.PathCollection(succ_left_paths, edgecolor=successors_left_color, facecolor='none',
+                                                     lw=draw_linewidth * 3.0, zorder=11, antialiased=antialiased))
+    if successors_straight:
+        ax.add_collection(collections.PathCollection(succ_straight_paths, edgecolor=successors_straight_color, facecolor='none',
+                                                     lw=draw_linewidth * 3.0, zorder=11, antialiased=antialiased))
+    if successors_right:
+        ax.add_collection(collections.PathCollection(succ_right_paths, edgecolor=successors_right_color, facecolor='none',
+                                                     lw=draw_linewidth * 3.0, zorder=11, antialiased=antialiased))
+
+    # fill lanelets with facecolor
+    collection_tmp = collections.PolyCollection(vertices_fill, transOffset=ax.transData, zorder=9.0,
+                                                facecolor=facecolor, edgecolor='none', antialiased=antialiased)
     ax.add_collection(collection_tmp)
+    if incoming_vertices_fill:
+        collection_tmp = collections.PolyCollection(incoming_vertices_fill, transOffset=ax.transData,
+                                                    facecolor=incoming_lanelets_color, edgecolor='none', zorder=9.1,
+                                                    antialiased=antialiased)
+        ax.add_collection(collection_tmp)
+    if crossing_vertices_fill:
+        collection_tmp = collections.PolyCollection(crossing_vertices_fill, transOffset=ax.transData,
+                                                    facecolor=crossings_color, edgecolor='none', zorder=9.2,
+                                                    antialiased=antialiased)
+        ax.add_collection(collection_tmp)
 
+    # draw_border_vertices
     if draw_border_vertices:
         # left vertices
         collection_tmp = collections.EllipseCollection(np.ones([coordinates_left_border_vertices.shape[0],1]) * 1,
@@ -439,6 +833,14 @@ def draw_lanelets(obj: Union[List[Lanelet],Lanelet], plot_limits: Union[List[Uni
                                                        offsets=coordinates_right_border_vertices,
                                                        color=right_bound_color, transOffset=ax.transData)
         ax.add_collection(collection_tmp)
+
+    if draw_traffic_signs:
+        # draw actual traffic sign
+        draw_traffic_sign(list(traffic_signs.values()), None, ax, draw_params, draw_func, handles, call_stack)
+
+    if draw_traffic_lights:
+        # draw actual traffic sign
+        draw_traffic_light(list(traffic_lights.values()), None, ax, draw_params, draw_func, handles, call_stack)
 
 
 def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
@@ -467,7 +869,7 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
 
         # draw occupancies
         if (draw_occupancies == 1 or
-                (draw_occupancies == 0 and isinstance(o.prediction, commonroad.prediction.prediction.SetBasedPrediction))):
+                (draw_occupancies == 0 and type(o.prediction) == commonroad.prediction.prediction.SetBasedPrediction)):
             if draw_shape:
                 # occupancy already plotted
                 time_begin_occ = time_begin + 1
@@ -480,7 +882,7 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
                     occupancy_list.append(tmp)
 
         # get trajectory
-        if isinstance(o.prediction, commonroad.prediction.prediction.TrajectoryPrediction):
+        if draw_trajectory and type(o.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:
             trajectory = o.prediction.trajectory
 
         # get shape
@@ -492,7 +894,7 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
                 shape = occ.shape
 
         # draw car icon
-        if draw_icon and isinstance(o.prediction, commonroad.prediction.prediction.TrajectoryPrediction):
+        if draw_icon and type(o.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:
             if time_begin == 0:
                 inital_state = o.initial_state
             else:
@@ -507,7 +909,7 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
                 handles.setdefault(DynamicObstacle, []).append(
                     ax.text(initial_position[0] + 0.5, initial_position[1], str(o.obstacle_id),
                         clip_on=True, zorder=1000))
-            elif trajectory:
+            elif type(o.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:
                 begin_state = o.prediction.trajectory.state_at_time_step(time_begin)
                 if begin_state is not None:
                     initial_position = o.prediction.trajectory.state_at_time_step(time_begin).position
@@ -539,6 +941,9 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
         draw_occupancies = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('dynamic_obstacle', 'occupancy', 'draw_occupancies'))
+        draw_trajectory = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('dynamic_obstacle', 'trajectory', 'draw_trajectory'))
     except KeyError:
         warnings.warn("Cannot find stylesheet for dynamic_obstacle. Called through:")
         print(call_stack)
@@ -817,7 +1222,7 @@ def draw_rectangle(obj: Union[Rectangle,List[Rectangle]], plot_limits: Union[Lis
         vertices.append(np.array(rect.vertices))
 
     collection = collections.PolyCollection(vertices, closed=True, zorder=zorder, transOffset=ax.transData,
-                                            facecolor=facecolor, edgecolor=edgecolor, alpha=opacity, antialiaseds=antialiased, linewidth=linewidth)
+                                            facecolor=facecolor, edgecolor=edgecolor, alpha=opacity, antialiased=antialiased, linewidth=linewidth)
     ax.add_collection(collection)
 
     return [collection]
@@ -987,8 +1392,9 @@ def draw_car(pos_x: Union[int,float], pos_y: Union[int,float], rotate: Union[int
 
 # default function dict, which assigns drawing functions to object classes
 draw_func_dict = {commonroad.scenario.scenario.Scenario: draw_scenario,
-                  commonroad.scenario.lanelet.Lanelet: draw_lanelets,
+                  commonroad.scenario.lanelet.Lanelet: draw_lanelet_list,
                   commonroad.scenario.lanelet.LaneletNetwork: draw_lanelet_network,
+                  commonroad.scenario.traffic_sign.TrafficSign: draw_traffic_sign,
                   commonroad.scenario.obstacle.DynamicObstacle: draw_dynamic_obstacles,
                   commonroad.scenario.obstacle.StaticObstacle: draw_static_obstacles,
                   commonroad.scenario.trajectory.Trajectory: draw_trajectories,

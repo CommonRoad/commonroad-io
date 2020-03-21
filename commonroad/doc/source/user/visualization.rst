@@ -37,20 +37,54 @@ When settings of a plot should be changed with ``draw_params``, they have to be 
             'static_obstacle':
                 {'shape': shape_parameters},
             'lanelet_network':
-                {'lanelet':
-                    {'left_bound_color': '#555555',
-                     'right_bound_color': '#555555',
-                     'center_bound_color': '#dddddd',
-                     'draw_left_bound': True,
-                     'draw_right_bound': True,
-                     'draw_center_bound': True,
-                     'draw_border_vertices': False,
-                     'draw_start_and_direction': True,
-                     'show_label': False,
-                     'draw_linewidth': 0.5,
-                     'fill_lanelet': True,
-                     'facecolor': '#c7c7c7'
-                    }
+                {'draw_traffic_lights': True,
+                 'traffic_light':
+                     {'red_color': 'red',
+                      'yellow_color': '#feb609',
+                      'green_color': '#00aa16',
+                      'red_yellow_color': '#fe4009ff',
+                      'show_label': False,
+                      'kwargs': {}, # further properties for AnnotationBox, see # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
+                      'scale_factor': 0.25,
+                      'zorder': 30
+                      },
+                 'draw_traffic_signs': False,
+                 'traffic_sign':
+                     {'show_traffic_signs': 'all',  # 'all' or list of TrafficSignIDs
+                      'show_label': False,
+                      'kwargs': {},   # further properties for AnnotationBox, see https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
+                      'scale_factor': 0.25,
+                      'zorder': 30
+                     },
+                 'draw_intersection': False,
+                 'intersection':
+                     {'draw_incoming_lanelets': True,
+                      'incoming_lanelets_color': '#24b582',
+                      'draw_crossings': True,
+                      'crossings_color': '#b62a55',
+                      'draw_successors': True,
+                      'successors_left_color': 'red',
+                      'successors_straight_color': 'blue',
+                      'successors_right_color': '#ccff00'
+                      },
+                 'lanelet':
+                     {'left_bound_color': '#555555',
+                      'right_bound_color': '#555555',
+                      'center_bound_color': '#dddddd',
+                      'unique_colors': False,  # colorizes center_vertices and labels of each lanelet differently
+                      'draw_stop_line':True,
+                      'stop_line_color':'#ffffff',
+                      'draw_line_markings':True,
+                      'draw_left_bound': True,
+                      'draw_right_bound': True,
+                      'draw_center_bound': True,
+                      'draw_border_vertices': False,
+                      'draw_start_and_direction': True,
+                      'show_label': False,
+                      'draw_linewidth': 0.5,
+                      'fill_lanelet': True,
+                      'facecolor': '#c7c7c7'
+                      }
                 }
             },
          'planning_problem_set':

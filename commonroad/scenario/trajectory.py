@@ -17,9 +17,9 @@ from commonroad.common.util import make_valid_orientation
 __author__ = "Stefanie Manzinger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2019.1"
+__version__ = "2020.1"
 __maintainer__ = "Stefanie Manzinger"
-__email__ = "commonroad@in.tum.de"
+__email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 
@@ -90,8 +90,16 @@ class State:
             are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar delta_y_r: rear lateral displacement :math:`\delta_{y,r}` of sprung mass due to roll. Exact values
             are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar acceleration: acceleration :math:`a`. We optionally include acceleration as a state variable for
+        :ivar acceleration: acceleration :math:`a_x`. We optionally include acceleration as a state variable for
             obstacles to provide additional information, e.g., for motion prediction, even though acceleration is often
+            used as an input for vehicle models. Exact values are given as real number, uncertain values are given as
+            :class:`commonroad.common.util.Interval`
+        :ivar acceleration_y: velocity :math:`a_y`.
+            We optionally include acceleration as a state variable for obstacles to provide additional information,
+            e.g., for motion prediction, even though acceleration is often used as an input for vehicle models. Exact
+            values are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
+        :ivar jerk: acceleration :math:`j`. We optionally include jerk as a state variable for
+            obstacles to provide additional information, e.g., for motion prediction, even though jerk is often
             used as an input for vehicle models. Exact values are given as real number, uncertain values are given as
             :class:`commonroad.common.util.Interval`
         :ivar time_step: the discrete time step. Exact values are given as integers, uncertain values are given as
@@ -139,6 +147,8 @@ class State:
         'delta_y_f',
         'delta_y_r',
         'acceleration',
+        'acceleration_y',
+        'jerk',
         'time_step',
     ]
 
@@ -280,15 +290,6 @@ class Trajectory:
             for state in state_list
             if hasattr(state, 'time_step')
         ), '<Trajectory/state_list>: Element time_step of each state must be an integer.'
-        assert (
-            self.initial_time_step == state_list[0].time_step
-            if hasattr(state_list[0], 'time_step')
-            else True
-        ), (
-            '<Trajectory/state_list>: time_step of first state in state_list is different from initial_time_step. '
-            'initial_time_step = %s. time_step of first state in state_list = %s.'
-            % (self.initial_time_step, state_list[0].time_step)
-        )
         assert all(
             state_list[0].attributes == state.attributes for state in state_list
         ), (
@@ -321,6 +322,17 @@ class Trajectory:
         ):
             state = self._state_list[time_step - self._initial_time_step]
         return state
+
+    def states_in_time_interval(self, time_begin: int, time_end: int) -> List[Union[State, None]]:
+        """
+        Function to get the states of a trajectory at a specific time interval.
+
+        :param time_begin: first considered time step
+        :param time_end: last considered time step
+        :return: list of states
+        """
+        assert time_end >= time_begin
+        return [self.state_at_time_step(time_step) for time_step in range(time_begin,time_end+1)]
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ First translates each state of the trajectory, then rotates each state of the trajectory around the

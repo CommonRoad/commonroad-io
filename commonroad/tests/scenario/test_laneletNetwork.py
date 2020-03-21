@@ -3,14 +3,15 @@ import numpy as np
 from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.geometry.shape import Rectangle
+from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany
 from commonroad.scenario.trajectory import State
 
 __author__ = "Moritz Untersperger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2019.1"
+__version__ = "2020.1"
 __maintainer__ = "Moritz Untersperger"
-__email__ = "commonroad@in.tum.de"
+__email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 
@@ -27,16 +28,19 @@ class TestLaneletNetwork(unittest.TestCase):
         self.adjacent_right = 4
         self.adjacent_right_same_dir = True
         self.adjacent_left_same_dir = False
-        self.speed_limit = 15
         self.line_marking_right = LineMarking.SOLID
         self.line_marking_left = LineMarking.DASHED
+        traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAXSPEED.value, ["15"])
+        self.traffic_sign = TrafficSign(1, [traffic_sign_max_speed])
 
-        self.lanelet = Lanelet(self.left_vertices, self.center_vertices, self.right_vertices, self.lanelet_id, self.predecessor, self.successor,
-                               self.adjacent_left, self.adjacent_left_same_dir, self.adjacent_right, self.adjacent_right_same_dir, self.speed_limit,
-                               self.line_marking_left, self.line_marking_right)
+        self.lanelet = Lanelet(self.left_vertices, self.center_vertices, self.right_vertices, self.lanelet_id,
+                               self.predecessor, self.successor, self.adjacent_left, self.adjacent_left_same_dir,
+                               self.adjacent_right, self.adjacent_right_same_dir, self.line_marking_left,
+                               self.line_marking_right,None, None, None, None, {self.traffic_sign.traffic_sign_id})
 
         self.lanelet_network = LaneletNetwork()
         self.lanelet_network.add_lanelet(self.lanelet)
+        self.lanelet_network.add_traffic_sign(self.traffic_sign, set())
 
     def test_initialize_lanelets(self):
         s1 = np.sqrt(1.25)

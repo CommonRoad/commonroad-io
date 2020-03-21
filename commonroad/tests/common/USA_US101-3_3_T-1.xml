@@ -1,4 +1,4 @@
-<commonRoad timeStepSize="0.1" commonRoadVersion="2018b" author="Markus Koschi, Moritz Klischat, Lukas Willinger, Alexander Zhu, Lukas Braunstorfer, Stefanie Manzinger, Christian Pek" affiliation="Technical University of Munich, Germany" source="Next Generation Simulation (NGSIM) and OpenStreetMaps (OSM)" tags="critical parallel_lanes highway lane_change multi_lane no_oncoming_traffic" benchmarkID="USA_US101-3_3_T-1" date="2019-07-17">
+<commonRoad timeStepSize="0.1" commonRoadVersion="2018b" author="Markus Koschi, Moritz Klischat, Lukas Willinger, Alexander Zhu, Lukas Braunstorfer, Stefanie Manzinger, Christian Pek" affiliation="Technical University of Munich, Germany" source="Next Generation Simulation (NGSIM) and OpenStreetMaps (OSM)" tags="critical parallel_lanes interstate lane_change multi_lane no_oncoming_traffic" benchmarkID="USA_US101-3_3_T-1" date="2019-07-17">
   <lanelet id="31">
     <leftBound>
       <point>
