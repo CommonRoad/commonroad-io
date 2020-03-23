@@ -1,3 +1,4 @@
+import itertools
 import os
 from collections import defaultdict
 from typing import Dict, Callable, Tuple, Union, Any, Set
@@ -57,6 +58,12 @@ def create_default_draw_params() -> dict:
                             'draw_bounding_box': True,
                             'show_label': False,
                             'zorder': 20,
+                            'draw_signals': True,
+                            'signal_radius': 0.5,
+                            'indicator_color': '#ebc200',
+                            'braking_color': 'red',
+                            'blue_lights_color': 'blue',
+                            'horn_color': 'red',
                             'occupancy': {
                                 'draw_occupancies': 0,  # -1= never, 0= if prediction of vehicle is set-based, 1=always
                                 'shape': {
@@ -861,6 +868,10 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
         occupancy_list=list()
         trajectory = None
         shape = None
+        indicators = []
+        braking = []
+        horns = []
+        bluelights = []
 
         if type(o) is not DynamicObstacle:
             warnings.warn('<visualization/scenario> Only lists with objects of the same type can be plotted',
@@ -893,6 +904,25 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
             else:
                 shape = occ.shape
 
+            # draw turn signal
+            if draw_signals and occ is not None:
+                sig = o.signal_state_at_time_step(time_begin)
+                if isinstance(occ.shape, Rectangle):
+                    if hasattr(sig, 'hazard_warning_lights') and sig.hazard_warning_lights is True:
+                        indicators.extend([occ.shape.vertices[0], occ.shape.vertices[1],  occ.shape.vertices[2],
+                                           occ.shape.vertices[3]])
+                    else:
+                        if hasattr(sig, 'indicator_left') and sig.indicator_left is True:
+                            indicators.extend([occ.shape.vertices[1], occ.shape.vertices[2]])
+                        if hasattr(sig, 'indicator_right') and sig.indicator_right is True:
+                            indicators.extend([occ.shape.vertices[0], occ.shape.vertices[3]])
+                    if hasattr(sig, 'braking_lights') and sig.braking_lights is True:
+                        braking.extend([occ.shape.vertices[0], occ.shape.vertices[1]])
+                    if hasattr(sig, 'flashing_blue_lights') and sig.flashing_blue_lights is True:
+                        bluelights.append(occ.shape.center)
+                    if hasattr(sig, 'horn') and sig.horn is True:
+                        horns.append(occ.shape.center)
+
         # draw car icon
         if draw_icon and type(o.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:
             if time_begin == 0:
@@ -917,7 +947,7 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
                         ax.text(initial_position[0]+0.5, initial_position[1], str(o.obstacle_id),
                             clip_on=True, zorder=1000))
 
-        return (occupancy_list, trajectory, shape)
+        return (occupancy_list, trajectory, shape, indicators, braking, horns, bluelights)
 
     if type(obj) is DynamicObstacle:
         obj = [obj]
@@ -941,6 +971,27 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
         draw_occupancies = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('dynamic_obstacle', 'occupancy', 'draw_occupancies'))
+        draw_signals = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('dynamic_obstacle', 'draw_signals'))
+        zorder = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('dynamic_obstacle', 'zorder'))
+        signal_radius = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('dynamic_obstacle', 'signal_radius'))
+        indicator_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('dynamic_obstacle', 'indicator_color'))
+        braking_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('dynamic_obstacle', 'braking_color'))
+        horn_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('dynamic_obstacle', 'horn_color'))
+        blue_lights_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('dynamic_obstacle', 'blue_lights_color'))
         draw_trajectory = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('dynamic_obstacle', 'trajectory', 'draw_trajectory'))
@@ -955,21 +1006,56 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
     occupancy_list = list(filter(None,list(tmp_array[:,0])))
     trajectories_list = list(filter(None,list(tmp_array[:, 1])))
     shapes_list = list(filter(None,list(tmp_array[:, 2])))
+    indicators = np.array(list(itertools.chain.from_iterable(tmp_array[:, 3])))
+    braking = np.array(list(itertools.chain.from_iterable(tmp_array[:, 4])))
+    horns = np.array(list(itertools.chain.from_iterable(tmp_array[:, 5])))
+    bluelights = np.array(list(itertools.chain.from_iterable(tmp_array[:, 6])))
 
     # draw collected lists, store handles:
     if len(shapes_list) > 0:
         handles.setdefault(DynamicObstacle, []).extend(
             shape_batch_dispatcher(shapes_list, None, ax, draw_params, draw_func, handles, call_stack))
-
     if len(trajectories_list) > 0:
         handles.setdefault(DynamicObstacle, []).extend(
             commonroad.visualization.draw_dispatch_cr.
                 draw_object(trajectories_list, None, ax, draw_params, draw_func, handles, call_stack))
-
     if len(occupancy_list) > 0:
         handles.setdefault(DynamicObstacle, []).extend(
             commonroad.visualization.draw_dispatch_cr.
                 draw_object(occupancy_list, None, ax, draw_params, draw_func, handles, call_stack))
+
+    # draw signals
+
+
+
+    if indicators.size > 0:
+        diameters = signal_radius * np.ones(indicators.shape[0]) * 2
+        handles.setdefault(DynamicObstacle, []).append(
+            collections.EllipseCollection(diameters, diameters, angles=np.zeros_like(diameters), offsets=indicators,
+                                          transOffset=ax.transData, units='xy', facecolor=indicator_color,
+                                          edgecolor=indicator_color, zorder=zorder+0.2, linewidth=0))
+        ax.add_collection(handles[DynamicObstacle][-1])
+    if braking.size > 0:
+        diameters = signal_radius * np.ones(braking.shape[0]) * 3.0
+        handles.setdefault(DynamicObstacle, []).append(
+            collections.EllipseCollection(diameters, diameters, angles=np.zeros_like(diameters), offsets=braking,
+                                          transOffset=ax.transData, units='xy', facecolor=braking_color,
+                                          edgecolor=braking_color, zorder=zorder + 0.1, linewidth=0))
+        ax.add_collection(handles[DynamicObstacle][-1])
+    if horns.size > 0:
+        diameters = signal_radius * np.ones(horns.shape[0]) * 3.0
+        handles.setdefault(DynamicObstacle, []).append(
+            collections.EllipseCollection(diameters, diameters, angles=np.zeros_like(diameters), offsets=horns,
+                                          transOffset=ax.transData, units='xy', facecolor=horn_color,
+                                          edgecolor=braking_color, zorder=zorder + 0.1, linewidth=0))
+        ax.add_collection(handles[DynamicObstacle][-1])
+    if bluelights.size > 0:
+        diameters = signal_radius * np.ones(bluelights.shape[0]) * 2
+        handles.setdefault(DynamicObstacle, []).append(
+            collections.EllipseCollection(diameters, diameters, angles=np.zeros_like(diameters), offsets=bluelights,
+                                          transOffset=ax.transData, units='xy', facecolor=blue_lights_color,
+                                          edgecolor=braking_color, zorder=zorder + 0.1, linewidth=0))
+        ax.add_collection(handles[DynamicObstacle][-1])
 
 
 def draw_occupancies(obj: Union[List[Occupancy], Occupancy], plot_limits: Union[List[Union[int,float]], None],

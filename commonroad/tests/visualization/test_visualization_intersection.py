@@ -15,6 +15,7 @@ class TestVisualization(unittest.TestCase):
         self.full_path = os.path.dirname(os.path.abspath(__file__))
         self.filename_urban = os.path.join(self.full_path,  '../common/test_reading_intersection_traffic_sign.xml')
         self.filename_lanelet = os.path.join(self.full_path, '../common/test_reading_lanelets.xml')
+        self.filename_test_all = os.path.join(self.full_path, '../common/test_reading_all.xml')
 
     def test_intersection_plot(self):
         "Uses all options for plotting objects related to intersections or traffic sign/lights."
@@ -60,14 +61,19 @@ class TestVisualization(unittest.TestCase):
         plt.autoscale()
         plt.axis('equal')
         plt.show()
-# def test_read_svg():
-#     path = '/home/klischat/GIT_REPOS/commonroad-io/commonroad/visualization/traffic_signs/306.svg'
-#     path2 = '/home/klischat/GIT_REPOS/commonroad-io/commonroad/visualization/traffic_signs/310.svg'
-#     plt.figure()
-#     pylustrator.load(path, offset=[5, 0.5])
-#     pylustrator.load(path2, offset=[10, 0.5])
-#
-#     plt.show()
+
+    def test_signal_states(self):
+        "Uses all options for plotting objects related to intersections or traffic sign/lights."
+        scenario, pp = CommonRoadFileReader(self.filename_test_all).open()
+        plt.close('all')
+        plt.figure()
+        draw_params = {'time_begin': 1}
+        draw_object(scenario.obstacle_by_id(2),
+                    draw_params=draw_params)
+        plt.autoscale()
+        plt.axis('equal')
+        plt.show()
+
 
 if __name__ == '__main__':
     unittest.main()

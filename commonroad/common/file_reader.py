@@ -353,7 +353,10 @@ class LaneletNetworkFactory:
         :return: supported traffic sign country enum
         """
         if xml_node._root.attrib["commonRoadVersion"] == "2018b":
-            country = xml_node._root.attrib["benchmarkID"][:3]
+            if xml_node._root.attrib["benchmarkID"][:3] == "C-":
+                country = xml_node._root.attrib["benchmarkID"][2:5]
+            else:
+                country = xml_node._root.attrib["benchmarkID"][:3]
         else:
             country = xml_node.find('location').find('country').text
 

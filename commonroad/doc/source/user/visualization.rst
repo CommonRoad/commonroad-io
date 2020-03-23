@@ -25,6 +25,12 @@ When settings of a plot should be changed with ``draw_params``, they have to be 
                  'draw_bounding_box': True,
                  'show_label': False,
                  'zorder': 20,
+                 'draw_signals': True,
+                 'signal_radius': 0.5,
+                 'indicator_color': '#ebc200',
+                 'braking_color': 'red',
+                 'blue_lights_color': 'blue',
+                 'horn_color': 'red',
 								 'occupancy':
 										 {'draw_occupancies': 0,
 											'shape': shape_parameters
