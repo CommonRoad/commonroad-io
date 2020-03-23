@@ -254,12 +254,14 @@ class Obstacle(ABC):
         :param time_step: time step of interest
         :returns signal state or None if time step does not exist
         """
-        signal_state = None
-        for state in self.signal_series:
-            if state.time_step == time_step:
-                signal_state = state
+        if self.initial_signal_state is not None and time_step == self.initial_signal_state.time_step:
+            return self.initial_signal_state
+        else:
+            for state in self.signal_series:
+                if state.time_step == time_step:
+                    return state
 
-        return signal_state
+        return None
 
 
 class StaticObstacle(Obstacle):
