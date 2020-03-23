@@ -3,6 +3,8 @@ from typing import Union, List, Tuple, Dict, Set
 from xml.etree import ElementTree
 import numpy as np
 from abc import ABC
+
+from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.util import Interval, AngleInterval
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
 from commonroad.planning.goal import GoalRegion
@@ -25,9 +27,6 @@ __version__ = "2020.1"
 __maintainer__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
-
-
-SUPPORTED_COMMONROAD_VERSIONS = {'2018b', '2020a'}
 
 
 def read_value_exact_or_interval(xml_node: ElementTree.Element)\
