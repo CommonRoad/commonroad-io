@@ -8,9 +8,11 @@ from typing import List, Union
 import warnings
 import datetime
 import copy
+
+from commonroad import SCENARIO_VERSION
 from lxml import etree, objectify
 
-from commonroad.common.solution import VehicleType, CostFunction, VehicleModel, SCENARIO_VERSION
+from commonroad.common.solution import VehicleType, CostFunction, VehicleModel
 from commonroad.geometry.transform import rotate_translate
 from commonroad.scenario.trajectory import Trajectory
 

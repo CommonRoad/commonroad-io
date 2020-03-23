@@ -10,6 +10,8 @@ from typing import Union, List, Set
 import numpy as np
 import decimal
 import warnings
+
+from commonroad import SCENARIO_VERSION
 from lxml import etree, objectify
 
 from commonroad.common.util import Interval
@@ -31,9 +33,6 @@ __version__ = "2020.1"
 __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
-
-
-SCENARIO_VERSION = '2020a'
 
 # create a new context for this task
 ctx = decimal.Context()
