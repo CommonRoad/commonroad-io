@@ -12,7 +12,15 @@ from datetime import datetime
 
 from commonroad.scenario.trajectory import State, Trajectory
 
-SCENARIO_VERSION = '2018b'
+__author__ = "Murat Üste, Christina Miller, Moritz Klischat"
+__copyright__ = "TUM Cyber-Physical Systems Group"
+__credits__ = ["BMW CAR@TUM"]
+__version__ = "2020.1"
+__maintainer__ = "Moritz Klischat"
+__email__ = "commonroad-i06@in.tum.de"
+__status__ = "Released"
+
+SCENARIO_VERSION = '2020a'
 
 
 @unique
