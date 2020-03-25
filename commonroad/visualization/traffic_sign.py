@@ -1,6 +1,7 @@
 import copy
 import enum
 import os
+from collections import defaultdict, OrderedDict
 from typing import Dict, Callable, Tuple, Union, Any
 import commonroad.geometry.shape
 import matplotlib as mpl
@@ -14,7 +15,7 @@ import commonroad.visualization.draw_dispatch_cr
 from commonroad.geometry.shape import *
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDGermany, TrafficLight, TrafficLightState, \
     TrafficSignIDUsa, TrafficSignIDChina, TrafficSignIDZamunda
-from matplotlib.offsetbox import OffsetImage, AnnotationBbox, HPacker, TextArea, VPacker
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox, HPacker, TextArea, VPacker, OffsetBox
 
 # path to traffic sign .png files
 traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
@@ -42,14 +43,14 @@ def text_prop_dict() -> dict:
             'R2-1': {'weight': 'normal', 'color': 'black', 'size': 10}}
 
 
-def draw_traffic_sign(traffic_signs: Union[List[TrafficSign], TrafficSign],
-                      plot_limits: Union[List[Union[int,float]], None], ax: mpl.axes.Axes, draw_params: dict,
-                      draw_func: Dict[type,Callable],
-                      handles: Dict[Any,List[Union[mpl.patches.Patch,mpl.collections.Collection]]],
-                      call_stack: Tuple[str,...]) -> None:
+def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], TrafficSign], draw_params: dict,
+                                  call_stack: Tuple[str,...]) -> Dict[Tuple[float,float],List[OffsetBox]]:
 
     if type(traffic_signs) is not list:
         traffic_signs = [traffic_signs]
+
+    if len(traffic_signs) == 0:
+        return dict()
 
     scale_factor = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
         draw_params, call_stack,
@@ -63,26 +64,18 @@ def draw_traffic_sign(traffic_signs: Union[List[TrafficSign], TrafficSign],
     zorder = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
         draw_params, call_stack,
         ('traffic_sign', 'zorder'), ('scenario','lanelet_network','traffic_sign', 'zorder'))
-    kwargs = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
-        draw_params, call_stack,
-        ('traffic_sign', 'kwargs'), ('scenario','lanelet_network','traffic_sign', 'kwargs'))
 
     assert any([show_traffic_signs == 'all',
                 isinstance(show_traffic_signs, list) and type(show_traffic_signs[0] is enum)]),\
         'Plotting option traffic_sign.show_traffic_signs must be either "all" or list of type TrafficSignID'
 
-    # add default AnnotationBox args if not specified by user
-    default_params = dict(xycoords='data', frameon=False)
-    for param, value in default_params.items():
-        if param not in kwargs:
-            kwargs[param] = value
-
     #call_stack = tuple(list(call_stack) + ['traffic_sign'])
     pos_dict = additional_value_position_dict()
     prop_dict = text_prop_dict()
+    imageboxes_all = defaultdict(list)
 
     for traffic_sign in traffic_signs:
-        if traffic_sign.virtual is True: continue
+        if traffic_sign.virtual is True or traffic_sign.position is None: continue
         imageboxes = []
         for element in traffic_sign.traffic_sign_elements:
             el_id = element.traffic_sign_element_id
@@ -128,26 +121,19 @@ def draw_traffic_sign(traffic_signs: Union[List[TrafficSign], TrafficSign],
         # horizontally stack all traffic sign elements of the traffic sign
         if len(imageboxes) > 0:
             hbox = HPacker(children=imageboxes, pad=0, sep=0.05, align='baseline')
-            kwargs_tmp = copy.deepcopy(kwargs)
-            if 'xybox' not in kwargs_tmp:
-                kwargs_tmp['xybox'] = traffic_sign.position
+            imageboxes_all[tuple(traffic_sign.position.tolist())].append(hbox)
 
-            ab = AnnotationBbox(hbox, traffic_sign.position, **kwargs_tmp)
-            ab.zorder = 30
-            ax.add_artist(ab)
+    return imageboxes_all
 
 
-def draw_traffic_light(traffic_lights: Union[List[TrafficLight], TrafficLight],
-                      plot_limits: Union[List[Union[int,float]], None], ax: mpl.axes.Axes, draw_params: dict,
-                      draw_func: Dict[type,Callable],
-                      handles: Dict[Any,List[Union[mpl.patches.Patch,mpl.collections.Collection]]],
-                      call_stack: Tuple[str,...]) -> None:
+def create_img_boxes_traffic_lights(traffic_lights: Union[List[TrafficLight], TrafficLight], draw_params: dict,
+                                  call_stack: Tuple[str,...]) -> Dict[Tuple[float,float],List[OffsetBox]]:
 
     if type(traffic_lights) is not list:
         traffic_lights = [traffic_lights]
 
     if len(traffic_lights) == 0:
-        return
+        return dict()
 
     time_begin = commonroad.visualization.draw_dispatch_cr._retrieve_value(
         draw_params, call_stack,
@@ -161,9 +147,102 @@ def draw_traffic_light(traffic_lights: Union[List[TrafficLight], TrafficLight],
     zorder = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
         draw_params, call_stack,
         ('traffic_light', 'zorder'), ('scenario','lanelet_network','traffic_light', 'zorder'))
+
+    #call_stack = tuple(list(call_stack) + ['traffic_light'])
+
+    # plots all group members horizontally stacked
+    imageboxes_all = defaultdict(list)
+    for traffic_light in traffic_lights:
+        imageboxes = []
+        if traffic_light.active:
+            state = traffic_light.get_state_at_time_step(time_begin)
+            path = os.path.join(traffic_sign_path, 'traffic_light_state_' + str(state.value) + '.png')
+        else:
+            path = os.path.join(traffic_sign_path, 'traffic_light_state_inactive.png')
+
+        boxes = []  # collect matplotlib offset boxes for text and images
+        sign_img = Image.open(path)
+        boxes.append(OffsetImage(sign_img, zoom=scale_factor, zorder=zorder, interpolation='bicubic'))
+
+        if show_label:
+            boxes.append(TextArea(str(state.value)))
+
+        # stack boxes vertically
+        img_box = VPacker(children=boxes,pad=0, sep=0, align='center')
+
+        imageboxes_all[tuple(traffic_light.position.tolist())].append(img_box)
+
+    return imageboxes_all
+
+
+def draw_traffic_light_signs(traffic_lights_signs: Union[List[Union[TrafficLight,TrafficSign]],
+                                                         Union[TrafficLight,TrafficSign]],
+                             plot_limits: Union[List[Union[int,float]], None], ax: mpl.axes.Axes, draw_params: dict,
+                             draw_func: Dict[type,Callable],
+                             handles: Dict[Any,List[Union[mpl.patches.Patch,mpl.collections.Collection]]],
+                             call_stack: Tuple[str,...]) -> None:
     kwargs = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
         draw_params, call_stack,
-        ('traffic_light', 'kwargs'), ('scenario','lanelet_network','traffic_light', 'kwargs'))
+        ('kwargs_traffic_light_signs',), ('scenario','lanelet_network','kwargs_traffic_light_signs'))
+
+    zorder_0 = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
+        draw_params, call_stack,
+        ('traffic_light', 'zorder'), ('scenario','lanelet_network','traffic_light', 'zorder'))
+
+    zorder_1 = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
+        draw_params, call_stack,
+        ('traffic_sign', 'zorder'), ('scenario','lanelet_network','traffic_sign', 'zorder'))
+
+    zorder = min(zorder_0, zorder_1)
+    threshold_grouping = 0.8  # [m] distance threshold for grouping traffic light and/or signs
+
+    if not isinstance(traffic_lights_signs, list):
+        traffic_lights_signs = [traffic_lights_signs]
+
+    traffic_signs = []
+    traffic_lights = []
+
+    for obj in traffic_lights_signs:
+        if isinstance(obj, TrafficSign):
+            traffic_signs.append(obj)
+        elif isinstance(obj, TrafficLight):
+            traffic_lights.append(obj)
+        else:
+            warnings.warn('Object of type {}, but expected type TrafficSign or TrafficLight'.format(type(obj)))
+
+    # collect ImageBoxes of traffic signs/lights grouped by their positions
+    boxes_tl = create_img_boxes_traffic_lights(traffic_lights, draw_params, call_stack)
+    boxes_signs = create_img_boxes_traffic_sign(traffic_signs, draw_params, call_stack)
+    img_boxes = defaultdict(list)  # {position: List[OffsetBox]}
+    [img_boxes[pos].extend(box_list) for pos, box_list in boxes_tl.items()]
+    [img_boxes[pos].extend(box_list) for pos, box_list in boxes_signs.items()]
+
+    if not img_boxes:
+        return None
+
+    positions = list(img_boxes.keys())
+    box_lists = list(img_boxes.values())
+
+    # group objects based on their distances
+    groups = dict()
+    grouped = set()  # set of already assigned keys
+    i = 1
+    for pos, box_list in zip(positions[:-1], box_lists[:-1]):
+        i += 1
+        group_tmp = list(box_list)
+        if pos in grouped: continue
+        gr_pos_tmp = [np.array(pos)]  # collect positions of members
+        for pos2, box_list2 in zip(positions[i:], box_lists[i:]):
+            if pos2 in grouped: continue
+            if np.linalg.norm(np.array(pos) - np.array(pos2), ord=np.inf) < threshold_grouping:
+                group_tmp.extend(box_list2)
+                gr_pos_tmp.append(np.array(pos2))
+
+        grouped.add(pos)  # collect ids of all objects
+        groups[tuple(np.average(gr_pos_tmp, axis=0).tolist())] = group_tmp
+
+    if positions[-1] not in grouped:
+        groups[positions[-1]] = box_lists[-1]
 
     # add default AnnotationBox args if not specified by user
     default_params = dict(xycoords='data', frameon=False)
@@ -171,59 +250,16 @@ def draw_traffic_light(traffic_lights: Union[List[TrafficLight], TrafficLight],
         if param not in kwargs:
             kwargs[param] = value
 
-    #call_stack = tuple(list(call_stack) + ['traffic_light'])
-    pos_dict = additional_value_position_dict()
-    prop_dict = text_prop_dict()
-
-    # group lights at same position
-    positions = [tl.position for tl in traffic_lights]
-    ids = [tl.traffic_light_id for tl in traffic_lights]
-    mapping = {tl.traffic_light_id: tl for tl in traffic_lights}
-    groups = []
-    grouped = set()
-    i=1
-    for pos, tl_id in zip(positions[:-1], ids[:-1]):
-        group_tmp = {tl_id}
-        if tl_id in grouped: continue
-        grouped.add(tl_id)
-        for pos2, tl_id2 in zip(positions[i:], ids[:]):
-            if tl_id2 in grouped: continue
-            if np.linalg.norm(pos-pos2, ord=np.inf) < 0.8:
-                group_tmp.add(tl_id2)
-
-        groups.append(group_tmp)
-
-    if ids[-1] not in grouped:
-        groups.append({ids[-1]})
-
-    # plots all group members horizontally stacked
-    for group in groups:
-        imageboxes = []
-        for tl_id in group:
-            traffic_light = mapping[tl_id]
-            imageboxes = []
-            if traffic_light.active:
-                state = traffic_light.get_state_at_time_step(time_begin)
-                path = os.path.join(traffic_sign_path, 'traffic_light_state_' + str(state.value) + '.png')
-            else:
-                path = os.path.join(traffic_sign_path, 'traffic_light_state_inactive.png')
-
-            boxes = []  # collect matplotlib offset boxes for text and images
-            sign_img = Image.open(path)
-            boxes.append(OffsetImage(sign_img, zoom=scale_factor, zorder=zorder, interpolation='bicubic'))
-
-            if show_label:
-                boxes.append(TextArea(str(state.value)))
-
-            # stack boxes vertically
-            imageboxes.append(VPacker(children=boxes,pad=0, sep=0, align='center'))
-
-        # horizontally stack all traffic sign elements of the traffic sign
-        hbox = HPacker(children=imageboxes, pad=0, sep=0.05, align='baseline')
+    # stack imageboxes of each group and draw
+    for position_tmp, box_list_tmp in groups.items():
+        position_tmp = np.array(position_tmp)
         kwargs_tmp = copy.deepcopy(kwargs)
         if 'xybox' not in kwargs_tmp:
-            kwargs_tmp['xybox'] = traffic_light.position
+            kwargs_tmp['xybox'] = position_tmp
 
-        ab = AnnotationBbox(hbox, traffic_light.position, **kwargs_tmp)
-        ab.zorder = 30
+        hbox = HPacker(children=box_list_tmp, pad=0, sep=0.1, align='baseline')
+        ab = AnnotationBbox(hbox, position_tmp, **kwargs_tmp)
+        ab.zorder = zorder
         ax.add_artist(ab)
+
+

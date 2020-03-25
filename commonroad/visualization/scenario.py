@@ -16,7 +16,7 @@ from commonroad.common.util import Interval
 from commonroad.geometry.shape import *
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDGermany, TrafficLight, TrafficLightState
-from commonroad.visualization.traffic_sign import draw_traffic_sign, draw_traffic_light
+from commonroad.visualization.traffic_sign import draw_traffic_light_signs
 from matplotlib.path import Path
 from commonroad.prediction.prediction import Occupancy
 from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, LineMarking
@@ -111,18 +111,17 @@ def create_default_draw_params() -> dict:
                         },
                         'lanelet_network': {
                             'draw_traffic_lights': True,
+                            'kwargs_traffic_light_signs': {}, # further properties for AnnotationBox of traffic signs or lights, see # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
                             'traffic_light': {'red_color': 'red',
                                               'yellow_color': '#feb609',
                                               'green_color': '#00aa16',
                                               'red_yellow_color': '#fe4009ff',
                                               'show_label': False,
-                                              'kwargs': {}, # further properties for AnnotationBox, see # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
                                               'scale_factor': 0.25,
                                               'zorder': 30},
                             'draw_traffic_signs': True,
                             'traffic_sign': {'show_traffic_signs': 'all',  # 'all' or list of TrafficSignIDs
                                              'show_label': False,
-                                             'kwargs': {},   # further properties for AnnotationBox, see # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
                                              'scale_factor': 0.25,
                                              'zorder': 30},
                             'draw_intersections': False,
@@ -841,13 +840,19 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
                                                        color=right_bound_color, transOffset=ax.transData)
         ax.add_collection(collection_tmp)
 
+    traffic_lights_signs = []
     if draw_traffic_signs:
         # draw actual traffic sign
-        draw_traffic_sign(list(traffic_signs.values()), None, ax, draw_params, draw_func, handles, call_stack)
+        traffic_lights_signs.extend(list(traffic_signs.values()))
 
     if draw_traffic_lights:
         # draw actual traffic sign
-        draw_traffic_light(list(traffic_lights.values()), None, ax, draw_params, draw_func, handles, call_stack)
+        traffic_lights_signs.extend(list(traffic_lights.values()))
+
+    if traffic_lights_signs:
+        draw_traffic_light_signs(traffic_lights_signs, None, ax, draw_params, draw_func, handles, call_stack)
+
+
 
 
 def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
@@ -1480,7 +1485,8 @@ def draw_car(pos_x: Union[int,float], pos_y: Union[int,float], rotate: Union[int
 draw_func_dict = {commonroad.scenario.scenario.Scenario: draw_scenario,
                   commonroad.scenario.lanelet.Lanelet: draw_lanelet_list,
                   commonroad.scenario.lanelet.LaneletNetwork: draw_lanelet_network,
-                  commonroad.scenario.traffic_sign.TrafficSign: draw_traffic_sign,
+                  commonroad.scenario.traffic_sign.TrafficSign: draw_traffic_light_signs,
+                  commonroad.scenario.traffic_sign.TrafficLight: draw_traffic_light_signs,
                   commonroad.scenario.obstacle.DynamicObstacle: draw_dynamic_obstacles,
                   commonroad.scenario.obstacle.StaticObstacle: draw_static_obstacles,
                   commonroad.scenario.trajectory.Trajectory: draw_trajectories,
