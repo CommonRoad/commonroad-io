@@ -97,9 +97,22 @@
     <successor ref="26"/>
     <successor ref="22"/>
     <adjacentLeft ref="12" drivingDir="opposite"/>
+    <stopLine>
+      <point>
+        <x>174.1617095787515</x>
+        <y>-64.10832609867704</y>
+      </point>
+      <point>
+        <x>176.4678542468245</x>
+        <y>-65.07388839655903</y>
+      </point>
+      <lineMarking>solid</lineMarking>
+      <trafficLightRef ref="201"/>
+    </stopLine>
     <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
     <trafficSignRef ref="104"/>
+    <trafficLightRef ref="201"/>
   </lanelet>
   <lanelet id="14">
     <leftBound>
@@ -134,9 +147,22 @@
     <successor ref="28"/>
     <successor ref="24"/>
     <adjacentLeft ref="15" drivingDir="opposite"/>
+    <stopLine>
+      <point>
+        <x>169.2560351117039</x>
+        <y>-54.95658983061205</y>
+      </point>
+      <point>
+        <x>168.6607857447963</x>
+        <y>-57.38341449560771</y>
+      </point>
+      <lineMarking>solid</lineMarking>
+      <trafficLightRef ref="203"/>
+    </stopLine>
     <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
     <trafficSignRef ref="101"/>
+    <trafficLightRef ref="203"/>
   </lanelet>
   <lanelet id="15">
     <leftBound>
@@ -245,9 +271,22 @@
     <successor ref="31"/>
     <successor ref="23"/>
     <adjacentLeft ref="16" drivingDir="opposite"/>
+    <stopLine>
+      <point>
+        <x>169.2560351117039</x>
+        <y>-54.95658983061205</y>
+      </point>
+      <point>
+        <x>168.6607857447963</x>
+        <y>-57.38341449560771</y>
+      </point>
+      <lineMarking>solid</lineMarking>
+      <trafficLightRef ref="204"/>
+    </stopLine>
     <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
     <trafficSignRef ref="103"/>
+    <trafficLightRef ref="204"/>
   </lanelet>
   <lanelet id="18">
     <leftBound>
@@ -308,9 +347,22 @@
     <successor ref="25"/>
     <successor ref="29"/>
     <adjacentLeft ref="19" drivingDir="opposite"/>
+    <stopLine>
+      <point>
+        <x>184.5507356058114</x>
+        <y>-58.90594934212008</y>
+      </point>
+      <point>
+        <x>185.2791517140859</x>
+        <y>-56.51567398336667</y>
+      </point>
+      <lineMarking>solid</lineMarking>
+      <trafficLightRef ref="202"/>
+    </stopLine>
     <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
     <trafficSignRef ref="102"/>
+    <trafficLightRef ref="202"/>
   </lanelet>
   <lanelet id="19">
     <leftBound>
@@ -477,22 +529,9 @@
     <predecessor ref="13"/>
     <successor ref="15"/>
     <adjacentLeft ref="30" drivingDir="opposite"/>
-    <stopLine>
-      <point>
-        <x>169.2560351117039</x>
-        <y>-54.95658983061205</y>
-      </point>
-      <point>
-        <x>168.6607857447963</x>
-        <y>-57.38341449560771</y>
-      </point>
-      <lineMarking>solid</lineMarking>
-      <trafficLightRef ref="204"/>
-    </stopLine>
     <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
     <trafficSignRef ref="108"/>
-    <trafficLightRef ref="204"/>
   </lanelet>
   <lanelet id="21">
     <leftBound>
@@ -526,22 +565,9 @@
     <predecessor ref="18"/>
     <successor ref="12"/>
     <adjacentLeft ref="22" drivingDir="opposite"/>
-    <stopLine>
-      <point>
-        <x>184.5507356058114</x>
-        <y>-58.90594934212008</y>
-      </point>
-      <point>
-        <x>185.2791517140859</x>
-        <y>-56.51567398336667</y>
-      </point>
-      <lineMarking>solid</lineMarking>
-      <trafficLightRef ref="202"/>
-    </stopLine>
     <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
-    <trafficSignRef ref="106"/>
-    <trafficLightRef ref="202"/>
+    <trafficSignRef ref="107"/>
   </lanelet>
   <lanelet id="22">
     <leftBound>
@@ -575,22 +601,9 @@
     <predecessor ref="13"/>
     <successor ref="19"/>
     <adjacentLeft ref="21" drivingDir="opposite"/>
-    <stopLine>
-      <point>
-        <x>169.2560351117039</x>
-        <y>-54.95658983061205</y>
-      </point>
-      <point>
-        <x>168.6607857447963</x>
-        <y>-57.38341449560771</y>
-      </point>
-      <lineMarking>solid</lineMarking>
-      <trafficLightRef ref="204"/>
-    </stopLine>
     <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
     <trafficSignRef ref="108"/>
-    <trafficLightRef ref="204"/>
   </lanelet>
   <lanelet id="23">
     <leftBound>
@@ -624,22 +637,9 @@
     <predecessor ref="17"/>
     <successor ref="15"/>
     <adjacentLeft ref="24" drivingDir="opposite"/>
-    <stopLine>
-      <point>
-        <x>174.1617095787515</x>
-        <y>-64.10832609867704</y>
-      </point>
-      <point>
-        <x>176.4678542468245</x>
-        <y>-65.07388839655903</y>
-      </point>
-      <lineMarking>solid</lineMarking>
-      <trafficLightRef ref="203"/>
-    </stopLine>
     <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
-    <trafficSignRef ref="107"/>
-    <trafficLightRef ref="203"/>
+    <trafficSignRef ref="106"/>
   </lanelet>
   <lanelet id="24">
     <leftBound>
@@ -673,22 +673,9 @@
     <predecessor ref="14"/>
     <successor ref="16"/>
     <adjacentLeft ref="23" drivingDir="opposite"/>
-    <stopLine>
-      <point>
-        <x>180.1823263682323</x>
-        <y>-49.72698815669259</y>
-      </point>
-      <point>
-        <x>177.8639861239823</x>
-        <y>-48.79316329157203</y>
-      </point>
-      <lineMarking>solid</lineMarking>
-      <trafficLightRef ref="201"/>
-    </stopLine>
     <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
     <trafficSignRef ref="105"/>
-    <trafficLightRef ref="201"/>
   </lanelet>
   <lanelet id="25">
     <leftBound>
@@ -786,22 +773,9 @@
     <predecessor ref="18"/>
     <successor ref="16"/>
     <adjacentLeft ref="27" drivingDir="opposite"/>
-    <stopLine>
-      <point>
-        <x>184.5507356058114</x>
-        <y>-58.90594934212008</y>
-      </point>
-      <point>
-        <x>185.2791517140859</x>
-        <y>-56.51567398336667</y>
-      </point>
-      <lineMarking>solid</lineMarking>
-      <trafficLightRef ref="202"/>
-    </stopLine>
     <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
-    <trafficSignRef ref="106"/>
-    <trafficLightRef ref="202"/>
+    <trafficSignRef ref="104"/>
   </lanelet>
   <lanelet id="26">
     <leftBound>
@@ -891,22 +865,9 @@
     <predecessor ref="13"/>
     <successor ref="16"/>
     <adjacentLeft ref="31" drivingDir="opposite"/>
-    <stopLine>
-      <point>
-        <x>169.2560351117039</x>
-        <y>-54.95658983061205</y>
-      </point>
-      <point>
-        <x>168.6607857447963</x>
-        <y>-57.38341449560771</y>
-      </point>
-      <lineMarking>solid</lineMarking>
-      <trafficLightRef ref="204"/>
-    </stopLine>
     <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
     <trafficSignRef ref="108"/>
-    <trafficLightRef ref="204"/>
   </lanelet>
   <lanelet id="27">
     <leftBound>
@@ -1004,22 +965,9 @@
     <predecessor ref="17"/>
     <successor ref="19"/>
     <adjacentLeft ref="25" drivingDir="opposite"/>
-    <stopLine>
-      <point>
-        <x>174.1617095787515</x>
-        <y>-64.10832609867704</y>
-      </point>
-      <point>
-        <x>176.4678542468245</x>
-        <y>-65.07388839655903</y>
-      </point>
-      <lineMarking>solid</lineMarking>
-      <trafficLightRef ref="203"/>
-    </stopLine>
     <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
-    <trafficSignRef ref="107"/>
-    <trafficLightRef ref="203"/>
+    <trafficSignRef ref="106"/>
   </lanelet>
   <lanelet id="28">
     <leftBound>
@@ -1119,12 +1067,10 @@
         <y>-48.79316329157203</y>
       </point>
       <lineMarking>solid</lineMarking>
-      <trafficLightRef ref="201"/>
     </stopLine>
     <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
     <trafficSignRef ref="105"/>
-    <trafficLightRef ref="201"/>
   </lanelet>
   <lanelet id="29">
     <leftBound>
@@ -1214,22 +1160,9 @@
     <predecessor ref="18"/>
     <successor ref="15"/>
     <adjacentLeft ref="28" drivingDir="opposite"/>
-    <stopLine>
-      <point>
-        <x>184.5507356058114</x>
-        <y>-58.90594934212008</y>
-      </point>
-      <point>
-        <x>185.2791517140859</x>
-        <y>-56.51567398336667</y>
-      </point>
-      <lineMarking>solid</lineMarking>
-      <trafficLightRef ref="202"/>
-    </stopLine>
     <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
-    <trafficSignRef ref="106"/>
-    <trafficLightRef ref="202"/>
+    <trafficSignRef ref="107"/>
   </lanelet>
   <lanelet id="30">
     <leftBound>
@@ -1335,22 +1268,9 @@
     <predecessor ref="14"/>
     <successor ref="12"/>
     <adjacentLeft ref="20" drivingDir="opposite"/>
-    <stopLine>
-      <point>
-        <x>180.1823263682323</x>
-        <y>-49.72698815669259</y>
-      </point>
-      <point>
-        <x>177.8639861239823</x>
-        <y>-48.79316329157203</y>
-      </point>
-      <lineMarking>solid</lineMarking>
-      <trafficLightRef ref="201"/>
-    </stopLine>
     <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
     <trafficSignRef ref="105"/>
-    <trafficLightRef ref="201"/>
   </lanelet>
   <lanelet id="31">
     <leftBound>
@@ -1440,22 +1360,9 @@
     <predecessor ref="17"/>
     <successor ref="12"/>
     <adjacentLeft ref="26" drivingDir="opposite"/>
-    <stopLine>
-      <point>
-        <x>174.1617095787515</x>
-        <y>-64.10832609867704</y>
-      </point>
-      <point>
-        <x>176.4678542468245</x>
-        <y>-65.07388839655903</y>
-      </point>
-      <lineMarking>solid</lineMarking>
-      <trafficLightRef ref="203"/>
-    </stopLine>
     <laneletType>urban</laneletType>
     <userOneWay>vehicle</userOneWay>
-    <trafficSignRef ref="107"/>
-    <trafficLightRef ref="203"/>
+    <trafficSignRef ref="106"/>
   </lanelet>
   <trafficSign id="101">
         <trafficSignElement>
@@ -1529,8 +1436,8 @@
         </trafficSignElement>
         <position>
           <point>
-            <x>185.2791517140859</x>
-            <y>-56.51567398336667</y>
+            <x>176.4678542468245</x>
+            <y>-65.07388839655903</y>
           </point>
         </position>
   </trafficSign>
@@ -1540,8 +1447,8 @@
         </trafficSignElement>
         <position>
           <point>
-            <x>176.4678542468245</x>
-            <y>-65.07388839655903</y>
+            <x>185.2791517140859</x>
+            <y>-56.51567398336667</y>
           </point>
         </position>
   </trafficSign>
@@ -1629,8 +1536,8 @@
         </cycle>
         <position>
           <point>
-            <x>177.8639861239823</x>
-            <y>-48.79316329157203</y>
+            <x>168.6607857447963</x>
+            <y>-57.38341449560771</y>
           </point>
         </position>
         <direction>all</direction>
@@ -1685,8 +1592,8 @@
         </cycle>
         <position>
           <point>
-            <x>176.4678542468245</x>
-            <y>-65.07388839655903</y>
+            <x>177.8639861239823</x>
+            <y>-48.79316329157203</y>
           </point>
         </position>
         <direction>all</direction>
@@ -1713,8 +1620,8 @@
       </cycle>
         <position>
           <point>
-            <x>168.6607857447963</x>
-            <y>-57.38341449560771</y>
+            <x>176.4678542468245</x>
+            <y>-65.07388839655903</y>
           </point>
         </position>
         <direction>all</direction>
