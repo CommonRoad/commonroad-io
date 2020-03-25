@@ -90,14 +90,14 @@ class TestFileReader(unittest.TestCase):
         self.planning_problem_set = PlanningProblemSet(list([planning_problem]))
 
         # setup for reading intersection scenario with traffic signs, traffic lights, stop signs (without obstacles)
-        self.stop_line_20 = StopLine(np.array([169.2560351117039, -54.95658983061205]),
+        self.stop_line_17 = StopLine(np.array([169.2560351117039, -54.95658983061205]),
                                      np.array([168.6607857447963, -57.38341449560771]), LineMarking.SOLID, None, 204)
-        self.stop_line_28 = StopLine(np.array([180.1823263682323, -49.72698815669259]),
-                                     np.array([177.8639861239823, -48.79316329157203]), LineMarking.SOLID, None, 201)
+        self.stop_line_13 = StopLine(np.array([174.1617095787515, -64.10832609867704]),
+                                     np.array([176.4678542468245, -65.07388839655903]), LineMarking.SOLID, None, 201)
         self.stop_line_12 = None
         self.lanelet_12_traffic_sign_ref = {112}
         self.lanelet_28_traffic_sign_ref = {105}
-        self.lanelet_28_traffic_lights_ref = {201}
+        self.lanelet_13_traffic_lights_ref = {201}
         self.traffic_sign_101 = TrafficSign(traffic_sign_id=101,
                                             position=np.array([206.9839751212892, 20.67847944866278]),
                                             traffic_sign_elements=[TrafficSignElement(TrafficSignIDGermany.CITYLIMIT,
@@ -111,7 +111,7 @@ class TestFileReader(unittest.TestCase):
                                                                                       [])], virtual=False)
 
         self.traffic_light_201 = TrafficLight(traffic_light_id=201,
-                                              position=np.array([177.8639861239823, -48.79316329157203]),
+                                              position=np.array([168.6607857447963, -57.38341449560771]),
                                               direction=TrafficLightDirection.ALL, active=True, time_offset=0,
                                               cycle=[TrafficLightCycleElement(state=TrafficLightState.RED,
                                                                               duration=15),
@@ -448,20 +448,20 @@ class TestFileReader(unittest.TestCase):
         self.assertEqual(exp_location_geo, xml_file[0].location.geo_transformation)
 
     def test_open_intersection(self):
-        exp_lanelet_stop_line_20_point_1 = self.stop_line_20.start
-        exp_lanelet_stop_line_20_point_2 = self.stop_line_20.end
-        exp_lanelet_stop_line_28_point_1 = self.stop_line_28.start
-        exp_lanelet_stop_line_28_point_2 = self.stop_line_28.end
-        exp_lanelet_stop_line_20_line_marking = self.stop_line_20.line_marking
-        exp_lanelet_stop_line_28_line_marking = self.stop_line_28.line_marking
-        exp_lanelet_stop_line_20_traffic_sign_ref = self.stop_line_20.traffic_sign_ref
-        exp_lanelet_stop_line_28_traffic_sign_ref = self.stop_line_28.traffic_sign_ref
-        exp_lanelet_stop_line_20_traffic_light_ref = self.stop_line_20.traffic_light_ref
-        exp_lanelet_stop_line_28_traffic_light_ref = self.stop_line_28.traffic_light_ref
+        exp_lanelet_stop_line_17_point_1 = self.stop_line_17.start
+        exp_lanelet_stop_line_17_point_2 = self.stop_line_17.end
+        exp_lanelet_stop_line_13_point_1 = self.stop_line_13.start
+        exp_lanelet_stop_line_13_point_2 = self.stop_line_13.end
+        exp_lanelet_stop_line_17_line_marking = self.stop_line_17.line_marking
+        exp_lanelet_stop_line_13_line_marking = self.stop_line_13.line_marking
+        exp_lanelet_stop_line_17_traffic_sign_ref = self.stop_line_17.traffic_sign_ref
+        exp_lanelet_stop_line_13_traffic_sign_ref = self.stop_line_13.traffic_sign_ref
+        exp_lanelet_stop_line_17_traffic_light_ref = self.stop_line_17.traffic_light_ref
+        exp_lanelet_stop_line_13_traffic_light_ref = self.stop_line_13.traffic_light_ref
         exp_lanelet_stop_line_12 = self.stop_line_12
         exp_lanelet_traffic_sign_ref_12 = self.lanelet_12_traffic_sign_ref
         exp_lanelet_traffic_sign_ref_28 = self.lanelet_28_traffic_sign_ref
-        exp_lanelet_traffic_lights_ref_28 = self.lanelet_28_traffic_lights_ref
+        exp_lanelet_traffic_lights_ref_13 = self.lanelet_13_traffic_lights_ref
 
         exp_traffic_sign_101_id = self.traffic_sign_101.traffic_sign_id
         exp_traffic_sign_101_position = self.traffic_sign_101.position
@@ -502,33 +502,33 @@ class TestFileReader(unittest.TestCase):
 
         xml_file = CommonRoadFileReader(self.filename_urban).open()
 
-        np.testing.assert_array_equal(exp_lanelet_stop_line_20_point_1,
-                                      xml_file[0].lanelet_network.find_lanelet_by_id(20).stop_line.start)
-        np.testing.assert_array_equal(exp_lanelet_stop_line_20_point_2,
-                                      xml_file[0].lanelet_network.find_lanelet_by_id(20).stop_line.end)
-        np.testing.assert_array_equal(exp_lanelet_stop_line_28_point_1,
-                                      xml_file[0].lanelet_network.find_lanelet_by_id(28).stop_line.start)
-        np.testing.assert_array_equal(exp_lanelet_stop_line_28_point_2,
-                                      xml_file[0].lanelet_network.find_lanelet_by_id(28).stop_line.end)
-        self.assertEqual(exp_lanelet_stop_line_20_line_marking,
-                         xml_file[0].lanelet_network.find_lanelet_by_id(20).stop_line.line_marking)
-        self.assertEqual(exp_lanelet_stop_line_28_line_marking,
-                         xml_file[0].lanelet_network.find_lanelet_by_id(28).stop_line.line_marking)
-        self.assertEqual(exp_lanelet_stop_line_20_traffic_sign_ref,
-                         xml_file[0].lanelet_network.find_lanelet_by_id(20).stop_line.traffic_sign_ref)
-        self.assertEqual(exp_lanelet_stop_line_28_traffic_sign_ref,
-                         xml_file[0].lanelet_network.find_lanelet_by_id(28).stop_line.traffic_sign_ref)
-        self.assertEqual(exp_lanelet_stop_line_20_traffic_light_ref,
-                         xml_file[0].lanelet_network.find_lanelet_by_id(20).stop_line.traffic_light_ref)
-        self.assertEqual(exp_lanelet_stop_line_28_traffic_light_ref,
-                         xml_file[0].lanelet_network.find_lanelet_by_id(28).stop_line.traffic_light_ref)
+        np.testing.assert_array_equal(exp_lanelet_stop_line_17_point_1,
+                                      xml_file[0].lanelet_network.find_lanelet_by_id(17).stop_line.start)
+        np.testing.assert_array_equal(exp_lanelet_stop_line_17_point_2,
+                                      xml_file[0].lanelet_network.find_lanelet_by_id(17).stop_line.end)
+        np.testing.assert_array_equal(exp_lanelet_stop_line_13_point_1,
+                                      xml_file[0].lanelet_network.find_lanelet_by_id(13).stop_line.start)
+        np.testing.assert_array_equal(exp_lanelet_stop_line_13_point_2,
+                                      xml_file[0].lanelet_network.find_lanelet_by_id(13).stop_line.end)
+        self.assertEqual(exp_lanelet_stop_line_17_line_marking,
+                         xml_file[0].lanelet_network.find_lanelet_by_id(17).stop_line.line_marking)
+        self.assertEqual(exp_lanelet_stop_line_13_line_marking,
+                         xml_file[0].lanelet_network.find_lanelet_by_id(13).stop_line.line_marking)
+        self.assertEqual(exp_lanelet_stop_line_17_traffic_sign_ref,
+                         xml_file[0].lanelet_network.find_lanelet_by_id(17).stop_line.traffic_sign_ref)
+        self.assertEqual(exp_lanelet_stop_line_13_traffic_sign_ref,
+                         xml_file[0].lanelet_network.find_lanelet_by_id(13).stop_line.traffic_sign_ref)
+        self.assertEqual(exp_lanelet_stop_line_17_traffic_light_ref,
+                         xml_file[0].lanelet_network.find_lanelet_by_id(17).stop_line.traffic_light_ref)
+        self.assertEqual(exp_lanelet_stop_line_13_traffic_light_ref,
+                         xml_file[0].lanelet_network.find_lanelet_by_id(13).stop_line.traffic_light_ref)
         self.assertEqual(exp_lanelet_stop_line_12, xml_file[0].lanelet_network.find_lanelet_by_id(12).stop_line)
         self.assertSetEqual(exp_lanelet_traffic_sign_ref_12,
                             xml_file[0].lanelet_network.find_lanelet_by_id(12).traffic_signs)
         self.assertSetEqual(exp_lanelet_traffic_sign_ref_28,
                             xml_file[0].lanelet_network.find_lanelet_by_id(28).traffic_signs)
-        self.assertSetEqual(exp_lanelet_traffic_lights_ref_28,
-                            xml_file[0].lanelet_network.find_lanelet_by_id(28).traffic_lights)
+        self.assertSetEqual(exp_lanelet_traffic_lights_ref_13,
+                            xml_file[0].lanelet_network.find_lanelet_by_id(13).traffic_lights)
 
         self.assertEqual(exp_traffic_sign_101_id, xml_file[0].lanelet_network.traffic_signs[0].traffic_sign_id)
         np.testing.assert_array_equal(exp_traffic_sign_101_position,
