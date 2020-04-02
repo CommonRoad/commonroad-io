@@ -140,7 +140,7 @@ class TrafficSignElement:
 class TrafficSign:
     """Class to represent traffic sign"""
     def __init__(self, traffic_sign_id: int, traffic_sign_elements: List[TrafficSignElement],
-                 position: np.ndarray = None, virtual: bool = False):
+                 position: Union[None,np.ndarray] = None, virtual: bool = False):
         """
         :param traffic_sign_id: ID of traffic sign
         :param traffic_sign_elements: list of traffic sign elements
@@ -158,7 +158,7 @@ class TrafficSign:
         return self._traffic_sign_id
 
     @property
-    def position(self) -> np.ndarray:
+    def position(self) -> Union[None,np.ndarray]:
         return self._position
 
     @property

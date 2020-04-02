@@ -47,17 +47,19 @@ class TestVisualization(unittest.TestCase):
         plt.figure()
         draw_params = {'time_begin': 20,
                                  'lanelet_network': {'draw_intersections': False, 'draw_traffic_signs': True,
-                                                     'traffic_sign':{'show_label':False,'show_traffic_signs':'all'}},
+                                                     'traffic_sign':{'show_label':False,'show_traffic_signs':'all',
+                                                                     'scale_factor': 0.15}},
                                  'lanelet': {'draw_lane_marking': False,
                                              'show_label': False}}
         draw_object(scenario.lanelet_network,
                     draw_params=draw_params)
         ts = TrafficSign(traffic_sign_id=100000,traffic_sign_elements=
         [TrafficSignElement(TrafficSignIDUsa.MAXSPEED,additional_values=['50']),
+         TrafficSignElement(TrafficSignIDGermany.MINSPEED, additional_values=['30']),
          TrafficSignElement(TrafficSignIDGermany.MAXSPEED,additional_values=['80']),
          TrafficSignElement(TrafficSignIDGermany.OVERTAKING,additional_values=['80']),
          TrafficSignElement(TrafficSignIDGermany.STOP,additional_values=['80'])], position=np.array([159.,-88.]),virtual=False)
-        draw_object(ts,draw_params={'traffic_sign':{'scale_factor':0.2, 'kwargs':{'arrowprops':{'arrowstyle':"simple"}}}})
+        draw_object(ts,draw_params={'traffic_sign':{'scale_factor': 0.3, 'kwargs':{'arrowprops':{'arrowstyle':"simple"}}}})
         plt.autoscale()
         plt.axis('equal')
         plt.show()
