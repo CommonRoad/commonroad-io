@@ -1,1 +1,2 @@
 include commonroad/common/commonroad_validity.xsd
+include commonroad/visualization/traffic_signs/*
