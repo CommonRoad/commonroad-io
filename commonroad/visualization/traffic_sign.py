@@ -21,27 +21,45 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox, HPacker, TextArea,
 traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
 
 
-def additional_value_position_dict() -> dict:
-    """Describes vertical offset of additional_value's text in relation to the traffic sign image."""
-    return {'274': -16.5,
-            '275': -16.5,
-            '278': -16.5,
-            '279': -16.5,
-            '380': -16.5,
-            '381': -16.5,
-            'R2-1': -12.2}
-
-
 def text_prop_dict() -> dict:
     """Properties of text for additional_value."""
-    return {'274': {'weight': 'bold', 'size': 11},
-            '275': {'weight': 'bold', 'color': 'white', 'size': 11},
-            '278': {'weight': 'bold', 'color': 'gray', 'size': 11},
-            '279': {'weight': 'bold', 'color': 'white', 'size': 11},
-            '380': {'weight': 'bold', 'color': 'white', 'size': 11},
-            '381': {'weight': 'bold', 'color': 'white', 'size': 11},
-            'R2-1': {'weight': 'normal', 'color': 'black', 'size': 10}}
+    return {'274': {'mpl_args':{'weight': 'bold', 'size': 13.5},
+                    'rescale_threshold': 2, 'position_offset': -21.0},
+            '275': {'mpl_args':{'weight': 'bold', 'color': 'white', 'size': 13.5},
+                    'rescale_threshold': 2, 'position_offset':-21.0},
+            '278': {'mpl_args':{'weight': 'bold', 'color': 'gray', 'size': 10},
+                    'position_offset': -16.5},
+            '279': {'mpl_args':{'weight': 'bold', 'color': 'white', 'size': 10},
+                    'position_offset': -16.5},
+            '310': {'mpl_args': {'weight': 'normal', 'color': 'black', 'size': 10}},
+            '380': {'mpl_args':{'weight': 'bold', 'color': 'white', 'size': 10},
+                    'position_offset': -16.5},
+            '381': {'mpl_args':{'weight': 'bold', 'color': 'white', 'size': 10},
+                    'position_offset': -16.5},
+            'R2-1': {'mpl_args':{'weight': 'normal', 'color': 'black', 'size': 10.5},
+                     'position_offset': -13.5}}
 
+
+def rescale_text(string:str, prop:dict, scale_factor:float, default_scale_factor:float) -> dict:
+    """Rescales text size proportionally to the max. number of strings given by prop['rescale_threshold'] and to the
+    'scale_factor' compared to the default scale_factor. Used e.g. for fitting speed limits into the traffic sign."""
+    prop = copy.deepcopy(prop)
+    if default_scale_factor != scale_factor:
+        tmp_scale_factor = scale_factor / default_scale_factor
+        if 'position_offset' in prop:
+            prop['position_offset'] *= tmp_scale_factor
+
+        if 'mpl_args' in prop and 'size' in prop['mpl_args']:
+            prop['mpl_args']['size'] *= tmp_scale_factor
+
+    if 'rescale_threshold' in prop:
+        if len(string) > prop['rescale_threshold']:
+            if 'mpl_args' in prop and 'size' in prop['mpl_args']:
+                prop['mpl_args']['size'] *= prop['rescale_threshold'] / len(string) * 1.1
+            if 'position_offset' in prop:
+                prop['position_offset'] *= prop['rescale_threshold'] / len(string) * 1.35
+
+    return prop
 
 def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], TrafficSign], draw_params: dict,
                                   call_stack: Tuple[str,...]) -> Dict[Tuple[float,float],List[OffsetBox]]:
@@ -55,6 +73,9 @@ def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], Traffi
     scale_factor = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
         draw_params, call_stack,
         ('traffic_sign', 'scale_factor'), ('scenario','lanelet_network','traffic_sign', 'scale_factor'))
+    scale_factor_default = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+        commonroad.visualization.draw_dispatch_cr.default_draw_params, call_stack,
+        ('scenario', 'lanelet_network', 'traffic_sign', 'scale_factor'))
     show_label_default = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
         draw_params, call_stack,
         ('traffic_sign', 'show_label'), ('scenario', 'lanelet_network', 'traffic_sign', 'show_label'))
@@ -70,7 +91,6 @@ def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], Traffi
         'Plotting option traffic_sign.show_traffic_signs must be either "all" or list of type TrafficSignID'
 
     #call_stack = tuple(list(call_stack) + ['traffic_sign'])
-    pos_dict = additional_value_position_dict()
     prop_dict = text_prop_dict()
     imageboxes_all = defaultdict(list)
 
@@ -104,18 +124,19 @@ def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], Traffi
             if len(boxes) > 1:
                 boxes = [VPacker(children=boxes, pad=0, sep=0, align='center')]
 
-            # get additional values
+            # get additional values string
             sep = 0
             if len(element.additional_values) > 0:
-                if plot_img and el_id.value in pos_dict:
-                    sep = pos_dict[el_id.value]
-
                 add_text = '\n'.join(element.additional_values)
-                props = prop_dict[el_id.value] if el_id.value in prop_dict else {}
-                boxes.append(TextArea(add_text, textprops=props))
+                props = prop_dict[el_id.value] if el_id.value in prop_dict else {'mpl_args':{}}
+                props = rescale_text(add_text, props, scale_factor, scale_factor_default)
+                boxes.append(TextArea(add_text, textprops=props['mpl_args']))
+
+                if plot_img and 'position_offset' in props:
+                    sep = props['position_offset']
 
             # stack boxes vertically
-            img = VPacker(children=boxes,pad=0, sep=sep,align='center')
+            img = VPacker(children=boxes, pad=0, sep=sep, align='center')
             imageboxes.append(img)
 
         # horizontally stack all traffic sign elements of the traffic sign

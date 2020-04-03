@@ -15,7 +15,7 @@ import commonroad.visualization.draw_dispatch_cr
 from commonroad.common.util import Interval
 from commonroad.geometry.shape import *
 from commonroad.scenario.intersection import Intersection
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDGermany, TrafficLight, TrafficLightState
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficLightState
 from commonroad.visualization.traffic_sign import draw_traffic_light_signs
 from matplotlib.path import Path
 from commonroad.prediction.prediction import Occupancy
