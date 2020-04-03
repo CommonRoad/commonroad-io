@@ -7,7 +7,7 @@ __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Release"
 
 import enum
-from typing import List, Union
+from typing import List, Union, Set
 import numpy as np
 
 
@@ -167,11 +167,11 @@ class TrafficSignElement:
 class TrafficSign:
     """Class to represent traffic sign"""
     def __init__(self, traffic_sign_id: int, traffic_sign_elements: List[TrafficSignElement],
-                 first_lanelet_occurrence: int, position: Union[None,np.ndarray] = None, virtual: bool = False):
+                 first_occurrence: Set[int], position: Union[None,np.ndarray] = None, virtual: bool = False):
         """
         :param traffic_sign_id: ID of traffic sign
         :param traffic_sign_elements: list of traffic sign elements
-        :param first_lanelet_occurrence: lanelet ID where traffic sign first appears
+        :param first_occurrence: lanelet ID where traffic sign first appears
         :param position: position of traffic sign
         :param virtual: boolean indicating if this traffic sign is also placed there in the real environment or it
         is added for other reasons (e.g., completeness of scenario)
@@ -180,7 +180,7 @@ class TrafficSign:
         self._position = position
         self._traffic_sign_elements = traffic_sign_elements
         self._virtual = virtual
-        self._first_lanelet_occurrence = first_lanelet_occurrence
+        self._first_occurrence = first_occurrence
 
     @property
     def traffic_sign_id(self) -> int:
@@ -197,6 +197,10 @@ class TrafficSign:
     @property
     def virtual(self) -> bool:
         return self._virtual
+
+    @property
+    def first_occurrence(self) -> Set[int]:
+        return self._first_occurrence
 
     def __str__(self):
         return f"Sign At {self._position} with {self._traffic_sign_elements} "

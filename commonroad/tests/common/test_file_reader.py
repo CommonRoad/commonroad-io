@@ -69,7 +69,7 @@ class TestFileReader(unittest.TestCase):
                            line_marking_right_vertices=LineMarking.BROAD_SOLID,
                            lanelet_type={LaneletType.URBAN, LaneletType.BUS_LANE}, user_bidirectional={RoadUser.BUS})
 
-        traffic_sign_201 = TrafficSign(traffic_sign_id=201, first_lanelet_occurrence=100, position=None,
+        traffic_sign_201 = TrafficSign(traffic_sign_id=201, first_occurrence={100}, position=None,
                                        traffic_sign_elements=[TrafficSignElement(TrafficSignIDGermany.MAX_SPEED,
                                                                                  ["10"])], virtual=False)
 
@@ -101,13 +101,13 @@ class TestFileReader(unittest.TestCase):
         self.lanelet_13_traffic_lights_ref = {201}
         self.traffic_sign_101 = TrafficSign(traffic_sign_id=101,
                                             position=np.array([206.9839751212892, 20.67847944866278]),
-                                            first_lanelet_occurrence=14,
+                                            first_occurrence={14},
                                             traffic_sign_elements=[TrafficSignElement(TrafficSignIDGermany.TOWN_SIGN,
                                                                                       ["Landeshauptstadt München"])],
                                             virtual=False)
         self.traffic_sign_105 = TrafficSign(traffic_sign_id=105,
                                             position=np.array([177.8639861239823, -48.79316329157203]),
-                                            first_lanelet_occurrence=14,
+                                            first_occurrence={14},
                                             traffic_sign_elements=[TrafficSignElement(TrafficSignIDGermany.PRIORITY,
                                                                                       []),
                                                                    TrafficSignElement(TrafficSignIDGermany.GREEN_ARROW,

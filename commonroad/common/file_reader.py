@@ -342,7 +342,7 @@ class LaneletNetworkFactory:
         return lanelet_network
 
     @staticmethod
-    def _find_first_traffic_sign_occurence(lanelet_network: LaneletNetwork) -> Dict[int, int]:
+    def _find_first_traffic_sign_occurence(lanelet_network: LaneletNetwork) -> Dict[int, Set[int]]:
         """
         Evaluates all lanelets if a traffic sign occurs first within it
         :param lanelet_network: CommonRoad lanelet network
@@ -351,13 +351,14 @@ class LaneletNetworkFactory:
         occurences = {}
         for lanelet in lanelet_network.lanelets:
             for traffic_sign in lanelet.traffic_signs:
+                if occurences.get(traffic_sign) is None:
+                    occurences[traffic_sign] = set()
                 if len(lanelet.predecessor) == 0:
-                    occurences[traffic_sign] = lanelet.lanelet_id
+                    occurences[traffic_sign].add(lanelet.lanelet_id)
                 elif any(traffic_sign not in lanelet_network.find_lanelet_by_id(pre).traffic_signs
                        for pre in lanelet.predecessor):
                     occurences[traffic_sign] = lanelet.lanelet_id
         return occurences
-
 
     @staticmethod
     def _find_country(xml_node: ElementTree.Element) -> SupportedTrafficSignCountry:
@@ -411,7 +412,7 @@ class LaneletFactory:
         adjacent_left, adjacent_left_same_direction = cls._adjacent_left(xml_node)
         adjacent_right, adjacent_right_same_direction = cls._adjacent_right(xml_node)
 
-        stop_line = cls._stop_line(xml_node)
+        stop_line = cls._stop_line(xml_node, left_vertices[-1], right_vertices[-1])
         lanelet_type = cls._lanelet_type(xml_node)
         user_one_way = cls._user_one_way(xml_node)
         user_bidirectional = cls._user_bidirectional(xml_node)
@@ -569,7 +570,7 @@ class LaneletFactory:
         return users_bidirectional
 
     @classmethod
-    def _stop_line(cls, xml_node: ElementTree.Element) -> Union[StopLine, None]:
+    def _stop_line(cls, xml_node: ElementTree.Element, left_lanelet_end, right_lanelet_end) -> Union[StopLine, None]:
         """
         Reads the stop line of the lanelet.
 
@@ -590,8 +591,8 @@ class LaneletFactory:
                 stop_line = StopLine(start=points[0], end=points[1], line_marking=line_marking,
                                      traffic_sign_ref=traffic_sign_ref, traffic_light_ref=traffic_light_ref)
             else:
-                stop_line = StopLine(line_marking=line_marking, traffic_sign_ref=traffic_sign_ref,
-                                     traffic_light_ref=traffic_light_ref)
+                stop_line = StopLine(start=left_lanelet_end, end=right_lanelet_end, line_marking=line_marking,
+                                     traffic_sign_ref=traffic_sign_ref, traffic_light_ref=traffic_light_ref)
 
         return stop_line
 
@@ -650,7 +651,7 @@ class TrafficSignFactory:
     """ Class to create an object of class TrafficSign from an XML element."""
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element, country: SupportedTrafficSignCountry,
-                             first_traffic_sign_occurence: Dict[int, int]) -> TrafficSign:
+                             first_traffic_sign_occurence: Dict[int, Set[int]]) -> TrafficSign:
         """
         :param xml_node: XML element
         :param country: country where traffic sign stands
@@ -677,7 +678,7 @@ class TrafficSignFactory:
             virtual = False
 
         return TrafficSign(traffic_sign_id=traffic_sign_id, position=position,
-                           first_lanelet_occurrence=first_traffic_sign_occurence[traffic_sign_id],
+                           first_occurrence=first_traffic_sign_occurence[traffic_sign_id],
                            traffic_sign_elements=traffic_sign_elements, virtual=virtual)
 
 
