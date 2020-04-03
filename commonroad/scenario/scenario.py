@@ -94,34 +94,24 @@ class GeoTransformation:
 
 
 class Location:
-    def __init__(self, country: str = "", federal_state: str = "", gps_latitude: float = "", gps_longitude: float = "",
-                 zipcode: str = "", name: str = None, geo_transformation: GeoTransformation = None):
+    def __init__(self, geo_name_id: int = -999, gps_latitude: float = "", gps_longitude: float = "",
+                 geo_transformation: GeoTransformation = None):
         """
         Constructor of a location object
 
-        :param country: country where the road network is located
-        :param federal_state: federal state where the road network is located
+        :param geo_name_id: GeoName ID
         :param gps_latitude: GPS latitude coordinate
         :param gps_longitude: GPS longitude coordinate
-        :param zipcode: zipcode where the road network is located
-        :param name: city or village name where the road network is located
         :param geo_transformation: description of geometric transformation during scenario generation
         """
-        self._country = country
-        self._federal_state = federal_state
+        self._geo_name_id = geo_name_id
         self._gps_latitude = gps_latitude
         self._gps_longitude = gps_longitude
-        self._zipcode = zipcode
-        self._name = name
         self._geo_transformation = geo_transformation
 
     @property
-    def country(self) -> str:
-        return self._country
-
-    @property
-    def federal_state(self) -> str:
-        return self._federal_state
+    def geo_name_id(self) -> int:
+        return self._geo_name_id
 
     @property
     def gps_latitude(self) -> float:
@@ -130,14 +120,6 @@ class Location:
     @property
     def gps_longitude(self) -> float:
         return self._gps_longitude
-
-    @property
-    def zipcode(self) -> str:
-        return self._zipcode
-
-    @property
-    def name(self) -> str:
-        return self._name
 
     @property
     def geo_transformation(self) -> GeoTransformation:

@@ -53,8 +53,8 @@ class TestVisualization(unittest.TestCase):
         draw_object(scenario.lanelet_network,
                     draw_params=draw_params)
         ts = TrafficSign(traffic_sign_id=100000,traffic_sign_elements=
-        [TrafficSignElement(TrafficSignIDUsa.MAXSPEED,additional_values=['50']),
-         TrafficSignElement(TrafficSignIDGermany.MAXSPEED,additional_values=['80']),
+        [TrafficSignElement(TrafficSignIDUsa.MAX_SPEED,additional_values=['50']),
+         TrafficSignElement(TrafficSignIDGermany.MAX_SPEED,additional_values=['80']),
          TrafficSignElement(TrafficSignIDGermany.OVERTAKING,additional_values=['80']),
          TrafficSignElement(TrafficSignIDGermany.STOP,additional_values=['80'])], position=np.array([159.,-88.]),virtual=False)
         draw_object(ts,draw_params={'traffic_sign':{'scale_factor':0.2, 'kwargs':{'arrowprops':{'arrowstyle':"simple"}}}})

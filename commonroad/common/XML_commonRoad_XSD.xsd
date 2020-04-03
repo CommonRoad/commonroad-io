@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-__author__ = "Markus Koschi"
+__author__ = "Markus Koschi, Anna-Katharina Rettinger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical System Group"
 __credits__ = ["BMW Group CAR@TUM"]
-__version__ = "2018b"
+__version__ = "2020b"
 __maintainer__ = "Markus Koschi"
-__email__ = "Markus.Koschi@tum.de"
-__status__ = "in development"
+__email__ = "commonroad-i06@in.tum.de"
+__status__ = "released"
 
 """ XSD for CommonRoad benchmark scenarios """
 -->
@@ -72,6 +72,7 @@ __status__ = "in development"
     <xs:sequence>
       <xs:element name="x" type="xs:decimal"/>
       <xs:element name="y" type="xs:decimal"/>
+      <xs:element name="z" type="xs:decimal" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="rectangle">
@@ -284,7 +285,7 @@ __status__ = "in development"
   </xs:complexType>
   <xs:complexType name="stopLine">
     <xs:sequence>
-      <xs:element name="point" type="point" minOccurs="2" maxOccurs="2"/>
+      <xs:element name="point" type="point" minOccurs="0" maxOccurs="2"/>
       <xs:element name="lineMarking" type="lineMarking"/>
       <xs:element name="trafficSignRef" type="trafficSignRef" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="trafficLightRef" type="trafficLightRef" minOccurs="0" maxOccurs="1"/>
@@ -468,6 +469,7 @@ __status__ = "in development"
       <xs:enumeration value="car"/>
       <xs:enumeration value="truck"/>
       <xs:enumeration value="bus"/>
+      <xs:enumeration value="motorcycle"/>
       <xs:enumeration value="bicycle"/>
       <xs:enumeration value="pedestrian"/>
       <xs:enumeration value="priorityVehicle"/>
@@ -537,20 +539,24 @@ __status__ = "in development"
       <xs:enumeration value="ZAM"/>
     </xs:restriction>
   </xs:simpleType>
+  <xs:simpleType name="federalState">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="DE-BY"/>
+      <xs:enumeration value="ZA-M"/>
+    </xs:restriction>
+  </xs:simpleType>
   <xs:complexType name="location">
     <xs:sequence minOccurs="1" maxOccurs="1">
-      <xs:element name="country" type="country"/>
-      <xs:element name="federalState" type="xs:string"/>
-      <xs:element name="gpsLatitude" type="xs:string"/>
-      <xs:element name="gpsLongitude" type="xs:string"/>
-      <xs:element name="zipcode" type="xs:string"/>
-      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="geoNameId" type="xs:integer"/>
+      <xs:element name="gpsLatitude" type="xs:decimal"/>
+      <xs:element name="gpsLongitude" type="xs:decimal"/>
       <xs:element name="geoTransformation" type="geoTransformation" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="tag">
     <xs:all>
       <xs:element name="interstate" type="xs:string" minOccurs="0"/>
+      <xs:element name="highway" type="xs:string" minOccurs="0"/>
       <xs:element name="urban" type="xs:string" minOccurs="0"/>
       <xs:element name="comfort" type="xs:string" minOccurs="0"/>
       <xs:element name="critical" type="xs:string" minOccurs="0"/>

@@ -11,6 +11,9 @@ from typing import List, Union
 import numpy as np
 
 
+TRAFFIC_SIGN_VALIDITY_START = {'MIN_SPEED', 'MAX_SPEED', 'NO_OVERTAKING_START', 'CITY_SIGN'}
+
+
 @enum.unique
 class SupportedTrafficSignCountry(enum.Enum):
     GERMANY = 'DEU'
@@ -24,51 +27,75 @@ class SupportedTrafficSignCountry(enum.Enum):
 @enum.unique
 class TrafficSignIDZamunda(enum.Enum):
     # default traffic sign IDs (similar to German IDs)
-    MINSPEED = '275'
-    MAXSPEED = '274'
-    OVERTAKING = '276'
-    CITYLIMIT = '310'
-    GIVEWAY = '205'
+    MIN_SPEED = '275'
+    MAX_SPEED = '274'
+    NO_OVERTAKING_START = '276'
+    TOWN_SIGN = '310'
+    YIELD = '205'
     STOP = '206'
     PRIORITY = '306'
+    RIGHT_OF_WAY = '301'
     GREEN_ARROW = '720'
+    RIGHT_BEFORE_LEFT = '102'
+    LEFT_TURNING_PRIORITY_WITH_OPPOSITE_RIGHT_YIELD = '1002-10'
+    LEFT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD = '1002-12'
+    LEFT_TURNING_PRIORITY_WITH_RIGHT_YIELD = '1002-13'
+    RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_LEFT_YIELD = '1002-20'
+    RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD = '1002-22'
+    RIGHT_TURNING_PRIORITY_WITH_LEFT_YIELD = '1002-23'
+    LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_RIGHT_YIELD = '1002-11'
+    LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD = '1002-14'
+    RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_LEFT_YIELD = '1002-21'
+    RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD = '1002-24'
     UNKNOWN = ''
 
 
 @enum.unique
 class TrafficSignIDGermany(enum.Enum):
-    MINSPEED = '275'
-    MAXSPEED = '274'
-    OVERTAKING = '276'
-    CITYLIMIT = '310'
-    GIVEWAY = '205'
+    MIN_SPEED = '275'
+    MAX_SPEED = '274'
+    NO_OVERTAKING_START = '276'
+    TOWN_SIGN = '310'
+    YIELD = '205'
     STOP = '206'
     PRIORITY = '306'
+    RIGHT_OF_WAY = '301'
     GREEN_ARROW = '720'
+    RIGHT_BEFORE_LEFT = '102'
+    LEFT_TURNING_PRIORITY_WITH_OPPOSITE_RIGHT_YIELD = '1002-10'
+    LEFT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD = '1002-12'
+    LEFT_TURNING_PRIORITY_WITH_RIGHT_YIELD = '1002-13'
+    RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_LEFT_YIELD = '1002-20'
+    RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD = '1002-22'
+    RIGHT_TURNING_PRIORITY_WITH_LEFT_YIELD = '1002-23'
+    LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_RIGHT_YIELD = '1002-11'
+    LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD = '1002-14'
+    RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_LEFT_YIELD = '1002-21'
+    RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD = '1002-24'
     UNKNOWN = ''
 
 
 @enum.unique
 class TrafficSignIDUsa(enum.Enum):
-    MAXSPEED = 'R2-1'
+    MAX_SPEED = 'R2-1'
     UNKNOWN = ''
 
 
 @enum.unique
 class TrafficSignIDChina(enum.Enum):
-    MAXSPEED = '274'
+    MAX_SPEED = '274'
     UNKNOWN = ''
 
 
 @enum.unique
 class TrafficSignIDSpain(enum.Enum):
-    MAXSPEED = '274'
+    MAX_SPEED = '274'
     UNKNOWN = ''
 
 
 @enum.unique
 class TrafficSignIDRussia(enum.Enum):
-    MAXSPEED = '274'
+    MAX_SPEED = '274'
     UNKNOWN = ''
 
 
@@ -140,10 +167,11 @@ class TrafficSignElement:
 class TrafficSign:
     """Class to represent traffic sign"""
     def __init__(self, traffic_sign_id: int, traffic_sign_elements: List[TrafficSignElement],
-                 position: np.ndarray = None, virtual: bool = False):
+                 first_lanelet_occurrence: int, position: np.ndarray = None, virtual: bool = False):
         """
         :param traffic_sign_id: ID of traffic sign
         :param traffic_sign_elements: list of traffic sign elements
+        :param first_lanelet_occurrence: lanelet ID where traffic sign first appears
         :param position: position of traffic sign
         :param virtual: boolean indicating if this traffic sign is also placed there in the real environment or it
         is added for other reasons (e.g., completeness of scenario)
@@ -152,6 +180,7 @@ class TrafficSign:
         self._position = position
         self._traffic_sign_elements = traffic_sign_elements
         self._virtual = virtual
+        self._first_lanelet_occurrence = first_lanelet_occurrence
 
     @property
     def traffic_sign_id(self) -> int:

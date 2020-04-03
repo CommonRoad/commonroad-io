@@ -69,15 +69,16 @@ class TestFileReader(unittest.TestCase):
                            line_marking_right_vertices=LineMarking.BROAD_SOLID,
                            lanelet_type={LaneletType.URBAN, LaneletType.BUS_LANE}, user_bidirectional={RoadUser.BUS})
 
-        traffic_sign_201 = TrafficSign(traffic_sign_id=201, position=None,
-                                       traffic_sign_elements=[TrafficSignElement(TrafficSignIDGermany.MAXSPEED, ["10"])], virtual=False)
+        traffic_sign_201 = TrafficSign(traffic_sign_id=201, first_lanelet_occurrence=100, position=None,
+                                       traffic_sign_elements=[TrafficSignElement(TrafficSignIDGermany.MAX_SPEED,
+                                                                                 ["10"])], virtual=False)
 
         self.lanelet_network = LaneletNetwork().create_from_lanelet_list(list([lanelet1, lanelet2]))
         self.lanelet_network.add_traffic_sign(traffic_sign_201, [100])
 
         tags = {Tag.URBAN, Tag.INTERSTATE}
         geo_transformation = GeoTransformation("test", 0.0, 0.0, 0.0, 0.0)
-        location = Location("DEU", "DEU_BY", 0.0, 0.0, "90839", "München", geo_transformation)
+        location = Location(2867714, 0.0, 0.0, geo_transformation)
 
         self.scenario = Scenario(0.1, 'ZAM_test_0-0-1', tags=tags, location=location)
         self.scenario.add_objects([static_obs, dyn_set_obs, dyn_traj_obs, self.lanelet_network])
@@ -100,11 +101,13 @@ class TestFileReader(unittest.TestCase):
         self.lanelet_13_traffic_lights_ref = {201}
         self.traffic_sign_101 = TrafficSign(traffic_sign_id=101,
                                             position=np.array([206.9839751212892, 20.67847944866278]),
-                                            traffic_sign_elements=[TrafficSignElement(TrafficSignIDGermany.CITYLIMIT,
+                                            first_lanelet_occurrence=14,
+                                            traffic_sign_elements=[TrafficSignElement(TrafficSignIDGermany.TOWN_SIGN,
                                                                                       ["Landeshauptstadt München"])],
                                             virtual=False)
         self.traffic_sign_105 = TrafficSign(traffic_sign_id=105,
                                             position=np.array([177.8639861239823, -48.79316329157203]),
+                                            first_lanelet_occurrence=14,
                                             traffic_sign_elements=[TrafficSignElement(TrafficSignIDGermany.PRIORITY,
                                                                                       []),
                                                                    TrafficSignElement(TrafficSignIDGermany.GREEN_ARROW,
@@ -321,12 +324,9 @@ class TestFileReader(unittest.TestCase):
         exp_planning_problem_initial_state_yaw_rate = \
             self.planning_problem_set.planning_problem_dict[1000].initial_state.yaw_rate
 
-        exp_location_country = "DEU"
-        exp_location_state = "DE_BY"
+        exp_location_geo_name_id = 2867714
         exp_location_latitude = 48.262333
         exp_location_longitude = 11.668775
-        exp_location_zip = "12345"
-        exp_location_name = "München"
         exp_location_geo = None
         exp_tags = {Tag.INTERSECTION, Tag.URBAN}
 
@@ -439,12 +439,9 @@ class TestFileReader(unittest.TestCase):
                          xml_file[1].planning_problem_dict[1000].initial_state.yaw_rate)
 
         self.assertSetEqual(exp_tags, xml_file[0].tags)
-        self.assertEqual(exp_location_country, xml_file[0].location.country)
-        self.assertEqual(exp_location_state, xml_file[0].location.federal_state)
+        self.assertEqual(exp_location_geo_name_id, xml_file[0].location.geo_name_id)
         self.assertEqual(exp_location_latitude, xml_file[0].location.gps_latitude)
         self.assertEqual(exp_location_longitude, xml_file[0].location.gps_longitude)
-        self.assertEqual(exp_location_zip, xml_file[0].location.zipcode)
-        self.assertEqual(exp_location_name, xml_file[0].location.name)
         self.assertEqual(exp_location_geo, xml_file[0].location.geo_transformation)
 
     def test_open_intersection(self):

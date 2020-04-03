@@ -33,10 +33,10 @@ class TestTrafficSigInterpreter(unittest.TestCase):
                                right_vertices=np.array([[0.0, 5], [1.0, 5], [2, 5]]), lanelet_id=104,
                                lanelet_type={LaneletType.HIGHWAY, LaneletType.MAIN_CARRIAGE_WAY},
                                user_one_way={RoadUser.VEHICLE})
-        traffic_sign_one = TrafficSign(201, [TrafficSignElement(TrafficSignIDZamunda.MAXSPEED, ["20"])])
-        traffic_sign_two = TrafficSign(202, [TrafficSignElement(TrafficSignIDZamunda.MAXSPEED, ["30"])])
-        traffic_sign_three = TrafficSign(203, [TrafficSignElement(TrafficSignIDZamunda.MAXSPEED, ["40"])])
-        traffic_sign_four = TrafficSign(204, [TrafficSignElement(TrafficSignIDZamunda.MINSPEED, ["50"])])
+        traffic_sign_one = TrafficSign(201, [TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, ["20"])], 100)
+        traffic_sign_two = TrafficSign(202, [TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, ["30"])], 101)
+        traffic_sign_three = TrafficSign(203, [TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, ["40"])], 102)
+        traffic_sign_four = TrafficSign(204, [TrafficSignElement(TrafficSignIDZamunda.MIN_SPEED, ["50"])], 103)
 
         lanelet_network = LaneletNetwork().create_from_lanelet_list([lanelet_one, lanelet_two, lanelet_three,
                                                                      lanelet_four, lanelet_five])

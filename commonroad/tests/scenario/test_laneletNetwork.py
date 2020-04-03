@@ -30,8 +30,8 @@ class TestLaneletNetwork(unittest.TestCase):
         self.adjacent_left_same_dir = False
         self.line_marking_right = LineMarking.SOLID
         self.line_marking_left = LineMarking.DASHED
-        traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAXSPEED.value, ["15"])
-        self.traffic_sign = TrafficSign(1, [traffic_sign_max_speed])
+        traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED.value, ["15"])
+        self.traffic_sign = TrafficSign(1, [traffic_sign_max_speed], 5)
 
         self.lanelet = Lanelet(self.left_vertices, self.center_vertices, self.right_vertices, self.lanelet_id,
                                self.predecessor, self.successor, self.adjacent_left, self.adjacent_left_same_dir,

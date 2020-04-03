@@ -204,17 +204,17 @@ class ScenarioFactory:
             scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network))
             for key, value in LaneletFactory._speed_limits.items():
                 if SupportedTrafficSignCountry.GERMANY.value in benchmark_id:
-                    traffic_sign_element = TrafficSignElement(TrafficSignIDGermany.MAXSPEED.value, [str(key)])
+                    traffic_sign_element = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED.value, [str(key)])
                 elif SupportedTrafficSignCountry.USA.value in benchmark_id:
-                    traffic_sign_element = TrafficSignElement(TrafficSignIDUsa.MAXSPEED.value, [str(key)])
+                    traffic_sign_element = TrafficSignElement(TrafficSignIDUsa.MAX_SPEED.value, [str(key)])
                 elif SupportedTrafficSignCountry.CHINA.value in benchmark_id:
-                    traffic_sign_element = TrafficSignElement(TrafficSignIDChina.MAXSPEED.value, [str(key)])
+                    traffic_sign_element = TrafficSignElement(TrafficSignIDChina.MAX_SPEED.value, [str(key)])
                 elif SupportedTrafficSignCountry.SPAIN.value in benchmark_id:
-                    traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAXSPEED.value, [str(key)])
+                    traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAX_SPEED.value, [str(key)])
                 elif SupportedTrafficSignCountry.RUSSIA.value in benchmark_id:
-                    traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAXSPEED.value, [str(key)])
+                    traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAX_SPEED.value, [str(key)])
                 else:
-                    traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAXSPEED.value, [str(key)])
+                    traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED.value, [str(key)])
                     warnings.warn("Unknown country: Default traffic sign IDs are used.")
                 traffic_sign = TrafficSign(scenario.generate_object_id(), [traffic_sign_element], None, True)
                 scenario.lanelet_network.add_traffic_sign(traffic_sign, value)
@@ -283,21 +283,15 @@ class LocationFactory:
         """
         if xml_node.find('location') is not None:
             location_element = xml_node.find('location')
-            country = location_element.find('country').text
-            federal_state = location_element.find('federalState').text
+            geo_name_id = int(location_element.find('geoNameId').text)
             gps_latitude = float(location_element.find('gpsLatitude').text)
             gps_longitude = float(location_element.find('gpsLongitude').text)
-            zipcode = location_element.find('zipcode').text
-            if location_element.find('name') is not None:
-                name = location_element.find('name').text
-            else:
-                name = None
             if xml_node.find('geoTransformation') is not None:
                 geo_transformation = GeoTransformationFactory.create_from_xml_node(xml_node.find('geoTransformation'))
             else:
                 geo_transformation = None
 
-            return Location(country, federal_state, gps_latitude, gps_longitude, zipcode, name, geo_transformation)
+            return Location(geo_name_id, gps_latitude, gps_longitude, geo_transformation)
         else:
             return None
 
@@ -334,8 +328,10 @@ class LaneletNetworkFactory:
         lanelet_network = LaneletNetwork.create_from_lanelet_list(lanelets)
 
         country = cls._find_country( xml_node)
+        first_traffic_sign_occurence = cls._find_first_traffic_sign_occurence(lanelet_network)
         for traffic_sign_node in xml_node.findall('trafficSign'):
-            lanelet_network.add_traffic_sign(TrafficSignFactory.create_from_xml_node(traffic_sign_node, country), [])
+            lanelet_network.add_traffic_sign(TrafficSignFactory.create_from_xml_node(traffic_sign_node, country,
+                                                                                     first_traffic_sign_occurence), [])
 
         for traffic_light_node in xml_node.findall('trafficLight'):
             lanelet_network.add_traffic_light(TrafficLightFactory.create_from_xml_node(traffic_light_node), [])
@@ -346,19 +342,34 @@ class LaneletNetworkFactory:
         return lanelet_network
 
     @staticmethod
+    def _find_first_traffic_sign_occurence(lanelet_network: LaneletNetwork) -> Dict[int, int]:
+        """
+        Evaluates all lanelets if a traffic sign occurs first within it
+        :param lanelet_network: CommonRoad lanelet network
+        :return: list of tuples with traffic sign ID and corresponding lanelet ID
+        """
+        occurences = {}
+        for lanelet in lanelet_network.lanelets:
+            for traffic_sign in lanelet.traffic_signs:
+                if len(lanelet.predecessor) == 0:
+                    occurences[traffic_sign] = lanelet.lanelet_id
+                elif any(traffic_sign not in lanelet_network.find_lanelet_by_id(pre).traffic_signs
+                       for pre in lanelet.predecessor):
+                    occurences[traffic_sign] = lanelet.lanelet_id
+        return occurences
+
+
+    @staticmethod
     def _find_country(xml_node: ElementTree.Element) -> SupportedTrafficSignCountry:
         """
         Extracts country from location element
         :param xml_node: CommonRoad root xml node
         :return: supported traffic sign country enum
         """
-        if xml_node._root.attrib["commonRoadVersion"] == "2018b":
-            if xml_node._root.attrib["benchmarkID"][:3] == "C-":
-                country = xml_node._root.attrib["benchmarkID"][2:5]
-            else:
-                country = xml_node._root.attrib["benchmarkID"][:3]
+        if xml_node._root.attrib["benchmarkID"][:2] == "C-":
+            country = xml_node._root.attrib["benchmarkID"][2:5]
         else:
-            country = xml_node.find('location').find('country').text
+            country = xml_node._root.attrib["benchmarkID"][:3]
 
         if SupportedTrafficSignCountry.GERMANY.value == country:
             return SupportedTrafficSignCountry.GERMANY
@@ -575,7 +586,12 @@ class LaneletFactory:
                 traffic_sign_ref = int(xml_node.find('stopLine').find('trafficSignRef').get('ref'))
             if xml_node.find('stopLine').find('trafficLightRef') is not None:
                 traffic_light_ref = int(xml_node.find('stopLine').find('trafficLightRef').get('ref'))
-            stop_line = StopLine(points[0], points[1], line_marking, traffic_sign_ref, traffic_light_ref)
+            if len(points) > 0:
+                stop_line = StopLine(start=points[0], end=points[1], line_marking=line_marking,
+                                     traffic_sign_ref=traffic_sign_ref, traffic_light_ref=traffic_light_ref)
+            else:
+                stop_line = StopLine(line_marking=line_marking, traffic_sign_ref=traffic_sign_ref,
+                                     traffic_light_ref=traffic_light_ref)
 
         return stop_line
 
@@ -633,7 +649,8 @@ class LaneletFactory:
 class TrafficSignFactory:
     """ Class to create an object of class TrafficSign from an XML element."""
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, country: SupportedTrafficSignCountry) -> TrafficSign:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, country: SupportedTrafficSignCountry,
+                             first_traffic_sign_occurence: Dict[int, int]) -> TrafficSign:
         """
         :param xml_node: XML element
         :param country: country where traffic sign stands
@@ -660,6 +677,7 @@ class TrafficSignFactory:
             virtual = False
 
         return TrafficSign(traffic_sign_id=traffic_sign_id, position=position,
+                           first_lanelet_occurrence=first_traffic_sign_occurence[traffic_sign_id],
                            traffic_sign_elements=traffic_sign_elements, virtual=virtual)
 
 

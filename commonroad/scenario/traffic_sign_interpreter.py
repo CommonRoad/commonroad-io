@@ -64,7 +64,7 @@ class TrafficSigInterpreter:
             for traffic_sign_id in lanelet.traffic_signs:
                 traffic_sign = self._lanelet_network.find_traffic_sign_by_id(traffic_sign_id)
                 for elem in traffic_sign.traffic_sign_elements:
-                    if elem.traffic_sign_element_id == self.traffic_sign_ids.MAXSPEED:
+                    if elem.traffic_sign_element_id == self.traffic_sign_ids.MAX_SPEED:
                         speed_limits.append(float(elem.additional_values[0]))
 
         if len(speed_limits) == 0:
@@ -87,7 +87,7 @@ class TrafficSigInterpreter:
             for traffic_sign_id in lanelet.traffic_signs:
                 traffic_sign = self._lanelet_network.find_traffic_sign_by_id(traffic_sign_id)
                 for elem in traffic_sign.traffic_sign_elements:
-                    if elem.traffic_sign_element_id == self.traffic_sign_ids.MINSPEED:
+                    if elem.traffic_sign_element_id == self.traffic_sign_ids.MIN_SPEED:
                         required_velocities.append(float(elem.additional_values[0]))
 
         if len(required_velocities) == 0:

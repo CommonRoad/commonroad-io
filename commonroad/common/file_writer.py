@@ -421,25 +421,15 @@ class LocationXMLNode:
         :return: node
         """
         location_node = etree.Element('location')
-        country_node = etree.Element("country")
-        country_node.text = location.country
-        location_node.append(country_node)
-        federal_state_node = etree.Element("federalState")
-        federal_state_node.text = location.federal_state
-        location_node.append(federal_state_node)
+        geo_name_id_node = etree.Element("geoNameId")
+        geo_name_id_node.text = str(location.geo_name_id)
+        location_node.append(geo_name_id_node)
         gps_latitude_node = etree.Element("gpsLatitude")
         gps_latitude_node.text = str(location.gps_latitude)
         location_node.append(gps_latitude_node)
         gps_longitude_node = etree.Element("gpsLongitude")
         gps_longitude_node.text = str(location.gps_longitude)
         location_node.append(gps_longitude_node)
-        zipcode_node = etree.Element("zipcode")
-        zipcode_node.text = location.zipcode
-        location_node.append(zipcode_node)
-        if location.name is not None:
-            name_node = etree.Element("name")
-            name_node.text = location.name
-            location_node.append(name_node)
         if location.geo_transformation is not None:
             location_node.append(GeoTransformationXMLNode.create_node(location.geo_transformation))
 
@@ -1309,10 +1299,11 @@ class LaneletStopLineXMLNode:
     def create_node(cls, stop_line: StopLine) -> etree.Element:
         stop_line_node = etree.Element('stopLine')
 
-        start_node = Point(stop_line.start[0], stop_line.start[1]).create_node()
-        stop_line_node.append(start_node)
-        end_node = Point(stop_line.end[0], stop_line.end[1]).create_node()
-        stop_line_node.append(end_node)
+        if stop_line.start is not None or stop_line.end is not None:
+            start_node = Point(stop_line.start[0], stop_line.start[1]).create_node()
+            stop_line_node.append(start_node)
+            end_node = Point(stop_line.end[0], stop_line.end[1]).create_node()
+            stop_line_node.append(end_node)
 
         if stop_line.line_marking:
             line_marking_node = LineMarkingXMLNode.create_node(stop_line.line_marking)

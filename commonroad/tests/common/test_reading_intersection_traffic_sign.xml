@@ -1,11 +1,8 @@
 <commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="PrinceOfZAM" affiliation="Technical University of Munich, Germany" source="OpenStreetMaps (OSM)" benchmarkID="ZAM_test_0-0-1" date="2019-12-29">
 <location>
-    <country>DEU</country>
-    <federalState>DE_BY</federalState>
+    <geoNameId>2867714</geoNameId>
     <gpsLatitude>48.262333</gpsLatitude>
     <gpsLongitude>11.668775</gpsLongitude>
-    <zipcode>98368</zipcode>
-    <name>München</name>
   </location>
    <scenarioTags>
     <intersection/>
@@ -148,14 +145,6 @@
     <successor ref="24"/>
     <adjacentLeft ref="15" drivingDir="opposite"/>
     <stopLine>
-      <point>
-        <x>169.2560351117039</x>
-        <y>-54.95658983061205</y>
-      </point>
-      <point>
-        <x>168.6607857447963</x>
-        <y>-57.38341449560771</y>
-      </point>
       <lineMarking>solid</lineMarking>
       <trafficLightRef ref="203"/>
     </stopLine>
@@ -1395,12 +1384,6 @@
             <trafficSignID>310</trafficSignID>
             <additionalValue>Landeshauptstadt München</additionalValue>
         </trafficSignElement>
-        <position>
-          <point>
-            <x>126.6855461566415</x>
-            <y>-183.6227460269015</y>
-          </point>
-        </position>
         <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="104">
@@ -1590,12 +1573,6 @@
             <color>redYellow</color>
           </cycleElement>
         </cycle>
-        <position>
-          <point>
-            <x>177.8639861239823</x>
-            <y>-48.79316329157203</y>
-          </point>
-        </position>
         <direction>all</direction>
         <active>true</active>
   </trafficLight>

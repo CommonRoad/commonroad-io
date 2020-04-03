@@ -68,7 +68,7 @@ class RoadUser(enum.Enum):
 
 class StopLine:
     """Class which describes the stop line of a lanelet"""
-    def __init__(self, start: np.ndarray, end: np.ndarray,
+    def __init__(self, start: np.ndarray = None, end: np.ndarray = None,
                line_marking: LineMarking = None,
                traffic_sign_ref: int = None,
                traffic_light_ref: int = None):
