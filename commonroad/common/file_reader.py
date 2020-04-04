@@ -172,7 +172,11 @@ class CommonRoadFileReader:
         splits = tags_string.split()
         tags = set()
         for tag in splits:
-            tags.add(Tag(tag))
+            try:
+                tags.add(Tag(tag))
+            except ValueError:
+                warnings.warn('Scenario tag \'{}\' not valid.'.format(tag), stacklevel=2)
+
         return tags
 
     @staticmethod

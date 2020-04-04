@@ -61,9 +61,17 @@ def rescale_text(string:str, prop:dict, scale_factor:float, default_scale_factor
 
     return prop
 
+
 def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], TrafficSign], draw_params: dict,
                                   call_stack: Tuple[str,...]) -> Dict[Tuple[float,float],List[OffsetBox]]:
-
+    """
+    For each Traffic sign an OffsetBox is created, containing the png image and optionally labels. These boxes can
+    be stacked horizontally later when multiple signs or lights share the same position.
+    :param traffic_signs:
+    :param draw_params:
+    :param call_stack:
+    :return:
+    """
     if type(traffic_signs) is not list:
         traffic_signs = [traffic_signs]
 
@@ -90,7 +98,6 @@ def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], Traffi
                 isinstance(show_traffic_signs, list) and type(show_traffic_signs[0] is enum)]),\
         'Plotting option traffic_sign.show_traffic_signs must be either "all" or list of type TrafficSignID'
 
-    #call_stack = tuple(list(call_stack) + ['traffic_sign'])
     prop_dict = text_prop_dict()
     imageboxes_all = defaultdict(list)
 
@@ -149,7 +156,14 @@ def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], Traffi
 
 def create_img_boxes_traffic_lights(traffic_lights: Union[List[TrafficLight], TrafficLight], draw_params: dict,
                                   call_stack: Tuple[str,...]) -> Dict[Tuple[float,float],List[OffsetBox]]:
-
+    """
+    For each Traffic light an OffsetBox is created, containing the png image and optionally labels. These boxes can
+    be stacked horizontally later when multiple signs or lights share the same position.
+    :param traffic_lights:
+    :param draw_params:
+    :param call_stack:
+    :return:
+    """
     if type(traffic_lights) is not list:
         traffic_lights = [traffic_lights]
 
@@ -169,12 +183,11 @@ def create_img_boxes_traffic_lights(traffic_lights: Union[List[TrafficLight], Tr
         draw_params, call_stack,
         ('traffic_light', 'zorder'), ('scenario','lanelet_network','traffic_light', 'zorder'))
 
-    #call_stack = tuple(list(call_stack) + ['traffic_light'])
-
     # plots all group members horizontally stacked
     imageboxes_all = defaultdict(list)
     for traffic_light in traffic_lights:
-        imageboxes = []
+        if traffic_light.position is None:
+            continue
         if traffic_light.active:
             state = traffic_light.get_state_at_time_step(time_begin)
             path = os.path.join(traffic_sign_path, 'traffic_light_state_' + str(state.value) + '.png')
@@ -202,6 +215,18 @@ def draw_traffic_light_signs(traffic_lights_signs: Union[List[Union[TrafficLight
                              draw_func: Dict[type,Callable],
                              handles: Dict[Any,List[Union[mpl.patches.Patch,mpl.collections.Collection]]],
                              call_stack: Tuple[str,...]) -> None:
+    """
+    Draws OffsetBoxes which are first collected for all traffic signs and -lights. Boxes are stacked together when they
+    share the same position.
+    :param traffic_lights_signs:
+    :param plot_limits:
+    :param ax:
+    :param draw_params:
+    :param draw_func:
+    :param handles:
+    :param call_stack:
+    :return:
+    """
     kwargs = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
         draw_params, call_stack,
         ('kwargs_traffic_light_signs',), ('scenario','lanelet_network','kwargs_traffic_light_signs'))
@@ -244,7 +269,7 @@ def draw_traffic_light_signs(traffic_lights_signs: Union[List[Union[TrafficLight
     positions = list(img_boxes.keys())
     box_lists = list(img_boxes.values())
 
-    # group objects based on their distances
+    # group objects based on their positions' distances
     groups = dict()
     grouped = set()  # set of already assigned keys
     i = 1

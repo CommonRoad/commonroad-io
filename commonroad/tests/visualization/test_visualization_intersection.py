@@ -58,7 +58,8 @@ class TestVisualization(unittest.TestCase):
          TrafficSignElement(TrafficSignIDGermany.MIN_SPEED, additional_values=['30']),
          TrafficSignElement(TrafficSignIDGermany.MAX_SPEED,additional_values=['80']),
          TrafficSignElement(TrafficSignIDGermany.NO_OVERTAKING_START,additional_values=['80']),
-         TrafficSignElement(TrafficSignIDGermany.STOP,additional_values=['80'])], position=np.array([159.,-88.]),virtual=False)
+         TrafficSignElement(TrafficSignIDGermany.STOP,additional_values=['80'])], position=np.array([159.,-88.]),
+                         virtual=False, first_occurrence={})
         draw_object(ts,draw_params={'traffic_sign':{'scale_factor': 0.3, 'kwargs':{'arrowprops':{'arrowstyle':"simple"}}}})
         plt.autoscale()
         plt.axis('equal')
