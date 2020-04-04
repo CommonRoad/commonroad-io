@@ -68,18 +68,38 @@ class RoadUser(enum.Enum):
 
 class StopLine:
     """Class which describes the stop line of a lanelet"""
-    def __init__(self, start: np.ndarray = None, end: np.ndarray = None,
-               line_marking: LineMarking = None,
-               traffic_sign_ref: int = None,
-               traffic_light_ref: int = None):
-        self.start = start
-        self.end = end
-        self.line_marking = line_marking
-        self.traffic_sign_ref = traffic_sign_ref
-        self.traffic_light_ref = traffic_light_ref
+    def __init__(self, start: np.ndarray, end: np.ndarray,
+                 line_marking: LineMarking,
+                 traffic_sign_ref: int = None,
+                 traffic_light_ref: int = None):
+        self._start = start
+        self._end = end
+        self._line_marking = line_marking
+        self._traffic_sign_ref = traffic_sign_ref
+        self._traffic_light_ref = traffic_light_ref
+
+    @property
+    def start(self) -> np.ndarray:
+        return self._start
+
+    @property
+    def end(self) -> np.ndarray:
+        return self._end
+
+    @property
+    def line_marking(self) -> LineMarking:
+        return self._line_marking
+
+    @property
+    def traffic_sign_ref(self) -> int:
+        return self._traffic_sign_ref
+
+    @property
+    def traffic_light_ref(self) -> int:
+        return self._traffic_light_ref
 
     def __str__(self):
-        return f'StopLine From {self.start} to  {self.end}'
+        return f'StopLine from {self._start} to  {self._end}'
 
 
 class Lanelet:
