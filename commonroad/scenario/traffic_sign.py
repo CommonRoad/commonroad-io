@@ -127,11 +127,12 @@ class TrafficLightState(enum.Enum):
 
 
 class TrafficSignElement:
-    """ Class to represent each traffic sign element"""
+    """ Class which represents a collection of traffic signs at one position"""
     def __init__(self, traffic_sign_element_id: Union[TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSignIDSpain,
                                                       TrafficSignIDGermany, TrafficSignIDChina, TrafficSignIDRussia],
                  additional_values: List[str]):
         """
+
         :param traffic_sign_element_id: ID of traffic sign element (must be element of a traffic sign element enum)
         :param additional_values: list of additional values of a traffic sign element, e.g. velocity, time, city name
         """
@@ -167,7 +168,7 @@ class TrafficSignElement:
 
 
 class TrafficSign:
-    """Class to represent traffic sign"""
+    """Class to represent a traffic sign"""
     def __init__(self, traffic_sign_id: int, traffic_sign_elements: List[TrafficSignElement],
                  first_occurrence: Set[int], position: np.ndarray, virtual: bool = False):
         """
@@ -209,7 +210,7 @@ class TrafficSign:
 
 
 class TrafficLightCycleElement:
-    """Class to represent traffic light cycle"""
+    """Class to represent a traffic light cycle"""
     def __init__(self, state: TrafficLightState, duration: int):
         """
         :param state: state of a traffic light cycle element
@@ -228,7 +229,7 @@ class TrafficLightCycleElement:
 
 
 class TrafficLight:
-    """ Class to represent Traffic Light"""
+    """ Class to represent a traffic light"""
     def __init__(self, traffic_light_id: int, cycle: List[TrafficLightCycleElement], position: np.ndarray,
                  time_offset: int = 0, direction: TrafficLightDirection = TrafficLightDirection.ALL,
                  active: bool = True):
@@ -291,7 +292,7 @@ class TrafficLight:
 
 def get_default_cycle():
     """
-    Defines default cycle in case no cycle is provided
+    Defines default traffic light cycle in case no cycle is provided
 
     _:returns traffic light cycle element
     """

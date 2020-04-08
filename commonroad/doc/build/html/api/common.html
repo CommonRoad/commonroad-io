@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -235,20 +235,20 @@
 <span id="file-reader"></span><h2>File Reader<a class="headerlink" href="#module-commonroad.common.file_reader" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="commonroadfilereader-class">
 <h3><code class="docutils literal notranslate"><span class="pre">CommonRoadFileReader</span></code> class<a class="headerlink" href="#commonroadfilereader-class" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="commonroad.common.file_reader.CommonRoadFileReader">
-<em class="property">class </em><code class="sig-prename descclassname">commonroad.common.file_reader.</code><code class="sig-name descname">CommonRoadFileReader</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/file_reader.html#CommonRoadFileReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.file_reader.CommonRoadFileReader" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">commonroad.common.file_reader.</code><code class="sig-name descname">CommonRoadFileReader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/file_reader.html#CommonRoadFileReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.file_reader.CommonRoadFileReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class which reads CommonRoad XML-files. The XML-files are composed of
 (1) a formal representation of the road network,
 (2) static and dynamic obstacles,
 (3) the planning problem of the ego vehicle(s).</p>
-<dl class="method">
+<dl class="py method">
 <dt id="commonroad.common.file_reader.CommonRoadFileReader.open">
 <code class="sig-name descname">open</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/file_reader.html#CommonRoadFileReader.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.file_reader.CommonRoadFileReader.open" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads a CommonRoad XML-file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="scenario.html#commonroad.scenario.scenario.Scenario" title="commonroad.scenario.scenario.Scenario"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scenario</span></code></a>, <a class="reference internal" href="planning.html#commonroad.planning.planning_problem.PlanningProblemSet" title="commonroad.planning.planning_problem.PlanningProblemSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanningProblemSet</span></code></a>]</p>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="scenario.html#commonroad.scenario.scenario.Scenario" title="commonroad.scenario.scenario.Scenario"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scenario</span></code></a>, <a class="reference internal" href="planning.html#commonroad.planning.planning_problem.PlanningProblemSet" title="commonroad.planning.planning_problem.PlanningProblemSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanningProblemSet</span></code></a>]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>the scenario containing the road network and the obstacles and the planning problem set         containing the planning problems—initial states and goal regions–for all ego vehicles.</p>
@@ -256,7 +256,7 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="commonroad.common.file_reader.CommonRoadFileReader.open_lanelet_network">
 <code class="sig-name descname">open_lanelet_network</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/file_reader.html#CommonRoadFileReader.open_lanelet_network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.file_reader.CommonRoadFileReader.open_lanelet_network" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the lanelet network of a CommonRoad XML-file.</p>
@@ -279,12 +279,12 @@
 <p>File Writer for scenarios to commonroad xml-format</p>
 <div class="section" id="commonroadfilewriter-class">
 <h3><code class="docutils literal notranslate"><span class="pre">CommonRoadFileWriter</span></code> class<a class="headerlink" href="#commonroadfilewriter-class" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="commonroad.common.file_writer.CommonRoadFileWriter">
-<em class="property">class </em><code class="sig-prename descclassname">commonroad.common.file_writer.</code><code class="sig-name descname">CommonRoadFileWriter</code><span class="sig-paren">(</span><em class="sig-param">scenario</em>, <em class="sig-param">planning_problem_set</em>, <em class="sig-param">author</em>, <em class="sig-param">affiliation</em>, <em class="sig-param">source</em>, <em class="sig-param">tags</em>, <em class="sig-param">decimal_precision=8</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/file_writer.html#CommonRoadFileWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.file_writer.CommonRoadFileWriter" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<em class="property">class </em><code class="sig-prename descclassname">commonroad.common.file_writer.</code><code class="sig-name descname">CommonRoadFileWriter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">scenario</span></em>, <em class="sig-param"><span class="n">planning_problem_set</span></em>, <em class="sig-param"><span class="n">author</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">affiliation</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tags</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">location</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">decimal_precision</span><span class="o">=</span><span class="default_value">8</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/file_writer.html#CommonRoadFileWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.file_writer.CommonRoadFileWriter" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
 <dt id="commonroad.common.file_writer.CommonRoadFileWriter.check_validity_of_commonroad_file">
-<em class="property">static </em><code class="sig-name descname">check_validity_of_commonroad_file</code><span class="sig-paren">(</span><em class="sig-param">commonroad_str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/file_writer.html#CommonRoadFileWriter.check_validity_of_commonroad_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.file_writer.CommonRoadFileWriter.check_validity_of_commonroad_file" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">check_validity_of_commonroad_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">commonroad_str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/file_writer.html#CommonRoadFileWriter.check_validity_of_commonroad_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.file_writer.CommonRoadFileWriter.check_validity_of_commonroad_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check the validity of a generated xml_string in terms of
 commonroad with an existing XSD schema.
 Throw an error if it is not valid.</p>
@@ -294,7 +294,7 @@ Throw an error if it is not valid.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="commonroad.common.file_writer.CommonRoadFileWriter.write_scenario_to_file">
 <code class="sig-name descname">write_scenario_to_file</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">overwrite_existing_file=&lt;OverwriteExistingFile.ASK_USER_INPUT: 0&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/file_writer.html#CommonRoadFileWriter.write_scenario_to_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.file_writer.CommonRoadFileWriter.write_scenario_to_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a scenario without planning-problem. If file already exists, it will be overwritten of skipped.</p>
@@ -311,9 +311,9 @@ Throw an error if it is not valid.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="commonroad.common.file_writer.CommonRoadFileWriter.write_scenario_to_file_io">
-<code class="sig-name descname">write_scenario_to_file_io</code><span class="sig-paren">(</span><em class="sig-param">file_io</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/file_writer.html#CommonRoadFileWriter.write_scenario_to_file_io"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.file_writer.CommonRoadFileWriter.write_scenario_to_file_io" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write_scenario_to_file_io</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_io</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/file_writer.html#CommonRoadFileWriter.write_scenario_to_file_io"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.file_writer.CommonRoadFileWriter.write_scenario_to_file_io" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a scenario without planning-problem to file_io.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>file_io: File to write to.</p>
@@ -321,15 +321,16 @@ Throw an error if it is not valid.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="commonroad.common.file_writer.CommonRoadFileWriter.write_to_file">
-<code class="sig-name descname">write_to_file</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">overwrite_existing_file=&lt;OverwriteExistingFile.ASK_USER_INPUT: 0&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/file_writer.html#CommonRoadFileWriter.write_to_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.file_writer.CommonRoadFileWriter.write_to_file" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write_to_file</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">overwrite_existing_file=&lt;OverwriteExistingFile.ASK_USER_INPUT: 0&gt;</em>, <em class="sig-param">check_validity=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/file_writer.html#CommonRoadFileWriter.write_to_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.file_writer.CommonRoadFileWriter.write_to_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a scenario including planning-problem. If file already exists, it will be overwritten of skipped</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filename</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – filename of the xml output file. If ‘None’, the Benchmark ID is taken</p></li>
 <li><p><strong>overwrite_existing_file</strong> (<a class="reference internal" href="#commonroad.common.file_writer.OverwriteExistingFile" title="commonroad.common.file_writer.OverwriteExistingFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">OverwriteExistingFile</span></code></a>) – Specify whether an already existing file should be overwritten or skipped</p></li>
+<li><p><strong>check_validity</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – check xml file against .xsd definition</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -338,9 +339,9 @@ Throw an error if it is not valid.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="commonroad.common.file_writer.CommonRoadFileWriter.write_to_file_io">
-<code class="sig-name descname">write_to_file_io</code><span class="sig-paren">(</span><em class="sig-param">file_io</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/file_writer.html#CommonRoadFileWriter.write_to_file_io"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.file_writer.CommonRoadFileWriter.write_to_file_io" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write_to_file_io</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_io</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/file_writer.html#CommonRoadFileWriter.write_to_file_io"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.file_writer.CommonRoadFileWriter.write_to_file_io" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a scenario including planning-problem to file_io.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>file_io: File to write to.</p>
@@ -353,21 +354,21 @@ Throw an error if it is not valid.</p>
 </div>
 <div class="section" id="overwriteexistingfile-class">
 <h3><code class="docutils literal notranslate"><span class="pre">OverwriteExistingFile</span></code> class<a class="headerlink" href="#overwriteexistingfile-class" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="commonroad.common.file_writer.OverwriteExistingFile">
 <em class="property">class </em><code class="sig-prename descclassname">commonroad.common.file_writer.</code><code class="sig-name descname">OverwriteExistingFile</code><a class="reference internal" href="../_modules/commonroad/common/file_writer.html#OverwriteExistingFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.file_writer.OverwriteExistingFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specifies whether an existing file will be overwritten or skipped</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="commonroad.common.file_writer.OverwriteExistingFile.ASK_USER_INPUT">
 <code class="sig-name descname">ASK_USER_INPUT</code><em class="property"> = 0</em><a class="headerlink" href="#commonroad.common.file_writer.OverwriteExistingFile.ASK_USER_INPUT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="commonroad.common.file_writer.OverwriteExistingFile.ALWAYS">
 <code class="sig-name descname">ALWAYS</code><em class="property"> = 1</em><a class="headerlink" href="#commonroad.common.file_writer.OverwriteExistingFile.ALWAYS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="commonroad.common.file_writer.OverwriteExistingFile.SKIP">
 <code class="sig-name descname">SKIP</code><em class="property"> = 2</em><a class="headerlink" href="#commonroad.common.file_writer.OverwriteExistingFile.SKIP" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -381,21 +382,21 @@ Throw an error if it is not valid.</p>
 <p>Solution writer for uploading motion plans to commonroad.in.tum.de</p>
 <div class="section" id="vehicletype-class">
 <h3><code class="docutils literal notranslate"><span class="pre">VehicleType</span></code> class<a class="headerlink" href="#vehicletype-class" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="commonroad.common.solution_writer.VehicleType">
-<em class="property">class </em><code class="sig-prename descclassname">commonroad.common.solution_writer.</code><code class="sig-name descname">VehicleType</code><a class="reference internal" href="../_modules/commonroad/common/solution_writer.html#VehicleType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.solution_writer.VehicleType" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">commonroad.common.solution_writer.</code><code class="sig-name descname">VehicleType</code><a class="reference internal" href="../_modules/commonroad/common/solution.html#VehicleType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.solution_writer.VehicleType" title="Permalink to this definition">¶</a></dt>
 <dd><p>An enumeration.</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="commonroad.common.solution_writer.VehicleType.FORD_ESCORT">
 <code class="sig-name descname">FORD_ESCORT</code><em class="property"> = 1</em><a class="headerlink" href="#commonroad.common.solution_writer.VehicleType.FORD_ESCORT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="commonroad.common.solution_writer.VehicleType.BMW_320i">
 <code class="sig-name descname">BMW_320i</code><em class="property"> = 2</em><a class="headerlink" href="#commonroad.common.solution_writer.VehicleType.BMW_320i" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="commonroad.common.solution_writer.VehicleType.VW_VANAGON">
 <code class="sig-name descname">VW_VANAGON</code><em class="property"> = 3</em><a class="headerlink" href="#commonroad.common.solution_writer.VehicleType.VW_VANAGON" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -405,26 +406,26 @@ Throw an error if it is not valid.</p>
 </div>
 <div class="section" id="vehiclemodel-class">
 <h3><code class="docutils literal notranslate"><span class="pre">VehicleModel</span></code> class<a class="headerlink" href="#vehiclemodel-class" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="commonroad.common.solution_writer.VehicleModel">
-<em class="property">class </em><code class="sig-prename descclassname">commonroad.common.solution_writer.</code><code class="sig-name descname">VehicleModel</code><a class="reference internal" href="../_modules/commonroad/common/solution_writer.html#VehicleModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.solution_writer.VehicleModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">commonroad.common.solution_writer.</code><code class="sig-name descname">VehicleModel</code><a class="reference internal" href="../_modules/commonroad/common/solution.html#VehicleModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.solution_writer.VehicleModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>An enumeration.</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="commonroad.common.solution_writer.VehicleModel.PM">
 <code class="sig-name descname">PM</code><em class="property"> = 0</em><a class="headerlink" href="#commonroad.common.solution_writer.VehicleModel.PM" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="commonroad.common.solution_writer.VehicleModel.ST">
 <code class="sig-name descname">ST</code><em class="property"> = 1</em><a class="headerlink" href="#commonroad.common.solution_writer.VehicleModel.ST" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="commonroad.common.solution_writer.VehicleModel.KS">
 <code class="sig-name descname">KS</code><em class="property"> = 2</em><a class="headerlink" href="#commonroad.common.solution_writer.VehicleModel.KS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="commonroad.common.solution_writer.VehicleModel.MB">
 <code class="sig-name descname">MB</code><em class="property"> = 3</em><a class="headerlink" href="#commonroad.common.solution_writer.VehicleModel.MB" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -435,36 +436,36 @@ Throw an error if it is not valid.</p>
 </div>
 <div class="section" id="costfunction-class">
 <h3><code class="docutils literal notranslate"><span class="pre">CostFunction</span></code> class<a class="headerlink" href="#costfunction-class" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="commonroad.common.solution_writer.CostFunction">
-<em class="property">class </em><code class="sig-prename descclassname">commonroad.common.solution_writer.</code><code class="sig-name descname">CostFunction</code><a class="reference internal" href="../_modules/commonroad/common/solution_writer.html#CostFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.solution_writer.CostFunction" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">commonroad.common.solution_writer.</code><code class="sig-name descname">CostFunction</code><a class="reference internal" href="../_modules/commonroad/common/solution.html#CostFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.solution_writer.CostFunction" title="Permalink to this definition">¶</a></dt>
 <dd><p>An enumeration.</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="commonroad.common.solution_writer.CostFunction.JB1">
 <code class="sig-name descname">JB1</code><em class="property"> = 0</em><a class="headerlink" href="#commonroad.common.solution_writer.CostFunction.JB1" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="commonroad.common.solution_writer.CostFunction.SA1">
 <code class="sig-name descname">SA1</code><em class="property"> = 1</em><a class="headerlink" href="#commonroad.common.solution_writer.CostFunction.SA1" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="commonroad.common.solution_writer.CostFunction.WX1">
 <code class="sig-name descname">WX1</code><em class="property"> = 2</em><a class="headerlink" href="#commonroad.common.solution_writer.CostFunction.WX1" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="commonroad.common.solution_writer.CostFunction.SM1">
 <code class="sig-name descname">SM1</code><em class="property"> = 3</em><a class="headerlink" href="#commonroad.common.solution_writer.CostFunction.SM1" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="commonroad.common.solution_writer.CostFunction.SM2">
 <code class="sig-name descname">SM2</code><em class="property"> = 4</em><a class="headerlink" href="#commonroad.common.solution_writer.CostFunction.SM2" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="commonroad.common.solution_writer.CostFunction.SM3">
 <code class="sig-name descname">SM3</code><em class="property"> = 5</em><a class="headerlink" href="#commonroad.common.solution_writer.CostFunction.SM3" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -475,12 +476,12 @@ Throw an error if it is not valid.</p>
 </div>
 <div class="section" id="commonroadsolutionwriter-class">
 <h3><code class="docutils literal notranslate"><span class="pre">CommonRoadSolutionWriter</span></code> class<a class="headerlink" href="#commonroadsolutionwriter-class" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="commonroad.common.solution_writer.CommonRoadSolutionWriter">
-<em class="property">class </em><code class="sig-prename descclassname">commonroad.common.solution_writer.</code><code class="sig-name descname">CommonRoadSolutionWriter</code><span class="sig-paren">(</span><em class="sig-param">output_dir</em>, <em class="sig-param">scenario_id</em>, <em class="sig-param">step_size</em>, <em class="sig-param">vehicle_type=&lt;VehicleType.FORD_ESCORT: 1&gt;</em>, <em class="sig-param">vehicle_model=&lt;VehicleModel.KS: 2&gt;</em>, <em class="sig-param">cost_function=&lt;CostFunction.JB1: 0&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/solution_writer.html#CommonRoadSolutionWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.solution_writer.CommonRoadSolutionWriter" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<em class="property">class </em><code class="sig-prename descclassname">commonroad.common.solution_writer.</code><code class="sig-name descname">CommonRoadSolutionWriter</code><span class="sig-paren">(</span><em class="sig-param">output_dir</em>, <em class="sig-param">scenario_id</em>, <em class="sig-param">step_size</em>, <em class="sig-param">vehicle_type=&lt;VehicleType.FORD_ESCORT: 1&gt;</em>, <em class="sig-param">vehicle_model=&lt;VehicleModel.KS: 2&gt;</em>, <em class="sig-param">cost_function=&lt;CostFunction.JB1: 0&gt;</em>, <em class="sig-param">computation_time=None</em>, <em class="sig-param">processor_name='auto'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/solution_writer.html#CommonRoadSolutionWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.solution_writer.CommonRoadSolutionWriter" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
 <dt id="commonroad.common.solution_writer.CommonRoadSolutionWriter.add_solution_input_vector">
-<code class="sig-name descname">add_solution_input_vector</code><span class="sig-paren">(</span><em class="sig-param">input_vector</em>, <em class="sig-param">planning_problem_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/solution_writer.html#CommonRoadSolutionWriter.add_solution_input_vector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.solution_writer.CommonRoadSolutionWriter.add_solution_input_vector" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_solution_input_vector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_vector</span></em>, <em class="sig-param"><span class="n">planning_problem_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/solution_writer.html#CommonRoadSolutionWriter.add_solution_input_vector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.solution_writer.CommonRoadSolutionWriter.add_solution_input_vector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add an input vector to the xml tree</p>
 <p>Note: the entries of the input vector is not checked. It is assumed to contain the correct states in correct
 order:
@@ -490,16 +491,16 @@ The cost function is not checked for existence.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_vector</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – list of states, each state is a list of the three above named values</p></li>
+<li><p><strong>input_vector</strong> (<a class="reference internal" href="scenario.html#commonroad.scenario.trajectory.Trajectory" title="commonroad.scenario.trajectory.Trajectory"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trajectory</span></code></a>) – list of states, each state is a list of the three above named values</p></li>
 <li><p><strong>planning_problem_id</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Id of the planning problem that is solved with the trajectory.</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="commonroad.common.solution_writer.CommonRoadSolutionWriter.add_solution_trajectory">
-<code class="sig-name descname">add_solution_trajectory</code><span class="sig-paren">(</span><em class="sig-param">trajectory</em>, <em class="sig-param">planning_problem_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/solution_writer.html#CommonRoadSolutionWriter.add_solution_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.solution_writer.CommonRoadSolutionWriter.add_solution_trajectory" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_solution_trajectory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trajectory</span></em>, <em class="sig-param"><span class="n">planning_problem_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/solution_writer.html#CommonRoadSolutionWriter.add_solution_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.solution_writer.CommonRoadSolutionWriter.add_solution_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a trajectory to the xml tree.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -514,9 +515,16 @@ The cost function is not checked for existence.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
+<dt id="commonroad.common.solution_writer.CommonRoadSolutionWriter.check_validity_of_solution_file">
+<code class="sig-name descname">check_validity_of_solution_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/solution_writer.html#CommonRoadSolutionWriter.check_validity_of_solution_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.solution_writer.CommonRoadSolutionWriter.check_validity_of_solution_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the validity of a generated xml_string with the CommonRoadSolution_schema.xsd schema.
+Throw an error if it is not valid.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="commonroad.common.solution_writer.CommonRoadSolutionWriter.write_to_file">
-<code class="sig-name descname">write_to_file</code><span class="sig-paren">(</span><em class="sig-param">overwrite=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/solution_writer.html#CommonRoadSolutionWriter.write_to_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.solution_writer.CommonRoadSolutionWriter.write_to_file" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write_to_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">overwrite</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/solution_writer.html#CommonRoadSolutionWriter.write_to_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.solution_writer.CommonRoadSolutionWriter.write_to_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write xml file to ouput_dir</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -533,17 +541,17 @@ The cost function is not checked for existence.</p>
 <span id="util"></span><h2>Util<a class="headerlink" href="#module-commonroad.common.util" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="interval-class">
 <h3><code class="docutils literal notranslate"><span class="pre">Interval</span></code> class<a class="headerlink" href="#interval-class" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="commonroad.common.util.Interval">
-<em class="property">class </em><code class="sig-prename descclassname">commonroad.common.util.</code><code class="sig-name descname">Interval</code><span class="sig-paren">(</span><em class="sig-param">start</em>, <em class="sig-param">end</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/util.html#Interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.util.Interval" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">commonroad.common.util.</code><code class="sig-name descname">Interval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start</span></em>, <em class="sig-param"><span class="n">end</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/util.html#Interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.util.Interval" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
 <div class="section" id="angleinterval-class">
 <h3><code class="docutils literal notranslate"><span class="pre">AngleInterval</span></code> class<a class="headerlink" href="#angleinterval-class" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="commonroad.common.util.AngleInterval">
-<em class="property">class </em><code class="sig-prename descclassname">commonroad.common.util.</code><code class="sig-name descname">AngleInterval</code><span class="sig-paren">(</span><em class="sig-param">start</em>, <em class="sig-param">end</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/util.html#AngleInterval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.util.AngleInterval" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">commonroad.common.util.</code><code class="sig-name descname">AngleInterval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start</span></em>, <em class="sig-param"><span class="n">end</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/common/util.html#AngleInterval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.common.util.AngleInterval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows only angles from interval [-2pi,2pi]</p>
 </dd></dl>
 

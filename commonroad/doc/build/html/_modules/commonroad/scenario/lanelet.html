@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -232,24 +232,100 @@
 
 <span class="kn">import</span> <span class="nn">commonroad.geometry.transform</span>
 <span class="kn">from</span> <span class="nn">commonroad.common.validity</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">commonroad.geometry.shape</span> <span class="k">import</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">ShapeGroup</span><span class="p">,</span> <span class="n">Circle</span>
+<span class="kn">from</span> <span class="nn">commonroad.geometry.shape</span> <span class="k">import</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">ShapeGroup</span><span class="p">,</span> <span class="n">Circle</span><span class="p">,</span> <span class="n">Rectangle</span><span class="p">,</span> <span class="n">Shape</span>
 <span class="kn">from</span> <span class="nn">commonroad.scenario.obstacle</span> <span class="k">import</span> <span class="n">Obstacle</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.traffic_sign</span> <span class="k">import</span> <span class="n">TrafficSign</span><span class="p">,</span> <span class="n">TrafficLight</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.intersection</span> <span class="k">import</span> <span class="n">Intersection</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Christian Pek&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Christian Pek, Sebastian Maierhofer&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;TUM Cyber-Physical Systems Group&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;BMW CAR@TUM&quot;</span><span class="p">]</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2019.1&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2020.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Christian Pek&quot;</span>
-<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;Christian.Pek@tum.de&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad-i06@in.tum.de&quot;</span>
 <span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;released&quot;</span>
 
 
-<div class="viewcode-block" id="LineMarking"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.LineMarking">[docs]</a><span class="k">class</span> <span class="nc">LineMarking</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+
+
+<span class="k">class</span> <span class="nc">LineMarking</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Enum describing different types of line markings, i.e. dashed or solid lines</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">DASHED</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">SOLID</span> <span class="o">=</span> <span class="mi">2</span></div>
+    <span class="n">DASHED</span> <span class="o">=</span> <span class="s1">&#39;dashed&#39;</span>
+    <span class="n">SOLID</span> <span class="o">=</span> <span class="s1">&#39;solid&#39;</span>
+    <span class="n">BROAD_DASHED</span> <span class="o">=</span> <span class="s1">&#39;broad_dashed&#39;</span>
+    <span class="n">BROAD_SOLID</span> <span class="o">=</span> <span class="s1">&#39;broad_solid&#39;</span>
+
+
+<div class="viewcode-block" id="LaneletType"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.LaneletType">[docs]</a><span class="k">class</span> <span class="nc">LaneletType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enum describing different types of lanelets</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">URBAN</span> <span class="o">=</span> <span class="s1">&#39;urban&#39;</span>
+    <span class="n">COUNTRY</span> <span class="o">=</span> <span class="s1">&#39;country&#39;</span>
+    <span class="n">HIGHWAY</span> <span class="o">=</span> <span class="s1">&#39;highway&#39;</span>
+    <span class="n">DRIVE_WAY</span><span class="o">=</span><span class="s1">&#39;driveWay&#39;</span>
+    <span class="n">MAIN_CARRIAGE_WAY</span> <span class="o">=</span> <span class="s1">&#39;mainCarriageWay&#39;</span>
+    <span class="n">ACCESS_RAMP</span> <span class="o">=</span> <span class="s1">&#39;accessRamp&#39;</span>
+    <span class="n">EXIT_RAMP</span> <span class="o">=</span> <span class="s1">&#39;exitRamp&#39;</span>
+    <span class="n">SHOULDER</span> <span class="o">=</span> <span class="s1">&#39;shoulder&#39;</span>
+    <span class="n">BUS_LANE</span> <span class="o">=</span> <span class="s1">&#39;busLane&#39;</span>
+    <span class="n">BUS_STOP</span> <span class="o">=</span> <span class="s1">&#39;busStop&#39;</span>
+    <span class="n">BIKE_LANE</span> <span class="o">=</span> <span class="s1">&#39;bikeLane&#39;</span>
+    <span class="n">SIDEWALK</span> <span class="o">=</span> <span class="s1">&#39;sidewalk&#39;</span>
+    <span class="n">CROSSWALK</span> <span class="o">=</span> <span class="s1">&#39;crosswalk&#39;</span></div>
+
+
+<div class="viewcode-block" id="RoadUser"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.RoadUser">[docs]</a><span class="k">class</span> <span class="nc">RoadUser</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enum describing different types of road users</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">VEHICLE</span> <span class="o">=</span> <span class="s1">&#39;vehicle&#39;</span>
+    <span class="n">CAR</span> <span class="o">=</span> <span class="s1">&#39;car&#39;</span>
+    <span class="n">TRUCK</span> <span class="o">=</span> <span class="s1">&#39;truck&#39;</span>
+    <span class="n">BUS</span> <span class="o">=</span> <span class="s1">&#39;bus&#39;</span>
+    <span class="n">PRIORITY_VEHICLE</span> <span class="o">=</span> <span class="s1">&#39;priorityVehicle&#39;</span>
+    <span class="n">MOTORCYCLE</span> <span class="o">=</span> <span class="s1">&#39;motorycle&#39;</span>
+    <span class="n">BICYCLE</span> <span class="o">=</span> <span class="s1">&#39;bicycle&#39;</span>
+    <span class="n">PEDESTRIAN</span> <span class="o">=</span> <span class="s1">&#39;pedestrian&#39;</span>
+    <span class="n">TRAIN</span> <span class="o">=</span> <span class="s1">&#39;train&#39;</span></div>
+
+
+<span class="k">class</span> <span class="nc">StopLine</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class which describes the stop line of a lanelet&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">line_marking</span><span class="p">:</span> <span class="n">LineMarking</span><span class="p">,</span>
+                 <span class="n">traffic_sign_ref</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">traffic_light_ref</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="o">=</span> <span class="n">start</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_end</span> <span class="o">=</span> <span class="n">end</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_marking</span> <span class="o">=</span> <span class="n">line_marking</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_ref</span> <span class="o">=</span> <span class="n">traffic_sign_ref</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_light_ref</span> <span class="o">=</span> <span class="n">traffic_light_ref</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_end</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">line_marking</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LineMarking</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line_marking</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">traffic_sign_ref</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_ref</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">traffic_light_ref</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_light_ref</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="s1">&#39;StopLine from </span><span class="si">{self._start}</span><span class="s1"> to  </span><span class="si">{self._end}</span><span class="s1">&#39;</span>
 
 
 <div class="viewcode-block" id="Lanelet"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.Lanelet">[docs]</a><span class="k">class</span> <span class="nc">Lanelet</span><span class="p">:</span>
@@ -260,12 +336,18 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left_vertices</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">center_vertices</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">right_vertices</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-                 <span class="n">lanelet_id</span><span class="p">,</span>
-                 <span class="n">predecessor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">successor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">lanelet_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">predecessor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">successor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">adjacent_left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">adjacent_left_same_direction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">adjacent_right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">adjacent_right_same_direction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">speed_limit</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">infty</span><span class="p">,</span> <span class="n">line_marking_left_vertices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">line_marking_right_vertices</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">line_marking_left_vertices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">line_marking_right_vertices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">stop_line</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">lanelet_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">user_one_way</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">user_bidirectional</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">traffic_signs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">traffic_lights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor of a Lanelet object</span>
 <span class="sd">        :param left_vertices: The vertices of the left boundary of the Lanelet described as a</span>
@@ -283,9 +365,14 @@
 <span class="sd">        :param adjacent_right: The adjacent right lanelet (None if not existing)</span>
 <span class="sd">        :param adjacent_right_same_direction: True if the adjacent right lanelet has the same driving direction,</span>
 <span class="sd">        false otherwise (None if no right adjacent lanelet exists)</span>
-<span class="sd">        :param speed_limit: The speed limit of the lanelet</span>
 <span class="sd">        :param line_marking_left_vertices: The type of line marking of the left boundary</span>
 <span class="sd">        :param line_marking_right_vertices: The type of line marking of the right boundary</span>
+<span class="sd">        :param stop_line: The stop line of the lanelet</span>
+<span class="sd">        :param lanelet_type: The types of lanelet applicable here</span>
+<span class="sd">        :param user_one_way: type of users that will use the lanelet as one-way</span>
+<span class="sd">        :param user_bidirectional: type of users that will use the lanelet as bidirectional way</span>
+<span class="sd">        :param traffic_signs: Traffic signs to be applied</span>
+<span class="sd">        :param traffic_lights: Traffic lights to follow</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Set required properties</span>
@@ -335,10 +422,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">adj_right</span> <span class="o">=</span> <span class="n">adjacent_right</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">adj_right_same_direction</span> <span class="o">=</span> <span class="n">adjacent_right_same_direction</span>
 
-        <span class="c1"># Set speed limit</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_speed_limit</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">speed_limit</span> <span class="o">=</span> <span class="n">speed_limit</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">center_vertices</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span>
@@ -348,6 +431,44 @@
 
         <span class="c1"># create empty polygon</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_polygon</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_obstacles_on_lanelet</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_static_obstacles_on_lanelet</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_line</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">stop_line</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stop_line</span> <span class="o">=</span> <span class="n">stop_line</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lanelet_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">lanelet_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lanelet_type</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lanelet_type</span> <span class="o">=</span> <span class="n">lanelet_type</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_user_one_way</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">user_one_way</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_user_one_way</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_one_way</span> <span class="o">=</span> <span class="n">user_one_way</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_user_bidirectional</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">user_bidirectional</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_user_bidirectional</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_bidirectional</span> <span class="o">=</span> <span class="n">user_bidirectional</span>
+
+        <span class="c1"># Set Traffic Rules</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_signs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">traffic_signs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_signs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">traffic_signs</span> <span class="o">=</span> <span class="n">traffic_signs</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_lights</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">traffic_lights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_lights</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">traffic_lights</span> <span class="o">=</span> <span class="n">traffic_lights</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">distance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -368,21 +489,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_lanelet_id</span> <span class="o">=</span> <span class="n">l_id</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;&lt;Lanelet/lanelet_id&gt;: lanelet_id of lanelet is immutable&#39;</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">speed_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_speed_limit</span>
-
-    <span class="nd">@speed_limit</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">speed_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_speed_limit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">is_valid_velocity</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span>
-                                     <span class="kc">None</span><span class="p">),</span> <span class="s1">&#39;&lt;Lanelet/speed_limit&gt;: provided speed_limit is not valid! &#39;</span> \
-                                            <span class="s1">&#39;limit = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">limit</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_speed_limit</span> <span class="o">=</span> <span class="n">limit</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;&lt;Lanelet/speed_limit&gt; speed_limit of lanelet is immutable&#39;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">left_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -539,6 +645,117 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;&lt;Lanelet/adj_right_same_direction&gt;: adj_right_same_direction of lanelet is immutable&#39;</span><span class="p">)</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dynamic_obstacles_on_lanelet</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_obstacles_on_lanelet</span>
+
+    <span class="nd">@dynamic_obstacles_on_lanelet</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">dynamic_obstacles_on_lanelet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obstacle_ids</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obstacle_ids</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> \
+            <span class="s1">&#39;&lt;Lanelet/obstacles_on_lanelet&gt;: provided dictionary of ids is not a &#39;</span> \
+            <span class="s1">&#39;dictionary! type = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obstacle_ids</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_obstacles_on_lanelet</span> <span class="o">=</span> <span class="n">obstacle_ids</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">static_obstacles_on_lanelet</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static_obstacles_on_lanelet</span>
+
+    <span class="nd">@static_obstacles_on_lanelet</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">static_obstacles_on_lanelet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obstacle_ids</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obstacle_ids</span><span class="p">,</span> <span class="nb">set</span><span class="p">),</span> \
+            <span class="s1">&#39;&lt;Lanelet/obstacles_on_lanelet&gt;: provided list of ids is not a &#39;</span> \
+            <span class="s1">&#39;set! type = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obstacle_ids</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_static_obstacles_on_lanelet</span> <span class="o">=</span> <span class="n">obstacle_ids</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stop_line</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StopLine</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_line</span>
+
+    <span class="nd">@stop_line</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">stop_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_line</span><span class="p">:</span> <span class="n">StopLine</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_line</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stop_line</span><span class="p">,</span> <span class="n">StopLine</span><span class="p">),</span>\
+                <span class="s1">&#39;&lt;Lanelet/stop_line&gt;: &#39;&#39;Provided type is not valid! type = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">stop_line</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stop_line</span> <span class="o">=</span> <span class="n">stop_line</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s1">&#39;&lt;Lanelet/stop_line&gt;: stop_line of lanelet is immutable!&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lanelet_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">LaneletType</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lanelet_type</span>
+
+    <span class="nd">@lanelet_type</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">lanelet_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lanelet_type</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">LaneletType</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lanelet_type</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lanelet_type</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lanelet_type</span><span class="p">,</span> <span class="nb">set</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">LaneletType</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">lanelet_type</span><span class="p">),</span> \
+                <span class="s1">&#39;&lt;Lanelet/lanelet_type&gt;: &#39;&#39;Provided type is not valid! type = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">lanelet_type</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lanelet_type</span> <span class="o">=</span> <span class="n">lanelet_type</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s1">&#39;&lt;Lanelet/lanelet_type&gt;: type of lanelet is immutable!&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">user_one_way</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">RoadUser</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_one_way</span>
+
+    <span class="nd">@user_one_way</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">user_one_way</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_one_way</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">RoadUser</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_one_way</span> <span class="ow">is</span> <span class="kc">None</span> <span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">user_one_way</span><span class="p">,</span> <span class="nb">set</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">RoadUser</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">user_one_way</span><span class="p">),</span>\
+                <span class="s1">&#39;&lt;Lanelet/user_one_way&gt;: &#39;&#39;Provided type is not valid! type = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="nb">type</span><span class="p">(</span><span class="n">user_one_way</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_user_one_way</span> <span class="o">=</span> <span class="n">user_one_way</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s1">&#39;&lt;Lanelet/user_one_way&gt;: user_one_way of lanelet is immutable!&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">user_bidirectional</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">RoadUser</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_bidirectional</span>
+
+    <span class="nd">@user_bidirectional</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">user_bidirectional</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_bidirectional</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">RoadUser</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_bidirectional</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">user_bidirectional</span><span class="p">,</span> <span class="nb">set</span><span class="p">)</span> <span class="ow">and</span> \
+                   <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">RoadUser</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">user_bidirectional</span><span class="p">),</span> \
+                <span class="s1">&#39;&lt;Lanelet/user_bidirectional&gt;: &#39;&#39;Provided type is not valid! type = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="nb">type</span><span class="p">(</span><span class="n">user_bidirectional</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_user_bidirectional</span> <span class="o">=</span> <span class="n">user_bidirectional</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s1">&#39;&lt;Lanelet/user_bidirectional&gt;: user_bidirectional of lanelet is immutable!&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">traffic_signs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_signs</span>
+
+    <span class="nd">@traffic_signs</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">traffic_signs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_sign_ids</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_signs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">traffic_sign_ids</span><span class="p">,</span> <span class="nb">set</span><span class="p">),</span> \
+                <span class="s1">&#39;&lt;Lanelet/traffic_signs&gt;: provided list of ids is not a &#39;</span> \
+                <span class="s1">&#39;set! type = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">traffic_sign_ids</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_signs</span> <span class="o">=</span> <span class="n">traffic_sign_ids</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s1">&#39;&lt;Lanelet/traffic_signs&gt;: traffic_signs of lanelet is immutable!&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">traffic_lights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_lights</span>
+
+    <span class="nd">@traffic_lights</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">traffic_lights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_light_ids</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_lights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">traffic_light_ids</span><span class="p">,</span> <span class="nb">set</span><span class="p">),</span> \
+                <span class="s1">&#39;&lt;Lanelet/traffic_lights&gt;: provided list of ids is not a &#39;</span> \
+                <span class="s1">&#39;set! type = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">traffic_light_ids</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_lights</span> <span class="o">=</span> <span class="n">traffic_light_ids</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s1">&#39;&lt;Lanelet/traffic_lights&gt;: traffic_lights of lanelet is immutable!&#39;</span><span class="p">)</span>
+
 <div class="viewcode-block" id="Lanelet.translate_rotate"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.Lanelet.translate_rotate">[docs]</a>    <span class="k">def</span> <span class="nf">translate_rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">translation</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This method translates and rotates a lanelet</span>
@@ -572,7 +789,12 @@
         <span class="n">tmp</span> <span class="o">=</span> <span class="n">t_m</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">right_vertices</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span>
                                  <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_vertices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])))))</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_right_vertices</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_right_vertices</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+        <span class="c1"># recreate polygon in case it existed</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_polygon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_polygon</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_polygon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_to_polygon</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Lanelet.interpolate_position"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.Lanelet.interpolate_position">[docs]</a>    <span class="k">def</span> <span class="nf">interpolate_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -667,18 +889,55 @@
                         <span class="n">vertices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sh</span><span class="o">.</span><span class="n">center</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">vertices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sh</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span>
+                        <span class="n">vertices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="p">[</span><span class="n">o_shape</span><span class="o">.</span><span class="n">center</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># distinguish between type of shape (circle has no vertices)</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o_shape</span><span class="p">,</span> <span class="n">Circle</span><span class="p">):</span>
                     <span class="n">vertices</span> <span class="o">=</span> <span class="n">o_shape</span><span class="o">.</span><span class="n">center</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">vertices</span> <span class="o">=</span> <span class="n">o_shape</span><span class="o">.</span><span class="n">vertices</span>
+                    <span class="n">vertices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="p">[</span><span class="n">o_shape</span><span class="o">.</span><span class="n">center</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
             <span class="c1"># check if obstacle is in lane</span>
             <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contains_points</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vertices</span><span class="p">))):</span>
                 <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">res</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_merge_static_obstacles_on_lanelet</span><span class="p">(</span><span class="n">obstacles_on_lanelet1</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">obstacles_on_lanelet2</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Merges obstacle IDs of static obstacles on two lanelets</span>
+
+<span class="sd">        :param obstacles_on_lanelet1: Obstacle IDs on the first lanelet</span>
+<span class="sd">        :param obstacles_on_lanelet2: Obstacle IDs on the second lanelet</span>
+<span class="sd">        :return: Merged obstacle IDs of static obstacles on lanelets</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">obs_id</span> <span class="ow">in</span> <span class="n">obstacles_on_lanelet2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">obs_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">obstacles_on_lanelet1</span><span class="p">:</span>
+                <span class="n">obstacles_on_lanelet1</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obs_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obstacles_on_lanelet1</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_merge_dynamic_obstacles_on_lanelet</span><span class="p">(</span><span class="n">obstacles_on_lanelet1</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
+                                            <span class="n">obstacles_on_lanelet2</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Merges obstacle IDs of static obstacles on two lanelets</span>
+
+<span class="sd">        :param static_obstacles_on_lanelet1: Obstacle IDs on the first lanelet</span>
+<span class="sd">        :param lanelet2: Obstacle IDs on the second lanelet</span>
+<span class="sd">        :return: Merged obstacle IDs of static obstacles on lanelets</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obstacles_on_lanelet2</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">time_step</span><span class="p">,</span> <span class="n">ids</span> <span class="ow">in</span> <span class="n">obstacles_on_lanelet2</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">obs_id</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">obstacles_on_lanelet1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">time_step</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">obs_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">obstacles_on_lanelet1</span><span class="p">[</span><span class="n">time_step</span><span class="p">]:</span>
+                            <span class="n">obstacles_on_lanelet1</span><span class="p">[</span><span class="n">time_step</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obs_id</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">obstacles_on_lanelet1</span><span class="p">[</span><span class="n">time_step</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">obs_id</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">obstacles_on_lanelet1</span>
 
 <div class="viewcode-block" id="Lanelet.merge_lanelets"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.Lanelet.merge_lanelets">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">merge_lanelets</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">lanelet1</span><span class="p">:</span> <span class="s1">&#39;Lanelet&#39;</span><span class="p">,</span> <span class="n">lanelet2</span><span class="p">:</span> <span class="s1">&#39;Lanelet&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Lanelet&#39;</span><span class="p">:</span>
@@ -718,13 +977,20 @@
         <span class="n">lanelet_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">lanelet_id</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">suc</span><span class="o">.</span><span class="n">lanelet_id</span><span class="p">))</span>
         <span class="n">predecessor</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">predecessor</span>
         <span class="n">successor</span> <span class="o">=</span> <span class="n">suc</span><span class="o">.</span><span class="n">successor</span>
+        <span class="n">static_obstacles_on_lanelet</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_merge_static_obstacles_on_lanelet</span><span class="p">(</span><span class="n">lanelet1</span><span class="o">.</span><span class="n">static_obstacles_on_lanelet</span><span class="p">,</span>
+                                                                             <span class="n">lanelet2</span><span class="o">.</span><span class="n">static_obstacles_on_lanelet</span><span class="p">)</span>
+        <span class="n">dynamic_obstacles_on_lanelet</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_merge_dynamic_obstacles_on_lanelet</span><span class="p">(</span><span class="n">lanelet1</span><span class="o">.</span><span class="n">dynamic_obstacles_on_lanelet</span><span class="p">,</span>
+                                                                               <span class="n">lanelet2</span><span class="o">.</span><span class="n">dynamic_obstacles_on_lanelet</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">Lanelet</span><span class="p">(</span><span class="n">left_vertices</span><span class="p">,</span> <span class="n">center_vertices</span><span class="p">,</span> <span class="n">right_vertices</span><span class="p">,</span> <span class="n">lanelet_id</span><span class="p">,</span> <span class="n">predecessor</span><span class="o">=</span><span class="n">predecessor</span><span class="p">,</span>
-                       <span class="n">successor</span><span class="o">=</span><span class="n">successor</span><span class="p">)</span></div>
+        <span class="n">new_lanelet</span> <span class="o">=</span> <span class="n">Lanelet</span><span class="p">(</span><span class="n">left_vertices</span><span class="p">,</span> <span class="n">center_vertices</span><span class="p">,</span> <span class="n">right_vertices</span><span class="p">,</span> <span class="n">lanelet_id</span><span class="p">,</span> <span class="n">predecessor</span><span class="o">=</span><span class="n">predecessor</span><span class="p">,</span>
+                       <span class="n">successor</span><span class="o">=</span><span class="n">successor</span><span class="p">)</span>
+        <span class="n">new_lanelet</span><span class="o">.</span><span class="n">static_obstacles_on_lanelet</span> <span class="o">=</span> <span class="n">static_obstacles_on_lanelet</span>
+        <span class="n">new_lanelet</span><span class="o">.</span><span class="n">dynamic_obstacles_on_lanelet</span> <span class="o">=</span> <span class="n">dynamic_obstacles_on_lanelet</span>
+        <span class="k">return</span> <span class="n">new_lanelet</span></div>
 
 <div class="viewcode-block" id="Lanelet.all_lanelets_by_merging_successors_from_lanelet"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.Lanelet.all_lanelets_by_merging_successors_from_lanelet">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">all_lanelets_by_merging_successors_from_lanelet</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">lanelet</span><span class="p">:</span> <span class="s1">&#39;Lanelet&#39;</span><span class="p">,</span> <span class="n">network</span><span class="p">:</span> <span class="s1">&#39;LaneletNetwork&#39;</span><span class="p">,</span>
-                                                        <span class="n">max_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">150.0</span><span class="p">)</span> \
+                                                        <span class="n">max_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">150.0</span><span class="p">,</span> <span class="n">lanelet_type</span><span class="p">:</span> <span class="n">LaneletType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s1">&#39;Lanelet&#39;</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes all reachable lanelets starting from a provided lanelet and merges them to a single lanelet for each route.</span>
@@ -732,6 +998,7 @@
 <span class="sd">        :param lanelet: The lanelet to start from</span>
 <span class="sd">        :param network: The network which contains all lanelets</span>
 <span class="sd">        :param max_length: maxmimal length of merged lanelets can be provided</span>
+<span class="sd">        :param lanelet_type: allowed type of lanelets which should be merged</span>
 <span class="sd">        :return: List of merged lanelets, Lists of lanelet ids of which each merged lanelet consists</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lanelet</span><span class="p">,</span> <span class="n">Lanelet</span><span class="p">),</span> <span class="s1">&#39;&lt;Lanelet&gt;: provided lanelet is not a valid Lanelet!&#39;</span>
@@ -750,7 +1017,8 @@
             <span class="k">if</span> <span class="n">elements</span><span class="o">.</span><span class="n">successor</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">lanelet_id</span> <span class="ow">in</span> <span class="n">elements</span><span class="o">.</span><span class="n">successor</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">successors</span> <span class="ow">in</span> <span class="n">elements</span><span class="o">.</span><span class="n">successor</span><span class="p">:</span>
                     <span class="n">successor</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">find_lanelet_by_id</span><span class="p">(</span><span class="n">successors</span><span class="p">)</span>
-                    <span class="n">Net</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">successor</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">lanelet_type</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">lanelet_type</span> <span class="ow">in</span> <span class="n">successor</span><span class="o">.</span><span class="n">lanelet_type</span><span class="p">:</span>
+                        <span class="n">Net</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">successor</span><span class="p">)</span>
             <span class="c1"># Find leave Nodes</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">leafs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
@@ -794,6 +1062,44 @@
             
         <span class="k">return</span> <span class="n">merged_lanelets</span><span class="p">,</span> <span class="n">merge_jobs_final</span></div>
 
+<div class="viewcode-block" id="Lanelet.add_dynamic_obstacle_to_lanelet"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.Lanelet.add_dynamic_obstacle_to_lanelet">[docs]</a>    <span class="k">def</span> <span class="nf">add_dynamic_obstacle_to_lanelet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obstacle_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">time_step</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a dynamic obstacle ID to lanelet</span>
+
+<span class="sd">        :param obstacle_id: obstacle ID to add</span>
+<span class="sd">        :param time_step: time step at which the obstacle should be added</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamic_obstacles_on_lanelet</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">time_step</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dynamic_obstacles_on_lanelet</span><span class="p">[</span><span class="n">time_step</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dynamic_obstacles_on_lanelet</span><span class="p">[</span><span class="n">time_step</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obstacle_id</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Lanelet.add_static_obstacle_to_lanelet"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.Lanelet.add_static_obstacle_to_lanelet">[docs]</a>    <span class="k">def</span> <span class="nf">add_static_obstacle_to_lanelet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obstacle_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a static obstacle ID to lanelet</span>
+
+<span class="sd">        :param obstacle_id: obstacle ID to add</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">static_obstacles_on_lanelet</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obstacle_id</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Lanelet.add_traffic_sign_to_lanelet"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.Lanelet.add_traffic_sign_to_lanelet">[docs]</a>    <span class="k">def</span> <span class="nf">add_traffic_sign_to_lanelet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_sign_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a traffic sign ID to lanelet</span>
+
+<span class="sd">        :param traffic_sign_id: traffic sign ID to add</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">traffic_signs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">traffic_sign_id</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Lanelet.dynamic_obstacle_by_time_step"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.Lanelet.dynamic_obstacle_by_time_step">[docs]</a>    <span class="k">def</span> <span class="nf">dynamic_obstacle_by_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_step</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns all dynamic obstacles on lanelet at specific time step</span>
+
+<span class="sd">        :param time_step: time step of interest</span>
+<span class="sd">        :returns list of obstacle IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamic_obstacles_on_lanelet</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">time_step</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamic_obstacles_on_lanelet</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">time_step</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">set</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;Lanelet with id:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lanelet_id</span><span class="p">)</span></div>
@@ -805,7 +1111,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_lanelets</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lanelets</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="n">Lanelet</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_intersections</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_signs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_lights</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">lanelets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Lanelet</span><span class="p">]:</span>
@@ -815,12 +1124,33 @@
     <span class="k">def</span> <span class="nf">lanelets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lanelets</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;&lt;LaneletNetwork/lanelets&gt;: lanelets of network are immutable&#39;</span><span class="p">)</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">intersections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Intersection</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intersections</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">traffic_signs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TrafficSign</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_traffic_signs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">traffic_lights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TrafficLight</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_traffic_lights</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">map_inc_lanelets_to_intersections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="n">Intersection</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns dict that maps lanelet ids to the intersection of which it is an incoming lanelet.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">l_id</span><span class="p">:</span> <span class="n">intersection</span> <span class="k">for</span> <span class="n">intersection</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">intersections</span>
+                <span class="k">for</span> <span class="n">l_id</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">intersection</span><span class="o">.</span><span class="n">map_incoming_lanelets</span><span class="o">.</span><span class="n">keys</span><span class="p">())}</span>
+
 <div class="viewcode-block" id="LaneletNetwork.create_from_lanelet_list"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.create_from_lanelet_list">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_from_lanelet_list</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">lanelets</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_from_lanelet_list</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">lanelets</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">cleanup_ids</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a LaneletNetwork object from a given list of lanelets</span>
 
 <span class="sd">        :param lanelets: The list of lanelets</span>
+<span class="sd">        :param cleanup_ids: cleans up unused ids</span>
 <span class="sd">        :return: The LaneletNetwork for the given list of lanelets</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lanelets</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">Lanelet</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span>
@@ -835,6 +1165,8 @@
         <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lanelets</span><span class="p">:</span>
             <span class="n">lanelet_network</span><span class="o">.</span><span class="n">add_lanelet</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
 
+        <span class="k">if</span> <span class="n">cleanup_ids</span><span class="p">:</span>
+            <span class="n">lanelet_network</span><span class="o">.</span><span class="n">cleanup_lanelet_references</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">lanelet_network</span></div>
 
 <div class="viewcode-block" id="LaneletNetwork.create_from_lanelet_network"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.create_from_lanelet_network">[docs]</a>    <span class="nd">@classmethod</span>
@@ -850,6 +1182,30 @@
             <span class="n">new_lanelet_network</span><span class="o">.</span><span class="n">add_lanelet</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">new_lanelet_network</span></div>
 
+<div class="viewcode-block" id="LaneletNetwork.cleanup_lanelet_references"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.cleanup_lanelet_references">[docs]</a>    <span class="k">def</span> <span class="nf">cleanup_lanelet_references</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes ids which do not exist in the lanelet network. Useful when cutting out lanelet networks.</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">exisiting_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lanelets</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lanelets</span><span class="p">:</span>
+            <span class="n">l</span><span class="o">.</span><span class="n">_predecessor</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">_predecessor</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">exisiting_ids</span><span class="p">))</span>
+            <span class="n">l</span><span class="o">.</span><span class="n">_successor</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">_successor</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">exisiting_ids</span><span class="p">))</span>
+            <span class="n">l</span><span class="o">.</span><span class="n">_adj_left</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">l</span><span class="o">.</span><span class="n">_adj_left</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">l</span><span class="o">.</span><span class="n">_adj_left</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exisiting_ids</span> <span class="k">else</span> <span class="n">l</span><span class="o">.</span><span class="n">_adj_left</span>
+            <span class="n">prev</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">_adj_left_same_direction</span><span class="p">)</span>
+            <span class="n">l</span><span class="o">.</span><span class="n">_adj_left_same_direction</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">l</span><span class="o">.</span><span class="n">_adj_left_same_direction</span> <span class="ow">is</span> <span class="kc">None</span> \
+                                                 <span class="ow">or</span> <span class="n">l</span><span class="o">.</span><span class="n">adj_left</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exisiting_ids</span> \
+                <span class="k">else</span> <span class="n">l</span><span class="o">.</span><span class="n">_adj_left_same_direction</span>
+            <span class="k">if</span> <span class="n">prev</span> <span class="o">!=</span> <span class="n">l</span><span class="o">.</span><span class="n">_adj_left_same_direction</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">prev</span><span class="p">,</span><span class="n">l</span><span class="o">.</span><span class="n">_adj_left_same_direction</span><span class="p">)</span>
+            <span class="n">l</span><span class="o">.</span><span class="n">_adj_right</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">l</span><span class="o">.</span><span class="n">_adj_right</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">l</span><span class="o">.</span><span class="n">_adj_right</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exisiting_ids</span> <span class="k">else</span> <span class="n">l</span><span class="o">.</span><span class="n">_adj_right</span>
+            <span class="n">prev</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">_adj_right_same_direction</span><span class="p">)</span>
+            <span class="n">l</span><span class="o">.</span><span class="n">_adj_right_same_direction</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">l</span><span class="o">.</span><span class="n">_adj_right_same_direction</span> <span class="ow">is</span> <span class="kc">None</span> \
+                                                  <span class="ow">or</span> <span class="n">l</span><span class="o">.</span><span class="n">adj_right</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exisiting_ids</span> \
+                <span class="k">else</span> <span class="n">l</span><span class="o">.</span><span class="n">_adj_right_same_direction</span>
+            <span class="k">if</span> <span class="n">prev</span> <span class="o">!=</span> <span class="n">l</span><span class="o">.</span><span class="n">_adj_right_same_direction</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">prev</span><span class="p">,</span><span class="n">l</span><span class="o">.</span><span class="n">_adj_right_same_direction</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="LaneletNetwork.find_lanelet_by_id"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.find_lanelet_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">find_lanelet_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lanelet_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Lanelet</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Finds a lanelet for a given lanelet_id</span>
@@ -862,6 +1218,32 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lanelets</span><span class="p">[</span><span class="n">lanelet_id</span><span class="p">]</span> <span class="k">if</span> <span class="n">lanelet_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lanelets</span> <span class="k">else</span> <span class="kc">None</span></div>
 
+<div class="viewcode-block" id="LaneletNetwork.find_traffic_sign_by_id"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.find_traffic_sign_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">find_traffic_sign_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_sign_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrafficSign</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds a traffic sign for a given traffic_sign_id</span>
+
+<span class="sd">        :param traffic_sign_id: The id of the traffic sign to find</span>
+<span class="sd">        :return: The traffic sign object if the id exists and None otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">is_natural_number</span><span class="p">(</span>
+            <span class="n">traffic_sign_id</span><span class="p">),</span> <span class="s1">&#39;&lt;LaneletNetwork/find_traffic_sign_by_id&gt;: provided id is not valid! &#39;</span> \
+                              <span class="s1">&#39;id = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">traffic_sign_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_signs</span><span class="p">[</span><span class="n">traffic_sign_id</span><span class="p">]</span> <span class="k">if</span> <span class="n">traffic_sign_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_signs</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="LaneletNetwork.find_traffic_light_by_id"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.find_traffic_light_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">find_traffic_light_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_light_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrafficLight</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds a traffic light for a given traffic_light_id</span>
+
+<span class="sd">        :param traffic_light_id: The id of the traffic light to find</span>
+<span class="sd">        :return: The traffic light object if the id exists and None otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">is_natural_number</span><span class="p">(</span>
+            <span class="n">traffic_light_id</span><span class="p">),</span> <span class="s1">&#39;&lt;LaneletNetwork/find_traffic_light_by_id&gt;: provided id is not valid! &#39;</span> \
+                              <span class="s1">&#39;id = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">traffic_light_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_lights</span><span class="p">[</span><span class="n">traffic_light_id</span><span class="p">]</span> <span class="k">if</span> <span class="n">traffic_light_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_lights</span> <span class="k">else</span> <span class="kc">None</span></div>
+
 <div class="viewcode-block" id="LaneletNetwork.add_lanelet"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.add_lanelet">[docs]</a>    <span class="k">def</span> <span class="nf">add_lanelet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lanelet</span><span class="p">:</span> <span class="n">Lanelet</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds a lanelet to the LaneletNetwork</span>
@@ -870,12 +1252,8 @@
 <span class="sd">        :return: True if the lanelet has successfully been added to the network, false otherwise</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lanelet</span><span class="p">,</span>
-                          <span class="n">Lanelet</span><span class="p">),</span> <span class="s1">&#39;&lt;LaneletNetwork/add_lanelet&gt;: provided lanelet is not of type lanelet! type = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="nb">type</span><span class="p">(</span><span class="n">lanelet</span><span class="p">))</span>
-
-        <span class="c1"># flag if added to lanelet network</span>
-        <span class="n">flag</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lanelet</span><span class="p">,</span> <span class="n">Lanelet</span><span class="p">),</span> <span class="s1">&#39;&lt;LaneletNetwork/add_lanelet&gt;: provided lanelet is not of &#39;</span> \
+                                             <span class="s1">&#39;type lanelet! type = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">lanelet</span><span class="p">))</span>
 
         <span class="c1"># check if lanelet already exists in network and warn user</span>
         <span class="k">if</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">lanelet_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lanelets</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -883,9 +1261,79 @@
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_lanelets</span><span class="p">[</span><span class="n">lanelet</span><span class="o">.</span><span class="n">lanelet_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">lanelet</span>
-            <span class="n">flag</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
 
-        <span class="k">return</span> <span class="n">flag</span></div>
+<div class="viewcode-block" id="LaneletNetwork.add_traffic_sign"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.add_traffic_sign">[docs]</a>    <span class="k">def</span> <span class="nf">add_traffic_sign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_sign</span><span class="p">:</span> <span class="n">TrafficSign</span><span class="p">,</span> <span class="n">lanelet_ids</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a traffic sign to the LaneletNetwork</span>
+
+<span class="sd">        :param traffic_sign: The traffic sign to add</span>
+<span class="sd">        :param lanelet_ids: Lanelets the traffic sign should be referenced from</span>
+<span class="sd">        :return: True if the traffic sign has successfully been added to the network, false otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">traffic_sign</span><span class="p">,</span> <span class="n">TrafficSign</span><span class="p">),</span> <span class="s1">&#39;&lt;LaneletNetwork/add_traffic_sign&gt;: provided traffic sign is &#39;</span> \
+                                                      <span class="s1">&#39;not of type traffic_sign! type = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">traffic_sign</span><span class="p">))</span>
+
+        <span class="c1"># check if traffic already exists in network and warn user</span>
+        <span class="k">if</span> <span class="n">traffic_sign</span><span class="o">.</span><span class="n">traffic_sign_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_signs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Traffic sign already exists in network! No changes are made.&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_signs</span><span class="p">[</span><span class="n">traffic_sign</span><span class="o">.</span><span class="n">traffic_sign_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">traffic_sign</span>
+            <span class="k">for</span> <span class="n">lanelet_id</span> <span class="ow">in</span> <span class="n">lanelet_ids</span><span class="p">:</span>
+                <span class="n">lanelet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_lanelet_by_id</span><span class="p">(</span><span class="n">lanelet_id</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">lanelet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">lanelet</span><span class="o">.</span><span class="n">add_traffic_sign_to_lanelet</span><span class="p">(</span><span class="n">traffic_sign</span><span class="o">.</span><span class="n">traffic_sign_id</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Traffic sign cannot be referenced to lanelet because the lanelet does not exist.&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="LaneletNetwork.add_traffic_light"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.add_traffic_light">[docs]</a>    <span class="k">def</span> <span class="nf">add_traffic_light</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_light</span><span class="p">:</span> <span class="n">TrafficLight</span><span class="p">,</span> <span class="n">lanelet_ids</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a traffic light to the LaneletNetwork</span>
+
+<span class="sd">        :param traffic_light: The traffic light to add</span>
+<span class="sd">        :param lanelet_ids: Lanelets the traffic sign should be referenced from</span>
+<span class="sd">        :return: True if the traffic light has successfully been added to the network, false otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">traffic_light</span><span class="p">,</span> <span class="n">TrafficLight</span><span class="p">),</span> <span class="s1">&#39;&lt;LaneletNetwork/add_traffic_light&gt;: provided traffic light &#39;</span> \
+                                                        <span class="s1">&#39;is not of type traffic_light! &#39;</span> \
+                                                        <span class="s1">&#39;type = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">traffic_light</span><span class="p">))</span>
+
+        <span class="c1"># check if traffic already exists in network and warn user</span>
+        <span class="k">if</span> <span class="n">traffic_light</span><span class="o">.</span><span class="n">traffic_light_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_lights</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Traffic light already exists in network! No changes are made.&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_lights</span><span class="p">[</span><span class="n">traffic_light</span><span class="o">.</span><span class="n">traffic_light_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">traffic_light</span>
+            <span class="k">for</span> <span class="n">lanelet_id</span> <span class="ow">in</span> <span class="n">lanelet_ids</span><span class="p">:</span>
+                <span class="n">lanelet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_lanelet_by_id</span><span class="p">(</span><span class="n">lanelet_id</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">lanelet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">lanelet</span><span class="o">.</span><span class="n">add_traffic_sign_to_lanelet</span><span class="p">(</span><span class="n">traffic_light</span><span class="o">.</span><span class="n">traffic_light_id</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Traffic light cannot be referenced to lanelet because the lanelet does not exist.&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="LaneletNetwork.add_intersection"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.add_intersection">[docs]</a>    <span class="k">def</span> <span class="nf">add_intersection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intersection</span><span class="p">:</span> <span class="n">Intersection</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a intersection to the LaneletNetwork</span>
+
+<span class="sd">        :param intersection: The intersection to add</span>
+<span class="sd">        :return: True if the traffic light has successfully been added to the network, false otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">intersection</span><span class="p">,</span> <span class="n">Intersection</span><span class="p">),</span> <span class="s1">&#39;&lt;LaneletNetwork/add_intersection&gt;: provided intersection is &#39;</span> \
+                                                       <span class="s1">&#39;not of type Intersection! type = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">intersection</span><span class="p">))</span>
+
+        <span class="c1"># check if traffic already exists in network and warn user</span>
+        <span class="k">if</span> <span class="n">intersection</span><span class="o">.</span><span class="n">intersection_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intersections</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Intersection already exists in network! No changes are made.&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_intersections</span><span class="p">[</span><span class="n">intersection</span><span class="o">.</span><span class="n">intersection_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">intersection</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="LaneletNetwork.add_lanelets_from_network"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.add_lanelets_from_network">[docs]</a>    <span class="k">def</span> <span class="nf">add_lanelets_from_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lanelet_network</span><span class="p">:</span> <span class="s1">&#39;LaneletNetwork&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -894,7 +1342,6 @@
 <span class="sd">        :param lanelet_network: The lanelet network</span>
 <span class="sd">        :return: True if all lanelets have been added to the network, false otherwise</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">flag</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="c1"># add lanelets to the network</span>
@@ -947,6 +1394,30 @@
                 <span class="k">if</span> <span class="n">poly</span><span class="o">.</span><span class="n">contains_point</span><span class="p">(</span><span class="n">point</span><span class="p">):</span>
                     <span class="n">mapped</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lanelet_id</span><span class="p">)</span>
             <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mapped</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="LaneletNetwork.find_lanelet_by_shape"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.find_lanelet_by_shape">[docs]</a>    <span class="k">def</span> <span class="nf">find_lanelet_by_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="n">Shape</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds the lanelet id of a given shape</span>
+
+<span class="sd">        :param shape: The shape to check</span>
+<span class="sd">        :return: A list of lanelet ids. If the position could not be matched to a lanelet, an empty list is returned</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="p">(</span><span class="n">Circle</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">Rectangle</span><span class="p">)),</span> <span class="s1">&#39;&lt;Lanelet/find_lanelet_by_shape&gt;: &#39;</span> \
+                                                                <span class="s1">&#39;provided shape is not a shape! &#39;</span> \
+                                                                <span class="s1">&#39;type = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">shape</span><span class="p">))</span>
+
+        <span class="c1"># output list</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># look at each lanelet</span>
+        <span class="n">polygons</span> <span class="o">=</span> <span class="p">[(</span><span class="n">l</span><span class="o">.</span><span class="n">lanelet_id</span><span class="p">,</span> <span class="n">l</span><span class="o">.</span><span class="n">convert_to_polygon</span><span class="p">())</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lanelets</span><span class="p">]</span>
+
+
+        <span class="k">for</span> <span class="n">lanelet_id</span><span class="p">,</span> <span class="n">poly</span> <span class="ow">in</span> <span class="n">polygons</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">poly</span><span class="o">.</span><span class="n">shapely_object</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">shapely_object</span><span class="p">):</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lanelet_id</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">res</span></div>
 
@@ -1054,10 +1525,8 @@
         <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">distance_list</span><span class="p">)</span>
         <span class="n">lanelets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">lanes</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
-
         <span class="c1"># return sorted list</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">lanelets</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">]</span></div>
-
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">return_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>

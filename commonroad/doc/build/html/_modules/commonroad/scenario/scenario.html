@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -229,6 +229,7 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">enum</span>
 
 <span class="kn">from</span> <span class="nn">commonroad.common.util</span> <span class="k">import</span> <span class="n">Interval</span>
 <span class="kn">from</span> <span class="nn">commonroad.common.validity</span> <span class="k">import</span> <span class="n">is_real_number</span><span class="p">,</span> <span class="n">is_real_number_vector</span><span class="p">,</span> <span class="n">is_valid_orientation</span>
@@ -237,15 +238,118 @@
 <span class="kn">from</span> <span class="nn">commonroad.scenario.obstacle</span> <span class="k">import</span> <span class="n">ObstacleRole</span>
 <span class="kn">from</span> <span class="nn">commonroad.scenario.obstacle</span> <span class="k">import</span> <span class="n">ObstacleType</span>
 <span class="kn">from</span> <span class="nn">commonroad.scenario.obstacle</span> <span class="k">import</span> <span class="n">StaticObstacle</span><span class="p">,</span> <span class="n">DynamicObstacle</span><span class="p">,</span> <span class="n">Obstacle</span>
-<span class="kn">from</span> <span class="nn">commonroad.prediction.prediction</span> <span class="k">import</span> <span class="n">Occupancy</span>
+<span class="kn">from</span> <span class="nn">commonroad.prediction.prediction</span> <span class="k">import</span> <span class="n">Occupancy</span><span class="p">,</span> <span class="n">SetBasedPrediction</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Stefanie Manzinger, Moritz Klischat&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;TUM Cyber-Physical Systems Group&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Priority Program SPP 1835 Cooperative Interacting Automobiles&quot;</span><span class="p">]</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2019.1&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2020.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Stefanie Manzinger&quot;</span>
-<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad@in.tum.de&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad-i06@in.tum.de&quot;</span>
 <span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Released&quot;</span>
+
+
+<span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">Tag</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Enum containing all possible tags of a CommonRoad scenario.&quot;&quot;&quot;</span>
+    <span class="n">INTERSTATE</span> <span class="o">=</span> <span class="s2">&quot;interstate&quot;</span>
+    <span class="n">URBAN</span> <span class="o">=</span> <span class="s2">&quot;urban&quot;</span>
+    <span class="n">HIGHWAY</span> <span class="o">=</span> <span class="s2">&quot;highway&quot;</span>
+    <span class="n">COMFORT</span> <span class="o">=</span> <span class="s2">&quot;comfort&quot;</span>
+    <span class="n">CRITICAL</span> <span class="o">=</span> <span class="s2">&quot;critical&quot;</span>
+    <span class="n">EVASIVE</span> <span class="o">=</span> <span class="s2">&quot;evasive&quot;</span>
+    <span class="n">CUT_IN</span> <span class="o">=</span> <span class="s2">&quot;cut_in&quot;</span>
+    <span class="n">ILLEGAL_CUTIN</span> <span class="o">=</span> <span class="s2">&quot;illegal_cutin&quot;</span>
+    <span class="n">INTERSECTION</span> <span class="o">=</span> <span class="s2">&quot;intersection&quot;</span>
+    <span class="n">LANE_CHANGE</span> <span class="o">=</span> <span class="s2">&quot;lane_change&quot;</span>
+    <span class="n">LANE_FOLLOWING</span> <span class="o">=</span> <span class="s2">&quot;lane_following&quot;</span>
+    <span class="n">MERGING_LANES</span> <span class="o">=</span> <span class="s2">&quot;merging_lanes&quot;</span>
+    <span class="n">MULTI_LANE</span> <span class="o">=</span> <span class="s2">&quot;multi_lane&quot;</span>
+    <span class="n">NO_ONCOMING_TRAFFIC</span> <span class="o">=</span> <span class="s2">&quot;no_oncoming_traffic&quot;</span>
+    <span class="n">PARALLEL_LANES</span> <span class="o">=</span> <span class="s2">&quot;parallel_lanes&quot;</span>
+    <span class="n">RACE_TRACK</span> <span class="o">=</span> <span class="s2">&quot;race_track&quot;</span>
+    <span class="n">ROUNDABOUT</span> <span class="o">=</span> <span class="s2">&quot;roundabout&quot;</span>
+    <span class="n">RURAL</span> <span class="o">=</span> <span class="s2">&quot;rural&quot;</span>
+    <span class="n">SIMULATED</span> <span class="o">=</span> <span class="s2">&quot;simulated&quot;</span>
+    <span class="n">SINGLE_LANE</span> <span class="o">=</span> <span class="s2">&quot;single_lane&quot;</span>
+    <span class="n">SLIP_ROAD</span> <span class="o">=</span> <span class="s2">&quot;slip_road&quot;</span>
+    <span class="n">SPEED_LIMIT</span> <span class="o">=</span> <span class="s2">&quot;speed_limit&quot;</span>
+    <span class="n">TRAFFIC_JAM</span> <span class="o">=</span> <span class="s2">&quot;traffic_jam&quot;</span>
+    <span class="n">TURN_LEFT</span> <span class="o">=</span> <span class="s2">&quot;turn_left&quot;</span>
+    <span class="n">TURN_RIGHT</span> <span class="o">=</span> <span class="s2">&quot;turn_right&quot;</span>
+    <span class="n">TWO_LANE</span> <span class="o">=</span> <span class="s2">&quot;two_lane&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">GeoTransformation</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo_reference</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">x_translation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">y_translation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">z_rotation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">scaling</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor of a location object</span>
+
+<span class="sd">        :param geo_reference: proj-string describing transformation from geodetic to projected Cartesian coordinates</span>
+<span class="sd">        :param x_translation: translation value for x-coordinates</span>
+<span class="sd">        :param y_translation: translation value for y-coordinates</span>
+<span class="sd">        :param z_rotation: rotation value around origin</span>
+<span class="sd">        :param scaling: multiplication value of x- and y-coordinates</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geo_reference</span> <span class="o">=</span> <span class="n">geo_reference</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x_translation</span> <span class="o">=</span> <span class="n">x_translation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_translation</span> <span class="o">=</span> <span class="n">y_translation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_z_rotation</span> <span class="o">=</span> <span class="n">z_rotation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scaling</span> <span class="o">=</span> <span class="n">scaling</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geo_reference</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geo_reference</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">x_translation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_translation</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">y_translation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_translation</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">z_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_z_rotation</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">scaling</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scaling</span>
+
+
+<span class="k">class</span> <span class="nc">Location</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo_name_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">999</span><span class="p">,</span> <span class="n">gps_latitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">gps_longitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">geo_transformation</span><span class="p">:</span> <span class="n">GeoTransformation</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor of a location object</span>
+
+<span class="sd">        :param geo_name_id: GeoName ID</span>
+<span class="sd">        :param gps_latitude: GPS latitude coordinate</span>
+<span class="sd">        :param gps_longitude: GPS longitude coordinate</span>
+<span class="sd">        :param geo_transformation: description of geometric transformation during scenario generation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geo_name_id</span> <span class="o">=</span> <span class="n">geo_name_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gps_latitude</span> <span class="o">=</span> <span class="n">gps_latitude</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gps_longitude</span> <span class="o">=</span> <span class="n">gps_longitude</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geo_transformation</span> <span class="o">=</span> <span class="n">geo_transformation</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geo_name_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geo_name_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">gps_latitude</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gps_latitude</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">gps_longitude</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gps_longitude</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geo_transformation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeoTransformation</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geo_transformation</span>
 
 
 <div class="viewcode-block" id="Scenario"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.scenario.Scenario">[docs]</a><span class="k">class</span> <span class="nc">Scenario</span><span class="p">:</span>
@@ -253,12 +357,18 @@
 <span class="sd">     a road network consisting of lanelets (see :class:`commonroad.scenario.lanelet.LaneletNetwork`) and a set of</span>
 <span class="sd">     obstacles which can be either static or dynamic (see :class:`commonroad.scenario.obstacle.Obstacle`).&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">benchmark_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                 <span class="n">author</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">affiliation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+                 <span class="n">author</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Tag</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">affiliation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">location</span><span class="p">:</span> <span class="n">Location</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor of a Scenario object</span>
 
 <span class="sd">        :param dt: global time step size of the time-discrete scenario</span>
 <span class="sd">        :param benchmark_id: unique CommonRoad benchmark ID of the scenario</span>
+<span class="sd">        :param author: authors of the CommonRoad scenario</span>
+<span class="sd">        :param tags: tags describing and classifying the scenario</span>
+<span class="sd">        :param affiliation: institution of the authors</span>
+<span class="sd">        :param source: source of the scenario, e.g. generated by a map converter and a traffic simulator</span>
+<span class="sd">        :param location: location object of the scenario</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">dt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">benchmark_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">benchmark_id</span>
@@ -274,6 +384,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="n">tags</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">affiliation</span> <span class="o">=</span> <span class="n">affiliation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">location</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -338,9 +449,12 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">,</span> <span class="n">StaticObstacle</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_mark_object_id_as_used</span><span class="p">(</span><span class="n">scenario_object</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_static_obstacles</span><span class="p">[</span><span class="n">scenario_object</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">scenario_object</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_static_obstacle_to_lanelets</span><span class="p">(</span><span class="n">scenario_object</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">,</span>
+                                                  <span class="n">scenario_object</span><span class="o">.</span><span class="n">initial_shape_lanelet_ids</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">,</span> <span class="n">DynamicObstacle</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_mark_object_id_as_used</span><span class="p">(</span><span class="n">scenario_object</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_obstacles</span><span class="p">[</span><span class="n">scenario_object</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">scenario_object</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_dynamic_obstacle_to_lanelets</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">,</span> <span class="n">LaneletNetwork</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">lanelet</span> <span class="ow">in</span> <span class="n">scenario_object</span><span class="o">.</span><span class="n">lanelets</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_mark_object_id_as_used</span><span class="p">(</span><span class="n">lanelet</span><span class="o">.</span><span class="n">lanelet_id</span><span class="p">)</span>
@@ -353,23 +467,91 @@
                              <span class="s1">&#39;Expected types: </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">, and </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span>
                              <span class="o">%</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">Obstacle</span><span class="p">,</span> <span class="n">Lanelet</span><span class="p">,</span> <span class="n">LaneletNetwork</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">)))</span></div>
 
+    <span class="k">def</span> <span class="nf">_add_static_obstacle_to_lanelets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obstacle_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">lanelet_ids</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot; Adds a static obstacle reference to all lanelets the obstacle is on.</span>
+
+<span class="sd">        :param obstacle_id: obstacle ID to be removed</span>
+<span class="sd">        :param lanelet_ids: list of lanelet IDs on which the obstacle is on</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">lanelet_ids</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lanelet_network</span><span class="o">.</span><span class="n">lanelets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">l_id</span> <span class="ow">in</span> <span class="n">lanelet_ids</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lanelet_network</span><span class="o">.</span><span class="n">find_lanelet_by_id</span><span class="p">(</span><span class="n">l_id</span><span class="p">)</span><span class="o">.</span><span class="n">static_obstacles_on_lanelet</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obstacle_id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_remove_static_obstacle_from_lanelets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obstacle_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">lanelet_ids</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot; Adds a static obstacle reference to all lanelets the obstacle is on.</span>
+
+<span class="sd">        :param obstacle_id: obstacle ID to be added</span>
+<span class="sd">        :param lanelet_ids: list of lanelet IDs on which the obstacle is on</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">lanelet_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">l_id</span> <span class="ow">in</span> <span class="n">lanelet_ids</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lanelet_network</span><span class="o">.</span><span class="n">find_lanelet_by_id</span><span class="p">(</span><span class="n">l_id</span><span class="p">)</span><span class="o">.</span><span class="n">static_obstacles_on_lanelet</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">obstacle_id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_remove_dynamic_obstacle_from_lanelets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obstacle</span><span class="p">:</span> <span class="n">DynamicObstacle</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Removes a dynamic obstacle reference from all lanelets the obstacle is on.</span>
+
+<span class="sd">        :param obstacle: obstacle to be removed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obstacle</span><span class="o">.</span><span class="n">prediction</span><span class="p">,</span> <span class="n">SetBasedPrediction</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lanelet_network</span><span class="o">.</span><span class="n">lanelets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="c1"># delete obstacle references from initial time step</span>
+        <span class="k">if</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">initial_shape_lanelet_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">lanelet_id</span> <span class="ow">in</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">initial_shape_lanelet_ids</span><span class="p">:</span>
+                <span class="n">lanelet_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lanelet_network</span><span class="o">.</span><span class="n">find_lanelet_by_id</span><span class="p">(</span><span class="n">lanelet_id</span><span class="p">)</span><span class="o">.</span><span class="n">dynamic_obstacles_on_lanelet</span>
+                <span class="n">lanelet_dict</span><span class="p">[</span><span class="n">obstacle</span><span class="o">.</span><span class="n">initial_state</span><span class="o">.</span><span class="n">time_step</span><span class="p">]</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">)</span>
+
+        <span class="c1"># delete obstacle references from prediction</span>
+        <span class="k">if</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">prediction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">prediction</span><span class="o">.</span><span class="n">shape_lanelet_assignment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">time_step</span><span class="p">,</span> <span class="n">ids</span> <span class="ow">in</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">prediction</span><span class="o">.</span><span class="n">shape_lanelet_assignment</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">lanelet_id</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">:</span>
+                    <span class="n">lanelet_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lanelet_network</span><span class="o">.</span><span class="n">find_lanelet_by_id</span><span class="p">(</span><span class="n">lanelet_id</span><span class="p">)</span><span class="o">.</span><span class="n">dynamic_obstacles_on_lanelet</span>
+                    <span class="n">lanelet_dict</span><span class="p">[</span><span class="n">time_step</span><span class="p">]</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_add_dynamic_obstacle_to_lanelets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obstacle</span><span class="p">:</span> <span class="n">DynamicObstacle</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Adds a dynamic obstacle reference to all lanelets the obstacle is on.</span>
+
+<span class="sd">        :param obstacle: obstacle to be added</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obstacle</span><span class="o">.</span><span class="n">prediction</span><span class="p">,</span> <span class="n">SetBasedPrediction</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lanelet_network</span><span class="o">.</span><span class="n">lanelets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="c1"># add obstacle references to initial time step</span>
+        <span class="k">if</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">initial_shape_lanelet_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">lanelet_id</span> <span class="ow">in</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">initial_shape_lanelet_ids</span><span class="p">:</span>
+                <span class="n">lanelet_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lanelet_network</span><span class="o">.</span><span class="n">find_lanelet_by_id</span><span class="p">(</span><span class="n">lanelet_id</span><span class="p">)</span><span class="o">.</span><span class="n">dynamic_obstacles_on_lanelet</span>
+                <span class="k">if</span> <span class="n">lanelet_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">obstacle</span><span class="o">.</span><span class="n">initial_state</span><span class="o">.</span><span class="n">time_step</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">lanelet_dict</span><span class="p">[</span><span class="n">obstacle</span><span class="o">.</span><span class="n">initial_state</span><span class="o">.</span><span class="n">time_step</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+                <span class="n">lanelet_dict</span><span class="p">[</span><span class="n">obstacle</span><span class="o">.</span><span class="n">initial_state</span><span class="o">.</span><span class="n">time_step</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">)</span>
+
+        <span class="c1"># add obstacle references to prediction</span>
+        <span class="k">if</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">prediction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">prediction</span><span class="o">.</span><span class="n">shape_lanelet_assignment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">time_step</span><span class="p">,</span> <span class="n">ids</span> <span class="ow">in</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">prediction</span><span class="o">.</span><span class="n">shape_lanelet_assignment</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">lanelet_id</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">:</span>
+                    <span class="n">lanelet_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lanelet_network</span><span class="o">.</span><span class="n">find_lanelet_by_id</span><span class="p">(</span><span class="n">lanelet_id</span><span class="p">)</span><span class="o">.</span><span class="n">dynamic_obstacles_on_lanelet</span>
+                    <span class="k">if</span> <span class="n">lanelet_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">time_step</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">lanelet_dict</span><span class="p">[</span><span class="n">time_step</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+                    <span class="n">lanelet_dict</span><span class="p">[</span><span class="n">time_step</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">)</span>
+
 <div class="viewcode-block" id="Scenario.remove_obstacle"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.scenario.Scenario.remove_obstacle">[docs]</a>    <span class="k">def</span> <span class="nf">remove_obstacle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obstacle</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Obstacle</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Obstacle</span><span class="p">]]):</span>
         <span class="sd">&quot;&quot;&quot; Removes a static, dynamic or a list of obstacles from the scenario. If the obstacle ID is not assigned,</span>
 <span class="sd">        a warning message is given.</span>
 
 <span class="sd">        :param obstacle: obstacle to be removed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obstacle</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span><span class="n">Obstacle</span><span class="p">)),</span> <span class="s1">&#39;&lt;Scenario/remove_obstacle&gt; argument &quot;obstacle&quot; of wrong type. &#39;</span> \
-                                               <span class="s1">&#39;Expected type: </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">Obstacle</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">obstacle</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obstacle</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">Obstacle</span><span class="p">)),</span> <span class="s1">&#39;&lt;Scenario/remove_obstacle&gt; argument &quot;obstacle&quot; of wrong type. &#39;</span>\
+                                                       <span class="s1">&#39;Expected type: </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">Obstacle</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">obstacle</span><span class="p">))</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obstacle</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">obstacle</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">remove_obstacle</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static_obstacles</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_remove_static_obstacle_from_lanelets</span><span class="p">(</span><span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">,</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">initial_shape_lanelet_ids</span><span class="p">)</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static_obstacles</span><span class="p">[</span><span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_id_set</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_obstacles</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_remove_dynamic_obstacle_from_lanelets</span><span class="p">(</span><span class="n">obstacle</span><span class="p">)</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_obstacles</span><span class="p">[</span><span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_id_set</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -383,17 +565,23 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_set</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span></div>
 
-<div class="viewcode-block" id="Scenario.occupancies_at_time_step"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.scenario.Scenario.occupancies_at_time_step">[docs]</a>    <span class="k">def</span> <span class="nf">occupancies_at_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_step</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Occupancy</span><span class="p">]:</span>
+<div class="viewcode-block" id="Scenario.occupancies_at_time_step"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.scenario.Scenario.occupancies_at_time_step">[docs]</a>    <span class="k">def</span> <span class="nf">occupancies_at_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_step</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">obstacle_role</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ObstacleRole</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Occupancy</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot; Returns the occupancies of all static and dynamic obstacles at a specific time step.</span>
 
 <span class="sd">            :param time_step: occupancies of obstacles at this time step</span>
+<span class="sd">            :param obstacle_role: obstacle role as defined in CommonRoad, e.g., static or dynamic</span>
 <span class="sd">            :return: list of occupancies of the obstacles</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time_step</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s1">&#39;&lt;Scenario/occupancies_at_time&gt; argument &quot;time_step&quot; of wrong type. &#39;</span> \
                                            <span class="s1">&#39;Expected type: </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">time_step</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obstacle_role</span><span class="p">,</span> <span class="p">(</span><span class="n">ObstacleRole</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))),</span> \
+            <span class="s1">&#39;&lt;Scenario/obstacles_by_role_and_type&gt; argument &quot;obstacle_role&quot; of wrong type. Expected types: &#39;</span> \
+            <span class="s1">&#39; </span><span class="si">%s</span><span class="s1"> or </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ObstacleRole</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">obstacle_role</span><span class="p">))</span>
         <span class="n">occupancies</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">obstacle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">occupancy_at_time</span><span class="p">(</span><span class="n">time_step</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">((</span><span class="n">obstacle_role</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">obstacle_role</span> <span class="o">==</span> <span class="n">obstacle_role</span><span class="p">)</span> <span class="ow">and</span>
+                    <span class="n">obstacle</span><span class="o">.</span><span class="n">occupancy_at_time</span><span class="p">(</span><span class="n">time_step</span><span class="p">)):</span>
                 <span class="n">occupancies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obstacle</span><span class="o">.</span><span class="n">occupancy_at_time</span><span class="p">(</span><span class="n">time_step</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">occupancies</span></div>
 

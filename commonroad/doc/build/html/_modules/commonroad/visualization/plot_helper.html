@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -236,9 +236,9 @@
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Moritz Klischat&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;TUM Cyber-Physical Systems Group&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2019.1&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2020.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Moritz Klischat&quot;</span>
-<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad@in.tum.de&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad-i06@in.tum.de&quot;</span>
 <span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Released&quot;</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -295,21 +295,24 @@
 
 
 <div class="viewcode-block" id="redraw_obstacles"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.plot_helper.redraw_obstacles">[docs]</a><span class="k">def</span> <span class="nf">redraw_obstacles</span><span class="p">(</span><span class="n">scenario</span><span class="p">:</span> <span class="n">Scenario</span><span class="p">,</span> <span class="n">handles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="n">List</span><span class="p">[</span><span class="n">mpl</span><span class="o">.</span><span class="n">patches</span><span class="o">.</span><span class="n">Patch</span><span class="p">]],</span> <span class="n">figure_handle</span><span class="p">:</span> <span class="n">mpl</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">Figure</span><span class="p">,</span>
-                     <span class="n">draw_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_limits</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="nb">float</span><span class="p">]],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+                     <span class="n">draw_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_limits</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="nb">float</span><span class="p">]],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">draw</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This function is used for fast updating dynamic obstacles of an already drawn plot. Saves about 80% time compared to a complete plot.</span>
+<span class="sd">    This function is used for fast updating dynamic obstacles of an already drawn plot. Saves on average about 80% time</span>
+<span class="sd">    compared to a complete plot.</span>
 <span class="sd">    Deletes all dynamic obstacles which are specified in handles and draws dynamic obstacles of a scenario.</span>
 
 <span class="sd">    :param scenario: scenario from which obstacle should be plotted</span>
 <span class="sd">    :param handles: dict of obstacle_ids and corresponding patch handles (generated by draw_object function)</span>
 <span class="sd">    :param plot_limits: axis limits for plot [x_min, x_max, y_min, y_max]</span>
 <span class="sd">    :param figure_handle: figure handle of current plot</span>
+<span class="sd">    :param draw: if True, updates are displayed directly in figure</span>
 <span class="sd">    :return: None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#remove dynamic obstacle from current plot</span>
     <span class="k">for</span> <span class="n">handles_i</span> <span class="ow">in</span> <span class="n">handles</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">handle</span> <span class="ow">in</span> <span class="n">handles_i</span><span class="p">:</span>
-            <span class="n">handle</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">handle</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
     <span class="n">handles</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
     <span class="c1"># redraw dynamic obstacles</span>
@@ -321,24 +324,26 @@
         <span class="n">draw_object</span><span class="p">(</span><span class="n">scenario</span><span class="o">.</span><span class="n">obstacles</span><span class="p">,</span> <span class="n">draw_params</span><span class="o">=</span><span class="n">draw_params</span><span class="p">,</span> <span class="n">plot_limits</span><span class="o">=</span><span class="n">plot_limits</span><span class="p">,</span> <span class="n">handles</span><span class="o">=</span><span class="n">handles</span><span class="p">)</span>
 
     <span class="c1"># update plot</span>
-    <span class="n">ax</span> <span class="o">=</span> <span class="n">figure_handle</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">handles_i</span> <span class="ow">in</span> <span class="n">handles</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-        <span class="k">for</span> <span class="n">handle</span> <span class="ow">in</span> <span class="n">handles_i</span><span class="p">:</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">draw_artist</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">draw</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">figure_handle</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">handles_i</span> <span class="ow">in</span> <span class="n">handles</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">handle</span> <span class="ow">in</span> <span class="n">handles_i</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">draw_artist</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span> <span class="o">==</span><span class="s1">&#39;TkAgg&#39;</span><span class="p">:</span>
-        <span class="n">figure_handle</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span> <span class="o">==</span><span class="s1">&#39;TkAgg&#39;</span><span class="p">:</span>
+            <span class="n">figure_handle</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 
-    <span class="k">elif</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span> <span class="o">==</span><span class="s1">&#39;Qt5Agg&#39;</span><span class="p">:</span>
-        <span class="n">figure_handle</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span> <span class="o">==</span><span class="s1">&#39;Qt5Agg&#39;</span><span class="p">:</span>
             <span class="n">figure_handle</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;&lt;plot_helper/redraw_dynamic_obstacles&gt; Backend for matplotlib needs to be </span><span class="se">\&#39;</span><span class="s1">Qt5Agg</span><span class="se">\&#39;</span><span class="s1"> or </span><span class="se">\&#39;</span><span class="s1">TkAgg</span><span class="se">\&#39;</span><span class="s1"> but is&#39;</span>
-                        <span class="s1">&#39;</span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">figure_handle</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;&lt;plot_helper/redraw_dynamic_obstacles&gt; Backend for matplotlib needs to be </span><span class="se">\&#39;</span><span class="s1">Qt5Agg</span><span class="se">\&#39;</span><span class="s1"> or </span><span class="se">\&#39;</span><span class="s1">TkAgg</span><span class="se">\&#39;</span><span class="s1"> but is&#39;</span>
+                            <span class="s1">&#39;</span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">())</span>
 
-    <span class="n">figure_handle</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">flush_events</span><span class="p">()</span></div>
+        <span class="n">figure_handle</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">flush_events</span><span class="p">()</span></div>
 </pre></div>
 
            </div>

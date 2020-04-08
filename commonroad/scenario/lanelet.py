@@ -861,7 +861,7 @@ class Lanelet:
         """
         self.traffic_signs.add(traffic_sign_id)
 
-    def dynamic_obstacle_by_time_step(self, time_step) -> Set[int]:
+    def dynamic_obstacle_by_time_step(self, time_step: int) -> Set[int]:
         """
         Returns all dynamic obstacles on lanelet at specific time step
 

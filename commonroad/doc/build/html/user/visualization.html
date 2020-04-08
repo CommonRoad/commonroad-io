@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -246,6 +246,12 @@
              <span class="s1">&#39;draw_bounding_box&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
              <span class="s1">&#39;show_label&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
              <span class="s1">&#39;zorder&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+             <span class="s1">&#39;draw_signals&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+             <span class="s1">&#39;signal_radius&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+             <span class="s1">&#39;indicator_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#ebc200&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;braking_color&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;blue_lights_color&#39;</span><span class="p">:</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;horn_color&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
                                                              <span class="s1">&#39;occupancy&#39;</span><span class="p">:</span>
                                                                              <span class="p">{</span><span class="s1">&#39;draw_occupancies&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                                                                                     <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="n">shape_parameters</span>
@@ -258,20 +264,53 @@
         <span class="s1">&#39;static_obstacle&#39;</span><span class="p">:</span>
             <span class="p">{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="n">shape_parameters</span><span class="p">},</span>
         <span class="s1">&#39;lanelet_network&#39;</span><span class="p">:</span>
-            <span class="p">{</span><span class="s1">&#39;lanelet&#39;</span><span class="p">:</span>
-                <span class="p">{</span><span class="s1">&#39;left_bound_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#555555&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;right_bound_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#555555&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;center_bound_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#dddddd&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;draw_left_bound&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                 <span class="s1">&#39;draw_right_bound&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                 <span class="s1">&#39;draw_center_bound&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                 <span class="s1">&#39;draw_border_vertices&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                 <span class="s1">&#39;draw_start_and_direction&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                 <span class="s1">&#39;show_label&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                 <span class="s1">&#39;draw_linewidth&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-                 <span class="s1">&#39;fill_lanelet&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                 <span class="s1">&#39;facecolor&#39;</span><span class="p">:</span> <span class="s1">&#39;#c7c7c7&#39;</span>
-                <span class="p">}</span>
+            <span class="p">{</span><span class="s1">&#39;draw_traffic_lights&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;kwargs_traffic_light_signs&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="c1"># further properties for AnnotationBox, see # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html</span>
+             <span class="s1">&#39;traffic_light&#39;</span><span class="p">:</span>
+                 <span class="p">{</span><span class="s1">&#39;red_color&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;yellow_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#feb609&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;green_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#00aa16&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;red_yellow_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#fe4009ff&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;show_label&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                  <span class="s1">&#39;scale_factor&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+                  <span class="s1">&#39;zorder&#39;</span><span class="p">:</span> <span class="mi">30</span>
+                  <span class="p">},</span>
+             <span class="s1">&#39;draw_traffic_signs&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+             <span class="s1">&#39;traffic_sign&#39;</span><span class="p">:</span>
+                 <span class="p">{</span><span class="s1">&#39;show_traffic_signs&#39;</span><span class="p">:</span> <span class="s1">&#39;all&#39;</span><span class="p">,</span>  <span class="c1"># &#39;all&#39; or list of TrafficSignIDs</span>
+                  <span class="s1">&#39;show_label&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                  <span class="s1">&#39;scale_factor&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+                  <span class="s1">&#39;zorder&#39;</span><span class="p">:</span> <span class="mi">30</span>
+                 <span class="p">},</span>
+             <span class="s1">&#39;draw_intersection&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+             <span class="s1">&#39;intersection&#39;</span><span class="p">:</span>
+                 <span class="p">{</span><span class="s1">&#39;draw_incoming_lanelets&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;incoming_lanelets_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#24b582&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_crossings&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;crossings_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#b62a55&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_successors&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;successors_left_color&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;successors_straight_color&#39;</span><span class="p">:</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;successors_right_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#ccff00&#39;</span>
+                  <span class="p">},</span>
+             <span class="s1">&#39;lanelet&#39;</span><span class="p">:</span>
+                 <span class="p">{</span><span class="s1">&#39;left_bound_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#555555&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;right_bound_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#555555&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;center_bound_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#dddddd&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;unique_colors&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># colorizes center_vertices and labels of each lanelet differently</span>
+                  <span class="s1">&#39;draw_stop_line&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;stop_line_color&#39;</span><span class="p">:</span><span class="s1">&#39;#ffffff&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_line_markings&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_left_bound&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_right_bound&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_center_bound&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_border_vertices&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_start_and_direction&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;show_label&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_linewidth&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+                  <span class="s1">&#39;fill_lanelet&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;facecolor&#39;</span><span class="p">:</span> <span class="s1">&#39;#c7c7c7&#39;</span>
+                  <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">},</span>
      <span class="s1">&#39;planning_problem_set&#39;</span><span class="p">:</span>
@@ -330,7 +369,7 @@
 <h3>Passing custom <code class="docutils literal notranslate"><span class="pre">draw_params</span></code><a class="headerlink" href="#passing-custom-draw-params" title="Permalink to this headline">¶</a></h3>
 <p>In case no <code class="docutils literal notranslate"><span class="pre">draw_params</span></code> is passed to <a class="reference internal" href="../api/visualization.html#commonroad.visualization.draw_dispatch_cr.draw_object" title="commonroad.visualization.draw_dispatch_cr.draw_object"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_object()</span></code></a>, the default parameters are applied. To set a parameter manually, this needs to be done in accordance to the structure above. If for instance a complete scenario is plotted and the <code class="docutils literal notranslate"><span class="pre">face_color</span></code> of a dynamic obstacle should be set to black, this parameter can be specified by:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">draw_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;scenario&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;dynamic_obstacle&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;facecolor&#39;</span><span class="p">:</span><span class="s1">&#39;#000000&#39;</span><span class="p">}}}}</span>
-<span class="n">draw_object</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span><span class="n">draw_params</span><span class="p">)</span>
+<span class="n">draw_object</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">draw_params</span><span class="o">=</span><span class="n">draw_params</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>When the parameter of an object is extracted from <code class="docutils literal notranslate"><span class="pre">draw_params</span></code>, the search starts at the lowest level of the <code class="docutils literal notranslate"><span class="pre">dict</span></code>’s hierarchy. Therefore, it is sufficient to start with the specification on the lowest level of the dict, that unambiguously defines a parameter. Therefore, the expression above can be simplified to</p>
@@ -370,10 +409,7 @@
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../user/visualization-1.py">Source code</a>, <a class="reference external" href="../user/visualization-1.png">png</a>, <a class="reference external" href="../user/visualization-1.hires.png">hires.png</a>, <a class="reference external" href="../user/visualization-1.pdf">pdf</a>)</p>
-<div class="figure align-center">
-<img alt="../_images/visualization-1.png" src="../_images/visualization-1.png" />
-</div>
+<p>(<a class="reference external" href="../user/visualization-1.py">Source code</a>)</p>
 </div>
 <div class="section" id="speed-up-plotting-for-real-time-applications">
 <span id="plot-helper"></span><h2>Speed up plotting for real-time applications<a class="headerlink" href="#speed-up-plotting-for-real-time-applications" title="Permalink to this headline">¶</a></h2>

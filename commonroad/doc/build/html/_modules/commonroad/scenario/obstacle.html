@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -227,7 +227,7 @@
 <span></span><span class="kn">import</span> <span class="nn">enum</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">List</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 
 <span class="kn">from</span> <span class="nn">commonroad.common.validity</span> <span class="k">import</span> <span class="n">is_valid_orientation</span><span class="p">,</span> <span class="n">is_real_number_vector</span><span class="p">,</span> <span class="n">is_real_number</span>
@@ -235,55 +235,98 @@
 <span class="kn">from</span> <span class="nn">commonroad.prediction.prediction</span> <span class="k">import</span> <span class="n">Prediction</span><span class="p">,</span> <span class="n">Occupancy</span>
 <span class="kn">from</span> <span class="nn">commonroad.scenario.trajectory</span> <span class="k">import</span> <span class="n">State</span>
 
+
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Stefanie Manzinger, Christian Pek&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;TUM Cyber-Physical Systems Group&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Priority Program SPP 1835 Cooperative Interacting Automobiles, BMW Group, KO-HAF&quot;</span><span class="p">]</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2019.1&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2020.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Stefanie Manzinger&quot;</span>
-<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad@in.tum.de&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad-i06@in.tum.de&quot;</span>
 <span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Released&quot;</span>
 
 
 <div class="viewcode-block" id="ObstacleRole"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.obstacle.ObstacleRole">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
 <span class="k">class</span> <span class="nc">ObstacleRole</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Enum containing all possible obstacle roles defined in CommonRoad.&quot;&quot;&quot;</span>
-    <span class="n">STATIC</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">DYNAMIC</span> <span class="o">=</span> <span class="mi">2</span></div>
+    <span class="n">STATIC</span> <span class="o">=</span> <span class="s2">&quot;static&quot;</span>
+    <span class="n">DYNAMIC</span> <span class="o">=</span> <span class="s2">&quot;dynamic&quot;</span></div>
 
 
 <div class="viewcode-block" id="ObstacleType"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.obstacle.ObstacleType">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
 <span class="k">class</span> <span class="nc">ObstacleType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Enum containing all possible obstacle types defined in CommonRoad.&quot;&quot;&quot;</span>
-    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">CAR</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">TRUCK</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">BUS</span> <span class="o">=</span> <span class="mi">3</span>
-    <span class="n">BICYCLE</span> <span class="o">=</span> <span class="mi">4</span>
-    <span class="n">PEDESTRIAN</span> <span class="o">=</span> <span class="mi">5</span>
-    <span class="n">PRIORITY_VEHICLE</span> <span class="o">=</span> <span class="mi">6</span>
-    <span class="n">PARKED_VEHICLE</span> <span class="o">=</span> <span class="mi">7</span>
-    <span class="n">CONSTRUCTION_ZONE</span> <span class="o">=</span> <span class="mi">8</span>
-    <span class="n">TRAIN</span> <span class="o">=</span> <span class="mi">9</span>
-    <span class="n">ROAD_BOUNDARY</span> <span class="o">=</span> <span class="mi">10</span></div>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
+    <span class="n">CAR</span> <span class="o">=</span> <span class="s2">&quot;car&quot;</span>
+    <span class="n">TRUCK</span> <span class="o">=</span> <span class="s2">&quot;truck&quot;</span>
+    <span class="n">BUS</span> <span class="o">=</span> <span class="s2">&quot;bus&quot;</span>
+    <span class="n">BICYCLE</span> <span class="o">=</span> <span class="s2">&quot;bicycle&quot;</span>
+    <span class="n">PEDESTRIAN</span> <span class="o">=</span> <span class="s2">&quot;pedestrian&quot;</span>
+    <span class="n">PRIORITY_VEHICLE</span> <span class="o">=</span> <span class="s2">&quot;priorityVehicle&quot;</span>
+    <span class="n">PARKED_VEHICLE</span> <span class="o">=</span> <span class="s2">&quot;parkedVehicle&quot;</span>
+    <span class="n">CONSTRUCTION_ZONE</span> <span class="o">=</span> <span class="s2">&quot;constructionZone&quot;</span>
+    <span class="n">TRAIN</span> <span class="o">=</span> <span class="s2">&quot;train&quot;</span>
+    <span class="n">ROAD_BOUNDARY</span> <span class="o">=</span> <span class="s2">&quot;roadBoundary&quot;</span>
+    <span class="n">MOTORCYCLE</span> <span class="o">=</span> <span class="s2">&quot;motorcycle&quot;</span></div>
+
+
+<span class="k">class</span> <span class="nc">SignalState</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; A signal state is a boolean value indicating the activity of the signal source at a time step.</span>
+<span class="sd">        The possible signal state elements are defined as slots:</span>
+
+<span class="sd">        :ivar horn: boolean indicating activity of horn</span>
+<span class="sd">        :ivar indicator_left: boolean indicating activity of left indicator</span>
+<span class="sd">        :ivar indicator_right: boolean indicating activity of right indicator</span>
+<span class="sd">        :ivar braking_lights: boolean indicating activity of braking lights</span>
+<span class="sd">        :ivar hazard_warning_lights: boolean indicating activity of hazard warning lights</span>
+<span class="sd">        :ivar flashing_blue_lights: boolean indicating activity of flashing blue lights (police, ambulance)</span>
+<span class="sd">        :ivar time_step: the discrete time step. Exact values are given as integers, uncertain values are given as</span>
+<span class="sd">              :class:`commonroad.common.util.Interval`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;horn&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;indicator_left&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;indicator_right&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;braking_lights&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;hazard_warning_lights&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;flashing_blue_lights&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;time_step&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Elements of state vector are determined during runtime.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Obstacle"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.obstacle.Obstacle">[docs]</a><span class="k">class</span> <span class="nc">Obstacle</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Superclass for dynamic and static obstacles holding common properties defined in CommonRoad.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obstacle_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">obstacle_role</span><span class="p">:</span> <span class="n">ObstacleRole</span><span class="p">,</span>
-                 <span class="n">obstacle_type</span><span class="p">:</span> <span class="n">ObstacleType</span><span class="p">,</span> <span class="n">obstacle_shape</span><span class="p">:</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+                 <span class="n">obstacle_type</span><span class="p">:</span> <span class="n">ObstacleType</span><span class="p">,</span> <span class="n">obstacle_shape</span><span class="p">:</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">:</span> <span class="n">State</span><span class="p">,</span>
+                 <span class="n">initial_center_lanelet_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">initial_shape_lanelet_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">initial_signal_state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">SignalState</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">signal_series</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SignalState</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param obstacle_id: unique ID of the obstacle</span>
 <span class="sd">        :param obstacle_role: obstacle role as defined in CommonRoad</span>
 <span class="sd">        :param obstacle_type: obstacle type as defined in CommonRoad (e.g. PARKED_VEHICLE)</span>
 <span class="sd">        :param obstacle_shape: occupied area of the obstacle</span>
 <span class="sd">        :param initial_state: initial state of the obstacle</span>
+<span class="sd">        :param initial_center_lanelet_ids: initial IDs of lanelets the obstacle center is on</span>
+<span class="sd">        :param initial_shape_lanelet_ids: initial IDs of lanelets the obstacle shape is on</span>
+<span class="sd">        :param initial_signal_state: initial signal state of obstacle</span>
+<span class="sd">        :param signal_series: list of signal states over time</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">obstacle_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">obstacle_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">obstacle_role</span><span class="p">:</span> <span class="n">ObstacleRole</span> <span class="o">=</span> <span class="n">obstacle_role</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">obstacle_type</span><span class="p">:</span> <span class="n">ObstacleType</span> <span class="o">=</span> <span class="n">obstacle_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">obstacle_shape</span><span class="p">:</span> <span class="n">Shape</span> <span class="o">=</span> <span class="n">obstacle_shape</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initial_state</span><span class="p">:</span> <span class="n">State</span> <span class="o">=</span> <span class="n">initial_state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_center_lanelet_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="n">initial_center_lanelet_ids</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_shape_lanelet_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="n">initial_shape_lanelet_ids</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_signal_state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">SignalState</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_signal_state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signal_series</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SignalState</span><span class="p">]</span> <span class="o">=</span> <span class="n">signal_series</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">obstacle_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -356,28 +399,119 @@
                                                  <span class="s1">&#39;Expected types: </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">State</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">initial_state</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initial_state</span> <span class="o">=</span> <span class="n">initial_state</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">initial_center_lanelet_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot; Initial lanelets of obstacle center, e.g., obtained through localization.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial_center_lanelet_ids</span>
+
+    <span class="nd">@initial_center_lanelet_ids</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">initial_center_lanelet_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_center_lanelet_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">initial_center_lanelet_ids</span><span class="p">,</span> <span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))),</span> \
+            <span class="s1">&#39;&lt;Obstacle/initial_center_lanelet_ids&gt;: argument initial_lanelet_ids of wrong type. &#39;</span> \
+            <span class="s1">&#39;Expected types: </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">initial_center_lanelet_ids</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">initial_center_lanelet_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">lanelet_id</span> <span class="ow">in</span> <span class="n">initial_center_lanelet_ids</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lanelet_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> \
+                    <span class="s1">&#39;&lt;Obstacle/initial_center_lanelet_ids&gt;: argument initial_lanelet of wrong type. &#39;</span> \
+                    <span class="s1">&#39;Expected types: </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">lanelet_id</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial_center_lanelet_ids</span> <span class="o">=</span> <span class="n">initial_center_lanelet_ids</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">initial_shape_lanelet_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot; Initial lanelets of obstacle shape, e.g., obtained through localization.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial_shape_lanelet_ids</span>
+
+    <span class="nd">@initial_shape_lanelet_ids</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">initial_shape_lanelet_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_shape_lanelet_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">initial_shape_lanelet_ids</span><span class="p">,</span> <span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))),</span> \
+            <span class="s1">&#39;&lt;Obstacle/initial_shape_lanelet_ids&gt;: argument initial_lanelet_ids of wrong type. &#39;</span> \
+            <span class="s1">&#39;Expected types: </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">initial_shape_lanelet_ids</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">initial_shape_lanelet_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">lanelet_id</span> <span class="ow">in</span> <span class="n">initial_shape_lanelet_ids</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lanelet_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> \
+                    <span class="s1">&#39;&lt;Obstacle/initial_shape_lanelet_ids&gt;: argument initial_lanelet of wrong type. &#39;</span> \
+                    <span class="s1">&#39;Expected types: </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">lanelet_id</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial_shape_lanelet_ids</span> <span class="o">=</span> <span class="n">initial_shape_lanelet_ids</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">initial_signal_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SignalState</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Signal state as defined in CommonRoad.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial_signal_state</span>
+
+    <span class="nd">@initial_signal_state</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">initial_signal_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_signal_state</span><span class="p">:</span> <span class="n">SignalState</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">initial_signal_state</span><span class="p">,</span> <span class="p">(</span><span class="n">SignalState</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))),</span> <span class="s1">&#39;&lt;Obstacle/initial_signal_state&gt;: &#39;</span> \
+                                                              <span class="s1">&#39;argument initial_signal_state of wrong &#39;</span> \
+                                                              <span class="s1">&#39;type. Expected types: </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> \
+                                                              <span class="o">%</span> <span class="p">(</span><span class="n">SignalState</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">initial_signal_state</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_initial_signal_state&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_initial_signal_state</span> <span class="o">=</span> <span class="n">initial_signal_state</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;&lt;Obstacle/initial_signal_state&gt;: Initial obstacle signal state is immutable.&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">signal_series</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">SignalState</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot; Signal series as defined in CommonRoad.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_signal_series</span>
+
+    <span class="nd">@signal_series</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">signal_series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal_series</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SignalState</span><span class="p">]):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signal_series</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))),</span> <span class="s1">&#39;&lt;Obstacle/initial_signal_state&gt;: &#39;</span> \
+                                                              <span class="s1">&#39;argument initial_signal_state of wrong &#39;</span> \
+                                                              <span class="s1">&#39;type. Expected types: </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span> \
+                                                              <span class="o">%</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">signal_series</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_signal_series&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_signal_series</span> <span class="o">=</span> <span class="n">signal_series</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;&lt;Obstacle/signal_series&gt;: Obstacle signal series is immutable.&#39;</span><span class="p">)</span>
+
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">occupancy_at_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_step</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Occupancy</span><span class="p">]:</span>
         <span class="k">pass</span>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">translate_rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">translation</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-        <span class="k">pass</span></div>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="Obstacle.signal_state_at_time_step"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.obstacle.Obstacle.signal_state_at_time_step">[docs]</a>    <span class="k">def</span> <span class="nf">signal_state_at_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_step</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">SignalState</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts signal state at a time step</span>
+
+<span class="sd">        :param time_step: time step of interest</span>
+<span class="sd">        :returns signal state or None if time step does not exist</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_signal_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">time_step</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_signal_state</span><span class="o">.</span><span class="n">time_step</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_signal_state</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal_series</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">time_step</span> <span class="o">==</span> <span class="n">time_step</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">state</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div></div>
 
 
 <div class="viewcode-block" id="StaticObstacle"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.obstacle.StaticObstacle">[docs]</a><span class="k">class</span> <span class="nc">StaticObstacle</span><span class="p">(</span><span class="n">Obstacle</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Class representing static obstacles as defined in CommonRoad.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obstacle_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">obstacle_type</span><span class="p">:</span> <span class="n">ObstacleType</span><span class="p">,</span>
-                 <span class="n">obstacle_shape</span><span class="p">:</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+                 <span class="n">obstacle_shape</span><span class="p">:</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">:</span> <span class="n">State</span><span class="p">,</span> <span class="n">initial_center_lanelet_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">initial_shape_lanelet_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">initial_signal_state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">SignalState</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">signal_series</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SignalState</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            :param obstacle_id: unique ID of the obstacle</span>
 <span class="sd">            :param obstacle_type: type of obstacle (e.g. PARKED_VEHICLE)</span>
 <span class="sd">            :param obstacle_shape: shape of the static obstacle</span>
 <span class="sd">            :param initial_state: initial state of the static obstacle</span>
+<span class="sd">            :param initial_center_lanelet_ids: initial IDs of lanelets the obstacle center is on</span>
+<span class="sd">            :param initial_shape_lanelet_ids: initial IDs of lanelets the obstacle shape is on</span>
+<span class="sd">            :param initial_signal_state: initial signal state of static obstacle</span>
+<span class="sd">            :param signal_series: list of signal states over time</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Obstacle</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obstacle_id</span><span class="o">=</span><span class="n">obstacle_id</span><span class="p">,</span> <span class="n">obstacle_role</span><span class="o">=</span><span class="n">ObstacleRole</span><span class="o">.</span><span class="n">STATIC</span><span class="p">,</span>
-                          <span class="n">obstacle_type</span><span class="o">=</span><span class="n">obstacle_type</span><span class="p">,</span> <span class="n">obstacle_shape</span><span class="o">=</span><span class="n">obstacle_shape</span><span class="p">,</span> <span class="n">initial_state</span><span class="o">=</span><span class="n">initial_state</span><span class="p">)</span>
+                          <span class="n">obstacle_type</span><span class="o">=</span><span class="n">obstacle_type</span><span class="p">,</span> <span class="n">obstacle_shape</span><span class="o">=</span><span class="n">obstacle_shape</span><span class="p">,</span> <span class="n">initial_state</span><span class="o">=</span><span class="n">initial_state</span><span class="p">,</span>
+                          <span class="n">initial_center_lanelet_ids</span><span class="o">=</span><span class="n">initial_center_lanelet_ids</span><span class="p">,</span>
+                          <span class="n">initial_shape_lanelet_ids</span><span class="o">=</span><span class="n">initial_shape_lanelet_ids</span><span class="p">,</span>
+                          <span class="n">initial_signal_state</span><span class="o">=</span><span class="n">initial_signal_state</span><span class="p">,</span> <span class="n">signal_series</span><span class="o">=</span><span class="n">signal_series</span><span class="p">)</span>
 
 <div class="viewcode-block" id="StaticObstacle.translate_rotate"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.obstacle.StaticObstacle.translate_rotate">[docs]</a>    <span class="k">def</span> <span class="nf">translate_rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">translation</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; First translates the static obstacle, then rotates the static obstacle around the origin.</span>
@@ -410,6 +544,7 @@
         <span class="n">obs_str</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">initial state: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_state</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">obs_str</span></div>
 
+
 <div class="viewcode-block" id="DynamicObstacle"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.obstacle.DynamicObstacle">[docs]</a><span class="k">class</span> <span class="nc">DynamicObstacle</span><span class="p">(</span><span class="n">Obstacle</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Class representing dynamic obstacles as defined in CommonRoad. Each dynamic obstacle has stored its predicted</span>
 <span class="sd">    movement in future time steps.</span>
@@ -417,16 +552,25 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obstacle_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">obstacle_type</span><span class="p">:</span> <span class="n">ObstacleType</span><span class="p">,</span>
                  <span class="n">obstacle_shape</span><span class="p">:</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">:</span> <span class="n">State</span><span class="p">,</span>
-                 <span class="n">prediction</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Prediction</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+                 <span class="n">prediction</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Prediction</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">initial_center_lanelet_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">initial_shape_lanelet_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">initial_signal_state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">SignalState</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">signal_series</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SignalState</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            :param obstacle_id: unique ID of the obstacle</span>
-<span class="sd">            :param obstacle_type: type of obstacle (e.g. Bus)</span>
-<span class="sd">            :param obstacle_shape: shape of the dynamic obstacle</span>
-<span class="sd">            :param initial_state: initial state of the dynamic obstacle</span>
+<span class="sd">            :param obstacle_type: type of obstacle (e.g. PARKED_VEHICLE)</span>
+<span class="sd">            :param obstacle_shape: shape of the static obstacle</span>
+<span class="sd">            :param initial_state: initial state of the static obstacle</span>
 <span class="sd">            :param prediction: predicted movement of the dynamic obstacle</span>
+<span class="sd">            :param initial_center_lanelet_ids: initial IDs of lanelets the obstacle center is on</span>
+<span class="sd">            :param initial_shape_lanelet_ids: initial IDs of lanelets the obstacle shape is on</span>
+<span class="sd">            :param initial_signal_state: initial signal state of static obstacle</span>
+<span class="sd">            :param signal_series: list of signal states over time</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Obstacle</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obstacle_id</span><span class="o">=</span><span class="n">obstacle_id</span><span class="p">,</span> <span class="n">obstacle_role</span><span class="o">=</span><span class="n">ObstacleRole</span><span class="o">.</span><span class="n">DYNAMIC</span><span class="p">,</span>
-                          <span class="n">obstacle_type</span><span class="o">=</span><span class="n">obstacle_type</span><span class="p">,</span> <span class="n">obstacle_shape</span><span class="o">=</span><span class="n">obstacle_shape</span><span class="p">,</span> <span class="n">initial_state</span><span class="o">=</span><span class="n">initial_state</span><span class="p">)</span>
+                          <span class="n">obstacle_type</span><span class="o">=</span><span class="n">obstacle_type</span><span class="p">,</span> <span class="n">obstacle_shape</span><span class="o">=</span><span class="n">obstacle_shape</span><span class="p">,</span> <span class="n">initial_state</span><span class="o">=</span><span class="n">initial_state</span><span class="p">,</span>
+                          <span class="n">initial_center_lanelet_ids</span><span class="o">=</span><span class="n">initial_center_lanelet_ids</span><span class="p">,</span>
+                          <span class="n">initial_shape_lanelet_ids</span><span class="o">=</span><span class="n">initial_shape_lanelet_ids</span><span class="p">,</span>
+                          <span class="n">initial_signal_state</span><span class="o">=</span><span class="n">initial_signal_state</span><span class="p">,</span> <span class="n">signal_series</span><span class="o">=</span><span class="n">signal_series</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prediction</span><span class="p">:</span> <span class="n">Prediction</span> <span class="o">=</span> <span class="n">prediction</span>
 
     <span class="nd">@property</span>

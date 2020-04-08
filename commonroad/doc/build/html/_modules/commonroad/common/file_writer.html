@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -232,39 +232,33 @@
 <span class="kn">import</span> <span class="nn">pathlib</span>
 <span class="kn">import</span> <span class="nn">io</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Set</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">decimal</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">commonroad</span> <span class="k">import</span> <span class="n">SCENARIO_VERSION</span>
 <span class="kn">from</span> <span class="nn">lxml</span> <span class="k">import</span> <span class="n">etree</span><span class="p">,</span> <span class="n">objectify</span>
 
 <span class="kn">from</span> <span class="nn">commonroad.common.util</span> <span class="k">import</span> <span class="n">Interval</span>
 <span class="kn">from</span> <span class="nn">commonroad.geometry.shape</span> <span class="k">import</span> <span class="n">Rectangle</span><span class="p">,</span> <span class="n">Circle</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">ShapeGroup</span>
 <span class="kn">from</span> <span class="nn">commonroad.planning.planning_problem</span> <span class="k">import</span> <span class="n">PlanningProblemSet</span><span class="p">,</span> <span class="n">PlanningProblem</span>
 <span class="kn">from</span> <span class="nn">commonroad.prediction.prediction</span> <span class="k">import</span> <span class="n">SetBasedPrediction</span><span class="p">,</span> <span class="n">TrajectoryPrediction</span>
-<span class="kn">from</span> <span class="nn">commonroad.scenario.lanelet</span> <span class="k">import</span> <span class="n">Lanelet</span><span class="p">,</span> <span class="n">LineMarking</span>
-<span class="kn">from</span> <span class="nn">commonroad.scenario.obstacle</span> <span class="k">import</span> <span class="p">(</span>
-    <span class="n">ObstacleRole</span><span class="p">,</span>
-    <span class="n">ObstacleType</span><span class="p">,</span>
-    <span class="n">DynamicObstacle</span><span class="p">,</span>
-    <span class="n">StaticObstacle</span><span class="p">,</span>
-    <span class="n">Obstacle</span><span class="p">,</span>
-    <span class="n">Occupancy</span><span class="p">,</span>
-    <span class="n">Shape</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">commonroad.scenario.scenario</span> <span class="k">import</span> <span class="n">Scenario</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.intersection</span> <span class="k">import</span> <span class="n">Intersection</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.lanelet</span> <span class="k">import</span> <span class="n">Lanelet</span><span class="p">,</span> <span class="n">LineMarking</span><span class="p">,</span> <span class="n">StopLine</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.obstacle</span> <span class="k">import</span> <span class="n">ObstacleRole</span><span class="p">,</span> <span class="n">ObstacleType</span><span class="p">,</span> <span class="n">DynamicObstacle</span><span class="p">,</span> <span class="n">StaticObstacle</span><span class="p">,</span> <span class="n">Obstacle</span><span class="p">,</span> \
+    <span class="n">Occupancy</span><span class="p">,</span> <span class="n">Shape</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.scenario</span> <span class="k">import</span> <span class="n">Scenario</span><span class="p">,</span> <span class="n">Tag</span><span class="p">,</span> <span class="n">Location</span><span class="p">,</span> <span class="n">GeoTransformation</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.traffic_sign</span> <span class="k">import</span> <span class="n">TrafficSign</span><span class="p">,</span> <span class="n">TrafficLight</span><span class="p">,</span> <span class="n">TrafficLightCycleElement</span>
 <span class="kn">from</span> <span class="nn">commonroad.scenario.trajectory</span> <span class="k">import</span> <span class="n">Trajectory</span><span class="p">,</span> <span class="n">State</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Stefanie Manzinger, Moritz Klischat&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;TUM Cyber-Physical Systems Group&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Priority Program SPP 1835 Cooperative Interacting Automobiles&quot;</span><span class="p">]</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2019.1&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2020.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Moritz Klischat&quot;</span>
-<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad@in.tum.de&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad-i06@in.tum.de&quot;</span>
 <span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Released&quot;</span>
-
-
-<span class="n">SCENARIO_VERSION</span> <span class="o">=</span> <span class="s1">&#39;2018b&#39;</span>
 
 <span class="c1"># create a new context for this task</span>
 <span class="n">ctx</span> <span class="o">=</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Context</span><span class="p">()</span>
@@ -276,7 +270,7 @@
 <span class="sd">    without resorting to scientific notation</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">d1</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">create_decimal</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
-    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{:.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">format</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">create_exact_node_float</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
@@ -355,10 +349,11 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">scenario</span><span class="p">:</span> <span class="n">Scenario</span><span class="p">,</span>
         <span class="n">planning_problem_set</span><span class="p">:</span> <span class="n">PlanningProblemSet</span><span class="p">,</span>
-        <span class="n">author</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">affiliation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">tags</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">author</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">affiliation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">tags</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Tag</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">location</span><span class="p">:</span> <span class="n">Location</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">decimal_precision</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -369,17 +364,24 @@
 <span class="sd">        :param author: author&#39;s name</span>
 <span class="sd">        :param affiliation: affiliation of the author</span>
 <span class="sd">        :param source: source of dataset (d.h. database, handcrafted, etc.)</span>
-<span class="sd">        :param tags: keywords describing the scenario (e.g. road type(one-lane road, multilane),</span>
+<span class="sd">        :param tags: list of keywords describing the scenario (e.g. road type(one-lane road, multilane),</span>
 <span class="sd">                required maneuver etc., see commonroad.in.tum.de for full list))</span>
 <span class="sd">        :param decimal_precision: number of decimal places used when writing float values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span><span class="n">author</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">scenario</span><span class="o">.</span><span class="n">author</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span><span class="n">affiliation</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">scenario</span><span class="o">.</span><span class="n">affiliation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span><span class="n">source</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">scenario</span><span class="o">.</span><span class="n">source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span><span class="n">tags</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">scenario</span><span class="o">.</span><span class="n">tags</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span> <span class="o">=</span> <span class="n">scenario</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">planning_problem_set</span> <span class="o">=</span> <span class="n">planning_problem_set</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;commonRoad&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">author</span> <span class="o">=</span> <span class="n">author</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">affiliation</span> <span class="o">=</span> <span class="n">affiliation</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="n">tags</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">author</span> <span class="o">=</span> <span class="n">author</span> <span class="k">if</span> <span class="n">author</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">scenario</span><span class="o">.</span><span class="n">author</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">affiliation</span> <span class="o">=</span> <span class="n">affiliation</span> <span class="k">if</span> <span class="n">affiliation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">scenario</span><span class="o">.</span><span class="n">affiliation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span> <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">scenario</span><span class="o">.</span><span class="n">source</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">location</span> <span class="k">if</span> <span class="n">location</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">scenario</span><span class="o">.</span><span class="n">location</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="n">tags</span> <span class="k">if</span> <span class="n">tags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">scenario</span><span class="o">.</span><span class="n">tags</span>
+
 
         <span class="c1"># set decimal precision</span>
         <span class="n">ctx</span><span class="o">.</span><span class="n">prec</span> <span class="o">=</span> <span class="n">decimal_precision</span>
@@ -439,11 +441,9 @@
 
     <span class="nd">@tags</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">tags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tags</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-            <span class="n">tags</span><span class="p">,</span> <span class="nb">str</span>
-        <span class="p">),</span> <span class="s1">&#39;&lt;CommonRoadFileWriter/tags&gt; tags must be a string, but has type </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="nb">type</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">Tag</span><span class="p">),</span> <span class="s1">&#39;&lt;CommonRoadFileWriter/tags&gt; tag must &#39;</span> \
+                                         <span class="s1">&#39;be a enum of type Tag, but has type </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">tag</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span> <span class="o">=</span> <span class="n">tags</span>
 
     <span class="k">def</span> <span class="nf">_write_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -452,7 +452,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;author&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">author</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;affiliation&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">affiliation</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;tags&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">benchmark_id</span><span class="p">:</span>
@@ -464,8 +463,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_add_all_objects_from_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">LocationXMLNode</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TagXMLNode</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">lanelet_network</span><span class="o">.</span><span class="n">lanelets</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">LaneletXMLNode</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">sign</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">lanelet_network</span><span class="o">.</span><span class="n">traffic_signs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TrafficSignXMLNode</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">sign</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">light</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">lanelet_network</span><span class="o">.</span><span class="n">traffic_lights</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TrafficLightXMLNode</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">light</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">intersection</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">lanelet_network</span><span class="o">.</span><span class="n">intersections</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">IntersectionXMLNode</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">intersection</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">obstacles</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ObstacleXMLNode</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">o</span><span class="p">))</span>
 
@@ -479,6 +487,7 @@
         <span class="n">rough_string</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span><span class="p">,</span> <span class="n">pretty_print</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;unicode&#39;</span>
         <span class="p">)</span>
+        <span class="n">rough_string</span> <span class="o">=</span> <span class="s1">&#39;&lt;?xml version=</span><span class="se">\&quot;</span><span class="s1">1.0</span><span class="se">\&quot;</span><span class="s1"> encoding=</span><span class="se">\&quot;</span><span class="s1">utf-8</span><span class="se">\&quot;</span><span class="s1">?&gt;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">rough_string</span>
         <span class="k">return</span> <span class="n">rough_string</span>
         <span class="c1"># reparsed = minidom.parseString(rough_string)</span>
         <span class="c1"># return reparsed.toprettyxml(indent=&#39;  &#39;)</span>
@@ -487,12 +496,14 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">overwrite_existing_file</span><span class="p">:</span> <span class="n">OverwriteExistingFile</span> <span class="o">=</span> <span class="n">OverwriteExistingFile</span><span class="o">.</span><span class="n">ASK_USER_INPUT</span><span class="p">,</span>
+        <span class="n">check_validity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write a scenario including planning-problem. If file already exists, it will be overwritten of skipped</span>
 
 <span class="sd">        :param filename: filename of the xml output file. If &#39;None&#39;, the Benchmark ID is taken</span>
 <span class="sd">        :param overwrite_existing_file: Specify whether an already existing file should be overwritten or skipped</span>
+<span class="sd">        :param check_validity: check xml file against .xsd definition</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -520,6 +531,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_write_header</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_all_objects_from_scenario</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_all_planning_problems_from_planning_problem_set</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">check_validity</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_validity_of_commonroad_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dump</span><span class="p">())</span>
         <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dump</span><span class="p">())</span>
         <span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
@@ -625,6 +638,75 @@
             <span class="p">)</span></div></div>
 
 
+<span class="k">class</span> <span class="nc">LocationXMLNode</span><span class="p">:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="n">Location</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create XML-Node for a location</span>
+<span class="sd">        :param location: location object</span>
+<span class="sd">        :return: node</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">location_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">)</span>
+        <span class="n">geo_name_id_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;geoNameId&quot;</span><span class="p">)</span>
+        <span class="n">geo_name_id_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">location</span><span class="o">.</span><span class="n">geo_name_id</span><span class="p">)</span>
+        <span class="n">location_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">geo_name_id_node</span><span class="p">)</span>
+        <span class="n">gps_latitude_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;gpsLatitude&quot;</span><span class="p">)</span>
+        <span class="n">gps_latitude_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">location</span><span class="o">.</span><span class="n">gps_latitude</span><span class="p">)</span>
+        <span class="n">location_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gps_latitude_node</span><span class="p">)</span>
+        <span class="n">gps_longitude_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;gpsLongitude&quot;</span><span class="p">)</span>
+        <span class="n">gps_longitude_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">location</span><span class="o">.</span><span class="n">gps_longitude</span><span class="p">)</span>
+        <span class="n">location_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gps_longitude_node</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">location</span><span class="o">.</span><span class="n">geo_transformation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">location_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GeoTransformationXMLNode</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">location</span><span class="o">.</span><span class="n">geo_transformation</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">location_node</span>
+
+
+<span class="k">class</span> <span class="nc">GeoTransformationXMLNode</span><span class="p">:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">geo_transformation</span><span class="p">:</span> <span class="n">GeoTransformation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create XML-Node for a location</span>
+<span class="sd">        :param geo_transformation: GeoTransformation object</span>
+<span class="sd">        :return: node</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">geotransform_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;geoTransformation&#39;</span><span class="p">)</span>
+        <span class="n">geo_reference_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;geoReference&quot;</span><span class="p">)</span>
+        <span class="n">geo_reference_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">geo_transformation</span><span class="o">.</span><span class="n">geo_reference</span>
+        <span class="n">geotransform_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">geo_reference_node</span><span class="p">)</span>
+        <span class="n">additional_transformation_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;additionalTransformation&#39;</span><span class="p">)</span>
+        <span class="n">x_translation_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;xTranslation&quot;</span><span class="p">)</span>
+        <span class="n">x_translation_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">geo_transformation</span><span class="o">.</span><span class="n">x_translation</span><span class="p">)</span>
+        <span class="n">additional_transformation_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_translation_node</span><span class="p">)</span>
+        <span class="n">y_translation_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;yTranslation&quot;</span><span class="p">)</span>
+        <span class="n">y_translation_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">geo_transformation</span><span class="o">.</span><span class="n">y_translation</span><span class="p">)</span>
+        <span class="n">additional_transformation_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_translation_node</span><span class="p">)</span>
+        <span class="n">z_rotation_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;zRotation&quot;</span><span class="p">)</span>
+        <span class="n">z_rotation_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">geo_transformation</span><span class="o">.</span><span class="n">z_rotation</span><span class="p">)</span>
+        <span class="n">additional_transformation_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z_rotation_node</span><span class="p">)</span>
+        <span class="n">scaling_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;scaling&quot;</span><span class="p">)</span>
+        <span class="n">scaling_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">geo_transformation</span><span class="o">.</span><span class="n">scaling</span><span class="p">)</span>
+        <span class="n">additional_transformation_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scaling_node</span><span class="p">)</span>
+        <span class="n">geotransform_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">additional_transformation_node</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">geotransform_node</span>
+
+
+<span class="k">class</span> <span class="nc">TagXMLNode</span><span class="p">:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Tag</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create XML-Node for a tag element</span>
+<span class="sd">        :param tags: list of tags of the scenario</span>
+<span class="sd">        :return: node</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tags_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;scenarioTags&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+            <span class="n">tags_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">tags_node</span>
+
+
 <span class="k">class</span> <span class="nc">LaneletXMLNode</span><span class="p">:</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">lanelet</span><span class="p">:</span> <span class="n">Lanelet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
@@ -646,10 +728,7 @@
             <span class="n">lanelet</span><span class="o">.</span><span class="n">line_marking_left_vertices</span><span class="p">,</span> <span class="n">LineMarking</span>
         <span class="p">):</span>
             <span class="n">line_marking_left</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;lineMarking&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">line_marking_left_vertices</span> <span class="ow">is</span> <span class="n">LineMarking</span><span class="o">.</span><span class="n">DASHED</span><span class="p">:</span>
-                <span class="n">line_marking_left</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;dashed&#39;</span>
-            <span class="k">elif</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">line_marking_left_vertices</span> <span class="ow">is</span> <span class="n">LineMarking</span><span class="o">.</span><span class="n">SOLID</span><span class="p">:</span>
-                <span class="n">line_marking_left</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;solid&#39;</span>
+            <span class="n">line_marking_left</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">line_marking_left_vertices</span><span class="o">.</span><span class="n">value</span>
             <span class="n">left_boundary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_marking_left</span><span class="p">)</span>
 
         <span class="n">lanelet_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">left_boundary</span><span class="p">)</span>
@@ -664,10 +743,7 @@
             <span class="n">lanelet</span><span class="o">.</span><span class="n">line_marking_right_vertices</span><span class="p">,</span> <span class="n">LineMarking</span>
         <span class="p">):</span>
             <span class="n">line_marking_right</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;lineMarking&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">line_marking_right_vertices</span> <span class="ow">is</span> <span class="n">LineMarking</span><span class="o">.</span><span class="n">DASHED</span><span class="p">:</span>
-                <span class="n">line_marking_right</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;dashed&#39;</span>
-            <span class="k">elif</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">line_marking_right_vertices</span> <span class="ow">is</span> <span class="n">LineMarking</span><span class="o">.</span><span class="n">SOLID</span><span class="p">:</span>
-                <span class="n">line_marking_right</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;solid&#39;</span>
+            <span class="n">line_marking_right</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">line_marking_right_vertices</span><span class="o">.</span><span class="n">value</span>
             <span class="n">right_boundary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_marking_right</span><span class="p">)</span>
 
         <span class="n">lanelet_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">right_boundary</span><span class="p">)</span>
@@ -700,15 +776,40 @@
                 <span class="n">adjacent_right</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;drivingDir&#39;</span><span class="p">,</span> <span class="s1">&#39;opposite&#39;</span><span class="p">)</span>
             <span class="n">lanelet_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">adjacent_right</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">speed_limit</span><span class="p">:</span>
-            <span class="n">speed_limit</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;speedLimit&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">lanelet</span><span class="o">.</span><span class="n">speed_limit</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">lanelet_node</span>
-                <span class="c1"># speed_limit.text = str(&#39;INF&#39;)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">speed_limit</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">lanelet</span><span class="o">.</span><span class="n">speed_limit</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">stop_line</span><span class="p">:</span>
+            <span class="n">stop_line_node</span> <span class="o">=</span> <span class="n">LaneletStopLineXMLNode</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">lanelet</span><span class="o">.</span><span class="n">stop_line</span><span class="p">)</span>
+            <span class="n">lanelet_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stop_line_node</span><span class="p">)</span>
 
-            <span class="n">lanelet_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">speed_limit</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">lanelet_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">lanelet_type_element</span> <span class="ow">in</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">lanelet_type</span><span class="p">:</span>
+                <span class="n">lanelet_type_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;laneletType&#39;</span><span class="p">)</span>
+                <span class="n">lanelet_type_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">lanelet_type_element</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">lanelet_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lanelet_type_node</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;&lt;CommonRoadFileWriter/lanelet.lanelet_type&gt; Lanelet </span><span class="si">%s</span><span class="s1"> has not &#39;</span>
+                          <span class="s1">&#39;lanelet type&#39;</span> <span class="o">%</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">lanelet_id</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">user_one_way</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">user_one_way</span> <span class="ow">in</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">user_one_way</span><span class="p">:</span>
+                <span class="n">user_one_way_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;userOneWay&#39;</span><span class="p">)</span>
+                <span class="n">user_one_way_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">user_one_way</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">lanelet_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user_one_way_node</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">user_bidirectional</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">user_bidirectional</span><span class="p">:</span>
+                <span class="n">user_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;userBidirectional&#39;</span><span class="p">)</span>
+                <span class="n">user_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">lanelet_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user_node</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">traffic_signs</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">traffic_sign</span> <span class="ow">in</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">traffic_signs</span><span class="p">:</span>
+                <span class="n">traffic_sign_node</span> <span class="o">=</span> <span class="n">TrafficSignXMLNode</span><span class="o">.</span><span class="n">create_ref_node</span><span class="p">(</span><span class="n">traffic_sign</span><span class="p">)</span>
+                <span class="n">lanelet_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">traffic_sign_node</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">traffic_lights</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">traffic_light</span> <span class="ow">in</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">traffic_lights</span><span class="p">:</span>
+                <span class="n">traffic_light_node</span> <span class="o">=</span> <span class="n">TrafficLightXMLNode</span><span class="o">.</span><span class="n">create_ref_node</span><span class="p">(</span><span class="n">traffic_light</span><span class="p">)</span>
+                <span class="n">lanelet_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">traffic_light_node</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">lanelet_node</span>
 
@@ -729,34 +830,6 @@
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">()</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_obstacle_type_enum_to_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obstacle_type</span><span class="p">:</span> <span class="n">ObstacleType</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create string for obstacle type</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">obstacle_type</span> <span class="o">==</span> <span class="n">ObstacleType</span><span class="o">.</span><span class="n">CAR</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;car&#39;</span>
-        <span class="k">elif</span> <span class="n">obstacle_type</span> <span class="o">==</span> <span class="n">ObstacleType</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;unknown&#39;</span>
-        <span class="k">elif</span> <span class="n">obstacle_type</span> <span class="o">==</span> <span class="n">ObstacleType</span><span class="o">.</span><span class="n">BICYCLE</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;bicycle&#39;</span>
-        <span class="k">elif</span> <span class="n">obstacle_type</span> <span class="o">==</span> <span class="n">ObstacleType</span><span class="o">.</span><span class="n">PEDESTRIAN</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;pedestrian&#39;</span>
-        <span class="k">elif</span> <span class="n">obstacle_type</span> <span class="o">==</span> <span class="n">ObstacleType</span><span class="o">.</span><span class="n">PARKED_VEHICLE</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;parkedVehicle&#39;</span>
-        <span class="k">elif</span> <span class="n">obstacle_type</span> <span class="o">==</span> <span class="n">ObstacleType</span><span class="o">.</span><span class="n">ROAD_BOUNDARY</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;roadBoundary&#39;</span>
-        <span class="k">elif</span> <span class="n">obstacle_type</span> <span class="o">==</span> <span class="n">ObstacleType</span><span class="o">.</span><span class="n">TRUCK</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;truck&#39;</span>
-        <span class="k">elif</span> <span class="n">obstacle_type</span> <span class="o">==</span> <span class="n">ObstacleType</span><span class="o">.</span><span class="n">BUS</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;bus&#39;</span>
-        <span class="k">elif</span> <span class="n">obstacle_type</span> <span class="o">==</span> <span class="n">ObstacleType</span><span class="o">.</span><span class="n">PRIORITY_VEHICLE</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;priorityVehicle&#39;</span>
-        <span class="k">elif</span> <span class="n">obstacle_type</span> <span class="o">==</span> <span class="n">ObstacleType</span><span class="o">.</span><span class="n">CONSTRUCTION_ZONE</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;constructionZone&#39;</span>
-        <span class="k">elif</span> <span class="n">obstacle_type</span> <span class="o">==</span> <span class="n">ObstacleType</span><span class="o">.</span><span class="n">TRAIN</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;train&#39;</span>
-
-    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_obstacle_role_enum_to_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obstacle_role</span><span class="p">:</span> <span class="n">ObstacleRole</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create string for obstalce role</span>
@@ -770,13 +843,13 @@
     <span class="k">def</span> <span class="nf">create_obstacle_node_header</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">obstacle_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">obstacle_role</span><span class="p">:</span> <span class="n">ObstacleRole</span><span class="p">,</span> <span class="n">obstacle_type</span><span class="p">:</span> <span class="n">ObstacleType</span>
     <span class="p">):</span>
-        <span class="n">obstacle_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;obstacle&#39;</span><span class="p">)</span>
+        <span class="n">obstacle_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_obstacle_role_enum_to_string</span><span class="p">(</span><span class="n">obstacle_role</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;Obstacle&#39;</span><span class="p">)</span>
         <span class="n">obstacle_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">obstacle_id</span><span class="p">))</span>
-        <span class="n">role_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;role&#39;</span><span class="p">)</span>
-        <span class="n">role_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_obstacle_role_enum_to_string</span><span class="p">(</span><span class="n">obstacle_role</span><span class="p">)</span>
-        <span class="n">obstacle_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">role_node</span><span class="p">)</span>
+        <span class="c1"># role_node = etree.Element(&#39;role&#39;)</span>
+        <span class="c1"># role_node.text = cls._obstacle_role_enum_to_string(obstacle_role)</span>
+        <span class="c1"># obstacle_node.append(role_node)</span>
         <span class="n">type_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span>
-        <span class="n">type_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_obstacle_type_enum_to_string</span><span class="p">(</span><span class="n">obstacle_type</span><span class="p">)</span>
+        <span class="n">type_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">obstacle_type</span><span class="o">.</span><span class="n">value</span>
         <span class="n">obstacle_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">type_node</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">obstacle_node</span>
 
@@ -1110,7 +1183,8 @@
         <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;A goal state cannot contain multiple items. Use a list of goal states instead.&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Case should not occur, position=</span><span class="si">{}</span><span class="s1">, goal_lanelet_ids=</span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">position</span><span class="p">,</span><span class="n">goal_lanelet_ids</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Case should not occur, position=</span><span class="si">{}</span><span class="s1">, goal_lanelet_ids=</span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">position</span><span class="p">,</span>
+                                                                                               <span class="n">goal_lanelet_ids</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">node</span>
 
     <span class="nd">@classmethod</span>
@@ -1247,17 +1321,24 @@
 
 
 <span class="k">class</span> <span class="nc">Point</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">z</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">z</span>
 
     <span class="k">def</span> <span class="nf">as_numpy_array</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">])</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_numpy_array</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">point</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="nb">list</span><span class="p">]):</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">point</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">point</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">3</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">point</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">point</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">point_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;point&#39;</span><span class="p">)</span>
@@ -1267,6 +1348,10 @@
         <span class="n">y</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
         <span class="n">y</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">float_to_str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
         <span class="n">point_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">)</span>
+            <span class="n">z</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">float_to_str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+            <span class="n">point_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">point_node</span>
 
 
@@ -1284,6 +1369,183 @@
     <span class="k">def</span> <span class="nf">add_points_to_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xml_node</span><span class="p">:</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">:</span>
             <span class="n">xml_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="o">.</span><span class="n">create_node</span><span class="p">())</span>
+
+
+<span class="k">class</span> <span class="nc">IntersectionXMLNode</span><span class="p">:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">intersection</span><span class="p">:</span> <span class="n">Intersection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a xml node for an intersection</span>
+<span class="sd">        :param intersection: intersection for the node</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">intersection_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;intersection&#39;</span><span class="p">)</span>
+        <span class="n">intersection_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">intersection</span><span class="o">.</span><span class="n">intersection_id</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">incoming</span> <span class="ow">in</span> <span class="n">intersection</span><span class="o">.</span><span class="n">incomings</span><span class="p">:</span>
+            <span class="n">incoming_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;incoming&#39;</span><span class="p">)</span>
+            <span class="n">incoming_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">incoming</span><span class="o">.</span><span class="n">incoming_id</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">incoming_lanelet</span> <span class="ow">in</span> <span class="n">incoming</span><span class="o">.</span><span class="n">incoming_lanelets</span><span class="p">:</span>
+                <span class="n">incoming_lanelet_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;incomingLanelet&#39;</span><span class="p">)</span>
+                <span class="n">incoming_lanelet_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;ref&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">incoming_lanelet</span><span class="p">))</span>
+                <span class="n">incoming_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">incoming_lanelet_node</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">incoming</span><span class="o">.</span><span class="n">successors_right</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">successor_right</span> <span class="ow">in</span> <span class="n">incoming</span><span class="o">.</span><span class="n">successors_right</span><span class="p">:</span>
+                    <span class="n">successor_right_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;successorsRight&#39;</span><span class="p">)</span>
+                    <span class="n">successor_right_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;ref&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">successor_right</span><span class="p">))</span>
+                    <span class="n">incoming_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">successor_right_node</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">incoming</span><span class="o">.</span><span class="n">successors_straight</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">successor_straight</span> <span class="ow">in</span> <span class="n">incoming</span><span class="o">.</span><span class="n">successors_straight</span><span class="p">:</span>
+                    <span class="n">successor_straight_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;successorsStraight&#39;</span><span class="p">)</span>
+                    <span class="n">successor_straight_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;ref&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">successor_straight</span><span class="p">))</span>
+                    <span class="n">incoming_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">successor_straight_node</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">incoming</span><span class="o">.</span><span class="n">successors_left</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">successor_left</span> <span class="ow">in</span> <span class="n">incoming</span><span class="o">.</span><span class="n">successors_left</span><span class="p">:</span>
+                    <span class="n">successor_left_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;successorsLeft&#39;</span><span class="p">)</span>
+                    <span class="n">successor_left_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;ref&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">successor_left</span><span class="p">))</span>
+                    <span class="n">incoming_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">successor_left_node</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">incoming</span><span class="o">.</span><span class="n">left_of</span><span class="p">:</span>
+                <span class="n">is_left_of_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;isLeftOf&#39;</span><span class="p">)</span>
+                <span class="n">is_left_of_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;ref&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">incoming</span><span class="o">.</span><span class="n">left_of</span><span class="p">))</span>
+                <span class="n">incoming_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">is_left_of_node</span><span class="p">)</span>
+
+            <span class="n">intersection_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">incoming_node</span><span class="p">)</span>
+
+        <span class="c1"># if intersection.crossings is not None:</span>
+        <span class="c1">#     crossing_node = etree.Element(&#39;crossing&#39;)</span>
+        <span class="c1">#     for crossing_lanelet in intersection.crossings:</span>
+        <span class="c1">#         crossing_lanelet_node = etree.Element(&#39;crossingLanelet&#39;)</span>
+        <span class="c1">#         crossing_lanelet_node.set(&#39;ref&#39;, str(crossing_lanelet))</span>
+        <span class="c1">#         crossing_node.append(crossing_lanelet_node)</span>
+        <span class="c1">#     intersection_node.append(crossing_node)</span>
+
+        <span class="k">return</span> <span class="n">intersection_node</span>
+
+
+<span class="k">class</span> <span class="nc">TrafficSignXMLNode</span><span class="p">:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">traffic_sign</span><span class="p">:</span> <span class="n">TrafficSign</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+        <span class="n">traffic_sign_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;trafficSign&#39;</span><span class="p">)</span>
+        <span class="n">traffic_sign_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">traffic_sign</span><span class="o">.</span><span class="n">traffic_sign_id</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">traffic_sign</span><span class="o">.</span><span class="n">traffic_sign_elements</span><span class="p">:</span>
+            <span class="n">element_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;trafficSignElement&#39;</span><span class="p">)</span>
+            <span class="n">sign_id_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;trafficSignID&#39;</span><span class="p">)</span>
+            <span class="n">sign_id_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">traffic_sign_element_id</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">element_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sign_id_node</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">element</span><span class="o">.</span><span class="n">additional_values</span><span class="p">:</span>
+                <span class="n">value_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;additionalValue&#39;</span><span class="p">)</span>
+                <span class="n">value_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">element_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value_node</span><span class="p">)</span>
+            <span class="n">traffic_sign_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element_node</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">traffic_sign</span><span class="o">.</span><span class="n">position</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">position_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;position&#39;</span><span class="p">)</span>
+            <span class="n">position_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Point</span><span class="p">(</span><span class="n">traffic_sign</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                       <span class="n">traffic_sign</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">create_node</span><span class="p">())</span>
+            <span class="n">traffic_sign_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">position_node</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">traffic_sign</span><span class="o">.</span><span class="n">virtual</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">virtual_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;virtual&#39;</span><span class="p">)</span>
+            <span class="n">virtual_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">traffic_sign</span><span class="o">.</span><span class="n">virtual</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">traffic_sign_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">virtual_node</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">traffic_sign_node</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_ref_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">traffic_sign_ref</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+        <span class="n">traffic_sign_ref_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;trafficSignRef&#39;</span><span class="p">)</span>
+        <span class="n">traffic_sign_ref_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;ref&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">traffic_sign_ref</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">traffic_sign_ref_node</span>
+
+
+<span class="k">class</span> <span class="nc">TrafficLightXMLNode</span><span class="p">:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">traffic_light</span><span class="p">:</span> <span class="n">TrafficLight</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+        <span class="n">traffic_light_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;trafficLight&#39;</span><span class="p">)</span>
+        <span class="n">traffic_light_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">traffic_light</span><span class="o">.</span><span class="n">traffic_light_id</span><span class="p">))</span>
+        <span class="n">cycle_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;cycle&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">traffic_light</span><span class="o">.</span><span class="n">cycle</span><span class="p">:</span>
+            <span class="n">element_node</span> <span class="o">=</span> <span class="n">TrafficLightCycleElementXMLNode</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+            <span class="n">cycle_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element_node</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">traffic_light</span><span class="o">.</span><span class="n">time_offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">traffic_light</span><span class="o">.</span><span class="n">time_offset</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">offset_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;timeOffset&#39;</span><span class="p">)</span>
+            <span class="n">offset_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">traffic_light</span><span class="o">.</span><span class="n">time_offset</span><span class="p">)</span>
+            <span class="n">cycle_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">offset_node</span><span class="p">)</span>
+        <span class="n">traffic_light_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cycle_node</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">traffic_light</span><span class="o">.</span><span class="n">position</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">position_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;position&#39;</span><span class="p">)</span>
+            <span class="n">position_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Point</span><span class="p">(</span><span class="n">traffic_light</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                       <span class="n">traffic_light</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">create_node</span><span class="p">())</span>
+            <span class="n">traffic_light_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">position_node</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">traffic_light</span><span class="o">.</span><span class="n">active</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">active_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;active&#39;</span><span class="p">)</span>
+            <span class="n">active_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">traffic_light</span><span class="o">.</span><span class="n">active</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">traffic_light_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">active_node</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">traffic_light_node</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_ref_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">traffic_light_ref</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+        <span class="n">traffic_light_ref_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;trafficLightRef&#39;</span><span class="p">)</span>
+        <span class="n">traffic_light_ref_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;ref&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">traffic_light_ref</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">traffic_light_ref_node</span>
+
+
+<span class="k">class</span> <span class="nc">TrafficLightCycleElementXMLNode</span><span class="p">:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cycle_element</span><span class="p">:</span> <span class="n">TrafficLightCycleElement</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+        <span class="n">element_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;cycleElement&quot;</span><span class="p">)</span>
+        <span class="n">duration_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;duration&quot;</span><span class="p">)</span>
+        <span class="n">duration_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cycle_element</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span>
+        <span class="n">element_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">duration_node</span><span class="p">)</span>
+        <span class="n">color_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">)</span>
+        <span class="n">color_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">cycle_element</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">element_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">color_node</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">element_node</span>
+
+
+<span class="k">class</span> <span class="nc">LineMarkingXMLNode</span><span class="p">:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_line_marking_enum_to_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">line_marking</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">line_marking</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">line_marking</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+        <span class="n">line_marking_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;lineMarking&#39;</span><span class="p">)</span>
+        <span class="n">line_marking_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_line_marking_enum_to_string</span><span class="p">(</span><span class="n">line_marking</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">line_marking_node</span>
+
+
+<span class="k">class</span> <span class="nc">LaneletStopLineXMLNode</span><span class="p">:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stop_line</span><span class="p">:</span> <span class="n">StopLine</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+        <span class="n">stop_line_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;stopLine&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">stop_line</span><span class="o">.</span><span class="n">start</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">stop_line</span><span class="o">.</span><span class="n">end</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">start_node</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">stop_line</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stop_line</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">create_node</span><span class="p">()</span>
+            <span class="n">stop_line_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">start_node</span><span class="p">)</span>
+            <span class="n">end_node</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">stop_line</span><span class="o">.</span><span class="n">end</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stop_line</span><span class="o">.</span><span class="n">end</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">create_node</span><span class="p">()</span>
+            <span class="n">stop_line_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">end_node</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">stop_line</span><span class="o">.</span><span class="n">line_marking</span><span class="p">:</span>
+            <span class="n">line_marking_node</span> <span class="o">=</span> <span class="n">LineMarkingXMLNode</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">stop_line</span><span class="o">.</span><span class="n">line_marking</span><span class="p">)</span>
+            <span class="n">stop_line_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_marking_node</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">stop_line</span><span class="o">.</span><span class="n">traffic_sign_ref</span><span class="p">:</span>
+            <span class="n">traffic_sign_ref_node</span> <span class="o">=</span> <span class="n">TrafficSignXMLNode</span><span class="o">.</span><span class="n">create_ref_node</span><span class="p">(</span><span class="n">stop_line</span><span class="o">.</span><span class="n">traffic_sign_ref</span><span class="p">)</span>
+            <span class="n">stop_line_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">traffic_sign_ref_node</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">stop_line</span><span class="o">.</span><span class="n">traffic_light_ref</span><span class="p">:</span>
+            <span class="n">traffic_light_ref_node</span> <span class="o">=</span> <span class="n">TrafficLightXMLNode</span><span class="o">.</span><span class="n">create_ref_node</span><span class="p">(</span><span class="n">stop_line</span><span class="o">.</span><span class="n">traffic_light_ref</span><span class="p">)</span>
+            <span class="n">stop_line_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">traffic_light_ref_node</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">stop_line_node</span>
+
+
 </pre></div>
 
            </div>

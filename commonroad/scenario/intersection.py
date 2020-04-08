@@ -10,7 +10,7 @@ from typing import List, Set, Union, Dict
 
 
 class IntersectionIncomingElement:
-    """ Class for incoming element in an intersection"""
+    """ Class which represents an incoming element of an intersection"""
     def __init__(self, incoming_id: int, incoming_lanelets: Set[int] = None, successors_right: Set[int] = None,
                  successors_straight: Set[int] = None, successors_left: Set[int] = None,
                  left_of: int = None):
@@ -55,7 +55,7 @@ class IntersectionIncomingElement:
 
 
 class Intersection:
-    """ Class to represent intersection"""
+    """ Class to represent an intersection"""
     def __init__(self, intersection_id: int, incomings: List[IntersectionIncomingElement], crossings: Set[int] = None):
         """
         :param intersection_id: ID of intersection element

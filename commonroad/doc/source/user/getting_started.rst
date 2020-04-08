@@ -6,7 +6,7 @@ Getting Started
 
 This manual introduces the main functionality by means of some examples. Exact class descriptions can be found in the module descriptions.
 
-`CommonRoad XML-files <https://commonroad.in.tum.de/scenarios/>`_ consist of a :class:`.Scenario` and a :class:`.PlanningProblemSet`. A :class:`.Scenario` represents the environment including a :class:`.LaneletNetwork` and a set of :class:`.DynamicObstacle` and :class:`.StaticObstacle`. A :class:`.LaneletNetwork` is built from lane segments (:class:`.Lanelet`), that can be connected arbitrarily.
+`CommonRoad XML-files <https://commonroad.in.tum.de/scenarios/>`_ consist of a :class:`.Scenario` and a :class:`.PlanningProblemSet`. A :class:`.Scenario` represents the environment including a :class:`.LaneletNetwork` and a set of :class:`.DynamicObstacle` and :class:`.StaticObstacle`. A :class:`.LaneletNetwork` is built from lane segments (:class:`.Lanelet`), that can be connected arbitrarily, traffic signs (:class:`.TrafficSign`), traffic lights (:class:`.TrafficLight`), and intersections (:class:`.Intersection`).
 A :class:`.PlanningProblemSet` contains one :class:`.PlanningProblem` for every ego vehicle in the :class:`.Scenario`, consisting of an initial :class:`.State` and a :class:`.GoalRegion` that has to be reached.
 
 For detailed information, see `XML CommonRoad Documentation <https://commonroad.in.tum.de/documentation/xml_format_doc/>`_.

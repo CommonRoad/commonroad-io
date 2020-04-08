@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -230,58 +230,36 @@
 <span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">et</span>
 <span class="kn">from</span> <span class="nn">xml.dom</span> <span class="k">import</span> <span class="n">minidom</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="k">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">unique</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 
+<span class="kn">from</span> <span class="nn">commonroad</span> <span class="k">import</span> <span class="n">SCENARIO_VERSION</span>
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="k">import</span> <span class="n">etree</span><span class="p">,</span> <span class="n">objectify</span>
+
+<span class="kn">from</span> <span class="nn">commonroad.common.solution</span> <span class="k">import</span> <span class="n">VehicleType</span><span class="p">,</span> <span class="n">CostFunction</span><span class="p">,</span> <span class="n">VehicleModel</span>
 <span class="kn">from</span> <span class="nn">commonroad.geometry.transform</span> <span class="k">import</span> <span class="n">rotate_translate</span>
 <span class="kn">from</span> <span class="nn">commonroad.scenario.trajectory</span> <span class="k">import</span> <span class="n">Trajectory</span>
-<span class="kn">from</span> <span class="nn">commonroad.common.validity</span> <span class="k">import</span> <span class="n">is_real_number_vector</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Christina Miller&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;TUM Cyber-Physical Systems Group&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;BMW CAR@TUM&quot;</span><span class="p">]</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2019.1&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2020.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Moritz Klischat&quot;</span>
-<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad@in.tum.de&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad-i06@in.tum.de&quot;</span>
 <span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Released&quot;</span>
 
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">platform</span><span class="o">,</span> <span class="nn">subprocess</span><span class="o">,</span> <span class="nn">re</span>
 
-<span class="n">SCENARIO_VERSION</span> <span class="o">=</span> <span class="s1">&#39;2018b&#39;</span>
-
-
-<div class="viewcode-block" id="VehicleType"><a class="viewcode-back" href="../../../api/common.html#commonroad.common.solution_writer.VehicleType">[docs]</a><span class="nd">@unique</span>
-<span class="k">class</span> <span class="nc">VehicleType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="n">FORD_ESCORT</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">BMW_320i</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">VW_VANAGON</span> <span class="o">=</span> <span class="mi">3</span></div>
-
-
-<div class="viewcode-block" id="VehicleModel"><a class="viewcode-back" href="../../../api/common.html#commonroad.common.solution_writer.VehicleModel">[docs]</a><span class="nd">@unique</span>
-<span class="k">class</span> <span class="nc">VehicleModel</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="n">PM</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">ST</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">KS</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">MB</span> <span class="o">=</span> <span class="mi">3</span></div>
-
-
-<div class="viewcode-block" id="CostFunction"><a class="viewcode-back" href="../../../api/common.html#commonroad.common.solution_writer.CostFunction">[docs]</a><span class="nd">@unique</span>
-<span class="k">class</span> <span class="nc">CostFunction</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="n">JB1</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">SA1</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">WX1</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">SM1</span> <span class="o">=</span> <span class="mi">3</span>
-    <span class="n">SM2</span> <span class="o">=</span> <span class="mi">4</span>
-    <span class="n">SM3</span> <span class="o">=</span> <span class="mi">5</span></div>
+<span class="n">delete_from_cpu_name</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;(R)&#39;</span><span class="p">,</span> <span class="s1">&#39;(TM)&#39;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="CommonRoadSolutionWriter"><a class="viewcode-back" href="../../../api/common.html#commonroad.common.solution_writer.CommonRoadSolutionWriter">[docs]</a><span class="k">class</span> <span class="nc">CommonRoadSolutionWriter</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scenario_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">step_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-                 <span class="n">vehicle_type</span><span class="p">:</span> <span class="n">VehicleType</span><span class="o">=</span><span class="n">VehicleType</span><span class="o">.</span><span class="n">FORD_ESCORT</span><span class="p">,</span> <span class="n">vehicle_model</span><span class="p">:</span> <span class="n">VehicleModel</span><span class="o">=</span><span class="n">VehicleModel</span><span class="o">.</span><span class="n">KS</span><span class="p">,</span>
-                 <span class="n">cost_function</span><span class="p">:</span> <span class="n">CostFunction</span><span class="o">=</span><span class="n">CostFunction</span><span class="o">.</span><span class="n">JB1</span><span class="p">):</span>
+                 <span class="n">vehicle_type</span><span class="p">:</span> <span class="n">VehicleType</span> <span class="o">=</span> <span class="n">VehicleType</span><span class="o">.</span><span class="n">FORD_ESCORT</span><span class="p">,</span> <span class="n">vehicle_model</span><span class="p">:</span> <span class="n">VehicleModel</span> <span class="o">=</span> <span class="n">VehicleModel</span><span class="o">.</span><span class="n">KS</span><span class="p">,</span>
+                 <span class="n">cost_function</span><span class="p">:</span> <span class="n">CostFunction</span> <span class="o">=</span> <span class="n">CostFunction</span><span class="o">.</span><span class="n">JB1</span><span class="p">,</span> <span class="n">computation_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">processor_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write solution xml files to upload at commonroad.in.tum.de.</span>
 
@@ -293,7 +271,14 @@
 <span class="sd">        :param vehicle_type: Vehicle that is used for evaluating the trajectory (also used for benchmark ID)</span>
 <span class="sd">        :param vehicle_model: The states that are necessary for this vehicle model are written to the xml file</span>
 <span class="sd">        :param cost_function: this cost function is written to the benchmark ID. Note: not checked for existence here.</span>
+<span class="sd">        :param computation_time: computation time required to obtain solution (optional)</span>
+<span class="sd">        :param processor_name: name of processor time required to obtain solution (optional). Determined automatically</span>
+<span class="sd">        if set to &#39;auto&#39;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s1">&#39;Module commonroad.common.solution_writer is deprecated. Use commonroad.common.solution module instead&#39;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">cost_function</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CostFunction</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Cost function not listed. May cannot be evaluated.&#39;</span><span class="p">)</span>
@@ -303,9 +288,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">benchmark_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_benchmark_id</span><span class="p">(</span><span class="n">scenario_id</span><span class="p">,</span> <span class="n">vehicle_type</span><span class="p">,</span> <span class="n">vehicle_model</span><span class="p">,</span> <span class="n">cost_function</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s1">&#39;solution_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">benchmark_id</span> <span class="o">+</span> <span class="s1">&#39;.xml&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;CommonRoadSolution&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_write_header</span><span class="p">()</span>
 
-<div class="viewcode-block" id="CommonRoadSolutionWriter.add_solution_trajectory"><a class="viewcode-back" href="../../../api/common.html#commonroad.common.solution_writer.CommonRoadSolutionWriter.add_solution_trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">add_solution_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">trajectory</span><span class="p">:</span> <span class="n">Trajectory</span><span class="p">,</span> <span class="n">planning_problem_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">processor_name</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span><span class="p">:</span>
+            <span class="n">processor_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_processor_name</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write_header</span><span class="p">(</span><span class="n">computation_time</span><span class="p">,</span> <span class="n">processor_name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CommonRoadSolutionWriter.add_solution_trajectory"><a class="viewcode-back" href="../../../api/common.html#commonroad.common.solution_writer.CommonRoadSolutionWriter.add_solution_trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">add_solution_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">:</span> <span class="n">Trajectory</span><span class="p">,</span> <span class="n">planning_problem_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a trajectory to the xml tree.</span>
 
@@ -328,7 +316,7 @@
         <span class="n">trajectory_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;planningProblem&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">planning_problem_id</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trajectory_node</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CommonRoadSolutionWriter.add_solution_input_vector"><a class="viewcode-back" href="../../../api/common.html#commonroad.common.solution_writer.CommonRoadSolutionWriter.add_solution_input_vector">[docs]</a>    <span class="k">def</span> <span class="nf">add_solution_input_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_vector</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">planning_problem_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<div class="viewcode-block" id="CommonRoadSolutionWriter.add_solution_input_vector"><a class="viewcode-back" href="../../../api/common.html#commonroad.common.solution_writer.CommonRoadSolutionWriter.add_solution_input_vector">[docs]</a>    <span class="k">def</span> <span class="nf">add_solution_input_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_vector</span><span class="p">:</span> <span class="n">Trajectory</span><span class="p">,</span> <span class="n">planning_problem_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add an input vector to the xml tree</span>
 
@@ -341,9 +329,6 @@
 <span class="sd">        :param input_vector: list of states, each state is a list of the three above named values</span>
 <span class="sd">        :param planning_problem_id: Id of the planning problem that is solved with the trajectory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="n">is_real_number_vector</span><span class="p">(</span><span class="n">input_vector_i</span><span class="p">,</span><span class="n">length</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">input_vector_i</span> <span class="ow">in</span> <span class="n">input_vector</span><span class="p">]),</span>\
-            <span class="s1">&#39;&lt;CommonRoadSolutionWriter/add_solution_input_vector&gt;: input_vector has to be numpy vector of real numbers with shape=[n,3]&#39;</span>
-
         <span class="n">input_vector_node</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vehicle_model</span> <span class="o">==</span> <span class="n">VehicleModel</span><span class="o">.</span><span class="n">PM</span><span class="p">:</span>
             <span class="n">input_vector_node</span> <span class="o">=</span> <span class="n">PMInputVectorXMLNode</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">input_vector</span><span class="p">)</span>
@@ -355,11 +340,16 @@
         <span class="n">input_vector_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;planningProblem&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">planning_problem_id</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_vector_node</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_write_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_write_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">computation_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">processor_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;benchmark_id&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">benchmark_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">computation_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;computation_time&#39;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.4f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">computation_time</span><span class="p">))</span>
 
-<div class="viewcode-block" id="CommonRoadSolutionWriter.write_to_file"><a class="viewcode-back" href="../../../api/common.html#commonroad.common.solution_writer.CommonRoadSolutionWriter.write_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">processor_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;processor_name&#39;</span><span class="p">,</span> <span class="n">processor_name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CommonRoadSolutionWriter.write_to_file"><a class="viewcode-back" href="../../../api/common.html#commonroad.common.solution_writer.CommonRoadSolutionWriter.write_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write xml file to ouput_dir</span>
 
@@ -372,11 +362,34 @@
                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">))</span></div>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dump</span><span class="p">())</span></div>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_dump</span><span class="p">(</span><span class="n">root_node</span><span class="p">):</span>
-        <span class="n">rough_string</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">root_node</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="CommonRoadSolutionWriter.check_validity_of_solution_file"><a class="viewcode-back" href="../../../api/common.html#commonroad.common.solution_writer.CommonRoadSolutionWriter.check_validity_of_solution_file">[docs]</a>    <span class="k">def</span> <span class="nf">check_validity_of_solution_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check the validity of a generated xml_string with the CommonRoadSolution_schema.xsd schema.</span>
+<span class="sd">        Throw an error if it is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;/CommonRoadSolution_schema.xsd&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;rb&#39;</span><span class="p">,</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">schema_file</span><span class="p">:</span>
+            <span class="n">schema</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">XMLSchema</span><span class="p">(</span><span class="n">etree</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">schema_file</span><span class="p">))</span>
+
+        <span class="n">parser</span> <span class="o">=</span> <span class="n">objectify</span><span class="o">.</span><span class="n">makeparser</span><span class="p">(</span><span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">etree</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">et</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="n">parser</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">etree</span><span class="o">.</span><span class="n">XMLSyntaxError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s1">&#39;Could not produce valid CommonRoadSolution file! Error: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
+            <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># rough_string = etree.tostring(</span>
+        <span class="c1">#     self.root_node, pretty_print=True, encoding=&#39;unicode&#39;</span>
+        <span class="c1"># )</span>
+        <span class="c1"># return rough_string</span>
+
+        <span class="n">rough_string</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
         <span class="n">parsed</span> <span class="o">=</span> <span class="n">minidom</span><span class="o">.</span><span class="n">parseString</span><span class="p">(</span><span class="n">rough_string</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">parsed</span><span class="o">.</span><span class="n">toprettyxml</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="s2">&quot;  &quot;</span><span class="p">)</span>
 
@@ -384,7 +397,33 @@
     <span class="k">def</span> <span class="nf">_create_benchmark_id</span><span class="p">(</span><span class="n">scenario_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">vehicle_type</span><span class="p">:</span> <span class="n">VehicleType</span><span class="p">,</span> <span class="n">vehicle_model</span><span class="p">:</span> <span class="n">VehicleModel</span><span class="p">,</span>
                              <span class="n">cost_function</span><span class="p">:</span> <span class="n">CostFunction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{0}{1}</span><span class="s1">:</span><span class="si">{2}</span><span class="s1">:</span><span class="si">{3}</span><span class="s1">:</span><span class="si">{4}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">vehicle_model</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">vehicle_type</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">cost_function</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">scenario_id</span><span class="p">,</span>
-                                           <span class="n">SCENARIO_VERSION</span><span class="p">)</span></div>
+                                           <span class="n">SCENARIO_VERSION</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_processor_name</span><span class="p">():</span>
+        <span class="c1"># TODO: compare cpu name with list also used on the web server</span>
+        <span class="k">def</span> <span class="nf">strip_substrings</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">del_str</span> <span class="ow">in</span> <span class="n">delete_from_cpu_name</span><span class="p">:</span>
+                <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">del_str</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">string</span>
+
+        <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+            <span class="n">name_tmp</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">processor</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">del_str</span> <span class="ow">in</span> <span class="n">delete_from_cpu_name</span><span class="p">:</span>
+                <span class="n">name_tmp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">del_str</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">strip_substrings</span><span class="p">(</span><span class="n">name_tmp</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Darwin&quot;</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PATH&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PATH&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">pathsep</span> <span class="o">+</span> <span class="s1">&#39;/usr/sbin&#39;</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;sysctl -n machdep.cpu.brand_string&quot;</span>
+            <span class="k">return</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">command</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Linux&quot;</span><span class="p">:</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;cat /proc/cpuinfo&quot;</span>
+            <span class="n">all_info</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">all_info</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">n&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s2">&quot;model name&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="n">name_tmp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;.*model name.*: &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">strip_substrings</span><span class="p">(</span><span class="n">name_tmp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <span class="k">class</span> <span class="nc">PMTrajectoryXMLNode</span><span class="p">:</span>
@@ -397,7 +436,6 @@
             <span class="n">mandatory_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;position&#39;</span><span class="p">,</span> <span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="s1">&#39;orientation&#39;</span><span class="p">,</span> <span class="s1">&#39;time_step&#39;</span><span class="p">]</span>
             <span class="n">is_valid_trajectory</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">mandatory_fields</span><span class="p">)</span>
             <span class="n">trajectory</span> <span class="o">=</span> <span class="n">split_velocity_to_xy</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span>
-
 
         <span class="n">trajectory_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;pmTrajectory&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">state_list</span><span class="p">:</span>
@@ -415,17 +453,19 @@
             <span class="n">time_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">time_step</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">trajectory_node</span>
 
+
 <span class="k">def</span> <span class="nf">split_velocity_to_xy</span><span class="p">(</span><span class="n">trajectory</span><span class="p">:</span> <span class="n">Trajectory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Trajectory</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Converts trajectory from [v,orientation] ot [v_x,v_y]&quot;&quot;&quot;</span>
     <span class="n">trajectory</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">state_list</span><span class="p">:</span>
-        <span class="n">v_temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="p">,</span><span class="mf">0.0</span><span class="p">]])</span>
-        <span class="n">v_temp</span> <span class="o">=</span> <span class="n">rotate_translate</span><span class="p">(</span><span class="n">v_temp</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span><span class="n">state</span><span class="o">.</span><span class="n">orientation</span><span class="p">)</span>
-        <span class="n">state</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="n">v_temp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">state</span><span class="o">.</span><span class="n">velocity_y</span> <span class="o">=</span> <span class="n">v_temp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">v_temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>
+        <span class="n">v_temp</span> <span class="o">=</span> <span class="n">rotate_translate</span><span class="p">(</span><span class="n">v_temp</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span> <span class="n">state</span><span class="o">.</span><span class="n">orientation</span><span class="p">)</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="n">v_temp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">velocity_y</span> <span class="o">=</span> <span class="n">v_temp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">trajectory</span>
+
 
 <span class="k">class</span> <span class="nc">STTrajectoryXMLNode</span><span class="p">:</span>
     <span class="nd">@classmethod</span>
@@ -517,7 +557,7 @@
             <span class="n">slip_angle_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">state_node</span><span class="p">,</span> <span class="s1">&#39;slipAngle&#39;</span><span class="p">)</span>
             <span class="n">slip_angle_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">slip_angle</span><span class="p">))</span>
             <span class="n">time_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">state_node</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">)</span>
-            <span class="n">time_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">time_step</span> <span class="o">*</span> <span class="n">step_size</span><span class="p">)</span>
+            <span class="n">time_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">time_step</span><span class="p">)</span>
 
             <span class="n">roll_angle_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">state_node</span><span class="p">,</span> <span class="s1">&#39;rollAngle&#39;</span><span class="p">)</span>
             <span class="n">roll_angle_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">roll_angle</span><span class="p">)</span>
@@ -573,43 +613,45 @@
 
 <span class="k">class</span> <span class="nc">PMInputVectorXMLNode</span><span class="p">:</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">input_vector</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">et</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="n">input_vector</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="mi">3</span><span class="p">),</span> <span class="s1">&#39;&lt;PMInputVectorXMLNode/create_node&gt;: input_vector contains&#39;</span> \
-                                                          <span class="s1">&#39;lists of length 3: xAcceleration: float, yAcceleration: &#39;</span> \
-                                                          <span class="s1">&#39;float, time: float.&#39;</span>
-        <span class="n">input_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;pmInputVector&#39;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">input_vector</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">:</span> <span class="n">Trajectory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">et</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+        <span class="n">mandatory_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;acceleration&#39;</span><span class="p">,</span> <span class="s1">&#39;orientation&#39;</span><span class="p">,</span> <span class="s1">&#39;time_step&#39;</span><span class="p">]</span>
+        <span class="n">is_valid_trajectory</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">mandatory_fields</span><span class="p">)</span>
+
+        <span class="n">input_vector_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;pmInputVector&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">state_list</span><span class="p">:</span>
+            <span class="n">input_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">input_vector_node</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span><span class="p">)</span>
             <span class="n">x_acceleration_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">input_node</span><span class="p">,</span> <span class="s1">&#39;xAcceleration&#39;</span><span class="p">)</span>
-            <span class="n">x_acceleration_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">x_acceleration_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">acceleration</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">orientation</span><span class="p">))</span>
             <span class="n">y_acceleration_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">input_node</span><span class="p">,</span> <span class="s1">&#39;yAcceleration&#39;</span><span class="p">)</span>
-            <span class="n">y_acceleration_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">y_acceleration_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">acceleration</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">orientation</span><span class="p">))</span>
             <span class="n">time_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">input_node</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">)</span>
-            <span class="n">time_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">input_node</span>
+            <span class="n">time_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">time_step</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">input_vector_node</span>
 
 
 <span class="k">class</span> <span class="nc">InputVectorXMLNode</span><span class="p">:</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">input_vector</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">et</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="n">input_vector</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="mi">3</span><span class="p">),</span> <span class="s1">&#39;&lt;InputVectorXMLNode/create_node&gt;: input_vector contains&#39;</span> \
-                                                           <span class="s1">&#39;lists of length 3: acceleration: float, &#39;</span> \
-                                                           <span class="s1">&#39;steeringAngleSpeed: float, time: float.&#39;</span>
-        <span class="n">input_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;inputVector&#39;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">input_vector</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">:</span> <span class="n">Trajectory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">et</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+        <span class="n">mandatory_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;acceleration&#39;</span><span class="p">,</span> <span class="s1">&#39;steering_angle_speed&#39;</span><span class="p">,</span> <span class="s1">&#39;time_step&#39;</span><span class="p">]</span>
+        <span class="n">is_valid_trajectory</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">mandatory_fields</span><span class="p">)</span>
+
+        <span class="n">input_vector_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;inputVector&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">state_list</span><span class="p">:</span>
+            <span class="n">input_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">input_vector_node</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span><span class="p">)</span>
             <span class="n">acceleration_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">input_node</span><span class="p">,</span> <span class="s1">&#39;acceleration&#39;</span><span class="p">)</span>
-            <span class="n">acceleration_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">acceleration_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">acceleration</span><span class="p">)</span>
             <span class="n">steering_angle_speed_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">input_node</span><span class="p">,</span> <span class="s1">&#39;steeringAngleSpeed&#39;</span><span class="p">)</span>
-            <span class="n">steering_angle_speed_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">steering_angle_speed_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">steering_angle_speed</span><span class="p">)</span>
             <span class="n">time_node</span> <span class="o">=</span> <span class="n">et</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">input_node</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">)</span>
-            <span class="n">time_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">input_node</span>
+            <span class="n">time_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">time_step</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">input_vector_node</span>
 
 
 <span class="k">def</span> <span class="nf">is_valid_trajectory</span><span class="p">(</span><span class="n">trajectory</span><span class="p">:</span> <span class="n">Trajectory</span><span class="p">,</span> <span class="n">mandatory_fields</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">state_list</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">mandatory_fields</span><span class="p">:</span>
-            <span class="k">assert</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">field</span><span class="p">)),</span> <span class="s1">&#39;&lt;PlanningProblem/initial_state&gt; fields [</span><span class="si">{}</span><span class="s1">] are mandatory. &#39;</span> \
-                                           <span class="s1">&#39;No </span><span class="si">{}</span><span class="s1"> attribute found.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mandatory_fields</span><span class="p">),</span> <span class="n">field</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">field</span><span class="p">)),</span> <span class="s1">&#39;&lt;PlanningProblem/initial_state&gt; fields [</span><span class="si">{}</span><span class="s1">] are mandatory. &#39;</span> \
+                                            <span class="s1">&#39;No </span><span class="si">{}</span><span class="s1"> attribute found.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mandatory_fields</span><span class="p">),</span> <span class="n">field</span><span class="p">)</span>
 </pre></div>
 
            </div>
