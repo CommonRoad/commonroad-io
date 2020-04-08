@@ -1,0 +1,393 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>CommonRoad_io Documentation &mdash; CommonRoad_io 2020.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="User Manual" href="user/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home"> CommonRoad_io
+          
+
+          
+            
+            <img src="_static/commonroad_white150.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2020.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user/index.html">User Manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user/getting_started.html">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user/getting_started.html#reading-files">Reading Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user/getting_started.html#scenario">Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user/getting_started.html#lanelet-network">Lanelet Network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user/getting_started.html#obstacles">Obstacles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user/getting_started.html#dynamic-obstacle-prediction">Dynamic Obstacle Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user/getting_started.html#trajectory-prediction">Trajectory Prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user/getting_started.html#set-based-prediction">Set Based Prediction</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user/getting_started.html#planning-problems">Planning Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user/getting_started.html#writing-files">Writing Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user/getting_started.html#solution-writer">Solution Writer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user/visualization.html">Visualization Manual</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user/visualization.html#draw-params"><code class="docutils literal notranslate"><span class="pre">draw_params</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user/visualization.html#passing-custom-draw-params">Passing custom <code class="docutils literal notranslate"><span class="pre">draw_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user/visualization.html#plot-limits"><code class="docutils literal notranslate"><span class="pre">plot_limits</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user/visualization.html#example-plot-with-matplotlib">Example plot with <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user/visualization.html#speed-up-plotting-for-real-time-applications">Speed up plotting for real-time applications</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">CommonRoad_io API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/index.html#modules">Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/scenario.html">Module Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/scenario.html#module-commonroad.scenario.scenario">Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/scenario.html#module-commonroad.scenario.lanelet">Road network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/scenario.html#module-commonroad.scenario.traffic_sign">Traffic Sign</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/scenario.html#traffic-light">Traffic Light</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/scenario.html#module-commonroad.scenario.traffic_sign_interpreter">Traffic Sign Interpreter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/scenario.html#intersection">Intersection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/scenario.html#obstacles">Obstacles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/scenario.html#module-commonroad.scenario.trajectory">States and Trajectories</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/prediction.html">Module Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/prediction.html#prediction-class"><code class="docutils literal notranslate"><span class="pre">Prediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/prediction.html#trajectoryprediction-class"><code class="docutils literal notranslate"><span class="pre">TrajectoryPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/prediction.html#setbasedprediction-class"><code class="docutils literal notranslate"><span class="pre">SetBasedPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/prediction.html#occupancy-class"><code class="docutils literal notranslate"><span class="pre">Occupancy</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/planning.html">Module Planning</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/planning.html#module-commonroad.planning.planning_problem">Planning Problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/planning.html#module-commonroad.planning.goal">Goal Region</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/geometry.html">Module Geometry</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/geometry.html#module-commonroad.geometry.shape">Shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/geometry.html#module-geometry.transform">Transform</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html">Module Common</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/common.html#module-commonroad.common.file_reader">File Reader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/common.html#module-commonroad.common.file_writer">File Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/common.html#solution-reader-and-writer">Solution Reader and Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/common.html#module-commonroad.common.util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/visualization.html">Module Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/visualization.html#module-commonroad.visualization.draw_dispatch_cr">draw_dispatch_cr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/visualization.html#module-commonroad.visualization.plot_helper">plot_Helper</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">CommonRoad_io</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>CommonRoad_io Documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="commonroad-io-documentation">
+<h1>CommonRoad_io Documentation<a class="headerlink" href="#commonroad-io-documentation" title="Permalink to this headline">¶</a></h1>
+<p>The CommonRoad_io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks. Each benchmark is composed by a <a class="reference external" href="https://commonroad.in.tum.de/documentation/vehicle_model_doc/">vehicle model</a>
+, a <a class="reference external" href="https://commonroad.in.tum.de/documentation/cost_func_doc/">cost function</a>
+, and a <a class="reference external" href="https://commonroad.in.tum.de/scenarios/">scenario</a> (including goals and constraints). With CommonRoad_io those solutions can be written to xml-files for uploading them on <a class="reference external" href="https://commonroad.in.tum.de/">commonroad.in.tum.de</a> .</p>
+<div class="section" id="commonroad">
+<h2>CommonRoad<a class="headerlink" href="#commonroad" title="Permalink to this headline">¶</a></h2>
+<p>Numerical experiments for motion planning of road vehicles require numerous ingredients: vehicle dynamics, a road network, static obstacles,dynamic obstacles and their movement over time, goal regions, a cost function, etc. Providing a description of the numerical experiment precise enough to reproduce it might require several pages of information. Thus, only key aspects are typically described in scientific publications, making it impossible to reproduce results - yet, reproducibility is an important asset of good science.</p>
+<p>Composable benchmarks for motion planning on roads (CommonRoad) are proposed so that numerical experiments are fully defined by a unique ID; all required information to reconstruct the experiment can be found on <a class="reference external" href="https://commonroad.in.tum.de/">commonroad.in.tum.de</a>
+. Each benchmark is composed by a <a class="reference external" href="https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models/blob/master/vehicleModels_commonRoad.pdf">vehicle model</a>
+, a <a class="reference external" href="https://gitlab.lrz.de/tum-cps/commonroad-cost-functions/blob/master/costFunctions_commonRoad.pdf">cost function</a>
+, and a <a class="reference external" href="https://commonroad.in.tum.de/scenarios/">scenario</a> (including goals and constraints). The scenarios are partly recorded from real traffic and partly hand-crafted to create dangerous situations. Solutions to the benchmarks can be uploaded and ranked on the CommonRoad Website.
+Learn more abut the scenario specification <a class="reference external" href="https://gitlab.lrz.de/tum-cps/commonroad-scenarios/blob/master/documentation/XML_commonRoad_2020a.pdf">here</a>.</p>
+</div>
+<div class="section" id="commonroad-io">
+<h2>CommonRoad_io<a class="headerlink" href="#commonroad-io" title="Permalink to this headline">¶</a></h2>
+<p>The CommonRoad_io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tool of the CommonRoad Framework.
+With CommonRoad_io, those solutions can be written to xml-files for uploading them on <a class="reference external" href="https://commonroad.in.tum.de/">commonroad.in.tum.de</a>.
+CommonRoad_io is compatible with CommonRoad scenario version 2020a and supports reading 2018b scenarios.</p>
+<p>The software is written in Python 3.6 and tested on MacOs and Linux. The usage of the <a class="reference external" href="http://www.anaconda.com/download/#download">Anaconda</a> Python distribution is strongly recommended.</p>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>The full documentation of the API and introducing examples can be found under <a class="reference external" href="https://commonroad.in.tum.de/static/docs/commonroad-io/index.html">commonroad.in.tum.de</a>.</p>
+<p>For getting started, we recommend our <a class="reference external" href="https://commonroad.in.tum.de/tutorials/">tutorials</a>.</p>
+</div>
+<div class="section" id="additional-tools">
+<h2>Additional Tools<a class="headerlink" href="#additional-tools" title="Permalink to this headline">¶</a></h2>
+<p>Based on CommonRoad_io, we have developed a list of tools for implementing motion-planning algorithms:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://gitlab.lrz.de/tum-cps/commonroad-collision-checker">Collision Checker</a></p></li>
+<li><p><a class="reference external" href="https://gitlab.lrz.de/tum-cps/commonroad-sumo-interface">CommonRoad-SUMO Interface</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/opendrive2lanelet">OpenDRIVE to Lanelet converter</a></p></li>
+<li><p><a class="reference external" href="https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models/tree/master/Python">Vehicle Models</a></p></li>
+</ul>
+</div>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<p>The required dependencies for running CommonRoad_io are:</p>
+<ul class="simple">
+<li><p>numpy&gt;=1.13</p></li>
+<li><p>shapely&gt;=1.6.4</p></li>
+<li><p>matplotlib&gt;=2.2.2</p></li>
+<li><p>lxml&gt;=4.2.2</p></li>
+<li><p>networkx&gt;=2.2</p></li>
+<li><p>Pillow&gt;=7.0.0</p></li>
+</ul>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>CommonRoad_io can be installed with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">commonroad</span><span class="o">-</span><span class="n">io</span>
+</pre></div>
+</div>
+<p>Alternatively, clone from our gitlab repository:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">gitlab</span><span class="o">.</span><span class="n">lrz</span><span class="o">.</span><span class="n">de</span><span class="o">/</span><span class="n">tum</span><span class="o">-</span><span class="n">cps</span><span class="o">/</span><span class="n">commonroad_io</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>and add the folder commonroad_io to your Python environment.</p>
+</div>
+<div class="section" id="changelog">
+<h2>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h2>
+<p>Compared to version 2019.2, the following features are added:</p>
+<ul class="simple">
+<li><p>support of 2020a Scenarios with TrafficLights, TrafficSigns, and Intersection objects</p></li>
+<li><p>SignalStates store information on turn lights, horn, hazard lights, and bluelights of DynamicObstacles</p></li>
+<li><p>a SolutionReader can now read solution files generated by the CommonRoadSolutionReader</p></li>
+<li><p>a new Solution object simplifies creating solution xml files and automaitcally checks the validity of benchmark IDs</p></li>
+<li><p>the old commonroad.common.solution_writer.CommonRoadSolutionWriter is deprecated and replaced by commonroad.common.solution.CommonRoadSolutionWriter</p></li>
+<li><p>the CommonRoadSolutionWriter can directly write computation times and the CPU model into the solution file</p></li>
+<li><p>the visualization is improved and now supports legends</p></li>
+<li><p>various small bug fixes</p></li>
+</ul>
+</div>
+<div class="section" id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>A tutorial on the main functionalities of the project is <a class="reference internal" href="user/getting_started.html#getting-started"><span class="std std-ref">available here</span></a>.</p>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user/index.html">User Manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user/getting_started.html">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/visualization.html">Visualization Manual</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">CommonRoad_io API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/index.html#modules">Modules</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+<div class="section" id="contact-information">
+<h2>Contact information<a class="headerlink" href="#contact-information" title="Permalink to this headline">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">Website</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://commonroad.in.tum.de/">http://commonroad.in.tum.de</a></p>
+</dd>
+<dt class="field-even">Email</dt>
+<dd class="field-even"><p><a class="reference external" href="mailto:commonroad-i06&#37;&#52;&#48;in&#46;tum&#46;de">commonroad-i06<span>&#64;</span>in<span>&#46;</span>tum<span>&#46;</span>de</a></p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="user/index.html" class="btn btn-neutral float-right" title="User Manual" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Anna-Katharina Rettinger
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

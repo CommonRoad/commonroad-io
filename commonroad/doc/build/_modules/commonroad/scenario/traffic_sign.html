@@ -1,0 +1,576 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>commonroad.scenario.traffic_sign &mdash; CommonRoad_io 2020.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> CommonRoad_io
+          
+
+          
+            
+            <img src="../../../_static/commonroad_white150.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2020.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/index.html">User Manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/getting_started.html">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#reading-files">Reading Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#scenario">Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#lanelet-network">Lanelet Network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#obstacles">Obstacles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#dynamic-obstacle-prediction">Dynamic Obstacle Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#trajectory-prediction">Trajectory Prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#set-based-prediction">Set Based Prediction</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#planning-problems">Planning Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#writing-files">Writing Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#solution-writer">Solution Writer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/visualization.html">Visualization Manual</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#draw-params"><code class="docutils literal notranslate"><span class="pre">draw_params</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/visualization.html#passing-custom-draw-params">Passing custom <code class="docutils literal notranslate"><span class="pre">draw_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#plot-limits"><code class="docutils literal notranslate"><span class="pre">plot_limits</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#example-plot-with-matplotlib">Example plot with <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#speed-up-plotting-for-real-time-applications">Speed up plotting for real-time applications</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">CommonRoad_io API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#modules">Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/scenario.html">Module Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.scenario">Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.lanelet">Road network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.traffic_sign">Traffic Sign</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#traffic-light">Traffic Light</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.traffic_sign_interpreter">Traffic Sign Interpreter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#intersection">Intersection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#obstacles">Obstacles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.trajectory">States and Trajectories</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/prediction.html">Module Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#prediction-class"><code class="docutils literal notranslate"><span class="pre">Prediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#trajectoryprediction-class"><code class="docutils literal notranslate"><span class="pre">TrajectoryPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#setbasedprediction-class"><code class="docutils literal notranslate"><span class="pre">SetBasedPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#occupancy-class"><code class="docutils literal notranslate"><span class="pre">Occupancy</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/planning.html">Module Planning</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/planning.html#module-commonroad.planning.planning_problem">Planning Problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/planning.html#module-commonroad.planning.goal">Goal Region</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/geometry.html">Module Geometry</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-commonroad.geometry.shape">Shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-geometry.transform">Transform</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/common.html">Module Common</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.file_reader">File Reader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.file_writer">File Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#solution-reader-and-writer">Solution Reader and Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/visualization.html">Module Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/visualization.html#module-commonroad.visualization.draw_dispatch_cr">draw_dispatch_cr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/visualization.html#module-commonroad.visualization.plot_helper">plot_Helper</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CommonRoad_io</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>commonroad.scenario.traffic_sign</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for commonroad.scenario.traffic_sign</h1><div class="highlight"><pre>
+<span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Sebastian Maierhofer&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;TUM Cyber-Physical Systems Group&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CAR@TUM&quot;</span><span class="p">]</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2020.1&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Sebastian Maierhofer&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad-i06@in.tum.de&quot;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Release&quot;</span>
+
+<span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Set</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<span class="n">TRAFFIC_SIGN_VALIDITY_START</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;MIN_SPEED&#39;</span><span class="p">,</span> <span class="s1">&#39;MAX_SPEED&#39;</span><span class="p">,</span> <span class="s1">&#39;NO_OVERTAKING_START&#39;</span><span class="p">,</span> <span class="s1">&#39;CITY_SIGN&#39;</span><span class="p">}</span>
+<span class="n">LEFT_HAND_TRAFFIC</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;AUS&#39;</span><span class="p">,</span> <span class="s1">&#39;JPN&#39;</span><span class="p">,</span> <span class="s1">&#39;HKG&#39;</span><span class="p">,</span> <span class="s1">&#39;IND&#39;</span><span class="p">,</span> <span class="s1">&#39;JEY&#39;</span><span class="p">,</span> <span class="s1">&#39;IMN&#39;</span><span class="p">,</span> <span class="s1">&#39;IRL&#39;</span><span class="p">,</span> <span class="s1">&#39;JAM&#39;</span><span class="p">,</span> <span class="s1">&#39;KEN&#39;</span><span class="p">,</span> <span class="s1">&#39;MLT&#39;</span><span class="p">,</span> <span class="s1">&#39;MYS&#39;</span><span class="p">,</span> <span class="s1">&#39;NPL&#39;</span><span class="p">,</span> <span class="s1">&#39;NZL&#39;</span><span class="p">,</span> <span class="s1">&#39;ZAF&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;SGP&#39;</span><span class="p">,</span> <span class="s1">&#39;THA&#39;</span><span class="p">,</span> <span class="s1">&#39;GBR&#39;</span><span class="p">,</span> <span class="s1">&#39;IDN&#39;</span><span class="p">,</span> <span class="s1">&#39;MAC&#39;</span><span class="p">,</span> <span class="s1">&#39;PAK&#39;</span><span class="p">,</span> <span class="s1">&#39;CYP&#39;</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="SupportedTrafficSignCountry"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.SupportedTrafficSignCountry">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">SupportedTrafficSignCountry</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">GERMANY</span> <span class="o">=</span> <span class="s1">&#39;DEU&#39;</span>
+    <span class="n">USA</span> <span class="o">=</span> <span class="s2">&quot;USA&quot;</span>
+    <span class="n">CHINA</span> <span class="o">=</span> <span class="s2">&quot;CHN&quot;</span>
+    <span class="n">SPAIN</span> <span class="o">=</span> <span class="s2">&quot;ESP&quot;</span>
+    <span class="n">RUSSIA</span> <span class="o">=</span> <span class="s2">&quot;RUS&quot;</span>
+    <span class="n">ZAMUNDA</span> <span class="o">=</span> <span class="s2">&quot;ZAM&quot;</span>  <span class="c1"># default if</span></div>
+
+
+<div class="viewcode-block" id="TrafficSignIDZamunda"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDZamunda</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="c1"># default traffic sign IDs (similar to German IDs)</span>
+    <span class="n">MIN_SPEED</span> <span class="o">=</span> <span class="s1">&#39;275&#39;</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;274&#39;</span>
+    <span class="n">NO_OVERTAKING_START</span> <span class="o">=</span> <span class="s1">&#39;276&#39;</span>
+    <span class="n">TOWN_SIGN</span> <span class="o">=</span> <span class="s1">&#39;310&#39;</span>
+    <span class="n">YIELD</span> <span class="o">=</span> <span class="s1">&#39;205&#39;</span>
+    <span class="n">STOP</span> <span class="o">=</span> <span class="s1">&#39;206&#39;</span>
+    <span class="n">PRIORITY</span> <span class="o">=</span> <span class="s1">&#39;306&#39;</span>
+    <span class="n">RIGHT_OF_WAY</span> <span class="o">=</span> <span class="s1">&#39;301&#39;</span>
+    <span class="n">GREEN_ARROW</span> <span class="o">=</span> <span class="s1">&#39;720&#39;</span>
+    <span class="n">RIGHT_BEFORE_LEFT</span> <span class="o">=</span> <span class="s1">&#39;102&#39;</span>
+    <span class="n">LEFT_TURNING_PRIORITY_WITH_OPPOSITE_RIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-10&#39;</span>
+    <span class="n">LEFT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-12&#39;</span>
+    <span class="n">LEFT_TURNING_PRIORITY_WITH_RIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-13&#39;</span>
+    <span class="n">RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_LEFT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-20&#39;</span>
+    <span class="n">RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-22&#39;</span>
+    <span class="n">RIGHT_TURNING_PRIORITY_WITH_LEFT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-23&#39;</span>
+    <span class="n">LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_RIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-11&#39;</span>
+    <span class="n">LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-14&#39;</span>
+    <span class="n">RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_LEFT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-21&#39;</span>
+    <span class="n">RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-24&#39;</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="TrafficSignIDGermany"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDGermany</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">MIN_SPEED</span> <span class="o">=</span> <span class="s1">&#39;275&#39;</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;274&#39;</span>
+    <span class="n">NO_OVERTAKING_START</span> <span class="o">=</span> <span class="s1">&#39;276&#39;</span>
+    <span class="n">TOWN_SIGN</span> <span class="o">=</span> <span class="s1">&#39;310&#39;</span>
+    <span class="n">YIELD</span> <span class="o">=</span> <span class="s1">&#39;205&#39;</span>
+    <span class="n">STOP</span> <span class="o">=</span> <span class="s1">&#39;206&#39;</span>
+    <span class="n">PRIORITY</span> <span class="o">=</span> <span class="s1">&#39;306&#39;</span>
+    <span class="n">RIGHT_OF_WAY</span> <span class="o">=</span> <span class="s1">&#39;301&#39;</span>
+    <span class="n">GREEN_ARROW</span> <span class="o">=</span> <span class="s1">&#39;720&#39;</span>
+    <span class="n">RIGHT_BEFORE_LEFT</span> <span class="o">=</span> <span class="s1">&#39;102&#39;</span>
+    <span class="n">LEFT_TURNING_PRIORITY_WITH_OPPOSITE_RIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-10&#39;</span>
+    <span class="n">LEFT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-12&#39;</span>
+    <span class="n">LEFT_TURNING_PRIORITY_WITH_RIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-13&#39;</span>
+    <span class="n">RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_LEFT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-20&#39;</span>
+    <span class="n">RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-22&#39;</span>
+    <span class="n">RIGHT_TURNING_PRIORITY_WITH_LEFT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-23&#39;</span>
+    <span class="n">LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_RIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-11&#39;</span>
+    <span class="n">LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-14&#39;</span>
+    <span class="n">RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_LEFT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-21&#39;</span>
+    <span class="n">RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-24&#39;</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="TrafficSignIDUsa"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDUsa">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDUsa</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;R2-1&#39;</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="TrafficSignIDChina"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDChina">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDChina</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;274&#39;</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="TrafficSignIDSpain"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDSpain">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDSpain</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;274&#39;</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="TrafficSignIDRussia"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDRussia">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDRussia</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;274&#39;</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="TrafficLightDirection"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightDirection">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficLightDirection</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enum for all the possible directions for a traffic signal</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">RIGHT</span> <span class="o">=</span> <span class="s2">&quot;right&quot;</span>
+    <span class="n">STRAIGHT</span> <span class="o">=</span> <span class="s2">&quot;straight&quot;</span>
+    <span class="n">LEFT</span> <span class="o">=</span> <span class="s2">&quot;left&quot;</span>
+    <span class="n">LEFT_STRAIGHT</span> <span class="o">=</span> <span class="s2">&quot;leftStraight&quot;</span>
+    <span class="n">STRAIGHT_RIGHT</span> <span class="o">=</span> <span class="s2">&quot;straightRight&quot;</span>
+    <span class="n">LEFT_RIGHT</span> <span class="o">=</span> <span class="s2">&quot;leftRight&quot;</span>
+    <span class="n">ALL</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span></div>
+
+
+<div class="viewcode-block" id="TrafficLightState"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightState">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficLightState</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enum for the possible types of traffic light in signals</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">RED</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>
+    <span class="n">YELLOW</span> <span class="o">=</span> <span class="s2">&quot;yellow&quot;</span>
+    <span class="n">RED_YELLOW</span> <span class="o">=</span> <span class="s2">&quot;redYellow&quot;</span>
+    <span class="n">GREEN</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span></div>
+
+
+<div class="viewcode-block" id="TrafficSignElement"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignElement">[docs]</a><span class="k">class</span> <span class="nc">TrafficSignElement</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Class which represents a collection of traffic signs at one position&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_sign_element_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TrafficSignIDZamunda</span><span class="p">,</span> <span class="n">TrafficSignIDUsa</span><span class="p">,</span> <span class="n">TrafficSignIDSpain</span><span class="p">,</span>
+                                                      <span class="n">TrafficSignIDGermany</span><span class="p">,</span> <span class="n">TrafficSignIDChina</span><span class="p">,</span> <span class="n">TrafficSignIDRussia</span><span class="p">],</span>
+                 <span class="n">additional_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param traffic_sign_element_id: ID of traffic sign element (must be element of a traffic sign element enum)</span>
+<span class="sd">        :param additional_values: list of additional values of a traffic sign element, e.g. velocity, time, city name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_element_id</span> <span class="o">=</span> <span class="n">traffic_sign_element_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_additional_values</span> <span class="o">=</span> <span class="n">additional_values</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">traffic_sign_element_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">enum</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_element_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">additional_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_additional_values</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;TrafficSignElement&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">traffic_sign_element_id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">traffic_sign_element_id</span> \
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">additional_values</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">additional_values</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span> <span class="n">_traffic_sign_element_id</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">additional_values</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;Sign Element with id </span><span class="si">{self._traffic_sign_element_id}</span><span class="s2"> and values </span><span class="si">{self._additional_values}</span><span class="s2"> &quot;</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;Sign Element with id </span><span class="si">{self._traffic_sign_element_id}</span><span class="s2"> and values </span><span class="si">{self._additional_values}</span><span class="s2"> &quot;</span></div>
+
+
+<div class="viewcode-block" id="TrafficSign"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSign">[docs]</a><span class="k">class</span> <span class="nc">TrafficSign</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class to represent a traffic sign&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_sign_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">traffic_sign_elements</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TrafficSignElement</span><span class="p">],</span>
+                 <span class="n">first_occurrence</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">position</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">virtual</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param traffic_sign_id: ID of traffic sign</span>
+<span class="sd">        :param traffic_sign_elements: list of traffic sign elements</span>
+<span class="sd">        :param first_occurrence: lanelet ID where traffic sign first appears</span>
+<span class="sd">        :param position: position of traffic sign</span>
+<span class="sd">        :param virtual: boolean indicating if this traffic sign is also placed there in the real environment or it</span>
+<span class="sd">        is added for other reasons (e.g., completeness of scenario)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_id</span> <span class="o">=</span> <span class="n">traffic_sign_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="o">=</span> <span class="n">position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_elements</span> <span class="o">=</span> <span class="n">traffic_sign_elements</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_virtual</span> <span class="o">=</span> <span class="n">virtual</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_first_occurrence</span> <span class="o">=</span> <span class="n">first_occurrence</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">traffic_sign_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">traffic_sign_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TrafficSignElement</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_elements</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">virtual</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_virtual</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">first_occurrence</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_occurrence</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;Sign At </span><span class="si">{self._position}</span><span class="s2"> with </span><span class="si">{self._traffic_sign_elements}</span><span class="s2"> &quot;</span></div>
+
+
+<div class="viewcode-block" id="TrafficLightCycleElement"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightCycleElement">[docs]</a><span class="k">class</span> <span class="nc">TrafficLightCycleElement</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class to represent a traffic light cycle&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">TrafficLightState</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param state: state of a traffic light cycle element</span>
+<span class="sd">        :param duration: duration of traffic light cycle element</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_duration</span> <span class="o">=</span> <span class="n">duration</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrafficLightState</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">duration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_duration</span></div>
+
+
+<div class="viewcode-block" id="TrafficLight"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficLight">[docs]</a><span class="k">class</span> <span class="nc">TrafficLight</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Class to represent a traffic light&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_light_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cycle</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TrafficLightCycleElement</span><span class="p">],</span> <span class="n">position</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">time_offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">direction</span><span class="p">:</span> <span class="n">TrafficLightDirection</span> <span class="o">=</span> <span class="n">TrafficLightDirection</span><span class="o">.</span><span class="n">ALL</span><span class="p">,</span>
+                 <span class="n">active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param traffic_light_id: ID of traffic light</span>
+<span class="sd">        :param cycle: list of traffic light cycle elements</span>
+<span class="sd">        :param time_offset: offset of traffic light cycle</span>
+<span class="sd">        :param position: position of traffic light</span>
+<span class="sd">        :param direction: driving directions for which the traffic light is valid</span>
+<span class="sd">        :param active: boolean indicating if traffic light is currently active</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_light_id</span> <span class="o">=</span> <span class="n">traffic_light_id</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycle</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cycle</span> <span class="o">=</span> <span class="n">get_default_cycle</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cycle</span> <span class="o">=</span> <span class="n">cycle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_offset</span> <span class="o">=</span> <span class="n">time_offset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="o">=</span> <span class="n">position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_direction</span> <span class="o">=</span> <span class="n">direction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="n">active</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">traffic_light_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_light_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TrafficLightCycleElement</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cycle</span>
+
+<div class="viewcode-block" id="TrafficLight.get_state_at_time_step"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficLight.get_state_at_time_step">[docs]</a>    <span class="k">def</span> <span class="nf">get_state_at_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_step</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrafficLightState</span><span class="p">:</span>
+        <span class="n">time_step_mod</span> <span class="o">=</span> <span class="p">((</span><span class="n">time_step</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_offset</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cycle_init_timesteps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_offset</span><span class="p">))</span>\
+                        <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_offset</span>
+        <span class="n">i_cycle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">time_step_mod</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycle_init_timesteps</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycle</span><span class="p">[</span><span class="n">i_cycle</span><span class="p">]</span><span class="o">.</span><span class="n">state</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cycle_init_timesteps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_cycle_init_timesteps&#39;</span><span class="p">):</span>
+            <span class="n">durations</span> <span class="o">=</span> <span class="p">[</span><span class="n">cycle_el</span><span class="o">.</span><span class="n">duration</span> <span class="k">for</span> <span class="n">cycle_el</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cycle</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cycle_init_timesteps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">durations</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_offset</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cycle_init_timesteps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cycle_init_timesteps</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_offset</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cycle_init_timesteps</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">time_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_offset</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">direction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrafficLightDirection</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_direction</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">active</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active</span></div>
+
+
+<span class="k">def</span> <span class="nf">get_default_cycle</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Defines default traffic light cycle in case no cycle is provided</span>
+
+<span class="sd">    _:returns traffic light cycle element</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cycle</span> <span class="o">=</span> <span class="p">[(</span><span class="n">TrafficLightState</span><span class="o">.</span><span class="n">RED</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span>
+             <span class="p">(</span><span class="n">TrafficLightState</span><span class="o">.</span><span class="n">RED_YELLOW</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+             <span class="p">(</span><span class="n">TrafficLightState</span><span class="o">.</span><span class="n">GREEN</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span>
+             <span class="p">(</span><span class="n">TrafficLightState</span><span class="o">.</span><span class="n">YELLOW</span><span class="p">,</span> <span class="mi">10</span><span class="p">)]</span>
+    <span class="n">cycle_element_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">TrafficLightCycleElement</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">cycle</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">cycle_element_list</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Anna-Katharina Rettinger
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

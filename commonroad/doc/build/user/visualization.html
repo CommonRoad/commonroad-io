@@ -1,0 +1,509 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Visualization Manual &mdash; CommonRoad_io 2020.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="CommonRoad_io API" href="../api/index.html" />
+    <link rel="prev" title="Getting Started" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> CommonRoad_io
+          
+
+          
+            
+            <img src="../_static/commonroad_white150.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2020.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#reading-files">Reading Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#scenario">Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="getting_started.html#lanelet-network">Lanelet Network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="getting_started.html#obstacles">Obstacles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#dynamic-obstacle-prediction">Dynamic Obstacle Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="getting_started.html#trajectory-prediction">Trajectory Prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="getting_started.html#set-based-prediction">Set Based Prediction</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#planning-problems">Planning Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#writing-files">Writing Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#solution-writer">Solution Writer</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Visualization Manual</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#draw-params"><code class="docutils literal notranslate"><span class="pre">draw_params</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#passing-custom-draw-params">Passing custom <code class="docutils literal notranslate"><span class="pre">draw_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#plot-limits"><code class="docutils literal notranslate"><span class="pre">plot_limits</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example-plot-with-matplotlib">Example plot with <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#speed-up-plotting-for-real-time-applications">Speed up plotting for real-time applications</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">CommonRoad_io API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/index.html#modules">Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/scenario.html">Module Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/scenario.html#module-commonroad.scenario.scenario">Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/scenario.html#module-commonroad.scenario.lanelet">Road network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/scenario.html#module-commonroad.scenario.traffic_sign">Traffic Sign</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/scenario.html#traffic-light">Traffic Light</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/scenario.html#module-commonroad.scenario.traffic_sign_interpreter">Traffic Sign Interpreter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/scenario.html#intersection">Intersection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/scenario.html#obstacles">Obstacles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/scenario.html#module-commonroad.scenario.trajectory">States and Trajectories</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/prediction.html">Module Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/prediction.html#prediction-class"><code class="docutils literal notranslate"><span class="pre">Prediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/prediction.html#trajectoryprediction-class"><code class="docutils literal notranslate"><span class="pre">TrajectoryPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/prediction.html#setbasedprediction-class"><code class="docutils literal notranslate"><span class="pre">SetBasedPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/prediction.html#occupancy-class"><code class="docutils literal notranslate"><span class="pre">Occupancy</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/planning.html">Module Planning</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/planning.html#module-commonroad.planning.planning_problem">Planning Problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/planning.html#module-commonroad.planning.goal">Goal Region</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/geometry.html">Module Geometry</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/geometry.html#module-commonroad.geometry.shape">Shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/geometry.html#module-geometry.transform">Transform</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/common.html">Module Common</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/common.html#module-commonroad.common.file_reader">File Reader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/common.html#module-commonroad.common.file_writer">File Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/common.html#solution-reader-and-writer">Solution Reader and Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/common.html#module-commonroad.common.util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/visualization.html">Module Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/visualization.html#module-commonroad.visualization.draw_dispatch_cr">draw_dispatch_cr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/visualization.html#module-commonroad.visualization.plot_helper">plot_Helper</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CommonRoad_io</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">User Manual</a> &raquo;</li>
+        
+      <li>Visualization Manual</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/user/visualization.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="visualization-manual">
+<span id="id1"></span><h1>Visualization Manual<a class="headerlink" href="#visualization-manual" title="Permalink to this headline">¶</a></h1>
+<p>All objects of the scenario and planning problems can be visualized with the function <a class="reference internal" href="../api/visualization.html#commonroad.visualization.draw_dispatch_cr.draw_object" title="commonroad.visualization.draw_dispatch_cr.draw_object"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_object()</span></code></a> combined with <a class="reference external" href="https://matplotlib.org">matplotlib</a>. It is possible to pass either complete scenarios, single objects of the framework or lists of them to the drawing function. In case a list is passed, all objects therein have to be of the same type. Moreover, <a class="reference internal" href="../api/visualization.html#commonroad.visualization.draw_dispatch_cr.draw_object" title="commonroad.visualization.draw_dispatch_cr.draw_object"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_object()</span></code></a> provides customizable settings with the parameter <code class="docutils literal notranslate"><span class="pre">draw_params</span></code> and calls other specific drawing functions depending on the object type passed as an argument. For example <code class="docutils literal notranslate"><span class="pre">draw_object(scenario)</span></code> calls itself a specific function which is designed to draw a scenario. Often these functions itself call <a class="reference internal" href="../api/visualization.html#commonroad.visualization.draw_dispatch_cr.draw_object" title="commonroad.visualization.draw_dispatch_cr.draw_object"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_object()</span></code></a> for objects which belong to the original object. Nevertheless, the user only needs to call <a class="reference internal" href="../api/visualization.html#commonroad.visualization.draw_dispatch_cr.draw_object" title="commonroad.visualization.draw_dispatch_cr.draw_object"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_object()</span></code></a>.</p>
+<div class="section" id="draw-params">
+<h2><code class="docutils literal notranslate"><span class="pre">draw_params</span></code><a class="headerlink" href="#draw-params" title="Permalink to this headline">¶</a></h2>
+<p>When settings of a plot should be changed with <code class="docutils literal notranslate"><span class="pre">draw_params</span></code>, they have to be passed as a nested <code class="docutils literal notranslate"><span class="pre">dict</span></code> that refers to the hierarchy in which the objects are plotted. The complete structure of <code class="docutils literal notranslate"><span class="pre">draw_params</span></code> is given by the default parameters:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;time_begin&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+ <span class="s1">&#39;time_end&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+ <span class="s1">&#39;antialiased&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+ <span class="s1">&#39;scenario&#39;</span><span class="p">:</span>
+        <span class="p">{</span><span class="s1">&#39;dynamic_obstacle&#39;</span><span class="p">:</span>
+            <span class="p">{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="n">shape_parameters</span><span class="p">,</span>
+             <span class="s1">&#39;draw_shape&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+             <span class="s1">&#39;draw_icon&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+             <span class="s1">&#39;draw_bounding_box&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+             <span class="s1">&#39;show_label&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+             <span class="s1">&#39;zorder&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+             <span class="s1">&#39;draw_signals&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+             <span class="s1">&#39;signal_radius&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+             <span class="s1">&#39;indicator_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#ebc200&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;braking_color&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;blue_lights_color&#39;</span><span class="p">:</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;horn_color&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;occupancy&#39;</span><span class="p">:</span>
+                 <span class="p">{</span><span class="s1">&#39;draw_occupancies&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                  <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="n">shape_parameters</span>
+                 <span class="p">},</span>
+             <span class="s1">&#39;trajectory&#39;</span><span class="p">:</span>
+                <span class="p">{</span><span class="s1">&#39;facecolor&#39;</span><span class="p">:</span> <span class="s1">&#39;#000000&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;marker_size&#39;</span><span class="p">:</span> <span class="mf">0.13</span><span class="p">,</span>
+                 <span class="s1">&#39;z_order&#39;</span><span class="p">:</span> <span class="mi">24</span><span class="p">}</span>
+                 <span class="p">},</span>
+        <span class="s1">&#39;static_obstacle&#39;</span><span class="p">:</span>
+            <span class="p">{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="n">shape_parameters</span><span class="p">},</span>
+        <span class="s1">&#39;lanelet_network&#39;</span><span class="p">:</span>
+            <span class="p">{</span><span class="s1">&#39;draw_traffic_lights&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;kwargs_traffic_light_signs&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="c1"># further properties for</span>
+              <span class="c1">#AnnotationBox, see</span>
+              <span class="c1"># https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html</span>
+             <span class="s1">&#39;traffic_light&#39;</span><span class="p">:</span>
+                 <span class="p">{</span><span class="s1">&#39;red_color&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;yellow_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#feb609&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;green_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#00aa16&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;red_yellow_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#fe4009ff&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;show_label&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                  <span class="s1">&#39;scale_factor&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+                  <span class="s1">&#39;zorder&#39;</span><span class="p">:</span> <span class="mi">30</span>
+                 <span class="p">},</span>
+             <span class="s1">&#39;draw_traffic_signs&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+             <span class="s1">&#39;traffic_sign&#39;</span><span class="p">:</span>
+                 <span class="p">{</span><span class="s1">&#39;show_traffic_signs&#39;</span><span class="p">:</span> <span class="s1">&#39;all&#39;</span><span class="p">,</span>  <span class="c1"># &#39;all&#39; or list of TrafficSignIDs</span>
+                  <span class="s1">&#39;show_label&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                  <span class="s1">&#39;scale_factor&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+                  <span class="s1">&#39;zorder&#39;</span><span class="p">:</span> <span class="mi">30</span>
+                 <span class="p">},</span>
+             <span class="s1">&#39;draw_intersection&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+             <span class="s1">&#39;intersection&#39;</span><span class="p">:</span>
+                 <span class="p">{</span><span class="s1">&#39;draw_incoming_lanelets&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;incoming_lanelets_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#24b582&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_crossings&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;crossings_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#b62a55&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_successors&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;successors_left_color&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;successors_straight_color&#39;</span><span class="p">:</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;successors_right_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#ccff00&#39;</span>
+                  <span class="p">},</span>
+             <span class="s1">&#39;lanelet&#39;</span><span class="p">:</span>
+                 <span class="p">{</span><span class="s1">&#39;left_bound_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#555555&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;right_bound_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#555555&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;center_bound_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#dddddd&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;unique_colors&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># colorizes center_vertices and labels of each lanelet differently</span>
+                  <span class="s1">&#39;draw_stop_line&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;stop_line_color&#39;</span><span class="p">:</span><span class="s1">&#39;#ffffff&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_line_markings&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_left_bound&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_right_bound&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_center_bound&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_border_vertices&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_start_and_direction&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;show_label&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                  <span class="s1">&#39;draw_linewidth&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+                  <span class="s1">&#39;fill_lanelet&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="s1">&#39;facecolor&#39;</span><span class="p">:</span> <span class="s1">&#39;#c7c7c7&#39;</span>
+                  <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+     <span class="s1">&#39;planning_problem_set&#39;</span><span class="p">:</span>
+        <span class="p">{</span><span class="s1">&#39;planning_problem&#39;</span><span class="p">:</span>
+            <span class="p">{</span><span class="s1">&#39;initial_state&#39;</span><span class="p">:</span>
+                <span class="p">{</span><span class="s1">&#39;facecolor&#39;</span><span class="p">:</span> <span class="s1">&#39;#000080&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;zorder&#39;</span><span class="p">:</span> <span class="mi">25</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+             <span class="s1">&#39;goal_region&#39;</span><span class="p">:</span>
+                <span class="p">{</span><span class="s1">&#39;draw_shape&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="n">shape_parameters</span><span class="p">,</span>
+                 <span class="s1">&#39;lanelet&#39;</span><span class="p">:</span>
+                     <span class="p">{</span><span class="s1">&#39;left_bound_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#555555&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;right_bound_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#555555&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;center_bound_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#dddddd&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;draw_left_bound&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                      <span class="s1">&#39;draw_right_bound&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                      <span class="s1">&#39;draw_center_bound&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                      <span class="s1">&#39;draw_border_vertices&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                      <span class="s1">&#39;draw_start_and_direction&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                      <span class="s1">&#39;show_label&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                      <span class="s1">&#39;draw_linewidth&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+                      <span class="s1">&#39;fill_lanelet&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                      <span class="s1">&#39;facecolor&#39;</span><span class="p">:</span> <span class="s1">&#39;#c7c7c7&#39;</span>
+                     <span class="p">}</span>
+                <span class="p">}</span>
+        <span class="p">}</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<p>The defaults for <code class="docutils literal notranslate"><span class="pre">shape_parameters</span></code> are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shape_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;polygon&#39;</span><span class="p">:</span>
+                        <span class="p">{</span><span class="s1">&#39;opacity&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+                         <span class="s1">&#39;facecolor&#39;</span><span class="p">:</span> <span class="s1">&#39;#1d7eea&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;edgecolor&#39;</span><span class="p">:</span> <span class="s1">&#39;#0066cc&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;zorder&#39;</span><span class="p">:</span> <span class="mi">18</span>
+                        <span class="p">},</span>
+                    <span class="s1">&#39;rectangle&#39;</span><span class="p">:</span>
+                        <span class="p">{</span><span class="s1">&#39;opacity&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+                         <span class="s1">&#39;facecolor&#39;</span><span class="p">:</span> <span class="s1">&#39;#1d7eea&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;edgecolor&#39;</span><span class="p">:</span> <span class="s1">&#39;#0066cc&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;zorder&#39;</span><span class="p">:</span> <span class="mi">18</span>
+                        <span class="p">},</span>
+                    <span class="s1">&#39;circle&#39;</span><span class="p">:</span>
+                        <span class="p">{</span><span class="s1">&#39;opacity&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+                         <span class="s1">&#39;facecolor&#39;</span><span class="p">:</span> <span class="s1">&#39;#1d7eea&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;edgecolor&#39;</span><span class="p">:</span> <span class="s1">&#39;#0066cc&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;zorder&#39;</span><span class="p">:</span> <span class="mi">18</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+</pre></div>
+</div>
+<p>Notice that specifying the the type of a shape in <code class="docutils literal notranslate"><span class="pre">shape_parameters</span></code> is optional and can be omitted.</p>
+<div class="section" id="passing-custom-draw-params">
+<h3>Passing custom <code class="docutils literal notranslate"><span class="pre">draw_params</span></code><a class="headerlink" href="#passing-custom-draw-params" title="Permalink to this headline">¶</a></h3>
+<p>In case no <code class="docutils literal notranslate"><span class="pre">draw_params</span></code> is passed to <a class="reference internal" href="../api/visualization.html#commonroad.visualization.draw_dispatch_cr.draw_object" title="commonroad.visualization.draw_dispatch_cr.draw_object"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw_object()</span></code></a>, the default parameters are applied. To set a parameter manually, this needs to be done in accordance to the structure above. If for instance a complete scenario is plotted and the <code class="docutils literal notranslate"><span class="pre">face_color</span></code> of a dynamic obstacle should be set to black, this parameter can be specified by:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">draw_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;scenario&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;dynamic_obstacle&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;facecolor&#39;</span><span class="p">:</span><span class="s1">&#39;#000000&#39;</span><span class="p">}}}}</span>
+<span class="n">draw_object</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">draw_params</span><span class="o">=</span><span class="n">draw_params</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When the parameter of an object is extracted from <code class="docutils literal notranslate"><span class="pre">draw_params</span></code>, the search starts at the lowest level of the <code class="docutils literal notranslate"><span class="pre">dict</span></code>’s hierarchy. Therefore, it is sufficient to start with the specification on the lowest level of the dict, that unambiguously defines a parameter. Therefore, the expression above can be simplified to</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">draw_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dynamic_obstacle&#39;</span><span class="p">:{</span><span class="s1">&#39;shape&#39;</span><span class="p">:{</span><span class="s1">&#39;facecolor&#39;</span><span class="p">:</span><span class="s1">&#39;#000000&#39;</span><span class="p">}}}</span>
+</pre></div>
+</div>
+<p>since <code class="docutils literal notranslate"><span class="pre">dynamic_obstacle</span></code> appears at no other point in the <code class="docutils literal notranslate"><span class="pre">draw_params</span></code>’ structure. On the other hand, in case you write:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">draw_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;shape&#39;</span><span class="p">:{</span><span class="s1">&#39;facecolor&#39;</span><span class="p">:</span><span class="s1">&#39;#000000&#39;</span><span class="p">}}</span>
+</pre></div>
+</div>
+<p>all shapes in the plot will be drawn in black.</p>
+</div>
+</div>
+<div class="section" id="plot-limits">
+<h2><code class="docutils literal notranslate"><span class="pre">plot_limits</span></code><a class="headerlink" href="#plot-limits" title="Permalink to this headline">¶</a></h2>
+<p>The drawn area of a scenario can be clipped by providing axes limits with <code class="code docutils literal notranslate"><span class="pre">plot_limits=[x_min,</span> <span class="pre">x_max,</span> <span class="pre">y_min,</span> <span class="pre">y_max]</span></code>. In cases where performance matters, this option should be preferred over setting axes limits with <code class="code docutils literal notranslate"><span class="pre">pyplot.get_gca().set_xlim</span></code>. The latter would only crop the shown area of the scenario after drawing the whole scenario.</p>
+</div>
+<div class="section" id="example-plot-with-matplotlib">
+<h2>Example plot with <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code><a class="headerlink" href="#example-plot-with-matplotlib" title="Permalink to this headline">¶</a></h2>
+<p>The drawing function is used in combination with maplotlib. Therefore, every command from the <a class="reference external" href="https://matplotlib.org/api">matplotlib-API</a> can be combined with <code class="docutils literal notranslate"><span class="pre">draw_object</span></code>. A simple example for plotting scenario and the corresponding planning problem set with default parameters would be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">commonroad.common.file_reader</span> <span class="k">import</span> <span class="n">CommonRoadFileReader</span>
+<span class="kn">from</span> <span class="nn">commonroad.visualization.draw_dispatch_cr</span> <span class="k">import</span> <span class="n">draw_object</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="o">/</span><span class="n">commonroad</span><span class="o">-</span><span class="n">scenarios</span><span class="o">/</span><span class="n">scenarios</span><span class="o">/</span><span class="n">NGSIM</span><span class="o">/</span><span class="n">US101</span><span class="o">/</span><span class="n">USA_US101</span><span class="o">-</span><span class="mi">2_1</span><span class="n">_T</span><span class="o">-</span><span class="mf">1.</span><span class="n">xml</span><span class="s1">&#39;</span>
+<span class="n">scenario</span><span class="p">,</span> <span class="n">planning_problem_set</span> <span class="o">=</span> <span class="n">CommonRoadFileReader</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;classic&#39;</span><span class="p">)</span>
+<span class="n">inch_in_cm</span> <span class="o">=</span> <span class="mf">2.54</span>
+<span class="n">figsize</span> <span class="o">=</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+<span class="n">plot_limits</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">80</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="o">-</span><span class="mi">60</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mf">4.5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+
+<span class="n">draw_object</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">plot_limits</span><span class="o">=</span><span class="n">plot_limits</span><span class="p">)</span>
+<span class="n">draw_object</span><span class="p">(</span><span class="n">planning_problem_set</span><span class="p">,</span> <span class="n">plot_limits</span><span class="o">=</span><span class="n">plot_limits</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../user/visualization-1.py">Source code</a>)</p>
+</div>
+<div class="section" id="speed-up-plotting-for-real-time-applications">
+<span id="plot-helper"></span><h2>Speed up plotting for real-time applications<a class="headerlink" href="#speed-up-plotting-for-real-time-applications" title="Permalink to this headline">¶</a></h2>
+<p>Plotting of a typical scenario can be too slow when using for real-time applications, where updated scenarios have have be redrawn at high rates. For those applications we provide the helper function <code class="docutils literal notranslate"><span class="pre">redraw_obstacles()</span></code> . Since plotting of the lanelet network requires most of the runtime, this function only updates obstacles of a scenario, while maintaining an initially plotted <code class="docutils literal notranslate"><span class="pre">lanelet_network</span></code> . Further speed improvements can be achieved by selecting a fast backend for matplotlib, like <code class="docutils literal notranslate"><span class="pre">Qt5Agg</span></code> or <code class="docutils literal notranslate"><span class="pre">TkAgg</span></code> .</p>
+<p>Furthermore the number of plotted graphic elements should be minimized. These parameters help to improve run time considerably (ordered by impact):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">draw_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;lanelet&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;draw_start_and_direction&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;draw_center_bound&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+               <span class="s1">&#39;dynamic_obstacle&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;show_label&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}</span>
+</pre></div>
+</div>
+<p>Additionally the plotted area should be restricted by using <code class="docutils literal notranslate"><span class="pre">draw_object</span></code> ‘s option <code class="docutils literal notranslate"><span class="pre">plot_limits</span></code>. Effectively update rates of more than 20 frames/s are possible even for complex scenarios.</p>
+<p>A minimal example would be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;Qt5Agg&#39;</span><span class="p">)</span> <span class="c1"># sets the backend for matplotlib</span>
+<span class="kn">import</span> <span class="nn">mpl.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">commonroad.visualization.plot_helper</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="o">/</span><span class="n">commonroad</span><span class="o">-</span><span class="n">scenarios</span><span class="o">/</span><span class="n">scenarios</span><span class="o">/</span><span class="n">NGSIM</span><span class="o">/</span><span class="n">US101</span><span class="o">/</span><span class="n">USA_US101</span><span class="o">-</span><span class="mi">2_1</span><span class="n">_T</span><span class="o">-</span><span class="mf">1.</span><span class="n">xml</span><span class="s1">&#39;</span>
+<span class="n">scenario</span><span class="p">,</span> <span class="n">planning_problem_set</span> <span class="o">=</span> <span class="n">CommonRoadFileReader</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+<span class="n">set_non_blocking</span><span class="p">()</span> <span class="c1"># ensures interactive plotting is activated</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;classic&#39;</span><span class="p">)</span>
+<span class="n">inch_in_cm</span> <span class="o">=</span> <span class="mf">2.54</span>
+<span class="n">figsize</span> <span class="o">=</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">figsize</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">inch_in_cm</span><span class="p">,</span> <span class="n">figsize</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">inch_in_cm</span><span class="p">))</span>
+<span class="n">handles</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># collects handles of obstacles for fast updating of figures</span>
+
+<span class="c1"># inital plot including the lanelet network</span>
+<span class="n">draw_object</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">handles</span><span class="o">=</span><span class="n">handles</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+
+<span class="c1"># loop where obstacle positions are modified</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">):</span>
+        <span class="c1">#...</span>
+        <span class="c1"># modifying the scenario</span>
+        <span class="c1">#...</span>
+        <span class="n">redraw_dynamic_obstacles</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">handles</span><span class="o">=</span><span class="n">handles</span><span class="p">,</span> <span class="n">figure_handle</span><span class="o">=</span><span class="n">fig</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../api/index.html" class="btn btn-neutral float-right" title="CommonRoad_io API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Anna-Katharina Rettinger
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

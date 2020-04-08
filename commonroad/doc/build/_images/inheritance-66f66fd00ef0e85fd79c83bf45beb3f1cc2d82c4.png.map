@@ -1,0 +1,7 @@
+<map id="inheritance63b2655cb4" name="inheritance63b2655cb4">
+<area shape="rect" id="node1" href="#commonroad.geometry.shape.Circle" target="_top" title="The class Circle can be used to model occupied regions or circular obstacles, e.g., a pedestrian." alt="" coords="140,5,212,31"/>
+<area shape="rect" id="node2" href="#commonroad.geometry.shape.Shape" target="_top" title="Abstract class for CommonRoad shapes." alt="" coords="5,80,77,105"/>
+<area shape="rect" id="node3" href="#commonroad.geometry.shape.Polygon" target="_top" title="The class Polygon can be used to model occupied regions or obstacles. A polygon is defined by an array of" alt="" coords="139,55,213,80"/>
+<area shape="rect" id="node4" href="#commonroad.geometry.shape.Rectangle" target="_top" title="The class Rectangle can be used to model occupied regions or rectangular obstacles, e.g., a vehicle. The" alt="" coords="133,104,219,129"/>
+<area shape="rect" id="node5" href="#commonroad.geometry.shape.ShapeGroup" target="_top" title="The class ShapeGroup represents a collection of primitive shapes, e.g., rectangles and polygons," alt="" coords="125,153,227,179"/>
+</map>
