@@ -252,7 +252,7 @@ class Obstacle(ABC):
         Extracts signal state at a time step
 
         :param time_step: time step of interest
-        :returns signal state or None if time step does not exist
+        :returns: signal state or None if time step does not exist
         """
         if self.initial_signal_state is not None and time_step == self.initial_signal_state.time_step:
             return self.initial_signal_state

@@ -1,3 +1,4 @@
 include commonroad/common/XML_commonRoad_XSD.xsd
 include commonroad/visualization/traffic_signs/**/*.png
+include commonroad/visualization/traffic_signs/**/.png
 include commonroad/common/CommonRoadSolution_schema.xsd

@@ -167,7 +167,7 @@ def create_default_draw_params() -> dict:
 
 
 def line_marking_to_linestyle(line_marking:LineMarking) -> Tuple:
-    """:returns Tuple[line_style, dashes, line_width] for matplotlib plotting options."""
+    """:returns: Tuple[line_style, dashes, line_width] for matplotlib plotting options."""
     return {LineMarking.DASHED: ('--', (10,10), 0.25,),
             LineMarking.SOLID: ('-', (None,None), 0.25),
             LineMarking.BROAD_DASHED: ('--',(10,10), 0.5),

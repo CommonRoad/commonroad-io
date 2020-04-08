@@ -334,6 +334,7 @@ class PlanningProblemSolution:
 
 
 class Solution:
+    """Stores a solution to a CommonRoad benchmark and additional meta data."""
     def __init__(self,
                  scenario_id: str,
                  commonroad_version: str,
@@ -342,8 +343,6 @@ class Solution:
                  computation_time: Union[float, None] = None,
                  processor_name: Union[str, None] = None):
         """
-        Constructor for the Solution class.
-
         :param scenario_id: Scenario ID of the Solution
         :param commonroad_version: valid CommonRoad Version (see `:py:data:`~common.file_reader.SUPPORTED_COMMONROAD_VERSIONS`)
         :param planning_problem_solutions: List of PlanningProblemSolution for corresponding
@@ -457,6 +456,7 @@ class Solution:
 
 
 class CommonRoadSolutionReader:
+    """Reads solution xml files created with the CommonRoadSolutionWriter"""
     # TODO Add parser check
     # TODO Prepare proper error messages to show to the user.
 
@@ -682,15 +682,13 @@ class CommonRoadSolutionWriter:
         """
         Writes the Solution XML to a file.
 
-        :param output_path: Output dir where the Solution XML file should be written to.
-        Writes to the same folder where it is called from if not specified.
-        :param filename: Name of the Solution XML file. If not specified, sets the name as 'solution_BENCHMARKID.xml'
-        where the BENCHMARKID is the benchmark_id of the solution.
+        :param output_path: Output dir where the Solution XML file should be written to. \
+            Writes to the same folder where it is called from if not specified.
+        :param filename: Name of the Solution XML file. If not specified, sets the name as 'solution_BENCHMARKID.xml' \
+            where the BENCHMARKID is the benchmark_id of the solution.
         :param overwrite: If set to True, overwrites the file if it already exists.
         :param pretty: If set to True, prettifies the Solution XML string before writing to file.
-        :return:
         """
-
         filename = filename if filename is not None else 'solution_%s.xml' % self.solution.benchmark_id
         fullpath = os.path.join(output_path, filename) if filename is not None else os.path.join(output_path, filename)
 

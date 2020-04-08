@@ -20,6 +20,8 @@ __email__ = "commonroad-i06@in.tum.de"
 __status__ = "released"
 
 
+
+
 class LineMarking(enum.Enum):
     """
     Enum describing different types of line markings, i.e. dashed or solid lines
@@ -861,12 +863,12 @@ class Lanelet:
         """
         self.traffic_signs.add(traffic_sign_id)
 
-    def dynamic_obstacle_by_time_step(self, time_step: int) -> Set[int]:
+    def dynamic_obstacle_by_time_step(self, time_step) -> Set[int]:
         """
         Returns all dynamic obstacles on lanelet at specific time step
 
         :param time_step: time step of interest
-        :returns list of obstacle IDs
+        :returns: list of obstacle IDs
         """
         if self.dynamic_obstacles_on_lanelet.get(time_step) is not None:
             return self.dynamic_obstacles_on_lanelet.get(time_step)
@@ -911,7 +913,7 @@ class LaneletNetwork:
     @property
     def map_inc_lanelets_to_intersections(self) -> Dict[int,Intersection]:
         """
-        :returns dict that maps lanelet ids to the intersection of which it is an incoming lanelet.
+        :returns: dict that maps lanelet ids to the intersection of which it is an incoming lanelet.
         """
         return {l_id: intersection for intersection in self.intersections
                 for l_id in list(intersection.map_incoming_lanelets.keys())}

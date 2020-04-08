@@ -190,7 +190,7 @@ class TrafficSign:
         return self._traffic_sign_id
 
     @property
-    def position(self) -> np.ndarray:
+    def position(self) -> Union[None,np.ndarray]:
         return self._position
 
     @property

@@ -31,20 +31,22 @@ When settings of a plot should be changed with ``draw_params``, they have to be 
                  'braking_color': 'red',
                  'blue_lights_color': 'blue',
                  'horn_color': 'red',
-								 'occupancy':
-										 {'draw_occupancies': 0,
-											'shape': shape_parameters
-										 },
-								 'trajectory':
+                 'occupancy':
+                     {'draw_occupancies': 0,
+                      'shape': shape_parameters
+                     },
+                 'trajectory':
                     {'facecolor': '#000000',
                      'marker_size': 0.13,
                      'z_order': 24}
-                },
+                     },
             'static_obstacle':
                 {'shape': shape_parameters},
             'lanelet_network':
                 {'draw_traffic_lights': True,
-                'kwargs_traffic_light_signs': {}, # further properties for AnnotationBox, see # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
+                'kwargs_traffic_light_signs': {}, # further properties for
+                  # AnnotationBox, see
+                  # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
                  'traffic_light':
                      {'red_color': 'red',
                       'yellow_color': '#feb609',
@@ -53,7 +55,7 @@ When settings of a plot should be changed with ``draw_params``, they have to be 
                       'show_label': False,
                       'scale_factor': 0.25,
                       'zorder': 30
-                      },
+                     },
                  'draw_traffic_signs': False,
                  'traffic_sign':
                      {'show_traffic_signs': 'all',  # 'all' or list of TrafficSignIDs

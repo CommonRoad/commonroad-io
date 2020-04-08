@@ -20,7 +20,7 @@ Road network
 ``LaneletNetwork`` class
 ^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: LaneletNetwork
-   :undoc-members:   
+   :undoc-members:
    :members:
    :member-order: bysource
 
@@ -28,7 +28,7 @@ Road network
 ``Lanelet`` class
 ^^^^^^^^^^^^^^^^^
 .. autoclass:: Lanelet
-   :undoc-members:   
+   :undoc-members:
    :members:
    :member-order: bysource
 
@@ -49,6 +49,8 @@ Road network
    :member-order: bysource
 
 
+Traffic Sign
+------------
 
 .. automodule:: commonroad.scenario.traffic_sign
 
@@ -108,6 +110,16 @@ Road network
    :member-order: bysource
 
 
+Traffic Light
+-------------
+
+``TrafficLight`` class
+^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: TrafficLight
+   :members:
+   :undoc-members:
+   :member-order: bysource
+
 ``TrafficLightDirection`` class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: TrafficLightDirection
@@ -148,14 +160,8 @@ Road network
    :member-order: bysource
 
 
-``TrafficLight`` class
-^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: TrafficLight
-   :members:
-   :undoc-members:
-   :member-order: bysource
-
-
+Traffic Sign Interpreter
+------------------------
 
 .. automodule:: commonroad.scenario.traffic_sign_interpreter
 
@@ -178,6 +184,9 @@ Road network
    :member-order: bysource
 
 
+Intersection
+------------
+
 ``Intersection`` class
 ^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: Intersection
@@ -190,7 +199,7 @@ Road network
 Obstacles
 ---------
 
-Different kinds of traffic participants are modeled as obstacles within the scenario. An obstacle is either static or dynamic. 
+Different kinds of traffic participants are modeled as obstacles within the scenario. An obstacle is either static or dynamic.
 
 .. automodule:: commonroad.scenario.obstacle
 
@@ -210,6 +219,12 @@ Different kinds of traffic participants are modeled as obstacles within the scen
    :members:
    :undoc-members:
    :member-order: bysource
+
+``SignalState`` class
+^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: SignalState
+ :members:
+ :member-order: bysource
 
 ``Obstacle`` class
 ^^^^^^^^^^^^^^^^^^^^^^^^

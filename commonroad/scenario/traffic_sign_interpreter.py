@@ -33,7 +33,7 @@ class TrafficSigInterpreter:
         Extracts country specific traffic sign enum
 
         :param country: country of CommonRoad scenario
-        :returns country specific traffic sign enum
+        :returns: country specific traffic sign enum
         """
         if country == SupportedTrafficSignCountry.SPAIN:
             return TrafficSignIDSpain
@@ -56,7 +56,8 @@ class TrafficSigInterpreter:
         Extracts the maximum speed limit of provided lanelets
 
         :param lanelet_ids: set of lanelets which should be considered
-        :returns speed limit of provided lanelets or None if no speed limit exists
+        :returns: speed limit of provided lanelets or None if no speed limit exists
+
         """
         speed_limits = []
         for lanelet_id in lanelet_ids:
@@ -79,7 +80,7 @@ class TrafficSigInterpreter:
         Extracts the required speed a vehicle has to drive on a set of lanelets
 
         :param lanelet_ids: IDs of lanelets the vehicle is on
-        :returns minimum required speed of provided lanelets or None if no required speed exists
+        :returns: minimum required speed of provided lanelets or None if no required speed exists
         """
         required_velocities = []
         for lanelet_id in lanelet_ids:
