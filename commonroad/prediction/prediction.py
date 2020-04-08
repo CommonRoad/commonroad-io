@@ -1,5 +1,5 @@
 import abc
-from typing import Union, List
+from typing import Union, List, Dict, Set
 import numpy as np
 
 from commonroad.common.util import Interval
@@ -9,10 +9,10 @@ from commonroad.scenario.trajectory import Trajectory
 
 __author__ = "Stefanie Manzinger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2019.1"
+__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles", "CAR@TUM"]
+__version__ = "2020.1"
 __maintainer__ = "Stefanie Manzinger"
-__email__ = "commonroad@in.tum.de"
+__email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 
@@ -151,14 +151,17 @@ class SetBasedPrediction(Prediction):
 class TrajectoryPrediction(Prediction):
     """ Class to represent the predicted movement of an obstacle using a trajectory. A trajectory is modeled as a
     state sequence over time. The occupancy of an obstacle along a trajectory is uniquely defined given its shape."""
-    def __init__(self, trajectory: Trajectory, shape: Shape):
+    def __init__(self, trajectory: Trajectory, shape: Shape,
+                 center_lanelet_assignment: Union[None, Dict[int, Set[int]]] = None,
+                 shape_lanelet_assignment: Union[None, Dict[int, Set[int]]] = None):
         """
         :param trajectory: predicted trajectory of the obstacle
         :param shape: shape of the obstacle
         """
         self.shape: Shape = shape
         self.trajectory: Trajectory = trajectory
-
+        self.shape_lanelet_assignment: Dict[int, Set[int]] = shape_lanelet_assignment
+        self.center_lanelet_assignment: Dict[int, Set[int]] = center_lanelet_assignment
         Prediction.__init__(self, self._trajectory.initial_time_step, self._create_occupancy_set())
 
     @property
@@ -184,6 +187,34 @@ class TrajectoryPrediction(Prediction):
                                                    % (Trajectory, type(trajectory))
         self._trajectory = trajectory
 
+    @property
+    def shape_lanelet_assignment(self) -> Union[None, Dict[int, Set[int]]]:
+        """ Predicted lanelet assignment of obstacle shape."""
+        return self._shape_lanelet_assignment
+
+    @shape_lanelet_assignment.setter
+    def shape_lanelet_assignment(self, shape_lanelet_assignment: Union[None, Dict[int, Set[int]]]):
+        if shape_lanelet_assignment is not None:
+            assert isinstance(shape_lanelet_assignment, dict), '<TrajectoryPrediction/shape_lanelet_assignment>: ' \
+                                                         'argument "shape_lanelet_assignment" of wrong type. ' \
+                                                               'Expected type: %s. Got' \
+                                                               ' type: %s.' % (Dict, type(shape_lanelet_assignment))
+        self._shape_lanelet_assignment = shape_lanelet_assignment
+
+    @property
+    def center_lanelet_assignment(self) -> Union[None, Dict[int, Set[int]]]:
+        """ Predicted lanelet assignment of obstacle center."""
+        return self._center_lanelet_assignment
+
+    @center_lanelet_assignment.setter
+    def center_lanelet_assignment(self, center_lanelet_assignment: Union[None, Dict[int, Set[int]]]):
+        if center_lanelet_assignment is not None:
+            assert isinstance(center_lanelet_assignment, dict), '<TrajectoryPrediction/center_lanelet_assignment>: ' \
+                                                         'argument "center_lanelet_assignment" of wrong type. ' \
+                                                         'Expected type: ' \
+                                                         '%s. Got type: %s.' % (Dict, type(center_lanelet_assignment))
+        self._center_lanelet_assignment = center_lanelet_assignment
+
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ Translates and rotates all states of the trajectory and re-computes the translated and rotated occupancy
         set.
@@ -205,5 +236,5 @@ class TrajectoryPrediction(Prediction):
         for k, state in enumerate(self._trajectory.state_list):
             occupied_region = self._shape.rotate_translate_local(
                 state.position, state.orientation)
-            occupancy_set.append(Occupancy(self._trajectory.initial_time_step + k, occupied_region))
+            occupancy_set.append(Occupancy(state.time_step, occupied_region))
         return occupancy_set

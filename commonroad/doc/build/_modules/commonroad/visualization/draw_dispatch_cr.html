@@ -1,0 +1,608 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>commonroad.visualization.draw_dispatch_cr &mdash; CommonRoad_io 2020.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> CommonRoad_io
+          
+
+          
+            
+            <img src="../../../_static/commonroad_white150.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2020.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/index.html">User Manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/getting_started.html">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#reading-files">Reading Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#scenario">Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#lanelet-network">Lanelet Network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#obstacles">Obstacles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#dynamic-obstacle-prediction">Dynamic Obstacle Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#trajectory-prediction">Trajectory Prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#set-based-prediction">Set Based Prediction</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#planning-problems">Planning Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#writing-files">Writing Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#solution-writer">Solution Writer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/visualization.html">Visualization Manual</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#draw-params"><code class="docutils literal notranslate"><span class="pre">draw_params</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/visualization.html#passing-custom-draw-params">Passing custom <code class="docutils literal notranslate"><span class="pre">draw_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#plot-limits"><code class="docutils literal notranslate"><span class="pre">plot_limits</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#example-plot-with-matplotlib">Example plot with <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#speed-up-plotting-for-real-time-applications">Speed up plotting for real-time applications</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">CommonRoad_io API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#modules">Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/scenario.html">Module Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.scenario">Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.lanelet">Road network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.traffic_sign">Traffic Sign</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#traffic-light">Traffic Light</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.traffic_sign_interpreter">Traffic Sign Interpreter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#intersection">Intersection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#obstacles">Obstacles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.trajectory">States and Trajectories</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/prediction.html">Module Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#prediction-class"><code class="docutils literal notranslate"><span class="pre">Prediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#trajectoryprediction-class"><code class="docutils literal notranslate"><span class="pre">TrajectoryPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#setbasedprediction-class"><code class="docutils literal notranslate"><span class="pre">SetBasedPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#occupancy-class"><code class="docutils literal notranslate"><span class="pre">Occupancy</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/planning.html">Module Planning</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/planning.html#module-commonroad.planning.planning_problem">Planning Problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/planning.html#module-commonroad.planning.goal">Goal Region</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/geometry.html">Module Geometry</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-commonroad.geometry.shape">Shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-geometry.transform">Transform</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/common.html">Module Common</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.file_reader">File Reader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.file_writer">File Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#solution-reader-and-writer">Solution Reader and Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/visualization.html">Module Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/visualization.html#module-commonroad.visualization.draw_dispatch_cr">draw_dispatch_cr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/visualization.html#module-commonroad.visualization.plot_helper">plot_Helper</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CommonRoad_io</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>commonroad.visualization.draw_dispatch_cr</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for commonroad.visualization.draw_dispatch_cr</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">mpatches</span>
+<span class="kn">import</span> <span class="nn">commonroad</span>
+<span class="kn">from</span> <span class="nn">commonroad.geometry.shape</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">commonroad.planning.planning_problem</span> <span class="k">import</span> <span class="n">GoalRegion</span><span class="p">,</span> <span class="n">PlanningProblemSet</span><span class="p">,</span> \
+    <span class="n">PlanningProblem</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.lanelet</span> <span class="k">import</span> <span class="n">Lanelet</span><span class="p">,</span> <span class="n">LaneletNetwork</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.obstacle</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.scenario</span> <span class="k">import</span> <span class="n">Scenario</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.traffic_sign</span> <span class="k">import</span> <span class="n">TrafficSign</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.trajectory</span> <span class="k">import</span> <span class="n">Trajectory</span><span class="p">,</span> <span class="n">State</span>
+<span class="kn">import</span> <span class="nn">commonroad.visualization.scenario</span>
+<span class="kn">import</span> <span class="nn">commonroad.visualization.planning</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Moritz Klischat&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;TUM Cyber-Physical Systems Group&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2020.1&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Moritz Klischat&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad-i06@in.tum.de&quot;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Released&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_create_drawers_dict</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates default dict of drawer functions, which are later called for draw objects depending on their class</span>
+
+<span class="sd">    :return: dict containing the drawer functions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">draw_func</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="s1">&#39;commonroad.visualization.scenario&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">draw_func</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">commonroad</span><span class="o">.</span><span class="n">visualization</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">draw_func_dict</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;commonroad.visualization.planning&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">draw_func</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">commonroad</span><span class="o">.</span><span class="n">visualization</span><span class="o">.</span><span class="n">planning</span><span class="o">.</span><span class="n">draw_func_dict</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">draw_func</span>
+
+
+<span class="k">def</span> <span class="nf">_create_default_draw_params</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates default settings for drawing objects</span>
+
+<span class="sd">    :return: nested dict, containing the settings</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">draw_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;time_begin&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;time_end&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s1">&#39;antialiased&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="k">if</span> <span class="s1">&#39;commonroad.visualization.scenario&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">draw_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="n">commonroad</span><span class="o">.</span><span class="n">visualization</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">create_default_draw_params</span><span class="p">())</span>
+    <span class="k">if</span> <span class="s1">&#39;commonroad.visualization.planning&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">draw_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="n">commonroad</span><span class="o">.</span><span class="n">visualization</span><span class="o">.</span><span class="n">planning</span><span class="o">.</span><span class="n">create_default_draw_params</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">draw_params</span>
+
+
+<span class="n">default_draw_params</span> <span class="o">=</span> <span class="n">_create_default_draw_params</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_retrieve_value_by_path</span><span class="p">(</span><span class="n">style_sheet_caller</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">value_path</span><span class="p">:</span>  <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieves value corresponding to value path from the nested dict style_sheet.</span>
+
+<span class="sd">    :param style_sheet_caller: parameters for plotting given by a nested dict</span>
+<span class="sd">    :param value_path: string tuple that contains the path to the value</span>
+<span class="sd">    :return: the value from style_sheet defined by value_path</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">c_dict</span> <span class="o">=</span> <span class="n">style_sheet_caller</span>
+    <span class="k">for</span> <span class="n">value_element</span> <span class="ow">in</span> <span class="n">value_path</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">c_dict</span> <span class="o">=</span> <span class="n">c_dict</span><span class="p">[</span><span class="n">value_element</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">return_value</span> <span class="o">=</span> <span class="n">c_dict</span><span class="p">[</span><span class="n">value_path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">return_value</span>
+
+
+<span class="k">def</span> <span class="nf">_retrieve_value</span><span class="p">(</span><span class="n">style_sheet</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">call_stack</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">value_path</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieves value corresponding to value_path from the nested dict style_sheet. If value_path not contained in</span>
+<span class="sd">    style_sheet, try to retrieve from default draw_params.</span>
+<span class="sd">    Starts by searching for value_path beginning at first element in call stack, stepping down all frames</span>
+
+<span class="sd">    :param style_sheet: parameters for plotting given by a nested dict</span>
+<span class="sd">    :param call_stack: tuple of string containing the call stack</span>
+<span class="sd">    :param value_path: string tuple that contains the path to the value</span>
+<span class="sd">    :return: the value from style_sheet defined by value_path and call_stack</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># first: try to retrieve value with call stack, start from deepest level</span>
+    <span class="k">for</span> <span class="n">idx_r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">call_stack</span><span class="p">)):</span>
+        <span class="n">style_sheet_caller</span> <span class="o">=</span> <span class="n">style_sheet</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">call_stack</span><span class="p">)</span><span class="o">-</span><span class="n">idx_r</span><span class="p">):</span>
+                <span class="n">style_sheet_caller</span> <span class="o">=</span> <span class="n">style_sheet_caller</span><span class="p">[</span><span class="n">call_stack</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">_retrieve_value_by_path</span><span class="p">(</span><span class="n">style_sheet_caller</span><span class="p">,</span> <span class="n">value_path</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">value</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">continue</span>
+    <span class="c1"># try to retrieve value without call_stack (for fallback to top-level parameters)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">_retrieve_value_by_path</span><span class="p">(</span><span class="n">style_sheet</span><span class="p">,</span> <span class="n">value_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># try to retrieve from default parameters</span>
+    <span class="k">for</span> <span class="n">idx_r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">call_stack</span><span class="p">)):</span>
+        <span class="n">style_sheet_caller</span> <span class="o">=</span> <span class="n">default_draw_params</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">call_stack</span><span class="p">)</span><span class="o">-</span><span class="n">idx_r</span><span class="p">):</span>
+                <span class="n">style_sheet_caller</span> <span class="o">=</span> <span class="n">style_sheet_caller</span><span class="p">[</span><span class="n">call_stack</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">_retrieve_value_by_path</span><span class="p">(</span><span class="n">style_sheet_caller</span><span class="p">,</span> <span class="n">value_path</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">value</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">continue</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">_retrieve_value_by_path</span><span class="p">(</span><span class="n">default_draw_params</span><span class="p">,</span> <span class="n">value_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># if value not found yet, it is neither given in default parameters nor in provided parameters,</span>
+    <span class="c1"># possibly a wrong call_stack was provided</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value</span>
+    <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span>
+    <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="k">def</span> <span class="nf">_retrieve_alternate_value</span><span class="p">(</span><span class="n">style_sheet</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">call_stack</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">value_path_1</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+                              <span class="n">value_path_2</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span><span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Like retrieve_value(...), but retrieves value from value_path_2 if value_path_1 does not exist in style_sheet</span>
+
+<span class="sd">    :param style_sheet: parameters for plotting given by a nested dict (see draw_params in draw_object)</span>
+<span class="sd">    :param call_stack: tuple of string containing the call stack</span>
+<span class="sd">    :param value_path_1: string tuple that contains the path to the value</span>
+<span class="sd">    :param value_path_2: alternate value_path</span>
+<span class="sd">    :return: the value from style_sheet defined by value_path_1 (or value_path_2)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># first: try to retrieve value with call stack, start from deepest level</span>
+    <span class="k">for</span> <span class="n">idx_r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">call_stack</span><span class="p">)):</span>
+        <span class="n">style_sheet_caller</span> <span class="o">=</span> <span class="n">style_sheet</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">call_stack</span><span class="p">)</span> <span class="o">-</span> <span class="n">idx_r</span><span class="p">):</span>
+                <span class="n">style_sheet_caller</span> <span class="o">=</span> <span class="n">style_sheet_caller</span><span class="p">[</span><span class="n">call_stack</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">_retrieve_value_by_path</span><span class="p">(</span><span class="n">style_sheet_caller</span><span class="p">,</span> <span class="n">value_path_1</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">value</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+    <span class="k">for</span> <span class="n">idx_r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">call_stack</span><span class="p">)):</span>
+        <span class="n">style_sheet_caller</span> <span class="o">=</span> <span class="n">style_sheet</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">call_stack</span><span class="p">)</span> <span class="o">-</span> <span class="n">idx_r</span><span class="p">):</span>
+                <span class="n">style_sheet_caller</span> <span class="o">=</span> <span class="n">style_sheet_caller</span><span class="p">[</span><span class="n">call_stack</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">_retrieve_value_by_path</span><span class="p">(</span><span class="n">style_sheet_caller</span><span class="p">,</span> <span class="n">value_path_2</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">value</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">continue</span>
+    <span class="c1"># try to retrieve value without call_stack (for fallback to top-level parameters)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">_retrieve_value_by_path</span><span class="p">(</span><span class="n">style_sheet</span><span class="p">,</span> <span class="n">value_path_1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">_retrieve_value_by_path</span><span class="p">(</span><span class="n">style_sheet</span><span class="p">,</span> <span class="n">value_path_2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># try to retrieve from default parameters</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">_retrieve_value_by_path</span><span class="p">(</span><span class="n">default_draw_params</span><span class="p">,</span> <span class="n">call_stack</span> <span class="o">+</span> <span class="n">value_path_1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">_retrieve_value_by_path</span><span class="p">(</span><span class="n">default_draw_params</span><span class="p">,</span> <span class="n">call_stack</span> <span class="o">+</span> <span class="n">value_path_2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">_retrieve_value_by_path</span><span class="p">(</span><span class="n">default_draw_params</span><span class="p">,</span> <span class="n">value_path_1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">_retrieve_value_by_path</span><span class="p">(</span><span class="n">default_draw_params</span><span class="p">,</span> <span class="n">value_path_2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># if value not found yet, it is neither given in default parameters nor in provided parameters,</span>
+    <span class="c1"># possibly a wrong call_stack was provided</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value</span>
+    <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span>
+    <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="k">def</span> <span class="nf">_add_legend</span><span class="p">(</span><span class="n">legend</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span><span class="o">...</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span> <span class="n">draw_params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds legend with color of objects specified by legend.keys() and texts specified by legend.values().</span>
+<span class="sd">    :param legend: color of objects specified by path in legend.keys() and texts specified by legend.values()</span>
+<span class="sd">    :param draw_params: draw parameters used for plotting (color is extracted using path in legend.keys())</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">handles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">obj_name</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">legend</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">_retrieve_value</span><span class="p">(</span><span class="n">draw_params</span><span class="p">,</span> <span class="p">(),</span> <span class="n">obj_name</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">text</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">handles</span><span class="p">)</span>
+
+
+<span class="n">plottable_types</span><span class="o">=</span><span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">Scenario</span><span class="p">,</span> <span class="n">Trajectory</span><span class="p">,</span> <span class="n">LaneletNetwork</span><span class="p">,</span> <span class="n">Lanelet</span><span class="p">,</span> <span class="n">Obstacle</span><span class="p">,</span> <span class="n">ShapeGroup</span><span class="p">,</span> <span class="n">Shape</span><span class="p">,</span>
+                      <span class="n">GoalRegion</span><span class="p">,</span> <span class="n">PlanningProblem</span><span class="p">,</span> <span class="n">PlanningProblemSet</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="n">Occupancy</span><span class="p">,</span> <span class="n">TrafficSign</span><span class="p">]</span>
+
+<div class="viewcode-block" id="draw_object"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_dispatch_cr.draw_object">[docs]</a><span class="k">def</span> <span class="nf">draw_object</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">plottable_types</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">plottable_types</span><span class="p">]],</span>
+                <span class="n">plot_limits</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">]],</span><span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">ax</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">mpl</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">Axes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">draw_params</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">draw_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span><span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">handles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">mpl</span><span class="o">.</span><span class="n">patches</span><span class="o">.</span><span class="n">Patch</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">call_stack</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span><span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">legend</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span><span class="o">...</span><span class="p">],</span><span class="nb">str</span><span class="p">],</span><span class="kc">None</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">mpl</span><span class="o">.</span><span class="n">patches</span><span class="o">.</span><span class="n">Patch</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main function for drawing objects from the scenario and planning modules.</span>
+
+<span class="sd">    :param obj: the object or list of objects (with all the same type) to be plotted</span>
+<span class="sd">    :param plot_limits:  list of [x_min, x_max, y_min, y_max that defines the plotted area of the scenario</span>
+<span class="sd">    :param ax: axes object from matplotlib</span>
+<span class="sd">    :param draw_params: parameters for plotting given by a nested dict that recreates the structure of an object,</span>
+<span class="sd">           see documentation for full overview over the structure. If parameters are not set,</span>
+<span class="sd">           the default setting are used. An example for specifying the color of circle obstacles:</span>
+<span class="sd">           {&#39;scenario&#39;: {&#39;static_obstacle&#39;:{&#39;shape&#39;:{&#39;circle&#39;:{&#39;facecolor&#39;:#3399ff, edgecolor&#39;: &#39;#0066cc&#39;}}}}}</span>
+<span class="sd">    :param draw_func: specify the drawing function (usually not necessary to change default)</span>
+<span class="sd">    :param handles: dict that assign to every object_id of all plotted obstacles the corresponding patch handles</span>
+<span class="sd">    :param call_stack: tuple of string containing the call stack, which allows for differentiation of plotting styles</span>
+<span class="sd">           depending on the call stack of draw_object, (usually &#39;None&#39;!)</span>
+<span class="sd">   :param legend: names of objects that should appear in the legend</span>
+<span class="sd">    :return: Returns matplotlib patch object for draw_funcs that actually draw a patch (used internally for creating handles dict)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">draw_params</span><span class="p">,</span><span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="n">draw_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;&lt;visualization/draw_dispatch_cr/draw_object&gt;:&#39;</span>\
+        <span class="s1">&#39;draw_params must be either a (nested) dictionary contating the plotting parameters&#39;</span>\
+                                                                <span class="s1">&#39;or None (for default parameters)&#39;</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plot_limits</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">))</span> <span class="ow">or</span> <span class="n">plot_limits</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;&lt;visualization/draw_dispatch_cr/draw_object&gt;:&#39;</span>\
+                                                                  <span class="s1">&#39;plot_limits must be a list of [x_min, x_max, y_min, y_max]&#39;</span>\
+                                                                  <span class="s1">&#39;or None&#39;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">call_stack</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="n">call_stack</span> <span class="ow">is</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">handles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">handles</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">plot_limits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">plot_limits</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">plot_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">plot_limits</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">plot_limits</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>\
+            <span class="s1">&#39;&lt;draw_dispatch_cr/draw_object&gt;: position limits need to be given by [x_min, x_max, y_min, y_max]&#39;</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">plot_limits</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">plot_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">plot_limits</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">plot_limits</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">draw_func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">draw_func</span> <span class="o">=</span> <span class="n">_create_drawers_dict</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">draw_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">draw_params</span> <span class="o">=</span> <span class="n">_create_default_draw_params</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">call_stack</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">call_stack</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">legend</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_add_legend</span><span class="p">(</span><span class="n">legend</span><span class="p">,</span> <span class="n">draw_params</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="n">DynamicObstacle</span><span class="p">,</span> <span class="n">Trajectory</span><span class="p">,</span> <span class="n">Rectangle</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">Lanelet</span><span class="p">,</span> <span class="n">Circle</span><span class="p">)):</span>
+            <span class="n">patch_list</span> <span class="o">=</span> <span class="n">draw_func</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="mi">0</span><span class="p">])](</span><span class="n">obj</span><span class="p">,</span> <span class="n">plot_limits</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">draw_params</span><span class="p">,</span> <span class="n">draw_func</span><span class="p">,</span> <span class="n">handles</span><span class="p">,</span> <span class="n">call_stack</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">patch_list</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">patch_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">:</span>
+                <span class="n">patch_list_tmp</span> <span class="o">=</span> <span class="n">draw_object</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">draw_params</span><span class="p">,</span> <span class="n">draw_func</span><span class="p">,</span> <span class="n">handles</span><span class="p">,</span> <span class="n">call_stack</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">patch_list_tmp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">patch_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">patch_list_tmp</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">patch_list</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">in</span> <span class="n">draw_func</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="c1"># plotting the object</span>
+        <span class="n">patch_list</span> <span class="o">=</span> <span class="n">draw_func</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)](</span><span class="n">obj</span><span class="p">,</span> <span class="n">plot_limits</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">draw_params</span><span class="p">,</span> <span class="n">draw_func</span><span class="p">,</span> <span class="n">handles</span><span class="p">,</span> <span class="n">call_stack</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">patch_list</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">obj_type</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">draw_func</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">obj_type</span><span class="p">):</span>
+                <span class="n">patch_list</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">plot_limits</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">draw_params</span><span class="p">,</span> <span class="n">draw_func</span><span class="p">,</span> <span class="n">handles</span><span class="p">,</span> <span class="n">call_stack</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">patch_list</span>
+        <span class="c1"># else: no draw function available</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Cannot dispatch to plot &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)))</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Anna-Katharina Rettinger
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

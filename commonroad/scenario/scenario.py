@@ -3,6 +3,7 @@ import warnings
 from collections import defaultdict
 from typing import Union, List, Set, Dict, Tuple
 import numpy as np
+import enum
 
 from commonroad.common.util import Interval
 from commonroad.common.validity import is_real_number, is_real_number_vector, is_valid_orientation
@@ -11,27 +12,137 @@ from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.obstacle import ObstacleRole
 from commonroad.scenario.obstacle import ObstacleType
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Obstacle
-from commonroad.prediction.prediction import Occupancy
+from commonroad.prediction.prediction import Occupancy, SetBasedPrediction
 
-__author__ = "Stefanie Manzinger, Moritz Klischat"
+__author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2019.1"
+__version__ = "2020.1"
 __maintainer__ = "Stefanie Manzinger"
-__email__ = "commonroad@in.tum.de"
+__email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
+
+
+@enum.unique
+class Tag(enum.Enum):
+    """ Enum containing all possible tags of a CommonRoad scenario."""
+    INTERSTATE = "interstate"
+    URBAN = "urban"
+    HIGHWAY = "highway"
+    COMFORT = "comfort"
+    CRITICAL = "critical"
+    EVASIVE = "evasive"
+    CUT_IN = "cut_in"
+    ILLEGAL_CUTIN = "illegal_cutin"
+    INTERSECTION = "intersection"
+    LANE_CHANGE = "lane_change"
+    LANE_FOLLOWING = "lane_following"
+    MERGING_LANES = "merging_lanes"
+    MULTI_LANE = "multi_lane"
+    NO_ONCOMING_TRAFFIC = "no_oncoming_traffic"
+    PARALLEL_LANES = "parallel_lanes"
+    RACE_TRACK = "race_track"
+    ROUNDABOUT = "roundabout"
+    RURAL = "rural"
+    SIMULATED = "simulated"
+    SINGLE_LANE = "single_lane"
+    SLIP_ROAD = "slip_road"
+    SPEED_LIMIT = "speed_limit"
+    TRAFFIC_JAM = "traffic_jam"
+    TURN_LEFT = "turn_left"
+    TURN_RIGHT = "turn_right"
+    TWO_LANE = "two_lane"
+
+
+class GeoTransformation:
+    def __init__(self, geo_reference: str = None, x_translation: float = None, y_translation: float = None,
+                 z_rotation: float = None, scaling: float = None):
+        """
+        Constructor of a location object
+
+        :param geo_reference: proj-string describing transformation from geodetic to projected Cartesian coordinates
+        :param x_translation: translation value for x-coordinates
+        :param y_translation: translation value for y-coordinates
+        :param z_rotation: rotation value around origin
+        :param scaling: multiplication value of x- and y-coordinates
+        """
+        self._geo_reference = geo_reference
+        self._x_translation = x_translation
+        self._y_translation = y_translation
+        self._z_rotation = z_rotation
+        self._scaling = scaling
+
+    @property
+    def geo_reference(self) -> str:
+        return self._geo_reference
+
+    @property
+    def x_translation(self) -> float:
+        return self._x_translation
+
+    @property
+    def y_translation(self) -> float:
+        return self._y_translation
+
+    @property
+    def z_rotation(self) -> float:
+        return self._z_rotation
+
+    @property
+    def scaling(self) -> float:
+        return self._scaling
+
+
+class Location:
+    def __init__(self, geo_name_id: int = -999, gps_latitude: float = "", gps_longitude: float = "",
+                 geo_transformation: GeoTransformation = None):
+        """
+        Constructor of a location object
+
+        :param geo_name_id: GeoName ID
+        :param gps_latitude: GPS latitude coordinate
+        :param gps_longitude: GPS longitude coordinate
+        :param geo_transformation: description of geometric transformation during scenario generation
+        """
+        self._geo_name_id = geo_name_id
+        self._gps_latitude = gps_latitude
+        self._gps_longitude = gps_longitude
+        self._geo_transformation = geo_transformation
+
+    @property
+    def geo_name_id(self) -> int:
+        return self._geo_name_id
+
+    @property
+    def gps_latitude(self) -> float:
+        return self._gps_latitude
+
+    @property
+    def gps_longitude(self) -> float:
+        return self._gps_longitude
+
+    @property
+    def geo_transformation(self) -> GeoTransformation:
+        return self._geo_transformation
 
 
 class Scenario:
     """ Class which describes a Scenario entity according to the CommonRoad specification. Each scenario is described by
      a road network consisting of lanelets (see :class:`commonroad.scenario.lanelet.LaneletNetwork`) and a set of
      obstacles which can be either static or dynamic (see :class:`commonroad.scenario.obstacle.Obstacle`)."""
-    def __init__(self, dt: float, benchmark_id: str):
+    def __init__(self, dt: float, benchmark_id: str,
+                 author: str = None, tags: Set[Tag] = None, affiliation: str = None, source: str = None,
+                 location: Location = None):
         """
         Constructor of a Scenario object
 
         :param dt: global time step size of the time-discrete scenario
         :param benchmark_id: unique CommonRoad benchmark ID of the scenario
+        :param author: authors of the CommonRoad scenario
+        :param tags: tags describing and classifying the scenario
+        :param affiliation: institution of the authors
+        :param source: source of the scenario, e.g. generated by a map converter and a traffic simulator
+        :param location: location object of the scenario
         """
         self.dt: float = dt
         self.benchmark_id: str = benchmark_id
@@ -41,6 +152,13 @@ class Scenario:
         self._dynamic_obstacles: Dict[int, DynamicObstacle] = defaultdict()
 
         self._id_set: Set[int] = set()
+
+        # meta data
+        self.author = author
+        self.tags = tags
+        self.affiliation = affiliation
+        self.source = source
+        self.location = location
 
     @property
     def dt(self) -> float:
@@ -105,9 +223,12 @@ class Scenario:
         elif isinstance(scenario_object, StaticObstacle):
             self._mark_object_id_as_used(scenario_object.obstacle_id)
             self._static_obstacles[scenario_object.obstacle_id] = scenario_object
+            self._add_static_obstacle_to_lanelets(scenario_object.obstacle_id,
+                                                  scenario_object.initial_shape_lanelet_ids)
         elif isinstance(scenario_object, DynamicObstacle):
             self._mark_object_id_as_used(scenario_object.obstacle_id)
             self._dynamic_obstacles[scenario_object.obstacle_id] = scenario_object
+            self._add_dynamic_obstacle_to_lanelets(scenario_object)
         elif isinstance(scenario_object, LaneletNetwork):
             for lanelet in scenario_object.lanelets:
                 self._mark_object_id_as_used(lanelet.lanelet_id)
@@ -120,23 +241,91 @@ class Scenario:
                              'Expected types: %s, %s, %s, and %s. Got type: %s.'
                              % (list, Obstacle, Lanelet, LaneletNetwork, type(scenario_object)))
 
+    def _add_static_obstacle_to_lanelets(self, obstacle_id: int, lanelet_ids: Set[int]):
+        """ Adds a static obstacle reference to all lanelets the obstacle is on.
+
+        :param obstacle_id: obstacle ID to be removed
+        :param lanelet_ids: list of lanelet IDs on which the obstacle is on
+        """
+        if lanelet_ids is None or len(self.lanelet_network.lanelets) == 0:
+            return
+        for l_id in lanelet_ids:
+            self.lanelet_network.find_lanelet_by_id(l_id).static_obstacles_on_lanelet.add(obstacle_id)
+
+    def _remove_static_obstacle_from_lanelets(self, obstacle_id: int, lanelet_ids: Set[int]):
+        """ Adds a static obstacle reference to all lanelets the obstacle is on.
+
+        :param obstacle_id: obstacle ID to be added
+        :param lanelet_ids: list of lanelet IDs on which the obstacle is on
+        """
+        if lanelet_ids is None:
+            return
+        for l_id in lanelet_ids:
+            self.lanelet_network.find_lanelet_by_id(l_id).static_obstacles_on_lanelet.remove(obstacle_id)
+
+    def _remove_dynamic_obstacle_from_lanelets(self, obstacle: DynamicObstacle):
+        """ Removes a dynamic obstacle reference from all lanelets the obstacle is on.
+
+        :param obstacle: obstacle to be removed
+        """
+        if isinstance(obstacle.prediction, SetBasedPrediction) or len(self.lanelet_network.lanelets) == 0:
+            return
+        # delete obstacle references from initial time step
+        if obstacle.initial_shape_lanelet_ids is not None:
+            for lanelet_id in obstacle.initial_shape_lanelet_ids:
+                lanelet_dict = self.lanelet_network.find_lanelet_by_id(lanelet_id).dynamic_obstacles_on_lanelet
+                lanelet_dict[obstacle.initial_state.time_step].discard(obstacle.obstacle_id)
+
+        # delete obstacle references from prediction
+        if obstacle.prediction is not None and obstacle.prediction.shape_lanelet_assignment is not None:
+            for time_step, ids in obstacle.prediction.shape_lanelet_assignment.items():
+                for lanelet_id in ids:
+                    lanelet_dict = self.lanelet_network.find_lanelet_by_id(lanelet_id).dynamic_obstacles_on_lanelet
+                    lanelet_dict[time_step].discard(obstacle.obstacle_id)
+
+    def _add_dynamic_obstacle_to_lanelets(self, obstacle: DynamicObstacle):
+        """ Adds a dynamic obstacle reference to all lanelets the obstacle is on.
+
+        :param obstacle: obstacle to be added
+        """
+        if isinstance(obstacle.prediction, SetBasedPrediction) or len(self.lanelet_network.lanelets) == 0:
+            return
+        # add obstacle references to initial time step
+        if obstacle.initial_shape_lanelet_ids is not None:
+            for lanelet_id in obstacle.initial_shape_lanelet_ids:
+                lanelet_dict = self.lanelet_network.find_lanelet_by_id(lanelet_id).dynamic_obstacles_on_lanelet
+                if lanelet_dict.get(obstacle.initial_state.time_step) is None:
+                    lanelet_dict[obstacle.initial_state.time_step] = set()
+                lanelet_dict[obstacle.initial_state.time_step].add(obstacle.obstacle_id)
+
+        # add obstacle references to prediction
+        if obstacle.prediction is not None and obstacle.prediction.shape_lanelet_assignment is not None:
+            for time_step, ids in obstacle.prediction.shape_lanelet_assignment.items():
+                for lanelet_id in ids:
+                    lanelet_dict = self.lanelet_network.find_lanelet_by_id(lanelet_id).dynamic_obstacles_on_lanelet
+                    if lanelet_dict.get(time_step) is None:
+                        lanelet_dict[time_step] = set()
+                    lanelet_dict[time_step].add(obstacle.obstacle_id)
+
     def remove_obstacle(self, obstacle: Union[Obstacle, List[Obstacle]]):
         """ Removes a static, dynamic or a list of obstacles from the scenario. If the obstacle ID is not assigned,
         a warning message is given.
 
         :param obstacle: obstacle to be removed
         """
-        assert isinstance(obstacle, (list,Obstacle)), '<Scenario/remove_obstacle> argument "obstacle" of wrong type. ' \
-                                               'Expected type: %s. Got type: %s.' % (Obstacle, type(obstacle))
+        assert isinstance(obstacle, (list, Obstacle)), '<Scenario/remove_obstacle> argument "obstacle" of wrong type. '\
+                                                       'Expected type: %s. Got type: %s.' % (Obstacle, type(obstacle))
         if isinstance(obstacle, list):
             for obs in obstacle:
                 self.remove_obstacle(obs)
             return
 
         if obstacle.obstacle_id in self._static_obstacles:
+            self._remove_static_obstacle_from_lanelets(obstacle.obstacle_id, obstacle.initial_shape_lanelet_ids)
             del self._static_obstacles[obstacle.obstacle_id]
             self._id_set.remove(obstacle.obstacle_id)
         elif obstacle.obstacle_id in self._dynamic_obstacles:
+            self._remove_dynamic_obstacle_from_lanelets(obstacle)
             del self._dynamic_obstacles[obstacle.obstacle_id]
             self._id_set.remove(obstacle.obstacle_id)
         else:
@@ -150,17 +339,23 @@ class Scenario:
         """
         return max(self._id_set) + 1
 
-    def occupancies_at_time_step(self, time_step: int) -> List[Occupancy]:
+    def occupancies_at_time_step(self, time_step: int, obstacle_role: Union[None, ObstacleRole] = None) \
+            -> List[Occupancy]:
         """ Returns the occupancies of all static and dynamic obstacles at a specific time step.
 
             :param time_step: occupancies of obstacles at this time step
+            :param obstacle_role: obstacle role as defined in CommonRoad, e.g., static or dynamic
             :return: list of occupancies of the obstacles
         """
         assert isinstance(time_step, int), '<Scenario/occupancies_at_time> argument "time_step" of wrong type. ' \
                                            'Expected type: %s. Got type: %s.' % (int, type(time_step))
+        assert isinstance(obstacle_role, (ObstacleRole, type(None))), \
+            '<Scenario/obstacles_by_role_and_type> argument "obstacle_role" of wrong type. Expected types: ' \
+            ' %s or %s. Got type: %s.' % (ObstacleRole, None, type(obstacle_role))
         occupancies = list()
         for obstacle in self.obstacles:
-            if obstacle.occupancy_at_time(time_step):
+            if ((obstacle_role is None or obstacle.obstacle_role == obstacle_role) and
+                    obstacle.occupancy_at_time(time_step)):
                 occupancies.append(obstacle.occupancy_at_time(time_step))
         return occupancies
 

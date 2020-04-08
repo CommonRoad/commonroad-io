@@ -1,9 +1,11 @@
 import unittest
 import numpy as np
-from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork
+
+from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork, StopLine
 from commonroad.geometry.shape import Polygon, Rectangle
 from commonroad.prediction.prediction import Trajectory, TrajectoryPrediction
-from commonroad.scenario.obstacle import State, DynamicObstacle, StaticObstacle, ObstacleType
+from commonroad.scenario.obstacle import State, DynamicObstacle, ObstacleType
+from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany
 
 
 class TestLanelet(unittest.TestCase):
@@ -18,13 +20,16 @@ class TestLanelet(unittest.TestCase):
         adjacent_right = 4
         adjacent_right_same_dir = True
         adjacent_left_same_dir = False
-        speed_limit = 15
         line_marking_right = LineMarking.SOLID
         line_marking_left = LineMarking.DASHED
-
+        stop_line = StopLine(start=np.array([0, 0]), end=np.array([0, 1]), line_marking=LineMarking.SOLID)
+        traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED.value, ["15"])
+        traffic_sign = TrafficSign(1, [traffic_sign_max_speed], {5}, np.array([0.0, 0.0]))
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
-                          adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir, speed_limit,
-                          line_marking_left, line_marking_right)
+                          adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir,
+                          line_marking_left, line_marking_right, stop_line, None, None, None,
+                          {traffic_sign.traffic_sign_id})
+
 
         s1 = np.sqrt(1.25)
         s2 = np.sqrt(2.0)
@@ -44,6 +49,8 @@ class TestLanelet(unittest.TestCase):
         self.assertEqual(lanelet.adj_right_same_direction, adjacent_right_same_dir)
         self.assertEqual(lanelet.line_marking_left_vertices, line_marking_left)
         self.assertEqual(lanelet.line_marking_right_vertices, line_marking_right)
+        self.assertSetEqual(lanelet.traffic_signs, {traffic_sign.traffic_sign_id})
+        self.assertEqual(lanelet.stop_line, stop_line)
 
     def test_translate_rotate(self):
         right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
@@ -105,7 +112,6 @@ class TestLanelet(unittest.TestCase):
             lanelet.interpolate_position(-1.0)
 
     def test_get_obstacles(self):
-        print("TEST")
         right_vertices = np.array([[0, 0], [10, 0], [20, 0], [30, 0]])
         left_vertices = np.array([[0, 4], [10, 4], [20, 4], [30, 4]])
         center_vertices = np.array([[0, 2], [10, 2], [20, 2], [30, 2]])
@@ -142,6 +148,8 @@ class TestLanelet(unittest.TestCase):
         polygon = lanelet.convert_to_polygon()
         self.assertTrue(isinstance(polygon, Polygon))
         vertices = np.append(right_vertices, np.flip(left_vertices, axis=0), axis=0)
+        vertices = np.concatenate((vertices, np.array([[0, 0]])), axis=0)
+        vertices = vertices[::-1]
         np.testing.assert_array_almost_equal(polygon.vertices, vertices)
 
     def test_merge_lanelets(self):
@@ -159,6 +167,17 @@ class TestLanelet(unittest.TestCase):
         lanelet2 = Lanelet(left_vertices2, center_vertices2, right_vertices2, 2,
                            predecessor=[1], successor=[10, 11])
 
+        lanelet1.add_static_obstacle_to_lanelet(100)
+        lanelet2.add_static_obstacle_to_lanelet(101)
+
+        lanelet1.add_dynamic_obstacle_to_lanelet(102, 0)
+        lanelet2.add_dynamic_obstacle_to_lanelet(103, 0)
+        lanelet1.add_dynamic_obstacle_to_lanelet(102, 1)
+        lanelet2.add_dynamic_obstacle_to_lanelet(103, 1)
+        lanelet1.add_dynamic_obstacle_to_lanelet(102, 2)
+        lanelet2.add_dynamic_obstacle_to_lanelet(103, 2)
+        lanelet2.add_dynamic_obstacle_to_lanelet(103, 3)
+
         merged_lanelet = Lanelet.merge_lanelets(lanelet1, lanelet2)
         self.assertListEqual(merged_lanelet.predecessor, [5, 7])
         self.assertListEqual(merged_lanelet.successor, [10, 11])
@@ -168,6 +187,11 @@ class TestLanelet(unittest.TestCase):
                                              np.append(left_vertices1, left_vertices2[1:], axis=0))
         np.testing.assert_array_almost_equal(merged_lanelet.center_vertices,
                                              np.append(center_vertices1, center_vertices2[1:], axis=0))
+
+        # merging of obstacle assignment
+        self.assertSetEqual(merged_lanelet.static_obstacles_on_lanelet, {100, 101})
+        self.assertEqual(merged_lanelet.dynamic_obstacles_on_lanelet, {0: {102, 103}, 1: {102, 103},
+                                                                       2: {102, 103}, 3: {103}})
 
         # merging works also in reverse order
         merged_lanelet = Lanelet.merge_lanelets(lanelet2, lanelet1)

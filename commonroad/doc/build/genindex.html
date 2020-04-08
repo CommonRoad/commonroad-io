@@ -1,0 +1,1424 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Index &mdash; CommonRoad_io 2020.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> CommonRoad_io
+          
+
+          
+            
+            <img src="_static/commonroad_white150.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2020.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user/index.html">User Manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user/getting_started.html">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user/getting_started.html#reading-files">Reading Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user/getting_started.html#scenario">Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user/getting_started.html#lanelet-network">Lanelet Network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user/getting_started.html#obstacles">Obstacles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user/getting_started.html#dynamic-obstacle-prediction">Dynamic Obstacle Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user/getting_started.html#trajectory-prediction">Trajectory Prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="user/getting_started.html#set-based-prediction">Set Based Prediction</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user/getting_started.html#planning-problems">Planning Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user/getting_started.html#writing-files">Writing Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user/getting_started.html#solution-writer">Solution Writer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user/visualization.html">Visualization Manual</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user/visualization.html#draw-params"><code class="docutils literal notranslate"><span class="pre">draw_params</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="user/visualization.html#passing-custom-draw-params">Passing custom <code class="docutils literal notranslate"><span class="pre">draw_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="user/visualization.html#plot-limits"><code class="docutils literal notranslate"><span class="pre">plot_limits</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user/visualization.html#example-plot-with-matplotlib">Example plot with <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="user/visualization.html#speed-up-plotting-for-real-time-applications">Speed up plotting for real-time applications</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">CommonRoad_io API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/index.html#modules">Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/scenario.html">Module Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/scenario.html#module-commonroad.scenario.scenario">Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/scenario.html#module-commonroad.scenario.lanelet">Road network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/scenario.html#module-commonroad.scenario.traffic_sign">Traffic Sign</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/scenario.html#traffic-light">Traffic Light</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/scenario.html#module-commonroad.scenario.traffic_sign_interpreter">Traffic Sign Interpreter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/scenario.html#intersection">Intersection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/scenario.html#obstacles">Obstacles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/scenario.html#module-commonroad.scenario.trajectory">States and Trajectories</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/prediction.html">Module Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/prediction.html#prediction-class"><code class="docutils literal notranslate"><span class="pre">Prediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/prediction.html#trajectoryprediction-class"><code class="docutils literal notranslate"><span class="pre">TrajectoryPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/prediction.html#setbasedprediction-class"><code class="docutils literal notranslate"><span class="pre">SetBasedPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/prediction.html#occupancy-class"><code class="docutils literal notranslate"><span class="pre">Occupancy</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/planning.html">Module Planning</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/planning.html#module-commonroad.planning.planning_problem">Planning Problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/planning.html#module-commonroad.planning.goal">Goal Region</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/geometry.html">Module Geometry</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/geometry.html#module-commonroad.geometry.shape">Shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/geometry.html#module-geometry.transform">Transform</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html">Module Common</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/common.html#module-commonroad.common.file_reader">File Reader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/common.html#module-commonroad.common.file_writer">File Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/common.html#solution-reader-and-writer">Solution Reader and Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/common.html#module-commonroad.common.util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/visualization.html">Module Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/visualization.html#module-commonroad.visualization.draw_dispatch_cr">draw_dispatch_cr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/visualization.html#module-commonroad.visualization.plot_helper">plot_Helper</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CommonRoad_io</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Index</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#J"><strong>J</strong></a>
+ | <a href="#K"><strong>K</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
+ | <a href="#W"><strong>W</strong></a>
+ | <a href="#Y"><strong>Y</strong></a>
+ | <a href="#Z"><strong>Z</strong></a>
+ 
+</div>
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletType.ACCESS_RAMP">ACCESS_RAMP (commonroad.scenario.lanelet.LaneletType attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLight.active">active() (commonroad.scenario.traffic_sign.TrafficLight property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.add_dynamic_obstacle_to_lanelet">add_dynamic_obstacle_to_lanelet() (commonroad.scenario.lanelet.Lanelet method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.add_intersection">add_intersection() (commonroad.scenario.lanelet.LaneletNetwork method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.add_lanelet">add_lanelet() (commonroad.scenario.lanelet.LaneletNetwork method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.add_lanelets_from_network">add_lanelets_from_network() (commonroad.scenario.lanelet.LaneletNetwork method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.scenario.Scenario.add_objects">add_objects() (commonroad.scenario.scenario.Scenario method)</a>, <a href="api/scenario.html#commonroad.scenario.scenario.Scenario.add_objects">[1]</a>
+</li>
+      <li><a href="api/planning.html#commonroad.planning.planning_problem.PlanningProblemSet.add_planning_problem">add_planning_problem() (commonroad.planning.planning_problem.PlanningProblemSet method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.add_static_obstacle_to_lanelet">add_static_obstacle_to_lanelet() (commonroad.scenario.lanelet.Lanelet method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.add_traffic_light">add_traffic_light() (commonroad.scenario.lanelet.LaneletNetwork method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.add_traffic_sign">add_traffic_sign() (commonroad.scenario.lanelet.LaneletNetwork method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.add_traffic_sign_to_lanelet">add_traffic_sign_to_lanelet() (commonroad.scenario.lanelet.Lanelet method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignElement.additional_values">additional_values() (commonroad.scenario.traffic_sign.TrafficSignElement property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.adj_left">adj_left() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.adj_left_same_direction">adj_left_same_direction() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.adj_right">adj_right() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.adj_right_same_direction">adj_right_same_direction() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightDirection.ALL">ALL (commonroad.scenario.traffic_sign.TrafficLightDirection attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.all_lanelets_by_merging_successors_from_lanelet">all_lanelets_by_merging_successors_from_lanelet() (commonroad.scenario.lanelet.Lanelet class method)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.file_writer.OverwriteExistingFile.ALWAYS">ALWAYS (commonroad.common.file_writer.OverwriteExistingFile attribute)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.util.AngleInterval">AngleInterval (class in commonroad.common.util)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.file_writer.OverwriteExistingFile.ASK_USER_INPUT">ASK_USER_INPUT (commonroad.common.file_writer.OverwriteExistingFile attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.trajectory.State.attributes">attributes() (commonroad.scenario.trajectory.State property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/common.html#commonroad.common.solution.Solution.benchmark_id">benchmark_id() (commonroad.common.solution.Solution property)</a>, <a href="api/common.html#commonroad.common.solution.Solution.benchmark_id">[1]</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.scenario.Scenario.benchmark_id">(commonroad.scenario.scenario.Scenario property)</a>, <a href="api/scenario.html#commonroad.scenario.scenario.Scenario.benchmark_id">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.RoadUser.BICYCLE">BICYCLE (commonroad.scenario.lanelet.RoadUser attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.ObstacleType.BICYCLE">(commonroad.scenario.obstacle.ObstacleType attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletType.BIKE_LANE">BIKE_LANE (commonroad.scenario.lanelet.LaneletType attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/common.html#commonroad.common.solution.VehicleType.BMW_320i">BMW_320i (commonroad.common.solution.VehicleType attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.RoadUser.BUS">BUS (commonroad.scenario.lanelet.RoadUser attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.ObstacleType.BUS">(commonroad.scenario.obstacle.ObstacleType attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletType.BUS_LANE">BUS_LANE (commonroad.scenario.lanelet.LaneletType attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletType.BUS_STOP">BUS_STOP (commonroad.scenario.lanelet.LaneletType attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.RoadUser.CAR">CAR (commonroad.scenario.lanelet.RoadUser attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.ObstacleType.CAR">(commonroad.scenario.obstacle.ObstacleType attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/geometry.html#commonroad.geometry.shape.Circle.center">center() (commonroad.geometry.shape.Circle property)</a>
+
+      <ul>
+        <li><a href="api/geometry.html#commonroad.geometry.shape.Polygon.center">(commonroad.geometry.shape.Polygon property)</a>
+</li>
+        <li><a href="api/geometry.html#commonroad.geometry.shape.Rectangle.center">(commonroad.geometry.shape.Rectangle property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/prediction.html#commonroad.prediction.prediction.TrajectoryPrediction.center_lanelet_assignment">center_lanelet_assignment() (commonroad.prediction.prediction.TrajectoryPrediction property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.center_vertices">center_vertices() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.file_writer.CommonRoadFileWriter.check_validity_of_commonroad_file">check_validity_of_commonroad_file() (commonroad.common.file_writer.CommonRoadFileWriter static method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.SupportedTrafficSignCountry.CHINA">CHINA (commonroad.scenario.traffic_sign.SupportedTrafficSignCountry attribute)</a>
+</li>
+      <li><a href="api/geometry.html#commonroad.geometry.shape.Circle">Circle (class in commonroad.geometry.shape)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.cleanup_lanelet_references">cleanup_lanelet_references() (commonroad.scenario.lanelet.LaneletNetwork method)</a>
+</li>
+      <li><a href="api/common.html#module-commonroad.common.file_reader">commonroad.common.file_reader (module)</a>
+</li>
+      <li><a href="api/common.html#module-commonroad.common.file_writer">commonroad.common.file_writer (module)</a>
+</li>
+      <li><a href="api/common.html#module-commonroad.common.solution">commonroad.common.solution (module)</a>
+</li>
+      <li><a href="api/common.html#module-commonroad.common.util">commonroad.common.util (module)</a>
+</li>
+      <li><a href="api/geometry.html#module-commonroad.geometry.shape">commonroad.geometry.shape (module)</a>
+</li>
+      <li><a href="api/planning.html#module-commonroad.planning.goal">commonroad.planning.goal (module)</a>
+</li>
+      <li><a href="api/planning.html#module-commonroad.planning.planning_problem">commonroad.planning.planning_problem (module)</a>
+</li>
+      <li><a href="api/prediction.html#module-commonroad.prediction.prediction">commonroad.prediction.prediction (module)</a>
+</li>
+      <li><a href="api/scenario.html#module-commonroad.scenario.intersection">commonroad.scenario.intersection (module)</a>
+</li>
+      <li><a href="api/scenario.html#module-commonroad.scenario.lanelet">commonroad.scenario.lanelet (module)</a>
+</li>
+      <li><a href="api/scenario.html#module-commonroad.scenario.obstacle">commonroad.scenario.obstacle (module)</a>
+</li>
+      <li><a href="api/scenario.html#module-commonroad.scenario.scenario">commonroad.scenario.scenario (module)</a>
+</li>
+      <li><a href="api/scenario.html#module-commonroad.scenario.traffic_sign">commonroad.scenario.traffic_sign (module)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#module-commonroad.scenario.traffic_sign_interpreter">commonroad.scenario.traffic_sign_interpreter (module)</a>
+</li>
+      <li><a href="api/scenario.html#module-commonroad.scenario.trajectory">commonroad.scenario.trajectory (module)</a>
+</li>
+      <li><a href="api/visualization.html#module-commonroad.visualization.draw_dispatch_cr">commonroad.visualization.draw_dispatch_cr (module)</a>
+</li>
+      <li><a href="api/visualization.html#module-commonroad.visualization.plot_helper">commonroad.visualization.plot_helper (module)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.file_reader.CommonRoadFileReader">CommonRoadFileReader (class in commonroad.common.file_reader)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.file_writer.CommonRoadFileWriter">CommonRoadFileWriter (class in commonroad.common.file_writer)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.CommonRoadSolutionWriter">CommonRoadSolutionWriter (class in commonroad.common.solution)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.ObstacleType.CONSTRUCTION_ZONE">CONSTRUCTION_ZONE (commonroad.scenario.obstacle.ObstacleType attribute)</a>
+</li>
+      <li><a href="api/geometry.html#commonroad.geometry.shape.Circle.contains_point">contains_point() (commonroad.geometry.shape.Circle method)</a>
+
+      <ul>
+        <li><a href="api/geometry.html#commonroad.geometry.shape.Polygon.contains_point">(commonroad.geometry.shape.Polygon method)</a>
+</li>
+        <li><a href="api/geometry.html#commonroad.geometry.shape.Rectangle.contains_point">(commonroad.geometry.shape.Rectangle method)</a>
+</li>
+        <li><a href="api/geometry.html#commonroad.geometry.shape.ShapeGroup.contains_point">(commonroad.geometry.shape.ShapeGroup method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.contains_points">contains_points() (commonroad.scenario.lanelet.Lanelet method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.convert_to_polygon">convert_to_polygon() (commonroad.scenario.lanelet.Lanelet method)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.PlanningProblemSolution.cost_function">cost_function() (commonroad.common.solution.PlanningProblemSolution property)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.PlanningProblemSolution.cost_id">cost_id() (commonroad.common.solution.PlanningProblemSolution property)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.Solution.cost_ids">cost_ids() (commonroad.common.solution.Solution property)</a>, <a href="api/common.html#commonroad.common.solution.Solution.cost_ids">[1]</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.CostFunction">CostFunction (class in commonroad.common.solution)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletType.COUNTRY">COUNTRY (commonroad.scenario.lanelet.LaneletType attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.create_from_lanelet_list">create_from_lanelet_list() (commonroad.scenario.lanelet.LaneletNetwork class method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.create_from_lanelet_network">create_from_lanelet_network() (commonroad.scenario.lanelet.LaneletNetwork class method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.intersection.Intersection.crossings">crossings() (commonroad.scenario.intersection.Intersection property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletType.CROSSWALK">CROSSWALK (commonroad.scenario.lanelet.LaneletType attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLight.cycle">cycle() (commonroad.scenario.traffic_sign.TrafficLight property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLight.cycle_init_timesteps">cycle_init_timesteps() (commonroad.scenario.traffic_sign.TrafficLight property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLight.direction">direction() (commonroad.scenario.traffic_sign.TrafficLight property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.distance">distance() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+      <li><a href="api/visualization.html#commonroad.visualization.draw_dispatch_cr.draw_object">draw_object() (in module commonroad.visualization.draw_dispatch_cr)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletType.DRIVE_WAY">DRIVE_WAY (commonroad.scenario.lanelet.LaneletType attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.scenario.Scenario.dt">dt() (commonroad.scenario.scenario.Scenario property)</a>, <a href="api/scenario.html#commonroad.scenario.scenario.Scenario.dt">[1]</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.CommonRoadSolutionWriter.dump">dump() (commonroad.common.solution.CommonRoadSolutionWriter method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightCycleElement.duration">duration() (commonroad.scenario.traffic_sign.TrafficLightCycleElement property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.ObstacleRole.DYNAMIC">DYNAMIC (commonroad.scenario.obstacle.ObstacleRole attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.dynamic_obstacle_by_time_step">dynamic_obstacle_by_time_step() (commonroad.scenario.lanelet.Lanelet method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.scenario.Scenario.dynamic_obstacles">dynamic_obstacles() (commonroad.scenario.scenario.Scenario property)</a>, <a href="api/scenario.html#commonroad.scenario.scenario.Scenario.dynamic_obstacles">[1]</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.dynamic_obstacles_on_lanelet">dynamic_obstacles_on_lanelet() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.DynamicObstacle">DynamicObstacle (class in commonroad.scenario.obstacle)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletType.EXIT_RAMP">EXIT_RAMP (commonroad.scenario.lanelet.LaneletType attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.filter_obstacles_in_network">filter_obstacles_in_network() (commonroad.scenario.lanelet.LaneletNetwork method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.trajectory.Trajectory.final_state">final_state() (commonroad.scenario.trajectory.Trajectory property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.find_lanelet_by_id">find_lanelet_by_id() (commonroad.scenario.lanelet.LaneletNetwork method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.find_lanelet_by_position">find_lanelet_by_position() (commonroad.scenario.lanelet.LaneletNetwork method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.find_lanelet_by_shape">find_lanelet_by_shape() (commonroad.scenario.lanelet.LaneletNetwork method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/planning.html#commonroad.planning.planning_problem.PlanningProblemSet.find_planning_problem_by_id">find_planning_problem_by_id() (commonroad.planning.planning_problem.PlanningProblemSet method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.find_traffic_light_by_id">find_traffic_light_by_id() (commonroad.scenario.lanelet.LaneletNetwork method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.find_traffic_sign_by_id">find_traffic_sign_by_id() (commonroad.scenario.lanelet.LaneletNetwork method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSign.first_occurrence">first_occurrence() (commonroad.scenario.traffic_sign.TrafficSign property)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.VehicleType.FORD_ESCORT">FORD_ESCORT (commonroad.common.solution.VehicleType attribute)</a>
+</li>
+      <li><a href="api/geometry.html#geometry.transform.from_homogeneous_coordinates">from_homogeneous_coordinates() (in module geometry.transform)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.scenario.Scenario.generate_object_id">generate_object_id() (commonroad.scenario.scenario.Scenario method)</a>, <a href="api/scenario.html#commonroad.scenario.scenario.Scenario.generate_object_id">[1]</a>
+</li>
+      <li><a href="api/geometry.html#module-geometry.transform">geometry.transform (module)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.scenario.GeoTransformation">GeoTransformation (class in commonroad.scenario.scenario)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.SupportedTrafficSignCountry.GERMANY">GERMANY (commonroad.scenario.traffic_sign.SupportedTrafficSignCountry attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.get_obstacles">get_obstacles() (commonroad.scenario.lanelet.Lanelet method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLight.get_state_at_time_step">get_state_at_time_step() (commonroad.scenario.traffic_sign.TrafficLight method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/planning.html#commonroad.planning.planning_problem.PlanningProblem.goal">goal() (commonroad.planning.planning_problem.PlanningProblem property)</a>
+</li>
+      <li><a href="api/planning.html#commonroad.planning.planning_problem.PlanningProblem.goal_reached">goal_reached() (commonroad.planning.planning_problem.PlanningProblem method)</a>
+</li>
+      <li><a href="api/planning.html#commonroad.planning.goal.GoalRegion">GoalRegion (class in commonroad.planning.goal)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightState.GREEN">GREEN (commonroad.scenario.traffic_sign.TrafficLightState attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.GREEN_ARROW">GREEN_ARROW (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.GREEN_ARROW">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletType.HIGHWAY">HIGHWAY (commonroad.scenario.lanelet.LaneletType attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.intersection.IntersectionIncomingElement.incoming_id">incoming_id() (commonroad.scenario.intersection.IntersectionIncomingElement property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.intersection.IntersectionIncomingElement.incoming_lanelets">incoming_lanelets() (commonroad.scenario.intersection.IntersectionIncomingElement property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.intersection.Intersection.incomings">incomings() (commonroad.scenario.intersection.Intersection property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.DynamicObstacle.initial_center_lanelet_ids">initial_center_lanelet_ids() (commonroad.scenario.obstacle.DynamicObstacle property)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.Obstacle.initial_center_lanelet_ids">(commonroad.scenario.obstacle.Obstacle property)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.StaticObstacle.initial_center_lanelet_ids">(commonroad.scenario.obstacle.StaticObstacle property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.DynamicObstacle.initial_shape_lanelet_ids">initial_shape_lanelet_ids() (commonroad.scenario.obstacle.DynamicObstacle property)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.Obstacle.initial_shape_lanelet_ids">(commonroad.scenario.obstacle.Obstacle property)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.StaticObstacle.initial_shape_lanelet_ids">(commonroad.scenario.obstacle.StaticObstacle property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.DynamicObstacle.initial_signal_state">initial_signal_state() (commonroad.scenario.obstacle.DynamicObstacle property)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.Obstacle.initial_signal_state">(commonroad.scenario.obstacle.Obstacle property)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.StaticObstacle.initial_signal_state">(commonroad.scenario.obstacle.StaticObstacle property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/planning.html#commonroad.planning.planning_problem.PlanningProblem.initial_state">initial_state() (commonroad.planning.planning_problem.PlanningProblem property)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.DynamicObstacle.initial_state">(commonroad.scenario.obstacle.DynamicObstacle property)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.Obstacle.initial_state">(commonroad.scenario.obstacle.Obstacle property)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.StaticObstacle.initial_state">(commonroad.scenario.obstacle.StaticObstacle property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/prediction.html#commonroad.prediction.prediction.Prediction.initial_time_step">initial_time_step() (commonroad.prediction.prediction.Prediction property)</a>
+
+      <ul>
+        <li><a href="api/prediction.html#commonroad.prediction.prediction.SetBasedPrediction.initial_time_step">(commonroad.prediction.prediction.SetBasedPrediction property)</a>
+</li>
+        <li><a href="api/prediction.html#commonroad.prediction.prediction.TrajectoryPrediction.initial_time_step">(commonroad.prediction.prediction.TrajectoryPrediction property)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.trajectory.Trajectory.initial_time_step">(commonroad.scenario.trajectory.Trajectory property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.interpolate_position">interpolate_position() (commonroad.scenario.lanelet.Lanelet method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.intersection.Intersection">Intersection (class in commonroad.scenario.intersection)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.intersection.Intersection.intersection_id">intersection_id() (commonroad.scenario.intersection.Intersection property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.intersection.IntersectionIncomingElement">IntersectionIncomingElement (class in commonroad.scenario.intersection)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.intersections">intersections() (commonroad.scenario.lanelet.LaneletNetwork property)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.util.Interval">Interval (class in commonroad.common.util)</a>
+</li>
+      <li><a href="api/planning.html#commonroad.planning.goal.GoalRegion.is_reached">is_reached() (commonroad.planning.goal.GoalRegion method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="J">J</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/common.html#commonroad.common.solution.CostFunction.JB1">JB1 (commonroad.common.solution.CostFunction attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/common.html#commonroad.common.solution.VehicleModel.KS">KS (commonroad.common.solution.VehicleModel attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet">Lanelet (class in commonroad.scenario.lanelet)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.lanelet_id">lanelet_id() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.scenario.Scenario.lanelet_network">lanelet_network() (commonroad.scenario.scenario.Scenario property)</a>, <a href="api/scenario.html#commonroad.scenario.scenario.Scenario.lanelet_network">[1]</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.lanelet_type">lanelet_type() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork">LaneletNetwork (class in commonroad.scenario.lanelet)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.lanelets">lanelets() (commonroad.scenario.lanelet.LaneletNetwork property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.lanelets_in_proximity">lanelets_in_proximity() (commonroad.scenario.lanelet.LaneletNetwork method)</a>
+</li>
+      <li><a href="api/planning.html#commonroad.planning.goal.GoalRegion.lanelets_of_goal_position">lanelets_of_goal_position() (commonroad.planning.goal.GoalRegion property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletType">LaneletType (class in commonroad.scenario.lanelet)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightDirection.LEFT">LEFT (commonroad.scenario.traffic_sign.TrafficLightDirection attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.intersection.IntersectionIncomingElement.left_of">left_of() (commonroad.scenario.intersection.IntersectionIncomingElement property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightDirection.LEFT_RIGHT">LEFT_RIGHT (commonroad.scenario.traffic_sign.TrafficLightDirection attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightDirection.LEFT_STRAIGHT">LEFT_STRAIGHT (commonroad.scenario.traffic_sign.TrafficLightDirection attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_RIGHT_YIELD">LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_RIGHT_YIELD (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_RIGHT_YIELD">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD">LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.LEFT_TURNING_PRIORITY_WITH_OPPOSITE_RIGHT_YIELD">LEFT_TURNING_PRIORITY_WITH_OPPOSITE_RIGHT_YIELD (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.LEFT_TURNING_PRIORITY_WITH_OPPOSITE_RIGHT_YIELD">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.LEFT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD">LEFT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.LEFT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.LEFT_TURNING_PRIORITY_WITH_RIGHT_YIELD">LEFT_TURNING_PRIORITY_WITH_RIGHT_YIELD (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.LEFT_TURNING_PRIORITY_WITH_RIGHT_YIELD">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.left_vertices">left_vertices() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+      <li><a href="api/geometry.html#commonroad.geometry.shape.Rectangle.length">length() (commonroad.geometry.shape.Rectangle property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.line_marking_left_vertices">line_marking_left_vertices() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.line_marking_right_vertices">line_marking_right_vertices() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletType.MAIN_CARRIAGE_WAY">MAIN_CARRIAGE_WAY (commonroad.scenario.lanelet.LaneletType attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.map_inc_lanelets_to_intersections">map_inc_lanelets_to_intersections() (commonroad.scenario.lanelet.LaneletNetwork property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.intersection.Intersection.map_incoming_lanelets">map_incoming_lanelets() (commonroad.scenario.intersection.Intersection property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.map_obstacles_to_lanelets">map_obstacles_to_lanelets() (commonroad.scenario.lanelet.LaneletNetwork method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDChina.MAX_SPEED">MAX_SPEED (commonroad.scenario.traffic_sign.TrafficSignIDChina attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.MAX_SPEED">(commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDRussia.MAX_SPEED">(commonroad.scenario.traffic_sign.TrafficSignIDRussia attribute)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDSpain.MAX_SPEED">(commonroad.scenario.traffic_sign.TrafficSignIDSpain attribute)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDUsa.MAX_SPEED">(commonroad.scenario.traffic_sign.TrafficSignIDUsa attribute)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.MAX_SPEED">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/common.html#commonroad.common.solution.VehicleModel.MB">MB (commonroad.common.solution.VehicleModel attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.merge_lanelets">merge_lanelets() (commonroad.scenario.lanelet.Lanelet class method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.MIN_SPEED">MIN_SPEED (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.MIN_SPEED">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.RoadUser.MOTORCYCLE">MOTORCYCLE (commonroad.scenario.lanelet.RoadUser attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.ObstacleType.MOTORCYCLE">(commonroad.scenario.obstacle.ObstacleType attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.NO_OVERTAKING_START">NO_OVERTAKING_START (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.NO_OVERTAKING_START">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.Obstacle">Obstacle (class in commonroad.scenario.obstacle)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.scenario.Scenario.obstacle_by_id">obstacle_by_id() (commonroad.scenario.scenario.Scenario method)</a>, <a href="api/scenario.html#commonroad.scenario.scenario.Scenario.obstacle_by_id">[1]</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.DynamicObstacle.obstacle_id">obstacle_id() (commonroad.scenario.obstacle.DynamicObstacle property)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.Obstacle.obstacle_id">(commonroad.scenario.obstacle.Obstacle property)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.StaticObstacle.obstacle_id">(commonroad.scenario.obstacle.StaticObstacle property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.DynamicObstacle.obstacle_role">obstacle_role() (commonroad.scenario.obstacle.DynamicObstacle property)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.Obstacle.obstacle_role">(commonroad.scenario.obstacle.Obstacle property)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.StaticObstacle.obstacle_role">(commonroad.scenario.obstacle.StaticObstacle property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.DynamicObstacle.obstacle_shape">obstacle_shape() (commonroad.scenario.obstacle.DynamicObstacle property)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.Obstacle.obstacle_shape">(commonroad.scenario.obstacle.Obstacle property)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.StaticObstacle.obstacle_shape">(commonroad.scenario.obstacle.StaticObstacle property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.DynamicObstacle.obstacle_type">obstacle_type() (commonroad.scenario.obstacle.DynamicObstacle property)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.Obstacle.obstacle_type">(commonroad.scenario.obstacle.Obstacle property)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.StaticObstacle.obstacle_type">(commonroad.scenario.obstacle.StaticObstacle property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.ObstacleRole">ObstacleRole (class in commonroad.scenario.obstacle)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.scenario.Scenario.obstacles">obstacles() (commonroad.scenario.scenario.Scenario property)</a>, <a href="api/scenario.html#commonroad.scenario.scenario.Scenario.obstacles">[1]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.scenario.Scenario.obstacles_by_position_intervals">obstacles_by_position_intervals() (commonroad.scenario.scenario.Scenario method)</a>, <a href="api/scenario.html#commonroad.scenario.scenario.Scenario.obstacles_by_position_intervals">[1]</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.scenario.Scenario.obstacles_by_role_and_type">obstacles_by_role_and_type() (commonroad.scenario.scenario.Scenario method)</a>, <a href="api/scenario.html#commonroad.scenario.scenario.Scenario.obstacles_by_role_and_type">[1]</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.ObstacleType">ObstacleType (class in commonroad.scenario.obstacle)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.scenario.Scenario.occupancies_at_time_step">occupancies_at_time_step() (commonroad.scenario.scenario.Scenario method)</a>, <a href="api/scenario.html#commonroad.scenario.scenario.Scenario.occupancies_at_time_step">[1]</a>
+</li>
+      <li><a href="api/prediction.html#commonroad.prediction.prediction.Occupancy">Occupancy (class in commonroad.prediction.prediction)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.DynamicObstacle.occupancy_at_time">occupancy_at_time() (commonroad.scenario.obstacle.DynamicObstacle method)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.StaticObstacle.occupancy_at_time">(commonroad.scenario.obstacle.StaticObstacle method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/prediction.html#commonroad.prediction.prediction.Prediction.occupancy_at_time_step">occupancy_at_time_step() (commonroad.prediction.prediction.Prediction method)</a>
+
+      <ul>
+        <li><a href="api/prediction.html#commonroad.prediction.prediction.SetBasedPrediction.occupancy_at_time_step">(commonroad.prediction.prediction.SetBasedPrediction method)</a>
+</li>
+        <li><a href="api/prediction.html#commonroad.prediction.prediction.TrajectoryPrediction.occupancy_at_time_step">(commonroad.prediction.prediction.TrajectoryPrediction method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/prediction.html#commonroad.prediction.prediction.Prediction.occupancy_set">occupancy_set() (commonroad.prediction.prediction.Prediction property)</a>
+
+      <ul>
+        <li><a href="api/prediction.html#commonroad.prediction.prediction.SetBasedPrediction.occupancy_set">(commonroad.prediction.prediction.SetBasedPrediction property)</a>
+</li>
+        <li><a href="api/prediction.html#commonroad.prediction.prediction.TrajectoryPrediction.occupancy_set">(commonroad.prediction.prediction.TrajectoryPrediction property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/common.html#commonroad.common.file_reader.CommonRoadFileReader.open">open() (commonroad.common.file_reader.CommonRoadFileReader method)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.file_reader.CommonRoadFileReader.open_lanelet_network">open_lanelet_network() (commonroad.common.file_reader.CommonRoadFileReader method)</a>
+</li>
+      <li><a href="api/geometry.html#commonroad.geometry.shape.Rectangle.orientation">orientation() (commonroad.geometry.shape.Rectangle property)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.file_writer.OverwriteExistingFile">OverwriteExistingFile (class in commonroad.common.file_writer)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.ObstacleType.PARKED_VEHICLE">PARKED_VEHICLE (commonroad.scenario.obstacle.ObstacleType attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.RoadUser.PEDESTRIAN">PEDESTRIAN (commonroad.scenario.lanelet.RoadUser attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.ObstacleType.PEDESTRIAN">(commonroad.scenario.obstacle.ObstacleType attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/planning.html#commonroad.planning.planning_problem.PlanningProblemSet.planning_problem_dict">planning_problem_dict() (commonroad.planning.planning_problem.PlanningProblemSet property)</a>
+</li>
+      <li><a href="api/planning.html#commonroad.planning.planning_problem.PlanningProblem.planning_problem_id">planning_problem_id() (commonroad.planning.planning_problem.PlanningProblem property)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.Solution.planning_problem_ids">planning_problem_ids() (commonroad.common.solution.Solution property)</a>, <a href="api/common.html#commonroad.common.solution.Solution.planning_problem_ids">[1]</a>
+</li>
+      <li><a href="api/planning.html#commonroad.planning.planning_problem.PlanningProblem">PlanningProblem (class in commonroad.planning.planning_problem)</a>
+</li>
+      <li><a href="api/planning.html#commonroad.planning.planning_problem.PlanningProblemSet">PlanningProblemSet (class in commonroad.planning.planning_problem)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.PlanningProblemSolution">PlanningProblemSolution (class in commonroad.common.solution)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.VehicleModel.PM">PM (commonroad.common.solution.VehicleModel attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/geometry.html#commonroad.geometry.shape.Polygon">Polygon (class in commonroad.geometry.shape)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLight.position">position() (commonroad.scenario.traffic_sign.TrafficLight property)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSign.position">(commonroad.scenario.traffic_sign.TrafficSign property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.predecessor">predecessor() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+      <li><a href="api/prediction.html#commonroad.prediction.prediction.Prediction">Prediction (class in commonroad.prediction.prediction)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.DynamicObstacle.prediction">prediction() (commonroad.scenario.obstacle.DynamicObstacle property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.PRIORITY">PRIORITY (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.PRIORITY">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.RoadUser.PRIORITY_VEHICLE">PRIORITY_VEHICLE (commonroad.scenario.lanelet.RoadUser attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.ObstacleType.PRIORITY_VEHICLE">(commonroad.scenario.obstacle.ObstacleType attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/geometry.html#commonroad.geometry.shape.Circle.radius">radius() (commonroad.geometry.shape.Circle property)</a>
+</li>
+      <li><a href="api/geometry.html#commonroad.geometry.shape.Rectangle">Rectangle (class in commonroad.geometry.shape)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightState.RED">RED (commonroad.scenario.traffic_sign.TrafficLightState attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightState.RED_YELLOW">RED_YELLOW (commonroad.scenario.traffic_sign.TrafficLightState attribute)</a>
+</li>
+      <li><a href="api/visualization.html#commonroad.visualization.plot_helper.redraw_obstacles">redraw_obstacles() (in module commonroad.visualization.plot_helper)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.scenario.Scenario.remove_obstacle">remove_obstacle() (commonroad.scenario.scenario.Scenario method)</a>, <a href="api/scenario.html#commonroad.scenario.scenario.Scenario.remove_obstacle">[1]</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign_interpreter.TrafficSigInterpreter.required_speed">required_speed (commonroad.scenario.traffic_sign_interpreter.TrafficSigInterpreter attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightDirection.RIGHT">RIGHT (commonroad.scenario.traffic_sign.TrafficLightDirection attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.RIGHT_BEFORE_LEFT">RIGHT_BEFORE_LEFT (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.RIGHT_BEFORE_LEFT">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.RIGHT_OF_WAY">RIGHT_OF_WAY (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.RIGHT_OF_WAY">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_LEFT_YIELD">RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_LEFT_YIELD (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_LEFT_YIELD">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD">RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.RIGHT_TURNING_PRIORITY_WITH_LEFT_YIELD">RIGHT_TURNING_PRIORITY_WITH_LEFT_YIELD (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.RIGHT_TURNING_PRIORITY_WITH_LEFT_YIELD">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_LEFT_YIELD">RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_LEFT_YIELD (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_LEFT_YIELD">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD">RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.right_vertices">right_vertices() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.ObstacleType.ROAD_BOUNDARY">ROAD_BOUNDARY (commonroad.scenario.obstacle.ObstacleType attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.RoadUser">RoadUser (class in commonroad.scenario.lanelet)</a>
+</li>
+      <li><a href="api/geometry.html#geometry.transform.rotate_translate">rotate_translate() (in module geometry.transform)</a>
+</li>
+      <li><a href="api/geometry.html#commonroad.geometry.shape.Circle.rotate_translate_local">rotate_translate_local() (commonroad.geometry.shape.Circle method)</a>
+
+      <ul>
+        <li><a href="api/geometry.html#commonroad.geometry.shape.Polygon.rotate_translate_local">(commonroad.geometry.shape.Polygon method)</a>
+</li>
+        <li><a href="api/geometry.html#commonroad.geometry.shape.Rectangle.rotate_translate_local">(commonroad.geometry.shape.Rectangle method)</a>
+</li>
+        <li><a href="api/geometry.html#commonroad.geometry.shape.Shape.rotate_translate_local">(commonroad.geometry.shape.Shape method)</a>
+</li>
+        <li><a href="api/geometry.html#commonroad.geometry.shape.ShapeGroup.rotate_translate_local">(commonroad.geometry.shape.ShapeGroup method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/geometry.html#geometry.transform.rotation_translation_matrix">rotation_translation_matrix() (in module geometry.transform)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.SupportedTrafficSignCountry.RUSSIA">RUSSIA (commonroad.scenario.traffic_sign.SupportedTrafficSignCountry attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/common.html#commonroad.common.solution.CostFunction.SA1">SA1 (commonroad.common.solution.CostFunction attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.scenario.Scenario">Scenario (class in commonroad.scenario.scenario)</a>, <a href="api/scenario.html#commonroad.scenario.scenario.Scenario">[1]</a>
+</li>
+      <li><a href="api/visualization.html#commonroad.visualization.plot_helper.set_non_blocking">set_non_blocking() (in module commonroad.visualization.plot_helper)</a>
+</li>
+      <li><a href="api/prediction.html#commonroad.prediction.prediction.SetBasedPrediction">SetBasedPrediction (class in commonroad.prediction.prediction)</a>
+</li>
+      <li><a href="api/geometry.html#commonroad.geometry.shape.Shape">Shape (class in commonroad.geometry.shape)</a>
+</li>
+      <li><a href="api/prediction.html#commonroad.prediction.prediction.Occupancy.shape">shape() (commonroad.prediction.prediction.Occupancy property)</a>
+
+      <ul>
+        <li><a href="api/prediction.html#commonroad.prediction.prediction.TrajectoryPrediction.shape">(commonroad.prediction.prediction.TrajectoryPrediction property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/prediction.html#commonroad.prediction.prediction.TrajectoryPrediction.shape_lanelet_assignment">shape_lanelet_assignment() (commonroad.prediction.prediction.TrajectoryPrediction property)</a>
+</li>
+      <li><a href="api/geometry.html#commonroad.geometry.shape.ShapeGroup">ShapeGroup (class in commonroad.geometry.shape)</a>
+</li>
+      <li><a href="api/geometry.html#commonroad.geometry.shape.ShapeGroup.shapes">shapes() (commonroad.geometry.shape.ShapeGroup property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletType.SHOULDER">SHOULDER (commonroad.scenario.lanelet.LaneletType attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletType.SIDEWALK">SIDEWALK (commonroad.scenario.lanelet.LaneletType attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.DynamicObstacle.signal_series">signal_series() (commonroad.scenario.obstacle.DynamicObstacle property)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.Obstacle.signal_series">(commonroad.scenario.obstacle.Obstacle property)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.StaticObstacle.signal_series">(commonroad.scenario.obstacle.StaticObstacle property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.DynamicObstacle.signal_state_at_time_step">signal_state_at_time_step() (commonroad.scenario.obstacle.DynamicObstacle method)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.Obstacle.signal_state_at_time_step">(commonroad.scenario.obstacle.Obstacle method)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.StaticObstacle.signal_state_at_time_step">(commonroad.scenario.obstacle.StaticObstacle method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.SignalState">SignalState (class in commonroad.scenario.obstacle)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.file_writer.OverwriteExistingFile.SKIP">SKIP (commonroad.common.file_writer.OverwriteExistingFile attribute)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.CostFunction.SM1">SM1 (commonroad.common.solution.CostFunction attribute)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.CostFunction.SM2">SM2 (commonroad.common.solution.CostFunction attribute)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.CostFunction.SM3">SM3 (commonroad.common.solution.CostFunction attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/common.html#commonroad.common.solution.Solution">Solution (class in commonroad.common.solution)</a>, <a href="api/common.html#commonroad.common.solution.Solution">[1]</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.SupportedTrafficSignCountry.SPAIN">SPAIN (commonroad.scenario.traffic_sign.SupportedTrafficSignCountry attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign_interpreter.TrafficSigInterpreter.speed_limit">speed_limit (commonroad.scenario.traffic_sign_interpreter.TrafficSigInterpreter attribute)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.VehicleModel.ST">ST (commonroad.common.solution.VehicleModel attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.trajectory.State">State (class in commonroad.scenario.trajectory)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightCycleElement.state">state() (commonroad.scenario.traffic_sign.TrafficLightCycleElement property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.trajectory.Trajectory.state_at_time_step">state_at_time_step() (commonroad.scenario.trajectory.Trajectory method)</a>
+</li>
+      <li><a href="api/planning.html#commonroad.planning.goal.GoalRegion.state_list">state_list() (commonroad.planning.goal.GoalRegion property)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.trajectory.Trajectory.state_list">(commonroad.scenario.trajectory.Trajectory property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.trajectory.Trajectory.states_in_time_interval">states_in_time_interval() (commonroad.scenario.trajectory.Trajectory method)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.ObstacleRole.STATIC">STATIC (commonroad.scenario.obstacle.ObstacleRole attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.scenario.Scenario.static_obstacles">static_obstacles() (commonroad.scenario.scenario.Scenario property)</a>, <a href="api/scenario.html#commonroad.scenario.scenario.Scenario.static_obstacles">[1]</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.static_obstacles_on_lanelet">static_obstacles_on_lanelet() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.StaticObstacle">StaticObstacle (class in commonroad.scenario.obstacle)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.STOP">STOP (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.STOP">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.stop_line">stop_line() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightDirection.STRAIGHT">STRAIGHT (commonroad.scenario.traffic_sign.TrafficLightDirection attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightDirection.STRAIGHT_RIGHT">STRAIGHT_RIGHT (commonroad.scenario.traffic_sign.TrafficLightDirection attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.successor">successor() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.intersection.IntersectionIncomingElement.successors_left">successors_left() (commonroad.scenario.intersection.IntersectionIncomingElement property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.intersection.IntersectionIncomingElement.successors_right">successors_right() (commonroad.scenario.intersection.IntersectionIncomingElement property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.intersection.IntersectionIncomingElement.successors_straight">successors_straight() (commonroad.scenario.intersection.IntersectionIncomingElement property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.SupportedTrafficSignCountry">SupportedTrafficSignCountry (class in commonroad.scenario.traffic_sign)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.scenario.Tag">Tag (class in commonroad.scenario.scenario)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLight.time_offset">time_offset() (commonroad.scenario.traffic_sign.TrafficLight property)</a>
+</li>
+      <li><a href="api/prediction.html#commonroad.prediction.prediction.Occupancy.time_step">time_step() (commonroad.prediction.prediction.Occupancy property)</a>
+</li>
+      <li><a href="api/geometry.html#geometry.transform.to_homogeneous_coordinates">to_homogeneous_coordinates() (in module geometry.transform)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.TOWN_SIGN">TOWN_SIGN (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.TOWN_SIGN">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLight.traffic_light_id">traffic_light_id() (commonroad.scenario.traffic_sign.TrafficLight property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.traffic_lights">traffic_lights() (commonroad.scenario.lanelet.Lanelet property)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.traffic_lights">(commonroad.scenario.lanelet.LaneletNetwork property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignElement.traffic_sign_element_id">traffic_sign_element_id() (commonroad.scenario.traffic_sign.TrafficSignElement property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSign.traffic_sign_elements">traffic_sign_elements() (commonroad.scenario.traffic_sign.TrafficSign property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSign.traffic_sign_id">traffic_sign_id() (commonroad.scenario.traffic_sign.TrafficSign property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.traffic_signs">traffic_signs() (commonroad.scenario.lanelet.Lanelet property)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.traffic_signs">(commonroad.scenario.lanelet.LaneletNetwork property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLight">TrafficLight (class in commonroad.scenario.traffic_sign)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightCycleElement">TrafficLightCycleElement (class in commonroad.scenario.traffic_sign)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightDirection">TrafficLightDirection (class in commonroad.scenario.traffic_sign)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightState">TrafficLightState (class in commonroad.scenario.traffic_sign)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign_interpreter.TrafficSigInterpreter">TrafficSigInterpreter (class in commonroad.scenario.traffic_sign_interpreter)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSign">TrafficSign (class in commonroad.scenario.traffic_sign)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignElement">TrafficSignElement (class in commonroad.scenario.traffic_sign)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDChina">TrafficSignIDChina (class in commonroad.scenario.traffic_sign)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany">TrafficSignIDGermany (class in commonroad.scenario.traffic_sign)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDRussia">TrafficSignIDRussia (class in commonroad.scenario.traffic_sign)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDSpain">TrafficSignIDSpain (class in commonroad.scenario.traffic_sign)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDUsa">TrafficSignIDUsa (class in commonroad.scenario.traffic_sign)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda">TrafficSignIDZamunda (class in commonroad.scenario.traffic_sign)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.RoadUser.TRAIN">TRAIN (commonroad.scenario.lanelet.RoadUser attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.ObstacleType.TRAIN">(commonroad.scenario.obstacle.ObstacleType attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.trajectory.Trajectory">Trajectory (class in commonroad.scenario.trajectory)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.PlanningProblemSolution.trajectory">trajectory() (commonroad.common.solution.PlanningProblemSolution property)</a>
+
+      <ul>
+        <li><a href="api/prediction.html#commonroad.prediction.prediction.TrajectoryPrediction.trajectory">(commonroad.prediction.prediction.TrajectoryPrediction property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/common.html#commonroad.common.solution.PlanningProblemSolution.trajectory_type">trajectory_type() (commonroad.common.solution.PlanningProblemSolution property)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.Solution.trajectory_types">trajectory_types() (commonroad.common.solution.Solution property)</a>, <a href="api/common.html#commonroad.common.solution.Solution.trajectory_types">[1]</a>
+</li>
+      <li><a href="api/prediction.html#commonroad.prediction.prediction.TrajectoryPrediction">TrajectoryPrediction (class in commonroad.prediction.prediction)</a>
+</li>
+      <li><a href="api/geometry.html#commonroad.geometry.shape.Circle.translate_rotate">translate_rotate() (commonroad.geometry.shape.Circle method)</a>
+
+      <ul>
+        <li><a href="api/geometry.html#commonroad.geometry.shape.Polygon.translate_rotate">(commonroad.geometry.shape.Polygon method)</a>
+</li>
+        <li><a href="api/geometry.html#commonroad.geometry.shape.Rectangle.translate_rotate">(commonroad.geometry.shape.Rectangle method)</a>
+</li>
+        <li><a href="api/geometry.html#commonroad.geometry.shape.Shape.translate_rotate">(commonroad.geometry.shape.Shape method)</a>
+</li>
+        <li><a href="api/geometry.html#commonroad.geometry.shape.ShapeGroup.translate_rotate">(commonroad.geometry.shape.ShapeGroup method)</a>
+</li>
+        <li><a href="api/planning.html#commonroad.planning.goal.GoalRegion.translate_rotate">(commonroad.planning.goal.GoalRegion method)</a>
+</li>
+        <li><a href="api/planning.html#commonroad.planning.planning_problem.PlanningProblem.translate_rotate">(commonroad.planning.planning_problem.PlanningProblem method)</a>
+</li>
+        <li><a href="api/planning.html#commonroad.planning.planning_problem.PlanningProblemSet.translate_rotate">(commonroad.planning.planning_problem.PlanningProblemSet method)</a>
+</li>
+        <li><a href="api/prediction.html#commonroad.prediction.prediction.Occupancy.translate_rotate">(commonroad.prediction.prediction.Occupancy method)</a>
+</li>
+        <li><a href="api/prediction.html#commonroad.prediction.prediction.SetBasedPrediction.translate_rotate">(commonroad.prediction.prediction.SetBasedPrediction method)</a>
+</li>
+        <li><a href="api/prediction.html#commonroad.prediction.prediction.TrajectoryPrediction.translate_rotate">(commonroad.prediction.prediction.TrajectoryPrediction method)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.translate_rotate">(commonroad.scenario.lanelet.Lanelet method)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.translate_rotate">(commonroad.scenario.lanelet.LaneletNetwork method)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.DynamicObstacle.translate_rotate">(commonroad.scenario.obstacle.DynamicObstacle method)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.StaticObstacle.translate_rotate">(commonroad.scenario.obstacle.StaticObstacle method)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.scenario.Scenario.translate_rotate">(commonroad.scenario.scenario.Scenario method)</a>, <a href="api/scenario.html#commonroad.scenario.scenario.Scenario.translate_rotate">[1]</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.trajectory.State.translate_rotate">(commonroad.scenario.trajectory.State method)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.trajectory.Trajectory.translate_rotate">(commonroad.scenario.trajectory.Trajectory method)</a>
+</li>
+        <li><a href="api/geometry.html#geometry.transform.translate_rotate">(in module geometry.transform)</a>
+</li>
+      </ul></li>
+      <li><a href="api/geometry.html#geometry.transform.translation_rotation_matrix">translation_rotation_matrix() (in module geometry.transform)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.RoadUser.TRUCK">TRUCK (commonroad.scenario.lanelet.RoadUser attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.obstacle.ObstacleType.TRUCK">(commonroad.scenario.obstacle.ObstacleType attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.obstacle.ObstacleType.UNKNOWN">UNKNOWN (commonroad.scenario.obstacle.ObstacleType attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDChina.UNKNOWN">(commonroad.scenario.traffic_sign.TrafficSignIDChina attribute)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.UNKNOWN">(commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDRussia.UNKNOWN">(commonroad.scenario.traffic_sign.TrafficSignIDRussia attribute)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDSpain.UNKNOWN">(commonroad.scenario.traffic_sign.TrafficSignIDSpain attribute)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDUsa.UNKNOWN">(commonroad.scenario.traffic_sign.TrafficSignIDUsa attribute)</a>
+</li>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.UNKNOWN">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.LaneletType.URBAN">URBAN (commonroad.scenario.lanelet.LaneletType attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.SupportedTrafficSignCountry.USA">USA (commonroad.scenario.traffic_sign.SupportedTrafficSignCountry attribute)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.user_bidirectional">user_bidirectional() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.Lanelet.user_one_way">user_one_way() (commonroad.scenario.lanelet.Lanelet property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.lanelet.RoadUser.VEHICLE">VEHICLE (commonroad.scenario.lanelet.RoadUser attribute)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.PlanningProblemSolution.vehicle_id">vehicle_id() (commonroad.common.solution.PlanningProblemSolution property)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.Solution.vehicle_ids">vehicle_ids() (commonroad.common.solution.Solution property)</a>, <a href="api/common.html#commonroad.common.solution.Solution.vehicle_ids">[1]</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.PlanningProblemSolution.vehicle_model">vehicle_model() (commonroad.common.solution.PlanningProblemSolution property)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.VehicleModel">VehicleModel (class in commonroad.common.solution)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/common.html#commonroad.common.solution.VehicleType">VehicleType (class in commonroad.common.solution)</a>
+</li>
+      <li><a href="api/geometry.html#commonroad.geometry.shape.Polygon.vertices">vertices() (commonroad.geometry.shape.Polygon property)</a>
+
+      <ul>
+        <li><a href="api/geometry.html#commonroad.geometry.shape.Rectangle.vertices">(commonroad.geometry.shape.Rectangle property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSign.virtual">virtual() (commonroad.scenario.traffic_sign.TrafficSign property)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.VehicleType.VW_VANAGON">VW_VANAGON (commonroad.common.solution.VehicleType attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/geometry.html#commonroad.geometry.shape.Rectangle.width">width() (commonroad.geometry.shape.Rectangle property)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.file_writer.CommonRoadFileWriter.write_scenario_to_file">write_scenario_to_file() (commonroad.common.file_writer.CommonRoadFileWriter method)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.file_writer.CommonRoadFileWriter.write_scenario_to_file_io">write_scenario_to_file_io() (commonroad.common.file_writer.CommonRoadFileWriter method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/common.html#commonroad.common.file_writer.CommonRoadFileWriter.write_to_file">write_to_file() (commonroad.common.file_writer.CommonRoadFileWriter method)</a>
+
+      <ul>
+        <li><a href="api/common.html#commonroad.common.solution.CommonRoadSolutionWriter.write_to_file">(commonroad.common.solution.CommonRoadSolutionWriter method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/common.html#commonroad.common.file_writer.CommonRoadFileWriter.write_to_file_io">write_to_file_io() (commonroad.common.file_writer.CommonRoadFileWriter method)</a>
+</li>
+      <li><a href="api/common.html#commonroad.common.solution.CostFunction.WX1">WX1 (commonroad.common.solution.CostFunction attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Y">Y</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightState.YELLOW">YELLOW (commonroad.scenario.traffic_sign.TrafficLightState attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany.YIELD">YIELD (commonroad.scenario.traffic_sign.TrafficSignIDGermany attribute)</a>
+
+      <ul>
+        <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda.YIELD">(commonroad.scenario.traffic_sign.TrafficSignIDZamunda attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Z">Z</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scenario.html#commonroad.scenario.traffic_sign.SupportedTrafficSignCountry.ZAMUNDA">ZAMUNDA (commonroad.scenario.traffic_sign.SupportedTrafficSignCountry attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Anna-Katharina Rettinger
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

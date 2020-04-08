@@ -1,18 +1,19 @@
 CommonRoad
 ============
 
-Numerical experiments for motion planning of road vehicles require numerous ingredients: vehicle dynamics, a road network, static obstacles,dynamic obstacles and their movement over time, goal regions, a cost function, etc. Providing a description of the numerical experiment precise enough to reproduce it might require several pages of information. Thus, only key aspects are typically described in scientific publications, making it impossible to reproduce results - yet, reproducibility is an important asset of good science.
+Numerical experiments for motion planning of road vehicles require numerous ingredients: vehicle dynamics, a road network, static obstacles, dynamic obstacles and their movement over time, goal regions, a cost function, etc. Providing a description of the numerical experiment precise enough to reproduce it might require several pages of information. Thus, only key aspects are typically described in scientific publications, making it impossible to reproduce results - yet, reproducibility is an important asset of good science.
 
 Composable benchmarks for motion planning on roads (CommonRoad) are proposed so that numerical experiments are fully defined by a unique ID; all required information to reconstruct the experiment can be found on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`_
-. Each benchmark is composed by a `vehicle model <https://commonroad.in.tum.de/documentation/vehicle_model_doc/>`_
-, a `cost function <https://commonroad.in.tum.de/documentation/cost_func_doc/>`_
-, and a `scenario <https://commonroad.in.tum.de/scenarios/>`_ (including goals and constraints). The scenarios are partly recorded from real traffic and partly hand-crafted to create dangerous situations. Solutions to the benchmarks can be uploaded and ranked on the CommonRoad Website.
+. Each benchmark is composed of a `vehicle model <https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models/blob/master/vehicleModels_commonRoad.pdf>`__, a `cost function <https://gitlab.lrz.de/tum-cps/commonroad-cost-functions/blob/master/costFunctions_commonRoad.pdf>`__, and a `scenario <https://commonroad.in.tum.de/scenarios/>`__ (including goals and constraints). The scenarios are partly recorded from real traffic and partly hand-crafted to create dangerous situations. Solutions to the benchmarks can be uploaded and ranked on the CommonRoad Website.
+Learn more about the scenario specification `here <https://gitlab.lrz.de/tum-cps/commonroad-scenarios/blob/master/documentation/XML_commonRoad_2020a.pdf>`__.
 
 CommonRoad_io
 =============
 
-The CommonRoad_io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tool of the CommonRoad Framework.
-With CommonRoad_io, those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`_.
+The CommonRoad_io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tools of the CommonRoad Framework.
+With CommonRoad_io, those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`__.
+
+CommonRoad_io 2020.1 is compatible with CommonRoad scenario in version 2020a and supports reading 2018b scenarios.
 
 The software is written in Python 3.6 and tested on MacOs and Linux. The usage of the Anaconda_ Python distribution is strongly recommended.
 
@@ -21,18 +22,18 @@ The software is written in Python 3.6 and tested on MacOs and Linux. The usage o
 Documentation
 =============
 
-The full documentation of the API and introducing examples can be found under `commonroad.in.tum.de <https://commonroad.in.tum.de/static/docs/commonroad-io/index.html>`_.
+The full documentation of the API and introducing examples can be found under `commonroad.in.tum.de <https://commonroad.in.tum.de/static/docs/commonroad-io/index.html>`__.
 
-For getting started, we recommend our `tutorials <https://commonroad.in.tum.de/tutorials/>`_.
+For getting started, we recommend our `tutorials <https://commonroad.in.tum.de/tutorials/>`__.
 
 Additional Tools
 ================
 Based on CommonRoad_io, we have developed a list of tools for implementing motion-planning algorithms:
 
-* `Collision Checker <https://gitlab.lrz.de/tum-cps/commonroad-collision-checker>`_
-* `CommonRoad-SUMO Interface <https://gitlab.lrz.de/tum-cps/commonroad-sumo-interface>`_
-* `OpenDRIVE to Lanelet converter <https://pypi.org/project/opendrive2lanelet>`_
-* `Vehicle Models <https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models/tree/master/Python>`_
+* `Collision Checker <https://gitlab.lrz.de/tum-cps/commonroad-collision-checker>`__
+* `CommonRoad-SUMO Interface <https://gitlab.lrz.de/tum-cps/commonroad-sumo-interface>`__
+* `OpenDRIVE to Lanelet converter <https://pypi.org/project/opendrive2lanelet>`__
+* `Vehicle Models <https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models/tree/master/Python>`__
 
 Requirements
 ============
@@ -42,7 +43,9 @@ The required dependencies for running CommonRoad_io are:
 * numpy>=1.13
 * shapely>=1.6.4
 * matplotlib>=2.2.2
+* lxml>=4.2.2
 * networkx>=2.2
+* Pillow>=7.0.0
 
 Installation
 ============
@@ -50,3 +53,23 @@ Installation
 CommonRoad_io can be installed with::
 
 	pip install commonroad-io
+
+Alternatively, clone from our gitlab repository::
+
+	git clone https://gitlab.lrz.de/tum-cps/commonroad_io.git
+
+and add the folder commonroad_io to your Python environment.
+
+Changelog
+============
+Compared to version 2019.2, the following features were added:
+
+* support of 2020a Scenarios with TrafficLights, TrafficSigns, and Intersection objects
+* SignalStates store information on turn lights, horn, hazard lights, and blue lights of DynamicObstacles
+* a SolutionReader can now read solution files generated by the CommonRoadSolutionReader
+* a new Solution object simplifies creating solution xml files and automatically checks the validity of benchmark IDs
+* the old commonroad.common.solution_writer.CommonRoadSolutionWriter is deprecated and replaced by commonroad.common.solution.CommonRoadSolutionWriter
+* the CommonRoadSolutionWriter can directly write computation times and the CPU model into the solution file
+* the GeoTransformation object stores location and transformation information for lanelet networks extracted from the real world
+* the visualization is improved and now supports legends
+* various small bug fixes

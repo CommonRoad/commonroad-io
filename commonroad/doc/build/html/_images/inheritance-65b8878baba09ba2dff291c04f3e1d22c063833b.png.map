@@ -1,5 +1,0 @@
-<map id="inheritance530414f049" name="inheritance530414f049">
-<area shape="rect" id="node1" href="#commonroad.prediction.prediction.Prediction" target="_top" title="Base class for a prediction module." alt="" coords="5,31,91,56"/>
-<area shape="rect" id="node2" href="#commonroad.prediction.prediction.SetBasedPrediction" target="_top" title="Class to represent the future behavior of obstacles by bounded occupancy sets." alt="" coords="139,5,285,31"/>
-<area shape="rect" id="node3" href="#commonroad.prediction.prediction.TrajectoryPrediction" target="_top" title="Class to represent the predicted movement of an obstacle using a trajectory. A trajectory is modeled as a" alt="" coords="139,55,285,80"/>
-</map>
