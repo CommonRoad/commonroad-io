@@ -52,28 +52,60 @@ class TestFileReader(unittest.TestCase):
                                        initial_state=traj_pred.trajectory.state_at_time_step(0),
                                        prediction=traj_pred, obstacle_shape=rectangle,
                                        initial_signal_state=initial_signal_state, signal_series=signal_series)
-        lanelet1 = Lanelet(left_vertices=np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]),
+        lanelet1 = Lanelet(right_vertices=np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]),
                            center_vertices=np.array([[0.0, 1], [1.0, 1], [2, 1]]),
-                           right_vertices=np.array([[0.0, 2], [1.0, 2], [2, 2]]), lanelet_id=100,
-                           predecessor=[101], successor=[101], adjacent_left=101, adjacent_left_same_direction=False,
-                           adjacent_right=101, adjacent_right_same_direction=True,
+                           left_vertices=np.array([[0.0, 2], [1.0, 2], [2, 2]]), lanelet_id=100,
+                           predecessor=[101], successor=[101],
+                           adjacent_left=103, adjacent_left_same_direction=True,
                            line_marking_left_vertices=LineMarking.DASHED, line_marking_right_vertices=LineMarking.SOLID,
                            lanelet_type={LaneletType.HIGHWAY, LaneletType.MAIN_CARRIAGE_WAY},
                            user_one_way={RoadUser.VEHICLE}, traffic_signs={201})
-        lanelet2 = Lanelet(left_vertices=np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]),
-                           center_vertices=np.array([[0.0, 1], [1.0, 1], [2, 1]]),
-                           right_vertices=np.array([[0.0, 2], [1.0, 2], [2, 2]]), lanelet_id=101,
-                           predecessor=[100], successor=[100], adjacent_left=100, adjacent_left_same_direction=False,
+        lanelet2 = Lanelet(right_vertices=np.array([[2.0, 0.0], [3.0, 0.0], [4, 0]]),
+                           center_vertices=np.array([[2.0, 1], [3.0, 1], [4, 1]]),
+                           left_vertices=np.array([[2.0, 2], [3.0, 2], [4, 2]]), lanelet_id=101,
+                           predecessor=[100], successor=[101],
+                           adjacent_left=104, adjacent_left_same_direction=True,
+                           line_marking_left_vertices=LineMarking.BROAD_DASHED,
+                           line_marking_right_vertices=LineMarking.BROAD_SOLID,
+                           lanelet_type={LaneletType.URBAN, LaneletType.BUS_LANE}, user_bidirectional={RoadUser.BUS})
+        lanelet3 = Lanelet(right_vertices=np.array([[4.0, 0.0], [5.0, 0.0], [6, 0]]),
+                           center_vertices=np.array([[4.0, 1], [5.0, 1], [6, 1]]),
+                           left_vertices=np.array([[4.0, 2], [5.0, 2], [6, 2]]), lanelet_id=102,
+                           predecessor=[102],
+                           adjacent_left=105, adjacent_left_same_direction=True,
+                           line_marking_left_vertices=LineMarking.BROAD_DASHED,
+                           line_marking_right_vertices=LineMarking.BROAD_SOLID,
+                           lanelet_type={LaneletType.URBAN, LaneletType.BUS_LANE}, user_bidirectional={RoadUser.BUS})
+        lanelet4 = Lanelet(right_vertices=np.array([[0.0, 2.0], [1.0, 2.0], [2, 2]]),
+                           center_vertices=np.array([[0.0, 3], [1.0, 3], [2, 3]]),
+                           left_vertices=np.array([[0.0, 4], [1.0, 4], [2, 4]]), lanelet_id=103,
+                           successor=[104],
                            adjacent_right=100, adjacent_right_same_direction=True,
                            line_marking_left_vertices=LineMarking.BROAD_DASHED,
                            line_marking_right_vertices=LineMarking.BROAD_SOLID,
                            lanelet_type={LaneletType.URBAN, LaneletType.BUS_LANE}, user_bidirectional={RoadUser.BUS})
+        lanelet5 = Lanelet(right_vertices=np.array([[2.0, 2.0], [3.0, 2.0], [4, 2]]),
+                           center_vertices=np.array([[2.0, 3], [3.0, 3], [4, 3]]),
+                           left_vertices=np.array([[2.0, 4], [3.0, 4], [4, 4]]), lanelet_id=104,
+                           predecessor=[103], successor=[105],
+                           adjacent_right=101, adjacent_right_same_direction=True,
+                           line_marking_left_vertices=LineMarking.BROAD_DASHED,
+                           line_marking_right_vertices=LineMarking.BROAD_SOLID,
+                           lanelet_type={LaneletType.URBAN, LaneletType.BUS_LANE}, user_bidirectional={RoadUser.BUS})
+        lanelet6 = Lanelet(right_vertices=np.array([[4.0, 0.0], [5.0, 0.0], [6, 0]]),
+                           center_vertices=np.array([[4.0, 1], [5.0, 1], [6, 1]]),
+                           left_vertices=np.array([[4.0, 2], [5.0, 2], [6, 2]]), lanelet_id=105,
+                           predecessor=[104], adjacent_right=102, adjacent_right_same_direction=True,
+                           line_marking_left_vertices=LineMarking.BROAD_DASHED,
+                           line_marking_right_vertices=LineMarking.BROAD_SOLID,
+                           lanelet_type={LaneletType.URBAN, LaneletType.BUS_LANE}, user_bidirectional={RoadUser.BUS})
 
-        traffic_sign_201 = TrafficSign(traffic_sign_id=201, first_occurrence={100}, position=None,
+        traffic_sign_201 = TrafficSign(traffic_sign_id=201, first_occurrence={100, 103}, position=np.array([0.0, 0.0]),
                                        traffic_sign_elements=[TrafficSignElement(TrafficSignIDGermany.MAX_SPEED,
                                                                                  ["10"])], virtual=False)
 
-        self.lanelet_network = LaneletNetwork().create_from_lanelet_list(list([lanelet1, lanelet2]))
+        self.lanelet_network = LaneletNetwork().create_from_lanelet_list(list([lanelet1, lanelet2, lanelet3, lanelet4,
+                                                                               lanelet5, lanelet6]))
         self.lanelet_network.add_traffic_sign(traffic_sign_201, [100])
 
         tags = {Tag.URBAN, Tag.INTERSTATE}
@@ -141,7 +173,7 @@ class TestFileReader(unittest.TestCase):
         exp_lanelet_zero_adj_right = self.scenario.lanelet_network.lanelets[0].adj_right
         exp_lanelet_zero_adj_left_same_direction = self.scenario.lanelet_network.lanelets[0].adj_left_same_direction
         exp_lanelet_zero_adj_right_same_direction = self.scenario.lanelet_network.lanelets[0].adj_right_same_direction
-        exp_lanelet_zero_predecessor = self.scenario.lanelet_network.lanelets[0].predecessor
+        exp_lanelet_one_predecessor = self.scenario.lanelet_network.lanelets[1].predecessor
         exp_lanelet_zero_successor = self.scenario.lanelet_network.lanelets[0].successor
 
         np.testing.assert_array_equal(exp_lanelet_zero_center_vertices,
@@ -156,7 +188,7 @@ class TestFileReader(unittest.TestCase):
                          lanelets[0].lanelet_network.lanelets[0].adj_left_same_direction)
         self.assertEqual(exp_lanelet_zero_adj_right_same_direction,
                          lanelets[0].lanelet_network.lanelets[0].adj_right_same_direction)
-        self.assertEqual(exp_lanelet_zero_predecessor, lanelets[0].lanelet_network.lanelets[0].predecessor)
+        self.assertEqual(exp_lanelet_one_predecessor, lanelets[0].lanelet_network.lanelets[1].predecessor)
         self.assertEqual(exp_lanelet_zero_successor, lanelets[0].lanelet_network.lanelets[0].successor)
 
     def test_open_obstacles(self):
@@ -286,10 +318,10 @@ class TestFileReader(unittest.TestCase):
         exp_lanelet_zero_adj_right = self.scenario.lanelet_network.lanelets[0].adj_right
         exp_lanelet_zero_adj_left_same_direction = self.scenario.lanelet_network.lanelets[0].adj_left_same_direction
         exp_lanelet_zero_adj_right_same_direction = self.scenario.lanelet_network.lanelets[0].adj_right_same_direction
-        exp_lanelet_zero_predecessor = self.scenario.lanelet_network.lanelets[0].predecessor
         exp_lanelet_zero_succesor = self.scenario.lanelet_network.lanelets[0].successor
         exp_lanelet_zero_line_marking_left = self.lanelet_network.lanelets[0].line_marking_left_vertices
         exp_lanelet_zero_line_marking_right = self.lanelet_network.lanelets[0].line_marking_right_vertices
+        exp_lanelet_one_predecessor = self.scenario.lanelet_network.lanelets[1].predecessor
         exp_lanelet_one_line_marking_left = self.lanelet_network.lanelets[1].line_marking_left_vertices
         exp_lanelet_one_line_marking_right = self.lanelet_network.lanelets[1].line_marking_right_vertices
         exp_lanelet_zero_type = self.lanelet_network.lanelets[0].lanelet_type
@@ -299,14 +331,14 @@ class TestFileReader(unittest.TestCase):
         exp_lanelet_zero_traffic_signs = self.lanelet_network.lanelets[0].traffic_signs
 
         exp_static_obstacles_on_lanelet_zero = {self.scenario.static_obstacles[0].obstacle_id}
-        exp_static_obstacles_on_lanelet_one = {self.scenario.static_obstacles[0].obstacle_id}
+
         exp_dynamic_obstacles_on_lanelet_zero = {0: {self.scenario.dynamic_obstacles[1].obstacle_id},
                                                  1: {self.scenario.dynamic_obstacles[1].obstacle_id}}
         exp_dynamic_obstacles_on_lanelet_one = {0: {self.scenario.dynamic_obstacles[1].obstacle_id},
                                                 1: {self.scenario.dynamic_obstacles[1].obstacle_id}}
-        exp_lanelet_of_static_obstacle = {100, 101}
-        exp_lanelet_of_dynamic_obstacle_initial = {100, 101}
-        exp_lanelet_of_dynamic_obstacle_prediction = {0: {100, 101}, 1: {100, 101}}
+        exp_lanelet_of_static_obstacle = {100}
+        exp_lanelet_of_dynamic_obstacle_initial = {100, 101, 103, 104}
+        exp_lanelet_of_dynamic_obstacle_prediction = {0: {100, 101, 103, 104}, 1: {100, 101, 103, 104}}
 
         exp_traffic_sign_id = self.lanelet_network.traffic_signs[0].traffic_sign_id
         exp_traffic_sign_position = self.lanelet_network.traffic_signs[0].position
@@ -390,12 +422,12 @@ class TestFileReader(unittest.TestCase):
                          xml_file[0].lanelet_network.lanelets[0].adj_left_same_direction)
         self.assertEqual(exp_lanelet_zero_adj_right_same_direction,
                          xml_file[0].lanelet_network.lanelets[0].adj_right_same_direction)
-        self.assertEqual(exp_lanelet_zero_predecessor, xml_file[0].lanelet_network.lanelets[0].predecessor)
         self.assertEqual(exp_lanelet_zero_succesor, xml_file[0].lanelet_network.lanelets[0].successor)
         self.assertEqual(exp_lanelet_zero_line_marking_left,
                          xml_file[0].lanelet_network.lanelets[0].line_marking_left_vertices)
         self.assertEqual(exp_lanelet_zero_line_marking_right,
                          xml_file[0].lanelet_network.lanelets[0].line_marking_right_vertices)
+        self.assertEqual(exp_lanelet_one_predecessor, xml_file[0].lanelet_network.lanelets[1].predecessor)
         self.assertEqual(exp_lanelet_one_line_marking_left,
                          xml_file[0].lanelet_network.lanelets[1].line_marking_left_vertices)
         self.assertEqual(exp_lanelet_one_line_marking_right,
@@ -404,12 +436,10 @@ class TestFileReader(unittest.TestCase):
         self.assertEqual(exp_lanelet_one_type, xml_file[0].lanelet_network.lanelets[1].lanelet_type)
         self.assertEqual(exp_lanelet_zero_user_one_way, xml_file[0].lanelet_network.lanelets[0].user_one_way)
         self.assertEqual(exp_lanelet_one_user_bidirectional, xml_file[0].lanelet_network.lanelets[1].user_bidirectional)
-        self.assertSetEqual(exp_lanelet_zero_traffic_signs, xml_file[0].lanelet_network.lanelets[1].traffic_signs)
+        self.assertSetEqual(exp_lanelet_zero_traffic_signs, xml_file[0].lanelet_network.lanelets[0].traffic_signs)
 
         self.assertSetEqual(exp_static_obstacles_on_lanelet_zero,
                             xml_file[0].lanelet_network.lanelets[0].static_obstacles_on_lanelet)
-        self.assertSetEqual(exp_static_obstacles_on_lanelet_one,
-                            xml_file[0].lanelet_network.lanelets[1].static_obstacles_on_lanelet)
         self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
                          xml_file[0].lanelet_network.lanelets[0].dynamic_obstacles_on_lanelet)
         self.assertEqual(exp_dynamic_obstacles_on_lanelet_one,

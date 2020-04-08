@@ -329,7 +329,7 @@ __status__ = "released"
       <xs:element name="adjacentLeft" type="laneletAdjacentRef" minOccurs="0"/>
       <xs:element name="adjacentRight" type="laneletAdjacentRef" minOccurs="0"/>
       <xs:element name="stopLine" type="stopLine" minOccurs="0"/>
-      <xs:element name="laneletType" type="laneletType"/>
+      <xs:element name="laneletType" type="laneletType" maxOccurs="unbounded"/>
       <xs:element name="userOneWay" type="vehicleType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="userBidirectional" type="vehicleType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="trafficSignRef" type="trafficSignRef" minOccurs="0" maxOccurs="unbounded"/>

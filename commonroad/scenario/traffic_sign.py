@@ -12,6 +12,8 @@ import numpy as np
 
 
 TRAFFIC_SIGN_VALIDITY_START = {'MIN_SPEED', 'MAX_SPEED', 'NO_OVERTAKING_START', 'CITY_SIGN'}
+LEFT_HAND_TRAFFIC = {'AUS', 'JPN', 'HKG', 'IND', 'JEY', 'IMN', 'IRL', 'JAM', 'KEN', 'MLT', 'MYS', 'NPL', 'NZL', 'ZAF',
+                     'SGP', 'THA', 'GBR', 'IDN', 'MAC', 'PAK', 'CYP'}
 
 
 @enum.unique
@@ -167,7 +169,7 @@ class TrafficSignElement:
 class TrafficSign:
     """Class to represent traffic sign"""
     def __init__(self, traffic_sign_id: int, traffic_sign_elements: List[TrafficSignElement],
-                 first_occurrence: Set[int], position: Union[None,np.ndarray] = None, virtual: bool = False):
+                 first_occurrence: Set[int], position: np.ndarray, virtual: bool = False):
         """
         :param traffic_sign_id: ID of traffic sign
         :param traffic_sign_elements: list of traffic sign elements
@@ -187,7 +189,7 @@ class TrafficSign:
         return self._traffic_sign_id
 
     @property
-    def position(self) -> Union[None,np.ndarray]:
+    def position(self) -> np.ndarray:
         return self._position
 
     @property
@@ -227,8 +229,8 @@ class TrafficLightCycleElement:
 
 class TrafficLight:
     """ Class to represent Traffic Light"""
-    def __init__(self, traffic_light_id: int, cycle: List[TrafficLightCycleElement], time_offset: int = 0,
-                 position: np.ndarray = None, direction: TrafficLightDirection = TrafficLightDirection.ALL,
+    def __init__(self, traffic_light_id: int, cycle: List[TrafficLightCycleElement], position: np.ndarray,
+                 time_offset: int = 0, direction: TrafficLightDirection = TrafficLightDirection.ALL,
                  active: bool = True):
         """
         :param traffic_light_id: ID of traffic light

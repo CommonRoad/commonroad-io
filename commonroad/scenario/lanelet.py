@@ -20,8 +20,6 @@ __email__ = "commonroad-i06@in.tum.de"
 __status__ = "released"
 
 
-
-
 class LineMarking(enum.Enum):
     """
     Enum describing different types of line markings, i.e. dashed or solid lines

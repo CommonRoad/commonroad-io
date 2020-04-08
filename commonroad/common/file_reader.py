@@ -16,7 +16,8 @@ from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Locat
 from commonroad.scenario.trajectory import State, Trajectory
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLight, TrafficLightCycleElement, \
     TrafficLightState, TrafficLightDirection, TrafficSignIDGermany, TrafficSignIDUsa, TrafficSignIDChina, \
-    TrafficSignIDRussia, TrafficSignIDSpain, TrafficSignIDZamunda, SupportedTrafficSignCountry
+    TrafficSignIDRussia, TrafficSignIDSpain, TrafficSignIDZamunda, SupportedTrafficSignCountry, LEFT_HAND_TRAFFIC, \
+    TRAFFIC_SIGN_VALIDITY_START
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 import warnings
 
@@ -335,10 +336,12 @@ class LaneletNetworkFactory:
         first_traffic_sign_occurence = cls._find_first_traffic_sign_occurence(lanelet_network)
         for traffic_sign_node in xml_node.findall('trafficSign'):
             lanelet_network.add_traffic_sign(TrafficSignFactory.create_from_xml_node(traffic_sign_node, country,
-                                                                                     first_traffic_sign_occurence), [])
+                                                                                     first_traffic_sign_occurence,
+                                                                                     lanelet_network), [])
 
         for traffic_light_node in xml_node.findall('trafficLight'):
-            lanelet_network.add_traffic_light(TrafficLightFactory.create_from_xml_node(traffic_light_node), [])
+            lanelet_network.add_traffic_light(TrafficLightFactory.create_from_xml_node(traffic_light_node, country,
+                                                                                       lanelet_network), [],)
 
         for intersection_node in xml_node.findall('intersection'):
             lanelet_network.add_intersection(IntersectionFactory.create_from_xml_node(intersection_node))
@@ -361,7 +364,7 @@ class LaneletNetworkFactory:
                     occurences[traffic_sign].add(lanelet.lanelet_id)
                 elif any(traffic_sign not in lanelet_network.find_lanelet_by_id(pre).traffic_signs
                        for pre in lanelet.predecessor):
-                    occurences[traffic_sign] = lanelet.lanelet_id
+                    occurences[traffic_sign].add(lanelet.lanelet_id)
         return occurences
 
     @staticmethod
@@ -655,21 +658,63 @@ class TrafficSignFactory:
     """ Class to create an object of class TrafficSign from an XML element."""
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element, country: SupportedTrafficSignCountry,
-                             first_traffic_sign_occurence: Dict[int, Set[int]]) -> TrafficSign:
+                             first_traffic_sign_occurence: Dict[int, Set[int]],
+                             lanelet_network: LaneletNetwork) -> TrafficSign:
         """
         :param xml_node: XML element
         :param country: country where traffic sign stands
+        :param first_traffic_sign_occurence: set of first occurences of traffic sign
+        :param lanelet_network: CommonRoad lanelet network
         :return: object of class TrafficSign according to the CommonRoad specification.
         """
         traffic_sign_id = int(xml_node.get('id'))
-        if xml_node.find('position') is not None:
-            position = PointFactory.create_from_xml_node(xml_node.find('position').find('point'))
-        else:
-            position = None
-
         traffic_sign_elements = []
         for element in xml_node.findall('trafficSignElement'):
             traffic_sign_elements.append(TrafficSignElementFactory.create_from_xml_node(element, country))
+
+        if xml_node.find('position') is not None:
+            position = PointFactory.create_from_xml_node(xml_node.find('position').find('point'))
+        else:
+            # traffic signs are always placed on right side of road if no position is given (for right-hand traffic)
+            position = None
+            for lanelet_id in first_traffic_sign_occurence.get(traffic_sign_id):
+                if country.value in LEFT_HAND_TRAFFIC:
+                    if lanelet_network.find_lanelet_by_id(lanelet_id).adj_left_same_direction is None or \
+                            lanelet_network.find_lanelet_by_id(lanelet_id).adj_left_same_direction is False:
+                        if any(element.traffic_sign_element_id.name in TRAFFIC_SIGN_VALIDITY_START
+                               for element in traffic_sign_elements):
+                            position = lanelet_network.find_lanelet_by_id(lanelet_id).left_vertices[0]
+                        else:
+                            position = lanelet_network.find_lanelet_by_id(lanelet_id).left_vertices[-1]
+                else:
+                    if lanelet_network.find_lanelet_by_id(lanelet_id).adj_right_same_direction is None \
+                            or lanelet_network.find_lanelet_by_id(lanelet_id).adj_right_same_direction is False:
+                        if any(element.traffic_sign_element_id.name in TRAFFIC_SIGN_VALIDITY_START
+                               for element in traffic_sign_elements):
+                            position = lanelet_network.find_lanelet_by_id(lanelet_id).right_vertices[0]
+                        else:
+                            position = lanelet_network.find_lanelet_by_id(lanelet_id).right_vertices[-1]
+            if position is None:
+                current_lanelet =\
+                    lanelet_network.find_lanelet_by_id(list(first_traffic_sign_occurence.get(traffic_sign_id))[0])
+                if country.value in LEFT_HAND_TRAFFIC:
+                    while current_lanelet.adj_left_same_direction is not None \
+                            and current_lanelet.adj_left_same_direction is not False:
+                        current_lanelet = lanelet_network.find_lanelet_by_id(current_lanelet.adj_left)
+                    if any(element.traffic_sign_element_id.name in TRAFFIC_SIGN_VALIDITY_START for element in
+                           traffic_sign_elements):
+                        position = current_lanelet.left_vertices[0]
+                    else:
+                        position = current_lanelet.left_vertices[-1]
+                else:
+                    while current_lanelet.adj_right_same_direction is not None \
+                            and current_lanelet.adj_right_same_direction is not False:
+                        current_lanelet = lanelet_network.find_lanelet_by_id(current_lanelet.adj_right)
+                    if any(element.traffic_sign_element_id.name in TRAFFIC_SIGN_VALIDITY_START for element in
+                           traffic_sign_elements):
+                        position = current_lanelet.right_vertices[0]
+                    else:
+                        position = current_lanelet.right_vertices[-1]
 
         if xml_node.get('virtual') is not None:
             if xml_node.get('virtual').text == "true":
@@ -723,9 +768,12 @@ class TrafficSignElementFactory:
 class TrafficLightFactory:
     """ Class to create an object of class TrafficLight from an XML element."""
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> TrafficLight:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, country: SupportedTrafficSignCountry,
+                             lanelet_network: LaneletNetwork) -> TrafficLight:
         """
         :param xml_node: XML element
+        :param country: country where traffic sign stands
+        :param lanelet_network: CommonRoad lanelet network
         :return: object of class TrafficLight according to the CommonRoad specification.
         """
         traffic_light_id = int(xml_node.get('id'))
@@ -733,7 +781,24 @@ class TrafficLightFactory:
         if xml_node.find('position') is not None:
             position = PointFactory.create_from_xml_node(xml_node.find('position').find('point'))
         else:
-            position = None
+            # traffic lights are always placed on right side of road if no position is given (for right-hand traffic)
+            current_lanelet = None
+            for lanelet in lanelet_network.lanelets:
+                if traffic_light_id in lanelet.traffic_lights:
+                    current_lanelet = lanelet
+                    break
+            if current_lanelet is None:
+                raise ValueError("Error in xml-file: Traffic Light not referenced by a lanelet")
+            if country.value in LEFT_HAND_TRAFFIC:
+                while current_lanelet.adj_left_same_direction is not None \
+                        and current_lanelet.adj_left_same_direction is not False:
+                    current_lanelet = lanelet_network.find_lanelet_by_id(current_lanelet.adj_left)
+                position = current_lanelet.left_vertices[-1]
+            else:
+                while current_lanelet.adj_right_same_direction is not None \
+                        and current_lanelet.adj_right_same_direction is not False:
+                    current_lanelet = lanelet_network.find_lanelet_by_id(current_lanelet.adj_right)
+                position = current_lanelet.right_vertices[-1]
 
         if xml_node.find('active') is not None:
             if xml_node.find('active').text == "true":
