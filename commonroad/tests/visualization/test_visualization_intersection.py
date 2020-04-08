@@ -1,6 +1,10 @@
 import os
+import warnings
+
 import matplotlib as mpl
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany, TrafficSignIDUsa
+import pytest
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany, TrafficSignIDUsa,\
+TrafficSignIDZamunda, TrafficSignIDRussia, TrafficSignIDSpain, TrafficSignIDChina
 import numpy as np
 
 # mpl.use('TkAgg')
@@ -64,6 +68,51 @@ class TestVisualization(unittest.TestCase):
         plt.autoscale()
         plt.axis('equal')
         plt.show()
+
+    def test_all_signs(self):
+        """Check if all traffic signs can be plotted."""
+        kwargs = {'traffic_sign_id':1,'first_occurrence':1,'position': np.array([0.,0.])}
+        plt.figure(figsize=[10,10])
+
+        with pytest.warns(None) as record:
+            for value in TrafficSignIDGermany:
+                kwargs['position'] = kwargs['position'] + np.array([0.,5.])
+                draw_object(TrafficSign(traffic_sign_elements=[TrafficSignElement(value, ['foo'])], **kwargs))
+
+            for value in TrafficSignIDUsa:
+                kwargs['position'] = kwargs['position'] + np.array([0.,5.])
+                draw_object(TrafficSign(traffic_sign_elements=[TrafficSignElement(value, ['foo'])], **kwargs))
+
+            for value in TrafficSignIDRussia:
+                kwargs['position'] = kwargs['position'] + np.array([0.,5.])
+                draw_object(TrafficSign(traffic_sign_elements=[TrafficSignElement(value, ['foo'])], **kwargs))
+
+            for value in TrafficSignIDSpain:
+                kwargs['position'] = kwargs['position'] + np.array([0.,5.])
+                draw_object(TrafficSign(traffic_sign_elements=[TrafficSignElement(value, ['foo'])], **kwargs))
+
+            for value in TrafficSignIDChina:
+                kwargs['position'] = kwargs['position'] + np.array([0.,5.])
+                draw_object(TrafficSign(traffic_sign_elements=[TrafficSignElement(value, ['foo'])], **kwargs))
+
+            for value in TrafficSignIDZamunda:
+                kwargs['position'] = kwargs['position'] + np.array([0.,5.])
+                draw_object(TrafficSign(traffic_sign_elements=[TrafficSignElement(value, ['foo'])], **kwargs))
+
+
+        # uncomment to check plots
+        # plt.xlim([-1., 1.])
+        # plt.draw()
+        # plt.autoscale()
+        # plt.ylim([-1., kwargs['position'][1] + 1])
+        # plt.pause(100)
+
+        # check for warnings
+        for r in record:
+            print('Found warning:', r.message)
+        assert len(record) == 0, record
+
+
 
     def test_signal_states(self):
         "Uses all options for plotting objects related to intersections or traffic sign/lights."
