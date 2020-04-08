@@ -26,7 +26,7 @@ Road network
 
 
 ``Lanelet`` class
-^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
 .. autoclass:: Lanelet
    :undoc-members:   
    :members:
@@ -34,7 +34,7 @@ Road network
 
 
 ``LaneletType`` class
-^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: LaneletType
    :members:
    :undoc-members:
@@ -42,7 +42,7 @@ Road network
 
 
 ``RoadUser`` class
-^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
 .. autoclass:: RoadUser
    :members:
    :undoc-members:
@@ -53,7 +53,7 @@ Road network
 .. automodule:: commonroad.scenario.traffic_sign
 
 ``SupportedTrafficSignCountry`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: SupportedTrafficSignCountry
    :members:
    :undoc-members:
@@ -61,7 +61,7 @@ Road network
 
 
 ``TrafficSignIDZamunda`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: TrafficSignIDZamunda
    :members:
    :undoc-members:
@@ -69,7 +69,7 @@ Road network
 
 
 ``TrafficSignIDGermany`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: TrafficSignIDGermany
    :members:
    :undoc-members:
@@ -77,7 +77,7 @@ Road network
 
 
 ``TrafficSignIDUsa`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: TrafficSignIDUsa
    :members:
    :undoc-members:
@@ -85,7 +85,7 @@ Road network
 
 
 ``TrafficSignIDChina`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: TrafficSignIDChina
    :members:
    :undoc-members:
@@ -93,7 +93,7 @@ Road network
 
 
 ``TrafficSignIDSpain`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: TrafficSignIDSpain
    :members:
    :undoc-members:
@@ -101,7 +101,7 @@ Road network
 
 
 ``TrafficSignIDRussia`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: TrafficSignIDRussia
    :members:
    :undoc-members:
@@ -109,7 +109,7 @@ Road network
 
 
 ``TrafficLightDirection`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: TrafficLightDirection
    :members:
    :undoc-members:
@@ -117,7 +117,7 @@ Road network
 
 
 ``TrafficLightState`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: TrafficLightState
    :members:
    :undoc-members:
@@ -125,7 +125,7 @@ Road network
 
 
 ``TrafficSignElement`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: TrafficSignElement
    :members:
    :undoc-members:
@@ -133,7 +133,7 @@ Road network
 
 
 ``TrafficSign`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: TrafficSign
    :members:
    :undoc-members:
@@ -141,7 +141,7 @@ Road network
 
 
 ``TrafficLightCycleElement`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: TrafficLightCycleElement
    :members:
    :undoc-members:
@@ -149,7 +149,7 @@ Road network
 
 
 ``TrafficLight`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: TrafficLight
    :members:
    :undoc-members:
@@ -160,7 +160,7 @@ Road network
 .. automodule:: commonroad.scenario.traffic_sign_interpreter
 
 ``TrafficSigInterpreter`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: TrafficSigInterpreter
    :members:
    :undoc-members:
@@ -171,7 +171,7 @@ Road network
 .. automodule:: commonroad.scenario.intersection
 
 ``IntersectionIncomingElement`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: IntersectionIncomingElement
    :members:
    :undoc-members:
@@ -179,7 +179,7 @@ Road network
 
 
 ``Intersection`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: Intersection
    :members:
    :undoc-members:

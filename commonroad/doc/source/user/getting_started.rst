@@ -108,6 +108,23 @@ Useful methods for trajectory planning are:
 - :meth:`.LaneletNetwork.find_lanelet_by_id`
 - :meth:`.LaneletNetwork.lanelets_in_proximity`
 
+Description: :class:`commonroad.scenario.trafficSign`.
+
+Each :class:`.TrafficSign` stores several traffic sign elements (:class:`.TrafficSignElement`) for one position. A traffic sign element represents a traffic sign with a country-specific ID.
+If the attribute :attr:`.TrafficSign.virtual` is set to false, the traffic sign is not located at this position in real world.
+A traffic sign can be valid starting from the beginning or end of a lanelet. Traffic signs valid from the beginning are maintained in the list *TRAFFIC_SIGN_VALIDITY_START*.
+A traffic sign is always valid for the complete lanelet.
+A traffic sign can be referenced by successor lanelets of its first occurrence, e.g., a speed limit sign.
+
+Description: :class:`commonroad.scenario.trafficLight`.
+
+Each :class:`.TrafficLight` has a cycle (:class:`.TrafficLightCycleElement`) with the current state and duration of each phase.
+
+Description: :class:`commonroad.scenario.intersection`.
+
+A :class:`.Intersection` stores the incoming lanelets (:class:`.IntersectionIncomingElement`) of an intersection.
+
+
 Obstacles
 ^^^^^^^^^
 Description: :class:`commonroad.scenario.obstacle`
