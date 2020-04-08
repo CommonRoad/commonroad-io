@@ -45,7 +45,7 @@ When settings of a plot should be changed with ``draw_params``, they have to be 
             'lanelet_network':
                 {'draw_traffic_lights': True,
                 'kwargs_traffic_light_signs': {}, # further properties for
-                  #AnnotationBox, see
+                  # AnnotationBox, see
                   # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
                  'traffic_light':
                      {'red_color': 'red',

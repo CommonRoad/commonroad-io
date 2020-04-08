@@ -445,6 +445,231 @@ a warning message is given.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="tag-class">
+<h3><code class="docutils literal notranslate"><span class="pre">Tag</span></code> class<a class="headerlink" href="#tag-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="commonroad.scenario.scenario.Tag">
+<em class="property">class </em><code class="sig-prename descclassname">commonroad.scenario.scenario.</code><code class="sig-name descname">Tag</code><a class="reference internal" href="../_modules/commonroad/scenario/scenario.html#Tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.scenario.scenario.Tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enum containing all possible tags of a CommonRoad scenario.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="geotransformation-class">
+<h3><code class="docutils literal notranslate"><span class="pre">GeoTransformation</span></code> class<a class="headerlink" href="#geotransformation-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="commonroad.scenario.scenario.GeoTransformation">
+<em class="property">class </em><code class="sig-prename descclassname">commonroad.scenario.scenario.</code><code class="sig-name descname">GeoTransformation</code><span class="sig-paren">(</span><em class="sig-param">geo_reference=None</em>, <em class="sig-param">x_translation=None</em>, <em class="sig-param">y_translation=None</em>, <em class="sig-param">z_rotation=None</em>, <em class="sig-param">scaling=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/scenario/scenario.html#GeoTransformation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#commonroad.scenario.scenario.GeoTransformation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="location-class">
+<h3><code class="docutils literal notranslate"><span class="pre">Location</span></code> class<a class="headerlink" href="#location-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="sig-prename descclassname">commonroad.scenario.scenario.</code><code class="sig-name descname">Scenario</code><span class="sig-paren">(</span><em class="sig-param">dt</em>, <em class="sig-param">benchmark_id</em>, <em class="sig-param">author=None</em>, <em class="sig-param">tags=None</em>, <em class="sig-param">affiliation=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">location=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/scenario/scenario.html#Scenario"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Class which describes a Scenario entity according to the CommonRoad specification. Each scenario is described by
+a road network consisting of lanelets (see <a class="reference internal" href="#commonroad.scenario.lanelet.LaneletNetwork" title="commonroad.scenario.lanelet.LaneletNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">commonroad.scenario.lanelet.LaneletNetwork</span></code></a>) and a set of
+obstacles which can be either static or dynamic (see <a class="reference internal" href="#commonroad.scenario.obstacle.Obstacle" title="commonroad.scenario.obstacle.Obstacle"><code class="xref py py-class docutils literal notranslate"><span class="pre">commonroad.scenario.obstacle.Obstacle</span></code></a>).</p>
+<dl class="method">
+<dt>
+<code class="sig-name descname">add_objects</code><span class="sig-paren">(</span><em class="sig-param">scenario_object</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/scenario/scenario.html#Scenario.add_objects"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Function to add objects, e.g., lanelets, dynamic and static obstacles, to the scenario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>scenario_object</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#commonroad.scenario.obstacle.Obstacle" title="commonroad.scenario.obstacle.Obstacle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Obstacle</span></code></a>, <a class="reference internal" href="#commonroad.scenario.lanelet.Lanelet" title="commonroad.scenario.lanelet.Lanelet"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lanelet</span></code></a>, <a class="reference internal" href="#commonroad.scenario.lanelet.LaneletNetwork" title="commonroad.scenario.lanelet.LaneletNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">LaneletNetwork</span></code></a>]], <a class="reference internal" href="#commonroad.scenario.obstacle.Obstacle" title="commonroad.scenario.obstacle.Obstacle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Obstacle</span></code></a>, <a class="reference internal" href="#commonroad.scenario.lanelet.Lanelet" title="commonroad.scenario.lanelet.Lanelet"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lanelet</span></code></a>, <a class="reference internal" href="#commonroad.scenario.lanelet.LaneletNetwork" title="commonroad.scenario.lanelet.LaneletNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">LaneletNetwork</span></code></a>]) – object(s) to be added to the scenario</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – a value error is raised if the type of scenario_object is invalid.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<em class="property">property </em><code class="sig-name descname">benchmark_id</code></dt>
+<dd><p>Unique benchmark ID of a scenario as specified in the CommonRoad XML-file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<em class="property">property </em><code class="sig-name descname">dt</code></dt>
+<dd><p>Global time step size of the time-discrete scenario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<em class="property">property </em><code class="sig-name descname">dynamic_obstacles</code></dt>
+<dd><p>Returns a list of all dynamic obstacles in the scenario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#commonroad.scenario.obstacle.DynamicObstacle" title="commonroad.scenario.obstacle.DynamicObstacle"><code class="xref py py-class docutils literal notranslate"><span class="pre">DynamicObstacle</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">generate_object_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/scenario/scenario.html#Scenario.generate_object_id"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Generates a unique ID which is not assigned to any object in the scenario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>unique object ID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<em class="property">property </em><code class="sig-name descname">lanelet_network</code></dt>
+<dd><p>Road network composed of lanelets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#commonroad.scenario.lanelet.LaneletNetwork" title="commonroad.scenario.lanelet.LaneletNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">LaneletNetwork</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">obstacle_by_id</code><span class="sig-paren">(</span><em class="sig-param">obstacle_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/scenario/scenario.html#Scenario.obstacle_by_id"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Finds an obstacle for a given obstacle_id</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>obstacle_id</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – ID of the queried obstacle</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#commonroad.scenario.obstacle.Obstacle" title="commonroad.scenario.obstacle.Obstacle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Obstacle</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the obstacle object if the ID exists, otherwise None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<em class="property">property </em><code class="sig-name descname">obstacles</code></dt>
+<dd><p>Returns a list of all static and dynamic obstacles in the scenario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#commonroad.scenario.obstacle.Obstacle" title="commonroad.scenario.obstacle.Obstacle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Obstacle</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">obstacles_by_position_intervals</code><span class="sig-paren">(</span><em class="sig-param">position_intervals</em>, <em class="sig-param">obstacle_role=(&lt;ObstacleRole.DYNAMIC: 'dynamic'&gt;</em>, <em class="sig-param">&lt;ObstacleRole.STATIC: 'static'&gt;)</em>, <em class="sig-param">time_step=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/scenario/scenario.html#Scenario.obstacles_by_position_intervals"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns obstacles which center is located within in the given x-/y-position intervals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>position_intervals</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="common.html#commonroad.common.util.Interval" title="commonroad.common.util.Interval"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interval</span></code></a>]) – list of intervals for x- and y-coordinates [interval_x,  interval_y]</p></li>
+<li><p><strong>obstacle_role</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#commonroad.scenario.obstacle.ObstacleRole" title="commonroad.scenario.obstacle.ObstacleRole"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObstacleRole</span></code></a>]) – tuple containing the desired obstacle roles</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#commonroad.scenario.obstacle.Obstacle" title="commonroad.scenario.obstacle.Obstacle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Obstacle</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of obstacles in the position intervals</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">obstacles_by_role_and_type</code><span class="sig-paren">(</span><em class="sig-param">obstacle_role=None</em>, <em class="sig-param">obstacle_type=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/scenario/scenario.html#Scenario.obstacles_by_role_and_type"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Filters the obstacles by their role and type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obstacle_role</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <a class="reference internal" href="#commonroad.scenario.obstacle.ObstacleRole" title="commonroad.scenario.obstacle.ObstacleRole"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObstacleRole</span></code></a>]) – obstacle role as defined in CommonRoad, e.g., static or dynamic</p></li>
+<li><p><strong>obstacle_type</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <a class="reference internal" href="#commonroad.scenario.obstacle.ObstacleType" title="commonroad.scenario.obstacle.ObstacleType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObstacleType</span></code></a>]) – obstacle type as defined in CommonRoad, e.g., car, train, or bus</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#commonroad.scenario.obstacle.Obstacle" title="commonroad.scenario.obstacle.Obstacle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Obstacle</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of all obstacles satisfying the given obstacle_role and obstacle_type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">occupancies_at_time_step</code><span class="sig-paren">(</span><em class="sig-param">time_step</em>, <em class="sig-param">obstacle_role=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/scenario/scenario.html#Scenario.occupancies_at_time_step"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns the occupancies of all static and dynamic obstacles at a specific time step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time_step</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – occupancies of obstacles at this time step</p></li>
+<li><p><strong>obstacle_role</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>, <a class="reference internal" href="#commonroad.scenario.obstacle.ObstacleRole" title="commonroad.scenario.obstacle.ObstacleRole"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObstacleRole</span></code></a>]) – obstacle role as defined in CommonRoad, e.g., static or dynamic</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="prediction.html#commonroad.prediction.prediction.Occupancy" title="commonroad.prediction.prediction.Occupancy"><code class="xref py py-class docutils literal notranslate"><span class="pre">Occupancy</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of occupancies of the obstacles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">remove_obstacle</code><span class="sig-paren">(</span><em class="sig-param">obstacle</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/scenario/scenario.html#Scenario.remove_obstacle"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Removes a static, dynamic or a list of obstacles from the scenario. If the obstacle ID is not assigned,
+a warning message is given.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>obstacle</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#commonroad.scenario.obstacle.Obstacle" title="commonroad.scenario.obstacle.Obstacle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Obstacle</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#commonroad.scenario.obstacle.Obstacle" title="commonroad.scenario.obstacle.Obstacle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Obstacle</span></code></a>]]) – obstacle to be removed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<em class="property">property </em><code class="sig-name descname">static_obstacles</code></dt>
+<dd><p>Returns a list of all static obstacles in the scenario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#commonroad.scenario.obstacle.StaticObstacle" title="commonroad.scenario.obstacle.StaticObstacle"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaticObstacle</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">translate_rotate</code><span class="sig-paren">(</span><em class="sig-param">translation</em>, <em class="sig-param">angle</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/scenario/scenario.html#Scenario.translate_rotate"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Translates and rotates all objects, e.g., obstacles and road network, in the scenario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</p></li>
+<li><p><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 <div class="section" id="module-commonroad.scenario.lanelet">
 <span id="road-network"></span><h2>Road network<a class="headerlink" href="#module-commonroad.scenario.lanelet" title="Permalink to this headline">¶</a></h2>

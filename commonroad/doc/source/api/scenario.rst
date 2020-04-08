@@ -12,6 +12,25 @@ Scenario
    :members:
    :member-order: bysource
 
+``Tag`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: Tag
+  :members:
+  :member-order: bysource
+
+``GeoTransformation`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: GeoTransformation
+   :members:
+   :member-order: bysource
+
+``Location`` class
+^^^^^^^^^^^^^^^^^^
+.. autoclass:: Scenario
+  :members:
+  :member-order: Location
+
+
 Road network
 ------------
 
