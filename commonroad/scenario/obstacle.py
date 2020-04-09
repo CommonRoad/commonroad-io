@@ -256,6 +256,8 @@ class Obstacle(ABC):
         """
         if self.initial_signal_state is not None and time_step == self.initial_signal_state.time_step:
             return self.initial_signal_state
+        elif self.signal_series is None:
+            return None
         else:
             for state in self.signal_series:
                 if state.time_step == time_step:
