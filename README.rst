@@ -62,6 +62,12 @@ and add the folder commonroad_io to your Python environment.
 
 Changelog
 ============
+Compared to version 2020.1, the following features were added:
+
+* new tags for compatibility with 2018b XML format
+* bug-fix in signal series method
+* new lanelet type: *unknown*
+
 Compared to version 2019.2, the following features were added:
 
 * support of 2020a Scenarios with TrafficLights, TrafficSigns, and Intersection objects
