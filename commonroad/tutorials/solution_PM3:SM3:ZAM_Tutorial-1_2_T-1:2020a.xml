@@ -1,276 +1,276 @@
 <?xml version="1.0" ?>
-<CommonRoadSolution benchmark_id="PM3:SM3:ZAM_Tutorial-1_2_T-1:2020a" date="2020-04-09" processor_name="Intel Core i7-8650U CPU @ 1.90GHz">
+<CommonRoadSolution benchmark_id="PM3:SM3:ZAM_Tutorial-1_2_T-1:2020a" date="2020-04-10" processor_name="Intel Core i7-8650U CPU @ 1.90GHz">
   <pmTrajectory planningProblem="100">
     <pmState>
-      <x>17.200079379450234</x>
+      <x>17.200079379440112</x>
       <y>0.0</y>
-      <xVelocity>22.003175135656452</xVelocity>
+      <xVelocity>22.003175135463316</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>1</time>
     </pmState>
     <pmState>
-      <x>19.401244363142396</x>
+      <x>19.401244363116785</x>
       <y>0.0</y>
-      <xVelocity>22.02437359522687</xVelocity>
+      <xVelocity>22.02437359505975</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>2</time>
     </pmState>
     <pmState>
-      <x>21.60599797121634</x>
+      <x>21.605997971182337</x>
       <y>0.0</y>
-      <xVelocity>22.07668104181176</xVelocity>
+      <xVelocity>22.076681041760832</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>3</time>
     </pmState>
     <pmState>
-      <x>23.81789248565863</x>
+      <x>23.817892485630907</x>
       <y>0.0</y>
-      <xVelocity>22.168181267222682</xVelocity>
+      <xVelocity>22.168181267348835</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>4</time>
     </pmState>
     <pmState>
-      <x>26.04108179593021</x>
+      <x>26.04108179592825</x>
       <y>0.0</y>
-      <xVelocity>22.302980238313978</xVelocity>
+      <xVelocity>22.30298023865345</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>5</time>
     </pmState>
     <pmState>
-      <x>28.27996845858458</x>
+      <x>28.279968458630492</x>
       <y>0.0</y>
-      <xVelocity>22.4820793051659</xVelocity>
+      <xVelocity>22.482079305735635</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>6</time>
     </pmState>
     <pmState>
-      <x>30.538931281649617</x>
+      <x>30.538931281766427</x>
       <y>0.0</y>
-      <xVelocity>22.704115292263957</xVelocity>
+      <xVelocity>22.704115293066035</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>7</time>
     </pmState>
     <pmState>
-      <x>32.8221209200182</x>
+      <x>32.822120920228556</x>
       <y>0.0</y>
-      <xVelocity>22.965983093076662</xVelocity>
+      <xVelocity>22.96598309410206</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>8</time>
     </pmState>
     <pmState>
-      <x>35.13331245129041</x>
+      <x>35.13331245161565</x>
       <y>0.0</y>
-      <xVelocity>23.26335492847771</xVelocity>
+      <xVelocity>23.263354929709383</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>9</time>
     </pmState>
     <pmState>
-      <x>37.475805247964416</x>
+      <x>37.47580524842389</x>
       <y>0.0</y>
-      <xVelocity>23.591109027829336</xVelocity>
+      <xVelocity>23.59110902924468</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>10</time>
     </pmState>
     <pmState>
-      <x>39.852361671256055</x>
+      <x>39.85236167186665</x>
       <y>0.0</y>
-      <xVelocity>23.943679191650563</xVelocity>
+      <xVelocity>23.943679193223286</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>11</time>
     </pmState>
     <pmState>
-      <x>42.26517720078388</x>
+      <x>42.26517720155975</x>
       <y>0.0</y>
-      <xVelocity>24.315335585913015</xVelocity>
+      <xVelocity>24.315335587614673</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>12</time>
     </pmState>
     <pmState>
-      <x>44.71587559718035</x>
+      <x>44.715875598132754</x>
       <y>0.0</y>
-      <xVelocity>24.700406078076277</xVelocity>
+      <xVelocity>24.70040607987757</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>13</time>
     </pmState>
     <pmState>
-      <x>47.20552357857318</x>
+      <x>47.205523579710466</x>
       <y>0.0</y>
-      <xVelocity>25.093446500366667</xVelocity>
+      <xVelocity>25.09344650223849</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>14</time>
     </pmState>
     <pmState>
-      <x>49.734660285794064</x>
+      <x>49.73466028712174</x>
       <y>0.0</y>
-      <xVelocity>25.489367340783794</xVelocity>
+      <xVelocity>25.489367342698102</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>15</time>
     </pmState>
     <pmState>
-      <x>52.30333751969417</x>
+      <x>52.30333752121504</x>
       <y>0.0</y>
-      <xVelocity>25.883523544051336</xVelocity>
+      <xVelocity>25.88352354598188</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>16</time>
     </pmState>
     <pmState>
-      <x>54.91116736438942</x>
+      <x>54.91116736610374</x>
       <y>0.0</y>
-      <xVelocity>26.271773360557447</xVelocity>
+      <xVelocity>26.271773362480197</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>17</time>
     </pmState>
     <pmState>
-      <x>57.55737436950258</x>
+      <x>57.557374371408386</x>
       <y>0.0</y>
-      <xVelocity>26.650511499814822</xVelocity>
+      <xVelocity>26.650511501708298</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>18</time>
     </pmState>
     <pmState>
-      <x>60.240849958383386</x>
+      <x>60.24084996047668</x>
       <y>0.0</y>
-      <xVelocity>27.01668121915498</xVelocity>
+      <xVelocity>27.016681221000404</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>19</time>
     </pmState>
     <pmState>
-      <x>62.960207163268855</x>
+      <x>62.960207165543906</x>
       <y>0.0</y>
-      <xVelocity>27.367769405164864</xVelocity>
+      <xVelocity>27.36776940694618</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>20</time>
     </pmState>
     <pmState>
-      <x>65.7138341675507</x>
+      <x>65.71383417000034</x>
       <y>0.0</y>
-      <xVelocity>27.701788182651583</xVelocity>
+      <xVelocity>27.70178818435537</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>21</time>
     </pmState>
     <pmState>
-      <x>68.49994546465764</x>
+      <x>68.49994546727349</x>
       <y>0.0</y>
-      <xVelocity>28.017246110816433</xVelocity>
+      <xVelocity>28.017246112431778</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>22</time>
     </pmState>
     <pmState>
-      <x>71.31662972711777</x>
+      <x>71.31662972989047</x>
       <y>0.0</y>
-      <xVelocity>28.31311159512964</xVelocity>
+      <xVelocity>28.313111596647925</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>23</time>
     </pmState>
     <pmState>
-      <x>74.1618937223648</x>
+      <x>74.16189372528424</x>
       <y>0.0</y>
-      <xVelocity>28.588770753008287</xVelocity>
+      <xVelocity>28.58877075442297</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>24</time>
     </pmState>
     <pmState>
-      <x>77.03370181777498</x>
+      <x>77.03370182083053</x>
       <y>0.0</y>
-      <xVelocity>28.843981620061577</xVelocity>
+      <xVelocity>28.843981621367952</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>25</time>
     </pmState>
     <pmState>
-      <x>79.93001079011698</x>
+      <x>79.9300107932976</x>
       <y>0.0</y>
-      <xVelocity>29.07882627026079</xVelocity>
+      <xVelocity>29.07882627145575</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>26</time>
     </pmState>
     <pmState>
-      <x>82.84879979778594</x>
+      <x>82.84879980108038</x>
       <y>0.0</y>
-      <xVelocity>29.29366214634473</xVelocity>
+      <xVelocity>29.293662147426556</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>27</time>
     </pmState>
     <pmState>
-      <x>85.78809549140297</x>
+      <x>85.78809549479982</x>
       <y>0.0</y>
-      <xVelocity>29.489073653827226</xVelocity>
+      <xVelocity>29.489073654795348</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>28</time>
     </pmState>
     <pmState>
-      <x>88.74599233287735</x>
+      <x>88.74599233636523</x>
       <y>0.0</y>
-      <xVelocity>29.665824860619942</xVelocity>
+      <xVelocity>29.66582486147475</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>29</time>
     </pmState>
     <pmState>
-      <x>91.72066826788718</x>
+      <x>91.72066827145481</x>
       <y>0.0</y>
-      <xVelocity>29.82481396208847</xVelocity>
+      <xVelocity>29.8248139628311</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>30</time>
     </pmState>
     <pmState>
-      <x>94.71039595473562</x>
+      <x>94.71039595837186</x>
       <y>0.0</y>
-      <xVelocity>29.967030016069813</xVelocity>
+      <xVelocity>29.96703001670198</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>31</time>
     </pmState>
     <pmState>
-      <x>97.71354979627337</x>
+      <x>97.71354979996732</x>
       <y>0.0</y>
-      <xVelocity>30.093512321964536</xVelocity>
+      <xVelocity>30.093512322488362</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>32</time>
     </pmState>
     <pmState>
-      <x>100.72860905343428</x>
+      <x>100.72860905717519</x>
       <y>0.0</y>
-      <xVelocity>30.205312710614734</xVelocity>
+      <xVelocity>30.205312711032615</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>33</time>
     </pmState>
     <pmState>
-      <x>103.75415734112356</x>
+      <x>103.75415734490093</x>
       <y>0.0</y>
-      <xVelocity>30.303460925484835</xVelocity>
+      <xVelocity>30.30346092579931</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>34</time>
     </pmState>
     <pmState>
-      <x>106.78887882175567</x>
+      <x>106.78887882555937</x>
       <y>0.0</y>
-      <xVelocity>30.388933208859847</xVelocity>
+      <xVelocity>30.38893320907351</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>35</time>
     </pmState>
     <pmState>
-      <x>109.83155142050975</x>
+      <x>109.8315514243298</x>
       <y>0.0</y>
-      <xVelocity>30.462624157538443</xVelocity>
+      <xVelocity>30.462624157653853</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>36</time>
     </pmState>
     <pmState>
-      <x>112.88103739102013</x>
+      <x>112.88103739484686</x>
       <y>0.0</y>
-      <xVelocity>30.525321879022993</xVelocity>
+      <xVelocity>30.525321879042643</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>37</time>
     </pmState>
     <pmState>
-      <x>115.93627156223694</x>
+      <x>115.93627156606091</x>
       <y>0.0</y>
-      <xVelocity>30.577686459738622</xVelocity>
+      <xVelocity>30.57768645966488</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>38</time>
     </pmState>
     <pmState>
-      <x>118.99624759789126</x>
+      <x>118.99624760170323</x>
       <y>0.0</y>
-      <xVelocity>30.620231749643217</xVelocity>
+      <xVelocity>30.62023174947834</xVelocity>
       <yVelocity>0.0</yVelocity>
       <time>39</time>
     </pmState>

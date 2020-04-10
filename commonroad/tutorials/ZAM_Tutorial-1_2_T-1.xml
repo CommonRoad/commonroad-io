@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="ZAM_Tutorial-1_1_T-1" date="2020-04-09">
+<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="ZAM_Tutorial-1_1_T-1" date="2020-04-10">
   <location>
     <geoNameId>-999</geoNameId>
     <gpsLatitude>48.262333</gpsLatitude>
     <gpsLongitude>11.668775</gpsLongitude>
   </location>
   <scenarioTags>
-    <critical/>
     <interstate/>
+    <critical/>
   </scenarioTags>
   <lanelet id="1">
     <leftBound>
