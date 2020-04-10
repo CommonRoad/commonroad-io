@@ -13,7 +13,7 @@ from commonroad.scenario.trajectory import State
 __author__ = "Stefanie Manzinger, Christian Pek"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles, BMW Group, KO-HAF"]
-__version__ = "2020.1"
+__version__ = "2020.2"
 __maintainer__ = "Stefanie Manzinger"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
@@ -256,6 +256,8 @@ class Obstacle(ABC):
         """
         if self.initial_signal_state is not None and time_step == self.initial_signal_state.time_step:
             return self.initial_signal_state
+        elif self.signal_series is None:
+            return None
         else:
             for state in self.signal_series:
                 if state.time_step == time_step:

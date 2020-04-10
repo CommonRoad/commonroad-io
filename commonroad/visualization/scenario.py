@@ -30,7 +30,7 @@ from commonroad.visualization.util import draw_polygon_as_patch, draw_polygon_co
 __author__ = "Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = [""]
-__version__ = "2020.1"
+__version__ = "2020.2"
 __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
@@ -909,24 +909,27 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
             else:
                 shape = occ.shape
 
-            # draw turn signal
+            # draw signal states
             if draw_signals and occ is not None:
                 sig = o.signal_state_at_time_step(time_begin)
-                if isinstance(occ.shape, Rectangle):
-                    if hasattr(sig, 'hazard_warning_lights') and sig.hazard_warning_lights is True:
-                        indicators.extend([occ.shape.vertices[0], occ.shape.vertices[1],  occ.shape.vertices[2],
-                                           occ.shape.vertices[3]])
+                if sig is not None:
+                    if isinstance(occ.shape, Rectangle):
+                        if hasattr(sig, 'hazard_warning_lights') and sig.hazard_warning_lights is True:
+                            indicators.extend([occ.shape.vertices[0], occ.shape.vertices[1],  occ.shape.vertices[2],
+                                               occ.shape.vertices[3]])
+                        else:
+                            if hasattr(sig, 'indicator_left') and sig.indicator_left is True:
+                                indicators.extend([occ.shape.vertices[1], occ.shape.vertices[2]])
+                            if hasattr(sig, 'indicator_right') and sig.indicator_right is True:
+                                indicators.extend([occ.shape.vertices[0], occ.shape.vertices[3]])
+                        if hasattr(sig, 'braking_lights') and sig.braking_lights is True:
+                            braking.extend([occ.shape.vertices[0], occ.shape.vertices[1]])
+                        if hasattr(sig, 'flashing_blue_lights') and sig.flashing_blue_lights is True:
+                            bluelights.append(occ.shape.center)
+                        if hasattr(sig, 'horn') and sig.horn is True:
+                            horns.append(occ.shape.center)
                     else:
-                        if hasattr(sig, 'indicator_left') and sig.indicator_left is True:
-                            indicators.extend([occ.shape.vertices[1], occ.shape.vertices[2]])
-                        if hasattr(sig, 'indicator_right') and sig.indicator_right is True:
-                            indicators.extend([occ.shape.vertices[0], occ.shape.vertices[3]])
-                    if hasattr(sig, 'braking_lights') and sig.braking_lights is True:
-                        braking.extend([occ.shape.vertices[0], occ.shape.vertices[1]])
-                    if hasattr(sig, 'flashing_blue_lights') and sig.flashing_blue_lights is True:
-                        bluelights.append(occ.shape.center)
-                    if hasattr(sig, 'horn') and sig.horn is True:
-                        horns.append(occ.shape.center)
+                        warnings.warn('Plotting signal states only implemented for obstacle_shapes Rectangle.')
 
         # draw car icon
         if draw_icon and type(o.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:

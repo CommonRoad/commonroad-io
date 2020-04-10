@@ -19,7 +19,7 @@ from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.intersection import Intersection
-from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine
+from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine, LaneletType
 from commonroad.scenario.obstacle import ObstacleRole, ObstacleType, DynamicObstacle, StaticObstacle, Obstacle, \
     Occupancy, Shape
 from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation
@@ -29,8 +29,8 @@ from commonroad.scenario.trajectory import Trajectory, State
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2020.1"
-__maintainer__ = "Moritz Klischat"
+__version__ = "2020.2"
+__maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
@@ -554,14 +554,17 @@ class LaneletXMLNode:
             stop_line_node = LaneletStopLineXMLNode.create_node(lanelet.stop_line)
             lanelet_node.append(stop_line_node)
 
-        if lanelet.lanelet_type is not None:
+        if len(lanelet.lanelet_type) > 0:
             for lanelet_type_element in lanelet.lanelet_type:
                 lanelet_type_node = etree.Element('laneletType')
                 lanelet_type_node.text = str(lanelet_type_element.value)
                 lanelet_node.append(lanelet_type_node)
         else:
-            warnings.warn('<CommonRoadFileWriter/lanelet.lanelet_type> Lanelet %s has not '
-                          'lanelet type' % lanelet.lanelet_id)
+            warnings.warn('<CommonRoadFileWriter/lanelet.lanelet_type> Lanelet %s has no '
+                          'lanelet type! Default lanelet type is used!' % lanelet.lanelet_id)
+            lanelet_type_node = etree.Element('laneletType')
+            lanelet_type_node.text = str(LaneletType.UNKNOWN.value)
+            lanelet_node.append(lanelet_type_node)
 
         if lanelet.user_one_way:
             for user_one_way in lanelet.user_one_way:

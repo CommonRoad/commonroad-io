@@ -1,9 +1,8 @@
 import unittest
-import numpy as np
 from commonroad.scenario.obstacle import *
 from commonroad.geometry.shape import *
 from commonroad.prediction.prediction import *
-from commonroad.scenario.lanelet import Lanelet
+
 
 class TestObstacle(unittest.TestCase):
     def test_initialize_static_obstacle(self):
@@ -22,8 +21,10 @@ class TestObstacle(unittest.TestCase):
         np.testing.assert_equal(static_obstacle.obstacle_shape.vertices, shape.vertices)
 
     def test_initialize_dynamic_obstacle(self):
-        initial_lanelet_ids = {1, 2}
-
+        initial_shape_lanelet_ids = {1, 2}
+        initial_center_lanelet_ids  = {3, 4}
+        initial_signal_state = SignalState(braking_lights=True, time_step=0)
+        signal_series = [SignalState(braking_lights=True, time_step=1), SignalState(indicator_right=True, time_step=2)]
         obstacle_id = 100
         obstacle_type = ObstacleType.CAR
         obstacle_role = ObstacleRole.DYNAMIC
@@ -31,21 +32,48 @@ class TestObstacle(unittest.TestCase):
         state_list = [State(position=np.array([0.0, 0.0]), orientation=0.3, time_step=0),
                       State(position=np.array([1.0, 1.0]), orientation=0.3, time_step=1),
                       State(position=np.array([2.0, 1.0]), orientation=0.3, time_step=2)]
-        trajectory = Trajectory(0, state_list)
+        trajectory = Trajectory(0, state_list[1::])
         shape = Rectangle(5.1, 2.6, np.array([0, 0]), 0)
         prediction = TrajectoryPrediction(trajectory, shape)
         initial_state = state_list[0]
         shape = Rectangle(5.1, 2.6, np.array([0, 0]), 0)
 
         dynamic_obstacle = DynamicObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type, prediction=prediction,
-                                          initial_state=initial_state, obstacle_shape=shape,
-                                          initial_shape_lanelet_ids=initial_lanelet_ids)
+                                           initial_state=initial_state, obstacle_shape=shape,
+                                           initial_shape_lanelet_ids=initial_shape_lanelet_ids,
+                                           initial_center_lanelet_ids=initial_center_lanelet_ids,
+                                           initial_signal_state=initial_signal_state, signal_series=signal_series)
         np.testing.assert_equal(dynamic_obstacle.obstacle_id, obstacle_id)
         self.assertEqual(obstacle_type, dynamic_obstacle.obstacle_type)
         self.assertEqual(dynamic_obstacle.obstacle_role, obstacle_role)
-        self.assertEqual(dynamic_obstacle.prediction.trajectory.state_list, state_list)
+        self.assertEqual(dynamic_obstacle.prediction.trajectory.state_list, state_list[1::])
         self.assertEqual(dynamic_obstacle.initial_state, initial_state)
+        self.assertEqual(dynamic_obstacle.initial_shape_lanelet_ids, initial_shape_lanelet_ids)
+        self.assertEqual(dynamic_obstacle.initial_center_lanelet_ids, initial_center_lanelet_ids)
+        self.assertEqual(dynamic_obstacle.initial_signal_state, initial_signal_state)
+        self.assertEqual(dynamic_obstacle.signal_series, signal_series)
         np.testing.assert_equal(dynamic_obstacle.obstacle_shape.vertices, shape.vertices)
+
+    def test_signal_state_at_time_step(self):
+        initial_signal_state = SignalState(braking_lights=True, time_step=0)
+        signal_series = [SignalState(braking_lights=True, time_step=1), SignalState(indicator_right=True, time_step=2)]
+        obstacle_id = 100
+        obstacle_type = ObstacleType.CAR
+
+        state_list = [State(position=np.array([1.0, 1.0]), orientation=0.3, time_step=1)]
+        trajectory = Trajectory(0, state_list)
+        shape = Rectangle(5.1, 2.6, np.array([0, 0]), 0)
+        prediction = TrajectoryPrediction(trajectory, shape)
+        initial_state = State(position=np.array([0.0, 0.0]), orientation=0.3, time_step=0)
+        shape = Rectangle(5.1, 2.6, np.array([0, 0]), 0)
+
+        dynamic_obstacle1 = DynamicObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type, prediction=prediction,
+                                           initial_state=initial_state, obstacle_shape=shape,
+                                           initial_signal_state=initial_signal_state, signal_series=signal_series)
+        dynamic_obstacle2 = DynamicObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type, prediction=prediction,
+                                           initial_state=initial_state, obstacle_shape=shape)
+        self.assertEqual(dynamic_obstacle1.signal_state_at_time_step(1), signal_series[0])
+        self.assertEqual(dynamic_obstacle2.signal_state_at_time_step(1), None)
 
     def test_transform_static_obstacle(self):
         rectangle = Rectangle(4.3, 8.9, np.array((2.5, - 1.8)), 1.7)

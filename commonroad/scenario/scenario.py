@@ -17,7 +17,7 @@ from commonroad.prediction.prediction import Occupancy, SetBasedPrediction
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2020.1"
+__version__ = "2020.2"
 __maintainer__ = "Stefanie Manzinger"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
@@ -94,7 +94,7 @@ class GeoTransformation:
 
 
 class Location:
-    def __init__(self, geo_name_id: int = -999, gps_latitude: float = "", gps_longitude: float = "",
+    def __init__(self, geo_name_id: int = -999, gps_latitude: float = 999, gps_longitude: float = 999,
                  geo_transformation: GeoTransformation = None):
         """
         Constructor of a location object

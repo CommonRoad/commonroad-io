@@ -294,6 +294,7 @@ __status__ = "released"
   <xs:simpleType name="laneletType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="urban"/>
+      <xs:enumeration value="interstate"/>
       <xs:enumeration value="country"/>
       <xs:enumeration value="highway"/>
       <xs:enumeration value="sidewalk"/>
@@ -305,6 +306,7 @@ __status__ = "released"
       <xs:enumeration value="accessRamp"/>
       <xs:enumeration value="driveWay"/>
       <xs:enumeration value="busStop"/>
+      <xs:enumeration value="unknown"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="vehicleType">
@@ -339,14 +341,16 @@ __status__ = "released"
   </xs:complexType>
   <!-- intersections -->
   <xs:simpleType name="trafficSignID">
-  	<xs:restriction base="xs:string">
-      <xs:enumeration value="206"/>
+      <xs:restriction base="xs:string">
+          <xs:enumeration value="206"/>
 	  <xs:enumeration value="205"/>
-      <xs:enumeration value="274"/>
+          <xs:enumeration value="274"/>
+	  <xs:enumeration value="275"/>
+          <xs:enumeration value="276"/>
 	  <xs:enumeration value="301"/>
 	  <xs:enumeration value="306"/>
-      <xs:enumeration value="310"/>
-      <xs:enumeration value="720"/>
+          <xs:enumeration value="310"/>
+          <xs:enumeration value="720"/>
 	  <xs:enumeration value="1002-10"/>
 	  <xs:enumeration value="1002-12"/>
 	  <xs:enumeration value="1002-13"/>
@@ -358,7 +362,7 @@ __status__ = "released"
 	  <xs:enumeration value="1002-21"/>
 	  <xs:enumeration value="1002-24"/>
 	  <xs:enumeration value="102"/>
-	</xs:restriction>
+      </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="trafficSign">
     <xs:sequence>
@@ -533,18 +537,6 @@ __status__ = "released"
       <xs:element name="additionalTransformation" type="additionalTransformation"/>
     </xs:sequence>
   </xs:complexType>
-  <xs:simpleType name="country">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="DEU"/>
-      <xs:enumeration value="ZAM"/>
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:simpleType name="federalState">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="DE-BY"/>
-      <xs:enumeration value="ZA-M"/>
-    </xs:restriction>
-  </xs:simpleType>
   <xs:complexType name="location">
     <xs:sequence minOccurs="1" maxOccurs="1">
       <xs:element name="geoNameId" type="xs:integer"/>
