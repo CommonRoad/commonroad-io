@@ -17,7 +17,7 @@ from commonroad.prediction.prediction import Occupancy, SetBasedPrediction
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2020.1"
+__version__ = "2020.2"
 __maintainer__ = "Stefanie Manzinger"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
