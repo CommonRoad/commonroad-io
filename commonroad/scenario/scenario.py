@@ -53,6 +53,7 @@ class Tag(enum.Enum):
     TURN_LEFT = "turn_left"
     TURN_RIGHT = "turn_right"
     TWO_LANE = "two_lane"
+    EMERGENCY_BRAKING = "emergency_braking"
 
 
 class GeoTransformation:
