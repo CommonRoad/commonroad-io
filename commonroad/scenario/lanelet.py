@@ -39,7 +39,7 @@ class LaneletType(enum.Enum):
     URBAN = 'urban'
     COUNTRY = 'country'
     HIGHWAY = 'highway'
-    DRIVE_WAY='driveWay'
+    DRIVE_WAY = 'driveWay'
     MAIN_CARRIAGE_WAY = 'mainCarriageWay'
     ACCESS_RAMP = 'accessRamp'
     EXIT_RAMP = 'exitRamp'
@@ -49,6 +49,7 @@ class LaneletType(enum.Enum):
     BIKE_LANE = 'bikeLane'
     SIDEWALK = 'sidewalk'
     CROSSWALK = 'crosswalk'
+    UNKNOWN = 'unknown'
 
 
 class RoadUser(enum.Enum):
@@ -116,9 +117,9 @@ class Lanelet:
                  line_marking_left_vertices=None,
                  line_marking_right_vertices=None,
                  stop_line=None,
-                 lanelet_type = None,
-                 user_one_way = None,
-                 user_bidirectional = None,
+                 lanelet_type=None,
+                 user_one_way=None,
+                 user_bidirectional=None,
                  traffic_signs=None,
                  traffic_lights=None,
                  ):

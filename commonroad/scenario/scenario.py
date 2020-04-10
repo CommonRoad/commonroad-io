@@ -94,7 +94,7 @@ class GeoTransformation:
 
 
 class Location:
-    def __init__(self, geo_name_id: int = -999, gps_latitude: float = "", gps_longitude: float = "",
+    def __init__(self, geo_name_id: int = -999, gps_latitude: float = -999, gps_longitude: float = -999,
                  geo_transformation: GeoTransformation = None):
         """
         Constructor of a location object

@@ -2,8 +2,8 @@
 <commonRoad affiliation="Technical University of Munich, Germany" author="Christian Pek, Sebastian Maierhofer, Stefanie Manzinger" benchmarkID="ZAM_Tutorial-1_1_T-1" commonRoadVersion="2020a" date="2020-04-08" source="OpenStreetMaps (OSM)" timeStepSize="0.1">
   <location>
     <geoNameId>-999</geoNameId>
-    <gpsLatitude>48.262333</gpsLatitude>
-    <gpsLongitude>11.668775</gpsLongitude>
+    <gpsLatitude>-999</gpsLatitude>
+    <gpsLongitude>-999</gpsLongitude>
   </location>
   <scenarioTags>
     <intersection/>

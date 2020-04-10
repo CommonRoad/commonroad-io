@@ -133,7 +133,7 @@ class CommonRoadFileReader:
                                'affiliation': self._get_affiliation(),
                                'source': self._get_source(),
                                'tags': self._get_tags(),
-                               'location': self._get_location(self._benchmark_id)}
+                               'location': Location()}
         else:
             self._meta_data = {'author': self._get_author(),
                                'affiliation': self._get_affiliation(),
@@ -179,11 +179,6 @@ class CommonRoadFileReader:
                 warnings.warn('Scenario tag \'{}\' not valid.'.format(tag), stacklevel=2)
 
         return tags
-
-    @staticmethod
-    def _get_location(benchmark_id: str) -> Location:
-        """ Reads the tags of the scenario."""
-        return Location(benchmark_id[:3])
 
 
 class ScenarioFactory:
