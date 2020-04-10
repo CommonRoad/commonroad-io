@@ -128,16 +128,68 @@ class TestFileWriter(unittest.TestCase):
             return False
 
     # def test_all_scenarios(self):
-    #     file_list=[]
-    #     for (dirpath, dirnames, filenames) in os.walk(self.cwd_path + "/../../../../../../scenarios/NGSIM/Lankershim"):
-    #         file_list.extend(filenames)
-    #         break
-    #     from commonroad.common.file_reader import CommonRoadFileReader
-    #     for file in file_list:
-    #         scenario_tmp, planning_problem_tmp = CommonRoadFileReader(os.path.join(dirpath, file)).open()
-    #         CommonRoadFileWriter(scenario_tmp, planning_problem_tmp, 'PrinceOfZAM', 'TU Munich', 'unittest', 'overwritten'). \
-    #             write_to_file(filename=self.out_path + '/' + file, overwrite_existing_file=OverwriteExistingFile.SKIP)
-    #         assert self.validate_with_xsd(self.out_path + '/' + file)
+    #     scenarios = "update"
+    #     cooperative = scenarios + "/cooperative"
+    #     hand_crafted = scenarios + "/hand-crafted"
+    #     ngsim_lankershim = scenarios + "/NGSIM/Lankershim"
+    #     ngsim_us101 = scenarios + "/NGSIM/US101"
+    #     sumo = scenarios + "/SUMO"
+    #     bicycle = scenarios + "/THI-Bicycle"
+    #
+    #     for scenario_name in os.listdir(hand_crafted):
+    #         full_path = hand_crafted + "/" + scenario_name
+    #         print(full_path)
+    #         scenario_tmp, planning_problem_tmp = CommonRoadFileReader(full_path).open()
+    #         CommonRoadFileWriter(scenario_tmp, planning_problem_tmp, 'PrinceOfZAM', 'TU Munich', 'unittest'). \
+    #             write_to_file(filename=self.out_path + '/' + scenario_tmp.benchmark_id + ".xml",
+    #                           overwrite_existing_file=OverwriteExistingFile.SKIP)
+    #         assert self.validate_with_xsd(self.out_path + '/' + scenario_tmp.benchmark_id + ".xml")
+
+        # for scenario_name in os.listdir(cooperative):
+        #     full_path = cooperative + "/" + scenario_name
+        #     print(full_path)
+        #     scenario_tmp, planning_problem_tmp = CommonRoadFileReader(full_path).open()
+        #     CommonRoadFileWriter(scenario_tmp, planning_problem_tmp, 'PrinceOfZAM', 'TU Munich', 'unittest'). \
+        #         write_to_file(filename=self.out_path + '/' + scenario_tmp.benchmark_id + ".xml",
+        #                       overwrite_existing_file=OverwriteExistingFile.SKIP)
+        #     assert self.validate_with_xsd(self.out_path + '/' + scenario_tmp.benchmark_id + ".xml")
+
+        # for scenario_name in os.listdir(ngsim_lankershim):
+        #     full_path = ngsim_lankershim + "/" + scenario_name
+        #     print(full_path)
+        #     scenario_tmp, planning_problem_tmp = CommonRoadFileReader(full_path).open()
+        #     CommonRoadFileWriter(scenario_tmp, planning_problem_tmp, 'PrinceOfZAM', 'TU Munich', 'unittest'). \
+        #         write_to_file(filename=self.out_path + '/' + scenario_tmp.benchmark_id + ".xml",
+        #                       overwrite_existing_file=OverwriteExistingFile.SKIP)
+        #     assert self.validate_with_xsd(self.out_path + '/' + scenario_tmp.benchmark_id + ".xml")
+
+        # for scenario_name in os.listdir(ngsim_us101):
+        #     full_path = ngsim_us101 + "/" + scenario_name
+        #     print(full_path)
+        #     scenario_tmp, planning_problem_tmp = CommonRoadFileReader(full_path).open()
+        #     CommonRoadFileWriter(scenario_tmp, planning_problem_tmp, 'PrinceOfZAM', 'TU Munich', 'unittest'). \
+        #         write_to_file(filename=self.out_path + '/' + scenario_tmp.benchmark_id + ".xml",
+        #                       overwrite_existing_file=OverwriteExistingFile.SKIP)
+        #     assert self.validate_with_xsd(self.out_path + '/' + scenario_tmp.benchmark_id + ".xml")
+
+
+        # for scenario_name in os.listdir(sumo):
+        #     full_path = sumo + "/" + scenario_name
+        #     print(full_path)
+        #     scenario_tmp, planning_problem_tmp = CommonRoadFileReader(full_path).open()
+        #     CommonRoadFileWriter(scenario_tmp, planning_problem_tmp, 'PrinceOfZAM', 'TU Munich', 'unittest'). \
+        #         write_to_file(filename=self.out_path + '/' + scenario_tmp.benchmark_id + ".xml",
+        #                       overwrite_existing_file=OverwriteExistingFile.SKIP)
+        #     assert self.validate_with_xsd(self.out_path + '/' + scenario_tmp.benchmark_id + ".xml")
+
+        # for scenario_name in os.listdir(bicycle):
+        #     full_path = bicycle + "/" + scenario_name
+        #     print(full_path)
+        #     scenario_tmp, planning_problem_tmp = CommonRoadFileReader(full_path).open()
+        #     CommonRoadFileWriter(scenario_tmp, planning_problem_tmp, 'PrinceOfZAM', 'TU Munich', 'unittest'). \
+        #         write_to_file(filename=self.out_path + '/' + scenario_tmp.benchmark_id + ".xml",
+        #                       overwrite_existing_file=OverwriteExistingFile.SKIP)
+        #     assert self.validate_with_xsd(self.out_path + '/' + scenario_tmp.benchmark_id + ".xml")
 
 
 if __name__ == '__main__':

@@ -617,27 +617,36 @@ class TestFileReader(unittest.TestCase):
                          xml_file[0].lanelet_network.intersections[0].incomings[0].left_of)
 
     # def test_open_all_scenarios(self):
-    #     scenarios = self.cwd_path
-    #     scenarios = scenarios[:len(scenarios)-51] + "/scenarios"
+    #     scenarios = "update"
     #     cooperative = scenarios + "/cooperative"
     #     hand_crafted = scenarios + "/hand-crafted"
-    #     NGSIM_Lankershim = scenarios + "/NGSIM/Lankershim"
-    #     NGSIM_US101 = scenarios + "/NGSIM/US101"
+    #     ngsim_lankershim = scenarios + "/NGSIM/Lankershim"
+    #     ngsim_us101 = scenarios + "/NGSIM/US101"
+    #     sumo = scenarios + "/SUMO"
+    #     bicycle = scenarios + "/THI-Bicycle"
     #
     #     for scenario in os.listdir(hand_crafted):
     #         full_path = hand_crafted + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
     #
-    #     for scenario in os.listdir(NGSIM_Lankershim):
-    #         full_path = NGSIM_Lankershim + "/" + scenario
+    #     for scenario in os.listdir(ngsim_lankershim):
+    #         full_path = ngsim_lankershim + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
     #
-    #     for scenario in os.listdir(NGSIM_US101):
-    #         full_path = NGSIM_US101 + "/" + scenario
+    #     for scenario in os.listdir(ngsim_us101):
+    #         full_path = ngsim_us101 + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
     #
     #     for scenario in os.listdir(cooperative):
     #         full_path = cooperative + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(sumo):
+    #         full_path = sumo + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(bicycle):
+    #         full_path = bicycle + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
 
 

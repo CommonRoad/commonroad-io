@@ -561,7 +561,7 @@ __status__ = "released"
       <xs:element name="merging_lanes" type="xs:string" minOccurs="0"/>	
       <xs:element name="multi_lane" type="xs:string" minOccurs="0"/>	
       <xs:element name="no_oncoming_traffic" type="xs:string" minOccurs="0"/>	
-      <xs:element name="on_coming_traffic" type="xs:string" minOccurs="0"/>	
+      <xs:element name="oncoming_traffic" type="xs:string" minOccurs="0"/>
       <xs:element name="parallel_lanes" type="xs:string" minOccurs="0"/>
       <xs:element name="race_track" type="xs:string" minOccurs="0"/>
       <xs:element name="roundabout" type="xs:string" minOccurs="0"/>
@@ -574,6 +574,7 @@ __status__ = "released"
       <xs:element name="turn_left" type="xs:string" minOccurs="0"/>
       <xs:element name="turn_right" type="xs:string" minOccurs="0"/>
       <xs:element name="two_lane" type="xs:string" minOccurs="0"/>
+      <xs:element name="emergency_braking" type="xs:string" minOccurs="0"/>
     </xs:all>
   </xs:complexType>
   <!-- %%%%%%%%%%%%%%% root CommonRoad element %%%%%%%%%%%%%%% -->

@@ -39,6 +39,7 @@ class Tag(enum.Enum):
     LANE_FOLLOWING = "lane_following"
     MERGING_LANES = "merging_lanes"
     MULTI_LANE = "multi_lane"
+    ONCOMING_TRAFFIC = "oncoming_traffic"
     NO_ONCOMING_TRAFFIC = "no_oncoming_traffic"
     PARALLEL_LANES = "parallel_lanes"
     RACE_TRACK = "race_track"
@@ -52,6 +53,7 @@ class Tag(enum.Enum):
     TURN_LEFT = "turn_left"
     TURN_RIGHT = "turn_right"
     TWO_LANE = "two_lane"
+    EMERGENCY_BRAKING = "emergency_braking"
 
 
 class GeoTransformation:
