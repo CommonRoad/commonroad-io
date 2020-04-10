@@ -2,12 +2,12 @@
 <commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="ZAM_Tutorial-1_1_T-1" date="2020-04-10">
   <location>
     <geoNameId>-999</geoNameId>
-    <gpsLatitude>-999.0</gpsLatitude>
-    <gpsLongitude>-999.0</gpsLongitude>
+    <gpsLatitude>999.0</gpsLatitude>
+    <gpsLongitude>999.0</gpsLongitude>
   </location>
   <scenarioTags>
-    <critical/>
     <interstate/>
+    <critical/>
   </scenarioTags>
   <lanelet id="1">
     <leftBound>
