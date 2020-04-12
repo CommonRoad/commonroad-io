@@ -21,6 +21,7 @@ class TestFileReader(unittest.TestCase):
         self.filename_lanelets = self.cwd_path + '/test_reading_lanelets.xml'
         self.filename_obstacle = self.cwd_path + '/test_reading_obstacles.xml'
         self.filename_planning_problem = self.cwd_path + '/test_reading_planning_problem.xml'
+        self.filename_2018b = self.cwd_path + "/USA_Lanker-1_1_T-1.xml"
 
         # setup for reading obstacles, lanelets, planning problem and all (without intersection)
         rectangle = Rectangle(4.3, 8.9, center=np.array([0.1, 0.5]), orientation=1.7)
@@ -162,6 +163,30 @@ class TestFileReader(unittest.TestCase):
                                IntersectionIncomingElement(304, {17}, {27}, {23}, {31}, 305),
                                IntersectionIncomingElement(305, {18}, {29}, {21}, {25}, 305)])
 
+    def test_open_2018b(self):
+        scenario, planning_problem_set = CommonRoadFileReader(self.filename_2018b).open()
+        exp_location = Location()
+        exp_location_geo_name_id = exp_location.geo_name_id
+        exp_location_gps_long = exp_location.gps_longitude
+        exp_location_gps_lat = exp_location.gps_latitude
+        exp_tags = {Tag.URBAN, Tag.SPEED_LIMIT, Tag.ONCOMING_TRAFFIC, Tag.MULTI_LANE, Tag.INTERSECTION, Tag.COMFORT,
+                    Tag.LANE_FOLLOWING}
+        exp_num_lanelets = 91
+        exp_num_dynamic_obstacles = 24
+        exp_num_static_obstacles = 0
+        exp_num_traffic_signs = 91
+        exp_num_traffic_lights = 0
+        exp_num_intersections = 0
+        self.assertSetEqual(exp_tags, scenario.tags)
+        self.assertEqual(exp_location_geo_name_id, scenario.location.geo_name_id)
+        self.assertEqual(exp_location_gps_long, scenario.location.gps_longitude)
+        self.assertEqual(exp_location_gps_lat, scenario.location.gps_latitude)
+        self.assertEqual(exp_num_lanelets, len(scenario.lanelet_network.lanelets))
+        self.assertEqual(exp_num_dynamic_obstacles, len(scenario.dynamic_obstacles))
+        self.assertEqual(exp_num_static_obstacles, len(scenario.static_obstacles))
+        self.assertEqual(exp_num_traffic_signs, len(scenario.lanelet_network.traffic_signs))
+        self.assertEqual(exp_num_traffic_lights, len(scenario.lanelet_network.traffic_lights))
+        self.assertEqual(exp_num_intersections, len(scenario.lanelet_network.intersections))
 
     def test_open_lanelets(self):
         lanelets = CommonRoadFileReader(self.filename_lanelets).open()

@@ -196,29 +196,32 @@ class ScenarioFactory:
         if commonroad_version != '2018b':
             meta_data["tags"] = TagsFactory.create_from_xml_node(xml_node)
             meta_data["location"] = LocationFactory.create_from_xml_node(xml_node)
+        else:
+            LaneletFactory._speed_limits = {}
         scenario = Scenario(dt, benchmark_id, **meta_data)
 
         scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
         if commonroad_version == '2018b':
-            LaneletFactory._speed_limits = {}
             scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network))
             for key, value in LaneletFactory._speed_limits.items():
-                if SupportedTrafficSignCountry.GERMANY.value in benchmark_id:
-                    traffic_sign_element = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED.value, [str(key)])
-                elif SupportedTrafficSignCountry.USA.value in benchmark_id:
-                    traffic_sign_element = TrafficSignElement(TrafficSignIDUsa.MAX_SPEED.value, [str(key)])
-                elif SupportedTrafficSignCountry.CHINA.value in benchmark_id:
-                    traffic_sign_element = TrafficSignElement(TrafficSignIDChina.MAX_SPEED.value, [str(key)])
-                elif SupportedTrafficSignCountry.SPAIN.value in benchmark_id:
-                    traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAX_SPEED.value, [str(key)])
-                elif SupportedTrafficSignCountry.RUSSIA.value in benchmark_id:
-                    traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAX_SPEED.value, [str(key)])
-                else:
-                    traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED.value, [str(key)])
-                    warnings.warn("Unknown country: Default traffic sign IDs are used.")
-                traffic_sign = TrafficSign(scenario.generate_object_id(), [traffic_sign_element], None, True)
-                scenario.lanelet_network.add_traffic_sign(traffic_sign, value)
-                LaneletFactory._speed_limits = {}
+                for lanelet in value:
+                    if SupportedTrafficSignCountry.GERMANY.value in benchmark_id:
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, [str(key)])
+                    elif SupportedTrafficSignCountry.USA.value in benchmark_id:
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDUsa.MAX_SPEED, [str(key)])
+                    elif SupportedTrafficSignCountry.CHINA.value in benchmark_id:
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDChina.MAX_SPEED, [str(key)])
+                    elif SupportedTrafficSignCountry.SPAIN.value in benchmark_id:
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAX_SPEED, [str(key)])
+                    elif SupportedTrafficSignCountry.RUSSIA.value in benchmark_id:
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAX_SPEED, [str(key)])
+                    else:
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
+                        warnings.warn("Unknown country: Default traffic sign IDs are used.")
+                    traffic_sign = TrafficSign(scenario.generate_object_id(), [traffic_sign_element], {lanelet},
+                                               scenario.lanelet_network.find_lanelet_by_id(lanelet).right_vertices[0])
+                    scenario.add_objects(traffic_sign, {lanelet})
+            LaneletFactory._speed_limits = {}
         else:
             scenario.add_objects(cls._obstacles(xml_node, scenario.lanelet_network))
         return scenario
@@ -423,10 +426,12 @@ class LaneletFactory:
 
         if cls._speed_limit_exists(xml_node) is not None:
             speed_limit = cls._speed_limit_exists(xml_node)
-            if hasattr(cls, '_speed_limits') and cls._speed_limits.get(speed_limit) is not None:
+            if not hasattr(cls, '_speed_limits'):
+                cls._speed_limits = {speed_limit: {lanelet_id}}
+            elif cls._speed_limits.get(speed_limit) is not None:
                 cls._speed_limits[speed_limit].add(lanelet_id)
             else:
-                cls._speed_limits = {speed_limit: {lanelet_id}}
+                cls._speed_limits[speed_limit] = {lanelet_id}
 
         return Lanelet(
             left_vertices=left_vertices, center_vertices=center_vertices, right_vertices=right_vertices,

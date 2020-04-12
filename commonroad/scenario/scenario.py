@@ -13,6 +13,8 @@ from commonroad.scenario.obstacle import ObstacleRole
 from commonroad.scenario.obstacle import ObstacleType
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Obstacle
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction
+from commonroad.scenario.intersection import Intersection
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
 
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -212,11 +214,14 @@ class Scenario:
         return list(itertools.chain(self._static_obstacles.values(),
                                     self._dynamic_obstacles.values()))
 
-    def add_objects(self, scenario_object: Union[List[Union[Obstacle, Lanelet, LaneletNetwork]],
-                                                 Obstacle, Lanelet, LaneletNetwork]):
+    def add_objects(self, scenario_object: Union[List[Union[Obstacle, Lanelet, LaneletNetwork, TrafficSign,
+                                                            TrafficLight, Intersection]], Obstacle, Lanelet,
+                                                 LaneletNetwork, TrafficSign, TrafficLight, Intersection],
+                    lanelet_ids: Set[int] = None):
         """ Function to add objects, e.g., lanelets, dynamic and static obstacles, to the scenario.
 
             :param scenario_object: object(s) to be added to the scenario
+            :param lanelet_ids: lanelet IDs a traffic sign, traffic light should be referenced from
             :raise ValueError: a value error is raised if the type of scenario_object is invalid.
         """
         if isinstance(scenario_object, list):
@@ -238,6 +243,16 @@ class Scenario:
         elif isinstance(scenario_object, Lanelet):
             self._mark_object_id_as_used(scenario_object.lanelet_id)
             self._lanelet_network.add_lanelet(scenario_object)
+        elif isinstance(scenario_object, TrafficSign):
+            self._mark_object_id_as_used(scenario_object.traffic_sign_id)
+            self._lanelet_network.add_traffic_sign(scenario_object, lanelet_ids)
+        elif isinstance(scenario_object, TrafficLight):
+            self._mark_object_id_as_used(scenario_object.traffic_light_id)
+            self._lanelet_network.add_traffic_light(scenario_object, lanelet_ids)
+        elif isinstance(scenario_object, Intersection):
+            self._mark_object_id_as_used(scenario_object.intersection_id)
+            self._lanelet_network.add_intersection(scenario_object)
+
         else:
             raise ValueError('<Scenario/add_objects> argument "scenario_object" of wrong type. '
                              'Expected types: %s, %s, %s, and %s. Got type: %s.'
