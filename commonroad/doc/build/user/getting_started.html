@@ -428,10 +428,10 @@ The <a class="reference internal" href="../api/common.html#commonroad.common.sol
 
 <span class="c1"># create solution object for benchmark</span>
 <span class="n">pps</span> <span class="o">=</span> <span class="n">PlanningProblemSolution</span><span class="p">(</span><span class="n">planning_problem_id</span><span class="o">=</span><span class="mi">1215</span><span class="p">,</span>
-                                                                                                                <span class="n">vehicle_type</span><span class="o">=</span><span class="n">VehicleType</span><span class="o">.</span><span class="n">BMW_320i</span><span class="p">,</span>
-                                                                                                                <span class="n">vehicle_model</span><span class="o">=</span><span class="n">VehicleModel</span><span class="o">.</span><span class="n">PM</span><span class="p">,</span>
-                                                                                                                <span class="n">cost_function</span><span class="o">=</span><span class="n">CostFunction</span><span class="o">.</span><span class="n">JB1</span><span class="p">,</span>
-                                                                                                                <span class="n">trajectory</span><span class="o">=</span><span class="n">trajectory_pm</span><span class="p">)</span>
+                        <span class="n">vehicle_type</span><span class="o">=</span><span class="n">VehicleType</span><span class="o">.</span><span class="n">BMW_320i</span><span class="p">,</span>
+                        <span class="n">vehicle_model</span><span class="o">=</span><span class="n">VehicleModel</span><span class="o">.</span><span class="n">PM</span><span class="p">,</span>
+                        <span class="n">cost_function</span><span class="o">=</span><span class="n">CostFunction</span><span class="o">.</span><span class="n">JB1</span><span class="p">,</span>
+                        <span class="n">trajectory</span><span class="o">=</span><span class="n">trajectory_pm</span><span class="p">)</span>
 
 <span class="n">solution</span> <span class="o">=</span> <span class="n">Solution</span><span class="p">(</span><span class="n">scenario</span><span class="o">.</span><span class="n">benchmark_id</span><span class="p">,</span> <span class="s1">&#39;2020a&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">pps</span><span class="p">],</span> <span class="n">computation_time</span><span class="o">=</span><span class="n">t_c</span><span class="p">)</span>
 

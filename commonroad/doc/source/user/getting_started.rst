@@ -239,10 +239,10 @@ A solution (trajectory or control input vector) can be written as XML file in th
 
 	# create solution object for benchmark
 	pps = PlanningProblemSolution(planning_problem_id=1215,
-															vehicle_type=VehicleType.BMW_320i,
-															vehicle_model=VehicleModel.PM,
-															cost_function=CostFunction.JB1,
-															trajectory=trajectory_pm)
+                                vehicle_type=VehicleType.BMW_320i,
+                                vehicle_model=VehicleModel.PM,
+                                cost_function=CostFunction.JB1,
+                                trajectory=trajectory_pm)
 
 	solution = Solution(scenario.benchmark_id, '2020a', [pps], computation_time=t_c)
 
