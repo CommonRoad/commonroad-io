@@ -49,6 +49,7 @@ class LaneletType(enum.Enum):
     BIKE_LANE = 'bikeLane'
     SIDEWALK = 'sidewalk'
     CROSSWALK = 'crosswalk'
+    INTERSTATE = 'interstate'
     UNKNOWN = 'unknown'
 
 

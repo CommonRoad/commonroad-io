@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>commonroad.scenario.lanelet &mdash; CommonRoad_io 2020.1 documentation</title>
+  <title>commonroad.scenario.lanelet &mdash; CommonRoad_io 2020.2 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                2020.1
+                2020.2
               </div>
             
           
@@ -244,7 +244,7 @@
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Christian Pek, Sebastian Maierhofer&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;TUM Cyber-Physical Systems Group&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;BMW CAR@TUM&quot;</span><span class="p">]</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2020.1&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2020.2&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Christian Pek&quot;</span>
 <span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad-i06@in.tum.de&quot;</span>
 <span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;released&quot;</span>
@@ -269,7 +269,7 @@
     <span class="n">URBAN</span> <span class="o">=</span> <span class="s1">&#39;urban&#39;</span>
     <span class="n">COUNTRY</span> <span class="o">=</span> <span class="s1">&#39;country&#39;</span>
     <span class="n">HIGHWAY</span> <span class="o">=</span> <span class="s1">&#39;highway&#39;</span>
-    <span class="n">DRIVE_WAY</span><span class="o">=</span><span class="s1">&#39;driveWay&#39;</span>
+    <span class="n">DRIVE_WAY</span> <span class="o">=</span> <span class="s1">&#39;driveWay&#39;</span>
     <span class="n">MAIN_CARRIAGE_WAY</span> <span class="o">=</span> <span class="s1">&#39;mainCarriageWay&#39;</span>
     <span class="n">ACCESS_RAMP</span> <span class="o">=</span> <span class="s1">&#39;accessRamp&#39;</span>
     <span class="n">EXIT_RAMP</span> <span class="o">=</span> <span class="s1">&#39;exitRamp&#39;</span>
@@ -278,7 +278,9 @@
     <span class="n">BUS_STOP</span> <span class="o">=</span> <span class="s1">&#39;busStop&#39;</span>
     <span class="n">BIKE_LANE</span> <span class="o">=</span> <span class="s1">&#39;bikeLane&#39;</span>
     <span class="n">SIDEWALK</span> <span class="o">=</span> <span class="s1">&#39;sidewalk&#39;</span>
-    <span class="n">CROSSWALK</span> <span class="o">=</span> <span class="s1">&#39;crosswalk&#39;</span></div>
+    <span class="n">CROSSWALK</span> <span class="o">=</span> <span class="s1">&#39;crosswalk&#39;</span>
+    <span class="n">INTERSTATE</span> <span class="o">=</span> <span class="s1">&#39;interstate&#39;</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;unknown&#39;</span></div>
 
 
 <div class="viewcode-block" id="RoadUser"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.lanelet.RoadUser">[docs]</a><span class="k">class</span> <span class="nc">RoadUser</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
@@ -346,9 +348,9 @@
                  <span class="n">line_marking_left_vertices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">line_marking_right_vertices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">stop_line</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">lanelet_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">user_one_way</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">user_bidirectional</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">lanelet_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">user_one_way</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">user_bidirectional</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">traffic_signs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">traffic_lights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="p">):</span>

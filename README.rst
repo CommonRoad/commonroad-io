@@ -13,7 +13,7 @@ CommonRoad_io
 The CommonRoad_io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tools of the CommonRoad Framework.
 With CommonRoad_io, those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`__.
 
-CommonRoad_io 2020.1 is compatible with CommonRoad scenario in version 2020a and supports reading 2018b scenarios.
+CommonRoad_io 2020.2 is compatible with CommonRoad scenario in version 2020a and supports reading 2018b scenarios.
 
 The software is written in Python 3.6 and tested on MacOs and Linux. The usage of the Anaconda_ Python distribution is strongly recommended.
 
@@ -62,6 +62,13 @@ and add the folder commonroad_io to your Python environment.
 
 Changelog
 ============
+Compared to version 2020.1, the following features were added:
+
+* new tags for compatibility with 2018b XML format
+* new lanelet types: *unknown* and *interstate*
+* traffic signs are not visualized by default
+* various small bug fixes
+
 Compared to version 2019.2, the following features were added:
 
 * support of 2020a Scenarios with TrafficLights, TrafficSigns, and Intersection objects

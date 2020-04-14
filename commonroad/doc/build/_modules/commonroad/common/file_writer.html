@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>commonroad.common.file_writer &mdash; CommonRoad_io 2020.1 documentation</title>
+  <title>commonroad.common.file_writer &mdash; CommonRoad_io 2020.2 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                2020.1
+                2020.2
               </div>
             
           
@@ -249,7 +249,7 @@
 <span class="kn">from</span> <span class="nn">commonroad.planning.planning_problem</span> <span class="k">import</span> <span class="n">PlanningProblemSet</span><span class="p">,</span> <span class="n">PlanningProblem</span>
 <span class="kn">from</span> <span class="nn">commonroad.prediction.prediction</span> <span class="k">import</span> <span class="n">SetBasedPrediction</span><span class="p">,</span> <span class="n">TrajectoryPrediction</span>
 <span class="kn">from</span> <span class="nn">commonroad.scenario.intersection</span> <span class="k">import</span> <span class="n">Intersection</span>
-<span class="kn">from</span> <span class="nn">commonroad.scenario.lanelet</span> <span class="k">import</span> <span class="n">Lanelet</span><span class="p">,</span> <span class="n">LineMarking</span><span class="p">,</span> <span class="n">StopLine</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.lanelet</span> <span class="k">import</span> <span class="n">Lanelet</span><span class="p">,</span> <span class="n">LineMarking</span><span class="p">,</span> <span class="n">StopLine</span><span class="p">,</span> <span class="n">LaneletType</span>
 <span class="kn">from</span> <span class="nn">commonroad.scenario.obstacle</span> <span class="k">import</span> <span class="n">ObstacleRole</span><span class="p">,</span> <span class="n">ObstacleType</span><span class="p">,</span> <span class="n">DynamicObstacle</span><span class="p">,</span> <span class="n">StaticObstacle</span><span class="p">,</span> <span class="n">Obstacle</span><span class="p">,</span> \
     <span class="n">Occupancy</span><span class="p">,</span> <span class="n">Shape</span>
 <span class="kn">from</span> <span class="nn">commonroad.scenario.scenario</span> <span class="k">import</span> <span class="n">Scenario</span><span class="p">,</span> <span class="n">Tag</span><span class="p">,</span> <span class="n">Location</span><span class="p">,</span> <span class="n">GeoTransformation</span>
@@ -259,8 +259,8 @@
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;TUM Cyber-Physical Systems Group&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Priority Program SPP 1835 Cooperative Interacting Automobiles&quot;</span><span class="p">]</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2020.1&quot;</span>
-<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Moritz Klischat&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2020.2&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Sebastian Maierhofer&quot;</span>
 <span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad-i06@in.tum.de&quot;</span>
 <span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Released&quot;</span>
 
@@ -469,6 +469,8 @@
     <span class="k">def</span> <span class="nf">_add_all_objects_from_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">LocationXMLNode</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">LocationXMLNode</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">Location</span><span class="p">()))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TagXMLNode</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">lanelet_network</span><span class="o">.</span><span class="n">lanelets</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_root_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">LaneletXMLNode</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
@@ -784,14 +786,17 @@
             <span class="n">stop_line_node</span> <span class="o">=</span> <span class="n">LaneletStopLineXMLNode</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">lanelet</span><span class="o">.</span><span class="n">stop_line</span><span class="p">)</span>
             <span class="n">lanelet_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stop_line_node</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">lanelet_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lanelet</span><span class="o">.</span><span class="n">lanelet_type</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">lanelet_type_element</span> <span class="ow">in</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">lanelet_type</span><span class="p">:</span>
                 <span class="n">lanelet_type_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;laneletType&#39;</span><span class="p">)</span>
                 <span class="n">lanelet_type_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">lanelet_type_element</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
                 <span class="n">lanelet_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lanelet_type_node</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;&lt;CommonRoadFileWriter/lanelet.lanelet_type&gt; Lanelet </span><span class="si">%s</span><span class="s1"> has not &#39;</span>
-                          <span class="s1">&#39;lanelet type&#39;</span> <span class="o">%</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">lanelet_id</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;&lt;CommonRoadFileWriter/lanelet.lanelet_type&gt; Lanelet </span><span class="si">%s</span><span class="s1"> has no &#39;</span>
+                          <span class="s1">&#39;lanelet type! Default lanelet type is used!&#39;</span> <span class="o">%</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">lanelet_id</span><span class="p">)</span>
+            <span class="n">lanelet_type_node</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;laneletType&#39;</span><span class="p">)</span>
+            <span class="n">lanelet_type_node</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">LaneletType</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">lanelet_node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lanelet_type_node</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">user_one_way</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">user_one_way</span> <span class="ow">in</span> <span class="n">lanelet</span><span class="o">.</span><span class="n">user_one_way</span><span class="p">:</span>

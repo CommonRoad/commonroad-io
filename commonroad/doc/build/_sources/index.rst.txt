@@ -2,7 +2,7 @@
    sphinx-quickstart on Tue Jul 10 09:17:31 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
-   
+
 
 CommonRoad_io
 =============
@@ -10,7 +10,7 @@ CommonRoad_io
 The CommonRoad_io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tools of the CommonRoad Framework.
 With CommonRoad_io, those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`__.
 
-CommonRoad_io 2020.1 is compatible with CommonRoad scenario in version 2020a and supports reading 2018b scenarios.
+CommonRoad_io 2020.2 is compatible with CommonRoad scenario in version 2020a and supports reading 2018b scenarios.
 
 The software is written in Python 3.6 and tested on MacOs and Linux. The usage of the Anaconda_ Python distribution is strongly recommended.
 

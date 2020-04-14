@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>commonroad.scenario.scenario &mdash; CommonRoad_io 2020.1 documentation</title>
+  <title>commonroad.scenario.scenario &mdash; CommonRoad_io 2020.2 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                2020.1
+                2020.2
               </div>
             
           
@@ -243,11 +243,13 @@
 <span class="kn">from</span> <span class="nn">commonroad.scenario.obstacle</span> <span class="k">import</span> <span class="n">ObstacleType</span>
 <span class="kn">from</span> <span class="nn">commonroad.scenario.obstacle</span> <span class="k">import</span> <span class="n">StaticObstacle</span><span class="p">,</span> <span class="n">DynamicObstacle</span><span class="p">,</span> <span class="n">Obstacle</span>
 <span class="kn">from</span> <span class="nn">commonroad.prediction.prediction</span> <span class="k">import</span> <span class="n">Occupancy</span><span class="p">,</span> <span class="n">SetBasedPrediction</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.intersection</span> <span class="k">import</span> <span class="n">Intersection</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.traffic_sign</span> <span class="k">import</span> <span class="n">TrafficSign</span><span class="p">,</span> <span class="n">TrafficLight</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;TUM Cyber-Physical Systems Group&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Priority Program SPP 1835 Cooperative Interacting Automobiles&quot;</span><span class="p">]</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2020.1&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2020.2&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Stefanie Manzinger&quot;</span>
 <span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad-i06@in.tum.de&quot;</span>
 <span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Released&quot;</span>
@@ -269,6 +271,7 @@
     <span class="n">LANE_FOLLOWING</span> <span class="o">=</span> <span class="s2">&quot;lane_following&quot;</span>
     <span class="n">MERGING_LANES</span> <span class="o">=</span> <span class="s2">&quot;merging_lanes&quot;</span>
     <span class="n">MULTI_LANE</span> <span class="o">=</span> <span class="s2">&quot;multi_lane&quot;</span>
+    <span class="n">ONCOMING_TRAFFIC</span> <span class="o">=</span> <span class="s2">&quot;oncoming_traffic&quot;</span>
     <span class="n">NO_ONCOMING_TRAFFIC</span> <span class="o">=</span> <span class="s2">&quot;no_oncoming_traffic&quot;</span>
     <span class="n">PARALLEL_LANES</span> <span class="o">=</span> <span class="s2">&quot;parallel_lanes&quot;</span>
     <span class="n">RACE_TRACK</span> <span class="o">=</span> <span class="s2">&quot;race_track&quot;</span>
@@ -281,7 +284,8 @@
     <span class="n">TRAFFIC_JAM</span> <span class="o">=</span> <span class="s2">&quot;traffic_jam&quot;</span>
     <span class="n">TURN_LEFT</span> <span class="o">=</span> <span class="s2">&quot;turn_left&quot;</span>
     <span class="n">TURN_RIGHT</span> <span class="o">=</span> <span class="s2">&quot;turn_right&quot;</span>
-    <span class="n">TWO_LANE</span> <span class="o">=</span> <span class="s2">&quot;two_lane&quot;</span></div>
+    <span class="n">TWO_LANE</span> <span class="o">=</span> <span class="s2">&quot;two_lane&quot;</span>
+    <span class="n">EMERGENCY_BRAKING</span> <span class="o">=</span> <span class="s2">&quot;emergency_braking&quot;</span></div>
 
 
 <div class="viewcode-block" id="GeoTransformation"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.scenario.GeoTransformation">[docs]</a><span class="k">class</span> <span class="nc">GeoTransformation</span><span class="p">:</span>
@@ -324,7 +328,7 @@
 
 
 <span class="k">class</span> <span class="nc">Location</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo_name_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">999</span><span class="p">,</span> <span class="n">gps_latitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">gps_longitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geo_name_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">999</span><span class="p">,</span> <span class="n">gps_latitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">999</span><span class="p">,</span> <span class="n">gps_longitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">999</span><span class="p">,</span>
                  <span class="n">geo_transformation</span><span class="p">:</span> <span class="n">GeoTransformation</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor of a location object</span>
@@ -440,11 +444,14 @@
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_static_obstacles</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
                                     <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_obstacles</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
 
-<div class="viewcode-block" id="Scenario.add_objects"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.scenario.Scenario.add_objects">[docs]</a>    <span class="k">def</span> <span class="nf">add_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scenario_object</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Obstacle</span><span class="p">,</span> <span class="n">Lanelet</span><span class="p">,</span> <span class="n">LaneletNetwork</span><span class="p">]],</span>
-                                                 <span class="n">Obstacle</span><span class="p">,</span> <span class="n">Lanelet</span><span class="p">,</span> <span class="n">LaneletNetwork</span><span class="p">]):</span>
+<div class="viewcode-block" id="Scenario.add_objects"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.scenario.Scenario.add_objects">[docs]</a>    <span class="k">def</span> <span class="nf">add_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scenario_object</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Obstacle</span><span class="p">,</span> <span class="n">Lanelet</span><span class="p">,</span> <span class="n">LaneletNetwork</span><span class="p">,</span> <span class="n">TrafficSign</span><span class="p">,</span>
+                                                            <span class="n">TrafficLight</span><span class="p">,</span> <span class="n">Intersection</span><span class="p">]],</span> <span class="n">Obstacle</span><span class="p">,</span> <span class="n">Lanelet</span><span class="p">,</span>
+                                                 <span class="n">LaneletNetwork</span><span class="p">,</span> <span class="n">TrafficSign</span><span class="p">,</span> <span class="n">TrafficLight</span><span class="p">,</span> <span class="n">Intersection</span><span class="p">],</span>
+                    <span class="n">lanelet_ids</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Function to add objects, e.g., lanelets, dynamic and static obstacles, to the scenario.</span>
 
 <span class="sd">            :param scenario_object: object(s) to be added to the scenario</span>
+<span class="sd">            :param lanelet_ids: lanelet IDs a traffic sign, traffic light should be referenced from</span>
 <span class="sd">            :raise ValueError: a value error is raised if the type of scenario_object is invalid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -466,6 +473,16 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">,</span> <span class="n">Lanelet</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_mark_object_id_as_used</span><span class="p">(</span><span class="n">scenario_object</span><span class="o">.</span><span class="n">lanelet_id</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_lanelet_network</span><span class="o">.</span><span class="n">add_lanelet</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">,</span> <span class="n">TrafficSign</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mark_object_id_as_used</span><span class="p">(</span><span class="n">scenario_object</span><span class="o">.</span><span class="n">traffic_sign_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lanelet_network</span><span class="o">.</span><span class="n">add_traffic_sign</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">,</span> <span class="n">lanelet_ids</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">,</span> <span class="n">TrafficLight</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mark_object_id_as_used</span><span class="p">(</span><span class="n">scenario_object</span><span class="o">.</span><span class="n">traffic_light_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lanelet_network</span><span class="o">.</span><span class="n">add_traffic_light</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">,</span> <span class="n">lanelet_ids</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">,</span> <span class="n">Intersection</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mark_object_id_as_used</span><span class="p">(</span><span class="n">scenario_object</span><span class="o">.</span><span class="n">intersection_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lanelet_network</span><span class="o">.</span><span class="n">add_intersection</span><span class="p">(</span><span class="n">scenario_object</span><span class="p">)</span>
+
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;&lt;Scenario/add_objects&gt; argument &quot;scenario_object&quot; of wrong type. &#39;</span>
                              <span class="s1">&#39;Expected types: </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">, and </span><span class="si">%s</span><span class="s1">. Got type: </span><span class="si">%s</span><span class="s1">.&#39;</span>

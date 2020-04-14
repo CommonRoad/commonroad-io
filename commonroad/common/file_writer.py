@@ -239,6 +239,8 @@ class CommonRoadFileWriter:
     def _add_all_objects_from_scenario(self):
         if self.location is not None:
             self._root_node.append(LocationXMLNode.create_node(self.location))
+        else:
+            self._root_node.append(LocationXMLNode.create_node(Location()))
         self._root_node.append(TagXMLNode.create_node(self.tags))
         for l in self.scenario.lanelet_network.lanelets:
             self._root_node.append(LaneletXMLNode.create_node(l))

@@ -105,10 +105,10 @@ class StateType(Enum):
     Input             -> Input type for ST, KS, and MB vehicle models
     PMInput           -> Input type for PM vehicle model.
     """
-    PM = 'pmState'
+    MB = 'mbState'
     ST = 'stState'
     KS = 'ksState'
-    MB = 'mbState'
+    PM = 'pmState'
     Input = 'input'
     PMInput = 'pmInput'
 
@@ -131,21 +131,47 @@ class StateType(Enum):
         return XMLStateFields[self.name].value
 
     @classmethod
-    def get_state_type(cls, state: State) -> 'StateType':
+    def get_state_type(cls, state: State, desired_vehicle_model:VehicleModel=None) -> 'StateType':
         """
         Returns the corresponding StateType for the given State object by matching State object's attributes
         to the state fields.
 
         :param state: State - CommonRoad State object
+        :param desired_vehicle_model: check if given vehicle_model is supported first
         :return: State-Type
         """
+        # put desired_vehicle_model first
         attrs = state.attributes
-        for state_fields in StateFields:
-            if not len(attrs) == len(state_fields.value): continue
-            if not all([attr in state_fields.value for attr in attrs]): continue
-            return cls[state_fields.name]
+
+        if desired_vehicle_model is not None:
+            state_fields_all = [StateFields[str(desired_vehicle_model.name)], StateFields.Input, StateFields.PMInput]
+            state_fields_add = []
+            for sf in StateFields:
+                if sf not in state_fields_all: state_fields_add.append(sf)
+
+            state_fields_all += state_fields_add
+
+            for state_fields in state_fields_all:
+                if not len(attrs) >= len(state_fields.value): continue  # >=
+                if not all([sf in attrs for sf in state_fields.value]): continue
+                return cls[state_fields.name]
+        else:
+            state_fields_all = StateFields
+            for state_fields in state_fields_all:
+                if not len(attrs) == len(state_fields.value): continue  # ==
+                if not all([sf in attrs for sf in state_fields.value]): continue
+                return cls[state_fields.name]
+
         raise Exception('Given state is not valid!')
 
+    @classmethod
+    def check_state_type(cls, vehicle_model:VehicleModel) -> bool:
+        """
+        Checks whether vehicle model can be supported by trajectory.
+        :param vehicle_model: vehicle model enum
+        :return: bool
+        """
+        StateFields(vehicle_model.name)
 
 @unique
 class TrajectoryType(Enum):
@@ -156,10 +182,10 @@ class TrajectoryType(Enum):
     Input             -> InputVector type for ST, KS, and MB vehicle models
     PMInput           -> InputVector type for PM vehicle model.
     """
-    PM = 'pmTrajectory'
+    MB = 'mbTrajectory'
     ST = 'stTrajectory'
     KS = 'ksTrajectory'
-    MB = 'mbTrajectory'
+    PM = 'pmTrajectory'
     Input = 'inputVector'
     PMInput = 'pmInputVector'
 
@@ -173,14 +199,14 @@ class TrajectoryType(Enum):
         return StateType[self.name]
 
     @classmethod
-    def get_trajectory_type(cls, trajectory: Trajectory) -> 'TrajectoryType':
+    def get_trajectory_type(cls, trajectory: Trajectory, desired_vehicle_model:VehicleModel=None) -> 'TrajectoryType':
         """
         Returns the corresponding TrajectoryType for the given Trajectory object based on the StateType of its states.
 
         :param trajectory: Trajectory - CommonRoad Trajectory object
         :return: TrajectoryType
         """
-        state_type = StateType.get_state_type(trajectory.state_list[0])
+        state_type = StateType.get_state_type(trajectory.state_list[0], desired_vehicle_model)
         return cls[state_type.name]
 
     def valid_vehicle_model(self, vehicle_model: VehicleModel) -> bool:
@@ -229,7 +255,7 @@ class PlanningProblemSolution:
         self.vehicle_type = vehicle_type
         self._cost_function = cost_function
         self._trajectory = trajectory
-        self._trajectory_type = TrajectoryType.get_trajectory_type(self._trajectory)
+        self._trajectory_type = TrajectoryType.get_trajectory_type(self._trajectory, self.vehicle_model)
 
         self._check_trajectory_supported(self._vehicle_model, self._trajectory_type)
         self._check_cost_supported(self._vehicle_model, self._cost_function)
@@ -580,6 +606,7 @@ class CommonRoadSolutionWriter:
 
         :param solution: Solution.
         """
+        assert isinstance(solution, Solution)
         self.solution = solution
         self._solution_root = self._serialize_solution(self.solution)
 
