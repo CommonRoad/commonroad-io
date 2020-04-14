@@ -65,8 +65,9 @@ Changelog
 Compared to version 2020.1, the following features were added:
 
 * new tags for compatibility with 2018b XML format
-* bug-fix in signal series method
-* new lanelet type: *unknown*
+* new lanelet types: *unknown* and *interstate*
+* traffic signs are not visualized by default
+* various small bug fixes
 
 Compared to version 2019.2, the following features were added:
 
