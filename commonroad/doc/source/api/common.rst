@@ -29,9 +29,15 @@ File Writer
    :member-order: bysource
 
 
-Solution Writer
----------------
-.. automodule:: commonroad.common.solution_writer
+Solution Reader and Writer
+--------------------------
+
+The following classes help with creating a CommonRoad solution xml file from a
+trajectory that solves CommonRoad benchmarks. The files can be submitted on our
+`website <https://commonroad.in.tum.de/documentation/vehicle_model_doc/>`_.
+Create a Solution and write using the CommonRoadSolutionWriter.
+
+.. automodule:: commonroad.common.solution
 
 ``VehicleType`` class
 ^^^^^^^^^^^^^^^^^^^^^
@@ -58,6 +64,27 @@ Detailed information about the listed vehicle models in `Vehicle Model Documenta
 
 Detailed information about the listed cost functions in `Cost Function Documentation <https://commonroad.in.tum.de/documentation/cost_func_doc/>`_.
 
+``PlanningProblemSolution`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: PlanningProblemSolution
+   :members:
+   :undoc-members:
+   :member-order: bysource
+
+``Solution`` class
+^^^^^^^^^^^^^^^^^^
+.. autoclass:: Solution
+  :members:
+  :undoc-members:
+  :member-order: bysource
+
+``CommonRoadSolutionReader`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: Solution
+  :members:
+  :undoc-members:
+  :member-order: bysource
+
 ``CommonRoadSolutionWriter`` class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: CommonRoadSolutionWriter
@@ -76,4 +103,3 @@ Util
 ^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: AngleInterval
    :members:
-

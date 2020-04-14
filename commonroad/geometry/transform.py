@@ -6,9 +6,9 @@ from commonroad.common.validity import is_real_number_vector, is_valid_orientati
 __author__ = "Christina Miller"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW CAR@TUM"]
-__version__ = "2019.1"
+__version__ = "2020.2"
 __maintainer__ = "Moritz Klischat"
-__email__ = "commonroad@in.tum.de"
+__email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 

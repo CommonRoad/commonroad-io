@@ -6,9 +6,9 @@ from commonroad.common.validity import *
 __author__ = "Stefanie Manzinger, Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2019.1"
+__version__ = "2020.2"
 __maintainer__ = "Moritz Klischat"
-__email__ = "commonroad@in.tum.de"
+__email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 
@@ -79,6 +79,10 @@ class Interval:
 
     def overlaps(self, interval: 'Interval') -> bool:
         return np.greater_equal(self.end, interval.start) and np.greater_equal(interval.end, self.start)
+
+    @property
+    def length(self):
+        return self.end - self.start
 
     def __str__(self):
         info_str = "Interval\n"

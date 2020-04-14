@@ -13,9 +13,9 @@ from commonroad.common.util import make_valid_orientation
 __author__ = "Stefanie Manzinger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2019.1"
+__version__ = "2020.2"
 __maintainer__ = "Stefanie Manzinger"
-__email__ = "commonroad@in.tum.de"
+__email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 
@@ -58,7 +58,18 @@ class Rectangle(Shape):
         self.orientation: float = orientation
 
         self._vertices: np.ndarray = self._compute_vertices()
-        self._shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self._vertices)
+        self.__shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self._vertices)
+
+    @property
+    def _shapely_polygon(self) -> shapely.geometry.Polygon:
+        if self.__shapely_polygon is None:
+            self.__shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self._vertices)
+
+        return self.__shapely_polygon
+
+    @_shapely_polygon.setter
+    def _shapely_polygon(self, _shapely_polygon):
+        self.__shapely_polygon = _shapely_polygon
 
     @property
     def length(self) -> float:
@@ -119,7 +130,9 @@ class Rectangle(Shape):
 
     @property
     def vertices(self) -> np.ndarray:
-        """ Vertices of the rectangle: [[x_0, y_0], [x_1, y_1], ...]."""
+        """ Vertices of the rectangle: [[x_0, y_0], [x_1, y_1], ...]. The vertices are sorted clockwise and the
+            first and last point are the same.
+        """
         return self._vertices
 
     @vertices.setter
@@ -177,9 +190,10 @@ class Rectangle(Shape):
         """ Computes the vertices of the rectangle."""
         vertices = np.array(
                    [[- 0.5 * self._length, - 0.5 * self._width],
-                    [+ 0.5 * self._length, - 0.5 * self._width],
+                    [- 0.5 * self._length, + 0.5 * self._width],
                     [+ 0.5 * self._length, + 0.5 * self._width],
-                    [- 0.5 * self._length, + 0.5 * self._width]])
+                    [+ 0.5 * self._length, - 0.5 * self._width],
+                    [- 0.5 * self._length, - 0.5 * self._width]])
         return rotate_translate(vertices, self._center, self._orientation)
 
     def __str__(self):
@@ -203,6 +217,7 @@ class Circle(Shape):
         """
         self.radius: float = radius
         self.center: np.ndarray = center
+        self._shapely_circle: shapely.geometry = shapely.geometry.Point(center[0], center[1]).buffer(radius / 2)
 
     @property
     def radius(self) -> float:
@@ -232,6 +247,10 @@ class Circle(Shape):
             self._center = center
         else:
             warnings.warn('<Circle/center>: center of circle is immutable.')
+
+    @property
+    def shapely_object(self) -> shapely.geometry.Polygon:
+        return self._shapely_circle
 
     def translate_rotate(self, translation: np.ndarray, angle: float) -> 'Circle':
         """ A new circle is created by first translating and then rotating the current circle around the origin.
@@ -286,10 +305,15 @@ class Polygon(Shape):
         """
         self.vertices: np.ndarray = vertices
         self._shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self._vertices)
+        # ensure that vertices are sorted clockwise and the first and last point are the same
+        self._vertices = np.array(shapely.geometry.polygon.orient(
+            self._shapely_polygon, sign=-1.0).exterior.coords)
 
     @property
     def vertices(self) -> np.ndarray:
-        """ Array of ordered vertices of the polygon [[x_0, y_0], [x_1, y_1], ...]."""
+        """ Vertices of the polygon [[x_0, y_0], [x_1, y_1], ...]. The vertices are sorted clockwise and the
+            first and last point are the same.
+        """
         return self._vertices
 
     @vertices.setter
