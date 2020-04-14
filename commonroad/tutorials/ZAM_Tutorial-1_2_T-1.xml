@@ -6,8 +6,8 @@
     <gpsLongitude>999.0</gpsLongitude>
   </location>
   <scenarioTags>
-    <interstate/>
     <critical/>
+    <interstate/>
   </scenarioTags>
   <lanelet id="1">
     <leftBound>

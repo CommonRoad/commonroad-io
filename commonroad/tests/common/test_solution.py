@@ -409,37 +409,53 @@ class TestStateType(unittest.TestCase):
         assert StateType.PM.value == 'pmState'
         assert StateType.PM.fields == StateFields.PM.value
         assert StateType.PM.xml_fields == XMLStateFields.PM.value
-        assert StateType.PM == StateType.get_state_type(DummyDataGenerator.create_random_pm_state())
+        assert StateType.PM == StateType.get_state_type(DummyDataGenerator.create_random_pm_state(), desired_vehicle_model=VehicleModel.PM)
 
     def test_st_state_type(self):
         assert StateType.ST.value == 'stState'
         assert StateType.ST.fields == StateFields.ST.value
         assert StateType.ST.xml_fields == XMLStateFields.ST.value
-        assert StateType.ST == StateType.get_state_type(DummyDataGenerator.create_random_st_state())
+        assert StateType.ST == StateType.get_state_type(DummyDataGenerator.create_random_st_state(),
+                                                        desired_vehicle_model=VehicleModel.ST)
 
     def test_ks_state_type(self):
         assert StateType.KS.value == 'ksState'
         assert StateType.KS.fields == StateFields.KS.value
         assert StateType.KS.xml_fields == XMLStateFields.KS.value
-        assert StateType.KS == StateType.get_state_type(DummyDataGenerator.create_random_ks_state())
+        assert StateType.KS == StateType.get_state_type(DummyDataGenerator.create_random_ks_state(),
+                                                        desired_vehicle_model=VehicleModel.KS)
+
+    def test_ks_state_type_other_type(self):
+        assert StateType.KS.value == 'ksState'
+        assert StateType.KS.fields == StateFields.KS.value
+        assert StateType.KS.xml_fields == XMLStateFields.KS.value
+        assert StateType.KS == StateType.get_state_type(DummyDataGenerator.create_random_mb_state(),
+                                                        desired_vehicle_model=VehicleModel.KS)
 
     def test_mb_state_type(self):
         assert StateType.MB.value == 'mbState'
         assert StateType.MB.fields == StateFields.MB.value
         assert StateType.MB.xml_fields == XMLStateFields.MB.value
-        assert StateType.MB == StateType.get_state_type(DummyDataGenerator.create_random_mb_state())
+        assert StateType.MB == StateType.get_state_type(DummyDataGenerator.create_random_mb_state(),
+                                                        desired_vehicle_model=VehicleModel.MB)
 
     def test_input_state_type(self):
         assert StateType.Input.value == 'input'
         assert StateType.Input.fields == StateFields.Input.value
         assert StateType.Input.xml_fields == XMLStateFields.Input.value
-        assert StateType.Input == StateType.get_state_type(DummyDataGenerator.create_random_input())
+        assert StateType.Input == StateType.get_state_type(DummyDataGenerator.create_random_input(),
+                                                           desired_vehicle_model=VehicleModel.MB)
+        assert StateType.Input == StateType.get_state_type(DummyDataGenerator.create_random_input(),
+                                                           desired_vehicle_model=VehicleModel.KS)
+        assert StateType.Input == StateType.get_state_type(DummyDataGenerator.create_random_input(),
+                                                           desired_vehicle_model=VehicleModel.ST)
 
     def test_pm_input_state_type(self):
         assert StateType.PMInput.value == 'pmInput'
         assert StateType.PMInput.fields == StateFields.PMInput.value
         assert StateType.PMInput.xml_fields == XMLStateFields.PMInput.value
-        assert StateType.PMInput == StateType.get_state_type(DummyDataGenerator.create_random_pm_input())
+        assert StateType.PMInput == StateType.get_state_type(DummyDataGenerator.create_random_pm_input(),
+                                                             desired_vehicle_model=VehicleModel.PM)
 
 
 class TestTrajectoryType(unittest.TestCase):
