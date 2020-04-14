@@ -118,7 +118,7 @@ def create_default_draw_params() -> dict:
                                               'show_label': False,
                                               'scale_factor': 0.25,
                                               'zorder': 30},
-                            'draw_traffic_signs': True,
+                            'draw_traffic_signs': False,
                             'traffic_sign': {'show_traffic_signs': 'all',  # 'all' or list of TrafficSignIDs
                                              'show_label': False,
                                              'scale_factor': 0.25,

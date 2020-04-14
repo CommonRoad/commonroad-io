@@ -6,13 +6,13 @@
     <gpsLongitude>999</gpsLongitude>
   </location>
   <scenarioTags>
+    <intersection/>
     <speed_limit/>
+    <multi_lane/>
+    <urban/>
+    <lane_following/>
     <comfort/>
     <oncoming_traffic/>
-    <intersection/>
-    <lane_following/>
-    <urban/>
-    <multi_lane/>
   </scenarioTags>
   <lanelet id="3419">
     <leftBound>
