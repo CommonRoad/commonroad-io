@@ -261,12 +261,10 @@ class CommonRoadFileWriter:
 
     def _dump(self):
         rough_string = etree.tostring(
-            self._root_node, pretty_print=True, encoding='unicode'
+            self._root_node, pretty_print=True, encoding='UTF-8'
         )
-        rough_string = '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n' + rough_string
+        rough_string = rough_string
         return rough_string
-        # reparsed = minidom.parseString(rough_string)
-        # return reparsed.toprettyxml(indent='  ')
 
     def write_to_file(
         self,
@@ -303,14 +301,14 @@ class CommonRoadFileWriter:
             else:
                 print('Replace file {}'.format(filename))
 
-        file = open(filename, 'w')
         self._write_header()
         self._add_all_objects_from_scenario()
         self._add_all_planning_problems_from_planning_problem_set()
         if check_validity:
             self.check_validity_of_commonroad_file(self._dump())
-        file.write(self._dump())
-        file.close()
+
+        tree = etree.ElementTree(self._root_node)
+        tree.write(filename, pretty_print=True, xml_declaration=True, encoding="utf-8")
 
     def write_scenario_to_file(
         self,
