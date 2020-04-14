@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Visualization Manual &mdash; CommonRoad_io 2020.1 documentation</title>
+  <title>Visualization Manual &mdash; CommonRoad_io 2020.2 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2020.1
+                2020.2
               </div>
             
           
@@ -248,22 +248,25 @@
              <span class="s1">&#39;draw_shape&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
              <span class="s1">&#39;draw_icon&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
              <span class="s1">&#39;draw_bounding_box&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-             <span class="s1">&#39;show_label&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+             <span class="s1">&#39;show_label&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># show id of obstacle</span>
              <span class="s1">&#39;zorder&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
-             <span class="s1">&#39;draw_signals&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-             <span class="s1">&#39;signal_radius&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-             <span class="s1">&#39;indicator_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#ebc200&#39;</span><span class="p">,</span>
-             <span class="s1">&#39;braking_color&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;draw_signals&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># draw signal states</span>
+             <span class="s1">&#39;signal_radius&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>  <span class="c1"># size of a signal states</span>
+             <span class="s1">&#39;indicator_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#ebc200&#39;</span><span class="p">,</span>  <span class="c1"># turn light</span>
+             <span class="s1">&#39;braking_color&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>  <span class="c1"># braking light</span>
              <span class="s1">&#39;blue_lights_color&#39;</span><span class="p">:</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span>
-             <span class="s1">&#39;horn_color&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;horn_color&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>  <span class="c1"># horn is visualized as red center dot</span>
              <span class="s1">&#39;occupancy&#39;</span><span class="p">:</span>
                  <span class="p">{</span><span class="s1">&#39;draw_occupancies&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                   <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="n">shape_parameters</span>
                  <span class="p">},</span>
              <span class="s1">&#39;trajectory&#39;</span><span class="p">:</span>
-                <span class="p">{</span><span class="s1">&#39;facecolor&#39;</span><span class="p">:</span> <span class="s1">&#39;#000000&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;marker_size&#39;</span><span class="p">:</span> <span class="mf">0.13</span><span class="p">,</span>
-                 <span class="s1">&#39;z_order&#39;</span><span class="p">:</span> <span class="mi">24</span><span class="p">}</span>
+                <span class="p">{</span><span class="s1">&#39;draw_trajectory&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="s1">&#39;facecolor&#39;</span><span class="p">:</span> <span class="s1">&#39;#000000&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;draw_continuous&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># use continuous lines</span>
+                 <span class="s1">&#39;unique_colors&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># use different color for each trajectory</span>
+                 <span class="s1">&#39;line_width&#39;</span><span class="p">:</span> <span class="mf">0.17</span><span class="p">,</span>
+                 <span class="s1">&#39;z_order&#39;</span><span class="p">:</span> <span class="mi">24</span>
                  <span class="p">},</span>
         <span class="s1">&#39;static_obstacle&#39;</span><span class="p">:</span>
             <span class="p">{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="n">shape_parameters</span><span class="p">},</span>
@@ -415,7 +418,10 @@
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../user/visualization-1.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../user/visualization-1.py">Source code</a>, <a class="reference external" href="../user/visualization-1.png">png</a>, <a class="reference external" href="../user/visualization-1.hires.png">hires.png</a>, <a class="reference external" href="../user/visualization-1.pdf">pdf</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/visualization-1.png" src="../_images/visualization-1.png" />
+</div>
 </div>
 <div class="section" id="speed-up-plotting-for-real-time-applications">
 <span id="plot-helper"></span><h2>Speed up plotting for real-time applications<a class="headerlink" href="#speed-up-plotting-for-real-time-applications" title="Permalink to this headline">¶</a></h2>

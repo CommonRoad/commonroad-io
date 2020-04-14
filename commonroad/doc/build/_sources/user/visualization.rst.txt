@@ -23,22 +23,25 @@ When settings of a plot should be changed with ``draw_params``, they have to be 
                  'draw_shape': True,
                  'draw_icon': False,
                  'draw_bounding_box': True,
-                 'show_label': False,
+                 'show_label': False,  # show id of obstacle
                  'zorder': 20,
-                 'draw_signals': True,
-                 'signal_radius': 0.5,
-                 'indicator_color': '#ebc200',
-                 'braking_color': 'red',
+                 'draw_signals': True,  # draw signal states
+                 'signal_radius': 0.5,  # size of a signal states
+                 'indicator_color': '#ebc200',  # turn light
+                 'braking_color': 'red',  # braking light
                  'blue_lights_color': 'blue',
-                 'horn_color': 'red',
+                 'horn_color': 'red',  # horn is visualized as red center dot
                  'occupancy':
                      {'draw_occupancies': 0,
                       'shape': shape_parameters
                      },
                  'trajectory':
-                    {'facecolor': '#000000',
-                     'marker_size': 0.13,
-                     'z_order': 24}
+                    {'draw_trajectory':True,
+                     'facecolor': '#000000',
+                     'draw_continuous': False, # use continuous lines
+                     'unique_colors': False, # use different color for each trajectory
+                     'line_width': 0.17,
+                     'z_order': 24
                      },
             'static_obstacle':
                 {'shape': shape_parameters},

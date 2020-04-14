@@ -52,18 +52,17 @@ def create_default_draw_params() -> dict:
 
     draw_params = {'scenario': {
                         'dynamic_obstacle': {
-                            'add_legend': True,
                             'draw_shape': True,
                             'draw_icon': False,
                             'draw_bounding_box': True,
-                            'show_label': False,
+                            'show_label': False,  # show id of obstacle
                             'zorder': 20,
-                            'draw_signals': True,
-                            'signal_radius': 0.5,
-                            'indicator_color': '#ebc200',
-                            'braking_color': 'red',
+                            'draw_signals': True,  # draw signal states
+                            'signal_radius': 0.5,  # size of a signal states
+                            'indicator_color': '#ebc200',  # turn light
+                            'braking_color': 'red',  # braking light
                             'blue_lights_color': 'blue',
-                            'horn_color': 'red',
+                            'horn_color': 'red',  # horn is visualized as red center dot
                             'occupancy': {
                                 'draw_occupancies': 0,  # -1= never, 0= if prediction of vehicle is set-based, 1=always
                                 'shape': {

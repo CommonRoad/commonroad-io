@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>commonroad.common.solution &mdash; CommonRoad_io 2020.1 documentation</title>
+  <title>commonroad.common.solution &mdash; CommonRoad_io 2020.2 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                2020.1
+                2020.2
               </div>
             
           
@@ -246,7 +246,7 @@
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Murat Üste, Christina Miller, Moritz Klischat&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;TUM Cyber-Physical Systems Group&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;BMW CAR@TUM&quot;</span><span class="p">]</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2020.1&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2020.2&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Moritz Klischat&quot;</span>
 <span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;commonroad-i06@in.tum.de&quot;</span>
 <span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Released&quot;</span>
@@ -335,10 +335,10 @@
 <span class="sd">    Input             -&gt; Input type for ST, KS, and MB vehicle models</span>
 <span class="sd">    PMInput           -&gt; Input type for PM vehicle model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">PM</span> <span class="o">=</span> <span class="s1">&#39;pmState&#39;</span>
+    <span class="n">MB</span> <span class="o">=</span> <span class="s1">&#39;mbState&#39;</span>
     <span class="n">ST</span> <span class="o">=</span> <span class="s1">&#39;stState&#39;</span>
     <span class="n">KS</span> <span class="o">=</span> <span class="s1">&#39;ksState&#39;</span>
-    <span class="n">MB</span> <span class="o">=</span> <span class="s1">&#39;mbState&#39;</span>
+    <span class="n">PM</span> <span class="o">=</span> <span class="s1">&#39;pmState&#39;</span>
     <span class="n">Input</span> <span class="o">=</span> <span class="s1">&#39;input&#39;</span>
     <span class="n">PMInput</span> <span class="o">=</span> <span class="s1">&#39;pmInput&#39;</span>
 
@@ -361,21 +361,47 @@
         <span class="k">return</span> <span class="n">XMLStateFields</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_state_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;StateType&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_state_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">,</span> <span class="n">desired_vehicle_model</span><span class="p">:</span><span class="n">VehicleModel</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;StateType&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the corresponding StateType for the given State object by matching State object&#39;s attributes</span>
 <span class="sd">        to the state fields.</span>
 
 <span class="sd">        :param state: State - CommonRoad State object</span>
+<span class="sd">        :param desired_vehicle_model: check if given vehicle_model is supported first</span>
 <span class="sd">        :return: State-Type</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># put desired_vehicle_model first</span>
         <span class="n">attrs</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">attributes</span>
-        <span class="k">for</span> <span class="n">state_fields</span> <span class="ow">in</span> <span class="n">StateFields</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_fields</span><span class="o">.</span><span class="n">value</span><span class="p">):</span> <span class="k">continue</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">attr</span> <span class="ow">in</span> <span class="n">state_fields</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">]):</span> <span class="k">continue</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="p">[</span><span class="n">state_fields</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">desired_vehicle_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">state_fields_all</span> <span class="o">=</span> <span class="p">[</span><span class="n">StateFields</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">desired_vehicle_model</span><span class="o">.</span><span class="n">name</span><span class="p">)],</span> <span class="n">StateFields</span><span class="o">.</span><span class="n">Input</span><span class="p">,</span> <span class="n">StateFields</span><span class="o">.</span><span class="n">PMInput</span><span class="p">]</span>
+            <span class="n">state_fields_add</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">sf</span> <span class="ow">in</span> <span class="n">StateFields</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">sf</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">state_fields_all</span><span class="p">:</span> <span class="n">state_fields_add</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sf</span><span class="p">)</span>
+
+            <span class="n">state_fields_all</span> <span class="o">+=</span> <span class="n">state_fields_add</span>
+
+            <span class="k">for</span> <span class="n">state_fields</span> <span class="ow">in</span> <span class="n">state_fields_all</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_fields</span><span class="o">.</span><span class="n">value</span><span class="p">):</span> <span class="k">continue</span>  <span class="c1"># &gt;=</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">sf</span> <span class="ow">in</span> <span class="n">attrs</span> <span class="k">for</span> <span class="n">sf</span> <span class="ow">in</span> <span class="n">state_fields</span><span class="o">.</span><span class="n">value</span><span class="p">]):</span> <span class="k">continue</span>
+                <span class="k">return</span> <span class="bp">cls</span><span class="p">[</span><span class="n">state_fields</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">state_fields_all</span> <span class="o">=</span> <span class="n">StateFields</span>
+            <span class="k">for</span> <span class="n">state_fields</span> <span class="ow">in</span> <span class="n">state_fields_all</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_fields</span><span class="o">.</span><span class="n">value</span><span class="p">):</span> <span class="k">continue</span>  <span class="c1"># ==</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">sf</span> <span class="ow">in</span> <span class="n">attrs</span> <span class="k">for</span> <span class="n">sf</span> <span class="ow">in</span> <span class="n">state_fields</span><span class="o">.</span><span class="n">value</span><span class="p">]):</span> <span class="k">continue</span>
+                <span class="k">return</span> <span class="bp">cls</span><span class="p">[</span><span class="n">state_fields</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Given state is not valid!&#39;</span><span class="p">)</span>
 
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">check_state_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vehicle_model</span><span class="p">:</span><span class="n">VehicleModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks whether vehicle model can be supported by trajectory.</span>
+<span class="sd">        :param vehicle_model: vehicle model enum</span>
+<span class="sd">        :return: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">StateFields</span><span class="p">(</span><span class="n">vehicle_model</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
 <span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">TrajectoryType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -386,10 +412,10 @@
 <span class="sd">    Input             -&gt; InputVector type for ST, KS, and MB vehicle models</span>
 <span class="sd">    PMInput           -&gt; InputVector type for PM vehicle model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">PM</span> <span class="o">=</span> <span class="s1">&#39;pmTrajectory&#39;</span>
+    <span class="n">MB</span> <span class="o">=</span> <span class="s1">&#39;mbTrajectory&#39;</span>
     <span class="n">ST</span> <span class="o">=</span> <span class="s1">&#39;stTrajectory&#39;</span>
     <span class="n">KS</span> <span class="o">=</span> <span class="s1">&#39;ksTrajectory&#39;</span>
-    <span class="n">MB</span> <span class="o">=</span> <span class="s1">&#39;mbTrajectory&#39;</span>
+    <span class="n">PM</span> <span class="o">=</span> <span class="s1">&#39;pmTrajectory&#39;</span>
     <span class="n">Input</span> <span class="o">=</span> <span class="s1">&#39;inputVector&#39;</span>
     <span class="n">PMInput</span> <span class="o">=</span> <span class="s1">&#39;pmInputVector&#39;</span>
 
@@ -403,14 +429,14 @@
         <span class="k">return</span> <span class="n">StateType</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_trajectory_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">:</span> <span class="n">Trajectory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;TrajectoryType&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_trajectory_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">:</span> <span class="n">Trajectory</span><span class="p">,</span> <span class="n">desired_vehicle_model</span><span class="p">:</span><span class="n">VehicleModel</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;TrajectoryType&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the corresponding TrajectoryType for the given Trajectory object based on the StateType of its states.</span>
 
 <span class="sd">        :param trajectory: Trajectory - CommonRoad Trajectory object</span>
 <span class="sd">        :return: TrajectoryType</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">state_type</span> <span class="o">=</span> <span class="n">StateType</span><span class="o">.</span><span class="n">get_state_type</span><span class="p">(</span><span class="n">trajectory</span><span class="o">.</span><span class="n">state_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">state_type</span> <span class="o">=</span> <span class="n">StateType</span><span class="o">.</span><span class="n">get_state_type</span><span class="p">(</span><span class="n">trajectory</span><span class="o">.</span><span class="n">state_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">desired_vehicle_model</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">[</span><span class="n">state_type</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">valid_vehicle_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vehicle_model</span><span class="p">:</span> <span class="n">VehicleModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -459,7 +485,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">vehicle_type</span> <span class="o">=</span> <span class="n">vehicle_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cost_function</span> <span class="o">=</span> <span class="n">cost_function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory</span> <span class="o">=</span> <span class="n">trajectory</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_type</span> <span class="o">=</span> <span class="n">TrajectoryType</span><span class="o">.</span><span class="n">get_trajectory_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trajectory</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_type</span> <span class="o">=</span> <span class="n">TrajectoryType</span><span class="o">.</span><span class="n">get_trajectory_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trajectory</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vehicle_model</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_trajectory_supported</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vehicle_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_type</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_cost_supported</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vehicle_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cost_function</span><span class="p">)</span>
@@ -810,6 +836,7 @@
 
 <span class="sd">        :param solution: Solution.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span> <span class="n">Solution</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">solution</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_solution_root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_solution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="p">)</span>
 
