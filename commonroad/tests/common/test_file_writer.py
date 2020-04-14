@@ -35,7 +35,8 @@ class TestFileWriter(unittest.TestCase):
         CommonRoadFileWriter(scenario, planning_problem_set, scenario.author, scenario.affiliation,
                              scenario.benchmark_id, scenario.tags,
                              scenario.location).write_to_file(filename=filename,
-                                                              overwrite_existing_file=OverwriteExistingFile.ALWAYS)
+                                                              overwrite_existing_file=OverwriteExistingFile.ALWAYS,
+                                                              check_validity=True)
 
         assert self.validate_with_xsd(self.out_path + '/test_reading_intersection_traffic_sign.xml')
 
@@ -45,7 +46,8 @@ class TestFileWriter(unittest.TestCase):
         CommonRoadFileWriter(scenario, planning_problem_set, scenario.author, scenario.affiliation,
                              scenario.benchmark_id, scenario.tags,
                              scenario.location).write_to_file(filename=filename,
-                                                              overwrite_existing_file=OverwriteExistingFile.ALWAYS)
+                                                              overwrite_existing_file=OverwriteExistingFile.ALWAYS,
+                                                              check_validity=True)
 
         assert self.validate_with_xsd(self.out_path + "/USA_Lanker-1_1_T-1.xml")
 
