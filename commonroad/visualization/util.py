@@ -1,14 +1,17 @@
 import warnings
-
-from commonroad.scenario.intersection import Intersection
-from commonroad.scenario.lanelet import LaneletNetwork
-from commonroad.scenario.traffic_sign import TrafficLightState, TrafficLight, TrafficLightDirection
+import numpy as np
+from commonroad.scenario.scenario import Scenario
 from matplotlib.lines import Line2D
 from matplotlib.path import Path
 import matplotlib.patches as patches
 import matplotlib as mpl
 import matplotlib.collections as collections
-from typing import List, Dict
+from typing import List, Dict, Tuple, Union
+
+from commonroad.common.util import Interval
+from commonroad.scenario.lanelet import LaneletNetwork
+from commonroad.scenario.obstacle import DynamicObstacle
+from commonroad.scenario.traffic_sign import TrafficLightState, TrafficLight, TrafficLightDirection
 
 __author__ = "Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -135,3 +138,50 @@ def collect_center_line_colors(lanelet_network:LaneletNetwork, traffic_lights: L
                 warnings.warn('Direction of traffic light cannot be visualized.')
 
     return l2state
+
+
+def approximate_bounding_box_dyn_obstacles(obj: list, time_step=0) -> Union[Tuple[list], None]:
+    """
+    Compute bounding box of dynamic obstacles at time step
+    :param obj: All possible objects. DynamicObstacles are filtered.
+    :return:
+    """
+    def update_bounds(new_point: np.ndarray, bounds:List[list]):
+        """Update bounds with new point"""
+        if new_point[0] < bounds[0][0]:
+            bounds[0][0] = new_point[0]
+        if new_point[1] < bounds[1][0]:
+            bounds[1][0] = new_point[1]
+        if new_point[0] > bounds[0][1]:
+            bounds[0][1] = new_point[0]
+        if new_point[1] > bounds[1][1]:
+            bounds[1][1] = new_point[1]
+
+        return bounds
+
+    dynamic_obstacles_filtered = []
+    for o in obj:
+        if type(o) == DynamicObstacle:
+            dynamic_obstacles_filtered.append(o)
+        elif type(o) == Scenario:
+            dynamic_obstacles_filtered.extend(o.dynamic_obstacles)
+
+    x_int = [np.inf, -np.inf]
+    y_int = [np.inf, -np.inf]
+    bounds = [x_int, y_int]
+
+    for obs in dynamic_obstacles_filtered:
+        occ = obs.occupancy_at_time(time_step)
+        if occ is None: continue
+        shape = occ.shape
+        if hasattr(shape, 'center'):  # Rectangle, Circle
+            bounds = update_bounds(shape.center, bounds=bounds)
+        elif hasattr(shape, 'vertices'):  # Polygon, Triangle
+            v = shape.vertices
+            bounds = update_bounds(np.min(v, axis=0), bounds=bounds)
+            bounds = update_bounds(np.max(v, axis=0), bounds=bounds)
+
+    if np.inf in bounds[0] or -np.inf in bounds[0] or np.inf in bounds[1] or -np.inf in bounds[1]:
+        return None
+    else:
+        return tuple(bounds)

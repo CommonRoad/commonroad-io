@@ -1,4 +1,5 @@
 # matplotlib.use('Qt5Agg')
+import matplotlib
 # matplotlib.use('TkAgg')
 import os
 import time
@@ -172,7 +173,7 @@ class TestVisualization(unittest.TestCase):
             # plt.gca().autoscale()
             # plt.tight_layout()
             draw_object(planning_problem_set,draw_params=draw_params, plot_limits=[-50,60,-50,50])
-            # draw_object(scenario.dynamic_obstacles[0],draw_params=draw_params)
+            # draw_object(scenario.obj[0],draw_params=draw_params)
             plt.show(block=False)
             tt+=time.time()-t1
 
