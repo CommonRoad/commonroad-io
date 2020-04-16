@@ -5,72 +5,72 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+
   <title>Getting Started &mdash; CommonRoad_io 2020.2 documentation</title>
-  
 
-  
-  
-  
-  
 
-  
+
+
+
+
+
+
   <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
-  
-    
+
+
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script type="text/javascript" src="../_static/jquery.js"></script>
         <script type="text/javascript" src="../_static/underscore.js"></script>
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
+
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-    
 
-  
+
+
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Visualization Manual" href="visualization.html" />
-    <link rel="prev" title="User Manual" href="index.html" /> 
+    <link rel="prev" title="User Manual" href="index.html" />
 </head>
 
 <body class="wy-body-for-nav">
 
-   
+
   <div class="wy-grid-for-nav">
-    
+
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
-          
+
+
             <a href="../index.html" class="icon icon-home"> CommonRoad_io
-          
 
-          
-            
+
+
+
             <img src="../_static/commonroad_white150.png" class="logo" alt="Logo"/>
-          
+
           </a>
 
-          
-            
-            
+
+
+
               <div class="version">
                 2020.2
               </div>
-            
-          
 
-          
+
+
+
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -79,16 +79,16 @@
   </form>
 </div>
 
-          
+
         </div>
 
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+
+
+
+
+
+
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">User Manual</a><ul class="current">
@@ -169,28 +169,28 @@
 </li>
 </ul>
 
-            
-          
+
+
         </div>
       </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
-      
+
       <nav class="wy-nav-top" aria-label="top navigation">
-        
+
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">CommonRoad_io</a>
-        
+
       </nav>
 
 
       <div class="wy-nav-content">
-        
+
         <div class="rst-content">
-        
-          
+
+
 
 
 
@@ -209,36 +209,36 @@
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
-    
+
       <li><a href="../index.html">Docs</a> &raquo;</li>
-        
+
           <li><a href="index.html">User Manual</a> &raquo;</li>
-        
+
       <li>Getting Started</li>
-    
-    
+
+
       <li class="wy-breadcrumbs-aside">
-        
-            
+
+
             <a href="../_sources/user/getting_started.rst.txt" rel="nofollow"> View page source</a>
-          
-        
+
+
       </li>
-    
+
   </ul>
 
-  
+
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+
   <div class="section" id="getting-started">
 <span id="id1"></span><h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <p>This manual introduces the main functionality by means of some examples. Exact class descriptions can be found in the module descriptions.</p>
 <p><a class="reference external" href="https://commonroad.in.tum.de/scenarios/">CommonRoad XML-files</a> consist of a <a class="reference internal" href="../api/scenario.html#commonroad.scenario.scenario.Scenario" title="commonroad.scenario.scenario.Scenario"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scenario</span></code></a> and a <a class="reference internal" href="../api/planning.html#commonroad.planning.planning_problem.PlanningProblemSet" title="commonroad.planning.planning_problem.PlanningProblemSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanningProblemSet</span></code></a>. A <a class="reference internal" href="../api/scenario.html#commonroad.scenario.scenario.Scenario" title="commonroad.scenario.scenario.Scenario"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scenario</span></code></a> represents the environment including a <a class="reference internal" href="../api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork" title="commonroad.scenario.lanelet.LaneletNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">LaneletNetwork</span></code></a> and a set of <a class="reference internal" href="../api/scenario.html#commonroad.scenario.obstacle.DynamicObstacle" title="commonroad.scenario.obstacle.DynamicObstacle"><code class="xref py py-class docutils literal notranslate"><span class="pre">DynamicObstacle</span></code></a> and <a class="reference internal" href="../api/scenario.html#commonroad.scenario.obstacle.StaticObstacle" title="commonroad.scenario.obstacle.StaticObstacle"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaticObstacle</span></code></a>. A <a class="reference internal" href="../api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork" title="commonroad.scenario.lanelet.LaneletNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">LaneletNetwork</span></code></a> is built from lane segments (<a class="reference internal" href="../api/scenario.html#commonroad.scenario.lanelet.Lanelet" title="commonroad.scenario.lanelet.Lanelet"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lanelet</span></code></a>), that can be connected arbitrarily, traffic signs (<a class="reference internal" href="../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSign" title="commonroad.scenario.traffic_sign.TrafficSign"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrafficSign</span></code></a>), traffic lights (<a class="reference internal" href="../api/scenario.html#commonroad.scenario.traffic_sign.TrafficLight" title="commonroad.scenario.traffic_sign.TrafficLight"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrafficLight</span></code></a>), and intersections (<a class="reference internal" href="../api/scenario.html#commonroad.scenario.intersection.Intersection" title="commonroad.scenario.intersection.Intersection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Intersection</span></code></a>).
 A <a class="reference internal" href="../api/planning.html#commonroad.planning.planning_problem.PlanningProblemSet" title="commonroad.planning.planning_problem.PlanningProblemSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanningProblemSet</span></code></a> contains one <a class="reference internal" href="../api/planning.html#commonroad.planning.planning_problem.PlanningProblem" title="commonroad.planning.planning_problem.PlanningProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanningProblem</span></code></a> for every ego vehicle in the <a class="reference internal" href="../api/scenario.html#commonroad.scenario.scenario.Scenario" title="commonroad.scenario.scenario.Scenario"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scenario</span></code></a>, consisting of an initial <a class="reference internal" href="../api/scenario.html#commonroad.scenario.trajectory.State" title="commonroad.scenario.trajectory.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a> and a <a class="reference internal" href="../api/planning.html#commonroad.planning.goal.GoalRegion" title="commonroad.planning.goal.GoalRegion"><code class="xref py py-class docutils literal notranslate"><span class="pre">GoalRegion</span></code></a> that has to be reached.</p>
-<p>For detailed information, see <a class="reference external" href="https://commonroad.in.tum.de/documentation/xml_format_doc/">XML CommonRoad Documentation</a>.</p>
+<p>For detailed information, see <a class="reference external" href="https://gitlab.lrz.de/tum-cps/commonroad-scenarios/blob/master/documentation/XML_commonRoad_2020a.pdf">XML CommonRoad Documentation</a>.</p>
 <div class="section" id="reading-files">
 <h2>Reading Files<a class="headerlink" href="#reading-files" title="Permalink to this headline">¶</a></h2>
 <p>Description: <a class="reference internal" href="../api/common.html#module-commonroad.common.file_reader" title="commonroad.common.file_reader"><code class="xref py py-class docutils literal notranslate"><span class="pre">commonroad.common.file_reader</span></code></a>.</p>
@@ -314,7 +314,7 @@ To plot the scenario at another time index, draw parameters can be defined:</p>
 <h3>Lanelet Network<a class="headerlink" href="#lanelet-network" title="Permalink to this headline">¶</a></h3>
 <p>Description: <a class="reference internal" href="../api/scenario.html#module-commonroad.scenario.lanelet" title="commonroad.scenario.lanelet"><code class="xref py py-class docutils literal notranslate"><span class="pre">commonroad.scenario.lanelet</span></code></a>.</p>
 <p>Each <a class="reference internal" href="../api/scenario.html#commonroad.scenario.lanelet.Lanelet" title="commonroad.scenario.lanelet.Lanelet"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lanelet</span></code></a> stores its left and right boundary and its center by a polyline (a list of vertices).
-If a lanelet A is the successor of another lanelet B, the first (center/left/right) point of A coincides with the last (center/left/right) point of B. More necessary conditions on lanelets can be found in the <a class="reference external" href="https://commonroad.in.tum.de/documentation/xml_format_doc/">XML CommonRoad Documentation</a>.</p>
+If a lanelet A is the successor of another lanelet B, the first (center/left/right) point of A coincides with the last (center/left/right) point of B. More necessary conditions on lanelets can be found in the <a class="reference external" href="https://gitlab.lrz.de/tum-cps/commonroad-scenarios/blob/master/documentation/XML_commonRoad_2020a.pdf">XML CommonRoad Documentation</a>.</p>
 <p>Useful methods for trajectory planning are:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="../api/scenario.html#commonroad.scenario.lanelet.LaneletNetwork.find_lanelet_by_id" title="commonroad.scenario.lanelet.LaneletNetwork.find_lanelet_by_id"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LaneletNetwork.find_lanelet_by_id()</span></code></a></p></li>
@@ -447,19 +447,19 @@ The <a class="reference internal" href="../api/common.html#commonroad.common.sol
 
 
            </div>
-           
+
           </div>
           <footer>
-  
+
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
+
         <a href="visualization.html" class="btn btn-neutral float-right" title="Visualization Manual" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
+
+
         <a href="index.html" class="btn btn-neutral float-left" title="User Manual" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+
     </div>
-  
+
 
   <hr/>
 
@@ -469,7 +469,7 @@ The <a class="reference internal" href="../api/common.html#commonroad.common.sol
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 
 </footer>
 
@@ -479,7 +479,7 @@ The <a class="reference internal" href="../api/common.html#commonroad.common.sol
     </section>
 
   </div>
-  
+
 
 
   <script type="text/javascript">
@@ -488,10 +488,10 @@ The <a class="reference internal" href="../api/common.html#commonroad.common.sol
       });
   </script>
 
-  
-  
-    
-   
+
+
+
+
 
 </body>
 </html>
