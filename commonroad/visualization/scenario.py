@@ -482,7 +482,7 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
                 draw_params, call_stack,
                 ('lanelet_network', 'intersection', 'show_label'))
         else:
-            draw_incoming_lanelets=draw_crossings=draw_successors = False
+            draw_incoming_lanelets=draw_crossings=draw_successors=show_intersection_labels = False
 
         left_bound_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
