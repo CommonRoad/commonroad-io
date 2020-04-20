@@ -131,7 +131,9 @@ def create_default_draw_params() -> dict:
                                              'draw_successors': True,
                                              'successors_left_color': '#ff00ff',
                                              'successors_straight_color': 'blue',
-                                             'successors_right_color': '#ccff00'},
+                                             'successors_right_color': '#ccff00',
+                                             'show_label': False,  # show incoming id and incoming left
+                                             },
                             'lanelet': {'left_bound_color': '#555555',
                                        'right_bound_color': '#555555',
                                        'center_bound_color': '#dddddd',
@@ -476,6 +478,9 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
             successors_right_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
                 ('lanelet_network', 'intersection', 'successors_right_color'))
+            show_intersection_labels = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'intersection', 'show_label'))
         else:
             draw_incoming_lanelets=draw_crossings=draw_successors = False
 
@@ -745,11 +750,12 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
             crossing_vertices_fill.append(
                 np.concatenate((lanelet.right_vertices, np.flip(lanelet.left_vertices, 0))))
 
-        if show_label or draw_incoming_lanelets or draw_traffic_signs:
+        # DRAW LABELS INTO LANELET CENTER
+        if show_label or show_intersection_labels or draw_traffic_signs:
             strings = []
             if show_label:
                 strings.append(str(lanelet.lanelet_id))
-            if is_incoming_lanelet:
+            if is_incoming_lanelet and show_intersection_labels:
                 strings.append('inc_id: ' + str(incomings_id[lanelet.lanelet_id]))
                 strings.append('inc_left: ' + str(incomings_left[lanelet.lanelet_id]))
             if draw_traffic_signs and show_traffic_sign_label is True:
@@ -765,21 +771,21 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
                             add_str = ', '
 
                     strings.append(str_tmp)
-                # TODO: implement svg plotting
 
-            string = ', '.join(strings)
-            # compute normal angle of label box
-            clr_positions = lanelet.interpolate_position(0.5 * lanelet.distance[-1])
-            normal_vector = np.array(clr_positions[1]) - np.array(clr_positions[2])
-            angle = np.rad2deg(np.arctan2(normal_vector[1], normal_vector[0])) - 90
-            angle = angle if Interval(-90,90).contains(angle) else angle - 180
+            label_string = ', '.join(strings)
+            if len(label_string) > 0:
+                # compute normal angle of label box
+                clr_positions = lanelet.interpolate_position(0.5 * lanelet.distance[-1])
+                normal_vector = np.array(clr_positions[1]) - np.array(clr_positions[2])
+                angle = np.rad2deg(np.arctan2(normal_vector[1], normal_vector[0])) - 90
+                angle = angle if Interval(-90,90).contains(angle) else angle - 180
 
-            ax.text(clr_positions[0][0], clr_positions[0][1],
-                    string,
-                    bbox={'facecolor': center_bound_color, 'pad': 2},
-                    horizontalalignment='center', verticalalignment='center',
-                    rotation=angle,
-                    zorder=30.2)
+                ax.text(clr_positions[0][0], clr_positions[0][1],
+                        label_string,
+                        bbox={'facecolor': center_bound_color, 'pad': 2},
+                        horizontalalignment='center', verticalalignment='center',
+                        rotation=angle,
+                        zorder=30.2)
 
     # draw paths and collect axis handles
     if draw_right_bound:

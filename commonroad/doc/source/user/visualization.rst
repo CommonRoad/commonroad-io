@@ -75,7 +75,8 @@ When settings of a plot should be changed with ``draw_params``, they have to be 
                       'draw_successors': True,
                       'successors_left_color': 'red',
                       'successors_straight_color': 'blue',
-                      'successors_right_color': '#ccff00'
+                      'successors_right_color': '#ccff00',
+                      'show_label': False,  # show incoming id and incoming left
                       },
                  'lanelet':
                      {'left_bound_color': '#555555',

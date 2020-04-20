@@ -29,7 +29,7 @@ class TestVisualization(unittest.TestCase):
         mpl.rcParams['lines.scale_dashes'] = False
         draw_object(scenario.lanelet_network,
                     draw_params={'time_begin': 20, 'lanelet_network':{'draw_intersections':True, 'draw_traffic_signs':True,
-                                                                      },
+                                                                      'intersection':{'show_label':True}},
                                  'lanelet':{'draw_lane_marking':True,
                                             'show_label':True}},
                     legend={('lanelet_network','intersection','incoming_lanelets_color'):'Incoming lanelets',
