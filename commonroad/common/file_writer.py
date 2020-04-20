@@ -352,40 +352,6 @@ class CommonRoadFileWriter:
             self._add_all_objects_from_scenario()
             file_out.write(self._dump())
 
-    def write_scenario_to_file_io(self, file_io: io.IOBase):
-        """Write a scenario without planning-problem to file_io.
-
-        Args:
-          file_io: File to write to.
-
-        """
-        self._write_header()
-        self._add_all_objects_from_scenario()
-        self._write_xml_output_to_file(file_io)
-
-    def write_to_file_io(self, file_io: io.IOBase):
-        """Write a scenario including planning-problem to file_io.
-
-        Args:
-          file_io: File to write to.
-
-        """
-        self._write_header()
-        self._add_all_objects_from_scenario()
-        self._add_all_planning_problems_from_planning_problem_set()
-        self._write_xml_output_to_file(file_io)
-
-    def _write_xml_output_to_file(self, file_io: io.IOBase):
-        """Write the dump from self._dump() to file_io.
-
-        Args:
-          file_io: File to write to.
-
-        """
-        output_str = self._dump()
-        CommonRoadFileWriter.check_validity_of_commonroad_file(output_str)
-        file_io.write(output_str)
-
     @staticmethod
     def check_validity_of_commonroad_file(commonroad_str: str):
         """Check the validity of a generated xml_string in terms of
