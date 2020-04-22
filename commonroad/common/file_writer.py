@@ -1178,6 +1178,8 @@ class TrafficSignXMLNode:
             element_node = etree.Element('trafficSignElement')
             sign_id_node = etree.Element('trafficSignID')
             sign_id_node.text = str(element.traffic_sign_element_id.value)
+            if str(element.traffic_sign_element_id.value) == '':
+                warnings.warn('<FileWriter>: Invalid traffic sign ID!')
             element_node.append(sign_id_node)
             for value in element.additional_values:
                 value_node = etree.Element('additionalValue')

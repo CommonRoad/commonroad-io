@@ -741,21 +741,25 @@ class TrafficSignElementFactory:
         :param country: country where traffic sign stands
         :return: object of class TrafficSignElement according to the CommonRoad specification.
         """
-        if country is SupportedTrafficSignCountry.GERMANY:
-            traffic_sign_element_id = TrafficSignIDGermany(xml_node.find('trafficSignID').text)
-        elif country is SupportedTrafficSignCountry.ZAMUNDA:
-            traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find('trafficSignID').text)
-        elif country is SupportedTrafficSignCountry.USA:
-            traffic_sign_element_id = TrafficSignIDUsa(xml_node.find('trafficSignID').text)
-        elif country is SupportedTrafficSignCountry.CHINA:
-            traffic_sign_element_id = TrafficSignIDChina(xml_node.find('trafficSignID').text)
-        elif country is SupportedTrafficSignCountry.SPAIN:
-            traffic_sign_element_id = TrafficSignIDSpain(xml_node.find('trafficSignID').text)
-        elif country is SupportedTrafficSignCountry.RUSSIA:
-            traffic_sign_element_id = TrafficSignIDRussia(xml_node.find('trafficSignID').text)
-        else:
-            warnings.warn("Unknown country: Default traffic sign IDs are used.")
-            traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find('trafficSignID').text)
+        try:
+            if country is SupportedTrafficSignCountry.GERMANY:
+                traffic_sign_element_id = TrafficSignIDGermany(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.ZAMUNDA:
+                traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.USA:
+                traffic_sign_element_id = TrafficSignIDUsa(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.CHINA:
+                traffic_sign_element_id = TrafficSignIDChina(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.SPAIN:
+                traffic_sign_element_id = TrafficSignIDSpain(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.RUSSIA:
+                traffic_sign_element_id = TrafficSignIDRussia(xml_node.find('trafficSignID').text)
+            else:
+                warnings.warn("Unknown country: Default traffic sign ID is used.")
+                traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find('trafficSignID').text)
+        except ValueError:
+            warnings.warn("<FileReader>: Unknown TrafficElementID! Default traffic sign ID is used.")
+            traffic_sign_element_id = TrafficSignIDZamunda.UNKNOWN
 
         additional_values = []
         for additional_value in xml_node.findall('additionalValue'):

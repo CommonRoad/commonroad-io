@@ -13,6 +13,7 @@ from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, Tr
     TrafficLightCycleElement, TrafficLightState, TrafficSignIDGermany
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 
+
 class TestFileReader(unittest.TestCase):
     def setUp(self):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
