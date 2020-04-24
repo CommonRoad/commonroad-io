@@ -244,7 +244,8 @@ def _add_legend(legend: Dict[Tuple[str,...], str], draw_params):
         if color is not None:
             handles.append(mpatches.Patch(color=color, label=text))
 
-    plt.legend(handles=handles)
+    l = plt.legend(handles=handles)
+    l.set_zorder(1000)
 
 
 plottable_types=Union[list, Scenario, Trajectory, LaneletNetwork, Lanelet, Obstacle, ShapeGroup, Shape,
