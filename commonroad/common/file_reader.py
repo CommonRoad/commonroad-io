@@ -834,12 +834,7 @@ class TrafficLightFactory:
         else:
             direction = TrafficLightDirection.ALL
 
-        if xml_node.find('offset') is not None:
-            time_offset = int(xml_node.find('offset').text)
-        else:
-            time_offset = 0
-
-        traffic_ligth_cycle = TrafficLightCycleFactory.create_from_xml_node(xml_node.find('cycle'))
+        traffic_ligth_cycle, time_offset = TrafficLightCycleFactory.create_from_xml_node(xml_node.find('cycle'))
 
         return TrafficLight(traffic_light_id=traffic_light_id, cycle=traffic_ligth_cycle, position=position,
                             direction=direction, active=active, time_offset=time_offset)
@@ -848,7 +843,7 @@ class TrafficLightFactory:
 class TrafficLightCycleFactory:
     """ Class to create an object of class TrafficLightCycleElement from an XML element."""
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> List[TrafficLightCycleElement]:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Tuple[List[TrafficLightCycleElement], int]:
         """
         :param xml_node: XML element
         :return: list of objects of class TrafficLightCycleElement according to the CommonRoad specification.
@@ -860,7 +855,12 @@ class TrafficLightCycleFactory:
             traffic_ligth_cycle_elements.append(TrafficLightCycleElement(state=TrafficLightState(state),
                                                                          duration=duration))
 
-        return traffic_ligth_cycle_elements
+        if xml_node.find('timeOffset') is not None:
+            time_offset = int(xml_node.find('timeOffset').text)
+        else:
+            time_offset = 0
+
+        return traffic_ligth_cycle_elements, time_offset
 
 
 class IntersectionFactory:

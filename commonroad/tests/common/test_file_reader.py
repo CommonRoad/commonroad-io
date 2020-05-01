@@ -149,7 +149,7 @@ class TestFileReader(unittest.TestCase):
 
         self.traffic_light_201 = TrafficLight(traffic_light_id=201,
                                               position=np.array([168.6607857447963, -57.38341449560771]),
-                                              direction=TrafficLightDirection.ALL, active=True, time_offset=0,
+                                              direction=TrafficLightDirection.ALL, active=True, time_offset=2,
                                               cycle=[TrafficLightCycleElement(state=TrafficLightState.RED,
                                                                               duration=15),
                                                      TrafficLightCycleElement(state=TrafficLightState.RED_YELLOW,
