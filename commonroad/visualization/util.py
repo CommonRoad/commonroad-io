@@ -130,7 +130,7 @@ def collect_center_line_colors(lanelet_network:LaneletNetwork, traffic_lights: L
                                  TrafficLightDirection.LEFT_STRAIGHT):
                     l2state.update({l: state for l in inc_ele.successors_left})
                 if direction in (TrafficLightDirection.STRAIGHT, TrafficLightDirection.STRAIGHT_RIGHT,
-                                 TrafficLightDirection.LEFT_STRAIGHTS):
+                                 TrafficLightDirection.LEFT_STRAIGHT):
                     l2state.update({l: state for l in inc_ele.successors_straight})
             elif len(lanelet.successor) == 1:
                 l2state.update({lanelet.successor[0]: state})
