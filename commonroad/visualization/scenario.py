@@ -109,22 +109,23 @@ def create_default_draw_params() -> dict:
                            }
                         },
                         'lanelet_network': {
-                            'draw_traffic_lights': True,
                             'kwargs_traffic_light_signs': {}, # further properties for AnnotationBox of traffic signs or lights, see # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
-                            'traffic_light': {'red_color': 'red',
+                            'traffic_light': {'draw_traffic_lights': True,
+                                              'red_color': 'red',
                                               'yellow_color': '#feb609',
                                               'green_color': '#00aa16',
                                               'red_yellow_color': '#fe4009ff',
                                               'show_label': False,
                                               'scale_factor': 0.25,
                                               'zorder': 30},
-                            'draw_traffic_signs': False,
-                            'traffic_sign': {'show_traffic_signs': 'all',  # 'all' or list of TrafficSignIDs
+                            'traffic_sign': {'draw_traffic_signs': False,
+                                             'show_traffic_signs': 'all',  # 'all' or list of TrafficSignIDs
+                                             'speed_limit_unit': 'auto',  # 'mph', 'kmh', 'ms', 'auto'
                                              'show_label': False,
                                              'scale_factor': 0.25,
                                              'zorder': 30},
-                            'draw_intersections': False,
-                            'intersection': {'draw_incoming_lanelets': True,
+                            'intersection': {'draw_intersections': False,
+                                             'draw_incoming_lanelets': True,
                                              'incoming_lanelets_color': '#3ecbcf',
                                              'draw_crossings': True,
                                              'crossings_color': '#b62a55',
@@ -162,6 +163,9 @@ def create_default_draw_params() -> dict:
     draw_params['trajectory'] = draw_params['scenario']['dynamic_obstacle']['trajectory']
     draw_params['lanelet_network'] = draw_params['scenario']['lanelet_network']
     draw_params['lanelet'] = draw_params['scenario']['lanelet_network']['lanelet']
+    draw_params['intersection'] = draw_params['scenario']['lanelet_network']['intersection']
+    draw_params['traffic_sign'] = draw_params['scenario']['lanelet_network']['traffic_sign']
+    draw_params['traffic_light'] = draw_params['scenario']['lanelet_network']['traffic_light']
     draw_params['scenario']['lanelet'] = draw_params['scenario']['lanelet_network']['lanelet']
 
     return draw_params
@@ -428,7 +432,7 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
         if traffic_lights is not None:
             draw_traffic_lights = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
-                ('lanelet_network', 'draw_traffic_lights'))
+                ('lanelet_network', 'traffic_light', 'draw_traffic_lights'))
 
             traffic_light_colors = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
@@ -439,7 +443,7 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
         if traffic_signs is not None:
             draw_traffic_signs = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
-                ('lanelet_network', 'draw_traffic_signs'))
+                ('lanelet_network', 'traffic_sign', 'draw_traffic_signs'))
             show_traffic_sign_label = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
                 ('lanelet_network', 'traffic_sign', 'show_label'))
@@ -449,7 +453,7 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
         if intersections is not None and len(intersections) > 0:
             draw_intersections = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
-                ('lanelet_network', 'draw_intersections'))
+                ('lanelet_network', 'intersection', 'draw_intersections'))
         else:
             draw_intersections = False
 

@@ -14,11 +14,37 @@ import commonroad.scenario.obstacle
 import commonroad.visualization.draw_dispatch_cr
 from commonroad.geometry.shape import *
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDGermany, TrafficLight, TrafficLightState, \
-    TrafficSignIDUsa, TrafficSignIDChina, TrafficSignIDZamunda
+    TrafficSignIDUsa, TrafficSignIDChina, TrafficSignIDZamunda, SupportedTrafficSignCountry
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox, HPacker, TextArea, VPacker, OffsetBox
 
 # path to traffic sign .png files
 traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
+
+
+speed_limit_factors = {'mph': 2.23694, 'kmh': 3.6, 'ms': 1.0}
+
+
+def isfloat(value: str):
+  try:
+    float(value)
+    return True
+  except ValueError:
+    return False
+
+
+def speed_limit_factor(country_code) -> float:
+    """Determine factor for speed_limit_unit by country code."""
+    # dicts for units other than kph
+    mph_countries = [TrafficSignIDUsa]
+
+    if type(country_code) in mph_countries:
+        return speed_limit_factors['mph']
+    else:
+        return speed_limit_factors['kmh']
+
+
+# denotes traffic signs that are speed limits
+is_speed_limit_id = ['274', '275', 'R2-1']
 
 
 def text_prop_dict() -> dict:
@@ -81,9 +107,9 @@ def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], Traffi
     scale_factor = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
         draw_params, call_stack,
         ('traffic_sign', 'scale_factor'), ('scenario','lanelet_network','traffic_sign', 'scale_factor'))
-    scale_factor_default = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-        commonroad.visualization.draw_dispatch_cr.default_draw_params, call_stack,
-        ('scenario', 'lanelet_network', 'traffic_sign', 'scale_factor'))
+    speed_limit_unit = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
+        draw_params, call_stack,
+        ('traffic_sign', 'speed_limit_unit'), ('scenario', 'lanelet_network', 'traffic_sign', 'speed_limit_unit'))
     show_label_default = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
         draw_params, call_stack,
         ('traffic_sign', 'show_label'), ('scenario', 'lanelet_network', 'traffic_sign', 'show_label'))
@@ -93,6 +119,10 @@ def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], Traffi
     zorder = commonroad.visualization.draw_dispatch_cr._retrieve_alternate_value(
         draw_params, call_stack,
         ('traffic_sign', 'zorder'), ('scenario','lanelet_network','traffic_sign', 'zorder'))
+
+    scale_factor_default = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+        commonroad.visualization.draw_dispatch_cr.default_draw_params, call_stack,
+        ('scenario', 'lanelet_network', 'traffic_sign', 'scale_factor'))
 
     assert any([show_traffic_signs == 'all',
                 isinstance(show_traffic_signs, list) and type(show_traffic_signs[0] is enum)]),\
@@ -110,6 +140,7 @@ def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], Traffi
             show_label = show_label_default
             path = os.path.join(traffic_sign_path, el_id.__class__.__name__, el_id.value + '.png')
             plot_img = True
+            # get png image
             if not os.path.exists(path):
                 path = os.path.join(traffic_sign_path, 'TrafficSignIDZamunda', el_id.value + '.png')
                 if not os.path.exists(path):
@@ -131,14 +162,25 @@ def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], Traffi
             if len(boxes) > 1:
                 boxes = [VPacker(children=boxes, pad=0, sep=0, align='center')]
 
-            # get additional values string
+            # get additional values string (like speed limits)
             sep = 0
             if len(element.additional_values) > 0:
-                add_text = '\n'.join(element.additional_values)
+                if element.traffic_sign_element_id.value in is_speed_limit_id \
+                    and isfloat(element.additional_values[0]):
+                    if speed_limit_unit == 'auto':
+                        speed_factor = speed_limit_factor(element.traffic_sign_element_id)
+                    else:
+                        speed_factor = speed_limit_factors[speed_limit_unit]
+
+                    add_text = str(round(speed_factor * float(element.additional_values[0])))
+                else:
+                    add_text = '\n'.join(element.additional_values)
+
                 props = prop_dict[el_id.value] if el_id.value in prop_dict else {'mpl_args':{}}
                 props = rescale_text(add_text, props, scale_factor, scale_factor_default)
                 boxes.append(TextArea(add_text, textprops=props['mpl_args']))
 
+                # position text label on png image
                 if plot_img and 'position_offset' in props:
                     sep = props['position_offset']
 
