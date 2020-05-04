@@ -116,6 +116,9 @@ class TestFileWriter(unittest.TestCase):
         CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', {Tag.URBAN},
                              location).write_to_file(filename=filename,
                                                      overwrite_existing_file=OverwriteExistingFile.ALWAYS)
+        CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM_no_problem', 'TU Munich', 'test', {Tag.URBAN},
+                             location).write_scenario_to_file(filename=filename,
+                                                              overwrite_existing_file=OverwriteExistingFile.ALWAYS)
 
     def validate_with_xsd(self, xml_path: str) -> bool:
         xmlschema_doc = etree.parse(self.xsd_path)
