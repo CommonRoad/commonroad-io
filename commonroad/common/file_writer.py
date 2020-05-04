@@ -313,8 +313,7 @@ class CommonRoadFileWriter:
     def write_scenario_to_file(
         self,
         filename: Union[str, None] = None,
-        overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
-        check_validity=False
+        overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT
     ):
         """
         Write a scenario without planning-problem. If file already exists, it will be overwritten of skipped.
@@ -350,8 +349,6 @@ class CommonRoadFileWriter:
 
         self._write_header()
         self._add_all_objects_from_scenario()
-        if check_validity:
-            self.check_validity_of_commonroad_file(self._dump())
 
         tree = etree.ElementTree(self._root_node)
         tree.write(filename, pretty_print=True, xml_declaration=True, encoding="utf-8")
