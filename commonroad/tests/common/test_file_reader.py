@@ -126,9 +126,9 @@ class TestFileReader(unittest.TestCase):
 
         # setup for reading intersection scenario with traffic signs, traffic lights, stop signs (without obstacles)
         self.stop_line_17 = StopLine(np.array([169.2560351117039, -54.95658983061205]),
-                                     np.array([168.6607857447963, -57.38341449560771]), LineMarking.SOLID, None, 204)
+                                     np.array([168.6607857447963, -57.38341449560771]), LineMarking.SOLID, None, {204})
         self.stop_line_13 = StopLine(np.array([174.1617095787515, -64.10832609867704]),
-                                     np.array([176.4678542468245, -65.07388839655903]), LineMarking.SOLID, None, 201)
+                                     np.array([176.4678542468245, -65.07388839655903]), LineMarking.SOLID, None, {201})
         self.stop_line_12 = None
         self.lanelet_12_traffic_sign_ref = {112}
         self.lanelet_28_traffic_sign_ref = {105}

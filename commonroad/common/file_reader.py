@@ -591,9 +591,13 @@ class LaneletFactory:
             points = PointListFactory.create_from_xml_node(xml_node.find('stopLine'))
             line_marking = LineMarking(xml_node.find('stopLine').find('lineMarking').text)
             if xml_node.find('stopLine').find('trafficSignRef') is not None:
-                traffic_sign_ref = int(xml_node.find('stopLine').find('trafficSignRef').get('ref'))
+                for sign in xml_node.find('stopLine').findall('trafficSignRef'):
+                    traffic_sign_ref = set()
+                    traffic_sign_ref.add(int(sign.get('ref')))
             if xml_node.find('stopLine').find('trafficLightRef') is not None:
-                traffic_light_ref = int(xml_node.find('stopLine').find('trafficLightRef').get('ref'))
+                for light in xml_node.find('stopLine').findall('trafficLightRef'):
+                    traffic_light_ref = set()
+                    traffic_light_ref.add(int(light.get('ref')))
             if len(points) > 0:
                 stop_line = StopLine(start=points[0], end=points[1], line_marking=line_marking,
                                      traffic_sign_ref=traffic_sign_ref, traffic_light_ref=traffic_light_ref)

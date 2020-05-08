@@ -1280,13 +1280,15 @@ class LaneletStopLineXMLNode:
             line_marking_node = LineMarkingXMLNode.create_node(stop_line.line_marking)
             stop_line_node.append(line_marking_node)
 
-        if stop_line.traffic_sign_ref:
-            traffic_sign_ref_node = TrafficSignXMLNode.create_ref_node(stop_line.traffic_sign_ref)
-            stop_line_node.append(traffic_sign_ref_node)
+        if stop_line.traffic_sign_ref is not None:
+            for sign in stop_line.traffic_sign_ref:
+                traffic_sign_ref_node = TrafficSignXMLNode.create_ref_node(sign)
+                stop_line_node.append(traffic_sign_ref_node)
 
-        if stop_line.traffic_light_ref:
-            traffic_light_ref_node = TrafficLightXMLNode.create_ref_node(stop_line.traffic_light_ref)
-            stop_line_node.append(traffic_light_ref_node)
+        if stop_line.traffic_light_ref is not None:
+            for light in stop_line.traffic_light_ref:
+                traffic_light_ref_node = TrafficLightXMLNode.create_ref_node(light)
+                stop_line_node.append(traffic_light_ref_node)
 
         return stop_line_node
 

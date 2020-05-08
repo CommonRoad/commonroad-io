@@ -34,6 +34,7 @@ class TrafficSignIDZamunda(enum.Enum):
     YIELD = '205'
     STOP = '206'
     BAN_CAR_TRUCK_BUS_MOTORCYCLE = '260'
+    U_TURN = '272'
     MAX_SPEED = '274'
     MIN_SPEED = '275'
     NO_OVERTAKING_START = '276'
@@ -60,6 +61,7 @@ class TrafficSignIDGermany(enum.Enum):
     YIELD = '205'
     STOP = '206'
     BAN_CAR_TRUCK_BUS_MOTORCYCLE = '260'
+    U_TURN = '272'
     MAX_SPEED = '274'
     MIN_SPEED = '275'
     NO_OVERTAKING_START = '276'
@@ -83,6 +85,7 @@ class TrafficSignIDGermany(enum.Enum):
 @enum.unique
 class TrafficSignIDUsa(enum.Enum):
     MAX_SPEED = 'R2-1'
+    U_TURN = 'R3-4'
     UNKNOWN = ''
 
 
@@ -127,6 +130,7 @@ class TrafficLightState(enum.Enum):
     YELLOW = "yellow"
     RED_YELLOW = "redYellow"
     GREEN = "green"
+    INACTIVE = "inactive"
 
 
 class TrafficSignElement:

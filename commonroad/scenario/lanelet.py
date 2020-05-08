@@ -15,11 +15,9 @@ __author__ = "Christian Pek, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW CAR@TUM"]
 __version__ = "2020.2"
-__maintainer__ = "Christian Pek"
+__maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "released"
-
-
 
 
 class LineMarking(enum.Enum):
@@ -72,8 +70,8 @@ class StopLine:
     """Class which describes the stop line of a lanelet"""
     def __init__(self, start: np.ndarray, end: np.ndarray,
                  line_marking: LineMarking,
-                 traffic_sign_ref: int = None,
-                 traffic_light_ref: int = None):
+                 traffic_sign_ref: Set[int] = None,
+                 traffic_light_ref: Set[int] = None):
         self._start = start
         self._end = end
         self._line_marking = line_marking
@@ -93,11 +91,11 @@ class StopLine:
         return self._line_marking
 
     @property
-    def traffic_sign_ref(self) -> int:
+    def traffic_sign_ref(self) -> Set[int]:
         return self._traffic_sign_ref
 
     @property
-    def traffic_light_ref(self) -> int:
+    def traffic_light_ref(self) -> Set[int]:
         return self._traffic_light_ref
 
     def __str__(self):

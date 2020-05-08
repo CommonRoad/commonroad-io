@@ -288,7 +288,7 @@ __status__ = "released"
       <xs:element name="point" type="point" minOccurs="0" maxOccurs="2"/>
       <xs:element name="lineMarking" type="lineMarking"/>
       <xs:element name="trafficSignRef" type="trafficSignRef" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="trafficLightRef" type="trafficLightRef" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="trafficLightRef" type="trafficLightRef" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
   <xs:simpleType name="laneletType">
@@ -335,35 +335,37 @@ __status__ = "released"
       <xs:element name="userOneWay" type="vehicleType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="userBidirectional" type="vehicleType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="trafficSignRef" type="trafficSignRef" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="trafficLightRef" type="trafficLightRef" minOccurs="0"/>
+      <xs:element name="trafficLightRef" type="trafficLightRef" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
   </xs:complexType>
   <!-- intersections -->
   <xs:simpleType name="trafficSignID">
       <xs:restriction base="xs:string">
-        <xs:enumeration value="206"/>
-	<xs:enumeration value="205"/>
-	<xs:enumeration value="260"/>
-        <xs:enumeration value="274"/>
-	<xs:enumeration value="275"/>
-        <xs:enumeration value="276"/>
-	<xs:enumeration value="301"/>
-	<xs:enumeration value="306"/>
-        <xs:enumeration value="310"/>
-        <xs:enumeration value="720"/>
-  	<xs:enumeration value="1002-10"/>
- 	<xs:enumeration value="1002-12"/>
-	<xs:enumeration value="1002-13"/>
-   	<xs:enumeration value="1002-20"/>
-   	<xs:enumeration value="1002-22"/>
-    	<xs:enumeration value="1002-23"/>
-    	<xs:enumeration value="1002-11"/>
-    	<xs:enumeration value="1002-14"/>
-    	<xs:enumeration value="1002-21"/>
-    	<xs:enumeration value="1002-24"/>
-        <xs:enumeration value="102"/>
-        <xs:enumeration value="R2-1"/>
+          <xs:enumeration value="102"/>
+	  <xs:enumeration value="205"/>
+	  <xs:enumeration value="206"/>
+	  <xs:enumeration value="260"/>
+          <xs:enumeration value="272"/>
+          <xs:enumeration value="274"/>
+	  <xs:enumeration value="275"/>
+          <xs:enumeration value="276"/>
+	  <xs:enumeration value="301"/>
+	  <xs:enumeration value="306"/>
+          <xs:enumeration value="310"/>
+          <xs:enumeration value="720"/>
+	  <xs:enumeration value="1002-10"/>
+	  <xs:enumeration value="1002-12"/>
+	  <xs:enumeration value="1002-13"/>
+	  <xs:enumeration value="1002-20"/>
+	  <xs:enumeration value="1002-22"/>
+	  <xs:enumeration value="1002-23"/>
+	  <xs:enumeration value="1002-11"/>
+	  <xs:enumeration value="1002-14"/>
+	  <xs:enumeration value="1002-21"/>
+	  <xs:enumeration value="1002-24"/>
+          <xs:enumeration value="R2-1"/>
+          <xs:enumeration value="R3-4"/>
       </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="trafficSign">
@@ -384,9 +386,10 @@ __status__ = "released"
   <xs:simpleType name="trafficLightColor">
    <xs:restriction base="xs:string">
     <xs:enumeration value="red"/>
-	<xs:enumeration value="redYellow"/>
+    <xs:enumeration value="redYellow"/>
     <xs:enumeration value="green"/>
-	<xs:enumeration value="yellow"/>
+    <xs:enumeration value="yellow"/>
+    <xs:enumeration value="inactive"/>
    </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="trafficCycleElement">

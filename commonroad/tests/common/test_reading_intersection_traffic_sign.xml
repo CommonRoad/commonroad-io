@@ -1516,6 +1516,10 @@
             <duration>4</duration>
             <color>yellow</color>
           </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
+            <color>inactive</color>
+          </cycleElement>
           <timeOffset>2</timeOffset>
         </cycle>
         <position>
