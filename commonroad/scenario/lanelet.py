@@ -60,7 +60,7 @@ class RoadUser(enum.Enum):
     TRUCK = 'truck'
     BUS = 'bus'
     PRIORITY_VEHICLE = 'priorityVehicle'
-    MOTORCYCLE = 'motorycle'
+    MOTORCYCLE = 'motorcycle'
     BICYCLE = 'bicycle'
     PEDESTRIAN = 'pedestrian'
     TRAIN = 'train'
