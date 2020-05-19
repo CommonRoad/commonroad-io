@@ -26,7 +26,7 @@ Scenario
 
 ``Location`` class
 ^^^^^^^^^^^^^^^^^^
-.. autoclass:: Scenario
+.. autoclass:: Location
   :members:
   :member-order: Location
 
