@@ -44,7 +44,7 @@ class LaneletType(enum.Enum):
     SHOULDER = 'shoulder'
     BUS_LANE = 'busLane'
     BUS_STOP = 'busStop'
-    BIKE_LANE = 'bikeLane'
+    BICYCLE_LANE = 'bicycleLane'
     SIDEWALK = 'sidewalk'
     CROSSWALK = 'crosswalk'
     INTERSTATE = 'interstate'
