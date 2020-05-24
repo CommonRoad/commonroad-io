@@ -36,7 +36,7 @@ class TestScenario(unittest.TestCase):
         self.lanelet1.add_dynamic_obstacle_to_lanelet(2, 1)
         self.lanelet_network = LaneletNetwork().create_from_lanelet_list(list([self.lanelet1, self.lanelet2]))
         traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED.value, ['10.0'])
-        traffic_sign = TrafficSign(1, [traffic_sign_max_speed], {100}, np.array([0.0, 2]))
+        traffic_sign = TrafficSign(3, [traffic_sign_max_speed], {100}, np.array([0.0, 2]))
         self.lanelet_network.add_traffic_sign(traffic_sign, [])
         self.set_pred = SetBasedPrediction(0, occupancy_list)
 

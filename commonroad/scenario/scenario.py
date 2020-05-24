@@ -239,6 +239,12 @@ class Scenario:
         elif isinstance(scenario_object, LaneletNetwork):
             for lanelet in scenario_object.lanelets:
                 self._mark_object_id_as_used(lanelet.lanelet_id)
+            for traffic_sign in scenario_object.traffic_signs:
+                self._mark_object_id_as_used(traffic_sign.traffic_sign_id)
+            for traffic_light in scenario_object.traffic_lights:
+                self._mark_object_id_as_used(traffic_light.traffic_light_id)
+            for intersection in scenario_object.intersections:
+                self._mark_object_id_as_used(intersection.intersection_id)
             self.lanelet_network: LaneletNetwork = scenario_object
         elif isinstance(scenario_object, Lanelet):
             self._mark_object_id_as_used(scenario_object.lanelet_id)
