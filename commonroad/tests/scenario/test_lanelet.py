@@ -56,15 +56,20 @@ class TestLanelet(unittest.TestCase):
         right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
         left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
         center_vertices = np.array([[0, .5], [1, .5], [2, .5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, .5], [8, .5]])
+        stop_line = StopLine(start=np.array([0, 0]), end=np.array([0, 1]), line_marking=LineMarking.SOLID)
 
-        lanelet = Lanelet(left_vertices, center_vertices, right_vertices, 1)
+        lanelet = Lanelet(left_vertices, center_vertices, right_vertices, 1, stop_line=stop_line)
 
         lanelet.translate_rotate(np.array([2, -4]), np.pi/2)
 
-        desired_center = np.array([[3.5, 2], [3.5, 3], [3.5, 4], [3, 5], [2.5, 6], [2.5, 7], [2.5,  8], [3.5, 9],
+        desired_lanelet_center = np.array([[3.5, 2], [3.5, 3], [3.5, 4], [3, 5], [2.5, 6], [2.5, 7], [2.5,  8], [3.5, 9],
                                    [3.5, 10]])
+        desired_stop_line_start = np.array([4, 2])
+        desired_stop_line_end = np.array([3, 2])
 
-        np.testing.assert_array_almost_equal(lanelet.center_vertices, desired_center)
+        np.testing.assert_array_almost_equal(lanelet.center_vertices, desired_lanelet_center)
+        np.testing.assert_array_almost_equal(lanelet.stop_line.start, desired_stop_line_start)
+        np.testing.assert_array_almost_equal(lanelet.stop_line.end, desired_stop_line_end)
 
     def test_translate_invalid(self):
         right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])

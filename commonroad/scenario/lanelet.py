@@ -98,6 +98,30 @@ class StopLine:
     def traffic_light_ref(self) -> Set[int]:
         return self._traffic_light_ref
 
+    def translate_rotate(self, translation: np.ndarray, angle: float):
+        """
+        This method translates and rotates a stop line
+
+        :param translation: The translation given as [x_off,y_off] for the x and y translation
+        :param angle: The rotation angle in radian (counter-clockwise defined)
+        """
+
+        assert is_real_number_vector(translation,
+                                     2), '<Lanelet/translate_rotate>: provided translation ' \
+                                         'is not valid! translation = {}'.format(translation)
+        assert is_valid_orientation(
+            angle), '<Lanelet/translate_rotate>: provided angle is not valid! angle = {}'.format(angle)
+
+        # create transformation matrix
+        t_m = commonroad.geometry.transform.translation_rotation_matrix(translation,
+                                                                        angle)
+        line_vertices = np.array([self._start, self._end])
+        # transform center vertices
+        tmp = t_m.dot(np.vstack((line_vertices.transpose(),
+                                 np.ones((1, line_vertices.shape[0])))))
+        tmp = tmp[0:2, :].transpose()
+        self._start, self._end = tmp[0], tmp[1]
+
     def __str__(self):
         return f'StopLine from {self._start} to  {self._end}'
 
@@ -565,6 +589,10 @@ class Lanelet:
         tmp = tmp[0:2, :]
         self._right_vertices = tmp.transpose()
 
+        # transform the stop line
+        if self._stop_line is not None:
+            self._stop_line.translate_rotate(translation, angle)
+
         # recreate polygon in case it existed
         if self._polygon is not None:
             self._polygon = None
@@ -885,10 +913,10 @@ class LaneletNetwork:
     """
 
     def __init__(self):
-        self._lanelets: Dict[int,Lanelet] = {}
-        self._intersections: Dict = {}
-        self._traffic_signs: Dict = {}
-        self._traffic_lights: Dict = {}
+        self._lanelets: Dict[int, Lanelet] = {}
+        self._intersections: Dict[int, Intersection] = {}
+        self._traffic_signs: Dict[int, TrafficSign] = {}
+        self._traffic_lights: Dict[int, TrafficLight] = {}
 
     @property
     def lanelets(self) -> List[Lanelet]:
@@ -1141,6 +1169,10 @@ class LaneletNetwork:
         # rotate each lanelet
         for lanelet in self._lanelets.values():
             lanelet.translate_rotate(translation, angle)
+        for traffic_sign in self._traffic_signs.values():
+            traffic_sign.translate_rotate(translation, angle)
+        for traffic_light in self._traffic_lights.values():
+            traffic_light.translate_rotate(translation, angle)
 
     def find_lanelet_by_position(self, point_list: List[np.ndarray]) -> List[List[int]]:
         """

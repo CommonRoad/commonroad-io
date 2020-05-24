@@ -10,6 +10,9 @@ import enum
 from typing import List, Union, Set
 import numpy as np
 
+from commonroad.common.validity import *
+import commonroad.geometry.transform
+
 
 TRAFFIC_SIGN_VALIDITY_START = {'MIN_SPEED', 'MAX_SPEED', 'NO_OVERTAKING_START', 'TOWN_SIGN',
                                'BAN_CAR_TRUCK_BUS_MOTORCYCLE'}
@@ -212,6 +215,23 @@ class TrafficSign:
     def first_occurrence(self) -> Set[int]:
         return self._first_occurrence
 
+    def translate_rotate(self, translation: np.ndarray, angle: float):
+        """
+        This method translates and rotates a traffic sign
+
+        :param translation: The translation given as [x_off,y_off] for the x and y translation
+        :param angle: The rotation angle in radian (counter-clockwise defined)
+        """
+
+        assert is_real_number_vector(translation, 2), '<TrafficSign/translate_rotate>: argument translation is ' \
+                                                      'not a vector of real numbers of length 2.'
+        assert is_real_number(angle), '<TrafficSign/translate_rotate>: argument angle must be a scalar. ' \
+                                      'angle = %s' % angle
+        assert is_valid_orientation(angle), '<TrafficSign/translate_rotate>: argument angle must be within the ' \
+                                            'interval [-2pi, 2pi]. angle = %s' % angle
+        self._position = commonroad.geometry.transform.translate_rotate(np.array([self._position]),
+                                                                        translation, angle)[0]
+
     def __str__(self):
         return f"Sign At {self._position} with {self._traffic_sign_elements} "
 
@@ -295,6 +315,24 @@ class TrafficLight:
     @property
     def active(self) -> bool:
         return self._active
+
+    def translate_rotate(self, translation: np.ndarray, angle: float):
+        """
+        This method translates and rotates a traffic light
+
+        :param translation: The translation given as [x_off,y_off] for the x and y translation
+        :param angle: The rotation angle in radian (counter-clockwise defined)
+        """
+
+        assert is_real_number_vector(translation, 2), '<TrafficLight/translate_rotate>: argument translation is ' \
+                                                      'not a vector of real numbers of length 2.'
+        assert is_real_number(angle), '<TrafficLight/translate_rotate>: argument angle must be a scalar. ' \
+                                      'angle = %s' % angle
+        assert is_valid_orientation(angle), '<TrafficLight/translate_rotate>: argument angle must be within the ' \
+                                            'interval [-2pi, 2pi]. angle = %s' % angle
+        self._position = commonroad.geometry.transform.translate_rotate(
+            np.array([self._position]), translation, angle
+        )[0]
 
 
 def get_default_cycle():

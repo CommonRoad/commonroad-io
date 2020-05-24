@@ -112,10 +112,13 @@ class TestLaneletNetwork(unittest.TestCase):
 
         self.lanelet_network.translate_rotate(np.array([2, -4]), np.pi / 2)
 
-        desired_center = np.array([[3.5, 2], [3.5, 3], [3.5, 4], [3, 5], [2.5, 6], [2.5, 7], [2.5,  8], [3.5, 9],
+        desired_lanelet_center = np.array([[3.5, 2], [3.5, 3], [3.5, 4], [3, 5], [2.5, 6], [2.5, 7], [2.5,  8], [3.5, 9],
                                    [3.5, 10]])
+        desired_traffic_sign_position = np.array([4, 2])
 
-        np.testing.assert_array_almost_equal(self.lanelet_network.lanelets[0].center_vertices, desired_center)
+        np.testing.assert_array_almost_equal(self.lanelet_network.lanelets[0].center_vertices, desired_lanelet_center)
+        np.testing.assert_array_almost_equal(self.lanelet_network.traffic_signs[0].position,
+                                             desired_traffic_sign_position)
 
     def test_translate_invalid(self):
 
