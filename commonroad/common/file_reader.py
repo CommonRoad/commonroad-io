@@ -363,6 +363,7 @@ class LaneletNetworkFactory:
                 elif any(traffic_sign not in lanelet_network.find_lanelet_by_id(pre).traffic_signs
                        for pre in lanelet.predecessor):
                     occurences[traffic_sign].add(lanelet.lanelet_id)
+
         return occurences
 
     @staticmethod
@@ -672,6 +673,10 @@ class TrafficSignFactory:
         :return: object of class TrafficSign according to the CommonRoad specification.
         """
         traffic_sign_id = int(xml_node.get('id'))
+        assert traffic_sign_id in first_traffic_sign_occurence.keys(), \
+            '<CommonRoadFileReader/TrafficSignFactory.create_from_xml_node>: ' \
+            'CommonRoad file is invalid! Traffic sign {} is not referenced by a lanelet!'.format(traffic_sign_id)
+
         traffic_sign_elements = []
         for element in xml_node.findall('trafficSignElement'):
             traffic_sign_elements.append(TrafficSignElementFactory.create_from_xml_node(element, country))
