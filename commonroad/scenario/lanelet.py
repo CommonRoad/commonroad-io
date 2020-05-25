@@ -891,6 +891,14 @@ class Lanelet:
         """
         self.traffic_signs.add(traffic_sign_id)
 
+    def add_traffic_light_to_lanelet(self, traffic_light_id: int):
+        """
+        Adds a traffic light ID to lanelet
+
+        :param traffic_light_id: traffic light ID to add
+        """
+        self.traffic_lights.add(traffic_light_id)
+
     def dynamic_obstacle_by_time_step(self, time_step) -> Set[int]:
         """
         Returns all dynamic obstacles on lanelet at specific time step
@@ -1113,7 +1121,7 @@ class LaneletNetwork:
             for lanelet_id in lanelet_ids:
                 lanelet = self.find_lanelet_by_id(lanelet_id)
                 if lanelet is not None:
-                    lanelet.add_traffic_sign_to_lanelet(traffic_light.traffic_light_id)
+                    lanelet.add_traffic_light_to_lanelet(traffic_light.traffic_light_id)
                 else:
                     warnings.warn('Traffic light cannot be referenced to lanelet because the lanelet does not exist.')
             return True

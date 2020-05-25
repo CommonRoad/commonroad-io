@@ -3,7 +3,8 @@ import numpy as np
 from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.geometry.shape import Rectangle
-from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany
+from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany, \
+    TrafficLight, TrafficLightCycleElement, TrafficLightState
 from commonroad.scenario.trajectory import State
 
 __author__ = "Moritz Untersperger"
@@ -96,6 +97,26 @@ class TestLaneletNetwork(unittest.TestCase):
         np.testing.assert_array_almost_equal(self.lanelet_network.lanelets[0].center_vertices, self.lanelet.center_vertices)
         np.testing.assert_array_almost_equal(self.lanelet_network.lanelets[0].left_vertices, self.lanelet.left_vertices)
         self.assertEqual(self.lanelet_network.lanelets[0].lanelet_id, self.lanelet.lanelet_id)
+
+    def test_add_traffic_sign(self):
+        traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED.value, ["15"])
+        traffic_sign = TrafficSign(123, [traffic_sign_max_speed], {5}, np.array([0.0, 0.0]))
+
+        self.assertTrue(self.lanelet_network.add_traffic_sign(traffic_sign, {5}))
+
+        self.assertEqual(self.lanelet_network.traffic_signs[1].traffic_sign_id, traffic_sign.traffic_sign_id)
+        self.assertSetEqual(self.lanelet_network.lanelets[0].traffic_signs, {123, 1})
+
+    def test_add_traffic_light(self):
+        cycle = [TrafficLightCycleElement(TrafficLightState.GREEN, 2),
+                 TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
+                 TrafficLightCycleElement(TrafficLightState.RED, 2)]
+        traffic_light = TrafficLight(234, cycle, time_offset=0, position=np.array([10., 10.]))
+
+        self.assertTrue(self.lanelet_network.add_traffic_light(traffic_light, {5}))
+
+        self.assertEqual(self.lanelet_network.traffic_lights[0].traffic_light_id, traffic_light.traffic_light_id)
+        self.assertSetEqual(self.lanelet_network.lanelets[0].traffic_lights, {234})
 
     def test_add_lanelets_from_network(self):
 
