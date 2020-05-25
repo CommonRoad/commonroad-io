@@ -15,20 +15,23 @@ Scenario
 ``Tag`` class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: Tag
+  :undoc-members:
   :members:
   :member-order: bysource
 
 ``GeoTransformation`` class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: GeoTransformation
-   :members:
-   :member-order: bysource
+  :undoc-members:
+  :members:
+  :member-order: bysource
 
 ``Location`` class
 ^^^^^^^^^^^^^^^^^^
 .. autoclass:: Location
+  :undoc-members:
   :members:
-  :member-order: Location
+  :member-order: bysource
 
 
 Road network
