@@ -21,7 +21,7 @@ from commonroad.prediction.prediction import SetBasedPrediction, TrajectoryPredi
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine, LaneletType
 from commonroad.scenario.obstacle import ObstacleRole, ObstacleType, DynamicObstacle, StaticObstacle, Obstacle, \
-    Occupancy, Shape
+    Occupancy, Shape, SignalState
 from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficLightCycleElement
 from commonroad.scenario.trajectory import Trajectory, State
@@ -657,6 +657,16 @@ class DynamicObstacleXMLNode:
         )
         obstacle_node.append(initial_state_node)
 
+        # write initial signal state if one exists
+        if dynamic_obstacle.initial_signal_state is not None:
+            initial_signal_state_node = etree.Element('initialSignalState')
+            SignalStateXMLNode.create_signal_state_node(
+                dynamic_obstacle.initial_signal_state,
+                initial_signal_state_node,
+                time_step=dynamic_obstacle.initial_signal_state.time_step,
+            )
+            obstacle_node.append(initial_signal_state_node)
+
         # write prediction depending on type
         if isinstance(dynamic_obstacle.prediction, SetBasedPrediction):
             obstacle_node.append(
@@ -666,6 +676,10 @@ class DynamicObstacleXMLNode:
             obstacle_node.append(
                 cls._create_trajectory_node(dynamic_obstacle.prediction.trajectory)
             )
+
+        # write signal series if it exists
+        if dynamic_obstacle.signal_series is not None and len(dynamic_obstacle.signal_series) > 0:
+            obstacle_node.append(cls._create_signal_series_node(dynamic_obstacle.signal_series))
 
         return obstacle_node
 
@@ -695,6 +709,21 @@ class DynamicObstacleXMLNode:
         for occupancy in occupancy_set:
             occupancy_set_node.append(OccupancyXMLNode.create_node(occupancy))
         return occupancy_set_node
+
+    @classmethod
+    def _create_signal_series_node(cls, signal_series: List[SignalState]) -> etree.Element:
+        """
+        Create XML-Node for a Trajectory
+        :param trajectory: trajectory for creating a node
+        :return: node
+        """
+        series_node = etree.Element('signalSeries')
+        for signal_state in signal_series:
+            signal_state_node = etree.Element('signalState')
+            series_node.append(
+                SignalStateXMLNode.create_signal_state_node(signal_state, signal_state_node, signal_state.time_step)
+            )
+        return series_node
 
 
 class OccupancyXMLNode:
@@ -850,12 +879,10 @@ class PolygonXMLNode:
 
 class StateXMLNode:
     @classmethod
-    def create_goal_state_node(
-        cls, state: State, goal_lanelet_ids: List[int]
-    ) -> etree.Element:
+    def create_goal_state_node(cls, state: State, goal_lanelet_ids: List[int]) -> etree.Element:
         """
-        Create XML-Node for a polygon
-        :param polygon: polygon for creating a node
+        Create XML-Node for a state
+        :param state: CommonRoad state
         :param goal_lanelet_ids: contains a list of lanelet ids if a goal state's position is specified lanelet id(s)
         :return: node
         """
@@ -1294,3 +1321,43 @@ class LaneletStopLineXMLNode:
         return stop_line_node
 
 
+class SignalStateXMLNode:
+    @classmethod
+    def create_signal_state_node(cls, signal_state: SignalState, signal_state_node: etree.Element,
+                          time_step: int) -> etree.Element:
+        """
+        Create XML-Node for a state
+        :param signal_state: value of the signal state
+        :param signal_state_node: node of the overlying state
+        :return: node
+        """
+        time_node = etree.Element('time')
+        time_node.append(create_exact_node_int(time_step))
+        signal_state_node.append(time_node)
+
+        if hasattr(signal_state, 'indicator_left'):
+            indicator_left = etree.Element('indicatorLeft')
+            indicator_left.text = str(signal_state.indicator_left).lower()
+            signal_state_node.append(indicator_left)
+
+        if hasattr(signal_state, 'indicator_right'):
+            indicator_right = etree.Element('indicatorRight')
+            indicator_right.text = str(signal_state.indicator_right).lower()
+            signal_state_node.append(indicator_right)
+
+        if hasattr(signal_state, 'braking_lights'):
+            braking_lights = etree.Element('brakingLights')
+            braking_lights.text = str(signal_state.braking_lights).lower()
+            signal_state_node.append(braking_lights)
+
+        if hasattr(signal_state, 'hazard_warning_lights'):
+            hazard_warning_lights = etree.Element('hazardWarningLights')
+            hazard_warning_lights.text = str(signal_state.braking_lights).lower()
+            signal_state_node.append(hazard_warning_lights)
+
+        if hasattr(signal_state, 'flashing_blue_lights'):
+            flashing_blue_lights = etree.Element('flashingBlueLights')
+            flashing_blue_lights.text = str(signal_state.flashing_blue_lights).lower()
+            signal_state_node.append(flashing_blue_lights)
+
+        return signal_state_node
