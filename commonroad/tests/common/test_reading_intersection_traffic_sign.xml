@@ -1506,6 +1506,10 @@
           </cycleElement>
           <cycleElement>
             <duration>4</duration>
+            <color>inactive</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
             <color>redYellow</color>
           </cycleElement>
           <cycleElement>
@@ -1515,10 +1519,6 @@
           <cycleElement>
             <duration>4</duration>
             <color>yellow</color>
-          </cycleElement>
-          <cycleElement>
-            <duration>4</duration>
-            <color>inactive</color>
           </cycleElement>
           <timeOffset>2</timeOffset>
         </cycle>
@@ -1570,12 +1570,12 @@
             <color>yellow</color>
           </cycleElement>
           <cycleElement>
-            <duration>15</duration>
-            <color>red</color>
-          </cycleElement>
-          <cycleElement>
             <duration>4</duration>
             <color>redYellow</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>15</duration>
+            <color>red</color>
           </cycleElement>
         </cycle>
         <direction>all</direction>
@@ -1589,15 +1589,15 @@
           </cycleElement>
           <cycleElement>
             <duration>4</duration>
+            <color>redYellow</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
             <color>yellow</color>
           </cycleElement>
           <cycleElement>
             <duration>15</duration>
             <color>red</color>
-          </cycleElement>
-          <cycleElement>
-            <duration>4</duration>
-            <color>redYellow</color>
           </cycleElement>
       </cycle>
         <position>

@@ -704,7 +704,7 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
         if has_traffic_light:
             light_state = center_line_color_dict[lanelet.lanelet_id]
 
-            if light_state:
+            if light_state is not TrafficLightState.INACTIVE:
                 linewidth_metres = 0.75
                 # dashed line for red_yellow
                 linestyle = '--' if light_state == TrafficLightState.RED_YELLOW else '-'
