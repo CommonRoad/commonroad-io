@@ -152,6 +152,8 @@ class TestFileReader(unittest.TestCase):
                                               direction=TrafficLightDirection.ALL, active=True, time_offset=2,
                                               cycle=[TrafficLightCycleElement(state=TrafficLightState.RED,
                                                                               duration=15),
+                                                     TrafficLightCycleElement(state=TrafficLightState.INACTIVE,
+                                                                              duration=4),
                                                      TrafficLightCycleElement(state=TrafficLightState.RED_YELLOW,
                                                                               duration=4),
                                                      TrafficLightCycleElement(state=TrafficLightState.GREEN,
