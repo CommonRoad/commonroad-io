@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector, is_real_number
 from commonroad.geometry.shape import Shape
-from commonroad.prediction.prediction import Prediction, Occupancy
+from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.trajectory import State
 
 
@@ -328,7 +328,8 @@ class DynamicObstacle(Obstacle):
 
     def __init__(self, obstacle_id: int, obstacle_type: ObstacleType,
                  obstacle_shape: Shape, initial_state: State,
-                 prediction: Union[None, Prediction] = None, initial_center_lanelet_ids: Union[None, Set[int]] = None,
+                 prediction: Union[None, Prediction, TrajectoryPrediction, SetBasedPrediction] = None,
+                 initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
                  initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None):
         """
@@ -350,12 +351,12 @@ class DynamicObstacle(Obstacle):
         self.prediction: Prediction = prediction
 
     @property
-    def prediction(self) -> Union[Prediction, None]:
+    def prediction(self) -> Union[Prediction, TrajectoryPrediction, SetBasedPrediction, None]:
         """ Prediction describing the movement of the dynamic obstacle over time."""
         return self._prediction
 
     @prediction.setter
-    def prediction(self, prediction: Union[Prediction, None]):
+    def prediction(self, prediction: Union[Prediction, TrajectoryPrediction, SetBasedPrediction,  None]):
         assert isinstance(prediction, (Prediction, type(None))), '<DynamicObstacle/prediction>: argument prediction ' \
                                                                  'of wrong type. Expected types: %s, %s. Got type: ' \
                                                                  '%s.' % (Prediction, type(None), type(prediction))
