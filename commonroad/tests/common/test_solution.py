@@ -409,7 +409,8 @@ class TestStateType(unittest.TestCase):
         assert StateType.PM.value == 'pmState'
         assert StateType.PM.fields == StateFields.PM.value
         assert StateType.PM.xml_fields == XMLStateFields.PM.value
-        assert StateType.PM == StateType.get_state_type(DummyDataGenerator.create_random_pm_state(), desired_vehicle_model=VehicleModel.PM)
+        assert StateType.PM == StateType.get_state_type(DummyDataGenerator.create_random_pm_state(),
+                                                        desired_vehicle_model=VehicleModel.PM)
 
     def test_st_state_type(self):
         assert StateType.ST.value == 'stState'
@@ -596,8 +597,10 @@ class TestSolution(unittest.TestCase):
             trajectory=DummyDataGenerator.create_random_st_trajectory()
         )
 
-        solution_single = Solution(scenario_id='TEST', commonroad_version='2020a', planning_problem_solutions=[pp_solution_1])
-        solution_collab = Solution(scenario_id='TEST', commonroad_version='2020a', planning_problem_solutions=[pp_solution_1, pp_solution_2])
+        solution_single = Solution(scenario_id='TEST', commonroad_version='2020a',
+                                   planning_problem_solutions=[pp_solution_1])
+        solution_collab = Solution(scenario_id='TEST', commonroad_version='2020a',
+                                   planning_problem_solutions=[pp_solution_1, pp_solution_2])
 
         assert solution_single.vehicle_ids == ['KS1']
         assert solution_collab.vehicle_ids == ['KS1', 'ST2']
@@ -619,8 +622,10 @@ class TestSolution(unittest.TestCase):
             trajectory=DummyDataGenerator.create_random_st_trajectory()
         )
 
-        solution_single = Solution(scenario_id='TEST', commonroad_version='2020a', planning_problem_solutions=[pp_solution_1])
-        solution_collab = Solution(scenario_id='TEST', commonroad_version='2020a', planning_problem_solutions=[pp_solution_1, pp_solution_2])
+        solution_single = Solution(scenario_id='TEST', commonroad_version='2020a',
+                                   planning_problem_solutions=[pp_solution_1])
+        solution_collab = Solution(scenario_id='TEST', commonroad_version='2020a',
+                                   planning_problem_solutions=[pp_solution_1, pp_solution_2])
 
         assert solution_single.cost_ids == ['JB1']
         assert solution_collab.cost_ids == ['JB1', 'SA1']
@@ -642,8 +647,10 @@ class TestSolution(unittest.TestCase):
             trajectory=DummyDataGenerator.create_random_st_trajectory()
         )
 
-        solution_single = Solution(scenario_id='TEST', commonroad_version='2020a', planning_problem_solutions=[pp_solution_1])
-        solution_collab = Solution(scenario_id='TEST', commonroad_version='2020a', planning_problem_solutions=[pp_solution_1, pp_solution_2])
+        solution_single = Solution(scenario_id='TEST', commonroad_version='2020a',
+                                   planning_problem_solutions=[pp_solution_1])
+        solution_collab = Solution(scenario_id='TEST', commonroad_version='2020a',
+                                   planning_problem_solutions=[pp_solution_1, pp_solution_2])
 
         assert solution_single.benchmark_id == 'KS1:JB1:TEST:2020a'
         assert solution_collab.benchmark_id == '[KS1,ST2]:[JB1,SA1]:TEST:2020a'
@@ -670,9 +677,11 @@ class TestCommonRoadSolutionWriter(unittest.TestCase):
             cost_function=CostFunction.SA1,
             trajectory=DummyDataGenerator.create_random_ks_trajectory()
         )
-        self.solution_single = Solution(scenario_id='TEST', commonroad_version='2020a', planning_problem_solutions=[self.pp_solution1])
-        self.solution_collab = Solution(scenario_id='TEST', commonroad_version='2020a', planning_problem_solutions=[self.pp_solution1,
-                                                                                        self.pp_solution2])
+        self.solution_single = Solution(scenario_id='TEST', commonroad_version='2020a',
+                                        planning_problem_solutions=[self.pp_solution1])
+        self.solution_collab = Solution(scenario_id='TEST', commonroad_version='2020a',
+                                        planning_problem_solutions=[self.pp_solution1,
+                                                                    self.pp_solution2])
 
     def tearDown(self):
         for file in glob('./solution_*.xml'):
@@ -711,12 +720,11 @@ class TestCommonRoadSolutionWriter(unittest.TestCase):
         CommonRoadSolutionWriter(self.solution_single).write_to_file()
         CommonRoadSolutionWriter(self.solution_collab).write_to_file()
 
-        with warnings.catch_warnings(record=True) as w:
+        with self.assertRaises(FileExistsError):
             CommonRoadSolutionWriter(self.solution_single).write_to_file()
-            CommonRoadSolutionWriter(self.solution_collab).write_to_file()
 
-            assert 'already exists' in str(w[-2].message)
-            assert 'already exists' in str(w[-1].message)
+        with self.assertRaises(FileExistsError):
+            CommonRoadSolutionWriter(self.solution_collab).write_to_file()
 
     def test_write_to_file_invalid_output_path(self):
         with self.assertRaises(NotADirectoryError):
@@ -740,9 +748,11 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
             cost_function=CostFunction.SA1,
             trajectory=DummyDataGenerator.create_random_ks_trajectory()
         )
-        self.solution_single = Solution(scenario_id='TEST', commonroad_version='2020a', planning_problem_solutions=[self.pp_solution1])
-        self.solution_collab = Solution(scenario_id='TEST', commonroad_version='2020a', planning_problem_solutions=[self.pp_solution1,
-                                                                                        self.pp_solution2])
+        self.solution_single = Solution(scenario_id='TEST', commonroad_version='2020a',
+                                        planning_problem_solutions=[self.pp_solution1])
+        self.solution_collab = Solution(scenario_id='TEST', commonroad_version='2020a',
+                                        planning_problem_solutions=[self.pp_solution1,
+                                                                    self.pp_solution2])
 
         CommonRoadSolutionWriter(self.solution_single).write_to_file()
         CommonRoadSolutionWriter(self.solution_collab).write_to_file()
