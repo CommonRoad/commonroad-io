@@ -390,7 +390,7 @@ class TestFileReader(unittest.TestCase):
         exp_location_geo = None
         exp_tags = {Tag.INTERSECTION, Tag.URBAN}
 
-        xml_file = CommonRoadFileReader(self.filename_all).open()
+        xml_file = CommonRoadFileReader(self.filename_all).open(lanelet_assignment=True)
 
         self.assertEqual(exp_num_lanelet_scenario,len(xml_file[0].lanelet_network.lanelets))
         self.assertEqual(exp_num_obstacles_scenario,len(xml_file[0].obstacles))

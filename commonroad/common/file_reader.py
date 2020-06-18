@@ -72,15 +72,16 @@ class CommonRoadFileReader:
         self._benchmark_id = None
         self._meta_data = None
 
-    def open(self) -> Tuple[Scenario, PlanningProblemSet]:
+    def open(self, lanelet_assignment: bool = False) -> Tuple[Scenario, PlanningProblemSet]:
         """
         Reads a CommonRoad XML-file.
 
+        :param lanelet_assignment: activates assignment of occupied lanelets of an obstacle
         :return: the scenario containing the road network and the obstacles and the planning problem set \
         containing the planning problems---initial states and goal regions--for all ego vehicles.
         """
         self._read_header()
-        scenario = self._open_scenario()
+        scenario = self._open_scenario(lanelet_assignment)
         planning_problem_set = self._open_planning_problem_set(scenario.lanelet_network)
         return scenario, planning_problem_set
 
@@ -93,14 +94,15 @@ class CommonRoadFileReader:
         self._read_header()
         return LaneletNetworkFactory.create_from_xml_node(self._tree)
 
-    def _open_scenario(self) -> Scenario:
+    def _open_scenario(self, lanelet_assignment: bool) -> Scenario:
         """
         Reads the lanelet network and obstacles from the CommonRoad XML-file.
 
+        :param lanelet_assignment: activates assignment of occupied lanelets of an obstacle
         :return: object of class scenario containing the road network and the obstacles
         """
         scenario = ScenarioFactory.create_from_xml_node(self._tree, self._dt, self._benchmark_id,
-                                                        self._commonroad_version, self._meta_data)
+                                                        self._commonroad_version, self._meta_data, lanelet_assignment)
         return scenario
 
     def _open_planning_problem_set(self, lanelet_network: LaneletNetwork) \
@@ -185,12 +187,13 @@ class ScenarioFactory:
     """ Class to create an object of class Scenario from an XML element."""
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element, dt: float, benchmark_id: str, commonroad_version: str,
-                             meta_data: dict):
+                             meta_data: dict, lanelet_assignment: bool):
         """
         :param xml_node: XML element
         :param dt: time step size of the scenario
         :param benchmark_id: unique CommonRoad benchmark ID
         :param commonroad_version: CommonRoad version of the file
+        :param lanelet_assignment: activates assignment of occupied lanelets of an obstacle
         :return: CommonRoad scenario
         """
         if commonroad_version != '2018b':
@@ -202,7 +205,7 @@ class ScenarioFactory:
 
         scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
         if commonroad_version == '2018b':
-            scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network))
+            scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network, lanelet_assignment))
             for key, value in LaneletFactory._speed_limits.items():
                 for lanelet in value:
                     if SupportedTrafficSignCountry.GERMANY.value in benchmark_id:
@@ -223,40 +226,44 @@ class ScenarioFactory:
                     scenario.add_objects(traffic_sign, {lanelet})
             LaneletFactory._speed_limits = {}
         else:
-            scenario.add_objects(cls._obstacles(xml_node, scenario.lanelet_network))
+            scenario.add_objects(cls._obstacles(xml_node, scenario.lanelet_network, lanelet_assignment))
         return scenario
 
     @classmethod
-    def _obstacles_2018b(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) -> List[Obstacle]:
+    def _obstacles_2018b(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork,
+                         lanelet_assignment: bool) -> List[Obstacle]:
         """
         Reads all obstacles specified in a CommonRoad XML-file.
         :param xml_node: XML element
         :param dt: time step size of the scenario
+        :param lanelet_assignment: activates assignment of occupied lanelets of an obstacle
         :return: list of static and dynamic obstacles specified in the CommonRoad XML-file
         """
         obstacles = list()
         for o in xml_node.findall('obstacle'):
             if o.find('role').text == 'static':
-                obstacles.append(StaticObstacleFactory.create_from_xml_node(o, lanelet_network))
+                obstacles.append(StaticObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment))
             elif o.find('role').text == 'dynamic':
-                obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network))
+                obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment))
             else:
                 raise ValueError('Role of obstacle is unknown. Got role: {}'.format(xml_node.find('role').text))
         return obstacles
 
     @classmethod
-    def _obstacles(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) -> List[Obstacle]:
+    def _obstacles(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork,
+                   lanelet_assignment: bool) -> List[Obstacle]:
         """
         Reads all obstacles specified in a CommonRoad XML-file.
         :param xml_node: XML element
         :param dt: time step size of the scenario
+        :param lanelet_assignment: activates assignment of occupied lanelets of an obstacle
         :return: list of static and dynamic obstacles specified in the CommonRoad XML-file
         """
         obstacles = []
         for o in xml_node.findall('staticObstacle'):
-            obstacles.append(StaticObstacleFactory.create_from_xml_node(o, lanelet_network))
+            obstacles.append(StaticObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment))
         for o in xml_node.findall('dynamicObstacle'):
-            obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network))
+            obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment))
         return obstacles
 
 
@@ -956,7 +963,8 @@ class ObstacleFactory(ABC):
 
 class StaticObstacleFactory(ObstacleFactory):
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) -> StaticObstacle:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork,
+                             lanelet_assignment: bool) -> StaticObstacle:
         obstacle_type = StaticObstacleFactory.read_type(xml_node)
         obstacle_id = StaticObstacleFactory.read_id(xml_node)
         initial_state = StaticObstacleFactory.read_initial_state(xml_node.find('initialState'))
@@ -964,15 +972,20 @@ class StaticObstacleFactory(ObstacleFactory):
         signal_series = SignalSeriesFactory.create_from_xml_node((xml_node.find('signalSeries')))
         shape = StaticObstacleFactory.read_shape(xml_node.find('shape'))
 
-        rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
-        initial_shape_lanelet_ids = lanelet_network.find_lanelet_by_shape(rotated_shape)
-        initial_center_lanelet_ids = lanelet_network.find_lanelet_by_position([initial_state.position])[0]
-        for l_id in initial_shape_lanelet_ids:
-            lanelet_network.find_lanelet_by_id(l_id).add_static_obstacle_to_lanelet(obstacle_id=obstacle_id)
+        if lanelet_assignment is True:
+            rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
+            initial_shape_lanelet_ids = set(lanelet_network.find_lanelet_by_shape(rotated_shape))
+            initial_center_lanelet_ids = set(lanelet_network.find_lanelet_by_position([initial_state.position])[0])
+            for l_id in initial_shape_lanelet_ids:
+                 lanelet_network.find_lanelet_by_id(l_id).add_static_obstacle_to_lanelet(obstacle_id=obstacle_id)
+        else:
+            initial_center_lanelet_ids = None
+            initial_shape_lanelet_ids = None
+
         return StaticObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
                               obstacle_shape=shape, initial_state=initial_state,
-                              initial_center_lanelet_ids=set(initial_center_lanelet_ids),
-                              initial_shape_lanelet_ids=set(initial_shape_lanelet_ids),
+                              initial_center_lanelet_ids=initial_center_lanelet_ids,
+                              initial_shape_lanelet_ids=initial_shape_lanelet_ids,
                               initial_signal_state=initial_signal_state,
                               signal_series=signal_series)
 
@@ -1025,28 +1038,37 @@ class DynamicObstacleFactory(ObstacleFactory):
         return lanelet_ids_per_state
 
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) -> DynamicObstacle:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork,
+                             lanelet_assignment: bool) -> DynamicObstacle:
         obstacle_type = DynamicObstacleFactory.read_type(xml_node)
         obstacle_id = DynamicObstacleFactory.read_id(xml_node)
         shape = DynamicObstacleFactory.read_shape(xml_node.find('shape'))
         initial_state = DynamicObstacleFactory.read_initial_state(xml_node.find('initialState'))
         initial_signal_state = StaticObstacleFactory.read_initial_signal_state(xml_node.find('initialSignalState'))
         signal_series = SignalSeriesFactory.create_from_xml_node((xml_node.find('signalSeries')))
-        initial_center_lanelet_ids = []
-        initial_shape_lanelet_ids = []
+        initial_center_lanelet_ids = set()
+        initial_shape_lanelet_ids = set()
 
         if xml_node.find('trajectory') is not None:
-            rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
-            initial_shape_lanelet_ids = lanelet_network.find_lanelet_by_shape(rotated_shape)
-            initial_center_lanelet_ids = lanelet_network.find_lanelet_by_position([initial_state.position])[0]
-            for l_id in initial_shape_lanelet_ids:
-                lanelet_network.find_lanelet_by_id(l_id).\
-                    add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle_id, time_step=initial_state.time_step)
+            if lanelet_assignment is True:
+                rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
+                initial_shape_lanelet_ids = set(lanelet_network.find_lanelet_by_shape(rotated_shape))
+                initial_center_lanelet_ids = set(lanelet_network.find_lanelet_by_position([initial_state.position])[0])
+                for l_id in initial_shape_lanelet_ids:
+                    lanelet_network.find_lanelet_by_id(l_id).\
+                        add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle_id, time_step=initial_state.time_step)
+            else:
+                initial_shape_lanelet_ids = None
+                initial_center_lanelet_ids = None
             trajectory = TrajectoryFactory.create_from_xml_node(xml_node.find('trajectory'))
-            shape_lanelet_assignment = cls.find_obstacle_shape_lanelets(initial_state, trajectory.state_list,
-                                                                        lanelet_network, obstacle_id, shape)
-            center_lanelet_assignment = cls.find_obstacle_center_lanelets(initial_state, trajectory.state_list,
-                                                                          lanelet_network)
+            if lanelet_assignment is True:
+                shape_lanelet_assignment = cls.find_obstacle_shape_lanelets(initial_state, trajectory.state_list,
+                                                                            lanelet_network, obstacle_id, shape)
+                center_lanelet_assignment = cls.find_obstacle_center_lanelets(initial_state, trajectory.state_list,
+                                                                              lanelet_network)
+            else:
+                shape_lanelet_assignment = None
+                center_lanelet_assignment = None
             prediction = TrajectoryPrediction(trajectory, shape, center_lanelet_assignment, shape_lanelet_assignment)
         elif xml_node.find('occupancySet') is not None:
             prediction = SetBasedPredictionFactory.create_from_xml_node(xml_node.find('occupancySet'))
@@ -1054,8 +1076,8 @@ class DynamicObstacleFactory(ObstacleFactory):
             prediction = None
         return DynamicObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
                                obstacle_shape=shape, initial_state=initial_state, prediction=prediction,
-                               initial_center_lanelet_ids=set(initial_center_lanelet_ids),
-                               initial_shape_lanelet_ids=set(initial_shape_lanelet_ids),
+                               initial_center_lanelet_ids=initial_center_lanelet_ids,
+                               initial_shape_lanelet_ids=initial_shape_lanelet_ids,
                                initial_signal_state=initial_signal_state,
                                signal_series=signal_series)
 
