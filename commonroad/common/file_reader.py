@@ -76,7 +76,7 @@ class CommonRoadFileReader:
         """
         Reads a CommonRoad XML-file.
 
-        :param lanelet_assignment: activates assignment of occupied lanelets of an obstacle
+        :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
         :return: the scenario containing the road network and the obstacles and the planning problem set \
         containing the planning problems---initial states and goal regions--for all ego vehicles.
         """
@@ -98,7 +98,7 @@ class CommonRoadFileReader:
         """
         Reads the lanelet network and obstacles from the CommonRoad XML-file.
 
-        :param lanelet_assignment: activates assignment of occupied lanelets of an obstacle
+        :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
         :return: object of class scenario containing the road network and the obstacles
         """
         scenario = ScenarioFactory.create_from_xml_node(self._tree, self._dt, self._benchmark_id,
@@ -193,7 +193,7 @@ class ScenarioFactory:
         :param dt: time step size of the scenario
         :param benchmark_id: unique CommonRoad benchmark ID
         :param commonroad_version: CommonRoad version of the file
-        :param lanelet_assignment: activates assignment of occupied lanelets of an obstacle
+        :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
         :return: CommonRoad scenario
         """
         if commonroad_version != '2018b':
@@ -236,7 +236,7 @@ class ScenarioFactory:
         Reads all obstacles specified in a CommonRoad XML-file.
         :param xml_node: XML element
         :param dt: time step size of the scenario
-        :param lanelet_assignment: activates assignment of occupied lanelets of an obstacle
+        :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
         :return: list of static and dynamic obstacles specified in the CommonRoad XML-file
         """
         obstacles = list()
@@ -256,7 +256,7 @@ class ScenarioFactory:
         Reads all obstacles specified in a CommonRoad XML-file.
         :param xml_node: XML element
         :param dt: time step size of the scenario
-        :param lanelet_assignment: activates assignment of occupied lanelets of an obstacle
+        :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
         :return: list of static and dynamic obstacles specified in the CommonRoad XML-file
         """
         obstacles = []
