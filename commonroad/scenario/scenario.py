@@ -209,7 +209,7 @@ class Scenario:
         return list(self._static_obstacles.values())
 
     @property
-    def obstacles(self) -> List[Obstacle]:
+    def obstacles(self) -> List[Union[Obstacle, StaticObstacle, DynamicObstacle]]:
         """ Returns a list of all static and dynamic obstacles in the scenario."""
         return list(itertools.chain(self._static_obstacles.values(),
                                     self._dynamic_obstacles.values()))
@@ -382,7 +382,7 @@ class Scenario:
                 occupancies.append(obstacle.occupancy_at_time(time_step))
         return occupancies
 
-    def obstacle_by_id(self, obstacle_id: int) -> Union[Obstacle, None]:
+    def obstacle_by_id(self, obstacle_id: int) -> Union[Obstacle, DynamicObstacle, StaticObstacle, None]:
         """
         Finds an obstacle for a given obstacle_id
 

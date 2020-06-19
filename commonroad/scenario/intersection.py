@@ -82,6 +82,6 @@ class Intersection:
         return self._crossings
 
     @property
-    def map_incoming_lanelets(self) -> Dict[int,IntersectionIncomingElement]:
+    def map_incoming_lanelets(self) -> Dict[int, IntersectionIncomingElement]:
         """Maps all incoming lanelet ids to IntersectionIncomingElement"""
         return {l_id: inc for inc in self.incomings for l_id in inc.incoming_lanelets}
