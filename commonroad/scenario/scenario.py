@@ -458,22 +458,22 @@ class Scenario:
                         obstacle_list.append(obstacle)
         return obstacle_list
 
-    def obstacle_states_at_time_step(self, time_step: int) -> List[State]:
+    def obstacle_states_at_time_step(self, time_step: int) -> Dict[int, State]:
         """
         Returns all obstacle states which exist at a provided time step.
 
         :param time_step: time step of interest
-        :return: list of obstacle states at time step
+        :return: dictionary which maps id to obstacle state at time step
         """
         assert isinstance(time_step, int), '<Scenario/obstacle_at_time_step> argument "time_step" of wrong type. ' \
                                            'Expected type: %s. Got type: %s.' % (int, type(time_step))
 
-        obstacle_states = []
+        obstacle_states = {}
         for obstacle in self.dynamic_obstacles:
             if obstacle.state_at_time(time_step) is not None:
-                obstacle_states.append(obstacle.state_at_time(time_step))
+                obstacle_states[obstacle.obstacle_id] = obstacle.state_at_time(time_step)
         for obstacle in self.static_obstacles:
-            obstacle_states.append(obstacle.initial_state)
+            obstacle_states[obstacle.obstacle_id] = obstacle.initial_state
         return obstacle_states
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
