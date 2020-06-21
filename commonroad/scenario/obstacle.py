@@ -244,6 +244,10 @@ class Obstacle(ABC):
         pass
 
     @abstractmethod
+    def state_at_time(self, time_step: int) -> Union[None, State]:
+        pass
+
+    @abstractmethod
     def translate_rotate(self, translation: np.ndarray, angle: float):
         pass
 
@@ -314,6 +318,15 @@ class StaticObstacle(Obstacle):
             self.initial_state.position, self.initial_state.orientation)
         return Occupancy(time_step=time_step, shape=shape)
 
+    def state_at_time(self, time_step: int) -> State:
+        """
+        Returns the state the obstacle at a specific time step.
+
+        :param time_step: discrete time step
+        :return: state of the static obstacle at time step
+        """
+        return self.initial_state
+
     def __str__(self):
         obs_str = 'Static Obstacle:\n'
         obs_str += '\nid: {}'.format(self.obstacle_id)
@@ -378,6 +391,23 @@ class DynamicObstacle(Obstacle):
         elif time_step > self.initial_state.time_step and self._prediction is not None:
             occupancy = self._prediction.occupancy_at_time_step(time_step)
         return occupancy
+
+    def state_at_time(self, time_step: int) -> Union[None, State]:
+        """
+        Returns the predicted state of the obstacle at a specific time step.
+
+        :param time_step: discrete time step
+        :return: predicted state of the obstacle at time step
+        """
+        if time_step == self.initial_state.time_step:
+            return self.initial_state
+        elif type(self._prediction) is SetBasedPrediction:
+            warnings.warn("<DynamicObstacle/state_at_time>: Set-based prediction is used. State cannot be returned!")
+            return None
+        elif time_step > self.initial_state.time_step and self._prediction is not None:
+            return self.prediction.trajectory.state_at_time_step(time_step)
+        else:
+            return None
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ First translates the dynamic obstacle, then rotates the dynamic obstacle around the origin.
