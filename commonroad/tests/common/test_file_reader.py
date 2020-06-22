@@ -390,7 +390,7 @@ class TestFileReader(unittest.TestCase):
         exp_location_geo = None
         exp_tags = {Tag.INTERSECTION, Tag.URBAN}
 
-        xml_file = CommonRoadFileReader(self.filename_all).open()
+        xml_file = CommonRoadFileReader(self.filename_all).open(lanelet_assignment=True)
 
         self.assertEqual(exp_num_lanelet_scenario,len(xml_file[0].lanelet_network.lanelets))
         self.assertEqual(exp_num_obstacles_scenario,len(xml_file[0].obstacles))
@@ -643,6 +643,55 @@ class TestFileReader(unittest.TestCase):
                             xml_file[0].lanelet_network.intersections[0].incomings[0].successors_straight)
         self.assertEqual(exp_intersection_301_incoming_zero_left_of,
                          xml_file[0].lanelet_network.intersections[0].incomings[0].left_of)
+
+    def test_open_with_lanelet_assignment(self):
+        exp_static_obstacles_on_lanelet_zero = {self.scenario.static_obstacles[0].obstacle_id}
+        exp_dynamic_obstacles_on_lanelet_zero = {0: {self.scenario.dynamic_obstacles[1].obstacle_id},
+                                                 1: {self.scenario.dynamic_obstacles[1].obstacle_id}}
+        exp_dynamic_obstacles_on_lanelet_one = {0: {self.scenario.dynamic_obstacles[1].obstacle_id},
+                                                1: {self.scenario.dynamic_obstacles[1].obstacle_id}}
+        exp_lanelet_of_static_obstacle = {100}
+        exp_lanelet_of_dynamic_obstacle_initial = {100, 101, 103, 104}
+        exp_lanelet_of_dynamic_obstacle_prediction = {0: {100, 101, 103, 104}, 1: {100, 101, 103, 104}}
+
+        xml_file = CommonRoadFileReader(self.filename_all).open(lanelet_assignment=True)
+
+        self.assertSetEqual(exp_static_obstacles_on_lanelet_zero,
+                            xml_file[0].lanelet_network.lanelets[0].static_obstacles_on_lanelet)
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
+                         xml_file[0].lanelet_network.lanelets[0].dynamic_obstacles_on_lanelet)
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_one,
+                         xml_file[0].lanelet_network.lanelets[1].dynamic_obstacles_on_lanelet)
+        self.assertSetEqual(exp_lanelet_of_static_obstacle,
+                            xml_file[0].obstacle_by_id(3).initial_shape_lanelet_ids)
+        self.assertSetEqual(exp_lanelet_of_dynamic_obstacle_initial,
+                            xml_file[0].obstacle_by_id(2).initial_shape_lanelet_ids)
+        self.assertEqual(exp_lanelet_of_dynamic_obstacle_prediction,
+                         xml_file[0].obstacle_by_id(2).prediction.shape_lanelet_assignment)
+
+    def test_open_without_lanelet_assignment(self):
+        exp_static_obstacles_on_lanelet_zero = set()
+        exp_dynamic_obstacles_on_lanelet_zero = {}
+        exp_dynamic_obstacles_on_lanelet_one = {}
+        exp_lanelet_of_static_obstacle = None
+        exp_lanelet_of_dynamic_obstacle_initial = None
+        exp_lanelet_of_dynamic_obstacle_prediction = None
+
+        xml_file = CommonRoadFileReader(self.filename_all).open(lanelet_assignment=False)
+
+        self.assertEqual(exp_static_obstacles_on_lanelet_zero,
+                         xml_file[0].lanelet_network.lanelets[0].static_obstacles_on_lanelet)
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
+                         xml_file[0].lanelet_network.lanelets[0].dynamic_obstacles_on_lanelet)
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_one,
+                         xml_file[0].lanelet_network.lanelets[1].dynamic_obstacles_on_lanelet)
+        self.assertEqual(exp_lanelet_of_static_obstacle,
+                        xml_file[0].obstacle_by_id(3).initial_shape_lanelet_ids)
+        self.assertEqual(exp_lanelet_of_dynamic_obstacle_initial,
+                        xml_file[0].obstacle_by_id(2).initial_shape_lanelet_ids)
+        self.assertEqual(exp_lanelet_of_dynamic_obstacle_prediction,
+                         xml_file[0].obstacle_by_id(2).prediction.shape_lanelet_assignment)
+
 
     # def test_open_all_scenarios(self):
     #     scenarios = "update"

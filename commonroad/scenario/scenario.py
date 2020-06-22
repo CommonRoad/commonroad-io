@@ -11,7 +11,7 @@ from commonroad.scenario.lanelet import Lanelet
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.obstacle import ObstacleRole
 from commonroad.scenario.obstacle import ObstacleType
-from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Obstacle
+from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Obstacle, State
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
@@ -209,7 +209,7 @@ class Scenario:
         return list(self._static_obstacles.values())
 
     @property
-    def obstacles(self) -> List[Obstacle]:
+    def obstacles(self) -> List[Union[Obstacle, StaticObstacle, DynamicObstacle]]:
         """ Returns a list of all static and dynamic obstacles in the scenario."""
         return list(itertools.chain(self._static_obstacles.values(),
                                     self._dynamic_obstacles.values()))
@@ -382,7 +382,7 @@ class Scenario:
                 occupancies.append(obstacle.occupancy_at_time(time_step))
         return occupancies
 
-    def obstacle_by_id(self, obstacle_id: int) -> Union[Obstacle, None]:
+    def obstacle_by_id(self, obstacle_id: int) -> Union[Obstacle, DynamicObstacle, StaticObstacle, None]:
         """
         Finds an obstacle for a given obstacle_id
 
@@ -457,6 +457,24 @@ class Scenario:
                     elif contained_in_interval(occ.shape.center):
                         obstacle_list.append(obstacle)
         return obstacle_list
+
+    def obstacle_states_at_time_step(self, time_step: int) -> Dict[int, State]:
+        """
+        Returns all obstacle states which exist at a provided time step.
+
+        :param time_step: time step of interest
+        :return: dictionary which maps id to obstacle state at time step
+        """
+        assert isinstance(time_step, int), '<Scenario/obstacle_at_time_step> argument "time_step" of wrong type. ' \
+                                           'Expected type: %s. Got type: %s.' % (int, type(time_step))
+
+        obstacle_states = {}
+        for obstacle in self.dynamic_obstacles:
+            if obstacle.state_at_time(time_step) is not None:
+                obstacle_states[obstacle.obstacle_id] = obstacle.state_at_time(time_step)
+        for obstacle in self.static_obstacles:
+            obstacle_states[obstacle.obstacle_id] = obstacle.initial_state
+        return obstacle_states
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ Translates and rotates all objects, e.g., obstacles and road network, in the scenario.
