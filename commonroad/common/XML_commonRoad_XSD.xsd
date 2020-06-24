@@ -67,6 +67,33 @@ __status__ = "released"
       </xs:sequence>
     </xs:choice>
   </xs:complexType>
+  <!-- decimal orientation: either exact or interval -->
+  <xs:simpleType name="orientation">
+      <xs:restriction base="xs:decimal">
+          <xs:minInclusive value="0"/>
+          <xs:maxInclusive value="6.23818530718"/>
+      </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="orientationExact">
+      <xs:all>
+          <xs:element name="exact" type="orientation"/>
+      </xs:all>
+  </xs:complexType>
+  <xs:complexType name="orientationInterval">
+      <xs:sequence>
+          <xs:element name="intervalStart" type="orientation"/>
+          <xs:element name="intervalEnd" type="orientation"/>
+      </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="orientationExactOrInterval">
+      <xs:choice>
+          <xs:element name="exact" type="orientation"/>
+          <xs:sequence>
+              <xs:element name="intervalStart" type="orientation"/>
+              <xs:element name="intervalEnd" type="orientation"/>
+          </xs:sequence>
+      </xs:choice>
+  </xs:complexType>
   <!-- %%%%%%%%%%%%%%% auxiliary CommonRoad elements %%%%%%%%%%%%%%% -->
   <xs:complexType name="point">
     <xs:sequence>
@@ -79,7 +106,7 @@ __status__ = "released"
     <xs:sequence>
       <xs:element name="length" type="positiveDecimal"/>
       <xs:element name="width" type="positiveDecimal"/>
-      <xs:element name="orientation" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="orientation" type="orientation" minOccurs="0"/>
       <xs:element name="center" type="point" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
@@ -126,7 +153,7 @@ __status__ = "released"
   <xs:complexType name="state">
     <xs:all>
       <xs:element name="position" type="position"/>
-      <xs:element name="orientation" type="decimalExactOrInterval"/>
+      <xs:element name="orientation" type="orientationExactOrInterval"/>
       <xs:element name="time" type="integerExactOrIntervalGreaterZero"/>
       <xs:element name="velocity" type="decimalExactOrInterval" minOccurs="0"/>
       <xs:element name="acceleration" type="decimalExactOrInterval" minOccurs="0"/>
@@ -165,7 +192,7 @@ __status__ = "released"
   <xs:complexType name="initialState">
     <xs:all>
       <xs:element name="position" type="position"/>
-      <xs:element name="orientation" type="decimalExactOrInterval"/>
+      <xs:element name="orientation" type="orientationExactOrInterval"/>
       <xs:element name="time" type="integerExactZero"/>
       <xs:element name="velocity" type="decimalExactOrInterval" minOccurs="0"/>
       <xs:element name="acceleration" type="decimalExactOrInterval" minOccurs="0"/>
@@ -227,7 +254,7 @@ __status__ = "released"
     <xs:all>
       <xs:element name="position" type="positionExact"/>
       <xs:element name="velocity" type="decimalExact"/>
-      <xs:element name="orientation" type="decimalExact"/>
+      <xs:element name="orientation" type="orientationExact"/>
       <xs:element name="yawRate" type="decimalExact"/>
       <xs:element name="slipAngle" type="decimalExact"/>
       <xs:element name="time" type="integerExactZero"/>
@@ -238,7 +265,7 @@ __status__ = "released"
     <xs:all>
       <xs:element name="time" type="integerIntervalGreaterZero"/>
       <xs:element name="position" type="positionInterval" minOccurs="0"/>
-      <xs:element name="orientation" type="decimalInterval" minOccurs="0"/>
+      <xs:element name="orientation" type="orientationInterval" minOccurs="0"/>
       <xs:element name="velocity" type="decimalInterval" minOccurs="0"/>
     </xs:all>
   </xs:complexType>
