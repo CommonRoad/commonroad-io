@@ -71,7 +71,7 @@ __status__ = "released"
   <xs:simpleType name="orientation">
       <xs:restriction base="xs:decimal">
           <xs:minInclusive value="0"/>
-          <xs:maxInclusive value="6.23818530718"/>
+          <xs:maxInclusive value="6.2818530718"/>
       </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="orientationExact">
