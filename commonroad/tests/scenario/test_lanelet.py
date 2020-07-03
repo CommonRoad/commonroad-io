@@ -23,7 +23,7 @@ class TestLanelet(unittest.TestCase):
         line_marking_right = LineMarking.SOLID
         line_marking_left = LineMarking.DASHED
         stop_line = StopLine(start=np.array([0, 0]), end=np.array([0, 1]), line_marking=LineMarking.SOLID)
-        traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED.value, ["15"])
+        traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, ["15"])
         traffic_sign = TrafficSign(1, [traffic_sign_max_speed], {5}, np.array([0.0, 0.0]))
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
                           adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir,
