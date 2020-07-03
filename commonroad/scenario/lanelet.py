@@ -455,7 +455,7 @@ class Lanelet:
         self._dynamic_obstacles_on_lanelet = obstacle_ids
 
     @property
-    def static_obstacles_on_lanelet(self) -> Set[int]:
+    def static_obstacles_on_lanelet(self) -> Union[None, Set[int]]:
         return self._static_obstacles_on_lanelet
 
     @static_obstacles_on_lanelet.setter

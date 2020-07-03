@@ -154,6 +154,30 @@ class TestObstacle(unittest.TestCase):
             else:
                 assert dynamic_obs.occupancy_at_time(i) is None
 
+    def test_state_at_time(self):
+        rect = Rectangle(5.1, 2.6)
+        state_list = [State(position=np.array([0.0, 0.0]), orientation=0.3, time_step=0),
+                      State(position=np.array([0.0, 1.0]), orientation=0.3, time_step=1),
+                      State(position=np.array([1.0, 1.0]), orientation=0.3, time_step=2),
+                      State(position=np.array([2.0, 1.0]), orientation=0.3, time_step=3)]
+        initial_state = State(**{'position': np.array([0, 0]), 'orientation': 0.0, 'time_step': 0})
+        trajectory = Trajectory(1, state_list[1:])
+        prediction = TrajectoryPrediction(trajectory, rect)
+
+        dynamic_obs = DynamicObstacle(
+            obstacle_id=30, obstacle_type=ObstacleType.CAR, initial_state=initial_state,
+            obstacle_shape=rect, prediction=prediction)
+
+        for i in range(5):
+            if i == 0:
+                np.testing.assert_array_equal(dynamic_obs.state_at_time(i).position, initial_state.position)
+                self.assertEqual(dynamic_obs.state_at_time(i).orientation, initial_state.orientation)
+            elif 1<= i <= 3:
+               np.testing.assert_array_equal(dynamic_obs.state_at_time(i).position, state_list[i].position)
+               self.assertEqual(dynamic_obs.state_at_time(i).orientation, state_list[i].orientation)
+            else:
+                assert dynamic_obs.state_at_time(i) is None
+
 
 if __name__ == '__main__':
     unittest.main()

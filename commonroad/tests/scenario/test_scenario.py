@@ -1,6 +1,5 @@
 import unittest
 from commonroad.geometry.shape import *
-from commonroad.prediction.prediction import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario
@@ -41,11 +40,11 @@ class TestScenario(unittest.TestCase):
         self.set_pred = SetBasedPrediction(0, occupancy_list)
 
         states = list()
-        states.append(State(time_step=0, orientation=0, position=np.array([0, 0])))
-        states.append(State(time_step=1, orientation=0, position=np.array([0, 1])))
+        states.append(State(time_step=0, orientation=0, position=np.array([0, 0]), velocity=5))
+        states.append(State(time_step=1, orientation=0, position=np.array([0, 1]), velocity=10))
         trajectory = Trajectory(0, states)
 
-        self.init_state = State(time_step=0, orientation=0, position=np.array([0, 0]))
+        self.init_state = State(time_step=0, orientation=0, position=np.array([0, 0]), velocity=15)
 
         self.traj_pred = TrajectoryPrediction(trajectory, self.rectangle, {0: {100, 101}, 1: {100, 101}})
 
@@ -339,6 +338,45 @@ class TestScenario(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             self.scenario._mark_object_id_as_used(100)
+
+    def test_obstacle_states_at_time_step(self):
+        exp_states_time_zero = {1: self.dyn_set_obs.state_at_time(0), 2: self.dyn_traj_obs.state_at_time(0),
+                                0: self.static_obs.initial_state}
+        exp_states_time_one = {2: self.dyn_traj_obs.state_at_time(1), 0: self.static_obs.initial_state}
+        self.scenario.add_objects(self.static_obs)
+        self.scenario.add_objects(self.dyn_traj_obs)
+        self.scenario.add_objects(self.dyn_set_obs)
+
+        # test for time step 1
+        self.assertEqual(len(exp_states_time_one), len(self.scenario.obstacle_states_at_time_step(1)))
+        self.assertEqual(exp_states_time_one[2].velocity, self.scenario.obstacle_states_at_time_step(1)[2].velocity)
+        self.assertEqual(exp_states_time_one[2].position[0],
+                         self.scenario.obstacle_states_at_time_step(1)[2].position[0])
+        self.assertEqual(exp_states_time_one[2].position[1],
+                         self.scenario.obstacle_states_at_time_step(1)[2].position[1])
+        self.assertEqual(exp_states_time_one[0].velocity, self.scenario.obstacle_states_at_time_step(1)[0].velocity)
+        self.assertEqual(exp_states_time_one[0].position[0],
+                         self.scenario.obstacle_states_at_time_step(1)[0].position[0])
+        self.assertEqual(exp_states_time_one[0].position[1],
+                         self.scenario.obstacle_states_at_time_step(1)[0].position[1])
+
+        # test for time step zero
+        self.assertEqual(len(exp_states_time_zero), len(self.scenario.obstacle_states_at_time_step(0)))
+        self.assertEqual(exp_states_time_zero[1].velocity, self.scenario.obstacle_states_at_time_step(0)[1].velocity)
+        self.assertEqual(exp_states_time_zero[1].position[0],
+                         self.scenario.obstacle_states_at_time_step(0)[1].position[0])
+        self.assertEqual(exp_states_time_zero[1].position[1],
+                         self.scenario.obstacle_states_at_time_step(0)[1].position[1])
+        self.assertEqual(exp_states_time_zero[2].velocity, self.scenario.obstacle_states_at_time_step(0)[2].velocity)
+        self.assertEqual(exp_states_time_zero[2].position[0],
+                         self.scenario.obstacle_states_at_time_step(0)[2].position[0])
+        self.assertEqual(exp_states_time_zero[2].position[1],
+                         self.scenario.obstacle_states_at_time_step(0)[2].position[1])
+        self.assertEqual(exp_states_time_one[0].velocity, self.scenario.obstacle_states_at_time_step(1)[0].velocity)
+        self.assertEqual(exp_states_time_one[0].position[0],
+                         self.scenario.obstacle_states_at_time_step(1)[0].position[0])
+        self.assertEqual(exp_states_time_one[0].position[1],
+                         self.scenario.obstacle_states_at_time_step(1)[0].position[1])
 
 
 if __name__ == '__main__':
