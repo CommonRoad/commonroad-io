@@ -6,11 +6,18 @@ __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Release"
 
-from typing import List, Set, Union, Dict
+from typing import List, Set, Dict
 
 
 class IntersectionIncomingElement:
-    """ Class which represents an incoming element of an intersection"""
+    """
+    This class represents an incoming element of an intersection.
+    An incoming can consist of several adjacent lanelets which lead to an intersection, right, straight,
+    and left successor lanelets, and a reference to the incoming located on the left side.
+    The right/straight/left successors are used to infer for which lanelets the traffic light
+    is valid for and to facilitate the calculation of priorities at intersections.
+    The left incoming is used to infer the right-before-left-rule.
+    """
     def __init__(self, incoming_id: int, incoming_lanelets: Set[int] = None, successors_right: Set[int] = None,
                  successors_straight: Set[int] = None, successors_left: Set[int] = None,
                  left_of: int = None):
@@ -55,7 +62,11 @@ class IntersectionIncomingElement:
 
 
 class Intersection:
-    """ Class to represent an intersection"""
+    """
+    This class represent an intersection.
+    An intersection element is defined by at least one incoming and an optional crossing element.
+    The crossing element models lanelets which cross other lanelets, e.g., these are usually lanelets of type crosswalk.
+    """
     def __init__(self, intersection_id: int, incomings: List[IntersectionIncomingElement], crossings: Set[int] = None):
         """
         :param intersection_id: ID of intersection element

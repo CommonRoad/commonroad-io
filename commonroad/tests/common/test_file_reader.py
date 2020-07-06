@@ -161,10 +161,20 @@ class TestFileReader(unittest.TestCase):
                                                      TrafficLightCycleElement(state=TrafficLightState.YELLOW,
                                                                               duration=4)])
         self.intersection_301 = \
-            Intersection(301, [IntersectionIncomingElement(302, {13}, {26}, {22}, {20}, 304),
-                               IntersectionIncomingElement(303, {14}, {30}, {24}, {28}, 302),
-                               IntersectionIncomingElement(304, {17}, {27}, {23}, {31}, 305),
-                               IntersectionIncomingElement(305, {18}, {29}, {21}, {25}, 305)])
+            Intersection(intersection_id=301,
+                         incomings=[IntersectionIncomingElement(incoming_id=302, incoming_lanelets={13},
+                                                                successors_right={26},
+                                                                successors_straight={22},
+                                                                successors_left={20}, left_of=304),
+                                    IntersectionIncomingElement(incoming_id=303, incoming_lanelets={14},
+                                                                successors_right={30}, successors_straight={24},
+                                                                successors_left={28}, left_of=302),
+                                    IntersectionIncomingElement(incoming_id=304, incoming_lanelets={17},
+                                                                successors_right={27}, successors_straight={23},
+                                                                successors_left={31}, left_of=305),
+                                    IntersectionIncomingElement(incoming_id=305, incoming_lanelets={18},
+                                                                successors_right={29}, successors_straight={21},
+                                                                successors_left={25}, left_of=305)])
 
     def test_open_2018b(self):
         scenario, planning_problem_set = CommonRoadFileReader(self.filename_2018b).open()
