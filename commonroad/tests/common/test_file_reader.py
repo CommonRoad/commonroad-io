@@ -174,7 +174,8 @@ class TestFileReader(unittest.TestCase):
                                                                 successors_left={31}, left_of=305),
                                     IntersectionIncomingElement(incoming_id=305, incoming_lanelets={18},
                                                                 successors_right={29}, successors_straight={21},
-                                                                successors_left={25}, left_of=305)])
+                                                                successors_left={25}, left_of=305)],
+                         crossings={32})
 
     def test_open_2018b(self):
         scenario, planning_problem_set = CommonRoadFileReader(self.filename_2018b).open()
@@ -563,6 +564,7 @@ class TestFileReader(unittest.TestCase):
         exp_intersection_301_incoming_zero_successors_right = self.intersection_301.incomings[0].successors_right
         exp_intersection_301_incoming_zero_successors_straight = self.intersection_301.incomings[0].successors_straight
         exp_intersection_301_incoming_zero_left_of = self.intersection_301.incomings[0].left_of
+        exp_intersection_301_crossing = self.intersection_301.crossings
 
 
         xml_file = CommonRoadFileReader(self.filename_urban).open()
@@ -653,6 +655,7 @@ class TestFileReader(unittest.TestCase):
                             xml_file[0].lanelet_network.intersections[0].incomings[0].successors_straight)
         self.assertEqual(exp_intersection_301_incoming_zero_left_of,
                          xml_file[0].lanelet_network.intersections[0].incomings[0].left_of)
+        self.assertEqual(exp_intersection_301_crossing, xml_file[0].lanelet_network.intersections[0].crossings)
 
     def test_open_with_lanelet_assignment(self):
         exp_static_obstacles_on_lanelet_zero = {self.scenario.static_obstacles[0].obstacle_id}

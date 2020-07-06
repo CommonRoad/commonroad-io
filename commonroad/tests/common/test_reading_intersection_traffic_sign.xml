@@ -1353,6 +1353,31 @@
     <userOneWay>vehicle</userOneWay>
     <trafficSignRef ref="106"/>
   </lanelet>
+    <lanelet id="32">
+    <leftBound>
+      <point>
+        <x>178.0</x>
+        <y>-65.0</y>
+      </point>
+      <point>
+        <x>170.0</x>
+        <y>-62.0</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>179.0</x>
+        <y>-63</y>
+      </point>
+      <point>
+        <x>170.0</x>
+        <y>-60.0</y>
+      </point>
+    </rightBound>
+    <laneletType>urban</laneletType>
+    <laneletType>crosswalk</laneletType>
+    <userOneWay>pedestrian</userOneWay>
+  </lanelet>
   <trafficSign id="101">
         <trafficSignElement>
             <trafficSignID>310</trafficSignID>
@@ -1638,6 +1663,9 @@
       <successorsLeft ref="25"/>
       <isLeftOf ref="303"/>
     </incoming>
+    <crossing>
+        <crossingLanelet ref="32"/>
+    </crossing>
   </intersection>
   <planningProblem id="4000">
     <initialState>

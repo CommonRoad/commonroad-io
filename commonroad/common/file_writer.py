@@ -560,7 +560,7 @@ class LaneletXMLNode:
 
 class ObstacleXMLNode:
     @classmethod
-    def create_node(cls, obstacle: Obstacle) -> etree.Element:
+    def create_node(cls, obstacle: Union[Obstacle, DynamicObstacle, StaticObstacle]) -> etree.Element:
         """
         Create XML-Node for an Obstacle
         :param obstacle: Obstacle for creating a node
@@ -1186,13 +1186,13 @@ class IntersectionXMLNode:
 
             intersection_node.append(incoming_node)
 
-        # if intersection.crossings is not None:
-        #     crossing_node = etree.Element('crossing')
-        #     for crossing_lanelet in intersection.crossings:
-        #         crossing_lanelet_node = etree.Element('crossingLanelet')
-        #         crossing_lanelet_node.set('ref', str(crossing_lanelet))
-        #         crossing_node.append(crossing_lanelet_node)
-        #     intersection_node.append(crossing_node)
+        if intersection.crossings is not None and len(intersection.crossings) > 0:
+            crossing_node = etree.Element('crossing')
+            for crossing_lanelet in intersection.crossings:
+                crossing_lanelet_node = etree.Element('crossingLanelet')
+                crossing_lanelet_node.set('ref', str(crossing_lanelet))
+                crossing_node.append(crossing_lanelet_node)
+            intersection_node.append(crossing_node)
 
         return intersection_node
 
@@ -1252,7 +1252,7 @@ class TrafficLightXMLNode:
         if traffic_light.position is not None:
             position_node = etree.Element('position')
             position_node.append(Point(traffic_light.position[0],
-                                       traffic_light.position[0]).create_node())
+                                       traffic_light.position[1]).create_node())
             traffic_light_node.append(position_node)
         if traffic_light.active is not None:
             active_node = etree.Element('active')

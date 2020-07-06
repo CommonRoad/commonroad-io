@@ -304,6 +304,7 @@ __status__ = "released"
       <xs:enumeration value="exitRamp"/>
       <xs:enumeration value="mainCarriageWay"/>
       <xs:enumeration value="accessRamp"/>
+      <xs:enumeration value="shoulder"/>
       <xs:enumeration value="driveWay"/>
       <xs:enumeration value="busStop"/>
       <xs:enumeration value="unknown"/>
@@ -446,6 +447,7 @@ __status__ = "released"
   <xs:complexType name="intersection">
     <xs:sequence>
   	  <xs:element name="incoming" type="incoming" minOccurs="1" maxOccurs="unbounded"/>
+	  <xs:element name="crossing" type="crossing" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   	<xs:attribute name="id" type="xs:positiveInteger" use="required"/>
   </xs:complexType>

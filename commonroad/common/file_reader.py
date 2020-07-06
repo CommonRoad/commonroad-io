@@ -891,11 +891,12 @@ class IntersectionFactory:
         incomings = []
         for incoming_node in xml_node.findall('incoming'):
             incomings.append(IntersectionIncomingFactory.create_from_xml_node(incoming_node))
-        # crossings = set()
-        # for crossing_ref in xml_node.findall('crossing'):
-        #     crossings.add(int(crossing_ref.text))
+        crossings = set()
+        if xml_node.find('crossing') is not None:
+            for crossing_ref in xml_node.find('crossing').findall('crossingLanelet'):
+                crossings.add(int(crossing_ref.get("ref")))
 
-        return Intersection(intersection_id=intersection_id, incomings=incomings, crossings = None)
+        return Intersection(intersection_id=intersection_id, incomings=incomings, crossings=crossings)
 
 
 class IntersectionIncomingFactory:
