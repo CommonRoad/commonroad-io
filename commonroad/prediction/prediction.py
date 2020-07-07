@@ -88,6 +88,18 @@ class Prediction:
         self._initial_time_step = initial_time_step
 
     @property
+    def final_time_step(self) -> int:
+        """ Final time step of the prediction."""
+        return self._final_time_step
+
+    @final_time_step.setter
+    def final_time_step(self, final_time_step: int):
+        assert isinstance(final_time_step, int), '<Prediction/final_time_step>: argument "final_time_step" of ' \
+                                                   'wrong type. Expected type: %s. Got type: %s.' \
+                                                   % (int, type(final_time_step))
+        self._final_time_step = final_time_step
+
+    @property
     def occupancy_set(self) -> List[Occupancy]:
         """ List of occupancies over time."""
         return self._occupancy_set
@@ -101,6 +113,7 @@ class Prediction:
                                                                                      'of wrong type. Expected type: ' \
                                                                                      '%s.' % Occupancy
         self._occupancy_set = occupancy_set
+        self.final_time_step = max([occ.time_step for occ in self._occupancy_set])
 
     def occupancy_at_time_step(self, time_step: int) -> Union[None, Occupancy]:
         """ Occupancy at a specific time step.

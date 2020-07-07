@@ -22,7 +22,8 @@ def create_scenario_video(obj_lists: Union[List[plottable_types]], file_path: st
     :param dpi: resolution of the video
     :return: None
     """
-    assert time_begin < time_end, '<video/create_scenario_video> time_begin=%i needs to smaller than time_end=%i.' % (time_begin,time_end)
+    assert time_begin < time_end,\
+        '<video/create_scenario_video> time_begin=%i needs to smaller than time_end=%i.' % (time_begin,time_end)
 
     if fig_size is None:
         fig_size = [15,8]
@@ -61,7 +62,11 @@ def create_scenario_video(obj_lists: Union[List[plottable_types]], file_path: st
     plt.ioff()
     anim = FuncAnimation(fig, update, frames=frame_count,
                          init_func=update, blit=False, interval=interval)
+
+    if not any([file_path.endswith('.mp4'), file_path.endswith('.gif'), file_path.endswith('.avi')]):
+        file_path += '.mp4'
+
     anim.save(file_path, dpi=dpi,
-              writer='imagemagick')
+              writer='ffmpeg')
 
     plt.close(plt.gcf())

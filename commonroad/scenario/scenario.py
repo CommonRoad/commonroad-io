@@ -12,7 +12,7 @@ from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.obstacle import ObstacleRole
 from commonroad.scenario.obstacle import ObstacleType
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Obstacle, State
-from commonroad.prediction.prediction import Occupancy, SetBasedPrediction
+from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
 
@@ -163,6 +163,7 @@ class Scenario:
         self.affiliation = affiliation
         self.source = source
         self.location = location
+        self._vehicles_assigned_to_lanelets = False
 
     @property
     def dt(self) -> float:
@@ -213,6 +214,12 @@ class Scenario:
         """ Returns a list of all static and dynamic obstacles in the scenario."""
         return list(itertools.chain(self._static_obstacles.values(),
                                     self._dynamic_obstacles.values()))
+
+    @property
+    def vehicles_assigned_to_lanelets(self):
+        """ Returns whether vehicles have been assigned to the lanelets they are located on. If not, one can use
+        assign_obstacles_to_lanelets() to so. """
+        return self._vehicles_assigned_to_lanelets
 
     def add_objects(self, scenario_object: Union[List[Union[Obstacle, Lanelet, LaneletNetwork, TrafficSign,
                                                             TrafficLight, Intersection]], Obstacle, Lanelet,
@@ -276,15 +283,18 @@ class Scenario:
             self.lanelet_network.find_lanelet_by_id(l_id).static_obstacles_on_lanelet.add(obstacle_id)
 
     def _remove_static_obstacle_from_lanelets(self, obstacle_id: int, lanelet_ids: Set[int]):
-        """ Adds a static obstacle reference to all lanelets the obstacle is on.
+        """ Remove a static obstacle reference from all lanelets the obstacle is on.
 
         :param obstacle_id: obstacle ID to be added
         :param lanelet_ids: list of lanelet IDs on which the obstacle is on
         """
         if lanelet_ids is None:
             return
-        for l_id in lanelet_ids:
-            self.lanelet_network.find_lanelet_by_id(l_id).static_obstacles_on_lanelet.remove(obstacle_id)
+        obs: StaticObstacle = self.obstacle_by_id(obstacle_id)
+        l_ids = obs.initial_center_lanelet_ids
+        if l_ids is not None:
+            for l_id in lanelet_ids:
+                self.lanelet_network.find_lanelet_by_id(l_id).static_obstacles_on_lanelet.remove(obstacle_id)
 
     def _remove_dynamic_obstacle_from_lanelets(self, obstacle: DynamicObstacle):
         """ Removes a dynamic obstacle reference from all lanelets the obstacle is on.
@@ -475,6 +485,78 @@ class Scenario:
         for obstacle in self.static_obstacles:
             obstacle_states[obstacle.obstacle_id] = obstacle.initial_state
         return obstacle_states
+
+    def assign_obstacles_to_lanelets(self, time_steps: Union[int,None] = None,
+                                     obstacle_ids: Union[Set[int], None] = None):
+        """
+        Assigns center points and shapes of obstacles to lanelets by setting the attributes
+        Obstacle.prediction.initial_shape_lanelet_ids, .shape_lanelet_assignment, .initial_center_lanelet_ids,
+        & .center_lanelet_assignment, and Lanelet.dynamic_obstacles_on_lanelet & .static_obstacles_on_lanelet.
+
+        :param time_steps: time step for which the obstacles should be assigned. If None, all time_steps are
+        assigned.
+        :param obstacle_ids: ids for which the assignment should be computed. If None, all obstacles are
+        assigned.
+        """
+        def assign_dynamic_obstacle_shape_at_time(obstacle: DynamicObstacle, time_step):
+            # assign center of obstacle
+            if time_step == obstacle.initial_state.time_step:
+                position = obstacle.initial_state.position
+            elif not isinstance(obstacle.prediction, TrajectoryPrediction):
+                return
+            else:
+                position = obstacle.prediction.trajectory.state_at_time_step(time_step).position
+
+            lanelet_ids_center = set(self.lanelet_network.find_lanelet_by_position([position])[0])
+            obstacle.prediction.center_lanelet_assignment[time_step] = lanelet_ids_center
+            # assign shape of obstacle
+            shape = obstacle.occupancy_at_time(time_step).shape
+            lanelet_ids = set(self.lanelet_network.find_lanelet_by_shape(shape))
+            obstacle.prediction.shape_lanelet_assignment[time_step] = lanelet_ids
+            if time_step == obstacle.initial_state.time_step:
+                obstacle.initial_shape_lanelet_ids = lanelet_ids
+                obstacle.initial_center_lanelet_ids = lanelet_ids_center
+            for l_id in lanelet_ids:
+                self.lanelet_network.find_lanelet_by_id(l_id)\
+                    .add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle.obstacle_id, time_step=time_step)
+
+        def assign_static_obstacle(obstacle: StaticObstacle):
+            shape = obstacle.occupancy_at_time(0).shape
+            lanelet_ids = set(self.lanelet_network.find_lanelet_by_shape(shape))
+            obstacle.initial_shape_lanelet_ids = lanelet_ids
+            lanelet_ids = set(self.lanelet_network.find_lanelet_by_position([obstacle.initial_state.position])[0])
+            obstacle.initial_center_lanelet_ids = lanelet_ids
+
+            for l_id in lanelet_ids:
+                self.lanelet_network.find_lanelet_by_id(l_id)\
+                    .add_static_obstacle_to_lanelet(obstacle_id=obstacle.obstacle_id)
+
+        if obstacle_ids is None:
+            # assign all obstacles
+            obstacle_ids = set(self._static_obstacles.keys()).union(set(self._dynamic_obstacles.keys()))
+
+        for obs_id in obstacle_ids:
+            obs = self.obstacle_by_id(obs_id)
+            if isinstance(obs, DynamicObstacle):
+                if time_steps is None:
+                    # assign all time steps
+                    time_steps_tmp = range(obs.prediction.initial_time_step - 1,
+                                           obs.prediction.final_time_step + 1)
+                else:
+                    time_steps_tmp = time_steps
+
+                if obs.prediction.shape_lanelet_assignment is None:
+                    obs.prediction.shape_lanelet_assignment = {}
+                if obs.prediction.center_lanelet_assignment is None:
+                    obs.prediction.center_lanelet_assignment = {}
+
+
+                for t in time_steps_tmp:
+                    assign_dynamic_obstacle_shape_at_time(obs, t)
+            else:
+                assign_static_obstacle(obs)
+
+        self._vehicles_assigned_to_lanelets = True
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ Translates and rotates all objects, e.g., obstacles and road network, in the scenario.
