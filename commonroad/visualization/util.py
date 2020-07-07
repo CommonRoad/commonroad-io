@@ -114,10 +114,12 @@ def collect_center_line_colors(lanelet_network:LaneletNetwork, traffic_lights: L
     def update_state_dict(new_dict: Dict[int, TrafficLightState]):
         """ Updates state in dict. If new_state is inactive, an existing state is not overwritten."""
         for lanelet_id, new_state in new_dict.items():
-            if new_state == TrafficLightState.INACTIVE and lanelet_id in l2state:
-                continue
-            else:
-                l2state[lanelet_id] = new_state
+            if lanelet_id in l2state:
+                if new_state == TrafficLightState.INACTIVE or \
+                   (new_state == TrafficLightState.RED and l2state[lanelet_id] == TrafficLightState.GREEN):
+                    continue
+
+            l2state[lanelet_id] = new_state
 
     l2int = lanelet_network.map_inc_lanelets_to_intersections
     l2state = {}
