@@ -18,6 +18,7 @@ class TestVisualization(unittest.TestCase):
     def setUp(self):
         self.full_path = os.path.dirname(os.path.abspath(__file__))
         self.filename_urban = os.path.join(self.full_path,  '../common/test_reading_intersection_traffic_sign.xml')
+        self.filename_complex_tl = os.path.join(self.full_path, '../visualization/test_reading_complex_tl.xml')
         self.filename_lanelet = os.path.join(self.full_path, '../common/test_reading_lanelets.xml')
         self.filename_test_all = os.path.join(self.full_path, '../common/test_reading_all.xml')
 
@@ -124,6 +125,28 @@ class TestVisualization(unittest.TestCase):
         draw_params = {'time_begin': 1}
         draw_object(scenario.obstacle_by_id(2),
                     draw_params=draw_params)
+        plt.autoscale()
+        plt.axis('equal')
+        plt.show()
+
+    def test_complex_intersection_tl(self):
+        scenario, pp = CommonRoadFileReader(self.filename_complex_tl).open()
+        plt.close('all')
+        plt.figure()
+        mpl.rcParams['lines.scale_dashes'] = False
+        draw_object(scenario.lanelet_network,
+                    draw_params={'time_begin': 30,
+                                 'lanelet_network': {'draw_intersections': True, 'draw_traffic_signs': True,
+                                                     'intersection': {'show_label': True}},
+                                 'lanelet': {'draw_lane_marking': True,
+                                             'show_label': True}},
+                    legend={('lanelet_network', 'intersection', 'incoming_lanelets_color'): 'Incoming lanelets',
+                            ('lanelet_network', 'intersection', 'successors_left_color'): 'Successors left',
+                            ('lanelet_network', 'intersection', 'successors_straight_color'): 'Successors straight',
+                            ('lanelet_network', 'intersection', 'successors_right_color'): 'Successors right',
+                            ('lanelet_network', 'traffic_light', 'green_color'): 'Traffic light green',
+                            ('lanelet_network', 'traffic_light', 'yellow_color'): 'Traffic light yellow',
+                            ('lanelet_network', 'traffic_light', 'red_color'): 'Traffic light red'})
         plt.autoscale()
         plt.axis('equal')
         plt.show()
