@@ -111,6 +111,16 @@ def draw_polygon_collection_as_patch(vertices: List[list], ax, zorder=5, facecol
 def collect_center_line_colors(lanelet_network:LaneletNetwork, traffic_lights: List[TrafficLight], time_step)\
         -> Dict[int,TrafficLightState]:
     """Collects traffic light states that each lanelet is affected by."""
+    def update_state_dict(new_dict: Dict[int, TrafficLightState]):
+        """ Updates state in dict. If new_state is inactive, an existing state is not overwritten."""
+        for lanelet_id, new_state in new_dict.items():
+            if lanelet_id in l2state:
+                if new_state == TrafficLightState.INACTIVE or \
+                   (new_state == TrafficLightState.RED and l2state[lanelet_id] == TrafficLightState.GREEN):
+                    continue
+
+            l2state[lanelet_id] = new_state
+
     l2int = lanelet_network.map_inc_lanelets_to_intersections
     l2state = {}
     for lanelet in lanelet_network.lanelets:
@@ -120,20 +130,20 @@ def collect_center_line_colors(lanelet_network:LaneletNetwork, traffic_lights: L
             direction = tl.direction
             state = tl.get_state_at_time_step(time_step)
             if direction == TrafficLightDirection.ALL:
-                l2state.update({succ_id: state for succ_id in lanelet.successor})
+                update_state_dict({succ_id: state for succ_id in lanelet.successor})
             elif intersection is not None:
                 inc_ele = intersection.map_incoming_lanelets[lanelet.lanelet_id]
                 if direction in (TrafficLightDirection.RIGHT, TrafficLightDirection.LEFT_RIGHT,
                                  TrafficLightDirection.STRAIGHT_RIGHT):
-                    l2state.update({l: state for l in inc_ele.successors_right})
+                    update_state_dict({l: state for l in inc_ele.successors_right})
                 if direction in (TrafficLightDirection.LEFT, TrafficLightDirection.LEFT_RIGHT,
                                  TrafficLightDirection.LEFT_STRAIGHT):
-                    l2state.update({l: state for l in inc_ele.successors_left})
+                    update_state_dict({l: state for l in inc_ele.successors_left})
                 if direction in (TrafficLightDirection.STRAIGHT, TrafficLightDirection.STRAIGHT_RIGHT,
                                  TrafficLightDirection.LEFT_STRAIGHT):
-                    l2state.update({l: state for l in inc_ele.successors_straight})
+                    update_state_dict({l: state for l in inc_ele.successors_straight})
             elif len(lanelet.successor) == 1:
-                l2state.update({lanelet.successor[0]: state})
+                update_state_dict({lanelet.successor[0]: state})
             else:
                 warnings.warn('Direction of traffic light cannot be visualized.')
 
