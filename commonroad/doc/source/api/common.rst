@@ -80,7 +80,7 @@ Detailed information about the listed cost functions in `Cost Function Documenta
 
 ``CommonRoadSolutionReader`` class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: Solution
+.. autoclass:: CommonRoadSolutionReader
   :members:
   :undoc-members:
   :member-order: bysource

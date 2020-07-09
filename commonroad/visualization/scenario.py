@@ -1072,12 +1072,13 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
                 draw_object(occupancy_list, None, ax, draw_params, draw_func, handles, call_stack))
 
     # draw initial state
-    for initial_state in initial_states:
-        handles.setdefault(DynamicObstacle, []).extend(draw_state(initial_state, call_stack=call_stack,
-                                                                  ax=ax, draw_params=draw_params,
-                                                                  scale_factor=scale_factor,
-                                                                  plot_limits=None,
-                                                                  arrow_args=kwargs_init_state))
+    if draw_initial_state is True:
+        for initial_state in initial_states:
+            handles.setdefault(DynamicObstacle, []).extend(draw_state(initial_state, call_stack=call_stack,
+                                                                      ax=ax, draw_params=draw_params,
+                                                                      scale_factor=scale_factor,
+                                                                      plot_limits=None,
+                                                                      arrow_args=kwargs_init_state))
 
     # draw signals
     if indicators.size > 0:
