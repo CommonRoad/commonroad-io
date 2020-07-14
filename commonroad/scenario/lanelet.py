@@ -64,6 +64,7 @@ class RoadUser(enum.Enum):
     BICYCLE = 'bicycle'
     PEDESTRIAN = 'pedestrian'
     TRAIN = 'train'
+    TAXI = 'taxi'
 
 
 class StopLine:
