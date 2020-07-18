@@ -64,6 +64,7 @@ class RoadUser(enum.Enum):
     BICYCLE = 'bicycle'
     PEDESTRIAN = 'pedestrian'
     TRAIN = 'train'
+    TAXI = 'taxi'
 
 
 class StopLine:
@@ -808,7 +809,7 @@ class Lanelet:
         assert network.find_lanelet_by_id(lanelet.lanelet_id) is not None, '<Lanelet>: lanelet not contained in network!'
 
         if lanelet.successor is None or len(lanelet.successor) == 0:
-            return [], []
+            return [lanelet], [[lanelet.lanelet_id]]
 
         # Create Graph from network
         Net = nx.DiGraph() 

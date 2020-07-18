@@ -68,7 +68,7 @@ When settings of a plot should be changed with ``draw_params``, they have to be 
                       'zorder': 30
                      },
                  'intersection':
-                     {'draw_intersection': False,
+                     {'draw_intersections': False,
                       'draw_incoming_lanelets': True,
                       'incoming_lanelets_color': '#24b582',
                       'draw_crossings': True,

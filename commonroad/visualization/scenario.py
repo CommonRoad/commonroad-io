@@ -1,4 +1,5 @@
 import itertools
+import math
 import os
 from collections import defaultdict
 from typing import Dict, Callable, Tuple, Union, Any, Set
@@ -22,7 +23,7 @@ from commonroad.prediction.prediction import Occupancy
 from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, ObstacleRole
 from commonroad.scenario.scenario import Scenario
-from commonroad.scenario.trajectory import Trajectory
+from commonroad.scenario.trajectory import Trajectory, State
 
 from commonroad.visualization.util import draw_polygon_as_patch, draw_polygon_collection_as_patch, LineDataUnits, \
     collect_center_line_colors
@@ -63,6 +64,16 @@ def create_default_draw_params() -> dict:
                             'braking_color': 'red',  # braking light
                             'blue_lights_color': 'blue',
                             'horn_color': 'red',  # horn is visualized as red center dot
+                            'initial_state': {
+                                'draw_initial_state': False,  # visualize initial state by arrow proportional to velocity
+                                'scale_factor': 0.3,  # length of arrow in m per m/s
+                                'kwargs':{
+                                    'linewidth': 1.5,
+                                    'length_includes_head': True,
+                                    'edgecolor': 'black',
+                                    'facecolor': 'black',
+                                    },  # further parameters for FancyArrow
+                            },
                             'occupancy': {
                                 'draw_occupancies': 0,  # -1= never, 0= if prediction of vehicle is set-based, 1=always
                                 'shape': {
@@ -950,21 +961,30 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
                 draw_car(inital_state.position[0], inital_state.position[1], inital_state.orientation, 2.5,
                          ax, zorder=30)
 
+        initial_state = None
         if show_label:
             if time_begin == 0:
-                initial_position = o.initial_state.position
+                initial_state = o.initial_state
+                initial_position = initial_state.position
                 handles.setdefault(DynamicObstacle, []).append(
                     ax.text(initial_position[0] + 0.5, initial_position[1], str(o.obstacle_id),
                         clip_on=True, zorder=1000))
             elif type(o.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:
-                begin_state = o.prediction.trajectory.state_at_time_step(time_begin)
-                if begin_state is not None:
+                initial_state = o.prediction.trajectory.state_at_time_step(time_begin)
+                if initial_state is not None:
                     initial_position = o.prediction.trajectory.state_at_time_step(time_begin).position
                     handles.setdefault(DynamicObstacle, []).append(
                         ax.text(initial_position[0]+0.5, initial_position[1], str(o.obstacle_id),
                             clip_on=True, zorder=1000))
 
-        return (occupancy_list, trajectory, shape, indicators, braking, horns, bluelights)
+        if draw_initial_state:
+            if initial_state is None:
+                if time_begin == 0:
+                    initial_state = o.initial_state
+                elif type(o.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:
+                    initial_state = o.prediction.trajectory.state_at_time_step(time_begin)
+
+        return occupancy_list, trajectory, shape, indicators, braking, horns, bluelights, initial_state
 
     if type(obj) is DynamicObstacle:
         obj = [obj]
@@ -985,6 +1005,15 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
         draw_shape = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('dynamic_obstacle', 'draw_shape'))
+        draw_initial_state = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('dynamic_obstacle', 'initial_state', 'draw_initial_state'))
+        scale_factor = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('dynamic_obstacle', 'initial_state', 'scale_factor'))
+        kwargs_init_state = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('dynamic_obstacle', 'initial_state', 'kwargs'))
         draw_occupancies = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('dynamic_obstacle', 'occupancy', 'draw_occupancies'))
@@ -1027,6 +1056,7 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
     braking = np.array(list(itertools.chain.from_iterable(tmp_array[:, 4])))
     horns = np.array(list(itertools.chain.from_iterable(tmp_array[:, 5])))
     bluelights = np.array(list(itertools.chain.from_iterable(tmp_array[:, 6])))
+    initial_states = list(filter(None,list(tmp_array[:, 7])))
 
     # draw collected lists, store handles:
     if len(shapes_list) > 0:
@@ -1041,10 +1071,16 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
             commonroad.visualization.draw_dispatch_cr.
                 draw_object(occupancy_list, None, ax, draw_params, draw_func, handles, call_stack))
 
+    # draw initial state
+    if draw_initial_state is True:
+        for initial_state in initial_states:
+            handles.setdefault(DynamicObstacle, []).extend(draw_state(initial_state, call_stack=call_stack,
+                                                                      ax=ax, draw_params=draw_params,
+                                                                      scale_factor=scale_factor,
+                                                                      plot_limits=None,
+                                                                      arrow_args=kwargs_init_state))
+
     # draw signals
-
-
-
     if indicators.size > 0:
         diameters = signal_radius * np.ones(indicators.shape[0]) * 2
         handles.setdefault(DynamicObstacle, []).append(
@@ -1292,28 +1328,28 @@ def draw_rectangle(obj: Union[Rectangle,List[Rectangle]], plot_limits: Union[Lis
         obj =[obj]
 
     call_stack = tuple(list(call_stack) + ['shape', 'rectangle'])
-    # try:
-    facecolor = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-        draw_params, call_stack,
-        tuple(['facecolor']))
-    edgecolor = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-        draw_params, call_stack,
-        tuple(['edgecolor']))
-    zorder = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-        draw_params, call_stack,
-        tuple(['zorder']))
-    opacity = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-        draw_params, call_stack,
-        tuple(['opacity']))
-    linewidth = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-        draw_params, call_stack,
-        tuple(['linewidth']))
-    antialiased = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-        draw_params, tuple(),
-        tuple(['antialiased']))
-    # except KeyError:
-    #     print("Cannot find stylesheet for rectangle. Called through:")
-    #     print(call_stack)
+    try:
+        facecolor = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            tuple(['facecolor']))
+        edgecolor = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            tuple(['edgecolor']))
+        zorder = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            tuple(['zorder']))
+        opacity = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            tuple(['opacity']))
+        linewidth = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            tuple(['linewidth']))
+        antialiased = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, tuple(),
+            tuple(['antialiased']))
+    except KeyError:
+        print("Cannot find stylesheet for rectangle. Called through:")
+        print(call_stack)
 
     vertices = list()
 
@@ -1491,6 +1527,47 @@ def draw_car(pos_x: Union[int,float], pos_y: Union[int,float], rotate: Union[int
                           lw=lw)
     draw_polygon_as_patch(verts8, ax, facecolor=carcolor, edgecolor='#000000',
                           zorder=zorder, lw=lw)
+
+
+def draw_state(state: State, plot_limits: Union[List[Union[int,float]], None],
+               ax: mpl.axes.Axes, draw_params: dict, draw_func: Dict[type,Callable] = None,
+               handles: Dict[int,List[mpl.patches.Patch]] = None, call_stack: Tuple[str,...] = None,
+               scale_factor=None,
+               arrow_args=None) -> List[mpl.collections.Collection]:
+    """
+    :param state: state to be plotted
+    :param ax: axes object from matplotlib
+    :param draw_params: parameters for plotting given by a nested dict that recreates the structure of an object,
+    :param draw_func: specifies the drawing function
+    :param call_stack: tuple of string containing the call stack, which allows for differentiation of plotting styles
+           depending on the call stack of draw_object
+    :return: None
+    """
+    try:
+        if scale_factor is None:
+            scale_factor = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('initial_state', 'scale_factor'))
+        if arrow_args is None:
+            arrow_args = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('initial_state', 'kwargs'))
+    except KeyError:
+        print("Cannot find stylesheet for initial_state. Called through:")
+        print(call_stack)
+        return []
+
+    cos = math.cos(state.orientation)
+    sin = math.sin(state.orientation)
+    length = 1.5
+    x = state.position[0] + cos * length
+    y = state.position[1] + sin * length
+    artist = ax.arrow(x=x, y=y,
+                     dx=state.velocity * cos * scale_factor,
+                     dy=state.velocity * sin * scale_factor,
+                     zorder=100,
+                     **arrow_args)
+    return [artist]
 
 
 # default function dict, which assigns drawing functions to object classes
