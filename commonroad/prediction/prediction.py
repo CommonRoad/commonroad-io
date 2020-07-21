@@ -115,9 +115,11 @@ class Prediction:
             if isinstance(occ.time_step, Interval):
                 if occ.time_step.contains(time_step):
                     occupancy = occ
+                    break
             elif isinstance(occ.time_step, int):
                 if occ.time_step == time_step:
                     occupancy = occ
+                    break
         return occupancy
 
     @abc.abstractmethod
