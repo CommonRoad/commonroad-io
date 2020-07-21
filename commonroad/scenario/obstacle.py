@@ -310,6 +310,7 @@ class StaticObstacle(Obstacle):
         assert is_valid_orientation(angle), '<StaticObstacle/translate_rotate>: argument angle must be within the ' \
                                             'interval [-2pi, 2pi]. angle = %s' % angle
         self.initial_state = self._initial_state.translate_rotate(translation, angle)
+        self._occupancy_shape = self._occupancy_shape.translate_rotate(translation, angle)
 
     def occupancy_at_time(self, time_step: int) -> Occupancy:
         """
@@ -427,6 +428,7 @@ class DynamicObstacle(Obstacle):
         if self._prediction is not None:
             self.prediction.translate_rotate(translation, angle)
         self._initial_state = self._initial_state.translate_rotate(translation, angle)
+        self._initial_occupancy_shape = self._initial_occupancy_shape.translate_rotate(translation, angle)
 
     def __str__(self):
         obs_str = 'Dynamic Obstacle:\n'
