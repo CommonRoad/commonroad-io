@@ -75,6 +75,12 @@ __status__ = "released"
       <xs:element name="z" type="xs:decimal" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
+  <xs:complexType name="point2D">
+    <xs:sequence>
+      <xs:element name="x" type="xs:decimal"/>
+      <xs:element name="y" type="xs:decimal"/>
+    </xs:sequence>
+  </xs:complexType>
   <xs:complexType name="rectangle">
     <xs:sequence>
       <xs:element name="length" type="positiveDecimal"/>
@@ -321,6 +327,7 @@ __status__ = "released"
       <xs:enumeration value="pedestrian"/>
       <xs:enumeration value="priorityVehicle"/>
       <xs:enumeration value="train"/>
+      <xs:enumeration value="taxi"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="lanelet">
@@ -485,6 +492,7 @@ __status__ = "released"
       <xs:enumeration value="pedestrian"/>
       <xs:enumeration value="priorityVehicle"/>
       <xs:enumeration value="train"/>
+      <xs:enumeration value="taxi"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="dynamicObstacle">
@@ -519,6 +527,12 @@ __status__ = "released"
     </xs:sequence>
     <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
   </xs:complexType>
+  <!-- building -->
+  <xs:complexType name="building">
+    <xs:sequence>
+      <xs:element name="point" type="point2D" minOccurs="3" maxOccurs="unbounded"/>
+  </xs:sequence>
+  </xs:complexType>
   <!-- planning problem -->
   <xs:complexType name="planningProblem">
     <xs:sequence>
@@ -544,12 +558,47 @@ __status__ = "released"
       <xs:element name="additionalTransformation" type="additionalTransformation"/>
     </xs:sequence>
   </xs:complexType>
+  <xs:complexType name="timeOfDay">
+    <xs:choice>
+      <xs:element name="night" type="xs:string"/>
+      <xs:element name="day" type="xs:string"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="weather">
+    <xs:choice>
+      <xs:element name="sunny" type="xs:string"/>
+      <xs:element name="light_rain" type="xs:string"/>
+      <xs:element name="heavy_rain" type="xs:string"/>
+      <xs:element name="fog" type="xs:string"/>
+      <xs:element name="snow" type="xs:string"/>
+      <xs:element name="hail" type="xs:string"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="underground">
+    <xs:choice>
+      <xs:element name="wet" type="xs:string"/>
+      <xs:element name="clean" type="xs:string"/>
+      <xs:element name="dirty" type="xs:string"/>
+      <xs:element name="damaged" type="xs:string"/>
+      <xs:element name="snow" type="xs:string"/>
+      <xs:element name="ice" type="xs:string"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="environment">
+    <xs:sequence minOccurs="0" maxOccurs="1">
+      <xs:element name="time" type="xs:time"/>
+      <xs:element name="timeOfDay" type="timeOfDay"/>
+      <xs:element name="weather" type="weather"/>
+      <xs:element name="underground" type="underground"/>
+    </xs:sequence>
+  </xs:complexType>
   <xs:complexType name="location">
     <xs:sequence minOccurs="1" maxOccurs="1">
       <xs:element name="geoNameId" type="xs:integer"/>
       <xs:element name="gpsLatitude" type="xs:decimal"/>
       <xs:element name="gpsLongitude" type="xs:decimal"/>
       <xs:element name="geoTransformation" type="geoTransformation" minOccurs="0"/>
+      <xs:element name="environment" type="environment" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="tag">
@@ -596,6 +645,7 @@ __status__ = "released"
         <xs:element name="intersection" type="intersection" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="staticObstacle" type="staticObstacle" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="dynamicObstacle" type="dynamicObstacle" minOccurs="0" maxOccurs="unbounded"/>
+	<xs:element name="building" type="building" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="planningProblem" type="planningProblem" minOccurs="1" maxOccurs="unbounded"/>
       </xs:sequence>
       <xs:attribute name="commonRoadVersion" use="required">
@@ -613,7 +663,7 @@ __status__ = "released"
       <xs:attribute name="timeStepSize" type="xs:decimal" use="required"/>
     </xs:complexType>
     <xs:key name="id">
-      <xs:selector xpath="./lanelet | ./trafficSign | ./trafficLight | ./trafficSign | ./trafficLight | ./intersection | ./staticObstacle | ./dynamicObstacle | ./planningProblem | ./intersection/incoming"/>
+      <xs:selector xpath="./lanelet | ./trafficSign | ./trafficLight | ./trafficSign | ./trafficLight | ./intersection | ./staticObstacle | ./dynamicObstacle | ./building | ./planningProblem | ./intersection/incoming"/>
       <xs:field xpath="@id"/>
     </xs:key>
     <xs:keyref name="idref" refer="id">
