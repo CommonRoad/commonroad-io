@@ -6,7 +6,7 @@ import numpy as np
 import enum
 
 from commonroad.common.util import Interval
-from commonroad.common.validity import is_real_number, is_real_number_vector, is_valid_orientation
+from commonroad.common.validity import is_real_number, is_real_number_vector, is_valid_orientation, is_natural_number
 from commonroad.scenario.lanelet import Lanelet
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.obstacle import ObstacleRole
@@ -380,7 +380,7 @@ class Scenario:
             :param obstacle_role: obstacle role as defined in CommonRoad, e.g., static or dynamic
             :return: list of occupancies of the obstacles
         """
-        assert isinstance(time_step, int), '<Scenario/occupancies_at_time> argument "time_step" of wrong type. ' \
+        assert is_natural_number(time_step), '<Scenario/occupancies_at_time> argument "time_step" of wrong type. ' \
                                            'Expected type: %s. Got type: %s.' % (int, type(time_step))
         assert isinstance(obstacle_role, (ObstacleRole, type(None))), \
             '<Scenario/obstacles_by_role_and_type> argument "obstacle_role" of wrong type. Expected types: ' \
@@ -399,7 +399,7 @@ class Scenario:
         :param obstacle_id: ID of the queried obstacle
         :return: the obstacle object if the ID exists, otherwise None
         """
-        assert isinstance(obstacle_id, int), '<Scenario/obstacle_by_id> argument "obstacle_id" of wrong type. ' \
+        assert is_natural_number(obstacle_id), '<Scenario/obstacle_by_id> argument "obstacle_id" of wrong type. ' \
                                              'Expected type: %s. Got type: %s.' % (int, type(obstacle_id))
         obstacle = None
         if obstacle_id in self._static_obstacles:
@@ -475,7 +475,7 @@ class Scenario:
         :param time_step: time step of interest
         :return: dictionary which maps id to obstacle state at time step
         """
-        assert isinstance(time_step, int), '<Scenario/obstacle_at_time_step> argument "time_step" of wrong type. ' \
+        assert is_natural_number(time_step), '<Scenario/obstacle_at_time_step> argument "time_step" of wrong type. ' \
                                            'Expected type: %s. Got type: %s.' % (int, type(time_step))
 
         obstacle_states = {}
@@ -486,8 +486,9 @@ class Scenario:
             obstacle_states[obstacle.obstacle_id] = obstacle.initial_state
         return obstacle_states
 
-    def assign_obstacles_to_lanelets(self, time_steps: Union[int,None] = None,
-                                     obstacle_ids: Union[Set[int], None] = None):
+    def assign_obstacles_to_lanelets(self, time_steps: Union[List[int],None] = None,
+                                     obstacle_ids: Union[Set[int], None] = None,
+                                     use_center_only = False):
         """
         Assigns center points and shapes of obstacles to lanelets by setting the attributes
         Obstacle.prediction.initial_shape_lanelet_ids, .shape_lanelet_assignment, .initial_center_lanelet_ids,
@@ -496,10 +497,13 @@ class Scenario:
         :param time_steps: time step for which the obstacles should be assigned. If None, all time_steps are
         assigned.
         :param obstacle_ids: ids for which the assignment should be computed. If None, all obstacles are
+        :param use_center_only: if False, the shape is used to find occupied lanelets.
+        Otherwise, only the center is used.
         assigned.
         """
         def assign_dynamic_obstacle_shape_at_time(obstacle: DynamicObstacle, time_step):
             # assign center of obstacle
+            # print(time_step, [state.time_step for state in obstacle.prediction.trajectory.state_list])
             if time_step == obstacle.initial_state.time_step:
                 position = obstacle.initial_state.position
             elif not isinstance(obstacle.prediction, TrajectoryPrediction):
@@ -509,12 +513,18 @@ class Scenario:
 
             lanelet_ids_center = set(self.lanelet_network.find_lanelet_by_position([position])[0])
             obstacle.prediction.center_lanelet_assignment[time_step] = lanelet_ids_center
-            # assign shape of obstacle
-            shape = obstacle.occupancy_at_time(time_step).shape
-            lanelet_ids = set(self.lanelet_network.find_lanelet_by_shape(shape))
-            obstacle.prediction.shape_lanelet_assignment[time_step] = lanelet_ids
+
+            if use_center_only:
+                lanelet_ids = lanelet_ids_center
+            else:
+                # assign shape of obstacle
+                shape = obstacle.occupancy_at_time(time_step).shape
+                lanelet_ids = set(self.lanelet_network.find_lanelet_by_shape(shape))
+                obstacle.prediction.shape_lanelet_assignment[time_step] = lanelet_ids
+
             if time_step == obstacle.initial_state.time_step:
-                obstacle.initial_shape_lanelet_ids = lanelet_ids
+                if not use_center_only:
+                    obstacle.initial_shape_lanelet_ids = lanelet_ids
                 obstacle.initial_center_lanelet_ids = lanelet_ids_center
             for l_id in lanelet_ids:
                 self.lanelet_network.find_lanelet_by_id(l_id)\
@@ -522,8 +532,9 @@ class Scenario:
 
         def assign_static_obstacle(obstacle: StaticObstacle):
             shape = obstacle.occupancy_at_time(0).shape
-            lanelet_ids = set(self.lanelet_network.find_lanelet_by_shape(shape))
-            obstacle.initial_shape_lanelet_ids = lanelet_ids
+            if not use_center_only:
+                lanelet_ids = set(self.lanelet_network.find_lanelet_by_shape(shape))
+                obstacle.initial_shape_lanelet_ids = lanelet_ids
             lanelet_ids = set(self.lanelet_network.find_lanelet_by_position([obstacle.initial_state.position])[0])
             obstacle.initial_center_lanelet_ids = lanelet_ids
 
