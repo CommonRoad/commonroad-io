@@ -726,8 +726,8 @@ class Lanelet:
         """
         Merges obstacle IDs of static obstacles on two lanelets
 
-        :param static_obstacles_on_lanelet1: Obstacle IDs on the first lanelet
-        :param lanelet2: Obstacle IDs on the second lanelet
+        :param obstacles_on_lanelet1: Obstacle IDs on the first lanelet
+        :param obstacles_on_lanelet2: Obstacle IDs on the second lanelet
         :return: Merged obstacle IDs of static obstacles on lanelets
         """
         if len(obstacles_on_lanelet2.items()) > 0:
@@ -753,12 +753,13 @@ class Lanelet:
         assert isinstance(lanelet1, Lanelet), '<Lanelet/merge_lanelets>: lanelet1 is not a valid lanelet object!'
         assert isinstance(lanelet2, Lanelet), '<Lanelet/merge_lanelets>: lanelet1 is not a valid lanelet object!'
         # check connection via successor / predecessor
-        assert lanelet1.lanelet_id in lanelet2.successor or lanelet2.lanelet_id in lanelet1.successor,\
+        assert lanelet1.lanelet_id in lanelet2.successor or lanelet2.lanelet_id in lanelet1.successor \
+            or lanelet1.lanelet_id in lanelet2.predecessor or lanelet2.lanelet_id in lanelet1.predecessor,\
             '<Lanelet/merge_lanelets>: cannot merge two not connected lanelets! successors of l1 = {}, successors of l2 = {}'.format(
             lanelet1.successor, lanelet2.successor)
 
         # check pred and successor
-        if lanelet1.lanelet_id in lanelet2.successor:
+        if lanelet1.lanelet_id in lanelet2.successor or lanelet2.lanelet_id in lanelet1.predecessor:
             pred = lanelet2
             suc = lanelet1
         else:
