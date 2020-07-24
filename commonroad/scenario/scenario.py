@@ -68,7 +68,7 @@ class TimeOfDay(enum.Enum):
 @enum.unique
 class Weather(enum.Enum):
     """ Enum containing all possible weathers."""
-    DAY = "sunny"
+    SUNNY = "sunny"
     LIGHT_RAIN = "light_rain"
     HEAVY_RAIN = "heavy_rain"
     FOG = "fog"
@@ -225,6 +225,10 @@ class Location:
     @property
     def geo_transformation(self) -> GeoTransformation:
         return self._geo_transformation
+
+    @property
+    def environment(self) -> Environment:
+        return self._environment
 
 
 class Scenario:
