@@ -760,12 +760,12 @@ class Lanelet:
             lanelet1.successor, lanelet2.successor)
 
         # check pred and successor
-        if lanelet1.lanelet_id in lanelet2.successor or lanelet2.lanelet_id in lanelet1.predecessor:
-            pred = lanelet2
-            suc = lanelet1
-        else:
+        if lanelet1.lanelet_id in lanelet2.predecessor or lanelet2.lanelet_id in lanelet1.successor:
             pred = lanelet1
             suc = lanelet2
+        else:
+            pred = lanelet2
+            suc = lanelet1
 
         # build new merged lanelet (remove first node of successor if both lanes are connected)
         # check connectedness
