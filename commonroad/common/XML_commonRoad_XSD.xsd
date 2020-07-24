@@ -558,34 +558,35 @@ __status__ = "released"
       <xs:element name="additionalTransformation" type="additionalTransformation"/>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="timeOfDay">
-    <xs:choice>
-      <xs:element name="night" type="xs:string"/>
-      <xs:element name="day" type="xs:string"/>
-    </xs:choice>
-  </xs:complexType>
-  <xs:complexType name="weather">
-    <xs:choice>
-      <xs:element name="sunny" type="xs:string"/>
-      <xs:element name="light_rain" type="xs:string"/>
-      <xs:element name="heavy_rain" type="xs:string"/>
-      <xs:element name="fog" type="xs:string"/>
-      <xs:element name="snow" type="xs:string"/>
-      <xs:element name="hail" type="xs:string"/>
-    </xs:choice>
-  </xs:complexType>
-  <xs:complexType name="underground">
-    <xs:choice>
-      <xs:element name="wet" type="xs:string"/>
-      <xs:element name="clean" type="xs:string"/>
-      <xs:element name="dirty" type="xs:string"/>
-      <xs:element name="damaged" type="xs:string"/>
-      <xs:element name="snow" type="xs:string"/>
-      <xs:element name="ice" type="xs:string"/>
-    </xs:choice>
-  </xs:complexType>
+  <xs:simpleType name="timeOfDay">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="unknown"/>
+      <xs:enumeration value="night"/>
+      <xs:enumeration value="day"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="weather">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="sunny"/>
+      <xs:enumeration value="light_rain"/>
+      <xs:enumeration value="heavy_rain"/>
+      <xs:enumeration value="fog"/>
+      <xs:enumeration value="snow"/>
+      <xs:enumeration value="hail"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="underground">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="wet"/>
+      <xs:enumeration value="clean"/>
+      <xs:enumeration value="dirty"/>
+      <xs:enumeration value="damaged"/>
+      <xs:enumeration value="snow"/>
+      <xs:enumeration value="ice"/>
+    </xs:restriction>
+  </xs:simpleType>
   <xs:complexType name="environment">
-    <xs:sequence minOccurs="0" maxOccurs="1">
+    <xs:sequence>
       <xs:element name="time" type="xs:time"/>
       <xs:element name="timeOfDay" type="timeOfDay"/>
       <xs:element name="weather" type="weather"/>

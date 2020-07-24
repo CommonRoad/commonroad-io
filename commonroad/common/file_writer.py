@@ -4,7 +4,6 @@ File Writer for scenarios to commonroad xml-format
 import datetime
 import enum
 import pathlib
-import io
 import os
 from typing import Union, List, Set
 import numpy as np
@@ -22,7 +21,7 @@ from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine, LaneletType
 from commonroad.scenario.obstacle import ObstacleRole, ObstacleType, DynamicObstacle, StaticObstacle, Obstacle, \
     Occupancy, Shape, SignalState
-from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation
+from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficLightCycleElement
 from commonroad.scenario.trajectory import Trajectory, State
 
@@ -399,6 +398,8 @@ class LocationXMLNode:
         location_node.append(gps_longitude_node)
         if location.geo_transformation is not None:
             location_node.append(GeoTransformationXMLNode.create_node(location.geo_transformation))
+        if location.environment is not None:
+            location_node.append(EnvironmentXMLNode.create_node(location.environment))
 
         return location_node
 
@@ -431,6 +432,34 @@ class GeoTransformationXMLNode:
         geotransform_node.append(additional_transformation_node)
 
         return geotransform_node
+
+
+class EnvironmentXMLNode:
+    @classmethod
+    def create_node(cls, environment: Environment) -> etree.Element:
+        """
+        Create XML-Node for a environment
+        :param environment: Environment object
+        :return: node
+        """
+        environment_node = etree.Element('environment')
+        time_node = etree.Element('time')
+        if environment.time.hours < 10:
+            time_node.text = "0" + str(environment.time.hours) + ":" + str(environment.time.minutes) + ":00"
+        else:
+            time_node.text = str(environment.time.hours) + ":" + str(environment.time.minutes)
+        environment_node.append(time_node)
+        time_of_day_node = etree.Element('timeOfDay')
+        time_of_day_node.text = environment.time_of_day.value
+        environment_node.append(time_of_day_node)
+        weather_node = etree.Element('weather')
+        weather_node.text = environment.weather.value
+        environment_node.append(weather_node)
+        underground_node = etree.Element('underground')
+        underground_node.text = environment.underground.value
+        environment_node.append(underground_node)
+
+        return environment_node
 
 
 class TagXMLNode:
