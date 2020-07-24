@@ -1007,15 +1007,11 @@ class LaneletNetwork:
             l._adj_left_same_direction = None if l._adj_left_same_direction is None \
                                                  or l.adj_left not in exisiting_ids \
                 else l._adj_left_same_direction
-            if prev != l._adj_left_same_direction:
-                print(prev,l._adj_left_same_direction)
             l._adj_right = None if l._adj_right is None or l._adj_right not in exisiting_ids else l._adj_right
             prev = copy.deepcopy(l._adj_right_same_direction)
             l._adj_right_same_direction = None if l._adj_right_same_direction is None \
                                                   or l.adj_right not in exisiting_ids \
                 else l._adj_right_same_direction
-            if prev != l._adj_right_same_direction:
-                print(prev,l._adj_right_same_direction)
 
     def find_lanelet_by_id(self, lanelet_id: int) -> Lanelet:
         """
