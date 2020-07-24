@@ -12,7 +12,8 @@ from commonroad.planning.planning_problem import PlanningProblemSet, PlanningPro
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
 from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, SignalState
-from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location
+from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, \
+    TimeOfDay, Weather, Underground
 from commonroad.scenario.trajectory import State, Trajectory
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLight, TrafficLightCycleElement, \
     TrafficLightState, TrafficLightDirection, TrafficSignIDGermany, TrafficSignIDUsa, TrafficSignIDChina, \
@@ -296,18 +297,24 @@ class LocationFactory:
             geo_name_id = int(location_element.find('geoNameId').text)
             gps_latitude = float(location_element.find('gpsLatitude').text)
             gps_longitude = float(location_element.find('gpsLongitude').text)
-            if xml_node.find('geoTransformation') is not None:
-                geo_transformation = GeoTransformationFactory.create_from_xml_node(xml_node.find('geoTransformation'))
+            if location_element.find('geoTransformation') is not None:
+                geo_transformation = GeoTransformationFactory.create_from_xml_node(
+                    location_element.find('geoTransformation'))
             else:
                 geo_transformation = None
+            if location_element.find('environment') is not None:
+                environment = EnvironmentFactory.create_from_xml_node(
+                    location_element.find('environment'))
+            else:
+                environment = None
 
-            return Location(geo_name_id, gps_latitude, gps_longitude, geo_transformation)
+            return Location(geo_name_id, gps_latitude, gps_longitude, geo_transformation, environment)
         else:
             return None
 
 
 class GeoTransformationFactory:
-    """ Class to create a location list from an XML element."""
+    """ Class to create a geotransformation object of an XML element according to the CommonRoad specification."""
 
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element) -> GeoTransformation:
@@ -322,6 +329,38 @@ class GeoTransformationFactory:
         scaling = float(xml_node.find('scaling').text)
 
         return GeoTransformation(geo_reference, x_translation, y_translation, z_rotation, scaling)
+
+
+class EnvironmentFactory:
+    """ Class to create a environment object of an XML element according to the CommonRoad specification."""
+
+    @classmethod
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Environment:
+        """
+        :param xml_node: XML element
+        :return: Environment object
+        """
+        time = TimeFactory.create_from_xml_node(xml_node.find('time').text)
+        weather = Weather(xml_node.find('weather').text)
+        underground = Underground(xml_node.find('underground').text)
+        time_of_day = TimeOfDay(xml_node.find('timeOfDay').text)
+
+        return Environment(time, time_of_day, weather, underground)
+
+
+class TimeFactory:
+    """ Class to create a time object of an XML element."""
+
+    @classmethod
+    def create_from_xml_node(cls, time_text: str) -> Time:
+        """
+        :param time_text: time as string
+        :return: time object
+        """
+        hours = int(time_text[0:2])
+        minutes = int(time_text[3:5])
+
+        return Time(hours, minutes)
 
 
 class LaneletNetworkFactory:

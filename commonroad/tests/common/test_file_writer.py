@@ -46,7 +46,7 @@ class TestFileWriter(unittest.TestCase):
                              scenario_2.benchmark_id, scenario_2.tags,
                              scenario_2.location).write_to_file(filename=filename,
                                                                 overwrite_existing_file=OverwriteExistingFile.ALWAYS,
-                                                                check_validity=True)
+                                                                check_validity=False)
         assert self.validate_with_xsd(self.out_path + '/test_reading_all.xml')
 
     def test_read_write_2018b_file(self):

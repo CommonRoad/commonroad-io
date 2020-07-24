@@ -4,6 +4,12 @@
     <geoNameId>2867714</geoNameId>
     <gpsLatitude>48.262333</gpsLatitude>
     <gpsLongitude>11.668775</gpsLongitude>
+    <environment>
+      <time>09:12:00</time>
+      <timeOfDay>night</timeOfDay>
+      <weather>light_rain</weather>
+      <underground>ice</underground>
+    </environment>
   </location>
    <scenarioTags>
     <intersection/>
