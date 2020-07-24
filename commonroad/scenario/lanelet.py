@@ -64,6 +64,7 @@ class RoadUser(enum.Enum):
     BICYCLE = 'bicycle'
     PEDESTRIAN = 'pedestrian'
     TRAIN = 'train'
+    TAXI = 'taxi'
 
 
 class StopLine:
@@ -809,7 +810,7 @@ class Lanelet:
         assert network.find_lanelet_by_id(lanelet.lanelet_id) is not None, '<Lanelet>: lanelet not contained in network!'
 
         if lanelet.successor is None or len(lanelet.successor) == 0:
-            return [], []
+            return [lanelet], [[lanelet.lanelet_id]]
 
         # Create Graph from network
         Net = nx.DiGraph() 
@@ -1050,6 +1051,18 @@ class LaneletNetwork:
                               'id = {}'.format(traffic_light_id)
 
         return self._traffic_lights[traffic_light_id] if traffic_light_id in self._traffic_lights else None
+
+    def find_intersection_by_id(self, intersection_id: int) -> Intersection:
+        """
+        Finds a intersection for a given intersection_id
+
+        :param intersection_id: The id of the intersection to find
+        :return: The intersection object if the id exists and None otherwise
+        """
+        assert is_natural_number(intersection_id), '<LaneletNetwork/find_intersection_by_id>: ' \
+                                                   'provided id is not valid! id = {}'.format(intersection_id)
+
+        return self._intersections[intersection_id] if intersection_id in self._intersections else None
 
     def add_lanelet(self, lanelet: Lanelet):
         """
