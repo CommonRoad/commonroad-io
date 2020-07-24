@@ -668,7 +668,7 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
                 tmp_left = lanelet.left_vertices.copy()
                 tmp_left[0, :] = lanelet.interpolate_position(linewidth_metres/2)[2]
                 tmp_left[-1, :] = lanelet.interpolate_position(lanelet.distance[-1] - linewidth_metres / 2)[2]
-                line = LineDataUnits(tmp_left[:, 0], tmp_left[:, 1], zorder=20, linewidth=linewidth_metres,
+                line = LineDataUnits(tmp_left[:, 0], tmp_left[:, 1], zorder=12, linewidth=linewidth_metres,
                               alpha=1.0,
                               color=left_bound_color, linestyle=linestyle,
                               dashes=dashes)
