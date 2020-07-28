@@ -293,6 +293,9 @@ class StaticObstacle(Obstacle):
                           initial_center_lanelet_ids=initial_center_lanelet_ids,
                           initial_shape_lanelet_ids=initial_shape_lanelet_ids,
                           initial_signal_state=initial_signal_state, signal_series=signal_series)
+        self._occupancy_shape = obstacle_shape.rotate_translate_local(
+            initial_state.position, initial_state.orientation
+        )
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ First translates the static obstacle, then rotates the static obstacle around the origin.
@@ -307,6 +310,7 @@ class StaticObstacle(Obstacle):
         assert is_valid_orientation(angle), '<StaticObstacle/translate_rotate>: argument angle must be within the ' \
                                             'interval [-2pi, 2pi]. angle = %s' % angle
         self.initial_state = self._initial_state.translate_rotate(translation, angle)
+        self._occupancy_shape = self._occupancy_shape.translate_rotate(translation, angle)
 
     def occupancy_at_time(self, time_step: int) -> Occupancy:
         """
@@ -315,9 +319,7 @@ class StaticObstacle(Obstacle):
         :param time_step: discrete time step
         :return: occupancy of the static obstacle at time step
         """
-        shape = self.obstacle_shape.rotate_translate_local(
-            self.initial_state.position, self.initial_state.orientation)
-        return Occupancy(time_step=time_step, shape=shape)
+        return Occupancy(time_step=time_step, shape=self._occupancy_shape)
 
     def state_at_time(self, time_step: int) -> State:
         """
@@ -363,6 +365,9 @@ class DynamicObstacle(Obstacle):
                           initial_shape_lanelet_ids=initial_shape_lanelet_ids,
                           initial_signal_state=initial_signal_state, signal_series=signal_series)
         self.prediction: Prediction = prediction
+        self._initial_occupancy_shape = obstacle_shape.rotate_translate_local(
+            initial_state.position, initial_state.orientation
+        )
 
     @property
     def prediction(self) -> Union[Prediction, TrajectoryPrediction, SetBasedPrediction, None]:
@@ -386,9 +391,7 @@ class DynamicObstacle(Obstacle):
         occupancy = None
 
         if time_step == self.initial_state.time_step:
-            shape = self.obstacle_shape.rotate_translate_local(
-                self.initial_state.position, self.initial_state.orientation)
-            occupancy = Occupancy(time_step, shape)
+            occupancy = Occupancy(time_step, self._initial_occupancy_shape)
         elif time_step > self.initial_state.time_step and self._prediction is not None:
             occupancy = self._prediction.occupancy_at_time_step(time_step)
         return occupancy
@@ -425,6 +428,7 @@ class DynamicObstacle(Obstacle):
         if self._prediction is not None:
             self.prediction.translate_rotate(translation, angle)
         self._initial_state = self._initial_state.translate_rotate(translation, angle)
+        self._initial_occupancy_shape = self._initial_occupancy_shape.translate_rotate(translation, angle)
 
     def __str__(self):
         obs_str = 'Dynamic Obstacle:\n'
