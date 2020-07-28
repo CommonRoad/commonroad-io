@@ -2,7 +2,7 @@ import unittest
 from commonroad.geometry.shape import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import *
-from commonroad.scenario.scenario import Scenario
+from commonroad.scenario.scenario import Scenario, Environment, TimeOfDay, Time, Underground, Weather, Location
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany
 from commonroad.scenario.trajectory import *
 from commonroad.common.util import Interval
@@ -60,7 +60,10 @@ class TestScenario(unittest.TestCase):
                                             prediction=self.traj_pred, obstacle_shape=self.rectangle,
                                             initial_shape_lanelet_ids={100, 101})
 
-        self.scenario = Scenario(0.1, 'test')
+        self.environment = Environment(Time(12, 15), TimeOfDay.NIGHT, Weather.SNOW, Underground.ICE)
+        self.location = Location(geo_name_id=123, gps_latitude=456, gps_longitude=789, environment=self.environment)
+
+        self.scenario = Scenario(0.1, 'test', location=self.location)
 
     def test_add_objects(self):
 
@@ -377,6 +380,27 @@ class TestScenario(unittest.TestCase):
                          self.scenario.obstacle_states_at_time_step(1)[0].position[0])
         self.assertEqual(exp_states_time_one[0].position[1],
                          self.scenario.obstacle_states_at_time_step(1)[0].position[1])
+
+    def test_location(self):
+        self.environment = Environment(Time(12, 15), TimeOfDay.NIGHT, Weather.SNOW, Underground.ICE)
+        self.location = Location(geo_name_id=123, gps_latitude=456, gps_longitude=789, environment=self.environment)
+        exp_geo_name_id = 123
+        exp_gps_latitude = 456
+        exp_gps_longitude = 789
+        exp_env_time_hours = 12
+        exp_env_time_min = 15
+        exp_env_time_of_day = TimeOfDay.NIGHT
+        exp_env_weather = Weather.SNOW
+        exp_env_underground = Underground.ICE
+
+        self.assertEqual(exp_geo_name_id, self.scenario.location.geo_name_id)
+        self.assertEqual(exp_gps_latitude, self.scenario.location.gps_latitude)
+        self.assertEqual(exp_gps_longitude, self.scenario.location.gps_longitude)
+        self.assertEqual(exp_env_time_hours, self.scenario.location.environment.time.hours)
+        self.assertEqual(exp_env_time_min, self.scenario.location.environment.time.minutes)
+        self.assertEqual(exp_env_time_of_day, self.scenario.location.environment.time_of_day)
+        self.assertEqual(exp_env_weather, self.scenario.location.environment.weather)
+        self.assertEqual(exp_env_underground, self.scenario.location.environment.underground)
 
 
 if __name__ == '__main__':

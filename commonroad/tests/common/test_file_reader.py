@@ -7,7 +7,7 @@ from commonroad.planning.planning_problem import PlanningProblem, PlanningProble
 from commonroad.prediction.prediction import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
 from commonroad.scenario.obstacle import *
-from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation
+from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Underground, Weather, TimeOfDay
 from commonroad.scenario.trajectory import *
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLightDirection, TrafficLight, \
     TrafficLightCycleElement, TrafficLightState, TrafficSignIDGermany
@@ -399,6 +399,11 @@ class TestFileReader(unittest.TestCase):
         exp_location_latitude = 48.262333
         exp_location_longitude = 11.668775
         exp_location_geo = None
+        exp_location_env_time_hours = 9
+        exp_location_env_time_minutes = 12
+        exp_location_env_underground = Underground.ICE
+        exp_location_env_time_of_day = TimeOfDay.NIGHT
+        exp_location_env_weather = Weather.LIGHT_RAIN
         exp_tags = {Tag.INTERSECTION, Tag.URBAN}
 
         xml_file = CommonRoadFileReader(self.filename_all).open(lanelet_assignment=True)
@@ -512,6 +517,11 @@ class TestFileReader(unittest.TestCase):
         self.assertEqual(exp_location_latitude, xml_file[0].location.gps_latitude)
         self.assertEqual(exp_location_longitude, xml_file[0].location.gps_longitude)
         self.assertEqual(exp_location_geo, xml_file[0].location.geo_transformation)
+        self.assertEqual(exp_location_env_time_hours, xml_file[0].location.environment.time.hours)
+        self.assertEqual(exp_location_env_time_minutes, xml_file[0].location.environment.time.minutes)
+        self.assertEqual(exp_location_env_underground, xml_file[0].location.environment.underground)
+        self.assertEqual(exp_location_env_time_of_day, xml_file[0].location.environment.time_of_day)
+        self.assertEqual(exp_location_env_weather, xml_file[0].location.environment.weather)
 
     def test_open_intersection(self):
         exp_lanelet_stop_line_17_point_1 = self.stop_line_17.start
