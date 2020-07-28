@@ -75,12 +75,6 @@ __status__ = "released"
       <xs:element name="z" type="xs:decimal" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="point2D">
-    <xs:sequence>
-      <xs:element name="x" type="xs:decimal"/>
-      <xs:element name="y" type="xs:decimal"/>
-    </xs:sequence>
-  </xs:complexType>
   <xs:complexType name="rectangle">
     <xs:sequence>
       <xs:element name="length" type="positiveDecimal"/>
@@ -530,8 +524,9 @@ __status__ = "released"
   <!-- building -->
   <xs:complexType name="building">
     <xs:sequence>
-      <xs:element name="point" type="point2D" minOccurs="3" maxOccurs="unbounded"/>
-  </xs:sequence>
+      <xs:element name="point" type="point" minOccurs="3" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
   </xs:complexType>
   <!-- planning problem -->
   <xs:complexType name="planningProblem">
@@ -646,7 +641,7 @@ __status__ = "released"
         <xs:element name="intersection" type="intersection" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="staticObstacle" type="staticObstacle" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="dynamicObstacle" type="dynamicObstacle" minOccurs="0" maxOccurs="unbounded"/>
-	<xs:element name="building" type="building" minOccurs="0" maxOccurs="unbounded"/>
+	    <xs:element name="building" type="building" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="planningProblem" type="planningProblem" minOccurs="1" maxOccurs="unbounded"/>
       </xs:sequence>
       <xs:attribute name="commonRoadVersion" use="required">

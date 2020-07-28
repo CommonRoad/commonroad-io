@@ -24,6 +24,7 @@ from commonroad.scenario.obstacle import ObstacleRole, ObstacleType, DynamicObst
 from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficLightCycleElement
 from commonroad.scenario.trajectory import Trajectory, State
+from commonroad.scenario.building import Building
 
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -251,6 +252,8 @@ class CommonRoadFileWriter:
             self._root_node.append(IntersectionXMLNode.create_node(intersection))
         for o in self.scenario.obstacles:
             self._root_node.append(ObstacleXMLNode.create_node(o))
+        for b in self.scenario.buildings:
+            self._root_node.append(BuildingXMLNode.create_node(b))
 
     def _add_all_planning_problems_from_planning_problem_set(self):
         for (
@@ -585,6 +588,22 @@ class LaneletXMLNode:
                 lanelet_node.append(traffic_light_node)
 
         return lanelet_node
+
+
+class BuildingXMLNode:
+    @classmethod
+    def create_node(cls, building: Building) -> etree.Element:
+        """
+        Create XML-Node for a building
+        :param building: building for creating a node
+        :return: node
+        """
+        building_node = etree.Element('building')
+        building_node.set('id', str(building.building_id))
+
+        Pointlist.create_from_numpy_array(building.outline).add_points_to_node(building_node)
+
+        return building_node
 
 
 class ObstacleXMLNode:
