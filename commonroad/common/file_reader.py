@@ -3,6 +3,7 @@ from typing import Union, List, Tuple, Dict, Set
 from xml.etree import ElementTree
 import numpy as np
 from abc import ABC
+import warnings
 
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.util import Interval, AngleInterval
@@ -20,7 +21,8 @@ from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, Tr
     TrafficSignIDRussia, TrafficSignIDSpain, TrafficSignIDZamunda, SupportedTrafficSignCountry, LEFT_HAND_TRAFFIC, \
     TRAFFIC_SIGN_VALIDITY_START
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
-import warnings
+from commonroad.scenario.building import Building
+
 
 __author__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -228,6 +230,9 @@ class ScenarioFactory:
             LaneletFactory._speed_limits = {}
         else:
             scenario.add_objects(cls._obstacles(xml_node, scenario.lanelet_network, lanelet_assignment))
+
+        scenario.add_objects(BuildingFactory.create_from_xml_node(xml_node))
+
         return scenario
 
     @classmethod
@@ -1398,3 +1403,28 @@ class PointFactory:
         else:
             z = float(xml_node.find('z').text)
             return np.array([x, y, z])
+
+class BuildingFactory:
+    """ Class to create a list of objects of class Building from an XML element."""
+    @classmethod
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> List[Building]:
+        """
+        :param xml_node: XML element
+        :return: list of objects of class Building according to the CommonRoad specification.
+        """
+        buildings = []
+        for building in xml_node.findall('building'):
+            outline = cls._vertices(building)
+            building_id = int(building.get('id'))
+            buildings.append(Building(outline, building_id))
+
+        return buildings
+
+    @classmethod
+    def _vertices(cls, xml_node: ElementTree.Element) -> np.ndarray:
+        """
+        Reads the vertices of a building.
+        :param xml_node: XML element
+        :return: The vertices of the boundary of a building described as a polyline
+        """
+        return PointListFactory.create_from_xml_node(xml_node)

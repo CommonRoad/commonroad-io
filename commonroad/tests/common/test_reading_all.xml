@@ -403,6 +403,20 @@
       </signalState>
     </signalSeries>
   </dynamicObstacle>
+  <building id="1234">
+    <point>
+      <x>0.0</x>
+      <y>0.0</y>
+    </point>
+    <point>
+      <x>8.0</x>
+      <y>0.0</y>
+    </point>
+    <point>
+      <x>4.0</x>
+      <y>-4.0</y>
+    </point>
+  </building>
   <planningProblem id="1000">
     <initialState>
       <position>

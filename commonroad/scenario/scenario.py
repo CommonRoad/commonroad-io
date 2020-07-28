@@ -15,6 +15,7 @@ from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Obstac
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
+from commonroad.scenario.building import Building
 
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -256,6 +257,8 @@ class Scenario:
         self._static_obstacles: Dict[int, StaticObstacle] = defaultdict()
         self._dynamic_obstacles: Dict[int, DynamicObstacle] = defaultdict()
 
+        self._buildings: Dict[int, Building] = defaultdict()
+
         self._id_set: Set[int] = set()
 
         # meta data
@@ -315,9 +318,14 @@ class Scenario:
         return list(itertools.chain(self._static_obstacles.values(),
                                     self._dynamic_obstacles.values()))
 
+    @property
+    def buildings(self) -> List[Building]:
+        """ Returns a list of all buildings in the scenario."""
+        return list(self._buildings.values())
+
     def add_objects(self, scenario_object: Union[List[Union[Obstacle, Lanelet, LaneletNetwork, TrafficSign,
-                                                            TrafficLight, Intersection]], Obstacle, Lanelet,
-                                                 LaneletNetwork, TrafficSign, TrafficLight, Intersection],
+                                                            TrafficLight, Intersection, Building]], Obstacle, Lanelet,
+                                                 LaneletNetwork, TrafficSign, TrafficLight, Intersection, Building],
                     lanelet_ids: Set[int] = None):
         """ Function to add objects, e.g., lanelets, dynamic and static obstacles, to the scenario.
 
@@ -359,6 +367,9 @@ class Scenario:
         elif isinstance(scenario_object, Intersection):
             self._mark_object_id_as_used(scenario_object.intersection_id)
             self._lanelet_network.add_intersection(scenario_object)
+        elif isinstance(scenario_object, Building):
+            self._mark_object_id_as_used(scenario_object.building_id)
+            self._buildings[scenario_object.building_id] = scenario_object
 
         else:
             raise ValueError('<Scenario/add_objects> argument "scenario_object" of wrong type. '
