@@ -111,13 +111,15 @@ class TestObstacle(unittest.TestCase):
         np.testing.assert_array_almost_equal(dynamic_obs.obstacle_shape.center, np.array([0, 0]))
 
         # check transformation of statelist
-        target_statelist = [[10, 0], [11, 1], [12, 1]]
-        for state,target_state in zip(dynamic_obs.prediction.trajectory.state_list,target_statelist):
+        target_statelist = [[10, 0], [10, 0], [11, 1], [12, 1]]
+        for i,target_state in enumerate(target_statelist):
+            state = dynamic_obs.state_at_time(i)
             np.testing.assert_array_almost_equal(state.position, target_state)
 
         # check transformation of occupancies
-        for i in range(1, 3):
-            np.testing.assert_array_almost_equal(dynamic_obs.occupancy_at_time(i).shape.center, target_statelist[i-1])
+        for i in range(3):
+            print(dynamic_obs.occupancy_at_time(i).shape.center, target_statelist[i])
+            np.testing.assert_array_almost_equal(dynamic_obs.occupancy_at_time(i).shape.center, target_statelist[i])
 
         # rotation
         dynamic_obs.translate_rotate(np.array([0, 0]), -0.3)

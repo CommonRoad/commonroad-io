@@ -4,6 +4,12 @@
     <geoNameId>2867714</geoNameId>
     <gpsLatitude>48.262333</gpsLatitude>
     <gpsLongitude>11.668775</gpsLongitude>
+    <environment>
+      <time>09:12:00</time>
+      <timeOfDay>night</timeOfDay>
+      <weather>light_rain</weather>
+      <underground>ice</underground>
+    </environment>
   </location>
    <scenarioTags>
     <intersection/>
@@ -397,6 +403,20 @@
       </signalState>
     </signalSeries>
   </dynamicObstacle>
+  <building id="1234">
+    <point>
+      <x>0.0</x>
+      <y>0.0</y>
+    </point>
+    <point>
+      <x>8.0</x>
+      <y>0.0</y>
+    </point>
+    <point>
+      <x>4.0</x>
+      <y>-4.0</y>
+    </point>
+  </building>
   <planningProblem id="1000">
     <initialState>
       <position>

@@ -3,6 +3,7 @@ from typing import Union, List, Tuple, Dict, Set
 from xml.etree import ElementTree
 import numpy as np
 from abc import ABC
+import warnings
 
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.util import Interval, AngleInterval
@@ -12,14 +13,16 @@ from commonroad.planning.planning_problem import PlanningProblemSet, PlanningPro
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
 from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, SignalState
-from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location
+from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, \
+    TimeOfDay, Weather, Underground
 from commonroad.scenario.trajectory import State, Trajectory
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLight, TrafficLightCycleElement, \
     TrafficLightState, TrafficLightDirection, TrafficSignIDGermany, TrafficSignIDUsa, TrafficSignIDChina, \
     TrafficSignIDRussia, TrafficSignIDSpain, TrafficSignIDZamunda, SupportedTrafficSignCountry, LEFT_HAND_TRAFFIC, \
     TRAFFIC_SIGN_VALIDITY_START
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
-import warnings
+from commonroad.scenario.building import Building
+
 
 __author__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -227,6 +230,9 @@ class ScenarioFactory:
             LaneletFactory._speed_limits = {}
         else:
             scenario.add_objects(cls._obstacles(xml_node, scenario.lanelet_network, lanelet_assignment))
+
+        scenario.add_objects(BuildingFactory.create_from_xml_node(xml_node))
+
         return scenario
 
     @classmethod
@@ -296,18 +302,24 @@ class LocationFactory:
             geo_name_id = int(location_element.find('geoNameId').text)
             gps_latitude = float(location_element.find('gpsLatitude').text)
             gps_longitude = float(location_element.find('gpsLongitude').text)
-            if xml_node.find('geoTransformation') is not None:
-                geo_transformation = GeoTransformationFactory.create_from_xml_node(xml_node.find('geoTransformation'))
+            if location_element.find('geoTransformation') is not None:
+                geo_transformation = GeoTransformationFactory.create_from_xml_node(
+                    location_element.find('geoTransformation'))
             else:
                 geo_transformation = None
+            if location_element.find('environment') is not None:
+                environment = EnvironmentFactory.create_from_xml_node(
+                    location_element.find('environment'))
+            else:
+                environment = None
 
-            return Location(geo_name_id, gps_latitude, gps_longitude, geo_transformation)
+            return Location(geo_name_id, gps_latitude, gps_longitude, geo_transformation, environment)
         else:
             return None
 
 
 class GeoTransformationFactory:
-    """ Class to create a location list from an XML element."""
+    """ Class to create a geotransformation object of an XML element according to the CommonRoad specification."""
 
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element) -> GeoTransformation:
@@ -322,6 +334,38 @@ class GeoTransformationFactory:
         scaling = float(xml_node.find('scaling').text)
 
         return GeoTransformation(geo_reference, x_translation, y_translation, z_rotation, scaling)
+
+
+class EnvironmentFactory:
+    """ Class to create a environment object of an XML element according to the CommonRoad specification."""
+
+    @classmethod
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Environment:
+        """
+        :param xml_node: XML element
+        :return: Environment object
+        """
+        time = TimeFactory.create_from_xml_node(xml_node.find('time').text)
+        weather = Weather(xml_node.find('weather').text)
+        underground = Underground(xml_node.find('underground').text)
+        time_of_day = TimeOfDay(xml_node.find('timeOfDay').text)
+
+        return Environment(time, time_of_day, weather, underground)
+
+
+class TimeFactory:
+    """ Class to create a time object of an XML element."""
+
+    @classmethod
+    def create_from_xml_node(cls, time_text: str) -> Time:
+        """
+        :param time_text: time as string
+        :return: time object
+        """
+        hours = int(time_text[0:2])
+        minutes = int(time_text[3:5])
+
+        return Time(hours, minutes)
 
 
 class LaneletNetworkFactory:
@@ -1359,3 +1403,28 @@ class PointFactory:
         else:
             z = float(xml_node.find('z').text)
             return np.array([x, y, z])
+
+class BuildingFactory:
+    """ Class to create a list of objects of class Building from an XML element."""
+    @classmethod
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> List[Building]:
+        """
+        :param xml_node: XML element
+        :return: list of objects of class Building according to the CommonRoad specification.
+        """
+        buildings = []
+        for building in xml_node.findall('building'):
+            outline = cls._vertices(building)
+            building_id = int(building.get('id'))
+            buildings.append(Building(outline, building_id))
+
+        return buildings
+
+    @classmethod
+    def _vertices(cls, xml_node: ElementTree.Element) -> np.ndarray:
+        """
+        Reads the vertices of a building.
+        :param xml_node: XML element
+        :return: The vertices of the boundary of a building described as a polyline
+        """
+        return PointListFactory.create_from_xml_node(xml_node)

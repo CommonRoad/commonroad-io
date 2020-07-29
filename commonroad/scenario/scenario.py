@@ -15,6 +15,7 @@ from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Obstac
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
+from commonroad.scenario.building import Building
 
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -58,7 +59,63 @@ class Tag(enum.Enum):
     EMERGENCY_BRAKING = "emergency_braking"
 
 
+@enum.unique
+class TimeOfDay(enum.Enum):
+    """ Enum containing all possible time of days."""
+    DAY = "day"
+    NIGHT = "night"
+
+
+@enum.unique
+class Weather(enum.Enum):
+    """ Enum containing all possible weathers."""
+    SUNNY = "sunny"
+    LIGHT_RAIN = "light_rain"
+    HEAVY_RAIN = "heavy_rain"
+    FOG = "fog"
+    SNOW = "snow"
+    HAIL = "hail"
+
+
+@enum.unique
+class Underground(enum.Enum):
+    """ Enum containing all possible undergrounds."""
+    WET = "wet"
+    CLEAN = "clean"
+    DIRTY = "dirty"
+    DAMAGED = "damaged"
+    SNOW = "snow"
+    ICE = "ice"
+
+
+class Time:
+    """
+    Class which describes the fictive time when a scenario starts.
+    """
+    def __init__(self, hours: int, minutes: int):
+        """
+        Constructor of a time object
+
+        :param hours: hours at start of scenario (0-24)
+        :param minutes: minutes at start of scenario (0-60)
+        """
+        self._hours = hours
+        self._minutes = minutes
+
+    @property
+    def hours(self) -> int:
+        return self._hours
+
+    @property
+    def minutes(self) -> int:
+        return self._minutes
+
+
 class GeoTransformation:
+    """
+    Class which describes the transformation from geodetic to projected Cartesian coordinates according to the
+    CommonRoad specification
+    """
     def __init__(self, geo_reference: str = None, x_translation: float = None, y_translation: float = None,
                  z_rotation: float = None, scaling: float = None):
         """
@@ -97,9 +154,48 @@ class GeoTransformation:
         return self._scaling
 
 
+class Environment:
+    """
+    Class which describes the environment where a scenario takes place as specified in the CommonRoad specification.
+    """
+    def __init__(self, time: Time = None, time_of_day: TimeOfDay = None, weather: Weather = None,
+                 underground: Underground = None):
+        """
+        Constructor of an environment object
+
+        :param time: time in hours
+        :param time_of_day: current time of day, i.e., day or night
+        :param weather: weather information, e.g., sunny
+        :param underground: underground information, e.g., ice
+        """
+        self._time = time
+        self._time_of_day = time_of_day
+        self._weather = weather
+        self._underground = underground
+
+    @property
+    def time(self) -> Time:
+        return self._time
+
+    @property
+    def time_of_day(self) -> TimeOfDay:
+        return self._time_of_day
+
+    @property
+    def weather(self) -> Weather:
+        return self._weather
+
+    @property
+    def underground(self) -> Underground:
+        return self._underground
+
+
 class Location:
+    """
+    Class which describes a location according to the CommonRoad specification.
+    """
     def __init__(self, geo_name_id: int = -999, gps_latitude: float = 999, gps_longitude: float = 999,
-                 geo_transformation: GeoTransformation = None):
+                 geo_transformation: GeoTransformation = None, environment: Environment = None):
         """
         Constructor of a location object
 
@@ -107,11 +203,13 @@ class Location:
         :param gps_latitude: GPS latitude coordinate
         :param gps_longitude: GPS longitude coordinate
         :param geo_transformation: description of geometric transformation during scenario generation
+        :param environment: environmental information, e.g. weather
         """
         self._geo_name_id = geo_name_id
         self._gps_latitude = gps_latitude
         self._gps_longitude = gps_longitude
         self._geo_transformation = geo_transformation
+        self._environment = environment
 
     @property
     def geo_name_id(self) -> int:
@@ -128,6 +226,10 @@ class Location:
     @property
     def geo_transformation(self) -> GeoTransformation:
         return self._geo_transformation
+
+    @property
+    def environment(self) -> Environment:
+        return self._environment
 
 
 class Scenario:
@@ -154,6 +256,8 @@ class Scenario:
 
         self._static_obstacles: Dict[int, StaticObstacle] = defaultdict()
         self._dynamic_obstacles: Dict[int, DynamicObstacle] = defaultdict()
+
+        self._buildings: Dict[int, Building] = defaultdict()
 
         self._id_set: Set[int] = set()
 
@@ -216,14 +320,13 @@ class Scenario:
                                     self._dynamic_obstacles.values()))
 
     @property
-    def vehicles_assigned_to_lanelets(self):
-        """ Returns whether vehicles have been assigned to the lanelets they are located on. If not, one can use
-        assign_obstacles_to_lanelets() to so. """
-        return self._vehicles_assigned_to_lanelets
+    def buildings(self) -> List[Building]:
+        """ Returns a list of all buildings in the scenario."""
+        return list(self._buildings.values())
 
     def add_objects(self, scenario_object: Union[List[Union[Obstacle, Lanelet, LaneletNetwork, TrafficSign,
-                                                            TrafficLight, Intersection]], Obstacle, Lanelet,
-                                                 LaneletNetwork, TrafficSign, TrafficLight, Intersection],
+                                                            TrafficLight, Intersection, Building]], Obstacle, Lanelet,
+                                                 LaneletNetwork, TrafficSign, TrafficLight, Intersection, Building],
                     lanelet_ids: Set[int] = None):
         """ Function to add objects, e.g., lanelets, dynamic and static obstacles, to the scenario.
 
@@ -265,6 +368,9 @@ class Scenario:
         elif isinstance(scenario_object, Intersection):
             self._mark_object_id_as_used(scenario_object.intersection_id)
             self._lanelet_network.add_intersection(scenario_object)
+        elif isinstance(scenario_object, Building):
+            self._mark_object_id_as_used(scenario_object.building_id)
+            self._buildings[scenario_object.building_id] = scenario_object
 
         else:
             raise ValueError('<Scenario/add_objects> argument "scenario_object" of wrong type. '
