@@ -11,17 +11,16 @@ from commonroad.scenario.lanelet import Lanelet
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.obstacle import ObstacleRole
 from commonroad.scenario.obstacle import ObstacleType
-from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Obstacle, State
+from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, Obstacle, State
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
-from commonroad.scenario.building import Building
 
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
 __version__ = "2020.2"
-__maintainer__ = "Stefanie Manzinger"
+__maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
@@ -256,8 +255,7 @@ class Scenario:
 
         self._static_obstacles: Dict[int, StaticObstacle] = defaultdict()
         self._dynamic_obstacles: Dict[int, DynamicObstacle] = defaultdict()
-
-        self._buildings: Dict[int, Building] = defaultdict()
+        self._envionrment_obstacle: Dict[int, EnvironmentObstacle] = defaultdict()
 
         self._id_set: Set[int] = set()
 
@@ -319,13 +317,14 @@ class Scenario:
                                     self._dynamic_obstacles.values()))
 
     @property
-    def buildings(self) -> List[Building]:
-        """ Returns a list of all buildings in the scenario."""
-        return list(self._buildings.values())
+    def environment_obstacle(self) -> List[EnvironmentObstacle]:
+        """ Returns a list of all environment_obstacles in the scenario."""
+        return list(self._envionrment_obstacle.values())
 
     def add_objects(self, scenario_object: Union[List[Union[Obstacle, Lanelet, LaneletNetwork, TrafficSign,
-                                                            TrafficLight, Intersection, Building]], Obstacle, Lanelet,
-                                                 LaneletNetwork, TrafficSign, TrafficLight, Intersection, Building],
+                                                            TrafficLight, Intersection, EnvironmentObstacle]], Obstacle,
+                                                 Lanelet, LaneletNetwork, TrafficSign, TrafficLight, Intersection,
+                                                 EnvironmentObstacle],
                     lanelet_ids: Set[int] = None):
         """ Function to add objects, e.g., lanelets, dynamic and static obstacles, to the scenario.
 
@@ -367,9 +366,9 @@ class Scenario:
         elif isinstance(scenario_object, Intersection):
             self._mark_object_id_as_used(scenario_object.intersection_id)
             self._lanelet_network.add_intersection(scenario_object)
-        elif isinstance(scenario_object, Building):
-            self._mark_object_id_as_used(scenario_object.building_id)
-            self._buildings[scenario_object.building_id] = scenario_object
+        elif isinstance(scenario_object, EnvironmentObstacle):
+            self._mark_object_id_as_used(scenario_object.obstacle_id)
+            self._envionrment_obstacle[scenario_object.obstacle_id] = scenario_object
 
         else:
             raise ValueError('<Scenario/add_objects> argument "scenario_object" of wrong type. '

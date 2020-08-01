@@ -180,6 +180,19 @@ class TestObstacle(unittest.TestCase):
             else:
                 assert dynamic_obs.state_at_time(i) is None
 
+    def test_environmental_obstacle(self):
+        environmental_obstacle_shape = Polygon(np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [4, 2], [3, 1], [2, 1], [1, 1]]))
+        environmental_obstacle_id = 1234
+        environmental_obstacle_type = ObstacleType.BUILDING
+        environmental_obstacle = EnvironmentObstacle(environmental_obstacle_id, environmental_obstacle_type,
+                                                     environmental_obstacle_shape)
+
+        self.assertEqual(environmental_obstacle.obstacle_id, environmental_obstacle_id)
+        self.assertEqual(environmental_obstacle.obstacle_role, ObstacleRole.ENVIRONMENT)
+        self.assertEqual(environmental_obstacle.obstacle_type, environmental_obstacle_type)
+        np.testing.assert_array_almost_equal(environmental_obstacle_shape.vertices,
+                                             environmental_obstacle.obstacle_shape.vertices)
+
 
 if __name__ == '__main__':
     unittest.main()
