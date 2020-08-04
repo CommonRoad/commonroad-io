@@ -9,6 +9,8 @@ __maintainer__ = "Christian Pek"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
+from commonroad import TWO_PI
+
 
 class ValidTypes:
     """
@@ -167,7 +169,7 @@ def is_valid_orientation(theta: float) -> bool:
     :param theta: The orientation to check
     :return: True if the orientation is a valid orientation (radian), False otherwise
     """
-    return is_in_interval(theta, -2. * npy.pi, 2. * npy.pi)
+    return is_in_interval(theta, -TWO_PI, TWO_PI)
 
 
 def is_valid_polyline(polyline: npy.ndarray, length=None):

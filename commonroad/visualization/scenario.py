@@ -984,7 +984,8 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
                 elif type(o.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:
                     initial_state = o.prediction.trajectory.state_at_time_step(time_begin)
 
-        return occupancy_list, trajectory, shape, indicators, braking, horns, bluelights, initial_state
+        return [occupancy_list, trajectory, shape, np.array(indicators).reshape(-1, 2), np.array(braking).reshape(-1, 2),
+                np.array(horns).reshape(-1, 2), np.array(bluelights).reshape(-1, 2), initial_state]
 
     if type(obj) is DynamicObstacle:
         obj = [obj]
@@ -1047,16 +1048,18 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
 
     call_stack = tuple(list(call_stack) + ['dynamic_obstacle'])
 
-    # collect objects from all vehicles to draw them in a batch
-    tmp_array  = np.array(list(map(collecting,obj)))
-    occupancy_list = list(filter(None,list(tmp_array[:,0])))
-    trajectories_list = list(filter(None,list(tmp_array[:, 1])))
-    shapes_list = list(filter(None,list(tmp_array[:, 2])))
-    indicators = np.array(list(itertools.chain.from_iterable(tmp_array[:, 3])))
-    braking = np.array(list(itertools.chain.from_iterable(tmp_array[:, 4])))
-    horns = np.array(list(itertools.chain.from_iterable(tmp_array[:, 5])))
-    bluelights = np.array(list(itertools.chain.from_iterable(tmp_array[:, 6])))
-    initial_states = list(filter(None,list(tmp_array[:, 7])))
+    # collect objects from all vehicles to draw them efficiently in batches
+    occupancy_list, trajectories_list, shapes_list, indicators, braking, horns, bluelights, initial_states\
+        = zip(*list(map(collecting, obj)))
+
+    occupancy_list = list(filter(None, list(occupancy_list)))
+    trajectories_list = list(filter(None, list(trajectories_list)))
+    shapes_list = list(filter(None, list(shapes_list)))
+    indicators = np.vstack(indicators)
+    braking = np.vstack(braking)
+    horns = np.vstack(horns)
+    bluelights = np.vstack(bluelights)
+    initial_states = list(filter(None, list(initial_states)))
 
     # draw collected lists, store handles:
     if len(shapes_list) > 0:

@@ -399,6 +399,7 @@
         </time>
         <horn>false</horn>
         <brakingLights>true</brakingLights>
+        <indicatorLights>true</indicatorLights>
         <hazardWarningLights>false</hazardWarningLights>
       </signalState>
     </signalSeries>
