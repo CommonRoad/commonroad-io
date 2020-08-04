@@ -521,10 +521,19 @@ __status__ = "released"
     </xs:sequence>
     <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
   </xs:complexType>
-  <!-- building -->
-  <xs:complexType name="building">
+  <!-- environmentObstacle -->
+  <xs:simpleType name="obstacleTypeEnvironment">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="unknown"/>
+      <xs:enumeration value="building"/>
+      <xs:enumeration value="pillar"/>
+      <xs:enumeration value="median_strip"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="environmentObstacle">
     <xs:sequence>
-      <xs:element name="point" type="point" minOccurs="3" maxOccurs="unbounded"/>
+      <xs:element name="type" type="obstacleTypeEnvironment"/>
+      <xs:element name="shape" type="shape"/>
     </xs:sequence>
     <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
   </xs:complexType>
@@ -641,7 +650,7 @@ __status__ = "released"
         <xs:element name="intersection" type="intersection" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="staticObstacle" type="staticObstacle" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="dynamicObstacle" type="dynamicObstacle" minOccurs="0" maxOccurs="unbounded"/>
-	    <xs:element name="building" type="building" minOccurs="0" maxOccurs="unbounded"/>
+	    <xs:element name="environmentObstacle" type="environmentObstacle" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="planningProblem" type="planningProblem" minOccurs="1" maxOccurs="unbounded"/>
       </xs:sequence>
       <xs:attribute name="commonRoadVersion" use="required">

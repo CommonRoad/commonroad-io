@@ -121,13 +121,14 @@ class TestVisualization(unittest.TestCase):
         "Uses all options for plotting objects related to intersections or traffic sign/lights."
         scenario, pp = CommonRoadFileReader(self.filename_test_all).open()
         plt.close('all')
-        plt.figure()
-        draw_params = {'time_begin': 1}
-        draw_object(scenario.obstacle_by_id(2),
-                    draw_params=draw_params)
-        plt.autoscale()
-        plt.axis('equal')
-        plt.show()
+        for t in range(2):
+            plt.figure()
+            draw_params = {'time_begin': t}
+            draw_object(scenario.obstacles,
+                        draw_params=draw_params)
+            plt.autoscale()
+            plt.axis('equal')
+            plt.show()
 
     def test_complex_intersection_tl(self):
         scenario, pp = CommonRoadFileReader(self.filename_complex_tl).open()

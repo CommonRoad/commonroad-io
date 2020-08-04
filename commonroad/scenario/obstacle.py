@@ -5,16 +5,16 @@ from typing import Union, Set, List
 from abc import ABC, abstractmethod
 
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector, is_real_number
-from commonroad.geometry.shape import Shape
+from commonroad.geometry.shape import Shape, Rectangle, Circle, Polygon
 from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.trajectory import State
 
 
-__author__ = "Stefanie Manzinger, Christian Pek"
+__author__ = "Stefanie Manzinger, Christian Pek, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles, BMW Group, KO-HAF"]
 __version__ = "2020.2"
-__maintainer__ = "Stefanie Manzinger"
+__maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
@@ -24,6 +24,7 @@ class ObstacleRole(enum.Enum):
     """ Enum containing all possible obstacle roles defined in CommonRoad."""
     STATIC = "static"
     DYNAMIC = "dynamic"
+    ENVIRONMENT = "environment"
 
 
 @enum.unique
@@ -42,6 +43,9 @@ class ObstacleType(enum.Enum):
     ROAD_BOUNDARY = "roadBoundary"
     MOTORCYCLE = "motorcycle"
     TAXI = "taxi"
+    BUILDING = "building"
+    PILLAR = "pillar"
+    MEDIAN_STRIP = "median_strip"
 
 
 class SignalState:
@@ -78,7 +82,7 @@ class Obstacle(ABC):
     """ Superclass for dynamic and static obstacles holding common properties defined in CommonRoad."""
 
     def __init__(self, obstacle_id: int, obstacle_role: ObstacleRole,
-                 obstacle_type: ObstacleType, obstacle_shape: Shape, initial_state: State,
+                 obstacle_type: ObstacleType, obstacle_shape: Shape, initial_state: State = None,
                  initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
                  initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None):
@@ -430,4 +434,84 @@ class DynamicObstacle(Obstacle):
         obs_str = 'Dynamic Obstacle:\n'
         obs_str += '\nid: {}'.format(self.obstacle_id)
         obs_str += '\ninitial state: {}'.format(self.initial_state)
+        return obs_str
+
+
+class EnvironmentObstacle():
+    """ Class representing environment obstacles as defined in CommonRoad."""
+
+    def __init__(self, obstacle_id: int, obstacle_type: ObstacleType, obstacle_shape: Shape):
+        """
+            :param obstacle_id: unique ID of the obstacle
+            :param obstacle_type: type of obstacle (e.g. BUILDING)
+            :param obstacle_shape: shape of the static obstacle
+        """
+        self.obstacle_id: int = obstacle_id
+        self.obstacle_role: ObstacleRole = ObstacleRole.ENVIRONMENT
+        self.obstacle_type: ObstacleType = obstacle_type
+        self.obstacle_shape: Shape = obstacle_shape
+
+    @property
+    def obstacle_id(self) -> int:
+        """ Unique ID of the obstacle."""
+        return self._obstacle_id
+
+    @obstacle_id.setter
+    def obstacle_id(self, obstacle_id: int):
+        assert isinstance(obstacle_id, int), '<Obstacle/obstacle_id>: argument obstacle_id of wrong type.' \
+                                             'Expected type: %s. Got type: %s.' % (int, type(obstacle_id))
+        if not hasattr(self, '_obstacle_id'):
+            self._obstacle_id = obstacle_id
+        else:
+            warnings.warn('<Obstacle/obstacle_id>: Obstacle ID is immutable.')
+
+    @property
+    def obstacle_role(self) -> ObstacleRole:
+        """ Obstacle role as defined in CommonRoad."""
+        return self._obstacle_role
+
+    @obstacle_role.setter
+    def obstacle_role(self, obstacle_role: ObstacleRole):
+        assert isinstance(obstacle_role, ObstacleRole), '<Obstacle/obstacle_role>: argument obstacle_role of wrong ' \
+                                                        'type. Expected type: %s. Got type: %s.' \
+                                                        % (ObstacleRole, type(obstacle_role))
+        if not hasattr(self, '_obstacle_role'):
+            self._obstacle_role = obstacle_role
+        else:
+            warnings.warn('<Obstacle/obstacle_role>: Obstacle role is immutable.')
+
+    @property
+    def obstacle_type(self) -> ObstacleType:
+        """ Obstacle type as defined in CommonRoad."""
+        return self._obstacle_type
+
+    @obstacle_type.setter
+    def obstacle_type(self, obstacle_type: ObstacleType):
+        assert isinstance(obstacle_type, ObstacleType), '<Obstacle/obstacle_type>: argument obstacle_type of wrong ' \
+                                                        'type. Expected type: %s. Got type: %s.' \
+                                                        % (ObstacleType, type(obstacle_type))
+        if not hasattr(self, '_obstacle_type'):
+            self._obstacle_type = obstacle_type
+        else:
+            warnings.warn('<Obstacle/obstacle_type>: Obstacle type is immutable.')
+
+    @property
+    def obstacle_shape(self) -> Union[Shape, Polygon, Circle, Rectangle]:
+        """ Obstacle shape as defined in CommonRoad."""
+        return self._obstacle_shape
+
+    @obstacle_shape.setter
+    def obstacle_shape(self, shape: Union[Shape, Polygon, Circle, Rectangle]):
+        assert isinstance(shape,
+                          (type(None), Shape)), '<Obstacle/obstacle_shape>: argument shape of wrong type. Expected ' \
+                                                'type %s. Got type %s.' % (Shape, type(shape))
+
+        if not hasattr(self, '_obstacle_shape'):
+            self._obstacle_shape = shape
+        else:
+            warnings.warn('<Obstacle/obstacle_shape>: Obstacle shape is immutable.')
+
+    def __str__(self):
+        obs_str = 'Environment Obstacle:\n'
+        obs_str += '\nid: {}'.format(self.obstacle_id)
         return obs_str

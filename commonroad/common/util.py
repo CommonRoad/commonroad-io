@@ -13,20 +13,20 @@ __status__ = "Released"
 
 
 def make_valid_orientation(angle: float) -> float:
-    while angle > 2 * np.pi:
-        angle = angle - 2 * np.pi
-    while angle < -2 * np.pi:
-        angle = angle + 2 * np.pi
+    while angle > TWO_PI:
+        angle = angle - TWO_PI
+    while angle < -TWO_PI:
+        angle = angle + TWO_PI
     return angle
 
 
 def make_valid_orientation_interval(angle_start: float, angle_end: float) -> Tuple[float, float]:
-    while angle_start > 2 * np.pi or angle_end > 2 * np.pi :
-        angle_start -= 2 * np.pi
-        angle_end -= 2 * np.pi
-    while angle_start < -2 * np.pi or angle_start < -2 * np.pi:
-        angle_start += 2 * np.pi
-        angle_end += 2 * np.pi
+    while angle_start > TWO_PI or angle_end > TWO_PI:
+        angle_start -= TWO_PI
+        angle_end -= TWO_PI
+    while angle_start < -TWO_PI or angle_start < -TWO_PI:
+        angle_start += TWO_PI
+        angle_end += TWO_PI
     return angle_start, angle_end
 
 
@@ -95,7 +95,7 @@ class AngleInterval(Interval):
     """ Allows only angles from interval [-2pi,2pi]"""
     def __init__(self, start: Union[int, float], end: Union[int, float]):
         start, end = make_valid_orientation_interval(start,end)
-        assert end - start < 2 * np.pi, '<common.util/AngleInterval> Interval must not be |start-end| > 2pi'
+        assert end - start < TWO_PI, '<common.util/AngleInterval> Interval must not be |start-end| > 2pi'
         Interval.__init__(self, start, end)
 
     @property

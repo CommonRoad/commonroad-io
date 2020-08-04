@@ -12,7 +12,8 @@ from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
-from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, SignalState
+from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, EnvironmentObstacle, \
+    SignalState
 from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, \
     TimeOfDay, Weather, Underground
 from commonroad.scenario.trajectory import State, Trajectory
@@ -21,7 +22,6 @@ from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, Tr
     TrafficSignIDRussia, TrafficSignIDSpain, TrafficSignIDZamunda, SupportedTrafficSignCountry, LEFT_HAND_TRAFFIC, \
     TRAFFIC_SIGN_VALIDITY_START
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
-from commonroad.scenario.building import Building
 
 
 __author__ = "Stefanie Manzinger, Sebastian Maierhofer"
@@ -231,8 +231,6 @@ class ScenarioFactory:
         else:
             scenario.add_objects(cls._obstacles(xml_node, scenario.lanelet_network, lanelet_assignment))
 
-        scenario.add_objects(BuildingFactory.create_from_xml_node(xml_node))
-
         return scenario
 
     @classmethod
@@ -270,6 +268,8 @@ class ScenarioFactory:
             obstacles.append(StaticObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment))
         for o in xml_node.findall('dynamicObstacle'):
             obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment))
+        for o in xml_node.findall('environmentObstacle'):
+            obstacles.append(EnvironmentObstacleFactory.create_from_xml_node(o))
         return obstacles
 
 
@@ -1404,27 +1404,13 @@ class PointFactory:
             z = float(xml_node.find('z').text)
             return np.array([x, y, z])
 
-class BuildingFactory:
+
+class EnvironmentObstacleFactory(ObstacleFactory):
     """ Class to create a list of objects of class Building from an XML element."""
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> List[Building]:
-        """
-        :param xml_node: XML element
-        :return: list of objects of class Building according to the CommonRoad specification.
-        """
-        buildings = []
-        for building in xml_node.findall('building'):
-            outline = cls._vertices(building)
-            building_id = int(building.get('id'))
-            buildings.append(Building(outline, building_id))
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> EnvironmentObstacle:
+        obstacle_type = EnvironmentObstacleFactory.read_type(xml_node)
+        obstacle_id = StaticObstacleFactory.read_id(xml_node)
+        shape = StaticObstacleFactory.read_shape(xml_node.find('shape'))
 
-        return buildings
-
-    @classmethod
-    def _vertices(cls, xml_node: ElementTree.Element) -> np.ndarray:
-        """
-        Reads the vertices of a building.
-        :param xml_node: XML element
-        :return: The vertices of the boundary of a building described as a polyline
-        """
-        return PointListFactory.create_from_xml_node(xml_node)
+        return EnvironmentObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type, obstacle_shape=shape)
