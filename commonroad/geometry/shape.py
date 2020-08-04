@@ -57,13 +57,13 @@ class Rectangle(Shape):
         self.center: np.ndarray = center
         self.orientation: float = orientation
 
-        self._vertices: np.ndarray = self._compute_vertices()
-        self.__shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self._vertices)
+        self._vertices: np.ndarray = None
+        self.__shapely_polygon: shapely.geometry.Polygon = None
 
     @property
     def _shapely_polygon(self) -> shapely.geometry.Polygon:
         if self.__shapely_polygon is None:
-            self.__shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self._vertices)
+            self.__shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self.vertices)
 
         return self.__shapely_polygon
 
@@ -133,6 +133,8 @@ class Rectangle(Shape):
         """ Vertices of the rectangle: [[x_0, y_0], [x_1, y_1], ...]. The vertices are sorted clockwise and the
             first and last point are the same.
         """
+        if self._vertices is None:
+            self._vertices = self._compute_vertices()
         return self._vertices
 
     @vertices.setter
@@ -155,7 +157,7 @@ class Rectangle(Shape):
                                                       '{}'.format(translation)
         assert is_valid_orientation(angle), '<Rectangle/translate_rotate>: argument "orientation" is not valid.' \
                                             'orientation = {}'.format(angle)
-        new_center = translate_rotate(np.array([self._center]), translation, angle)[0]
+        new_center = translate_rotate(self._center.reshape([1,-1]), translation, angle)[0]
         new_orientation = make_valid_orientation(self._orientation + angle)
         return Rectangle(self._length, self._width, new_center, new_orientation)
 
@@ -166,11 +168,6 @@ class Rectangle(Shape):
             :param angle: rotation angle in radian (counter-clockwise)
             :return: transformed rectangle
         """
-        assert is_real_number_vector(translation, 2), '<Rectangle/rotate_translate_local>: argument "translation" is ' \
-                                                      'not a vector of real numbers of length 2. translation = ' \
-                                                      '{}'.format(translation)
-        assert is_valid_orientation(angle), '<Rectangle/rotate_translate_local>: argument "orientation" is not valid.' \
-                                            'orientation = {}'.format(angle)
         new_center = self._center + translation
         new_orientation = make_valid_orientation(self._orientation + angle)
         return Rectangle(self._length, self._width, new_center, new_orientation)
