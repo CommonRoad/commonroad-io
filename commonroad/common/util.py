@@ -1,4 +1,3 @@
-import numpy as np
 from typing import Union, Tuple
 
 from commonroad.common.validity import *
@@ -40,10 +39,16 @@ class Interval:
         yield self._end
 
     def __truediv__(self, other) -> 'Interval':
-        return type(self)(self._start/other, self._end/other)
+        if other > 0.0:
+            return type(self)(self._start/other, self._end/other)
+        else:
+            return type(self)(self._end / other, self._start / other)
 
     def __mul__(self, other: Union[int,float]) -> 'Interval':
-        return type(self)(self._start * other, self._end * other)
+        if other > 0.0:
+            return type(self)(self._start * other, self._end * other)
+        else:
+            return type(self)(self._end * other, self._start * other)
 
     def __round__(self, n=None) -> 'Interval':
         return type(self)(round(self._start, n), round(self._end, n))
@@ -75,10 +80,21 @@ class Interval:
         self._end = end
 
     def contains(self, value: float) -> bool:
-        return np.greater_equal(value, self.start) and np.greater_equal(self.end, value)
+        return self.start <= value <= self.end
 
     def overlaps(self, interval: 'Interval') -> bool:
-        return np.greater_equal(self.end, interval.start) and np.greater_equal(interval.end, self.start)
+        return self.end >= interval.start and interval.end >= self.start
+
+    def intersection(self, other: 'Interval') -> Union[None, 'Interval']:
+        """
+        Returns the intersections with another interval.
+        :param other: Interval
+        :return: Interval or None if intersection is empty
+        """
+        if not self.overlaps(other):
+            return None
+        else:
+            return Interval(max(self._start, other._start), min(self._end, other._end))
 
     @property
     def length(self):
@@ -119,4 +135,7 @@ class AngleInterval(Interval):
         if hasattr(self, '_start'):
             assert end >= self._start, '<common.util/Interval> start of interval must be <= end, but start {} > end {}'.format(self._start, end)
         self._end = end
+
+    def intersect(self, other: 'Interval'):
+        raise NotImplementedError()
 
