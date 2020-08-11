@@ -1,4 +1,6 @@
 import unittest
+from copy import deepcopy
+
 from commonroad.geometry.shape import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import *
@@ -401,6 +403,90 @@ class TestScenario(unittest.TestCase):
         self.assertEqual(exp_env_time_of_day, self.scenario.location.environment.time_of_day)
         self.assertEqual(exp_env_weather, self.scenario.location.environment.weather)
         self.assertEqual(exp_env_underground, self.scenario.location.environment.underground)
+
+    def test_assign_vehicles(self):
+        states = list()
+        states.append(State(time_step=0, orientation=0, position=np.array([1, .5]), velocity=5))
+        states.append(State(time_step=1, orientation=0, position=np.array([1, .5]), velocity=10))
+        trajectory = Trajectory(0, states)
+
+        self.init_state = State(time_step=0, orientation=0, position=np.array([0, 0]), velocity=15)
+
+        traj_pred = TrajectoryPrediction(trajectory, self.rectangle)
+        dyn_traj_obs = DynamicObstacle(2, ObstacleType("unknown"),
+                                            initial_state=traj_pred.trajectory.state_at_time_step(0),
+                                            prediction=traj_pred, obstacle_shape=self.rectangle,
+                                            initial_shape_lanelet_ids=None)
+        sc = Scenario(dt=0.1, benchmark_id='test')
+        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
+        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
+        center_vertices = np.array(
+            [[0, .5], [1, .5], [2, .5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, .5], [8, .5]])
+        lanelet = Lanelet(right_vertices=right_vertices,left_vertices=left_vertices, center_vertices=center_vertices,lanelet_id=1)
+        sc.add_objects([lanelet, dyn_traj_obs])
+        scenario_tmp: Scenario = deepcopy(sc)
+        # assign all time steps
+        scenario_tmp.assign_obstacles_to_lanelets(time_steps=None)
+        exp_dynamic_obstacles_on_lanelet_zero = {0: {2}, 1: {2}}
+        exp_dynamic_lanelet_of_obstacle = {0: {1}, 1: {1}}
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
+                         scenario_tmp.lanelet_network.find_lanelet_by_id(1).dynamic_obstacles_on_lanelet)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle[0],
+                         scenario_tmp.obstacle_by_id(2).initial_center_lanelet_ids)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle,
+                         scenario_tmp.obstacle_by_id(2).prediction.center_lanelet_assignment)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle,
+                         scenario_tmp.obstacle_by_id(2).prediction.shape_lanelet_assignment)
+        # assign one time step
+        scenario_tmp: Scenario = deepcopy(sc)
+        scenario_tmp.assign_obstacles_to_lanelets(time_steps=[1])
+        exp_dynamic_obstacles_on_lanelet_zero = {1: {2}}
+        exp_dynamic_lanelet_of_obstacle = {1: {1}}
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
+                         scenario_tmp.lanelet_network.find_lanelet_by_id(1).dynamic_obstacles_on_lanelet)
+        self.assertEqual(None,
+                         scenario_tmp.obstacle_by_id(2).initial_center_lanelet_ids)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle,
+                         scenario_tmp.obstacle_by_id(2).prediction.center_lanelet_assignment)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle,
+                         scenario_tmp.obstacle_by_id(2).prediction.shape_lanelet_assignment)
+        # assign center only
+        scenario_tmp: Scenario = deepcopy(sc)
+        scenario_tmp.assign_obstacles_to_lanelets(time_steps=None, use_center_only=True)
+        exp_dynamic_obstacles_on_lanelet_zero = {0: {2}, 1: {2}}
+        exp_dynamic_lanelet_of_obstacle = {0: {1}, 1: {1}}
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
+                         scenario_tmp.lanelet_network.find_lanelet_by_id(1).dynamic_obstacles_on_lanelet)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle[0],
+                         scenario_tmp.obstacle_by_id(2).initial_center_lanelet_ids)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle,
+                         scenario_tmp.obstacle_by_id(2).prediction.center_lanelet_assignment)
+        self.assertEqual(None,
+                         scenario_tmp.obstacle_by_id(2).prediction.shape_lanelet_assignment)
+        # assign only a selected obstacle
+        scenario_tmp: Scenario = deepcopy(sc)
+        dyn_traj_obs_3 = DynamicObstacle(3, ObstacleType("unknown"),
+                                       initial_state=traj_pred.trajectory.state_at_time_step(0),
+                                       prediction=traj_pred, obstacle_shape=self.rectangle,
+                                       initial_shape_lanelet_ids=None)
+        scenario_tmp.add_objects(dyn_traj_obs_3)
+        scenario_tmp.assign_obstacles_to_lanelets(time_steps=None, obstacle_ids={3})
+        exp_dynamic_obstacles_on_lanelet_zero = {0: {3}, 1: {3}}
+        exp_dynamic_lanelet_of_obstacle = {0: {1}, 1: {1}}
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
+                         scenario_tmp.lanelet_network.find_lanelet_by_id(1).dynamic_obstacles_on_lanelet)
+        self.assertEqual(None,
+                         scenario_tmp.obstacle_by_id(2).initial_center_lanelet_ids)
+        self.assertEqual(None,
+                         scenario_tmp.obstacle_by_id(2).prediction.center_lanelet_assignment)
+        self.assertEqual(None,
+                         scenario_tmp.obstacle_by_id(2).prediction.shape_lanelet_assignment)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle[0],
+                         scenario_tmp.obstacle_by_id(3).initial_center_lanelet_ids)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle,
+                         scenario_tmp.obstacle_by_id(3).prediction.center_lanelet_assignment)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle,
+                         scenario_tmp.obstacle_by_id(3).prediction.shape_lanelet_assignment)
 
 
 if __name__ == '__main__':

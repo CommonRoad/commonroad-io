@@ -265,7 +265,6 @@ class Scenario:
         self.affiliation = affiliation
         self.source = source
         self.location = location
-        self._vehicles_assigned_to_lanelets = False
 
     @property
     def dt(self) -> float:
@@ -656,12 +655,12 @@ class Scenario:
             if isinstance(obs, DynamicObstacle):
                 if time_steps is None:
                     # assign all time steps
-                    time_steps_tmp = range(obs.prediction.initial_time_step - 1,
+                    time_steps_tmp = range(obs.initial_state.time_step,
                                            obs.prediction.final_time_step + 1)
                 else:
                     time_steps_tmp = time_steps
 
-                if obs.prediction.shape_lanelet_assignment is None:
+                if not use_center_only and obs.prediction.shape_lanelet_assignment is None:
                     obs.prediction.shape_lanelet_assignment = {}
                 if obs.prediction.center_lanelet_assignment is None:
                     obs.prediction.center_lanelet_assignment = {}
@@ -671,8 +670,6 @@ class Scenario:
                     assign_dynamic_obstacle_shape_at_time(obs, t)
             else:
                 assign_static_obstacle(obs)
-
-        self._vehicles_assigned_to_lanelets = True
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ Translates and rotates all objects, e.g., obstacles and road network, in the scenario.
