@@ -11,4 +11,9 @@ before_script:
 commonroad_io_python36:
   image: python:3.6
   stage: test
-  script: pip install -r ./requirements.txt && pip install -e .[tests] && coverage run commonroad/tests/run_tests.py
+  script: 
+    - pip install -r ./requirements.txt
+    - pip install -e .[tests] 
+    - coverage run commonroad/tests/run_tests.py
+    - coverage report -m || true
+
