@@ -16,5 +16,4 @@ commonroad_io_python36:
     - pip install -e .[tests] 
     - coverage run commonroad/tests/run_tests.py
     - coverage report -m || true
-  coverage: ^TOTAL.+?(\d+\%)$
     
