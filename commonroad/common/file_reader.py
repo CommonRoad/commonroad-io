@@ -935,10 +935,13 @@ class IntersectionFactory:
         incomings = []
         for incoming_node in xml_node.findall('incoming'):
             incomings.append(IntersectionIncomingFactory.create_from_xml_node(incoming_node))
-        crossings = set()
+
         if xml_node.find('crossing') is not None:
+            crossings = set()
             for crossing_ref in xml_node.find('crossing').findall('crossingLanelet'):
                 crossings.add(int(crossing_ref.get("ref")))
+        else:
+            crossings = None
 
         return Intersection(intersection_id=intersection_id, incomings=incomings, crossings=crossings)
 
