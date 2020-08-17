@@ -4,7 +4,8 @@ import numpy as np
 from typing import Union, Set, List
 from abc import ABC, abstractmethod
 
-from commonroad.common.validity import is_valid_orientation, is_real_number_vector, is_real_number
+from commonroad.common.validity import is_valid_orientation, is_real_number_vector, is_real_number, ValidTypes
+from commonroad.common.util import AngleInterval
 from commonroad.geometry.shape import Shape, Rectangle, Circle, Polygon
 from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.trajectory import State
@@ -97,7 +98,7 @@ class Obstacle(ABC):
         :param initial_signal_state: initial signal state of obstacle
         :param signal_series: list of signal states over time
         """
-        self._initial_occupancy_shape: Shape = None
+        self._initial_occupancy_shape: Shape = self._compute_initial_occupancy_shape()
         self.obstacle_id: int = obstacle_id
         self.obstacle_role: ObstacleRole = obstacle_role
         self.obstacle_type: ObstacleType = obstacle_type
@@ -247,6 +248,27 @@ class Obstacle(ABC):
         else:
             warnings.warn('<Obstacle/signal_series>: Obstacle signal series is immutable.')
 
+    def _compute_initial_occupancy_shape(self) -> Shape:
+        """ Computes the initial occupancy of the obstacle given its shape and initial state. """
+        if isinstance(self.initial_state.position, Shape):
+            position = self.initial_state.position.center
+        elif isinstance(self.initial_state.position, ValidTypes.ARRAY):
+            position = self.initial_state.position
+        else:
+            raise TypeError('<Obstacle/occupancy_at_time> Expected instance of %s or %s. Got '
+                            '%s instead.' % (ValidTypes.ARRAY, Shape, self.initial_state.position.__class__))
+        if isinstance(self.initial_state.orientation, ValidTypes.NUMBERS):
+            orientation = self.initial_state.orientation
+        elif isinstance(self.initial_state.orientation, AngleInterval):
+            orientation = 0.5 * (self.initial_state.orientation.start + self.initial_state.orientation.end)
+        else:
+            raise TypeError('<Obstacle/occupancy_at_time> Expected instance of %s or %s. Got %s '
+                            'instead.' % (ValidTypes.NUMBERS, AngleInterval,
+                                          self.initial_state.orientation.__class__))
+        shape = self.obstacle_shape.rotate_translate_local(
+            position, orientation)
+        return shape
+
     @abstractmethod
     def occupancy_at_time(self, time_step: int) -> Union[None, Occupancy]:
         pass
@@ -314,6 +336,7 @@ class StaticObstacle(Obstacle):
         assert is_valid_orientation(angle), '<StaticObstacle/translate_rotate>: argument angle must be within the ' \
                                             'interval [-2pi, 2pi]. angle = %s' % angle
         self.initial_state = self._initial_state.translate_rotate(translation, angle)
+        self._initial_occupancy_shape = self._compute_initial_occupancy_shape()
 
     def occupancy_at_time(self, time_step: int) -> Occupancy:
         """
@@ -322,16 +345,7 @@ class StaticObstacle(Obstacle):
         :param time_step: discrete time step
         :return: occupancy of the static obstacle at time step
         """
-        return Occupancy(time_step=time_step, shape=self._initial_occupancy_shape)
-
-    def state_at_time(self, time_step: int) -> State:
-        """
-        Returns the state the obstacle at a specific time step.
-
-        :param time_step: discrete time step
-        :return: state of the static obstacle at time step
-        """
-        return self.initial_state
+        return Occupancy(time_step, self._initial_occupancy_shape)
 
     def __str__(self):
         obs_str = 'Static Obstacle:\n'
@@ -428,7 +442,8 @@ class DynamicObstacle(Obstacle):
         if self._prediction is not None:
             self.prediction.translate_rotate(translation, angle)
 
-        self.initial_state = self._initial_state.translate_rotate(translation, angle)
+        self._initial_state = self._initial_state.translate_rotate(translation, angle)
+        self._initial_occupancy_shape = self._compute_initial_occupancy_shape()
 
     def __str__(self):
         obs_str = 'Dynamic Obstacle:\n'

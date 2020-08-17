@@ -2,8 +2,8 @@ import abc
 from typing import Union, List, Dict, Set
 import numpy as np
 
-from commonroad.common.util import Interval
-from commonroad.common.validity import is_valid_orientation, is_real_number_vector
+from commonroad.common.util import Interval, AngleInterval
+from commonroad.common.validity import is_valid_orientation, is_real_number_vector, ValidTypes
 from commonroad.geometry.shape import Shape
 from commonroad.scenario.trajectory import Trajectory
 
@@ -249,6 +249,21 @@ class TrajectoryPrediction(Prediction):
         """ Computes the occupancy set over time given the predicted trajectory and shape of the object."""
         occupancy_set = list()
         for k, state in enumerate(self._trajectory.state_list):
+            # ToDo: uncertain states; change this
+            if isinstance(state.position, Shape):
+                position = state.position.center
+            elif isinstance(state.position, ValidTypes.ARRAY):
+                position = state.position
+            else:
+                raise TypeError('<TrajectoryPrediction/_create_occupancy_set> Expected instance of %s or %s. Got '
+                                '%s instead.' % (ValidTypes.ARRAY, Shape, state.position.__class__))
+            if isinstance(state.orientation, ValidTypes.NUMBERS):
+                orientation = state.orientation
+            elif isinstance(state.orientation, AngleInterval):
+                orientation = 0.5*(state.orientation.start + state.orientation.end)
+            else:
+                raise TypeError('<TrajectoryPrediction/_create_occupancy_set> Expected instance of %s or %s. Got %s '
+                                'instead.' % (ValidTypes.NUMBERS, AngleInterval, state.orientation.__class__))
             occupied_region = self._shape.rotate_translate_local(
                 state.position, state.orientation)
             occupancy_set.append(Occupancy(state.time_step, occupied_region))
