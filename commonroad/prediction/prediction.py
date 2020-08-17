@@ -264,7 +264,6 @@ class TrajectoryPrediction(Prediction):
             else:
                 raise TypeError('<TrajectoryPrediction/_create_occupancy_set> Expected instance of %s or %s. Got %s '
                                 'instead.' % (ValidTypes.NUMBERS, AngleInterval, state.orientation.__class__))
-            occupied_region = self._shape.rotate_translate_local(
-                state.position, state.orientation)
+            occupied_region = self._shape.rotate_translate_local(position, orientation)
             occupancy_set.append(Occupancy(state.time_step, occupied_region))
         return occupancy_set

@@ -179,8 +179,6 @@ class Obstacle(ABC):
         assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of wrong type. ' \
                                                  'Expected types: %s. Got type: %s.' % (State, type(initial_state))
         self._initial_state = initial_state
-        self._initial_occupancy_shape = self._obstacle_shape.rotate_translate_local(
-            initial_state.position, initial_state.orientation)
 
     @property
     def initial_center_lanelet_ids(self) -> Union[None, Set[int]]:
