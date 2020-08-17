@@ -46,12 +46,12 @@ When settings of a plot should be changed with ``draw_params``, they have to be 
             'static_obstacle':
                 {'shape': shape_parameters},
             'lanelet_network':
-                {'draw_traffic_lights': True,
-                'kwargs_traffic_light_signs': {}, # further properties for
+                {'kwargs_traffic_light_signs': {}, # further properties for
                   # AnnotationBox, see
                   # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
                  'traffic_light':
-                     {'red_color': 'red',
+                     {'draw_traffic_lights': True,
+                      'red_color': 'red',
                       'yellow_color': '#feb609',
                       'green_color': '#00aa16',
                       'red_yellow_color': '#fe4009ff',
@@ -59,23 +59,25 @@ When settings of a plot should be changed with ``draw_params``, they have to be 
                       'scale_factor': 0.25,
                       'zorder': 30
                      },
-                 'draw_traffic_signs': False,
                  'traffic_sign':
-                     {'show_traffic_signs': 'all',  # 'all' or list of TrafficSignIDs
+                     {'draw_traffic_signs': False,
+                      'show_traffic_signs': 'all',  # 'all' or list of TrafficSignIDs
+                      'speed_limit_unit': 'auto',  # 'mph', 'kmh', 'ms', 'auto'
                       'show_label': False,
                       'scale_factor': 0.25,
                       'zorder': 30
                      },
-                 'draw_intersection': False,
                  'intersection':
-                     {'draw_incoming_lanelets': True,
+                     {'draw_intersections': False,
+                      'draw_incoming_lanelets': True,
                       'incoming_lanelets_color': '#24b582',
                       'draw_crossings': True,
                       'crossings_color': '#b62a55',
                       'draw_successors': True,
                       'successors_left_color': 'red',
                       'successors_straight_color': 'blue',
-                      'successors_right_color': '#ccff00'
+                      'successors_right_color': '#ccff00',
+                      'show_label': False,  # show incoming id and incoming left
                       },
                  'lanelet':
                      {'left_bound_color': '#555555',
@@ -224,6 +226,7 @@ The drawing function is used in combination with maplotlib. Therefore, every com
 
 .. _plot-helper:
 
+
 Speed up plotting for real-time applications
 --------------------------------------------
 
@@ -262,4 +265,4 @@ A minimal example would be::
 		#...
 		# modifying the scenario
 		#...
-		redraw_dynamic_obstacles(scenario, handles=handles, figure_handle=fig)
+		redraw_obstacles(scenario, handles=handles, figure_handle=fig)

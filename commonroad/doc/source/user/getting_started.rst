@@ -9,7 +9,7 @@ This manual introduces the main functionality by means of some examples. Exact c
 `CommonRoad XML-files <https://commonroad.in.tum.de/scenarios/>`_ consist of a :class:`.Scenario` and a :class:`.PlanningProblemSet`. A :class:`.Scenario` represents the environment including a :class:`.LaneletNetwork` and a set of :class:`.DynamicObstacle` and :class:`.StaticObstacle`. A :class:`.LaneletNetwork` is built from lane segments (:class:`.Lanelet`), that can be connected arbitrarily, traffic signs (:class:`.TrafficSign`), traffic lights (:class:`.TrafficLight`), and intersections (:class:`.Intersection`).
 A :class:`.PlanningProblemSet` contains one :class:`.PlanningProblem` for every ego vehicle in the :class:`.Scenario`, consisting of an initial :class:`.State` and a :class:`.GoalRegion` that has to be reached.
 
-For detailed information, see `XML CommonRoad Documentation <https://commonroad.in.tum.de/documentation/xml_format_doc/>`_.
+For detailed information, see `XML CommonRoad Documentation <https://gitlab.lrz.de/tum-cps/commonroad-scenarios/blob/master/documentation/XML_commonRoad_2020a.pdf>`_.
 
 Reading Files
 -------------
@@ -101,7 +101,7 @@ Lanelet Network
 Description: :class:`commonroad.scenario.lanelet`.
 
 Each :class:`.Lanelet` stores its left and right boundary and its center by a polyline (a list of vertices).
-If a lanelet A is the successor of another lanelet B, the first (center/left/right) point of A coincides with the last (center/left/right) point of B. More necessary conditions on lanelets can be found in the `XML CommonRoad Documentation <https://commonroad.in.tum.de/documentation/xml_format_doc/>`_.
+If a lanelet A is the successor of another lanelet B, the first (center/left/right) point of A coincides with the last (center/left/right) point of B. More necessary conditions on lanelets can be found in the `XML CommonRoad Documentation <https://gitlab.lrz.de/tum-cps/commonroad-scenarios/blob/master/documentation/XML_commonRoad_2020a.pdf>`_.
 
 Useful methods for trajectory planning are:
 

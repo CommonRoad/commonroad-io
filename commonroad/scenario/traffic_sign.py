@@ -10,8 +10,12 @@ import enum
 from typing import List, Union, Set
 import numpy as np
 
+from commonroad.common.validity import *
+import commonroad.geometry.transform
 
-TRAFFIC_SIGN_VALIDITY_START = {'MIN_SPEED', 'MAX_SPEED', 'NO_OVERTAKING_START', 'CITY_SIGN'}
+
+TRAFFIC_SIGN_VALIDITY_START = {'MIN_SPEED', 'MAX_SPEED', 'NO_OVERTAKING_START', 'TOWN_SIGN',
+                               'BAN_CAR_TRUCK_BUS_MOTORCYCLE'}
 LEFT_HAND_TRAFFIC = {'AUS', 'JPN', 'HKG', 'IND', 'JEY', 'IMN', 'IRL', 'JAM', 'KEN', 'MLT', 'MYS', 'NPL', 'NZL', 'ZAF',
                      'SGP', 'THA', 'GBR', 'IDN', 'MAC', 'PAK', 'CYP'}
 
@@ -23,56 +27,60 @@ class SupportedTrafficSignCountry(enum.Enum):
     CHINA = "CHN"
     SPAIN = "ESP"
     RUSSIA = "RUS"
-    ZAMUNDA = "ZAM"  # default if
+    ZAMUNDA = "ZAM"  # default
 
 
 @enum.unique
 class TrafficSignIDZamunda(enum.Enum):
     # default traffic sign IDs (similar to German IDs)
-    MIN_SPEED = '275'
-    MAX_SPEED = '274'
-    NO_OVERTAKING_START = '276'
-    TOWN_SIGN = '310'
+    RIGHT_BEFORE_LEFT = '102'
     YIELD = '205'
     STOP = '206'
-    PRIORITY = '306'
+    BAN_CAR_TRUCK_BUS_MOTORCYCLE = '260'
+    U_TURN = '272'
+    MAX_SPEED = '274'
+    MIN_SPEED = '275'
+    NO_OVERTAKING_START = '276'
     RIGHT_OF_WAY = '301'
+    PRIORITY = '306'
+    TOWN_SIGN = '310'
     GREEN_ARROW = '720'
-    RIGHT_BEFORE_LEFT = '102'
     LEFT_TURNING_PRIORITY_WITH_OPPOSITE_RIGHT_YIELD = '1002-10'
+    LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_RIGHT_YIELD = '1002-11'
     LEFT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD = '1002-12'
     LEFT_TURNING_PRIORITY_WITH_RIGHT_YIELD = '1002-13'
+    LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD = '1002-14'
     RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_LEFT_YIELD = '1002-20'
+    RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_LEFT_YIELD = '1002-21'
     RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD = '1002-22'
     RIGHT_TURNING_PRIORITY_WITH_LEFT_YIELD = '1002-23'
-    LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_RIGHT_YIELD = '1002-11'
-    LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD = '1002-14'
-    RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_LEFT_YIELD = '1002-21'
     RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD = '1002-24'
     UNKNOWN = ''
 
 
 @enum.unique
 class TrafficSignIDGermany(enum.Enum):
-    MIN_SPEED = '275'
-    MAX_SPEED = '274'
-    NO_OVERTAKING_START = '276'
-    TOWN_SIGN = '310'
+    RIGHT_BEFORE_LEFT = '102'
     YIELD = '205'
     STOP = '206'
-    PRIORITY = '306'
+    BAN_CAR_TRUCK_BUS_MOTORCYCLE = '260'
+    U_TURN = '272'
+    MAX_SPEED = '274'
+    MIN_SPEED = '275'
+    NO_OVERTAKING_START = '276'
     RIGHT_OF_WAY = '301'
+    PRIORITY = '306'
+    TOWN_SIGN = '310'
     GREEN_ARROW = '720'
-    RIGHT_BEFORE_LEFT = '102'
     LEFT_TURNING_PRIORITY_WITH_OPPOSITE_RIGHT_YIELD = '1002-10'
+    LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_RIGHT_YIELD = '1002-11'
     LEFT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD = '1002-12'
     LEFT_TURNING_PRIORITY_WITH_RIGHT_YIELD = '1002-13'
+    LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD = '1002-14'
     RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_LEFT_YIELD = '1002-20'
+    RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_LEFT_YIELD = '1002-21'
     RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD = '1002-22'
     RIGHT_TURNING_PRIORITY_WITH_LEFT_YIELD = '1002-23'
-    LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_RIGHT_YIELD = '1002-11'
-    LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD = '1002-14'
-    RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_LEFT_YIELD = '1002-21'
     RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD = '1002-24'
     UNKNOWN = ''
 
@@ -80,6 +88,7 @@ class TrafficSignIDGermany(enum.Enum):
 @enum.unique
 class TrafficSignIDUsa(enum.Enum):
     MAX_SPEED = 'R2-1'
+    U_TURN = 'R3-4'
     UNKNOWN = ''
 
 
@@ -124,6 +133,7 @@ class TrafficLightState(enum.Enum):
     YELLOW = "yellow"
     RED_YELLOW = "redYellow"
     GREEN = "green"
+    INACTIVE = "inactive"
 
 
 class TrafficSignElement:
@@ -204,6 +214,23 @@ class TrafficSign:
     @property
     def first_occurrence(self) -> Set[int]:
         return self._first_occurrence
+
+    def translate_rotate(self, translation: np.ndarray, angle: float):
+        """
+        This method translates and rotates a traffic sign
+
+        :param translation: The translation given as [x_off,y_off] for the x and y translation
+        :param angle: The rotation angle in radian (counter-clockwise defined)
+        """
+
+        assert is_real_number_vector(translation, 2), '<TrafficSign/translate_rotate>: argument translation is ' \
+                                                      'not a vector of real numbers of length 2.'
+        assert is_real_number(angle), '<TrafficSign/translate_rotate>: argument angle must be a scalar. ' \
+                                      'angle = %s' % angle
+        assert is_valid_orientation(angle), '<TrafficSign/translate_rotate>: argument angle must be within the ' \
+                                            'interval [-2pi, 2pi]. angle = %s' % angle
+        self._position = commonroad.geometry.transform.translate_rotate(np.array([self._position]),
+                                                                        translation, angle)[0]
 
     def __str__(self):
         return f"Sign At {self._position} with {self._traffic_sign_elements} "
@@ -288,6 +315,24 @@ class TrafficLight:
     @property
     def active(self) -> bool:
         return self._active
+
+    def translate_rotate(self, translation: np.ndarray, angle: float):
+        """
+        This method translates and rotates a traffic light
+
+        :param translation: The translation given as [x_off,y_off] for the x and y translation
+        :param angle: The rotation angle in radian (counter-clockwise defined)
+        """
+
+        assert is_real_number_vector(translation, 2), '<TrafficLight/translate_rotate>: argument translation is ' \
+                                                      'not a vector of real numbers of length 2.'
+        assert is_real_number(angle), '<TrafficLight/translate_rotate>: argument angle must be a scalar. ' \
+                                      'angle = %s' % angle
+        assert is_valid_orientation(angle), '<TrafficLight/translate_rotate>: argument angle must be within the ' \
+                                            'interval [-2pi, 2pi]. angle = %s' % angle
+        self._position = commonroad.geometry.transform.translate_rotate(
+            np.array([self._position]), translation, angle
+        )[0]
 
 
 def get_default_cycle():

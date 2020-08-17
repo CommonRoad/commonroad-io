@@ -216,6 +216,10 @@ commonroad/doc/build/*
 *.cache
 *pytest_cache/
 *.egg-info
+*.ipynb_checkpoints/
+
+# pycharm
+*.idea
 
 # pytest
 .coverage

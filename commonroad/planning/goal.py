@@ -44,7 +44,7 @@ class GoalRegion:
 
     @property
     def lanelets_of_goal_position(self) -> Union[None, Dict[int, List[int]]]:
-        """Dict that contains all lanelet ids and lanelets of the goal position. \
+        """Dict that contains the index of the state in the state_list to which the lanelets belong. \
         None, if goal position is not a lanelet"""
         return self._lanelets_of_goal_position
 

@@ -21,6 +21,28 @@ __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
+
+class SolutionException(Exception):
+    """
+    Main exception class for solution related exceptions.
+    """
+    pass
+
+
+class StateTypeException(SolutionException):
+    """
+    Main exception class for StateType related exceptions.
+    """
+    pass
+
+
+class SolutionReaderException(Exception):
+    """
+    Main exception class for solution reader related exceptions.
+    """
+    pass
+
+
 @unique
 class VehicleType(Enum):
     FORD_ESCORT = 1
@@ -117,7 +139,7 @@ class StateType(Enum):
         """
         Returns the state fields for the state type.
 
-        :return: List[str] - State fields as list
+        :return: State fields as list
         """
         return StateFields[self.name].value
 
@@ -126,19 +148,19 @@ class StateType(Enum):
         """
         Returns the xml state fields for the state type.
 
-        :return: List[str] - XML names of the state fields as list
+        :return: XML names of the state fields as list
         """
         return XMLStateFields[self.name].value
 
     @classmethod
-    def get_state_type(cls, state: State, desired_vehicle_model:VehicleModel=None) -> 'StateType':
+    def get_state_type(cls, state: State, desired_vehicle_model: VehicleModel = None) -> 'StateType':
         """
         Returns the corresponding StateType for the given State object by matching State object's attributes
         to the state fields.
 
-        :param state: State - CommonRoad State object
+        :param state: CommonRoad State object
         :param desired_vehicle_model: check if given vehicle_model is supported first
-        :return: State-Type
+        :return: corresponding StateType
         """
         # put desired_vehicle_model first
         attrs = state.attributes
@@ -162,16 +184,17 @@ class StateType(Enum):
                 if not all([sf in attrs for sf in state_fields.value]): continue
                 return cls[state_fields.name]
 
-        raise Exception('Given state is not valid!')
+        raise StateTypeException('Given state is not valid!')
 
     @classmethod
-    def check_state_type(cls, vehicle_model:VehicleModel) -> bool:
+    def check_state_type(cls, vehicle_model: VehicleModel) -> bool:
         """
         Checks whether vehicle model can be supported by trajectory.
         :param vehicle_model: vehicle model enum
         :return: bool
         """
         StateFields(vehicle_model.name)
+
 
 @unique
 class TrajectoryType(Enum):
@@ -199,12 +222,14 @@ class TrajectoryType(Enum):
         return StateType[self.name]
 
     @classmethod
-    def get_trajectory_type(cls, trajectory: Trajectory, desired_vehicle_model:VehicleModel=None) -> 'TrajectoryType':
+    def get_trajectory_type(cls, trajectory: Trajectory,
+                            desired_vehicle_model: VehicleModel = None) -> 'TrajectoryType':
         """
         Returns the corresponding TrajectoryType for the given Trajectory object based on the StateType of its states.
 
-        :param trajectory: Trajectory - CommonRoad Trajectory object
-        :return: TrajectoryType
+        :param trajectory: CommonRoad Trajectory object
+        :param desired_vehicle_model: check if given vehicle_model is supported first
+        :return: corresponding TrajectoryType
         """
         state_type = StateType.get_state_type(trajectory.state_list[0], desired_vehicle_model)
         return cls[state_type.name]
@@ -213,8 +238,8 @@ class TrajectoryType(Enum):
         """
         Checks whether given vehicle model is valid for the TrajectoryType.
 
-        :param vehicle_model: VehicleModel - CommonRoad enum for vehicle models
-        :return: bool - True if the vehicle model is valid for the TrajectoryType
+        :param vehicle_model: CommonRoad enum for vehicle models
+        :return: True if the vehicle model is valid for the TrajectoryType
         """
         return any([
             self.name == 'Input' and vehicle_model in [VehicleModel.KS, VehicleModel.ST, VehicleModel.MB],
@@ -267,11 +292,12 @@ class PlanningProblemSolution:
 
         :param vehicle_model: VehicleModel
         :param cost_function: CostFunction
-        :return: bool - True if supported.
+        :return: True if supported.
         """
         supported_costs = SupportedCostFunctions[vehicle_model.name].value
         if cost_function not in supported_costs:
-            raise Exception("Cost function %s isn't supported for %s model!" % (cost_function.name, vehicle_model.name))
+            raise SolutionException("Cost function %s isn't supported for %s model!" % (cost_function.name,
+                                                                                        vehicle_model.name))
         return True
 
     @staticmethod
@@ -281,11 +307,11 @@ class PlanningProblemSolution:
 
         :param vehicle_model: VehicleModel
         :param trajectory_type: TrajectoryType
-        :return: bool - True if valid.
+        :return: True if valid.
         """
         if not trajectory_type.valid_vehicle_model(vehicle_model):
-            raise Exception('Vehicle model %s is not valid for the trajectory type %s!'
-                            % (vehicle_model.name, trajectory_type.name))
+            raise SolutionException('Vehicle model %s is not valid for the trajectory type %s!'
+                                    % (vehicle_model.name, trajectory_type.name))
         return True
 
     @property
@@ -361,6 +387,7 @@ class PlanningProblemSolution:
 
 class Solution:
     """Stores a solution to a CommonRoad benchmark and additional meta data."""
+
     def __init__(self,
                  scenario_id: str,
                  commonroad_version: str,
@@ -372,11 +399,11 @@ class Solution:
         :param scenario_id: Scenario ID of the Solution
         :param commonroad_version: valid CommonRoad Version (see `:py:data:`~common.file_reader.SUPPORTED_COMMONROAD_VERSIONS`)
         :param planning_problem_solutions: List of PlanningProblemSolution for corresponding
-        to the planning problems of the scenario
+            to the planning problems of the scenario
         :param date: The date solution was produced. Default=datetime.today()
         :param computation_time: The computation time it took for the Solution. Default=None
         :param processor_name: The processor model used for the Solution. Determined automatically if set to 'auto'.
-        Default=None.
+            Default=None.
         """
         assert commonroad_version in SUPPORTED_COMMONROAD_VERSIONS
         self.scenario_id = scenario_id
@@ -483,8 +510,8 @@ class Solution:
 
 class CommonRoadSolutionReader:
     """Reads solution xml files created with the CommonRoadSolutionWriter"""
+
     # TODO Add parser check
-    # TODO Prepare proper error messages to show to the user.
 
     @classmethod
     def open(cls, filepath: str) -> Solution:
@@ -511,7 +538,7 @@ class CommonRoadSolutionReader:
 
     @classmethod
     def _parse_solution(cls, root_node: et.Element) -> Solution:
-        """ Parses the Solution XML root node. """
+        """ Parses the Solution XML root node. """  # TODO
         benchmark_id, date, computation_time, processor_name = cls._parse_header(root_node)
         vehicle_ids, cost_ids, scenario_id, version = cls._parse_benchmark_id(benchmark_id)
         pp_solutions = [cls._parse_planning_problem_solution(vehicle_ids[idx], cost_ids[idx], trajectory_node)
@@ -521,12 +548,20 @@ class CommonRoadSolutionReader:
     @staticmethod
     def _parse_header(root_node: et.Element) -> Tuple[str, Union[None, datetime], Union[None, float], Union[None, str]]:
         """ Parses the header attributes for the given Solution XML root node. """
-        benchmark_id = root_node.get('benchmark_id')
-        date = root_node.attrib.get('date')  # None if not found
-        if date is not None: date = datetime.strptime(date, '%Y-%m-%d')
-        computation_time = root_node.attrib.get('computation_time')
-        if computation_time is not None: computation_time = float(computation_time)
-        processor_name = root_node.attrib.get('processor_name')
+        benchmark_id = root_node.get('benchmark_id', None)
+        if not benchmark_id:
+            SolutionException("Solution xml does not have a benchmark id!")
+
+        date = root_node.attrib.get('date', None)  # None if not found
+        if date is not None:
+            date = datetime.strptime(date, '%Y-%m-%d')
+
+        computation_time = root_node.attrib.get('computation_time', None)
+        if computation_time is not None:
+            computation_time = float(computation_time)
+
+        processor_name = root_node.attrib.get('processor_name', None)
+
         return benchmark_id, date, computation_time, processor_name
 
     @classmethod
@@ -534,14 +569,22 @@ class CommonRoadSolutionReader:
                                          trajectory_node: et.Element) -> PlanningProblemSolution:
         """ Parses PlanningProblemSolution from the given XML node. """
         vehicle_model, vehicle_type = cls._parse_vehicle_id(vehicle_id)
+
+        if cost_id not in [cfunc.name for cfunc in CostFunction]:
+            raise SolutionReaderException("Invalid Cost ID: " + cost_id)
         cost_function = CostFunction[cost_id]
+
         pp_id, trajectory = cls._parse_trajectory(trajectory_node)
         return PlanningProblemSolution(pp_id, vehicle_model, vehicle_type, cost_function, trajectory)
 
     @classmethod
     def _parse_trajectory(cls, trajectory_node: et.Element) -> Tuple[int, Trajectory]:
         """ Parses Trajectory and planning problem id from the given XML node. """
+
+        if trajectory_node.tag not in [ttype.value for ttype in TrajectoryType]:
+            raise SolutionReaderException("Invalid Trajectory Type: " + trajectory_node.tag)
         trajectory_type = TrajectoryType(trajectory_node.tag)
+
         planning_problem_id = int(trajectory_node.get('planningProblem'))
         state_list = [cls._parse_state(trajectory_type.state_type, state_node) for state_node in trajectory_node]
         state_list = sorted(state_list, key=lambda state: state.time_step)
@@ -552,7 +595,7 @@ class CommonRoadSolutionReader:
         """ Parses the sub elements from the given XML node. """
         elem = state_node.find(name)
         if elem is None:
-            raise Exception("Element '%s' couldn't be found in the xml node!" % name)
+            raise SolutionReaderException("Element '%s' couldn't be found in the xml node!" % name)
         value = float(elem.text) if as_float else int(elem.text)
         return value
 
@@ -560,7 +603,7 @@ class CommonRoadSolutionReader:
     def _parse_state(cls, state_type: StateType, state_node: et.Element) -> State:
         """ Parses State from the given XML node. """
         if not state_node.tag == state_type.value:
-            raise Exception("Given xml node is not a '%s' node!" % state_type.value)
+            raise SolutionReaderException("Given xml node is not a '%s' node!" % state_type.value)
 
         state_vals = {}
         for mapping in list(zip(state_type.xml_fields, state_type.fields)):
@@ -578,7 +621,7 @@ class CommonRoadSolutionReader:
         segments = benchmark_id.replace(' ', '').split(':')
 
         if len(segments) != 4:
-            raise Exception("Invalid Benchmark ID: " + benchmark_id)
+            raise SolutionReaderException("Invalid Benchmark ID: " + benchmark_id)
 
         vehicle_model_ids = re.sub(r'[\[\]]', '', segments[0]).split(',')
         cost_function_ids = re.sub(r'[\[\]]', '', segments[1]).split(',')
@@ -591,14 +634,18 @@ class CommonRoadSolutionReader:
     def _parse_vehicle_id(vehicle_id: str) -> Tuple[VehicleModel, VehicleType]:
         """ Parses the given vehicle id string. """
         if not len(vehicle_id) == 3:
-            raise Exception("Invalid Vehicle ID: " + vehicle_id)
+            raise SolutionReaderException("Invalid Vehicle ID: " + vehicle_id)
+
+        if not vehicle_id[:2] in [vmodel.name for vmodel in VehicleModel]:
+            raise SolutionReaderException("Invalid Vehicle ID: " + vehicle_id)
+
+        if not int(vehicle_id[2]) in [vtype.value for vtype in VehicleType]:
+            raise SolutionReaderException("Invalid Vehicle ID: " + vehicle_id)
 
         return VehicleModel[vehicle_id[:2]], VehicleType(int(vehicle_id[2]))
 
 
 class CommonRoadSolutionWriter:
-    # TODO Add parser check
-    # TODO Prepare proper error messages to show to the user.
 
     def __init__(self, solution: Solution):
         """
@@ -611,8 +658,8 @@ class CommonRoadSolutionWriter:
         self._solution_root = self._serialize_solution(self.solution)
 
     @staticmethod
-    def _get_processor_name() -> Tuple[str, None]:
-        # TODO: compare cpu name with list also used on the web server
+    def _get_processor_name() -> Union[str, None]:
+        # TODO: compare cpu names with the list of cpu names used on web server
 
         delete_from_cpu_name = ['(R)', '(TM)']
 
@@ -629,7 +676,7 @@ class CommonRoadSolutionWriter:
         elif platform.system() == "Darwin":
             os.environ['PATH'] = os.environ['PATH'] + os.pathsep + '/usr/sbin'
             command = "sysctl -n machdep.cpu.brand_string"
-            return subprocess.check_output(command).strip()
+            return str(subprocess.check_output(command).strip())
         elif platform.system() == "Linux":
             command = "cat /proc/cpuinfo"
             all_info = str(subprocess.check_output(command, shell=True).strip())
@@ -700,7 +747,10 @@ class CommonRoadSolutionWriter:
         :return: string - Solution XML as string.
         """
         rough_string = et.tostring(self._solution_root, encoding='utf-8')
-        if not pretty: return rough_string
+
+        if not pretty:
+            return rough_string
+
         parsed = minidom.parseString(rough_string)
         return parsed.toprettyxml(indent="  ")
 
@@ -723,8 +773,7 @@ class CommonRoadSolutionWriter:
             raise NotADirectoryError("Directory %s does not exist." % os.path.dirname(fullpath))
 
         if os.path.exists(fullpath) and not overwrite:
-            warnings.warn("File %s already exists. If you want to overwrite it set overwrite=True." % fullpath)
+            raise FileExistsError("File %s already exists. If you want to overwrite it set overwrite=True." % fullpath)
 
-        else:
-            with open(fullpath, 'w') as f:
-                f.write(self.dump(pretty))
+        with open(fullpath, 'w') as f:
+            f.write(self.dump(pretty))

@@ -9,7 +9,7 @@ Modules
 =======
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 3
 
     scenario.rst
     prediction.rst

@@ -6,13 +6,13 @@ import numpy as np
 import enum
 
 from commonroad.common.util import Interval
-from commonroad.common.validity import is_real_number, is_real_number_vector, is_valid_orientation
+from commonroad.common.validity import is_real_number, is_real_number_vector, is_valid_orientation, is_natural_number
 from commonroad.scenario.lanelet import Lanelet
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.obstacle import ObstacleRole
 from commonroad.scenario.obstacle import ObstacleType
-from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Obstacle
-from commonroad.prediction.prediction import Occupancy, SetBasedPrediction
+from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, Obstacle, State
+from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
 
@@ -20,7 +20,7 @@ __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
 __version__ = "2020.2"
-__maintainer__ = "Stefanie Manzinger"
+__maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
@@ -58,7 +58,63 @@ class Tag(enum.Enum):
     EMERGENCY_BRAKING = "emergency_braking"
 
 
+@enum.unique
+class TimeOfDay(enum.Enum):
+    """ Enum containing all possible time of days."""
+    DAY = "day"
+    NIGHT = "night"
+
+
+@enum.unique
+class Weather(enum.Enum):
+    """ Enum containing all possible weathers."""
+    SUNNY = "sunny"
+    LIGHT_RAIN = "light_rain"
+    HEAVY_RAIN = "heavy_rain"
+    FOG = "fog"
+    SNOW = "snow"
+    HAIL = "hail"
+
+
+@enum.unique
+class Underground(enum.Enum):
+    """ Enum containing all possible undergrounds."""
+    WET = "wet"
+    CLEAN = "clean"
+    DIRTY = "dirty"
+    DAMAGED = "damaged"
+    SNOW = "snow"
+    ICE = "ice"
+
+
+class Time:
+    """
+    Class which describes the fictive time when a scenario starts.
+    """
+    def __init__(self, hours: int, minutes: int):
+        """
+        Constructor of a time object
+
+        :param hours: hours at start of scenario (0-24)
+        :param minutes: minutes at start of scenario (0-60)
+        """
+        self._hours = hours
+        self._minutes = minutes
+
+    @property
+    def hours(self) -> int:
+        return self._hours
+
+    @property
+    def minutes(self) -> int:
+        return self._minutes
+
+
 class GeoTransformation:
+    """
+    Class which describes the transformation from geodetic to projected Cartesian coordinates according to the
+    CommonRoad specification
+    """
     def __init__(self, geo_reference: str = None, x_translation: float = None, y_translation: float = None,
                  z_rotation: float = None, scaling: float = None):
         """
@@ -97,9 +153,48 @@ class GeoTransformation:
         return self._scaling
 
 
+class Environment:
+    """
+    Class which describes the environment where a scenario takes place as specified in the CommonRoad specification.
+    """
+    def __init__(self, time: Time = None, time_of_day: TimeOfDay = None, weather: Weather = None,
+                 underground: Underground = None):
+        """
+        Constructor of an environment object
+
+        :param time: time in hours
+        :param time_of_day: current time of day, i.e., day or night
+        :param weather: weather information, e.g., sunny
+        :param underground: underground information, e.g., ice
+        """
+        self._time = time
+        self._time_of_day = time_of_day
+        self._weather = weather
+        self._underground = underground
+
+    @property
+    def time(self) -> Time:
+        return self._time
+
+    @property
+    def time_of_day(self) -> TimeOfDay:
+        return self._time_of_day
+
+    @property
+    def weather(self) -> Weather:
+        return self._weather
+
+    @property
+    def underground(self) -> Underground:
+        return self._underground
+
+
 class Location:
+    """
+    Class which describes a location according to the CommonRoad specification.
+    """
     def __init__(self, geo_name_id: int = -999, gps_latitude: float = 999, gps_longitude: float = 999,
-                 geo_transformation: GeoTransformation = None):
+                 geo_transformation: GeoTransformation = None, environment: Environment = None):
         """
         Constructor of a location object
 
@@ -107,11 +202,13 @@ class Location:
         :param gps_latitude: GPS latitude coordinate
         :param gps_longitude: GPS longitude coordinate
         :param geo_transformation: description of geometric transformation during scenario generation
+        :param environment: environmental information, e.g. weather
         """
         self._geo_name_id = geo_name_id
         self._gps_latitude = gps_latitude
         self._gps_longitude = gps_longitude
         self._geo_transformation = geo_transformation
+        self._environment = environment
 
     @property
     def geo_name_id(self) -> int:
@@ -128,6 +225,10 @@ class Location:
     @property
     def geo_transformation(self) -> GeoTransformation:
         return self._geo_transformation
+
+    @property
+    def environment(self) -> Environment:
+        return self._environment
 
 
 class Scenario:
@@ -154,6 +255,7 @@ class Scenario:
 
         self._static_obstacles: Dict[int, StaticObstacle] = defaultdict()
         self._dynamic_obstacles: Dict[int, DynamicObstacle] = defaultdict()
+        self._envionrment_obstacle: Dict[int, EnvironmentObstacle] = defaultdict()
 
         self._id_set: Set[int] = set()
 
@@ -209,14 +311,20 @@ class Scenario:
         return list(self._static_obstacles.values())
 
     @property
-    def obstacles(self) -> List[Obstacle]:
+    def obstacles(self) -> List[Union[Obstacle, StaticObstacle, DynamicObstacle]]:
         """ Returns a list of all static and dynamic obstacles in the scenario."""
         return list(itertools.chain(self._static_obstacles.values(),
                                     self._dynamic_obstacles.values()))
 
+    @property
+    def environment_obstacle(self) -> List[EnvironmentObstacle]:
+        """ Returns a list of all environment_obstacles in the scenario."""
+        return list(self._envionrment_obstacle.values())
+
     def add_objects(self, scenario_object: Union[List[Union[Obstacle, Lanelet, LaneletNetwork, TrafficSign,
-                                                            TrafficLight, Intersection]], Obstacle, Lanelet,
-                                                 LaneletNetwork, TrafficSign, TrafficLight, Intersection],
+                                                            TrafficLight, Intersection, EnvironmentObstacle]], Obstacle,
+                                                 Lanelet, LaneletNetwork, TrafficSign, TrafficLight, Intersection,
+                                                 EnvironmentObstacle],
                     lanelet_ids: Set[int] = None):
         """ Function to add objects, e.g., lanelets, dynamic and static obstacles, to the scenario.
 
@@ -239,6 +347,12 @@ class Scenario:
         elif isinstance(scenario_object, LaneletNetwork):
             for lanelet in scenario_object.lanelets:
                 self._mark_object_id_as_used(lanelet.lanelet_id)
+            for traffic_sign in scenario_object.traffic_signs:
+                self._mark_object_id_as_used(traffic_sign.traffic_sign_id)
+            for traffic_light in scenario_object.traffic_lights:
+                self._mark_object_id_as_used(traffic_light.traffic_light_id)
+            for intersection in scenario_object.intersections:
+                self._mark_object_id_as_used(intersection.intersection_id)
             self.lanelet_network: LaneletNetwork = scenario_object
         elif isinstance(scenario_object, Lanelet):
             self._mark_object_id_as_used(scenario_object.lanelet_id)
@@ -252,6 +366,9 @@ class Scenario:
         elif isinstance(scenario_object, Intersection):
             self._mark_object_id_as_used(scenario_object.intersection_id)
             self._lanelet_network.add_intersection(scenario_object)
+        elif isinstance(scenario_object, EnvironmentObstacle):
+            self._mark_object_id_as_used(scenario_object.obstacle_id)
+            self._envionrment_obstacle[scenario_object.obstacle_id] = scenario_object
 
         else:
             raise ValueError('<Scenario/add_objects> argument "scenario_object" of wrong type. '
@@ -270,15 +387,18 @@ class Scenario:
             self.lanelet_network.find_lanelet_by_id(l_id).static_obstacles_on_lanelet.add(obstacle_id)
 
     def _remove_static_obstacle_from_lanelets(self, obstacle_id: int, lanelet_ids: Set[int]):
-        """ Adds a static obstacle reference to all lanelets the obstacle is on.
+        """ Remove a static obstacle reference from all lanelets the obstacle is on.
 
         :param obstacle_id: obstacle ID to be added
         :param lanelet_ids: list of lanelet IDs on which the obstacle is on
         """
         if lanelet_ids is None:
             return
-        for l_id in lanelet_ids:
-            self.lanelet_network.find_lanelet_by_id(l_id).static_obstacles_on_lanelet.remove(obstacle_id)
+        obs: StaticObstacle = self.obstacle_by_id(obstacle_id)
+        l_ids = obs.initial_center_lanelet_ids
+        if l_ids is not None:
+            for l_id in lanelet_ids:
+                self.lanelet_network.find_lanelet_by_id(l_id).static_obstacles_on_lanelet.remove(obstacle_id)
 
     def _remove_dynamic_obstacle_from_lanelets(self, obstacle: DynamicObstacle):
         """ Removes a dynamic obstacle reference from all lanelets the obstacle is on.
@@ -364,7 +484,7 @@ class Scenario:
             :param obstacle_role: obstacle role as defined in CommonRoad, e.g., static or dynamic
             :return: list of occupancies of the obstacles
         """
-        assert isinstance(time_step, int), '<Scenario/occupancies_at_time> argument "time_step" of wrong type. ' \
+        assert is_natural_number(time_step), '<Scenario/occupancies_at_time> argument "time_step" of wrong type. ' \
                                            'Expected type: %s. Got type: %s.' % (int, type(time_step))
         assert isinstance(obstacle_role, (ObstacleRole, type(None))), \
             '<Scenario/obstacles_by_role_and_type> argument "obstacle_role" of wrong type. Expected types: ' \
@@ -376,14 +496,14 @@ class Scenario:
                 occupancies.append(obstacle.occupancy_at_time(time_step))
         return occupancies
 
-    def obstacle_by_id(self, obstacle_id: int) -> Union[Obstacle, None]:
+    def obstacle_by_id(self, obstacle_id: int) -> Union[Obstacle, DynamicObstacle, StaticObstacle, None]:
         """
         Finds an obstacle for a given obstacle_id
 
         :param obstacle_id: ID of the queried obstacle
         :return: the obstacle object if the ID exists, otherwise None
         """
-        assert isinstance(obstacle_id, int), '<Scenario/obstacle_by_id> argument "obstacle_id" of wrong type. ' \
+        assert is_natural_number(obstacle_id), '<Scenario/obstacle_by_id> argument "obstacle_id" of wrong type. ' \
                                              'Expected type: %s. Got type: %s.' % (int, type(obstacle_id))
         obstacle = None
         if obstacle_id in self._static_obstacles:
@@ -451,6 +571,105 @@ class Scenario:
                     elif contained_in_interval(occ.shape.center):
                         obstacle_list.append(obstacle)
         return obstacle_list
+
+    def obstacle_states_at_time_step(self, time_step: int) -> Dict[int, State]:
+        """
+        Returns all obstacle states which exist at a provided time step.
+
+        :param time_step: time step of interest
+        :return: dictionary which maps id to obstacle state at time step
+        """
+        assert is_natural_number(time_step), '<Scenario/obstacle_at_time_step> argument "time_step" of wrong type. ' \
+                                           'Expected type: %s. Got type: %s.' % (int, type(time_step))
+
+        obstacle_states = {}
+        for obstacle in self.dynamic_obstacles:
+            if obstacle.state_at_time(time_step) is not None:
+                obstacle_states[obstacle.obstacle_id] = obstacle.state_at_time(time_step)
+        for obstacle in self.static_obstacles:
+            obstacle_states[obstacle.obstacle_id] = obstacle.initial_state
+        return obstacle_states
+
+    def assign_obstacles_to_lanelets(self, time_steps: Union[List[int],None] = None,
+                                     obstacle_ids: Union[Set[int], None] = None,
+                                     use_center_only = False):
+        """
+        Assigns center points and shapes of obstacles to lanelets by setting the attributes
+        Obstacle.prediction.initial_shape_lanelet_ids, .shape_lanelet_assignment, .initial_center_lanelet_ids,
+        & .center_lanelet_assignment, and Lanelet.dynamic_obstacles_on_lanelet & .static_obstacles_on_lanelet.
+
+        :param time_steps: time step for which the obstacles should be assigned. If None, all time_steps are
+        assigned.
+        :param obstacle_ids: ids for which the assignment should be computed. If None, all obstacles are
+        :param use_center_only: if False, the shape is used to find occupied lanelets.
+        Otherwise, only the center is used.
+        assigned.
+        """
+        def assign_dynamic_obstacle_shape_at_time(obstacle: DynamicObstacle, time_step):
+            # assign center of obstacle
+            # print(time_step, [state.time_step for state in obstacle.prediction.trajectory.state_list])
+            if time_step == obstacle.initial_state.time_step:
+                position = obstacle.initial_state.position
+            elif not isinstance(obstacle.prediction, TrajectoryPrediction):
+                return
+            else:
+                position = obstacle.prediction.trajectory.state_at_time_step(time_step).position
+
+            lanelet_ids_center = set(self.lanelet_network.find_lanelet_by_position([position])[0])
+            obstacle.prediction.center_lanelet_assignment[time_step] = lanelet_ids_center
+
+            if use_center_only:
+                lanelet_ids = lanelet_ids_center
+            else:
+                # assign shape of obstacle
+                shape = obstacle.occupancy_at_time(time_step).shape
+                lanelet_ids = set(self.lanelet_network.find_lanelet_by_shape(shape))
+                obstacle.prediction.shape_lanelet_assignment[time_step] = lanelet_ids
+
+            if time_step == obstacle.initial_state.time_step:
+                if not use_center_only:
+                    obstacle.initial_shape_lanelet_ids = lanelet_ids
+                obstacle.initial_center_lanelet_ids = lanelet_ids_center
+            for l_id in lanelet_ids:
+                self.lanelet_network.find_lanelet_by_id(l_id)\
+                    .add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle.obstacle_id, time_step=time_step)
+
+        def assign_static_obstacle(obstacle: StaticObstacle):
+            shape = obstacle.occupancy_at_time(0).shape
+            if not use_center_only:
+                lanelet_ids = set(self.lanelet_network.find_lanelet_by_shape(shape))
+                obstacle.initial_shape_lanelet_ids = lanelet_ids
+            lanelet_ids = set(self.lanelet_network.find_lanelet_by_position([obstacle.initial_state.position])[0])
+            obstacle.initial_center_lanelet_ids = lanelet_ids
+
+            for l_id in lanelet_ids:
+                self.lanelet_network.find_lanelet_by_id(l_id)\
+                    .add_static_obstacle_to_lanelet(obstacle_id=obstacle.obstacle_id)
+
+        if obstacle_ids is None:
+            # assign all obstacles
+            obstacle_ids = set(self._static_obstacles.keys()).union(set(self._dynamic_obstacles.keys()))
+
+        for obs_id in obstacle_ids:
+            obs = self.obstacle_by_id(obs_id)
+            if isinstance(obs, DynamicObstacle):
+                if time_steps is None:
+                    # assign all time steps
+                    time_steps_tmp = range(obs.initial_state.time_step,
+                                           obs.prediction.final_time_step + 1)
+                else:
+                    time_steps_tmp = time_steps
+
+                if not use_center_only and obs.prediction.shape_lanelet_assignment is None:
+                    obs.prediction.shape_lanelet_assignment = {}
+                if obs.prediction.center_lanelet_assignment is None:
+                    obs.prediction.center_lanelet_assignment = {}
+
+
+                for t in time_steps_tmp:
+                    assign_dynamic_obstacle_shape_at_time(obs, t)
+            else:
+                assign_static_obstacle(obs)
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ Translates and rotates all objects, e.g., obstacles and road network, in the scenario.
