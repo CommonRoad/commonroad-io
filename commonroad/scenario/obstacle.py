@@ -98,7 +98,6 @@ class Obstacle(ABC):
         :param initial_signal_state: initial signal state of obstacle
         :param signal_series: list of signal states over time
         """
-        self._initial_occupancy_shape: Shape = self._compute_initial_occupancy_shape()
         self.obstacle_id: int = obstacle_id
         self.obstacle_role: ObstacleRole = obstacle_role
         self.obstacle_type: ObstacleType = obstacle_type
@@ -108,6 +107,7 @@ class Obstacle(ABC):
         self.initial_shape_lanelet_ids: Union[None, Set[int]] = initial_shape_lanelet_ids
         self.initial_signal_state: Union[None, SignalState] = initial_signal_state
         self.signal_series: List[SignalState] = signal_series
+        self._initial_occupancy_shape: Shape = self._compute_initial_occupancy_shape()
 
     @property
     def obstacle_id(self) -> int:
@@ -345,7 +345,16 @@ class StaticObstacle(Obstacle):
         :param time_step: discrete time step
         :return: occupancy of the static obstacle at time step
         """
-        return Occupancy(time_step, self._initial_occupancy_shape)
+        return Occupancy(time_step=time_step, shape=self._initial_occupancy_shape)
+
+    def state_at_time(self, time_step: int) -> State:
+        """
+        Returns the state the obstacle at a specific time step.
+
+        :param time_step: discrete time step
+        :return: state of the static obstacle at time step
+        """
+        return self.initial_state
 
     def __str__(self):
         obs_str = 'Static Obstacle:\n'
@@ -442,7 +451,7 @@ class DynamicObstacle(Obstacle):
         if self._prediction is not None:
             self.prediction.translate_rotate(translation, angle)
 
-        self._initial_state = self._initial_state.translate_rotate(translation, angle)
+        self.initial_state = self._initial_state.translate_rotate(translation, angle)
         self._initial_occupancy_shape = self._compute_initial_occupancy_shape()
 
     def __str__(self):
