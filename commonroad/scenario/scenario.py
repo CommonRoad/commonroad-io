@@ -551,7 +551,6 @@ class Scenario:
         :return: list of obstacles in the position intervals
         """
         def contained_in_interval(position: np.ndarray):
-            # ToDo: possibly change such that not only the center of uncertain states is used
             if isinstance(position, Shape):
                 position = position.center
             elif not isinstance(position, ValidTypes.ARRAY):
@@ -562,7 +561,7 @@ class Scenario:
             return False
 
         if time_step is None:
-            time_step=0
+            time_step = 0
 
         obstacle_list = list()
         if ObstacleRole.STATIC in obstacle_role:

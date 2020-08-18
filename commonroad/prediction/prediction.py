@@ -7,11 +7,11 @@ from commonroad.common.validity import is_valid_orientation, is_real_number_vect
 from commonroad.geometry.shape import Shape
 from commonroad.scenario.trajectory import Trajectory
 
-__author__ = "Stefanie Manzinger"
+__author__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles", "CAR@TUM"]
 __version__ = "2020.2"
-__maintainer__ = "Stefanie Manzinger"
+__maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
@@ -74,6 +74,7 @@ class Prediction:
         """
         self.initial_time_step: int = initial_time_step
         self.occupancy_set: List[Occupancy] = occupancy_set
+        self.final_time_step: int = max([occ.time_step for occ in occupancy_set])
 
     @property
     def initial_time_step(self) -> int:
@@ -113,7 +114,6 @@ class Prediction:
                                                                                      'of wrong type. Expected type: ' \
                                                                                      '%s.' % Occupancy
         self._occupancy_set = occupancy_set
-        self.final_time_step = max([occ.time_step for occ in self._occupancy_set])
 
     def occupancy_at_time_step(self, time_step: int) -> Union[None, Occupancy]:
         """ Occupancy at a specific time step.
@@ -137,6 +137,11 @@ class Prediction:
 
     @abc.abstractmethod
     def translate_rotate(self, translation: list, angle: float):
+        """ Translates and rotates prediction.
+
+        :param translation: translation vector [x_off, y_off] in x- and y-direction
+        :param angle: rotation angle in radian (counter-clockwise)
+        """
         pass
 
 
@@ -249,7 +254,6 @@ class TrajectoryPrediction(Prediction):
         """ Computes the occupancy set over time given the predicted trajectory and shape of the object."""
         occupancy_set = list()
         for k, state in enumerate(self._trajectory.state_list):
-            # ToDo: uncertain states; change this
             if isinstance(state.position, Shape):
                 position = state.position.center
             elif isinstance(state.position, ValidTypes.ARRAY):
