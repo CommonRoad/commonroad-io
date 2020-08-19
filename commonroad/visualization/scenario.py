@@ -326,7 +326,12 @@ def draw_trajectories(obj: Union[List[Trajectory],Trajectory], plot_limits: Unio
         for time_step in range(time_begin, time_end):
             tmp = traj.state_at_time_step(time_step)
             if tmp is not None:
-                traj_points.append(tmp.position)
+                if isinstance(tmp.position, np.ndarray) == np.ndarray:
+                    traj_points.append(tmp.position)
+                elif hasattr(tmp.position, 'center'):
+                    traj_points.append(tmp.position.center)
+                else:
+                    warnings.warn(f'Plotting of positions with type {tmp.position} not supported!')
             else:
                 if time_begin > traj.initial_time_step:
                     break
@@ -363,10 +368,7 @@ def draw_trajectories(obj: Union[List[Trajectory],Trajectory], plot_limits: Unio
                                                        zorder=z_order, transOffset=ax.transData, facecolor=facecolor))
                     ax.add_collection(collection[-1])
             else:
-                try:
-                    traj_list = np.array(np.concatenate(traj_list))
-                except:
-                    dsdf=0
+                traj_list = np.array(np.concatenate(traj_list))
                 collection = [collections.EllipseCollection(np.ones([traj_list.shape[0],1]) * line_width,
                                                            np.ones([traj_list.shape[0],1]) * line_width,
                                                            np.zeros([traj_list.shape[0],1]),
