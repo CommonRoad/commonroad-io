@@ -1199,12 +1199,8 @@ class LaneletNetwork:
         :param point_list: The list of positions to check
         :return: A list of lanelet ids. If the position could not be matched to a lanelet, an empty list is returned
         """
-        assert isinstance(point_list,
-                          ValidTypes.LISTS), '<Lanelet/contains_points>: provided list of points is not a list! type = {}'.format(
-            type(point_list))
-        # assert is_valid_polyline(
-        #     point_list), 'Lanelet/contains_points>: provided list of points is malformed! points = {}'.format(
-        #     point_list)
+        assert isinstance(point_list, ValidTypes.LISTS), '<Lanelet/contains_points>: provided list of points is ' \
+                                                         'not a list! type = {}'.format(type(point_list))
 
         # output list
         res = list()

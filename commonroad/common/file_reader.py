@@ -5,6 +5,7 @@ import numpy as np
 from abc import ABC
 import warnings
 
+from commonroad.common.validity import ValidTypes
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.util import Interval, AngleInterval
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
@@ -1056,7 +1057,22 @@ class DynamicObstacleFactory(ObstacleFactory):
         lanelet_ids_per_state = {}
 
         for state in compl_state_list:
-            rotated_shape = shape.rotate_translate_local(state.position, state.orientation)
+            if isinstance(initial_state.position, Shape):
+                position = initial_state.position.center
+            elif isinstance(initial_state.position, ValidTypes.ARRAY):
+                position = initial_state.position
+            else:
+                raise TypeError('<Obstacle/occupancy_at_time> Expected instance of %s or %s. Got '
+                                '%s instead.' % (ValidTypes.ARRAY, Shape, initial_state.position.__class__))
+            if isinstance(initial_state.orientation, ValidTypes.NUMBERS):
+                orientation = initial_state.orientation
+            elif isinstance(initial_state.orientation, AngleInterval):
+                orientation = 0.5 * (initial_state.orientation.start + initial_state.orientation.end)
+            else:
+                raise TypeError('<Obstacle/occupancy_at_time> Expected instance of %s or %s. Got %s '
+                                'instead.' % (ValidTypes.NUMBERS, AngleInterval,
+                                              initial_state.orientation.__class__))
+            rotated_shape = shape.rotate_translate_local(position, orientation)
             lanelet_ids = lanelet_network.find_lanelet_by_shape(rotated_shape)
             for l_id in lanelet_ids:
                 lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle_id,
@@ -1080,7 +1096,14 @@ class DynamicObstacleFactory(ObstacleFactory):
         lanelet_ids_per_state = {}
 
         for state in compl_state_list:
-            lanelet_ids = lanelet_network.find_lanelet_by_position([state.position])[0]
+            if isinstance(initial_state.position, Shape):
+                position = initial_state.position.center
+            elif isinstance(initial_state.position, ValidTypes.ARRAY):
+                position = initial_state.position
+            else:
+                raise TypeError('<Obstacle/occupancy_at_time> Expected instance of %s or %s. Got '
+                                '%s instead.' % (ValidTypes.ARRAY, Shape, initial_state.position.__class__))
+            lanelet_ids = lanelet_network.find_lanelet_by_position([position])[0]
             lanelet_ids_per_state[state.time_step] = set(lanelet_ids)
 
         return lanelet_ids_per_state
@@ -1099,9 +1122,24 @@ class DynamicObstacleFactory(ObstacleFactory):
 
         if xml_node.find('trajectory') is not None:
             if lanelet_assignment is True:
-                rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
+                if isinstance(initial_state.position, Shape):
+                    position = initial_state.position.center
+                elif isinstance(initial_state.position, ValidTypes.ARRAY):
+                    position = initial_state.position
+                else:
+                    raise TypeError('<Obstacle/occupancy_at_time> Expected instance of %s or %s. Got '
+                                    '%s instead.' % (ValidTypes.ARRAY, Shape, initial_state.position.__class__))
+                if isinstance(initial_state.orientation, ValidTypes.NUMBERS):
+                    orientation = initial_state.orientation
+                elif isinstance(initial_state.orientation, AngleInterval):
+                    orientation = 0.5 * (initial_state.orientation.start + initial_state.orientation.end)
+                else:
+                    raise TypeError('<Obstacle/occupancy_at_time> Expected instance of %s or %s. Got %s '
+                                    'instead.' % (ValidTypes.NUMBERS, AngleInterval,
+                                                  initial_state.orientation.__class__))
+                rotated_shape = shape.rotate_translate_local(position, orientation)
                 initial_shape_lanelet_ids = set(lanelet_network.find_lanelet_by_shape(rotated_shape))
-                initial_center_lanelet_ids = set(lanelet_network.find_lanelet_by_position([initial_state.position])[0])
+                initial_center_lanelet_ids = set(lanelet_network.find_lanelet_by_position([position])[0])
                 for l_id in initial_shape_lanelet_ids:
                     lanelet_network.find_lanelet_by_id(l_id).\
                         add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle_id, time_step=initial_state.time_step)

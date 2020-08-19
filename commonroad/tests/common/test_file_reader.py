@@ -37,23 +37,34 @@ class TestFileReader(unittest.TestCase):
 
         set_pred = SetBasedPrediction(0, occupancy_list)
 
-        states = []
-        states.append(State(time_step=1, orientation=0, position=np.array([0, 1])))
+        states = [State(time_step=1, orientation=0, position=np.array([0, 1]))]
+        states_uncertain = [State(time_step=1, orientation=AngleInterval(-0.01, 0.01),
+                                  position=Rectangle(1.5, 1.25, center=np.array([11.0, 8.0]), orientation=1.0),
+                                  velocity=Interval(9.0, 12.0))]
         trajectory = Trajectory(0, states)
+        trajectory_uncertain = Trajectory(0, states_uncertain)
+
         init_state = State(time_step=0, orientation=0, position=np.array([0, 0]))
+        init_state_uncertain = State(time_step=0, orientation=AngleInterval(-0.01, 0.01),
+                                     position=Rectangle(0.5, 0.25, center=np.array([10.0, 8.0]), orientation=1.0),
+                                     velocity=Interval(10.0, 11.0))
         traj_pred = TrajectoryPrediction(trajectory, rectangle)
+        traj_pred_uncertain = TrajectoryPrediction(trajectory_uncertain, rectangle)
 
         initial_signal_state = SignalState(time_step=0, horn=True, hazard_warning_lights=True, braking_lights=False)
         signal_series = [SignalState(time_step=1, horn=False, hazard_warning_lights=False, braking_lights=True)]
 
         static_obs = StaticObstacle(3, ObstacleType("unknown"), obstacle_shape=circ, initial_state=init_state)
         dyn_set_obs = DynamicObstacle(1, ObstacleType("unknown"),
-                                      initial_state=traj_pred.trajectory.state_at_time_step(0),
+                                      initial_state=init_state,
                                       prediction=set_pred, obstacle_shape=rectangle)
         dyn_traj_obs = DynamicObstacle(2, ObstacleType("unknown"),
-                                       initial_state=traj_pred.trajectory.state_at_time_step(0),
+                                       initial_state=init_state,
                                        prediction=traj_pred, obstacle_shape=rectangle,
                                        initial_signal_state=initial_signal_state, signal_series=signal_series)
+        dyn_traj_obs_uncertain = DynamicObstacle(4, ObstacleType("unknown"),
+                                       initial_state=init_state_uncertain,
+                                       prediction=traj_pred_uncertain, obstacle_shape=rectangle)
         lanelet1 = Lanelet(right_vertices=np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]),
                            center_vertices=np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                            left_vertices=np.array([[0.0, 2], [1.0, 2], [2, 2]]), lanelet_id=100,
@@ -112,7 +123,7 @@ class TestFileReader(unittest.TestCase):
 
 
         environment_obstacle_shape = Polygon(np.array([[0, 0], [8, 0], [4, -4]]))
-        environment_obstacle_id = 1234
+        environment_obstacle_id =6
         self._environment_obstacle = EnvironmentObstacle(environment_obstacle_id, ObstacleType.BUILDING,
                                                           environment_obstacle_shape)
 
@@ -121,7 +132,7 @@ class TestFileReader(unittest.TestCase):
         location = Location(2867714, 0.0, 0.0, geo_transformation)
 
         self.scenario = Scenario(0.1, 'ZAM_test_0-0-1', tags=tags, location=location)
-        self.scenario.add_objects([static_obs, dyn_set_obs, dyn_traj_obs, self.lanelet_network,
+        self.scenario.add_objects([static_obs, dyn_set_obs, dyn_traj_obs, dyn_traj_obs_uncertain, self.lanelet_network,
                                    self._environment_obstacle])
 
         goal_region = GoalRegion([State(time_step=Interval(0, 1), velocity=Interval(0.0, 1), position=rectangle),
@@ -238,7 +249,7 @@ class TestFileReader(unittest.TestCase):
         self.assertEqual(exp_lanelet_zero_successor, lanelets[0].lanelet_network.lanelets[0].successor)
 
     def test_open_obstacles(self):
-        obstacles = CommonRoadFileReader(self.filename_obstacle).open()
+        obstacles_test_scenario = CommonRoadFileReader(self.filename_obstacle).open()
 
         exp_obstacle_zero_id = self.scenario.obstacles[0].obstacle_id
         exp_obstacle_zero_type = self.scenario.obstacles[0].obstacle_type
@@ -265,35 +276,84 @@ class TestFileReader(unittest.TestCase):
         exp_obstacle_two_shape_prediction_final_state_attributes_len = len(
             self.scenario.obstacles[2].prediction.trajectory.final_state.attributes)
 
-        self.assertEqual(exp_obstacle_zero_id, obstacles[0].obstacles[0].obstacle_id)
-        self.assertEqual(exp_obstacle_zero_type, obstacles[0].obstacles[0].obstacle_type)
-        self.assertEqual(exp_obstacle_zero_role, obstacles[0].obstacles[0].obstacle_role)
-        self.assertEqual(exp_obstacle_zero_shape, obstacles[0].obstacles[0].obstacle_shape.__class__)
-        self.assertEqual(exp_obstacle_zero_radius, obstacles[0].obstacles[0].obstacle_shape.radius)
-        self.assertEqual(exp_obstacle_zero_center[0], obstacles[0].obstacles[0].obstacle_shape.center[0])
-        self.assertEqual(exp_obstacle_zero_center[1], obstacles[0].obstacles[0].obstacle_shape.center[1])
+        exp_obstacle_three_id = self.scenario.obstacles[3].obstacle_id
+        exp_obstacle_three_type = self.scenario.obstacles[3].obstacle_type
+        exp_obstacle_three_role = self.scenario.obstacles[3].obstacle_role
+        exp_obstacle_three_initial_state_orientation_start = self.scenario.obstacles[3].initial_state.orientation.start
+        exp_obstacle_three_initial_state_orientation_end = self.scenario.obstacles[3].initial_state.orientation.end
+        exp_obstacle_three_initial_state_velocity_start = self.scenario.obstacles[3].initial_state.velocity.start
+        exp_obstacle_three_initial_state_velocity_end = self.scenario.obstacles[3].initial_state.velocity.end
+        exp_obstacle_three_initial_state_position_center = self.scenario.obstacles[3].initial_state.position.center
+        exp_obstacle_three_final_state_orientation_start = \
+            self.scenario.obstacles[3].prediction.trajectory.state_list[-1].orientation.start
+        exp_obstacle_three_final_state_orientation_end = \
+        self.scenario.obstacles[3].prediction.trajectory.state_list[-1].orientation.end
+        exp_obstacle_three_final_state_velocity_start = \
+            self.scenario.obstacles[3].prediction.trajectory.state_list[-1].velocity.start
+        exp_obstacle_three_final_state_velocity_end = \
+        self.scenario.obstacles[3].prediction.trajectory.state_list[-1].velocity.end
+        exp_obstacle_three_final_state_position_center = \
+            self.scenario.obstacles[3].prediction.trajectory.state_list[-1].position.center
 
-        self.assertEqual(exp_obstacle_one_id, obstacles[0].obstacles[1].obstacle_id)
-        self.assertEqual(exp_obstacle_one_type, obstacles[0].obstacles[1].obstacle_type)
-        self.assertEqual(exp_obstacle_one_role, obstacles[0].obstacles[1].obstacle_role)
-        self.assertEqual(exp_obstacle_one_shape, obstacles[0].obstacles[1].obstacle_shape.__class__)
-        self.assertEqual(exp_obstacle_one_attributes, len(obstacles[0].obstacles[1].initial_state.attributes))
-        self.assertEqual(exp_obstacle_one_orientation, obstacles[0].obstacles[1].initial_state.orientation)
+        self.assertEqual(exp_obstacle_zero_id, obstacles_test_scenario[0].obstacles[0].obstacle_id)
+        self.assertEqual(exp_obstacle_zero_type, obstacles_test_scenario[0].obstacles[0].obstacle_type)
+        self.assertEqual(exp_obstacle_zero_role, obstacles_test_scenario[0].obstacles[0].obstacle_role)
+        self.assertEqual(exp_obstacle_zero_radius, obstacles_test_scenario[0].obstacles[0].obstacle_shape.radius)
+        self.assertEqual(exp_obstacle_zero_center[0], obstacles_test_scenario[0].obstacles[0].obstacle_shape.center[0])
+        self.assertEqual(exp_obstacle_zero_center[1], obstacles_test_scenario[0].obstacles[0].obstacle_shape.center[1])
+
+        self.assertEqual(exp_obstacle_one_id, obstacles_test_scenario[0].obstacles[1].obstacle_id)
+        self.assertEqual(exp_obstacle_one_type, obstacles_test_scenario[0].obstacles[1].obstacle_type)
+        self.assertEqual(exp_obstacle_one_role, obstacles_test_scenario[0].obstacles[1].obstacle_role)
+        self.assertEqual(exp_obstacle_one_shape, obstacles_test_scenario[0].obstacles[1].obstacle_shape.__class__)
+        self.assertEqual(exp_obstacle_one_attributes,
+                         len(obstacles_test_scenario[0].obstacles[1].initial_state.attributes))
+        self.assertEqual(exp_obstacle_one_orientation,
+                         obstacles_test_scenario[0].obstacles[1].initial_state.orientation)
         self.assertEqual(exp_obstacle_one_predicition_zero_shape_center[0],
-                         obstacles[0].obstacles[1].prediction.occupancy_set[
+                         obstacles_test_scenario[0].obstacles[1].prediction.occupancy_set[
                              0].shape.center[0])
         self.assertEqual(exp_obstacle_one_predicition_zero_shape_center[1],
-                         obstacles[0].obstacles[1].prediction.occupancy_set[
+                         obstacles_test_scenario[0].obstacles[1].prediction.occupancy_set[
                              0].shape.center[1])
 
-        self.assertEqual(exp_obstacle_two_id, obstacles[0].obstacles[2].obstacle_id)
-        self.assertEqual(exp_obstacle_two_type, obstacles[0].obstacles[2].obstacle_type)
-        self.assertEqual(exp_obstacle_two_role, obstacles[0].obstacles[2].obstacle_role)
-        self.assertEqual(exp_obstacle_two_shape, obstacles[0].obstacles[2].obstacle_shape.__class__)
+        self.assertEqual(exp_obstacle_two_id, obstacles_test_scenario[0].obstacles[2].obstacle_id)
+        self.assertEqual(exp_obstacle_two_type, obstacles_test_scenario[0].obstacles[2].obstacle_type)
+        self.assertEqual(exp_obstacle_two_role, obstacles_test_scenario[0].obstacles[2].obstacle_role)
+        self.assertEqual(exp_obstacle_two_shape,
+                         obstacles_test_scenario[0].obstacles[2].obstacle_shape.__class__)
         self.assertEqual(exp_obstacle_two_shape_prediction_state_list_len, len(
-            obstacles[0].obstacles[2].prediction.trajectory.state_list))
+            obstacles_test_scenario[0].obstacles[2].prediction.trajectory.state_list))
         self.assertEqual(exp_obstacle_two_shape_prediction_final_state_attributes_len, len(
-            obstacles[0].obstacles[2].prediction.trajectory.final_state.attributes))
+            obstacles_test_scenario[0].obstacles[2].prediction.trajectory.final_state.attributes))
+
+        self.assertEqual(exp_obstacle_three_id, obstacles_test_scenario[0].obstacles[3].obstacle_id)
+        self.assertEqual(exp_obstacle_three_type, obstacles_test_scenario[0].obstacles[3].obstacle_type)
+        self.assertEqual(exp_obstacle_three_role, obstacles_test_scenario[0].obstacles[3].obstacle_role)
+        self.assertEqual(exp_obstacle_three_initial_state_orientation_start,
+                         obstacles_test_scenario[0].obstacles[3].initial_state.orientation.start)
+        self.assertEqual(exp_obstacle_three_initial_state_orientation_end,
+                         obstacles_test_scenario[0].obstacles[3].initial_state.orientation.end)
+        self.assertEqual(exp_obstacle_three_initial_state_velocity_start,
+                         obstacles_test_scenario[0].obstacles[3].initial_state.velocity.start)
+        self.assertEqual(exp_obstacle_three_initial_state_velocity_end,
+                         obstacles_test_scenario[0].obstacles[3].initial_state.velocity.end)
+        np.testing.assert_array_equal(exp_obstacle_three_initial_state_position_center,
+                                      obstacles_test_scenario[0].obstacles[3].initial_state.position.center)
+
+        self.assertEqual(exp_obstacle_three_final_state_orientation_start,
+                         obstacles_test_scenario[0].obstacles[3].prediction.trajectory.state_list[-1].orientation.start)
+        self.assertEqual(exp_obstacle_three_final_state_orientation_end,
+                         obstacles_test_scenario[0].obstacles[3].prediction.trajectory.state_list[-1].orientation.end)
+        self.assertEqual(exp_obstacle_three_final_state_velocity_start,
+                         obstacles_test_scenario[0].obstacles[3].prediction.trajectory.state_list[-1].velocity.start)
+        self.assertEqual(exp_obstacle_three_final_state_velocity_end,
+                         obstacles_test_scenario[0].obstacles[3].prediction.trajectory.state_list[-1].velocity.end)
+        np.testing.assert_array_equal(exp_obstacle_three_final_state_position_center,
+                                      obstacles_test_scenario[0].obstacles[3].prediction.trajectory.state_list[-1].
+                                      position.center)
+
+
 
     def test_open_planning_problem(self):
         planning_problem = CommonRoadFileReader(self.filename_planning_problem).open()
