@@ -326,7 +326,7 @@ def draw_trajectories(obj: Union[List[Trajectory],Trajectory], plot_limits: Unio
         for time_step in range(time_begin, time_end):
             tmp = traj.state_at_time_step(time_step)
             if tmp is not None:
-                if isinstance(tmp.position, np.ndarray) == np.ndarray:
+                if isinstance(tmp.position, np.ndarray):
                     traj_points.append(tmp.position)
                 elif hasattr(tmp.position, 'center'):
                     traj_points.append(tmp.position.center)
