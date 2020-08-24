@@ -33,7 +33,10 @@ class SupportedTrafficSignCountry(enum.Enum):
 @enum.unique
 class TrafficSignIDZamunda(enum.Enum):
     # default traffic sign IDs (similar to German IDs)
+    DANGER_POINT = '101'
     RIGHT_BEFORE_LEFT = '102'
+    SLIPPERY_ROAD = '114'
+    CROSSING_CYCLIST = '138'
     YIELD = '205'
     STOP = '206'
     BAN_CAR_TRUCK_BUS_MOTORCYCLE = '260'
@@ -41,9 +44,13 @@ class TrafficSignIDZamunda(enum.Enum):
     MAX_SPEED = '274'
     MIN_SPEED = '275'
     NO_OVERTAKING_START = '276'
+    NO_OVERTAKING_TRUCKS_START = '277'
+    NO_OVERTAKING_TRUCKS_END = '281'
     RIGHT_OF_WAY = '301'
     PRIORITY = '306'
     TOWN_SIGN = '310'
+    HIGHWAY_START = '331-1'
+    HIGHWAY_END = '331-2'
     GREEN_ARROW = '720'
     LEFT_TURNING_PRIORITY_WITH_OPPOSITE_RIGHT_YIELD = '1002-10'
     LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_RIGHT_YIELD = '1002-11'
