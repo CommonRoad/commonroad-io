@@ -1097,7 +1097,8 @@ class LaneletNetwork:
 
         # check if traffic already exists in network and warn user
         if traffic_sign.traffic_sign_id in self._traffic_signs.keys():
-            warnings.warn('Traffic sign already exists in network! No changes are made.')
+            warnings.warn('Traffic sign with ID {} already exists in network! '
+                          'No changes are made.'.format(traffic_sign.traffic_sign_id))
             return False
         else:
             self._traffic_signs[traffic_sign.traffic_sign_id] = traffic_sign
