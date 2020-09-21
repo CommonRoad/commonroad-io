@@ -69,7 +69,7 @@ class PlanningProblem:
         :return: Tuple: (True, index of first state in trajectory.state_list that reaches goal) if one state reaches
                  the goal. (False, -1) if no state reaches the goal.
         """
-        for i, state in enumerate(trajectory.state_list):
+        for i, state in reversed(list(enumerate(trajectory.state_list))):
             if self.goal.is_reached(state):
                 return True, i
         return False, -1
