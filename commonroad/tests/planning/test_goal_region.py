@@ -1,12 +1,8 @@
 import unittest
 
-from commonroad.common.file_reader import CommonRoadFileReader
-from commonroad.common.solution import CommonRoadSolutionReader
-from commonroad.common.util import Interval, AngleInterval
 from commonroad.geometry.shape import Rectangle
 from commonroad.planning.goal import *
 from commonroad.scenario.trajectory import State
-from commonroad_dc.feasibility.solution_checker import goal_reached
 
 
 class TestInitialization(unittest.TestCase):
