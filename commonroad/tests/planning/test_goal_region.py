@@ -1,9 +1,12 @@
 import unittest
 
+from commonroad.common.file_reader import CommonRoadFileReader
+from commonroad.common.solution import CommonRoadSolutionReader
 from commonroad.common.util import Interval, AngleInterval
 from commonroad.geometry.shape import Rectangle
 from commonroad.planning.goal import *
 from commonroad.scenario.trajectory import State
+from commonroad_dc.feasibility.solution_checker import goal_reached
 
 
 class TestInitialization(unittest.TestCase):
@@ -42,6 +45,32 @@ class TestInitialization(unittest.TestCase):
 
 
 class TestIsReached(unittest.TestCase):
+    def test_pm_model_goal_reached(self):
+        """
+        Test whether state velocities in the format v_x, v_y are in goals provided in format v, orientation.
+        :return:
+        """
+        goal_state_1 = State(time_step=Interval(3.0, 3.2), orientation=AngleInterval(0.1, 1),
+                             velocity=Interval(20, 30.5))
+        goal_state_2 = State(time_step=Interval(3.0, 3.1), orientation=AngleInterval(0.1, 1),
+                             acceleration=Interval(15, 25.5))
+
+        goal_region_1 = GoalRegion([goal_state_1])
+
+        # in goal
+        state_1 = State(time_step=3.1,
+                        velocity= 21 * math.cos(0.5),
+                        velocity_y= 21 * math.sin(0.5))
+
+        self.assertTrue(goal_region_1.is_reached(state_1))
+
+        # outside of goal
+        state_3 = State(time_step=3.1,
+                        velocity= 50 * math.cos(0.5),
+                        velocity_y= 50 * math.sin(0.5))
+
+        self.assertFalse(goal_region_1.is_reached(state_3))
+
     def test_intervals_reached(self):
         goal_state_1 = State(time_step=Interval(3.0, 3.2), orientation=AngleInterval(0.1, 1),
                              velocity=Interval(20, 30.5))

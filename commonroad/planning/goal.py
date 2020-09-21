@@ -1,4 +1,6 @@
-from typing import Union, List, Dict
+import copy
+import math
+from typing import Union, List, Dict, Set
 import numpy as np
 import warnings
 
@@ -70,21 +72,24 @@ class GoalRegion:
         """
         is_reached_list = list()
         for goal_state in self.state_list:
+            goal_state_tmp = copy.deepcopy(goal_state)
             goal_state_fields = set([slot for slot in goal_state.__slots__ if hasattr(goal_state, slot)])
             state_fields = set([slot for slot in goal_state.__slots__ if hasattr(state, slot)])
+            state_new, state_fields, goal_state_tmp, goal_state_fields =\
+                self._harmonize_state_types(state,goal_state_tmp, state_fields, goal_state_fields)
 
             if not goal_state_fields.issubset(state_fields):
-                is_reached_list.append(False)
-                continue
+                raise ValueError('The goal states {} are not a subset of the provided states {}!'
+                                 .format(goal_state_fields, state_fields))
             is_reached = True
-            if hasattr(goal_state, 'position'):
-                is_reached = is_reached and goal_state.position.contains_point(state.position)
-            if hasattr(goal_state, 'orientation'):
-                is_reached = is_reached and self._check_value_in_interval(state.orientation, goal_state.orientation)
             if hasattr(goal_state, 'time_step'):
-                is_reached = is_reached and self._check_value_in_interval(state.time_step, goal_state.time_step)
+                is_reached = is_reached and self._check_value_in_interval(state_new.time_step, goal_state.time_step)
+            if hasattr(goal_state, 'position'):
+                is_reached = is_reached and goal_state.position.contains_point(state_new.position)
+            if hasattr(goal_state, 'orientation'):
+                is_reached = is_reached and self._check_value_in_interval(state_new.orientation, goal_state.orientation)
             if hasattr(goal_state, 'velocity'):
-                is_reached = is_reached and self._check_value_in_interval(state.velocity, goal_state.velocity)
+                is_reached = is_reached and self._check_value_in_interval(state_new.velocity, goal_state.velocity)
             is_reached_list.append(is_reached)
         return np.any(is_reached_list)
 
@@ -151,3 +156,21 @@ class GoalRegion:
                                      '%s only (except from position and orientation); got "%s" for '
                                      'attribute "%s"' % (Interval, getattr(state, attr).__class__, attr))
 
+    def _harmonize_state_types(self, state:State, goal_state: State,  state_fields: Set[str], goal_state_fields: Set[str]):
+        """
+        Transforms states from value_x, value_y to orientation, value representation if required.
+        :param state: state to check for goal
+        :param goal_state: goal state
+        :return:
+        """
+        state_new = copy.deepcopy(state)
+        if {'velocity', 'velocity_y'}.issubset(state_fields) \
+            and {'orientation', 'velocity'}.issubset(goal_state_fields) \
+            and not {'velocity', 'velocity_y'}.issubset(goal_state_fields):
+
+            state_new.orientation = math.atan2(state_new.velocity_y, state_new.velocity)
+            state_new.velocity = np.linalg.norm(np.array([state_new.velocity, state_new.velocity_y]))
+            state_fields.add('orientation')
+            state_fields.remove('velocity_y')
+
+        return state_new, state_fields, goal_state, goal_state_fields
