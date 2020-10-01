@@ -163,14 +163,16 @@ class GoalRegion:
         :param goal_state: goal state
         :return:
         """
-        state_new = copy.deepcopy(state)
+        state_new = state
         if {'velocity', 'velocity_y'}.issubset(state_fields) \
-            and {'orientation', 'velocity'}.issubset(goal_state_fields) \
+            and {'orientation'}.issubset(goal_state_fields) \
             and not {'velocity', 'velocity_y'}.issubset(goal_state_fields):
 
-            state_new.orientation = math.atan2(state_new.velocity_y, state_new.velocity)
+            if not 'orientation' in state_fields:
+                state_new.orientation = math.atan2(state_new.velocity_y, state_new.velocity)
+                state_fields.add('orientation')
+
             state_new.velocity = np.linalg.norm(np.array([state_new.velocity, state_new.velocity_y]))
-            state_fields.add('orientation')
             state_fields.remove('velocity_y')
 
         return state_new, state_fields, goal_state, goal_state_fields
