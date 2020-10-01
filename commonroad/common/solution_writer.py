@@ -189,7 +189,7 @@ class CommonRoadSolutionWriter:
         elif platform.system() == "Darwin":
             os.environ['PATH'] = os.environ['PATH'] + os.pathsep + '/usr/sbin'
             command = "sysctl -n machdep.cpu.brand_string"
-            return subprocess.check_output(command).strip()
+            return subprocess.check_output(command, shell=True).strip()
         elif platform.system() == "Linux":
             command = "cat /proc/cpuinfo"
             all_info = str(subprocess.check_output(command, shell=True).strip())
