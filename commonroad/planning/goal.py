@@ -163,7 +163,7 @@ class GoalRegion:
         :param goal_state: goal state
         :return:
         """
-        state_new = state
+        state_new = copy.deepcopy(state)
         if {'velocity', 'velocity_y'}.issubset(state_fields) \
             and {'orientation'}.issubset(goal_state_fields) \
             and not {'velocity', 'velocity_y'}.issubset(goal_state_fields):
