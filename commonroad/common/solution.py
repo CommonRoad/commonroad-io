@@ -1,3 +1,4 @@
+import math
 import os
 import platform
 import re
@@ -613,6 +614,10 @@ class CommonRoadSolutionReader:
                 state_vals[field_name] = np.array([cls._parse_sub_element(state_node, name) for name in xml_name])
             else:
                 state_vals[field_name] = cls._parse_sub_element(state_node, xml_name, as_float=(not xml_name == 'time'))
+
+            if not 'orientation' in state_vals and ('velocity' in state_vals and 'velocity_y' in state_vals):
+                state_vals['orientation'] = math.atan2(state_vals['velocity_y'], state_vals['velocity'])
+
         return State(**state_vals)
 
     @staticmethod
