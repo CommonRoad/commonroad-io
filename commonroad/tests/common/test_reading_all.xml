@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<commonRoad affiliation="TU Munich" author="PrinceOfZAM" benchmarkID="ZAM_test_0-0-1" commonRoadVersion="2020a" date="2020-01-07" source="unittest" timeStepSize="0.1">
+<commonRoad affiliation="TU Munich" author="PrinceOfZAM" benchmarkID="ZAM_test_0-1" commonRoadVersion="2020a" date="2020-01-07" source="unittest" timeStepSize="0.1">
   <location>
     <geoNameId>2867714</geoNameId>
     <gpsLatitude>48.262333</gpsLatitude>

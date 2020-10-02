@@ -120,7 +120,7 @@ class TestFileReader(unittest.TestCase):
         geo_transformation = GeoTransformation("test", 0.0, 0.0, 0.0, 0.0)
         location = Location(2867714, 0.0, 0.0, geo_transformation)
 
-        self.scenario = Scenario(0.1, 'ZAM_test_0-0-1', tags=tags, location=location)
+        self.scenario = Scenario(0.1, 'ZAM_test_0-1', tags=tags, location=location)
         self.scenario.add_objects([static_obs, dyn_set_obs, dyn_traj_obs, self.lanelet_network,
                                    self._environment_obstacle])
 

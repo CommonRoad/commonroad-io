@@ -1,4 +1,4 @@
-<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="PrinceOfZAM" affiliation="Technical University of Munich, Germany" source="OpenStreetMaps (OSM)" benchmarkID="ZAM_test_0-0-1" date="2019-12-29">
+<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="PrinceOfZAM" affiliation="Technical University of Munich, Germany" source="OpenStreetMaps (OSM)" benchmarkID="ZAM_test_0-1" date="2019-12-29">
 <location>
     <geoNameId>2867714</geoNameId>
     <gpsLatitude>48.262333</gpsLatitude>
