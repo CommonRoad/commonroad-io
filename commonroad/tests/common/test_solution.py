@@ -8,6 +8,7 @@ from glob import glob
 import numpy as np
 from commonroad.common.solution import StateFields, XMLStateFields, StateType, TrajectoryType, PlanningProblemSolution, \
     Solution, CommonRoadSolutionWriter, CommonRoadSolutionReader, VehicleModel, VehicleType, CostFunction
+from commonroad.scenario.scenario import ScenarioID
 from commonroad.scenario.trajectory import State, Trajectory
 
 
@@ -580,6 +581,9 @@ class TestPlanningProblemSolution(unittest.TestCase):
 
 class TestSolution(unittest.TestCase):
 
+    def setUp(self) -> None:
+        self.scenario_id = ScenarioID.from_benchmark_id('USA_US101-33_2_T-1', "2020a")
+
     def test_solution_vehicle_ids(self):
         pp_solution_1 = PlanningProblemSolution(
             planning_problem_id=1,
@@ -597,9 +601,9 @@ class TestSolution(unittest.TestCase):
             trajectory=DummyDataGenerator.create_random_st_trajectory()
         )
 
-        solution_single = Solution(scenario_id='TEST', commonroad_version='2020a',
+        solution_single = Solution(scenario_id=self.scenario_id,
                                    planning_problem_solutions=[pp_solution_1])
-        solution_collab = Solution(scenario_id='TEST', commonroad_version='2020a',
+        solution_collab = Solution(scenario_id=self.scenario_id,
                                    planning_problem_solutions=[pp_solution_1, pp_solution_2])
 
         assert solution_single.vehicle_ids == ['KS1']
@@ -622,9 +626,9 @@ class TestSolution(unittest.TestCase):
             trajectory=DummyDataGenerator.create_random_st_trajectory()
         )
 
-        solution_single = Solution(scenario_id='TEST', commonroad_version='2020a',
+        solution_single = Solution(scenario_id=self.scenario_id,
                                    planning_problem_solutions=[pp_solution_1])
-        solution_collab = Solution(scenario_id='TEST', commonroad_version='2020a',
+        solution_collab = Solution(scenario_id=self.scenario_id,
                                    planning_problem_solutions=[pp_solution_1, pp_solution_2])
 
         assert solution_single.cost_ids == ['JB1']
@@ -647,13 +651,13 @@ class TestSolution(unittest.TestCase):
             trajectory=DummyDataGenerator.create_random_st_trajectory()
         )
 
-        solution_single = Solution(scenario_id='TEST', commonroad_version='2020a',
+        solution_single = Solution(scenario_id=self.scenario_id,
                                    planning_problem_solutions=[pp_solution_1])
-        solution_collab = Solution(scenario_id='TEST', commonroad_version='2020a',
+        solution_collab = Solution(scenario_id=self.scenario_id,
                                    planning_problem_solutions=[pp_solution_1, pp_solution_2])
 
-        assert solution_single.benchmark_id == 'KS1:JB1:TEST:2020a'
-        assert solution_collab.benchmark_id == '[KS1,ST2]:[JB1,SA1]:TEST:2020a'
+        assert solution_single.benchmark_id == 'KS1:JB1:USA_US101-33_2_T-1:2020a'
+        assert solution_collab.benchmark_id == '[KS1,ST2]:[JB1,SA1]:USA_US101-33_2_T-1:2020a'
 
 
 class TestCommonRoadSolutionWriter(unittest.TestCase):
@@ -677,9 +681,11 @@ class TestCommonRoadSolutionWriter(unittest.TestCase):
             cost_function=CostFunction.SA1,
             trajectory=DummyDataGenerator.create_random_ks_trajectory()
         )
-        self.solution_single = Solution(scenario_id='TEST', commonroad_version='2020a',
+        self.scenario_id = ScenarioID.from_benchmark_id('USA_US101-33_2_T-1', "2020a")
+
+        self.solution_single = Solution(scenario_id=self.scenario_id,
                                         planning_problem_solutions=[self.pp_solution1])
-        self.solution_collab = Solution(scenario_id='TEST', commonroad_version='2020a',
+        self.solution_collab = Solution(scenario_id=self.scenario_id,
                                         planning_problem_solutions=[self.pp_solution1,
                                                                     self.pp_solution2])
 
@@ -748,9 +754,10 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
             cost_function=CostFunction.SA1,
             trajectory=DummyDataGenerator.create_random_ks_trajectory()
         )
-        self.solution_single = Solution(scenario_id='TEST', commonroad_version='2020a',
+        self.scenario_id = ScenarioID.from_benchmark_id('USA_US101-33_2_T-1', "2020a")
+        self.solution_single = Solution(scenario_id=self.scenario_id,
                                         planning_problem_solutions=[self.pp_solution1])
-        self.solution_collab = Solution(scenario_id='TEST', commonroad_version='2020a',
+        self.solution_collab = Solution(scenario_id=self.scenario_id,
                                         planning_problem_solutions=[self.pp_solution1,
                                                                     self.pp_solution2])
 
@@ -771,16 +778,16 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
         parsed_solution_single = CommonRoadSolutionReader.fromstring(solution_xml_single)
         parsed_solution_collab = CommonRoadSolutionReader.fromstring(solution_xml_collab)
 
-        assert parsed_solution_single.scenario_id == self.solution_single.scenario_id
-        assert parsed_solution_collab.scenario_id == self.solution_collab.scenario_id
+        assert str(parsed_solution_single.scenario_id) == str(self.solution_single.scenario_id)
+        assert str(parsed_solution_collab.scenario_id) == str(self.solution_collab.scenario_id)
         assert parsed_solution_single.date.strftime('%Y-%m-%d') == self.solution_single.date.strftime('%Y-%m-%d')
         assert parsed_solution_collab.date.strftime('%Y-%m-%d') == self.solution_collab.date.strftime('%Y-%m-%d')
         assert parsed_solution_single.computation_time == self.solution_single.computation_time
         assert parsed_solution_collab.computation_time == self.solution_collab.computation_time
         assert parsed_solution_single.processor_name == self.solution_single.processor_name
         assert parsed_solution_collab.processor_name == self.solution_collab.processor_name
-        assert parsed_solution_single.commonroad_version == self.solution_single.commonroad_version
-        assert parsed_solution_collab.commonroad_version == self.solution_collab.commonroad_version
+        assert parsed_solution_single.scenario_id.scenario_version == self.solution_single.scenario_id.scenario_version
+        assert parsed_solution_collab.scenario_id.scenario_version == self.solution_collab.scenario_id.scenario_version
         assert parsed_solution_single.vehicle_ids == self.solution_single.vehicle_ids
         assert parsed_solution_collab.vehicle_ids == self.solution_collab.vehicle_ids
         assert parsed_solution_single.cost_ids == self.solution_single.cost_ids
@@ -803,16 +810,16 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
         parsed_solution_single = CommonRoadSolutionReader.fromstring(solution_xml_single)
         parsed_solution_collab = CommonRoadSolutionReader.fromstring(solution_xml_collab)
 
-        assert parsed_solution_single.scenario_id == self.solution_single.scenario_id
-        assert parsed_solution_collab.scenario_id == self.solution_collab.scenario_id
+        assert str(parsed_solution_single.scenario_id) == str(self.solution_single.scenario_id)
+        assert str(parsed_solution_collab.scenario_id) == str(self.solution_collab.scenario_id)
         assert parsed_solution_single.date.strftime('%Y-%m-%d') == self.solution_single.date.strftime('%Y-%m-%d')
         assert parsed_solution_collab.date.strftime('%Y-%m-%d') == self.solution_collab.date.strftime('%Y-%m-%d')
         assert parsed_solution_single.computation_time == self.solution_single.computation_time
         assert parsed_solution_collab.computation_time == self.solution_collab.computation_time
         assert parsed_solution_single.processor_name == self.solution_single.processor_name
         assert parsed_solution_collab.processor_name == self.solution_collab.processor_name
-        assert parsed_solution_single.commonroad_version == self.solution_single.commonroad_version
-        assert parsed_solution_collab.commonroad_version == self.solution_collab.commonroad_version
+        assert parsed_solution_single.scenario_id.scenario_version == self.solution_single.scenario_id.scenario_version
+        assert parsed_solution_collab.scenario_id.scenario_version == self.solution_collab.scenario_id.scenario_version
         assert parsed_solution_single.vehicle_ids == self.solution_single.vehicle_ids
         assert parsed_solution_collab.vehicle_ids == self.solution_collab.vehicle_ids
         assert parsed_solution_single.cost_ids == self.solution_single.cost_ids
@@ -828,16 +835,16 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
         parsed_solution_single = CommonRoadSolutionReader.open(self.solution_single_path)
         parsed_solution_collab = CommonRoadSolutionReader.open(self.solution_collab_path)
 
-        assert parsed_solution_single.scenario_id == self.solution_single.scenario_id
-        assert parsed_solution_collab.scenario_id == self.solution_collab.scenario_id
+        assert str(parsed_solution_single.scenario_id) == str(self.solution_single.scenario_id)
+        assert str(parsed_solution_collab.scenario_id) == str(self.solution_collab.scenario_id)
         assert parsed_solution_single.date.strftime('%Y-%m-%d') == self.solution_single.date.strftime('%Y-%m-%d')
         assert parsed_solution_collab.date.strftime('%Y-%m-%d') == self.solution_collab.date.strftime('%Y-%m-%d')
         assert parsed_solution_single.computation_time == self.solution_single.computation_time
         assert parsed_solution_collab.computation_time == self.solution_collab.computation_time
         assert parsed_solution_single.processor_name == self.solution_single.processor_name
         assert parsed_solution_collab.processor_name == self.solution_collab.processor_name
-        assert parsed_solution_single.commonroad_version == self.solution_single.commonroad_version
-        assert parsed_solution_collab.commonroad_version == self.solution_collab.commonroad_version
+        assert parsed_solution_single.scenario_id.scenario_version == self.solution_single.scenario_id.scenario_version
+        assert parsed_solution_collab.scenario_id.scenario_version == self.solution_collab.scenario_id.scenario_version
         assert parsed_solution_single.vehicle_ids == self.solution_single.vehicle_ids
         assert parsed_solution_collab.vehicle_ids == self.solution_collab.vehicle_ids
         assert parsed_solution_single.cost_ids == self.solution_single.cost_ids

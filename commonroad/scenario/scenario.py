@@ -255,6 +255,8 @@ class ScenarioID:
         :param prediction_id: enumerates different predictions for the same initial configuration (e.g. 1)
         :param scenario_version: scenario version identifier (e.g. 2020a)
         """
+        assert scenario_version in SUPPORTED_COMMONROAD_VERSIONS, 'Scenario_version {} not supported.' \
+            .format(scenario_version)
         self.scenario_version = scenario_version
         self.cooperative = cooperative
         self._country_id = None
@@ -308,8 +310,6 @@ class ScenarioID:
         :param scenario_version: scenario format version (e.g. 2020a)
         :return: 
         """
-        assert scenario_version in SUPPORTED_COMMONROAD_VERSIONS, 'Scenario_version {} not supported.' \
-            .format(scenario_version)
         if not (benchmark_id.count('_') in (1, 2, 3) and benchmark_id.count('-') in (1, 2, 3)):
             warnings.warn('Not a valid scenario id: ' + benchmark_id)
             return ScenarioID(None, None, benchmark_id, 0, None, None, None)
@@ -359,14 +359,13 @@ class Scenario:
         :param benchmark_id: for backwards compatibility
         """
         self.dt: float = dt
+        self.scenario_id = scenario_id
         if isinstance(scenario_id, str):
             self.scenario_id = ScenarioID.from_benchmark_id(scenario_id, SCENARIO_VERSION)
-            self.orig_bid = scenario_id
         elif scenario_id is None and benchmark_id is not None:
             warnings.warn('Use the  the class commonroad.scenario.ScenarioID to define the scenario id.',
                           DeprecationWarning)
             self.scenario_id = ScenarioID.from_benchmark_id(benchmark_id, SCENARIO_VERSION)
-            self.orig_bid = benchmark_id
 
         self.lanelet_network: LaneletNetwork = LaneletNetwork()
 
