@@ -1,5 +1,6 @@
 from typing import Union, Tuple
 
+from commonroad.common import validity
 from commonroad.common.validity import *
 
 __author__ = "Stefanie Manzinger, Moritz Klischat"
@@ -105,6 +106,18 @@ class Interval:
         info_str += "start: {}\n".format(self._start)
         info_str += "end: {}\n".format(self._end)
         return info_str
+
+    def __gt__(self, other):
+        if isinstance(other, validity.ValidTypes.NUMBERS):
+            return True if self._start > other else False
+        else:
+            return True if self._start > other.end else False
+
+    def __lt__(self, other):
+        if isinstance(other, validity.ValidTypes.NUMBERS):
+            return True if self._end < other else False
+        else:
+            return True if self._end < other.start else False
 
 
 class AngleInterval(Interval):

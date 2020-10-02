@@ -88,15 +88,15 @@ class Prediction:
         self._initial_time_step = initial_time_step
 
     @property
-    def final_time_step(self) -> int:
+    def final_time_step(self) -> Union[int, Interval]:
         """ Final time step of the prediction."""
         return self._final_time_step
 
     @final_time_step.setter
-    def final_time_step(self, final_time_step: int):
-        assert isinstance(final_time_step, int), '<Prediction/final_time_step>: argument "final_time_step" of ' \
+    def final_time_step(self, final_time_step: Union[int, Interval]):
+        assert isinstance(final_time_step, (int, Interval)), '<Prediction/final_time_step>: argument "final_time_step" of ' \
                                                    'wrong type. Expected type: %s. Got type: %s.' \
-                                                   % (int, type(final_time_step))
+                                                   % ([int, Interval], type(final_time_step))
         self._final_time_step = final_time_step
 
     @property
