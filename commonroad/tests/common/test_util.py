@@ -29,6 +29,19 @@ class TestInterval(unittest.TestCase):
         self.assertEqual(0.8, result.start)
         self.assertEqual(0.9, result.end)
 
+    def test_contains(self):
+        a = Interval(-0.5, 0.5)
+        # float
+        self.assertEqual(a.contains(0.1), True)
+        self.assertEqual(a.contains(1.1), False)
+        self.assertEqual(a.contains(-1.1), False)
+
+        # intervals
+        self.assertEqual(a.contains(Interval(-0.1,0.1)), True)
+        self.assertEqual(a.contains(Interval(-1.1,0.1)), False)
+        self.assertEqual(a.contains(Interval(-1.1,1.1)), False)
+        self.assertEqual(a.contains(Interval(0.6, 1.1)), False)
+
     def test_sum(self):
         a = Interval(-0.5, -0.1)
         result = a + 5.0
