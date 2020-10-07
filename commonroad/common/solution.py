@@ -12,6 +12,7 @@ from typing import List, Tuple, Union
 from datetime import datetime
 
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
+from commonroad.scenario.scenario import ScenarioID
 from commonroad.scenario.trajectory import State, Trajectory
 
 __author__ = "Murat Üste, Christina Miller, Moritz Klischat"
@@ -390,15 +391,13 @@ class Solution:
     """Stores a solution to a CommonRoad benchmark and additional meta data."""
 
     def __init__(self,
-                 scenario_id: str,
-                 commonroad_version: str,
+                 scenario_id: ScenarioID,
                  planning_problem_solutions: List[PlanningProblemSolution],
                  date: datetime = datetime.today(),
                  computation_time: Union[float, None] = None,
                  processor_name: Union[str, None] = None):
         """
         :param scenario_id: Scenario ID of the Solution
-        :param commonroad_version: valid CommonRoad Version (see `:py:data:`~common.file_reader.SUPPORTED_COMMONROAD_VERSIONS`)
         :param planning_problem_solutions: List of PlanningProblemSolution for corresponding
             to the planning problems of the scenario
         :param date: The date solution was produced. Default=datetime.today()
@@ -406,9 +405,7 @@ class Solution:
         :param processor_name: The processor model used for the Solution. Determined automatically if set to 'auto'.
             Default=None.
         """
-        assert commonroad_version in SUPPORTED_COMMONROAD_VERSIONS
         self.scenario_id = scenario_id
-        self.commonroad_version = commonroad_version
         self.planning_problem_solutions = planning_problem_solutions
         self.date = date
         self.computation_time = computation_time
@@ -446,7 +443,7 @@ class Solution:
         cost_ids = self.cost_ids
         vehicles_str = vehicle_ids[0] if len(vehicle_ids) == 1 else '[%s]' % ','.join(vehicle_ids)
         costs_str = cost_ids[0] if len(cost_ids) == 1 else '[%s]' % ','.join(cost_ids)
-        return '%s:%s:%s:%s' % (vehicles_str, costs_str, self.scenario_id, self.commonroad_version)
+        return '%s:%s:%s:%s' % (vehicles_str, costs_str, str(self.scenario_id), self.scenario_id.scenario_version)
 
     @property
     def vehicle_ids(self) -> List[str]:
@@ -544,7 +541,7 @@ class CommonRoadSolutionReader:
         vehicle_ids, cost_ids, scenario_id, version = cls._parse_benchmark_id(benchmark_id)
         pp_solutions = [cls._parse_planning_problem_solution(vehicle_ids[idx], cost_ids[idx], trajectory_node)
                         for idx, trajectory_node in enumerate(root_node)]
-        return Solution(scenario_id, version, pp_solutions, date, computation_time, processor_name)
+        return Solution(ScenarioID.from_benchmark_id(scenario_id, version), pp_solutions, date, computation_time, processor_name)
 
     @staticmethod
     def _parse_header(root_node: et.Element) -> Tuple[str, Union[None, datetime], Union[None, float], Union[None, str]]:

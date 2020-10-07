@@ -1,9 +1,12 @@
 import itertools
+import re
 import warnings
 from collections import defaultdict
 from typing import Union, List, Set, Dict, Tuple
 import numpy as np
 import enum
+import iso3166
+from commonroad import SCENARIO_VERSION, SUPPORTED_COMMONROAD_VERSIONS
 
 from commonroad.common.util import Interval
 from commonroad.common.validity import is_real_number, is_real_number_vector, is_valid_orientation, is_natural_number
@@ -91,6 +94,7 @@ class Time:
     """
     Class which describes the fictive time when a scenario starts.
     """
+
     def __init__(self, hours: int, minutes: int):
         """
         Constructor of a time object
@@ -115,6 +119,7 @@ class GeoTransformation:
     Class which describes the transformation from geodetic to projected Cartesian coordinates according to the
     CommonRoad specification
     """
+
     def __init__(self, geo_reference: str = None, x_translation: float = None, y_translation: float = None,
                  z_rotation: float = None, scaling: float = None):
         """
@@ -157,6 +162,7 @@ class Environment:
     """
     Class which describes the environment where a scenario takes place as specified in the CommonRoad specification.
     """
+
     def __init__(self, time: Time = None, time_of_day: TimeOfDay = None, weather: Weather = None,
                  underground: Underground = None):
         """
@@ -193,6 +199,7 @@ class Location:
     """
     Class which describes a location according to the CommonRoad specification.
     """
+
     def __init__(self, geo_name_id: int = -999, gps_latitude: float = 999, gps_longitude: float = 999,
                  geo_transformation: GeoTransformation = None, environment: Environment = None):
         """
@@ -231,13 +238,114 @@ class Location:
         return self._environment
 
 
+class ScenarioID:
+    def __init__(self, cooperative: bool, country_id: str, map_name: str, map_id: int,
+                 configuration_id: Union[None, int], prediction_type: Union[None, str], prediction_id: Union[None, int],
+                 scenario_version: str = SCENARIO_VERSION):
+        """
+        Implements the scenario ID as specified in the scenario documentation
+        (see https://gitlab.lrz.de/tum-cps/commonroad-scenarios/-/tree/master/documentation)
+        Example for benchmark ID C-USA_US101-33_2_T-1
+        :param cooperative: True if scenario contains cooperative planning problem sets with multiple planning problems
+        :param country_id: three-letter ID according
+        :param map_name: name of the map (e.g. US101)
+        :param map_id: index of the map (e.g. 33)
+        :param configuration_id: enumerates initial configuration of vehicles on the map (e.g. 2)
+        :param prediction_type: type of the prediction for surrounding vehicles (e.g. T)
+        :param prediction_id: enumerates different predictions for the same initial configuration (e.g. 1)
+        :param scenario_version: scenario version identifier (e.g. 2020a)
+        """
+        assert scenario_version in SUPPORTED_COMMONROAD_VERSIONS, 'Scenario_version {} not supported.' \
+            .format(scenario_version)
+        self.scenario_version = scenario_version
+        self.cooperative = cooperative
+        self._country_id = None
+        self.country_id = country_id
+        self.map_name = map_name
+        self.map_id = map_id
+        self.configuration_id = configuration_id
+        self.prediction_type = prediction_type
+        self.prediction_id = prediction_id
+
+    def __str__(self):
+        scenario_id = ""
+        if self.cooperative is True:
+            scenario_id += "C-"
+        if self.country_id is not None:
+            scenario_id += self.country_id + "_"
+        if self.map_name is not None:
+            scenario_id += self.map_name + "-"
+        if self.map_id is not None:
+            scenario_id += str(self.map_id)
+        if self.configuration_id is not None:
+            scenario_id += "_" + str(self.configuration_id)
+        if self.prediction_type is not None:
+            scenario_id += "_" + self.prediction_type + "-"
+        if self.prediction_id is not None:
+            scenario_id += str(self.prediction_id)
+        return scenario_id
+
+    @property
+    def country_id(self):
+        return self._country_id
+
+    @country_id.setter
+    def country_id(self, country_id: str):
+        if country_id is None:
+            self._country_id = 'ZAM'
+        elif country_id in iso3166.countries_by_alpha3 or country_id == 'ZAM':
+            self._country_id = country_id
+        else:
+            raise ValueError('Country ID {} is not in the ISO-3166 three-letter format. '.format(country_id))
+
+    @property
+    def country_name(self):
+        return iso3166.countries_by_alpha3[self.country_id].name
+
+    @classmethod
+    def from_benchmark_id(cls, benchmark_id: str, scenario_version: str):
+        """
+        Create ScenarioID from benchmark_id and scenario_version in the XML header.
+        :param benchmark_id: scenario ID provided as a string
+        :param scenario_version: scenario format version (e.g. 2020a)
+        :return: 
+        """
+        if not (benchmark_id.count('_') in (1, 2, 3) and benchmark_id.count('-') in (1, 2, 3)):
+            warnings.warn('Not a valid scenario id: ' + benchmark_id)
+            return ScenarioID(None, None, benchmark_id, 0, None, None, None)
+
+        # extract sub IDs from string
+        if benchmark_id[0:2] == 'C-':
+            cooperative = True
+            benchmark_id = benchmark_id[2:]
+        else:
+            cooperative = False
+
+        sub_ids = re.split('_|-', benchmark_id)
+        country_id, map_name, map_id = sub_ids[:3]
+        map_id = int(map_id)
+
+        configuration_id = prediction_type = prediction_id = None
+        if len(sub_ids) > 3:
+            configuration_id = int(sub_ids[3])
+        if len(sub_ids) > 4:
+            assert sub_ids[4] in ('S', 'T', 'I'), "prediction type must be one of (S, T, I) but is {}".format(
+                sub_ids[4])
+            prediction_type = sub_ids[4]
+            prediction_id = int(sub_ids[5])
+
+        return ScenarioID(cooperative, country_id, map_name, map_id, configuration_id, prediction_type, prediction_id,
+                          scenario_version)
+
+
 class Scenario:
     """ Class which describes a Scenario entity according to the CommonRoad specification. Each scenario is described by
      a road network consisting of lanelets (see :class:`commonroad.scenario.lanelet.LaneletNetwork`) and a set of
      obstacles which can be either static or dynamic (see :class:`commonroad.scenario.obstacle.Obstacle`)."""
-    def __init__(self, dt: float, benchmark_id: str,
+
+    def __init__(self, dt: float, scenario_id: Union[str, ScenarioID],
                  author: str = None, tags: Set[Tag] = None, affiliation: str = None, source: str = None,
-                 location: Location = None):
+                 location: Location = None, benchmark_id: str = None):
         """
         Constructor of a Scenario object
 
@@ -248,14 +356,22 @@ class Scenario:
         :param affiliation: institution of the authors
         :param source: source of the scenario, e.g. generated by a map converter and a traffic simulator
         :param location: location object of the scenario
+        :param benchmark_id: for backwards compatibility
         """
         self.dt: float = dt
-        self.benchmark_id: str = benchmark_id
+        self.scenario_id = scenario_id
+        if isinstance(scenario_id, str):
+            self.scenario_id = ScenarioID.from_benchmark_id(scenario_id, SCENARIO_VERSION)
+        elif scenario_id is None and benchmark_id is not None:
+            warnings.warn('Use the  the class commonroad.scenario.ScenarioID to define the scenario id.',
+                          DeprecationWarning)
+            self.scenario_id = ScenarioID.from_benchmark_id(benchmark_id, SCENARIO_VERSION)
+
         self.lanelet_network: LaneletNetwork = LaneletNetwork()
 
         self._static_obstacles: Dict[int, StaticObstacle] = defaultdict()
         self._dynamic_obstacles: Dict[int, DynamicObstacle] = defaultdict()
-        self._envionrment_obstacle: Dict[int, EnvironmentObstacle] = defaultdict()
+        self._environment_obstacle: Dict[int, EnvironmentObstacle] = defaultdict()
 
         self._id_set: Set[int] = set()
 
@@ -280,13 +396,12 @@ class Scenario:
     @property
     def benchmark_id(self) -> str:
         """ Unique benchmark ID of a scenario as specified in the CommonRoad XML-file."""
-        return self._benchmark_id
+        warnings.warn('benchmark_id is deprecated, use scenario_id instead', DeprecationWarning)
+        return str(self.scenario_id)
 
     @benchmark_id.setter
     def benchmark_id(self, benchmark_id):
-        assert isinstance(benchmark_id, str), '<Scenario/benchmark_id> argument "benchmark_id" of wrong type. ' \
-                                              'Expected type: %s. Got type: %s' % (str, type(benchmark_id))
-        self._benchmark_id = benchmark_id
+        raise ValueError('benchmark_id is deprecated, use scenario_id instead')
 
     @property
     def lanelet_network(self) -> LaneletNetwork:
@@ -319,7 +434,7 @@ class Scenario:
     @property
     def environment_obstacle(self) -> List[EnvironmentObstacle]:
         """ Returns a list of all environment_obstacles in the scenario."""
-        return list(self._envionrment_obstacle.values())
+        return list(self._environment_obstacle.values())
 
     def add_objects(self, scenario_object: Union[List[Union[Obstacle, Lanelet, LaneletNetwork, TrafficSign,
                                                             TrafficLight, Intersection, EnvironmentObstacle]], Obstacle,
@@ -368,7 +483,7 @@ class Scenario:
             self._lanelet_network.add_intersection(scenario_object)
         elif isinstance(scenario_object, EnvironmentObstacle):
             self._mark_object_id_as_used(scenario_object.obstacle_id)
-            self._envionrment_obstacle[scenario_object.obstacle_id] = scenario_object
+            self._environment_obstacle[scenario_object.obstacle_id] = scenario_object
 
         else:
             raise ValueError('<Scenario/add_objects> argument "scenario_object" of wrong type. '
@@ -450,7 +565,7 @@ class Scenario:
 
         :param obstacle: obstacle to be removed
         """
-        assert isinstance(obstacle, (list, Obstacle)), '<Scenario/remove_obstacle> argument "obstacle" of wrong type. '\
+        assert isinstance(obstacle, (list, Obstacle)), '<Scenario/remove_obstacle> argument "obstacle" of wrong type. ' \
                                                        'Expected type: %s. Got type: %s.' % (Obstacle, type(obstacle))
         if isinstance(obstacle, list):
             for obs in obstacle:
@@ -485,7 +600,7 @@ class Scenario:
             :return: list of occupancies of the obstacles
         """
         assert is_natural_number(time_step), '<Scenario/occupancies_at_time> argument "time_step" of wrong type. ' \
-                                           'Expected type: %s. Got type: %s.' % (int, type(time_step))
+                                             'Expected type: %s. Got type: %s.' % (int, type(time_step))
         assert isinstance(obstacle_role, (ObstacleRole, type(None))), \
             '<Scenario/obstacles_by_role_and_type> argument "obstacle_role" of wrong type. Expected types: ' \
             ' %s or %s. Got type: %s.' % (ObstacleRole, None, type(obstacle_role))
@@ -504,7 +619,7 @@ class Scenario:
         :return: the obstacle object if the ID exists, otherwise None
         """
         assert is_natural_number(obstacle_id), '<Scenario/obstacle_by_id> argument "obstacle_id" of wrong type. ' \
-                                             'Expected type: %s. Got type: %s.' % (int, type(obstacle_id))
+                                               'Expected type: %s. Got type: %s.' % (int, type(obstacle_id))
         obstacle = None
         if obstacle_id in self._static_obstacles:
             obstacle = self._static_obstacles[obstacle_id]
@@ -549,13 +664,14 @@ class Scenario:
         :param obstacle_role: tuple containing the desired obstacle roles
         :return: list of obstacles in the position intervals
         """
+
         def contained_in_interval(position: np.ndarray):
             if position_intervals[0].contains(position[0]) and position_intervals[1].contains(position[1]):
                 return True
             return False
 
         if time_step is None:
-            time_step=0
+            time_step = 0
 
         obstacle_list = list()
         if ObstacleRole.STATIC in obstacle_role:
@@ -580,7 +696,7 @@ class Scenario:
         :return: dictionary which maps id to obstacle state at time step
         """
         assert is_natural_number(time_step), '<Scenario/obstacle_at_time_step> argument "time_step" of wrong type. ' \
-                                           'Expected type: %s. Got type: %s.' % (int, type(time_step))
+                                             'Expected type: %s. Got type: %s.' % (int, type(time_step))
 
         obstacle_states = {}
         for obstacle in self.dynamic_obstacles:
@@ -590,9 +706,9 @@ class Scenario:
             obstacle_states[obstacle.obstacle_id] = obstacle.initial_state
         return obstacle_states
 
-    def assign_obstacles_to_lanelets(self, time_steps: Union[List[int],None] = None,
+    def assign_obstacles_to_lanelets(self, time_steps: Union[List[int], None] = None,
                                      obstacle_ids: Union[Set[int], None] = None,
-                                     use_center_only = False):
+                                     use_center_only=False):
         """
         Assigns center points and shapes of obstacles to lanelets by setting the attributes
         Obstacle.prediction.initial_shape_lanelet_ids, .shape_lanelet_assignment, .initial_center_lanelet_ids,
@@ -605,6 +721,7 @@ class Scenario:
         Otherwise, only the center is used.
         assigned.
         """
+
         def assign_dynamic_obstacle_shape_at_time(obstacle: DynamicObstacle, time_step):
             # assign center of obstacle
             # print(time_step, [state.time_step for state in obstacle.prediction.trajectory.state_list])
@@ -631,7 +748,7 @@ class Scenario:
                     obstacle.initial_shape_lanelet_ids = lanelet_ids
                 obstacle.initial_center_lanelet_ids = lanelet_ids_center
             for l_id in lanelet_ids:
-                self.lanelet_network.find_lanelet_by_id(l_id)\
+                self.lanelet_network.find_lanelet_by_id(l_id) \
                     .add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle.obstacle_id, time_step=time_step)
 
         def assign_static_obstacle(obstacle: StaticObstacle):
@@ -643,7 +760,7 @@ class Scenario:
             obstacle.initial_center_lanelet_ids = lanelet_ids
 
             for l_id in lanelet_ids:
-                self.lanelet_network.find_lanelet_by_id(l_id)\
+                self.lanelet_network.find_lanelet_by_id(l_id) \
                     .add_static_obstacle_to_lanelet(obstacle_id=obstacle.obstacle_id)
 
         if obstacle_ids is None:
@@ -665,7 +782,6 @@ class Scenario:
                 if obs.prediction.center_lanelet_assignment is None:
                     obs.prediction.center_lanelet_assignment = {}
 
-
                 for t in time_steps_tmp:
                     assign_dynamic_obstacle_shape_at_time(obs, t)
             else:
@@ -678,8 +794,8 @@ class Scenario:
             :param angle: rotation angle in radian (counter-clockwise)
         """
         assert is_real_number_vector(translation, 2), '<Scenario/translate_rotate>: argument "translation" is ' \
-                                                      'not a vector of real numbers of length 2. translation = {}.'\
-                                                      .format(translation)
+                                                      'not a vector of real numbers of length 2. translation = {}.' \
+            .format(translation)
         assert is_valid_orientation(angle), '<Scenario/translate_rotate>: argument "orientation" is not valid. ' \
                                             'angle = {}.'.format(angle)
 

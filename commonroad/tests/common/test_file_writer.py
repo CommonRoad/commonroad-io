@@ -100,7 +100,7 @@ class TestFileWriter(unittest.TestCase):
                            LineMarking.SOLID, LineMarking.DASHED, lanelet_type={LaneletType.URBAN})
 
         lanelet_network = LaneletNetwork().create_from_lanelet_list(list([lanelet1, lanelet2]))
-        scenario = Scenario(0.1,'ZAM_test_0-0-1')
+        scenario = Scenario(0.1,'ZAM_test_0-1')
         scenario.add_objects([static_obs, lanelet_network])
 
         goal_region = GoalRegion([State(time_step=Interval(0,1),velocity=Interval(0.0,1),position=rectangle),

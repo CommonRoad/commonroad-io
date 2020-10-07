@@ -85,6 +85,18 @@ class TestInterval(unittest.TestCase):
         self.assertEqual(-1, result.start)
         self.assertEqual(0, result.end)
 
+    def test_lt(self):
+        a = Interval(-1.1, -0.1)
+        b = Interval(0.1, 0.2)
+        self.assertEqual(a < b, True)
+        self.assertEqual(b < a, False)
+
+    def test_gt(self):
+        a = Interval(-1.1, -0.1)
+        b = Interval(0.1, 0.2)
+        self.assertEqual(a > b, False)
+        self.assertEqual(b > a, True)
+
 
 if __name__ == '__main__':
     unittest.main()

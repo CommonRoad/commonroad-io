@@ -15,7 +15,7 @@ from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, La
 from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, EnvironmentObstacle, \
     SignalState
 from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, \
-    TimeOfDay, Weather, Underground
+    TimeOfDay, Weather, Underground, ScenarioID
 from commonroad.scenario.trajectory import State, Trajectory
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLight, TrafficLightCycleElement, \
     TrafficLightState, TrafficLightDirection, TrafficSignIDGermany, TrafficSignIDUsa, TrafficSignIDChina, \
@@ -204,7 +204,9 @@ class ScenarioFactory:
             meta_data["location"] = LocationFactory.create_from_xml_node(xml_node)
         else:
             LaneletFactory._speed_limits = {}
-        scenario = Scenario(dt, benchmark_id, **meta_data)
+
+        scenario_id = ScenarioID.from_benchmark_id(benchmark_id, commonroad_version)
+        scenario = Scenario(dt, scenario_id, **meta_data)
 
         scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
         if commonroad_version == '2018b':
