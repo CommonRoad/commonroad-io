@@ -319,7 +319,7 @@ class TestFileReader(unittest.TestCase):
         exp_num_lanelet_scenario = len(self.scenario.lanelet_network.lanelets)
         exp_num_obstacles_scenario = len(self.scenario.obstacles)
         exp_num_planning_problems = len(self.planning_problem_set.planning_problem_dict)
-        exp_benchmark_id = self.scenario.benchmark_id
+        exp_scenario_id = self.scenario.scenario_id
         exp_dt = self.scenario.dt
 
         exp_obstacle_zero_id = self.scenario.obstacles[0].obstacle_id
@@ -418,7 +418,7 @@ class TestFileReader(unittest.TestCase):
         self.assertEqual(exp_num_lanelet_scenario,len(xml_file[0].lanelet_network.lanelets))
         self.assertEqual(exp_num_obstacles_scenario,len(xml_file[0].obstacles))
         self.assertEqual(exp_num_planning_problems, len(xml_file[1].planning_problem_dict))
-        self.assertEqual(exp_benchmark_id, xml_file[0].benchmark_id)
+        self.assertEqual(exp_scenario_id, xml_file[0].scenario_id)
         self.assertEqual(exp_dt, xml_file[0].dt)
 
         self.assertEqual(exp_obstacle_zero_id, xml_file[0].obstacles[0].obstacle_id)

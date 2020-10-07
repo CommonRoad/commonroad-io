@@ -213,15 +213,15 @@ class ScenarioFactory:
             scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network, lanelet_assignment))
             for key, value in LaneletFactory._speed_limits.items():
                 for lanelet in value:
-                    if SupportedTrafficSignCountry.GERMANY.value in benchmark_id:
+                    if SupportedTrafficSignCountry.GERMANY.value == scenario_id.country_id:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.USA.value in benchmark_id:
+                    elif SupportedTrafficSignCountry.USA.value == scenario_id.country_id:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDUsa.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.CHINA.value in benchmark_id:
+                    elif SupportedTrafficSignCountry.CHINA.value == scenario_id.country_id:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDChina.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.SPAIN.value in benchmark_id:
+                    elif SupportedTrafficSignCountry.SPAIN.value == scenario_id.country_id:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.RUSSIA.value in benchmark_id:
+                    elif SupportedTrafficSignCountry.RUSSIA.value == scenario_id.country_id:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAX_SPEED, [str(key)])
                     else:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])

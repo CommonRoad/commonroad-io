@@ -34,7 +34,7 @@ class TestFileWriter(unittest.TestCase):
         scenario_1, planning_problem_set_1 = CommonRoadFileReader(self.filename_read_1).open()
         filename = self.out_path + '/test_reading_intersection_traffic_sign.xml'
         CommonRoadFileWriter(scenario_1, planning_problem_set_1, scenario_1.author, scenario_1.affiliation,
-                             scenario_1.benchmark_id, scenario_1.tags,
+                             'test', scenario_1.tags,
                              scenario_1.location).write_to_file(filename=filename,
                                                                 overwrite_existing_file=OverwriteExistingFile.ALWAYS,
                                                                 check_validity=False)
@@ -43,7 +43,7 @@ class TestFileWriter(unittest.TestCase):
         scenario_2, planning_problem_set_2 = CommonRoadFileReader(self.filename_read_2).open()
         filename = self.out_path + '/test_reading_all.xml'
         CommonRoadFileWriter(scenario_2, planning_problem_set_2, scenario_2.author, scenario_2.affiliation,
-                             scenario_2.benchmark_id, scenario_2.tags,
+                             'test', scenario_2.tags,
                              scenario_2.location).write_to_file(filename=filename,
                                                                 overwrite_existing_file=OverwriteExistingFile.ALWAYS,
                                                                 check_validity=False)
@@ -53,7 +53,7 @@ class TestFileWriter(unittest.TestCase):
         scenario, planning_problem_set = CommonRoadFileReader(self.filename_2018b).open()
         filename = self.out_path + "/USA_Lanker-1_1_T-1.xml"
         CommonRoadFileWriter(scenario, planning_problem_set, scenario.author, scenario.affiliation,
-                             scenario.benchmark_id, scenario.tags,
+                             str(scenario.scenario_id), scenario.tags,
                              scenario.location).write_to_file(filename=filename,
                                                               overwrite_existing_file=OverwriteExistingFile.ALWAYS,
                                                               check_validity=True)

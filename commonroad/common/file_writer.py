@@ -146,8 +146,8 @@ class CommonRoadFileWriter:
         assert not (source is None and scenario.source is None)
         assert not (tags is None and scenario.tags is None)
 
-        self.scenario = scenario
-        self.planning_problem_set = planning_problem_set
+        self.scenario: Scenario = scenario
+        self.planning_problem_set: PlanningProblemSet = planning_problem_set
         self._root_node = etree.Element('commonRoad')
         self.author = author if author is not None else scenario.author
         self.affiliation = affiliation if affiliation is not None else scenario.affiliation
@@ -227,11 +227,11 @@ class CommonRoadFileWriter:
         self._root_node.set('source', self.source)
 
         try:
-            if self.scenario.benchmark_id:
-                self._root_node.set('benchmarkID', self.scenario.benchmark_id)
+            if self.scenario.scenario_id:
+                self._root_node.set('benchmarkID', str(self.scenario.scenario_id))
         except:
             self._root_node.set('benchmarkID', '-1')
-            print('Warning: No benchmark id set.')
+            print('Warning: No scenario_id set.')
 
         self._root_node.set('date', datetime.datetime.today().strftime('%Y-%m-%d'))
 
@@ -282,7 +282,7 @@ class CommonRoadFileWriter:
         :return:
         """
         if filename is None:
-            filename = self.scenario.benchmark_id
+            filename = str(self.scenario.scenario_id)
 
         if pathlib.Path(filename).is_file():
             if overwrite_existing_file is OverwriteExistingFile.ASK_USER_INPUT:
@@ -324,7 +324,7 @@ class CommonRoadFileWriter:
         :return: None
         """
         if filename is None:
-            filename = self.scenario.benchmark_id
+            filename = str(self.scenario.scenario_id)
 
         if pathlib.Path(filename).is_file():
             if overwrite_existing_file is OverwriteExistingFile.ASK_USER_INPUT:

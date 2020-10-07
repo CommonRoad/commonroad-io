@@ -337,6 +337,9 @@ class ScenarioID:
         return ScenarioID(cooperative, country_id, map_name, map_id, configuration_id, prediction_type, prediction_id,
                           scenario_version)
 
+    def __eq__(self, other: 'ScenarioID'):
+        return str(self) == str(other)
+
 
 class Scenario:
     """ Class which describes a Scenario entity according to the CommonRoad specification. Each scenario is described by
@@ -825,7 +828,7 @@ class Scenario:
     def __str__(self):
         traffic_str = "\n"
         traffic_str += "Scenario:\n"
-        traffic_str += "- Benchmark ID: {}\n".format(self._benchmark_id)
+        traffic_str += "- Scenario ID: {}\n".format(str(self.scenario_id))
         traffic_str += "- Time step size: {}\n".format(self._dt)
         traffic_str += "- Number of Obstacles: {}\n".format(len(self.obstacles))
         traffic_str += "- Lanelets:\n"

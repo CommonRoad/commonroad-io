@@ -538,10 +538,10 @@ class CommonRoadSolutionReader:
     def _parse_solution(cls, root_node: et.Element) -> Solution:
         """ Parses the Solution XML root node. """  # TODO
         benchmark_id, date, computation_time, processor_name = cls._parse_header(root_node)
-        vehicle_ids, cost_ids, scenario_id, version = cls._parse_benchmark_id(benchmark_id)
+        vehicle_ids, cost_ids, scenario_id = cls._parse_benchmark_id(benchmark_id)
         pp_solutions = [cls._parse_planning_problem_solution(vehicle_ids[idx], cost_ids[idx], trajectory_node)
                         for idx, trajectory_node in enumerate(root_node)]
-        return Solution(ScenarioID.from_benchmark_id(scenario_id, version), pp_solutions, date, computation_time, processor_name)
+        return Solution(scenario_id, pp_solutions, date, computation_time, processor_name)
 
     @staticmethod
     def _parse_header(root_node: et.Element) -> Tuple[str, Union[None, datetime], Union[None, float], Union[None, str]]:
@@ -618,7 +618,7 @@ class CommonRoadSolutionReader:
         return State(**state_vals)
 
     @staticmethod
-    def _parse_benchmark_id(benchmark_id: str) -> (List[str], List[str], str, str):
+    def _parse_benchmark_id(benchmark_id: str) -> (List[str], List[str], str):
         """ Parses the given benchmark id string. """
         segments = benchmark_id.replace(' ', '').split(':')
 
@@ -627,10 +627,9 @@ class CommonRoadSolutionReader:
 
         vehicle_model_ids = re.sub(r'[\[\]]', '', segments[0]).split(',')
         cost_function_ids = re.sub(r'[\[\]]', '', segments[1]).split(',')
-        scenario_id = segments[2]
-        version = segments[3]
+        scenario_id = ScenarioID.from_benchmark_id(segments[2], segments[3])
 
-        return vehicle_model_ids, cost_function_ids, scenario_id, version
+        return vehicle_model_ids, cost_function_ids, scenario_id
 
     @staticmethod
     def _parse_vehicle_id(vehicle_id: str) -> Tuple[VehicleModel, VehicleType]:

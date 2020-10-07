@@ -796,8 +796,8 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
         assert parsed_solution_collab.planning_problem_ids == self.solution_collab.planning_problem_ids
         assert parsed_solution_single.trajectory_types == self.solution_single.trajectory_types
         assert parsed_solution_collab.trajectory_types == self.solution_collab.trajectory_types
-        assert parsed_solution_single.benchmark_id == self.solution_single.benchmark_id
-        assert parsed_solution_collab.benchmark_id == self.solution_collab.benchmark_id
+        assert parsed_solution_single.scenario_id == self.solution_single.scenario_id
+        assert parsed_solution_collab.scenario_id == self.solution_collab.scenario_id
 
     def test_fromstring_with_attribs(self):
         self.solution_single.processor_name = 'TEST_CPU'
