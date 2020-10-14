@@ -483,6 +483,7 @@ class Scenario:
             self._lanelet_network.add_traffic_light(scenario_object, lanelet_ids)
         elif isinstance(scenario_object, Intersection):
             self._mark_object_id_as_used(scenario_object.intersection_id)
+            self._mark_object_id_as_used()
             self._lanelet_network.add_intersection(scenario_object)
         elif isinstance(scenario_object, EnvironmentObstacle):
             self._mark_object_id_as_used(scenario_object.obstacle_id)

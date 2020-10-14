@@ -11,6 +11,14 @@ draw_dispatch_cr
    :undoc-members:
    :member-order: bysource
 
+video
+-----------
+
+.. automodule:: commonroad.visualization.video
+  :members:
+  :undoc-members:
+  :member-order: bysource
+
 plot_Helper
 -----------
 
@@ -18,4 +26,3 @@ plot_Helper
    :members:
    :undoc-members:
    :member-order: bysource
-
