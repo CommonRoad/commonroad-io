@@ -12,6 +12,7 @@ from typing import List, Tuple, Union
 from datetime import datetime
 
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
+from commonroad.common.validity import is_real_number, is_positive
 from commonroad.scenario.scenario import ScenarioID
 from commonroad.scenario.trajectory import State, Trajectory
 
@@ -401,13 +402,14 @@ class Solution:
         :param planning_problem_solutions: List of PlanningProblemSolution for corresponding
             to the planning problems of the scenario
         :param date: The date solution was produced. Default=datetime.today()
-        :param computation_time: The computation time it took for the Solution. Default=None
+        :param computation_time: The computation time measured in seconds for the Solution. Default=None
         :param processor_name: The processor model used for the Solution. Determined automatically if set to 'auto'.
             Default=None.
         """
         self.scenario_id = scenario_id
         self.planning_problem_solutions = planning_problem_solutions
         self.date = date
+        self._computation_time = None
         self.computation_time = computation_time
         self.processor_name = processor_name
 
@@ -504,6 +506,24 @@ class Solution:
         :return: List of trajectory types
         """
         return [pp_solution.trajectory_type for pp_solution in self.planning_problem_solutions]
+
+    @property
+    def computation_time(self) -> Union[None, float]:
+        """
+        Return the computation time [s] for the trajectory.
+        :return:
+        """
+        return self._computation_time
+
+    @computation_time.setter
+    def computation_time(self, computation_time):
+        if computation_time is not None:
+            assert is_real_number(computation_time), "<Solution> computation_time provided as type {}," \
+                                                     "but expected type float," \
+                                                     "measured in seconds!".format(type(computation_time))
+            assert is_positive(computation_time), "<Solution> computation_time needs to be positive!"\
+                .format(type(computation_time))
+        self._computation_time = computation_time
 
 
 class CommonRoadSolutionReader:

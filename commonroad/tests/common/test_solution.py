@@ -799,6 +799,12 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
         assert parsed_solution_single.scenario_id == self.solution_single.scenario_id
         assert parsed_solution_collab.scenario_id == self.solution_collab.scenario_id
 
+    def test_fromstring_computation_time(self):
+        self.solution_single.computation_time = 1.10
+        solution_xml_single = DummyDataGenerator.create_solution_xml(self.solution_single)
+        parsed_solution_single = CommonRoadSolutionReader.fromstring(solution_xml_single)
+        assert parsed_solution_single.computation_time == self.solution_single.computation_time
+
     def test_fromstring_with_attribs(self):
         self.solution_single.processor_name = 'TEST_CPU'
         self.solution_collab.processor_name = 'TEST_CPU'
