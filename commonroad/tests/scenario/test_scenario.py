@@ -106,13 +106,36 @@ class TestScenario(unittest.TestCase):
         self.scenario.remove_obstacle(self.static_obs)
         self.scenario.remove_obstacle(self.dyn_traj_obs)
 
-        self.assertEqual(expected_id_dyn_traj, self.scenario.obstacles[0].obstacle_id)
-        self.assertEqual(expected_id_lanelet1, self.scenario.lanelet_network.lanelets[0].lanelet_id)
-        self.assertEqual(expected_id_lanelet2, self.scenario.lanelet_network.lanelets[1].lanelet_id)
+        self.assertEqual(expected_id_dyn_traj,
+                         self.scenario.obstacles[0].obstacle_id)
+        self.assertEqual(expected_id_lanelet1,
+                         self.scenario.lanelet_network.lanelets[0].lanelet_id)
+        self.assertEqual(expected_id_lanelet2,
+                         self.scenario.lanelet_network.lanelets[1].lanelet_id)
 
         with self.assertRaises(AssertionError):
             self.scenario.remove_obstacle(self.lanelet1)
             self.scenario.remove_obstacle(self.static_obs)
+
+    def test_generate_object_id_empty(self):
+        expected_generated_id = 1
+        self.assertEqual(expected_generated_id,
+                         self.scenario.generate_object_id())
+
+    def test_generate_object_id_unique(self):
+        expected_generated_id = 3
+
+        self.scenario.add_objects(self.static_obs)
+        self.scenario.add_objects(self.dyn_traj_obs)
+
+        self.assertEqual(expected_generated_id,
+                         self.scenario.generate_object_id())
+
+        expected_generated_id = 4
+        self.scenario.remove_obstacle([self.static_obs, self.dyn_traj_obs])
+        # Ids should not be reused even when removing all objects
+        self.assertEqual(expected_generated_id,
+                         self.scenario.generate_object_id())
 
     def test_generate_object_id_positive(self):
         expected_generated_id = 3
@@ -120,7 +143,8 @@ class TestScenario(unittest.TestCase):
         self.scenario.add_objects(self.static_obs)
         self.scenario.add_objects(self.dyn_traj_obs)
 
-        self.assertEqual(expected_generated_id, self.scenario.generate_object_id())
+        self.assertEqual(expected_generated_id,
+                         self.scenario.generate_object_id())
 
     def test_generate_object_id_negative(self):
         self.static_obs = StaticObstacle(-5, ObstacleType("unknown"), obstacle_shape=self.circ,

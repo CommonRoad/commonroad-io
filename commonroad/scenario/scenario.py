@@ -368,15 +368,19 @@ class Scenario:
         elif scenario_id is None and benchmark_id is not None:
             warnings.warn('Use the  the class commonroad.scenario.ScenarioID to define the scenario id.',
                           DeprecationWarning)
-            self.scenario_id = ScenarioID.from_benchmark_id(benchmark_id, SCENARIO_VERSION)
+            self.scenario_id = ScenarioID.from_benchmark_id(benchmark_id,
+                                                            SCENARIO_VERSION)
 
         self.lanelet_network: LaneletNetwork = LaneletNetwork()
 
         self._static_obstacles: Dict[int, StaticObstacle] = defaultdict()
         self._dynamic_obstacles: Dict[int, DynamicObstacle] = defaultdict()
-        self._environment_obstacle: Dict[int, EnvironmentObstacle] = defaultdict()
+        self._environment_obstacle: Dict[
+            int, EnvironmentObstacle] = defaultdict()
 
         self._id_set: Set[int] = set()
+        # Count ids generated but not necessarily added yet
+        self._id_counter = None
 
         # meta data
         self.author = author
@@ -593,7 +597,13 @@ class Scenario:
 
             :return: unique object ID
         """
-        return max(self._id_set) + 1
+        if self._id_counter is None:
+            self._id_counter = 0
+        if len(self._id_set) > 0:
+            max_id_used = max(self._id_set)
+            self._id_counter = max(self._id_counter, max_id_used)
+        self._id_counter += 1
+        return self._id_counter
 
     def occupancies_at_time_step(self, time_step: int, obstacle_role: Union[None, ObstacleRole] = None) \
             -> List[Occupancy]:
@@ -822,6 +832,8 @@ class Scenario:
         :param object_id: object ID to be checked
         :raise ValueError:  if the object ID is already assigned to another object in the scenario.
         """
+        if self._id_counter is None:
+            self._id_counter = object_id
         if self._is_object_id_used(object_id):
             raise ValueError("ID %s is already used." % object_id)
         self._id_set.add(object_id)
