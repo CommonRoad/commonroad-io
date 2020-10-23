@@ -214,7 +214,7 @@
         <x>6.0</x>
         <y>4.0</y>
       </point>
-      <lineMarking>broad_solid</lineMarking>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -229,7 +229,7 @@
         <x>6.0</x>
         <y>2.0</y>
       </point>
-      <lineMarking>broad_dashed</lineMarking>
+      <lineMarking>no_marking</lineMarking>
     </rightBound>
     <predecessor ref="104"/>
     <adjacentRight drivingDir="same" ref="102"/>

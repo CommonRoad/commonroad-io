@@ -668,7 +668,7 @@ class LaneletFactory:
         :param xml_node: XML element
         :return: the type of the line marking of the lanelet boundary (None if not specified).
         """
-        line_marking = None
+        line_marking = LineMarking.UNKNOWN
         if xml_node.find('lineMarking') is not None:
             if LineMarking(xml_node.find('lineMarking').text) is not None:
                 line_marking = LineMarking(xml_node.find('lineMarking').text)

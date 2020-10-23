@@ -256,6 +256,8 @@ __status__ = "released"
       <xs:enumeration value="solid"/>
       <xs:enumeration value="broad_dashed"/>
       <xs:enumeration value="broad_solid"/>
+      <xs:enumeration value="unknown"/>
+      <xs:enumeration value="no_marking"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="bound">

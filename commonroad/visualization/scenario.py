@@ -182,7 +182,7 @@ def create_default_draw_params() -> dict:
     return draw_params
 
 
-def line_marking_to_linestyle(line_marking:LineMarking) -> Tuple:
+def line_marking_to_linestyle(line_marking: LineMarking) -> Tuple:
     """:returns: Tuple[line_style, dashes, line_width] for matplotlib plotting options."""
     return {LineMarking.DASHED: ('--', (10,10), 0.25,),
             LineMarking.SOLID: ('-', (None,None), 0.25),
@@ -663,7 +663,8 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
             if draw_border_vertices:
                 coordinates_left_border_vertices = np.vstack((coordinates_left_border_vertices,lanelet.left_vertices))
 
-            if draw_line_markings and lanelet.line_marking_left_vertices is not None:
+            if draw_line_markings and lanelet.line_marking_left_vertices is not LineMarking.UNKNOWN \
+                    and lanelet.line_marking_left_vertices is not LineMarking.NO_MARKING:
                 linestyle, dashes, linewidth_metres  = line_marking_to_linestyle(lanelet.line_marking_left_vertices)
                 tmp_left = lanelet.left_vertices.copy()
                 tmp_left[0, :] = lanelet.interpolate_position(linewidth_metres/2)[2]
@@ -680,9 +681,11 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
         if draw_border_vertices or draw_right_bound:
 
             if draw_border_vertices:
-                coordinates_right_border_vertices = np.vstack((coordinates_right_border_vertices, lanelet.right_vertices))
+                coordinates_right_border_vertices = np.vstack((coordinates_right_border_vertices,
+                                                               lanelet.right_vertices))
 
-            if draw_line_markings and lanelet.line_marking_right_vertices is not None:
+            if draw_line_markings and lanelet.line_marking_right_vertices is not LineMarking.UNKNOWN \
+                    and lanelet.line_marking_right_vertices is not LineMarking.NO_MARKING:
                 linestyle, dashes, linewidth_metres = line_marking_to_linestyle(lanelet.line_marking_right_vertices)
                 tmp_right = lanelet.right_vertices.copy()
                 tmp_right[0, :] = lanelet.interpolate_position(linewidth_metres/2)[1]
