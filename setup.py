@@ -25,7 +25,7 @@ setup(
     packages=find_packages(exclude=['doc', 'tests', 'tutorials']),
 	install_requires=[
 		'numpy>=1.13',
-		'Shapely>=1.6.4',
+		'shapely>=1.6.4',
 		'matplotlib>=3.0.0',
 		'lxml>=4.2.2',
 		'networkx>=2.2',

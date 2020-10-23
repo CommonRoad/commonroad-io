@@ -2,18 +2,31 @@ image: python
 
 stages:
 - test
+- deploy
 
 before_script:
 - curl -O https://bootstrap.pypa.io/get-pip.py
 - python get-pip.py
 - pip install tox coverage
 
-commonroad_io_python36:
+build_and_test:
   image: python:3.6
   stage: test
   script: 
-    - pip install -r ./requirements.txt
+    - python setup.py install
     - pip install -e .[tests] 
     - coverage run commonroad/tests/run_tests.py
     - coverage report -m || true
+
+push_to_internal_pipy_registry:
+  # push the development version to the internal pipy registry https://gitlab.lrz.de/cps/commonroad-io/-/packages
+  # before manually triggering the job, delete the previous package in case the version number didn't change
+  stage: deploy
+  when: manual
+  only:
+    - develop
+  script:
+    - pip install twine
+    - python setup.py sdist bdist_wheel
+    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --skip-existing --repository-url https://gitlab.lrz.de/api/v4/projects/${CI_PROJECT_ID}/packages/pypi dist/*
     
