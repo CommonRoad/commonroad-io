@@ -14,6 +14,7 @@ from commonroad import SCENARIO_VERSION
 from lxml import etree, objectify
 
 from commonroad.common.util import Interval
+from commonroad.common.lanelet_checker import check_lanelet_network
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import SetBasedPrediction, TrajectoryPrediction
@@ -306,7 +307,10 @@ class CommonRoadFileWriter:
         self._add_all_objects_from_scenario()
         self._add_all_planning_problems_from_planning_problem_set()
         if check_validity:
+            # validate xml format 
             self.check_validity_of_commonroad_file(self._dump())
+            # validate lanelet network of scenario
+            check_lanelet_network(self.scenario.lanelet_network)
 
         tree = etree.ElementTree(self._root_node)
         tree.write(filename, pretty_print=True, xml_declaration=True, encoding="utf-8")

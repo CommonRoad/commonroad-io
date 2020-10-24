@@ -22,6 +22,7 @@ class TestFileWriter(unittest.TestCase):
         self.filename_read_1 = self.cwd_path + "/test_reading_intersection_traffic_sign.xml"
         self.filename_read_2 = self.cwd_path + "/test_reading_all.xml"
         self.filename_2018b = self.cwd_path + "/USA_Lanker-1_1_T-1.xml"
+        self.filename_invalid = self.cwd_path + "/test_writing_invalid.xml"
         if not os.path.isdir(self.out_path):
             os.makedirs(self.out_path)
         else:
@@ -59,6 +60,32 @@ class TestFileWriter(unittest.TestCase):
                                                               check_validity=True)
 
         assert self.validate_with_xsd(self.out_path + "/USA_Lanker-1_1_T-1.xml")
+
+    def test_write_invalid_lanelet_file(self):
+        scenario, planning_problem_set = CommonRoadFileReader(self.filename_invalid).open()
+        filename = self.out_path + "/USA_Lanker-1_1_T-1_invalid.xml"
+        fw = CommonRoadFileWriter(scenario, planning_problem_set, scenario.author, scenario.affiliation,
+                                str(scenario.scenario_id), scenario.tags,
+                                scenario.location)
+
+        self.assertRaises(ValueError,
+            fw.write_to_file,
+            filename=filename,
+            overwrite_existing_file=OverwriteExistingFile.ALWAYS,
+            check_validity=True)
+
+    def test_write_valid_lanelet_file(self):
+        scenario, planning_problem_set = CommonRoadFileReader(self.filename_read_2).open()
+        filename = self.out_path + '/test_reading_all.xml'
+        try:
+            CommonRoadFileWriter(scenario, planning_problem_set, scenario.author, scenario.affiliation,
+                                    str(scenario.scenario_id), scenario.tags,
+                                    scenario.location).write_to_file(filename=filename,
+                                                                    overwrite_existing_file=OverwriteExistingFile.ALWAYS,
+                                                                    check_validity=True)
+        except:
+            self.fail('Error occurred during writing a valid lanelet file')
+
 
     def test_writing_shapes(self):
         rectangle = Rectangle(4.3, 8.9, center=np.array([2.5, -1.8]), orientation=1.7)
