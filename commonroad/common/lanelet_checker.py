@@ -7,47 +7,53 @@ from commonroad.visualization.draw_dispatch_cr import draw_object
 
 
 def draw_lanelet_network_section_for_id_list(lanelet_network, id_list_tagged):
-    draw_params_not_tagged = {'lanelet': {'draw_left_bound': True,
-                                   'draw_right_bound': True,
-                                   'draw_center_bound': False,
-                                   'draw_border_vertices': False,  # does not work? - object has not attribute 'extend'
-                                   'draw_start_and_direction': False,
-                                   'show_label': False,
-                                   'draw_linewidth': 0.5,
-                                   'fill_lanelet': False,
-                                   }}
 
-    draw_params_tagged = {'lanelet': {'draw_left_bound': True,
-                                      'draw_right_bound': True,
-                                      'draw_center_bound': True,
-                                      'draw_border_vertices': False,  # does not work? - object has not attribute 'extend'
-                                      'draw_start_and_direction': True,
-                                      'show_label': True,
-                                      'draw_linewidth': 0.5,
-                                      'fill_lanelet': True,
-                                      }}
+    # set TRUE to get highlighted lanelet map with errors
+    if False:
+        draw_params_not_tagged = {'lanelet': {'draw_left_bound': True,
+                                    'draw_right_bound': True,
+                                    'draw_center_bound': False,
+                                    'draw_border_vertices': False,  # does not work? - object has not attribute 'extend'
+                                    'draw_start_and_direction': False,
+                                    'show_label': False,
+                                    'draw_linewidth': 0.5,
+                                    'fill_lanelet': False,
+                                    }}
 
-    lanelets_to_plot_with_tag = [l for l in lanelet_network.lanelets if l.lanelet_id in id_list_tagged]
-    lanelets_to_plot_without_tag = lanelet_network.lanelets
+        draw_params_tagged = {'lanelet': {'draw_left_bound': True,
+                                        'draw_right_bound': True,
+                                        'draw_center_bound': True,
+                                        'draw_border_vertices': False,  # does not work? - object has not attribute 'extend'
+                                        'draw_start_and_direction': True,
+                                        'show_label': True,
+                                        'draw_linewidth': 0.5,
+                                        'fill_lanelet': True,
+                                        }}
 
-    # determine plot limits
-    x_min = y_min = 999999999999999
-    x_max = y_max = -99999999999999
-    for lnl in lanelets_to_plot_with_tag:
-        for lv_l, lv_r in zip(lnl.left_vertices, lnl.right_vertices):
-            x_min = min([x_min, lv_l[0], lv_r[0]])
-            x_max = max([x_max, lv_l[0], lv_r[0]])
-            y_min = min([y_min, lv_l[1], lv_r[1]])
-            y_max = max([y_max, lv_l[1], lv_r[1]])
-    c = 30
-    limits = [x_min - c, x_max + c, y_min - c, y_max + c]
+        lanelets_to_plot_with_tag = [l for l in lanelet_network.lanelets if l.lanelet_id in id_list_tagged]
+        lanelets_to_plot_without_tag = lanelet_network.lanelets
 
-    plt.figure(figsize=(25, 10))
-    draw_object(lanelets_to_plot_without_tag, draw_params=draw_params_not_tagged, plot_limits=limits)
-    draw_object(lanelets_to_plot_with_tag, draw_params=draw_params_tagged, plot_limits=limits)
-    plt.gca().set_aspect('equal')
-    plt.show()
-    return
+        # determine plot limits
+        x_min = y_min = 999999999999999
+        x_max = y_max = -99999999999999
+        for lnl in lanelets_to_plot_with_tag:
+            for lv_l, lv_r in zip(lnl.left_vertices, lnl.right_vertices):
+                x_min = min([x_min, lv_l[0], lv_r[0]])
+                x_max = max([x_max, lv_l[0], lv_r[0]])
+                y_min = min([y_min, lv_l[1], lv_r[1]])
+                y_max = max([y_max, lv_l[1], lv_r[1]])
+        c = 30
+        limits = [x_min - c, x_max + c, y_min - c, y_max + c]
+
+        plt.figure(figsize=(25, 10))
+        draw_object(lanelets_to_plot_without_tag, draw_params=draw_params_not_tagged, plot_limits=limits)
+        draw_object(lanelets_to_plot_with_tag, draw_params=draw_params_tagged, plot_limits=limits)
+        plt.gca().set_aspect('equal')
+        plt.show()
+
+    # raise error invalid lanelets
+    raise ValueError('Invalid lanelet network: Logic errors')
+
 
 
 def print_and_show_adjacencies_for_id_list(lanelet_network, ids):
