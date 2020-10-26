@@ -31,7 +31,6 @@ setup(
 		'networkx>=2.2',
 		'Pillow>=7.0.0',
         'iso3166>=1.0.1',
-        'prettytable>=1.0.1'
 	],
 	extras_require={
 		'doc':	['sphinx>=1.3.6',

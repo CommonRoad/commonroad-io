@@ -69,20 +69,20 @@ class TestFileWriter(unittest.TestCase):
                                 scenario.location)
 
         self.assertRaises(ValueError,
-            fw.write_to_file,
-            filename=filename,
-            overwrite_existing_file=OverwriteExistingFile.ALWAYS,
-            check_validity=True)
+                          fw.write_to_file,
+                          filename=filename,
+                          overwrite_existing_file=OverwriteExistingFile.ALWAYS,
+                          check_validity=True)
 
     def test_write_valid_lanelet_file(self):
         scenario, planning_problem_set = CommonRoadFileReader(self.filename_read_2).open()
         filename = self.out_path + '/test_reading_all.xml'
         try:
             CommonRoadFileWriter(scenario, planning_problem_set, scenario.author, scenario.affiliation,
-                                    str(scenario.scenario_id), scenario.tags,
-                                    scenario.location).write_to_file(filename=filename,
-                                                                    overwrite_existing_file=OverwriteExistingFile.ALWAYS,
-                                                                    check_validity=True)
+                                 str(scenario.scenario_id), scenario.tags,
+                                 scenario.location).write_to_file(filename=filename,
+                                                                  overwrite_existing_file=OverwriteExistingFile.ALWAYS,
+                                                                  check_validity=True)
         except:
             self.fail('Error occurred during writing a valid lanelet file')
 
