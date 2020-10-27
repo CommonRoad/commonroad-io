@@ -11,7 +11,6 @@ from enum import Enum, unique
 from typing import List, Tuple, Union
 from datetime import datetime
 
-from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.validity import is_real_number, is_positive
 from commonroad.scenario.scenario import ScenarioID
 from commonroad.scenario.trajectory import State, Trajectory
@@ -423,9 +422,9 @@ class Solution:
             VehicleModel = PM
             VehicleType = FORD_ESCORT
             CostFunction = JB1
-            Version = 2018b
+            Version = 2020a
 
-            Benchmark ID = PM1:JB1:TEST:2018b
+            Benchmark ID = PM1:JB1:TEST:2020a
 
         Collaborative Solution Example:
             Scenario ID = TEST
@@ -435,7 +434,7 @@ class Solution:
             2nd VehicleModel = PM
             2nd VehicleType = VW_VANAGON
             2nd CostFunction = SA1
-            Version = 2018b
+            Version = 2020a
 
             Benchmark ID = [PM1,PM3]:[JB1,SA1]:TEST:2020a
 

@@ -683,9 +683,9 @@ class TestCommonRoadSolutionWriter(unittest.TestCase):
         )
         self.scenario_id = ScenarioID.from_benchmark_id('USA_US101-33_2_T-1', "2020a")
 
-        self.solution_single = Solution(scenario_id=self.scenario_id,
+        self.solution_single: Solution = Solution(scenario_id=self.scenario_id,
                                         planning_problem_solutions=[self.pp_solution1])
-        self.solution_collab = Solution(scenario_id=self.scenario_id,
+        self.solution_collab: Solution = Solution(scenario_id=self.scenario_id,
                                         planning_problem_solutions=[self.pp_solution1,
                                                                     self.pp_solution2])
 
@@ -735,6 +735,14 @@ class TestCommonRoadSolutionWriter(unittest.TestCase):
     def test_write_to_file_invalid_output_path(self):
         with self.assertRaises(NotADirectoryError):
             CommonRoadSolutionWriter(self.solution_single).write_to_file(output_path='./tests/')
+
+    def test_write_version(self):
+        self.solution_single.scenario_id.scenario_version = '2018b'
+        path = "solution_test_file_writer_version.xml"
+        CommonRoadSolutionWriter(self.solution_single).write_to_file(filename=path, overwrite=True)
+        parsed_solution_single = CommonRoadSolutionReader.open("./" + path)
+
+        assert parsed_solution_single.scenario_id.scenario_version == self.solution_single.scenario_id.scenario_version
 
 
 class TestCommonRoadSolutionReader(unittest.TestCase):
