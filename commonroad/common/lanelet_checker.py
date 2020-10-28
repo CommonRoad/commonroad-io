@@ -66,7 +66,7 @@ def check_successor_predecessor_relationships(lanelet_network: LaneletNetwork) \
                     errors[la_1.lanelet_id].add(LaneletCheckerErrorCode.ERROR_6)
                     print('ERROR 6 - Lanelet', la_1.lanelet_id, 'successor', suc_id, 'does not match')
 
-        # check if relationship to preceeding lanelets is correct
+        # check if relationship to preceding lanelets is correct
         # preceding lanelet needs to have current lanelet as successor
         pred_id_matches = [x.lanelet_id for x in lanelets if la_1.lanelet_id in x.successor]
         passed_predecessor_validation = True
