@@ -27,7 +27,7 @@ from commonroad.scenario.intersection import Intersection, IntersectionIncomingE
 __author__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles", "CAR@TUM"]
-__version__ = "2020.2"
+__version__ = "2020.3"
 __maintainer__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"

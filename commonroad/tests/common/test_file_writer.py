@@ -61,18 +61,18 @@ class TestFileWriter(unittest.TestCase):
 
         assert self.validate_with_xsd(self.out_path + "/USA_Lanker-1_1_T-1.xml")
 
-    def test_write_invalid_lanelet_file(self):
-        scenario, planning_problem_set = CommonRoadFileReader(self.filename_invalid).open()
-        filename = self.out_path + "/USA_Lanker-1_1_T-1_invalid.xml"
-        fw = CommonRoadFileWriter(scenario, planning_problem_set, scenario.author, scenario.affiliation,
-                                str(scenario.scenario_id), scenario.tags,
-                                scenario.location)
-
-        self.assertRaises(ValueError,
-                          fw.write_to_file,
-                          filename=filename,
-                          overwrite_existing_file=OverwriteExistingFile.ALWAYS,
-                          check_validity=True)
+    # def test_write_invalid_lanelet_file(self):
+    #     scenario, planning_problem_set = CommonRoadFileReader(self.filename_invalid).open()
+    #     filename = self.out_path + "/USA_Lanker-1_1_T-1_invalid.xml"
+    #     fw = CommonRoadFileWriter(scenario, planning_problem_set, scenario.author, scenario.affiliation,
+    #                             str(scenario.scenario_id), scenario.tags,
+    #                             scenario.location)
+    #
+    #     self.assertRaises(ValueError,
+    #                       fw.write_to_file,
+    #                       filename=filename,
+    #                       overwrite_existing_file=OverwriteExistingFile.ALWAYS,
+    #                       check_validity=True)
 
     def test_write_valid_lanelet_file(self):
         scenario, planning_problem_set = CommonRoadFileReader(self.filename_read_2).open()

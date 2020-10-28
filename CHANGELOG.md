@@ -1,19 +1,26 @@
 # Changelog
 
-## [2020.3] - 2020-10-XX
+## [2020.3] - 2020-10-30
 ### Added
 - Support of environment obstacles, e.g. buildings
 - Several new traffic signs
 - New ScenarioID class for the representation of benchmarks
 - New line marking types *unknown* and *no_marking*
+- Checker for the evaluation of predecessor, successor, adjacency and direction relation between lanelets
+- Functions for repairing certain errors in the lanelet network
 
 ## Changed
+- New functionalities for the creation of default traffic light cycles
+- The creation of lanelet assignments is now optional which increases the loading time of scenarios. 
+The matching can still be performed during runtime.
 
 ### Fixed
 - Function *generate_object_id* works now if no element has been added before and reserves ID if element 
 will be added later
 - Various small bug fixes
 
+### Removed 
+- The old commonroad.common.solution_writer.CommonRoadSolutionWriter is removed. It is replace by the new
 
 ## [2020.2] - 2020-04-14
 ## Changed
@@ -45,7 +52,7 @@ from the real world
 
 ### Removed 
 - The old commonroad.common.solution_writer.CommonRoadSolutionWriter is deprecated and replaced by 
-commonroad.common.solution.CommonRoadSolutionWriter
+commonroad.common.solution.CommonRoadSolutionWriter. It will be deleted in a future release.
 
 
 ## [2019.2] - 2019-06-27
