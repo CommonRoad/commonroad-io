@@ -17,10 +17,10 @@ from commonroad.visualization.draw_dispatch_cr import draw_object
 class TestVisualization(unittest.TestCase):
     def setUp(self):
         self.full_path = os.path.dirname(os.path.abspath(__file__))
-        self.filename_urban = os.path.join(self.full_path,  '../common/test_reading_intersection_traffic_sign.xml')
+        self.filename_urban = os.path.join(self.full_path,  '../test_scenarios/test_reading_intersection_traffic_sign.xml')
         self.filename_complex_tl = os.path.join(self.full_path, '../visualization/test_reading_complex_tl.xml')
-        self.filename_lanelet = os.path.join(self.full_path, '../common/test_reading_lanelets.xml')
-        self.filename_test_all = os.path.join(self.full_path, '../common/test_reading_all.xml')
+        self.filename_lanelet = os.path.join(self.full_path, '../test_scenarios/test_reading_lanelets.xml')
+        self.filename_test_all = os.path.join(self.full_path, '../test_scenarios/test_reading_all.xml')
 
     def test_intersection_plot(self):
         "Uses all options for plotting objects related to intersections or traffic sign/lights."
