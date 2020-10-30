@@ -66,11 +66,10 @@ Compared to version 2020.2, the following features were added:
 * New ScenarioID class for the representation of benchmarks
 * New line marking types *unknown* and *no_marking*
 * The creation of lanelet assignments for obstacles is now optional.This decreases the loading time of scenarios. The lanelet assignment can still be performed manually after loading a scenario.
-* Function *generate_object_id* works now if no element has been added before and reserves ID if object
-will be added later
+* Function *generate_object_id* works now if no element has been added before and reserves ID if object will be added later
 * Various small bug fixes
 
-For a detailed overview about our changes for each version see the `Changelog <https://gitlab.lrz.de/tum-cps/commonroad_io/-/blob/master/CHANGELOG.md>`__.
+A detailed overview about the changes in each version is provided in the `Changelog <https://gitlab.lrz.de/tum-cps/commonroad_io/-/blob/master/CHANGELOG.md>`__.
 
 Getting Started
 ===============
