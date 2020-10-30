@@ -20,7 +20,7 @@ import commonroad.visualization.planning
 __author__ = "Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = [""]
-__version__ = "2020.2"
+__version__ = "2020.3"
 __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"

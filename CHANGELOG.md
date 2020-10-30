@@ -1,6 +1,6 @@
 # Changelog
 
-## [2020.3] - 2020-10-XX
+## [2020.3] - 2020-10-30
 ### Added
 - Support of environment obstacles, e.g. buildings
 - Several new traffic signs
@@ -8,9 +8,11 @@
 - New line marking types *unknown* and *no_marking*
 
 ## Changed
+The creation of lanelet assignments for obstacles is now optional. This decreases the loading time of scenarios.
+The lanelet assignment can still be performed manually after loading a scenario.
 
 ### Fixed
-- Function *generate_object_id* works now if no element has been added before and reserves ID if element 
+- Function *generate_object_id* works now if no element has been added before and reserves ID if object 
 will be added later
 - Various small bug fixes
 

@@ -14,7 +14,6 @@ from commonroad import SCENARIO_VERSION
 from lxml import etree, objectify
 
 from commonroad.common.util import Interval
-from commonroad.common.lanelet_checker import check_lanelet_network
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import SetBasedPrediction, TrajectoryPrediction
@@ -29,7 +28,7 @@ from commonroad.scenario.trajectory import Trajectory, State
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2020.2"
+__version__ = "2020.3"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
@@ -309,8 +308,6 @@ class CommonRoadFileWriter:
         if check_validity:
             # validate xml format 
             self.check_validity_of_commonroad_file(self._dump())
-            # validate lanelet network of scenario
-            check_lanelet_network(self.scenario.lanelet_network)
 
         tree = etree.ElementTree(self._root_node)
         tree.write(filename, pretty_print=True, xml_declaration=True, encoding="utf-8")

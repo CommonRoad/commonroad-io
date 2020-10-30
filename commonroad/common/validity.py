@@ -4,7 +4,7 @@ import warnings
 __author__ = "Christian Pek"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW Group CAR@TUM"]
-__version__ = "2020.2"
+__version__ = "2020.3"
 __maintainer__ = "Christian Pek"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"

@@ -61,32 +61,6 @@ class TestFileWriter(unittest.TestCase):
 
         assert self.validate_with_xsd(self.out_path + "/USA_Lanker-1_1_T-1.xml")
 
-    def test_write_invalid_lanelet_file(self):
-        scenario, planning_problem_set = CommonRoadFileReader(self.filename_invalid).open()
-        filename = self.out_path + "/USA_Lanker-1_1_T-1_invalid.xml"
-        fw = CommonRoadFileWriter(scenario, planning_problem_set, scenario.author, scenario.affiliation,
-                                str(scenario.scenario_id), scenario.tags,
-                                scenario.location)
-
-        self.assertRaises(ValueError,
-                          fw.write_to_file,
-                          filename=filename,
-                          overwrite_existing_file=OverwriteExistingFile.ALWAYS,
-                          check_validity=True)
-
-    def test_write_valid_lanelet_file(self):
-        scenario, planning_problem_set = CommonRoadFileReader(self.filename_read_2).open()
-        filename = self.out_path + '/test_reading_all.xml'
-        try:
-            CommonRoadFileWriter(scenario, planning_problem_set, scenario.author, scenario.affiliation,
-                                 str(scenario.scenario_id), scenario.tags,
-                                 scenario.location).write_to_file(filename=filename,
-                                                                  overwrite_existing_file=OverwriteExistingFile.ALWAYS,
-                                                                  check_validity=True)
-        except:
-            self.fail('Error occurred during writing a valid lanelet file')
-
-
     def test_writing_shapes(self):
         rectangle = Rectangle(4.3, 8.9, center=np.array([2.5, -1.8]), orientation=1.7)
         polygon = Polygon(np.array([np.array((0.0, 0.0)), np.array((0.0, 1.0)), np.array((1.0, 1.0)),
@@ -98,7 +72,6 @@ class TestFileWriter(unittest.TestCase):
         occupancy_list.append(Occupancy(1, circ))
         occupancy_list.append(Occupancy(2, polygon))
         occupancy_list.append(Occupancy(3, circ))
-
 
         set_pred = SetBasedPrediction(0,occupancy_list)
 
