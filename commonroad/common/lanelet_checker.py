@@ -1,7 +1,7 @@
 from commonroad.scenario.lanelet import LaneletNetwork
 import enum
 import numpy as np
-from typing import Dict, Set
+from typing import Dict, Set, Tuple
 
 __author__ = "Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -27,43 +27,49 @@ class LaneletCheckerErrorCode(enum.Enum):
     ERROR_9 = 9  # Self-reference successor
 
 
-def check_successor_predecessor_relationships(lanelet_network: LaneletNetwork) \
-        -> Dict[int, Set[LaneletCheckerErrorCode]]:
+def check_successor_predecessor_relationships(lanelet_network: LaneletNetwork,
+                                              errors: Dict[int, Set[Tuple[LaneletCheckerErrorCode, int]]] = None) \
+        -> Dict[int, Set[Tuple[LaneletCheckerErrorCode, int]]]:
     """
-    Evaluates whether all successor and predecessor relationships are correct
+    Evaluates whether all successor and predecessor relationships are correct.
+    Note that the error appearance is not disjoint.
 
     :param lanelet_network: scenario lanelet network to check
+    :param errors: already existing dictionary with lanelet IDs
+    and corresponding error codes with error causing lanelet reference
     :return: dictionary with error codes for each lanelet
     """
-    errors = {}
+    if errors is None:
+        errors = {}
     lanelets = lanelet_network.lanelets
     all_lanelet_ids = [ln.lanelet_id for ln in lanelets]
 
     for la_1 in lanelets:
         errors[la_1.lanelet_id] = set()
-        # check if preceeding/succeeding lanelets exist at all and print output if not
+        # check if preceding lanelets exist at all and print output if not
         for pred_id in la_1.predecessor:
             if pred_id not in all_lanelet_ids:
-                errors[la_1.lanelet_id].add(LaneletCheckerErrorCode.ERROR_1)
-                print('ERROR 1 - Lanelet', la_1.lanelet_id, 'precedessor', pred_id, 'does not exist')
-            else:
+                errors[la_1.lanelet_id].add((LaneletCheckerErrorCode.ERROR_1, pred_id))
+                print('ERROR 1 - Lanelet', la_1.lanelet_id, 'predecessor', pred_id, 'does not exist')
+            else:  # check if vertices match
                 if not (np.array_equal(la_1.left_vertices[0],
                                        lanelet_network.find_lanelet_by_id(pred_id).left_vertices[-1])
                         and np.array_equal(la_1.right_vertices[0],
                                            lanelet_network.find_lanelet_by_id(pred_id).right_vertices[-1])):
-                    errors[la_1.lanelet_id].add(LaneletCheckerErrorCode.ERROR_5)
-                    print('ERROR 5 - Lanelet', la_1.lanelet_id, 'precedessor', pred_id, 'does not match')
+                    errors[la_1.lanelet_id].add((LaneletCheckerErrorCode.ERROR_5, pred_id))
+                    print('ERROR 5 - Lanelet', la_1.lanelet_id, 'predecessor', pred_id, 'does not match')
 
+        # check if succeeding lanelets exist at all and print output if not
         for suc_id in la_1.successor:
             if suc_id not in all_lanelet_ids:
-                errors[la_1.lanelet_id].add(LaneletCheckerErrorCode.ERROR_2)
+                errors[la_1.lanelet_id].add((LaneletCheckerErrorCode.ERROR_2, suc_id))
                 print('ERROR 2 - Lanelet', la_1.lanelet_id, 'successor', suc_id, 'does not exist')
-            else:
+            else:  # check if vertices match
                 if not (np.array_equal(la_1.left_vertices[-1],
                                        lanelet_network.find_lanelet_by_id(suc_id).left_vertices[0])
                         and np.array_equal(la_1.right_vertices[-1],
                                            lanelet_network.find_lanelet_by_id(suc_id).right_vertices[0])):
-                    errors[la_1.lanelet_id].add(LaneletCheckerErrorCode.ERROR_6)
+                    errors[la_1.lanelet_id].add((LaneletCheckerErrorCode.ERROR_6, suc_id))
                     print('ERROR 6 - Lanelet', la_1.lanelet_id, 'successor', suc_id, 'does not match')
 
         # check if relationship to preceding lanelets is correct
@@ -79,48 +85,91 @@ def check_successor_predecessor_relationships(lanelet_network: LaneletNetwork) \
             if not sorted(la_1.predecessor) == sorted(pred_id_matches):
                 # expected predecessors for current lanelet do not match found predecessors
                 passed_predecessor_validation = False
-
         # print output if defects in predecessor-successor relationships were found
         if not passed_predecessor_validation:
-            errors[la_1.lanelet_id].add(LaneletCheckerErrorCode.ERROR_3)
+            errors[la_1.lanelet_id].add((LaneletCheckerErrorCode.ERROR_3,
+                                         tuple(set(pred_id_matches) - set(la_1.predecessor))))
             print('ERROR 3 - Lanelet', la_1.lanelet_id, 'expected predecessors', la_1.predecessor,
                   ', but found', pred_id_matches)
 
         # check if relationship to succeeding lanelets is correct
         # succeeding lanelet needs to have current lanelet as predecessor
-        succ_id_matches = [x.lanelet_id for x in lanelets if la_1.lanelet_id in x.predecessor]
+        suc_id_matches = [x.lanelet_id for x in lanelets if la_1.lanelet_id in x.predecessor]
         passed_successor_validation = True
         if not la_1.successor:
             # no successors expected
-            if succ_id_matches:
+            if suc_id_matches:
                 # found unexpected successors
                 passed_successor_validation = False
         else:
-            if not sorted(la_1.successor) == sorted(succ_id_matches):
+            if not sorted(la_1.successor) == sorted(suc_id_matches):
                 # expected successors do not match found successors
                 passed_successor_validation = False
-
+        # print output if defects in predecessor-successor relationships were found
         if not passed_successor_validation:
-            errors[la_1.lanelet_id].add(LaneletCheckerErrorCode.ERROR_4)
+            errors[la_1.lanelet_id].add((LaneletCheckerErrorCode.ERROR_4,
+                                         tuple(set(pred_id_matches) - set(la_1.predecessor))))
             print('ERROR 4 - Lanelet', la_1.lanelet_id, 'expected successors', la_1.successor,
-                  ', but found', succ_id_matches)
+                  ', but found', suc_id_matches)
 
+        # check all lanelets if their should be a relationship, but it is not modeled
         for la_2 in lanelets:
             if np.array_equal(la_1.left_vertices[-1], la_2.left_vertices[0]) and \
                     np.array_equal(la_1.right_vertices[-1], la_2.right_vertices[0]) \
                     and la_2.lanelet_id not in la_1.successor and la_1.lanelet_id not in la_2.predecessor:
-                errors[la_1.lanelet_id].add(LaneletCheckerErrorCode.ERROR_7)
+                errors[la_1.lanelet_id].add((LaneletCheckerErrorCode.ERROR_7, la_2.lanelet_id))
                 print('ERROR 7 - Lanelet', la_1.lanelet_id, 'and', la_2.lanelet_id, 'successor/predecessor '
                                                                                     'relation missing')
 
         # check for self-references
         if la_1.lanelet_id in la_1.predecessor:
-            errors[la_1.lanelet_id].add(LaneletCheckerErrorCode.ERROR_8)
-            print('ERROR 8 - Lanelet', la_1.lanelet_id, 'predecessor', ' self-reference')
+            errors[la_1.lanelet_id].add((LaneletCheckerErrorCode.ERROR_8, la_1.lanelet_id))
+            print('ERROR 8 - Lanelet', la_1.lanelet_id, 'predecessor', 'self-reference')
         if la_1.lanelet_id in la_1.successor:
-            errors[la_1.lanelet_id].add(LaneletCheckerErrorCode.ERROR_9)
-            print('ERROR 9 - Lanelet', la_1.lanelet_id, 'successor', ' self-reference')
+            errors[la_1.lanelet_id].add((LaneletCheckerErrorCode.ERROR_9, la_1.lanelet_id))
+            print('ERROR 9 - Lanelet', la_1.lanelet_id, 'successor', 'self-reference')
     return errors
+
+
+def exist_successor_predecessor_relationships(error_summary: Dict[int, Set[Tuple[LaneletCheckerErrorCode, int]]]) \
+        -> bool:
+    """
+    Checks whether there are successor and predecessor errors in the error summary
+
+    :param error_summary: dictionary with lanelet IDs
+    and corresponding error codes with error causing lanelet reference
+    :return: bool indicating whether there are successor and predecessor errors
+    """
+    suc_pre_error_codes = {LaneletCheckerErrorCode.ERROR_1.value, LaneletCheckerErrorCode.ERROR_2.value,
+                           LaneletCheckerErrorCode.ERROR_3.value, LaneletCheckerErrorCode.ERROR_4.value,
+                           LaneletCheckerErrorCode.ERROR_5.value, LaneletCheckerErrorCode.ERROR_6.value,
+                           LaneletCheckerErrorCode.ERROR_7.value, LaneletCheckerErrorCode.ERROR_8.value,
+                           LaneletCheckerErrorCode.ERROR_9.value}
+    for error_set in error_summary.values():
+        if any(er.value in suc_pre_error_codes for er in error_set):
+            return True
+    return False
+
+
+def repair_successor_predecessor_relationships(lanelet_network: LaneletNetwork,
+                                               error_summary: Dict[int, Set[Tuple[LaneletCheckerErrorCode, int]]]) \
+        -> LaneletNetwork:
+    """
+    Repairs successor and predecessor relationship errors in lanelet network
+
+    :param lanelet_network: scenario lanelet network to check
+    :param error_summary: dictionary with lanelet IDs
+    and corresponding error codes with error causing lanelet reference
+    :return: repaired lanelet network
+    """
+    while exist_successor_predecessor_relationships(error_summary):
+        for l_id, error_set in error_summary.items():
+            if LaneletCheckerErrorCode.ERROR_1 in error_set:
+                lanelet_network.find_lanelet_by_id(l_id).predecessor.remove(22)
+                break
+        error_summary = check_successor_predecessor_relationships(lanelet_network)
+
+    print(error_summary)
 
 
 def check_adjacency_relationships(lanelet_network: LaneletNetwork) -> bool:
@@ -265,8 +314,8 @@ def check_adjacency_relationships(lanelet_network: LaneletNetwork) -> bool:
         # check for other lanelets that are claiming a relationship to the current lanelet that is not expected
         # do not check lanelet against itself, left neighbor and right neighbor
         for other_lanelet in lanelets:
-            if not other_lanelet.lanelet_id == curr_lnl.lanelet_id and\
-                    not other_lanelet.lanelet_id == curr_lnl.adj_left and\
+            if not other_lanelet.lanelet_id == curr_lnl.lanelet_id and \
+                    not other_lanelet.lanelet_id == curr_lnl.adj_left and \
                     not other_lanelet.lanelet_id == curr_lnl.adj_right:
                 if other_lanelet.adj_left == curr_lnl.lanelet_id:
                     adj_relationships_correct = False
@@ -293,7 +342,7 @@ def check_lanelet_network(lanelet_network: LaneletNetwork) -> None:
     print('===========================================')
     print('\n')
     status_suc_pre = check_successor_predecessor_relationships(lanelet_network)
-    #validity_status_adjacencies = check_adjacencies_relationships(lanelet_network)
+    # validity_status_adjacencies = check_adjacencies_relationships(lanelet_network)
     for key, value in status_suc_pre.items():
         if value != set():
             raise ValueError
@@ -372,7 +421,7 @@ def repair_relationships(lanelet_network: LaneletNetwork) -> LaneletNetwork:
 
     # reconstruct new network
     list_lanelet_repaired = []
-    
+
     for lanelet in lanelet_network_new.lanelets:
         id_lanelet = lanelet.lanelet_id
 
