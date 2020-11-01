@@ -87,8 +87,7 @@ def check_successor_predecessor_relationships(lanelet_network: LaneletNetwork,
                 passed_predecessor_validation = False
         # print output if defects in predecessor-successor relationships were found
         if not passed_predecessor_validation:
-            errors[la_1.lanelet_id].add((LaneletCheckerErrorCode.ERROR_3,
-                                         tuple(set(pred_id_matches) - set(la_1.predecessor))))
+            errors[la_1.lanelet_id].add((LaneletCheckerErrorCode.ERROR_3, tuple(set(pred_id_matches))))
             print('ERROR 3 - Lanelet', la_1.lanelet_id, 'expected predecessors', la_1.predecessor,
                   ', but found', pred_id_matches)
 
@@ -107,8 +106,7 @@ def check_successor_predecessor_relationships(lanelet_network: LaneletNetwork,
                 passed_successor_validation = False
         # print output if defects in predecessor-successor relationships were found
         if not passed_successor_validation:
-            errors[la_1.lanelet_id].add((LaneletCheckerErrorCode.ERROR_4,
-                                         tuple(set(pred_id_matches) - set(la_1.predecessor))))
+            errors[la_1.lanelet_id].add((LaneletCheckerErrorCode.ERROR_4, tuple(set(suc_id_matches))))
             print('ERROR 4 - Lanelet', la_1.lanelet_id, 'expected successors', la_1.successor,
                   ', but found', suc_id_matches)
 
@@ -146,7 +144,7 @@ def exist_successor_predecessor_relationships(error_summary: Dict[int, Set[Tuple
                            LaneletCheckerErrorCode.ERROR_7.value, LaneletCheckerErrorCode.ERROR_8.value,
                            LaneletCheckerErrorCode.ERROR_9.value}
     for error_set in error_summary.values():
-        if any(er.value in suc_pre_error_codes for er in error_set):
+        if any(er[0] in suc_pre_error_codes for er in error_set):
             return True
     return False
 

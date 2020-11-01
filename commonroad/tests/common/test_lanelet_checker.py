@@ -149,8 +149,8 @@ class TestLaneletChecker(unittest.TestCase):
         self.assertEqual(check_successor_predecessor_relationships(self.lanelet_network_1), {1: set(), 6: set()})
         self.assertEqual(check_successor_predecessor_relationships(self.lanelet_network_2),
                          {4: {(LaneletCheckerErrorCode.ERROR_1, 22), (LaneletCheckerErrorCode.ERROR_3, ())}})
-        #self.assertEqual(check_successor_predecessor_relationships(self.lanelet_network_3),
-        #                     {5: {(LaneletCheckerErrorCode.ERROR_2, 23), LaneletCheckerErrorCode.ERROR_4, 23}})
+        self.assertEqual(check_successor_predecessor_relationships(self.lanelet_network_3),
+                         {5: {(LaneletCheckerErrorCode.ERROR_2, 23), (LaneletCheckerErrorCode.ERROR_4, ())}})
         self.assertEqual(check_successor_predecessor_relationships(self.lanelet_network_4),
                          {2: {(LaneletCheckerErrorCode.ERROR_6, 7)},
                           7: {(LaneletCheckerErrorCode.ERROR_5, 2)}})
@@ -158,29 +158,29 @@ class TestLaneletChecker(unittest.TestCase):
                          {3: {(LaneletCheckerErrorCode.ERROR_7, 8)},
                           8: set()})
         self.assertEqual(check_successor_predecessor_relationships(self.lanelet_network_6),
-                         {9: {(LaneletCheckerErrorCode.ERROR_4, ())},
+                         {9: {(LaneletCheckerErrorCode.ERROR_4, (10,))},
                           10: {(LaneletCheckerErrorCode.ERROR_3, ())}})
-        #self.assertEqual(check_successor_predecessor_relationships(self.lanelet_network_7),
-        #                 {11: {(LaneletCheckerErrorCode.ERROR_4, ())},
-        #                  12: {(LaneletCheckerErrorCode.ERROR_3, (11))}})
+        self.assertEqual(check_successor_predecessor_relationships(self.lanelet_network_7),
+                         {11: {(LaneletCheckerErrorCode.ERROR_4, ())},
+                          12: {(LaneletCheckerErrorCode.ERROR_3, (11,))}})
         self.assertEqual(check_successor_predecessor_relationships(self.lanelet_network_8),
-                         {13: {(LaneletCheckerErrorCode.ERROR_5,13 ), (LaneletCheckerErrorCode.ERROR_6, 13),
+                         {13: {(LaneletCheckerErrorCode.ERROR_5, 13), (LaneletCheckerErrorCode.ERROR_6, 13),
                           (LaneletCheckerErrorCode.ERROR_8, 13), (LaneletCheckerErrorCode.ERROR_9, 13)}})
-        # self.assertDictEqual(check_successor_predecessor_relationships(self.lanelet_network_9),
-        #                      {1: set(),
-        #                       2: {LaneletCheckerErrorCode.ERROR_6},
-        #                       3: {LaneletCheckerErrorCode.ERROR_7},
-        #                       4: {(LaneletCheckerErrorCode.ERROR_1, 22), (LaneletCheckerErrorCode.ERROR_3, 22)},
-        #                       5: {(LaneletCheckerErrorCode.ERROR_2, 23), LaneletCheckerErrorCode.ERROR_4, 23},
-        #                       6: set(),
-        #                       7: {LaneletCheckerErrorCode.ERROR_5},
-        #                       8: set(),
-        #                       9: {LaneletCheckerErrorCode.ERROR_4},
-        #                       10: {LaneletCheckerErrorCode.ERROR_3},
-        #                       11: {LaneletCheckerErrorCode.ERROR_4},
-        #                       12: {LaneletCheckerErrorCode.ERROR_3},
-        #                       13: {LaneletCheckerErrorCode.ERROR_5, LaneletCheckerErrorCode.ERROR_6,
-        #                            LaneletCheckerErrorCode.ERROR_8, LaneletCheckerErrorCode.ERROR_9}})
+        self.assertDictEqual(check_successor_predecessor_relationships(self.lanelet_network_9),
+                             {1: set(),
+                              2: {(LaneletCheckerErrorCode.ERROR_6, 7)},
+                              3: {(LaneletCheckerErrorCode.ERROR_7, 8)},
+                              4: {(LaneletCheckerErrorCode.ERROR_1, 22), (LaneletCheckerErrorCode.ERROR_3, ())},
+                              5: {(LaneletCheckerErrorCode.ERROR_2, 23), (LaneletCheckerErrorCode.ERROR_4, ())},
+                              6: set(),
+                              7: {(LaneletCheckerErrorCode.ERROR_5, 2)},
+                              8: set(),
+                              9: {(LaneletCheckerErrorCode.ERROR_4, (10,))},
+                              10: {(LaneletCheckerErrorCode.ERROR_3, ())},
+                              11: {(LaneletCheckerErrorCode.ERROR_4, ())},
+                              12: {(LaneletCheckerErrorCode.ERROR_3, (11,))},
+                              13: {(LaneletCheckerErrorCode.ERROR_5, 13), (LaneletCheckerErrorCode.ERROR_6, 13),
+                                   (LaneletCheckerErrorCode.ERROR_8, 13), (LaneletCheckerErrorCode.ERROR_9, 13)}})
 
  #   def test_check_successor_predecessor_relationships(self):
  #       repair_successor_predecessor_relationships(
