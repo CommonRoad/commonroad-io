@@ -571,7 +571,7 @@ class CommonRoadSolutionReader:
 
         date = root_node.attrib.get('date', None)  # None if not found
         if date is not None:
-            date = datetime.strptime(date, '%Y-%m-%d-%H-%M-%S')
+            date = datetime.strptime(date, '%Y-%m-%d')
 
         computation_time = root_node.attrib.get('computation_time', None)
         if computation_time is not None:

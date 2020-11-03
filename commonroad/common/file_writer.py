@@ -233,7 +233,7 @@ class CommonRoadFileWriter:
             self._root_node.set('benchmarkID', '-1')
             print('Warning: No scenario_id set.')
 
-        self._root_node.set('date', datetime.datetime.today().strftime('%Y-%m-%d-%H-%M-%S'))
+        self._root_node.set('date', datetime.datetime.today().strftime('%Y-%m-%d'))
 
     def _add_all_objects_from_scenario(self):
         if self.location is not None:
