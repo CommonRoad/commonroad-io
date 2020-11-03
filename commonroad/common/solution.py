@@ -571,7 +571,7 @@ class CommonRoadSolutionReader:
 
         date = root_node.attrib.get('date', None)  # None if not found
         if date is not None:
-            date = datetime.strptime(date, '%Y-%m-%d')
+            date = datetime.strptime(date, '%Y-%m-%d-%H-%M-%S')
 
         computation_time = root_node.attrib.get('computation_time', None)
         if computation_time is not None:
@@ -722,7 +722,7 @@ class CommonRoadSolutionWriter:
         """ Creates the root node of the Solution XML. """
         root_node = et.Element('CommonRoadSolution')
         root_node.set('benchmark_id', solution.benchmark_id)
-        if solution.date is not None: root_node.set('date', solution.date.strftime('%Y-%m-%d'))
+        if solution.date is not None: root_node.set('date', solution.date.strftime('%Y-%m-%d-%H-%M-%S'))
         if solution.computation_time is not None: root_node.set('computation_time', str(solution.computation_time))
         processor_name = cls._get_processor_name() if solution.processor_name == 'auto' else solution.processor_name
         if processor_name is not None: root_node.set('processor_name', processor_name)
