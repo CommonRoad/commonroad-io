@@ -846,3 +846,6 @@ class Scenario:
         traffic_str += "- Lanelets:\n"
         traffic_str += str(self._lanelet_network)
         return traffic_str
+
+    def draw(self, renderer, draw_params, call_stack):
+        renderer.draw_scenario(self, draw_params, call_stack)

@@ -339,6 +339,9 @@ class StaticObstacle(Obstacle):
         obs_str += '\ninitial state: {}'.format(self.initial_state)
         return obs_str
 
+    def draw(self, renderer, draw_params, call_stack):
+        renderer.draw_static_obstacle(self, draw_params, call_stack)
+
 
 class DynamicObstacle(Obstacle):
     """ Class representing dynamic obstacles as defined in CommonRoad. Each dynamic obstacle has stored its predicted
@@ -428,13 +431,17 @@ class DynamicObstacle(Obstacle):
         if self._prediction is not None:
             self.prediction.translate_rotate(translation, angle)
 
-        self.initial_state = self._initial_state.translate_rotate(translation, angle)
+        self.initial_state = self._initial_state.translate_rotate(translation,
+                                                                  angle)
 
     def __str__(self):
         obs_str = 'Dynamic Obstacle:\n'
         obs_str += '\nid: {}'.format(self.obstacle_id)
         obs_str += '\ninitial state: {}'.format(self.initial_state)
         return obs_str
+
+    def draw(self, renderer, draw_params, call_stack):
+        renderer.draw_dynamic_obstacle(self, draw_params, call_stack)
 
 
 class EnvironmentObstacle():

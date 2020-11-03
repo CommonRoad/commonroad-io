@@ -237,6 +237,9 @@ class State:
             traffic_str += '= {}\n'.format(self.__getattribute__(attr))
         return traffic_str
 
+    def draw(self, renderer, draw_params, call_stack):
+        renderer.draw_state(self, draw_params, call_stack)
+
 
 class Trajectory:
     """ Class to model the movement of an object over time. The states of the trajectory can be either exact or
@@ -356,12 +359,15 @@ class Trajectory:
 
         for i in range(len(self._state_list)):
             self._state_list[i] = self._state_list[i].translate_rotate(
-                translation, angle
-            )
+                    translation, angle)
 
     def __str__(self):
         traffic_str = '\n'
         traffic_str += 'Initial time step: {} \n'.format(self.initial_time_step)
         traffic_str += 'Number of states: {}\n'.format(len(self.state_list))
-        traffic_str += 'State elements: {}'.format(self.state_list[0].attributes)
+        traffic_str += 'State elements: {}'.format(
+            self.state_list[0].attributes)
         return traffic_str
+
+    def draw(self, renderer, draw_params, call_stack):
+        renderer.draw_trajectory(self, draw_params, call_stack)

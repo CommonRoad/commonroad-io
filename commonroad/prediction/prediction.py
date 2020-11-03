@@ -53,14 +53,23 @@ class Occupancy:
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ Translates and rotates the occupied area.
 
-        :param translation: translation vector [x_off, y_off] in x- and y-direction
+        :param translation: translation vector [x_off, y_off] in x- and
+        y-direction
         :param angle: rotation angle in radian (counter-clockwise)
         """
-        assert is_real_number_vector(translation, 2), '<Occupancy/translate_rotate>: argument "translation" is ' \
-                                                      'not a vector of real numbers of length 2.'
-        assert is_valid_orientation(angle), '<Occupancy/translate_rotate>: argument "orientation" is not valid.'
+        assert is_real_number_vector(translation,
+                                     2), '<Occupancy/translate_rotate>: ' \
+                                         'argument "translation" is ' \
+                                         'not a vector of real numbers of ' \
+                                         'length 2.'
+        assert is_valid_orientation(
+            angle), '<Occupancy/translate_rotate>: argument "orientation" is ' \
+                    'not valid.'
 
         self._shape = self._shape.translate_rotate(translation, angle)
+
+    def draw(self, renderer, draw_params, call_stack):
+        renderer.draw_occupancy(self, draw_params, call_stack)
 
 
 class Prediction:

@@ -201,6 +201,9 @@ class Rectangle(Shape):
         output += '\t orientation: {} \n'.format(self._orientation)
         return output
 
+    def draw(self, renderer, draw_params, call_stack):
+        renderer.draw_rectangle(self, draw_params, call_stack)
+
 
 class Circle(Shape):
     """ The class Circle can be used to model occupied regions or circular obstacles, e.g., a pedestrian.
@@ -281,16 +284,23 @@ class Circle(Shape):
             :param point: 2D point [x, y]
             :return: true if the circles’s interior or boundary intersects with the given point, otherwise false
         """
-        assert is_real_number_vector(point, 2), '<Circle/contains_point>: argument "point" is ' \
-                                                'not a vector of real numbers of length 2. point = {}'\
-                                                .format(point)
-        return np.greater_equal(self._radius, np.linalg.norm(point - self._center))
+        assert is_real_number_vector(point,
+                                     2), '<Circle/contains_point>: argument ' \
+                                         '"point" is ' \
+                                         'not a vector of real numbers of ' \
+                                         'length 2. point = {}'.format(
+            point)
+        return np.greater_equal(self._radius,
+                                np.linalg.norm(point - self._center))
 
     def __str__(self):
         output = "Circle: \n"
         output += '\t radius: {} \n'.format(self._radius)
         output += '\t center: {} \n'.format(self._center)
         return output
+
+    def draw(self, renderer, draw_params, call_stack):
+        renderer.draw_circle(self, draw_params, call_stack)
 
 
 class Polygon(Shape):
@@ -366,11 +376,15 @@ class Polygon(Shape):
         """ Checks if a point is contained in the polygon.
 
             :param point: 2D point
-            :return: true if the polygons’s interior or boundary intersects with the given point, otherwise false
+            :return: true if the polygons’s interior or boundary intersects
+            with the given point, otherwise false
         """
-        assert is_real_number_vector(point, 2), '<Polygon/contains_point>: argument "point" is ' \
-                                                'not a vector of real numbers of length 2. point = {}'\
-                                                .format(point)
+        assert is_real_number_vector(point,
+                                     2), '<Polygon/contains_point>: argument ' \
+                                         '"point" is ' \
+                                         'not a vector of real numbers of ' \
+                                         'length 2. point = {}'.format(
+            point)
         return self._shapely_polygon.intersects(shapely.geometry.Point(point))
 
     def __str__(self):
@@ -378,6 +392,9 @@ class Polygon(Shape):
         output += '\t vertices: {} \n'.format(self._vertices.tolist())
         output += '\t center: {} \n'.format(self.center)
         return output
+
+    def draw(self, renderer, draw_params, call_stack):
+        renderer.draw_polygon(self, draw_params, call_stack)
 
 
 class ShapeGroup(Shape):
@@ -445,9 +462,12 @@ class ShapeGroup(Shape):
             :param point: 2D point [x, y]
             :return: true if the interior or boundary of any shape intersects with the given point, otherwise false
         """
-        assert is_real_number_vector(point, 2), '<ShapeGroup/contains_point>: argument "point" is ' \
-                                                'not a vector of real numbers of length 2. point = {}'\
-                                                .format(point)
+        assert is_real_number_vector(point, 2), '<ShapeGroup/contains_point>: ' \
+                                                'argument "point" is ' \
+                                                'not a vector of real numbers' \
+                                                ' of length 2. point = {' \
+                                                '}'.format(
+            point)
         for s in self._shapes:
             if s.contains_point(point):
                 return True
@@ -457,3 +477,7 @@ class ShapeGroup(Shape):
         output = 'ShapeGroup: \n'
         output += '\t number of shapes: {} \n'.format(len(self._shapes))
         return output
+
+    def draw(self, renderer, draw_params, call_stack):
+        for s in self._shapes:
+            s.draw(renderer, draw_params, call_stack)
