@@ -18,6 +18,8 @@ def create_default_draw_params() -> dict:
             'zorder':    20}
 
     draw_params = {
+            'time_begin':       0,
+            'time_end':         5,
             'dynamic_obstacle': {
                     'draw_shape':        True,
                     'draw_icon':         False,
@@ -154,15 +156,28 @@ class ParamServer:
 
     @staticmethod
     def _resolve_key(map, key):
-        val = None
-        for k in key:
-            val = map[k]
-            if val is None:
+        d = map
+        l_key = list(key)
+        # Try to find most special version of element
+        while len(l_key) > 0:
+            k = l_key.pop(0)
+            if k in d.keys():
+                d = d[k]
+            else:
+                d = None
                 break
-        if val is None and len(key) > 0:
+        if d is None and len(l_key) > 0:
+            # If not found, remove first level and try again
             return ParamServer._resolve_key(map, key[1:])
         else:
-            return val
+            return d
+
+    def by_callstack(self, call_stack, value):
+        if isinstance(value, tuple):
+            path = call_stack + value
+        else:
+            path = call_stack + (value,)
+        return self.__getitem__(path)
 
     def __getitem__(self, item):
         if not isinstance(item, tuple):

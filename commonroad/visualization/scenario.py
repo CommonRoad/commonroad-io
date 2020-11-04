@@ -49,6 +49,7 @@ __status__ = "Released"
 
 traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
 
+
 def line_marking_to_linestyle(line_marking: LineMarking) -> Tuple:
     """:returns: Tuple[line_style, dashes, line_width] for matplotlib
     plotting options."""
@@ -88,15 +89,15 @@ class MPRenderer:
         # plt.gcf().savefig('/tmp/tmp_fig.pdf')
         for col in self.collections:
             self.ax.add_collection(
-                col)  # plt.gcf().canvas.draw()  # plt.gcf(
-            # ).canvas.flush_events()  # self.ax.autoscale()  # plt.gcf(
+                    col)  # plt.gcf().canvas.draw()  # plt.gcf(  #  #
+            # ).canvas.flush_events()  # self.ax.autoscale()  # plt.gcf(  #
             # ).savefig('/tmp/tmp_fig.pdf')
         self.patches.sort(key=lambda x: x.zorder)
         self.ax.add_collection(
             mpl.collections.PatchCollection(self.patches, match_original=True,
                                             zorder=20))
 
-    def draw_scenario(self, obj: Scenario, draw_params: dict,
+    def draw_scenario(self, obj: Scenario, draw_params: ParamServer,
                       call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
@@ -117,9 +118,7 @@ class MPRenderer:
 
         # draw only obstacles inside plot limits
         if self.plot_limits is not None:
-            time_begin = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, tuple(), ('time_begin',))
+            time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
             # dynamic obstacles
             dyn_obs = obj.obstacles_by_position_intervals(
                     [Interval(self.plot_limits[0], self.plot_limits[1]),
@@ -140,7 +139,8 @@ class MPRenderer:
         for o in static_obs:
             o.draw(self, draw_params, call_stack)
 
-    def draw_static_obstacle(self, obj: StaticObstacle, draw_params: dict,
+    def draw_static_obstacle(self, obj: StaticObstacle,
+                             draw_params: ParamServer,
                              call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
@@ -161,7 +161,8 @@ class MPRenderer:
         obj.occupancy_at_time(time_begin).shape.draw(self, draw_params,
                                                      call_stack)
 
-    def draw_dynamic_obstacle(self, obj: DynamicObstacle, draw_params: dict,
+    def draw_dynamic_obstacle(self, obj: DynamicObstacle,
+                              draw_params: ParamServer,
                               call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
@@ -176,66 +177,38 @@ class MPRenderer:
         """
 
         try:
-            time_begin = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, ('time_begin',))
-            time_end = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, ('time_end',))
-            draw_icon = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, ('dynamic_obstacle', 'draw_icon'))
-            show_label = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, ('dynamic_obstacle', 'show_label'))
-            draw_shape = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, ('dynamic_obstacle', 'draw_shape'))
-            draw_initial_state = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack,
-                    ('dynamic_obstacle', 'initial_state', 'draw_initial_state'))
-            scale_factor = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack,
-                    ('dynamic_obstacle', 'initial_state', 'scale_factor'))
-            kwargs_init_state = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack,
-                    ('dynamic_obstacle', 'initial_state', 'kwargs'))
-            draw_occupancies = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack,
-                    ('dynamic_obstacle', 'occupancy', 'draw_occupancies'))
-            draw_signals = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack,
-                    ('dynamic_obstacle', 'draw_signals'))
-            zorder = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack, ('dynamic_obstacle', 'zorder'))
-            signal_radius = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack,
-                    ('dynamic_obstacle', 'signal_radius'))
-            indicator_color = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack,
-                    ('dynamic_obstacle', 'indicator_color'))
-            braking_color = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack,
-                    ('dynamic_obstacle', 'braking_color'))
-            horn_color = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, ('dynamic_obstacle', 'horn_color'))
-            blue_lights_color = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack,
-                    ('dynamic_obstacle', 'blue_lights_color'))
-            draw_trajectory = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack,
-                    ('dynamic_obstacle', 'trajectory', 'draw_trajectory'))
+            time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
+            time_end = draw_params.by_callstack(call_stack, ('time_end',))
+            draw_icon = draw_params.by_callstack(call_stack, (
+                    'dynamic_obstacle', 'draw_icon'))
+            show_label = draw_params.by_callstack(call_stack, (
+                    'dynamic_obstacle', 'show_label'))
+            draw_shape = draw_params.by_callstack(call_stack, (
+                    'dynamic_obstacle', 'draw_shape'))
+            draw_initial_state = draw_params.by_callstack(call_stack, (
+                    'dynamic_obstacle', 'initial_state', 'draw_initial_state'))
+            scale_factor = draw_params.by_callstack(call_stack, (
+                    'dynamic_obstacle', 'initial_state', 'scale_factor'))
+            kwargs_init_state = draw_params.by_callstack(call_stack, (
+                    'dynamic_obstacle', 'initial_state', 'kwargs'))
+            draw_occupancies = draw_params.by_callstack(call_stack, (
+                    'dynamic_obstacle', 'occupancy', 'draw_occupancies'))
+            draw_signals = draw_params.by_callstack(call_stack, (
+                    'dynamic_obstacle', 'draw_signals'))
+            zorder = draw_params.by_callstack(call_stack,
+                                              ('dynamic_obstacle', 'zorder'))
+            signal_radius = draw_params.by_callstack(call_stack, (
+                    'dynamic_obstacle', 'signal_radius'))
+            indicator_color = draw_params.by_callstack(call_stack, (
+                    'dynamic_obstacle', 'indicator_color'))
+            braking_color = draw_params.by_callstack(call_stack, (
+                    'dynamic_obstacle', 'braking_color'))
+            horn_color = draw_params.by_callstack(call_stack, (
+                    'dynamic_obstacle', 'horn_color'))
+            blue_lights_color = draw_params.by_callstack(call_stack, (
+                    'dynamic_obstacle', 'blue_lights_color'))
+            draw_trajectory = draw_params.by_callstack(call_stack, (
+                    'dynamic_obstacle', 'trajectory', 'draw_trajectory'))
         except KeyError:
             warnings.warn("Cannot find stylesheet for dynamic_obstacle. Called "
                           "through:")
@@ -280,7 +253,27 @@ class MPRenderer:
             # draw signal states  # if draw_signals and occ is not None:  #
             # sig = o.signal_state_at_time_step(time_begin)  #     if sig is
             # not None:  #         if isinstance(occ.shape, Rectangle):  #  #
-            # if hasattr(sig,  #  # 'hazard_warning_lights') and \  #  #  #  # sig.hazard_warning_lights is True:  #  # indicators.extend([  #  # occ.shape.vertices[0],  #  # occ.shape.vertices[1],  #  # occ.shape.vertices[2],  #  # occ.shape.vertices[3]])  #  #  #  else:  #  # if hasattr(sig,  #  #  'indicator_left')  # and \  #  #  sig.indicator_left is True:  #  # indicators.extend([  #  #  #  occ.shape.vertices[1],  #  # occ.shape.vertices[2]])  #  #  if  #  hasattr(sig,  #  #  'indicator_right') and \  #  #  #  #  #  #  sig.indicator_right is True:  #  #  #  indicators.extend([  #  #  occ.shape.vertices[0],  #  #  #  occ.shape.vertices[3]])  #  #  #  if  #  hasattr(sig,  #  #  #  'braking_lights') and \  #  #  #  #  sig.braking_lights is True:  #  #  #  braking.extend([  #  #  #  occ.shape.vertices[  #  #  0],  #  #  #  occ.shape.vertices[  #  1]])  #  #                            if  #  hasattr(sig,  #  #  #  'flashing_blue_lights') and \  #  #  #  #  #  #  sig.flashing_blue_lights is True:  #  #  #  bluelights.append(  #  occ.shape.center)  #             if hasattr(  #  sig, 'horn')  #  and sig.horn is True:  #  #  #  horns.append(occ.shape.center)  #         else:  #  #  #  warnings.warn(  #  #         'Plotting  #         signal  #  #  states only implemented for '  #  #  #  #  #         'obstacle_shapes Rectangle.')
+            # if hasattr(sig,  #  # 'hazard_warning_lights') and \  #  #  #
+            # sig.hazard_warning_lights is True:  #  # indicators.extend([  #
+            # occ.shape.vertices[0],  #  # occ.shape.vertices[1],
+            #  # occ.shape.vertices[2],  #  # occ.shape.vertices[3]])  #  #
+            #  else:  #  # if hasattr(sig,  #  #  'indicator_left')  # and \
+            #  #  sig.indicator_left is True:  #  # indicators.extend([  #  #
+            #  occ.shape.vertices[1],  #  # occ.shape.vertices[2]])  #  #  if
+            #  hasattr(sig,  #  #  'indicator_right') and \  #  #  #  #  #  #
+            #  sig.indicator_right is True:  #  #  #  indicators.extend([  #
+            #  occ.shape.vertices[0],  #  #  #  occ.shape.vertices[3]])  #  #
+            #  if  #  hasattr(sig,  #  #  #  'braking_lights') and \  #  #  #
+            #  sig.braking_lights is True:  #  #  #  braking.extend([  #  #
+            #  occ.shape.vertices[  #  #  0],  #  #  #  occ.shape.vertices[
+            #  1]])  #  #                            if  #  hasattr(sig,
+            #  #  #  'flashing_blue_lights') and \  #  #  #  #  #  #  #
+            #  sig.flashing_blue_lights is True:  #  #  #  bluelights.append(
+            #  occ.shape.center)  #             if hasattr(  #  sig, 'horn')
+            #  and sig.horn is True:  #  #  #  horns.append(occ.shape.center)
+            #         else:  #  #  #  warnings.warn(  #  #         'Plotting
+            #         signal  #  #  states only implemented for '  #  #  #  #
+            #         'obstacle_shapes Rectangle.')
 
         # draw car icon
         # if draw_icon and type(
@@ -332,8 +325,8 @@ class MPRenderer:
         # np.vstack(bluelights)
 
         # draw signals  # if indicators.size > 0:  #     diameters =  #  #  #
-        # signal_radius * np.ones(indicators.shape[0]) * 2  #  #  #  #  #
-        # handles.setdefault(DynamicObstacle, []).append(  #  #  #  #  #
+        # signal_radius * np.ones(indicators.shape[0]) * 2  #  #  #  #  #  #
+        # handles.setdefault(DynamicObstacle, []).append(  #  #  #  #  #  #
         # collections.EllipseCollection(diameters, diameters,
         #  # angles=np.zeros_like(  #  # diameters),
         #  # offsets=indicators,  #  # transOffset=ax.transData,
@@ -354,19 +347,14 @@ class MPRenderer:
         # diameters, diameters,  #  # angles=np.zeros_like(  #  # diameters),
         # offsets=horns,  #  # transOffset=ax.transData,  #  # units='xy',
         #  # facecolor=horn_color,  #  # edgecolor=braking_color,
-        #  # zorder=zorder + 0.1,  #  # linewidth=0))  #  #  #  #
-        #  ax.add_collection(handles[DynamicObstacle][  # -1])  # if  #  #  #
+        #  # zorder=zorder + 0.1,  #  # linewidth=0))  #  #  #  #  #  #  ax.add_collection(handles[DynamicObstacle][  # -1])  # if  #  #  #
         #  bluelights.size > 0:  #     diameters = signal_radius *  #  #  #
         #  np.ones(bluelights.shape[0]) * 2  #     handles.setdefault(  #  #
         #  DynamicObstacle, []).append(  #  # collections.EllipseCollection(
         #  diameters, diameters,  #  # angles=np.zeros_like(  #  #  #  #  #
-        #  diameters),  #  # offsets=bluelights,  #  #  #  #  #
-        #  transOffset=ax.transData,  #  # units='xy',
-        #  # facecolor=blue_lights_color,  #  # edgecolor=braking_color,
-        #  # zorder=zorder + 0.1,  #  # linewidth=0))  #  #  #  #
-        #  ax.add_collection(handles[DynamicObstacle][-1])
+        #  diameters),  #  # offsets=bluelights,  #  #  #  #  #  #  #  transOffset=ax.transData,  #  # units='xy',  #  # facecolor=blue_lights_color,  #  # edgecolor=braking_color,  #  # zorder=zorder + 0.1,  #  # linewidth=0))  #  #  #  #  #  #  ax.add_collection(handles[DynamicObstacle][-1])
 
-    def draw_trajectory(self, obj: Trajectory, draw_params: dict,
+    def draw_trajectory(self, obj: Trajectory, draw_params: ParamServer,
                         call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
@@ -381,26 +369,18 @@ class MPRenderer:
         """
 
         try:
-            line_color = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, ('trajectory', 'facecolor'))
-            unique_colors = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack, ('trajectory', 'unique_colors'))
-            line_width = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, ('trajectory', 'line_width'))
-            draw_continuous = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack, ('trajectory', 'draw_continuous'))
-            z_order = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack, ('trajectory', 'z_order'))
-            time_begin = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, ('time_begin',))
-            time_end = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, tuple(['time_end']))
+            line_color = draw_params.by_callstack(call_stack,
+                                                  ('trajectory', 'facecolor'))
+            unique_colors = draw_params.by_callstack(call_stack, (
+                    'trajectory', 'unique_colors'))
+            line_width = draw_params.by_callstack(call_stack,
+                                                  ('trajectory', 'line_width'))
+            draw_continuous = draw_params.by_callstack(call_stack, (
+                    'trajectory', 'draw_continuous'))
+            z_order = draw_params.by_callstack(call_stack,
+                                               ('trajectory', 'z_order'))
+            time_begin = draw_params.by_callstack(call_stack, 'time_begin')
+            time_end = draw_params.by_callstack(call_stack, 'time_end')
         except KeyError:
             print("Cannot find stylesheet for trajectory. Called through:")
             print(call_stack)
@@ -428,7 +408,7 @@ class MPRenderer:
                 mpl.patches.PathPatch(path, color=line_color, lw=line_width,
                                       zorder=z_order, fill=False))
 
-    def draw_occupancy(self, obj: Occupancy, draw_params: dict,
+    def draw_occupancy(self, obj: Occupancy, draw_params: ParamServer,
                        call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
@@ -444,7 +424,7 @@ class MPRenderer:
         call_stack = tuple(list(call_stack) + ['occupancy'])
         obj.shape.draw(self, draw_params, call_stack)
 
-    def draw_polygon(self, obj: Polygon, draw_params: dict,
+    def draw_polygon(self, obj: Polygon, draw_params: ParamServer,
                      call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
@@ -460,22 +440,12 @@ class MPRenderer:
 
         call_stack = tuple(list(call_stack) + ['shape', 'polygon'])
         try:
-            facecolor = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, tuple(['facecolor']))
-            edgecolor = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, tuple(['edgecolor']))
-            zorder = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack, tuple(['zorder']))
-            opacity = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack, tuple(['opacity']))
-            linewidth = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, tuple(['linewidth']))
-            antialiased = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, tuple(), tuple(['antialiased']))
+            facecolor = draw_params.by_callstack(call_stack, 'facecolor')
+            edgecolor = draw_params.by_callstack(call_stack, 'edgecolor')
+            zorder = draw_params.by_callstack(call_stack, 'zorder')
+            opacity = draw_params.by_callstack(call_stack, 'opacity')
+            linewidth = draw_params.by_callstack(call_stack, 'linewidth')
+            antialiased = draw_params.by_callstack(call_stack, 'antialiased')
         except KeyError:
             print("Cannot find stylesheet for polygon. Called through:")
             print(call_stack)
@@ -487,7 +457,7 @@ class MPRenderer:
                                                 linewidth=linewidth,
                                                 antialiased=antialiased))
 
-    def draw_rectangle(self, obj: Rectangle, draw_params: dict,
+    def draw_rectangle(self, obj: Rectangle, draw_params: ParamServer,
                        call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
@@ -503,21 +473,12 @@ class MPRenderer:
 
         call_stack = tuple(list(call_stack) + ['shape', 'rectangle'])
         try:
-            facecolor = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, tuple(['facecolor']))
-            edgecolor = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, tuple(['edgecolor']))
-            zorder = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack, tuple(['zorder']))
-            opacity = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack, tuple(['opacity']))
-            linewidth = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack, tuple(['linewidth']))
-            antialiased = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, tuple(), tuple(['antialiased']))
+            facecolor = draw_params.by_callstack(call_stack, 'facecolor')
+            edgecolor = draw_params.by_callstack(call_stack, 'edgecolor')
+            zorder = draw_params.by_callstack(call_stack, 'zorder')
+            opacity = draw_params.by_callstack(call_stack, 'opacity')
+            linewidth = draw_params.by_callstack(call_stack, 'linewidth')
+            antialiased = draw_params.by_callstack(call_stack, 'antialiased')
         except KeyError:
             print("Cannot find stylesheet for rectangle. Called through:")
             print(call_stack)
@@ -537,7 +498,7 @@ class MPRenderer:
         #                                         antialiased=antialiased,
         #                                         linewidth=linewidth))
 
-    def draw_circle(self, obj: Circle, draw_params: dict,
+    def draw_circle(self, obj: Circle, draw_params: ParamServer,
                     call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
@@ -552,30 +513,18 @@ class MPRenderer:
         """
 
         call_stack = tuple(list(call_stack) + ['shape', 'circle'])
-        try:
-            facecolor = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, tuple(['facecolor']))
-            edgecolor = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, tuple(['edgecolor']))
-            zorder = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack, tuple(['zorder']))
-            opacity = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack, tuple(['opacity']))
-            linewidth = commonroad.visualization.draw_dispatch_cr\
-                ._retrieve_value(
-                    draw_params, call_stack, tuple(['linewidth']))
-        except KeyError:
-            print("Cannot find stylesheet for circle. Called through:")
-            print(call_stack)
+        facecolor = draw_params.by_callstack(call_stack, 'facecolor')
+        edgecolor = draw_params.by_callstack(call_stack, 'edgecolor')
+        zorder = draw_params.by_callstack(call_stack, 'zorder')
+        opacity = draw_params.by_callstack(call_stack, 'opacity')
+        linewidth = draw_params.by_callstack(call_stack, 'linewidth')
 
         self.patches.append(
                 mpl.patches.Circle(obj.center, obj.radius, facecolor=facecolor,
                                    edgecolor=edgecolor, zorder=zorder,
                                    linewidth=linewidth, alpha=opacity))
 
-    def draw_state(self, state: State, draw_params: dict,
+    def draw_state(self, state: State, draw_params: ParamServer,
                    call_stack: Tuple[str, ...] = None, scale_factor=None,
                    arrow_args=None) -> None:
         """
@@ -591,14 +540,11 @@ class MPRenderer:
         """
         try:
             if scale_factor is None:
-                scale_factor = \
-                    commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                        draw_params, call_stack,
-                        ('initial_state', 'scale_factor'))
+                scale_factor = draw_params.by_callstack(call_stack, (
+                        'initial_state', 'scale_factor'))
             if arrow_args is None:
-                arrow_args = \
-                    commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                        draw_params, call_stack, ('initial_state', 'kwargs'))
+                arrow_args = draw_params.by_callstack(call_stack, (
+                        'initial_state', 'kwargs'))
         except KeyError:
             print("Cannot find stylesheet for initial_state. Called through:")
             print(call_stack)
@@ -615,7 +561,8 @@ class MPRenderer:
                                                  scale_factor,
                                               zorder=100, **arrow_args))
 
-    def draw_lanelet_network(self, obj: LaneletNetwork, draw_params: dict,
+    def draw_lanelet_network(self, obj: LaneletNetwork,
+                             draw_params: ParamServer,
                              call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
@@ -635,131 +582,90 @@ class MPRenderer:
         intersections = obj.intersections
         lanelets = obj.lanelets
 
-        time_begin = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                draw_params, call_stack, ('time_begin',))
+        time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
         if traffic_lights is not None:
-            draw_traffic_lights = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack,
-                    ('lanelet_network', 'traffic_light', 'draw_traffic_lights'))
+            draw_traffic_lights = draw_params.by_callstack(call_stack, (
+                    'lanelet_network', 'traffic_light', 'draw_traffic_lights'))
 
-            traffic_light_colors = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack,
-                    ('lanelet_network', 'traffic_light'))
+            traffic_light_colors = draw_params.by_callstack(call_stack, (
+                    'lanelet_network', 'traffic_light'))
         else:
             draw_traffic_lights = False
 
         if traffic_signs is not None:
-            draw_traffic_signs = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack,
-                    ('lanelet_network', 'traffic_sign', 'draw_traffic_signs'))
-            show_traffic_sign_label = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack,
-                    ('lanelet_network', 'traffic_sign', 'show_label'))
+            draw_traffic_signs = draw_params.by_callstack(call_stack, (
+                    'lanelet_network', 'traffic_sign', 'draw_traffic_signs'))
+            show_traffic_sign_label = draw_params.by_callstack(call_stack, (
+                    'lanelet_network', 'traffic_sign', 'show_label'))
         else:
             draw_traffic_signs = show_traffic_sign_label = False
 
         if intersections is not None and len(intersections) > 0:
-            draw_intersections = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack,
-                    ('lanelet_network', 'intersection', 'draw_intersections'))
+            draw_intersections = draw_params.by_callstack(call_stack, (
+                    'lanelet_network', 'intersection', 'draw_intersections'))
         else:
             draw_intersections = False
 
         if draw_intersections is True:
-            draw_incoming_lanelets = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack, ('lanelet_network', 'intersection',
-                                              'draw_incoming_lanelets'))
-            incoming_lanelets_color = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack, ('lanelet_network', 'intersection',
-                                              'incoming_lanelets_color'))
-            draw_crossings = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack,
-                    ('lanelet_network', 'intersection', 'draw_crossings'))
-            crossings_color = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack,
-                    ('lanelet_network', 'intersection', 'crossings_color'))
-            draw_successors = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack,
-                    ('lanelet_network', 'intersection', 'draw_successors'))
-            successors_left_color = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack, ('lanelet_network', 'intersection',
-                                              'successors_left_color'))
-            successors_straight_color = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack, ('lanelet_network', 'intersection',
-                                              'successors_straight_color'))
-            successors_right_color = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack, ('lanelet_network', 'intersection',
-                                              'successors_right_color'))
-            show_intersection_labels = \
-                commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                    draw_params, call_stack,
-                    ('lanelet_network', 'intersection', 'show_label'))
+            draw_incoming_lanelets = draw_params.by_callstack(call_stack, (
+                    'lanelet_network', 'intersection',
+                    'draw_incoming_lanelets'))
+            incoming_lanelets_color = draw_params.by_callstack(call_stack, (
+                    'lanelet_network', 'intersection',
+                    'incoming_lanelets_color'))
+            draw_crossings = draw_params.by_callstack(call_stack, (
+                    'lanelet_network', 'intersection', 'draw_crossings'))
+            crossings_color = draw_params.by_callstack(call_stack, (
+                    'lanelet_network', 'intersection', 'crossings_color'))
+            draw_successors = draw_params.by_callstack(call_stack, (
+                    'lanelet_network', 'intersection', 'draw_successors'))
+            successors_left_color = draw_params.by_callstack(call_stack, (
+                    'lanelet_network', 'intersection', 'successors_left_color'))
+            successors_straight_color = draw_params.by_callstack(call_stack, (
+                    'lanelet_network', 'intersection',
+                    'successors_straight_color'))
+            successors_right_color = draw_params.by_callstack(call_stack, (
+                    'lanelet_network', 'intersection',
+                    'successors_right_color'))
+            show_intersection_labels = draw_params.by_callstack(call_stack, (
+                    'lanelet_network', 'intersection', 'show_label'))
         else:
             draw_incoming_lanelets = draw_crossings = draw_successors = \
                 show_intersection_labels = False
 
-        left_bound_color = commonroad.visualization.draw_dispatch_cr\
-            ._retrieve_value(
-                draw_params, call_stack, ('lanelet', 'left_bound_color'))
-        right_bound_color = \
-            commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                draw_params, call_stack, ('lanelet', 'right_bound_color'))
-        center_bound_color = \
-            commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                draw_params, call_stack, ('lanelet', 'center_bound_color'))
-        unique_colors = commonroad.visualization.draw_dispatch_cr\
-            ._retrieve_value(
-                draw_params, call_stack, ('lanelet', 'unique_colors'))
-        draw_stop_line = commonroad.visualization.draw_dispatch_cr\
-            ._retrieve_value(
-                draw_params, call_stack, ('lanelet', 'draw_stop_line'))
-        stop_line_color = commonroad.visualization.draw_dispatch_cr\
-            ._retrieve_value(
-                draw_params, call_stack, ('lanelet', 'stop_line_color'))
-        draw_line_markings = \
-            commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                draw_params, call_stack, ('lanelet', 'draw_line_markings'))
-        show_label = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                draw_params, call_stack, ('lanelet', 'show_label'))
-        draw_border_vertices = \
-            commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                draw_params, call_stack, ('lanelet', 'draw_border_vertices'))
-        draw_left_bound = commonroad.visualization.draw_dispatch_cr\
-            ._retrieve_value(
-                draw_params, call_stack, ('lanelet', 'draw_left_bound'))
-        draw_right_bound = commonroad.visualization.draw_dispatch_cr\
-            ._retrieve_value(
-                draw_params, call_stack, ('lanelet', 'draw_right_bound'))
-        draw_center_bound = \
-            commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                draw_params, call_stack, ('lanelet', 'draw_center_bound'))
-        draw_start_and_direction = \
-            commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                draw_params, call_stack,
-                ('lanelet', 'draw_start_and_direction'))
-        draw_linewidth = commonroad.visualization.draw_dispatch_cr\
-            ._retrieve_value(
-                draw_params, call_stack, ('lanelet', 'draw_linewidth'))
-        fill_lanelet = commonroad.visualization.draw_dispatch_cr\
-            ._retrieve_value(
-                draw_params, call_stack, ('lanelet', 'fill_lanelet'))
-        facecolor = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                draw_params, call_stack, ('lanelet', 'facecolor'))
-        antialiased = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                draw_params, tuple(), tuple(['antialiased']))
+        left_bound_color = draw_params.by_callstack(call_stack, (
+                'lanelet', 'left_bound_color'))
+        right_bound_color = draw_params.by_callstack(call_stack, (
+                'lanelet', 'right_bound_color'))
+        center_bound_color = draw_params.by_callstack(call_stack, (
+                'lanelet', 'center_bound_color'))
+        unique_colors = draw_params.by_callstack(call_stack,
+                                                 ('lanelet', 'unique_colors'))
+        draw_stop_line = draw_params.by_callstack(call_stack,
+                                                  ('lanelet', 'draw_stop_line'))
+        stop_line_color = draw_params.by_callstack(call_stack, (
+                'lanelet', 'stop_line_color'))
+        draw_line_markings = draw_params.by_callstack(call_stack, (
+                'lanelet', 'draw_line_markings'))
+        show_label = draw_params.by_callstack(call_stack,
+                                              ('lanelet', 'show_label'))
+        draw_border_vertices = draw_params.by_callstack(call_stack, (
+                'lanelet', 'draw_border_vertices'))
+        draw_left_bound = draw_params.by_callstack(call_stack, (
+                'lanelet', 'draw_left_bound'))
+        draw_right_bound = draw_params.by_callstack(call_stack, (
+                'lanelet', 'draw_right_bound'))
+        draw_center_bound = draw_params.by_callstack(call_stack, (
+                'lanelet', 'draw_center_bound'))
+        draw_start_and_direction = draw_params.by_callstack(call_stack, (
+                'lanelet', 'draw_start_and_direction'))
+        draw_linewidth = draw_params.by_callstack(call_stack,
+                                                  ('lanelet', 'draw_linewidth'))
+        fill_lanelet = draw_params.by_callstack(call_stack,
+                                                ('lanelet', 'fill_lanelet'))
+        facecolor = draw_params.by_callstack(call_stack,
+                                             ('lanelet', 'facecolor'))
+        antialiased = draw_params.by_callstack(call_stack, 'antialiased')
 
         # Collect lanelets
         incoming_lanelets = set()
@@ -1162,14 +1068,13 @@ class MPRenderer:
             # draw actual traffic sign
             traffic_lights_signs.extend(list(traffic_lights.values()))
 
-        # if traffic_lights_signs:  #     draw_traffic_light_signs(  #
-        # traffic_lights_signs, None, ax,  #  # draw_params, draw_func,
+        # if traffic_lights_signs:  #     draw_traffic_light_signs(  #  #  # traffic_lights_signs, None, ax,  #  # draw_params, draw_func,
         # handles,  #  # call_stack)
 
 
 # def draw_lanelet_network(obj: LaneletNetwork,
 #                          plot_limits: Union[List[Union[int, float]], None],
-#                          ax: mpl.axes.Axes, draw_params: dict,
+#                          ax: mpl.axes.Axes, draw_params: ParamServer,
 #                          draw_func: Dict[type, Callable],
 #                          handles: Dict[int, List[mpl.patches.Patch]],
 #                          call_stack: Tuple[str, ...]) -> None:
@@ -1200,7 +1105,7 @@ class MPRenderer:
 #
 # def draw_lanelet_list(obj: List[Lanelet],
 #                       plot_limits: Union[List[Union[int, float]], None],
-#                       ax: mpl.axes.Axes, draw_params: dict,
+#                       ax: mpl.axes.Axes, draw_params: ParamServer,
 #                       draw_func: Dict[type, Callable],
 #                       handles: Dict[int, List[mpl.patches.Patch]],
 #                       call_stack: Tuple[str, ...]) -> None:

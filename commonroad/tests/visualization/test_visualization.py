@@ -20,9 +20,9 @@ from commonroad.scenario.scenario import Scenario
 from commonroad.visualization.plot_helper import *
 # from commonroad.visualization.draw_dispatch_cr import draw_object,
 # _retrieve_value
-from commonroad.visualization.scenario import create_default_draw_params
 
 from commonroad.visualization.scenario import MPRenderer
+from commonroad.visualization.param_server import ParamServer
 
 
 class TestVisualization(unittest.TestCase):
@@ -40,7 +40,7 @@ class TestVisualization(unittest.TestCase):
 
     def test_primitive(self):
         rnd = MPRenderer(None, None)
-        params = create_default_draw_params()
+        params = ParamServer()
 
         rect = Rectangle(1, 2, np.array([1.5, 2.0]), math.pi * 0.25)
         poly = Polygon(np.array(
@@ -66,7 +66,7 @@ class TestVisualization(unittest.TestCase):
         # plt.gca().autoscale_view(False,False,False)
         with pytest.warns(None) as record_warnings:
             rnd = MPRenderer(None, None)
-            params = create_default_draw_params()
+            params = ParamServer()
             scenario.draw(rnd, params, tuple())
             rnd.render()
             plt.autoscale()
