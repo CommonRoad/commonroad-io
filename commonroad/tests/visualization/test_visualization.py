@@ -27,6 +27,17 @@ from commonroad.visualization.scenario import MPRenderer
 
 class TestVisualization(unittest.TestCase):
 
+    def test_zorder(self):
+        f, ax = plt.subplots(1, 1)
+        l = []
+        l.append(mpl.patches.Circle((1, 1), 3, fill=True, color='r', zorder=3))
+        l.append(mpl.patches.Circle((1, 1), 5, fill=True, color='g', zorder=1))
+        l.append(mpl.patches.Circle((1, 1), 4, fill=True, color='b', zorder=2))
+        ax.add_collection(
+            mpl.collections.PatchCollection(l, match_original=True))
+        ax.autoscale()
+        plt.show()
+
     def test_primitive(self):
         rnd = MPRenderer(None, None)
         params = create_default_draw_params()

@@ -1360,3 +1360,6 @@ class LaneletNetwork:
         for lanelet_id in self._lanelets.keys():
             return_str += '{:8d} lanelet\n'.format(lanelet_id)
         return return_str
+
+    def draw(self, renderer, draw_params, call_stack):
+        renderer.draw_lanelet_network(self, draw_params, call_stack)

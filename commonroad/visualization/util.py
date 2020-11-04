@@ -5,6 +5,7 @@ from matplotlib.lines import Line2D
 from matplotlib.path import Path
 import matplotlib.patches as patches
 import matplotlib as mpl
+import matplotlib.cm as cm
 import matplotlib.collections as collections
 from typing import List, Dict, Tuple, Union
 
@@ -191,7 +192,35 @@ def approximate_bounding_box_dyn_obstacles(obj: list, time_step=0) -> Union[Tupl
             bounds = update_bounds(np.min(v, axis=0), bounds=bounds)
             bounds = update_bounds(np.max(v, axis=0), bounds=bounds)
 
-    if np.inf in bounds[0] or -np.inf in bounds[0] or np.inf in bounds[1] or -np.inf in bounds[1]:
+    if np.inf in bounds[0] or -np.inf in bounds[0] or np.inf in bounds[
+        1] or -np.inf in bounds[1]:
         return None
     else:
         return tuple(bounds)
+
+
+def get_arrow_path_at(x, y, angle):
+    """Returns path of arrow shape"""
+    # direction arrow
+    codes_direction = [Path.MOVETO, Path.LINETO, Path.LINETO, Path.CLOSEPOLY]
+
+    scale_direction = 1.5
+    pts = np.array([[0.0, -0.5, 1.0], [1.0, 0.0, 1.0], [0.0, 0.5, 1.0],
+                    [0.0, -0.5, 1.0]])
+    scale_m = np.array(
+            [[scale_direction, 0, 0], [0, scale_direction, 0], [0, 0, 1]])
+    transform = np.array([[np.cos(angle), -np.sin(angle), x],
+                          [np.sin(angle), np.cos(angle), y], [0, 0, 1]])
+    ptr_trans = transform.dot(scale_m.dot(pts.transpose()))
+    ptr_trans = ptr_trans[0:2, :]
+    ptr_trans = ptr_trans.transpose()
+
+    path = Path(ptr_trans, codes_direction)
+    return path
+
+
+def colormap_idx(max_x):
+    norm = mpl.colors.Normalize(vmin=0, vmax=max_x)
+    colormap = cm.ScalarMappable(norm=norm, cmap=cm.jet)
+    # Closure
+    return lambda x: colormap.to_rgba(x)
