@@ -142,60 +142,6 @@ class TestVisualization(unittest.TestCase):
         assert (len(record_warnings) == 0)
         plt.close('all')
 
-    def test_parameter_retrieval(self):
-        # test overloading of parameters
-
-        # call with callstack, a value is not provided in default params
-        # -> retrieve deepest possible value 'some_value': 1
-        call_stack1 = ('scenario', 'dynamic_obstacle')
-        draw_params = {
-                'some_value': 0,
-                'scenario':   {
-                        'some_value':       0,
-                        'dynamic_obstacle': {'some_value': 1}}}
-        retrieved_value1 = _retrieve_value(draw_params, call_stack1,
-                                           tuple(['some_value']))
-        assert (retrieved_value1 == 1)
-
-        # dont call with callstack, a value that is not provided in default
-        # params -> retrieve 'some_value': 0
-        call_stack2 = tuple()
-        retrieved_value2 = _retrieve_value(draw_params, call_stack2,
-                                           tuple(['some_value']))
-        assert (retrieved_value2 == 0)
-
-        # dont call with callstack, retrieve a parameter that is also in
-        # default params
-        # -> nevertheless retrieve 'trajectory_steps': 1
-        call_stack1 = ('scenario', 'dynamic_obstacle')
-        draw_params3 = {
-                'scenario': {'dynamic_obstacle': {'trajectory_steps': 1}}}
-        retrieved_value3 = _retrieve_value(draw_params3, call_stack1,
-                                           tuple(['trajectory_steps']))
-        assert (retrieved_value3 == 1)
-
-        # provide draw_params, but try to retrieve a non-provided parameter
-        # -> get the default parameter
-        draw_params3 = {
-                'trajectory_steps': 0,
-                'scenario':         {
-                        'dynamic_obstacle': {'trajectory_steps': 1}}}
-        retrieved_value4 = _retrieve_value(draw_params3, call_stack1,
-                                           tuple(['zorder']))
-        assert (retrieved_value4 == 20)  # adapt to default value in
-        # visualization/scenario.create_default_draw_params()!
-
-        # provide draw_params, but try to retrieve a non-provided parameter
-        # that is only available on the top level of default parameters)
-        # -> get the default parameter
-        draw_params5 = {
-                'scenario': {'dynamic_obstacle': {'trajectory_steps': 1}}}
-        retrieved_value5 = _retrieve_value(draw_params5, call_stack1,
-                                           tuple(['time_begin']))
-        assert (
-                retrieved_value5 == 0)  # adapt to default value in  #
-        # visualization/draw_dispatch.create_default_draw_params()!
-
     def plot_object(self, object, draw_params=None):
         plt.clf()
         plt.ioff()

@@ -274,16 +274,24 @@ class TrafficSign:
         """
 
         assert is_real_number_vector(translation, 2), '<TrafficSign/translate_rotate>: argument translation is ' \
-                                                      'not a vector of real numbers of length 2.'
-        assert is_real_number(angle), '<TrafficSign/translate_rotate>: argument angle must be a scalar. ' \
-                                      'angle = %s' % angle
-        assert is_valid_orientation(angle), '<TrafficSign/translate_rotate>: argument angle must be within the ' \
-                                            'interval [-2pi, 2pi]. angle = %s' % angle
-        self._position = commonroad.geometry.transform.translate_rotate(np.array([self._position]),
-                                                                        translation, angle)[0]
+                                                      'not a vector of real ' \
+                                                      'numbers of length 2.'
+        assert is_real_number(
+            angle), '<TrafficSign/translate_rotate>: argument angle must be a ' \
+                    'scalar. ' \
+                    'angle = %s' % angle
+        assert is_valid_orientation(
+            angle), '<TrafficSign/translate_rotate>: argument angle must be ' \
+                    'within the ' \
+                    'interval [-2pi, 2pi]. angle = %s' % angle
+        self._position = commonroad.geometry.transform.translate_rotate(
+            np.array([self._position]), translation, angle)[0]
 
     def __str__(self):
         return f"Sign At {self._position} with {self._traffic_sign_elements} "
+
+    def draw(self, renderer, draw_params=None, call_stack=tuple()):
+        renderer.draw_traffic_light_sign(self, draw_params, call_stack)
 
 
 class TrafficLightCycleElement:
@@ -374,15 +382,24 @@ class TrafficLight:
         :param angle: The rotation angle in radian (counter-clockwise defined)
         """
 
-        assert is_real_number_vector(translation, 2), '<TrafficLight/translate_rotate>: argument translation is ' \
-                                                      'not a vector of real numbers of length 2.'
-        assert is_real_number(angle), '<TrafficLight/translate_rotate>: argument angle must be a scalar. ' \
-                                      'angle = %s' % angle
-        assert is_valid_orientation(angle), '<TrafficLight/translate_rotate>: argument angle must be within the ' \
-                                            'interval [-2pi, 2pi]. angle = %s' % angle
+        assert is_real_number_vector(translation,
+                                     2), '<TrafficLight/translate_rotate>: ' \
+                                         'argument translation is ' \
+                                         'not a vector of real numbers of ' \
+                                         'length 2.'
+        assert is_real_number(
+            angle), '<TrafficLight/translate_rotate>: argument angle must be ' \
+                    'a scalar. ' \
+                    'angle = %s' % angle
+        assert is_valid_orientation(
+            angle), '<TrafficLight/translate_rotate>: argument angle must be ' \
+                    'within the ' \
+                    'interval [-2pi, 2pi]. angle = %s' % angle
         self._position = commonroad.geometry.transform.translate_rotate(
-            np.array([self._position]), translation, angle
-        )[0]
+                np.array([self._position]), translation, angle)[0]
+
+    def draw(self, renderer, draw_params=None, call_stack=tuple()):
+        renderer.draw_traffic_light_sign(self, draw_params, call_stack)
 
 
 def get_default_cycle():

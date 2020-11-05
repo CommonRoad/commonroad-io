@@ -81,7 +81,6 @@ class MPRenderer:
                  plot_limits: Union[List[Union[int, float]], None] = None,
                  ax: Union[mpl.axes.Axes, None] = None):
         self.draw_params = draw_params or ParamServer()
-        self.collections = []
         self.plot_limits = plot_limits
         self.f = None
         if ax is None:
@@ -90,7 +89,13 @@ class MPRenderer:
             self.f = plt.gcf()
         self.ax = ax
         self.handles = {}
+
+        # Draw elements
+        self.collections = []
         self.obstacle_patches = []
+        self.traffic_signs = []
+        self.traffic_sign_call_stack = tuple()
+        self.traffic_sign_draw_params = self.draw_params
 
     def draw_list(self, drawable_list, draw_params=None, call_stack=tuple()):
         if draw_params is None:
@@ -103,15 +108,24 @@ class MPRenderer:
         self.collections.clear()
         self.handles.clear()
         self.obstacle_patches.clear()
+        self.traffic_signs.clear()
+        self.traffic_sign_call_stack = tuple()
+        self.traffic_sign_draw_params = self.draw_params
 
     def render(self, show=False, filename=None):
         for col in self.collections:
             self.ax.add_collection(col)
+        traffic_sign_artists = draw_traffic_light_signs(self.traffic_signs,
+                                                        self.traffic_sign_draw_params,
+                                                        self.traffic_sign_call_stack)
+        for art in traffic_sign_artists:
+            self.ax.add_artist(art)
         self.obstacle_patches.sort(key=lambda x: x.zorder)
         self.ax.add_collection(
                 mpl.collections.PatchCollection(self.obstacle_patches,
                                                 match_original=True, zorder=20))
         self.ax.autoscale(True)
+        self.ax.aspect('equal')
         if filename is not None:
             self.f.savefig(filename)
         if show:
@@ -199,6 +213,8 @@ class MPRenderer:
         """
         if draw_params is None:
             draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
         try:
             time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
             time_end = draw_params.by_callstack(call_stack, ('time_end',))
@@ -1092,9 +1108,11 @@ class MPRenderer:
             # draw actual traffic sign
             traffic_lights_signs.extend(list(traffic_lights.values()))
 
-        # TODO: Draw traffic lights and signs  # if traffic_lights_signs:  #
-        #  draw_traffic_light_signs(  #  #  #  # traffic_lights_signs, None,
-        #  ax,  #  # draw_params, draw_func,  # handles,  #  # call_stack)
+        # TODO: Draw traffic lights and signs
+        if traffic_lights_signs:
+            self.artists.extend(
+                draw_traffic_light_signs(traffic_lights_signs, draw_params,
+                                         call_stack))
 
     def draw_planning_problem_set(self, obj: PlanningProblemSet,
                                   draw_params: ParamServer,
@@ -1210,3 +1228,10 @@ class MPRenderer:
                     pos.draw(self, draw_params, call_stack)
             else:
                 obj.position.draw(self, draw_params, call_stack)
+
+    def draw_traffic_sign_light(self, obj, draw_params, call_stack):
+        # traffic signs and lights have to be collected and drawn only right
+        # before rendering to allow correct grouping
+        self.traffic_sign_call_stack = call_stack
+        self.traffic_sign_draw_params = draw_params
+        self.traffic_signs.append(obj)
