@@ -100,6 +100,8 @@ class MPRenderer:
     def draw_list(self, drawable_list, draw_params=None, call_stack=tuple()):
         if draw_params is None:
             draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
         for elem in drawable_list:
             elem.draw(self, draw_params, call_stack)
 
@@ -125,7 +127,7 @@ class MPRenderer:
                 mpl.collections.PatchCollection(self.obstacle_patches,
                                                 match_original=True, zorder=20))
         self.ax.autoscale(True)
-        self.ax.aspect('equal')
+        self.ax.set_aspect('equal')
         if filename is not None:
             self.f.savefig(filename)
         if show:
@@ -148,6 +150,8 @@ class MPRenderer:
         """
         if draw_params is None:
             draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
         call_stack = tuple(list(call_stack) + ['scenario'])
         obj.lanelet_network.draw(self, draw_params, call_stack)
 
@@ -190,6 +194,8 @@ class MPRenderer:
         """
         if draw_params is None:
             draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
         time_begin = draw_params.by_callstack(tuple(), ('time_begin',))
 
         call_stack = tuple(list(call_stack) + ['static_obstacle'])
@@ -215,6 +221,7 @@ class MPRenderer:
             draw_params = self.draw_params
         elif isinstance(draw_params, dict):
             draw_params = ParamServer(data=draw_params)
+
         try:
             time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
             time_end = draw_params.by_callstack(call_stack, ('time_end',))
@@ -386,6 +393,8 @@ class MPRenderer:
         """
         if draw_params is None:
             draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
         try:
             line_color = draw_params.by_callstack(call_stack,
                                                   ('trajectory', 'facecolor'))
@@ -441,6 +450,8 @@ class MPRenderer:
         """
         if draw_params is None:
             draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
         call_stack = tuple(list(call_stack) + ['occupancy'])
         obj.shape.draw(self, draw_params, call_stack)
 
@@ -459,6 +470,8 @@ class MPRenderer:
         """
         if draw_params is None:
             draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
         call_stack = tuple(list(call_stack) + ['shape', 'polygon'])
         try:
             facecolor = draw_params.by_callstack(call_stack, 'facecolor')
@@ -493,6 +506,8 @@ class MPRenderer:
         """
         if draw_params is None:
             draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
         call_stack = tuple(list(call_stack) + ['shape', 'rectangle'])
         try:
             facecolor = draw_params.by_callstack(call_stack, 'facecolor')
@@ -535,6 +550,8 @@ class MPRenderer:
         """
         if draw_params is None:
             draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
         call_stack = tuple(list(call_stack) + ['shape', 'circle'])
         facecolor = draw_params.by_callstack(call_stack, 'facecolor')
         edgecolor = draw_params.by_callstack(call_stack, 'edgecolor')
@@ -563,6 +580,8 @@ class MPRenderer:
         """
         if draw_params is None:
             draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
         try:
             if scale_factor is None:
                 scale_factor = draw_params.by_callstack(call_stack, (
@@ -600,10 +619,12 @@ class MPRenderer:
         """
         if draw_params is None:
             draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
         call_stack = tuple(list(call_stack) + ['lanelet_network'])
 
         traffic_lights = obj._traffic_lights
-        traffic_signs = obj.traffic_signs
+        traffic_signs = obj._traffic_signs
         intersections = obj.intersections
         lanelets = obj.lanelets
 
@@ -1110,9 +1131,9 @@ class MPRenderer:
 
         # TODO: Draw traffic lights and signs
         if traffic_lights_signs:
-            self.artists.extend(
-                draw_traffic_light_signs(traffic_lights_signs, draw_params,
-                                         call_stack))
+            self.traffic_signs.extend(
+                    draw_traffic_light_signs(traffic_lights_signs, draw_params,
+                                             call_stack))
 
     def draw_planning_problem_set(self, obj: PlanningProblemSet,
                                   draw_params: ParamServer,
@@ -1130,6 +1151,8 @@ class MPRenderer:
         """
         if draw_params is None:
             draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
         call_stack = tuple(list(call_stack) + ['planning_problem_set'])
         draw_ids = draw_params.by_callstack(call_stack, 'draw_ids')
 
@@ -1153,6 +1176,8 @@ class MPRenderer:
         """
         if draw_params is None:
             draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
         call_stack = tuple(list(call_stack) + ['planning_problem'])
         if not 'initial_state' in draw_params:
             draw_params['initial_state'] = {}
@@ -1175,6 +1200,8 @@ class MPRenderer:
         """
         if draw_params is None:
             draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
         facecolor = draw_params.by_callstack(call_stack,
                                              ('initial_state', 'facecolor'))
         zorder = draw_params.by_callstack(call_stack,
@@ -1201,6 +1228,8 @@ class MPRenderer:
         """
         if draw_params is None:
             draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
         if call_stack is ():
             call_stack = tuple(['planning_problem_set'])
         call_stack = tuple(list(call_stack) + ['goal_region'])
@@ -1222,6 +1251,8 @@ class MPRenderer:
         """
         if draw_params is None:
             draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
         if hasattr(obj, 'position'):
             if type(obj.position) == list:
                 for pos in obj.position:
@@ -1229,7 +1260,11 @@ class MPRenderer:
             else:
                 obj.position.draw(self, draw_params, call_stack)
 
-    def draw_traffic_sign_light(self, obj, draw_params, call_stack):
+    def draw_traffic_light_sign(self, obj, draw_params, call_stack):
+        if draw_params is None:
+            draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
         # traffic signs and lights have to be collected and drawn only right
         # before rendering to allow correct grouping
         self.traffic_sign_call_stack = call_stack

@@ -145,26 +145,25 @@ def create_img_boxes_traffic_sign(
     if len(traffic_signs) == 0:
         return dict()
 
-    scale_factor = draw_params.by_callstack(call_stack, (
-            'scenario', 'lanelet_network', 'traffic_sign', 'scale_factor'))
+    scale_factor = draw_params.by_callstack(call_stack,
+                                            ('traffic_sign', 'scale_factor'))
     speed_limit_unit = draw_params.by_callstack(call_stack, (
-            'scenario', 'lanelet_network', 'traffic_sign', 'speed_limit_unit'))
+            'traffic_sign', 'speed_limit_unit'))
     show_label_default = draw_params.by_callstack(call_stack, (
-            'scenario', 'lanelet_network', 'traffic_sign', 'show_label'))
+            'traffic_sign', 'show_label'))
     show_traffic_signs = draw_params.by_callstack(call_stack, (
-            'scenario', 'lanelet_network', 'traffic_sign',
-            'show_traffic_signs'))
-    draw_params.by_callstack(call_stack, (
-            'scenario', 'lanelet_network', 'traffic_sign', 'zorder'))
+            'traffic_sign', 'show_traffic_signs'))
+    zorder = draw_params.by_callstack(call_stack, ('traffic_sign', 'zorder'))
 
     scale_factor_default = draw_params.by_callstack(call_stack, (
-            'scenario', 'lanelet_network', 'traffic_sign', 'scale_factor'))
+            'traffic_sign', 'scale_factor'))
 
     assert any([show_traffic_signs == 'all',
                 isinstance(show_traffic_signs, list) and type(
                         show_traffic_signs[0] is enum)]), 'Plotting option ' \
                                                           'traffic_sign.show_traffic_signs must ' \
                                                           'be either "all" or ' \
+                                                          '' \
                                                           '' \
                                                           'list of type ' \
                                                           'TrafficSignID'
@@ -275,12 +274,11 @@ def create_img_boxes_traffic_lights(
         return dict()
 
     time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
-    scale_factor = draw_params.by_callstack(call_stack, (
-            'scenario', 'lanelet_network', 'traffic_light', 'scale_factor'))
-    show_label = draw_params.by_callstack(
-            ('scenario', 'lanelet_network', 'traffic_light', 'show_label'))
-    zorder = draw_params.by_callstack(call_stack, (
-            'scenario', 'lanelet_network', 'traffic_light', 'zorder'))
+    scale_factor = draw_params.by_callstack(call_stack,
+                                            ('traffic_light', 'scale_factor'))
+    show_label = draw_params.by_callstack(call_stack,
+                                          ('traffic_light', 'show_label'))
+    zorder = draw_params.by_callstack(call_stack, ('traffic_light', 'zorder'))
 
     # plots all group members horizontally stacked
     imageboxes_all = defaultdict(list)
@@ -329,13 +327,11 @@ def draw_traffic_light_signs(traffic_lights_signs: Union[
     :return:
     """
     kwargs = draw_params.by_callstack(call_stack, (
-            'scenario', 'lanelet_network', 'kwargs_traffic_light_signs'))
+    'lanelet_network', 'kwargs_traffic_light_signs'))
 
-    zorder_0 = draw_params.by_callstack(call_stack, (
-            'scenario', 'lanelet_network', 'traffic_light', 'zorder'))
+    zorder_0 = draw_params.by_callstack(call_stack, ('traffic_light', 'zorder'))
 
-    zorder_1 = draw_params.by_callstack(call_stack, (
-            'scenario', 'lanelet_network', 'traffic_sign', 'zorder'))
+    zorder_1 = draw_params.by_callstack(call_stack, ('traffic_sign', 'zorder'))
 
     zorder = min(zorder_0, zorder_1)
     threshold_grouping = 0.8  # [m] distance threshold for grouping traffic
@@ -366,7 +362,7 @@ def draw_traffic_light_signs(traffic_lights_signs: Union[
     [img_boxes[pos].extend(box_list) for pos, box_list in boxes_signs.items()]
 
     if not img_boxes:
-        return None
+        return []
 
     positions = list(img_boxes.keys())
     box_lists = list(img_boxes.values())

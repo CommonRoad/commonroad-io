@@ -13,6 +13,13 @@ class TestParamServer(unittest.TestCase):
                 'center_bound_color')
         self.assertEqual('#dddddd', res)
 
+        res = self.param_server.by_callstack(tuple(), ('time_begin'))
+        self.assertEqual(0, res)
+
+        res = self.param_server.by_callstack(tuple(),
+                                             ('lanelet_network', 'time_begin'))
+        self.assertEqual(0, res)
+
     def test_set_item(self):
         self.param_server['test1', 'test2', 'test3'] = 1
         self.assertEqual(1, self.param_server['test1', 'test2', 'test3'])

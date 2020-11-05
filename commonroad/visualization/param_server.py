@@ -1,5 +1,16 @@
 import json
 import logging
+import os
+import inspect
+import sys
+
+# default_params_path = os.path.dirname(inspect.getsourcefile(sys.modules[
+# __name__]))
+# default_params_path = os.path.dirname(__loader__.fullname)
+default_params_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                   'default_draw_params.json')
+with open(default_params_path) as fp:
+    default_params = json.load(fp)
 
 
 def create_default_draw_params() -> dict:
@@ -8,7 +19,8 @@ def create_default_draw_params() -> dict:
             'facecolor': '#d95558',
             'edgecolor': '#831d20',
             'linewidth': 0.5,
-            'zorder':    20}
+            'zorder':    20
+    }
 
     basic_shape_parameters_dynamic = {
             'opacity':   1.0,
@@ -193,15 +205,14 @@ def write_default_params():
     with open('commonroad/visualization/default_draw_params.json', 'w') as fp:
         json.dump(create_default_draw_params(), fp, indent=4)
 
-
 class ParamServer:
     def __init__(self, data=None):
         self.data = data or {}
-        with open('commonroad/visualization/default_draw_params.json') as fp:
-            self.defaults = json.load(fp)
 
     @staticmethod
     def _resolve_key(map, key):
+        if len(key) == 0:
+            return None
         d = map
         l_key = list(key)
         # Try to find most special version of element
@@ -212,7 +223,7 @@ class ParamServer:
             else:
                 d = None
                 break
-        if d is None and len(l_key) > 0:
+        if d is None and len(key) > 0:
             # If not found, remove first level and try again
             return ParamServer._resolve_key(map, key[1:])
         else:
@@ -231,7 +242,7 @@ class ParamServer:
 
         val = ParamServer._resolve_key(self.data, item)
         if val is None:
-            val = ParamServer._resolve_key(self.defaults, item)
+            val = ParamServer._resolve_key(default_params, item)
             if val is None:
                 logging.error('Value for key {} not found!'.format(item))
             else:

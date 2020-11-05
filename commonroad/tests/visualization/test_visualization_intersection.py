@@ -36,24 +36,24 @@ class TestVisualization(unittest.TestCase):
         self.rnd = MPRenderer()
         legend = {
                 ('lanelet_network', 'intersection',
-                 'incoming_lanelets_color'): 'Incoming lanelets',
+                 'incoming_lanelets_color'):   'Incoming lanelets',
                 ('lanelet_network', 'intersection',
-                 'successors_left_color'): 'Successors left',
+                 'successors_left_color'):     'Successors left',
                 ('lanelet_network', 'intersection',
                  'successors_straight_color'): 'Successors straight',
                 ('lanelet_network', 'intersection',
-                 'successors_right_color'): 'Successors right',
+                 'successors_right_color'):    'Successors right',
                 ('lanelet_network', 'traffic_light',
-                 'green_color'): 'Traffic light green',
+                 'green_color'):               'Traffic light green',
                 ('lanelet_network', 'traffic_light',
-                 'yellow_color'): 'Traffic light yellow',
+                 'yellow_color'):              'Traffic light yellow',
                 ('lanelet_network', 'traffic_light',
-                 'red_color'): 'Traffic light red'
+                 'red_color'):                 'Traffic light red'
         }
 
     def test_intersection_plot(self):
-        "Uses all options for plotting objects related to intersections or
-        traffic sign/lights."
+        """Uses all options for plotting objects related to intersections or
+        traffic sign/lights."""
         scenario, pp = CommonRoadFileReader(self.filename_urban).open()
         plt.close('all')
         mpl.rcParams['lines.scale_dashes'] = False
@@ -69,17 +69,22 @@ class TestVisualization(unittest.TestCase):
         self.rnd.render(show=True)
 
     def test_traffic_signs(self):
-        "Uses all options for plotting objects related to intersections or traffic sign/lights."
+        """Uses all options for plotting objects related to intersections or
+        traffic sign/lights."""
         scenario, pp = CommonRoadFileReader(self.filename_urban).open()
         plt.close('all')
-        draw_params = {'time_begin': 20,
-                                 'lanelet_network': {'intersection': {'draw_intersections': False},
-                                                     'traffic_sign':{'draw_traffic_signs': True,
-                                                                     'show_label':False,'show_traffic_signs':'all',
-                                                                     'scale_factor': 0.15}},
-                                 'lanelet': {'draw_lane_marking': False,
-                                             'show_label':        False
-                                 }
+        draw_params = {
+                'time_begin': 20, 'lanelet_network': {
+                        'intersection': {'draw_intersections': False},
+                        'traffic_sign': {
+                                'draw_traffic_signs': True,
+                                'show_label':         False,
+                                'show_traffic_signs': 'all',
+                                'scale_factor':       0.15
+                        }
+                }, 'lanelet': {
+                        'draw_lane_marking': False, 'show_label': False
+                }
         }
         scenario.lanelet_network.draw(self.rnd, draw_params=draw_params)
         ts = TrafficSign(traffic_sign_id=100000, traffic_sign_elements=[
@@ -97,7 +102,7 @@ class TestVisualization(unittest.TestCase):
                                    additional_values=['80'])],
                          position=np.array([159., -88.]), virtual=False,
                          first_occurrence=set())
-        self.rnd.draw_list(ts, draw_params={
+        ts.draw(self.rnd, draw_params={
                 'traffic_sign': {
                         'speed_limit_unit': 'mph',
                         'scale_factor':     0.3,
@@ -106,50 +111,55 @@ class TestVisualization(unittest.TestCase):
                         }
                 }
         })
+
         self.rnd.render(show=True)
 
     def test_all_signs(self):
         """Check if all traffic signs can be plotted."""
-        kwargs = {'traffic_sign_id':1,'first_occurrence':1,'position': np.array([0.,0.])}
+        kwargs = {
+                'traffic_sign_id':  1,
+                'first_occurrence': 1,
+                'position':         np.array([0., 0.])
+        }
         plt.close('all')
         plt.figure(figsize=[10, 10])
         self.rnd = MPRenderer(ax=plt.gca())
         with pytest.warns(None) as record:
             for value in TrafficSignIDGermany:
-                kwargs['position'] = kwargs['position'] + np.array([0.,5.])
-                TrafficSign(
-                    traffic_sign_elements=[TrafficSignElement(value, ['foo'])],
-                    **kwargs).draw(self.rnd)
+                kwargs['position'] = kwargs['position'] + np.array([0., 5.])
+                TrafficSign(traffic_sign_elements=[
+                        TrafficSignElement(value, ['foo'])], **kwargs).draw(
+                    self.rnd)
 
             for value in TrafficSignIDUsa:
-                kwargs['position'] = kwargs['position'] + np.array([0.,5.])
-                TrafficSign(
-                    traffic_sign_elements=[TrafficSignElement(value, ['foo'])],
-                    **kwargs).draw(self.rnd)
+                kwargs['position'] = kwargs['position'] + np.array([0., 5.])
+                TrafficSign(traffic_sign_elements=[
+                        TrafficSignElement(value, ['foo'])], **kwargs).draw(
+                    self.rnd)
 
             for value in TrafficSignIDRussia:
-                kwargs['position'] = kwargs['position'] + np.array([0.,5.])
-                TrafficSign(
-                    traffic_sign_elements=[TrafficSignElement(value, ['foo'])],
-                    **kwargs).draw(self.rnd)
+                kwargs['position'] = kwargs['position'] + np.array([0., 5.])
+                TrafficSign(traffic_sign_elements=[
+                        TrafficSignElement(value, ['foo'])], **kwargs).draw(
+                    self.rnd)
 
             for value in TrafficSignIDSpain:
-                kwargs['position'] = kwargs['position'] + np.array([0.,5.])
-                TrafficSign(
-                    traffic_sign_elements=[TrafficSignElement(value, ['foo'])],
-                    **kwargs).draw(self.rnd)
+                kwargs['position'] = kwargs['position'] + np.array([0., 5.])
+                TrafficSign(traffic_sign_elements=[
+                        TrafficSignElement(value, ['foo'])], **kwargs).draw(
+                    self.rnd)
 
             for value in TrafficSignIDChina:
-                kwargs['position'] = kwargs['position'] + np.array([0.,5.])
-                TrafficSign(
-                    traffic_sign_elements=[TrafficSignElement(value, ['foo'])],
-                    **kwargs).draw(self.rnd)
+                kwargs['position'] = kwargs['position'] + np.array([0., 5.])
+                TrafficSign(traffic_sign_elements=[
+                        TrafficSignElement(value, ['foo'])], **kwargs).draw(
+                    self.rnd)
 
             for value in TrafficSignIDZamunda:
-                kwargs['position'] = kwargs['position'] + np.array([0.,5.])
-                TrafficSign(
-                    traffic_sign_elements=[TrafficSignElement(value, ['foo'])],
-                    **kwargs).draw(self.rnd)
+                kwargs['position'] = kwargs['position'] + np.array([0., 5.])
+                TrafficSign(traffic_sign_elements=[
+                        TrafficSignElement(value, ['foo'])], **kwargs).draw(
+                    self.rnd)
 
         # uncomment to check plots
         self.rnd.render(show=True)
@@ -159,11 +169,9 @@ class TestVisualization(unittest.TestCase):
             print('Found warning:', r.message)
         assert len(record) == 0, record
 
-
-
     def test_signal_states(self):
-        "Uses all options for plotting objects related to intersections or
-        traffic sign/lights."
+        """Uses all options for plotting objects related to intersections or
+        traffic sign/lights."""
         scenario, pp = CommonRoadFileReader(self.filename_test_all).open()
         plt.close('all')
         draw_params = ParamServer()
@@ -186,13 +194,20 @@ class TestVisualization(unittest.TestCase):
                         'draw_lane_marking': True, 'show_label': True
                 }
         })
-        # legend={('lanelet_network', 'intersection', 'incoming_lanelets_color'): 'Incoming lanelets',
-        #         ('lanelet_network', 'intersection', 'successors_left_color'): 'Successors left',
-        #         ('lanelet_network', 'intersection', 'successors_straight_color'): 'Successors straight',
-        #         ('lanelet_network', 'intersection', 'successors_right_color'): 'Successors right',
-        #         ('lanelet_network', 'traffic_light', 'green_color'): 'Traffic light green',
-        #         ('lanelet_network', 'traffic_light', 'yellow_color'): 'Traffic light yellow',
-        #         ('lanelet_network', 'traffic_light', 'red_color'): 'Traffic light red'})
+        # legend={('lanelet_network', 'intersection',
+        # 'incoming_lanelets_color'): 'Incoming lanelets',
+        #         ('lanelet_network', 'intersection',
+        #         'successors_left_color'): 'Successors left',
+        #         ('lanelet_network', 'intersection',
+        #         'successors_straight_color'): 'Successors straight',
+        #         ('lanelet_network', 'intersection',
+        #         'successors_right_color'): 'Successors right',
+        #         ('lanelet_network', 'traffic_light', 'green_color'):
+        #         'Traffic light green',
+        #         ('lanelet_network', 'traffic_light', 'yellow_color'):
+        #         'Traffic light yellow',
+        #         ('lanelet_network', 'traffic_light', 'red_color'): 'Traffic
+        #         light red'})
         self.rnd.render(show=True)
 
 

@@ -56,7 +56,8 @@
     }
   },
   "lanelet_network": {
-    "kwargs_traffic_light_signs": {}
+    "kwargs_traffic_light_signs": {},
+    "antialiased": true
   },
   "traffic_light": {
     "draw_traffic_lights": true,
