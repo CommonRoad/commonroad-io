@@ -18,9 +18,9 @@ def create_default_draw_params() -> dict:
             'zorder':    20}
 
     draw_params = {
-            'time_begin':       0,
-            'time_end':         5,
-            'dynamic_obstacle': {
+            'time_begin':           0,
+            'time_end':             5,
+            'dynamic_obstacle':     {
                     'draw_shape':        True,
                     'draw_icon':         False,
                     'draw_bounding_box': True,
@@ -60,14 +60,14 @@ def create_default_draw_params() -> dict:
                             'unique_colors':   False,
                             'line_width':      0.17,
                             'z_order':         24}},
-            'lanelet_network':  {'kwargs_traffic_light_signs': {},
-                                 # further properties for AnnotationBox of
-                                 # traffic
-                                 # signs or lights, see #
-                                 # https://matplotlib.org/3.1.0/gallery
-                                 # /text_labels_and_annotations/demo_annotation_box.html
-                                 },
-            'traffic_light':    {
+            'lanelet_network':      {'kwargs_traffic_light_signs': {},
+                                     # further properties for AnnotationBox of
+                                     # traffic
+                                     # signs or lights, see #
+                                     # https://matplotlib.org/3.1.0/gallery
+                                     # /text_labels_and_annotations/demo_annotation_box.html
+                                     },
+            'traffic_light':        {
                     'draw_traffic_lights': True,
                     'red_color':           'red',
                     'yellow_color':        '#feb609',
@@ -76,7 +76,7 @@ def create_default_draw_params() -> dict:
                     'show_label':          False,
                     'scale_factor':        0.25,
                     'zorder':              30},
-            'traffic_sign':     {
+            'traffic_sign':         {
                     'draw_traffic_signs': False,
                     'show_traffic_signs': 'all',
                     # 'all' or list of TrafficSignIDs
@@ -84,7 +84,7 @@ def create_default_draw_params() -> dict:
                     'show_label':         False,
                     'scale_factor':       0.25,
                     'zorder':             30},
-            'intersection':     {
+            'intersection':         {
                     'draw_intersections':        False,
                     'draw_incoming_lanelets':    True,
                     'incoming_lanelets_color':   '#3ecbcf',
@@ -97,7 +97,7 @@ def create_default_draw_params() -> dict:
                     'show_label':                False,
                     # show incoming id and incoming left
             },
-            'lanelet':          {
+            'lanelet':              {
                     'left_bound_color':         '#555555',
                     'right_bound_color':        '#555555',
                     'center_bound_color':       '#dddddd',
@@ -116,43 +116,89 @@ def create_default_draw_params() -> dict:
                     'draw_linewidth':           0.5,
                     'fill_lanelet':             True,
                     'facecolor':                '#c7c7c7'},
-            'occupancy':        {'draw_occupancies': 0,  # -1= never,
-                                 # 0= if prediction of vehicle
-                                 # is set-based, 1=always
-                                 'shape':            {
-                                         'polygon':   {
-                                                 'opacity':   0.2,
-                                                 'facecolor': '#1d7eea',
-                                                 'edgecolor': '#0066cc',
-                                                 'linewidth': 0.5,
-                                                 'zorder':    18, },
-                                         'rectangle': {
-                                                 'opacity':   0.2,
-                                                 'facecolor': '#1d7eea',
-                                                 'edgecolor': '#0066cc',
-                                                 'linewidth': 0.5,
-                                                 'zorder':    18, },
-                                         'circle':    {
-                                                 'opacity':   0.2,
-                                                 'facecolor': '#1d7eea',
-                                                 'edgecolor': '#0066cc',
-                                                 'linewidth': 0.5,
-                                                 'zorder':    18, }}, },
-            'shape':            {
+            'occupancy':            {'draw_occupancies': 0,  # -1= never,
+                                     # 0= if prediction of vehicle
+                                     # is set-based, 1=always
+                                     'shape':            {
+                                             'polygon':   {
+                                                     'opacity':   0.2,
+                                                     'facecolor': '#1d7eea',
+                                                     'edgecolor': '#0066cc',
+                                                     'linewidth': 0.5,
+                                                     'zorder':    18, },
+                                             'rectangle': {
+                                                     'opacity':   0.2,
+                                                     'facecolor': '#1d7eea',
+                                                     'edgecolor': '#0066cc',
+                                                     'linewidth': 0.5,
+                                                     'zorder':    18, },
+                                             'circle':    {
+                                                     'opacity':   0.2,
+                                                     'facecolor': '#1d7eea',
+                                                     'edgecolor': '#0066cc',
+                                                     'linewidth': 0.5,
+                                                     'zorder':    18, }}, },
+            'shape':                {
                     'polygon':   basic_shape_parameters_static,
                     'rectangle': basic_shape_parameters_static,
-                    'circle':    basic_shape_parameters_static, }}
+                    'circle':    basic_shape_parameters_static, },
+            'initial_state':        {
+                    'facecolor': '#000080',
+                    'zorder':    25,
+                    'label':     ''
+                    # text for labeling this state, i.r. 'initial position'
+            },
+            'goal_region':          {
+                    'draw_shape': True,
+                    'shape':      {
+                            'polygon':   {
+                                    'opacity':   1.0,
+                                    'linewidth': 0.5,
+                                    'facecolor': '#f1b514',
+                                    'edgecolor': '#302404',
+                                    'zorder':    15, },
+                            'rectangle': {
+                                    'opacity':   1.0,
+                                    'linewidth': 0.5,
+                                    'facecolor': '#f1b514',
+                                    'edgecolor': '#302404',
+                                    'zorder':    15, },
+                            'circle':    {
+                                    'opacity':   1.0,
+                                    'linewidth': 0.5,
+                                    'facecolor': '#f1b514',
+                                    'edgecolor': '#302404',
+                                    'zorder':    15, }},
+                    'lanelet':    {
+                            'left_bound_color':         '#555555',
+                            'right_bound_color':        '#555555',
+                            'center_bound_color':       '#dddddd',
+                            'draw_left_bound':          True,
+                            'draw_right_bound':         True,
+                            'draw_center_bound':        True,
+                            'draw_border_vertices':     False,
+                            'draw_start_and_direction': True,
+                            'show_label':               False,
+                            'draw_linewidth':           0.5,
+                            'fill_lanelet':             True,
+                            'facecolor':                '#c7c7c7'}},
+            'planning_problem_set': {'draw_ids': 'all'}}
     # ensure that parameters are also available on higher levels
     draw_params['shape'].update(basic_shape_parameters_static)
 
     return draw_params
 
 
+def write_default_params():
+    with open('commonroad/visualization/default_draw_params.json', 'w') as fp:
+        json.dump(create_default_draw_params(), fp, indent=4)
+
+
 class ParamServer:
     def __init__(self, data=None):
         self.data = data or {}
-        # with open('.')
-        self.defaults = create_default_draw_params()
+        with open('commonroad/visualization/default_draw_params.json') as fp:
+            self.defaults = json.load(fp)
 
     @staticmethod
     def _resolve_key(map, key):
@@ -183,12 +229,37 @@ class ParamServer:
         if not isinstance(item, tuple):
             item = tuple(item)
 
-        val = ParamServer._resolve_key(self.defaults, item)
+        val = ParamServer._resolve_key(self.data, item)
         if val is None:
-            logging.warning('Value for key {} not found!'.format(item))
-        return val  # if success:  #     return val  # else:  #     # Value
-        # was not found  #     val, success = ParamServer._resolve_key(  #  #
-        # self.defaults, item)  #     if success:  #         logging.warning(
-        # 'Using default for {}'.format(item))  #         return val
+            val = ParamServer._resolve_key(self.defaults, item)
+            if val is None:
+                logging.error('Value for key {} not found!'.format(item))
+            else:
+                logging.warning('Using default for key {}!'.format(item))
+        return val
 
-    # @staticmethod  # def from_json(fname):  #     data =
+    def __setitem__(self, key, value):
+        if not isinstance(key, tuple):
+            key = tuple(key)
+        d = self.data
+        for k in key[:-1]:
+            if not isinstance(d, dict):
+                raise KeyError(
+                        'Key "{}" in path "{}" is not subscriptable!'.format(k,
+                                                                             key))
+            if k in d.keys():
+                d = d[k]
+            else:
+                d[k] = {}
+                d = d[k]
+        if not isinstance(d, dict):
+            raise KeyError(
+                    'Key "{}" in path "{}" is not subscriptable!'.format(k,
+                                                                         key))
+        d[key[-1]] = value
+
+    @staticmethod
+    def from_json(fname):
+        with open(fname, 'r') as fp:
+            data = json.load(fp)
+        return ParamServer(data)

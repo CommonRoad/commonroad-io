@@ -12,3 +12,13 @@ class TestParamServer(unittest.TestCase):
                 ('scenario', 'lanelet_network', 'lanelet'),
                 'center_bound_color')
         self.assertEqual('#dddddd', res)
+
+    def test_set_item(self):
+        self.param_server['test1', 'test2', 'test3'] = 1
+        self.assertEqual(1, self.param_server['test1', 'test2', 'test3'])
+        self.param_server['test1', 'test21'] = 2
+        with self.assertRaises(KeyError):
+            self.param_server['test1', 'test2', 'test3', 'test4'] = 3
+        with self.assertRaises(KeyError):
+            self.param_server['test1', 'test21', 'test3', 'test4'] = 4
+        self.assertEqual(1, self.param_server['test1', 'test2', 'test3'])

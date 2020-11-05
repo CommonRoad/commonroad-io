@@ -16,6 +16,9 @@ import commonroad.scenario.obstacle
 import commonroad.visualization.draw_dispatch_cr
 from commonroad.common.util import Interval
 from commonroad.geometry.shape import *
+from commonroad.planning.goal import GoalRegion
+from commonroad.planning.planning_problem import PlanningProblemSet, \
+    PlanningProblem
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, \
     TrafficLight, \
@@ -35,7 +38,8 @@ from commonroad.visualization.util import draw_polygon_as_patch, \
     LineDataUnits, \
     collect_center_line_colors, \
     get_arrow_path_at, \
-    colormap_idx
+    colormap_idx, \
+    get_car_patch
 
 from commonroad.visualization.param_server import ParamServer
 
@@ -80,7 +84,7 @@ class MPRenderer:
         self.plot_limits = plot_limits
         self.ax = ax or plt.gca()
         self.handles = {}
-        self.patches = []
+        self.obstacle_patches = []
 
     def render(self):
         # plt.gcf().canvas.draw()
@@ -89,13 +93,13 @@ class MPRenderer:
         # plt.gcf().savefig('/tmp/tmp_fig.pdf')
         for col in self.collections:
             self.ax.add_collection(
-                    col)  # plt.gcf().canvas.draw()  # plt.gcf(  #  #
+                    col)  # plt.gcf().canvas.draw()  # plt.gcf(  #  #  #  #
             # ).canvas.flush_events()  # self.ax.autoscale()  # plt.gcf(  #
             # ).savefig('/tmp/tmp_fig.pdf')
-        self.patches.sort(key=lambda x: x.zorder)
+        self.obstacle_patches.sort(key=lambda x: x.zorder)
         self.ax.add_collection(
-            mpl.collections.PatchCollection(self.patches, match_original=True,
-                                            zorder=20))
+                mpl.collections.PatchCollection(self.obstacle_patches,
+                                                match_original=True, zorder=20))
 
     def draw_scenario(self, obj: Scenario, draw_params: ParamServer,
                       call_stack: Tuple[str, ...]) -> None:
@@ -265,28 +269,22 @@ class MPRenderer:
             #  occ.shape.vertices[0],  #  #  #  occ.shape.vertices[3]])  #  #
             #  if  #  hasattr(sig,  #  #  #  'braking_lights') and \  #  #  #
             #  sig.braking_lights is True:  #  #  #  braking.extend([  #  #
-            #  occ.shape.vertices[  #  #  0],  #  #  #  occ.shape.vertices[
-            #  1]])  #  #                            if  #  hasattr(sig,
-            #  #  #  'flashing_blue_lights') and \  #  #  #  #  #  #  #
-            #  sig.flashing_blue_lights is True:  #  #  #  bluelights.append(
-            #  occ.shape.center)  #             if hasattr(  #  sig, 'horn')
-            #  and sig.horn is True:  #  #  #  horns.append(occ.shape.center)
-            #         else:  #  #  #  warnings.warn(  #  #         'Plotting
-            #         signal  #  #  states only implemented for '  #  #  #  #
-            #         'obstacle_shapes Rectangle.')
+            #  occ.shape.vertices[  #  #  0],  #  #  #  occ.shape.vertices[  #  1]])  #  #                            if  #  hasattr(sig,  #  #  #  'flashing_blue_lights') and \  #  #  #  #  #  #  #  #  #  #  sig.flashing_blue_lights is True:  #  #  #  bluelights.append(  #  occ.shape.center)  #             if hasattr(  #  sig, 'horn')  #  and sig.horn is True:  #  #  #  horns.append(occ.shape.center)  #         else:  #  #  #  warnings.warn(  #  #         'Plotting  #         signal  #  #  states only implemented for '  #  #  #  #  #         'obstacle_shapes Rectangle.')
 
         # draw car icon
-        # if draw_icon and type(
-        #         obj.prediction) == \
-        #         commonroad.prediction.prediction.TrajectoryPrediction:
-        #     if time_begin == 0:
-        #         inital_state = o.initial_state
-        #     else:
-        #         inital_state = o.prediction.trajectory.state_at_time_step(
-        #                 time_begin)
-        #     if inital_state is not None:
-        #         draw_car(inital_state.position[0], inital_state.position[1],
-        #                  inital_state.orientation, 2.5, ax, zorder=30)
+        if draw_icon and type(
+                obj.prediction) == \
+                commonroad.prediction.prediction.TrajectoryPrediction:
+            if time_begin == 0:
+                inital_state = obj.initial_state
+            else:
+                inital_state = obj.prediction.trajectory.state_at_time_step(
+                        time_begin)
+            if inital_state is not None:
+                self.obstacle_patches.extend(
+                        get_car_patch(inital_state.position[0],
+                                      inital_state.position[1],
+                                      inital_state.orientation, 2.5, zorder=30))
 
         # Get state
         if time_begin == 0:
@@ -336,23 +334,7 @@ class MPRenderer:
         # -1])  # if braking.size > 0:  #     diameters = signal_radius *  #
         # np.ones(braking.shape[0]) * 3.0  #     handles.setdefault(  #  #  #
         # DynamicObstacle, []).append(  #  # collections.EllipseCollection(
-        # diameters, diameters,  #  # angles=np.zeros_like(  #  # diameters),
-        #  # offsets=braking,  #  # transOffset=ax.transData,
-        #  # units='xy',  #  # facecolor=braking_color,
-        #  # edgecolor=braking_color,  #  # zorder=zorder + 0.1,
-        #  # linewidth=0))  #     ax.add_collection(handles[DynamicObstacle][
-        # -1])  # if horns.size > 0:  #     diameters = signal_radius *  #  #
-        # np.ones(horns.shape[0]) * 3.0  #     handles.setdefault(  #  #  #
-        # DynamicObstacle, []).append(  #  # collections.EllipseCollection(
-        # diameters, diameters,  #  # angles=np.zeros_like(  #  # diameters),
-        # offsets=horns,  #  # transOffset=ax.transData,  #  # units='xy',
-        #  # facecolor=horn_color,  #  # edgecolor=braking_color,
-        #  # zorder=zorder + 0.1,  #  # linewidth=0))  #  #  #  #  #  #  ax.add_collection(handles[DynamicObstacle][  # -1])  # if  #  #  #
-        #  bluelights.size > 0:  #     diameters = signal_radius *  #  #  #
-        #  np.ones(bluelights.shape[0]) * 2  #     handles.setdefault(  #  #
-        #  DynamicObstacle, []).append(  #  # collections.EllipseCollection(
-        #  diameters, diameters,  #  # angles=np.zeros_like(  #  #  #  #  #
-        #  diameters),  #  # offsets=bluelights,  #  #  #  #  #  #  #  transOffset=ax.transData,  #  # units='xy',  #  # facecolor=blue_lights_color,  #  # edgecolor=braking_color,  #  # zorder=zorder + 0.1,  #  # linewidth=0))  #  #  #  #  #  #  ax.add_collection(handles[DynamicObstacle][-1])
+        # diameters, diameters,  #  # angles=np.zeros_like(  #  # diameters),  #  # offsets=braking,  #  # transOffset=ax.transData,  #  # units='xy',  #  # facecolor=braking_color,  #  # edgecolor=braking_color,  #  # zorder=zorder + 0.1,  #  # linewidth=0))  #     ax.add_collection(handles[DynamicObstacle][  # -1])  # if horns.size > 0:  #     diameters = signal_radius *  #  #  # np.ones(horns.shape[0]) * 3.0  #     handles.setdefault(  #  #  #  # DynamicObstacle, []).append(  #  # collections.EllipseCollection(  # diameters, diameters,  #  # angles=np.zeros_like(  #  # diameters),  # offsets=horns,  #  # transOffset=ax.transData,  #  # units='xy',  #  # facecolor=horn_color,  #  # edgecolor=braking_color,  #  # zorder=zorder + 0.1,  #  # linewidth=0))  #  #  #  #  #  #  #  #  ax.add_collection(handles[DynamicObstacle][  # -1])  # if  #  #  #  #  bluelights.size > 0:  #     diameters = signal_radius *  #  #  #  #  np.ones(bluelights.shape[0]) * 2  #     handles.setdefault(  #  #  #  DynamicObstacle, []).append(  #  # collections.EllipseCollection(  #  diameters, diameters,  #  # angles=np.zeros_like(  #  #  #  #  #  #  diameters),  #  # offsets=bluelights,  #  #  #  #  #  #  #  #  #  transOffset=ax.transData,  #  # units='xy',  #  # facecolor=blue_lights_color,  #  # edgecolor=braking_color,  #  # zorder=zorder + 0.1,  #  # linewidth=0))  #  #  #  #  #  #  #  #  ax.add_collection(handles[DynamicObstacle][-1])
 
     def draw_trajectory(self, obj: Trajectory, draw_params: ParamServer,
                         call_stack: Tuple[str, ...]) -> None:
@@ -404,7 +386,7 @@ class MPRenderer:
                     break
 
         path = mpl.path.Path(traj_points, closed=False)
-        self.patches.append(
+        self.obstacle_patches.append(
                 mpl.patches.PathPatch(path, color=line_color, lw=line_width,
                                       zorder=z_order, fill=False))
 
@@ -450,12 +432,12 @@ class MPRenderer:
             print("Cannot find stylesheet for polygon. Called through:")
             print(call_stack)
 
-        self.patches.append(mpl.patches.Polygon(obj.vertices, closed=True,
-                                                facecolor=facecolor,
-                                                edgecolor=edgecolor,
-                                                zorder=zorder, alpha=opacity,
-                                                linewidth=linewidth,
-                                                antialiased=antialiased))
+        self.obstacle_patches.append(
+                mpl.patches.Polygon(obj.vertices, closed=True,
+                                    facecolor=facecolor, edgecolor=edgecolor,
+                                    zorder=zorder, alpha=opacity,
+                                    linewidth=linewidth,
+                                    antialiased=antialiased))
 
     def draw_rectangle(self, obj: Rectangle, draw_params: ParamServer,
                        call_stack: Tuple[str, ...]) -> None:
@@ -483,7 +465,7 @@ class MPRenderer:
             print("Cannot find stylesheet for rectangle. Called through:")
             print(call_stack)
 
-        self.patches.append(
+        self.obstacle_patches.append(
                 mpl.patches.Polygon(obj.vertices, closed=True, zorder=zorder,
                                     facecolor=facecolor, edgecolor=edgecolor,
                                     alpha=opacity, antialiased=antialiased,
@@ -519,7 +501,7 @@ class MPRenderer:
         opacity = draw_params.by_callstack(call_stack, 'opacity')
         linewidth = draw_params.by_callstack(call_stack, 'linewidth')
 
-        self.patches.append(
+        self.obstacle_patches.append(
                 mpl.patches.Circle(obj.center, obj.radius, facecolor=facecolor,
                                    edgecolor=edgecolor, zorder=zorder,
                                    linewidth=linewidth, alpha=opacity))
@@ -554,12 +536,10 @@ class MPRenderer:
         sin = math.sin(state.orientation)
         x = state.position[0]
         y = state.position[1]
-        self.patches.append(mpl.patches.Arrow(x=x, y=y,
-                                              dx=state.velocity * cos *
-                                                 scale_factor,
-                                              dy=state.velocity * sin *
-                                                 scale_factor,
-                                              zorder=100, **arrow_args))
+        self.obstacle_patches.append(
+            mpl.patches.Arrow(x=x, y=y, dx=state.velocity * cos * scale_factor,
+                              dy=state.velocity * sin * scale_factor,
+                              zorder=100, **arrow_args))
 
     def draw_lanelet_network(self, obj: LaneletNetwork,
                              draw_params: ParamServer,
@@ -825,10 +805,11 @@ class MPRenderer:
                                          np.arctan2(tan_vec[1],
                                                     tan_vec[0]) + 0.5 * np.pi)
                 if unique_colors:
-                    self.patches.append(
-                        mpl.patches.PathPatch(path, color=center_bound_color,
-                                              lw=0.5, zorder=10.1,
-                                              antialiased=antialiased))
+                    direction_list.append(mpl.patches.PathPatch(path,
+                                                                color=center_bound_color,
+                                                                lw=0.5,
+                                                                zorder=10.1,
+                                                                antialiased=antialiased))
                 else:
                     direction_list.append(path)
 
@@ -881,7 +862,7 @@ class MPRenderer:
 
             elif draw_center_bound:
                 if unique_colors:
-                    self.patches.append(mpl.patches.PathPatch(
+                    center_paths.append(mpl.patches.PathPatch(
                             Path(lanelet.center_vertices, closed=False),
                             edgecolor=center_bound_color, facecolor='none',
                             lw=draw_linewidth, zorder=10,
@@ -978,7 +959,21 @@ class MPRenderer:
                                                                lw=draw_linewidth,
                                                                zorder=10,
                                                                antialiased=antialiased))
-        if unique_colors is False:
+        if unique_colors:
+            if draw_center_bound:
+                if draw_center_bound:
+                    self.collections.append(
+                            collections.PatchCollection(center_paths,
+                                                        match_original=True,
+                                                        zorder=10,
+                                                        antialiased=antialiased))
+                if draw_start_and_direction:
+                    self.collections.append(
+                            collections.PatchCollection(direction_list,
+                                                        match_original=True,
+                                                        zorder=10.1,
+                                                        antialiased=antialiased))
+        else:
             if draw_center_bound:
                 self.collections.append(collections.PathCollection(center_paths,
                                                                    edgecolor=center_bound_color,
@@ -1068,161 +1063,111 @@ class MPRenderer:
             # draw actual traffic sign
             traffic_lights_signs.extend(list(traffic_lights.values()))
 
-        # if traffic_lights_signs:  #     draw_traffic_light_signs(  #  #  # traffic_lights_signs, None, ax,  #  # draw_params, draw_func,
-        # handles,  #  # call_stack)
+        # TODO: Draw traffic lights and signs  # if traffic_lights_signs:  #
+        #  draw_traffic_light_signs(  #  #  #  # traffic_lights_signs, None,
+        #  ax,  #  # draw_params, draw_func,  # handles,  #  # call_stack)
 
+    def draw_planning_problem_set(self, obj: PlanningProblemSet,
+                                  draw_params: ParamServer,
+                                  call_stack: Tuple[str, ...]) -> None:
+        """
+        :param obj: object to be plotted
+        :param ax: axes object from matplotlib
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object,
+        :param draw_func: specifies the drawing function
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack of draw_object
+        :return: None
+        """
+        call_stack = tuple(list(call_stack) + ['planning_problem_set'])
+        draw_ids = draw_params.by_callstack(call_stack, 'draw_ids')
 
-# def draw_lanelet_network(obj: LaneletNetwork,
-#                          plot_limits: Union[List[Union[int, float]], None],
-#                          ax: mpl.axes.Axes, draw_params: ParamServer,
-#                          draw_func: Dict[type, Callable],
-#                          handles: Dict[int, List[mpl.patches.Patch]],
-#                          call_stack: Tuple[str, ...]) -> None:
-#     """
-#     :param obj: object to be plotted
-#     :param ax: axes object from matplotlib
-#     :param draw_params: parameters for plotting given by a nested dict that
-#     recreates the structure of an object,
-#     :param draw_func: specifies the drawing function
-#     :param call_stack: tuple of string containing the call stack,
-#     which allows for differentiation of plotting styles
-#            depending on the call stack of draw_object
-#     :return: None
-#     """
-#     call_stack = tuple(list(call_stack) + ['lanelet_network'])
-#     # if plot_limits is not None:
-#     #     center = [plot_limits[1]+plot_limits[0]*0.5, plot_limits[
-#     #     3]+plot_limits[2]*0.5]
-#     #     radius = np.sqrt((plot_limits[1]-plot_limits[0])**2 + (plot_limits[
-#     #     3]-plot_limits[2])**2)
-#     #     lanelets = obj.lanelets_in_proximity(center, radius)
-#     # else:
-#
-#     _draw_lanelets_intersection(obj, obj._traffic_lights, obj._traffic_signs,
-#                                 obj.intersections, None, ax, draw_params,
-#                                 draw_func, handles, call_stack)
-#
-#
-# def draw_lanelet_list(obj: List[Lanelet],
-#                       plot_limits: Union[List[Union[int, float]], None],
-#                       ax: mpl.axes.Axes, draw_params: ParamServer,
-#                       draw_func: Dict[type, Callable],
-#                       handles: Dict[int, List[mpl.patches.Patch]],
-#                       call_stack: Tuple[str, ...]) -> None:
-#     """
-#     Draws list of lanelets.
-#     """
-#     if isinstance(obj, Lanelet):
-#         obj = [obj]
-#
-#     _draw_lanelets_intersection(LaneletNetwork.create_from_lanelet_list(obj),
-#                                 None, None, None, plot_limits, ax,
-#                                 draw_params,
-#                                 draw_func, handles, call_stack)
+        for id, problem in obj.planning_problem_dict.items():
+            if draw_ids is 'all' or id in draw_ids:
+                self.draw_planning_problem(problem, draw_params, call_stack)
 
+    def draw_planning_problem(self, obj: PlanningProblem,
+                              draw_params: ParamServer,
+                              call_stack: Tuple[str, ...]) -> None:
+        """
+        :param obj: object to be plotted
+        :param ax: axes object from matplotlib
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object,
+        :param draw_func: specifies the drawing function
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack of draw_object
+        :return: None
+        """
+        call_stack = tuple(list(call_stack) + ['planning_problem'])
+        if not 'initial_state' in draw_params:
+            draw_params['initial_state'] = {}
+        draw_params['initial_state', 'label'] = 'initial position'
+        self.draw_initital_state(obj.initial_state, draw_params, call_stack)
+        self.draw_goal_region(obj.goal, draw_params, call_stack)
 
-def draw_car(pos_x: Union[int, float], pos_y: Union[int, float],
-             rotate: Union[int, float], scale: Union[int, float],
-             ax: mpl.axes.Axes, zorder: int = 5, carcolor: str = '#ffffff',
-             lw=0.5):
-    rotate = rotate + np.pi
+    def draw_initital_state(self, obj: State, draw_params: ParamServer,
+                            call_stack: Tuple[str, ...]) -> None:
+        """
+        :param obj: object to be plotted
+        :param ax: axes object from matplotlib
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object,
+        :param draw_func: specifies the drawing function
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack of draw_object
+        :return: None
+        """
+        facecolor = draw_params.by_callstack(call_stack,
+                                             ('initial_state', 'facecolor'))
+        zorder = draw_params.by_callstack(call_stack,
+                                          ('initial_state', 'zorder'))
+        label = draw_params.by_callstack(call_stack, ('initial_state', 'label'))
 
-    def reshape_and_addup(verts):
-        verts = verts.reshape((int(len(verts) / 2), 2))
-        for i in range(1, len(verts)):
-            verts[i] = verts[i] + verts[i - 1]
-        return verts
+        self.ax.plot(obj.position[0], obj.position[1], 'o', color=facecolor,
+                     zorder=zorder, markersize=3)
+        self.ax.annotate(label, xy=(obj.position[0] + 1, obj.position[1]),
+                         textcoords='data', zorder=zorder + 10)
 
-    def transform(vertices, pos_x, pos_y, rotate, scale):
-        vertices = np.asarray(np.bmat([vertices, np.ones((len(vertices), 1))]))
-        tmat = np.array([[np.cos(rotate), -np.sin(rotate), pos_x],
-                         [np.sin(rotate), np.cos(rotate), pos_y], [0, 0, 1]])
-        scalemat = np.array(
-                [[scale * 1 / 356.3211, 0, 0], [0, scale * 1 / 356.3211, 0],
-                 [0, 0, 1]])
-        centermat = np.array([[1, 0, -250], [0, 1, -889], [0, 0, 1]])
-        tmat = tmat.dot(scalemat.dot(centermat))
-        vertices = tmat.dot(vertices.transpose())
-        vertices = np.array([[1, 0, 0], [0, 1, 0]]).dot(vertices).transpose()
-        return vertices
+    def draw_goal_region(self, obj: GoalRegion, draw_params: ParamServer,
+                         call_stack: Tuple[str, ...]) -> None:
+        """
+        :param obj: object to be plotted
+        :param ax: axes object from matplotlib
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object,
+        :param draw_func: specifies the drawing function
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack of draw_object
+        :return: None
+        """
+        if call_stack is ():
+            call_stack = tuple(['planning_problem_set'])
+        call_stack = tuple(list(call_stack) + ['goal_region'])
+        for goal_state in obj.state_list:
+            goal_state.draw(self, draw_params, call_stack)
 
-    verts1 = np.array(
-            [193.99383, 752.94359, -22.66602, 38, -9.33398, 52.66797, -2.60743,
-             44.82812, -0.0586, 0, 0.0293, 0.91992, -0.0293, 0.91797, 0.0586, 0,
-             2.60743, 44.82813, 9.33398, 52.66797, 22.66602, 38.00003, 59.33398,
-             -7.334, 62, -10.666, -6, -50.00003, -2.65234, -68.41407, 2.65234,
-             -68.41601, 6, -50, -62, -10.66602])
-
-    verts2 = np.array(
-            [715.99381, 768.27757, -101.332, 6.66602, 10.666, 62.66797, 3.3223,
-             50.41797, -3.3223, 50.41796, -10.666, 62.66601, 101.332, 6.668, 22,
-             -42.66799, 9.9824, -76.83594,  # 0.018,0,
-             # -0.01,-0.24804,
-             # 0.01,-0.24805,
-             # -0.018,0,
-             -9.9824, -76.83789, 0, 0])
-
-    verts3 = np.array(
-            [421.06111, 751.61113, 190.2667, 3.33333, 13.3333, 5.33334,
-             -108.6666, 12.66666, -134, 0, -119.3334, -18.66666, 127.6456,
-             -2.96473])
-
-    verts4 = np.array(
-            [271.32781, 712.14446, -6, -0.8, -16, 12, -14.8, 19.2, -4, 6, 20.4,
-             0.4, 3.6, -4.4, 4.8, -2.8])
-    verts5 = np.array(
-            [191.32781, 753.94359, -99.999996, 11, -63, 18.5, -59, 38.5, -20,
-             77, 20, 59.52734, 57, 36.49998, 65, 20.49999, 99.999996, 11.0001])
-
-    verts6 = np.array([421.06111, 1027.399, 190.2667, -3.3333, 13.3333, -5.3333,
-                       -108.6666, -12.6667, -134, 0, -119.3334, 18.6667,
-                       127.6456, 2.9647])
-
-    verts7 = np.array(
-            [271.32781, 1066.8657, -6, 0.8, -16, -12, -14.8, -19.2, -4, -6,
-             20.4, -0.4, 3.6, 4.4, 4.8, 2.8])
-
-    verts8 = np.array(
-            [389.79851, 728.34788, -343.652396, 10.16016, -68.666, 22.42969,
-             -29.2558, 74.57031, -7.3164, 60.35742, -0.074, 0, 0.037, 0.76758,
-             -0.037, 0.76758, 0.074, 0, 7.3164, 42.35937, 29.2558, 74.57031,
-             68.666, 22.4278, 343.652396, 10.1621, 259.5859, -4.6192, 130.2539,
-             -17.5527, 24.0196, -18.4766, 17.5527, -65.58788, 3.6953, -37.42773,
-             0, -13.24414, -3.6953, -55.42774, -17.5527, -65.58984, -24.0196,
-             -18.47656, -130.2539, -17.55274])
-
-    verts1 = reshape_and_addup(verts1)  # vorderscheibe
-    verts2 = reshape_and_addup(verts2)  # rueckscheibe
-    verts3 = reshape_and_addup(verts3)  # seitenscheibe rechts
-    verts4 = reshape_and_addup(verts4)  # rueckspiegel links
-    verts5 = reshape_and_addup(verts5)  # motorhaube
-    verts6 = reshape_and_addup(verts6)  # fenster rechts
-    verts7 = reshape_and_addup(verts7)  # rueckspiegel rechts
-    verts8 = reshape_and_addup(verts8)  # umriss
-
-    verts1 = transform(verts1, pos_x, pos_y, rotate, scale)
-    verts2 = transform(verts2, pos_x, pos_y, rotate, scale)
-    verts3 = transform(verts3, pos_x, pos_y, rotate, scale)
-    verts4 = transform(verts4, pos_x, pos_y, rotate, scale)
-    verts5 = transform(verts5, pos_x, pos_y, rotate, scale)
-    verts6 = transform(verts6, pos_x, pos_y, rotate, scale)
-    verts7 = transform(verts7, pos_x, pos_y, rotate, scale)
-    verts8 = transform(verts8, pos_x, pos_y, rotate, scale)
-
-    windowcolor = '#555555'
-    draw_polygon_as_patch(verts1, ax, facecolor=windowcolor, zorder=zorder + 1,
-                          lw=lw)
-    draw_polygon_as_patch(verts2, ax, facecolor=windowcolor, zorder=zorder + 1,
-                          lw=lw)
-    draw_polygon_as_patch(verts3, ax, facecolor=windowcolor, zorder=zorder + 1,
-                          lw=lw)
-    draw_polygon_as_patch(verts4, ax, facecolor='#ffffff', zorder=zorder + 1,
-                          lw=lw)
-    ax.plot(verts5[:, 0], verts5[:, 1], zorder=zorder + 1, color='#000000',
-            lw=lw)
-    draw_polygon_as_patch(verts6, ax, facecolor=windowcolor, zorder=zorder + 1,
-                          lw=lw)
-    draw_polygon_as_patch(verts7, ax, facecolor='#ffffff', zorder=zorder + 1,
-                          lw=lw)
-    draw_polygon_as_patch(verts8, ax, facecolor=carcolor, edgecolor='#000000',
-                          zorder=zorder, lw=lw)
+    def draw_goal_state(self, obj: State, draw_params: ParamServer,
+                        call_stack: Tuple[str, ...]) -> None:
+        """
+        :param obj: object to be plotted
+        :param ax: axes object from matplotlib
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object,
+        :param draw_func: specifies the drawing function
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack of draw_object
+        :return: None
+        """
+        if hasattr(obj, 'position'):
+            if type(obj.position) == list:
+                for pos in obj.position:
+                    pos.draw(self, draw_params, call_stack)
+            else:
+                obj.position.draw(self, draw_params, call_stack)
