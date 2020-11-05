@@ -68,7 +68,7 @@ class Occupancy:
 
         self._shape = self._shape.translate_rotate(translation, angle)
 
-    def draw(self, renderer, draw_params, call_stack):
+    def draw(self, renderer, draw_params=None, call_stack=tuple()):
         renderer.draw_occupancy(self, draw_params, call_stack)
 
 

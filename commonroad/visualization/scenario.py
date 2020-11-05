@@ -77,29 +77,45 @@ def traffic_light_color_dict(traffic_light_state: TrafficLightState,
 
 class MPRenderer:
 
-    def __init__(self, plot_limits: Union[List[Union[int, float]], None],
-                 ax: Union[mpl.axes.Axes, None]):
-        self.shapes_ordered_by_type = {}
+    def __init__(self, draw_params=None,
+                 plot_limits: Union[List[Union[int, float]], None] = None,
+                 ax: Union[mpl.axes.Axes, None] = None):
+        self.draw_params = draw_params or ParamServer()
         self.collections = []
         self.plot_limits = plot_limits
-        self.ax = ax or plt.gca()
+        self.f = None
+        if ax is None:
+            self.f, ax = plt.subplots(1, 1)
+        if self.f is None:
+            self.f = plt.gcf()
+        self.ax = ax
         self.handles = {}
         self.obstacle_patches = []
 
-    def render(self):
-        # plt.gcf().canvas.draw()
-        # plt.gcf().canvas.flush_events()
-        # self.ax.autoscale()
-        # plt.gcf().savefig('/tmp/tmp_fig.pdf')
+    def draw_list(self, drawable_list, draw_params=None, call_stack=tuple()):
+        if draw_params is None:
+            draw_params = self.draw_params
+        for elem in drawable_list:
+            elem.draw(self, draw_params, call_stack)
+
+    def clear(self):
+        self.ax.cla()
+        self.collections.clear()
+        self.handles.clear()
+        self.obstacle_patches.clear()
+
+    def render(self, show=False, filename=None):
         for col in self.collections:
-            self.ax.add_collection(
-                    col)  # plt.gcf().canvas.draw()  # plt.gcf(  #  #  #  #
-            # ).canvas.flush_events()  # self.ax.autoscale()  # plt.gcf(  #
-            # ).savefig('/tmp/tmp_fig.pdf')
+            self.ax.add_collection(col)
         self.obstacle_patches.sort(key=lambda x: x.zorder)
         self.ax.add_collection(
                 mpl.collections.PatchCollection(self.obstacle_patches,
                                                 match_original=True, zorder=20))
+        self.ax.autoscale(True)
+        if filename is not None:
+            self.f.savefig(filename)
+        if show:
+            self.f.show()
 
     def draw_scenario(self, obj: Scenario, draw_params: ParamServer,
                       call_stack: Tuple[str, ...]) -> None:
@@ -116,8 +132,9 @@ class MPRenderer:
                depending on the call stack of draw_object
         :return: None
         """
+        if draw_params is None:
+            draw_params = self.draw_params
         call_stack = tuple(list(call_stack) + ['scenario'])
-
         obj.lanelet_network.draw(self, draw_params, call_stack)
 
         # draw only obstacles inside plot limits
@@ -157,8 +174,9 @@ class MPRenderer:
                depending on the call stack of draw_object
         :return: None
         """
-        time_begin = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-                draw_params, tuple(), ('time_begin',))
+        if draw_params is None:
+            draw_params = self.draw_params
+        time_begin = draw_params.by_callstack(tuple(), ('time_begin',))
 
         call_stack = tuple(list(call_stack) + ['static_obstacle'])
 
@@ -179,7 +197,8 @@ class MPRenderer:
                depending on the call stack of draw_object
         :return: None
         """
-
+        if draw_params is None:
+            draw_params = self.draw_params
         try:
             time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
             time_end = draw_params.by_callstack(call_stack, ('time_end',))
@@ -349,7 +368,8 @@ class MPRenderer:
                depending on the call stack of draw_object
         :return: None
         """
-
+        if draw_params is None:
+            draw_params = self.draw_params
         try:
             line_color = draw_params.by_callstack(call_stack,
                                                   ('trajectory', 'facecolor'))
@@ -403,6 +423,8 @@ class MPRenderer:
                depending on the call stack of draw_object
         :return: None
         """
+        if draw_params is None:
+            draw_params = self.draw_params
         call_stack = tuple(list(call_stack) + ['occupancy'])
         obj.shape.draw(self, draw_params, call_stack)
 
@@ -419,7 +441,8 @@ class MPRenderer:
                depending on the call stack of draw_object
         :return: None
         """
-
+        if draw_params is None:
+            draw_params = self.draw_params
         call_stack = tuple(list(call_stack) + ['shape', 'polygon'])
         try:
             facecolor = draw_params.by_callstack(call_stack, 'facecolor')
@@ -452,7 +475,8 @@ class MPRenderer:
                depending on the call stack of draw_object
         :return: None
         """
-
+        if draw_params is None:
+            draw_params = self.draw_params
         call_stack = tuple(list(call_stack) + ['shape', 'rectangle'])
         try:
             facecolor = draw_params.by_callstack(call_stack, 'facecolor')
@@ -493,7 +517,8 @@ class MPRenderer:
                depending on the call stack of draw_object
         :return: None
         """
-
+        if draw_params is None:
+            draw_params = self.draw_params
         call_stack = tuple(list(call_stack) + ['shape', 'circle'])
         facecolor = draw_params.by_callstack(call_stack, 'facecolor')
         edgecolor = draw_params.by_callstack(call_stack, 'edgecolor')
@@ -520,6 +545,8 @@ class MPRenderer:
                depending on the call stack of draw_object
         :return: None
         """
+        if draw_params is None:
+            draw_params = self.draw_params
         try:
             if scale_factor is None:
                 scale_factor = draw_params.by_callstack(call_stack, (
@@ -555,6 +582,8 @@ class MPRenderer:
                depending on the call stack of draw_object
         :return: None
         """
+        if draw_params is None:
+            draw_params = self.draw_params
         call_stack = tuple(list(call_stack) + ['lanelet_network'])
 
         traffic_lights = obj._traffic_lights
@@ -1081,6 +1110,8 @@ class MPRenderer:
                depending on the call stack of draw_object
         :return: None
         """
+        if draw_params is None:
+            draw_params = self.draw_params
         call_stack = tuple(list(call_stack) + ['planning_problem_set'])
         draw_ids = draw_params.by_callstack(call_stack, 'draw_ids')
 
@@ -1102,6 +1133,8 @@ class MPRenderer:
                depending on the call stack of draw_object
         :return: None
         """
+        if draw_params is None:
+            draw_params = self.draw_params
         call_stack = tuple(list(call_stack) + ['planning_problem'])
         if not 'initial_state' in draw_params:
             draw_params['initial_state'] = {}
@@ -1122,6 +1155,8 @@ class MPRenderer:
                depending on the call stack of draw_object
         :return: None
         """
+        if draw_params is None:
+            draw_params = self.draw_params
         facecolor = draw_params.by_callstack(call_stack,
                                              ('initial_state', 'facecolor'))
         zorder = draw_params.by_callstack(call_stack,
@@ -1146,6 +1181,8 @@ class MPRenderer:
                depending on the call stack of draw_object
         :return: None
         """
+        if draw_params is None:
+            draw_params = self.draw_params
         if call_stack is ():
             call_stack = tuple(['planning_problem_set'])
         call_stack = tuple(list(call_stack) + ['goal_region'])
@@ -1165,6 +1202,8 @@ class MPRenderer:
                depending on the call stack of draw_object
         :return: None
         """
+        if draw_params is None:
+            draw_params = self.draw_params
         if hasattr(obj, 'position'):
             if type(obj.position) == list:
                 for pos in obj.position:

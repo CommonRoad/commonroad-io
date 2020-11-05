@@ -34,7 +34,7 @@ class TestVisualization(unittest.TestCase):
         l.append(mpl.patches.Circle((1, 1), 5, fill=True, color='g', zorder=1))
         l.append(mpl.patches.Circle((1, 1), 4, fill=True, color='b', zorder=2))
         ax.add_collection(
-            mpl.collections.PatchCollection(l, match_original=True))
+                mpl.collections.PatchCollection(l, match_original=True))
         ax.autoscale()
         plt.show()
 
@@ -55,174 +55,211 @@ class TestVisualization(unittest.TestCase):
         plt.show()
 
     def test_scenario(self):
+
         # test draw_object for all possible object types
 
         full_path = os.path.dirname(os.path.abspath(__file__))
-        filename = 'commonroad/tests/common/USA_US101-3_3_T-1.xml'
+        filename = full_path + '/../common/USA_Lanker-1_1_T-1.xml'
         # filename = full_path + '/../common/test_reading_all.xml'
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         scenario: Scenario = scenario
 
-        # plt.gca().autoscale_view(False,False,False)
+        rnd = MPRenderer()
         with pytest.warns(None) as record_warnings:
-            rnd = MPRenderer(None, None)
-            params = ParamServer()
-            scenario.draw(rnd, params, tuple())
+            scenario.lanelet_network.lanelets[0].draw(rnd)
             rnd.render()
-            plt.autoscale()
-            plt.show()  # draw_object(scenario.lanelet_network)  #
-            # draw_object(scenario.lanelet_network.lanelets[0])
+            rnd.clear()
 
-            # visualization  # circ = Circle(2.0, np.array([10.0, 0.0]))  #
-            # obs = StaticObstacle(1000,ObstacleType.CAR,circ,
-            # initial_state=State(position=np.array([0,0]),orientation=0.4))
-            # scenario.add_objects(obs)  # draw_object(
-            # scenario.static_obstacles)  #  # draw_params = {'scenario':{
-            # 'dynamic_obstacle':{'occupancy':{'draw_occupancy':True}}}}  #
-            # draw_object(scenario.dynamic_obstacles,draw_params=draw_params)
-            #  # draw_object(scenario.dynamic_obstacles[
-            #  0].prediction.occupancy_set)  # draw_object(scenario)  #  #
-            #  draw_object(circ)  #  # poly = Polygon(np.array([[0.0, 0.0],
-            #  [0.0, 1.0], [1.0, 1.0], [1.0, 0.0]]))  # draw_object(poly)  #
-            # rect = Rectangle(2.0, 4.0, np.array([2.0, 2.0]))  #
-            # draw_object(rect)  #  # sg = ShapeGroup([circ, rect])  #
-            # draw_object(sg)  #  # #list of objects  # draw_object([circ,
-            # rect, poly])  #  # occ = Occupancy(1,rect)  # draw_object(occ)
+            scenario.lanelet_network.draw(rnd)
+            rnd.render()
+            # visualization
+            circ = Circle(2.0, np.array([10.0, 0.0]))
+            obs = StaticObstacle(1000, ObstacleType.CAR, circ,
+                                 initial_state=State(position=np.array([0, 0]),
+                                                     orientation=0.4))
+            scenario.add_objects(obs)
+            for obs in scenario.static_obstacles:
+                obs.draw(rnd)
+            rnd.render()
 
-        # plt.close('all')
+            draw_params = ParamServer({
+                    'scenario': {
+                            'dynamic_obstacle': {
+                                    'occupancy': {'draw_occupancy': True}}}})
+            rnd.draw_list(scenario.dynamic_obstacles, draw_params=draw_params)
+            rnd.render()
 
+            rnd.draw_list(
+                    scenario.dynamic_obstacles[0].prediction.occupancy_set)
+            scenario.draw(rnd)
+            rnd.render()
 
-#        assert (len(record_warnings)==0)
+            rnd.clear()
+            circ.draw(rnd)
+            rnd.render()
 
-# def test_plotting_non_plottable_object(self):
-#     # a warning has to be thrown if non-plottable object is supposed to be
-#     plotted
-#     non_plottable_object = int(0)
-#     with self.assertWarns(Warning) as w:
-#         draw_object(non_plottable_object)
-#
-# def test_planning(self):
-#     # test draw_object for all possible object types
-#     full_path = os.path.dirname(os.path.abspath(__file__))
-#     print(full_path)
-#     # filename = full_path +
-#     '/../../../../../scenarios/cooperative/C-USA_Lanker-2_4_T-1.xml'
-#     filename = full_path + '/../common/test_reading_all.xml'
-#     scenario, planning_problem_set = CommonRoadFileReader(filename).open()
-#     planning_problem_set: PlanningProblemSet = planning_problem_set
-#
-#     with pytest.warns(None) as record_warnings:
-#         draw_object(planning_problem_set)
-#         INT = planning_problem_set.planning_problem_dict.values()
-#         problem=list(planning_problem_set.planning_problem_dict.values())[0]
-#         draw_object(problem)
-#         draw_object(problem.goal)
-#         draw_object(problem.initial_state)
-#
-#     assert (len(record_warnings) == 0)
-#     plt.close('all')
-#
-# def test_parameter_retrieval(self):
-#     # test overloading of parameters
-#
-#     # call with callstack, a value is not provided in default params
-#     # -> retrieve deepest possible value 'some_value': 1
-#     call_stack1=('scenario','dynamic_obstacle')
-#     draw_params = {'some_value': 0, 'scenario': {'some_value': 0,
-#     'dynamic_obstacle': {'some_value': 1}}}
-#     retrieved_value1 = _retrieve_value(draw_params, call_stack1, tuple([
-#     'some_value']))
-#     assert(retrieved_value1==1)
-#
-#     # dont call with callstack, a value that is not provided in default
-#     params -> retrieve 'some_value': 0
-#     call_stack2 = tuple()
-#     retrieved_value2 = _retrieve_value(draw_params, call_stack2, tuple([
-#     'some_value']))
-#     assert (retrieved_value2 == 0)
-#
-#     # dont call with callstack, retrieve a parameter that is also in
-#     default params
-#     # -> nevertheless retrieve 'trajectory_steps': 1
-#     call_stack1 = ('scenario', 'dynamic_obstacle')
-#     draw_params3 = {'scenario': {'dynamic_obstacle': {'trajectory_steps': 1}}}
-#     retrieved_value3 = _retrieve_value(draw_params3, call_stack1, tuple([
-#     'trajectory_steps']))
-#     assert (retrieved_value3 == 1)
-#
-#     # provide draw_params, but try to retrieve a non-provided parameter
-#     # -> get the default parameter
-#     draw_params3 = {'trajectory_steps': 0, 'scenario': {'dynamic_obstacle':
-#     {'trajectory_steps': 1}}}
-#     retrieved_value4 = _retrieve_value(draw_params3, call_stack1, tuple([
-#     'zorder']))
-#     assert (retrieved_value4 == 20) # adapt to default value in
-#     visualization/scenario.create_default_draw_params()!
-#
-#     # provide draw_params, but try to retrieve a non-provided parameter
-#     # that is only available on the top level of default parameters)
-#     # -> get the default parameter
-#     draw_params5 = {'scenario': {'dynamic_obstacle': {'trajectory_steps': 1}}}
-#     retrieved_value5 = _retrieve_value(draw_params5, call_stack1, tuple([
-#     'time_begin']))
-#     assert (retrieved_value5 == 0)  # adapt to default value in
-#     visualization/draw_dispatch.create_default_draw_params()!
-#
-# def plot_object(self, object, draw_params=None):
-#     plt.clf()
-#     plt.ioff()
-#     plt.style.use('classic')
-#     inch_in_cm = 2.54
-#     figsize = [30, 8]
-#     plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
-#
-#     draw_object(object, draw_params)
-#     plt.gca().autoscale()
-#     plt.show(block=False)
-#     time.sleep(1)
-#     plt.close('all')
-#
-# def test_visual_appearance(self):
-#     tt=0
-#     nrun=1
-#     plt.close('all')
-#     # plt.ioff()
-#     # set_non_blocking()
-#     full_path = os.path.dirname(os.path.abspath(__file__))
-#     filename = full_path + '/../common/USA_US101-3_3_T-1.xml'
-#     scenario, planning_problem_set = CommonRoadFileReader(filename).open()
-#     scenario: Scenario = scenario
-#     # plt.autoscale(False)
-#
-#     for i in range(0, nrun):
-#         plt.style.use('classic')
-#         inch_in_cm = 2.54
-#         figsize = [20, 15]
-#         plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
-#         plt.gca().set(title='occupancies should be be plotted with opacity,
-#         plot limits: [-50,60,-50,50]')
-#         plt.gca().autoscale_view(False, False, False)
-#
-#         t1 = time.time()
-#         draw_params = {'planning_problem_set':{'draw_ids':[list(
-#         planning_problem_set.planning_problem_dict.keys())[0]]},
-#         'time_begin':15,'time_end':25,
-#             'dynamic_obstacle': {'occupancy': {'draw_occupancies': 0,
-#             'shape': {'rectangle': {'facecolor': 'g'}}}}}
-#         draw_object(scenario, draw_params=draw_params, plot_limits=[-50,60,
-#         -50,50])
-#         plt.gca().axis('equal')
-#         # plt.gca().autoscale()
-#         # plt.tight_layout()
-#         draw_object(planning_problem_set,draw_params=draw_params,
-#         plot_limits=[-50,60,-50,50])
-#         # draw_object(scenario.obj[0],draw_params=draw_params)
-#         plt.show(block=False)
-#         tt+=time.time()-t1
-#
-#         # plt.close()
-#
-#     print('time: {}'.format(tt/nrun))
+            rnd.clear()
+            rect = Rectangle(2.0, 4.0, np.array([2.0, 2.0]))
+            rect.draw(rnd)
+            rnd.render()
+
+            rnd.clear()
+            poly = Polygon(
+                    np.array([[0.0, 0.0], [0.0, 1.0], [1.0, 1.0], [1.0, 0.0]]))
+            poly.draw(rnd)
+            rnd.render()
+
+            sg = ShapeGroup([circ, rect])
+            sg.draw(rnd)
+            rnd.render()
+
+            rnd.clear()
+            occ = Occupancy(1, rect)
+            occ.draw(rnd)
+            rnd.render()
+
+        plt.close('all')
+
+    def test_planning(self):
+        # test draw_object for all possible object types
+        full_path = os.path.dirname(os.path.abspath(__file__))
+        print(full_path)
+        # filename = full_path +
+        # '/../../../../../scenarios/cooperative/C-USA_Lanker-2_4_T-1.xml'
+        filename = full_path + '/../common/test_reading_all.xml'
+        scenario, planning_problem_set = CommonRoadFileReader(filename).open()
+        planning_problem_set: PlanningProblemSet = planning_problem_set
+
+        with pytest.warns(None) as record_warnings:
+            draw_object(planning_problem_set)
+            INT = planning_problem_set.planning_problem_dict.values()
+            problem = list(planning_problem_set.planning_problem_dict.values())[
+                0]
+            draw_object(problem)
+            draw_object(problem.goal)
+            draw_object(problem.initial_state)
+
+        assert (len(record_warnings) == 0)
+        plt.close('all')
+
+    def test_parameter_retrieval(self):
+        # test overloading of parameters
+
+        # call with callstack, a value is not provided in default params
+        # -> retrieve deepest possible value 'some_value': 1
+        call_stack1 = ('scenario', 'dynamic_obstacle')
+        draw_params = {
+                'some_value': 0,
+                'scenario':   {
+                        'some_value':       0,
+                        'dynamic_obstacle': {'some_value': 1}}}
+        retrieved_value1 = _retrieve_value(draw_params, call_stack1,
+                                           tuple(['some_value']))
+        assert (retrieved_value1 == 1)
+
+        # dont call with callstack, a value that is not provided in default
+        # params -> retrieve 'some_value': 0
+        call_stack2 = tuple()
+        retrieved_value2 = _retrieve_value(draw_params, call_stack2,
+                                           tuple(['some_value']))
+        assert (retrieved_value2 == 0)
+
+        # dont call with callstack, retrieve a parameter that is also in
+        # default params
+        # -> nevertheless retrieve 'trajectory_steps': 1
+        call_stack1 = ('scenario', 'dynamic_obstacle')
+        draw_params3 = {
+                'scenario': {'dynamic_obstacle': {'trajectory_steps': 1}}}
+        retrieved_value3 = _retrieve_value(draw_params3, call_stack1,
+                                           tuple(['trajectory_steps']))
+        assert (retrieved_value3 == 1)
+
+        # provide draw_params, but try to retrieve a non-provided parameter
+        # -> get the default parameter
+        draw_params3 = {
+                'trajectory_steps': 0,
+                'scenario':         {
+                        'dynamic_obstacle': {'trajectory_steps': 1}}}
+        retrieved_value4 = _retrieve_value(draw_params3, call_stack1,
+                                           tuple(['zorder']))
+        assert (retrieved_value4 == 20)  # adapt to default value in
+        # visualization/scenario.create_default_draw_params()!
+
+        # provide draw_params, but try to retrieve a non-provided parameter
+        # that is only available on the top level of default parameters)
+        # -> get the default parameter
+        draw_params5 = {
+                'scenario': {'dynamic_obstacle': {'trajectory_steps': 1}}}
+        retrieved_value5 = _retrieve_value(draw_params5, call_stack1,
+                                           tuple(['time_begin']))
+        assert (
+                retrieved_value5 == 0)  # adapt to default value in  #
+        # visualization/draw_dispatch.create_default_draw_params()!
+
+    def plot_object(self, object, draw_params=None):
+        plt.clf()
+        plt.ioff()
+        plt.style.use('classic')
+        inch_in_cm = 2.54
+        figsize = [30, 8]
+        plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
+
+        draw_object(object, draw_params)
+        plt.gca().autoscale()
+        plt.show(block=False)
+        time.sleep(1)
+        plt.close('all')
+
+    def test_visual_appearance(self):
+        tt = 0
+        nrun = 1
+        plt.close('all')
+        # plt.ioff()
+        # set_non_blocking()
+        full_path = os.path.dirname(os.path.abspath(__file__))
+        filename = full_path + '/../common/USA_US101-3_3_T-1.xml'
+        scenario, planning_problem_set = CommonRoadFileReader(filename).open()
+        scenario: Scenario = scenario
+        # plt.autoscale(False)
+
+        for i in range(0, nrun):
+            plt.style.use('classic')
+            inch_in_cm = 2.54
+            figsize = [20, 15]
+            plt.figure(
+                    figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
+            plt.gca().set(
+                    title='occupancies should be be plotted with opacity, '
+                          'plot limits: [-50,60,-50,50]')
+            plt.gca().autoscale_view(False, False, False)
+
+            t1 = time.time()
+            draw_params = {
+                    'planning_problem_set': {
+                            'draw_ids': [list(
+                                    planning_problem_set.planning_problem_dict.keys())[
+                                             0]]},
+                    'time_begin':           15,
+                    'time_end':             25,
+                    'dynamic_obstacle':     {
+                            'occupancy': {
+                                    'draw_occupancies': 0,
+                                    'shape':            {
+                                            'rectangle': {'facecolor': 'g'}}}}}
+            draw_object(scenario, draw_params=draw_params,
+                        plot_limits=[-50, 60, -50, 50])
+            plt.gca().axis('equal')
+            # plt.gca().autoscale()
+            # plt.tight_layout()
+            draw_object(planning_problem_set, draw_params=draw_params,
+                        plot_limits=[-50, 60, -50, 50])
+            # draw_object(scenario.obj[0],draw_params=draw_params)
+            plt.show(block=False)
+            tt += time.time() - t1
+
+            # plt.close()
+
+        print('time: {}'.format(tt / nrun))
 
 
 # #
@@ -237,8 +274,7 @@ class TestVisualization(unittest.TestCase):
 #         plt.style.use('classic')
 #         inch_in_cm = 2.54
 #         figsize = [30, 8]
-#         fig = plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] /
-#         inch_in_cm))
+#         fig = plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
 #         # fig, axx= plt.subplots()
 #         plt.gca().set(title='one vehicle should be green and its occupancy
 #         be plotted with opacity')

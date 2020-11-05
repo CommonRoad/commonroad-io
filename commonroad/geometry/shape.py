@@ -201,7 +201,7 @@ class Rectangle(Shape):
         output += '\t orientation: {} \n'.format(self._orientation)
         return output
 
-    def draw(self, renderer, draw_params, call_stack):
+    def draw(self, renderer, draw_params=None, call_stack=tuple()):
         renderer.draw_rectangle(self, draw_params, call_stack)
 
 
@@ -299,7 +299,7 @@ class Circle(Shape):
         output += '\t center: {} \n'.format(self._center)
         return output
 
-    def draw(self, renderer, draw_params, call_stack):
+    def draw(self, renderer, draw_params=None, call_stack=tuple()):
         renderer.draw_circle(self, draw_params, call_stack)
 
 
@@ -393,7 +393,7 @@ class Polygon(Shape):
         output += '\t center: {} \n'.format(self.center)
         return output
 
-    def draw(self, renderer, draw_params, call_stack):
+    def draw(self, renderer, draw_params=None, call_stack=tuple()):
         renderer.draw_polygon(self, draw_params, call_stack)
 
 
@@ -478,6 +478,6 @@ class ShapeGroup(Shape):
         output += '\t number of shapes: {} \n'.format(len(self._shapes))
         return output
 
-    def draw(self, renderer, draw_params, call_stack):
+    def draw(self, renderer, draw_params=None, call_stack=tuple()):
         for s in self._shapes:
             s.draw(renderer, draw_params, call_stack)

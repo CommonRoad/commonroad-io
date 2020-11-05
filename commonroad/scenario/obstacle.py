@@ -339,7 +339,7 @@ class StaticObstacle(Obstacle):
         obs_str += '\ninitial state: {}'.format(self.initial_state)
         return obs_str
 
-    def draw(self, renderer, draw_params, call_stack):
+    def draw(self, renderer, draw_params=None, call_stack=tuple()):
         renderer.draw_static_obstacle(self, draw_params, call_stack)
 
 
@@ -440,7 +440,7 @@ class DynamicObstacle(Obstacle):
         obs_str += '\ninitial state: {}'.format(self.initial_state)
         return obs_str
 
-    def draw(self, renderer, draw_params, call_stack):
+    def draw(self, renderer, draw_params=None, call_stack=tuple()):
         renderer.draw_dynamic_obstacle(self, draw_params, call_stack)
 
 

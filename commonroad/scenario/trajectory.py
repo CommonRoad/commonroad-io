@@ -237,7 +237,7 @@ class State:
             traffic_str += '= {}\n'.format(self.__getattribute__(attr))
         return traffic_str
 
-    def draw(self, renderer, draw_params, call_stack):
+    def draw(self, renderer, draw_params=None, call_stack=tuple()):
         renderer.draw_state(self, draw_params, call_stack)
 
 
@@ -369,5 +369,5 @@ class Trajectory:
             self.state_list[0].attributes)
         return traffic_str
 
-    def draw(self, renderer, draw_params, call_stack):
+    def draw(self, renderer, draw_params=None, call_stack=tuple()):
         renderer.draw_trajectory(self, draw_params, call_stack)
