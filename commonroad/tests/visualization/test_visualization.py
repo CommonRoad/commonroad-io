@@ -30,17 +30,6 @@ class TestVisualization(unittest.TestCase):
     def setUp(self) -> None:
         self.rnd = MPRenderer()
 
-    def test_zorder(self):
-        f, ax = plt.subplots(1, 1)
-        l = []
-        l.append(mpl.patches.Circle((1, 1), 3, fill=True, color='r', zorder=3))
-        l.append(mpl.patches.Circle((1, 1), 5, fill=True, color='g', zorder=1))
-        l.append(mpl.patches.Circle((1, 1), 4, fill=True, color='b', zorder=2))
-        ax.add_collection(
-                mpl.collections.PatchCollection(l, match_original=True))
-        ax.autoscale()
-        plt.show()
-
     def test_primitive(self):
         rnd = MPRenderer(None, None)
         params = ParamServer()
@@ -54,8 +43,6 @@ class TestVisualization(unittest.TestCase):
         poly.draw(rnd, params, tuple())
         circ.draw(rnd, params, tuple())
         rnd.render()
-        plt.gca().autoscale()
-        plt.show()
 
     def test_scenario(self):
 
@@ -135,13 +122,15 @@ class TestVisualization(unittest.TestCase):
 
         with pytest.warns(None) as record_warnings:
             planning_problem_set.draw(self.rnd)
-            self.rnd.render(show=True)
+            self.rnd.render()
+            self.rnd.clear()
             INT = planning_problem_set.planning_problem_dict.values()
             problem = list(planning_problem_set.planning_problem_dict.values())[
                 0]
             problem.draw(self.rnd)
             problem.goal.draw(self.rnd)
             problem.initial_state.draw(self.rnd)
+            self.rnd.render()
 
         assert (len(record_warnings) == 0)
         plt.close('all')
@@ -183,8 +172,8 @@ class TestVisualization(unittest.TestCase):
             scenario.draw(self.rnd, draw_params=draw_params)
             # plt.tight_layout()
             planning_problem_set.draw(self.rnd, draw_params=draw_params)
-            # draw_object(scenario.obj[0],draw_params=draw_params)
             self.rnd.render(show=False, filename='/tmp/{}.png'.format(i))
+            self.rnd.clear()
             tt += time.time() - t1
             # plt.close()
 
