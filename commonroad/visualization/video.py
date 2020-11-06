@@ -44,6 +44,25 @@ def create_scenario_video(obj_lists: List[plottable_types], file_path: str,
     f, ax = plt.subplots(1, 1, figsize=fig_size)
     rnd = MPRenderer(draw_params=draw_params, plot_limits=plot_limits, ax=ax)
 
+    def init_frame():
+        rnd.draw_list(obj_lists, {
+                'time_begin': time_begin,
+                'time_end':   time_begin + delta_time_steps
+        })
+        rnd.render_static()
+        artists = rnd.render_dynamic()
+        if plot_limits is None:
+            rnd.ax.autoscale()
+        elif plot_limits == 'auto':
+            limits = approximate_bounding_box_dyn_obstacles(obj_lists,
+                                                            time_begin)
+            if limits is not None:
+                rnd.ax.xlim(limits[0][0] - 10, limits[0][1] + 10)
+                rnd.ax.ylim(limits[1][0] - 10, limits[1][1] + 10)
+            else:
+                rnd.ax.autoscale()
+        return artists
+
     def update(frame=0):
         rnd.clear()
         draw_params.update({
@@ -52,26 +71,19 @@ def create_scenario_video(obj_lists: List[plottable_types], file_path: str,
                                                delta_time_steps * frame +
                                                plotting_horizon)
         })
+        for art in rnd.dynamic_artists:
+            art.remove()
         rnd.draw_list(obj_lists, draw_params=draw_params)
-        rnd.render()
-        # Set limits to assure that each frame has the same size
-        if plot_limits is None:
-            rnd.ax.autoscale()
-        elif plot_limits == 'auto':
-            limits = approximate_bounding_box_dyn_obstacles(obj_lists, frame)
-            if limits is not None:
-                rnd.ax.xlim(limits[0][0] - 10, limits[0][1] + 10)
-                rnd.ax.ylim(limits[1][0] - 10, limits[1][1] + 10)
-            else:
-                rnd.ax.autoscale()
+        artists = rnd.render_dynamic()
+        return artists
 
     # Min frame rate is 1 fps
     dt = max(1000.0, dt)
     frame_count = (time_end - time_begin) // delta_time_steps
     plt.ioff()
     # Interval determines the duration of each frame in ms
-    anim = FuncAnimation(rnd.f, update, frames=frame_count, init_func=update,
-                         blit=False, interval=dt)
+    anim = FuncAnimation(rnd.f, update, frames=frame_count,
+                         init_func=init_frame, blit=True, interval=dt)
 
     if not any([file_path.endswith('.mp4'), file_path.endswith('.gif'),
                 file_path.endswith('.avi')]):

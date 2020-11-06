@@ -95,10 +95,11 @@ class MPRenderer:
         else:
             self.ax = ax
         self.f = self.ax.figure
-        self.handles = {}
+        self.dynamic_artists = []
 
         # Draw elements
-        self.collections = []
+        self.dynamic_collections = []
+        self.static_collections = []
         self.obstacle_patches = []
         self.traffic_signs = []
         self.traffic_sign_call_stack = tuple()
@@ -113,33 +114,50 @@ class MPRenderer:
             elem.draw(self, draw_params, call_stack)
 
     def clear(self):
-        self.ax.cla()
-        self.collections.clear()
-        self.handles.clear()
+        # self.ax.cla()
+        self.static_collections.clear()
         self.obstacle_patches.clear()
         self.traffic_signs.clear()
         self.traffic_sign_call_stack = tuple()
         self.traffic_sign_draw_params = self.draw_params
+        self.dynamic_collections.clear()
 
-    def render(self, show=False, filename=None):
-        for col in self.collections:
-            self.ax.add_collection(col)
+    def render_dynamic(self):
+        artists = []
         traffic_sign_artists = draw_traffic_light_signs(self.traffic_signs,
                                                         self.traffic_sign_draw_params,
                                                         self.traffic_sign_call_stack)
         for art in traffic_sign_artists:
             self.ax.add_artist(art)
+            artists.append(art)
+        for col in self.dynamic_collections:
+            self.ax.add_collection(col)
+            artists.append(col)
         self.obstacle_patches.sort(key=lambda x: x.zorder)
-        self.ax.add_collection(
-                mpl.collections.PatchCollection(self.obstacle_patches,
-                                                match_original=True, zorder=20))
-        if self.plot_limits is None or self.plot_limits == 'auto':
+        patch_col = mpl.collections.PatchCollection(self.obstacle_patches,
+                                                    match_original=True,
+                                                    zorder=20)
+        self.ax.add_collection(patch_col)
+        artists.append(patch_col)
+        self.dynamic_artists = artists
+        return artists
+
+    def render_static(self):
+        for col in self.static_collections:
+            self.ax.add_collection(col)
+        return self.static_collections
+
+    def render(self, show=False, filename=None):
+        artists = self.render_static()
+        artists.extend(self.render_dynamic())
+        if self.plot_limits is None:
             self.ax.autoscale(True)
         self.ax.set_aspect('equal')
         if filename is not None:
             self.f.savefig(filename)
         if show:
             self.f.show()
+        return artists
 
     def add_legend(self, legend: Dict[Tuple[str, ...], str], draw_params=None):
         """
@@ -397,12 +415,12 @@ class MPRenderer:
                     mpl.patches.PathPatch(path, color=line_color, lw=line_width,
                                           zorder=z_order, fill=False))
         else:
-            self.collections.append(collections.EllipseCollection(
-                np.ones([traj_points.shape[0], 1]) * line_width,
-                np.ones([traj_points.shape[0], 1]) * line_width,
-                np.zeros([traj_points.shape[0], 1]), offsets=traj_points,
-                units='xy', linewidths=0, zorder=z_order,
-                transOffset=self.ax.transData, facecolor=line_color))
+            self.dynamic_collections.append(collections.EllipseCollection(
+                    np.ones([traj_points.shape[0], 1]) * line_width,
+                    np.ones([traj_points.shape[0], 1]) * line_width,
+                    np.zeros([traj_points.shape[0], 1]), offsets=traj_points,
+                    units='xy', linewidths=0, zorder=z_order,
+                    transOffset=self.ax.transData, facecolor=line_color))
 
     def draw_occupancy(self, obj: Occupancy, draw_params: ParamServer,
                        call_stack: Tuple[str, ...]) -> None:
@@ -979,57 +997,56 @@ class MPRenderer:
 
         # draw paths and collect axis handles
         if draw_right_bound:
-            self.collections.append(collections.PathCollection(right_paths,
-                                                               edgecolor=right_bound_color,
-                                                               facecolor='none',
-                                                               lw=draw_linewidth,
-                                                               zorder=10,
-                                                               antialiased=antialiased))
+            self.static_collections.append(
+                collections.PathCollection(right_paths,
+                                           edgecolor=right_bound_color,
+                                           facecolor='none', lw=draw_linewidth,
+                                           zorder=10, antialiased=antialiased))
         if draw_left_bound:
-            self.collections.append(collections.PathCollection(left_paths,
-                                                               edgecolor=left_bound_color,
-                                                               facecolor='none',
-                                                               lw=draw_linewidth,
-                                                               zorder=10,
-                                                               antialiased=antialiased))
+            self.static_collections.append(
+                collections.PathCollection(left_paths,
+                                           edgecolor=left_bound_color,
+                                           facecolor='none', lw=draw_linewidth,
+                                           zorder=10, antialiased=antialiased))
         if unique_colors:
             if draw_center_bound:
                 if draw_center_bound:
-                    self.collections.append(
+                    self.static_collections.append(
                             collections.PatchCollection(center_paths,
                                                         match_original=True,
                                                         zorder=10,
                                                         antialiased=antialiased))
                 if draw_start_and_direction:
-                    self.collections.append(
+                    self.static_collections.append(
                             collections.PatchCollection(direction_list,
                                                         match_original=True,
                                                         zorder=10.1,
                                                         antialiased=antialiased))
+
         else:
             if draw_center_bound:
-                self.collections.append(collections.PathCollection(center_paths,
-                                                                   edgecolor=center_bound_color,
-                                                                   facecolor='none',
-                                                                   lw=draw_linewidth,
-                                                                   zorder=10,
-                                                                   antialiased=antialiased))
+                self.static_collections.append(
+                    collections.PathCollection(center_paths,
+                                               edgecolor=center_bound_color,
+                                               facecolor='none',
+                                               lw=draw_linewidth, zorder=10,
+                                               antialiased=antialiased))
             if draw_start_and_direction:
-                self.collections.append(
+                self.static_collections.append(
                         collections.PathCollection(direction_list,
                                                    color=center_bound_color,
                                                    lw=0.5, zorder=10.1,
                                                    antialiased=antialiased))
 
         if successors_left:
-            self.collections.append(collections.PathCollection(succ_left_paths,
-                                                               edgecolor=successors_left_color,
-                                                               facecolor='none',
-                                                               lw=draw_linewidth * 3.0,
-                                                               zorder=11,
-                                                               antialiased=antialiased))
+            self.static_collections.append(
+                collections.PathCollection(succ_left_paths,
+                                           edgecolor=successors_left_color,
+                                           facecolor='none',
+                                           lw=draw_linewidth * 3.0, zorder=11,
+                                           antialiased=antialiased))
         if successors_straight:
-            self.collections.append(
+            self.static_collections.append(
                     collections.PathCollection(succ_straight_paths,
                                                edgecolor=successors_straight_color,
                                                facecolor='none',
@@ -1037,29 +1054,29 @@ class MPRenderer:
                                                zorder=11,
                                                antialiased=antialiased))
         if successors_right:
-            self.collections.append(collections.PathCollection(succ_right_paths,
-                                                               edgecolor=successors_right_color,
-                                                               facecolor='none',
-                                                               lw=draw_linewidth * 3.0,
-                                                               zorder=11,
-                                                               antialiased=antialiased))
+            self.static_collections.append(
+                collections.PathCollection(succ_right_paths,
+                                           edgecolor=successors_right_color,
+                                           facecolor='none',
+                                           lw=draw_linewidth * 3.0, zorder=11,
+                                           antialiased=antialiased))
 
         # fill lanelets with facecolor
-        self.collections.append(collections.PolyCollection(vertices_fill,
-                                                           transOffset=self.ax.transData,
-                                                           zorder=9.0,
-                                                           facecolor=facecolor,
-                                                           edgecolor='none',
-                                                           antialiased=antialiased))
+        self.static_collections.append(collections.PolyCollection(vertices_fill,
+                                                                  transOffset=self.ax.transData,
+                                                                  zorder=9.0,
+                                                                  facecolor=facecolor,
+                                                                  edgecolor='none',
+                                                                  antialiased=antialiased))
         if incoming_vertices_fill:
-            self.collections.append(
+            self.static_collections.append(
                     collections.PolyCollection(incoming_vertices_fill,
                                                transOffset=self.ax.transData,
                                                facecolor=incoming_lanelets_color,
                                                edgecolor='none', zorder=9.1,
                                                antialiased=antialiased))
         if crossing_vertices_fill:
-            self.collections.append(
+            self.static_collections.append(
                     collections.PolyCollection(crossing_vertices_fill,
                                                transOffset=self.ax.transData,
                                                facecolor=crossings_color,
@@ -1069,7 +1086,7 @@ class MPRenderer:
         # draw_border_vertices
         if draw_border_vertices:
             # left vertices
-            self.collections.append(collections.EllipseCollection(
+            self.static_collections.append(collections.EllipseCollection(
                     np.ones([coordinates_left_border_vertices.shape[0], 1]) * 1,
                     np.ones([coordinates_left_border_vertices.shape[0], 1]) * 1,
                     np.zeros([coordinates_left_border_vertices.shape[0], 1]),
@@ -1077,15 +1094,12 @@ class MPRenderer:
                     color=left_bound_color, transOffset=self.ax.transData))
 
             # right_vertices
-            self.collections.append(collections.EllipseCollection(np.ones(
-                    [coordinates_right_border_vertices.shape[0], 1]) * 1,
-                                                                  np.ones([
-                                                                                  coordinates_right_border_vertices.shape[
-                                                                                      0],
-                                                                                  1]) * 1,
-                    np.zeros([coordinates_right_border_vertices.shape[0], 1]),
-                    offsets=coordinates_right_border_vertices,
-                    color=right_bound_color, transOffset=self.ax.transData))
+            self.static_collections.append(collections.EllipseCollection(
+                np.ones([coordinates_right_border_vertices.shape[0], 1]) * 1,
+                np.ones([coordinates_right_border_vertices.shape[0], 1]) * 1,
+                np.zeros([coordinates_right_border_vertices.shape[0], 1]),
+                offsets=coordinates_right_border_vertices,
+                color=right_bound_color, transOffset=self.ax.transData))
 
         traffic_lights_signs = []
         if draw_traffic_signs:
