@@ -34,7 +34,7 @@ class TestVisualization(unittest.TestCase):
         self.filename_test_all = os.path.join(self.full_path,
                                               '../common/test_reading_all.xml')
         self.rnd = MPRenderer()
-        legend = {
+        self.legend = {
                 ('lanelet_network', 'intersection',
                  'incoming_lanelets_color'):   'Incoming lanelets',
                 ('lanelet_network', 'intersection',
@@ -66,6 +66,7 @@ class TestVisualization(unittest.TestCase):
                         'draw_lane_marking': True, 'show_label': True
                 }
         })
+        self.rnd.add_legend(self.legend)
         self.rnd.render(show=True)
 
     def test_traffic_signs(self):
@@ -194,20 +195,7 @@ class TestVisualization(unittest.TestCase):
                         'draw_lane_marking': True, 'show_label': True
                 }
         })
-        # legend={('lanelet_network', 'intersection',
-        # 'incoming_lanelets_color'): 'Incoming lanelets',
-        #         ('lanelet_network', 'intersection',
-        #         'successors_left_color'): 'Successors left',
-        #         ('lanelet_network', 'intersection',
-        #         'successors_straight_color'): 'Successors straight',
-        #         ('lanelet_network', 'intersection',
-        #         'successors_right_color'): 'Successors right',
-        #         ('lanelet_network', 'traffic_light', 'green_color'):
-        #         'Traffic light green',
-        #         ('lanelet_network', 'traffic_light', 'yellow_color'):
-        #         'Traffic light yellow',
-        #         ('lanelet_network', 'traffic_light', 'red_color'): 'Traffic
-        #         light red'})
+        self.rnd.add_legend(self.legend)
         self.rnd.render(show=True)
 
 

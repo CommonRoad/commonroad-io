@@ -133,6 +133,32 @@ class MPRenderer:
         if show:
             self.f.show()
 
+    def add_legend(self, legend: Dict[Tuple[str, ...], str], draw_params=None):
+        """
+        Adds legend with color of objects specified by legend.keys() and
+        texts specified by legend.values().
+        :param legend: color of objects specified by path in legend.keys()
+        and texts specified by legend.values()
+        :param draw_params: draw parameters used for plotting (color is
+        extracted using path in legend.keys())
+        :return:
+        """
+        if draw_params is None:
+            draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
+        handles = []
+        for obj_name, text in legend.items():
+            try:
+                color = draw_params[obj_name]
+            except:
+                color = None
+            if color is not None:
+                handles.append(mpl.patches.Patch(color=color, label=text))
+
+        legend = self.ax.legend(handles=handles)
+        legend.set_zorder(1000)
+
     def draw_scenario(self, obj: Scenario, draw_params: ParamServer,
                       call_stack: Tuple[str, ...]) -> None:
         """
