@@ -122,6 +122,10 @@ class MPRenderer:
         self.traffic_sign_draw_params = self.draw_params
         self.dynamic_collections.clear()
 
+    def remove_dynamic(self):
+        for art in self.dynamic_artists:
+            art.remove()
+
     def render_dynamic(self):
         artists = []
         traffic_sign_artists = draw_traffic_light_signs(self.traffic_signs,
@@ -157,6 +161,7 @@ class MPRenderer:
             self.f.savefig(filename)
         if show:
             self.f.show()
+        self.clear()
         return artists
 
     def add_legend(self, legend: Dict[Tuple[str, ...], str], draw_params=None):

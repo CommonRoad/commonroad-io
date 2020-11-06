@@ -42,6 +42,7 @@ def create_scenario_video(obj_lists: List[plottable_types], file_path: str,
         fig_size = [15, 8]
 
     f, ax = plt.subplots(1, 1, figsize=fig_size)
+    ax.set_aspect('equal')
     rnd = MPRenderer(draw_params=draw_params, plot_limits=plot_limits, ax=ax)
 
     def init_frame():
@@ -71,8 +72,7 @@ def create_scenario_video(obj_lists: List[plottable_types], file_path: str,
                                                delta_time_steps * frame +
                                                plotting_horizon)
         })
-        for art in rnd.dynamic_artists:
-            art.remove()
+        rnd.remove_dynamic()
         rnd.draw_list(obj_lists, draw_params=draw_params)
         artists = rnd.render_dynamic()
         return artists
@@ -83,7 +83,7 @@ def create_scenario_video(obj_lists: List[plottable_types], file_path: str,
     plt.ioff()
     # Interval determines the duration of each frame in ms
     anim = FuncAnimation(rnd.f, update, frames=frame_count,
-                         init_func=init_frame, blit=True, interval=dt)
+                         init_func=init_frame, blit=False, interval=dt)
 
     if not any([file_path.endswith('.mp4'), file_path.endswith('.gif'),
                 file_path.endswith('.avi')]):
