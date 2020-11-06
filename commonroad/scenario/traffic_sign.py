@@ -27,6 +27,13 @@ class SupportedTrafficSignCountry(enum.Enum):
     CHINA = "CHN"
     SPAIN = "ESP"
     RUSSIA = "RUS"
+    ARGENTINA = "ARG"
+    BELGIUM = "BEL"
+    FRANCE = "FRA"
+    GREECE = "GRC"
+    CROATIA = "HRV"
+    ITALY = "ITA"
+    PUERTO_RICO = "PRI"
     ZAMUNDA = "ZAM"  # default
 
 
@@ -144,20 +151,60 @@ class TrafficSignIDUsa(enum.Enum):
 
 @enum.unique
 class TrafficSignIDChina(enum.Enum):
-    MAX_SPEED = '274'
     UNKNOWN = ''
 
 
 @enum.unique
 class TrafficSignIDSpain(enum.Enum):
-    MAX_SPEED = '274'
+    MAX_SPEED = '274'  # TODO: change to actual ID
     UNKNOWN = ''
 
 
 @enum.unique
 class TrafficSignIDRussia(enum.Enum):
-    MAX_SPEED = '274'
+    UNKNOWN = ''  # TODO: add actual IDs
+
+
+@enum.unique
+class TrafficSignIDArgentina(enum.Enum):
+    MAX_SPEED = '274'  # TODO: change to actual ID
+    UNKNOWN = ''  # TODO: add actual IDs
+
+
+@enum.unique
+class TrafficSignIDBelgium(enum.Enum):
+    MAX_SPEED = '274'  # TODO: change to actual ID
+    UNKNOWN = ''  # TODO: add actual IDs
+
+
+@enum.unique
+class TrafficSignIDFrance(enum.Enum):
+    MAX_SPEED = '274'  # TODO: change to actual ID
+    UNKNOWN = ''  # TODO: add actual IDs
+
+
+@enum.unique
+class TrafficSignIDGreece(enum.Enum):
+    MAX_SPEED = '274'  # TODO: change to actual ID
+    UNKNOWN = ''  # TODO: add actual IDs
+
+
+@enum.unique
+class TrafficSignIDCroatia(enum.Enum):
+    MAX_SPEED = '274'  # TODO: change to actual ID
     UNKNOWN = ''
+
+
+@enum.unique
+class TrafficSignIDItaly(enum.Enum):
+    MAX_SPEED = '274'  # TODO: change to actual ID
+    UNKNOWN = ''
+
+
+@enum.unique
+class TrafficSignIDPuertoRico(enum.Enum):
+    MAX_SPEED = '274'  # TODO: change to actual ID
+    UNKNOWN = ''  # TODO: add actual IDs
 
 
 @enum.unique

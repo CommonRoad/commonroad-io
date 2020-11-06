@@ -17,10 +17,7 @@ from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicOb
 from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, \
     TimeOfDay, Weather, Underground, ScenarioID
 from commonroad.scenario.trajectory import State, Trajectory
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLight, TrafficLightCycleElement, \
-    TrafficLightState, TrafficLightDirection, TrafficSignIDGermany, TrafficSignIDUsa, TrafficSignIDChina, \
-    TrafficSignIDRussia, TrafficSignIDSpain, TrafficSignIDZamunda, SupportedTrafficSignCountry, LEFT_HAND_TRAFFIC, \
-    TRAFFIC_SIGN_VALIDITY_START
+from commonroad.scenario.traffic_sign import *
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 
 
@@ -441,10 +438,24 @@ class LaneletNetworkFactory:
             return SupportedTrafficSignCountry.SPAIN
         elif SupportedTrafficSignCountry.RUSSIA.value == country:
             return SupportedTrafficSignCountry.RUSSIA
+        elif SupportedTrafficSignCountry.ARGENTINA.value == country:
+            return SupportedTrafficSignCountry.ARGENTINA
+        elif SupportedTrafficSignCountry.ITALY.value == country:
+            return SupportedTrafficSignCountry.ITALY
+        elif SupportedTrafficSignCountry.FRANCE.value == country:
+            return SupportedTrafficSignCountry.FRANCE
+        elif SupportedTrafficSignCountry.PUERTO_RICO.value == country:
+            return SupportedTrafficSignCountry.PUERTO_RICO
+        elif SupportedTrafficSignCountry.CROATIA.value == country:
+            return SupportedTrafficSignCountry.CROATIA
+        elif SupportedTrafficSignCountry.GREECE.value == country:
+            return SupportedTrafficSignCountry.GREECE
+        elif SupportedTrafficSignCountry.BELGIUM.value == country:
+            return SupportedTrafficSignCountry.BELGIUM
         elif SupportedTrafficSignCountry.ZAMUNDA.value == country:
             return SupportedTrafficSignCountry.ZAMUNDA
         else:
-            warnings.warn("Unknown country: Default traffic sign IDs are used.")
+            warnings.warn("Unknown country: Default traffic sign IDs are used. Specified country: " + country)
             return SupportedTrafficSignCountry.ZAMUNDA
 
 
@@ -816,11 +827,26 @@ class TrafficSignElementFactory:
                 traffic_sign_element_id = TrafficSignIDSpain(xml_node.find('trafficSignID').text)
             elif country is SupportedTrafficSignCountry.RUSSIA:
                 traffic_sign_element_id = TrafficSignIDRussia(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.ARGENTINA:
+                traffic_sign_element_id = TrafficSignIDArgentina(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.ITALY:
+                traffic_sign_element_id = TrafficSignIDItaly(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.FRANCE:
+                traffic_sign_element_id = TrafficSignIDFrance(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.PUERTO_RICO:
+                traffic_sign_element_id = TrafficSignIDPuertoRico(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.CROATIA:
+                traffic_sign_element_id = TrafficSignIDCroatia(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.GREECE:
+                traffic_sign_element_id = TrafficSignIDGreece(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.BELGIUM:
+                traffic_sign_element_id = TrafficSignIDBelgium(xml_node.find('trafficSignID').text)
             else:
-                warnings.warn("Unknown country: Default traffic sign ID is used.")
+                warnings.warn("Unknown country: Default traffic sign ID is used. Specified country: " + country.value)
                 traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find('trafficSignID').text)
         except ValueError:
-            warnings.warn("<FileReader>: Unknown TrafficElementID! Default traffic sign ID is used.")
+            warnings.warn("<FileReader>: Unknown TrafficElementID! Default traffic sign ID is used. Specified country: "
+                          + country.value + " / Specified traffic sign ID: " + xml_node.find('trafficSignID').text)
             traffic_sign_element_id = TrafficSignIDZamunda.UNKNOWN
 
         additional_values = []
