@@ -197,7 +197,7 @@ def create_img_boxes_traffic_sign(
 
             boxes = []  # collect matplotlib offset boxes for text and images
             if show_label:
-                boxes.append(TextArea(el_id.name))
+                boxes.append(TextArea(el_id.value))
 
             if plot_img:
                 # plot traffic sign
