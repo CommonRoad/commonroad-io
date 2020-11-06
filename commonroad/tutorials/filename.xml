@@ -1,18 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
-<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="author" affiliation="affiliation" source="source" benchmarkID="USA_Lanker-1_1_T-1" date="2020-04-14">
+<?xml version='1.0' encoding='UTF-8'?>
+<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="author" affiliation="affiliation" source="source" benchmarkID="USA_Lanker-1_1_T-1" date="2020-11-06">
   <location>
     <geoNameId>-999</geoNameId>
     <gpsLatitude>999</gpsLatitude>
     <gpsLongitude>999</gpsLongitude>
   </location>
   <scenarioTags>
-    <intersection/>
-    <speed_limit/>
-    <multi_lane/>
+    <comfort/>
     <urban/>
     <lane_following/>
-    <comfort/>
+    <intersection/>
     <oncoming_traffic/>
+    <speed_limit/>
+    <multi_lane/>
   </scenarioTags>
   <lanelet id="3419">
     <leftBound>
@@ -24,6 +24,7 @@
         <x>-62.9872</x>
         <y>25.768800</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -34,6 +35,7 @@
         <x>-64.4496</x>
         <y>23.018100</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <successor ref="3432"/>
     <adjacentLeft ref="3464" drivingDir="opposite"/>
@@ -51,6 +53,7 @@
         <x>-55.4371</x>
         <y>22.075100</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -61,6 +64,7 @@
         <x>-56.8701</x>
         <y>19.231500</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3419"/>
     <successor ref="3440"/>
@@ -87,6 +91,7 @@
         <x>-33.3414</x>
         <y>10.971400</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -105,6 +110,7 @@
         <x>-34.7109</x>
         <y>8.2659000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3432"/>
     <successor ref="3666"/>
@@ -167,6 +173,7 @@
         <x>-0.69360000</x>
         <y>23.4499</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -221,6 +228,7 @@
         <x>2.4016000</x>
         <y>22.0326</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3440"/>
     <successor ref="3489"/>
@@ -242,6 +250,7 @@
         <x>6.0378000</x>
         <y>37.1126</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -256,6 +265,7 @@
         <x>9.0735000</x>
         <y>35.6211</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3666"/>
     <predecessor ref="3674"/>
@@ -273,6 +283,7 @@
         <x>-64.4496</x>
         <y>23.018100</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -283,6 +294,7 @@
         <x>-65.8728</x>
         <y>20.317300</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <successor ref="3433"/>
     <adjacentLeft ref="3419" drivingDir="same"/>
@@ -300,6 +312,7 @@
         <x>-56.8701</x>
         <y>19.231500</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -310,6 +323,7 @@
         <x>-58.263</x>
         <y>16.499300</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3422"/>
     <successor ref="3442"/>
@@ -336,6 +350,7 @@
         <x>-34.7109</x>
         <y>8.2659000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -354,6 +369,7 @@
         <x>-36.0877</x>
         <y>5.5798000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3433"/>
     <successor ref="3664"/>
@@ -416,6 +432,7 @@
         <x>2.4016000</x>
         <y>22.0326</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -470,6 +487,7 @@
         <x>5.4896000</x>
         <y>20.3602</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3442"/>
     <successor ref="3492"/>
@@ -491,6 +509,7 @@
         <x>9.0735000</x>
         <y>35.6211</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -505,6 +524,7 @@
         <x>12.244400</x>
         <y>34.0632</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3664"/>
     <predecessor ref="3676"/>
@@ -524,6 +544,7 @@
         <x>-65.8728</x>
         <y>20.317300</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -534,6 +555,7 @@
         <x>-67.1816</x>
         <y>17.549100</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <successor ref="3434"/>
     <adjacentLeft ref="3422" drivingDir="same"/>
@@ -551,6 +573,7 @@
         <x>-58.263</x>
         <y>16.499300</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -561,6 +584,7 @@
         <x>-59.6325</x>
         <y>13.793700</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3425"/>
     <successor ref="3444"/>
@@ -587,6 +611,7 @@
         <x>-36.0877</x>
         <y>5.5798000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -605,6 +630,7 @@
         <x>-37.4975</x>
         <y>2.7397000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3434"/>
     <successor ref="3606"/>
@@ -623,6 +649,7 @@
         <x>-23.944</x>
         <y>-0.41840000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -633,6 +660,7 @@
         <x>-25.3133</x>
         <y>-3.2197000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3444"/>
     <successor ref="3642"/>
@@ -666,6 +694,7 @@
         <x>-8.9439</x>
         <y>-7.8282000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -692,6 +721,7 @@
         <x>-10.3644</x>
         <y>-10.5345</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3606"/>
     <successor ref="3622"/>
@@ -709,6 +739,7 @@
         <x>1.9862000</x>
         <y>-13.2276</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -719,6 +750,7 @@
         <x>0.58630000</x>
         <y>-15.8945</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3642"/>
     <successor ref="3536"/>
@@ -752,6 +784,7 @@
         <x>40.402</x>
         <y>-30.174800</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -778,6 +811,7 @@
         <x>39.083</x>
         <y>-32.8518</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3622"/>
     <predecessor ref="3668"/>
@@ -795,6 +829,7 @@
         <x>-67.1816</x>
         <y>17.549100</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -805,6 +840,7 @@
         <x>-68.5898</x>
         <y>14.824800</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <successor ref="3435"/>
     <adjacentLeft ref="3425" drivingDir="same"/>
@@ -822,6 +858,7 @@
         <x>-59.6325</x>
         <y>13.793700</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -832,6 +869,7 @@
         <x>-60.9487</x>
         <y>11.037200</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3428"/>
     <successor ref="3446"/>
@@ -858,6 +896,7 @@
         <x>-37.4975</x>
         <y>2.7397000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -876,6 +915,7 @@
         <x>-38.8365</x>
         <y>0.010500000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3435"/>
     <successor ref="3608"/>
@@ -894,6 +934,7 @@
         <x>-25.3133</x>
         <y>-3.2197000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -904,6 +945,7 @@
         <x>-26.6383</x>
         <y>-5.9306000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3446"/>
     <successor ref="3644"/>
@@ -938,6 +980,7 @@
         <x>-10.3644</x>
         <y>-10.5345</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -964,6 +1007,7 @@
         <x>-11.7542</x>
         <y>-13.1823</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3608"/>
     <successor ref="3624"/>
@@ -982,6 +1026,7 @@
         <x>0.58630000</x>
         <y>-15.8945</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -992,6 +1037,7 @@
         <x>-0.79370000</x>
         <y>-18.5237</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3644"/>
     <successor ref="3539"/>
@@ -1026,6 +1072,7 @@
         <x>39.083</x>
         <y>-32.8518</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1052,6 +1099,7 @@
         <x>37.6801</x>
         <y>-35.6989</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3624"/>
     <adjacentLeft ref="3536" drivingDir="same"/>
@@ -1069,6 +1117,7 @@
         <x>-68.5898</x>
         <y>14.824800</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1079,6 +1128,7 @@
         <x>-69.8738</x>
         <y>12.176100</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <successor ref="3436"/>
     <successor ref="3438"/>
@@ -1096,6 +1146,7 @@
         <x>-60.9487</x>
         <y>11.037200</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1106,6 +1157,7 @@
         <x>-62.2956</x>
         <y>8.2966000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3431"/>
     <successor ref="3448"/>
@@ -1132,6 +1184,7 @@
         <x>-38.8365</x>
         <y>0.010500000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1150,6 +1203,7 @@
         <x>-40.1346</x>
         <y>-2.5453000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3436"/>
     <successor ref="3610"/>
@@ -1168,6 +1222,7 @@
         <x>-26.6383</x>
         <y>-5.9306000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1178,6 +1233,7 @@
         <x>-27.981</x>
         <y>-8.6776000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3448"/>
     <successor ref="3646"/>
@@ -1211,6 +1267,7 @@
         <x>-11.7542</x>
         <y>-13.1823</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1237,6 +1294,7 @@
         <x>-13.282000</x>
         <y>-16.0926</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3610"/>
     <successor ref="3626"/>
@@ -1254,6 +1312,7 @@
         <x>-0.79370000</x>
         <y>-18.5237</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1264,6 +1323,7 @@
         <x>-2.3990000</x>
         <y>-21.5818</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3646"/>
     <successor ref="3542"/>
@@ -1297,6 +1357,7 @@
         <x>37.6801</x>
         <y>-35.6989</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1323,6 +1384,7 @@
         <x>36.4158</x>
         <y>-38.2648</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3600"/>
     <predecessor ref="3626"/>
@@ -1340,6 +1402,7 @@
         <x>-62.2956</x>
         <y>8.2966000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1350,6 +1413,7 @@
         <x>-63.6145</x>
         <y>5.3546000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3431"/>
     <successor ref="3450"/>
@@ -1375,6 +1439,7 @@
         <x>-40.1346</x>
         <y>-2.5453000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1393,6 +1458,7 @@
         <x>-42.0439</x>
         <y>-5.8809000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3438"/>
     <successor ref="3604"/>
@@ -1438,6 +1504,7 @@
         <x>-32.8851</x>
         <y>-18.780500</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1476,6 +1543,7 @@
         <x>-38.7588</x>
         <y>-16.254700</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3450"/>
     <successor ref="3487"/>
@@ -1500,6 +1568,7 @@
         <x>-43.5834</x>
         <y>-37.5972</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1518,6 +1587,7 @@
         <x>-47.6671</x>
         <y>-35.5315</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3604"/>
     <adjacentLeft ref="3484" drivingDir="same"/>
@@ -1542,6 +1612,7 @@
         <x>-26.4229</x>
         <y>-21.0519</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1560,6 +1631,7 @@
         <x>-23.5459</x>
         <y>-22.1903</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <successor ref="3672"/>
     <adjacentRight ref="3476" drivingDir="same"/>
@@ -1632,6 +1704,7 @@
         <x>-33.3414</x>
         <y>10.971400</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1698,6 +1771,7 @@
         <x>-32.0424</x>
         <y>13.596700</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3473"/>
     <successor ref="3452"/>
@@ -1722,6 +1796,7 @@
         <x>-55.4371</x>
         <y>22.075100</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1740,6 +1815,7 @@
         <x>-54.1694</x>
         <y>24.670000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3612"/>
     <predecessor ref="3672"/>
@@ -1759,6 +1835,7 @@
         <x>-62.9872</x>
         <y>25.768800</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1769,6 +1846,7 @@
         <x>-61.8103</x>
         <y>28.457600</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3452"/>
     <successor ref="3464"/>
@@ -1787,6 +1865,7 @@
         <x>-70.0118</x>
         <y>29.179300</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1797,6 +1876,7 @@
         <x>-68.6402</x>
         <y>31.851000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3458"/>
     <adjacentLeft ref="3419" drivingDir="opposite"/>
@@ -1822,6 +1902,7 @@
         <x>-23.5459</x>
         <y>-22.1903</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1840,6 +1921,7 @@
         <x>-20.9044</x>
         <y>-23.6654</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <successor ref="3634"/>
     <adjacentLeft ref="3473" drivingDir="same"/>
@@ -1857,6 +1939,7 @@
         <x>-19.0094</x>
         <y>-13.203800</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1867,6 +1950,7 @@
         <x>-16.2364</x>
         <y>-14.602500</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3476"/>
     <successor ref="3656"/>
@@ -1912,6 +1996,7 @@
         <x>-7.8315000</x>
         <y>8.9381</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1950,6 +2035,7 @@
         <x>-4.8509000</x>
         <y>7.5027</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3634"/>
     <successor ref="3674"/>
@@ -1971,6 +2057,7 @@
         <x>-0.69360000</x>
         <y>23.4499</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -1985,6 +2072,7 @@
         <x>2.4016000</x>
         <y>22.0326</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3656"/>
     <successor ref="3489"/>
@@ -2010,6 +2098,7 @@
         <x>-20.9044</x>
         <y>-23.6654</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2028,6 +2117,7 @@
         <x>-17.9847</x>
         <y>-25.0519</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <successor ref="3600"/>
     <successor ref="3636"/>
@@ -2081,6 +2171,7 @@
         <x>-0.79370000</x>
         <y>-18.5237</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2127,6 +2218,7 @@
         <x>-2.3990000</x>
         <y>-21.5818</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3479"/>
     <successor ref="3542"/>
@@ -2143,6 +2235,7 @@
         <x>-16.2364</x>
         <y>-14.602500</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2153,6 +2246,7 @@
         <x>-13.282000</x>
         <y>-16.0926</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3479"/>
     <successor ref="3658"/>
@@ -2198,6 +2292,7 @@
         <x>-4.8509000</x>
         <y>7.5027</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2236,6 +2331,7 @@
         <x>-1.6944000</x>
         <y>5.9826</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3636"/>
     <successor ref="3676"/>
@@ -2257,6 +2353,7 @@
         <x>2.4016000</x>
         <y>22.0326</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2271,6 +2368,7 @@
         <x>5.4896000</x>
         <y>20.3602</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3658"/>
     <successor ref="3492"/>
@@ -2292,6 +2390,7 @@
         <x>-1.8590000</x>
         <y>28.1045</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2306,6 +2405,7 @@
         <x>-5.1287000</x>
         <y>29.7741</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <successor ref="3524"/>
     <adjacentRight ref="3502" drivingDir="same"/>
@@ -2322,6 +2422,7 @@
         <x>-4.7716000</x>
         <y>22.239</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2332,6 +2433,7 @@
         <x>-8.0707000</x>
         <y>23.8635</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3499"/>
     <successor ref="3530"/>
@@ -2349,6 +2451,7 @@
         <x>-7.6881000</x>
         <y>16.3752</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2359,6 +2462,7 @@
         <x>-11.067500</x>
         <y>17.9072</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3524"/>
     <successor ref="3618"/>
@@ -2377,6 +2481,7 @@
         <x>-10.7232</x>
         <y>10.3306</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2387,6 +2492,7 @@
         <x>-14.0586</x>
         <y>11.9369</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3530"/>
     <successor ref="3660"/>
@@ -2432,6 +2538,7 @@
         <x>-21.8308</x>
         <y>-11.780800</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2470,6 +2577,7 @@
         <x>-25.1122</x>
         <y>-10.125200</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3618"/>
     <successor ref="3638"/>
@@ -2487,6 +2595,7 @@
         <x>-26.4229</x>
         <y>-21.0519</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2497,6 +2606,7 @@
         <x>-29.8509</x>
         <y>-19.689300</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3660"/>
     <predecessor ref="3670"/>
@@ -2523,6 +2633,7 @@
         <x>-37.5357</x>
         <y>-40.6564</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2541,6 +2652,7 @@
         <x>-40.8096</x>
         <y>-39.0003</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3638"/>
     <adjacentRight ref="3484" drivingDir="same"/>
@@ -2609,6 +2721,7 @@
         <x>1.9862000</x>
         <y>-13.2276</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2671,6 +2784,7 @@
         <x>0.58630000</x>
         <y>-15.8945</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3530"/>
     <successor ref="3536"/>
@@ -2691,6 +2805,7 @@
         <x>-5.1287000</x>
         <y>29.7741</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2705,6 +2820,7 @@
         <x>-8.4164000</x>
         <y>31.2584</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <successor ref="3526"/>
     <successor ref="3528"/>
@@ -2722,6 +2838,7 @@
         <x>-8.0707000</x>
         <y>23.8635</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2732,6 +2849,7 @@
         <x>-11.354400</x>
         <y>25.345</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3502"/>
     <successor ref="3532"/>
@@ -2750,6 +2868,7 @@
         <x>-11.067500</x>
         <y>17.9072</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2760,6 +2879,7 @@
         <x>-14.247100</x>
         <y>19.421</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3526"/>
     <successor ref="3620"/>
@@ -2778,6 +2898,7 @@
         <x>-14.0586</x>
         <y>11.9369</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2788,6 +2909,7 @@
         <x>-17.1722</x>
         <y>13.436300</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3532"/>
     <successor ref="3662"/>
@@ -2833,6 +2955,7 @@
         <x>-25.1122</x>
         <y>-10.125200</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2871,6 +2994,7 @@
         <x>-27.981</x>
         <y>-8.6776000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3620"/>
     <successor ref="3640"/>
@@ -2888,6 +3012,7 @@
         <x>-29.8509</x>
         <y>-19.689300</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2898,6 +3023,7 @@
         <x>-32.8851</x>
         <y>-18.780500</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3662"/>
     <successor ref="3484"/>
@@ -2923,6 +3049,7 @@
         <x>-40.8096</x>
         <y>-39.0003</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2941,6 +3068,7 @@
         <x>-43.5834</x>
         <y>-37.5972</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3640"/>
     <adjacentLeft ref="3481" drivingDir="same"/>
@@ -2958,6 +3086,7 @@
         <x>-11.354400</x>
         <y>25.345</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2968,6 +3097,7 @@
         <x>-14.234400</x>
         <y>26.8418</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3502"/>
     <successor ref="3534"/>
@@ -2985,6 +3115,7 @@
         <x>-14.247100</x>
         <y>19.421</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -2995,6 +3126,7 @@
         <x>-17.1206</x>
         <y>20.8067</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3528"/>
     <successor ref="3602"/>
@@ -3040,6 +3172,7 @@
         <x>-30.6105</x>
         <y>16.367000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3078,6 +3211,7 @@
         <x>-29.2539</x>
         <y>19.254400</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3534"/>
     <successor ref="3456"/>
@@ -3102,6 +3236,7 @@
         <x>-52.8094</x>
         <y>27.248100</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3120,6 +3255,7 @@
         <x>-51.4932</x>
         <y>29.996900</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3602"/>
     <predecessor ref="3616"/>
@@ -3138,6 +3274,7 @@
         <x>-60.3879</x>
         <y>31.096700</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3148,6 +3285,7 @@
         <x>-59.0402</x>
         <y>33.906900</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3456"/>
     <successor ref="3470"/>
@@ -3165,6 +3303,7 @@
         <x>-67.2627</x>
         <y>34.534300</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3175,6 +3314,7 @@
         <x>-65.8675</x>
         <y>37.252100</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3462"/>
     <adjacentLeft ref="3467" drivingDir="same"/>
@@ -3207,6 +3347,7 @@
         <x>3.6295000</x>
         <y>-10.0969</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3233,6 +3374,7 @@
         <x>5.0486000</x>
         <y>-7.3935</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <successor ref="3670"/>
     <adjacentRight ref="3564" drivingDir="same"/>
@@ -3289,6 +3431,7 @@
         <x>-21.8308</x>
         <y>-11.780800</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3339,6 +3482,7 @@
         <x>-25.1122</x>
         <y>-10.125200</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3561"/>
     <successor ref="3638"/>
@@ -3371,6 +3515,7 @@
         <x>5.0486000</x>
         <y>-7.3935</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3397,6 +3542,7 @@
         <x>6.4451</x>
         <y>-4.7329</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <successor ref="3628"/>
     <adjacentLeft ref="3561" drivingDir="same"/>
@@ -3414,6 +3560,7 @@
         <x>-5.9528</x>
         <y>-2.1301000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3424,6 +3571,7 @@
         <x>-4.5659</x>
         <y>0.51220000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3564"/>
     <successor ref="3648"/>
@@ -3457,6 +3605,7 @@
         <x>-21.2126</x>
         <y>5.1699000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3483,6 +3632,7 @@
         <x>-19.9158</x>
         <y>7.8229000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3628"/>
     <successor ref="3612"/>
@@ -3500,6 +3650,7 @@
         <x>-33.3414</x>
         <y>10.971400</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3510,6 +3661,7 @@
         <x>-32.0424</x>
         <y>13.596700</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3648"/>
     <successor ref="3452"/>
@@ -3543,6 +3695,7 @@
         <x>6.4451</x>
         <y>-4.7329</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3569,6 +3722,7 @@
         <x>7.8899</x>
         <y>-2.0157000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <successor ref="3630"/>
     <adjacentLeft ref="3564" drivingDir="same"/>
@@ -3586,6 +3740,7 @@
         <x>-4.5659</x>
         <y>0.51220000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3596,6 +3751,7 @@
         <x>-3.1454</x>
         <y>3.2183</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3567"/>
     <successor ref="3650"/>
@@ -3630,6 +3786,7 @@
         <x>-19.9158</x>
         <y>7.8229000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3656,6 +3813,7 @@
         <x>-18.5532</x>
         <y>10.610800</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3630"/>
     <successor ref="3614"/>
@@ -3674,6 +3832,7 @@
         <x>-32.0424</x>
         <y>13.596700</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3684,6 +3843,7 @@
         <x>-30.6105</x>
         <y>16.367000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3650"/>
     <successor ref="3454"/>
@@ -3710,6 +3870,7 @@
         <x>-54.1694</x>
         <y>24.670000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3728,6 +3889,7 @@
         <x>-52.8094</x>
         <y>27.248100</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3614"/>
     <successor ref="3460"/>
@@ -3746,6 +3908,7 @@
         <x>-61.8103</x>
         <y>28.457600</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3756,6 +3919,7 @@
         <x>-60.3879</x>
         <y>31.096700</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3454"/>
     <successor ref="3467"/>
@@ -3774,6 +3938,7 @@
         <x>-68.6402</x>
         <y>31.851000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3784,6 +3949,7 @@
         <x>-67.2627</x>
         <y>34.534300</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3460"/>
     <adjacentLeft ref="3464" drivingDir="same"/>
@@ -3817,6 +3983,7 @@
         <x>7.8899</x>
         <y>-2.0157000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3843,6 +4010,7 @@
         <x>9.3617</x>
         <y>0.75060000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <successor ref="3632"/>
     <successor ref="3678"/>
@@ -3861,6 +4029,7 @@
         <x>-3.1454</x>
         <y>3.2183</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3871,6 +4040,7 @@
         <x>-1.6944000</x>
         <y>5.9826</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3570"/>
     <successor ref="3652"/>
@@ -3904,6 +4074,7 @@
         <x>-18.5532</x>
         <y>10.610800</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3930,6 +4101,7 @@
         <x>-17.1722</x>
         <y>13.436300</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3632"/>
     <successor ref="3616"/>
@@ -3947,6 +4119,7 @@
         <x>-30.6105</x>
         <y>16.367000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -3957,6 +4130,7 @@
         <x>-29.2539</x>
         <y>19.254400</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3652"/>
     <successor ref="3456"/>
@@ -4002,6 +4176,7 @@
         <x>2.4016000</x>
         <y>22.0326</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -4040,6 +4215,7 @@
         <x>5.4896000</x>
         <y>20.3602</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3570"/>
     <successor ref="3492"/>
@@ -4073,6 +4249,7 @@
         <x>9.3617</x>
         <y>0.75060000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -4099,6 +4276,7 @@
         <x>11.1695</x>
         <y>4.2409000</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <successor ref="3680"/>
     <adjacentLeft ref="3570" drivingDir="same"/>
@@ -4143,6 +4321,7 @@
         <x>5.4896000</x>
         <y>20.3602</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -4181,6 +4360,7 @@
         <x>9.0578000</x>
         <y>18.7865</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3573"/>
     <successor ref="3495"/>
@@ -4202,6 +4382,7 @@
         <x>12.244400</x>
         <y>34.0632</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -4216,6 +4397,7 @@
         <x>15.723700</x>
         <y>32.3537</y>
       </point>
+      <lineMarking>unknown</lineMarking>
     </rightBound>
     <predecessor ref="3680"/>
     <adjacentLeft ref="3492" drivingDir="same"/>
@@ -4229,8 +4411,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>19.2544</x>
-        <y>29.2539</y>
+        <x>-29.2539</x>
+        <y>19.254400</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4242,8 +4424,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>24.67</x>
-        <y>54.1694</y>
+        <x>-54.1694</x>
+        <y>24.670000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4255,8 +4437,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>27.2481</x>
-        <y>52.8094</y>
+        <x>-52.8094</x>
+        <y>27.248100</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4268,8 +4450,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>29.9969</x>
-        <y>51.4932</y>
+        <x>-51.4932</x>
+        <y>29.996900</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4281,8 +4463,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>28.4576</x>
-        <y>61.8103</y>
+        <x>-61.8103</x>
+        <y>28.457600</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4294,8 +4476,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>31.0967</x>
-        <y>60.3879</y>
+        <x>-60.3879</x>
+        <y>31.096700</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4307,8 +4489,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>33.9069</x>
-        <y>59.0402</y>
+        <x>-59.0402</x>
+        <y>33.906900</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4320,8 +4502,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-25.0519</x>
-        <y>17.9847</y>
+        <x>-17.9847</x>
+        <y>-25.0519</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4333,8 +4515,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>20.8067</x>
-        <y>17.1206</y>
+        <x>-17.1206</x>
+        <y>20.8067</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4346,8 +4528,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-5.8809</x>
-        <y>42.0439</y>
+        <x>-42.0439</x>
+        <y>-5.8809000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4359,8 +4541,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>2.7397</x>
-        <y>37.4975</y>
+        <x>-37.4975</x>
+        <y>2.7397000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4372,8 +4554,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>0.0105</x>
-        <y>38.8365</y>
+        <x>-38.8365</x>
+        <y>0.010500000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4385,8 +4567,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-2.5453</x>
-        <y>40.1346</y>
+        <x>-40.1346</x>
+        <y>-2.5453000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4398,8 +4580,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>7.8229</x>
-        <y>19.9158</y>
+        <x>-19.9158</x>
+        <y>7.8229000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4411,8 +4593,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>10.6108</x>
-        <y>18.5532</y>
+        <x>-18.5532</x>
+        <y>10.610800</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4424,8 +4606,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>13.4363</x>
-        <y>17.1722</y>
+        <x>-17.1722</x>
+        <y>13.436300</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4437,8 +4619,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>17.9072</x>
-        <y>11.0675</y>
+        <x>-11.067500</x>
+        <y>17.9072</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4450,8 +4632,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>19.421</x>
-        <y>14.2471</y>
+        <x>-14.247100</x>
+        <y>19.421</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4463,8 +4645,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-10.5345</x>
-        <y>10.3644</y>
+        <x>-10.3644</x>
+        <y>-10.5345</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4476,8 +4658,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-13.1823</x>
-        <y>11.7542</y>
+        <x>-11.7542</x>
+        <y>-13.1823</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4489,8 +4671,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-16.0926</x>
-        <y>13.282</y>
+        <x>-13.282000</x>
+        <y>-16.0926</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4502,8 +4684,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-4.7329</x>
-        <y>-6.4451</y>
+        <x>6.4451</x>
+        <y>-4.7329</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4515,8 +4697,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-2.0157</x>
-        <y>-7.8899</y>
+        <x>7.8899</x>
+        <y>-2.0157000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4528,8 +4710,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>0.7506</x>
-        <y>-9.3617</y>
+        <x>9.3617</x>
+        <y>0.75060000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4541,8 +4723,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-23.6654</x>
-        <y>20.9044</y>
+        <x>-20.9044</x>
+        <y>-23.6654</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4554,8 +4736,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-25.0519</x>
-        <y>17.9847</y>
+        <x>-17.9847</x>
+        <y>-25.0519</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4567,8 +4749,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-10.1252</x>
-        <y>25.1122</y>
+        <x>-25.1122</x>
+        <y>-10.125200</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4580,8 +4762,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-8.6776</x>
-        <y>27.981</y>
+        <x>-27.981</x>
+        <y>-8.6776000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4593,8 +4775,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-3.2197</x>
-        <y>25.3133</y>
+        <x>-25.3133</x>
+        <y>-3.2197000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4606,8 +4788,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-5.9306</x>
-        <y>26.6383</y>
+        <x>-26.6383</x>
+        <y>-5.9306000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4619,8 +4801,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-8.6776</x>
-        <y>27.981</y>
+        <x>-27.981</x>
+        <y>-8.6776000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4632,8 +4814,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>0.5122</x>
-        <y>4.5659</y>
+        <x>-4.5659</x>
+        <y>0.51220000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4645,8 +4827,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>3.2183</x>
-        <y>3.1454</y>
+        <x>-3.1454</x>
+        <y>3.2183</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4658,8 +4840,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>5.9826</x>
-        <y>1.6944</y>
+        <x>-1.6944000</x>
+        <y>5.9826</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4671,8 +4853,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-14.6025</x>
-        <y>16.2364</y>
+        <x>-16.2364</x>
+        <y>-14.602500</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4684,8 +4866,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-16.0926</x>
-        <y>13.282</y>
+        <x>-13.282000</x>
+        <y>-16.0926</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4697,8 +4879,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>11.9369</x>
-        <y>14.0586</y>
+        <x>-14.0586</x>
+        <y>11.9369</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4710,8 +4892,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>13.4363</x>
-        <y>17.1722</y>
+        <x>-17.1722</x>
+        <y>13.436300</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4723,8 +4905,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>5.5798</x>
-        <y>36.0877</y>
+        <x>-36.0877</x>
+        <y>5.5798000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4736,8 +4918,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-15.8945</x>
-        <y>-0.5863</y>
+        <x>0.58630000</x>
+        <y>-15.8945</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4749,8 +4931,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>8.2659</x>
-        <y>34.7109</y>
+        <x>-34.7109</x>
+        <y>8.2659000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4762,8 +4944,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-18.5237</x>
-        <y>0.7937</y>
+        <x>-0.79370000</x>
+        <y>-18.5237</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4775,8 +4957,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>17.9072</x>
-        <y>11.0675</y>
+        <x>-11.067500</x>
+        <y>17.9072</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4788,8 +4970,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-21.5818</x>
-        <y>2.399</y>
+        <x>-2.3990000</x>
+        <y>-21.5818</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4801,8 +4983,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-7.3935</x>
-        <y>-5.0486</y>
+        <x>5.0486000</x>
+        <y>-7.3935</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4814,8 +4996,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-22.1903</x>
-        <y>23.5459</y>
+        <x>-23.5459</x>
+        <y>-22.1903</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4827,8 +5009,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>7.5027</x>
-        <y>4.8509</y>
+        <x>-4.8509000</x>
+        <y>7.5027</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4840,8 +5022,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>26.4695</x>
-        <y>71.4029</y>
+        <x>-71.4029</x>
+        <y>26.469500</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4853,8 +5035,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>5.9826</x>
-        <y>1.6944</y>
+        <x>-1.6944000</x>
+        <y>5.9826</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4866,8 +5048,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>23.7287</x>
-        <y>72.8099</y>
+        <x>-72.8099</x>
+        <y>23.728700</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4879,8 +5061,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>0.7506</x>
-        <y>-9.3617</y>
+        <x>9.3617</x>
+        <y>0.75060000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4892,8 +5074,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>4.2409</x>
-        <y>-11.1695</y>
+        <x>11.1695</x>
+        <y>4.2409000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4905,8 +5087,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>21.033</x>
-        <y>74.1938</y>
+        <x>-74.1938</x>
+        <y>21.033000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4918,8 +5100,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>18.3066</x>
-        <y>75.5934</y>
+        <x>-75.5934</x>
+        <y>18.306600</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4931,8 +5113,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>15.7785</x>
-        <y>76.8912</y>
+        <x>-76.8912</x>
+        <y>15.778500</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4944,8 +5126,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>23.0181</x>
-        <y>64.4496</y>
+        <x>-64.4496</x>
+        <y>23.018100</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4957,8 +5139,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>20.3173</x>
-        <y>65.8728</y>
+        <x>-65.8728</x>
+        <y>20.317300</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4970,8 +5152,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>17.5491</x>
-        <y>67.1816</y>
+        <x>-67.1816</x>
+        <y>17.549100</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4983,8 +5165,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>14.8248</x>
-        <y>68.5898</y>
+        <x>-68.5898</x>
+        <y>14.824800</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -4996,8 +5178,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>12.1761</x>
-        <y>69.8738</y>
+        <x>-69.8738</x>
+        <y>12.176100</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5009,8 +5191,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-25.8715</x>
-        <y>-42.5223</y>
+        <x>42.5223</x>
+        <y>-25.871500</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5022,8 +5204,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>12.1761</x>
-        <y>69.8738</y>
+        <x>-69.8738</x>
+        <y>12.176100</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5035,8 +5217,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-23.3454</x>
-        <y>-43.7671</y>
+        <x>43.7671</x>
+        <y>-23.345400</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5048,8 +5230,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>19.2315</x>
-        <y>56.8701</y>
+        <x>-56.8701</x>
+        <y>19.231500</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5061,8 +5243,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-20.4936</x>
-        <y>-45.1722</y>
+        <x>45.1722</x>
+        <y>-20.493600</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5074,8 +5256,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>16.4993</x>
-        <y>58.263</y>
+        <x>-58.263</x>
+        <y>16.499300</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5087,8 +5269,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-17.906</x>
-        <y>-46.4472</y>
+        <x>46.4472</x>
+        <y>-17.906000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5100,8 +5282,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>13.7937</x>
-        <y>59.6325</y>
+        <x>-59.6325</x>
+        <y>13.793700</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5113,8 +5295,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-14.7737</x>
-        <y>-47.9906</y>
+        <x>47.9906</x>
+        <y>-14.773700</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5126,8 +5308,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>11.0372</x>
-        <y>60.9487</y>
+        <x>-60.9487</x>
+        <y>11.037200</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5139,8 +5321,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>8.2966</x>
-        <y>62.2956</y>
+        <x>-62.2956</x>
+        <y>8.2966000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5152,8 +5334,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>5.3546</x>
-        <y>63.6145</y>
+        <x>-63.6145</x>
+        <y>5.3546000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5165,8 +5347,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>13.5967</x>
-        <y>32.0424</y>
+        <x>-32.0424</x>
+        <y>13.596700</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5178,8 +5360,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>16.367</x>
-        <y>30.6105</y>
+        <x>-30.6105</x>
+        <y>16.367000</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5191,8 +5373,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>22.0326</x>
-        <y>-2.4016</y>
+        <x>2.4016000</x>
+        <y>22.0326</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5204,8 +5386,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>20.3602</x>
-        <y>-5.4896</y>
+        <x>5.4896000</x>
+        <y>20.3602</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5217,8 +5399,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>29.7741</x>
-        <y>5.1287</y>
+        <x>-5.1287000</x>
+        <y>29.7741</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5230,8 +5412,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>31.2584</x>
-        <y>8.4164</y>
+        <x>-8.4164000</x>
+        <y>31.2584</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5243,8 +5425,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>18.7865</x>
-        <y>-9.0578</y>
+        <x>9.0578000</x>
+        <y>18.7865</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5256,8 +5438,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>31.2584</x>
-        <y>8.4164</y>
+        <x>-8.4164000</x>
+        <y>31.2584</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5269,8 +5451,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>23.8635</x>
-        <y>8.0707</y>
+        <x>-8.0707000</x>
+        <y>23.8635</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5282,8 +5464,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>40.1063</x>
-        <y>0.0551</y>
+        <x>-0.055100000</x>
+        <y>40.1063</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5295,8 +5477,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>25.345</x>
-        <y>11.3544</y>
+        <x>-11.354400</x>
+        <y>25.345</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5308,8 +5490,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>41.7144</x>
-        <y>3.3281</y>
+        <x>-3.3281000</x>
+        <y>41.7144</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5321,8 +5503,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>26.8418</x>
-        <y>14.2344</y>
+        <x>-14.234400</x>
+        <y>26.8418</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5334,8 +5516,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-42.5979</x>
-        <y>33.6975</y>
+        <x>-33.6975</x>
+        <y>-42.5979</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5347,8 +5529,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-43.9624</x>
-        <y>31.0</y>
+        <x>-31.000000</x>
+        <y>-43.9624</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5360,8 +5542,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-45.4209</x>
-        <y>28.1167</y>
+        <x>-28.116700</x>
+        <y>-45.4209</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5373,8 +5555,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-19.6893</x>
-        <y>29.8509</y>
+        <x>-29.8509</x>
+        <y>-19.689300</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5386,8 +5568,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-18.7805</x>
-        <y>32.8851</y>
+        <x>-32.8851</x>
+        <y>-18.780500</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -5399,8 +5581,8 @@
     </trafficSignElement>
     <position>
       <point>
-        <x>-16.2547</x>
-        <y>38.7588</y>
+        <x>-38.7588</x>
+        <y>-16.254700</y>
       </point>
     </position>
     <virtual>false</virtual>
