@@ -1,9 +1,15 @@
 <?xml version="1.0" ?>
-<commonRoad affiliation="TU Munich" author="PrinceOfZAM" benchmarkID="ZAM_test_0-0-1" commonRoadVersion="2020a" date="2020-01-07" source="unittest" timeStepSize="0.1">
+<commonRoad affiliation="TU Munich" author="PrinceOfZAM" benchmarkID="ZAM_test_0-1" commonRoadVersion="2020a" date="2020-01-07" source="unittest" timeStepSize="0.1">
   <location>
     <geoNameId>2867714</geoNameId>
     <gpsLatitude>48.262333</gpsLatitude>
     <gpsLongitude>11.668775</gpsLongitude>
+    <environment>
+      <time>09:12:00</time>
+      <timeOfDay>night</timeOfDay>
+      <weather>light_rain</weather>
+      <underground>ice</underground>
+    </environment>
   </location>
    <scenarioTags>
     <intersection/>
@@ -208,7 +214,7 @@
         <x>6.0</x>
         <y>4.0</y>
       </point>
-      <lineMarking>broad_solid</lineMarking>
+      <lineMarking>unknown</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -223,7 +229,7 @@
         <x>6.0</x>
         <y>2.0</y>
       </point>
-      <lineMarking>broad_dashed</lineMarking>
+      <lineMarking>no_marking</lineMarking>
     </rightBound>
     <predecessor ref="104"/>
     <adjacentRight drivingDir="same" ref="102"/>
@@ -393,10 +399,30 @@
         </time>
         <horn>false</horn>
         <brakingLights>true</brakingLights>
+        <indicatorLights>true</indicatorLights>
         <hazardWarningLights>false</hazardWarningLights>
       </signalState>
     </signalSeries>
   </dynamicObstacle>
+  <environmentObstacle id="1234">
+    <type>building</type>
+    <shape>
+      <polygon>
+        <point>
+      <x>0.0</x>
+      <y>0.0</y>
+      </point>
+      <point>
+        <x>8.0</x>
+        <y>0.0</y>
+      </point>
+      <point>
+        <x>4.0</x>
+        <y>-4.0</y>
+    </point>
+      </polygon>
+    </shape>
+  </environmentObstacle>
   <planningProblem id="1000">
     <initialState>
       <position>

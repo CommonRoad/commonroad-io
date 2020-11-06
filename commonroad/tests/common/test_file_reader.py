@@ -7,11 +7,12 @@ from commonroad.planning.planning_problem import PlanningProblem, PlanningProble
 from commonroad.prediction.prediction import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
 from commonroad.scenario.obstacle import *
-from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation
+from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Underground, Weather, TimeOfDay
 from commonroad.scenario.trajectory import *
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLightDirection, TrafficLight, \
     TrafficLightCycleElement, TrafficLightState, TrafficSignIDGermany
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
+
 
 class TestFileReader(unittest.TestCase):
     def setUp(self):
@@ -109,12 +110,19 @@ class TestFileReader(unittest.TestCase):
                                                                                lanelet5, lanelet6]))
         self.lanelet_network.add_traffic_sign(traffic_sign_201, [100])
 
+
+        environment_obstacle_shape = Polygon(np.array([[0, 0], [8, 0], [4, -4]]))
+        environment_obstacle_id = 1234
+        self._environment_obstacle = EnvironmentObstacle(environment_obstacle_id, ObstacleType.BUILDING,
+                                                          environment_obstacle_shape)
+
         tags = {Tag.URBAN, Tag.INTERSTATE}
         geo_transformation = GeoTransformation("test", 0.0, 0.0, 0.0, 0.0)
         location = Location(2867714, 0.0, 0.0, geo_transformation)
 
-        self.scenario = Scenario(0.1, 'ZAM_test_0-0-1', tags=tags, location=location)
-        self.scenario.add_objects([static_obs, dyn_set_obs, dyn_traj_obs, self.lanelet_network])
+        self.scenario = Scenario(0.1, 'ZAM_test_0-1', tags=tags, location=location)
+        self.scenario.add_objects([static_obs, dyn_set_obs, dyn_traj_obs, self.lanelet_network,
+                                   self._environment_obstacle])
 
         goal_region = GoalRegion([State(time_step=Interval(0, 1), velocity=Interval(0.0, 1), position=rectangle),
                                   State(time_step=Interval(1, 2), velocity=Interval(0.0, 1), position=circ)],
@@ -125,9 +133,9 @@ class TestFileReader(unittest.TestCase):
 
         # setup for reading intersection scenario with traffic signs, traffic lights, stop signs (without obstacles)
         self.stop_line_17 = StopLine(np.array([169.2560351117039, -54.95658983061205]),
-                                     np.array([168.6607857447963, -57.38341449560771]), LineMarking.SOLID, None, 204)
+                                     np.array([168.6607857447963, -57.38341449560771]), LineMarking.SOLID, None, {204})
         self.stop_line_13 = StopLine(np.array([174.1617095787515, -64.10832609867704]),
-                                     np.array([176.4678542468245, -65.07388839655903]), LineMarking.SOLID, None, 201)
+                                     np.array([176.4678542468245, -65.07388839655903]), LineMarking.SOLID, None, {201})
         self.stop_line_12 = None
         self.lanelet_12_traffic_sign_ref = {112}
         self.lanelet_28_traffic_sign_ref = {105}
@@ -148,9 +156,11 @@ class TestFileReader(unittest.TestCase):
 
         self.traffic_light_201 = TrafficLight(traffic_light_id=201,
                                               position=np.array([168.6607857447963, -57.38341449560771]),
-                                              direction=TrafficLightDirection.ALL, active=True, time_offset=0,
+                                              direction=TrafficLightDirection.ALL, active=True, time_offset=2,
                                               cycle=[TrafficLightCycleElement(state=TrafficLightState.RED,
                                                                               duration=15),
+                                                     TrafficLightCycleElement(state=TrafficLightState.INACTIVE,
+                                                                              duration=4),
                                                      TrafficLightCycleElement(state=TrafficLightState.RED_YELLOW,
                                                                               duration=4),
                                                      TrafficLightCycleElement(state=TrafficLightState.GREEN,
@@ -158,10 +168,21 @@ class TestFileReader(unittest.TestCase):
                                                      TrafficLightCycleElement(state=TrafficLightState.YELLOW,
                                                                               duration=4)])
         self.intersection_301 = \
-            Intersection(301, [IntersectionIncomingElement(302, {13}, {26}, {22}, {20}, 304),
-                               IntersectionIncomingElement(303, {14}, {30}, {24}, {28}, 302),
-                               IntersectionIncomingElement(304, {17}, {27}, {23}, {31}, 305),
-                               IntersectionIncomingElement(305, {18}, {29}, {21}, {25}, 305)])
+            Intersection(intersection_id=301,
+                         incomings=[IntersectionIncomingElement(incoming_id=302, incoming_lanelets={13},
+                                                                successors_right={26},
+                                                                successors_straight={22},
+                                                                successors_left={20}, left_of=304),
+                                    IntersectionIncomingElement(incoming_id=303, incoming_lanelets={14},
+                                                                successors_right={30}, successors_straight={24},
+                                                                successors_left={28}, left_of=302),
+                                    IntersectionIncomingElement(incoming_id=304, incoming_lanelets={17},
+                                                                successors_right={27}, successors_straight={23},
+                                                                successors_left={31}, left_of=305),
+                                    IntersectionIncomingElement(incoming_id=305, incoming_lanelets={18},
+                                                                successors_right={29}, successors_straight={21},
+                                                                successors_left={25}, left_of=305)],
+                         crossings={32})
 
     def test_open_2018b(self):
         scenario, planning_problem_set = CommonRoadFileReader(self.filename_2018b).open()
@@ -298,7 +319,7 @@ class TestFileReader(unittest.TestCase):
         exp_num_lanelet_scenario = len(self.scenario.lanelet_network.lanelets)
         exp_num_obstacles_scenario = len(self.scenario.obstacles)
         exp_num_planning_problems = len(self.planning_problem_set.planning_problem_dict)
-        exp_benchmark_id = self.scenario.benchmark_id
+        exp_scenario_id = self.scenario.scenario_id
         exp_dt = self.scenario.dt
 
         exp_obstacle_zero_id = self.scenario.obstacles[0].obstacle_id
@@ -385,14 +406,19 @@ class TestFileReader(unittest.TestCase):
         exp_location_latitude = 48.262333
         exp_location_longitude = 11.668775
         exp_location_geo = None
+        exp_location_env_time_hours = 9
+        exp_location_env_time_minutes = 12
+        exp_location_env_underground = Underground.ICE
+        exp_location_env_time_of_day = TimeOfDay.NIGHT
+        exp_location_env_weather = Weather.LIGHT_RAIN
         exp_tags = {Tag.INTERSECTION, Tag.URBAN}
 
-        xml_file = CommonRoadFileReader(self.filename_all).open()
+        xml_file = CommonRoadFileReader(self.filename_all).open(lanelet_assignment=True)
 
         self.assertEqual(exp_num_lanelet_scenario,len(xml_file[0].lanelet_network.lanelets))
         self.assertEqual(exp_num_obstacles_scenario,len(xml_file[0].obstacles))
         self.assertEqual(exp_num_planning_problems, len(xml_file[1].planning_problem_dict))
-        self.assertEqual(exp_benchmark_id, xml_file[0].benchmark_id)
+        self.assertEqual(exp_scenario_id, xml_file[0].scenario_id)
         self.assertEqual(exp_dt, xml_file[0].dt)
 
         self.assertEqual(exp_obstacle_zero_id, xml_file[0].obstacles[0].obstacle_id)
@@ -498,6 +524,11 @@ class TestFileReader(unittest.TestCase):
         self.assertEqual(exp_location_latitude, xml_file[0].location.gps_latitude)
         self.assertEqual(exp_location_longitude, xml_file[0].location.gps_longitude)
         self.assertEqual(exp_location_geo, xml_file[0].location.geo_transformation)
+        self.assertEqual(exp_location_env_time_hours, xml_file[0].location.environment.time.hours)
+        self.assertEqual(exp_location_env_time_minutes, xml_file[0].location.environment.time.minutes)
+        self.assertEqual(exp_location_env_underground, xml_file[0].location.environment.underground)
+        self.assertEqual(exp_location_env_time_of_day, xml_file[0].location.environment.time_of_day)
+        self.assertEqual(exp_location_env_weather, xml_file[0].location.environment.weather)
 
     def test_open_intersection(self):
         exp_lanelet_stop_line_17_point_1 = self.stop_line_17.start
@@ -550,6 +581,7 @@ class TestFileReader(unittest.TestCase):
         exp_intersection_301_incoming_zero_successors_right = self.intersection_301.incomings[0].successors_right
         exp_intersection_301_incoming_zero_successors_straight = self.intersection_301.incomings[0].successors_straight
         exp_intersection_301_incoming_zero_left_of = self.intersection_301.incomings[0].left_of
+        exp_intersection_301_crossing = self.intersection_301.crossings
 
 
         xml_file = CommonRoadFileReader(self.filename_urban).open()
@@ -640,14 +672,79 @@ class TestFileReader(unittest.TestCase):
                             xml_file[0].lanelet_network.intersections[0].incomings[0].successors_straight)
         self.assertEqual(exp_intersection_301_incoming_zero_left_of,
                          xml_file[0].lanelet_network.intersections[0].incomings[0].left_of)
+        self.assertEqual(exp_intersection_301_crossing, xml_file[0].lanelet_network.intersections[0].crossings)
+
+    def test_open_with_lanelet_assignment(self):
+        exp_static_obstacles_on_lanelet_zero = {self.scenario.static_obstacles[0].obstacle_id}
+        exp_dynamic_obstacles_on_lanelet_zero = {0: {self.scenario.dynamic_obstacles[1].obstacle_id},
+                                                 1: {self.scenario.dynamic_obstacles[1].obstacle_id}}
+        exp_dynamic_obstacles_on_lanelet_one = {0: {self.scenario.dynamic_obstacles[1].obstacle_id},
+                                                1: {self.scenario.dynamic_obstacles[1].obstacle_id}}
+        exp_lanelet_of_static_obstacle = {100}
+        exp_lanelet_of_dynamic_obstacle_initial = {100, 101, 103, 104}
+        exp_lanelet_of_dynamic_obstacle_prediction = {0: {100, 101, 103, 104}, 1: {100, 101, 103, 104}}
+
+        xml_file = CommonRoadFileReader(self.filename_all).open(lanelet_assignment=True)
+
+        self.assertSetEqual(exp_static_obstacles_on_lanelet_zero,
+                            xml_file[0].lanelet_network.lanelets[0].static_obstacles_on_lanelet)
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
+                         xml_file[0].lanelet_network.lanelets[0].dynamic_obstacles_on_lanelet)
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_one,
+                         xml_file[0].lanelet_network.lanelets[1].dynamic_obstacles_on_lanelet)
+        self.assertSetEqual(exp_lanelet_of_static_obstacle,
+                            xml_file[0].obstacle_by_id(3).initial_shape_lanelet_ids)
+        self.assertSetEqual(exp_lanelet_of_dynamic_obstacle_initial,
+                            xml_file[0].obstacle_by_id(2).initial_shape_lanelet_ids)
+        self.assertEqual(exp_lanelet_of_dynamic_obstacle_prediction,
+                         xml_file[0].obstacle_by_id(2).prediction.shape_lanelet_assignment)
+
+    def test_open_without_lanelet_assignment(self):
+        exp_static_obstacles_on_lanelet_zero = set()
+        exp_dynamic_obstacles_on_lanelet_zero = {}
+        exp_dynamic_obstacles_on_lanelet_one = {}
+        exp_lanelet_of_static_obstacle = None
+        exp_lanelet_of_dynamic_obstacle_initial = None
+        exp_lanelet_of_dynamic_obstacle_prediction = None
+
+        xml_file = CommonRoadFileReader(self.filename_all).open(lanelet_assignment=False)
+
+        self.assertEqual(exp_static_obstacles_on_lanelet_zero,
+                         xml_file[0].lanelet_network.lanelets[0].static_obstacles_on_lanelet)
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
+                         xml_file[0].lanelet_network.lanelets[0].dynamic_obstacles_on_lanelet)
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_one,
+                         xml_file[0].lanelet_network.lanelets[1].dynamic_obstacles_on_lanelet)
+        self.assertEqual(exp_lanelet_of_static_obstacle,
+                        xml_file[0].obstacle_by_id(3).initial_shape_lanelet_ids)
+        self.assertEqual(exp_lanelet_of_dynamic_obstacle_initial,
+                        xml_file[0].obstacle_by_id(2).initial_shape_lanelet_ids)
+        self.assertEqual(exp_lanelet_of_dynamic_obstacle_prediction,
+                         xml_file[0].obstacle_by_id(2).prediction.shape_lanelet_assignment)
+
+    def test_read_environment_obstacle(self):
+        exp_environment_obstacle_id = self._environment_obstacle.obstacle_id
+        exp_environment_obstacle_role = self._environment_obstacle.obstacle_role
+        exp_environment_obstacle_type = self._environment_obstacle.obstacle_type
+        exp_environment_obstacle_shape = self._environment_obstacle.obstacle_shape
+
+        xml_file = CommonRoadFileReader(self.filename_all).open(lanelet_assignment=False)
+        self.assertEqual(exp_environment_obstacle_id, xml_file[0].environment_obstacle[0].obstacle_id)
+        self.assertEqual(exp_environment_obstacle_role, xml_file[0].environment_obstacle[0].obstacle_role)
+        self.assertEqual(exp_environment_obstacle_type, xml_file[0].environment_obstacle[0].obstacle_type)
+        np.testing.assert_array_almost_equal(exp_environment_obstacle_shape.vertices,
+                                             xml_file[0].environment_obstacle[0].obstacle_shape.vertices)
+
 
     # def test_open_all_scenarios(self):
     #     scenarios = "update"
-    #     cooperative = scenarios + "/cooperative"
+    #     factory = scenarios + "/scenario-factory"
+    #     #cooperative = scenarios + "/cooperative"
     #     hand_crafted = scenarios + "/hand-crafted"
     #     ngsim_lankershim = scenarios + "/NGSIM/Lankershim"
     #     ngsim_us101 = scenarios + "/NGSIM/US101"
-    #     sumo = scenarios + "/SUMO"
+    #     ngsim_peachtree = scenarios + "/NGSIM/Peachtree"
+    #     #sumo = scenarios + "/SUMO"
     #     bicycle = scenarios + "/THI-Bicycle"
     #
     #     for scenario in os.listdir(hand_crafted):
@@ -662,16 +759,20 @@ class TestFileReader(unittest.TestCase):
     #         full_path = ngsim_us101 + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
     #
-    #     for scenario in os.listdir(cooperative):
-    #         full_path = cooperative + "/" + scenario
-    #         CommonRoadFileReader(full_path).open()
-    #
-    #     for scenario in os.listdir(sumo):
-    #         full_path = sumo + "/" + scenario
-    #         CommonRoadFileReader(full_path).open()
+    #     # for scenario in os.listdir(cooperative):
+    #     #     full_path = cooperative + "/" + scenario
+    #     #     CommonRoadFileReader(full_path).open()
+    #     #
+    #     # for scenario in os.listdir(sumo):
+    #     #     full_path = sumo + "/" + scenario
+    #     #     CommonRoadFileReader(full_path).open()
     #
     #     for scenario in os.listdir(bicycle):
     #         full_path = bicycle + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(factory):
+    #         full_path = factory + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
 
 

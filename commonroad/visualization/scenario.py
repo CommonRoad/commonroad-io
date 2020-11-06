@@ -1,4 +1,5 @@
 import itertools
+import math
 import os
 from collections import defaultdict
 from typing import Dict, Callable, Tuple, Union, Any, Set
@@ -22,7 +23,7 @@ from commonroad.prediction.prediction import Occupancy
 from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, ObstacleRole
 from commonroad.scenario.scenario import Scenario
-from commonroad.scenario.trajectory import Trajectory
+from commonroad.scenario.trajectory import Trajectory, State
 
 from commonroad.visualization.util import draw_polygon_as_patch, draw_polygon_collection_as_patch, LineDataUnits, \
     collect_center_line_colors
@@ -30,7 +31,7 @@ from commonroad.visualization.util import draw_polygon_as_patch, draw_polygon_co
 __author__ = "Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = [""]
-__version__ = "2020.2"
+__version__ = "2020.3"
 __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
@@ -63,6 +64,16 @@ def create_default_draw_params() -> dict:
                             'braking_color': 'red',  # braking light
                             'blue_lights_color': 'blue',
                             'horn_color': 'red',  # horn is visualized as red center dot
+                            'initial_state': {
+                                'draw_initial_state': False,  # visualize initial state by arrow proportional to velocity
+                                'scale_factor': 0.3,  # length of arrow in m per m/s
+                                'kwargs':{
+                                    'linewidth': 1.5,
+                                    'length_includes_head': True,
+                                    'edgecolor': 'black',
+                                    'facecolor': 'black',
+                                    },  # further parameters for FancyArrow
+                            },
                             'occupancy': {
                                 'draw_occupancies': 0,  # -1= never, 0= if prediction of vehicle is set-based, 1=always
                                 'shape': {
@@ -109,29 +120,32 @@ def create_default_draw_params() -> dict:
                            }
                         },
                         'lanelet_network': {
-                            'draw_traffic_lights': True,
                             'kwargs_traffic_light_signs': {}, # further properties for AnnotationBox of traffic signs or lights, see # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
-                            'traffic_light': {'red_color': 'red',
+                            'traffic_light': {'draw_traffic_lights': True,
+                                              'red_color': 'red',
                                               'yellow_color': '#feb609',
                                               'green_color': '#00aa16',
                                               'red_yellow_color': '#fe4009ff',
                                               'show_label': False,
                                               'scale_factor': 0.25,
                                               'zorder': 30},
-                            'draw_traffic_signs': False,
-                            'traffic_sign': {'show_traffic_signs': 'all',  # 'all' or list of TrafficSignIDs
+                            'traffic_sign': {'draw_traffic_signs': False,
+                                             'show_traffic_signs': 'all',  # 'all' or list of TrafficSignIDs
+                                             'speed_limit_unit': 'auto',  # 'mph', 'kmh', 'ms', 'auto'
                                              'show_label': False,
                                              'scale_factor': 0.25,
                                              'zorder': 30},
-                            'draw_intersections': False,
-                            'intersection': {'draw_incoming_lanelets': True,
+                            'intersection': {'draw_intersections': False,
+                                             'draw_incoming_lanelets': True,
                                              'incoming_lanelets_color': '#3ecbcf',
                                              'draw_crossings': True,
                                              'crossings_color': '#b62a55',
                                              'draw_successors': True,
                                              'successors_left_color': '#ff00ff',
                                              'successors_straight_color': 'blue',
-                                             'successors_right_color': '#ccff00'},
+                                             'successors_right_color': '#ccff00',
+                                             'show_label': False,  # show incoming id and incoming left
+                                             },
                             'lanelet': {'left_bound_color': '#555555',
                                        'right_bound_color': '#555555',
                                        'center_bound_color': '#dddddd',
@@ -160,12 +174,15 @@ def create_default_draw_params() -> dict:
     draw_params['trajectory'] = draw_params['scenario']['dynamic_obstacle']['trajectory']
     draw_params['lanelet_network'] = draw_params['scenario']['lanelet_network']
     draw_params['lanelet'] = draw_params['scenario']['lanelet_network']['lanelet']
+    draw_params['intersection'] = draw_params['scenario']['lanelet_network']['intersection']
+    draw_params['traffic_sign'] = draw_params['scenario']['lanelet_network']['traffic_sign']
+    draw_params['traffic_light'] = draw_params['scenario']['lanelet_network']['traffic_light']
     draw_params['scenario']['lanelet'] = draw_params['scenario']['lanelet_network']['lanelet']
 
     return draw_params
 
 
-def line_marking_to_linestyle(line_marking:LineMarking) -> Tuple:
+def line_marking_to_linestyle(line_marking: LineMarking) -> Tuple:
     """:returns: Tuple[line_style, dashes, line_width] for matplotlib plotting options."""
     return {LineMarking.DASHED: ('--', (10,10), 0.25,),
             LineMarking.SOLID: ('-', (None,None), 0.25),
@@ -426,7 +443,7 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
         if traffic_lights is not None:
             draw_traffic_lights = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
-                ('lanelet_network', 'draw_traffic_lights'))
+                ('lanelet_network', 'traffic_light', 'draw_traffic_lights'))
 
             traffic_light_colors = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
@@ -437,7 +454,7 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
         if traffic_signs is not None:
             draw_traffic_signs = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
-                ('lanelet_network', 'draw_traffic_signs'))
+                ('lanelet_network', 'traffic_sign', 'draw_traffic_signs'))
             show_traffic_sign_label = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
                 ('lanelet_network', 'traffic_sign', 'show_label'))
@@ -447,7 +464,7 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
         if intersections is not None and len(intersections) > 0:
             draw_intersections = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
-                ('lanelet_network', 'draw_intersections'))
+                ('lanelet_network', 'intersection', 'draw_intersections'))
         else:
             draw_intersections = False
 
@@ -476,8 +493,11 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
             successors_right_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
                 draw_params, call_stack,
                 ('lanelet_network', 'intersection', 'successors_right_color'))
+            show_intersection_labels = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('lanelet_network', 'intersection', 'show_label'))
         else:
-            draw_incoming_lanelets=draw_crossings=draw_successors = False
+            draw_incoming_lanelets=draw_crossings=draw_successors=show_intersection_labels = False
 
         left_bound_color = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
@@ -643,12 +663,13 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
             if draw_border_vertices:
                 coordinates_left_border_vertices = np.vstack((coordinates_left_border_vertices,lanelet.left_vertices))
 
-            if draw_line_markings and lanelet.line_marking_left_vertices is not None:
+            if draw_line_markings and lanelet.line_marking_left_vertices is not LineMarking.UNKNOWN \
+                    and lanelet.line_marking_left_vertices is not LineMarking.NO_MARKING:
                 linestyle, dashes, linewidth_metres  = line_marking_to_linestyle(lanelet.line_marking_left_vertices)
                 tmp_left = lanelet.left_vertices.copy()
                 tmp_left[0, :] = lanelet.interpolate_position(linewidth_metres/2)[2]
                 tmp_left[-1, :] = lanelet.interpolate_position(lanelet.distance[-1] - linewidth_metres / 2)[2]
-                line = LineDataUnits(tmp_left[:, 0], tmp_left[:, 1], zorder=20, linewidth=linewidth_metres,
+                line = LineDataUnits(tmp_left[:, 0], tmp_left[:, 1], zorder=12, linewidth=linewidth_metres,
                               alpha=1.0,
                               color=left_bound_color, linestyle=linestyle,
                               dashes=dashes)
@@ -660,9 +681,11 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
         if draw_border_vertices or draw_right_bound:
 
             if draw_border_vertices:
-                coordinates_right_border_vertices = np.vstack((coordinates_right_border_vertices, lanelet.right_vertices))
+                coordinates_right_border_vertices = np.vstack((coordinates_right_border_vertices,
+                                                               lanelet.right_vertices))
 
-            if draw_line_markings and lanelet.line_marking_right_vertices is not None:
+            if draw_line_markings and lanelet.line_marking_right_vertices is not LineMarking.UNKNOWN \
+                    and lanelet.line_marking_right_vertices is not LineMarking.NO_MARKING:
                 linestyle, dashes, linewidth_metres = line_marking_to_linestyle(lanelet.line_marking_right_vertices)
                 tmp_right = lanelet.right_vertices.copy()
                 tmp_right[0, :] = lanelet.interpolate_position(linewidth_metres/2)[1]
@@ -695,7 +718,7 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
         if has_traffic_light:
             light_state = center_line_color_dict[lanelet.lanelet_id]
 
-            if light_state:
+            if light_state is not TrafficLightState.INACTIVE:
                 linewidth_metres = 0.75
                 # dashed line for red_yellow
                 linestyle = '--' if light_state == TrafficLightState.RED_YELLOW else '-'
@@ -745,11 +768,12 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
             crossing_vertices_fill.append(
                 np.concatenate((lanelet.right_vertices, np.flip(lanelet.left_vertices, 0))))
 
-        if show_label or draw_incoming_lanelets or draw_traffic_signs:
+        # DRAW LABELS INTO LANELET CENTER
+        if show_label or show_intersection_labels or draw_traffic_signs:
             strings = []
             if show_label:
                 strings.append(str(lanelet.lanelet_id))
-            if is_incoming_lanelet:
+            if is_incoming_lanelet and show_intersection_labels:
                 strings.append('inc_id: ' + str(incomings_id[lanelet.lanelet_id]))
                 strings.append('inc_left: ' + str(incomings_left[lanelet.lanelet_id]))
             if draw_traffic_signs and show_traffic_sign_label is True:
@@ -765,21 +789,21 @@ def _draw_lanelets_intersection(obj: LaneletNetwork,
                             add_str = ', '
 
                     strings.append(str_tmp)
-                # TODO: implement svg plotting
 
-            string = ', '.join(strings)
-            # compute normal angle of label box
-            clr_positions = lanelet.interpolate_position(0.5 * lanelet.distance[-1])
-            normal_vector = np.array(clr_positions[1]) - np.array(clr_positions[2])
-            angle = np.rad2deg(np.arctan2(normal_vector[1], normal_vector[0])) - 90
-            angle = angle if Interval(-90,90).contains(angle) else angle - 180
+            label_string = ', '.join(strings)
+            if len(label_string) > 0:
+                # compute normal angle of label box
+                clr_positions = lanelet.interpolate_position(0.5 * lanelet.distance[-1])
+                normal_vector = np.array(clr_positions[1]) - np.array(clr_positions[2])
+                angle = np.rad2deg(np.arctan2(normal_vector[1], normal_vector[0])) - 90
+                angle = angle if Interval(-90,90).contains(angle) else angle - 180
 
-            ax.text(clr_positions[0][0], clr_positions[0][1],
-                    string,
-                    bbox={'facecolor': center_bound_color, 'pad': 2},
-                    horizontalalignment='center', verticalalignment='center',
-                    rotation=angle,
-                    zorder=30.2)
+                ax.text(clr_positions[0][0], clr_positions[0][1],
+                        label_string,
+                        bbox={'facecolor': center_bound_color, 'pad': 2},
+                        horizontalalignment='center', verticalalignment='center',
+                        rotation=angle,
+                        zorder=30.2)
 
     # draw paths and collect axis handles
     if draw_right_bound:
@@ -940,21 +964,31 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
                 draw_car(inital_state.position[0], inital_state.position[1], inital_state.orientation, 2.5,
                          ax, zorder=30)
 
+        initial_state = None
         if show_label:
             if time_begin == 0:
-                initial_position = o.initial_state.position
+                initial_state = o.initial_state
+                initial_position = initial_state.position
                 handles.setdefault(DynamicObstacle, []).append(
                     ax.text(initial_position[0] + 0.5, initial_position[1], str(o.obstacle_id),
                         clip_on=True, zorder=1000))
             elif type(o.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:
-                begin_state = o.prediction.trajectory.state_at_time_step(time_begin)
-                if begin_state is not None:
+                initial_state = o.prediction.trajectory.state_at_time_step(time_begin)
+                if initial_state is not None:
                     initial_position = o.prediction.trajectory.state_at_time_step(time_begin).position
                     handles.setdefault(DynamicObstacle, []).append(
                         ax.text(initial_position[0]+0.5, initial_position[1], str(o.obstacle_id),
                             clip_on=True, zorder=1000))
 
-        return (occupancy_list, trajectory, shape, indicators, braking, horns, bluelights)
+        if draw_initial_state:
+            if initial_state is None:
+                if time_begin == 0:
+                    initial_state = o.initial_state
+                elif type(o.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:
+                    initial_state = o.prediction.trajectory.state_at_time_step(time_begin)
+
+        return [occupancy_list, trajectory, shape, np.array(indicators).reshape(-1, 2), np.array(braking).reshape(-1, 2),
+                np.array(horns).reshape(-1, 2), np.array(bluelights).reshape(-1, 2), initial_state]
 
     if type(obj) is DynamicObstacle:
         obj = [obj]
@@ -975,6 +1009,15 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
         draw_shape = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('dynamic_obstacle', 'draw_shape'))
+        draw_initial_state = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('dynamic_obstacle', 'initial_state', 'draw_initial_state'))
+        scale_factor = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('dynamic_obstacle', 'initial_state', 'scale_factor'))
+        kwargs_init_state = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            ('dynamic_obstacle', 'initial_state', 'kwargs'))
         draw_occupancies = commonroad.visualization.draw_dispatch_cr._retrieve_value(
             draw_params, call_stack,
             ('dynamic_obstacle', 'occupancy', 'draw_occupancies'))
@@ -1008,15 +1051,18 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
 
     call_stack = tuple(list(call_stack) + ['dynamic_obstacle'])
 
-    # collect objects from all vehicles to draw them in a batch
-    tmp_array  = np.array(list(map(collecting,obj)))
-    occupancy_list = list(filter(None,list(tmp_array[:,0])))
-    trajectories_list = list(filter(None,list(tmp_array[:, 1])))
-    shapes_list = list(filter(None,list(tmp_array[:, 2])))
-    indicators = np.array(list(itertools.chain.from_iterable(tmp_array[:, 3])))
-    braking = np.array(list(itertools.chain.from_iterable(tmp_array[:, 4])))
-    horns = np.array(list(itertools.chain.from_iterable(tmp_array[:, 5])))
-    bluelights = np.array(list(itertools.chain.from_iterable(tmp_array[:, 6])))
+    # collect objects from all vehicles to draw them efficiently in batches
+    occupancy_list, trajectories_list, shapes_list, indicators, braking, horns, bluelights, initial_states\
+        = zip(*list(map(collecting, obj)))
+
+    occupancy_list = list(filter(None, list(occupancy_list)))
+    trajectories_list = list(filter(None, list(trajectories_list)))
+    shapes_list = list(filter(None, list(shapes_list)))
+    indicators = np.vstack(indicators)
+    braking = np.vstack(braking)
+    horns = np.vstack(horns)
+    bluelights = np.vstack(bluelights)
+    initial_states = list(filter(None, list(initial_states)))
 
     # draw collected lists, store handles:
     if len(shapes_list) > 0:
@@ -1031,10 +1077,16 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle],DynamicObstacle],
             commonroad.visualization.draw_dispatch_cr.
                 draw_object(occupancy_list, None, ax, draw_params, draw_func, handles, call_stack))
 
+    # draw initial state
+    if draw_initial_state is True:
+        for initial_state in initial_states:
+            handles.setdefault(DynamicObstacle, []).extend(draw_state(initial_state, call_stack=call_stack,
+                                                                      ax=ax, draw_params=draw_params,
+                                                                      scale_factor=scale_factor,
+                                                                      plot_limits=None,
+                                                                      arrow_args=kwargs_init_state))
+
     # draw signals
-
-
-
     if indicators.size > 0:
         diameters = signal_radius * np.ones(indicators.shape[0]) * 2
         handles.setdefault(DynamicObstacle, []).append(
@@ -1282,28 +1334,28 @@ def draw_rectangle(obj: Union[Rectangle,List[Rectangle]], plot_limits: Union[Lis
         obj =[obj]
 
     call_stack = tuple(list(call_stack) + ['shape', 'rectangle'])
-    # try:
-    facecolor = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-        draw_params, call_stack,
-        tuple(['facecolor']))
-    edgecolor = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-        draw_params, call_stack,
-        tuple(['edgecolor']))
-    zorder = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-        draw_params, call_stack,
-        tuple(['zorder']))
-    opacity = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-        draw_params, call_stack,
-        tuple(['opacity']))
-    linewidth = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-        draw_params, call_stack,
-        tuple(['linewidth']))
-    antialiased = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-        draw_params, tuple(),
-        tuple(['antialiased']))
-    # except KeyError:
-    #     print("Cannot find stylesheet for rectangle. Called through:")
-    #     print(call_stack)
+    try:
+        facecolor = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            tuple(['facecolor']))
+        edgecolor = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            tuple(['edgecolor']))
+        zorder = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            tuple(['zorder']))
+        opacity = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            tuple(['opacity']))
+        linewidth = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, call_stack,
+            tuple(['linewidth']))
+        antialiased = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+            draw_params, tuple(),
+            tuple(['antialiased']))
+    except KeyError:
+        print("Cannot find stylesheet for rectangle. Called through:")
+        print(call_stack)
 
     vertices = list()
 
@@ -1481,6 +1533,47 @@ def draw_car(pos_x: Union[int,float], pos_y: Union[int,float], rotate: Union[int
                           lw=lw)
     draw_polygon_as_patch(verts8, ax, facecolor=carcolor, edgecolor='#000000',
                           zorder=zorder, lw=lw)
+
+
+def draw_state(state: State, plot_limits: Union[List[Union[int,float]], None],
+               ax: mpl.axes.Axes, draw_params: dict, draw_func: Dict[type,Callable] = None,
+               handles: Dict[int,List[mpl.patches.Patch]] = None, call_stack: Tuple[str,...] = None,
+               scale_factor=None,
+               arrow_args=None) -> List[mpl.collections.Collection]:
+    """
+    :param state: state to be plotted
+    :param ax: axes object from matplotlib
+    :param draw_params: parameters for plotting given by a nested dict that recreates the structure of an object,
+    :param draw_func: specifies the drawing function
+    :param call_stack: tuple of string containing the call stack, which allows for differentiation of plotting styles
+           depending on the call stack of draw_object
+    :return: None
+    """
+    try:
+        if scale_factor is None:
+            scale_factor = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('initial_state', 'scale_factor'))
+        if arrow_args is None:
+            arrow_args = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack,
+                ('initial_state', 'kwargs'))
+    except KeyError:
+        print("Cannot find stylesheet for initial_state. Called through:")
+        print(call_stack)
+        return []
+
+    cos = math.cos(state.orientation)
+    sin = math.sin(state.orientation)
+    length = 1.5
+    x = state.position[0] + cos * length
+    y = state.position[1] + sin * length
+    artist = ax.arrow(x=x, y=y,
+                     dx=state.velocity * cos * scale_factor,
+                     dy=state.velocity * sin * scale_factor,
+                     zorder=100,
+                     **arrow_args)
+    return [artist]
 
 
 # default function dict, which assigns drawing functions to object classes

@@ -256,6 +256,8 @@ __status__ = "released"
       <xs:enumeration value="solid"/>
       <xs:enumeration value="broad_dashed"/>
       <xs:enumeration value="broad_solid"/>
+      <xs:enumeration value="unknown"/>
+      <xs:enumeration value="no_marking"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="bound">
@@ -288,7 +290,7 @@ __status__ = "released"
       <xs:element name="point" type="point" minOccurs="0" maxOccurs="2"/>
       <xs:element name="lineMarking" type="lineMarking"/>
       <xs:element name="trafficSignRef" type="trafficSignRef" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="trafficLightRef" type="trafficLightRef" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="trafficLightRef" type="trafficLightRef" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
   <xs:simpleType name="laneletType">
@@ -304,6 +306,7 @@ __status__ = "released"
       <xs:enumeration value="exitRamp"/>
       <xs:enumeration value="mainCarriageWay"/>
       <xs:enumeration value="accessRamp"/>
+      <xs:enumeration value="shoulder"/>
       <xs:enumeration value="driveWay"/>
       <xs:enumeration value="busStop"/>
       <xs:enumeration value="unknown"/>
@@ -320,6 +323,7 @@ __status__ = "released"
       <xs:enumeration value="pedestrian"/>
       <xs:enumeration value="priorityVehicle"/>
       <xs:enumeration value="train"/>
+      <xs:enumeration value="taxi"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="lanelet">
@@ -335,34 +339,37 @@ __status__ = "released"
       <xs:element name="userOneWay" type="vehicleType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="userBidirectional" type="vehicleType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="trafficSignRef" type="trafficSignRef" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="trafficLightRef" type="trafficLightRef" minOccurs="0"/>
+      <xs:element name="trafficLightRef" type="trafficLightRef" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
   </xs:complexType>
   <!-- intersections -->
   <xs:simpleType name="trafficSignID">
       <xs:restriction base="xs:string">
-        <xs:enumeration value="206"/>
-	    <xs:enumeration value="205"/>
-        <xs:enumeration value="274"/>
-	    <xs:enumeration value="275"/>
-        <xs:enumeration value="276"/>
-	    <xs:enumeration value="301"/>
-	    <xs:enumeration value="306"/>
-        <xs:enumeration value="310"/>
-        <xs:enumeration value="720"/>
-	    <xs:enumeration value="1002-10"/>
-	    <xs:enumeration value="1002-12"/>
-	    <xs:enumeration value="1002-13"/>
-	    <xs:enumeration value="1002-20"/>
-	    <xs:enumeration value="1002-22"/>
-	    <xs:enumeration value="1002-23"/>
-	    <xs:enumeration value="1002-11"/>
-	    <xs:enumeration value="1002-14"/>
-	    <xs:enumeration value="1002-21"/>
-	    <xs:enumeration value="1002-24"/>
-        <xs:enumeration value="102"/>
-        <xs:enumeration value="R2-1"/>
+          <xs:enumeration value="102"/>
+	  <xs:enumeration value="205"/>
+	  <xs:enumeration value="206"/>
+	  <xs:enumeration value="260"/>
+          <xs:enumeration value="272"/>
+          <xs:enumeration value="274"/>
+	  <xs:enumeration value="275"/>
+          <xs:enumeration value="276"/>
+	  <xs:enumeration value="301"/>
+	  <xs:enumeration value="306"/>
+          <xs:enumeration value="310"/>
+          <xs:enumeration value="720"/>
+	  <xs:enumeration value="1002-10"/>
+	  <xs:enumeration value="1002-12"/>
+	  <xs:enumeration value="1002-13"/>
+	  <xs:enumeration value="1002-20"/>
+	  <xs:enumeration value="1002-22"/>
+	  <xs:enumeration value="1002-23"/>
+	  <xs:enumeration value="1002-11"/>
+	  <xs:enumeration value="1002-14"/>
+	  <xs:enumeration value="1002-21"/>
+	  <xs:enumeration value="1002-24"/>
+          <xs:enumeration value="R2-1"/>
+          <xs:enumeration value="R3-4"/>
       </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="trafficSign">
@@ -383,9 +390,10 @@ __status__ = "released"
   <xs:simpleType name="trafficLightColor">
    <xs:restriction base="xs:string">
     <xs:enumeration value="red"/>
-	<xs:enumeration value="redYellow"/>
+    <xs:enumeration value="redYellow"/>
     <xs:enumeration value="green"/>
-	<xs:enumeration value="yellow"/>
+    <xs:enumeration value="yellow"/>
+    <xs:enumeration value="inactive"/>
    </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="trafficCycleElement">
@@ -442,6 +450,7 @@ __status__ = "released"
   <xs:complexType name="intersection">
     <xs:sequence>
   	  <xs:element name="incoming" type="incoming" minOccurs="1" maxOccurs="unbounded"/>
+	  <xs:element name="crossing" type="crossing" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   	<xs:attribute name="id" type="xs:positiveInteger" use="required"/>
   </xs:complexType>
@@ -479,6 +488,7 @@ __status__ = "released"
       <xs:enumeration value="pedestrian"/>
       <xs:enumeration value="priorityVehicle"/>
       <xs:enumeration value="train"/>
+      <xs:enumeration value="taxi"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="dynamicObstacle">
@@ -513,6 +523,22 @@ __status__ = "released"
     </xs:sequence>
     <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
   </xs:complexType>
+  <!-- environmentObstacle -->
+  <xs:simpleType name="obstacleTypeEnvironment">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="unknown"/>
+      <xs:enumeration value="building"/>
+      <xs:enumeration value="pillar"/>
+      <xs:enumeration value="median_strip"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="environmentObstacle">
+    <xs:sequence>
+      <xs:element name="type" type="obstacleTypeEnvironment"/>
+      <xs:element name="shape" type="shape"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
+  </xs:complexType>
   <!-- planning problem -->
   <xs:complexType name="planningProblem">
     <xs:sequence>
@@ -538,12 +564,48 @@ __status__ = "released"
       <xs:element name="additionalTransformation" type="additionalTransformation"/>
     </xs:sequence>
   </xs:complexType>
+  <xs:simpleType name="timeOfDay">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="unknown"/>
+      <xs:enumeration value="night"/>
+      <xs:enumeration value="day"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="weather">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="sunny"/>
+      <xs:enumeration value="light_rain"/>
+      <xs:enumeration value="heavy_rain"/>
+      <xs:enumeration value="fog"/>
+      <xs:enumeration value="snow"/>
+      <xs:enumeration value="hail"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="underground">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="wet"/>
+      <xs:enumeration value="clean"/>
+      <xs:enumeration value="dirty"/>
+      <xs:enumeration value="damaged"/>
+      <xs:enumeration value="snow"/>
+      <xs:enumeration value="ice"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="environment">
+    <xs:sequence>
+      <xs:element name="time" type="xs:time"/>
+      <xs:element name="timeOfDay" type="timeOfDay"/>
+      <xs:element name="weather" type="weather"/>
+      <xs:element name="underground" type="underground"/>
+    </xs:sequence>
+  </xs:complexType>
   <xs:complexType name="location">
     <xs:sequence minOccurs="1" maxOccurs="1">
       <xs:element name="geoNameId" type="xs:integer"/>
       <xs:element name="gpsLatitude" type="xs:decimal"/>
       <xs:element name="gpsLongitude" type="xs:decimal"/>
       <xs:element name="geoTransformation" type="geoTransformation" minOccurs="0"/>
+      <xs:element name="environment" type="environment" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="tag">
@@ -590,6 +652,7 @@ __status__ = "released"
         <xs:element name="intersection" type="intersection" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="staticObstacle" type="staticObstacle" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="dynamicObstacle" type="dynamicObstacle" minOccurs="0" maxOccurs="unbounded"/>
+	    <xs:element name="environmentObstacle" type="environmentObstacle" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="planningProblem" type="planningProblem" minOccurs="1" maxOccurs="unbounded"/>
       </xs:sequence>
       <xs:attribute name="commonRoadVersion" use="required">
@@ -607,7 +670,7 @@ __status__ = "released"
       <xs:attribute name="timeStepSize" type="xs:decimal" use="required"/>
     </xs:complexType>
     <xs:key name="id">
-      <xs:selector xpath="./lanelet | ./trafficSign | ./trafficLight | ./trafficSign | ./trafficLight | ./intersection | ./staticObstacle | ./dynamicObstacle | ./planningProblem | ./intersection/incoming"/>
+      <xs:selector xpath="./lanelet | ./trafficSign | ./trafficLight | ./trafficSign | ./trafficLight | ./intersection | ./staticObstacle | ./dynamicObstacle | ./building | ./planningProblem | ./intersection/incoming"/>
       <xs:field xpath="@id"/>
     </xs:key>
     <xs:keyref name="idref" refer="id">

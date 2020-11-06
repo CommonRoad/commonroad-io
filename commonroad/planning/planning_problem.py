@@ -9,7 +9,7 @@ from commonroad.common.validity import is_natural_number
 __author__ = "Christina Miller"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2020.2"
+__version__ = "2020.3"
 __maintainer__ = "Christina Miller"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
@@ -69,7 +69,7 @@ class PlanningProblem:
         :return: Tuple: (True, index of first state in trajectory.state_list that reaches goal) if one state reaches
                  the goal. (False, -1) if no state reaches the goal.
         """
-        for i, state in enumerate(trajectory.state_list):
+        for i, state in reversed(list(enumerate(trajectory.state_list))):
             if self.goal.is_reached(state):
                 return True, i
         return False, -1

@@ -1,9 +1,13 @@
 import unittest
+from copy import deepcopy
+
+from commonroad import SCENARIO_VERSION
+from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.geometry.shape import *
-from commonroad.prediction.prediction import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import *
-from commonroad.scenario.scenario import Scenario
+from commonroad.scenario.scenario import Scenario, Environment, TimeOfDay, Time, Underground, Weather, Location, \
+    ScenarioID
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany
 from commonroad.scenario.trajectory import *
 from commonroad.common.util import Interval
@@ -36,16 +40,16 @@ class TestScenario(unittest.TestCase):
         self.lanelet1.add_dynamic_obstacle_to_lanelet(2, 1)
         self.lanelet_network = LaneletNetwork().create_from_lanelet_list(list([self.lanelet1, self.lanelet2]))
         traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED.value, ['10.0'])
-        traffic_sign = TrafficSign(1, [traffic_sign_max_speed], {100}, np.array([0.0, 2]))
+        traffic_sign = TrafficSign(3, [traffic_sign_max_speed], {100}, np.array([0.0, 2]))
         self.lanelet_network.add_traffic_sign(traffic_sign, [])
         self.set_pred = SetBasedPrediction(0, occupancy_list)
 
         states = list()
-        states.append(State(time_step=0, orientation=0, position=np.array([0, 0])))
-        states.append(State(time_step=1, orientation=0, position=np.array([0, 1])))
+        states.append(State(time_step=0, orientation=0, position=np.array([0, 0]), velocity=5))
+        states.append(State(time_step=1, orientation=0, position=np.array([0, 1]), velocity=10))
         trajectory = Trajectory(0, states)
 
-        self.init_state = State(time_step=0, orientation=0, position=np.array([0, 0]))
+        self.init_state = State(time_step=0, orientation=0, position=np.array([0, 0]), velocity=15)
 
         self.traj_pred = TrajectoryPrediction(trajectory, self.rectangle, {0: {100, 101}, 1: {100, 101}})
 
@@ -61,7 +65,10 @@ class TestScenario(unittest.TestCase):
                                             prediction=self.traj_pred, obstacle_shape=self.rectangle,
                                             initial_shape_lanelet_ids={100, 101})
 
-        self.scenario = Scenario(0.1, 'test')
+        self.environment = Environment(Time(12, 15), TimeOfDay.NIGHT, Weather.SNOW, Underground.ICE)
+        self.location = Location(geo_name_id=123, gps_latitude=456, gps_longitude=789, environment=self.environment)
+
+        self.scenario = Scenario(0.1, 'test', location=self.location)
 
     def test_add_objects(self):
 
@@ -99,13 +106,36 @@ class TestScenario(unittest.TestCase):
         self.scenario.remove_obstacle(self.static_obs)
         self.scenario.remove_obstacle(self.dyn_traj_obs)
 
-        self.assertEqual(expected_id_dyn_traj, self.scenario.obstacles[0].obstacle_id)
-        self.assertEqual(expected_id_lanelet1, self.scenario.lanelet_network.lanelets[0].lanelet_id)
-        self.assertEqual(expected_id_lanelet2, self.scenario.lanelet_network.lanelets[1].lanelet_id)
+        self.assertEqual(expected_id_dyn_traj,
+                         self.scenario.obstacles[0].obstacle_id)
+        self.assertEqual(expected_id_lanelet1,
+                         self.scenario.lanelet_network.lanelets[0].lanelet_id)
+        self.assertEqual(expected_id_lanelet2,
+                         self.scenario.lanelet_network.lanelets[1].lanelet_id)
 
         with self.assertRaises(AssertionError):
             self.scenario.remove_obstacle(self.lanelet1)
             self.scenario.remove_obstacle(self.static_obs)
+
+    def test_generate_object_id_empty(self):
+        expected_generated_id = 1
+        self.assertEqual(expected_generated_id,
+                         self.scenario.generate_object_id())
+
+    def test_generate_object_id_unique(self):
+        expected_generated_id = 3
+
+        self.scenario.add_objects(self.static_obs)
+        self.scenario.add_objects(self.dyn_traj_obs)
+
+        self.assertEqual(expected_generated_id,
+                         self.scenario.generate_object_id())
+
+        expected_generated_id = 4
+        self.scenario.remove_obstacle([self.static_obs, self.dyn_traj_obs])
+        # Ids should not be reused even when removing all objects
+        self.assertEqual(expected_generated_id,
+                         self.scenario.generate_object_id())
 
     def test_generate_object_id_positive(self):
         expected_generated_id = 3
@@ -113,7 +143,8 @@ class TestScenario(unittest.TestCase):
         self.scenario.add_objects(self.static_obs)
         self.scenario.add_objects(self.dyn_traj_obs)
 
-        self.assertEqual(expected_generated_id, self.scenario.generate_object_id())
+        self.assertEqual(expected_generated_id,
+                         self.scenario.generate_object_id())
 
     def test_generate_object_id_negative(self):
         self.static_obs = StaticObstacle(-5, ObstacleType("unknown"), obstacle_shape=self.circ,
@@ -339,6 +370,212 @@ class TestScenario(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             self.scenario._mark_object_id_as_used(100)
+
+    def test_obstacle_states_at_time_step(self):
+        exp_states_time_zero = {1: self.dyn_set_obs.state_at_time(0), 2: self.dyn_traj_obs.state_at_time(0),
+                                0: self.static_obs.initial_state}
+        exp_states_time_one = {2: self.dyn_traj_obs.state_at_time(1), 0: self.static_obs.initial_state}
+        self.scenario.add_objects(self.static_obs)
+        self.scenario.add_objects(self.dyn_traj_obs)
+        self.scenario.add_objects(self.dyn_set_obs)
+
+        # test for time step 1
+        self.assertEqual(len(exp_states_time_one), len(self.scenario.obstacle_states_at_time_step(1)))
+        self.assertEqual(exp_states_time_one[2].velocity, self.scenario.obstacle_states_at_time_step(1)[2].velocity)
+        self.assertEqual(exp_states_time_one[2].position[0],
+                         self.scenario.obstacle_states_at_time_step(1)[2].position[0])
+        self.assertEqual(exp_states_time_one[2].position[1],
+                         self.scenario.obstacle_states_at_time_step(1)[2].position[1])
+        self.assertEqual(exp_states_time_one[0].velocity, self.scenario.obstacle_states_at_time_step(1)[0].velocity)
+        self.assertEqual(exp_states_time_one[0].position[0],
+                         self.scenario.obstacle_states_at_time_step(1)[0].position[0])
+        self.assertEqual(exp_states_time_one[0].position[1],
+                         self.scenario.obstacle_states_at_time_step(1)[0].position[1])
+
+        # test for time step zero
+        self.assertEqual(len(exp_states_time_zero), len(self.scenario.obstacle_states_at_time_step(0)))
+        self.assertEqual(exp_states_time_zero[1].velocity, self.scenario.obstacle_states_at_time_step(0)[1].velocity)
+        self.assertEqual(exp_states_time_zero[1].position[0],
+                         self.scenario.obstacle_states_at_time_step(0)[1].position[0])
+        self.assertEqual(exp_states_time_zero[1].position[1],
+                         self.scenario.obstacle_states_at_time_step(0)[1].position[1])
+        self.assertEqual(exp_states_time_zero[2].velocity, self.scenario.obstacle_states_at_time_step(0)[2].velocity)
+        self.assertEqual(exp_states_time_zero[2].position[0],
+                         self.scenario.obstacle_states_at_time_step(0)[2].position[0])
+        self.assertEqual(exp_states_time_zero[2].position[1],
+                         self.scenario.obstacle_states_at_time_step(0)[2].position[1])
+        self.assertEqual(exp_states_time_one[0].velocity, self.scenario.obstacle_states_at_time_step(1)[0].velocity)
+        self.assertEqual(exp_states_time_one[0].position[0],
+                         self.scenario.obstacle_states_at_time_step(1)[0].position[0])
+        self.assertEqual(exp_states_time_one[0].position[1],
+                         self.scenario.obstacle_states_at_time_step(1)[0].position[1])
+
+    def test_location(self):
+        self.environment = Environment(Time(12, 15), TimeOfDay.NIGHT, Weather.SNOW, Underground.ICE)
+        self.location = Location(geo_name_id=123, gps_latitude=456, gps_longitude=789, environment=self.environment)
+        exp_geo_name_id = 123
+        exp_gps_latitude = 456
+        exp_gps_longitude = 789
+        exp_env_time_hours = 12
+        exp_env_time_min = 15
+        exp_env_time_of_day = TimeOfDay.NIGHT
+        exp_env_weather = Weather.SNOW
+        exp_env_underground = Underground.ICE
+
+        self.assertEqual(exp_geo_name_id, self.scenario.location.geo_name_id)
+        self.assertEqual(exp_gps_latitude, self.scenario.location.gps_latitude)
+        self.assertEqual(exp_gps_longitude, self.scenario.location.gps_longitude)
+        self.assertEqual(exp_env_time_hours, self.scenario.location.environment.time.hours)
+        self.assertEqual(exp_env_time_min, self.scenario.location.environment.time.minutes)
+        self.assertEqual(exp_env_time_of_day, self.scenario.location.environment.time_of_day)
+        self.assertEqual(exp_env_weather, self.scenario.location.environment.weather)
+        self.assertEqual(exp_env_underground, self.scenario.location.environment.underground)
+
+    def test_assign_vehicles(self):
+        states = list()
+        states.append(State(time_step=0, orientation=0, position=np.array([1, .5]), velocity=5))
+        states.append(State(time_step=1, orientation=0, position=np.array([1, .5]), velocity=10))
+        trajectory = Trajectory(0, states)
+
+        self.init_state = State(time_step=0, orientation=0, position=np.array([0, 0]), velocity=15)
+
+        traj_pred = TrajectoryPrediction(trajectory, self.rectangle)
+        dyn_traj_obs = DynamicObstacle(2, ObstacleType("unknown"),
+                                            initial_state=traj_pred.trajectory.state_at_time_step(0),
+                                            prediction=traj_pred, obstacle_shape=self.rectangle,
+                                            initial_shape_lanelet_ids=None)
+        sc = Scenario(dt=0.1, scenario_id='test')
+        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
+        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
+        center_vertices = np.array(
+            [[0, .5], [1, .5], [2, .5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, .5], [8, .5]])
+        lanelet = Lanelet(right_vertices=right_vertices,left_vertices=left_vertices, center_vertices=center_vertices,lanelet_id=1)
+        sc.add_objects([lanelet, dyn_traj_obs])
+        scenario_tmp: Scenario = deepcopy(sc)
+        # assign all time steps
+        scenario_tmp.assign_obstacles_to_lanelets(time_steps=None)
+        exp_dynamic_obstacles_on_lanelet_zero = {0: {2}, 1: {2}}
+        exp_dynamic_lanelet_of_obstacle = {0: {1}, 1: {1}}
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
+                         scenario_tmp.lanelet_network.find_lanelet_by_id(1).dynamic_obstacles_on_lanelet)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle[0],
+                         scenario_tmp.obstacle_by_id(2).initial_center_lanelet_ids)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle,
+                         scenario_tmp.obstacle_by_id(2).prediction.center_lanelet_assignment)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle,
+                         scenario_tmp.obstacle_by_id(2).prediction.shape_lanelet_assignment)
+        # assign one time step
+        scenario_tmp: Scenario = deepcopy(sc)
+        scenario_tmp.assign_obstacles_to_lanelets(time_steps=[1])
+        exp_dynamic_obstacles_on_lanelet_zero = {1: {2}}
+        exp_dynamic_lanelet_of_obstacle = {1: {1}}
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
+                         scenario_tmp.lanelet_network.find_lanelet_by_id(1).dynamic_obstacles_on_lanelet)
+        self.assertEqual(None,
+                         scenario_tmp.obstacle_by_id(2).initial_center_lanelet_ids)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle,
+                         scenario_tmp.obstacle_by_id(2).prediction.center_lanelet_assignment)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle,
+                         scenario_tmp.obstacle_by_id(2).prediction.shape_lanelet_assignment)
+        # assign center only
+        scenario_tmp: Scenario = deepcopy(sc)
+        scenario_tmp.assign_obstacles_to_lanelets(time_steps=None, use_center_only=True)
+        exp_dynamic_obstacles_on_lanelet_zero = {0: {2}, 1: {2}}
+        exp_dynamic_lanelet_of_obstacle = {0: {1}, 1: {1}}
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
+                         scenario_tmp.lanelet_network.find_lanelet_by_id(1).dynamic_obstacles_on_lanelet)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle[0],
+                         scenario_tmp.obstacle_by_id(2).initial_center_lanelet_ids)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle,
+                         scenario_tmp.obstacle_by_id(2).prediction.center_lanelet_assignment)
+        self.assertEqual(None,
+                         scenario_tmp.obstacle_by_id(2).prediction.shape_lanelet_assignment)
+        # assign only a selected obstacle
+        scenario_tmp: Scenario = deepcopy(sc)
+        dyn_traj_obs_3 = DynamicObstacle(3, ObstacleType("unknown"),
+                                       initial_state=traj_pred.trajectory.state_at_time_step(0),
+                                       prediction=traj_pred, obstacle_shape=self.rectangle,
+                                       initial_shape_lanelet_ids=None)
+        scenario_tmp.add_objects(dyn_traj_obs_3)
+        scenario_tmp.assign_obstacles_to_lanelets(time_steps=None, obstacle_ids={3})
+        exp_dynamic_obstacles_on_lanelet_zero = {0: {3}, 1: {3}}
+        exp_dynamic_lanelet_of_obstacle = {0: {1}, 1: {1}}
+        self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
+                         scenario_tmp.lanelet_network.find_lanelet_by_id(1).dynamic_obstacles_on_lanelet)
+        self.assertEqual(None,
+                         scenario_tmp.obstacle_by_id(2).initial_center_lanelet_ids)
+        self.assertEqual(None,
+                         scenario_tmp.obstacle_by_id(2).prediction.center_lanelet_assignment)
+        self.assertEqual(None,
+                         scenario_tmp.obstacle_by_id(2).prediction.shape_lanelet_assignment)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle[0],
+                         scenario_tmp.obstacle_by_id(3).initial_center_lanelet_ids)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle,
+                         scenario_tmp.obstacle_by_id(3).prediction.center_lanelet_assignment)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle,
+                         scenario_tmp.obstacle_by_id(3).prediction.shape_lanelet_assignment)
+
+
+class TestScenarioID(unittest.TestCase):
+    def test_from_benchmark_id(self):
+        id_coop = "C-USA_US101-33_2_T-1"
+        s_id = ScenarioID.from_benchmark_id(id_coop, SCENARIO_VERSION)
+        self.assertEqual(id_coop, str(s_id))
+        self.assertEqual(s_id.cooperative, True)
+        self.assertEqual(s_id.country_id, "USA")
+        self.assertEqual(s_id.map_name, "US101")
+        self.assertEqual(s_id.map_id, 33)
+        self.assertEqual(s_id.configuration_id, 2)
+        self.assertEqual(s_id.prediction_type, 'T')
+        self.assertEqual(s_id.prediction_id, 1)
+        self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
+
+        id_single = "USA_US101-33_2_T-1"
+        s_id = ScenarioID.from_benchmark_id(id_single, SCENARIO_VERSION)
+        self.assertEqual(id_single, str(s_id))
+        self.assertEqual(s_id.cooperative, False)
+        self.assertEqual(s_id.country_id, "USA")
+        self.assertEqual(s_id.map_name, "US101")
+        self.assertEqual(s_id.map_id, 33)
+        self.assertEqual(s_id.configuration_id, 2)
+        self.assertEqual(s_id.prediction_type, 'T')
+        self.assertEqual(s_id.prediction_id, 1)
+        self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
+
+        id_no_pred = "USA_US101-33_2"
+        s_id = ScenarioID.from_benchmark_id(id_no_pred, SCENARIO_VERSION)
+        self.assertEqual(id_no_pred, str(s_id))
+        self.assertEqual(s_id.cooperative, False)
+        self.assertEqual(s_id.country_id, "USA")
+        self.assertEqual(s_id.map_name, "US101")
+        self.assertEqual(s_id.map_id, 33)
+        self.assertEqual(s_id.configuration_id, 2)
+        self.assertEqual(s_id.prediction_type, None)
+        self.assertEqual(s_id.prediction_id, None)
+        self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
+
+        id_map_only = "USA_US101-33"
+        s_id = ScenarioID.from_benchmark_id(id_map_only, SCENARIO_VERSION)
+        self.assertEqual(id_map_only, str(s_id))
+        self.assertEqual(s_id.cooperative, False)
+        self.assertEqual(s_id.country_id, "USA")
+        self.assertEqual(s_id.map_name, "US101")
+        self.assertEqual(s_id.map_id, 33)
+        self.assertEqual(s_id.configuration_id, None)
+        self.assertEqual(s_id.prediction_type, None)
+        self.assertEqual(s_id.prediction_id, None)
+        self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
+
+    # def test_read_all_files(self):
+    #     folder = 'commonroad-scenarios/scenarios'
+    #     from pathlib import Path
+    #     files = list(Path(folder).rglob('*.xml'))
+    #     for file in files:
+    #         # if not "C-USA_Lanker-1_2_T-1" in str(file):
+    #         #     continue
+    #         sc, _ = CommonRoadFileReader(file).open()
+    #         self.assertEqual(sc.orig_bid, str(sc.scenario_id))
+    #         print(file)
 
 
 if __name__ == '__main__':

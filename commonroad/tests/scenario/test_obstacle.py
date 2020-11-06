@@ -111,13 +111,15 @@ class TestObstacle(unittest.TestCase):
         np.testing.assert_array_almost_equal(dynamic_obs.obstacle_shape.center, np.array([0, 0]))
 
         # check transformation of statelist
-        target_statelist = [[10, 0], [11, 1], [12, 1]]
-        for state,target_state in zip(dynamic_obs.prediction.trajectory.state_list,target_statelist):
+        target_statelist = [[10, 0], [10, 0], [11, 1], [12, 1]]
+        for i,target_state in enumerate(target_statelist):
+            state = dynamic_obs.state_at_time(i)
             np.testing.assert_array_almost_equal(state.position, target_state)
 
         # check transformation of occupancies
-        for i in range(1, 3):
-            np.testing.assert_array_almost_equal(dynamic_obs.occupancy_at_time(i).shape.center, target_statelist[i-1])
+        for i in range(3):
+            print(dynamic_obs.occupancy_at_time(i).shape.center, target_statelist[i])
+            np.testing.assert_array_almost_equal(dynamic_obs.occupancy_at_time(i).shape.center, target_statelist[i])
 
         # rotation
         dynamic_obs.translate_rotate(np.array([0, 0]), -0.3)
@@ -153,6 +155,43 @@ class TestObstacle(unittest.TestCase):
                 np.testing.assert_array_equal(dynamic_obs.occupancy_at_time(i).shape.center, state_list[i].position)
             else:
                 assert dynamic_obs.occupancy_at_time(i) is None
+
+    def test_state_at_time(self):
+        rect = Rectangle(5.1, 2.6)
+        state_list = [State(position=np.array([0.0, 0.0]), orientation=0.3, time_step=0),
+                      State(position=np.array([0.0, 1.0]), orientation=0.3, time_step=1),
+                      State(position=np.array([1.0, 1.0]), orientation=0.3, time_step=2),
+                      State(position=np.array([2.0, 1.0]), orientation=0.3, time_step=3)]
+        initial_state = State(**{'position': np.array([0, 0]), 'orientation': 0.0, 'time_step': 0})
+        trajectory = Trajectory(1, state_list[1:])
+        prediction = TrajectoryPrediction(trajectory, rect)
+
+        dynamic_obs = DynamicObstacle(
+            obstacle_id=30, obstacle_type=ObstacleType.CAR, initial_state=initial_state,
+            obstacle_shape=rect, prediction=prediction)
+
+        for i in range(5):
+            if i == 0:
+                np.testing.assert_array_equal(dynamic_obs.state_at_time(i).position, initial_state.position)
+                self.assertEqual(dynamic_obs.state_at_time(i).orientation, initial_state.orientation)
+            elif 1<= i <= 3:
+               np.testing.assert_array_equal(dynamic_obs.state_at_time(i).position, state_list[i].position)
+               self.assertEqual(dynamic_obs.state_at_time(i).orientation, state_list[i].orientation)
+            else:
+                assert dynamic_obs.state_at_time(i) is None
+
+    def test_environmental_obstacle(self):
+        environmental_obstacle_shape = Polygon(np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [4, 2], [3, 1], [2, 1], [1, 1]]))
+        environmental_obstacle_id = 1234
+        environmental_obstacle_type = ObstacleType.BUILDING
+        environmental_obstacle = EnvironmentObstacle(environmental_obstacle_id, environmental_obstacle_type,
+                                                     environmental_obstacle_shape)
+
+        self.assertEqual(environmental_obstacle.obstacle_id, environmental_obstacle_id)
+        self.assertEqual(environmental_obstacle.obstacle_role, ObstacleRole.ENVIRONMENT)
+        self.assertEqual(environmental_obstacle.obstacle_type, environmental_obstacle_type)
+        np.testing.assert_array_almost_equal(environmental_obstacle_shape.vertices,
+                                             environmental_obstacle.obstacle_shape.vertices)
 
 
 if __name__ == '__main__':

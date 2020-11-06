@@ -18,6 +18,7 @@ class TestVisualization(unittest.TestCase):
     def setUp(self):
         self.full_path = os.path.dirname(os.path.abspath(__file__))
         self.filename_urban = os.path.join(self.full_path,  '../common/test_reading_intersection_traffic_sign.xml')
+        self.filename_complex_tl = os.path.join(self.full_path, '../visualization/test_reading_complex_tl.xml')
         self.filename_lanelet = os.path.join(self.full_path, '../common/test_reading_lanelets.xml')
         self.filename_test_all = os.path.join(self.full_path, '../common/test_reading_all.xml')
 
@@ -29,7 +30,7 @@ class TestVisualization(unittest.TestCase):
         mpl.rcParams['lines.scale_dashes'] = False
         draw_object(scenario.lanelet_network,
                     draw_params={'time_begin': 20, 'lanelet_network':{'draw_intersections':True, 'draw_traffic_signs':True,
-                                                                      },
+                                                                      'intersection':{'show_label':True}},
                                  'lanelet':{'draw_lane_marking':True,
                                             'show_label':True}},
                     legend={('lanelet_network','intersection','incoming_lanelets_color'):'Incoming lanelets',
@@ -50,21 +51,23 @@ class TestVisualization(unittest.TestCase):
         plt.close('all')
         plt.figure()
         draw_params = {'time_begin': 20,
-                                 'lanelet_network': {'draw_intersections': False, 'draw_traffic_signs': True,
-                                                     'traffic_sign':{'show_label':False,'show_traffic_signs':'all',
+                                 'lanelet_network': {'intersection': {'draw_intersections': False},
+                                                     'traffic_sign':{'draw_traffic_signs': True,
+                                                                     'show_label':False,'show_traffic_signs':'all',
                                                                      'scale_factor': 0.15}},
                                  'lanelet': {'draw_lane_marking': False,
                                              'show_label': False}}
         draw_object(scenario.lanelet_network,
                     draw_params=draw_params)
         ts = TrafficSign(traffic_sign_id=100000,traffic_sign_elements=
-        [TrafficSignElement(TrafficSignIDUsa.MAX_SPEED,additional_values=['50']),
-         TrafficSignElement(TrafficSignIDGermany.MIN_SPEED, additional_values=['30']),
-         TrafficSignElement(TrafficSignIDGermany.MAX_SPEED,additional_values=['80']),
-         TrafficSignElement(TrafficSignIDGermany.NO_OVERTAKING_START,additional_values=['80']),
+        [TrafficSignElement(TrafficSignIDUsa.MAX_SPEED,additional_values=[str(50/2.23694)]),
+         TrafficSignElement(TrafficSignIDGermany.MIN_SPEED, additional_values=[str(30/3.6)]),
+         TrafficSignElement(TrafficSignIDGermany.MAX_SPEED,additional_values=[str(80/3.6)]),
+         TrafficSignElement(TrafficSignIDGermany.MAX_SPEED,additional_values=[str(130/3.6)]),
+         TrafficSignElement(TrafficSignIDGermany.NO_OVERTAKING_START, additional_values=['test']),
          TrafficSignElement(TrafficSignIDGermany.STOP,additional_values=['80'])], position=np.array([159.,-88.]),
                          virtual=False, first_occurrence={})
-        draw_object(ts,draw_params={'traffic_sign':{'scale_factor': 0.3, 'kwargs':{'arrowprops':{'arrowstyle':"simple"}}}})
+        draw_object(ts,draw_params={'traffic_sign':{'speed_limit_unit': 'mph', 'scale_factor': 0.3, 'kwargs':{'arrowprops':{'arrowstyle':"simple"}}}})
         plt.autoscale()
         plt.axis('equal')
         plt.show()
@@ -118,10 +121,33 @@ class TestVisualization(unittest.TestCase):
         "Uses all options for plotting objects related to intersections or traffic sign/lights."
         scenario, pp = CommonRoadFileReader(self.filename_test_all).open()
         plt.close('all')
+        for t in range(2):
+            plt.figure()
+            draw_params = {'time_begin': t}
+            draw_object(scenario.obstacles,
+                        draw_params=draw_params)
+            plt.autoscale()
+            plt.axis('equal')
+            plt.show()
+
+    def test_complex_intersection_tl(self):
+        scenario, pp = CommonRoadFileReader(self.filename_complex_tl).open()
+        plt.close('all')
         plt.figure()
-        draw_params = {'time_begin': 1}
-        draw_object(scenario.obstacle_by_id(2),
-                    draw_params=draw_params)
+        mpl.rcParams['lines.scale_dashes'] = False
+        draw_object(scenario.lanelet_network,
+                    draw_params={'time_begin': 30,
+                                 'lanelet_network': {'draw_intersections': True, 'draw_traffic_signs': True,
+                                                     'intersection': {'show_label': True}},
+                                 'lanelet': {'draw_lane_marking': True,
+                                             'show_label': True}},
+                    legend={('lanelet_network', 'intersection', 'incoming_lanelets_color'): 'Incoming lanelets',
+                            ('lanelet_network', 'intersection', 'successors_left_color'): 'Successors left',
+                            ('lanelet_network', 'intersection', 'successors_straight_color'): 'Successors straight',
+                            ('lanelet_network', 'intersection', 'successors_right_color'): 'Successors right',
+                            ('lanelet_network', 'traffic_light', 'green_color'): 'Traffic light green',
+                            ('lanelet_network', 'traffic_light', 'yellow_color'): 'Traffic light yellow',
+                            ('lanelet_network', 'traffic_light', 'red_color'): 'Traffic light red'})
         plt.autoscale()
         plt.axis('equal')
         plt.show()

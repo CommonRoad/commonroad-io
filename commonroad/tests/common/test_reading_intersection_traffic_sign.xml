@@ -1,4 +1,4 @@
-<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="PrinceOfZAM" affiliation="Technical University of Munich, Germany" source="OpenStreetMaps (OSM)" benchmarkID="ZAM_test_0-0-1" date="2019-12-29">
+<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="PrinceOfZAM" affiliation="Technical University of Munich, Germany" source="OpenStreetMaps (OSM)" benchmarkID="ZAM_test_0-1" date="2019-12-29">
 <location>
     <geoNameId>2867714</geoNameId>
     <gpsLatitude>48.262333</gpsLatitude>
@@ -1353,6 +1353,31 @@
     <userOneWay>vehicle</userOneWay>
     <trafficSignRef ref="106"/>
   </lanelet>
+    <lanelet id="32">
+    <leftBound>
+      <point>
+        <x>178.0</x>
+        <y>-65.0</y>
+      </point>
+      <point>
+        <x>170.0</x>
+        <y>-62.0</y>
+      </point>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>179.0</x>
+        <y>-63</y>
+      </point>
+      <point>
+        <x>170.0</x>
+        <y>-60.0</y>
+      </point>
+    </rightBound>
+    <laneletType>urban</laneletType>
+    <laneletType>crosswalk</laneletType>
+    <userOneWay>pedestrian</userOneWay>
+  </lanelet>
   <trafficSign id="101">
         <trafficSignElement>
             <trafficSignID>310</trafficSignID>
@@ -1506,6 +1531,10 @@
           </cycleElement>
           <cycleElement>
             <duration>4</duration>
+            <color>inactive</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
             <color>redYellow</color>
           </cycleElement>
           <cycleElement>
@@ -1516,6 +1545,7 @@
             <duration>4</duration>
             <color>yellow</color>
           </cycleElement>
+          <timeOffset>2</timeOffset>
         </cycle>
         <position>
           <point>
@@ -1565,12 +1595,12 @@
             <color>yellow</color>
           </cycleElement>
           <cycleElement>
-            <duration>15</duration>
-            <color>red</color>
-          </cycleElement>
-          <cycleElement>
             <duration>4</duration>
             <color>redYellow</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>15</duration>
+            <color>red</color>
           </cycleElement>
         </cycle>
         <direction>all</direction>
@@ -1584,15 +1614,15 @@
           </cycleElement>
           <cycleElement>
             <duration>4</duration>
+            <color>redYellow</color>
+          </cycleElement>
+          <cycleElement>
+            <duration>4</duration>
             <color>yellow</color>
           </cycleElement>
           <cycleElement>
             <duration>15</duration>
             <color>red</color>
-          </cycleElement>
-          <cycleElement>
-            <duration>4</duration>
-            <color>redYellow</color>
           </cycleElement>
       </cycle>
         <position>
@@ -1633,6 +1663,9 @@
       <successorsLeft ref="25"/>
       <isLeftOf ref="303"/>
     </incoming>
+    <crossing>
+        <crossingLanelet ref="32"/>
+    </crossing>
   </intersection>
   <planningProblem id="4000">
     <initialState>
