@@ -360,31 +360,22 @@ class MPRenderer:
             draw_params = self.draw_params
         elif isinstance(draw_params, dict):
             draw_params = ParamServer(data=draw_params)
-        try:
-            line_color = draw_params.by_callstack(call_stack,
-                                                  ('trajectory', 'facecolor'))
-            unique_colors = draw_params.by_callstack(call_stack, (
-                    'trajectory', 'unique_colors'))
-            line_width = draw_params.by_callstack(call_stack,
-                                                  ('trajectory', 'line_width'))
-            draw_continuous = draw_params.by_callstack(call_stack, (
-                    'trajectory', 'draw_continuous'))
-            z_order = draw_params.by_callstack(call_stack,
-                                               ('trajectory', 'z_order'))
-            time_begin = draw_params.by_callstack(call_stack, 'time_begin')
-            time_end = draw_params.by_callstack(call_stack, 'time_end')
-        except KeyError:
-            print("Cannot find stylesheet for trajectory. Called through:")
-            print(call_stack)
+
+        line_color = draw_params.by_callstack(call_stack,
+                                              ('trajectory', 'facecolor'))
+        # unique_colors = draw_params.by_callstack(call_stack, (
+        #         'trajectory', 'unique_colors'))
+        line_width = draw_params.by_callstack(call_stack,
+                                              ('trajectory', 'line_width'))
+        draw_continuous = draw_params.by_callstack(call_stack, (
+                'trajectory', 'draw_continuous'))
+        z_order = draw_params.by_callstack(call_stack,
+                                           ('trajectory', 'z_order'))
+        time_begin = draw_params.by_callstack(call_stack, 'time_begin')
+        time_end = draw_params.by_callstack(call_stack, 'time_end')
 
         if time_begin == time_end:
             return
-
-        # select unique colors from colormap for each lanelet's center_line
-        colormap = None
-        # if unique_colors is True:
-        #     norm = mpl.colors.Normalize(vmin=0, vmax=len(obj))
-        #     colormap = cm.ScalarMappable(norm=norm, cmap=cm.brg)
 
         traj_points = list()
         for time_step in range(time_begin, time_end):
@@ -394,11 +385,19 @@ class MPRenderer:
             else:
                 if time_begin > obj.initial_time_step:
                     break
-
-        path = mpl.path.Path(traj_points, closed=False)
-        self.obstacle_patches.append(
-                mpl.patches.PathPatch(path, color=line_color, lw=line_width,
-                                      zorder=z_order, fill=False))
+        traj_points = np.array(traj_points)
+        if draw_continuous:
+            path = mpl.path.Path(traj_points, closed=False)
+            self.obstacle_patches.append(
+                    mpl.patches.PathPatch(path, color=line_color, lw=line_width,
+                                          zorder=z_order, fill=False))
+        else:
+            self.collections.append(collections.EllipseCollection(
+                np.ones([traj_points.shape[0], 1]) * line_width,
+                np.ones([traj_points.shape[0], 1]) * line_width,
+                np.zeros([traj_points.shape[0], 1]), offsets=traj_points,
+                units='xy', linewidths=0, zorder=z_order,
+                transOffset=self.ax.transData, facecolor=line_color))
 
     def draw_occupancy(self, obj: Occupancy, draw_params: ParamServer,
                        call_stack: Tuple[str, ...]) -> None:
