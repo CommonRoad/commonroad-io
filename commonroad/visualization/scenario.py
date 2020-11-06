@@ -30,7 +30,8 @@ from commonroad.prediction.prediction import Occupancy
 from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle, \
     StaticObstacle, \
-    ObstacleRole
+    ObstacleRole, \
+    SignalState
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.trajectory import Trajectory, State
 
@@ -250,53 +251,28 @@ class MPRenderer:
         elif isinstance(draw_params, dict):
             draw_params = ParamServer(data=draw_params)
 
-        try:
-            time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
-            time_end = draw_params.by_callstack(call_stack, ('time_end',))
-            draw_icon = draw_params.by_callstack(call_stack, (
-                    'dynamic_obstacle', 'draw_icon'))
-            show_label = draw_params.by_callstack(call_stack, (
-                    'dynamic_obstacle', 'show_label'))
-            draw_shape = draw_params.by_callstack(call_stack, (
-                    'dynamic_obstacle', 'draw_shape'))
-            draw_initial_state = draw_params.by_callstack(call_stack, (
-                    'dynamic_obstacle', 'initial_state', 'draw_initial_state'))
-            scale_factor = draw_params.by_callstack(call_stack, (
-                    'dynamic_obstacle', 'initial_state', 'scale_factor'))
-            kwargs_init_state = draw_params.by_callstack(call_stack, (
-                    'dynamic_obstacle', 'initial_state', 'kwargs'))
-            draw_occupancies = draw_params.by_callstack(call_stack, (
-                    'dynamic_obstacle', 'occupancy', 'draw_occupancies'))
-            draw_signals = draw_params.by_callstack(call_stack, (
-                    'dynamic_obstacle', 'draw_signals'))
-            zorder = draw_params.by_callstack(call_stack,
-                                              ('dynamic_obstacle', 'zorder'))
-            signal_radius = draw_params.by_callstack(call_stack, (
-                    'dynamic_obstacle', 'signal_radius'))
-            indicator_color = draw_params.by_callstack(call_stack, (
-                    'dynamic_obstacle', 'indicator_color'))
-            braking_color = draw_params.by_callstack(call_stack, (
-                    'dynamic_obstacle', 'braking_color'))
-            horn_color = draw_params.by_callstack(call_stack, (
-                    'dynamic_obstacle', 'horn_color'))
-            blue_lights_color = draw_params.by_callstack(call_stack, (
-                    'dynamic_obstacle', 'blue_lights_color'))
-            draw_trajectory = draw_params.by_callstack(call_stack, (
-                    'dynamic_obstacle', 'trajectory', 'draw_trajectory'))
-        except KeyError:
-            warnings.warn("Cannot find stylesheet for dynamic_obstacle. Called "
-                          "through:")
-            print(call_stack)
+        time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
+        time_end = draw_params.by_callstack(call_stack, ('time_end',))
+        draw_icon = draw_params.by_callstack(call_stack,
+                                             ('dynamic_obstacle', 'draw_icon'))
+        show_label = draw_params.by_callstack(call_stack, (
+                'dynamic_obstacle', 'show_label'))
+        draw_shape = draw_params.by_callstack(call_stack, (
+                'dynamic_obstacle', 'draw_shape'))
+        draw_initial_state = draw_params.by_callstack(call_stack, (
+                'dynamic_obstacle', 'initial_state', 'draw_initial_state'))
+        scale_factor = draw_params.by_callstack(call_stack, (
+                'dynamic_obstacle', 'initial_state', 'scale_factor'))
+        kwargs_init_state = draw_params.by_callstack(call_stack, (
+                'dynamic_obstacle', 'initial_state', 'kwargs'))
+        draw_occupancies = draw_params.by_callstack(call_stack, (
+                'dynamic_obstacle', 'occupancy', 'draw_occupancies'))
+        draw_signals = draw_params.by_callstack(call_stack, (
+                'dynamic_obstacle', 'draw_signals'))
+        draw_trajectory = draw_params.by_callstack(call_stack, (
+                'dynamic_obstacle', 'trajectory', 'draw_trajectory'))
 
         call_stack = tuple(list(call_stack) + ['dynamic_obstacle'])
-
-        occupancy_list = list()
-        trajectory = None
-        shape = None
-        # indicators = []
-        # braking = []
-        # horns = []
-        # bluelights = []
 
         # draw occupancies
         if (draw_occupancies == 1 or (draw_occupancies == 0 and type(
@@ -324,22 +300,11 @@ class MPRenderer:
             if occ is not None:
                 occ.shape.draw(self, draw_params, call_stack)
 
-            # draw signal states  # if draw_signals and occ is not None:  #
-            # sig = o.signal_state_at_time_step(time_begin)  #     if sig is
-            # not None:  #         if isinstance(occ.shape, Rectangle):  #  #
-            # if hasattr(sig,  #  # 'hazard_warning_lights') and \  #  #  #
-            # sig.hazard_warning_lights is True:  #  # indicators.extend([  #
-            # occ.shape.vertices[0],  #  # occ.shape.vertices[1],
-            #  # occ.shape.vertices[2],  #  # occ.shape.vertices[3]])  #  #
-            #  else:  #  # if hasattr(sig,  #  #  'indicator_left')  # and \
-            #  #  sig.indicator_left is True:  #  # indicators.extend([  #  #
-            #  occ.shape.vertices[1],  #  # occ.shape.vertices[2]])  #  #  if
-            #  hasattr(sig,  #  #  'indicator_right') and \  #  #  #  #  #  #
-            #  sig.indicator_right is True:  #  #  #  indicators.extend([  #
-            #  occ.shape.vertices[0],  #  #  #  occ.shape.vertices[3]])  #  #
-            #  if  #  hasattr(sig,  #  #  #  'braking_lights') and \  #  #  #
-            #  sig.braking_lights is True:  #  #  #  braking.extend([  #  #
-            #  occ.shape.vertices[  #  #  0],  #  #  #  occ.shape.vertices[  #  1]])  #  #                            if  #  hasattr(sig,  #  #  #  'flashing_blue_lights') and \  #  #  #  #  #  #  #  #  #  #  sig.flashing_blue_lights is True:  #  #  #  bluelights.append(  #  occ.shape.center)  #             if hasattr(  #  sig, 'horn')  #  and sig.horn is True:  #  #  #  horns.append(occ.shape.center)  #         else:  #  #  #  warnings.warn(  #  #         'Plotting  #         signal  #  #  states only implemented for '  #  #  #  #  #         'obstacle_shapes Rectangle.')
+                if draw_signals:
+                    sig = obj.signal_state_at_time_step(time_begin)
+                    if sig is not None:
+                        self.draw_signale_state(sig, occ, draw_params,
+                                                call_stack)
 
         # draw car icon
         if draw_icon and type(
@@ -377,34 +342,6 @@ class MPRenderer:
             state.draw(self, call_stack=call_stack, draw_params=draw_params,
                        scale_factor=scale_factor, arrow_args=kwargs_init_state)
 
-        # collect objects from all vehicles to draw them efficiently in  #  #
-        # batches  # occupancy_list, trajectories_list, shapes_list,
-        # indicators, braking, \  # horns, bluelights, initial_states = zip(
-        #     *list(map(collecting, obj)))
-
-        # Filter none  # occupancy_list = list(filter(None,  # list(  #  #  #
-        # occupancy_list)))  # trajectories_list = list(filter(None,  # list(
-        # trajectories_list)))  # shapes_list = list(filter(None,  # list(  #
-        # shapes_list)))  # initial_states = list(filter(None,  # list(  #  #
-        # initial_states)))
-
-        # Signals  # indicators = np.vstack(indicators)  # braking =  #  #  #
-        # np.vstack(braking)  # horns = np.vstack(horns)  # bluelights =  #
-        # np.vstack(bluelights)
-
-        # draw signals  # if indicators.size > 0:  #     diameters =  #  #  #
-        # signal_radius * np.ones(indicators.shape[0]) * 2  #  #  #  #  #  #
-        # handles.setdefault(DynamicObstacle, []).append(  #  #  #  #  #  #
-        # collections.EllipseCollection(diameters, diameters,
-        #  # angles=np.zeros_like(  #  # diameters),
-        #  # offsets=indicators,  #  # transOffset=ax.transData,
-        #  # units='xy',  #  # facecolor=indicator_color,
-        #  # edgecolor=indicator_color,  #  # zorder=zorder + 0.2,
-        #  # linewidth=0))  #     ax.add_collection(handles[DynamicObstacle][
-        # -1])  # if braking.size > 0:  #     diameters = signal_radius *  #
-        # np.ones(braking.shape[0]) * 3.0  #     handles.setdefault(  #  #  #
-        # DynamicObstacle, []).append(  #  # collections.EllipseCollection(
-        # diameters, diameters,  #  # angles=np.zeros_like(  #  # diameters),  #  # offsets=braking,  #  # transOffset=ax.transData,  #  # units='xy',  #  # facecolor=braking_color,  #  # edgecolor=braking_color,  #  # zorder=zorder + 0.1,  #  # linewidth=0))  #     ax.add_collection(handles[DynamicObstacle][  # -1])  # if horns.size > 0:  #     diameters = signal_radius *  #  #  # np.ones(horns.shape[0]) * 3.0  #     handles.setdefault(  #  #  #  # DynamicObstacle, []).append(  #  # collections.EllipseCollection(  # diameters, diameters,  #  # angles=np.zeros_like(  #  # diameters),  # offsets=horns,  #  # transOffset=ax.transData,  #  # units='xy',  #  # facecolor=horn_color,  #  # edgecolor=braking_color,  #  # zorder=zorder + 0.1,  #  # linewidth=0))  #  #  #  #  #  #  #  #  ax.add_collection(handles[DynamicObstacle][  # -1])  # if  #  #  #  #  bluelights.size > 0:  #     diameters = signal_radius *  #  #  #  #  np.ones(bluelights.shape[0]) * 2  #     handles.setdefault(  #  #  #  DynamicObstacle, []).append(  #  # collections.EllipseCollection(  #  diameters, diameters,  #  # angles=np.zeros_like(  #  #  #  #  #  #  diameters),  #  # offsets=bluelights,  #  #  #  #  #  #  #  #  #  transOffset=ax.transData,  #  # units='xy',  #  # facecolor=blue_lights_color,  #  # edgecolor=braking_color,  #  # zorder=zorder + 0.1,  #  # linewidth=0))  #  #  #  #  #  #  #  #  ax.add_collection(handles[DynamicObstacle][-1])
 
     def draw_trajectory(self, obj: Trajectory, draw_params: ParamServer,
                         call_stack: Tuple[str, ...]) -> None:
@@ -1294,3 +1231,97 @@ class MPRenderer:
         self.traffic_sign_call_stack = call_stack
         self.traffic_sign_draw_params = draw_params
         self.traffic_signs.append(obj)
+
+    def draw_signale_state(self, sig: SignalState, occ: Occupancy, draw_params,
+                           call_stack):
+        if draw_params is None:
+            draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
+
+        zorder = draw_params.by_callstack(call_stack, 'zorder')
+        signal_radius = draw_params.by_callstack(call_stack, 'signal_radius')
+        indicator_color = draw_params.by_callstack(call_stack,
+                                                   'indicator_color')
+        braking_color = draw_params.by_callstack(call_stack, 'braking_color')
+        horn_color = draw_params.by_callstack(call_stack, 'horn_color')
+        blue_lights_color = draw_params.by_callstack(call_stack,
+                                                     'blue_lights_color')
+        indicators = []
+        braking = []
+        horns = []
+        bluelights = []
+        if isinstance(occ.shape, Rectangle):
+            if hasattr(sig,
+                       'hazard_warning_lights') and sig.hazard_warning_lights\
+                    is True:
+                indicators.extend([occ.shape.vertices[0], occ.shape.vertices[1],
+                                   occ.shape.vertices[2],
+                                   occ.shape.vertices[3]])
+            else:
+                if hasattr(sig,
+                           'indicator_left') and sig.indicator_left is True:
+                    indicators.extend(
+                            [occ.shape.vertices[1], occ.shape.vertices[2]])
+                if hasattr(sig,
+                           'indicator_right') and sig.indicator_right is True:
+                    indicators.extend(
+                            [occ.shape.vertices[0], occ.shape.vertices[3]])
+            if hasattr(sig, 'braking_lights') and sig.braking_lights is True:
+                braking.extend([occ.shape.vertices[0], occ.shape.vertices[1]])
+            if hasattr(sig,
+                       'flashing_blue_lights') and sig.flashing_blue_lights \
+                    is True:
+                bluelights.append(occ.shape.center)
+            if hasattr(sig, 'horn') and sig.horn is True:
+                horns.append(occ.shape.center)
+        else:
+            warnings.warn(
+                    'Plotting signal states only implemented for '
+                    'obstacle_shapes Rectangle.')
+        indicators = np.vstack(indicators)
+        braking = np.vstack(braking)
+        horns = np.vstack(horns)
+        bluelights = np.vstack(bluelights)
+
+        # draw signals
+        if indicators.size > 0:
+            indicator_params = {
+                    'facecolor': indicator_color,
+                    'edgecolor': indicator_color,
+                    'zorder':    zorder + 0.2,
+                    'linewidth': 0
+            }
+            for e in indicators:
+                self.draw_circle(Circle(signal_radius, e), indicator_params,
+                                 call_stack)
+        if braking.size > 0:
+            braking_params = {
+                    'facecolor': braking_color,
+                    'edgecolor': braking_color,
+                    'zorder':    zorder + 0.2,
+                    'linewidth': 0
+            }
+            for e in indicators:
+                self.draw_circle(Circle(signal_radius * 1.5, e), braking_params,
+                                 call_stack)
+        if horns.size > 0:
+            horn_params = {
+                    'facecolor': horn_color,
+                    'edgecolor': braking_color,
+                    'zorder':    zorder + 0.1,
+                    'linewidth': 0
+            }
+            for e in indicators:
+                self.draw_circle(Circle(signal_radius * 1.5, e), horn_params,
+                                 call_stack)
+        if bluelights.size > 0:
+            bluelight_params = {
+                    'facecolor': blue_lights_color,
+                    'edgecolor': braking_color,
+                    'zorder':    zorder + 0.1,
+                    'linewidth': 0
+            }
+            for e in indicators:
+                self.draw_circle(Circle(signal_radius, e), bluelight_params,
+                                 call_stack)
