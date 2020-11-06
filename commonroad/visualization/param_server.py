@@ -206,8 +206,9 @@ def write_default_params():
         json.dump(create_default_draw_params(), fp, indent=4)
 
 class ParamServer:
-    def __init__(self, data=None):
+    def __init__(self, data=None, warn_default=False):
         self.data = data or {}
+        self.warn_default = warn_default
 
     @staticmethod
     def _resolve_key(map, key):
@@ -245,7 +246,7 @@ class ParamServer:
             val = ParamServer._resolve_key(default_params, item)
             if val is None:
                 logging.error('Value for key {} not found!'.format(item))
-            else:
+            elif self.warn_default:
                 logging.warning('Using default for key {}!'.format(item))
         return val
 
@@ -268,6 +269,9 @@ class ParamServer:
                     'Key "{}" in path "{}" is not subscriptable!'.format(k,
                                                                          key))
         d[key[-1]] = value
+
+    def __contains__(self, item):
+        return item in self.data
 
     @staticmethod
     def from_json(fname):

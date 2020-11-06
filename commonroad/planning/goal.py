@@ -169,10 +169,15 @@ class GoalRegion:
             and not {'velocity', 'velocity_y'}.issubset(goal_state_fields):
 
             if not 'orientation' in state_fields:
-                state_new.orientation = math.atan2(state_new.velocity_y, state_new.velocity)
+                state_new.orientation = math.atan2(state_new.velocity_y,
+                                                   state_new.velocity)
                 state_fields.add('orientation')
 
-            state_new.velocity = np.linalg.norm(np.array([state_new.velocity, state_new.velocity_y]))
+            state_new.velocity = np.linalg.norm(
+                np.array([state_new.velocity, state_new.velocity_y]))
             state_fields.remove('velocity_y')
 
         return state_new, state_fields, goal_state, goal_state_fields
+
+    def draw(self, renderer, draw_params=None, call_stack=tuple()):
+        renderer.draw_goal_region(self, draw_params, call_stack)

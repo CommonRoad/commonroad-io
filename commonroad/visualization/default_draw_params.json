@@ -56,8 +56,7 @@
     }
   },
   "lanelet_network": {
-    "kwargs_traffic_light_signs": {},
-    "antialiased": true
+    "kwargs_traffic_light_signs": {}
   },
   "traffic_light": {
     "draw_traffic_lights": true,
@@ -164,7 +163,9 @@
   "initial_state": {
     "facecolor": "#000080",
     "zorder": 25,
-    "label": ""
+    "label": "",
+    "scale_factor": 1.0,
+    "kwargs": {}
   },
   "goal_region": {
     "draw_shape": true,
@@ -208,5 +209,6 @@
   },
   "planning_problem_set": {
     "draw_ids": "all"
-  }
+  },
+  "antialiased": true
 }

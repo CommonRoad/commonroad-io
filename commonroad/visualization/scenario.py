@@ -85,9 +85,11 @@ class MPRenderer:
         self.plot_limits = plot_limits
         self.f = None
         if ax is None:
-            self.f, ax = plt.subplots(1, 1)
-        self.f = ax.figure
-        self.ax = ax
+            # self.f, ax = plt.subplots(1, 1)
+            self.ax = plt.gca()
+        else:
+            self.ax = ax
+        self.f = self.ax.figure
         self.handles = {}
 
         # Draw elements
@@ -608,26 +610,24 @@ class MPRenderer:
             draw_params = self.draw_params
         elif isinstance(draw_params, dict):
             draw_params = ParamServer(data=draw_params)
-        try:
-            if scale_factor is None:
-                scale_factor = draw_params.by_callstack(call_stack, (
-                        'initial_state', 'scale_factor'))
-            if arrow_args is None:
-                arrow_args = draw_params.by_callstack(call_stack, (
-                        'initial_state', 'kwargs'))
-        except KeyError:
-            print("Cannot find stylesheet for initial_state. Called through:")
-            print(call_stack)
-            return []
+
+        if scale_factor is None:
+            scale_factor = draw_params.by_callstack(call_stack, (
+                    'initial_state', 'scale_factor'))
+        if arrow_args is None:
+            arrow_args = draw_params.by_callstack(call_stack,
+                                                  ('initial_state', 'kwargs'))
 
         cos = math.cos(state.orientation)
         sin = math.sin(state.orientation)
         x = state.position[0]
         y = state.position[1]
-        self.obstacle_patches.append(
-            mpl.patches.Arrow(x=x, y=y, dx=state.velocity * cos * scale_factor,
-                              dy=state.velocity * sin * scale_factor,
-                              zorder=100, **arrow_args))
+        self.obstacle_patches.append(mpl.patches.Arrow(x=x, y=y,
+                                                       dx=state.velocity *
+                                                          cos * scale_factor,
+                                                       dy=state.velocity * sin * scale_factor,
+                                                       zorder=100,
+                                                       **arrow_args))
 
     def draw_lanelet_network(self, obj: LaneletNetwork,
                              draw_params: ParamServer,
@@ -1181,7 +1181,7 @@ class MPRenderer:
         draw_ids = draw_params.by_callstack(call_stack, 'draw_ids')
 
         for id, problem in obj.planning_problem_dict.items():
-            if draw_ids is 'all' or id in draw_ids:
+            if draw_ids == 'all' or id in draw_ids:
                 self.draw_planning_problem(problem, draw_params, call_stack)
 
     def draw_planning_problem(self, obj: PlanningProblem,
@@ -1203,7 +1203,7 @@ class MPRenderer:
         elif isinstance(draw_params, dict):
             draw_params = ParamServer(data=draw_params)
         call_stack = tuple(list(call_stack) + ['planning_problem'])
-        if not 'initial_state' in draw_params:
+        if 'initial_state' not in draw_params:
             draw_params['initial_state'] = {}
         draw_params['initial_state', 'label'] = 'initial position'
         self.draw_initital_state(obj.initial_state, draw_params, call_stack)
@@ -1258,7 +1258,7 @@ class MPRenderer:
             call_stack = tuple(['planning_problem_set'])
         call_stack = tuple(list(call_stack) + ['goal_region'])
         for goal_state in obj.state_list:
-            goal_state.draw(self, draw_params, call_stack)
+            self.draw_goal_state(goal_state, draw_params, call_stack)
 
     def draw_goal_state(self, obj: State, draw_params: ParamServer,
                         call_stack: Tuple[str, ...]) -> None:

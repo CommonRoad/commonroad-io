@@ -27,6 +27,9 @@ from commonroad.visualization.param_server import ParamServer
 
 class TestVisualization(unittest.TestCase):
 
+    def setUp(self) -> None:
+        self.rnd = MPRenderer()
+
     def test_zorder(self):
         f, ax = plt.subplots(1, 1)
         l = []
@@ -131,34 +134,21 @@ class TestVisualization(unittest.TestCase):
         planning_problem_set: PlanningProblemSet = planning_problem_set
 
         with pytest.warns(None) as record_warnings:
-            draw_object(planning_problem_set)
+            planning_problem_set.draw(self.rnd)
+            self.rnd.render(show=True)
             INT = planning_problem_set.planning_problem_dict.values()
             problem = list(planning_problem_set.planning_problem_dict.values())[
                 0]
-            draw_object(problem)
-            draw_object(problem.goal)
-            draw_object(problem.initial_state)
+            problem.draw(self.rnd)
+            problem.goal.draw(self.rnd)
+            problem.initial_state.draw(self.rnd)
 
         assert (len(record_warnings) == 0)
         plt.close('all')
 
-    def plot_object(self, object, draw_params=None):
-        plt.clf()
-        plt.ioff()
-        plt.style.use('classic')
-        inch_in_cm = 2.54
-        figsize = [30, 8]
-        plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
-
-        draw_object(object, draw_params)
-        plt.gca().autoscale()
-        plt.show(block=False)
-        time.sleep(1)
-        plt.close('all')
-
     def test_visual_appearance(self):
         tt = 0
-        nrun = 1
+        nrun = 20
         plt.close('all')
         # plt.ioff()
         # set_non_blocking()
@@ -167,24 +157,22 @@ class TestVisualization(unittest.TestCase):
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         scenario: Scenario = scenario
         # plt.autoscale(False)
-
+        plt.style.use('classic')
+        inch_in_cm = 2.54
+        figsize = [20, 15]
+        plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
+        plt.gca().set(title='occupancies should be be plotted with opacity, '
+                            'plot limits: [-50,60,-50,50]')
+        plt.gca().autoscale_view(False, False, False)
+        self.rnd = MPRenderer(plot_limits=[-50, 60, -50, 50])
         for i in range(0, nrun):
-            plt.style.use('classic')
-            inch_in_cm = 2.54
-            figsize = [20, 15]
-            plt.figure(
-                    figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
-            plt.gca().set(
-                    title='occupancies should be be plotted with opacity, '
-                          'plot limits: [-50,60,-50,50]')
-            plt.gca().autoscale_view(False, False, False)
-
             t1 = time.time()
             draw_params = {
                     'planning_problem_set': {
                             'draw_ids': [list(
                                     planning_problem_set.planning_problem_dict.keys())[
-                                             0]]},
+                                             0]]
+                    },
                     'time_begin':           15,
                     'time_end':             25,
                     'dynamic_obstacle':     {
@@ -192,17 +180,12 @@ class TestVisualization(unittest.TestCase):
                                     'draw_occupancies': 0,
                                     'shape':            {
                                             'rectangle': {'facecolor': 'g'}}}}}
-            draw_object(scenario, draw_params=draw_params,
-                        plot_limits=[-50, 60, -50, 50])
-            plt.gca().axis('equal')
-            # plt.gca().autoscale()
+            scenario.draw(self.rnd, draw_params=draw_params)
             # plt.tight_layout()
-            draw_object(planning_problem_set, draw_params=draw_params,
-                        plot_limits=[-50, 60, -50, 50])
+            planning_problem_set.draw(self.rnd, draw_params=draw_params)
             # draw_object(scenario.obj[0],draw_params=draw_params)
-            plt.show(block=False)
+            self.rnd.render(show=False, filename='/tmp/{}.png'.format(i))
             tt += time.time() - t1
-
             # plt.close()
 
         print('time: {}'.format(tt / nrun))
