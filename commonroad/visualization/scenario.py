@@ -1,6 +1,7 @@
 import itertools
 import math
 import os
+import datetime
 from collections import defaultdict
 from typing import Dict, Callable, Tuple, Union, Any, Set
 import commonroad.geometry.shape
@@ -85,8 +86,7 @@ class MPRenderer:
         self.f = None
         if ax is None:
             self.f, ax = plt.subplots(1, 1)
-        if self.f is None:
-            self.f = plt.gcf()
+        self.f = ax.figure
         self.ax = ax
         self.handles = {}
 
@@ -977,7 +977,7 @@ class MPRenderer:
                                          lanelet.traffic_signs]
                     if traffic_signs_tmp:
                         # add as text to label
-                        str_tmp = 'traffic signs: '
+                        str_tmp = 'sign: '
                         add_str = ''
                         for sign in traffic_signs_tmp:
                             for el in sign.traffic_sign_elements:
@@ -1131,9 +1131,7 @@ class MPRenderer:
 
         # TODO: Draw traffic lights and signs
         if traffic_lights_signs:
-            self.traffic_signs.extend(
-                    draw_traffic_light_signs(traffic_lights_signs, draw_params,
-                                             call_stack))
+            self.traffic_signs.extend(traffic_lights_signs)
 
     def draw_planning_problem_set(self, obj: PlanningProblemSet,
                                   draw_params: ParamServer,
