@@ -82,9 +82,13 @@ class MPRenderer:
     def __init__(self, draw_params=None,
                  plot_limits: Union[List[Union[int, float]], None] = None,
                  ax: Union[mpl.axes.Axes, None] = None):
-        self.draw_params = draw_params or ParamServer()
+        if draw_params is None:
+            self.draw_params = ParamServer()
+        elif isinstance(draw_params, dict):
+            self.draw_params = ParamServer(data=draw_params)
+        else:
+            self.draw_params = draw_params
         self.plot_limits = plot_limits
-        self.f = None
         if ax is None:
             # self.f, ax = plt.subplots(1, 1)
             self.ax = plt.gca()
@@ -129,7 +133,8 @@ class MPRenderer:
         self.ax.add_collection(
                 mpl.collections.PatchCollection(self.obstacle_patches,
                                                 match_original=True, zorder=20))
-        self.ax.autoscale(True)
+        if self.plot_limits is None or self.plot_limits == 'auto':
+            self.ax.autoscale(True)
         self.ax.set_aspect('equal')
         if filename is not None:
             self.f.savefig(filename)
