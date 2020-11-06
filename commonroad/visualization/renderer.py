@@ -1,49 +1,38 @@
-import itertools
 import math
 import os
-import datetime
-from collections import defaultdict
-from typing import Dict, Callable, Tuple, Union, Any, Set
-import commonroad.geometry.shape
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-import matplotlib.patches as patches
-import matplotlib.collections as collections
-# import pylustrator
+from typing import Dict, Tuple, Union, Set
 
+import commonroad.geometry.shape
 import commonroad.prediction.prediction
 import commonroad.scenario.obstacle
-import commonroad.visualization.draw_dispatch_cr
+import matplotlib as mpl
+import matplotlib.collections as collections
+import matplotlib.patches as patches
+import matplotlib.pyplot as plt
 from commonroad.common.util import Interval
 from commonroad.geometry.shape import *
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, \
     PlanningProblem
-from commonroad.scenario.intersection import Intersection
-from commonroad.scenario.traffic_sign import TrafficSign, \
-    TrafficLight, \
-    TrafficLightState
-from commonroad.visualization.traffic_sign import draw_traffic_light_signs
-from matplotlib.path import Path
 from commonroad.prediction.prediction import Occupancy
-from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, LineMarking
+from commonroad.scenario.lanelet import LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle, \
     StaticObstacle, \
     ObstacleRole, \
     SignalState
 from commonroad.scenario.scenario import Scenario
+from commonroad.scenario.traffic_sign import TrafficLightState
 from commonroad.scenario.trajectory import Trajectory, State
-
-from commonroad.visualization.util import draw_polygon_as_patch, \
-    draw_polygon_collection_as_patch, \
-    LineDataUnits, \
+from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.traffic_sign import draw_traffic_light_signs
+from commonroad.visualization.util import LineDataUnits, \
     collect_center_line_colors, \
     get_arrow_path_at, \
     colormap_idx, \
-    get_car_patch
-
-from commonroad.visualization.param_server import ParamServer
+    get_car_patch, \
+    line_marking_to_linestyle, \
+    traffic_light_color_dict
+from matplotlib.path import Path
 
 __author__ = "Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -54,27 +43,6 @@ __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
-
-
-def line_marking_to_linestyle(line_marking: LineMarking) -> Tuple:
-    """:returns: Tuple[line_style, dashes, line_width] for matplotlib
-    plotting options."""
-    return {
-            LineMarking.DASHED:       ('--', (10, 10), 0.25,),
-            LineMarking.SOLID:        ('-', (None, None), 0.25),
-            LineMarking.BROAD_DASHED: ('--', (10, 10), 0.5),
-            LineMarking.BROAD_SOLID:  ('-', (None, None), 0.5)}[line_marking]
-
-
-def traffic_light_color_dict(traffic_light_state: TrafficLightState,
-                             params: dict):
-    """Retrieve color code for traffic light state."""
-    return {
-            TrafficLightState.RED:        params['red_color'],
-            TrafficLightState.YELLOW:     params['yellow_color'],
-            TrafficLightState.GREEN:      params['green_color'],
-            TrafficLightState.RED_YELLOW: params['red_yellow_color']}[
-        traffic_light_state]
 
 
 class MPRenderer:
@@ -370,7 +338,6 @@ class MPRenderer:
             state.draw(self, call_stack=call_stack, draw_params=draw_params,
                        scale_factor=scale_factor, arrow_args=kwargs_init_state)
 
-
     def draw_trajectory(self, obj: Trajectory, draw_params: ParamServer,
                         call_stack: Tuple[str, ...]) -> None:
         """
@@ -589,7 +556,8 @@ class MPRenderer:
         self.obstacle_patches.append(mpl.patches.Arrow(x=x, y=y,
                                                        dx=state.velocity *
                                                           cos * scale_factor,
-                                                       dy=state.velocity * sin * scale_factor,
+                                                       dy=state.velocity *
+                                                          sin * scale_factor,
                                                        zorder=100,
                                                        **arrow_args))
 
@@ -995,24 +963,26 @@ class MPRenderer:
 
                     self.ax.text(clr_positions[0][0], clr_positions[0][1],
                                  label_string, bbox={
-                                'facecolor': center_bound_color,
-                                'pad':       2}, horizontalalignment='center',
+                                'facecolor': center_bound_color, 'pad': 2
+                        }, horizontalalignment='center',
                                  verticalalignment='center', rotation=angle,
                                  zorder=30.2)
 
         # draw paths and collect axis handles
         if draw_right_bound:
             self.static_collections.append(
-                collections.PathCollection(right_paths,
-                                           edgecolor=right_bound_color,
-                                           facecolor='none', lw=draw_linewidth,
-                                           zorder=10, antialiased=antialiased))
+                    collections.PathCollection(right_paths,
+                                               edgecolor=right_bound_color,
+                                               facecolor='none',
+                                               lw=draw_linewidth, zorder=10,
+                                               antialiased=antialiased))
         if draw_left_bound:
             self.static_collections.append(
-                collections.PathCollection(left_paths,
-                                           edgecolor=left_bound_color,
-                                           facecolor='none', lw=draw_linewidth,
-                                           zorder=10, antialiased=antialiased))
+                    collections.PathCollection(left_paths,
+                                               edgecolor=left_bound_color,
+                                               facecolor='none',
+                                               lw=draw_linewidth, zorder=10,
+                                               antialiased=antialiased))
         if unique_colors:
             if draw_center_bound:
                 if draw_center_bound:
@@ -1031,11 +1001,11 @@ class MPRenderer:
         else:
             if draw_center_bound:
                 self.static_collections.append(
-                    collections.PathCollection(center_paths,
-                                               edgecolor=center_bound_color,
-                                               facecolor='none',
-                                               lw=draw_linewidth, zorder=10,
-                                               antialiased=antialiased))
+                        collections.PathCollection(center_paths,
+                                                   edgecolor=center_bound_color,
+                                                   facecolor='none',
+                                                   lw=draw_linewidth, zorder=10,
+                                                   antialiased=antialiased))
             if draw_start_and_direction:
                 self.static_collections.append(
                         collections.PathCollection(direction_list,
@@ -1045,11 +1015,12 @@ class MPRenderer:
 
         if successors_left:
             self.static_collections.append(
-                collections.PathCollection(succ_left_paths,
-                                           edgecolor=successors_left_color,
-                                           facecolor='none',
-                                           lw=draw_linewidth * 3.0, zorder=11,
-                                           antialiased=antialiased))
+                    collections.PathCollection(succ_left_paths,
+                                               edgecolor=successors_left_color,
+                                               facecolor='none',
+                                               lw=draw_linewidth * 3.0,
+                                               zorder=11,
+                                               antialiased=antialiased))
         if successors_straight:
             self.static_collections.append(
                     collections.PathCollection(succ_straight_paths,
@@ -1060,11 +1031,12 @@ class MPRenderer:
                                                antialiased=antialiased))
         if successors_right:
             self.static_collections.append(
-                collections.PathCollection(succ_right_paths,
-                                           edgecolor=successors_right_color,
-                                           facecolor='none',
-                                           lw=draw_linewidth * 3.0, zorder=11,
-                                           antialiased=antialiased))
+                    collections.PathCollection(succ_right_paths,
+                                               edgecolor=successors_right_color,
+                                               facecolor='none',
+                                               lw=draw_linewidth * 3.0,
+                                               zorder=11,
+                                               antialiased=antialiased))
 
         # fill lanelets with facecolor
         self.static_collections.append(collections.PolyCollection(vertices_fill,
@@ -1100,11 +1072,13 @@ class MPRenderer:
 
             # right_vertices
             self.static_collections.append(collections.EllipseCollection(
-                np.ones([coordinates_right_border_vertices.shape[0], 1]) * 1,
-                np.ones([coordinates_right_border_vertices.shape[0], 1]) * 1,
-                np.zeros([coordinates_right_border_vertices.shape[0], 1]),
-                offsets=coordinates_right_border_vertices,
-                color=right_bound_color, transOffset=self.ax.transData))
+                    np.ones([coordinates_right_border_vertices.shape[0],
+                             1]) * 1, np.ones(
+                            [coordinates_right_border_vertices.shape[0],
+                             1]) * 1,
+                    np.zeros([coordinates_right_border_vertices.shape[0], 1]),
+                    offsets=coordinates_right_border_vertices,
+                    color=right_bound_color, transOffset=self.ax.transData))
 
         traffic_lights_signs = []
         if draw_traffic_signs:
@@ -1299,9 +1273,8 @@ class MPRenderer:
             if hasattr(sig, 'horn') and sig.horn is True:
                 horns.append(occ.shape.center)
         else:
-            warnings.warn(
-                    'Plotting signal states only implemented for '
-                    'obstacle_shapes Rectangle.')
+            warnings.warn('Plotting signal states only implemented for '
+                          'obstacle_shapes Rectangle.')
         indicators = np.vstack(indicators)
         braking = np.vstack(braking)
         horns = np.vstack(horns)

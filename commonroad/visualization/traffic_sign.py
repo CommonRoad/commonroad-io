@@ -11,7 +11,6 @@ from PIL import Image
 
 import commonroad.prediction.prediction
 import commonroad.scenario.obstacle
-import commonroad.visualization.draw_dispatch_cr
 from commonroad.geometry.shape import *
 from commonroad.scenario.traffic_sign import TrafficSign, \
     TrafficSignIDGermany, \

@@ -1,9 +1,7 @@
 import matplotlib.pyplot as plt
-from commonroad.visualization.scenario import MPRenderer
+from commonroad.visualization.renderer import MPRenderer
 from commonroad.visualization.util import approximate_bounding_box_dyn_obstacles
 from matplotlib.animation import FuncAnimation
-from commonroad.visualization.draw_dispatch_cr import draw_object, \
-    plottable_types
 from typing import List, Union
 import math
 

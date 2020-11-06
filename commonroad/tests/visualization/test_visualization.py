@@ -17,11 +17,10 @@ from commonroad.prediction.prediction import Occupancy
 from commonroad.scenario.trajectory import State
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.scenario.scenario import Scenario
-from commonroad.visualization.plot_helper import *
 # from commonroad.visualization.draw_dispatch_cr import draw_object,
 # _retrieve_value
 
-from commonroad.visualization.scenario import MPRenderer
+from commonroad.visualization.renderer import MPRenderer
 from commonroad.visualization.param_server import ParamServer
 
 

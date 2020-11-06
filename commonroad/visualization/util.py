@@ -7,12 +7,32 @@ import matplotlib.patches as patches
 import matplotlib as mpl
 import matplotlib.cm as cm
 import matplotlib.collections as collections
+import matplotlib.pyplot as plt
 from typing import List, Dict, Tuple, Union
 
-from commonroad.common.util import Interval
-from commonroad.scenario.lanelet import LaneletNetwork
+from commonroad.scenario.lanelet import LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle
-from commonroad.scenario.traffic_sign import TrafficLightState, TrafficLight, TrafficLightDirection
+from commonroad.scenario.traffic_sign import TrafficLightState, \
+    TrafficLight, \
+    TrafficLightDirection
+
+import warnings
+from typing import List, Dict, Tuple, Union
+
+import matplotlib as mpl
+import matplotlib.cm as cm
+import matplotlib.collections as collections
+import matplotlib.patches as patches
+import matplotlib.pyplot as plt
+import numpy as np
+from commonroad.scenario.lanelet import LaneletNetwork, LineMarking
+from commonroad.scenario.obstacle import DynamicObstacle
+from commonroad.scenario.scenario import Scenario
+from commonroad.scenario.traffic_sign import TrafficLightState, \
+    TrafficLight, \
+    TrafficLightDirection
+from matplotlib.lines import Line2D
+from matplotlib.path import Path
 
 __author__ = "Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -333,3 +353,42 @@ def get_car_patch(pos_x: Union[int, float], pos_y: Union[int, float],
             mpl.patches.Polygon(verts8, closed=True, edgecolor='#000000',
                                 zorder=zorder, lw=lw)]
     return patch_list
+
+
+def set_non_blocking() -> None:
+    """
+    Ensures that interactive plotting is enabled for non-blocking plotting.
+
+    :return: None
+    """
+
+    plt.ion()
+    if not mpl.is_interactive():
+        warnings.warn(
+            'The current backend of matplotlib does not support interactive '
+            'mode: ' + str(
+                mpl.get_backend()) + '. Select another backend with: '
+                                     '\"matplotlib.use(\'TkAgg\')\"',
+            UserWarning, stacklevel=3)
+
+
+def line_marking_to_linestyle(line_marking: LineMarking) -> Tuple:
+    """:returns: Tuple[line_style, dashes, line_width] for matplotlib
+    plotting options."""
+    return {
+            LineMarking.DASHED:       ('--', (10, 10), 0.25,),
+            LineMarking.SOLID:        ('-', (None, None), 0.25),
+            LineMarking.BROAD_DASHED: ('--', (10, 10), 0.5),
+            LineMarking.BROAD_SOLID:  ('-', (None, None), 0.5)
+    }[line_marking]
+
+
+def traffic_light_color_dict(traffic_light_state: TrafficLightState,
+                             params: dict):
+    """Retrieve color code for traffic light state."""
+    return {
+            TrafficLightState.RED:        params['red_color'],
+            TrafficLightState.YELLOW:     params['yellow_color'],
+            TrafficLightState.GREEN:      params['green_color'],
+            TrafficLightState.RED_YELLOW: params['red_yellow_color']
+    }[traffic_light_state]
