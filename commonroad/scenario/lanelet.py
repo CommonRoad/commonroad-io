@@ -918,10 +918,6 @@ class Lanelet:
     def __str__(self):
         return 'Lanelet with id:' + str(self.lanelet_id)
 
-    def draw(self, renderer, draw_params=None, call_stack=tuple()):
-        obj = LaneletNetwork.create_from_lanelet_list([self])
-        renderer.draw_lanelet_network(obj, draw_params, call_stack)
-
 
 class LaneletNetwork:
     """

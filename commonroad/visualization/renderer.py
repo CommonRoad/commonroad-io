@@ -686,6 +686,9 @@ class MPRenderer:
                                              ('lanelet', 'facecolor'))
         antialiased = draw_params.by_callstack(call_stack, 'antialiased')
 
+        draw_lanlet_ids = draw_params.by_callstack(call_stack, (
+        'lanelet_network', 'draw_ids'))
+
         # Collect lanelets
         incoming_lanelets = set()
         incomings_left = {}
@@ -753,6 +756,9 @@ class MPRenderer:
 
         # collect paths for drawing
         for i_lanelet, lanelet in enumerate(lanelets):
+            if isinstance(draw_lanlet_ids,
+                          list) and lanelet.lanelet_id not in draw_lanlet_ids:
+                continue
 
             # left bound
             if draw_border_vertices or draw_left_bound:
@@ -762,8 +768,7 @@ class MPRenderer:
                             lanelet.left_vertices))
 
                 if draw_line_markings and lanelet.line_marking_left_vertices \
-                        is not LineMarking.UNKNOWN and \
-                        lanelet.line_marking_left_vertices is not \
+                        is not LineMarking.UNKNOWN and lanelet.line_marking_left_vertices is not \
                         LineMarking.NO_MARKING:
                     linestyle, dashes, linewidth_metres = \
                         line_marking_to_linestyle(

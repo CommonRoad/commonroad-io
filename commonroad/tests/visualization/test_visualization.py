@@ -56,10 +56,6 @@ class TestVisualization(unittest.TestCase):
 
         rnd = MPRenderer()
         with pytest.warns(None) as record_warnings:
-            scenario.lanelet_network.lanelets[0].draw(rnd)
-            rnd.render()
-            rnd.clear()
-
             scenario.lanelet_network.draw(rnd)
             rnd.render()
             # visualization
@@ -197,7 +193,7 @@ class TestVisualization(unittest.TestCase):
         # Write default params to file
         json_filename = 'test_params.json'
         write_default_params(json_filename)
-        # No modify style sheet in file and read stylesheet
+        # Now modify stylesheet file and read it
         params = ParamServer.from_json(json_filename)
         # Use for drawing
         full_path = os.path.dirname(os.path.abspath(__file__))

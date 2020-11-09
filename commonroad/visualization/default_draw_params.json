@@ -56,7 +56,8 @@
     "z_order": 24
   },
   "lanelet_network": {
-    "kwargs_traffic_light_signs": {}
+    "kwargs_traffic_light_signs": {},
+    "draw_ids": "all"
   },
   "traffic_light": {
     "draw_traffic_lights": true,

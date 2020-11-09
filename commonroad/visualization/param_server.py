@@ -74,6 +74,7 @@ def create_default_draw_params() -> dict:
                     'z_order':         24
             }, 'lanelet_network':      {
                     'kwargs_traffic_light_signs': {},
+                    'draw_ids': 'all'
                     # further properties for AnnotationBox of
                     # traffic
                     # signs or lights, see #
