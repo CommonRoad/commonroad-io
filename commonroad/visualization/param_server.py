@@ -27,12 +27,11 @@ def create_default_draw_params() -> dict:
             'facecolor': '#1d7eea',
             'edgecolor': '#0066cc',
             'linewidth': 0.5,
-            'zorder':    20}
+            'zorder':    20
+    }
 
     draw_params = {
-            'time_begin':           0,
-            'time_end':             5,
-            'dynamic_obstacle':     {
+            'time_begin':              0, 'time_end': 5, 'dynamic_obstacle': {
                     'draw_shape':        True,
                     'draw_icon':         False,
                     'draw_bounding_box': True,
@@ -45,41 +44,42 @@ def create_default_draw_params() -> dict:
                     'blue_lights_color': 'blue',
                     'horn_color':        'red',
                     # horn is visualized as red center dot
-                    'initial_state':     {'draw_initial_state': False,
-                                          # visualize initial state
-                                          # by arrow
-                                          # proportional to velocity
-                                          'scale_factor':       0.3,
-                                          # length of arrow in m per m/s
-                                          'kwargs':             {
-                                                  'linewidth':            1.5,
-                                                  'length_includes_head': True,
-                                                  'edgecolor':
-                                                      'black',
-                                                  'facecolor':
-                                                      'black', },
-                                          # further parameters for
-                                          # FancyArrow
-                                          },
+                    'initial_state':     {
+                            'draw_initial_state': False,
+                            # visualize initial state
+                            # by arrow
+                            # proportional to velocity
+                            'scale_factor':       0.3,
+                            # length of arrow in m per m/s
+                            'kwargs':             {
+                                    'linewidth':            1.5,
+                                    'length_includes_head': True,
+                                    'edgecolor':            'black',
+                                    'facecolor':            'black',
+                            },
+                            # further parameters for
+                            # FancyArrow
+                    },
                     'shape':             {
                             'polygon':   basic_shape_parameters_dynamic,
                             'rectangle': basic_shape_parameters_dynamic,
-                            'circle':    basic_shape_parameters_dynamic},
-                    'trajectory':        {
-                            'draw_trajectory': True,
-                            'facecolor':       '#000000',
-                            'draw_continuous': False,
-                            'unique_colors':   False,
-                            'line_width':      0.17,
-                            'z_order':         24}},
-            'lanelet_network':      {'kwargs_traffic_light_signs': {},
-                                     # further properties for AnnotationBox of
-                                     # traffic
-                                     # signs or lights, see #
-                                     # https://matplotlib.org/3.1.0/gallery
-                                     # /text_labels_and_annotations/demo_annotation_box.html
-                                     },
-            'traffic_light':        {
+                            'circle':    basic_shape_parameters_dynamic
+                    }
+            }, 'trajectory':           {
+                    'draw_trajectory': True,
+                    'facecolor':       '#000000',
+                    'draw_continuous': False,
+                    'unique_colors':   False,
+                    'line_width':      0.17,
+                    'z_order':         24
+            }, 'lanelet_network':      {
+                    'kwargs_traffic_light_signs': {},
+                    # further properties for AnnotationBox of
+                    # traffic
+                    # signs or lights, see #
+                    # https://matplotlib.org/3.1.0/gallery
+                    # /text_labels_and_annotations/demo_annotation_box.html
+            }, 'traffic_light':        {
                     'draw_traffic_lights': True,
                     'red_color':           'red',
                     'yellow_color':        '#feb609',
@@ -87,16 +87,16 @@ def create_default_draw_params() -> dict:
                     'red_yellow_color':    '#fe4009ff',
                     'show_label':          False,
                     'scale_factor':        0.25,
-                    'zorder':              30},
-            'traffic_sign':         {
+                    'zorder':              30
+            }, 'traffic_sign':         {
                     'draw_traffic_signs': False,
                     'show_traffic_signs': 'all',
                     # 'all' or list of TrafficSignIDs
                     'speed_limit_unit':   'auto',  # 'mph', 'kmh', 'ms', 'auto'
                     'show_label':         False,
                     'scale_factor':       0.25,
-                    'zorder':             30},
-            'intersection':         {
+                    'zorder':             30
+            }, 'intersection':         {
                     'draw_intersections':        False,
                     'draw_incoming_lanelets':    True,
                     'incoming_lanelets_color':   '#3ecbcf',
@@ -108,8 +108,7 @@ def create_default_draw_params() -> dict:
                     'successors_right_color':    '#ccff00',
                     'show_label':                False,
                     # show incoming id and incoming left
-            },
-            'lanelet':              {
+            }, 'lanelet':              {
                     'left_bound_color':         '#555555',
                     'right_bound_color':        '#555555',
                     'center_bound_color':       '#dddddd',
@@ -127,61 +126,64 @@ def create_default_draw_params() -> dict:
                     'show_label':               False,  # show lanelet_id
                     'draw_linewidth':           0.5,
                     'fill_lanelet':             True,
-                    'facecolor':                '#c7c7c7'},
-            'occupancy':            {'draw_occupancies': 0,  # -1= never,
-                                     # 0= if prediction of vehicle
-                                     # is set-based, 1=always
-                                     'shape':            {
-                                             'polygon':   {
-                                                     'opacity':   0.2,
-                                                     'facecolor': '#1d7eea',
-                                                     'edgecolor': '#0066cc',
-                                                     'linewidth': 0.5,
-                                                     'zorder':    18, },
-                                             'rectangle': {
-                                                     'opacity':   0.2,
-                                                     'facecolor': '#1d7eea',
-                                                     'edgecolor': '#0066cc',
-                                                     'linewidth': 0.5,
-                                                     'zorder':    18, },
-                                             'circle':    {
-                                                     'opacity':   0.2,
-                                                     'facecolor': '#1d7eea',
-                                                     'edgecolor': '#0066cc',
-                                                     'linewidth': 0.5,
-                                                     'zorder':    18, }}, },
-            'shape':                {
+                    'facecolor':                '#c7c7c7'
+            }, 'occupancy':            {
+                    'draw_occupancies': 0,  # -1= never,
+                    # 0= if prediction of vehicle
+                    # is set-based, 1=always
+                    'shape':            {
+                            'polygon':      {
+                                    'opacity':   0.2,
+                                    'facecolor': '#1d7eea',
+                                    'edgecolor': '#0066cc',
+                                    'linewidth': 0.5,
+                                    'zorder':    18,
+                            }, 'rectangle': {
+                                    'opacity':   0.2,
+                                    'facecolor': '#1d7eea',
+                                    'edgecolor': '#0066cc',
+                                    'linewidth': 0.5,
+                                    'zorder':    18,
+                            }, 'circle':    {
+                                    'opacity':   0.2,
+                                    'facecolor': '#1d7eea',
+                                    'edgecolor': '#0066cc',
+                                    'linewidth': 0.5,
+                                    'zorder':    18,
+                            }
+                    },
+            }, 'shape':                {
                     'polygon':   basic_shape_parameters_static,
                     'rectangle': basic_shape_parameters_static,
-                    'circle':    basic_shape_parameters_static, },
-            'initial_state':        {
-                    'facecolor': '#000080',
-                    'zorder':    25,
-                    'label':     ''
-                    # text for labeling this state, i.r. 'initial position'
-            },
-            'goal_region':          {
-                    'draw_shape': True,
-                    'shape':      {
-                            'polygon':   {
+                    'circle':    basic_shape_parameters_static,
+            }, 'initial_state':        {
+                    'facecolor':    '#000080',
+                    'zorder':       25,
+                    'label':        '',
+                    "scale_factor": 1.0,
+                    "kwargs":       {}
+            }, 'goal_region':          {
+                    'draw_shape': True, 'shape': {
+                            'polygon':      {
                                     'opacity':   1.0,
                                     'linewidth': 0.5,
                                     'facecolor': '#f1b514',
                                     'edgecolor': '#302404',
-                                    'zorder':    15, },
-                            'rectangle': {
+                                    'zorder':    15,
+                            }, 'rectangle': {
                                     'opacity':   1.0,
                                     'linewidth': 0.5,
                                     'facecolor': '#f1b514',
                                     'edgecolor': '#302404',
-                                    'zorder':    15, },
-                            'circle':    {
+                                    'zorder':    15,
+                            }, 'circle':    {
                                     'opacity':   1.0,
                                     'linewidth': 0.5,
                                     'facecolor': '#f1b514',
                                     'edgecolor': '#302404',
-                                    'zorder':    15, }},
-                    'lanelet':    {
+                                    'zorder':    15,
+                            }
+                    }, 'lanelet': {
                             'left_bound_color':         '#555555',
                             'right_bound_color':        '#555555',
                             'center_bound_color':       '#dddddd',
@@ -193,8 +195,10 @@ def create_default_draw_params() -> dict:
                             'show_label':               False,
                             'draw_linewidth':           0.5,
                             'fill_lanelet':             True,
-                            'facecolor':                '#c7c7c7'}},
-            'planning_problem_set': {'draw_ids': 'all'}}
+                            'facecolor':                '#c7c7c7'
+                    }
+            }, 'planning_problem_set': {'draw_ids': 'all'}, 'antialiased': True
+    }
     # ensure that parameters are also available on higher levels
     draw_params['shape'].update(basic_shape_parameters_static)
 
@@ -204,6 +208,7 @@ def create_default_draw_params() -> dict:
 def write_default_params():
     with open('commonroad/visualization/default_draw_params.json', 'w') as fp:
         json.dump(create_default_draw_params(), fp, indent=4)
+
 
 class ParamServer:
     def __init__(self, data=None, warn_default=False):

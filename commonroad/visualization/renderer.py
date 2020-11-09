@@ -9,6 +9,7 @@ import matplotlib as mpl
 import matplotlib.collections as collections
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
+import matplotlib.colors
 from commonroad.common.util import Interval
 from commonroad.geometry.shape import *
 from commonroad.planning.goal import GoalRegion
@@ -58,7 +59,6 @@ class MPRenderer:
             self.draw_params = draw_params
         self.plot_limits = plot_limits
         if ax is None:
-            # self.f, ax = plt.subplots(1, 1)
             self.ax = plt.gca()
         else:
             self.ax = ax
@@ -82,7 +82,6 @@ class MPRenderer:
             elem.draw(self, draw_params, call_stack)
 
     def clear(self):
-        # self.ax.cla()
         self.static_collections.clear()
         self.obstacle_patches.clear()
         self.traffic_signs.clear()
@@ -120,6 +119,7 @@ class MPRenderer:
         return self.static_collections
 
     def render(self, show=False, filename=None):
+        self.ax.cla()
         artists = self.render_static()
         artists.extend(self.render_dynamic())
         if self.plot_limits is None:
@@ -358,8 +358,7 @@ class MPRenderer:
 
         line_color = draw_params.by_callstack(call_stack,
                                               ('trajectory', 'facecolor'))
-        # unique_colors = draw_params.by_callstack(call_stack, (
-        #         'trajectory', 'unique_colors'))
+
         line_width = draw_params.by_callstack(call_stack,
                                               ('trajectory', 'line_width'))
         draw_continuous = draw_params.by_callstack(call_stack, (
@@ -393,6 +392,22 @@ class MPRenderer:
                     np.zeros([traj_points.shape[0], 1]), offsets=traj_points,
                     units='xy', linewidths=0, zorder=z_order,
                     transOffset=self.ax.transData, facecolor=line_color))
+
+    def draw_trajectories(self, obj, draw_params, call_stack):
+        if draw_params is None:
+            draw_params = self.draw_params
+        elif isinstance(draw_params, dict):
+            draw_params = ParamServer(data=draw_params)
+        unique_colors = draw_params.by_callstack(call_stack, (
+                'trajectory', 'unique_colors'))
+        if unique_colors:
+            cmap = colormap_idx(len(obj))
+            for i, traj in enumerate(obj):
+                draw_params['trajectory', 'facecolor'] = mpl.colors.to_hex(
+                        cmap(i))
+                traj.draw(self, draw_params, call_stack)
+        else:
+            self.draw_list(obj, draw_params)
 
     def draw_occupancy(self, obj: Occupancy, draw_params: ParamServer,
                        call_stack: Tuple[str, ...]) -> None:

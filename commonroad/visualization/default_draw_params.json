@@ -45,15 +45,15 @@
         "linewidth": 0.5,
         "zorder": 20
       }
-    },
-    "trajectory": {
-      "draw_trajectory": true,
-      "facecolor": "#000000",
-      "draw_continuous": false,
-      "unique_colors": false,
-      "line_width": 0.17,
-      "z_order": 24
     }
+  },
+  "trajectory": {
+    "draw_trajectory": true,
+    "facecolor": "#000000",
+    "draw_continuous": false,
+    "unique_colors": false,
+    "line_width": 0.17,
+    "z_order": 24
   },
   "lanelet_network": {
     "kwargs_traffic_light_signs": {}

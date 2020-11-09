@@ -112,7 +112,7 @@ class TestVisualization(unittest.TestCase):
     def test_planning(self):
         # test draw_object for all possible object types
         full_path = os.path.dirname(os.path.abspath(__file__))
-        print(full_path)
+        # print(full_path)
         # filename = full_path +
         # '/../../../../../scenarios/cooperative/C-USA_Lanker-2_4_T-1.xml'
         filename = full_path + '/../common/test_reading_all.xml'
@@ -123,7 +123,6 @@ class TestVisualization(unittest.TestCase):
             planning_problem_set.draw(self.rnd)
             self.rnd.render()
             self.rnd.clear()
-            INT = planning_problem_set.planning_problem_dict.values()
             problem = list(planning_problem_set.planning_problem_dict.values())[
                 0]
             problem.draw(self.rnd)
@@ -133,6 +132,18 @@ class TestVisualization(unittest.TestCase):
 
         assert (len(record_warnings) == 0)
         plt.close('all')
+
+    def test_trajectory_unique_colors(self):
+        full_path = os.path.dirname(os.path.abspath(__file__))
+        filename = full_path + '/../common/USA_US101-3_3_T-1.xml'
+        scenario, planning_problem_set = CommonRoadFileReader(filename).open()
+        traj = list(
+            map(lambda x: x.prediction.trajectory, scenario.dynamic_obstacles))
+        params = {'trajectory': {'unique_colors': True}}
+        scenario.lanelet_network.draw(self.rnd)
+        self.rnd.draw_list(scenario.dynamic_obstacles)
+        self.rnd.draw_trajectories(traj, params, tuple())
+        self.rnd.render(show=True)
 
     def test_visual_appearance(self):
         tt = 0
