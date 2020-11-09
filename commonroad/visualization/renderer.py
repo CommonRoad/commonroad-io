@@ -1290,13 +1290,9 @@ class MPRenderer:
         else:
             warnings.warn('Plotting signal states only implemented for '
                           'obstacle_shapes Rectangle.')
-        indicators = np.vstack(indicators)
-        braking = np.vstack(braking)
-        horns = np.vstack(horns)
-        bluelights = np.vstack(bluelights)
 
         # draw signals
-        if indicators.size > 0:
+        if len(indicators) > 0:
             indicator_params = {
                     'facecolor': indicator_color,
                     'edgecolor': indicator_color,
@@ -1306,7 +1302,7 @@ class MPRenderer:
             for e in indicators:
                 self.draw_circle(Circle(signal_radius, e), indicator_params,
                                  call_stack)
-        if braking.size > 0:
+        if len(braking) > 0:
             braking_params = {
                     'facecolor': braking_color,
                     'edgecolor': braking_color,
@@ -1316,7 +1312,7 @@ class MPRenderer:
             for e in indicators:
                 self.draw_circle(Circle(signal_radius * 1.5, e), braking_params,
                                  call_stack)
-        if horns.size > 0:
+        if len(horns) > 0:
             horn_params = {
                     'facecolor': horn_color,
                     'edgecolor': braking_color,
@@ -1326,7 +1322,7 @@ class MPRenderer:
             for e in indicators:
                 self.draw_circle(Circle(signal_radius * 1.5, e), horn_params,
                                  call_stack)
-        if bluelights.size > 0:
+        if len(bluelights) > 0:
             bluelight_params = {
                     'facecolor': blue_lights_color,
                     'edgecolor': braking_color,
