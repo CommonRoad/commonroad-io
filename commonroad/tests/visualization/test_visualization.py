@@ -21,7 +21,8 @@ from commonroad.scenario.scenario import Scenario
 # _retrieve_value
 
 from commonroad.visualization.renderer import MPRenderer
-from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.param_server import ParamServer, \
+    write_default_params
 
 
 class TestVisualization(unittest.TestCase):
@@ -178,16 +179,31 @@ class TestVisualization(unittest.TestCase):
                             'occupancy': {
                                     'draw_occupancies': 0,
                                     'shape':            {
-                                            'rectangle': {'facecolor': 'g'}}}}}
+                                            'rectangle': {'facecolor': 'g'}
+                                    }
+                            }
+                    }
+            }
             scenario.draw(self.rnd, draw_params=draw_params)
             # plt.tight_layout()
             planning_problem_set.draw(self.rnd, draw_params=draw_params)
             self.rnd.render(show=False, filename='/tmp/{}.png'.format(i))
             self.rnd.clear()
-            tt += time.time() - t1
-            # plt.close()
+            tt += time.time() - t1  # plt.close()
 
         print('time: {}'.format(tt / nrun))
+
+    def test_stylesheet(self):
+        # Write default params to file
+        json_filename = 'test_params.json'
+        write_default_params(json_filename)
+        # No modify style sheet in file and read stylesheet
+        params = ParamServer.from_json(json_filename)
+        # Use for drawing
+        full_path = os.path.dirname(os.path.abspath(__file__))
+        filename = full_path + '/../common/USA_US101-3_3_T-1.xml'
+        scenario, planning_problem_set = CommonRoadFileReader(filename).open()
+        scenario.draw(self.rnd, draw_params=params)
 
 
 # #

@@ -205,8 +205,9 @@ def create_default_draw_params() -> dict:
     return draw_params
 
 
-def write_default_params():
-    with open('commonroad/visualization/default_draw_params.json', 'w') as fp:
+def write_default_params(
+        filename: str = 'commonroad/visualization/default_draw_params.json'):
+    with open(filename, 'w') as fp:
         json.dump(create_default_draw_params(), fp, indent=4)
 
 
