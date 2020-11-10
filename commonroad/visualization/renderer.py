@@ -10,6 +10,7 @@ import matplotlib.collections as collections
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import matplotlib.colors
+from matplotlib.colors import hsv_to_rgb, rgb_to_hsv, to_rgb, to_hex
 from commonroad.common.util import Interval
 from commonroad.geometry.shape import *
 from commonroad.planning.goal import GoalRegion
@@ -267,8 +268,35 @@ class MPRenderer:
                 'dynamic_obstacle', 'draw_signals'))
         draw_trajectory = draw_params.by_callstack(call_stack, (
                 'dynamic_obstacle', 'trajectory', 'draw_trajectory'))
+        draw_history = draw_params.by_callstack(call_stack, (
+        'dynamic_obstacle', 'history', 'draw_history'))
+        history_steps = draw_params.by_callstack(call_stack, (
+        'dynamic_obstacle', 'history', 'steps'))
+        history_fade_factor = draw_params.by_callstack(call_stack, (
+        'dynamic_obstacle', 'history', 'fade_factor'))
 
         call_stack = tuple(list(call_stack) + ['dynamic_obstacle'])
+
+        if draw_history and isinstance(obj.prediction,
+                                       commonroad.prediction.prediction.TrajectoryPrediction):
+            history_callstack = call_stack + ('history',)
+            history_base_color = draw_params.by_callstack(history_callstack, (
+            'occupancy', 'shape', 'rectangle', 'facecolor'))
+            history_base_color = rgb_to_hsv(to_rgb(history_base_color))
+            for time_step in range(1, history_steps):
+                occ = obj.occupancy_at_time(time_begin - time_step)
+                if occ is not None:
+                    color_hsv_new = history_base_color.copy()
+                    color_hsv_new[2] = max(0, color_hsv_new[
+                        2] - history_fade_factor * time_step)
+                    color_hex_new = to_hex(hsv_to_rgb(color_hsv_new))
+                    draw_params[call_stack + ('occupancy', 'shape', 'rectangle',
+                                              'facecolor')] = color_hex_new
+                    draw_params[call_stack + ('occupancy', 'shape', 'circle',
+                                              'facecolor')] = color_hex_new
+                    draw_params[call_stack + ('occupancy', 'shape', 'polygon',
+                                              'facecolor')] = color_hex_new
+                    occ.draw(self, draw_params, history_callstack)
 
         # draw occupancies
         if (draw_occupancies == 1 or (draw_occupancies == 0 and type(
@@ -1109,7 +1137,6 @@ class MPRenderer:
             # draw actual traffic sign
             traffic_lights_signs.extend(list(traffic_lights.values()))
 
-        # TODO: Draw traffic lights and signs
         if traffic_lights_signs:
             self.traffic_signs.extend(traffic_lights_signs)
 

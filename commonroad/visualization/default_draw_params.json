@@ -45,6 +45,36 @@
         "linewidth": 0.5,
         "zorder": 20
       }
+    },
+    "history": {
+      "draw_history": false,
+      "steps": 5,
+      "fade_factor": 0.1,
+      "occupancy": {
+        "shape": {
+          "polygon": {
+            "opacity": 0.2,
+            "facecolor": "#ffe119",
+            "edgecolor": "#000000",
+            "linewidth": 0.0,
+            "zorder": 17
+          },
+          "rectangle": {
+            "opacity": 0.2,
+            "facecolor": "#ffe119",
+            "edgecolor": "#000000",
+            "linewidth": 0.0,
+            "zorder": 17
+          },
+          "circle": {
+            "opacity": 0.2,
+            "facecolor": "#ffe119",
+            "edgecolor": "#000000",
+            "linewidth": 0.0,
+            "zorder": 17
+          }
+        }
+      }
     }
   },
   "trajectory": {
