@@ -251,6 +251,65 @@ class TestVisualization(unittest.TestCase):
 #         #     self.plot_limits(None)
 #         # print(time.time()-t1)
 
+    # def test_visualize_all_scenarios(self):
+    #     scenarios = "update"
+    #     factory = scenarios + "/scenario-factory"
+    #     #cooperative = scenarios + "/cooperative"
+    #     hand_crafted = scenarios + "/hand-crafted"
+    #     ngsim_lankershim = scenarios + "/NGSIM/Lankershim"
+    #     ngsim_us101 = scenarios + "/NGSIM/US101"
+    #     ngsim_peachtree = scenarios + "/NGSIM/Peachtree"
+    #     #sumo = scenarios + "/SUMO"
+    #     bicycle = scenarios + "/THI-Bicycle"
+    #
+    #     for scenario in os.listdir(hand_crafted):
+    #         full_path = hand_crafted + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     for scenario in os.listdir(ngsim_lankershim):
+    #         full_path = ngsim_lankershim + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     for scenario in os.listdir(ngsim_us101):
+    #         full_path = ngsim_us101 + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     # for scenario in os.listdir(cooperative):
+    #     #     full_path = cooperative + "/" + scenario
+    #     #     CommonRoadFileReader(full_path).open()
+    #     #
+    #     # for scenario in os.listdir(sumo):
+    #     #     full_path = sumo + "/" + scenario
+    #     #     CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(bicycle):
+    #         full_path = bicycle + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     for scenario in os.listdir(factory):
+    #         full_path = factory + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+
 
 if __name__ == '__main__':
     unittest.main()

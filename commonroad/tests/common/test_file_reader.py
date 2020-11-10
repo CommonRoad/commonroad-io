@@ -738,11 +738,13 @@ class TestFileReader(unittest.TestCase):
 
     # def test_open_all_scenarios(self):
     #     scenarios = "update"
-    #     cooperative = scenarios + "/cooperative"
+    #     factory = scenarios + "/scenario-factory"
+    #     #cooperative = scenarios + "/cooperative"
     #     hand_crafted = scenarios + "/hand-crafted"
     #     ngsim_lankershim = scenarios + "/NGSIM/Lankershim"
     #     ngsim_us101 = scenarios + "/NGSIM/US101"
-    #     sumo = scenarios + "/SUMO"
+    #     ngsim_peachtree = scenarios + "/NGSIM/Peachtree"
+    #     #sumo = scenarios + "/SUMO"
     #     bicycle = scenarios + "/THI-Bicycle"
     #
     #     for scenario in os.listdir(hand_crafted):
@@ -757,16 +759,20 @@ class TestFileReader(unittest.TestCase):
     #         full_path = ngsim_us101 + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
     #
-    #     for scenario in os.listdir(cooperative):
-    #         full_path = cooperative + "/" + scenario
-    #         CommonRoadFileReader(full_path).open()
-    #
-    #     for scenario in os.listdir(sumo):
-    #         full_path = sumo + "/" + scenario
-    #         CommonRoadFileReader(full_path).open()
+    #     # for scenario in os.listdir(cooperative):
+    #     #     full_path = cooperative + "/" + scenario
+    #     #     CommonRoadFileReader(full_path).open()
+    #     #
+    #     # for scenario in os.listdir(sumo):
+    #     #     full_path = sumo + "/" + scenario
+    #     #     CommonRoadFileReader(full_path).open()
     #
     #     for scenario in os.listdir(bicycle):
     #         full_path = bicycle + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(factory):
+    #         full_path = factory + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
 
 
