@@ -29,3 +29,13 @@ class TestParamServer(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.param_server['test1', 'test21', 'test3', 'test4'] = 4
         self.assertEqual(1, self.param_server['test1', 'test2', 'test3'])
+
+    def test_hierarchy(self):
+        path = ('occupancy', 'shape', 'rectangle', 'facecolor')
+        default_color = self.param_server[
+            ('dynamic_obstacle', 'history') + path]
+        self.param_server[path] = '#ffffff'
+
+        fetched = self.param_server[('dynamic_obstacle', 'history') + path]
+
+        self.assertEqual(default_color, fetched)
