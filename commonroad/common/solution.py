@@ -3,7 +3,6 @@ import os
 import platform
 import re
 import subprocess
-import warnings
 from xml.dom import minidom
 import numpy as np
 import xml.etree.ElementTree as et
