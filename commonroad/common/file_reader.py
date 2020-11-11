@@ -3,6 +3,7 @@ from typing import Union, List, Tuple, Dict, Set
 from xml.etree import ElementTree
 import numpy as np
 from abc import ABC
+import warnings
 
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.util import Interval, AngleInterval
@@ -11,20 +12,19 @@ from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
-from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, SignalState
-from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location
+from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, EnvironmentObstacle, \
+    SignalState
+from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, \
+    TimeOfDay, Weather, Underground, ScenarioID
 from commonroad.scenario.trajectory import State, Trajectory
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLight, TrafficLightCycleElement, \
-    TrafficLightState, TrafficLightDirection, TrafficSignIDGermany, TrafficSignIDUsa, TrafficSignIDChina, \
-    TrafficSignIDRussia, TrafficSignIDSpain, TrafficSignIDZamunda, SupportedTrafficSignCountry, LEFT_HAND_TRAFFIC, \
-    TRAFFIC_SIGN_VALIDITY_START
+from commonroad.scenario.traffic_sign import *
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
-import warnings
+
 
 __author__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles", "CAR@TUM"]
-__version__ = "2020.2"
+__version__ = "2020.3"
 __maintainer__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
@@ -72,15 +72,16 @@ class CommonRoadFileReader:
         self._benchmark_id = None
         self._meta_data = None
 
-    def open(self) -> Tuple[Scenario, PlanningProblemSet]:
+    def open(self, lanelet_assignment: bool = False) -> Tuple[Scenario, PlanningProblemSet]:
         """
         Reads a CommonRoad XML-file.
 
+        :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
         :return: the scenario containing the road network and the obstacles and the planning problem set \
         containing the planning problems---initial states and goal regions--for all ego vehicles.
         """
         self._read_header()
-        scenario = self._open_scenario()
+        scenario = self._open_scenario(lanelet_assignment)
         planning_problem_set = self._open_planning_problem_set(scenario.lanelet_network)
         return scenario, planning_problem_set
 
@@ -93,14 +94,15 @@ class CommonRoadFileReader:
         self._read_header()
         return LaneletNetworkFactory.create_from_xml_node(self._tree)
 
-    def _open_scenario(self) -> Scenario:
+    def _open_scenario(self, lanelet_assignment: bool) -> Scenario:
         """
         Reads the lanelet network and obstacles from the CommonRoad XML-file.
 
+        :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
         :return: object of class scenario containing the road network and the obstacles
         """
         scenario = ScenarioFactory.create_from_xml_node(self._tree, self._dt, self._benchmark_id,
-                                                        self._commonroad_version, self._meta_data)
+                                                        self._commonroad_version, self._meta_data, lanelet_assignment)
         return scenario
 
     def _open_planning_problem_set(self, lanelet_network: LaneletNetwork) \
@@ -185,12 +187,13 @@ class ScenarioFactory:
     """ Class to create an object of class Scenario from an XML element."""
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element, dt: float, benchmark_id: str, commonroad_version: str,
-                             meta_data: dict):
+                             meta_data: dict, lanelet_assignment: bool):
         """
         :param xml_node: XML element
         :param dt: time step size of the scenario
         :param benchmark_id: unique CommonRoad benchmark ID
         :param commonroad_version: CommonRoad version of the file
+        :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
         :return: CommonRoad scenario
         """
         if commonroad_version != '2018b':
@@ -198,22 +201,24 @@ class ScenarioFactory:
             meta_data["location"] = LocationFactory.create_from_xml_node(xml_node)
         else:
             LaneletFactory._speed_limits = {}
-        scenario = Scenario(dt, benchmark_id, **meta_data)
+
+        scenario_id = ScenarioID.from_benchmark_id(benchmark_id, commonroad_version)
+        scenario = Scenario(dt, scenario_id, **meta_data)
 
         scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
         if commonroad_version == '2018b':
-            scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network))
+            scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network, lanelet_assignment))
             for key, value in LaneletFactory._speed_limits.items():
                 for lanelet in value:
-                    if SupportedTrafficSignCountry.GERMANY.value in benchmark_id:
+                    if SupportedTrafficSignCountry.GERMANY.value == scenario_id.country_id:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.USA.value in benchmark_id:
+                    elif SupportedTrafficSignCountry.USA.value == scenario_id.country_id:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDUsa.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.CHINA.value in benchmark_id:
+                    elif SupportedTrafficSignCountry.CHINA.value == scenario_id.country_id:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDChina.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.SPAIN.value in benchmark_id:
+                    elif SupportedTrafficSignCountry.SPAIN.value == scenario_id.country_id:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.RUSSIA.value in benchmark_id:
+                    elif SupportedTrafficSignCountry.RUSSIA.value == scenario_id.country_id:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAX_SPEED, [str(key)])
                     else:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
@@ -223,40 +228,47 @@ class ScenarioFactory:
                     scenario.add_objects(traffic_sign, {lanelet})
             LaneletFactory._speed_limits = {}
         else:
-            scenario.add_objects(cls._obstacles(xml_node, scenario.lanelet_network))
+            scenario.add_objects(cls._obstacles(xml_node, scenario.lanelet_network, lanelet_assignment))
+
         return scenario
 
     @classmethod
-    def _obstacles_2018b(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) -> List[Obstacle]:
+    def _obstacles_2018b(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork,
+                         lanelet_assignment: bool) -> List[Obstacle]:
         """
         Reads all obstacles specified in a CommonRoad XML-file.
         :param xml_node: XML element
         :param dt: time step size of the scenario
+        :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
         :return: list of static and dynamic obstacles specified in the CommonRoad XML-file
         """
         obstacles = list()
         for o in xml_node.findall('obstacle'):
             if o.find('role').text == 'static':
-                obstacles.append(StaticObstacleFactory.create_from_xml_node(o, lanelet_network))
+                obstacles.append(StaticObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment))
             elif o.find('role').text == 'dynamic':
-                obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network))
+                obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment))
             else:
                 raise ValueError('Role of obstacle is unknown. Got role: {}'.format(xml_node.find('role').text))
         return obstacles
 
     @classmethod
-    def _obstacles(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) -> List[Obstacle]:
+    def _obstacles(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork,
+                   lanelet_assignment: bool) -> List[Obstacle]:
         """
         Reads all obstacles specified in a CommonRoad XML-file.
         :param xml_node: XML element
         :param dt: time step size of the scenario
+        :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
         :return: list of static and dynamic obstacles specified in the CommonRoad XML-file
         """
         obstacles = []
         for o in xml_node.findall('staticObstacle'):
-            obstacles.append(StaticObstacleFactory.create_from_xml_node(o, lanelet_network))
+            obstacles.append(StaticObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment))
         for o in xml_node.findall('dynamicObstacle'):
-            obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network))
+            obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment))
+        for o in xml_node.findall('environmentObstacle'):
+            obstacles.append(EnvironmentObstacleFactory.create_from_xml_node(o))
         return obstacles
 
 
@@ -289,18 +301,24 @@ class LocationFactory:
             geo_name_id = int(location_element.find('geoNameId').text)
             gps_latitude = float(location_element.find('gpsLatitude').text)
             gps_longitude = float(location_element.find('gpsLongitude').text)
-            if xml_node.find('geoTransformation') is not None:
-                geo_transformation = GeoTransformationFactory.create_from_xml_node(xml_node.find('geoTransformation'))
+            if location_element.find('geoTransformation') is not None:
+                geo_transformation = GeoTransformationFactory.create_from_xml_node(
+                    location_element.find('geoTransformation'))
             else:
                 geo_transformation = None
+            if location_element.find('environment') is not None:
+                environment = EnvironmentFactory.create_from_xml_node(
+                    location_element.find('environment'))
+            else:
+                environment = None
 
-            return Location(geo_name_id, gps_latitude, gps_longitude, geo_transformation)
+            return Location(geo_name_id, gps_latitude, gps_longitude, geo_transformation, environment)
         else:
             return None
 
 
 class GeoTransformationFactory:
-    """ Class to create a location list from an XML element."""
+    """ Class to create a geotransformation object of an XML element according to the CommonRoad specification."""
 
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element) -> GeoTransformation:
@@ -315,6 +333,38 @@ class GeoTransformationFactory:
         scaling = float(xml_node.find('scaling').text)
 
         return GeoTransformation(geo_reference, x_translation, y_translation, z_rotation, scaling)
+
+
+class EnvironmentFactory:
+    """ Class to create a environment object of an XML element according to the CommonRoad specification."""
+
+    @classmethod
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Environment:
+        """
+        :param xml_node: XML element
+        :return: Environment object
+        """
+        time = TimeFactory.create_from_xml_node(xml_node.find('time').text)
+        weather = Weather(xml_node.find('weather').text)
+        underground = Underground(xml_node.find('underground').text)
+        time_of_day = TimeOfDay(xml_node.find('timeOfDay').text)
+
+        return Environment(time, time_of_day, weather, underground)
+
+
+class TimeFactory:
+    """ Class to create a time object of an XML element."""
+
+    @classmethod
+    def create_from_xml_node(cls, time_text: str) -> Time:
+        """
+        :param time_text: time as string
+        :return: time object
+        """
+        hours = int(time_text[0:2])
+        minutes = int(time_text[3:5])
+
+        return Time(hours, minutes)
 
 
 class LaneletNetworkFactory:
@@ -356,13 +406,17 @@ class LaneletNetworkFactory:
         occurences = {}
         for lanelet in lanelet_network.lanelets:
             for traffic_sign in lanelet.traffic_signs:
+                # create set object if none exist
                 if occurences.get(traffic_sign) is None:
                     occurences[traffic_sign] = set()
+                # if there exists no predecessor, current lanelet is first occurence
                 if len(lanelet.predecessor) == 0:
                     occurences[traffic_sign].add(lanelet.lanelet_id)
-                elif any(traffic_sign not in lanelet_network.find_lanelet_by_id(pre).traffic_signs
-                       for pre in lanelet.predecessor):
+                # if no predecessor references the traffic sign, this is the first occurence
+                elif all(traffic_sign not in
+                         lanelet_network.find_lanelet_by_id(pre).traffic_signs for pre in lanelet.predecessor):
                     occurences[traffic_sign].add(lanelet.lanelet_id)
+
         return occurences
 
     @staticmethod
@@ -387,10 +441,24 @@ class LaneletNetworkFactory:
             return SupportedTrafficSignCountry.SPAIN
         elif SupportedTrafficSignCountry.RUSSIA.value == country:
             return SupportedTrafficSignCountry.RUSSIA
+        elif SupportedTrafficSignCountry.ARGENTINA.value == country:
+            return SupportedTrafficSignCountry.ARGENTINA
+        elif SupportedTrafficSignCountry.ITALY.value == country:
+            return SupportedTrafficSignCountry.ITALY
+        elif SupportedTrafficSignCountry.FRANCE.value == country:
+            return SupportedTrafficSignCountry.FRANCE
+        elif SupportedTrafficSignCountry.PUERTO_RICO.value == country:
+            return SupportedTrafficSignCountry.PUERTO_RICO
+        elif SupportedTrafficSignCountry.CROATIA.value == country:
+            return SupportedTrafficSignCountry.CROATIA
+        elif SupportedTrafficSignCountry.GREECE.value == country:
+            return SupportedTrafficSignCountry.GREECE
+        elif SupportedTrafficSignCountry.BELGIUM.value == country:
+            return SupportedTrafficSignCountry.BELGIUM
         elif SupportedTrafficSignCountry.ZAMUNDA.value == country:
             return SupportedTrafficSignCountry.ZAMUNDA
         else:
-            warnings.warn("Unknown country: Default traffic sign IDs are used.")
+            warnings.warn("Unknown country: Default traffic sign IDs are used. Specified country: " + country)
             return SupportedTrafficSignCountry.ZAMUNDA
 
 
@@ -591,9 +659,13 @@ class LaneletFactory:
             points = PointListFactory.create_from_xml_node(xml_node.find('stopLine'))
             line_marking = LineMarking(xml_node.find('stopLine').find('lineMarking').text)
             if xml_node.find('stopLine').find('trafficSignRef') is not None:
-                traffic_sign_ref = int(xml_node.find('stopLine').find('trafficSignRef').get('ref'))
+                traffic_sign_ref = set()
+                for sign in xml_node.find('stopLine').findall('trafficSignRef'):
+                    traffic_sign_ref.add(int(sign.get('ref')))
             if xml_node.find('stopLine').find('trafficLightRef') is not None:
-                traffic_light_ref = int(xml_node.find('stopLine').find('trafficLightRef').get('ref'))
+                traffic_light_ref = set()
+                for light in xml_node.find('stopLine').findall('trafficLightRef'):
+                    traffic_light_ref.add(int(light.get('ref')))
             if len(points) > 0:
                 stop_line = StopLine(start=points[0], end=points[1], line_marking=line_marking,
                                      traffic_sign_ref=traffic_sign_ref, traffic_light_ref=traffic_light_ref)
@@ -610,7 +682,7 @@ class LaneletFactory:
         :param xml_node: XML element
         :return: the type of the line marking of the lanelet boundary (None if not specified).
         """
-        line_marking = None
+        line_marking = LineMarking.UNKNOWN
         if xml_node.find('lineMarking') is not None:
             if LineMarking(xml_node.find('lineMarking').text) is not None:
                 line_marking = LineMarking(xml_node.find('lineMarking').text)
@@ -668,6 +740,10 @@ class TrafficSignFactory:
         :return: object of class TrafficSign according to the CommonRoad specification.
         """
         traffic_sign_id = int(xml_node.get('id'))
+        assert traffic_sign_id in first_traffic_sign_occurence.keys(), \
+            '<CommonRoadFileReader/TrafficSignFactory.create_from_xml_node>: ' \
+            'CommonRoad file is invalid! Traffic sign {} is not referenced by a lanelet!'.format(traffic_sign_id)
+
         traffic_sign_elements = []
         for element in xml_node.findall('trafficSignElement'):
             traffic_sign_elements.append(TrafficSignElementFactory.create_from_xml_node(element, country))
@@ -741,21 +817,40 @@ class TrafficSignElementFactory:
         :param country: country where traffic sign stands
         :return: object of class TrafficSignElement according to the CommonRoad specification.
         """
-        if country is SupportedTrafficSignCountry.GERMANY:
-            traffic_sign_element_id = TrafficSignIDGermany(xml_node.find('trafficSignID').text)
-        elif country is SupportedTrafficSignCountry.ZAMUNDA:
-            traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find('trafficSignID').text)
-        elif country is SupportedTrafficSignCountry.USA:
-            traffic_sign_element_id = TrafficSignIDUsa(xml_node.find('trafficSignID').text)
-        elif country is SupportedTrafficSignCountry.CHINA:
-            traffic_sign_element_id = TrafficSignIDChina(xml_node.find('trafficSignID').text)
-        elif country is SupportedTrafficSignCountry.SPAIN:
-            traffic_sign_element_id = TrafficSignIDSpain(xml_node.find('trafficSignID').text)
-        elif country is SupportedTrafficSignCountry.RUSSIA:
-            traffic_sign_element_id = TrafficSignIDRussia(xml_node.find('trafficSignID').text)
-        else:
-            warnings.warn("Unknown country: Default traffic sign IDs are used.")
-            traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find('trafficSignID').text)
+        try:
+            if country is SupportedTrafficSignCountry.GERMANY:
+                traffic_sign_element_id = TrafficSignIDGermany(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.ZAMUNDA:
+                traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.USA:
+                traffic_sign_element_id = TrafficSignIDUsa(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.CHINA:
+                traffic_sign_element_id = TrafficSignIDChina(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.SPAIN:
+                traffic_sign_element_id = TrafficSignIDSpain(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.RUSSIA:
+                traffic_sign_element_id = TrafficSignIDRussia(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.ARGENTINA:
+                traffic_sign_element_id = TrafficSignIDArgentina(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.ITALY:
+                traffic_sign_element_id = TrafficSignIDItaly(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.FRANCE:
+                traffic_sign_element_id = TrafficSignIDFrance(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.PUERTO_RICO:
+                traffic_sign_element_id = TrafficSignIDPuertoRico(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.CROATIA:
+                traffic_sign_element_id = TrafficSignIDCroatia(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.GREECE:
+                traffic_sign_element_id = TrafficSignIDGreece(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.BELGIUM:
+                traffic_sign_element_id = TrafficSignIDBelgium(xml_node.find('trafficSignID').text)
+            else:
+                warnings.warn("Unknown country: Default traffic sign ID is used. Specified country: " + country.value)
+                traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find('trafficSignID').text)
+        except ValueError:
+            warnings.warn("<FileReader>: Unknown TrafficElementID! Default traffic sign ID is used. Specified country: "
+                          + country.value + " / Specified traffic sign ID: " + xml_node.find('trafficSignID').text)
+            traffic_sign_element_id = TrafficSignIDZamunda.UNKNOWN
 
         additional_values = []
         for additional_value in xml_node.findall('additionalValue'):
@@ -830,12 +925,7 @@ class TrafficLightFactory:
         else:
             direction = TrafficLightDirection.ALL
 
-        if xml_node.find('offset') is not None:
-            time_offset = int(xml_node.find('offset').text)
-        else:
-            time_offset = 0
-
-        traffic_ligth_cycle = TrafficLightCycleFactory.create_from_xml_node(xml_node.find('cycle'))
+        traffic_ligth_cycle, time_offset = TrafficLightCycleFactory.create_from_xml_node(xml_node.find('cycle'))
 
         return TrafficLight(traffic_light_id=traffic_light_id, cycle=traffic_ligth_cycle, position=position,
                             direction=direction, active=active, time_offset=time_offset)
@@ -844,7 +934,7 @@ class TrafficLightFactory:
 class TrafficLightCycleFactory:
     """ Class to create an object of class TrafficLightCycleElement from an XML element."""
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> List[TrafficLightCycleElement]:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Tuple[List[TrafficLightCycleElement], int]:
         """
         :param xml_node: XML element
         :return: list of objects of class TrafficLightCycleElement according to the CommonRoad specification.
@@ -856,7 +946,12 @@ class TrafficLightCycleFactory:
             traffic_ligth_cycle_elements.append(TrafficLightCycleElement(state=TrafficLightState(state),
                                                                          duration=duration))
 
-        return traffic_ligth_cycle_elements
+        if xml_node.find('timeOffset') is not None:
+            time_offset = int(xml_node.find('timeOffset').text)
+        else:
+            time_offset = 0
+
+        return traffic_ligth_cycle_elements, time_offset
 
 
 class IntersectionFactory:
@@ -871,11 +966,15 @@ class IntersectionFactory:
         incomings = []
         for incoming_node in xml_node.findall('incoming'):
             incomings.append(IntersectionIncomingFactory.create_from_xml_node(incoming_node))
-        # crossings = set()
-        # for crossing_ref in xml_node.findall('crossing'):
-        #     crossings.add(int(crossing_ref.text))
 
-        return Intersection(intersection_id=intersection_id, incomings=incomings, crossings = None)
+        if xml_node.find('crossing') is not None:
+            crossings = set()
+            for crossing_ref in xml_node.find('crossing').findall('crossingLanelet'):
+                crossings.add(int(crossing_ref.get("ref")))
+        else:
+            crossings = None
+
+        return Intersection(intersection_id=intersection_id, incomings=incomings, crossings=crossings)
 
 
 class IntersectionIncomingFactory:
@@ -943,7 +1042,8 @@ class ObstacleFactory(ABC):
 
 class StaticObstacleFactory(ObstacleFactory):
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) -> StaticObstacle:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork,
+                             lanelet_assignment: bool) -> StaticObstacle:
         obstacle_type = StaticObstacleFactory.read_type(xml_node)
         obstacle_id = StaticObstacleFactory.read_id(xml_node)
         initial_state = StaticObstacleFactory.read_initial_state(xml_node.find('initialState'))
@@ -951,15 +1051,20 @@ class StaticObstacleFactory(ObstacleFactory):
         signal_series = SignalSeriesFactory.create_from_xml_node((xml_node.find('signalSeries')))
         shape = StaticObstacleFactory.read_shape(xml_node.find('shape'))
 
-        rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
-        initial_shape_lanelet_ids = lanelet_network.find_lanelet_by_shape(rotated_shape)
-        initial_center_lanelet_ids = lanelet_network.find_lanelet_by_position([initial_state.position])[0]
-        for l_id in initial_shape_lanelet_ids:
-            lanelet_network.find_lanelet_by_id(l_id).add_static_obstacle_to_lanelet(obstacle_id=obstacle_id)
+        if lanelet_assignment is True:
+            rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
+            initial_shape_lanelet_ids = set(lanelet_network.find_lanelet_by_shape(rotated_shape))
+            initial_center_lanelet_ids = set(lanelet_network.find_lanelet_by_position([initial_state.position])[0])
+            for l_id in initial_shape_lanelet_ids:
+                 lanelet_network.find_lanelet_by_id(l_id).add_static_obstacle_to_lanelet(obstacle_id=obstacle_id)
+        else:
+            initial_center_lanelet_ids = None
+            initial_shape_lanelet_ids = None
+
         return StaticObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
                               obstacle_shape=shape, initial_state=initial_state,
-                              initial_center_lanelet_ids=set(initial_center_lanelet_ids),
-                              initial_shape_lanelet_ids=set(initial_shape_lanelet_ids),
+                              initial_center_lanelet_ids=initial_center_lanelet_ids,
+                              initial_shape_lanelet_ids=initial_shape_lanelet_ids,
                               initial_signal_state=initial_signal_state,
                               signal_series=signal_series)
 
@@ -1012,28 +1117,37 @@ class DynamicObstacleFactory(ObstacleFactory):
         return lanelet_ids_per_state
 
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) -> DynamicObstacle:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork,
+                             lanelet_assignment: bool) -> DynamicObstacle:
         obstacle_type = DynamicObstacleFactory.read_type(xml_node)
         obstacle_id = DynamicObstacleFactory.read_id(xml_node)
         shape = DynamicObstacleFactory.read_shape(xml_node.find('shape'))
         initial_state = DynamicObstacleFactory.read_initial_state(xml_node.find('initialState'))
         initial_signal_state = StaticObstacleFactory.read_initial_signal_state(xml_node.find('initialSignalState'))
         signal_series = SignalSeriesFactory.create_from_xml_node((xml_node.find('signalSeries')))
-        initial_center_lanelet_ids = []
-        initial_shape_lanelet_ids = []
+        initial_center_lanelet_ids = set()
+        initial_shape_lanelet_ids = set()
 
         if xml_node.find('trajectory') is not None:
-            rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
-            initial_shape_lanelet_ids = lanelet_network.find_lanelet_by_shape(rotated_shape)
-            initial_center_lanelet_ids = lanelet_network.find_lanelet_by_position([initial_state.position])[0]
-            for l_id in initial_shape_lanelet_ids:
-                lanelet_network.find_lanelet_by_id(l_id).\
-                    add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle_id, time_step=initial_state.time_step)
+            if lanelet_assignment is True:
+                rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
+                initial_shape_lanelet_ids = set(lanelet_network.find_lanelet_by_shape(rotated_shape))
+                initial_center_lanelet_ids = set(lanelet_network.find_lanelet_by_position([initial_state.position])[0])
+                for l_id in initial_shape_lanelet_ids:
+                    lanelet_network.find_lanelet_by_id(l_id).\
+                        add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle_id, time_step=initial_state.time_step)
+            else:
+                initial_shape_lanelet_ids = None
+                initial_center_lanelet_ids = None
             trajectory = TrajectoryFactory.create_from_xml_node(xml_node.find('trajectory'))
-            shape_lanelet_assignment = cls.find_obstacle_shape_lanelets(initial_state, trajectory.state_list,
-                                                                        lanelet_network, obstacle_id, shape)
-            center_lanelet_assignment = cls.find_obstacle_center_lanelets(initial_state, trajectory.state_list,
-                                                                          lanelet_network)
+            if lanelet_assignment is True:
+                shape_lanelet_assignment = cls.find_obstacle_shape_lanelets(initial_state, trajectory.state_list,
+                                                                            lanelet_network, obstacle_id, shape)
+                center_lanelet_assignment = cls.find_obstacle_center_lanelets(initial_state, trajectory.state_list,
+                                                                              lanelet_network)
+            else:
+                shape_lanelet_assignment = None
+                center_lanelet_assignment = None
             prediction = TrajectoryPrediction(trajectory, shape, center_lanelet_assignment, shape_lanelet_assignment)
         elif xml_node.find('occupancySet') is not None:
             prediction = SetBasedPredictionFactory.create_from_xml_node(xml_node.find('occupancySet'))
@@ -1041,8 +1155,8 @@ class DynamicObstacleFactory(ObstacleFactory):
             prediction = None
         return DynamicObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
                                obstacle_shape=shape, initial_state=initial_state, prediction=prediction,
-                               initial_center_lanelet_ids=set(initial_center_lanelet_ids),
-                               initial_shape_lanelet_ids=set(initial_shape_lanelet_ids),
+                               initial_center_lanelet_ids=initial_center_lanelet_ids,
+                               initial_shape_lanelet_ids=initial_shape_lanelet_ids,
                                initial_signal_state=initial_signal_state,
                                signal_series=signal_series)
 
@@ -1323,3 +1437,14 @@ class PointFactory:
         else:
             z = float(xml_node.find('z').text)
             return np.array([x, y, z])
+
+
+class EnvironmentObstacleFactory(ObstacleFactory):
+    """ Class to create a list of objects of class Building from an XML element."""
+    @classmethod
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> EnvironmentObstacle:
+        obstacle_type = EnvironmentObstacleFactory.read_type(xml_node)
+        obstacle_id = StaticObstacleFactory.read_id(xml_node)
+        shape = StaticObstacleFactory.read_shape(xml_node.find('shape'))
+
+        return EnvironmentObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type, obstacle_shape=shape)

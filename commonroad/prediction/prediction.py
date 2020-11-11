@@ -10,7 +10,7 @@ from commonroad.scenario.trajectory import Trajectory
 __author__ = "Stefanie Manzinger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles", "CAR@TUM"]
-__version__ = "2020.2"
+__version__ = "2020.3"
 __maintainer__ = "Stefanie Manzinger"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
@@ -88,6 +88,18 @@ class Prediction:
         self._initial_time_step = initial_time_step
 
     @property
+    def final_time_step(self) -> Union[int, Interval]:
+        """ Final time step of the prediction."""
+        return self._final_time_step
+
+    @final_time_step.setter
+    def final_time_step(self, final_time_step: Union[int, Interval]):
+        assert isinstance(final_time_step, (int, Interval)), '<Prediction/final_time_step>: argument "final_time_step" of ' \
+                                                   'wrong type. Expected type: %s. Got type: %s.' \
+                                                   % ([int, Interval], type(final_time_step))
+        self._final_time_step = final_time_step
+
+    @property
     def occupancy_set(self) -> List[Occupancy]:
         """ List of occupancies over time."""
         return self._occupancy_set
@@ -101,6 +113,7 @@ class Prediction:
                                                                                      'of wrong type. Expected type: ' \
                                                                                      '%s.' % Occupancy
         self._occupancy_set = occupancy_set
+        self.final_time_step = max([occ.time_step for occ in self._occupancy_set])
 
     def occupancy_at_time_step(self, time_step: int) -> Union[None, Occupancy]:
         """ Occupancy at a specific time step.
@@ -115,9 +128,11 @@ class Prediction:
             if isinstance(occ.time_step, Interval):
                 if occ.time_step.contains(time_step):
                     occupancy = occ
+                    break
             elif isinstance(occ.time_step, int):
                 if occ.time_step == time_step:
                     occupancy = occ
+                    break
         return occupancy
 
     @abc.abstractmethod

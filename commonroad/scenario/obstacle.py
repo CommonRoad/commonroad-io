@@ -5,16 +5,16 @@ from typing import Union, Set, List
 from abc import ABC, abstractmethod
 
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector, is_real_number
-from commonroad.geometry.shape import Shape
-from commonroad.prediction.prediction import Prediction, Occupancy
+from commonroad.geometry.shape import Shape, Rectangle, Circle, Polygon
+from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.trajectory import State
 
 
-__author__ = "Stefanie Manzinger, Christian Pek"
+__author__ = "Stefanie Manzinger, Christian Pek, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles, BMW Group, KO-HAF"]
-__version__ = "2020.2"
-__maintainer__ = "Stefanie Manzinger"
+__version__ = "2020.3"
+__maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
@@ -24,6 +24,7 @@ class ObstacleRole(enum.Enum):
     """ Enum containing all possible obstacle roles defined in CommonRoad."""
     STATIC = "static"
     DYNAMIC = "dynamic"
+    ENVIRONMENT = "environment"
 
 
 @enum.unique
@@ -41,6 +42,10 @@ class ObstacleType(enum.Enum):
     TRAIN = "train"
     ROAD_BOUNDARY = "roadBoundary"
     MOTORCYCLE = "motorcycle"
+    TAXI = "taxi"
+    BUILDING = "building"
+    PILLAR = "pillar"
+    MEDIAN_STRIP = "median_strip"
 
 
 class SignalState:
@@ -77,7 +82,7 @@ class Obstacle(ABC):
     """ Superclass for dynamic and static obstacles holding common properties defined in CommonRoad."""
 
     def __init__(self, obstacle_id: int, obstacle_role: ObstacleRole,
-                 obstacle_type: ObstacleType, obstacle_shape: Shape, initial_state: State,
+                 obstacle_type: ObstacleType, obstacle_shape: Shape, initial_state: State = None,
                  initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
                  initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None):
@@ -92,6 +97,7 @@ class Obstacle(ABC):
         :param initial_signal_state: initial signal state of obstacle
         :param signal_series: list of signal states over time
         """
+        self._initial_occupancy_shape: Shape = None
         self.obstacle_id: int = obstacle_id
         self.obstacle_role: ObstacleRole = obstacle_role
         self.obstacle_type: ObstacleType = obstacle_type
@@ -172,6 +178,8 @@ class Obstacle(ABC):
         assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of wrong type. ' \
                                                  'Expected types: %s. Got type: %s.' % (State, type(initial_state))
         self._initial_state = initial_state
+        self._initial_occupancy_shape = self._obstacle_shape.rotate_translate_local(
+            initial_state.position, initial_state.orientation)
 
     @property
     def initial_center_lanelet_ids(self) -> Union[None, Set[int]]:
@@ -244,6 +252,10 @@ class Obstacle(ABC):
         pass
 
     @abstractmethod
+    def state_at_time(self, time_step: int) -> Union[None, State]:
+        pass
+
+    @abstractmethod
     def translate_rotate(self, translation: np.ndarray, angle: float):
         pass
 
@@ -310,9 +322,16 @@ class StaticObstacle(Obstacle):
         :param time_step: discrete time step
         :return: occupancy of the static obstacle at time step
         """
-        shape = self.obstacle_shape.rotate_translate_local(
-            self.initial_state.position, self.initial_state.orientation)
-        return Occupancy(time_step=time_step, shape=shape)
+        return Occupancy(time_step=time_step, shape=self._initial_occupancy_shape)
+
+    def state_at_time(self, time_step: int) -> State:
+        """
+        Returns the state the obstacle at a specific time step.
+
+        :param time_step: discrete time step
+        :return: state of the static obstacle at time step
+        """
+        return self.initial_state
 
     def __str__(self):
         obs_str = 'Static Obstacle:\n'
@@ -328,7 +347,8 @@ class DynamicObstacle(Obstacle):
 
     def __init__(self, obstacle_id: int, obstacle_type: ObstacleType,
                  obstacle_shape: Shape, initial_state: State,
-                 prediction: Union[None, Prediction] = None, initial_center_lanelet_ids: Union[None, Set[int]] = None,
+                 prediction: Union[None, Prediction, TrajectoryPrediction, SetBasedPrediction] = None,
+                 initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
                  initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None):
         """
@@ -350,12 +370,12 @@ class DynamicObstacle(Obstacle):
         self.prediction: Prediction = prediction
 
     @property
-    def prediction(self) -> Union[Prediction, None]:
+    def prediction(self) -> Union[Prediction, TrajectoryPrediction, SetBasedPrediction, None]:
         """ Prediction describing the movement of the dynamic obstacle over time."""
         return self._prediction
 
     @prediction.setter
-    def prediction(self, prediction: Union[Prediction, None]):
+    def prediction(self, prediction: Union[Prediction, TrajectoryPrediction, SetBasedPrediction,  None]):
         assert isinstance(prediction, (Prediction, type(None))), '<DynamicObstacle/prediction>: argument prediction ' \
                                                                  'of wrong type. Expected types: %s, %s. Got type: ' \
                                                                  '%s.' % (Prediction, type(None), type(prediction))
@@ -371,12 +391,27 @@ class DynamicObstacle(Obstacle):
         occupancy = None
 
         if time_step == self.initial_state.time_step:
-            shape = self.obstacle_shape.rotate_translate_local(
-                self.initial_state.position, self.initial_state.orientation)
-            occupancy = Occupancy(time_step, shape)
+            occupancy = Occupancy(time_step, self._initial_occupancy_shape)
         elif time_step > self.initial_state.time_step and self._prediction is not None:
             occupancy = self._prediction.occupancy_at_time_step(time_step)
         return occupancy
+
+    def state_at_time(self, time_step: int) -> Union[None, State]:
+        """
+        Returns the predicted state of the obstacle at a specific time step.
+
+        :param time_step: discrete time step
+        :return: predicted state of the obstacle at time step
+        """
+        if time_step == self.initial_state.time_step:
+            return self.initial_state
+        elif type(self._prediction) is SetBasedPrediction:
+            warnings.warn("<DynamicObstacle/state_at_time>: Set-based prediction is used. State cannot be returned!")
+            return None
+        elif time_step > self.initial_state.time_step and self._prediction is not None:
+            return self.prediction.trajectory.state_at_time_step(time_step)
+        else:
+            return None
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ First translates the dynamic obstacle, then rotates the dynamic obstacle around the origin.
@@ -392,10 +427,91 @@ class DynamicObstacle(Obstacle):
                                             'interval [-2pi, 2pi]. angle = %s' % angle
         if self._prediction is not None:
             self.prediction.translate_rotate(translation, angle)
-        self._initial_state = self._initial_state.translate_rotate(translation, angle)
+
+        self.initial_state = self._initial_state.translate_rotate(translation, angle)
 
     def __str__(self):
         obs_str = 'Dynamic Obstacle:\n'
         obs_str += '\nid: {}'.format(self.obstacle_id)
         obs_str += '\ninitial state: {}'.format(self.initial_state)
+        return obs_str
+
+
+class EnvironmentObstacle():
+    """ Class representing environment obstacles as defined in CommonRoad."""
+
+    def __init__(self, obstacle_id: int, obstacle_type: ObstacleType, obstacle_shape: Shape):
+        """
+            :param obstacle_id: unique ID of the obstacle
+            :param obstacle_type: type of obstacle (e.g. BUILDING)
+            :param obstacle_shape: shape of the static obstacle
+        """
+        self.obstacle_id: int = obstacle_id
+        self.obstacle_role: ObstacleRole = ObstacleRole.ENVIRONMENT
+        self.obstacle_type: ObstacleType = obstacle_type
+        self.obstacle_shape: Shape = obstacle_shape
+
+    @property
+    def obstacle_id(self) -> int:
+        """ Unique ID of the obstacle."""
+        return self._obstacle_id
+
+    @obstacle_id.setter
+    def obstacle_id(self, obstacle_id: int):
+        assert isinstance(obstacle_id, int), '<Obstacle/obstacle_id>: argument obstacle_id of wrong type.' \
+                                             'Expected type: %s. Got type: %s.' % (int, type(obstacle_id))
+        if not hasattr(self, '_obstacle_id'):
+            self._obstacle_id = obstacle_id
+        else:
+            warnings.warn('<Obstacle/obstacle_id>: Obstacle ID is immutable.')
+
+    @property
+    def obstacle_role(self) -> ObstacleRole:
+        """ Obstacle role as defined in CommonRoad."""
+        return self._obstacle_role
+
+    @obstacle_role.setter
+    def obstacle_role(self, obstacle_role: ObstacleRole):
+        assert isinstance(obstacle_role, ObstacleRole), '<Obstacle/obstacle_role>: argument obstacle_role of wrong ' \
+                                                        'type. Expected type: %s. Got type: %s.' \
+                                                        % (ObstacleRole, type(obstacle_role))
+        if not hasattr(self, '_obstacle_role'):
+            self._obstacle_role = obstacle_role
+        else:
+            warnings.warn('<Obstacle/obstacle_role>: Obstacle role is immutable.')
+
+    @property
+    def obstacle_type(self) -> ObstacleType:
+        """ Obstacle type as defined in CommonRoad."""
+        return self._obstacle_type
+
+    @obstacle_type.setter
+    def obstacle_type(self, obstacle_type: ObstacleType):
+        assert isinstance(obstacle_type, ObstacleType), '<Obstacle/obstacle_type>: argument obstacle_type of wrong ' \
+                                                        'type. Expected type: %s. Got type: %s.' \
+                                                        % (ObstacleType, type(obstacle_type))
+        if not hasattr(self, '_obstacle_type'):
+            self._obstacle_type = obstacle_type
+        else:
+            warnings.warn('<Obstacle/obstacle_type>: Obstacle type is immutable.')
+
+    @property
+    def obstacle_shape(self) -> Union[Shape, Polygon, Circle, Rectangle]:
+        """ Obstacle shape as defined in CommonRoad."""
+        return self._obstacle_shape
+
+    @obstacle_shape.setter
+    def obstacle_shape(self, shape: Union[Shape, Polygon, Circle, Rectangle]):
+        assert isinstance(shape,
+                          (type(None), Shape)), '<Obstacle/obstacle_shape>: argument shape of wrong type. Expected ' \
+                                                'type %s. Got type %s.' % (Shape, type(shape))
+
+        if not hasattr(self, '_obstacle_shape'):
+            self._obstacle_shape = shape
+        else:
+            warnings.warn('<Obstacle/obstacle_shape>: Obstacle shape is immutable.')
+
+    def __str__(self):
+        obs_str = 'Environment Obstacle:\n'
+        obs_str += '\nid: {}'.format(self.obstacle_id)
         return obs_str

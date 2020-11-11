@@ -20,7 +20,7 @@ import commonroad.visualization.planning
 __author__ = "Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = [""]
-__version__ = "2020.2"
+__version__ = "2020.3"
 __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
@@ -244,7 +244,8 @@ def _add_legend(legend: Dict[Tuple[str,...], str], draw_params):
         if color is not None:
             handles.append(mpatches.Patch(color=color, label=text))
 
-    plt.legend(handles=handles)
+    l = plt.legend(handles=handles)
+    l.set_zorder(1000)
 
 
 plottable_types=Union[list, Scenario, Trajectory, LaneletNetwork, Lanelet, Obstacle, ShapeGroup, Shape,
@@ -272,7 +273,7 @@ def draw_object(obj: Union[plottable_types, List[plottable_types]],
     :param handles: dict that assign to every object_id of all plotted obstacles the corresponding patch handles
     :param call_stack: tuple of string containing the call stack, which allows for differentiation of plotting styles
            depending on the call stack of draw_object, (usually 'None'!)
-   :param legend: names of objects that should appear in the legend
+    :param legend: names of objects that should appear in the legend
     :return: Returns matplotlib patch object for draw_funcs that actually draw a patch (used internally for creating handles dict)
     """
 
