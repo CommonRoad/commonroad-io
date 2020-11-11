@@ -239,9 +239,9 @@ class Location:
 
 
 class ScenarioID:
-    def __init__(self, cooperative: bool, country_id: str, map_name: str, map_id: int,
-                 configuration_id: Union[None, int], prediction_type: Union[None, str], prediction_id: Union[None, int],
-                 scenario_version: str = SCENARIO_VERSION):
+    def __init__(self, cooperative: bool = False, country_id: str = "ZAM", map_name: str = "Test", map_id: int = 1,
+                 configuration_id: Union[None, int] = None, prediction_type: Union[None, str] = None,
+                 prediction_id: Union[None, int] = None, scenario_version: str = SCENARIO_VERSION):
         """
         Implements the scenario ID as specified in the scenario documentation
         (see https://gitlab.lrz.de/tum-cps/commonroad-scenarios/-/tree/master/documentation)

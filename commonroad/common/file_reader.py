@@ -406,12 +406,15 @@ class LaneletNetworkFactory:
         occurences = {}
         for lanelet in lanelet_network.lanelets:
             for traffic_sign in lanelet.traffic_signs:
+                # create set object if none exist
                 if occurences.get(traffic_sign) is None:
                     occurences[traffic_sign] = set()
+                # if there exists no predecessor, current lanelet is first occurence
                 if len(lanelet.predecessor) == 0:
                     occurences[traffic_sign].add(lanelet.lanelet_id)
-                elif any(traffic_sign not in lanelet_network.find_lanelet_by_id(pre).traffic_signs
-                       for pre in lanelet.predecessor):
+                # if no predecessor references the traffic sign, this is the first occurence
+                elif all(traffic_sign not in
+                         lanelet_network.find_lanelet_by_id(pre).traffic_signs for pre in lanelet.predecessor):
                     occurences[traffic_sign].add(lanelet.lanelet_id)
 
         return occurences
