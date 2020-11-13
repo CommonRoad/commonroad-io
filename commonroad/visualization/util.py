@@ -248,7 +248,7 @@ def colormap_idx(max_x):
 
 def get_car_patch(pos_x: Union[int, float], pos_y: Union[int, float],
                   rotate: Union[int, float], scale: Union[int, float],
-                  zorder: int = 5, carcolor: str = '#ffffff', lw=0.5):
+                  zorder: float = 5, carcolor: str = '#ffffff', lw=0.5):
     rotate = rotate + np.pi
 
     def reshape_and_addup(verts):

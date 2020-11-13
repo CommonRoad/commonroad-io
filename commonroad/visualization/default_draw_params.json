@@ -13,12 +13,11 @@
     "braking_color": "red",
     "blue_lights_color": "blue",
     "horn_color": "red",
-    "initial_state": {
-      "draw_initial_state": false,
+    "draw_initial_state": false,
+    "state": {
       "scale_factor": 0.3,
       "kwargs": {
         "linewidth": 1.5,
-        "length_includes_head": true,
         "edgecolor": "black",
         "facecolor": "black"
       }
@@ -191,12 +190,21 @@
     "linewidth": 0.5,
     "zorder": 20
   },
-  "initial_state": {
-    "facecolor": "#000080",
-    "zorder": 25,
-    "label": "",
+  "state": {
     "scale_factor": 1.0,
-    "kwargs": {}
+    "kwargs": {},
+    "facecolor": "#000080",
+    "zorder": 25
+  },
+  "initial_state": {
+    "label_zorder": 35,
+    "label": "",
+    "state": {
+      "scale_factor": 1.0,
+      "kwargs": {},
+      "facecolor": "#000080",
+      "zorder": 25
+    }
   },
   "goal_region": {
     "draw_shape": true,

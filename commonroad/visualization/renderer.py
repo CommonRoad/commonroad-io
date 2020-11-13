@@ -1,6 +1,6 @@
 import math
 import os
-from enum import Enum
+
 from typing import Dict, Tuple, Union, Set, Optional
 
 import commonroad.geometry.shape
@@ -12,7 +12,8 @@ import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import matplotlib.colors
 import matplotlib.artist as artists
-from commonroad.visualization.drawable import IDrawable
+import matplotlib.text as text
+
 from matplotlib.colors import hsv_to_rgb, rgb_to_hsv, to_rgb, to_hex
 from commonroad.common.util import Interval
 from commonroad.geometry.shape import *
@@ -21,8 +22,7 @@ from commonroad.planning.planning_problem import PlanningProblemSet, \
     PlanningProblem
 from commonroad.prediction.prediction import Occupancy
 from commonroad.scenario.lanelet import LaneletNetwork, LineMarking
-from commonroad.scenario.obstacle import DynamicObstacle, \
-    StaticObstacle, \
+from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, \
     ObstacleRole, \
     SignalState
 from commonroad.scenario.scenario import Scenario
@@ -96,10 +96,11 @@ class MPRenderer:
         else:
             self.ax = ax
         self.f = self.ax.figure
-        self.dynamic_artists = []
 
         # Draw elements
+        self.dynamic_artists = []
         self.dynamic_collections = []
+        self.static_artists = []
         self.static_collections = []
         self.obstacle_patches = []
         self.traffic_signs = []
@@ -120,12 +121,14 @@ class MPRenderer:
         return draw_params
 
     def clear(self) -> None:
-        self.static_collections.clear()
         self.obstacle_patches.clear()
         self.traffic_signs.clear()
         self.traffic_sign_call_stack = tuple()
         self.traffic_sign_draw_params = self.draw_params
+        self.dynamic_artists.clear()
         self.dynamic_collections.clear()
+        self.static_artists.clear()
+        self.static_collections.clear()
 
     def remove_dynamic(self) -> None:
         for art in self.dynamic_artists:
@@ -151,10 +154,13 @@ class MPRenderer:
         self.dynamic_artists = artist_list
         return artist_list
 
-    def render_static(self) -> List[collections.Collection]:
+    def render_static(self) -> List[artists.Artist]:
         for col in self.static_collections:
             self.ax.add_collection(col)
-        return self.static_collections
+        for art in self.static_artists:
+            self.ax.add_artist(art)
+
+        return self.static_collections + self.static_artists
 
     def render(self, show: bool = False, filename: str = None) -> List[
         artists.Artist]:
@@ -272,12 +278,8 @@ class MPRenderer:
         draw_icon = draw_params.by_callstack(call_stack, 'draw_icon')
         show_label = draw_params.by_callstack(call_stack, 'show_label')
         draw_shape = draw_params.by_callstack(call_stack, 'draw_shape')
-        draw_initial_state = draw_params.by_callstack(call_stack, (
-                'initial_state', 'draw_initial_state'))
-        scale_factor = draw_params.by_callstack(call_stack, (
-                'initial_state', 'scale_factor'))
-        kwargs_init_state = draw_params.by_callstack(call_stack, (
-                'initial_state', 'kwargs'))
+        draw_initial_state = draw_params.by_callstack(call_stack,
+                                                      'draw_initial_state')
         draw_occupancies = draw_params.by_callstack(call_stack, (
                 'occupancy', 'draw_occupancies'))
         draw_signals = draw_params.by_callstack(call_stack, 'draw_signals')
@@ -352,14 +354,13 @@ class MPRenderer:
             if state is not None:
                 position = state.position
                 self.dynamic_artists.append(
-                        self.ax.text(position[0] + 0.5, position[1],
-                                     str(obj.obstacle_id), clip_on=True,
-                                     zorder=ZOrders.LABELS))
+                        text.Text(position[0] + 0.5, position[1],
+                                  str(obj.obstacle_id), clip_on=True,
+                                  zorder=ZOrders.LABELS))
 
         # draw initial state
         if draw_initial_state:
-            state.draw(self, call_stack=call_stack, draw_params=draw_params,
-                       scale_factor=scale_factor, arrow_args=kwargs_init_state)
+            state.draw(self, draw_params, call_stack)
 
     def _draw_history(self, dyn_obs: DynamicObstacle,
                       call_stack: Tuple[str, ...], draw_params: ParamServer):
@@ -545,9 +546,7 @@ class MPRenderer:
 
     def draw_state(self, state: State,
                    draw_params: Union[ParamServer, dict, None],
-                   call_stack: Tuple[str, ...] = None,
-                   scale_factor: Optional[float] = None,
-                   arrow_args: Optional[dict] = None) -> None:
+                   call_stack: Tuple[str, ...] = None) -> None:
         """
         :param state: state to be plotted
         :param draw_params: parameters for plotting given by a nested dict
@@ -555,16 +554,13 @@ class MPRenderer:
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
                depending on the call stack of draw_object
-        :param scale_factor scaling factor for arrow
-        :param arrow_args arguments for arrow drawing
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
 
-        scale_factor = scale_factor or draw_params.by_callstack(call_stack, (
-                'initial_state', 'scale_factor'))
-        arrow_args = arrow_args or draw_params.by_callstack(call_stack, (
-                'initial_state', 'kwargs'))
+        scale_factor = draw_params.by_callstack(call_stack,
+                                                ('state', 'scale_factor'))
+        arrow_args = draw_params.by_callstack(call_stack, ('state', 'kwargs'))
 
         cos = math.cos(state.orientation)
         sin = math.sin(state.orientation)
@@ -773,8 +769,7 @@ class MPRenderer:
                                          linewidth=linewidth_metres, alpha=1.0,
                                          color=left_bound_color,
                                          linestyle=linestyle, dashes=dashes)
-                    # TODO: Convert to path
-                    self.ax.add_line(line)
+                    self.static_artists.append(line)
                 else:
                     left_paths.append(Path(lanelet.left_vertices, closed=False))
 
@@ -802,8 +797,7 @@ class MPRenderer:
                                          linewidth=linewidth_metres, alpha=1.0,
                                          color=right_bound_color,
                                          linestyle=linestyle, dashes=dashes)
-                    # TODO: Convert to path
-                    self.ax.add_line(line)
+                    self.static_artists.append(line)
                 else:
                     right_paths.append(
                             Path(lanelet.right_vertices, closed=False))
@@ -825,8 +819,7 @@ class MPRenderer:
                                      linewidth=linewidth_metres, alpha=1.0,
                                      color=stop_line_color, linestyle=linestyle,
                                      dashes=dashes)
-                # TODO: Convert to path
-                self.ax.add_line(line)
+                self.static_artists.append(line)
 
             if unique_colors:
                 # set center bound color to unique value
@@ -878,8 +871,7 @@ class MPRenderer:
                                                  light_state,
                                                  traffic_light_colors),
                                          linestyle=linestyle, dashes=dashes)
-                    # TODO: Convert to path
-                    self.ax.add_line(line)
+                    self.static_artists.append(line)
 
             # draw colored center bound. Hierarchy or colors: successors > usual
             # center bound
@@ -940,10 +932,10 @@ class MPRenderer:
                 if is_incoming_lanelet and show_intersection_labels:
                     strings.append(
                             'inc_id: ' + str(incomings_id[lanelet.lanelet_id]))
-                    strings.append('inc_left: ' + str(
-                            incomings_left[lanelet.lanelet_id]))
-                if draw_traffic_signs and show_traffic_sign_label is True:
-                    traffic_signs_tmp = [traffic_signs[id] for id in
+                    strings.append(
+                        'inc_left: ' + str(incomings_left[lanelet.lanelet_id]))
+                if draw_traffic_signs and show_traffic_sign_label:
+                    traffic_signs_tmp = [obj._traffic_signs[id] for id in
                                          lanelet.traffic_signs]
                     if traffic_signs_tmp:
                         # add as text to label
@@ -973,12 +965,15 @@ class MPRenderer:
                     angle = angle if Interval(-90, 90).contains(
                             angle) else angle - 180
 
-                    self.ax.text(clr_positions[0][0], clr_positions[0][1],
-                                 label_string, bbox={
-                                'facecolor': center_bound_color, 'pad': 2
-                        }, horizontalalignment='center',
-                                 verticalalignment='center', rotation=angle,
-                                 zorder=ZOrders.LANELET_LABEL)
+                    self.static_artists.append(
+                            text.Text(clr_positions[0][0], clr_positions[0][1],
+                                      label_string, bbox={
+                                        'facecolor': center_bound_color,
+                                        'pad':       2
+                                }, horizontalalignment='center',
+                                      verticalalignment='center',
+                                      rotation=angle,
+                                      zorder=ZOrders.LANELET_LABEL))
 
         # draw paths and collect axis handles
         if draw_right_bound:
@@ -1161,16 +1156,14 @@ class MPRenderer:
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
-        facecolor = draw_params.by_callstack(call_stack,
-                                             ('initial_state', 'facecolor'))
-        zorder = draw_params.by_callstack(call_stack,
-                                          ('initial_state', 'zorder'))
-        label = draw_params.by_callstack(call_stack, ('initial_state', 'label'))
+        call_stack = call_stack + ('initial_state',)
+        zorder = draw_params.by_callstack(call_stack, 'label_zorder')
+        label = draw_params.by_callstack(call_stack, 'label')
 
-        self.ax.plot(obj.position[0], obj.position[1], 'o', color=facecolor,
-                     zorder=zorder, markersize=3)
-        self.ax.annotate(label, xy=(obj.position[0] + 1, obj.position[1]),
-                         textcoords='data', zorder=zorder + 10)
+        obj.draw(self, draw_params, call_stack)
+        self.static_artists.append(
+            text.Annotation(label, xy=(obj.position[0] + 1, obj.position[1]),
+                            textcoords='data', zorder=zorder))
 
     def draw_goal_region(self, obj: GoalRegion,
                          draw_params: Union[ParamServer, dict, None],
