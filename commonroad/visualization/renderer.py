@@ -1,5 +1,6 @@
 import math
 import os
+from enum import Enum
 from typing import Dict, Tuple, Union, Set, Optional
 
 import commonroad.geometry.shape
@@ -49,6 +50,33 @@ __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
+
+
+class ZOrders(Enum):
+    # Map
+    LANELET_POLY = 9.0
+    INCOMING_POLY = 9.1
+    CROSSING_POLY = 9.2
+    CENTER_BOUND = 10.0
+    LIGHT_STATE_OTHER = 10.0
+    LIGHT_STATE_GREEN = 10.05
+    DIRECTION_ARROW = 10.1
+    SUCCESSORS = 11.0
+    STOP_LINE = 11.0
+    RIGHT_BOUND = 12.0
+    LEFT_BOUND = 12.0
+    # Obstacles
+    OBSTACLES = 20.0
+    CAR_PATCH = 20.0
+    # Labels
+    LANELET_LABEL = 30.2
+    STATE = 100.0
+    LABELS = 1000.0
+    # Values added to base value from drawing parameters
+    INDICATOR_ADD = 0.2
+    BRAKING_ADD = 0.2
+    HORN_ADD = 0.1
+    BLUELIGHT_ADD = 0.1
 
 
 class MPRenderer:
@@ -117,7 +145,7 @@ class MPRenderer:
         self.obstacle_patches.sort(key=lambda x: x.zorder)
         patch_col = mpl.collections.PatchCollection(self.obstacle_patches,
                                                     match_original=True,
-                                                    zorder=20)
+                                                    zorder=ZOrders.OBSTACLES)
         self.ax.add_collection(patch_col)
         artist_list.append(patch_col)
         self.dynamic_artists = artist_list
@@ -165,7 +193,7 @@ class MPRenderer:
                 handles.append(mpl.patches.Patch(color=color, label=text))
 
         legend = self.ax.legend(handles=handles)
-        legend.set_zorder(1000)
+        legend.set_zorder(ZOrders.LABELS)
 
     def draw_scenario(self, obj: Scenario,
                       draw_params: Union[ParamServer, dict, None],
@@ -287,7 +315,7 @@ class MPRenderer:
         if draw_shape:
             occ = obj.occupancy_at_time(time_begin)
             if occ is not None:
-                occ.shape.draw(self, draw_params, call_stack)
+                occ.draw(self, draw_params, call_stack)
 
                 if draw_signals:
                     sig = obj.signal_state_at_time_step(time_begin)
@@ -308,7 +336,8 @@ class MPRenderer:
                 self.obstacle_patches.extend(
                         get_car_patch(inital_state.position[0],
                                       inital_state.position[1],
-                                      inital_state.orientation, 2.5, zorder=30))
+                                      inital_state.orientation, 2.5,
+                                      zorder=ZOrders.CAR_PATCH))
 
         # Get state
         state = None
@@ -325,7 +354,7 @@ class MPRenderer:
                 self.dynamic_artists.append(
                         self.ax.text(position[0] + 0.5, position[1],
                                      str(obj.obstacle_id), clip_on=True,
-                                     zorder=1000))
+                                     zorder=ZOrders.LABELS))
 
         # draw initial state
         if draw_initial_state:
@@ -567,8 +596,7 @@ class MPRenderer:
         self.obstacle_patches.append(
             mpl.patches.Arrow(x=x, y=y, dx=state.velocity * cos * scale_factor,
                               dy=state.velocity * sin * scale_factor,
-                                                       zorder=100,
-                                                       **arrow_args))
+                              zorder=ZOrders.STATE, **arrow_args))
 
     def draw_lanelet_network(self, obj: LaneletNetwork,
                              draw_params: Union[ParamServer, dict, None],
@@ -756,7 +784,10 @@ class MPRenderer:
                             coordinates_left_border_vertices,
                             lanelet.left_vertices))
 
-                if draw_line_markings and lanelet.line_marking_left_vertices is not LineMarking.UNKNOWN and lanelet.line_marking_left_vertices is not LineMarking.NO_MARKING:
+                if draw_line_markings and lanelet.line_marking_left_vertices \
+                        is not LineMarking.UNKNOWN and \
+                        lanelet.line_marking_left_vertices is not \
+                        LineMarking.NO_MARKING:
                     linestyle, dashes, linewidth_metres = \
                         line_marking_to_linestyle(
                             lanelet.line_marking_left_vertices)
@@ -766,8 +797,9 @@ class MPRenderer:
                     tmp_left[-1, :] = lanelet.interpolate_position(
                             lanelet.distance[-1] - linewidth_metres / 2)[2]
                     line = LineDataUnits(tmp_left[:, 0], tmp_left[:, 1],
-                                         zorder=12, linewidth=linewidth_metres,
-                                         alpha=1.0, color=left_bound_color,
+                                         zorder=ZOrders.LEFT_BOUND,
+                                         linewidth=linewidth_metres, alpha=1.0,
+                                         color=left_bound_color,
                                          linestyle=linestyle, dashes=dashes)
                     # TODO: Convert to path
                     self.ax.add_line(line)
@@ -794,7 +826,7 @@ class MPRenderer:
                     tmp_right[-1, :] = lanelet.interpolate_position(
                             lanelet.distance[-1] - linewidth_metres / 2)[1]
                     line = LineDataUnits(tmp_right[:, 0], tmp_right[:, 1],
-                                         zorder=10.5,
+                                         zorder=ZOrders.RIGHT_BOUND,
                                          linewidth=linewidth_metres, alpha=1.0,
                                          color=right_bound_color,
                                          linestyle=linestyle, dashes=dashes)
@@ -817,9 +849,10 @@ class MPRenderer:
                 stop_line[0, :] += linewidth_metres * tangent / 2
                 stop_line[1, :] -= linewidth_metres * tangent / 2
                 line = LineDataUnits(stop_line[:, 0], stop_line[:, 1],
-                                     zorder=11, linewidth=linewidth_metres,
-                                     alpha=1.0, color=stop_line_color,
-                                     linestyle=linestyle, dashes=dashes)
+                                     zorder=ZOrders.STOP_LINE,
+                                     linewidth=linewidth_metres, alpha=1.0,
+                                     color=stop_line_color, linestyle=linestyle,
+                                     dashes=dashes)
                 # TODO: Convert to path
                 self.ax.add_line(line)
 
@@ -839,7 +872,7 @@ class MPRenderer:
                     direction_list.append(mpl.patches.PathPatch(path,
                                                                 color=center_bound_color,
                                                                 lw=0.5,
-                                                                zorder=10.1,
+                                                                zorder=ZOrders.DIRECTION_ARROW,
                                                                 antialiased=antialiased))
                 else:
                     direction_list.append(path)
@@ -853,8 +886,7 @@ class MPRenderer:
                 if light_state is not TrafficLightState.INACTIVE:
                     linewidth_metres = 0.75
                     # dashed line for red_yellow
-                    linestyle = '--' if light_state == \
-                                        TrafficLightState.RED_YELLOW else '-'
+                    linestyle = '--' if light_state == TrafficLightState.RED_YELLOW else '-'
                     dashes = (5, 5) if linestyle == '--' else (None, None)
 
                     # cut off in the beginning, because linewidth_metres is
@@ -864,8 +896,8 @@ class MPRenderer:
                     if lanelet.distance[-1] > linewidth_metres:
                         tmp_center[0, :] = \
                             lanelet.interpolate_position(linewidth_metres)[0]
-                    zorder = 10.05 if light_state == TrafficLightState.GREEN \
-                        else 10.0
+                    zorder = ZOrders.LIGHT_STATE_GREEN if light_state == \
+                                                          TrafficLightState.GREEN else ZOrders.LIGHT_STATE_OTHER
                     line = LineDataUnits(tmp_center[:, 0], tmp_center[:, 1],
                                          zorder=zorder,
                                          linewidth=linewidth_metres, alpha=0.7,
@@ -896,7 +928,7 @@ class MPRenderer:
                     center_paths.append(mpl.patches.PathPatch(
                             Path(lanelet.center_vertices, closed=False),
                             edgecolor=center_bound_color, facecolor='none',
-                            lw=draw_linewidth, zorder=10,
+                            lw=draw_linewidth, zorder=ZOrders.CENTER_BOUND,
                             antialiased=antialiased))
                 else:
                     center_paths.append(
@@ -973,7 +1005,7 @@ class MPRenderer:
                                 'facecolor': center_bound_color, 'pad': 2
                         }, horizontalalignment='center',
                                  verticalalignment='center', rotation=angle,
-                                 zorder=30.2)
+                                 zorder=ZOrders.LANELET_LABEL)
 
         # draw paths and collect axis handles
         if draw_right_bound:
@@ -981,14 +1013,16 @@ class MPRenderer:
                     collections.PathCollection(right_paths,
                                                edgecolor=right_bound_color,
                                                facecolor='none',
-                                               lw=draw_linewidth, zorder=10,
+                                               lw=draw_linewidth,
+                                               zorder=ZOrders.RIGHT_BOUND,
                                                antialiased=antialiased))
         if draw_left_bound:
             self.static_collections.append(
                     collections.PathCollection(left_paths,
                                                edgecolor=left_bound_color,
                                                facecolor='none',
-                                               lw=draw_linewidth, zorder=10,
+                                               lw=draw_linewidth,
+                                               zorder=ZOrders.LEFT_BOUND,
                                                antialiased=antialiased))
         if unique_colors:
             if draw_center_bound:
@@ -996,13 +1030,13 @@ class MPRenderer:
                     self.static_collections.append(
                             collections.PatchCollection(center_paths,
                                                         match_original=True,
-                                                        zorder=10,
+                                                        zorder=ZOrders.CENTER_BOUND,
                                                         antialiased=antialiased))
                 if draw_start_and_direction:
                     self.static_collections.append(
                             collections.PatchCollection(direction_list,
                                                         match_original=True,
-                                                        zorder=10.1,
+                                                        zorder=ZOrders.DIRECTION_ARROW,
                                                         antialiased=antialiased))
 
         else:
@@ -1011,13 +1045,15 @@ class MPRenderer:
                         collections.PathCollection(center_paths,
                                                    edgecolor=center_bound_color,
                                                    facecolor='none',
-                                                   lw=draw_linewidth, zorder=10,
+                                                   lw=draw_linewidth,
+                                                   zorder=ZOrders.CENTER_BOUND,
                                                    antialiased=antialiased))
             if draw_start_and_direction:
                 self.static_collections.append(
                         collections.PathCollection(direction_list,
                                                    color=center_bound_color,
-                                                   lw=0.5, zorder=10.1,
+                                                   lw=0.5,
+                                                   zorder=ZOrders.DIRECTION_ARROW,
                                                    antialiased=antialiased))
 
         if successors_left:
@@ -1026,7 +1062,7 @@ class MPRenderer:
                                                edgecolor=successors_left_color,
                                                facecolor='none',
                                                lw=draw_linewidth * 3.0,
-                                               zorder=11,
+                                               zorder=ZOrders.SUCCESSORS,
                                                antialiased=antialiased))
         if successors_straight:
             self.static_collections.append(
@@ -1034,7 +1070,7 @@ class MPRenderer:
                                                edgecolor=successors_straight_color,
                                                facecolor='none',
                                                lw=draw_linewidth * 3.0,
-                                               zorder=11,
+                                               zorder=ZOrders.SUCCESSORS,
                                                antialiased=antialiased))
         if successors_right:
             self.static_collections.append(
@@ -1042,13 +1078,13 @@ class MPRenderer:
                                                edgecolor=successors_right_color,
                                                facecolor='none',
                                                lw=draw_linewidth * 3.0,
-                                               zorder=11,
+                                               zorder=ZOrders.SUCCESSORS,
                                                antialiased=antialiased))
 
         # fill lanelets with facecolor
         self.static_collections.append(collections.PolyCollection(vertices_fill,
                                                                   transOffset=self.ax.transData,
-                                                                  zorder=9.0,
+                                                                  zorder=ZOrders.LANELET_POLY,
                                                                   facecolor=facecolor,
                                                                   edgecolor='none',
                                                                   antialiased=antialiased))
@@ -1057,14 +1093,16 @@ class MPRenderer:
                     collections.PolyCollection(incoming_vertices_fill,
                                                transOffset=self.ax.transData,
                                                facecolor=incoming_lanelets_color,
-                                               edgecolor='none', zorder=9.1,
+                                               edgecolor='none',
+                                               zorder=ZOrders.INCOMING_POLY,
                                                antialiased=antialiased))
         if crossing_vertices_fill:
             self.static_collections.append(
                     collections.PolyCollection(crossing_vertices_fill,
                                                transOffset=self.ax.transData,
                                                facecolor=crossings_color,
-                                               edgecolor='none', zorder=9.2,
+                                               edgecolor='none',
+                                               zorder=ZOrders.CROSSING_POLY,
                                                antialiased=antialiased))
 
         # draw_border_vertices
@@ -1261,7 +1299,7 @@ class MPRenderer:
             indicator_params = {
                     'facecolor': indicator_color,
                     'edgecolor': indicator_color,
-                    'zorder':    zorder + 0.2,
+                    'zorder':    zorder + ZOrders.INDICATOR_ADD,
                     'linewidth': 0
             }
             for e in indicators:
@@ -1271,7 +1309,7 @@ class MPRenderer:
             braking_params = {
                     'facecolor': braking_color,
                     'edgecolor': braking_color,
-                    'zorder':    zorder + 0.2,
+                    'zorder':    zorder + ZOrders.BRAKING_ADD,
                     'linewidth': 0
             }
             for e in indicators:
@@ -1281,7 +1319,7 @@ class MPRenderer:
             horn_params = {
                     'facecolor': horn_color,
                     'edgecolor': braking_color,
-                    'zorder':    zorder + 0.1,
+                    'zorder':    zorder + ZOrders.HORN_ADD,
                     'linewidth': 0
             }
             for e in indicators:
@@ -1291,7 +1329,7 @@ class MPRenderer:
             bluelight_params = {
                     'facecolor': blue_lights_color,
                     'edgecolor': braking_color,
-                    'zorder':    zorder + 0.1,
+                    'zorder':    zorder + ZOrders.BLUELIGHT_ADD,
                     'linewidth': 0
             }
             for e in indicators:
