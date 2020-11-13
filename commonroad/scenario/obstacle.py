@@ -81,7 +81,7 @@ class SignalState:
             setattr(self, field, value)
 
 
-class Obstacle(ABC, IDrawable):
+class Obstacle(IDrawable):
     """ Superclass for dynamic and static obstacles holding common properties
     defined in CommonRoad."""
 

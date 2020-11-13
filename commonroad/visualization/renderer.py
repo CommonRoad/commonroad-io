@@ -52,7 +52,7 @@ __status__ = "Released"
 traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
 
 
-class ZOrders(Enum):
+class ZOrders:
     # Map
     LANELET_POLY = 9.0
     INCOMING_POLY = 9.1
@@ -288,7 +288,6 @@ class MPRenderer:
                                                 ('history', 'draw_history'))
         if draw_history and isinstance(obj.prediction,
                                        commonroad.prediction.prediction.TrajectoryPrediction):
-
             self._draw_history(obj, call_stack, draw_params)
 
         # draw occupancies
@@ -305,13 +304,13 @@ class MPRenderer:
                 if occ is not None:
                     occ.draw(self, draw_params, call_stack)
 
-        # get trajectory
+        # draw trajectory
         if draw_trajectory and type(
                 obj.prediction) == \
                 commonroad.prediction.prediction.TrajectoryPrediction:
             obj.prediction.trajectory.draw(self, draw_params, call_stack)
 
-        # get shape
+        # draw shape
         if draw_shape:
             occ = obj.occupancy_at_time(time_begin)
             if occ is not None:
@@ -339,7 +338,7 @@ class MPRenderer:
                                       inital_state.orientation, 2.5,
                                       zorder=ZOrders.CAR_PATCH))
 
-        # Get state
+        # get state
         state = None
         if time_begin == 0:
             state = obj.initial_state
@@ -348,6 +347,7 @@ class MPRenderer:
                 commonroad.prediction.prediction.TrajectoryPrediction:
             state = obj.prediction.trajectory.state_at_time_step(time_begin)
 
+        # draw label
         if show_label:
             if state is not None:
                 position = state.position
@@ -410,17 +410,16 @@ class MPRenderer:
         """
         draw_params = self._get_draw_params(draw_params)
 
-        line_color = draw_params.by_callstack(call_stack,
-                                              ('trajectory', 'facecolor'))
-
-        line_width = draw_params.by_callstack(call_stack,
-                                              ('trajectory', 'line_width'))
-        draw_continuous = draw_params.by_callstack(call_stack, (
-                'trajectory', 'draw_continuous'))
-        z_order = draw_params.by_callstack(call_stack,
-                                           ('trajectory', 'z_order'))
         time_begin = draw_params.by_callstack(call_stack, 'time_begin')
         time_end = draw_params.by_callstack(call_stack, 'time_end')
+
+        call_stack = call_stack + ('trajectory',)
+        line_color = draw_params.by_callstack(call_stack, 'facecolor')
+
+        line_width = draw_params.by_callstack(call_stack, 'line_width')
+        draw_continuous = draw_params.by_callstack(call_stack,
+                                                   'draw_continuous')
+        z_order = draw_params.by_callstack(call_stack, 'z_order')
 
         if time_begin == time_end:
             return
@@ -462,23 +461,6 @@ class MPRenderer:
         else:
             self.draw_list(obj, draw_params)
 
-    def draw_occupancy(self, obj: Occupancy,
-                       draw_params: Union[ParamServer, dict, None],
-                       call_stack: Tuple[str, ...]) -> None:
-        """
-        :param obj: object to be plotted
-
-        :param draw_params: parameters for plotting given by a nested
-        dict that recreates the structure of an object,
-        :param call_stack: tuple of string containing the call stack,
-        which allows for differentiation of plotting styles
-               depending on the call stack of draw_object
-        :return: None
-        """
-        draw_params = self._get_draw_params(draw_params)
-        call_stack = tuple(list(call_stack) + ['occupancy'])
-        obj.shape.draw(self, draw_params, call_stack)
-
     def draw_polygon(self, obj: Polygon,
                      draw_params: Union[ParamServer, dict, None],
                      call_stack: Tuple[str, ...]) -> None:
@@ -494,17 +476,12 @@ class MPRenderer:
         """
         draw_params = self._get_draw_params(draw_params)
         call_stack = tuple(list(call_stack) + ['shape', 'polygon'])
-        try:
-            facecolor = draw_params.by_callstack(call_stack, 'facecolor')
-            edgecolor = draw_params.by_callstack(call_stack, 'edgecolor')
-            zorder = draw_params.by_callstack(call_stack, 'zorder')
-            opacity = draw_params.by_callstack(call_stack, 'opacity')
-            linewidth = draw_params.by_callstack(call_stack, 'linewidth')
-            antialiased = draw_params.by_callstack(call_stack, 'antialiased')
-        except KeyError:
-            print("Cannot find stylesheet for polygon. Called through:")
-            print(call_stack)
-
+        facecolor = draw_params.by_callstack(call_stack, 'facecolor')
+        edgecolor = draw_params.by_callstack(call_stack, 'edgecolor')
+        zorder = draw_params.by_callstack(call_stack, 'zorder')
+        opacity = draw_params.by_callstack(call_stack, 'opacity')
+        linewidth = draw_params.by_callstack(call_stack, 'linewidth')
+        antialiased = draw_params.by_callstack(call_stack, 'antialiased')
         self.obstacle_patches.append(
                 mpl.patches.Polygon(obj.vertices, closed=True,
                                     facecolor=facecolor, edgecolor=edgecolor,
@@ -613,58 +590,54 @@ class MPRenderer:
         draw_params = self._get_draw_params(draw_params)
         call_stack = tuple(list(call_stack) + ['lanelet_network'])
 
-        traffic_lights = obj._traffic_lights
-        traffic_signs = obj._traffic_signs
+        traffic_lights = obj.traffic_lights
+        traffic_signs = obj.traffic_signs
         intersections = obj.intersections
         lanelets = obj.lanelets
 
         time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
         if traffic_lights is not None:
             draw_traffic_lights = draw_params.by_callstack(call_stack, (
-                    'lanelet_network', 'traffic_light', 'draw_traffic_lights'))
+                    'traffic_light', 'draw_traffic_lights'))
 
-            traffic_light_colors = draw_params.by_callstack(call_stack, (
-                    'lanelet_network', 'traffic_light'))
+            traffic_light_colors = draw_params.by_callstack(call_stack,
+                                                            ('traffic_light'))
         else:
             draw_traffic_lights = False
 
         if traffic_signs is not None:
             draw_traffic_signs = draw_params.by_callstack(call_stack, (
-                    'lanelet_network', 'traffic_sign', 'draw_traffic_signs'))
+                    'traffic_sign', 'draw_traffic_signs'))
             show_traffic_sign_label = draw_params.by_callstack(call_stack, (
-                    'lanelet_network', 'traffic_sign', 'show_label'))
+                    'traffic_sign', 'show_label'))
         else:
             draw_traffic_signs = show_traffic_sign_label = False
 
         if intersections is not None and len(intersections) > 0:
             draw_intersections = draw_params.by_callstack(call_stack, (
-                    'lanelet_network', 'intersection', 'draw_intersections'))
+                    'intersection', 'draw_intersections'))
         else:
             draw_intersections = False
 
         if draw_intersections is True:
             draw_incoming_lanelets = draw_params.by_callstack(call_stack, (
-                    'lanelet_network', 'intersection',
-                    'draw_incoming_lanelets'))
+                    'intersection', 'draw_incoming_lanelets'))
             incoming_lanelets_color = draw_params.by_callstack(call_stack, (
-                    'lanelet_network', 'intersection',
-                    'incoming_lanelets_color'))
+                    'intersection', 'incoming_lanelets_color'))
             draw_crossings = draw_params.by_callstack(call_stack, (
-                    'lanelet_network', 'intersection', 'draw_crossings'))
+                    'intersection', 'draw_crossings'))
             crossings_color = draw_params.by_callstack(call_stack, (
-                    'lanelet_network', 'intersection', 'crossings_color'))
+                    'intersection', 'crossings_color'))
             draw_successors = draw_params.by_callstack(call_stack, (
-                    'lanelet_network', 'intersection', 'draw_successors'))
+                    'intersection', 'draw_successors'))
             successors_left_color = draw_params.by_callstack(call_stack, (
-                    'lanelet_network', 'intersection', 'successors_left_color'))
+                    'intersection', 'successors_left_color'))
             successors_straight_color = draw_params.by_callstack(call_stack, (
-                    'lanelet_network', 'intersection',
-                    'successors_straight_color'))
+                    'intersection', 'successors_straight_color'))
             successors_right_color = draw_params.by_callstack(call_stack, (
-                    'lanelet_network', 'intersection',
-                    'successors_right_color'))
+                    'intersection', 'successors_right_color'))
             show_intersection_labels = draw_params.by_callstack(call_stack, (
-                    'lanelet_network', 'intersection', 'show_label'))
+                    'intersection', 'show_label'))
         else:
             draw_incoming_lanelets = draw_crossings = draw_successors = \
                 show_intersection_labels = False
@@ -703,8 +676,7 @@ class MPRenderer:
                                              ('lanelet', 'facecolor'))
         antialiased = draw_params.by_callstack(call_stack, 'antialiased')
 
-        draw_lanlet_ids = draw_params.by_callstack(call_stack, (
-                'lanelet_network', 'draw_ids'))
+        draw_lanlet_ids = draw_params.by_callstack(call_stack, 'draw_ids')
 
         # Collect lanelets
         incoming_lanelets = set()
@@ -886,7 +858,8 @@ class MPRenderer:
                 if light_state is not TrafficLightState.INACTIVE:
                     linewidth_metres = 0.75
                     # dashed line for red_yellow
-                    linestyle = '--' if light_state == TrafficLightState.RED_YELLOW else '-'
+                    linestyle = '--' if light_state == \
+                                        TrafficLightState.RED_YELLOW else '-'
                     dashes = (5, 5) if linestyle == '--' else (None, None)
 
                     # cut off in the beginning, because linewidth_metres is
@@ -959,7 +932,7 @@ class MPRenderer:
                         lanelet.right_vertices,
                         np.flip(lanelet.left_vertices, 0))))
 
-            # DRAW LABELS INTO LANELET CENTER
+            # Draw labels
             if show_label or show_intersection_labels or draw_traffic_signs:
                 strings = []
                 if show_label:
@@ -1125,17 +1098,15 @@ class MPRenderer:
                     offsets=coordinates_right_border_vertices,
                     color=right_bound_color, transOffset=self.ax.transData))
 
-        traffic_lights_signs = []
         if draw_traffic_signs:
             # draw actual traffic sign
-            traffic_lights_signs.extend(list(traffic_signs.values()))
+            for sign in traffic_signs:
+                sign.draw(self, draw_params, call_stack)
 
         if draw_traffic_lights:
-            # draw actual traffic sign
-            traffic_lights_signs.extend(list(traffic_lights.values()))
-
-        if traffic_lights_signs:
-            self.traffic_signs.extend(traffic_lights_signs)
+            # draw actual traffic light
+            for light in traffic_lights:
+                light.draw(self, draw_params, call_stack)
 
     def draw_planning_problem_set(self, obj: PlanningProblemSet,
                                   draw_params: Union[ParamServer, dict, None],
@@ -1153,8 +1124,8 @@ class MPRenderer:
         call_stack = tuple(list(call_stack) + ['planning_problem_set'])
         draw_ids = draw_params.by_callstack(call_stack, 'draw_ids')
 
-        for id, problem in obj.planning_problem_dict.items():
-            if draw_ids == 'all' or id in draw_ids:
+        for pp_id, problem in obj.planning_problem_dict.items():
+            if draw_ids == 'all' or pp_id in draw_ids:
                 self.draw_planning_problem(problem, draw_params, call_stack)
 
     def draw_planning_problem(self, obj: PlanningProblem,
@@ -1250,8 +1221,9 @@ class MPRenderer:
         self.traffic_sign_draw_params = draw_params
         self.traffic_signs.append(obj)
 
-    def draw_signale_state(self, sig: SignalState, occ: Occupancy, draw_params,
-                           call_stack):
+    def draw_signale_state(self, sig: SignalState, occ: Occupancy,
+                           draw_params: Union[ParamServer, dict, None],
+                           call_stack: Tuple[str, ...]):
         draw_params = self._get_draw_params(draw_params)
 
         zorder = draw_params.by_callstack(call_stack, 'zorder')

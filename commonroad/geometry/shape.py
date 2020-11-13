@@ -21,7 +21,7 @@ __status__ = "Released"
 from commonroad.visualization.drawable import IDrawable
 
 
-class Shape(metaclass=abc.ABCMeta, IDrawable):
+class Shape(IDrawable, metaclass=abc.ABCMeta):
     """ Abstract class for CommonRoad shapes."""
 
     @abc.abstractmethod
