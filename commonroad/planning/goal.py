@@ -1,6 +1,6 @@
 import copy
 import math
-from typing import Union, List, Dict, Set
+from typing import Union, List, Dict, Set, Tuple, Optional
 import numpy as np
 import warnings
 
@@ -17,6 +17,7 @@ __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
 
 
 class GoalRegion(IDrawable):
@@ -182,10 +183,11 @@ class GoalRegion(IDrawable):
                 state_fields.add('orientation')
 
             state_new.velocity = np.linalg.norm(
-                np.array([state_new.velocity, state_new.velocity_y]))
+                    np.array([state_new.velocity, state_new.velocity_y]))
             state_fields.remove('velocity_y')
 
         return state_new, state_fields, goal_state, goal_state_fields
 
-    def draw(self, renderer, draw_params=None, call_stack=tuple()):
+    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_goal_region(self, draw_params, call_stack)

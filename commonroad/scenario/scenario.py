@@ -2,7 +2,7 @@ import itertools
 import re
 import warnings
 from collections import defaultdict
-from typing import Union, List, Set, Dict, Tuple
+from typing import Union, List, Set, Dict, Tuple, Optional
 import numpy as np
 import enum
 import iso3166
@@ -28,6 +28,7 @@ __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
 
 
 @enum.unique
@@ -853,5 +854,6 @@ class Scenario(IDrawable):
         traffic_str += str(self._lanelet_network)
         return traffic_str
 
-    def draw(self, renderer, draw_params=None, call_stack=tuple()):
+    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_scenario(self, draw_params, call_stack)

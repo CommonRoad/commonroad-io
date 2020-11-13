@@ -20,6 +20,7 @@ __email__ = "commonroad-i06@in.tum.de"
 __status__ = "released"
 
 from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
 
 
 class LineMarking(enum.Enum):
@@ -1363,5 +1364,6 @@ class LaneletNetwork(IDrawable):
             return_str += '{:8d} lanelet\n'.format(lanelet_id)
         return return_str
 
-    def draw(self, renderer, draw_params=None, call_stack=tuple()):
+    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_lanelet_network(self, draw_params, call_stack)

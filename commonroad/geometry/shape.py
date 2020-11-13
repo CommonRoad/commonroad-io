@@ -1,7 +1,7 @@
 import warnings
 import abc
 import numpy as np
-from typing import List
+from typing import List, Union, Optional, Tuple
 
 import shapely.geometry
 import shapely.affinity
@@ -19,6 +19,7 @@ __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
 
 
 class Shape(IDrawable, metaclass=abc.ABCMeta):
@@ -206,7 +207,8 @@ class Rectangle(Shape):
         output += '\t orientation: {} \n'.format(self._orientation)
         return output
 
-    def draw(self, renderer, draw_params=None, call_stack=tuple()):
+    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_rectangle(self, draw_params, call_stack)
 
 
@@ -293,8 +295,7 @@ class Circle(Shape):
                                      2), '<Circle/contains_point>: argument ' \
                                          '"point" is ' \
                                          'not a vector of real numbers of ' \
-                                         'length 2. point = {}'.format(
-            point)
+                                         'length 2. point = {}'.format(point)
         return np.greater_equal(self._radius,
                                 np.linalg.norm(point - self._center))
 
@@ -304,7 +305,8 @@ class Circle(Shape):
         output += '\t center: {} \n'.format(self._center)
         return output
 
-    def draw(self, renderer, draw_params=None, call_stack=tuple()):
+    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_circle(self, draw_params, call_stack)
 
 
@@ -388,8 +390,7 @@ class Polygon(Shape):
                                      2), '<Polygon/contains_point>: argument ' \
                                          '"point" is ' \
                                          'not a vector of real numbers of ' \
-                                         'length 2. point = {}'.format(
-            point)
+                                         'length 2. point = {}'.format(point)
         return self._shapely_polygon.intersects(shapely.geometry.Point(point))
 
     def __str__(self):
@@ -398,7 +399,8 @@ class Polygon(Shape):
         output += '\t center: {} \n'.format(self.center)
         return output
 
-    def draw(self, renderer, draw_params=None, call_stack=tuple()):
+    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_polygon(self, draw_params, call_stack)
 
 
@@ -483,6 +485,7 @@ class ShapeGroup(Shape):
         output += '\t number of shapes: {} \n'.format(len(self._shapes))
         return output
 
-    def draw(self, renderer, draw_params=None, call_stack=tuple()):
+    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
         for s in self._shapes:
             s.draw(renderer, draw_params, call_stack)

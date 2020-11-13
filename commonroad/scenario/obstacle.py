@@ -1,7 +1,7 @@
 import enum
 import warnings
 import numpy as np
-from typing import Union, Set, List
+from typing import Union, Set, List, Optional, Tuple
 from abc import ABC, abstractmethod
 
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector, is_real_number
@@ -20,6 +20,7 @@ __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
 
 
 @enum.unique
@@ -345,7 +346,8 @@ class StaticObstacle(Obstacle):
         obs_str += '\ninitial state: {}'.format(self.initial_state)
         return obs_str
 
-    def draw(self, renderer, draw_params=None, call_stack=tuple()):
+    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_static_obstacle(self, draw_params, call_stack)
 
 
@@ -446,7 +448,8 @@ class DynamicObstacle(Obstacle):
         obs_str += '\ninitial state: {}'.format(self.initial_state)
         return obs_str
 
-    def draw(self, renderer, draw_params=None, call_stack=tuple()):
+    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_dynamic_obstacle(self, draw_params, call_stack)
 
 

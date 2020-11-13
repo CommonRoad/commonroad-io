@@ -1,5 +1,5 @@
 import copy
-from typing import List, Union
+from typing import List, Union, Tuple, Optional
 import numpy as np
 
 import commonroad.geometry.transform
@@ -22,15 +22,23 @@ __maintainer__ = "Stefanie Manzinger"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
+
 
 class State:
-    """ A state can be either exact or uncertain. Uncertain state elements can be either of type
-        :class:`commonroad.common.util.Interval` or of type :class:`commonroad.geometry.shape.Shape`. A
-        state is composed of several elements which are determined during runtime. The possible state elements
-        are defined as slots, which comprise the necessary state elements to describe the states of all CommonRoad
+    """ A state can be either exact or uncertain. Uncertain state elements
+    can be either of type
+        :class:`commonroad.common.util.Interval` or of type
+        :class:`commonroad.geometry.shape.Shape`. A
+        state is composed of several elements which are determined during
+        runtime. The possible state elements
+        are defined as slots, which comprise the necessary state elements to
+        describe the states of all CommonRoad
         vehicle models:
 
-        :ivar position: :math:`s_x`- and :math:`s_y`-position in a global coordinate system. Exact positions
+        :ivar position: :math:`s_x`- and :math:`s_y`-position in a global
+        coordinate system. Exact positions
             are given as numpy array [x, y], uncertain positions are given as :class:`commonroad.geometry.shape.Shape`
         :ivar orientation: yaw angle :math:`\Psi`. Exact values are given as real number, uncertain values are given as
             :class:`commonroad.common.util.AngleInterval`
@@ -237,19 +245,24 @@ class State:
             traffic_str += '= {}\n'.format(self.__getattribute__(attr))
         return traffic_str
 
-    def draw(self, renderer, draw_params=None, call_stack=tuple()):
+    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_state(self, draw_params, call_stack)
 
 
-class Trajectory:
-    """ Class to model the movement of an object over time. The states of the trajectory can be either exact or
-    uncertain (see :class:`commonroad.scenario.trajectory.State`); however, only exact time_step are allowed. """
+class Trajectory(IDrawable):
+    """ Class to model the movement of an object over time. The states of the
+    trajectory can be either exact or
+    uncertain (see :class:`commonroad.scenario.trajectory.State`); however,
+    only exact time_step are allowed. """
 
     def __init__(self, initial_time_step: int, state_list: List[State]):
         """
         :param initial_time_step: initial time step of the trajectory
-        :param state_list: ordered sequence of states over time representing the trajectory. It is assumed that
-        the time discretization between two states matches the time discretization of the scenario.
+        :param state_list: ordered sequence of states over time representing
+        the trajectory. It is assumed that
+        the time discretization between two states matches the time
+        discretization of the scenario.
         """
         self.initial_time_step: int = initial_time_step
         self.state_list: List[State] = state_list
@@ -366,8 +379,9 @@ class Trajectory:
         traffic_str += 'Initial time step: {} \n'.format(self.initial_time_step)
         traffic_str += 'Number of states: {}\n'.format(len(self.state_list))
         traffic_str += 'State elements: {}'.format(
-            self.state_list[0].attributes)
+                self.state_list[0].attributes)
         return traffic_str
 
-    def draw(self, renderer, draw_params=None, call_stack=tuple()):
+    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_trajectory(self, draw_params, call_stack)

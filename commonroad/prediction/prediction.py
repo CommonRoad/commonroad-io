@@ -1,5 +1,5 @@
 import abc
-from typing import Union, List, Dict, Set
+from typing import Union, List, Dict, Set, Optional, Tuple
 import numpy as np
 
 from commonroad.common.util import Interval
@@ -17,6 +17,7 @@ __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
 
 
 class Occupancy(IDrawable):
@@ -69,12 +70,14 @@ class Occupancy(IDrawable):
                                          'not a vector of real numbers of ' \
                                          'length 2.'
         assert is_valid_orientation(
-            angle), '<Occupancy/translate_rotate>: argument "orientation" is ' \
-                    'not valid.'
+                angle), '<Occupancy/translate_rotate>: argument "orientation" ' \
+                        'is ' \
+                        'not valid.'
 
         self._shape = self._shape.translate_rotate(translation, angle)
 
-    def draw(self, renderer, draw_params=None, call_stack=tuple()):
+    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
         call_stack = tuple(list(call_stack) + ['occupancy'])
         self.shape.draw(renderer, draw_params, call_stack)
 

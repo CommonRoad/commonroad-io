@@ -1,4 +1,4 @@
-from typing import Union, List, Tuple, Dict
+from typing import Union, List, Tuple, Dict, Optional
 import numpy as np
 import warnings
 
@@ -15,6 +15,7 @@ __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
 from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
 
 
 class PlanningProblem(IDrawable):
@@ -90,7 +91,8 @@ class PlanningProblem(IDrawable):
                                                                  angle)
         self.goal.translate_rotate(translation, angle)
 
-    def draw(self, renderer, draw_params=None, call_stack=tuple()):
+    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_planning_problem(self, draw_params, call_stack)
 
 
@@ -170,5 +172,6 @@ class PlanningProblemSet(IDrawable):
         for planning_problem in self._planning_problem_dict.values():
             planning_problem.translate_rotate(translation, angle)
 
-    def draw(self, renderer, draw_params=None, call_stack=tuple()):
+    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_planning_problem_set(self, draw_params, call_stack)
