@@ -19,6 +19,8 @@ __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "released"
 
+from commonroad.visualization.drawable import IDrawable
+
 
 class LineMarking(enum.Enum):
     """
@@ -919,7 +921,7 @@ class Lanelet:
         return 'Lanelet with id:' + str(self.lanelet_id)
 
 
-class LaneletNetwork:
+class LaneletNetwork(IDrawable):
     """
     Class which represents a network of connected lanelets
     """

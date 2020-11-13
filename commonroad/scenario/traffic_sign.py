@@ -12,7 +12,7 @@ import numpy as np
 
 from commonroad.common.validity import *
 import commonroad.geometry.transform
-
+from commonroad.visualization.drawable import IDrawable
 
 TRAFFIC_SIGN_VALIDITY_START = {'MIN_SPEED', 'MAX_SPEED', 'NO_OVERTAKING_START', 'TOWN_SIGN',
                                'BAN_CAR_TRUCK_BUS_MOTORCYCLE'}
@@ -274,16 +274,20 @@ class TrafficSignElement:
         return f"Sign Element with id {self._traffic_sign_element_id} and values {self._additional_values} "
 
 
-class TrafficSign:
+class TrafficSign(IDrawable):
     """Class to represent a traffic sign"""
-    def __init__(self, traffic_sign_id: int, traffic_sign_elements: List[TrafficSignElement],
-                 first_occurrence: Set[int], position: np.ndarray, virtual: bool = False):
+
+    def __init__(self, traffic_sign_id: int,
+                 traffic_sign_elements: List[TrafficSignElement],
+                 first_occurrence: Set[int], position: np.ndarray,
+                 virtual: bool = False):
         """
         :param traffic_sign_id: ID of traffic sign
         :param traffic_sign_elements: list of traffic sign elements
         :param first_occurrence: lanelet ID where traffic sign first appears
         :param position: position of traffic sign
-        :param virtual: boolean indicating if this traffic sign is also placed there in the real environment or it
+        :param virtual: boolean indicating if this traffic sign is also
+        placed there in the real environment or it
         is added for other reasons (e.g., completeness of scenario)
         """
         self._traffic_sign_id = traffic_sign_id
@@ -360,10 +364,13 @@ class TrafficLightCycleElement:
         return self._duration
 
 
-class TrafficLight:
+class TrafficLight(IDrawable):
     """ Class to represent a traffic light"""
-    def __init__(self, traffic_light_id: int, cycle: List[TrafficLightCycleElement], position: np.ndarray,
-                 time_offset: int = 0, direction: TrafficLightDirection = TrafficLightDirection.ALL,
+
+    def __init__(self, traffic_light_id: int,
+                 cycle: List[TrafficLightCycleElement], position: np.ndarray,
+                 time_offset: int = 0,
+                 direction: TrafficLightDirection = TrafficLightDirection.ALL,
                  active: bool = True):
         """
         :param traffic_light_id: ID of traffic light

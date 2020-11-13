@@ -16,17 +16,25 @@ __maintainer__ = "Christina Miller"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
+from commonroad.visualization.drawable import IDrawable
 
-class GoalRegion:
+
+class GoalRegion(IDrawable):
     def __init__(self, state_list: List[State],
-                 lanelets_of_goal_position: Union[None, Dict[int, List[int]]]=None):
+                 lanelets_of_goal_position: Union[
+                     None, Dict[int, List[int]]] = None):
         """
-        Region, that has to be reached by the vehicle. Contains a list of goal states of which one has to be fulfilled
-        to solve the scenario. If 'position' in a goal state is given as a list of lanelets, they are converted into a
-        polygon. To reconstruct the lanelets later, the lanelet ids are stored in a dict in lanelets_of_goal_position.
-        In no 'position' is given as lanelet, lanelets_of_goal_position is set to None.
+        Region, that has to be reached by the vehicle. Contains a list of
+        goal states of which one has to be fulfilled
+        to solve the scenario. If 'position' in a goal state is given as a
+        list of lanelets, they are converted into a
+        polygon. To reconstruct the lanelets later, the lanelet ids are
+        stored in a dict in lanelets_of_goal_position.
+        In no 'position' is given as lanelet, lanelets_of_goal_position is
+        set to None.
 
-        :param state_list: list of goal states (one of those has to be fulfilled)
+        :param state_list: list of goal states (one of those has to be
+        fulfilled)
         :param lanelets_of_goal_position: dict[index of state in state_list, list of lanelet ids].
         None, if no lanelet is given.
         """

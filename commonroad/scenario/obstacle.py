@@ -9,14 +9,17 @@ from commonroad.geometry.shape import Shape, Rectangle, Circle, Polygon
 from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.trajectory import State
 
-
 __author__ = "Stefanie Manzinger, Christian Pek, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles, BMW Group, KO-HAF"]
+__credits__ = [
+        "Priority Program SPP 1835 Cooperative Interacting Automobiles, "
+        "BMW Group, KO-HAF"]
 __version__ = "2020.3"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
+
+from commonroad.visualization.drawable import IDrawable
 
 
 @enum.unique
@@ -78,14 +81,17 @@ class SignalState:
             setattr(self, field, value)
 
 
-class Obstacle(ABC):
-    """ Superclass for dynamic and static obstacles holding common properties defined in CommonRoad."""
+class Obstacle(ABC, IDrawable):
+    """ Superclass for dynamic and static obstacles holding common properties
+    defined in CommonRoad."""
 
     def __init__(self, obstacle_id: int, obstacle_role: ObstacleRole,
-                 obstacle_type: ObstacleType, obstacle_shape: Shape, initial_state: State = None,
+                 obstacle_type: ObstacleType, obstacle_shape: Shape,
+                 initial_state: State = None,
                  initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
-                 initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None):
+                 initial_signal_state: Union[None, SignalState] = None,
+                 signal_series: List[SignalState] = None):
         """
         :param obstacle_id: unique ID of the obstacle
         :param obstacle_role: obstacle role as defined in CommonRoad
@@ -444,10 +450,11 @@ class DynamicObstacle(Obstacle):
         renderer.draw_dynamic_obstacle(self, draw_params, call_stack)
 
 
-class EnvironmentObstacle():
+class EnvironmentObstacle:
     """ Class representing environment obstacles as defined in CommonRoad."""
 
-    def __init__(self, obstacle_id: int, obstacle_type: ObstacleType, obstacle_shape: Shape):
+    def __init__(self, obstacle_id: int, obstacle_type: ObstacleType,
+                 obstacle_shape: Shape):
         """
             :param obstacle_id: unique ID of the obstacle
             :param obstacle_type: type of obstacle (e.g. BUILDING)
@@ -522,3 +529,4 @@ class EnvironmentObstacle():
         obs_str = 'Environment Obstacle:\n'
         obs_str += '\nid: {}'.format(self.obstacle_id)
         return obs_str
+

@@ -9,19 +9,25 @@ from commonroad.scenario.trajectory import Trajectory
 
 __author__ = "Stefanie Manzinger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles", "CAR@TUM"]
+__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles",
+               "CAR@TUM"]
 __version__ = "2020.3"
 __maintainer__ = "Stefanie Manzinger"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
+from commonroad.visualization.drawable import IDrawable
 
-class Occupancy:
-    """ Class describing an occupied area in the position domain. The occupied area can be defined for a certain time
+
+class Occupancy(IDrawable):
+    """ Class describing an occupied area in the position domain. The
+    occupied area can be defined for a certain time
     step or a time interval."""
+
     def __init__(self, time_step: Union[int, Interval], shape: Shape):
         """
-        :param time_step: a time interval or time step for which the occupancy is defined
+        :param time_step: a time interval or time step for which the
+        occupancy is defined
         :param shape: occupied region in the position domain
         """
         self.time_step: Union[int, Interval] = time_step

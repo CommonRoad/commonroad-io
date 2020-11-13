@@ -1,6 +1,6 @@
 import math
 import os
-from typing import Dict, Tuple, Union, Set
+from typing import Dict, Tuple, Union, Set, Optional
 
 import commonroad.geometry.shape
 import commonroad.prediction.prediction
@@ -10,6 +10,8 @@ import matplotlib.collections as collections
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import matplotlib.colors
+import matplotlib.artist as artists
+from commonroad.visualization.drawable import IDrawable
 from matplotlib.colors import hsv_to_rgb, rgb_to_hsv, to_rgb, to_hex
 from commonroad.common.util import Interval
 from commonroad.geometry.shape import *
@@ -23,7 +25,9 @@ from commonroad.scenario.obstacle import DynamicObstacle, \
     ObstacleRole, \
     SignalState
 from commonroad.scenario.scenario import Scenario
-from commonroad.scenario.traffic_sign import TrafficLightState
+from commonroad.scenario.traffic_sign import TrafficLightState, \
+    TrafficLight, \
+    TrafficSign
 from commonroad.scenario.trajectory import Trajectory, State
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.traffic_sign import draw_traffic_light_signs
@@ -49,7 +53,7 @@ traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
 
 class MPRenderer:
 
-    def __init__(self, draw_params=None,
+    def __init__(self, draw_params: Union[ParamServer, dict, None] = None,
                  plot_limits: Union[List[Union[int, float]], None] = None,
                  ax: Union[mpl.axes.Axes, None] = None):
         if draw_params is None:
@@ -74,15 +78,20 @@ class MPRenderer:
         self.traffic_sign_call_stack = tuple()
         self.traffic_sign_draw_params = self.draw_params
 
-    def draw_list(self, drawable_list, draw_params=None, call_stack=tuple()):
+    def draw_list(self, drawable_list: List[IDrawable], draw_params=None,
+                  call_stack=tuple()) -> None:
+        draw_params = self._get_draw_params(draw_params)
+        for elem in drawable_list:
+            elem.draw(self, draw_params, call_stack)
+
+    def _get_draw_params(self, draw_params):
         if draw_params is None:
             draw_params = self.draw_params
         elif isinstance(draw_params, dict):
             draw_params = ParamServer(data=draw_params)
-        for elem in drawable_list:
-            elem.draw(self, draw_params, call_stack)
+        return draw_params
 
-    def clear(self):
+    def clear(self) -> None:
         self.static_collections.clear()
         self.obstacle_patches.clear()
         self.traffic_signs.clear()
@@ -90,39 +99,40 @@ class MPRenderer:
         self.traffic_sign_draw_params = self.draw_params
         self.dynamic_collections.clear()
 
-    def remove_dynamic(self):
+    def remove_dynamic(self) -> None:
         for art in self.dynamic_artists:
             art.remove()
 
-    def render_dynamic(self):
-        artists = []
+    def render_dynamic(self) -> List[artists.Artist]:
+        artist_list = []
         traffic_sign_artists = draw_traffic_light_signs(self.traffic_signs,
                                                         self.traffic_sign_draw_params,
                                                         self.traffic_sign_call_stack)
         for art in traffic_sign_artists:
             self.ax.add_artist(art)
-            artists.append(art)
+            artist_list.append(art)
         for col in self.dynamic_collections:
             self.ax.add_collection(col)
-            artists.append(col)
+            artist_list.append(col)
         self.obstacle_patches.sort(key=lambda x: x.zorder)
         patch_col = mpl.collections.PatchCollection(self.obstacle_patches,
                                                     match_original=True,
                                                     zorder=20)
         self.ax.add_collection(patch_col)
-        artists.append(patch_col)
-        self.dynamic_artists = artists
-        return artists
+        artist_list.append(patch_col)
+        self.dynamic_artists = artist_list
+        return artist_list
 
-    def render_static(self):
+    def render_static(self) -> List[collections.Collection]:
         for col in self.static_collections:
             self.ax.add_collection(col)
         return self.static_collections
 
-    def render(self, show=False, filename=None):
+    def render(self, show: bool = False, filename: str = None) -> List[
+        artists.Artist]:
         self.ax.cla()
-        artists = self.render_static()
-        artists.extend(self.render_dynamic())
+        artists_list = self.render_static()
+        artists_list.extend(self.render_dynamic())
         if self.plot_limits is None:
             self.ax.autoscale(True)
         self.ax.set_aspect('equal')
@@ -131,9 +141,10 @@ class MPRenderer:
         if show:
             self.f.show()
         self.clear()
-        return artists
+        return artists_list
 
-    def add_legend(self, legend: Dict[Tuple[str, ...], str], draw_params=None):
+    def add_legend(self, legend: Dict[Tuple[str, ...], str],
+                   draw_params: Union[ParamServer, dict, None] = None) -> None:
         """
         Adds legend with color of objects specified by legend.keys() and
         texts specified by legend.values().
@@ -143,10 +154,7 @@ class MPRenderer:
         extracted using path in legend.keys())
         :return:
         """
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+        draw_params = self._get_draw_params(draw_params)
         handles = []
         for obj_name, text in legend.items():
             try:
@@ -159,25 +167,19 @@ class MPRenderer:
         legend = self.ax.legend(handles=handles)
         legend.set_zorder(1000)
 
-    def draw_scenario(self, obj: Scenario, draw_params: ParamServer,
+    def draw_scenario(self, obj: Scenario,
+                      draw_params: Union[ParamServer, dict, None],
                       call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
-        :param plot_limits: draw only objects inside limits [x_ min, x_max,
-        y_min, y_max]
-        :param ax: axes object from matplotlib
         :param draw_params: parameters for plotting given by a nested dict
         that recreates the structure of an object,
-        :param draw_func: specifies the drawing function
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
                depending on the call stack of draw_object
         :return: None
         """
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+        draw_params = self._get_draw_params(draw_params)
         call_stack = tuple(list(call_stack) + ['scenario'])
         obj.lanelet_network.draw(self, draw_params, call_stack)
 
@@ -205,98 +207,61 @@ class MPRenderer:
             o.draw(self, draw_params, call_stack)
 
     def draw_static_obstacle(self, obj: StaticObstacle,
-                             draw_params: ParamServer,
+                             draw_params: Union[ParamServer, dict, None],
                              call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
-        :param ax: axes object from matplotlib
         :param draw_params: parameters for plotting given by a nested dict
         that recreates the structure of an object,
-        :param draw_func: specifies the drawing function
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
                depending on the call stack of draw_object
         :return: None
         """
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+        draw_params = self._get_draw_params(draw_params)
         time_begin = draw_params.by_callstack(tuple(), ('time_begin',))
-
         call_stack = tuple(list(call_stack) + ['static_obstacle'])
-
-        obj.occupancy_at_time(time_begin).shape.draw(self, draw_params,
-                                                     call_stack)
+        obj.occupancy_at_time(time_begin).draw(self, draw_params, call_stack)
 
     def draw_dynamic_obstacle(self, obj: DynamicObstacle,
-                              draw_params: ParamServer,
+                              draw_params: Union[ParamServer, dict, None],
                               call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
-        :param ax: axes object from matplotlib
         :param draw_params: parameters for plotting given by a nested dict
         that recreates the structure of an object,
-        :param draw_func: specifies the drawing function
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
                depending on the call stack of draw_object
         :return: None
         """
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+        draw_params = self._get_draw_params(draw_params)
 
         time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
         time_end = draw_params.by_callstack(call_stack, ('time_end',))
-        draw_icon = draw_params.by_callstack(call_stack,
-                                             ('dynamic_obstacle', 'draw_icon'))
-        show_label = draw_params.by_callstack(call_stack, (
-                'dynamic_obstacle', 'show_label'))
-        draw_shape = draw_params.by_callstack(call_stack, (
-                'dynamic_obstacle', 'draw_shape'))
-        draw_initial_state = draw_params.by_callstack(call_stack, (
-                'dynamic_obstacle', 'initial_state', 'draw_initial_state'))
-        scale_factor = draw_params.by_callstack(call_stack, (
-                'dynamic_obstacle', 'initial_state', 'scale_factor'))
-        kwargs_init_state = draw_params.by_callstack(call_stack, (
-                'dynamic_obstacle', 'initial_state', 'kwargs'))
-        draw_occupancies = draw_params.by_callstack(call_stack, (
-                'dynamic_obstacle', 'occupancy', 'draw_occupancies'))
-        draw_signals = draw_params.by_callstack(call_stack, (
-                'dynamic_obstacle', 'draw_signals'))
-        draw_trajectory = draw_params.by_callstack(call_stack, (
-                'dynamic_obstacle', 'trajectory', 'draw_trajectory'))
-        draw_history = draw_params.by_callstack(call_stack, (
-        'dynamic_obstacle', 'history', 'draw_history'))
-        history_steps = draw_params.by_callstack(call_stack, (
-        'dynamic_obstacle', 'history', 'steps'))
-        history_fade_factor = draw_params.by_callstack(call_stack, (
-        'dynamic_obstacle', 'history', 'fade_factor'))
 
         call_stack = tuple(list(call_stack) + ['dynamic_obstacle'])
+        draw_icon = draw_params.by_callstack(call_stack, 'draw_icon')
+        show_label = draw_params.by_callstack(call_stack, 'show_label')
+        draw_shape = draw_params.by_callstack(call_stack, 'draw_shape')
+        draw_initial_state = draw_params.by_callstack(call_stack, (
+                'initial_state', 'draw_initial_state'))
+        scale_factor = draw_params.by_callstack(call_stack, (
+                'initial_state', 'scale_factor'))
+        kwargs_init_state = draw_params.by_callstack(call_stack, (
+                'initial_state', 'kwargs'))
+        draw_occupancies = draw_params.by_callstack(call_stack, (
+                'occupancy', 'draw_occupancies'))
+        draw_signals = draw_params.by_callstack(call_stack, 'draw_signals')
+        draw_trajectory = draw_params.by_callstack(call_stack, (
+                'trajectory', 'draw_trajectory'))
 
+        draw_history = draw_params.by_callstack(call_stack,
+                                                ('history', 'draw_history'))
         if draw_history and isinstance(obj.prediction,
                                        commonroad.prediction.prediction.TrajectoryPrediction):
-            history_callstack = call_stack + ('history',)
-            history_base_color = draw_params.by_callstack(history_callstack, (
-            'occupancy', 'shape', 'rectangle', 'facecolor'))
-            history_base_color = rgb_to_hsv(to_rgb(history_base_color))
-            for time_step in range(1, history_steps):
-                occ = obj.occupancy_at_time(time_begin - time_step)
-                if occ is not None:
-                    color_hsv_new = history_base_color.copy()
-                    color_hsv_new[2] = max(0, color_hsv_new[
-                        2] - history_fade_factor * time_step)
-                    color_hex_new = to_hex(hsv_to_rgb(color_hsv_new))
-                    draw_params[call_stack + ('occupancy', 'shape', 'rectangle',
-                                              'facecolor')] = color_hex_new
-                    draw_params[call_stack + ('occupancy', 'shape', 'circle',
-                                              'facecolor')] = color_hex_new
-                    draw_params[call_stack + ('occupancy', 'shape', 'polygon',
-                                              'facecolor')] = color_hex_new
-                    occ.draw(self, draw_params, history_callstack)
+
+            self._draw_history(obj, call_stack, draw_params)
 
         # draw occupancies
         if (draw_occupancies == 1 or (draw_occupancies == 0 and type(
@@ -346,6 +311,7 @@ class MPRenderer:
                                       inital_state.orientation, 2.5, zorder=30))
 
         # Get state
+        state = None
         if time_begin == 0:
             state = obj.initial_state
         elif type(
@@ -356,7 +322,7 @@ class MPRenderer:
         if show_label:
             if state is not None:
                 position = state.position
-                self.handles.setdefault(DynamicObstacle, []).append(
+                self.dynamic_artists.append(
                         self.ax.text(position[0] + 0.5, position[1],
                                      str(obj.obstacle_id), clip_on=True,
                                      zorder=1000))
@@ -366,23 +332,54 @@ class MPRenderer:
             state.draw(self, call_stack=call_stack, draw_params=draw_params,
                        scale_factor=scale_factor, arrow_args=kwargs_init_state)
 
-    def draw_trajectory(self, obj: Trajectory, draw_params: ParamServer,
+    def _draw_history(self, dyn_obs: DynamicObstacle,
+                      call_stack: Tuple[str, ...], draw_params: ParamServer):
+        """
+        Draws history occupancies of the dynamic obstacle
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack of drawing functions
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object,
+        :param dyn_obs: the dynamic obstacle
+        :return:
+        """
+        time_begin = draw_params['time_begin']
+        history_callstack = call_stack + ('history',)
+        history_steps = draw_params.by_callstack(call_stack, 'steps')
+        history_fade_factor = draw_params.by_callstack(call_stack,
+                                                       'fade_factor')
+        history_base_color = draw_params.by_callstack(history_callstack, (
+                'occupancy', 'shape', 'rectangle', 'facecolor'))
+        history_base_color = rgb_to_hsv(to_rgb(history_base_color))
+        for time_step in range(1, history_steps):
+            occ = dyn_obs.occupancy_at_time(time_begin - time_step)
+            if occ is not None:
+                color_hsv_new = history_base_color.copy()
+                color_hsv_new[2] = max(0, color_hsv_new[
+                    2] - history_fade_factor * time_step)
+                color_hex_new = to_hex(hsv_to_rgb(color_hsv_new))
+                draw_params[call_stack + ('occupancy', 'shape', 'rectangle',
+                                          'facecolor')] = color_hex_new
+                draw_params[call_stack + ('occupancy', 'shape', 'circle',
+                                          'facecolor')] = color_hex_new
+                draw_params[call_stack + ('occupancy', 'shape', 'polygon',
+                                          'facecolor')] = color_hex_new
+                occ.draw(self, draw_params, history_callstack)
+
+    def draw_trajectory(self, obj: Trajectory,
+                        draw_params: Union[ParamServer, dict, None],
                         call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
-        :param ax: axes object from matplotlib
         :param draw_params: parameters for plotting given by a nested dict
         that recreates the structure of an object,
-        :param draw_func: specifies the drawing function
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
                depending on the call stack of draw_object
         :return: None
         """
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+        draw_params = self._get_draw_params(draw_params)
 
         line_color = draw_params.by_callstack(call_stack,
                                               ('trajectory', 'facecolor'))
@@ -421,11 +418,10 @@ class MPRenderer:
                     units='xy', linewidths=0, zorder=z_order,
                     transOffset=self.ax.transData, facecolor=line_color))
 
-    def draw_trajectories(self, obj, draw_params, call_stack):
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+    def draw_trajectories(self, obj: List[Trajectory],
+                          draw_params: Union[ParamServer, dict, None],
+                          call_stack: Tuple[str, ...]) -> None:
+        draw_params = self._get_draw_params(draw_params)
         unique_colors = draw_params.by_callstack(call_stack, (
                 'trajectory', 'unique_colors'))
         if unique_colors:
@@ -437,43 +433,37 @@ class MPRenderer:
         else:
             self.draw_list(obj, draw_params)
 
-    def draw_occupancy(self, obj: Occupancy, draw_params: ParamServer,
+    def draw_occupancy(self, obj: Occupancy,
+                       draw_params: Union[ParamServer, dict, None],
                        call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
-        :param ax: axes object from matplotlib
+
         :param draw_params: parameters for plotting given by a nested
         dict that recreates the structure of an object,
-        :param draw_func: specifies the drawing function
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
                depending on the call stack of draw_object
         :return: None
         """
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+        draw_params = self._get_draw_params(draw_params)
         call_stack = tuple(list(call_stack) + ['occupancy'])
         obj.shape.draw(self, draw_params, call_stack)
 
-    def draw_polygon(self, obj: Polygon, draw_params: ParamServer,
+    def draw_polygon(self, obj: Polygon,
+                     draw_params: Union[ParamServer, dict, None],
                      call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
-        :param ax: axes object from matplotlib
+
         :param draw_params: parameters for plotting given by a nested dict
         that recreates the structure of an object,
-        :param draw_func: specifies the drawing function
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
                depending on the call stack of draw_object
         :return: None
         """
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+        draw_params = self._get_draw_params(draw_params)
         call_stack = tuple(list(call_stack) + ['shape', 'polygon'])
         try:
             facecolor = draw_params.by_callstack(call_stack, 'facecolor')
@@ -493,67 +483,48 @@ class MPRenderer:
                                     linewidth=linewidth,
                                     antialiased=antialiased))
 
-    def draw_rectangle(self, obj: Rectangle, draw_params: ParamServer,
+    def draw_rectangle(self, obj: Rectangle,
+                       draw_params: Union[ParamServer, dict, None],
                        call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
-        :param ax: axes object from matplotlib
         :param draw_params: parameters for plotting given by a nested dict that
         recreates the structure of an object,
-        :param draw_func: specifies the drawing function
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
                depending on the call stack of draw_object
         :return: None
         """
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+        draw_params = self._get_draw_params(draw_params)
         call_stack = tuple(list(call_stack) + ['shape', 'rectangle'])
-        try:
-            facecolor = draw_params.by_callstack(call_stack, 'facecolor')
-            edgecolor = draw_params.by_callstack(call_stack, 'edgecolor')
-            zorder = draw_params.by_callstack(call_stack, 'zorder')
-            opacity = draw_params.by_callstack(call_stack, 'opacity')
-            linewidth = draw_params.by_callstack(call_stack, 'linewidth')
-            antialiased = draw_params.by_callstack(call_stack, 'antialiased')
-        except KeyError:
-            print("Cannot find stylesheet for rectangle. Called through:")
-            print(call_stack)
+
+        facecolor = draw_params.by_callstack(call_stack, 'facecolor')
+        edgecolor = draw_params.by_callstack(call_stack, 'edgecolor')
+        zorder = draw_params.by_callstack(call_stack, 'zorder')
+        opacity = draw_params.by_callstack(call_stack, 'opacity')
+        linewidth = draw_params.by_callstack(call_stack, 'linewidth')
+        antialiased = draw_params.by_callstack(call_stack, 'antialiased')
 
         self.obstacle_patches.append(
                 mpl.patches.Polygon(obj.vertices, closed=True, zorder=zorder,
                                     facecolor=facecolor, edgecolor=edgecolor,
                                     alpha=opacity, antialiased=antialiased,
-                                    linewidth=linewidth))  # angle =  #  #  #
-        # obj.orientation * 180.0/math.pi  # low_left = obj.center - 0.5 *  #
-        # np.array([obj.length, obj.width])  # self.patches.append(  #  #  #
-        # mpl.patches.Rectangle(low_left, obj.width, obj.length, angle,
-        #                                         zorder=zorder,  #  #  #  #
-        #                                         facecolor=facecolor,
-        #                                         edgecolor=edgecolor,
-        #                                         alpha=opacity,  #  #  #  #
-        #                                         antialiased=antialiased,
-        #                                         linewidth=linewidth))
+                                    linewidth=linewidth))
 
-    def draw_circle(self, obj: Circle, draw_params: ParamServer,
+    def draw_circle(self, obj: Circle,
+                    draw_params: Union[ParamServer, dict, None],
                     call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
-        :param ax: axes object from matplotlib
+
         :param draw_params: parameters for plotting given by a nested dict that
         recreates the structure of an object,
-        :param draw_func: specifies the drawing function
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
                depending on the call stack of draw_object
         :return: None
         """
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+        draw_params = self._get_draw_params(draw_params)
         call_stack = tuple(list(call_stack) + ['shape', 'circle'])
         facecolor = draw_params.by_callstack(call_stack, 'facecolor')
         edgecolor = draw_params.by_callstack(call_stack, 'edgecolor')
@@ -566,62 +537,52 @@ class MPRenderer:
                                    edgecolor=edgecolor, zorder=zorder,
                                    linewidth=linewidth, alpha=opacity))
 
-    def draw_state(self, state: State, draw_params: ParamServer,
-                   call_stack: Tuple[str, ...] = None, scale_factor=None,
-                   arrow_args=None) -> None:
+    def draw_state(self, state: State,
+                   draw_params: Union[ParamServer, dict, None],
+                   call_stack: Tuple[str, ...] = None,
+                   scale_factor: Optional[float] = None,
+                   arrow_args: Optional[dict] = None) -> None:
         """
         :param state: state to be plotted
-        :param ax: axes object from matplotlib
         :param draw_params: parameters for plotting given by a nested dict
         that recreates the structure of an object,
-        :param draw_func: specifies the drawing function
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
                depending on the call stack of draw_object
+        :param scale_factor scaling factor for arrow
+        :param arrow_args arguments for arrow drawing
         :return: None
         """
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+        draw_params = self._get_draw_params(draw_params)
 
-        if scale_factor is None:
-            scale_factor = draw_params.by_callstack(call_stack, (
-                    'initial_state', 'scale_factor'))
-        if arrow_args is None:
-            arrow_args = draw_params.by_callstack(call_stack,
-                                                  ('initial_state', 'kwargs'))
+        scale_factor = scale_factor or draw_params.by_callstack(call_stack, (
+                'initial_state', 'scale_factor'))
+        arrow_args = arrow_args or draw_params.by_callstack(call_stack, (
+                'initial_state', 'kwargs'))
 
         cos = math.cos(state.orientation)
         sin = math.sin(state.orientation)
         x = state.position[0]
         y = state.position[1]
-        self.obstacle_patches.append(mpl.patches.Arrow(x=x, y=y,
-                                                       dx=state.velocity *
-                                                          cos * scale_factor,
-                                                       dy=state.velocity *
-                                                          sin * scale_factor,
+        self.obstacle_patches.append(
+            mpl.patches.Arrow(x=x, y=y, dx=state.velocity * cos * scale_factor,
+                              dy=state.velocity * sin * scale_factor,
                                                        zorder=100,
                                                        **arrow_args))
 
     def draw_lanelet_network(self, obj: LaneletNetwork,
-                             draw_params: ParamServer,
+                             draw_params: Union[ParamServer, dict, None],
                              call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
-        :param ax: axes object from matplotlib
         :param draw_params: parameters for plotting given by a nested dict that
         recreates the structure of an object,
-        :param draw_func: specifies the drawing function
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
                depending on the call stack of draw_object
         :return: None
         """
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+        draw_params = self._get_draw_params(draw_params)
         call_stack = tuple(list(call_stack) + ['lanelet_network'])
 
         traffic_lights = obj._traffic_lights
@@ -715,7 +676,7 @@ class MPRenderer:
         antialiased = draw_params.by_callstack(call_stack, 'antialiased')
 
         draw_lanlet_ids = draw_params.by_callstack(call_stack, (
-        'lanelet_network', 'draw_ids'))
+                'lanelet_network', 'draw_ids'))
 
         # Collect lanelets
         incoming_lanelets = set()
@@ -795,9 +756,7 @@ class MPRenderer:
                             coordinates_left_border_vertices,
                             lanelet.left_vertices))
 
-                if draw_line_markings and lanelet.line_marking_left_vertices \
-                        is not LineMarking.UNKNOWN and lanelet.line_marking_left_vertices is not \
-                        LineMarking.NO_MARKING:
+                if draw_line_markings and lanelet.line_marking_left_vertices is not LineMarking.UNKNOWN and lanelet.line_marking_left_vertices is not LineMarking.NO_MARKING:
                     linestyle, dashes, linewidth_metres = \
                         line_marking_to_linestyle(
                             lanelet.line_marking_left_vertices)
@@ -1141,23 +1100,18 @@ class MPRenderer:
             self.traffic_signs.extend(traffic_lights_signs)
 
     def draw_planning_problem_set(self, obj: PlanningProblemSet,
-                                  draw_params: ParamServer,
+                                  draw_params: Union[ParamServer, dict, None],
                                   call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
-        :param ax: axes object from matplotlib
         :param draw_params: parameters for plotting given by a nested dict
         that recreates the structure of an object,
-        :param draw_func: specifies the drawing function
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
                depending on the call stack of draw_object
         :return: None
         """
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+        draw_params = self._get_draw_params(draw_params)
         call_stack = tuple(list(call_stack) + ['planning_problem_set'])
         draw_ids = draw_params.by_callstack(call_stack, 'draw_ids')
 
@@ -1166,23 +1120,18 @@ class MPRenderer:
                 self.draw_planning_problem(problem, draw_params, call_stack)
 
     def draw_planning_problem(self, obj: PlanningProblem,
-                              draw_params: ParamServer,
+                              draw_params: Union[ParamServer, dict, None],
                               call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
-        :param ax: axes object from matplotlib
         :param draw_params: parameters for plotting given by a nested dict
         that recreates the structure of an object,
-        :param draw_func: specifies the drawing function
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
                depending on the call stack of draw_object
         :return: None
         """
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+        draw_params = self._get_draw_params(draw_params)
         call_stack = tuple(list(call_stack) + ['planning_problem'])
         if 'initial_state' not in draw_params:
             draw_params['initial_state'] = {}
@@ -1190,23 +1139,19 @@ class MPRenderer:
         self.draw_initital_state(obj.initial_state, draw_params, call_stack)
         self.draw_goal_region(obj.goal, draw_params, call_stack)
 
-    def draw_initital_state(self, obj: State, draw_params: ParamServer,
+    def draw_initital_state(self, obj: State,
+                            draw_params: Union[ParamServer, dict, None],
                             call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
-        :param ax: axes object from matplotlib
         :param draw_params: parameters for plotting given by a nested dict
         that recreates the structure of an object,
-        :param draw_func: specifies the drawing function
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
                depending on the call stack of draw_object
         :return: None
         """
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+        draw_params = self._get_draw_params(draw_params)
         facecolor = draw_params.by_callstack(call_stack,
                                              ('initial_state', 'facecolor'))
         zorder = draw_params.by_callstack(call_stack,
@@ -1218,46 +1163,38 @@ class MPRenderer:
         self.ax.annotate(label, xy=(obj.position[0] + 1, obj.position[1]),
                          textcoords='data', zorder=zorder + 10)
 
-    def draw_goal_region(self, obj: GoalRegion, draw_params: ParamServer,
+    def draw_goal_region(self, obj: GoalRegion,
+                         draw_params: Union[ParamServer, dict, None],
                          call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
-        :param ax: axes object from matplotlib
         :param draw_params: parameters for plotting given by a nested dict
         that recreates the structure of an object,
-        :param draw_func: specifies the drawing function
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
                depending on the call stack of draw_object
         :return: None
         """
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+        draw_params = self._get_draw_params(draw_params)
         if call_stack is ():
             call_stack = tuple(['planning_problem_set'])
         call_stack = tuple(list(call_stack) + ['goal_region'])
         for goal_state in obj.state_list:
             self.draw_goal_state(goal_state, draw_params, call_stack)
 
-    def draw_goal_state(self, obj: State, draw_params: ParamServer,
+    def draw_goal_state(self, obj: State,
+                        draw_params: Union[ParamServer, dict, None],
                         call_stack: Tuple[str, ...]) -> None:
         """
         :param obj: object to be plotted
-        :param ax: axes object from matplotlib
         :param draw_params: parameters for plotting given by a nested dict
         that recreates the structure of an object,
-        :param draw_func: specifies the drawing function
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
                depending on the call stack of draw_object
         :return: None
         """
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+        draw_params = self._get_draw_params(draw_params)
         if hasattr(obj, 'position'):
             if type(obj.position) == list:
                 for pos in obj.position:
@@ -1265,11 +1202,10 @@ class MPRenderer:
             else:
                 obj.position.draw(self, draw_params, call_stack)
 
-    def draw_traffic_light_sign(self, obj, draw_params, call_stack):
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+    def draw_traffic_light_sign(self, obj: Union[TrafficLight, TrafficSign],
+                                draw_params: Union[ParamServer, dict, None],
+                                call_stack: Tuple[str, ...]):
+        draw_params = self._get_draw_params(draw_params)
         # traffic signs and lights have to be collected and drawn only right
         # before rendering to allow correct grouping
         self.traffic_sign_call_stack = call_stack
@@ -1278,10 +1214,7 @@ class MPRenderer:
 
     def draw_signale_state(self, sig: SignalState, occ: Occupancy, draw_params,
                            call_stack):
-        if draw_params is None:
-            draw_params = self.draw_params
-        elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+        draw_params = self._get_draw_params(draw_params)
 
         zorder = draw_params.by_callstack(call_stack, 'zorder')
         signal_radius = draw_params.by_callstack(call_stack, 'signal_radius')

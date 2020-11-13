@@ -14,9 +14,12 @@ __maintainer__ = "Christina Miller"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
+from commonroad.visualization.drawable import IDrawable
 
-class PlanningProblem:
-    def __init__(self, planning_problem_id: int, initial_state: State, goal_region: GoalRegion):
+
+class PlanningProblem(IDrawable):
+    def __init__(self, planning_problem_id: int, initial_state: State,
+                 goal_region: GoalRegion):
         self.planning_problem_id = planning_problem_id
         self.initial_state = initial_state
         self.goal = goal_region
@@ -91,7 +94,7 @@ class PlanningProblem:
         renderer.draw_planning_problem(self, draw_params, call_stack)
 
 
-class PlanningProblemSet:
+class PlanningProblemSet(IDrawable):
     def __init__(self, planning_problem_list: Union[
         None, List[PlanningProblem]] = None):
         if planning_problem_list is None:

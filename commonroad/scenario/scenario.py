@@ -27,6 +27,8 @@ __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
+from commonroad.visualization.drawable import IDrawable
+
 
 @enum.unique
 class Tag(enum.Enum):
@@ -341,13 +343,17 @@ class ScenarioID:
         return str(self) == str(other)
 
 
-class Scenario:
-    """ Class which describes a Scenario entity according to the CommonRoad specification. Each scenario is described by
-     a road network consisting of lanelets (see :class:`commonroad.scenario.lanelet.LaneletNetwork`) and a set of
-     obstacles which can be either static or dynamic (see :class:`commonroad.scenario.obstacle.Obstacle`)."""
+class Scenario(IDrawable):
+    """ Class which describes a Scenario entity according to the CommonRoad
+    specification. Each scenario is described by
+     a road network consisting of lanelets (see
+     :class:`commonroad.scenario.lanelet.LaneletNetwork`) and a set of
+     obstacles which can be either static or dynamic (see
+     :class:`commonroad.scenario.obstacle.Obstacle`)."""
 
     def __init__(self, dt: float, scenario_id: Union[str, ScenarioID],
-                 author: str = None, tags: Set[Tag] = None, affiliation: str = None, source: str = None,
+                 author: str = None, tags: Set[Tag] = None,
+                 affiliation: str = None, source: str = None,
                  location: Location = None, benchmark_id: str = None):
         """
         Constructor of a Scenario object

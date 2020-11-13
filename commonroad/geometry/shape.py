@@ -18,16 +18,21 @@ __maintainer__ = "Stefanie Manzinger"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
+from commonroad.visualization.drawable import IDrawable
 
-class Shape(metaclass=abc.ABCMeta):
+
+class Shape(metaclass=abc.ABCMeta, IDrawable):
     """ Abstract class for CommonRoad shapes."""
+
     @abc.abstractmethod
-    def translate_rotate(self, translation: np.ndarray, angle: float) -> 'Shape':
+    def translate_rotate(self, translation: np.ndarray,
+                         angle: float) -> 'Shape':
         """ First translates and then rotates a shape around the origin."""
         pass
 
     @abc.abstractmethod
-    def rotate_translate_local(self, translation: np.ndarray, angle: float) -> 'Shape':
+    def rotate_translate_local(self, translation: np.ndarray,
+                               angle: float) -> 'Shape':
         """ First rotates a shape around the center and the translates it."""
         pass
 
