@@ -1,8 +1,6 @@
 import json
 import logging
 import os
-import inspect
-import sys
 
 default_params_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                    'default_draw_params.json')

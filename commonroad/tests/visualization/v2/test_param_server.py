@@ -1,5 +1,5 @@
 import unittest
-from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.v2.param_server import ParamServer
 
 
 class TestParamServer(unittest.TestCase):

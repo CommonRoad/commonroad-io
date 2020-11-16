@@ -4,7 +4,6 @@ import matplotlib
 import os
 import time
 import unittest
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
@@ -17,11 +16,9 @@ from commonroad.prediction.prediction import Occupancy
 from commonroad.scenario.trajectory import State
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.scenario.scenario import Scenario
-# from commonroad.visualization.draw_dispatch_cr import draw_object,
-# _retrieve_value
 
-from commonroad.visualization.renderer import MPRenderer
-from commonroad.visualization.param_server import ParamServer, \
+from commonroad.visualization.v2.renderer import MPRenderer
+from commonroad.visualization.v2.param_server import ParamServer, \
     write_default_params
 
 

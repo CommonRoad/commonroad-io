@@ -1,27 +1,15 @@
 import copy
 import enum
 import os
-from collections import defaultdict, OrderedDict
-from typing import Dict, Callable, Tuple, Union, Any
-import commonroad.geometry.shape
-import matplotlib as mpl
-import matplotlib.patches as patches
-import matplotlib.collections as collections
-from PIL import Image
+from collections import defaultdict
+from typing import Dict
 
-import commonroad.prediction.prediction
-import commonroad.scenario.obstacle
+from PIL import Image
 from commonroad.geometry.shape import *
 from commonroad.scenario.traffic_sign import TrafficSign, \
-    TrafficSignIDGermany, \
     TrafficLight, \
-    TrafficLightState, \
-    TrafficSignIDUsa, \
-    TrafficSignIDChina, \
-    TrafficSignIDZamunda, \
-    SupportedTrafficSignCountry
-
-from commonroad.visualization.param_server import ParamServer
+    TrafficSignIDUsa
+from commonroad.visualization.v2.param_server import ParamServer
 from matplotlib.offsetbox import OffsetImage, \
     AnnotationBbox, \
     HPacker, \

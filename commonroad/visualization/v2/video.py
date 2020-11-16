@@ -1,12 +1,14 @@
 import matplotlib.pyplot as plt
-from commonroad.visualization.renderer import MPRenderer
-from commonroad.visualization.util import approximate_bounding_box_dyn_obstacles
+from commonroad.visualization.v2.drawable import IDrawable
+from commonroad.visualization.v2.renderer import MPRenderer
+from commonroad.visualization.v2.util import \
+    approximate_bounding_box_dyn_obstacles
 from matplotlib.animation import FuncAnimation
 from typing import List, Union
 import math
 
 
-def create_scenario_video(obj_lists: List[plottable_types], file_path: str,
+def create_scenario_video(obj_lists: List[IDrawable], file_path: str,
                           time_begin: int, time_end: int,
                           delta_time_steps: int = 1, plotting_horizon=0,
                           plot_limits: Union[list, None, str] = None,

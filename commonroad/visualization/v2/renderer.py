@@ -22,7 +22,8 @@ from commonroad.planning.planning_problem import PlanningProblemSet, \
     PlanningProblem
 from commonroad.prediction.prediction import Occupancy
 from commonroad.scenario.lanelet import LaneletNetwork, LineMarking
-from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, \
+from commonroad.scenario.obstacle import DynamicObstacle, \
+    StaticObstacle, \
     ObstacleRole, \
     SignalState
 from commonroad.scenario.scenario import Scenario
@@ -30,9 +31,9 @@ from commonroad.scenario.traffic_sign import TrafficLightState, \
     TrafficLight, \
     TrafficSign
 from commonroad.scenario.trajectory import Trajectory, State
-from commonroad.visualization.param_server import ParamServer
-from commonroad.visualization.traffic_sign import draw_traffic_light_signs
-from commonroad.visualization.util import LineDataUnits, \
+from commonroad.visualization.v2.param_server import ParamServer
+from commonroad.visualization.v2.traffic_sign import draw_traffic_light_signs
+from commonroad.visualization.v2.util import LineDataUnits, \
     collect_center_line_colors, \
     get_arrow_path_at, \
     colormap_idx, \

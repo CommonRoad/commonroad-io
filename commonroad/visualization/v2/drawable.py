@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Union, Dict, Tuple, Optional
+from typing import Union, Tuple, Optional
 
-from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.v2.param_server import ParamServer
 
 
 class IDrawable(ABC):
