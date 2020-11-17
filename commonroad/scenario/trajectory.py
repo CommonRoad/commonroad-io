@@ -22,8 +22,8 @@ __maintainer__ = "Stefanie Manzinger"
 __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Released"
 
-from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.v2.drawable import IDrawable
+from commonroad.visualization.v2.param_server import ParamServer
 
 
 class State:

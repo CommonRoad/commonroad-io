@@ -18,7 +18,7 @@ from matplotlib.offsetbox import OffsetImage, \
     OffsetBox
 
 # path to traffic sign .png files
-traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
+traffic_sign_path = os.path.join(os.path.dirname(__file__), '../traffic_signs/')
 
 speed_limit_factors = {'mph': 2.23694, 'kmh': 3.6, 'ms': 1.0}
 

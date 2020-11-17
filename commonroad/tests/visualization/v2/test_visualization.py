@@ -46,7 +46,7 @@ class TestVisualization(unittest.TestCase):
         # test draw_object for all possible object types
 
         full_path = os.path.dirname(os.path.abspath(__file__))
-        filename = full_path + '/../common/USA_Lanker-1_1_T-1.xml'
+        filename = full_path + '/../../common/USA_Lanker-1_1_T-1.xml'
         # filename = full_path + '/../common/test_reading_all.xml'
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         scenario: Scenario = scenario
@@ -109,7 +109,7 @@ class TestVisualization(unittest.TestCase):
         # print(full_path)
         # filename = full_path +
         # '/../../../../../scenarios/cooperative/C-USA_Lanker-2_4_T-1.xml'
-        filename = full_path + '/../common/test_reading_all.xml'
+        filename = full_path + '/../../common/test_reading_all.xml'
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         planning_problem_set: PlanningProblemSet = planning_problem_set
 
@@ -129,7 +129,7 @@ class TestVisualization(unittest.TestCase):
 
     def test_trajectory_unique_colors(self):
         full_path = os.path.dirname(os.path.abspath(__file__))
-        filename = full_path + '/../common/USA_US101-3_3_T-1.xml'
+        filename = full_path + '/../../common/USA_US101-3_3_T-1.xml'
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         traj = list(
             map(lambda x: x.prediction.trajectory, scenario.dynamic_obstacles))
@@ -146,7 +146,7 @@ class TestVisualization(unittest.TestCase):
         # plt.ioff()
         # set_non_blocking()
         full_path = os.path.dirname(os.path.abspath(__file__))
-        filename = full_path + '/../common/USA_US101-3_3_T-1.xml'
+        filename = full_path + '/../../common/USA_US101-3_3_T-1.xml'
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         scenario: Scenario = scenario
         # plt.autoscale(False)
@@ -194,7 +194,7 @@ class TestVisualization(unittest.TestCase):
         params = ParamServer.from_json(json_filename)
         # Use for drawing
         full_path = os.path.dirname(os.path.abspath(__file__))
-        filename = full_path + '/../common/USA_US101-3_3_T-1.xml'
+        filename = full_path + '/../../common/USA_US101-3_3_T-1.xml'
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         scenario.draw(self.rnd, draw_params=params)
 

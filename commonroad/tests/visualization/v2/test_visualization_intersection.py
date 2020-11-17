@@ -17,21 +17,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 import unittest
 from commonroad.common.file_reader import CommonRoadFileReader
-from commonroad.visualization.param_server import ParamServer
-from commonroad.visualization.renderer import MPRenderer
+from commonroad.visualization.v2.param_server import ParamServer
+from commonroad.visualization.v2.renderer import MPRenderer
 
 
 class TestVisualization(unittest.TestCase):
     def setUp(self):
         self.full_path = os.path.dirname(os.path.abspath(__file__))
         self.filename_urban = os.path.join(self.full_path,
-                                           '../common/test_reading_intersection_traffic_sign.xml')
+                                           '../../common/test_reading_intersection_traffic_sign.xml')
         self.filename_complex_tl = os.path.join(self.full_path,
-                                                '../visualization/test_reading_complex_tl.xml')
+                                                '../../visualization/test_reading_complex_tl.xml')
         self.filename_lanelet = os.path.join(self.full_path,
-                                             '../common/test_reading_lanelets.xml')
+                                             '../../common/test_reading_lanelets.xml')
         self.filename_test_all = os.path.join(self.full_path,
-                                              '../common/test_reading_all.xml')
+                                              '../../common/test_reading_all.xml')
         self.rnd = MPRenderer()
         self.legend = {
                 ('lanelet_network', 'intersection',
