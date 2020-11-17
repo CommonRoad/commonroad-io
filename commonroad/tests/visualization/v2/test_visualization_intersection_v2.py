@@ -21,7 +21,7 @@ from commonroad.visualization.v2.param_server import ParamServer
 from commonroad.visualization.v2.renderer import MPRenderer
 
 
-class TestVisualization(unittest.TestCase):
+class TestVisualizationV2(unittest.TestCase):
     def setUp(self):
         self.full_path = os.path.dirname(os.path.abspath(__file__))
         self.filename_urban = os.path.join(self.full_path,

@@ -33,10 +33,8 @@ class TestVisualization(unittest.TestCase):
                                               '../common/test_reading_all.xml')
 
     def test_intersection_plot(self):
-        "Uses all options for plotting objects related to intersections or
-        traffic
-        sign / lights.
-        "
+        """Uses all options for plotting objects related to intersections or
+        traffic sign / lights."""
         scenario, pp = CommonRoadFileReader(self.filename_urban).open()
         plt.close('all')
         plt.figure()
@@ -71,10 +69,9 @@ class TestVisualization(unittest.TestCase):
         plt.show()
 
     def test_traffic_signs(self):
-        "Uses all options for plotting objects related to intersections or
-        traffic
-        sign / lights.
-        "
+        """Uses all options for plotting objects related to intersections or
+        traffic sign / lights.
+        """
         scenario, pp = CommonRoadFileReader(self.filename_urban).open()
         plt.close('all')
         plt.figure()
@@ -173,10 +170,10 @@ class TestVisualization(unittest.TestCase):
         assert len(record) == 0, record
 
     def test_signal_states(self):
-        "Uses all options for plotting objects related to intersections or
+        """Uses all options for plotting objects related to intersections or
         traffic
         sign / lights.
-        "
+        """
         scenario, pp = CommonRoadFileReader(self.filename_test_all).open()
         plt.close('all')
         for t in range(2):

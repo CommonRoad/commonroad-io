@@ -22,7 +22,7 @@ from commonroad.visualization.v2.param_server import ParamServer, \
     write_default_params
 
 
-class TestVisualization(unittest.TestCase):
+class TestVisualizationV2(unittest.TestCase):
 
     def setUp(self) -> None:
         self.rnd = MPRenderer()
