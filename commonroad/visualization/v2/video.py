@@ -13,13 +13,13 @@ def create_scenario_video(obj_lists: List[IDrawable], file_path: str,
                           delta_time_steps: int = 1, plotting_horizon=0,
                           plot_limits: Union[list, None, str] = None,
                           draw_params: Union[dict, None] = {},
-                          fig_size: Union[list, None] = None, dt=500, dpi=120):
+                          fig_size: Union[list, None] = None, dt=500,
+                          dpi=120) -> None:
     """
     Creates a video of one or multiple CommonRoad objects in mp4, gif,
     or avi format.
 
-    :param obj: list of objects to be plotted. When plotting objects of the
-    same type, use list of lists for speed-up.
+    :param obj: list of objects to be plotted.
     :param file_path: filename of generated video (ends on .mp4/.gif/.avi,
     default mp4, when nothing is specified)
     :param time_begin: first time step of video
@@ -28,7 +28,8 @@ def create_scenario_video(obj_lists: List[IDrawable], file_path: str,
     :param plotting_horizon: time steps of prediction plotted in each frame
     :param plot_limits: axis limits or 'auto' for limiting view to dynamic
     vehicles
-    :param draw_params: draw_params (see draw_object doc)
+    :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object or a ParamServer object
     :param fig_size: size of the video
     :param dt: time step between frames in ms
     :param dpi: resolution of the video

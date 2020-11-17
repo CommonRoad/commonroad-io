@@ -5,7 +5,22 @@ from commonroad.visualization.v2.param_server import ParamServer
 
 
 class IDrawable(ABC):
+    """
+    Interface for drawable types
+    """
+
     @abstractmethod
     def draw(self, renderer, draw_params: Union[ParamServer, dict, None],
-             call_stack: Optional[Tuple[str, ...]]):
+             call_stack: Optional[Tuple[str, ...]]) -> None:
+        """
+        Draw the object
+        :param renderer: Renderer to use for drawing
+        :param draw_params: Optional parameters ovrriding the defaults for
+        plotting given by a nested dict that recreates the structure of an
+        object or a ParamServer object
+        :param call_stack: Optional tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack
+        :return: None
+        """
         pass

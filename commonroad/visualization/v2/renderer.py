@@ -85,10 +85,18 @@ class MPRenderer:
     def __init__(self, draw_params: Union[ParamServer, dict, None] = None,
                  plot_limits: Union[List[Union[int, float]], None] = None,
                  ax: Union[mpl.axes.Axes, None] = None):
+        """
+        Creates an renderer for matplotlib
+        :param draw_params: Default drawing params, if not supplied, default 
+        values are used.
+        :param plot_limits: plotting limits. If not supplied, 
+        using `ax.autoscale()`.
+        :param ax: Axis to use. If not supplied, `pyplot.gca()` is used.
+        """
         if draw_params is None:
             self.draw_params = ParamServer()
         elif isinstance(draw_params, dict):
-            self.draw_params = ParamServer(data=draw_params)
+            self.draw_params = ParamServer(params=draw_params)
         else:
             self.draw_params = draw_params
         self.plot_limits = plot_limits
@@ -108,20 +116,36 @@ class MPRenderer:
         self.traffic_sign_call_stack = tuple()
         self.traffic_sign_draw_params = self.draw_params
 
-    def draw_list(self, drawable_list: List[IDrawable], draw_params=None,
-                  call_stack=tuple()) -> None:
+    def draw_list(self, drawable_list: List[IDrawable],
+                  draw_params: Union[ParamServer, dict, None] = None,
+                  call_stack: Optional[Tuple[str, ...]] = tuple()) -> None:
+        """
+        Simple wrapper to draw a list of drawable objects
+        :param drawable_list: Objects to draw
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object or a ParamServer object
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack
+        :return: None
+        """
         draw_params = self._get_draw_params(draw_params)
         for elem in drawable_list:
             elem.draw(self, draw_params, call_stack)
 
-    def _get_draw_params(self, draw_params):
+    def _get_draw_params(self, draw_params: Union[
+        ParamServer, dict, None]) -> ParamServer:
         if draw_params is None:
             draw_params = self.draw_params
         elif isinstance(draw_params, dict):
-            draw_params = ParamServer(data=draw_params)
+            draw_params = ParamServer(params=draw_params)
         return draw_params
 
     def clear(self) -> None:
+        """
+        Clears the internal drawing buffer
+        :return: None
+        """
         self.obstacle_patches.clear()
         self.traffic_signs.clear()
         self.traffic_sign_call_stack = tuple()
@@ -132,10 +156,18 @@ class MPRenderer:
         self.static_collections.clear()
 
     def remove_dynamic(self) -> None:
+        """
+        Remove the dynamic objects from their current axis
+        :return: None
+        """
         for art in self.dynamic_artists:
             art.remove()
 
     def render_dynamic(self) -> List[artists.Artist]:
+        """
+        Only render dynamic objects from buffer
+        :return: List of drawn object's artists
+        """
         artist_list = []
         traffic_sign_artists = draw_traffic_light_signs(self.traffic_signs,
                                                         self.traffic_sign_draw_params,
@@ -156,6 +188,10 @@ class MPRenderer:
         return artist_list
 
     def render_static(self) -> List[artists.Artist]:
+        """
+        Only render static objects from buffer
+        :return: List of drawn object's artists
+        """
         for col in self.static_collections:
             self.ax.add_collection(col)
         for art in self.static_artists:
@@ -165,6 +201,12 @@ class MPRenderer:
 
     def render(self, show: bool = False, filename: str = None) -> List[
         artists.Artist]:
+        """
+        Render all objects from buffer
+        :param show: Show the resulting figure
+        :param filename: If provided, saves the figure to the provided file
+        :return: List of drawn object's artists
+        """
         self.ax.cla()
         artists_list = self.render_static()
         artists_list.extend(self.render_dynamic())
@@ -187,7 +229,7 @@ class MPRenderer:
         and texts specified by legend.values()
         :param draw_params: draw parameters used for plotting (color is
         extracted using path in legend.keys())
-        :return:
+        :return: None
         """
         draw_params = self._get_draw_params(draw_params)
         handles = []
@@ -208,10 +250,10 @@ class MPRenderer:
         """
         :param obj: object to be plotted
         :param draw_params: parameters for plotting given by a nested dict
-        that recreates the structure of an object,
+        that recreates the structure of an object or a ParamServer object
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
-               depending on the call stack of draw_object
+               depending on the call stack
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
@@ -247,10 +289,10 @@ class MPRenderer:
         """
         :param obj: object to be plotted
         :param draw_params: parameters for plotting given by a nested dict
-        that recreates the structure of an object,
+        that recreates the structure of an object or a ParamServer object
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
-               depending on the call stack of draw_object
+               depending on the call stack
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
@@ -264,10 +306,10 @@ class MPRenderer:
         """
         :param obj: object to be plotted
         :param draw_params: parameters for plotting given by a nested dict
-        that recreates the structure of an object,
+        that recreates the structure of an object or a ParamServer object
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
-               depending on the call stack of draw_object
+               depending on the call stack
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
@@ -371,7 +413,7 @@ class MPRenderer:
         which allows for differentiation of plotting styles
                depending on the call stack of drawing functions
         :param draw_params: parameters for plotting given by a nested dict
-        that recreates the structure of an object,
+        that recreates the structure of an object or a ParamServer object
         :param dyn_obs: the dynamic obstacle
         :return:
         """
@@ -404,10 +446,10 @@ class MPRenderer:
         """
         :param obj: object to be plotted
         :param draw_params: parameters for plotting given by a nested dict
-        that recreates the structure of an object,
+        that recreates the structure of an object or a ParamServer object
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
-               depending on the call stack of draw_object
+               depending on the call stack
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
@@ -467,13 +509,13 @@ class MPRenderer:
                      draw_params: Union[ParamServer, dict, None],
                      call_stack: Tuple[str, ...]) -> None:
         """
+        Draws a polygon shape
         :param obj: object to be plotted
-
         :param draw_params: parameters for plotting given by a nested dict
-        that recreates the structure of an object,
+        that recreates the structure of an object or a ParamServer object
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
-               depending on the call stack of draw_object
+               depending on the call stack
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
@@ -495,12 +537,13 @@ class MPRenderer:
                        draw_params: Union[ParamServer, dict, None],
                        call_stack: Tuple[str, ...]) -> None:
         """
+        Draws a rectangle shape
         :param obj: object to be plotted
         :param draw_params: parameters for plotting given by a nested dict that
         recreates the structure of an object,
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
-               depending on the call stack of draw_object
+               depending on the call stack
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
@@ -523,13 +566,13 @@ class MPRenderer:
                     draw_params: Union[ParamServer, dict, None],
                     call_stack: Tuple[str, ...]) -> None:
         """
+        Draws a circle shape
         :param obj: object to be plotted
-
         :param draw_params: parameters for plotting given by a nested dict that
         recreates the structure of an object,
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
-               depending on the call stack of draw_object
+               depending on the call stack
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
@@ -549,12 +592,13 @@ class MPRenderer:
                    draw_params: Union[ParamServer, dict, None],
                    call_stack: Tuple[str, ...] = None) -> None:
         """
+        Draws a state as an arrow of its velocity vector
         :param state: state to be plotted
         :param draw_params: parameters for plotting given by a nested dict
-        that recreates the structure of an object,
+        that recreates the structure of an object or a ParamServer object
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
-               depending on the call stack of draw_object
+               depending on the call stack
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
@@ -576,12 +620,13 @@ class MPRenderer:
                              draw_params: Union[ParamServer, dict, None],
                              call_stack: Tuple[str, ...]) -> None:
         """
+        Draws a lanelet network
         :param obj: object to be plotted
         :param draw_params: parameters for plotting given by a nested dict that
         recreates the structure of an object,
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
-               depending on the call stack of draw_object
+               depending on the call stack
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
@@ -1108,12 +1153,15 @@ class MPRenderer:
                                   draw_params: Union[ParamServer, dict, None],
                                   call_stack: Tuple[str, ...]) -> None:
         """
+        Draws all or selected planning problems from the planning problem 
+        set. Planning problems can be selected by providing IDs in 
+        `drawing_params[planning_problem_set][draw_ids]`
         :param obj: object to be plotted
         :param draw_params: parameters for plotting given by a nested dict
-        that recreates the structure of an object,
+        that recreates the structure of an object or a ParamServer object
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
-               depending on the call stack of draw_object
+               depending on the call stack
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
@@ -1128,12 +1176,13 @@ class MPRenderer:
                               draw_params: Union[ParamServer, dict, None],
                               call_stack: Tuple[str, ...]) -> None:
         """
+        Draw initial state and goal region of the planning problem
         :param obj: object to be plotted
         :param draw_params: parameters for plotting given by a nested dict
-        that recreates the structure of an object,
+        that recreates the structure of an object or a ParamServer object
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
-               depending on the call stack of draw_object
+               depending on the call stack
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
@@ -1148,12 +1197,13 @@ class MPRenderer:
                             draw_params: Union[ParamServer, dict, None],
                             call_stack: Tuple[str, ...]) -> None:
         """
+        Draw initial state with label
         :param obj: object to be plotted
         :param draw_params: parameters for plotting given by a nested dict
-        that recreates the structure of an object,
+        that recreates the structure of an object or a ParamServer object
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
-               depending on the call stack of draw_object
+               depending on the call stack
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
@@ -1170,12 +1220,13 @@ class MPRenderer:
                          draw_params: Union[ParamServer, dict, None],
                          call_stack: Tuple[str, ...]) -> None:
         """
+        Draw goal states from goal region
         :param obj: object to be plotted
         :param draw_params: parameters for plotting given by a nested dict
-        that recreates the structure of an object,
+        that recreates the structure of an object or a ParamServer object
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
-               depending on the call stack of draw_object
+               depending on the call stack
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
@@ -1189,12 +1240,13 @@ class MPRenderer:
                         draw_params: Union[ParamServer, dict, None],
                         call_stack: Tuple[str, ...]) -> None:
         """
+        Draw goal states
         :param obj: object to be plotted
         :param draw_params: parameters for plotting given by a nested dict
-        that recreates the structure of an object,
+        that recreates the structure of an object or a ParamServer object
         :param call_stack: tuple of string containing the call stack,
         which allows for differentiation of plotting styles
-               depending on the call stack of draw_object
+               depending on the call stack
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
@@ -1208,6 +1260,16 @@ class MPRenderer:
     def draw_traffic_light_sign(self, obj: Union[TrafficLight, TrafficSign],
                                 draw_params: Union[ParamServer, dict, None],
                                 call_stack: Tuple[str, ...]):
+        """
+        Draw traffic sings and lights
+        :param obj: object to be drawn
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object or a ParamServer object
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack
+        :return: None
+        """
         draw_params = self._get_draw_params(draw_params)
         # traffic signs and lights have to be collected and drawn only right
         # before rendering to allow correct grouping
@@ -1218,6 +1280,17 @@ class MPRenderer:
     def _draw_signal_state(self, sig: SignalState, occ: Occupancy,
                            draw_params: Union[ParamServer, dict, None],
                            call_stack: Tuple[str, ...]):
+        """
+        Draw the vehicle signals
+        :param sig: signal state to be drawn
+        :param occ: Occupancy at current time step
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object or a ParamServer object
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack
+        :return: None
+        """
         draw_params = self._get_draw_params(draw_params)
         call_stack = call_stack + ('signals',)
         signal_radius = draw_params.by_callstack(call_stack, 'signal_radius')

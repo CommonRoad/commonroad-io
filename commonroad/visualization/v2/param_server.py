@@ -1,64 +1,104 @@
 import json
 import logging
 import os
+from typing import Tuple, Union
 
+# Read defaults only once
 default_params_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                    'default_draw_params.json')
 with open(default_params_path) as fp:
     default_params = json.load(fp)
 
 
-def write_default_params(filename: str):
+def write_default_params(filename: str) -> None:
+    """
+    Write default parameters to the give file as JSON
+    :param filename: Destination JSON file
+    :return: None
+    """
     with open(filename, 'w') as fp:
         json.dump(default_params, fp, indent=4)
 
 
 class ParamServer:
-    def __init__(self, data=None, warn_default=False):
-        self.data = data or {}
-        self.warn_default = warn_default
+    """
+    Wrapper object for parameters as nested dictionaries. Tries to resolve
+    queries with most specialized values. If values are not found, defaults
+    are used.
+    """
+
+    def __init__(self, params=None, warn_default=False):
+        """
+        :param params: Optional parameters to initialize parameter server with 
+        :param warn_default: Produce a warning when default parameters are used
+        """
+        self._params = params or {}
+        self._warn_default = warn_default
 
     @staticmethod
-    def _resolve_key(map, key):
+    def _resolve_key(param_dict, key):
         if len(key) == 0:
             return None, 0
-        d = map
+        tmp_dict = param_dict
         l_key = list(key)
         # Try to find most special version of element
         while len(l_key) > 0:
             k = l_key.pop(0)
-            if k in d.keys():
-                d = d[k]
+            if k in tmp_dict.keys():
+                tmp_dict = tmp_dict[k]
             else:
-                d = None
+                tmp_dict = None
                 break
-        if d is None and len(key) > 0:
+        if tmp_dict is None and len(key) > 0:
             # If not found, remove first level and try again
-            return ParamServer._resolve_key(map, key[1:])
+            return ParamServer._resolve_key(param_dict, key[1:])
         else:
-            return d, len(key)
+            return tmp_dict, len(key)
 
-    def by_callstack(self, call_stack, value):
-        if isinstance(value, tuple):
-            path = call_stack + value
+    def by_callstack(self, call_stack: Tuple[str, ...],
+                     param_path: Union[str, Tuple[str, ...]]):
+        """
+        Resolves the parameter path using the callstack. If it nothing can be
+        found returns None
+        :param call_stack: Tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack
+        :param param_path: Key or tuple of keys leading to the parameter
+        :return: the parameter
+        """
+        if isinstance(param_path, tuple):
+            path = call_stack + param_path
         else:
-            path = call_stack + (value,)
+            path = call_stack + (param_path,)
         return self.__getitem__(path)
 
-    def __getitem__(self, item):
-        if not isinstance(item, tuple):
-            item = tuple(item)
+    def __getitem__(self, param_path):
+        """
+        Resolves the parameter by the given key tuple. Parameters are
+        resolved recursively. If no parameter can be found under the given
+        path, the first element of the tuple is removed and the resolution
+        will be retried. This yields the most specialized version of the
+        parameter. Default parameters are provided if:
 
-        val, depth = ParamServer._resolve_key(self.data, item)
+        a) the specified path cannot be resolved in the contained parameters or
+        b) the default parameters contain a more specific version than the
+        contained parameters
+        :param param_path: Key or tuple of keys leading to the parameter
+        :return: the parameter
+        """
+        if not isinstance(param_path, tuple):
+            param_path = tuple(param_path)
+
+        val, depth = ParamServer._resolve_key(self._params, param_path)
         val_default, depth_default = ParamServer._resolve_key(default_params,
-                                                              item)
+                                                              param_path)
         if val is None and val_default is None:
-            logging.error('Value for key {} not found!'.format(item))
+            logging.error('Value for key {} not found!'.format(param_path))
             return None
 
         if val_default is not None and val is None:
-            if self.warn_default:
-                logging.warning('Using default for key {}!'.format(item))
+            if self._warn_default:
+                logging.warning('Using default for key {}!'.format(param_path))
             return val_default
 
         if val is not None and val_default is None:
@@ -70,31 +110,42 @@ class ParamServer:
             else:
                 return val_default
 
-    def __setitem__(self, key, value):
-        if not isinstance(key, tuple):
-            key = (key,)
-        d = self.data
-        for k in key[:-1]:
-            if not isinstance(d, dict):
+    def __setitem__(self, param_path, value):
+        """
+        Sets the value under the given key
+        :param param_path: key or tuple of keys leading to the parameter
+        :param value: the value
+        :return: None
+        """
+        if not isinstance(param_path, tuple):
+            param_path = (param_path,)
+        tmp_dict = self._params
+        for key in param_path[:-1]:
+            if not isinstance(tmp_dict, dict):
                 raise KeyError(
-                        'Key "{}" in path "{}" is not subscriptable!'.format(k,
-                                                                             key))
-            if k in d.keys():
-                d = d[k]
+                        'Key "{}" in path "{}" is not subscriptable!'.format(
+                            key, param_path))
+            if key in tmp_dict.keys():
+                tmp_dict = tmp_dict[key]
             else:
-                d[k] = {}
-                d = d[k]
-        if not isinstance(d, dict):
+                tmp_dict[key] = {}
+                tmp_dict = tmp_dict[key]
+        if not isinstance(tmp_dict, dict):
             raise KeyError(
-                    'Key "{}" in path "{}" is not subscriptable!'.format(k,
-                                                                         key))
-        d[key[-1]] = value
+                    'Key "{}" in path "{}" is not subscriptable!'.format(key,
+                                                                         param_path))
+        tmp_dict[param_path[-1]] = value
 
     def __contains__(self, item):
-        return item in self.data
+        return item in self._params
 
     @staticmethod
-    def from_json(fname):
+    def from_json(fname: str):
+        """
+        Restores a parameter server from a JSON file
+        :param fname: file name and path of the JSON file
+        :return: the parameter server
+        """
         with open(fname, 'r') as fp:
             data = json.load(fp)
         return ParamServer(data)
