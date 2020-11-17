@@ -14,6 +14,7 @@ from commonroad.common.validity import *
 import commonroad.geometry.transform
 from commonroad.visualization.v2.drawable import IDrawable
 from commonroad.visualization.v2.param_server import ParamServer
+from commonroad.visualization.v2.renderer import IRenderer
 
 TRAFFIC_SIGN_VALIDITY_START = {'MIN_SPEED', 'MAX_SPEED', 'NO_OVERTAKING_START',
                                'TOWN_SIGN', 'BAN_CAR_TRUCK_BUS_MOTORCYCLE'}
@@ -344,7 +345,8 @@ class TrafficSign(IDrawable):
     def __str__(self):
         return f"Sign At {self._position} with {self._traffic_sign_elements} "
 
-    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_traffic_light_sign(self, draw_params, call_stack)
 
@@ -458,7 +460,8 @@ class TrafficLight(IDrawable):
         self._position = commonroad.geometry.transform.translate_rotate(
                 np.array([self._position]), translation, angle)[0]
 
-    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_traffic_light_sign(self, draw_params, call_stack)
 

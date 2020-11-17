@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Union, Tuple, Optional
 
 from commonroad.visualization.v2.param_server import ParamServer
+from commonroad.visualization.v2.renderer import IRenderer
 
 
 class IDrawable(ABC):
@@ -10,7 +11,8 @@ class IDrawable(ABC):
     """
 
     @abstractmethod
-    def draw(self, renderer, draw_params: Union[ParamServer, dict, None],
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None],
              call_stack: Optional[Tuple[str, ...]]) -> None:
         """
         Draw the object

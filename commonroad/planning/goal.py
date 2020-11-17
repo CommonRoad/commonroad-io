@@ -18,6 +18,7 @@ __status__ = "Released"
 
 from commonroad.visualization.v2.drawable import IDrawable
 from commonroad.visualization.v2.param_server import ParamServer
+from commonroad.visualization.v2.renderer import IRenderer
 
 
 class GoalRegion(IDrawable):
@@ -188,6 +189,7 @@ class GoalRegion(IDrawable):
 
         return state_new, state_fields, goal_state, goal_state_fields
 
-    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_goal_region(self, draw_params, call_stack)

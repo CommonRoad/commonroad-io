@@ -24,6 +24,7 @@ __status__ = "Released"
 
 from commonroad.visualization.v2.drawable import IDrawable
 from commonroad.visualization.v2.param_server import ParamServer
+from commonroad.visualization.v2.renderer import IRenderer
 
 
 class State:
@@ -245,7 +246,8 @@ class State:
             traffic_str += '= {}\n'.format(self.__getattribute__(attr))
         return traffic_str
 
-    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_state(self, draw_params, call_stack)
 
@@ -382,6 +384,7 @@ class Trajectory(IDrawable):
                 self.state_list[0].attributes)
         return traffic_str
 
-    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_trajectory(self, draw_params, call_stack)

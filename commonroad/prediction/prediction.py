@@ -18,6 +18,7 @@ __status__ = "Released"
 
 from commonroad.visualization.v2.drawable import IDrawable
 from commonroad.visualization.v2.param_server import ParamServer
+from commonroad.visualization.v2.renderer import IRenderer
 
 
 class Occupancy(IDrawable):
@@ -76,7 +77,8 @@ class Occupancy(IDrawable):
 
         self._shape = self._shape.translate_rotate(translation, angle)
 
-    def draw(self, renderer, draw_params: Union[ParamServer, dict, None] = None,
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         call_stack = tuple(list(call_stack) + ['occupancy'])
         self.shape.draw(renderer, draw_params, call_stack)
