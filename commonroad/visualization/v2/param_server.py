@@ -72,7 +72,7 @@ class ParamServer:
 
     def __setitem__(self, key, value):
         if not isinstance(key, tuple):
-            key = tuple(key)
+            key = (key,)
         d = self.data
         for k in key[:-1]:
             if not isinstance(d, dict):

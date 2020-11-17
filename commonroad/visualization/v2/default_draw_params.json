@@ -8,11 +8,76 @@
     "show_label": false,
     "zorder": 20,
     "draw_signals": true,
-    "signal_radius": 0.5,
-    "indicator_color": "#ebc200",
-    "braking_color": "red",
-    "blue_lights_color": "blue",
-    "horn_color": "red",
+    "vehicle_shape": {
+      "occupancy": {
+        "shape": {
+          "polygon": {
+            "opacity": 1.0,
+            "facecolor": "#1d7eea",
+            "edgecolor": "#0066cc",
+            "linewidth": 0.5,
+            "zorder": 20
+          },
+          "rectangle": {
+            "opacity": 1.0,
+            "facecolor": "#1d7eea",
+            "edgecolor": "#0066cc",
+            "linewidth": 0.5,
+            "zorder": 20
+          },
+          "circle": {
+            "opacity": 1.0,
+            "facecolor": "#1d7eea",
+            "edgecolor": "#0066cc",
+            "linewidth": 0.5,
+            "zorder": 20
+          }
+        }
+      }
+    },
+    "signals": {
+      "signal_radius": 0.5,
+      "indicator": {
+        "shape": {
+          "circle": {
+            "facecolor": "#ebc200",
+            "edgecolor": "#ebc200",
+            "zorder": 20.2,
+            "linewidth": 0.0
+          }
+        }
+      },
+      "braking": {
+        "shape": {
+          "circle": {
+            "facecolor": "red",
+            "edgecolor": "red",
+            "zorder": 20.2,
+            "linewidth": 0.0
+          }
+        }
+      },
+      "horn": {
+        "shape": {
+          "circle": {
+            "facecolor": "red",
+            "edgecolor": "red",
+            "zorder": 20.1,
+            "linewidth": 0.0
+          }
+        }
+      },
+      "bluelight": {
+        "shape": {
+          "circle": {
+            "facecolor": "blue",
+            "edgecolor": "blue",
+            "zorder": 20.1,
+            "linewidth": 0.0
+          }
+        }
+      }
+    },
     "draw_initial_state": false,
     "state": {
       "scale_factor": 0.3,
@@ -20,29 +85,6 @@
         "linewidth": 1.5,
         "edgecolor": "black",
         "facecolor": "black"
-      }
-    },
-    "shape": {
-      "polygon": {
-        "opacity": 1.0,
-        "facecolor": "#1d7eea",
-        "edgecolor": "#0066cc",
-        "linewidth": 0.5,
-        "zorder": 20
-      },
-      "rectangle": {
-        "opacity": 1.0,
-        "facecolor": "#1d7eea",
-        "edgecolor": "#0066cc",
-        "linewidth": 0.5,
-        "zorder": 20
-      },
-      "circle": {
-        "opacity": 1.0,
-        "facecolor": "#1d7eea",
-        "edgecolor": "#0066cc",
-        "linewidth": 0.5,
-        "zorder": 20
       }
     },
     "history": {
@@ -201,7 +243,8 @@
     "label": "",
     "state": {
       "scale_factor": 1.0,
-      "kwargs": {},
+      "kwargs": {
+      },
       "facecolor": "#000080",
       "zorder": 25
     }

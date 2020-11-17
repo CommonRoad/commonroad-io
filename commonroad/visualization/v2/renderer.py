@@ -317,12 +317,12 @@ class MPRenderer:
         if draw_shape:
             occ = obj.occupancy_at_time(time_begin)
             if occ is not None:
-                occ.draw(self, draw_params, call_stack)
+                occ.draw(self, draw_params, call_stack + ('vehicle_shape',))
 
                 if draw_signals:
                     sig = obj.signal_state_at_time_step(time_begin)
                     if sig is not None:
-                        self.draw_signale_state(sig, occ, draw_params,
+                        self._draw_signal_state(sig, occ, draw_params,
                                                 call_stack)
 
         # draw car icon
@@ -1215,23 +1215,17 @@ class MPRenderer:
         self.traffic_sign_draw_params = draw_params
         self.traffic_signs.append(obj)
 
-    def draw_signale_state(self, sig: SignalState, occ: Occupancy,
+    def _draw_signal_state(self, sig: SignalState, occ: Occupancy,
                            draw_params: Union[ParamServer, dict, None],
                            call_stack: Tuple[str, ...]):
         draw_params = self._get_draw_params(draw_params)
-
-        zorder = draw_params.by_callstack(call_stack, 'zorder')
+        call_stack = call_stack + ('signals',)
         signal_radius = draw_params.by_callstack(call_stack, 'signal_radius')
-        indicator_color = draw_params.by_callstack(call_stack,
-                                                   'indicator_color')
-        braking_color = draw_params.by_callstack(call_stack, 'braking_color')
-        horn_color = draw_params.by_callstack(call_stack, 'horn_color')
-        blue_lights_color = draw_params.by_callstack(call_stack,
-                                                     'blue_lights_color')
+
         indicators = []
         braking = []
-        horns = []
-        bluelights = []
+
+        # indicators
         if isinstance(occ.shape, Rectangle):
             if hasattr(sig,
                        'hazard_warning_lights') and sig.hazard_warning_lights\
@@ -1248,56 +1242,33 @@ class MPRenderer:
                            'indicator_right') and sig.indicator_right is True:
                     indicators.extend(
                             [occ.shape.vertices[0], occ.shape.vertices[3]])
+
+            for e in indicators:
+                self.draw_circle(Circle(signal_radius, e), draw_params,
+                                 call_stack + ('indicator',))
+
+            # braking lights
             if hasattr(sig, 'braking_lights') and sig.braking_lights is True:
                 braking.extend([occ.shape.vertices[0], occ.shape.vertices[1]])
+
+            for e in braking:
+                self.draw_circle(Circle(signal_radius * 1.5, e), draw_params,
+                                 call_stack + ('braking',))
+
+            # blue lights
             if hasattr(sig,
                        'flashing_blue_lights') and sig.flashing_blue_lights \
                     is True:
-                bluelights.append(occ.shape.center)
+                pos = occ.shape.center
+                self.draw_circle(Circle(signal_radius, pos), draw_params,
+                                 call_stack + ('bluelight',))
+
+            # horn
             if hasattr(sig, 'horn') and sig.horn is True:
-                horns.append(occ.shape.center)
+                pos = occ.shape.center
+                self.draw_circle(Circle(signal_radius * 1.5, pos), draw_params,
+                                 call_stack + ('horn',))
+
         else:
             warnings.warn('Plotting signal states only implemented for '
                           'obstacle_shapes Rectangle.')
-
-        # draw signals
-        if len(indicators) > 0:
-            indicator_params = {
-                    'facecolor': indicator_color,
-                    'edgecolor': indicator_color,
-                    'zorder':    zorder + ZOrders.INDICATOR_ADD,
-                    'linewidth': 0
-            }
-            for e in indicators:
-                self.draw_circle(Circle(signal_radius, e), indicator_params,
-                                 call_stack)
-        if len(braking) > 0:
-            braking_params = {
-                    'facecolor': braking_color,
-                    'edgecolor': braking_color,
-                    'zorder':    zorder + ZOrders.BRAKING_ADD,
-                    'linewidth': 0
-            }
-            for e in indicators:
-                self.draw_circle(Circle(signal_radius * 1.5, e), braking_params,
-                                 call_stack)
-        if len(horns) > 0:
-            horn_params = {
-                    'facecolor': horn_color,
-                    'edgecolor': braking_color,
-                    'zorder':    zorder + ZOrders.HORN_ADD,
-                    'linewidth': 0
-            }
-            for e in indicators:
-                self.draw_circle(Circle(signal_radius * 1.5, e), horn_params,
-                                 call_stack)
-        if len(bluelights) > 0:
-            bluelight_params = {
-                    'facecolor': blue_lights_color,
-                    'edgecolor': braking_color,
-                    'zorder':    zorder + ZOrders.BLUELIGHT_ADD,
-                    'linewidth': 0
-            }
-            for e in indicators:
-                self.draw_circle(Circle(signal_radius, e), bluelight_params,
-                                 call_stack)
