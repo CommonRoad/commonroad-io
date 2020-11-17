@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 import unittest
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.visualization.v2.param_server import ParamServer
-from commonroad.visualization.v2.renderer import MPRenderer
+from commonroad.visualization.v2.mp_renderer import MPRenderer
 
 
 class TestVisualizationV2(unittest.TestCase):

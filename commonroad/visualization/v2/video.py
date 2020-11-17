@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from commonroad.visualization.v2.drawable import IDrawable
-from commonroad.visualization.v2.renderer import MPRenderer
+from commonroad.visualization.v2.mp_renderer import MPRenderer
 from commonroad.visualization.v2.util import \
     approximate_bounding_box_dyn_obstacles
 from matplotlib.animation import FuncAnimation

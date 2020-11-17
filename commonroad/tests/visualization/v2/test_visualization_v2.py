@@ -17,7 +17,7 @@ from commonroad.scenario.trajectory import State
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.scenario.scenario import Scenario
 
-from commonroad.visualization.v2.renderer import MPRenderer
+from commonroad.visualization.v2.mp_renderer import MPRenderer
 from commonroad.visualization.v2.param_server import ParamServer, \
     write_default_params
 
