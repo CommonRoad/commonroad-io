@@ -29,7 +29,7 @@ plot_Helper
 
 drawing API v2
 ------------
-.. automodule:: commonroad.visualization.v2.renderer
+.. automodule:: commonroad.visualization.v2.mp_renderer
    :members:
    :undoc-members:
    :member-order: bysource
