@@ -87,7 +87,7 @@ class ParamServer:
         :return: the parameter
         """
         if not isinstance(param_path, tuple):
-            param_path = tuple(param_path)
+            param_path = (param_path,)
 
         val, depth = ParamServer._resolve_key(self._params, param_path)
         val_default, depth_default = ParamServer._resolve_key(default_params,
@@ -138,6 +138,20 @@ class ParamServer:
 
     def __contains__(self, item):
         return item in self._params
+
+    def update(self, source):
+        self._update_recurisve(self._params, source)
+
+    def _update_recurisve(self, dest, source):
+        for k, v in source.items():
+            if k in dest:
+                if isinstance(dest[k], dict):
+                    assert isinstance(source[k], dict)
+                    self._update_recurisve(dest[k], source[k])
+                else:
+                    dest[k] = source[k]
+            else:
+                dest[k] = source[k]
 
     @staticmethod
     def from_json(fname: str):
