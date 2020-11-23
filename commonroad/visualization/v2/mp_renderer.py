@@ -40,7 +40,8 @@ from commonroad.visualization.v2.util import LineDataUnits, \
     colormap_idx, \
     get_car_patch, \
     line_marking_to_linestyle, \
-    traffic_light_color_dict
+    traffic_light_color_dict, \
+    get_tangent_angle
 from matplotlib.path import Path
 
 __author__ = "Moritz Klischat"
@@ -724,6 +725,9 @@ class MPRenderer(IRenderer):
 
         draw_lanlet_ids = draw_params.by_callstack(call_stack, 'draw_ids')
 
+        colormap_tangent = draw_params.by_callstack(call_stack, (
+        'lanelet', 'colormap_tangent'))
+
         # Collect lanelets
         incoming_lanelets = set()
         incomings_left = {}
@@ -945,9 +949,19 @@ class MPRenderer(IRenderer):
                             edgecolor=center_bound_color, facecolor='none',
                             lw=draw_linewidth, zorder=ZOrders.CENTER_BOUND,
                             antialiased=antialiased))
-                else:
-                    center_paths.append(
-                            Path(lanelet.center_vertices, closed=False))
+                elif colormap_tangent:
+                    relative_angle = draw_params['relative_angle']
+                    points = lanelet.center_vertices.reshape(-1, 1, 2)
+                    angles = get_tangent_angle(points[:, 0, :], relative_angle)
+                    segments = np.concatenate([points[:-1], points[1:]], axis=1)
+                    norm = plt.Normalize(0, 360)
+                    lc = collections.LineCollection(segments, cmap='hsv',
+                                                    norm=norm,
+                                                    lw=draw_linewidth,
+                                                    zorder=ZOrders.CENTER_BOUND,
+                                                    antialiased=antialiased)
+                    lc.set_array(angles)
+                    self.static_collections.append(lc)
 
             is_incoming_lanelet = draw_intersections and \
                                   draw_incoming_lanelets and (
@@ -1057,7 +1071,7 @@ class MPRenderer(IRenderer):
                                                         zorder=ZOrders.DIRECTION_ARROW,
                                                         antialiased=antialiased))
 
-        else:
+        elif not colormap_tangent:
             if draw_center_bound:
                 self.static_collections.append(
                         collections.PathCollection(center_paths,

@@ -1,6 +1,7 @@
 {
   "time_begin": 0,
   "time_end": 5,
+  "relative_angle": 0.0,
   "dynamic_obstacle": {
     "draw_shape": true,
     "draw_icon": false,
@@ -173,6 +174,7 @@
     "draw_center_bound": true,
     "draw_border_vertices": false,
     "draw_start_and_direction": true,
+    "colormap_tangent": false,
     "show_label": false,
     "draw_linewidth": 0.5,
     "fill_lanelet": true,

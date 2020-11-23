@@ -356,3 +356,11 @@ def traffic_light_color_dict(traffic_light_state: TrafficLightState,
             TrafficLightState.GREEN:      params['green_color'],
             TrafficLightState.RED_YELLOW: params['red_yellow_color']
     }[traffic_light_state]
+
+
+def get_tangent_angle(points, rel_angle=0.0):
+    vec = points[1:] - points[0:-1]
+    angle = np.arctan2(vec[:, 1], vec[:, 0])
+    angle -= rel_angle
+    angle = np.where(angle >= 0.0, angle, angle + 2 * np.pi) * 180.0 / np.pi
+    return angle
