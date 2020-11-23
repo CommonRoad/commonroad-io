@@ -91,26 +91,25 @@
     "history": {
       "draw_history": false,
       "steps": 5,
+      "step_size": 1,
       "fade_factor": 0.1,
+      "basecolor": "#ffe119",
       "occupancy": {
         "shape": {
           "polygon": {
             "opacity": 0.2,
-            "facecolor": "#ffe119",
             "edgecolor": "#000000",
             "linewidth": 0.0,
             "zorder": 17
           },
           "rectangle": {
             "opacity": 0.2,
-            "facecolor": "#ffe119",
             "edgecolor": "#000000",
             "linewidth": 0.0,
             "zorder": 17
           },
           "circle": {
             "opacity": 0.2,
-            "facecolor": "#ffe119",
             "edgecolor": "#000000",
             "linewidth": 0.0,
             "zorder": 17

@@ -420,26 +420,32 @@ class MPRenderer(IRenderer):
         :return:
         """
         time_begin = draw_params['time_begin']
+        history_base_color = draw_params.by_callstack(call_stack, (
+                'vehicle_shape', 'occupancy', 'shape', 'rectangle',
+                'facecolor'))
         history_callstack = call_stack + ('history',)
-        history_steps = draw_params.by_callstack(call_stack, 'steps')
-        history_fade_factor = draw_params.by_callstack(call_stack,
+        history_steps = draw_params.by_callstack(history_callstack, 'steps')
+        history_fade_factor = draw_params.by_callstack(history_callstack,
                                                        'fade_factor')
-        history_base_color = draw_params.by_callstack(history_callstack, (
-                'occupancy', 'shape', 'rectangle', 'facecolor'))
+        history_step_size = draw_params.by_callstack(history_callstack,
+                                                     'step_size')
         history_base_color = rgb_to_hsv(to_rgb(history_base_color))
-        for time_step in range(1, history_steps):
-            occ = dyn_obs.occupancy_at_time(time_begin - time_step)
+        for history_idx in range(history_steps, 0, -1):
+            time_step = time_begin - history_idx * history_step_size
+            occ = dyn_obs.occupancy_at_time(time_step)
             if occ is not None:
                 color_hsv_new = history_base_color.copy()
                 color_hsv_new[2] = max(0, color_hsv_new[
-                    2] - history_fade_factor * time_step)
+                    2] - history_fade_factor * history_idx)
                 color_hex_new = to_hex(hsv_to_rgb(color_hsv_new))
-                draw_params[call_stack + (
-                'occupancy', 'shape', 'rectangle', 'facecolor')] = color_hex_new
-                draw_params[call_stack + (
+                draw_params[history_callstack + (
+                        'occupancy', 'shape', 'rectangle',
+                        'facecolor')] = color_hex_new
+                draw_params[history_callstack + (
                 'occupancy', 'shape', 'circle', 'facecolor')] = color_hex_new
-                draw_params[call_stack + (
-                'occupancy', 'shape', 'polygon', 'facecolor')] = color_hex_new
+                draw_params[history_callstack + (
+                        'occupancy', 'shape', 'polygon',
+                        'facecolor')] = color_hex_new
                 occ.draw(self, draw_params, history_callstack)
 
     def draw_trajectory(self, obj: Trajectory,
