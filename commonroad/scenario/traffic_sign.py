@@ -131,6 +131,7 @@ class TrafficSignIDGermany(enum.Enum):
     NO_ENTRY = '267'
     BAN_CAR_TRUCK_BUS_MOTORCYCLE = '260'
     U_TURN = '272'
+    MAX_SPEED = '274'
     MAX_SPEED_ZONE_START = '274.1'
     MAX_SPEED_ZONE_END = '274.2'
     MIN_SPEED = '275'
