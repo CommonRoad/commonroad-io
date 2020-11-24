@@ -124,7 +124,7 @@ class TrafficSignIDGermany(enum.Enum):
     BAN_BUS = '257-54'
     BAN_PEDESTRIAN = '259'
     BAN_HAZARD = '261'
-    MAXWEIGHT = '262'
+    MAX_WEIGHT = '262'
     MAX_WIDTH = '264'
     MAX_HEIGHT = '265'
     MAX_LENGTH = '266'
