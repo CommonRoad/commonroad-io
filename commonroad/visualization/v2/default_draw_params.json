@@ -118,6 +118,33 @@
       }
     }
   },
+  "static_obstacle": {
+    "occupancy": {
+      "shape": {
+        "polygon": {
+          "opacity": 1.0,
+          "facecolor": "#d95558",
+          "edgecolor": "#831d20",
+          "linewidth": 0.5,
+          "zorder": 20
+        },
+        "rectangle": {
+          "opacity": 1.0,
+          "facecolor": "#d95558",
+          "edgecolor": "#831d20",
+          "linewidth": 0.5,
+          "zorder": 20
+        },
+        "circle": {
+          "opacity": 1.0,
+          "facecolor": "#d95558",
+          "edgecolor": "#831d20",
+          "linewidth": 0.5,
+          "zorder": 20
+        }
+      }
+    }
+  },
   "trajectory": {
     "draw_trajectory": true,
     "facecolor": "#000000",
