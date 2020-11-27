@@ -220,6 +220,8 @@ class ScenarioFactory:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAX_SPEED, [str(key)])
                     elif SupportedTrafficSignCountry.RUSSIA.value == scenario_id.country_id:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAX_SPEED, [str(key)])
+                    elif SupportedTrafficSignCountry.ZAMUNDA.value == scenario_id.country_id:
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
                     else:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
                         warnings.warn("Unknown country: Default traffic sign IDs are used.")
