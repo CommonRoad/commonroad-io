@@ -46,8 +46,10 @@ class SupportedTrafficSignCountry(enum.Enum):
     PUERTO_RICO = "PRI"
     ZAMUNDA = "ZAM"  # default
 
+
 @enum.unique
 class TrafficSignIDGermany(enum.Enum):
+    # default traffic sign IDs (similar to German IDs)
     WARNING_DANGER_SPOT = '101'
     WARNING_RIGHT_BEFORE_LEFT = '102'
     WARNING_STEEP_HILL_DOWNWARDS = '108'
@@ -71,7 +73,7 @@ class TrafficSignIDGermany(enum.Enum):
     PEDESTRIAN_ZONE_END = '242.2'
     BICYCLE_ROAD_START = '244.1'
     BICYCLE_ROAD_END = '244.2'
-    BUS_LANE = '245'
+    BUSLANE = '245'
     BAN_ALL_VEHICLES = '250'
     BAN_CARS = '251'
     BAN_TRUCKS = '253'
