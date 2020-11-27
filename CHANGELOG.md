@@ -1,5 +1,18 @@
 # Changelog
 
+## [2020.4] - 2020-12-X
+### Added
+- Support for over 50 new traffic signs from Germany
+
+## Changed
+
+
+### Fixed
+- Various small bug fixes
+
+### Removed
+
+
 ## [2020.3] - 2020-10-30
 ### Added
 - Support of environment obstacles, e.g. buildings
