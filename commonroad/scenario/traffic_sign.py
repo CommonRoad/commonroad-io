@@ -261,6 +261,7 @@ class TrafficSignIDUsa(enum.Enum):
 
 @enum.unique
 class TrafficSignIDChina(enum.Enum):
+    MAX_SPEED = '274'  # TODO: change to actual ID
     UNKNOWN = ''
 
 
@@ -272,6 +273,7 @@ class TrafficSignIDSpain(enum.Enum):
 
 @enum.unique
 class TrafficSignIDRussia(enum.Enum):
+    MAX_SPEED = '274'  # TODO: change to actual ID
     UNKNOWN = ''  # TODO: add actual IDs
 
 
