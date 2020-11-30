@@ -14,17 +14,18 @@ from commonroad.common.validity import *
 import commonroad.geometry.transform
 
 
-TRAFFIC_SIGN_VALIDITY_START = {'MIN_SPEED', 'MAX_SPEED', 'NO_OVERTAKING_START', 'TOWN_SIGN',
-                               'BAN_CAR_TRUCK_BUS_MOTORCYCLE', 'WARNING_DANGER_SPOT', 'WARNING_RIGHT_BEFORE_LEFT',
-                               'WARNING_STEEP_HILL_DOWNWARDS', 'WARNING_SLIPPERY_ROAD', 'WARNING_CONSTRUCTION_SITE',
-                               'WARNING_CROSSING_CYCLIST', 'WARNING_ANIMAL_CROSSING_RIGHT',
+TRAFFIC_SIGN_VALIDITY_START = {'WARNING_DANGER_SPOT', 'WARNING_RIGHT_BEFORE_LEFT', 'WARNING_STEEP_HILL_DOWNWARDS',
+                               'WARNING_SLIPPERY_ROAD', 'WARNING_CONSTRUCTION_SITE', 'WARNING_CROSSING_CYCLIST',
+                               'WARNING_ANIMAL_CROSSING_RIGHT',
+
                                'PRIORITY_OPPOSITE_DIRECTION', 'BIKEWAY', 'SIDEWALK', 'PEDESTRIAN_ZONE_START',
-                               'NO_OVERTAKING_TRUCKS_START', 'BAN_ALL_VEHICLES', 'BAN_CARS', 'BAN_TRUCKS',
+                               'BICYCLE_ROAD_START', 'BUS_LANE', 'BAN_ALL_VEHICLES', 'BAN_CARS', 'BAN_TRUCKS',
                                'BAN_BICYCLE', 'BAN_MOTORCYCLE', 'BAN_BUS', 'BAN_PEDESTRIAN',
-                               'BAN_CAR_TRUCK_BUS_MOTORCYCLE', 'BAN_VEHICLES_CARRYING_DANGEROUS_GOODS',
-                               'PEDESTRIAN_ZONE_START', 'BICYCLE_ROAD_START', 'BUS_LANE', 'MAX_SPEED_ZONE_START',
-                               'NO_ENTRY', 'PRIORITY_OVER_ONCOMING', 'TRAFFIC_CALMED_AREA_START', 'TUNNEL',
-                               'INTERSTATE_START', 'HIGHWAY_START', 'DEAD_END'}
+                               'BAN_CAR_TRUCK_BUS_MOTORCYCLE', 'BAN_VEHICLES_CARRYING_DANGEROUS_GOODS', 'NO_ENTRY',
+                               'MAX_SPEED', 'MAX_SPEED_ZONE_START', 'MIN_SPEED',  'NO_OVERTAKING_START',
+                               'NO_OVERTAKING_TRUCKS_START', 'TRAFFIC_CALMED_AREA_START'
+
+                               'PRIORITY_OVER_ONCOMING', 'TOWN_SIGN', 'TUNNEL', 'INTERSTATE_START', 'HIGHWAY_START'}
 
 LEFT_HAND_TRAFFIC = {'AUS', 'JPN', 'HKG', 'IND', 'JEY', 'IMN', 'IRL', 'JAM', 'KEN', 'MLT', 'MYS', 'NPL', 'NZL', 'ZAF',
                      'SGP', 'THA', 'GBR', 'IDN', 'MAC', 'PAK', 'CYP'}
