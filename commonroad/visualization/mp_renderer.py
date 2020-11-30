@@ -696,22 +696,28 @@ class MPRenderer(IRenderer):
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
-
-        scale_factor = draw_params.by_callstack(call_stack,
-                                                ('state', 'scale_factor'))
-        arrow_args = draw_params.by_callstack(call_stack, ('state', 'kwargs'))
-
-        cos = math.cos(state.orientation)
-        sin = math.sin(state.orientation)
-        x = state.position[0]
-        y = state.position[1]
-        self.obstacle_patches.append(mpl.patches.Arrow(x=x, y=y,
-                                                       dx=state.velocity *
-                                                          cos * scale_factor,
-                                                       dy=state.velocity *
-                                                          sin * scale_factor,
-                                                       zorder=ZOrders.STATE,
-                                                       **arrow_args))
+        call_stack += 'state',
+        scale_factor = draw_params.by_callstack(call_stack, 'scale_factor')
+        arrow_args = draw_params.by_callstack(call_stack, 'kwargs')
+        draw_arrow = draw_params.by_callstack(call_stack, 'draw_arrow')
+        if draw_arrow:
+            cos = math.cos(state.orientation)
+            sin = math.sin(state.orientation)
+            x = state.position[0]
+            y = state.position[1]
+            self.obstacle_patches.append(mpl.patches.Arrow(x=x, y=y,
+                                                           dx=state.velocity
+                                                              * cos *
+                                                              scale_factor,
+                                                           dy=state.velocity
+                                                              * sin *
+                                                              scale_factor,
+                                                           zorder=ZOrders.STATE,
+                                                           **arrow_args))
+        else:
+            self.obstacle_patches.append(
+                mpl.patches.Circle(state.position, radius=0.5,
+                                   zorder=ZOrders.STATE))
 
     def draw_lanelet_network(self, obj: LaneletNetwork,
                              draw_params: Union[ParamServer, dict, None],
@@ -1297,9 +1303,6 @@ class MPRenderer(IRenderer):
         """
         draw_params = self._get_draw_params(draw_params)
         call_stack = tuple(list(call_stack) + ['planning_problem'])
-        if 'initial_state' not in draw_params:
-            draw_params['initial_state'] = {}
-        draw_params['initial_state', 'label'] = 'initial position'
         self.draw_initital_state(obj.initial_state, draw_params, call_stack)
         self.draw_goal_region(obj.goal, draw_params, call_stack)
 
