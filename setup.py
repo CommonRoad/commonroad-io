@@ -20,7 +20,7 @@ setup(
         'Source': 'https://gitlab.lrz.de/tum-cps/commonroad_io',
     },
     author='Cyber-Physical Systems Group, Technical University of Munich',
-    author_email='commonroad-i06@in.tum.de',
+    author_email='commonroad@lists.lrz.de',
     license="GNU General Public License v3.0",
     packages=find_packages(exclude=['doc', 'tests', 'tutorials']),
 	install_requires=[
