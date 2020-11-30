@@ -13,7 +13,9 @@ import matplotlib.pyplot as plt
 import matplotlib.colors
 import matplotlib.artist as artists
 import matplotlib.text as text
-from commonroad.visualization.v2.renderer import IRenderer
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.renderer import IRenderer
+from matplotlib.animation import FuncAnimation
 
 from matplotlib.colors import hsv_to_rgb, rgb_to_hsv, to_rgb, to_hex
 from commonroad.common.util import Interval
@@ -32,25 +34,26 @@ from commonroad.scenario.traffic_sign import TrafficLightState, \
     TrafficLight, \
     TrafficSign
 from commonroad.scenario.trajectory import Trajectory, State
-from commonroad.visualization.v2.param_server import ParamServer
-from commonroad.visualization.v2.traffic_sign import draw_traffic_light_signs
-from commonroad.visualization.v2.util import LineDataUnits, \
+from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.traffic_sign_v2 import draw_traffic_light_signs
+from commonroad.visualization.util import LineDataUnits, \
     collect_center_line_colors, \
     get_arrow_path_at, \
     colormap_idx, \
     get_car_patch, \
     line_marking_to_linestyle, \
     traffic_light_color_dict, \
-    get_tangent_angle
+    get_tangent_angle, \
+    approximate_bounding_box_dyn_obstacles
 from matplotlib.path import Path
 
-__author__ = "Moritz Klischat"
+__author__ = "Luis Gressenbuch"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = [""]
-__version__ = "2020.3"
-__maintainer__ = "Moritz Klischat"
+__version__ = "2020.4"
+__maintainer__ = "Luis Gressenbuch"
 __email__ = "commonroad-i06@in.tum.de"
-__status__ = "Released"
+__status__ = "Development"
 
 traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
 
@@ -221,6 +224,89 @@ class MPRenderer(IRenderer):
             self.f.show()
         self.clear()
         return artists_list
+
+    def create_video(self, obj_lists: List[IDrawable], file_path: str,
+                     delta_time_steps: int = 1, plotting_horizon=0,
+                     draw_params: Union[dict, ParamServer, None] = None,
+                     fig_size: Union[list, None] = None, dt=500,
+                     dpi=120) -> None:
+        """
+        Creates a video of one or multiple CommonRoad objects in mp4, gif,
+        or avi format.
+
+        :param obj_lists: list of objects to be plotted.
+        :param file_path: filename of generated video (ends on .mp4/.gif/.avi,
+        default mp4, when nothing is specified)
+        :param delta_time_steps: plot every delta_time_steps time steps of
+        scenario
+        :param plotting_horizon: time steps of prediction plotted in each frame
+        :param draw_params: parameters for plotting given by a nested dict
+            that recreates the structure of an object or a ParamServer object
+        :param fig_size: size of the video
+        :param dt: time step between frames in ms
+        :param dpi: resolution of the video
+        :return: None
+        """
+        draw_params = self._get_draw_params(draw_params)
+        time_begin = draw_params['time_begin']
+        time_end = draw_params['time_end']
+        assert time_begin < time_end, '<video/create_scenario_video> ' \
+                                      'time_begin=%i needs to smaller than ' \
+                                      'time_end=%i.' % (time_begin, time_end)
+
+        if fig_size is None:
+            fig_size = [15, 8]
+
+        self.f.set_size_inches(*fig_size)
+        self.ax.set_aspect('equal')
+
+        def init_frame():
+            self.draw_list(obj_lists, {
+                    'time_begin': time_begin,
+                    'time_end':   time_begin + delta_time_steps
+            })
+            self.render_static()
+            artists = self.render_dynamic()
+            if self.plot_limits is None:
+                self.ax.autoscale()
+            elif self.plot_limits == 'auto':
+                limits = approximate_bounding_box_dyn_obstacles(obj_lists,
+                                                                time_begin)
+                if limits is not None:
+                    self.ax.xlim(limits[0][0] - 10, limits[0][1] + 10)
+                    self.ax.ylim(limits[1][0] - 10, limits[1][1] + 10)
+                else:
+                    self.ax.autoscale()
+            return artists
+
+        def update(frame=0):
+            draw_params.update({
+                    'time_begin': time_begin + delta_time_steps * frame,
+                    'time_end':   time_begin + min(frame_count,
+                                                   delta_time_steps * frame +
+                                                   plotting_horizon)
+            })
+            self.remove_dynamic()
+            self.clear()
+            self.draw_list(obj_lists, draw_params=draw_params)
+            artists = self.render_dynamic()
+            return artists
+
+        # Min frame rate is 1 fps
+        dt = max(1000.0, dt)
+        frame_count = (time_end - time_begin) // delta_time_steps
+        plt.ioff()
+        # Interval determines the duration of each frame in ms
+        anim = FuncAnimation(self.f, update, frames=frame_count,
+                             init_func=init_frame, blit=False, interval=dt)
+
+        if not any([file_path.endswith('.mp4'), file_path.endswith('.gif'),
+                    file_path.endswith('.avi')]):
+            file_path += '.mp4'
+        fps = int(math.ceil(1000.0 / dt))
+        interval_seconds = dt / 1000.0
+        anim.save(file_path, dpi=dpi, writer='ffmpeg', fps=fps,
+                  extra_args=["-g", "1", "-keyint_min", str(interval_seconds)])
 
     def add_legend(self, legend: Dict[Tuple[str, ...], str],
                    draw_params: Union[ParamServer, dict, None] = None) -> None:
@@ -732,7 +818,7 @@ class MPRenderer(IRenderer):
         draw_lanlet_ids = draw_params.by_callstack(call_stack, 'draw_ids')
 
         colormap_tangent = draw_params.by_callstack(call_stack, (
-        'lanelet', 'colormap_tangent'))
+                'lanelet', 'colormap_tangent'))
 
         # Collect lanelets
         incoming_lanelets = set()

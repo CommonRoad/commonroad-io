@@ -12,9 +12,9 @@ import numpy as np
 
 from commonroad.common.validity import *
 import commonroad.geometry.transform
-from commonroad.visualization.v2.drawable import IDrawable
-from commonroad.visualization.v2.param_server import ParamServer
-from commonroad.visualization.v2.renderer import IRenderer
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.renderer import IRenderer
 
 TRAFFIC_SIGN_VALIDITY_START = {'MIN_SPEED', 'MAX_SPEED', 'NO_OVERTAKING_START',
                                'TOWN_SIGN', 'BAN_CAR_TRUCK_BUS_MOTORCYCLE'}

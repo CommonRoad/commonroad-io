@@ -117,6 +117,7 @@ class TestVisualization(unittest.TestCase):
         plt.axis('equal')
         plt.show()
 
+    @pytest.mark.filterwarnings("ignore:draw_object is deprecated")
     def test_all_signs(self):
         """Check if all traffic signs can be plotted."""
         kwargs = {
@@ -126,7 +127,7 @@ class TestVisualization(unittest.TestCase):
         }
         plt.figure(figsize=[10, 10])
 
-        with pytest.warns(None) as record:
+        with pytest.warns(DeprecationWarning) as record:
             for value in TrafficSignIDGermany:
                 kwargs['position'] = kwargs['position'] + np.array([0., 5.])
                 draw_object(TrafficSign(traffic_sign_elements=[
@@ -163,11 +164,6 @@ class TestVisualization(unittest.TestCase):
         # plt.autoscale()
         # plt.ylim([-1., kwargs['position'][1] + 1])
         # plt.pause(100)
-
-        # check for warnings
-        for r in record:
-            print('Found warning:', r.message)
-        assert len(record) == 0, record
 
     def test_signal_states(self):
         """Uses all options for plotting objects related to intersections or

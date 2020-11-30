@@ -4,6 +4,7 @@ import matplotlib
 import os
 import time
 import unittest
+import warnings
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,6 +23,10 @@ from commonroad.visualization.draw_dispatch_cr import draw_object, \
 
 
 class TestVisualization(unittest.TestCase):
+
+    def setUp(self) -> None:
+        pass
+
     def test_scenario(self):
 
         # test draw_object for all possible object types
@@ -35,7 +40,7 @@ class TestVisualization(unittest.TestCase):
 
         plt.autoscale(False)
         plt.gca().autoscale_view(False, False, False)
-        with pytest.warns(None) as record_warnings:
+        with pytest.warns(DeprecationWarning) as record_warnings:
             draw_object(scenario)
             draw_object(scenario.lanelet_network)
             draw_object(scenario.lanelet_network.lanelets[0])
@@ -80,8 +85,6 @@ class TestVisualization(unittest.TestCase):
 
         plt.close('all')
 
-    #        assert (len(record_warnings)==0)
-
     def test_plotting_non_plottable_object(self):
         # a warning has to be thrown if non-plottable object is supposed to
         # be plotted
@@ -98,8 +101,7 @@ class TestVisualization(unittest.TestCase):
         filename = full_path + '/../common/test_reading_all.xml'
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         planning_problem_set: PlanningProblemSet = planning_problem_set
-
-        with pytest.warns(None) as record_warnings:
+        with pytest.warns(DeprecationWarning) as record_warnings:
             draw_object(planning_problem_set)
             INT = planning_problem_set.planning_problem_dict.values()
             problem = list(planning_problem_set.planning_problem_dict.values())[
@@ -107,8 +109,6 @@ class TestVisualization(unittest.TestCase):
             draw_object(problem)
             draw_object(problem.goal)
             draw_object(problem.initial_state)
-
-        assert (len(record_warnings) == 0)
         plt.close('all')
 
     def test_parameter_retrieval(self):

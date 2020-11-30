@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Union, Tuple, Optional
 
-from commonroad.visualization.v2.param_server import ParamServer
-from commonroad.visualization.v2.renderer import IRenderer
+from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.renderer import IRenderer
 
 
 class IDrawable(ABC):
