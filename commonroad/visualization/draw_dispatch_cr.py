@@ -312,13 +312,15 @@ def draw_object(obj: Union[plottable_types, List[plottable_types]],
     :return: Returns matplotlib patch object for draw_funcs that actually
     draw a patch (used internally for creating handles dict)
     """
-
+    warnings.warn('draw_object is deprecated, use renderer interface instead',
+                  DeprecationWarning)
     assert isinstance(draw_params,
                       dict) or draw_params is None, \
         '<visualization/draw_dispatch_cr/draw_object>:' \
                                                     'draw_params must be ' \
                                                     'either a (nested) ' \
-        'dictionary contating the plotting parameters' \
+                                                    'dictionary contating the ' \
+        'plotting parameters' \
                                                     'or None (for default ' \
                                                     'parameters)'
 
