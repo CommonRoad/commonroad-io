@@ -15,7 +15,7 @@ Scenario
 
 ``ScenarioID`` class
 ^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: Scenario
+.. autoclass:: ScenarioID
    :undoc-members:
    :members:
    :member-order: bysource
@@ -29,14 +29,14 @@ Scenario
 
 ``Time`` class
 ^^^^^^^^^^^^^^
-.. autoclass:: Location
+.. autoclass:: Time
   :undoc-members:
   :members:
   :member-order: bysource
 
 ``Environment`` class
 ^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: Location
+.. autoclass:: Environment
   :undoc-members:
   :members:
   :member-order: bysource
