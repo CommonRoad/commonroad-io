@@ -1,11 +1,25 @@
 # Changelog
 
+## [2020.4] - 2020-12-X
+### Added
+- Support for over 50 new traffic signs from Germany
+
+## Changed
+
+
+### Fixed
+- Various small bug fixes
+
+### Removed
+
+
 ## [2020.3] - 2020-10-30
 ### Added
 - Support of environment obstacles, e.g. buildings
 - Several new traffic signs
 - New ScenarioID class for the representation of benchmarks
 - New line marking types *unknown* and *no_marking*
+- Crossings for intersections
 
 ## Changed
 The creation of lanelet assignments for obstacles is now optional. This decreases the loading time of scenarios.

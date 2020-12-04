@@ -737,44 +737,75 @@ class TestFileReader(unittest.TestCase):
 
 
     # def test_open_all_scenarios(self):
-    #     scenarios = "update"
-    #     factory = scenarios + "/scenario-factory"
-    #     #cooperative = scenarios + "/cooperative"
-    #     hand_crafted = scenarios + "/hand-crafted"
-    #     ngsim_lankershim = scenarios + "/NGSIM/Lankershim"
-    #     ngsim_us101 = scenarios + "/NGSIM/US101"
-    #     ngsim_peachtree = scenarios + "/NGSIM/Peachtree"
-    #     #sumo = scenarios + "/SUMO"
-    #     bicycle = scenarios + "/THI-Bicycle"
+    #     scenarios_2020a = "todo"
+    #     scenarios_2018b = "todo"
     #
-    #     for scenario in os.listdir(hand_crafted):
-    #         full_path = hand_crafted + "/" + scenario
+    #     factory_2020a = scenarios_2020a + "/scenario-factory"
+    #     hand_crafted_2020a = scenarios_2020a + "/hand-crafted"
+    #     ngsim_lankershim_2020a = scenarios_2020a + "/NGSIM/Lankershim"
+    #     ngsim_us101_2020a = scenarios_2020a + "/NGSIM/US101"
+    #     ngsim_peachtree_2020a = scenarios_2020a + "/NGSIM/Peachtree"
+    #     bicycle_2020a = scenarios_2020a + "/THI-Bicycle"
+    #
+    #     cooperative_2018b = scenarios_2018b + "/cooperative"
+    #     bicycle_2018b = scenarios_2018b + "/THI-Bicycle"
+    #     sumo_2018b = scenarios_2018b + "/SUMO"
+    #     hand_crafted_2018b = scenarios_2018b + "/hand-crafted"
+    #     ngsim_lankershim_2018b = scenarios_2018b + "/NGSIM/Lankershim"
+    #     ngsim_us101_2018b = scenarios_2018b + "/NGSIM/US101"
+    #     ngsim_peachtree_2018b = scenarios_2018b + "/NGSIM/Peachtree"
+    #
+    #     for scenario in os.listdir(hand_crafted_2020a):
+    #         full_path = hand_crafted_2020a + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
     #
-    #     for scenario in os.listdir(ngsim_lankershim):
-    #         full_path = ngsim_lankershim + "/" + scenario
+    #     for scenario in os.listdir(ngsim_lankershim_2020a):
+    #         full_path = ngsim_lankershim_2020a + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
     #
-    #     for scenario in os.listdir(ngsim_us101):
-    #         full_path = ngsim_us101 + "/" + scenario
+    #     for scenario in os.listdir(ngsim_us101_2020a):
+    #         full_path = ngsim_us101_2020a + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
     #
-    #     # for scenario in os.listdir(cooperative):
-    #     #     full_path = cooperative + "/" + scenario
-    #     #     CommonRoadFileReader(full_path).open()
-    #     #
-    #     # for scenario in os.listdir(sumo):
-    #     #     full_path = sumo + "/" + scenario
-    #     #     CommonRoadFileReader(full_path).open()
-    #
-    #     for scenario in os.listdir(bicycle):
-    #         full_path = bicycle + "/" + scenario
+    #     for scenario in os.listdir(ngsim_peachtree_2020a):
+    #         full_path = ngsim_peachtree_2020a + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
     #
-    #     for scenario in os.listdir(factory):
-    #         full_path = factory + "/" + scenario
+    #     for scenario in os.listdir(bicycle_2020a):
+    #         full_path = bicycle_2020a + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
-
+    #
+    #     for scenario in os.listdir(factory_2020a):
+    #         full_path = factory_2020a + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(cooperative_2018b):
+    #         full_path = cooperative_2018b + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(sumo_2018b):
+    #         full_path = sumo_2018b + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(bicycle_2018b):
+    #         full_path = bicycle_2018b + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(ngsim_lankershim_2018b):
+    #         full_path = ngsim_lankershim_2018b + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(ngsim_us101_2018b):
+    #         full_path = ngsim_us101_2018b + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(ngsim_peachtree_2018b):
+    #         full_path = ngsim_peachtree_2018b + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(hand_crafted_2018b):
+    #         full_path = hand_crafted_2018b + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
 
 if __name__ == '__main__':
     unittest.main()

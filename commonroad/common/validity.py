@@ -6,7 +6,7 @@ __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW Group CAR@TUM"]
 __version__ = "2020.3"
 __maintainer__ = "Christian Pek"
-__email__ = "commonroad-i06@in.tum.de"
+__email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
 from commonroad import TWO_PI

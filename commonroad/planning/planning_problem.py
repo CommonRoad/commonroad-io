@@ -11,7 +11,7 @@ __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
 __version__ = "2020.3"
 __maintainer__ = "Christina Miller"
-__email__ = "commonroad-i06@in.tum.de"
+__email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
 from commonroad.visualization.drawable import IDrawable

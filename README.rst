@@ -30,7 +30,7 @@ Additional Tools
 ================
 Based on CommonRoad_io, we have developed a list of tools for implementing motion-planning algorithms:
 
-* `Collision Checker <https://gitlab.lrz.de/tum-cps/commonroad-collision-checker>`__
+* `Drivability Checker <https://gitlab.lrz.de/tum-cps/commonroad-drivability-checker>`__
 * `CommonRoad-SUMO Interface <https://gitlab.lrz.de/tum-cps/commonroad-sumo-interface>`__
 * `OpenDRIVE to Lanelet converter <https://pypi.org/project/opendrive2lanelet>`__
 * `Vehicle Models <https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models/tree/master/Python>`__

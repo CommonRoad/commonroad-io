@@ -26,7 +26,7 @@ __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles", "CAR@TUM"]
 __version__ = "2020.3"
 __maintainer__ = "Stefanie Manzinger, Sebastian Maierhofer"
-__email__ = "commonroad-i06@in.tum.de"
+__email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
 
@@ -220,6 +220,8 @@ class ScenarioFactory:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAX_SPEED, [str(key)])
                     elif SupportedTrafficSignCountry.RUSSIA.value == scenario_id.country_id:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAX_SPEED, [str(key)])
+                    elif SupportedTrafficSignCountry.ZAMUNDA.value == scenario_id.country_id:
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
                     else:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
                         warnings.warn("Unknown country: Default traffic sign IDs are used.")
@@ -406,12 +408,15 @@ class LaneletNetworkFactory:
         occurences = {}
         for lanelet in lanelet_network.lanelets:
             for traffic_sign in lanelet.traffic_signs:
+                # create set object if none exist
                 if occurences.get(traffic_sign) is None:
                     occurences[traffic_sign] = set()
+                # if there exists no predecessor, current lanelet is first occurence
                 if len(lanelet.predecessor) == 0:
                     occurences[traffic_sign].add(lanelet.lanelet_id)
-                elif any(traffic_sign not in lanelet_network.find_lanelet_by_id(pre).traffic_signs
-                       for pre in lanelet.predecessor):
+                # if no predecessor references the traffic sign, this is the first occurence
+                elif all(traffic_sign not in
+                         lanelet_network.find_lanelet_by_id(pre).traffic_signs for pre in lanelet.predecessor):
                     occurences[traffic_sign].add(lanelet.lanelet_id)
 
         return occurences
