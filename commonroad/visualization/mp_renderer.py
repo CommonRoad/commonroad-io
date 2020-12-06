@@ -627,7 +627,7 @@ class MPRenderer(IRenderer):
                                     linewidth=linewidth,
                                     antialiased=antialiased))
 
-    def draw_rectangle(self, obj: Rectangle,
+    def draw_rectangle(self, vertices: np.ndarray,
                        draw_params: Union[ParamServer, dict, None],
                        call_stack: Tuple[str, ...]) -> None:
         """
@@ -651,7 +651,7 @@ class MPRenderer(IRenderer):
         antialiased = draw_params.by_callstack(call_stack, 'antialiased')
 
         self.obstacle_patches.append(
-                mpl.patches.Polygon(obj.vertices, closed=True, zorder=zorder,
+                mpl.patches.Polygon(vertices, closed=True, zorder=zorder,
                                     facecolor=facecolor, edgecolor=edgecolor,
                                     alpha=opacity, antialiased=antialiased,
                                     linewidth=linewidth))

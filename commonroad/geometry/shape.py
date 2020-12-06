@@ -211,7 +211,7 @@ class Rectangle(Shape):
     def draw(self, renderer: IRenderer,
              draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_rectangle(self, draw_params, call_stack)
+        renderer.draw_rectangle(self.vertices, draw_params, call_stack)
 
 
 class Circle(Shape):

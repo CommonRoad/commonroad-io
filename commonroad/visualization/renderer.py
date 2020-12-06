@@ -73,7 +73,7 @@ class IRenderer(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def draw_rectangle(self, obj, draw_params, call_stack):
+    def draw_rectangle(self, vertices, draw_params, call_stack):
         """
         Draws a rectangle shape
         :param obj: object to be plotted
