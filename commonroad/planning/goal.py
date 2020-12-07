@@ -1,6 +1,6 @@
 import copy
 import math
-from typing import Union, List, Dict, Set
+from typing import Union, List, Dict, Set, Tuple, Optional
 import numpy as np
 import warnings
 
@@ -16,17 +16,27 @@ __maintainer__ = "Christina Miller"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.renderer import IRenderer
 
-class GoalRegion:
+
+class GoalRegion(IDrawable):
     def __init__(self, state_list: List[State],
-                 lanelets_of_goal_position: Union[None, Dict[int, List[int]]]=None):
+                 lanelets_of_goal_position: Union[
+                     None, Dict[int, List[int]]] = None):
         """
-        Region, that has to be reached by the vehicle. Contains a list of goal states of which one has to be fulfilled
-        to solve the scenario. If 'position' in a goal state is given as a list of lanelets, they are converted into a
-        polygon. To reconstruct the lanelets later, the lanelet ids are stored in a dict in lanelets_of_goal_position.
-        In no 'position' is given as lanelet, lanelets_of_goal_position is set to None.
+        Region, that has to be reached by the vehicle. Contains a list of
+        goal states of which one has to be fulfilled
+        to solve the scenario. If 'position' in a goal state is given as a
+        list of lanelets, they are converted into a
+        polygon. To reconstruct the lanelets later, the lanelet ids are
+        stored in a dict in lanelets_of_goal_position.
+        In no 'position' is given as lanelet, lanelets_of_goal_position is
+        set to None.
 
-        :param state_list: list of goal states (one of those has to be fulfilled)
+        :param state_list: list of goal states (one of those has to be
+        fulfilled)
         :param lanelets_of_goal_position: dict[index of state in state_list, list of lanelet ids].
         None, if no lanelet is given.
         """
@@ -169,10 +179,17 @@ class GoalRegion:
             and not {'velocity', 'velocity_y'}.issubset(goal_state_fields):
 
             if not 'orientation' in state_fields:
-                state_new.orientation = math.atan2(state_new.velocity_y, state_new.velocity)
+                state_new.orientation = math.atan2(state_new.velocity_y,
+                                                   state_new.velocity)
                 state_fields.add('orientation')
 
-            state_new.velocity = np.linalg.norm(np.array([state_new.velocity, state_new.velocity_y]))
+            state_new.velocity = np.linalg.norm(
+                    np.array([state_new.velocity, state_new.velocity_y]))
             state_fields.remove('velocity_y')
 
         return state_new, state_fields, goal_state, goal_state_fields
+
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
+        renderer.draw_goal_region(self, draw_params, call_stack)

@@ -2,7 +2,7 @@ import itertools
 import re
 import warnings
 from collections import defaultdict
-from typing import Union, List, Set, Dict, Tuple
+from typing import Union, List, Set, Dict, Tuple, Optional
 import numpy as np
 import enum
 import iso3166
@@ -26,6 +26,10 @@ __version__ = "2020.3"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
+
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.renderer import IRenderer
 
 
 @enum.unique
@@ -341,13 +345,17 @@ class ScenarioID:
         return str(self) == str(other)
 
 
-class Scenario:
-    """ Class which describes a Scenario entity according to the CommonRoad specification. Each scenario is described by
-     a road network consisting of lanelets (see :class:`commonroad.scenario.lanelet.LaneletNetwork`) and a set of
-     obstacles which can be either static or dynamic (see :class:`commonroad.scenario.obstacle.Obstacle`)."""
+class Scenario(IDrawable):
+    """ Class which describes a Scenario entity according to the CommonRoad
+    specification. Each scenario is described by
+     a road network consisting of lanelets (see
+     :class:`commonroad.scenario.lanelet.LaneletNetwork`) and a set of
+     obstacles which can be either static or dynamic (see
+     :class:`commonroad.scenario.obstacle.Obstacle`)."""
 
     def __init__(self, dt: float, scenario_id: Union[str, ScenarioID],
-                 author: str = None, tags: Set[Tag] = None, affiliation: str = None, source: str = None,
+                 author: str = None, tags: Set[Tag] = None,
+                 affiliation: str = None, source: str = None,
                  location: Location = None, benchmark_id: str = None):
         """
         Constructor of a Scenario object
@@ -846,3 +854,8 @@ class Scenario:
         traffic_str += "- Lanelets:\n"
         traffic_str += str(self._lanelet_network)
         return traffic_str
+
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
+        renderer.draw_scenario(self, draw_params, call_stack)

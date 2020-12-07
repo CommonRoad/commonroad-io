@@ -26,3 +26,15 @@ plot_Helper
    :members:
    :undoc-members:
    :member-order: bysource
+
+drawing API v2
+------------
+.. automodule:: commonroad.visualization.v2.mp_renderer
+   :members:
+   :undoc-members:
+   :member-order: bysource
+
+.. automodule:: commonroad.visualization.v2.param_server
+   :members:
+   :undoc-members:
+   :member-order: bysource

@@ -19,6 +19,10 @@ __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "released"
 
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.renderer import IRenderer
+
 
 class LineMarking(enum.Enum):
     """
@@ -919,7 +923,7 @@ class Lanelet:
         return 'Lanelet with id:' + str(self.lanelet_id)
 
 
-class LaneletNetwork:
+class LaneletNetwork(IDrawable):
     """
     Class which represents a network of connected lanelets
     """
@@ -1360,3 +1364,8 @@ class LaneletNetwork:
         for lanelet_id in self._lanelets.keys():
             return_str += '{:8d} lanelet\n'.format(lanelet_id)
         return return_str
+
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
+        renderer.draw_lanelet_network(self, draw_params, call_stack)

@@ -7,12 +7,14 @@ __email__ = "commonroad@lists.lrz.de"
 __status__ = "Release"
 
 import enum
-from typing import List, Union, Set
+from typing import List, Union, Set, Optional, Tuple
 import numpy as np
 
 from commonroad.common.validity import *
 import commonroad.geometry.transform
-
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.renderer import IRenderer
 
 TRAFFIC_SIGN_VALIDITY_START = {'WARNING_DANGER_SPOT', 'WARNING_RIGHT_BEFORE_LEFT', 'WARNING_STEEP_HILL_DOWNWARDS',
                                'WARNING_SLIPPERY_ROAD', 'WARNING_CONSTRUCTION_SITE', 'WARNING_CROSSING_CYCLIST',
@@ -26,9 +28,9 @@ TRAFFIC_SIGN_VALIDITY_START = {'WARNING_DANGER_SPOT', 'WARNING_RIGHT_BEFORE_LEFT
                                'NO_OVERTAKING_TRUCKS_START', 'TRAFFIC_CALMED_AREA_START'
 
                                'PRIORITY_OVER_ONCOMING', 'TOWN_SIGN', 'TUNNEL', 'INTERSTATE_START', 'HIGHWAY_START'}
-
-LEFT_HAND_TRAFFIC = {'AUS', 'JPN', 'HKG', 'IND', 'JEY', 'IMN', 'IRL', 'JAM', 'KEN', 'MLT', 'MYS', 'NPL', 'NZL', 'ZAF',
-                     'SGP', 'THA', 'GBR', 'IDN', 'MAC', 'PAK', 'CYP'}
+LEFT_HAND_TRAFFIC = {'AUS', 'JPN', 'HKG', 'IND', 'JEY', 'IMN', 'IRL', 'JAM',
+                     'KEN', 'MLT', 'MYS', 'NPL', 'NZL', 'ZAF', 'SGP', 'THA',
+                     'GBR', 'IDN', 'MAC', 'PAK', 'CYP'}
 
 
 @enum.unique
@@ -399,16 +401,20 @@ class TrafficSignElement:
         return f"Sign Element with id {self._traffic_sign_element_id} and values {self._additional_values} "
 
 
-class TrafficSign:
+class TrafficSign(IDrawable):
     """Class to represent a traffic sign"""
-    def __init__(self, traffic_sign_id: int, traffic_sign_elements: List[TrafficSignElement],
-                 first_occurrence: Set[int], position: np.ndarray, virtual: bool = False):
+
+    def __init__(self, traffic_sign_id: int,
+                 traffic_sign_elements: List[TrafficSignElement],
+                 first_occurrence: Set[int], position: np.ndarray,
+                 virtual: bool = False):
         """
         :param traffic_sign_id: ID of traffic sign
         :param traffic_sign_elements: list of traffic sign elements
         :param first_occurrence: lanelet ID where traffic sign first appears
         :param position: position of traffic sign
-        :param virtual: boolean indicating if this traffic sign is also placed there in the real environment or it
+        :param virtual: boolean indicating if this traffic sign is also
+        placed there in the real environment or it
         is added for other reasons (e.g., completeness of scenario)
         """
         self._traffic_sign_id = traffic_sign_id
@@ -446,16 +452,27 @@ class TrafficSign:
         """
 
         assert is_real_number_vector(translation, 2), '<TrafficSign/translate_rotate>: argument translation is ' \
-                                                      'not a vector of real numbers of length 2.'
-        assert is_real_number(angle), '<TrafficSign/translate_rotate>: argument angle must be a scalar. ' \
-                                      'angle = %s' % angle
-        assert is_valid_orientation(angle), '<TrafficSign/translate_rotate>: argument angle must be within the ' \
-                                            'interval [-2pi, 2pi]. angle = %s' % angle
-        self._position = commonroad.geometry.transform.translate_rotate(np.array([self._position]),
-                                                                        translation, angle)[0]
+                                                      'not a vector of real ' \
+                                                      'numbers of length 2.'
+        assert is_real_number(
+            angle), '<TrafficSign/translate_rotate>: argument angle must be a ' \
+                    'scalar. ' \
+                    'angle = %s' % angle
+        assert is_valid_orientation(
+                angle), '<TrafficSign/translate_rotate>: argument angle must ' \
+                        'be ' \
+                        'within the ' \
+                        'interval [-2pi, 2pi]. angle = %s' % angle
+        self._position = commonroad.geometry.transform.translate_rotate(
+                np.array([self._position]), translation, angle)[0]
 
     def __str__(self):
         return f"Sign At {self._position} with {self._traffic_sign_elements} "
+
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
+        renderer.draw_traffic_light_sign(self, draw_params, call_stack)
 
 
 class TrafficLightCycleElement:
@@ -477,10 +494,13 @@ class TrafficLightCycleElement:
         return self._duration
 
 
-class TrafficLight:
+class TrafficLight(IDrawable):
     """ Class to represent a traffic light"""
-    def __init__(self, traffic_light_id: int, cycle: List[TrafficLightCycleElement], position: np.ndarray,
-                 time_offset: int = 0, direction: TrafficLightDirection = TrafficLightDirection.ALL,
+
+    def __init__(self, traffic_light_id: int,
+                 cycle: List[TrafficLightCycleElement], position: np.ndarray,
+                 time_offset: int = 0,
+                 direction: TrafficLightDirection = TrafficLightDirection.ALL,
                  active: bool = True):
         """
         :param traffic_light_id: ID of traffic light
@@ -546,15 +566,28 @@ class TrafficLight:
         :param angle: The rotation angle in radian (counter-clockwise defined)
         """
 
-        assert is_real_number_vector(translation, 2), '<TrafficLight/translate_rotate>: argument translation is ' \
-                                                      'not a vector of real numbers of length 2.'
-        assert is_real_number(angle), '<TrafficLight/translate_rotate>: argument angle must be a scalar. ' \
-                                      'angle = %s' % angle
-        assert is_valid_orientation(angle), '<TrafficLight/translate_rotate>: argument angle must be within the ' \
-                                            'interval [-2pi, 2pi]. angle = %s' % angle
+        assert is_real_number_vector(translation,
+                                     2), '<TrafficLight/translate_rotate>: ' \
+                                         'argument translation is ' \
+                                         'not a vector of real numbers of ' \
+                                         'length 2.'
+        assert is_real_number(
+                angle), '<TrafficLight/translate_rotate>: argument angle must ' \
+                        'be ' \
+                        'a scalar. ' \
+                        'angle = %s' % angle
+        assert is_valid_orientation(
+                angle), '<TrafficLight/translate_rotate>: argument angle must ' \
+                        'be ' \
+                        'within the ' \
+                        'interval [-2pi, 2pi]. angle = %s' % angle
         self._position = commonroad.geometry.transform.translate_rotate(
-            np.array([self._position]), translation, angle
-        )[0]
+                np.array([self._position]), translation, angle)[0]
+
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
+        renderer.draw_traffic_light_sign(self, draw_params, call_stack)
 
 
 def get_default_cycle():

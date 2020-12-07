@@ -1,26 +1,15 @@
 import copy
 import enum
 import os
-from collections import defaultdict, OrderedDict
-from typing import Dict, Callable, Tuple, Union, Any
-import commonroad.geometry.shape
-import matplotlib as mpl
-import matplotlib.patches as patches
-import matplotlib.collections as collections
-from PIL import Image
+from collections import defaultdict
+from typing import Dict
 
-import commonroad.prediction.prediction
-import commonroad.scenario.obstacle
-import commonroad.visualization.draw_dispatch_cr
+from PIL import Image
 from commonroad.geometry.shape import *
 from commonroad.scenario.traffic_sign import TrafficSign, \
-    TrafficSignIDGermany, \
     TrafficLight, \
-    TrafficLightState, \
-    TrafficSignIDUsa, \
-    TrafficSignIDChina, \
-    TrafficSignIDZamunda, \
-    SupportedTrafficSignCountry
+    TrafficSignIDUsa
+from commonroad.visualization.param_server import ParamServer
 from matplotlib.offsetbox import OffsetImage, \
     AnnotationBbox, \
     HPacker, \
@@ -124,8 +113,8 @@ def rescale_text(string: str, prop: dict, scale_factor: float,
 
 
 def create_img_boxes_traffic_sign(
-        traffic_signs: Union[List[TrafficSign], TrafficSign], draw_params: dict,
-        call_stack: Tuple[str, ...]) -> Dict[
+        traffic_signs: Union[List[TrafficSign], TrafficSign],
+        draw_params: ParamServer, call_stack: Tuple[str, ...]) -> Dict[
     Tuple[float, float], List[OffsetBox]]:
     """
     For each Traffic sign an OffsetBox is created, containing the png image
@@ -143,39 +132,26 @@ def create_img_boxes_traffic_sign(
     if len(traffic_signs) == 0:
         return dict()
 
-    scale_factor = commonroad.visualization.draw_dispatch_cr\
-        ._retrieve_alternate_value(
-            draw_params, call_stack, ('traffic_sign', 'scale_factor'),
-            ('scenario', 'lanelet_network', 'traffic_sign', 'scale_factor'))
-    speed_limit_unit = commonroad.visualization.draw_dispatch_cr\
-        ._retrieve_alternate_value(
-            draw_params, call_stack, ('traffic_sign', 'speed_limit_unit'),
-            ('scenario', 'lanelet_network', 'traffic_sign', 'speed_limit_unit'))
-    show_label_default = commonroad.visualization.draw_dispatch_cr\
-        ._retrieve_alternate_value(
-            draw_params, call_stack, ('traffic_sign', 'show_label'),
-            ('scenario', 'lanelet_network', 'traffic_sign', 'show_label'))
-    show_traffic_signs = commonroad.visualization.draw_dispatch_cr\
-        ._retrieve_alternate_value(
-            draw_params, call_stack, ('traffic_sign', 'show_traffic_signs'), (
-                    'scenario', 'lanelet_network', 'traffic_sign',
-                    'show_traffic_signs'))
-    zorder = commonroad.visualization.draw_dispatch_cr\
-        ._retrieve_alternate_value(
-            draw_params, call_stack, ('traffic_sign', 'zorder'),
-            ('scenario', 'lanelet_network', 'traffic_sign', 'zorder'))
+    scale_factor = draw_params.by_callstack(call_stack,
+                                            ('traffic_sign', 'scale_factor'))
+    speed_limit_unit = draw_params.by_callstack(call_stack, (
+            'traffic_sign', 'speed_limit_unit'))
+    show_label_default = draw_params.by_callstack(call_stack, (
+            'traffic_sign', 'show_label'))
+    show_traffic_signs = draw_params.by_callstack(call_stack, (
+            'traffic_sign', 'show_traffic_signs'))
+    zorder = draw_params.by_callstack(call_stack, ('traffic_sign', 'zorder'))
 
-    scale_factor_default = commonroad.visualization.draw_dispatch_cr\
-        ._retrieve_value(
-            commonroad.visualization.draw_dispatch_cr.default_draw_params,
-            call_stack,
-            ('scenario', 'lanelet_network', 'traffic_sign', 'scale_factor'))
+    scale_factor_default = draw_params.by_callstack(call_stack, (
+            'traffic_sign', 'scale_factor'))
 
     assert any([show_traffic_signs == 'all',
                 isinstance(show_traffic_signs, list) and type(
                         show_traffic_signs[0] is enum)]), 'Plotting option ' \
                                                           'traffic_sign.show_traffic_signs must ' \
                                                           'be either "all" or ' \
+                                                          '' \
+                                                          '' \
                                                           'list of type ' \
                                                           'TrafficSignID'
 
@@ -208,7 +184,7 @@ def create_img_boxes_traffic_sign(
 
             boxes = []  # collect matplotlib offset boxes for text and images
             if show_label:
-                boxes.append(TextArea(el_id.name))
+                boxes.append(TextArea(el_id.value))
 
             if plot_img:
                 # plot traffic sign
@@ -266,7 +242,7 @@ def create_img_boxes_traffic_sign(
 
 def create_img_boxes_traffic_lights(
         traffic_lights: Union[List[TrafficLight], TrafficLight],
-        draw_params: dict, call_stack: Tuple[str, ...]) -> Dict[
+        draw_params: ParamServer, call_stack: Tuple[str, ...]) -> Dict[
     Tuple[float, float], List[OffsetBox]]:
     """
     For each Traffic light an OffsetBox is created, containing the png image
@@ -284,20 +260,12 @@ def create_img_boxes_traffic_lights(
     if len(traffic_lights) == 0:
         return dict()
 
-    time_begin = commonroad.visualization.draw_dispatch_cr._retrieve_value(
-            draw_params, call_stack, ('time_begin',))
-    scale_factor = commonroad.visualization.draw_dispatch_cr\
-        ._retrieve_alternate_value(
-            draw_params, call_stack, ('traffic_light', 'scale_factor'),
-            ('scenario', 'lanelet_network', 'traffic_light', 'scale_factor'))
-    show_label = commonroad.visualization.draw_dispatch_cr\
-        ._retrieve_alternate_value(
-            draw_params, call_stack, ('traffic_light', 'show_label'),
-            ('scenario', 'lanelet_network', 'traffic_light', 'show_label'))
-    zorder = commonroad.visualization.draw_dispatch_cr\
-        ._retrieve_alternate_value(
-            draw_params, call_stack, ('traffic_light', 'zorder'),
-            ('scenario', 'lanelet_network', 'traffic_light', 'zorder'))
+    time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
+    scale_factor = draw_params.by_callstack(call_stack,
+                                            ('traffic_light', 'scale_factor'))
+    show_label = draw_params.by_callstack(call_stack,
+                                          ('traffic_light', 'show_label'))
+    zorder = draw_params.by_callstack(call_stack, ('traffic_light', 'zorder'))
 
     # plots all group members horizontally stacked
     imageboxes_all = defaultdict(list)
@@ -330,11 +298,8 @@ def create_img_boxes_traffic_lights(
 
 def draw_traffic_light_signs(traffic_lights_signs: Union[
     List[Union[TrafficLight, TrafficSign]], Union[TrafficLight, TrafficSign]],
-                             plot_limits: Union[List[Union[int, float]], None],
-                             ax: mpl.axes.Axes, draw_params: dict,
-                             draw_func: Dict[type, Callable], handles: Dict[
-            Any, List[Union[mpl.patches.Patch, mpl.collections.Collection]]],
-                             call_stack: Tuple[str, ...]) -> None:
+                             draw_params: ParamServer,
+                             call_stack: Tuple[str, ...]):
     """
     Draws OffsetBoxes which are first collected for all traffic signs and
     -lights. Boxes are stacked together when they
@@ -348,20 +313,12 @@ def draw_traffic_light_signs(traffic_lights_signs: Union[
     :param call_stack:
     :return:
     """
-    kwargs = commonroad.visualization.draw_dispatch_cr\
-        ._retrieve_alternate_value(
-            draw_params, call_stack, ('kwargs_traffic_light_signs',),
-            ('scenario', 'lanelet_network', 'kwargs_traffic_light_signs'))
+    kwargs = draw_params.by_callstack(call_stack, (
+    'lanelet_network', 'kwargs_traffic_light_signs'))
 
-    zorder_0 = commonroad.visualization.draw_dispatch_cr\
-        ._retrieve_alternate_value(
-            draw_params, call_stack, ('traffic_light', 'zorder'),
-            ('scenario', 'lanelet_network', 'traffic_light', 'zorder'))
+    zorder_0 = draw_params.by_callstack(call_stack, ('traffic_light', 'zorder'))
 
-    zorder_1 = commonroad.visualization.draw_dispatch_cr\
-        ._retrieve_alternate_value(
-            draw_params, call_stack, ('traffic_sign', 'zorder'),
-            ('scenario', 'lanelet_network', 'traffic_sign', 'zorder'))
+    zorder_1 = draw_params.by_callstack(call_stack, ('traffic_sign', 'zorder'))
 
     zorder = min(zorder_0, zorder_1)
     threshold_grouping = 0.8  # [m] distance threshold for grouping traffic
@@ -392,7 +349,7 @@ def draw_traffic_light_signs(traffic_lights_signs: Union[
     [img_boxes[pos].extend(box_list) for pos, box_list in boxes_signs.items()]
 
     if not img_boxes:
-        return None
+        return []
 
     positions = list(img_boxes.keys())
     box_lists = list(img_boxes.values())
@@ -427,6 +384,7 @@ def draw_traffic_light_signs(traffic_lights_signs: Union[
         if param not in kwargs:
             kwargs[param] = value
 
+    artists = []
     # stack imageboxes of each group and draw
     for position_tmp, box_list_tmp in groups.items():
         position_tmp = np.array(position_tmp)
@@ -437,4 +395,5 @@ def draw_traffic_light_signs(traffic_lights_signs: Union[
         hbox = HPacker(children=box_list_tmp, pad=0, sep=0.1, align='baseline')
         ab = AnnotationBbox(hbox, position_tmp, **kwargs_tmp)
         ab.zorder = zorder
-        ax.add_artist(ab)
+        artists.append(ab)
+    return artists
