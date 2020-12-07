@@ -89,7 +89,7 @@ class MPRenderer(IRenderer):
 
     def __init__(self, draw_params: Union[ParamServer, dict, None] = None,
                  plot_limits: Union[List[Union[int, float]], None] = None,
-                 ax: Union[mpl.axes.Axes, None] = None):
+                 ax: Union[mpl.axes.Axes, None] = None, figsize=None):
         """
         Creates an renderer for matplotlib
         :param draw_params: Default drawing params, if not supplied, default 
@@ -110,6 +110,9 @@ class MPRenderer(IRenderer):
         else:
             self.ax = ax
         self.f = self.ax.figure
+
+        if figsize is not None:
+            self.f.set_size_inches(*figsize)
 
         # Draw elements
         self.dynamic_artists = []
@@ -204,8 +207,7 @@ class MPRenderer(IRenderer):
 
         return self.static_collections + self.static_artists
 
-    def render(self, show: bool = False, filename: str = None) -> List[
-        artists.Artist]:
+    def render(self, show: bool = False, filename: str = None) -> None:
         """
         Render all objects from buffer
         :param show: Show the resulting figure
@@ -223,7 +225,6 @@ class MPRenderer(IRenderer):
         if show:
             self.f.show()
         self.clear()
-        return artists_list
 
     def create_video(self, obj_lists: List[IDrawable], file_path: str,
                      delta_time_steps: int = 1, plotting_horizon=0,
@@ -599,12 +600,12 @@ class MPRenderer(IRenderer):
         else:
             self.draw_list(obj, draw_params)
 
-    def draw_polygon(self, obj: Polygon,
+    def draw_polygon(self, vertices,
                      draw_params: Union[ParamServer, dict, None],
                      call_stack: Tuple[str, ...]) -> None:
         """
         Draws a polygon shape
-        :param obj: object to be plotted
+        :param vertices: vertices of the polygon
         :param draw_params: parameters for plotting given by a nested dict
         that recreates the structure of an object or a ParamServer object
         :param call_stack: tuple of string containing the call stack,
@@ -621,10 +622,9 @@ class MPRenderer(IRenderer):
         linewidth = draw_params.by_callstack(call_stack, 'linewidth')
         antialiased = draw_params.by_callstack(call_stack, 'antialiased')
         self.obstacle_patches.append(
-                mpl.patches.Polygon(obj.vertices, closed=True,
-                                    facecolor=facecolor, edgecolor=edgecolor,
-                                    zorder=zorder, alpha=opacity,
-                                    linewidth=linewidth,
+                mpl.patches.Polygon(vertices, closed=True, facecolor=facecolor,
+                                    edgecolor=edgecolor, zorder=zorder,
+                                    alpha=opacity, linewidth=linewidth,
                                     antialiased=antialiased))
 
     def draw_rectangle(self, vertices: np.ndarray,
@@ -632,7 +632,7 @@ class MPRenderer(IRenderer):
                        call_stack: Tuple[str, ...]) -> None:
         """
         Draws a rectangle shape
-        :param obj: object to be plotted
+        :param vertices: vertices of the rectangle
         :param draw_params: parameters for plotting given by a nested dict that
         recreates the structure of an object,
         :param call_stack: tuple of string containing the call stack,
@@ -656,12 +656,15 @@ class MPRenderer(IRenderer):
                                     alpha=opacity, antialiased=antialiased,
                                     linewidth=linewidth))
 
-    def draw_circle(self, obj: Circle,
-                    draw_params: Union[ParamServer, dict, None],
-                    call_stack: Tuple[str, ...]) -> None:
+    def draw_ellipse(self, center: List[float], radius_x: float,
+                     radius_y: float,
+                     draw_params: Union[ParamServer, dict, None],
+                     call_stack: Tuple[str, ...]) -> None:
         """
         Draws a circle shape
-        :param obj: object to be plotted
+        :param ellipse: center position of the ellipse
+        :param radius_x: radius of the ellipse along the x-axis
+        :param radius_y: radius of the ellipse along the y-axis
         :param draw_params: parameters for plotting given by a nested dict that
         recreates the structure of an object,
         :param call_stack: tuple of string containing the call stack,
@@ -678,9 +681,10 @@ class MPRenderer(IRenderer):
         linewidth = draw_params.by_callstack(call_stack, 'linewidth')
 
         self.obstacle_patches.append(
-                mpl.patches.Circle(obj.center, obj.radius, facecolor=facecolor,
-                                   edgecolor=edgecolor, zorder=zorder,
-                                   linewidth=linewidth, alpha=opacity))
+                mpl.patches.Ellipse(center, 2 * radius_x, 2 * radius_y,
+                                    facecolor=facecolor, edgecolor=edgecolor,
+                                    zorder=zorder, linewidth=linewidth,
+                                    alpha=opacity))
 
     def draw_state(self, state: State,
                    draw_params: Union[ParamServer, dict, None],
@@ -1430,30 +1434,30 @@ class MPRenderer(IRenderer):
                             [occ.shape.vertices[0], occ.shape.vertices[3]])
 
             for e in indicators:
-                self.draw_circle(Circle(signal_radius, e), draw_params,
-                                 call_stack + ('indicator',))
+                self.draw_ellipse(e, signal_radius, signal_radius, draw_params,
+                                  call_stack + ('indicator',))
 
             # braking lights
             if hasattr(sig, 'braking_lights') and sig.braking_lights is True:
                 braking.extend([occ.shape.vertices[0], occ.shape.vertices[1]])
 
             for e in braking:
-                self.draw_circle(Circle(signal_radius * 1.5, e), draw_params,
-                                 call_stack + ('braking',))
+                self.draw_ellipse(e, signal_radius * 1.5, signal_radius * 1.5,
+                                  draw_params, call_stack + ('braking',))
 
             # blue lights
             if hasattr(sig,
                        'flashing_blue_lights') and sig.flashing_blue_lights \
                     is True:
                 pos = occ.shape.center
-                self.draw_circle(Circle(signal_radius, pos), draw_params,
-                                 call_stack + ('bluelight',))
+                self.draw_ellipse(pos, signal_radius, signal_radius,
+                                  draw_params, call_stack + ('bluelight',))
 
             # horn
             if hasattr(sig, 'horn') and sig.horn is True:
                 pos = occ.shape.center
-                self.draw_circle(Circle(signal_radius * 1.5, pos), draw_params,
-                                 call_stack + ('horn',))
+                self.draw_ellipse(pos, signal_radius * 1.5, signal_radius * 1.5,
+                                  draw_params, call_stack + ('horn',))
 
         else:
             warnings.warn('Plotting signal states only implemented for '

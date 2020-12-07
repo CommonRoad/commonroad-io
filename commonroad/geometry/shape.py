@@ -310,7 +310,8 @@ class Circle(Shape):
     def draw(self, renderer: IRenderer,
              draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_circle(self, draw_params, call_stack)
+        renderer.draw_ellipse(self.center, self.radius, self.radius,
+                              draw_params, call_stack)
 
 
 class Polygon(Shape):
@@ -405,7 +406,7 @@ class Polygon(Shape):
     def draw(self, renderer: IRenderer,
              draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_polygon(self, draw_params, call_stack)
+        renderer.draw_polygon(self.vertices, draw_params, call_stack)
 
 
 class ShapeGroup(Shape):

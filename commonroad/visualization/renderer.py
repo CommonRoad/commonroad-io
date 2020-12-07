@@ -59,10 +59,10 @@ class IRenderer(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def draw_polygon(self, obj, draw_params, call_stack):
+    def draw_polygon(self, vertices, draw_params, call_stack):
         """
         Draws a polygon shape
-        :param obj: object to be plotted
+        :param vertices: vertices of the polygon
         :param draw_params: parameters for plotting given by a nested dict
         that recreates the structure of an object or a ParamServer object
         :param call_stack: tuple of string containing the call stack,
@@ -76,7 +76,7 @@ class IRenderer(metaclass=ABCMeta):
     def draw_rectangle(self, vertices, draw_params, call_stack):
         """
         Draws a rectangle shape
-        :param obj: object to be plotted
+        :param vertices: vertices of the rectangle
         :param draw_params: parameters for plotting given by a nested dict that
         recreates the structure of an object,
         :param call_stack: tuple of string containing the call stack,
@@ -87,10 +87,13 @@ class IRenderer(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def draw_circle(self, obj, draw_params, call_stack):
+    def draw_ellipse(self, center: List[float], radius_x: float,
+                     radius_y: float, draw_params, call_stack):
         """
         Draws a circle shape
-        :param obj: object to be plotted
+        :param ellipse: center position of the ellipse
+        :param radius_x: radius of the ellipse along the x-axis
+        :param radius_y: radius of the ellipse along the y-axis
         :param draw_params: parameters for plotting given by a nested dict that
         recreates the structure of an object,
         :param call_stack: tuple of string containing the call stack,
