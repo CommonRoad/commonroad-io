@@ -87,8 +87,8 @@ class IRenderer(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def draw_ellipse(self, center: List[float], radius_x: float,
-                     radius_y: float, draw_params, call_stack):
+    def draw_ellipse(self, center, radius_x, radius_yt, draw_params,
+                     call_stack):
         """
         Draws a circle shape
         :param ellipse: center position of the ellipse
