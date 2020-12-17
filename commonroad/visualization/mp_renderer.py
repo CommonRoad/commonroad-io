@@ -180,6 +180,9 @@ class MPRenderer(IRenderer):
         traffic_sign_artists = draw_traffic_light_signs(self.traffic_signs,
                                                         self.traffic_sign_draw_params,
                                                         self.traffic_sign_call_stack)
+        for art in self.dynamic_artists:
+            self.ax.add_artist(art)
+            artist_list.append(art)
         for art in traffic_sign_artists:
             self.ax.add_artist(art)
             artist_list.append(art)
