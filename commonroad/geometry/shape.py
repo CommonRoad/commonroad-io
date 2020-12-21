@@ -188,16 +188,7 @@ class Rectangle(Shape):
         assert is_real_number_vector(point, 2), '<Rectangle/contains_point>: argument "point" is ' \
                                                 'not a vector of real numbers of length 2. point = {}'\
                                                 .format(point)
-
-        def in_axis_aligned_bounding_box(point: np.ndarray) -> bool:
-            """
-            fast check if a point is inside the axis aligned bounding box of a lanelet
-            """
-            px, py = point
-            return np.min(self.vertices[0, :]) <= px <= np.max(self.vertices[0, :]) \
-                   and np.min(self.vertices[1, :]) <= py <= np.max(self.vertices[1, :])
-
-        return in_axis_aligned_bounding_box(point) and self._shapely_polygon.intersects(shapely.geometry.Point(point))
+        return self._shapely_polygon.intersects(shapely.geometry.Point(point))
 
     def _compute_vertices(self) -> np.ndarray:
         """ Computes the vertices of the rectangle."""
@@ -404,7 +395,16 @@ class Polygon(Shape):
                                          '"point" is ' \
                                          'not a vector of real numbers of ' \
                                          'length 2. point = {}'.format(point)
-        return self._shapely_polygon.intersects(shapely.geometry.Point(point))
+
+        def in_axis_aligned_bounding_box(point: np.ndarray) -> bool:
+            """
+            fast check if a point is inside the axis aligned bounding box of a lanelet
+            """
+            px, py = point
+            return np.min(self.vertices[0, :]) <= px <= np.max(self.vertices[0, :]) \
+                   and np.min(self.vertices[1, :]) <= py <= np.max(self.vertices[1, :])
+
+        return in_axis_aligned_bounding_box(point)  and self._shapely_polygon.intersects(shapely.geometry.Point(point))
 
     def __str__(self):
         output = "Polygon: \n"
