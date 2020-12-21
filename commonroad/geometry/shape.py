@@ -404,8 +404,8 @@ class Polygon(Shape):
             fast check if a point is inside the axis aligned bounding box of a lanelet
             """
             px, py = point
-            return np.min(self.vertices[:, 0]) <= px <= np.max(self.vertices[:, 0]) \
-                   and np.min(self.vertices[:, 1]) <= py <= np.max(self.vertices[:, 1])
+            return all(np.less_equal(np.min(self.vertices, axis=0), point)) \
+                   and all(np.less_equal(point, np.max(self.vertices, axis=0)))
 
         return in_axis_aligned_bounding_box(point) and self._shapely_polygon.intersects(shapely.geometry.Point(point))
 
