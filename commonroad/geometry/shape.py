@@ -325,6 +325,8 @@ class Polygon(Shape):
         :param vertices: array of ordered vertices of the polygon [[x_0, y_0], [x_1, y_1], ...]
         """
         self.vertices: np.ndarray = vertices
+        self._min: np.ndarray = np.min(vertices, axis=0)
+        self._max: np.ndarray = np.max(vertices, axis=0)
         self._shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self._vertices)
         # ensure that vertices are sorted clockwise and the first and last point are the same
         self._vertices = np.array(shapely.geometry.polygon.orient(
@@ -343,6 +345,8 @@ class Polygon(Shape):
             assert is_valid_polyline(vertices), '<Polygon/vertices>: argument "vertices" is not valid. vertices = ' \
                                                 '{}'.format(vertices)
             self._vertices = vertices
+            self._min = np.min(vertices, axis=0)
+            self._max = np.max(vertices, axis=0)
         else:
             warnings.warn('<Polygon/vertices>: vertices of polygon are immutable.')
 
@@ -403,9 +407,7 @@ class Polygon(Shape):
             """
             fast check if a point is inside the axis aligned bounding box of a lanelet
             """
-            px, py = point
-            return all(np.less_equal(np.min(self.vertices, axis=0), point)) \
-                   and all(np.less_equal(point, np.max(self.vertices, axis=0)))
+            return all(np.less_equal(self._min, point)) and all(np.less_equal(point, self._max))
 
         return in_axis_aligned_bounding_box(point) and self._shapely_polygon.intersects(shapely.geometry.Point(point))
 
