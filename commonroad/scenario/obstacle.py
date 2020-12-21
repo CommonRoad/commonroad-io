@@ -29,6 +29,7 @@ class ObstacleRole(enum.Enum):
     STATIC = "static"
     DYNAMIC = "dynamic"
     ENVIRONMENT = "environment"
+    Phantom = "phantom"
 
 
 @enum.unique
@@ -461,8 +462,7 @@ class PhantomObstacle(IDrawable):
     """
 
     def __init__(self, obstacle_id: int,
-                 prediction: SetBasedPrediction = None,
-                 initial_shape_lanelet_ids: Union[None, Set[int]] = None):
+                 prediction: SetBasedPrediction = None):
         """
             :param obstacle_id: unique ID of the obstacle
             :param prediction: set-based prediction of phantom obstacle
@@ -470,7 +470,7 @@ class PhantomObstacle(IDrawable):
         """
         self.obstacle_id = obstacle_id
         self.prediction: SetBasedPrediction = prediction
-        self.initial_shape_lanelet_ids = initial_shape_lanelet_ids
+        self.obstacle_role: ObstacleRole = ObstacleRole.Phantom
 
     @property
     def prediction(self) -> Union[SetBasedPrediction, None]:
@@ -483,6 +483,21 @@ class PhantomObstacle(IDrawable):
             '<PhantomObstacle/prediction>: argument prediction of wrong type. Expected types: %s, %s. Got type: ' \
             '%s.' % (SetBasedPrediction, type(None), type(prediction))
         self._prediction = prediction
+
+    @property
+    def obstacle_role(self) -> ObstacleRole:
+        """ Obstacle role as defined in CommonRoad."""
+        return self._obstacle_role
+
+    @obstacle_role.setter
+    def obstacle_role(self, obstacle_role: ObstacleRole):
+        assert isinstance(obstacle_role, ObstacleRole), '<Obstacle/obstacle_role>: argument obstacle_role of wrong ' \
+                                                        'type. Expected type: %s. Got type: %s.' \
+                                                        % (ObstacleRole, type(obstacle_role))
+        if not hasattr(self, '_obstacle_role'):
+            self._obstacle_role = obstacle_role
+        else:
+            warnings.warn('<Obstacle/obstacle_role>: Obstacle role is immutable.')
 
     def occupancy_at_time(self, time_step: int) -> Union[None, Occupancy]:
         """
@@ -533,7 +548,7 @@ class PhantomObstacle(IDrawable):
     def draw(self, renderer: IRenderer,
              draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_dynamic_obstacle(self, draw_params, call_stack)
+        renderer.draw_phantom_obstacle(self, draw_params, call_stack)
 
 
 class EnvironmentObstacle(IDrawable):
@@ -611,6 +626,15 @@ class EnvironmentObstacle(IDrawable):
         else:
             warnings.warn('<Obstacle/obstacle_shape>: Obstacle shape is immutable.')
 
+    def occupancy_at_time(self, time_step: int) -> Occupancy:
+        """
+        Returns the predicted occupancy of the obstacle at a specific time step.
+
+        :param time_step: discrete time step
+        :return: occupancy of the static obstacle at time step
+        """
+        return Occupancy(time_step=time_step, shape=self._obstacle_shape)
+
     def __str__(self):
         obs_str = 'Environment Obstacle:\n'
         obs_str += '\nid: {}'.format(self.obstacle_id)
@@ -619,4 +643,4 @@ class EnvironmentObstacle(IDrawable):
     def draw(self, renderer: IRenderer,
              draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_dynamic_obstacle(self, draw_params, call_stack)
+        renderer.draw_environment_obstacle(self, draw_params, call_stack)

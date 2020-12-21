@@ -13,8 +13,6 @@ import matplotlib.pyplot as plt
 import matplotlib.colors
 import matplotlib.artist as artists
 import matplotlib.text as text
-from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.renderer import IRenderer
 from matplotlib.animation import FuncAnimation
 
 from matplotlib.colors import hsv_to_rgb, rgb_to_hsv, to_rgb, to_hex
@@ -28,7 +26,9 @@ from commonroad.scenario.lanelet import LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle, \
     StaticObstacle, \
     ObstacleRole, \
-    SignalState
+    SignalState, \
+    PhantomObstacle, \
+    EnvironmentObstacle
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.traffic_sign import TrafficLightState, \
     TrafficLight, \
@@ -493,6 +493,65 @@ class MPRenderer(IRenderer):
         # draw initial state
         if draw_initial_state:
             state.draw(self, draw_params, call_stack)
+
+    def draw_phantom_obstacle(self, obj: PhantomObstacle,
+                              draw_params: Union[ParamServer, dict, None],
+                              call_stack: Tuple[str, ...]) -> None:
+        """
+        :param obj: object to be plotted
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object or a ParamServer object
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack
+        :return: None
+        """
+        draw_params = self._get_draw_params(draw_params)
+
+        time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
+        time_end = draw_params.by_callstack(call_stack, ('time_end',))
+
+        call_stack = tuple(list(call_stack) + ['dynamic_obstacle'])
+        draw_shape = draw_params.by_callstack(call_stack, 'draw_shape')
+        draw_occupancies = draw_params.by_callstack(call_stack, (
+                'occupancy', 'draw_occupancies'))
+
+        # draw occupancies
+        if (draw_occupancies == 1 or (draw_occupancies == 0 and type(
+                obj.prediction) == commonroad.prediction.prediction.SetBasedPrediction)):
+            if draw_shape:
+                # occupancy already plotted
+                time_begin_occ = time_begin + 1
+            else:
+                time_begin_occ = time_begin
+
+            for time_step in range(time_begin_occ, time_end):
+                occ = obj.occupancy_at_time(time_step)
+                if occ is not None:
+                    occ.draw(self, draw_params, call_stack)
+
+        # draw shape
+        if draw_shape:
+            occ = obj.occupancy_at_time(time_begin)
+            if occ is not None:
+                occ.draw(self, draw_params, call_stack + ('vehicle_shape',))
+
+    def draw_environment_obstacle(self, obj: EnvironmentObstacle,
+                                  draw_params: Union[ParamServer, dict, None],
+                                  call_stack: Tuple[str, ...]) -> None:
+        """
+        :param obj: object to be plotted
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object or a ParamServer object
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack
+        :return: None
+        """
+        draw_params = self._get_draw_params(draw_params)
+        time_begin = draw_params.by_callstack(tuple(), ('time_begin',))
+        call_stack = tuple(list(call_stack) + ['static_obstacle'])
+        obj.occupancy_at_time(time_begin).draw(self, draw_params, call_stack)
 
     def _draw_history(self, dyn_obs: DynamicObstacle,
                       call_stack: Tuple[str, ...], draw_params: ParamServer):

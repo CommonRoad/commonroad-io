@@ -324,7 +324,6 @@ __status__ = "released"
       <xs:enumeration value="priorityVehicle"/>
       <xs:enumeration value="train"/>
       <xs:enumeration value="taxi"/>
-      <xs:enumeration value="phantom"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="lanelet">
@@ -571,7 +570,6 @@ __status__ = "released"
       <xs:enumeration value="priorityVehicle"/>
       <xs:enumeration value="train"/>
       <xs:enumeration value="taxi"/>
-      <xs:enumeration value="phantom"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="dynamicObstacle">
@@ -748,7 +746,8 @@ __status__ = "released"
         <xs:element name="intersection" type="intersection" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="staticObstacle" type="staticObstacle" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="dynamicObstacle" type="dynamicObstacle" minOccurs="0" maxOccurs="unbounded"/>
-	<xs:element name="environmentObstacle" type="environmentObstacle" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="phantomObstacle" type="phantomObstacle" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="environmentObstacle" type="environmentObstacle" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="planningProblem" type="planningProblem" minOccurs="1" maxOccurs="unbounded"/>
       </xs:sequence>
       <xs:attribute name="commonRoadVersion" use="required">

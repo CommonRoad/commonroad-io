@@ -25,7 +25,9 @@ from commonroad.prediction.prediction import Occupancy
 from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle, \
     StaticObstacle, \
-    ObstacleRole
+    ObstacleRole, \
+    EnvironmentObstacle, \
+    PhantomObstacle
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.trajectory import Trajectory, State
 
@@ -336,6 +338,47 @@ def draw_static_obstacles(obj: Union[List[StaticObstacle], StaticObstacle],
                                         draw_func, handles, call_stack)
 
     handles.setdefault(StaticObstacle, []).extend(collection)
+
+
+def draw_environment_obstacles(obj: Union[List[StaticObstacle], StaticObstacle],
+                              plot_limits: Union[List[Union[int, float]], None],
+                              ax: mpl.axes.Axes, draw_params: dict,
+                              draw_func: Dict[type, Callable],
+                              handles: Dict[int, List[mpl.patches.Patch]],
+                              call_stack: Tuple[str, ...]) -> None:
+    """
+    :param obj: object to be plotted
+    :param ax: axes object from matplotlib
+    :param draw_params: parameters for plotting given by a nested dict that
+    recreates the structure of an object,
+    :param draw_func: specifies the drawing function
+    :param call_stack: tuple of string containing the call stack,
+    which allows for differentiation of plotting styles
+           depending on the call stack of draw_object
+    :return: None
+    """
+    time_begin = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+        draw_params, tuple(), ('time_begin',))
+
+    if type(obj) is EnvironmentObstacle:
+        obj = [obj]
+
+    call_stack = tuple(list(call_stack) + ['static_obstacle'])
+
+    shape_list = list()
+    for obstacle in obj:
+        if type(obstacle) is not EnvironmentObstacle:
+            warnings.warn(
+                '<visualization/scenario> Only lists with objects of the '
+                'same '
+                'type can be plotted', UserWarning, stacklevel=1)
+            continue
+        shape_list.append(obstacle.occupancy_at_time(time_begin).shape)
+
+    collection = shape_batch_dispatcher(shape_list, None, ax, draw_params,
+                                        draw_func, handles, call_stack)
+
+    handles.setdefault(EnvironmentObstacle, []).extend(collection)
 
 
 def draw_trajectories(obj: Union[List[Trajectory], Trajectory],
@@ -1374,6 +1417,87 @@ def draw_dynamic_obstacles(obj: Union[List[DynamicObstacle], DynamicObstacle],
         ax.add_collection(handles[DynamicObstacle][-1])
 
 
+def draw_phantom_obstacles(obj: Union[List[PhantomObstacle], PhantomObstacle],
+                           plot_limits: Union[List[Union[int, float]], None],
+                           ax: mpl.axes.Axes, draw_params: dict,
+                           draw_func: Dict[type, Callable], handles: Dict[
+            Any, List[Union[mpl.patches.Patch, mpl.collections.Collection]]],
+                           call_stack: Tuple[str, ...]) -> None:
+    """
+    :param obj: object to be plotted
+    :param ax: axes object from matplotlib
+    :param draw_params: parameters for plotting given by a nested dict that
+    recreates the structure of an object,
+    :param draw_func: specifies the drawing function
+    :param call_stack: tuple of string containing the call stack,
+    which allows for differentiation of plotting styles
+           depending on the call stack of draw_object
+    :return: None
+    """
+
+    def collecting(o: PhantomObstacle):
+        occupancy_list = list()
+
+        if type(o) is not PhantomObstacle:
+            warnings.warn(
+                    '<visualization/scenario> Only lists with objects of the '
+                    'same '
+                    'type can be plotted', UserWarning, stacklevel=1)
+            return (occupancy_list)
+
+        # draw occupancies
+        if (draw_occupancies == 1 or (draw_occupancies == 0 and type(
+                o.prediction) == commonroad.prediction.prediction.SetBasedPrediction)):
+            if draw_shape:
+                # occupancy already plotted
+                time_begin_occ = time_begin + 1
+            else:
+                time_begin_occ = time_begin
+
+            for time_step in range(time_begin_occ, time_end):
+                tmp = o.occupancy_at_time(time_step)
+                if tmp is not None:
+                    occupancy_list.append(tmp)
+
+        return [occupancy_list]
+
+    if type(obj) is PhantomObstacle:
+        obj = [obj]
+
+    try:
+        time_begin = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack, ('time_begin',))
+        time_end = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack, ('time_end',))
+        draw_shape = commonroad.visualization.draw_dispatch_cr._retrieve_value(
+                draw_params, call_stack, ('dynamic_obstacle', 'draw_shape'))
+        draw_occupancies = commonroad.visualization.draw_dispatch_cr\
+            ._retrieve_value(
+                draw_params, call_stack,
+                ('dynamic_obstacle', 'occupancy', 'draw_occupancies'))
+
+    except KeyError:
+        warnings.warn(
+                "Cannot find stylesheet for dynamic_obstacle (phantom_obstacle. Called through:")
+        print(call_stack)
+
+    call_stack = tuple(list(call_stack) + ['phantom_obstacle'])
+
+    # collect objects from all vehicles to draw them efficiently in batches
+    occupancy_list = zip(*list(map(collecting, obj)))
+
+    occupancy_list = list(filter(None, list(occupancy_list)))
+
+    # draw collected lists, store handles:
+    if len(occupancy_list) > 0:
+        handles.setdefault(DynamicObstacle, []).extend(
+                commonroad.visualization.draw_dispatch_cr.draw_object(
+                        occupancy_list, None, ax, draw_params, draw_func,
+                        handles, call_stack))
+
+        ax.add_collection(handles[DynamicObstacle][-1])
+
+
 def draw_occupancies(obj: Union[List[Occupancy], Occupancy],
                      plot_limits: Union[List[Union[int, float]], None],
                      ax: mpl.axes.Axes, draw_params: dict,
@@ -1823,17 +1947,19 @@ def draw_state(state: State, plot_limits: Union[List[Union[int, float]], None],
 
 # default function dict, which assigns drawing functions to object classes
 draw_func_dict = {
-        commonroad.scenario.scenario.Scenario:         draw_scenario,
-        commonroad.scenario.lanelet.Lanelet:           draw_lanelet_list,
-        commonroad.scenario.lanelet.LaneletNetwork:    draw_lanelet_network,
-        commonroad.scenario.traffic_sign.TrafficSign:  draw_traffic_light_signs,
-        commonroad.scenario.traffic_sign.TrafficLight: draw_traffic_light_signs,
-        commonroad.scenario.obstacle.DynamicObstacle:  draw_dynamic_obstacles,
-        commonroad.scenario.obstacle.StaticObstacle:   draw_static_obstacles,
-        commonroad.scenario.trajectory.Trajectory:     draw_trajectories,
-        commonroad.geometry.shape.ShapeGroup:          draw_shape_group,
-        commonroad.geometry.shape.Polygon:             draw_polygons,
-        commonroad.geometry.shape.Circle:              draw_circle,
-        commonroad.geometry.shape.Rectangle:           draw_rectangle,
-        commonroad.prediction.prediction.Occupancy:    draw_occupancies
+        commonroad.scenario.scenario.Scenario:             draw_scenario,
+        commonroad.scenario.lanelet.Lanelet:               draw_lanelet_list,
+        commonroad.scenario.lanelet.LaneletNetwork:        draw_lanelet_network,
+        commonroad.scenario.traffic_sign.TrafficSign:      draw_traffic_light_signs,
+        commonroad.scenario.traffic_sign.TrafficLight:     draw_traffic_light_signs,
+        commonroad.scenario.obstacle.DynamicObstacle:      draw_dynamic_obstacles,
+        commonroad.scenario.obstacle.StaticObstacle:       draw_static_obstacles,
+        commonroad.scenario.obstacle.PhantomObstacle :     draw_phantom_obstacles,
+        commonroad.scenario.obstacle.EnvironmentObstacle:  draw_environment_obstacles,
+        commonroad.scenario.trajectory.Trajectory:         draw_trajectories,
+        commonroad.geometry.shape.ShapeGroup:              draw_shape_group,
+        commonroad.geometry.shape.Polygon:                 draw_polygons,
+        commonroad.geometry.shape.Circle:                  draw_circle,
+        commonroad.geometry.shape.Rectangle:               draw_rectangle,
+        commonroad.prediction.prediction.Occupancy:        draw_occupancies
 }

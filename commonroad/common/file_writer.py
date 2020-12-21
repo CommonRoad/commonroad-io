@@ -20,7 +20,7 @@ from commonroad.prediction.prediction import SetBasedPrediction, TrajectoryPredi
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine, LaneletType
 from commonroad.scenario.obstacle import ObstacleRole, ObstacleType, DynamicObstacle, StaticObstacle, Obstacle, \
-    Occupancy, Shape, SignalState, EnvironmentObstacle
+    Occupancy, Shape, SignalState, EnvironmentObstacle, PhantomObstacle
 from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficLightCycleElement
 from commonroad.scenario.trajectory import Trajectory, State
@@ -251,8 +251,6 @@ class CommonRoadFileWriter:
             self._root_node.append(IntersectionXMLNode.create_node(intersection))
         for o in self.scenario.obstacles:
             self._root_node.append(ObstacleXMLNode.create_node(o))
-        for b in self.scenario.environment_obstacle:
-            self._root_node.append(EnvironmentObstacleXMLNode.create_node(b))
 
     def _add_all_planning_problems_from_planning_problem_set(self):
         for (
@@ -592,7 +590,8 @@ class LaneletXMLNode:
 
 class ObstacleXMLNode:
     @classmethod
-    def create_node(cls, obstacle: Union[Obstacle, DynamicObstacle, StaticObstacle]) -> etree.Element:
+    def create_node(cls, obstacle: Union[Obstacle, DynamicObstacle, StaticObstacle, EnvironmentObstacle,
+                                         PhantomObstacle]) -> etree.Element:
         """
         Create XML-Node for an Obstacle
         :param obstacle: Obstacle for creating a node
@@ -602,8 +601,10 @@ class ObstacleXMLNode:
             return DynamicObstacleXMLNode.create_node(obstacle)
         elif type(obstacle) == StaticObstacle:
             return StaticObstacleXMLNode.create_node(obstacle)
-        elif type(obstacle == EnvironmentObstacle):
+        elif type(obstacle) == EnvironmentObstacle:
             return EnvironmentObstacleXMLNode.create_node(obstacle)
+        elif type(obstacle) == PhantomObstacle:
+            return PhantomObstacleXMLNode.create_node(obstacle)
         else:
             raise Exception()
 
@@ -613,9 +614,6 @@ class ObstacleXMLNode:
     ):
         obstacle_node = etree.Element(obstacle_role.value+'Obstacle')
         obstacle_node.set('id', str(obstacle_id))
-        # role_node = etree.Element('role')
-        # role_node.text = cls._obstacle_role_enum_to_string(obstacle_role)
-        # obstacle_node.append(role_node)
         type_node = etree.Element('type')
         type_node.text = obstacle_type.value
         obstacle_node.append(type_node)
@@ -627,7 +625,7 @@ class EnvironmentObstacleXMLNode:
     def create_node(cls, environment_obstacle: EnvironmentObstacle) -> etree.Element:
         """
         Create XML-Node for a EnvironmentObstacle
-        :param environment_obstacle: environment_obstacle for creating a node
+        :param environment_obstacle: EnvironmentObstacle for creating a node
         :return: node
         """
         node = ObstacleXMLNode.create_obstacle_node_header(
@@ -640,6 +638,27 @@ class EnvironmentObstacleXMLNode:
         node.append(shape_node)
 
         return node
+
+
+class PhantomObstacleXMLNode:
+    @classmethod
+    def create_node(cls, phantom_obstacle: PhantomObstacle) -> etree.Element:
+        """
+        Create XML-Node for a PhantomObstacle
+        :param phantom_obstacle: PhantomObstacle for creating a node
+        :return: node
+        """
+        node = PhantomObstacleXMLNode.create_obstacle_node_header(phantom_obstacle.obstacle_id,
+                                                                  phantom_obstacle.obstacle_role)
+        if isinstance(phantom_obstacle.prediction, SetBasedPrediction):
+            node.append(DynamicObstacleXMLNode.create_occupancy_node(phantom_obstacle.prediction.occupancy_set))
+        return node
+
+    @classmethod
+    def create_obstacle_node_header(cls, obstacle_id: int, obstacle_role: ObstacleRole):
+        obstacle_node = etree.Element(obstacle_role.value+'Obstacle')
+        obstacle_node.set('id', str(obstacle_id))
+        return obstacle_node
 
 
 class StaticObstacleXMLNode:
@@ -714,7 +733,7 @@ class DynamicObstacleXMLNode:
         # write prediction depending on type
         if isinstance(dynamic_obstacle.prediction, SetBasedPrediction):
             obstacle_node.append(
-                cls._create_occupancy_node(dynamic_obstacle.prediction.occupancy_set)
+                cls.create_occupancy_node(dynamic_obstacle.prediction.occupancy_set)
             )
         elif isinstance(dynamic_obstacle.prediction, TrajectoryPrediction):
             obstacle_node.append(
@@ -743,7 +762,7 @@ class DynamicObstacleXMLNode:
         return traj_node
 
     @classmethod
-    def _create_occupancy_node(cls, occupancy_set: List[Occupancy]) -> etree.Element:
+    def create_occupancy_node(cls, occupancy_set: List[Occupancy]) -> etree.Element:
         """
         Create XML-Node for an occupancy_set
         :param occupancy_set: occupancy_set for creating a node
