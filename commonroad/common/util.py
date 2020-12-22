@@ -32,6 +32,8 @@ def make_valid_orientation_interval(angle_start: float, angle_end: float) -> Tup
 
 class Interval:
     def __init__(self, start: Union[int, float], end: Union[int, float]):
+        self._start = None
+        self._end = None
         self.start = start
         self.end = end
 
@@ -66,7 +68,7 @@ class Interval:
 
     @start.setter
     def start(self, start: Union[int, float]):
-        if hasattr(self, '_end'):
+        if self._end is not None:
             assert start <= self._end, '<common.util/Interval> start of interval must be <= end, but start {} > end {}'.format(start,self._end)
         self._start = start
 
@@ -76,7 +78,7 @@ class Interval:
 
     @end.setter
     def end(self, end: Union[int, float]):
-        if hasattr(self, '_start'):
+        if self._start is not None:
             assert end >= self._start, '<common.util/Interval> start of interval must be <= end, but start {} > end {}'.format(self._start, end)
         self._end = end
 
@@ -137,7 +139,7 @@ class AngleInterval(Interval):
     @start.setter
     def start(self, start: Union[int, float]):
         assert is_valid_orientation(start), '<common.util/AngleInterval> start angle needs to be in interval [-2pi,2pi]'
-        if hasattr(self, '_end'):
+        if self._end is not None:
             assert start <= self._end, '<common.util/Interval> start of interval must be <= end, but start {} > end {}'.format(start,self._end)
         self._start = start
 
@@ -148,7 +150,7 @@ class AngleInterval(Interval):
     @end.setter
     def end(self, end: Union[int, float]):
         assert is_valid_orientation(end), '<common.util/AngleInterval> end angle needs to be in interval [-2pi,2pi]'
-        if hasattr(self, '_start'):
+        if self._start is not None:
             assert end >= self._start, '<common.util/Interval> start of interval must be <= end, but start {} > end {}'.format(self._start, end)
         self._end = end
 

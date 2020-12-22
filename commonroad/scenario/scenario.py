@@ -262,15 +262,15 @@ class ScenarioID:
         """
         assert scenario_version in SUPPORTED_COMMONROAD_VERSIONS, 'Scenario_version {} not supported.' \
             .format(scenario_version)
-        self.scenario_version = scenario_version
-        self.cooperative = cooperative
+        self.scenario_version: str = scenario_version
+        self.cooperative: bool = cooperative
         self._country_id = None
-        self.country_id = country_id
-        self.map_name = map_name
-        self.map_id = map_id
-        self.configuration_id = configuration_id
-        self.prediction_type = prediction_type
-        self.prediction_id = prediction_id
+        self.country_id: str = country_id
+        self.map_name: str = map_name
+        self.map_id: int = map_id
+        self.configuration_id: Union[None, int] = configuration_id
+        self.prediction_type: Union[None, str] = prediction_type
+        self.prediction_id: Union[None, int] = prediction_id
 
     def __str__(self):
         scenario_id = ""
