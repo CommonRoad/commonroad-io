@@ -48,6 +48,7 @@ class Rectangle(Shape):
     rectangle is specified by the length in longitudinal direction, the width in lateral direction, the orientation,
     and its geometric center. If we model the shape of an obstacle, the orientation and geometric center can be
     omitted; therefore, we set the orientation, and the x- and y-coordinate of the geometric center to zero."""
+
     def __init__(self, length: float, width: float, center: np.ndarray = np.array([0.0, 0.0]),
                  orientation: float = 0.0):
         """
@@ -164,7 +165,7 @@ class Rectangle(Shape):
                                                       '{}'.format(translation)
         assert is_valid_orientation(angle), '<Rectangle/translate_rotate>: argument "orientation" is not valid.' \
                                             'orientation = {}'.format(angle)
-        new_center = translate_rotate(self._center.reshape([1,-1]), translation, angle)[0]
+        new_center = translate_rotate(self._center.reshape([1, -1]), translation, angle)[0]
         new_orientation = make_valid_orientation(self._orientation + angle)
         return Rectangle(self._length, self._width, new_center, new_orientation)
 
@@ -186,18 +187,18 @@ class Rectangle(Shape):
             :return: true if the rectangle’s interior or boundary intersects with the given point, otherwise false
         """
         assert is_real_number_vector(point, 2), '<Rectangle/contains_point>: argument "point" is ' \
-                                                'not a vector of real numbers of length 2. point = {}'\
-                                                .format(point)
+                                                'not a vector of real numbers of length 2. point = {}' \
+            .format(point)
         return self._shapely_polygon.intersects(shapely.geometry.Point(point))
 
     def _compute_vertices(self) -> np.ndarray:
         """ Computes the vertices of the rectangle."""
         vertices = np.array(
-                   [[- 0.5 * self._length, - 0.5 * self._width],
-                    [- 0.5 * self._length, + 0.5 * self._width],
-                    [+ 0.5 * self._length, + 0.5 * self._width],
-                    [+ 0.5 * self._length, - 0.5 * self._width],
-                    [- 0.5 * self._length, - 0.5 * self._width]])
+            [[- 0.5 * self._length, - 0.5 * self._width],
+             [- 0.5 * self._length, + 0.5 * self._width],
+             [+ 0.5 * self._length, + 0.5 * self._width],
+             [+ 0.5 * self._length, - 0.5 * self._width],
+             [- 0.5 * self._length, - 0.5 * self._width]])
         return rotate_translate(vertices, self._center, self._orientation)
 
     def __str__(self):
@@ -218,6 +219,7 @@ class Circle(Shape):
     """ The class Circle can be used to model occupied regions or circular obstacles, e.g., a pedestrian.
     A circle is defined by its radius and its geometric center. If we model the shape of an obstacle,
     the geometric center can be omitted and is set to [0.0, 0.0]."""
+
     def __init__(self, radius: float, center: np.ndarray = np.array([0.0, 0.0])):
         """
         :param radius: radius of the circle in [m]
@@ -317,11 +319,14 @@ class Circle(Shape):
 class Polygon(Shape):
     """ The class Polygon can be used to model occupied regions or obstacles. A polygon is defined by an array of
     ordered points (clockwise or counterclockwise)."""
+
     def __init__(self, vertices: np.ndarray):
         """
         :param vertices: array of ordered vertices of the polygon [[x_0, y_0], [x_1, y_1], ...]
         """
         self.vertices: np.ndarray = vertices
+        self._min: np.ndarray = np.min(vertices, axis=0)
+        self._max: np.ndarray = np.max(vertices, axis=0)
         self._shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self._vertices)
         # ensure that vertices are sorted clockwise and the first and last point are the same
         self._vertices = np.array(shapely.geometry.polygon.orient(
@@ -340,6 +345,8 @@ class Polygon(Shape):
             assert is_valid_polyline(vertices), '<Polygon/vertices>: argument "vertices" is not valid. vertices = ' \
                                                 '{}'.format(vertices)
             self._vertices = vertices
+            self._min = np.min(vertices, axis=0)
+            self._max = np.max(vertices, axis=0)
         else:
             warnings.warn('<Polygon/vertices>: vertices of polygon are immutable.')
 
@@ -379,7 +386,7 @@ class Polygon(Shape):
         assert is_valid_orientation(angle), '<Polygon/rotate_translate_local>: argument "orientation" is not valid.' \
                                             'orientation = {}'.format(angle)
         rotated_shapely_polygon = shapely.affinity.rotate(
-            self._shapely_polygon, angle, origin='centroid',  use_radians=True)
+            self._shapely_polygon, angle, origin='centroid', use_radians=True)
         new_vertices = np.array(rotated_shapely_polygon.exterior.coords) + translation
         return Polygon(new_vertices)
 
@@ -395,7 +402,14 @@ class Polygon(Shape):
                                          '"point" is ' \
                                          'not a vector of real numbers of ' \
                                          'length 2. point = {}'.format(point)
-        return self._shapely_polygon.intersects(shapely.geometry.Point(point))
+
+        def in_axis_aligned_bounding_box(point: np.ndarray) -> bool:
+            """
+            fast check if a point is inside the axis aligned bounding box of a lanelet
+            """
+            return all(np.less_equal(self._min, point)) and all(np.less_equal(point, self._max))
+
+        return in_axis_aligned_bounding_box(point) and self._shapely_polygon.intersects(shapely.geometry.Point(point))
 
     def __str__(self):
         output = "Polygon: \n"
@@ -412,6 +426,7 @@ class Polygon(Shape):
 class ShapeGroup(Shape):
     """ The class ShapeGroup represents a collection of primitive shapes, e.g., rectangles and polygons,
     which can be used to model occupied regions."""
+
     def __init__(self, shapes: List[Shape]):
         """
         :param shapes: list of shapes
