@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-__author__ = "Markus Koschi, Anna-Katharina Rettinger, Sebastian Maierhofer"
+__author__ = "Markus Koschi, Sebastian Maierhofer, Anna-Katharina Rettinger"
 __copyright__ = "TUM Cyber-Physical System Group"
 __credits__ = ["BMW Group CAR@TUM"]
-__version__ = "2020b"
-__maintainer__ = "Markus Koschi"
+__version__ = "2020a"
+__maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "released"
 
@@ -346,57 +346,57 @@ __status__ = "released"
   <!-- intersections -->
   <xs:simpleType name="trafficSignID">
       <xs:restriction base="xs:string">
-	      <xs:enumeration value="101"/>
+	  <xs:enumeration value="101"/>
           <xs:enumeration value="102"/>
           <xs:enumeration value="108"/>
           <xs:enumeration value="114"/>
           <xs:enumeration value="123"/>
           <xs:enumeration value="138"/>
           <xs:enumeration value="142-10"/>
-          <xs:enumeration value="201"/>
-          <xs:enumeration value="205"/>
-          <xs:enumeration value="206"/>
-          <xs:enumeration value="208"/>
-          <xs:enumeration value="209"/>
-          <xs:enumeration value="215"/>
-          <xs:enumeration value="220-10"/>
-          <xs:enumeration value="220-20"/>
-          <xs:enumeration value="222-10"/>
-          <xs:enumeration value="222-20"/>
-          <xs:enumeration value="237"/>
-          <xs:enumeration value="239"/>
-          <xs:enumeration value="242.1"/>
-          <xs:enumeration value="242.2"/>
-          <xs:enumeration value="244.2"/>
-          <xs:enumeration value="244.2"/>
-          <xs:enumeration value="245"/>
-          <xs:enumeration value="250"/>
-          <xs:enumeration value="251"/>
-          <xs:enumeration value="253"/>
-          <xs:enumeration value="254"/>
-          <xs:enumeration value="255"/>
-          <xs:enumeration value="257-54"/>
-          <xs:enumeration value="259"/>
-          <xs:enumeration value="260"/>
-          <xs:enumeration value="261"/>
-          <xs:enumeration value="262"/>
-          <xs:enumeration value="264"/>
-          <xs:enumeration value="265"/>
-          <xs:enumeration value="266"/>
-          <xs:enumeration value="267"/>
+	  <xs:enumeration value="201"/>
+	  <xs:enumeration value="205"/>
+	  <xs:enumeration value="206"/>
+	  <xs:enumeration value="208"/>
+	  <xs:enumeration value="209"/>
+	  <xs:enumeration value="215"/>
+	  <xs:enumeration value="220-10"/>
+	  <xs:enumeration value="220-20"/>
+	  <xs:enumeration value="222-10"/>
+	  <xs:enumeration value="222-20"/>
+	  <xs:enumeration value="237"/>
+	  <xs:enumeration value="239"/>
+	  <xs:enumeration value="242.1"/>
+	  <xs:enumeration value="242.2"/>
+	  <xs:enumeration value="244.2"/>
+	  <xs:enumeration value="244.2"/>
+	  <xs:enumeration value="245"/>
+	  <xs:enumeration value="250"/>
+	  <xs:enumeration value="251"/>
+	  <xs:enumeration value="253"/>
+	  <xs:enumeration value="254"/>
+	  <xs:enumeration value="255"/>
+	  <xs:enumeration value="257-54"/>
+	  <xs:enumeration value="259"/>
+	  <xs:enumeration value="260"/>
+	  <xs:enumeration value="261"/>
+	  <xs:enumeration value="262"/>
+	  <xs:enumeration value="264"/>
+	  <xs:enumeration value="265"/>
+	  <xs:enumeration value="266"/>
+	  <xs:enumeration value="267"/>
           <xs:enumeration value="272"/>
           <xs:enumeration value="274"/>
           <xs:enumeration value="274.1"/>
           <xs:enumeration value="274.2"/>
-	      <xs:enumeration value="275"/>
+	  <xs:enumeration value="275"/>
           <xs:enumeration value="276"/>
           <xs:enumeration value="277"/>
           <xs:enumeration value="278"/>
           <xs:enumeration value="281"/>
           <xs:enumeration value="282"/>
-          <xs:enumeration value="301"/>
-          <xs:enumeration value="306"/>
-          <xs:enumeration value="308"/>
+	  <xs:enumeration value="301"/>
+	  <xs:enumeration value="306"/>
+	  <xs:enumeration value="308"/>
           <xs:enumeration value="310"/>
           <xs:enumeration value="325.1"/>
           <xs:enumeration value="325.2"/>
@@ -421,34 +421,34 @@ __status__ = "released"
           <xs:enumeration value="626-30"/>
           <xs:enumeration value="626-31"/>
           <xs:enumeration value="720"/>
-          <xs:enumeration value="1000-10"/>
-          <xs:enumeration value="1000-11"/>
-          <xs:enumeration value="1000-20"/>
-          <xs:enumeration value="1000-21"/>
-          <xs:enumeration value="1000-30"/>
-          <xs:enumeration value="1000-31"/>
-          <xs:enumeration value="1001-30"/>
-          <xs:enumeration value="1001-31"/>
-          <xs:enumeration value="1002-10"/>
-          <xs:enumeration value="1002-12"/>
-          <xs:enumeration value="1002-13"/>
-          <xs:enumeration value="1002-20"/>
-          <xs:enumeration value="1002-22"/>
-          <xs:enumeration value="1002-23"/>
-          <xs:enumeration value="1002-11"/>
-          <xs:enumeration value="1002-14"/>
-          <xs:enumeration value="1002-21"/>
-          <xs:enumeration value="1002-24"/>
-          <xs:enumeration value="1004-30"/>
-          <xs:enumeration value="1004-31"/>
-          <xs:enumeration value="1020-30"/>
-          <xs:enumeration value="1022-10"/>
-          <xs:enumeration value="1024-10"/>
-          <xs:enumeration value="1026-36"/>
-          <xs:enumeration value="1026-37"/>
-          <xs:enumeration value="1026-38"/>
-          <xs:enumeration value="1040-30"/>
-          <xs:enumeration value="1053-33"/>
+	  <xs:enumeration value="1000-10"/>
+	  <xs:enumeration value="1000-11"/>
+	  <xs:enumeration value="1000-20"/>
+	  <xs:enumeration value="1000-21"/>
+	  <xs:enumeration value="1000-30"/>
+	  <xs:enumeration value="1000-31"/>
+	  <xs:enumeration value="1001-30"/>
+	  <xs:enumeration value="1001-31"/>
+	  <xs:enumeration value="1002-10"/>
+	  <xs:enumeration value="1002-12"/>
+	  <xs:enumeration value="1002-13"/>
+	  <xs:enumeration value="1002-20"/>
+	  <xs:enumeration value="1002-22"/>
+	  <xs:enumeration value="1002-23"/>
+	  <xs:enumeration value="1002-11"/>
+	  <xs:enumeration value="1002-14"/>
+	  <xs:enumeration value="1002-21"/>
+	  <xs:enumeration value="1002-24"/>
+	  <xs:enumeration value="1004-30"/>
+	  <xs:enumeration value="1004-31"/>
+	  <xs:enumeration value="1020-30"/>
+	  <xs:enumeration value="1022-10"/>
+	  <xs:enumeration value="1024-10"/>
+	  <xs:enumeration value="1026-36"/>
+	  <xs:enumeration value="1026-37"/>
+	  <xs:enumeration value="1026-38"/>
+	  <xs:enumeration value="1040-30"/>
+	  <xs:enumeration value="1053-33"/>
           <xs:enumeration value="R2-1"/>
           <xs:enumeration value="R3-4"/>
       </xs:restriction>
@@ -620,6 +620,19 @@ __status__ = "released"
     </xs:sequence>
     <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
   </xs:complexType>
+  <!-- phantomObstacle -->
+  <xs:complexType name="phantomObstacle">
+    <xs:sequence>
+      <xs:element name="occupancySet">
+        <xs:complexType>
+          <xs:sequence>
+	    <xs:element name="occupancy" type="occupancy" maxOccurs="unbounded"/>
+	  </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
+  </xs:complexType>
   <!-- planning problem -->
   <xs:complexType name="planningProblem">
     <xs:sequence>
@@ -733,7 +746,8 @@ __status__ = "released"
         <xs:element name="intersection" type="intersection" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="staticObstacle" type="staticObstacle" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="dynamicObstacle" type="dynamicObstacle" minOccurs="0" maxOccurs="unbounded"/>
-	<xs:element name="environmentObstacle" type="environmentObstacle" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="phantomObstacle" type="phantomObstacle" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="environmentObstacle" type="environmentObstacle" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="planningProblem" type="planningProblem" minOccurs="1" maxOccurs="unbounded"/>
       </xs:sequence>
       <xs:attribute name="commonRoadVersion" use="required">
@@ -751,7 +765,7 @@ __status__ = "released"
       <xs:attribute name="timeStepSize" type="xs:decimal" use="required"/>
     </xs:complexType>
     <xs:key name="id">
-      <xs:selector xpath="./lanelet | ./trafficSign | ./trafficLight | ./trafficSign | ./trafficLight | ./intersection | ./staticObstacle | ./dynamicObstacle | ./building | ./planningProblem | ./intersection/incoming"/>
+      <xs:selector xpath="./lanelet | ./trafficSign | ./trafficLight | ./trafficSign | ./trafficLight | ./intersection | ./staticObstacle | ./dynamicObstacle| ./phantomObstacle | ./environmentObstacle | ./planningProblem | ./intersection/incoming"/>
       <xs:field xpath="@id"/>
     </xs:key>
     <xs:keyref name="idref" refer="id">

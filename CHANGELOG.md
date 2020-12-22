@@ -1,8 +1,10 @@
 # Changelog
 
-## [2020.4] - 2020-12-X
+## [2021.1] - 2021-01-X
 ### Added
 - Support for over 50 new traffic signs from Germany
+- Phantom obstacles
+- New visualization module which supports MVC pattern
 
 ## Changed
 

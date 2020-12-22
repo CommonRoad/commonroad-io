@@ -2,7 +2,6 @@ import os
 import unittest
 
 from commonroad.common.file_reader import CommonRoadFileReader
-from commonroad.geometry.shape import *
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
 from commonroad.prediction.prediction import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
@@ -54,6 +53,15 @@ class TestFileReader(unittest.TestCase):
                                        initial_state=traj_pred.trajectory.state_at_time_step(0),
                                        prediction=traj_pred, obstacle_shape=rectangle,
                                        initial_signal_state=initial_signal_state, signal_series=signal_series)
+
+        environment_obstacle_shape = Polygon(np.array([[0, 0], [8, 0], [4, -4]]))
+        environment_obstacle_id = 1234
+        self._environment_obstacle = EnvironmentObstacle(environment_obstacle_id, ObstacleType.BUILDING,
+                                                         environment_obstacle_shape)
+
+        phantom_obstacle_id = 5678
+        self._phantom_obstacle = PhantomObstacle(phantom_obstacle_id, set_pred)
+
         lanelet1 = Lanelet(right_vertices=np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]),
                            center_vertices=np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                            left_vertices=np.array([[0.0, 2], [1.0, 2], [2, 2]]), lanelet_id=100,
@@ -110,19 +118,13 @@ class TestFileReader(unittest.TestCase):
                                                                                lanelet5, lanelet6]))
         self.lanelet_network.add_traffic_sign(traffic_sign_201, [100])
 
-
-        environment_obstacle_shape = Polygon(np.array([[0, 0], [8, 0], [4, -4]]))
-        environment_obstacle_id = 1234
-        self._environment_obstacle = EnvironmentObstacle(environment_obstacle_id, ObstacleType.BUILDING,
-                                                          environment_obstacle_shape)
-
         tags = {Tag.URBAN, Tag.INTERSTATE}
         geo_transformation = GeoTransformation("test", 0.0, 0.0, 0.0, 0.0)
         location = Location(2867714, 0.0, 0.0, geo_transformation)
 
         self.scenario = Scenario(0.1, 'ZAM_test_0-1', tags=tags, location=location)
         self.scenario.add_objects([static_obs, dyn_set_obs, dyn_traj_obs, self.lanelet_network,
-                                   self._environment_obstacle])
+                                   self._environment_obstacle, self._phantom_obstacle])
 
         goal_region = GoalRegion([State(time_step=Interval(0, 1), velocity=Interval(0.0, 1), position=rectangle),
                                   State(time_step=Interval(1, 2), velocity=Interval(0.0, 1), position=circ)],
@@ -253,7 +255,7 @@ class TestFileReader(unittest.TestCase):
         exp_obstacle_one_shape = self.scenario.obstacles[1].obstacle_shape.__class__
         exp_obstacle_one_attributes = len(self.scenario.obstacles[1].initial_state.attributes)
         exp_obstacle_one_orientation = self.scenario.obstacles[1].initial_state.orientation
-        exp_obstacle_one_predicition_zero_shape_center = \
+        exp_obstacle_one_prediction_zero_shape_center = \
             self.scenario.obstacles[1].prediction.occupancy_set[0].shape.center
 
         exp_obstacle_two_id = self.scenario.obstacles[2].obstacle_id
@@ -279,10 +281,10 @@ class TestFileReader(unittest.TestCase):
         self.assertEqual(exp_obstacle_one_shape, obstacles[0].obstacles[1].obstacle_shape.__class__)
         self.assertEqual(exp_obstacle_one_attributes, len(obstacles[0].obstacles[1].initial_state.attributes))
         self.assertEqual(exp_obstacle_one_orientation, obstacles[0].obstacles[1].initial_state.orientation)
-        self.assertEqual(exp_obstacle_one_predicition_zero_shape_center[0],
+        self.assertEqual(exp_obstacle_one_prediction_zero_shape_center[0],
                          obstacles[0].obstacles[1].prediction.occupancy_set[
                              0].shape.center[0])
-        self.assertEqual(exp_obstacle_one_predicition_zero_shape_center[1],
+        self.assertEqual(exp_obstacle_one_prediction_zero_shape_center[1],
                          obstacles[0].obstacles[1].prediction.occupancy_set[
                              0].shape.center[1])
 
@@ -335,7 +337,7 @@ class TestFileReader(unittest.TestCase):
         exp_obstacle_one_shape = self.scenario.obstacles[1].obstacle_shape.__class__
         exp_obstacle_one_attributes = len(self.scenario.obstacles[1].initial_state.attributes)
         exp_obstacle_one_orientation = self.scenario.obstacles[1].initial_state.orientation
-        exp_obstacle_one_predicition_zero_shape_center = \
+        exp_obstacle_one_prediction_zero_shape_center = \
             self.scenario.obstacles[1].prediction.occupancy_set[0].shape.center
 
         exp_obstacle_two_id = self.scenario.obstacles[2].obstacle_id
@@ -416,7 +418,7 @@ class TestFileReader(unittest.TestCase):
         xml_file = CommonRoadFileReader(self.filename_all).open(lanelet_assignment=True)
 
         self.assertEqual(exp_num_lanelet_scenario,len(xml_file[0].lanelet_network.lanelets))
-        self.assertEqual(exp_num_obstacles_scenario,len(xml_file[0].obstacles))
+        self.assertEqual(exp_num_obstacles_scenario, len(xml_file[0].obstacles))
         self.assertEqual(exp_num_planning_problems, len(xml_file[1].planning_problem_dict))
         self.assertEqual(exp_scenario_id, xml_file[0].scenario_id)
         self.assertEqual(exp_dt, xml_file[0].dt)
@@ -435,9 +437,9 @@ class TestFileReader(unittest.TestCase):
         self.assertEqual(exp_obstacle_one_shape, xml_file[0].obstacles[1].obstacle_shape.__class__)
         self.assertEqual(exp_obstacle_one_attributes, len(xml_file[0].obstacles[1].initial_state.attributes))
         self.assertEqual(exp_obstacle_one_orientation, xml_file[0].obstacles[1].initial_state.orientation)
-        self.assertEqual(exp_obstacle_one_predicition_zero_shape_center[0],
+        self.assertEqual(exp_obstacle_one_prediction_zero_shape_center[0],
                          xml_file[0].obstacles[1].prediction.occupancy_set[0].shape.center[0])
-        self.assertEqual(exp_obstacle_one_predicition_zero_shape_center[1],
+        self.assertEqual(exp_obstacle_one_prediction_zero_shape_center[1],
                          xml_file[0].obstacles[1].prediction.occupancy_set[0].shape.center[1])
 
         self.assertEqual(exp_obstacle_two_id, xml_file[0].obstacles[2].obstacle_id)
@@ -734,6 +736,20 @@ class TestFileReader(unittest.TestCase):
         self.assertEqual(exp_environment_obstacle_type, xml_file[0].environment_obstacle[0].obstacle_type)
         np.testing.assert_array_almost_equal(exp_environment_obstacle_shape.vertices,
                                              xml_file[0].environment_obstacle[0].obstacle_shape.vertices)
+
+    def test_read_phantom_obstacle(self):
+        exp_phantom_obstacle_id = self._phantom_obstacle.obstacle_id
+        exp_phantom_obstacle_role = self._phantom_obstacle.obstacle_role
+        exp_obstacle_one_prediction_zero_shape_center = \
+            self.scenario.obstacles[1].prediction.occupancy_set[0].shape.center
+
+        xml_file = CommonRoadFileReader(self.filename_all).open(lanelet_assignment=False)
+        self.assertEqual(exp_phantom_obstacle_id, xml_file[0].phantom_obstacle[0].obstacle_id)
+        self.assertEqual(exp_phantom_obstacle_role, xml_file[0].phantom_obstacle[0].obstacle_role)
+        self.assertEqual(exp_obstacle_one_prediction_zero_shape_center[0],
+                         xml_file[0].obstacles[1].prediction.occupancy_set[0].shape.center[0])
+        self.assertEqual(exp_obstacle_one_prediction_zero_shape_center[1],
+                         xml_file[0].obstacles[1].prediction.occupancy_set[0].shape.center[1])
 
 
     # def test_open_all_scenarios(self):

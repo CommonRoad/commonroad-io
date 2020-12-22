@@ -14,7 +14,8 @@ from commonroad.scenario.lanelet import Lanelet
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.obstacle import ObstacleRole
 from commonroad.scenario.obstacle import ObstacleType
-from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, Obstacle, State
+from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, Obstacle, State, \
+    PhantomObstacle
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
@@ -383,8 +384,8 @@ class Scenario(IDrawable):
 
         self._static_obstacles: Dict[int, StaticObstacle] = defaultdict()
         self._dynamic_obstacles: Dict[int, DynamicObstacle] = defaultdict()
-        self._environment_obstacle: Dict[
-            int, EnvironmentObstacle] = defaultdict()
+        self._environment_obstacle: Dict[int, EnvironmentObstacle] = defaultdict()
+        self._phantom_obstacle: Dict[int, PhantomObstacle] = defaultdict()
 
         self._id_set: Set[int] = set()
         # Count ids generated but not necessarily added yet
@@ -441,15 +442,22 @@ class Scenario(IDrawable):
         return list(self._static_obstacles.values())
 
     @property
-    def obstacles(self) -> List[Union[Obstacle, StaticObstacle, DynamicObstacle]]:
-        """ Returns a list of all static and dynamic obstacles in the scenario."""
+    def obstacles(self) -> List[Union[Obstacle, StaticObstacle, DynamicObstacle, EnvironmentObstacle, PhantomObstacle]]:
+        """ Returns a list of all obstacles roles in the scenario."""
         return list(itertools.chain(self._static_obstacles.values(),
-                                    self._dynamic_obstacles.values()))
+                                    self._dynamic_obstacles.values(),
+                                    self._phantom_obstacle.values(),
+                                    self._environment_obstacle.values()))
 
     @property
     def environment_obstacle(self) -> List[EnvironmentObstacle]:
-        """ Returns a list of all environment_obstacles in the scenario."""
+        """ Returns a list of all environment obstacles in the scenario."""
         return list(self._environment_obstacle.values())
+
+    @property
+    def phantom_obstacle(self) -> List[PhantomObstacle]:
+        """ Returns a list of all phantom obstacles in the scenario."""
+        return list(self._phantom_obstacle.values())
 
     def add_objects(self, scenario_object: Union[List[Union[Obstacle, Lanelet, LaneletNetwork, TrafficSign,
                                                             TrafficLight, Intersection, EnvironmentObstacle]], Obstacle,
@@ -499,6 +507,9 @@ class Scenario(IDrawable):
         elif isinstance(scenario_object, EnvironmentObstacle):
             self._mark_object_id_as_used(scenario_object.obstacle_id)
             self._environment_obstacle[scenario_object.obstacle_id] = scenario_object
+        elif isinstance(scenario_object, PhantomObstacle):
+            self._mark_object_id_as_used(scenario_object.obstacle_id)
+            self._phantom_obstacle[scenario_object.obstacle_id] = scenario_object
 
         else:
             raise ValueError('<Scenario/add_objects> argument "scenario_object" of wrong type. '
@@ -574,14 +585,18 @@ class Scenario(IDrawable):
                         lanelet_dict[time_step] = set()
                     lanelet_dict[time_step].add(obstacle.obstacle_id)
 
-    def remove_obstacle(self, obstacle: Union[Obstacle, List[Obstacle]]):
-        """ Removes a static, dynamic or a list of obstacles from the scenario. If the obstacle ID is not assigned,
+    def remove_obstacle(self, obstacle: Union[Obstacle, DynamicObstacle, PhantomObstacle, EnvironmentObstacle,
+                                              StaticObstacle, List[Union[Obstacle, DynamicObstacle, PhantomObstacle,
+                                                                   EnvironmentObstacle,  StaticObstacle]]]):
+        """ Removes an obstacle or a list of obstacles from the scenario. If the obstacle ID is not assigned,
         a warning message is given.
 
         :param obstacle: obstacle to be removed
         """
-        assert isinstance(obstacle, (list, Obstacle)), '<Scenario/remove_obstacle> argument "obstacle" of wrong type. ' \
-                                                       'Expected type: %s. Got type: %s.' % (Obstacle, type(obstacle))
+        assert isinstance(obstacle, (list, Obstacle, DynamicObstacle, PhantomObstacle, EnvironmentObstacle,
+                                     StaticObstacle)), \
+            '<Scenario/remove_obstacle> argument "obstacle" of wrong type. ' \
+            'Expected type: %s. Got type: %s.' % (Obstacle, type(obstacle))
         if isinstance(obstacle, list):
             for obs in obstacle:
                 self.remove_obstacle(obs)
@@ -594,6 +609,12 @@ class Scenario(IDrawable):
         elif obstacle.obstacle_id in self._dynamic_obstacles:
             self._remove_dynamic_obstacle_from_lanelets(obstacle)
             del self._dynamic_obstacles[obstacle.obstacle_id]
+            self._id_set.remove(obstacle.obstacle_id)
+        elif obstacle.obstacle_id in self._environment_obstacle:
+            del self._environment_obstacle[obstacle.obstacle_id]
+            self._id_set.remove(obstacle.obstacle_id)
+        elif obstacle.obstacle_id in self._phantom_obstacle:
+            del self._phantom_obstacle[obstacle.obstacle_id]
             self._id_set.remove(obstacle.obstacle_id)
         else:
             warnings.warn('<Scenario/remove_obstacle> Cannot remove obstacle with ID %s, '
@@ -646,6 +667,10 @@ class Scenario(IDrawable):
             obstacle = self._static_obstacles[obstacle_id]
         elif obstacle_id in self._dynamic_obstacles:
             obstacle = self._dynamic_obstacles[obstacle_id]
+        elif obstacle_id in self._phantom_obstacle:
+            obstacle = self._phantom_obstacle[obstacle_id]
+        elif obstacle_id in self._environment_obstacle:
+            obstacle = self._environment_obstacle[obstacle_id]
         else:
             warnings.warn('<Scenario/obstacle_by_id> Obstacle with ID %s is not contained in the scenario.'
                           % obstacle_id)

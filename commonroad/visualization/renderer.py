@@ -42,6 +42,32 @@ class IRenderer(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def draw_phantom_obstacle(self, obj, draw_params, call_stack):
+        """
+        :param obj: object to be plotted
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object or a ParamServer object
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack
+        :return: None
+        """
+        pass
+
+    @abstractmethod
+    def draw_environment_obstacle(self, obj, draw_params, call_stack):
+        """
+        :param obj: object to be plotted
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object or a ParamServer object
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack
+        :return: None
+        """
+        pass
+
+    @abstractmethod
     def draw_trajectory(self, obj, draw_params, call_stack):
         """
         :param obj: object to be plotted

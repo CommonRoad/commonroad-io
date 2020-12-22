@@ -1,9 +1,7 @@
 from collections import defaultdict
-from typing import Union, List, Tuple, Dict, Set
+from typing import Dict
 from xml.etree import ElementTree
-import numpy as np
 from abc import ABC
-import warnings
 
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.util import Interval, AngleInterval
@@ -13,7 +11,7 @@ from commonroad.planning.planning_problem import PlanningProblemSet, PlanningPro
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
 from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, EnvironmentObstacle, \
-    SignalState
+    SignalState, PhantomObstacle
 from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, \
     TimeOfDay, Weather, Underground, ScenarioID
 from commonroad.scenario.trajectory import State, Trajectory
@@ -271,6 +269,8 @@ class ScenarioFactory:
             obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment))
         for o in xml_node.findall('environmentObstacle'):
             obstacles.append(EnvironmentObstacleFactory.create_from_xml_node(o))
+        for o in xml_node.findall('phantomObstacle'):
+            obstacles.append(PhantomObstacleFactory.create_from_xml_node(o))
         return obstacles
 
 
@@ -1125,7 +1125,7 @@ class DynamicObstacleFactory(ObstacleFactory):
         obstacle_id = DynamicObstacleFactory.read_id(xml_node)
         shape = DynamicObstacleFactory.read_shape(xml_node.find('shape'))
         initial_state = DynamicObstacleFactory.read_initial_state(xml_node.find('initialState'))
-        initial_signal_state = StaticObstacleFactory.read_initial_signal_state(xml_node.find('initialSignalState'))
+        initial_signal_state = DynamicObstacleFactory.read_initial_signal_state(xml_node.find('initialSignalState'))
         signal_series = SignalSeriesFactory.create_from_xml_node((xml_node.find('signalSeries')))
         initial_center_lanelet_ids = set()
         initial_shape_lanelet_ids = set()
@@ -1442,11 +1442,23 @@ class PointFactory:
 
 
 class EnvironmentObstacleFactory(ObstacleFactory):
-    """ Class to create a list of objects of class Building from an XML element."""
+    """ Class to create a list of objects of type EnvironmentObstacle from an XML element."""
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element) -> EnvironmentObstacle:
         obstacle_type = EnvironmentObstacleFactory.read_type(xml_node)
-        obstacle_id = StaticObstacleFactory.read_id(xml_node)
-        shape = StaticObstacleFactory.read_shape(xml_node.find('shape'))
+        obstacle_id = EnvironmentObstacleFactory.read_id(xml_node)
+        shape = EnvironmentObstacleFactory.read_shape(xml_node.find('shape'))
 
         return EnvironmentObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type, obstacle_shape=shape)
+
+
+class PhantomObstacleFactory(ObstacleFactory):
+    """ Class to create a list of objects of class PhantomObstacle from an XML element."""
+    @classmethod
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> PhantomObstacle:
+        obstacle_id = PhantomObstacleFactory.read_id(xml_node)
+        if xml_node.find('occupancySet') is not None:
+            prediction = SetBasedPredictionFactory.create_from_xml_node(xml_node.find('occupancySet'))
+        else:
+            prediction = None
+        return PhantomObstacle(obstacle_id=obstacle_id, prediction=prediction)

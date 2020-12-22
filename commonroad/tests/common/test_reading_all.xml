@@ -423,6 +423,63 @@
       </polygon>
     </shape>
   </environmentObstacle>
+  <phantomObstacle id="5678">
+    <occupancySet>
+      <occupancy>
+        <shape>
+          <circle>
+            <radius>2.0</radius>
+            <center>
+              <x>0.1</x>
+              <y>0.5</y>
+            </center>
+          </circle>
+        </shape>
+        <time>
+          <exact>1</exact>
+        </time>
+      </occupancy>
+      <occupancy>
+        <shape>
+          <polygon>
+            <point>
+              <x>0.0</x>
+              <y>0.0</y>
+            </point>
+            <point>
+              <x>0.0</x>
+              <y>1.0</y>
+            </point>
+            <point>
+              <x>1.0</x>
+              <y>1.0</y>
+            </point>
+            <point>
+              <x>1.0</x>
+              <y>0.0</y>
+            </point>
+          </polygon>
+        </shape>
+        <time>
+          <exact>2</exact>
+        </time>
+      </occupancy>
+      <occupancy>
+        <shape>
+          <circle>
+            <radius>2.0</radius>
+            <center>
+              <x>0.0</x>
+              <y>0.0</y>
+            </center>
+          </circle>
+        </shape>
+        <time>
+          <exact>3</exact>
+        </time>
+      </occupancy>
+    </occupancySet>
+  </phantomObstacle>
   <planningProblem id="1000">
     <initialState>
       <position>
