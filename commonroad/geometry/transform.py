@@ -6,9 +6,9 @@ from commonroad.common.validity import is_real_number_vector, is_valid_orientati
 __author__ = "Christina Miller"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW CAR@TUM"]
-__version__ = "2019.1"
+__version__ = "2020.3"
 __maintainer__ = "Moritz Klischat"
-__email__ = "commonroad@in.tum.de"
+__email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
 
@@ -22,13 +22,6 @@ def translate_rotate(vertices: np.ndarray, translation: Union[np.array, List[flo
     :param angle: rotation angle in radian (counter-clockwise)
     :return: array of transformed vertices [[x'_0, y'_0], [x'_1, y'_1], ...]
     """
-    assert is_valid_array_of_vertices(vertices), '<translate_rotate>: The provided vertices are not valid! ' \
-                                                 'vertices = {}'.format(vertices)
-    assert is_real_number_vector(translation, 2), '<translate_rotate>: argument "translation" is ' \
-                                                  'not a vector of real numbers of length 2. translation = {}.' \
-        .format(translation)
-    assert is_valid_orientation(angle), '<translate_rotate>: argument "orientation" is not valid. ' \
-                                        'angle = {}.'.format(angle)
 
     h_vertices = to_homogeneous_coordinates(vertices)
     return from_homogeneous_coordinates(translation_rotation_matrix(translation, angle).
@@ -45,13 +38,6 @@ def rotate_translate(vertices: np.ndarray, translation: Union[np.array, List[flo
     :param angle: rotation angle in radian (counter-clockwise)
     :return: array of transformed vertices [[x'_0, y'_0], [x'_1, y'_1], ...]
     """
-    assert is_valid_array_of_vertices(vertices), '<translate_rotate>: The provided vertices are not valid! ' \
-                                                 'vertices = {}'.format(vertices)
-    assert is_real_number_vector(translation, 2), '<translate_rotate>: argument "translation" is ' \
-                                                  'not a vector of real numbers of length 2. translation = {}.' \
-        .format(translation)
-    assert is_valid_orientation(angle), '<translate_rotate>: argument "orientation" is not valid. ' \
-                                        'angle = {}.'.format(angle)
 
     h_vertices = to_homogeneous_coordinates(vertices)
     return from_homogeneous_coordinates(rotation_translation_matrix(translation, angle).
@@ -86,19 +72,19 @@ def translation_rotation_matrix(translation: Union[np.array, List[float]], angle
     :param angle: angle in rad [-2pi, +2pi]
     :return: matrix
     """
-    translation_matrix = np.array([[1, 0, translation[0]],
-                                   [0, 1, translation[1]],
-                                   [0, 0, 1]])
-    if angle == 0:
+    translation_matrix = np.array([[1.0, 0.0, translation[0]],
+                                   [0.0, 1.0, translation[1]],
+                                   [0.0, 0.0, 1.0]], dtype=np.float64)
+    if np.abs(angle) <= 0.05:
         cos_angle = 1.0
-        sin_angle = 0.0
+        sin_angle = angle
     else:
         cos_angle = np.cos(angle)
         sin_angle = np.sin(angle)
 
-    rotation_matrix = np.array([[cos_angle, -sin_angle, 0],
-                                [sin_angle, cos_angle, 0],
-                                [0, 0, 1]])
+    rotation_matrix = np.array([[cos_angle, -sin_angle, 0.0],
+                                [sin_angle, cos_angle, 0.0],
+                                [0.0, 0.0, 1.0]], dtype=np.float64)
     return rotation_matrix.dot(translation_matrix)
 
 

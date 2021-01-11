@@ -4,10 +4,12 @@ import warnings
 __author__ = "Christian Pek"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW Group CAR@TUM"]
-__version__ = "2019.1"
+__version__ = "2020.3"
 __maintainer__ = "Christian Pek"
-__email__ = "Christian.Pek@tum.de"
+__email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
+
+from commonroad import TWO_PI
 
 
 class ValidTypes:
@@ -167,7 +169,7 @@ def is_valid_orientation(theta: float) -> bool:
     :param theta: The orientation to check
     :return: True if the orientation is a valid orientation (radian), False otherwise
     """
-    return is_in_interval(theta, -2. * npy.pi, 2. * npy.pi)
+    return is_in_interval(theta, -TWO_PI, TWO_PI)
 
 
 def is_valid_polyline(polyline: npy.ndarray, length=None):

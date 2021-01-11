@@ -1,4 +1,4 @@
-from typing import Union, List, Tuple, Dict
+from typing import Union, List, Tuple, Dict, Optional
 import numpy as np
 import warnings
 
@@ -9,14 +9,19 @@ from commonroad.common.validity import is_natural_number
 __author__ = "Christina Miller"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2019.1"
+__version__ = "2020.3"
 __maintainer__ = "Christina Miller"
-__email__ = "commonroad@in.tum.de"
+__email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.renderer import IRenderer
 
-class PlanningProblem:
-    def __init__(self, planning_problem_id: int, initial_state: State, goal_region: GoalRegion):
+
+class PlanningProblem(IDrawable):
+    def __init__(self, planning_problem_id: int, initial_state: State,
+                 goal_region: GoalRegion):
         self.planning_problem_id = planning_problem_id
         self.initial_state = initial_state
         self.goal = goal_region
@@ -69,30 +74,41 @@ class PlanningProblem:
         :return: Tuple: (True, index of first state in trajectory.state_list that reaches goal) if one state reaches
                  the goal. (False, -1) if no state reaches the goal.
         """
-        for i, state in enumerate(trajectory.state_list):
+        for i, state in reversed(list(enumerate(trajectory.state_list))):
             if self.goal.is_reached(state):
                 return True, i
         return False, -1
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """
-        translate and rotates the planning problem with given translation and angle around the origin (0, 0)
+        translate and rotates the planning problem with given translation and
+        angle around the origin (0, 0)
 
-        :param translation: translation vector [x_off, y_off] in x- and y-direction
+        :param translation: translation vector [x_off, y_off] in x- and
+        y-direction
         :param angle: rotation angle in radian (counter-clockwise)
         """
-        self.initial_state = self.initial_state.translate_rotate(translation, angle)
+        self.initial_state = self.initial_state.translate_rotate(translation,
+                                                                 angle)
         self.goal.translate_rotate(translation, angle)
 
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
+        renderer.draw_planning_problem(self, draw_params, call_stack)
 
-class PlanningProblemSet:
-    def __init__(self, planning_problem_list: Union[None, List[PlanningProblem]]=None):
+
+class PlanningProblemSet(IDrawable):
+    def __init__(self, planning_problem_list: Union[
+        None, List[PlanningProblem]] = None):
         if planning_problem_list is None:
             planning_problem_list = []
 
         self._valid_planning_problem_list(planning_problem_list)
 
-        self._planning_problem_dict = {planning_problem.planning_problem_id: planning_problem for planning_problem in
+        self._planning_problem_dict = {
+                planning_problem.planning_problem_id: planning_problem for
+                planning_problem in
                                        planning_problem_list}
 
     @property
@@ -140,17 +156,25 @@ class PlanningProblemSet:
         raises error, if id cannot be found.
 
         :param planning_problem_id: id to find
-        :return: Planning problem with id planning_problem_id, Raises key error, if id not in the dict.
+        :return: Planning problem with id planning_problem_id, Raises key
+        error, if id not in the dict.
         """
 
         return self.planning_problem_dict[planning_problem_id]
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """
-        translate and rotates the planning problem set with given translation and angle around the origin (0, 0)
+        translate and rotates the planning problem set with given translation
+        and angle around the origin (0, 0)
 
-        :param translation: translation vector [x_off, y_off] in x- and y-direction
+        :param translation: translation vector [x_off, y_off] in x- and
+        y-direction
         :param angle: rotation angle in radian (counter-clockwise)
         """
         for planning_problem in self._planning_problem_dict.values():
             planning_problem.translate_rotate(translation, angle)
+
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
+        renderer.draw_planning_problem_set(self, draw_params, call_stack)

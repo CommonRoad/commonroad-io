@@ -13,41 +13,90 @@ All objects of the scenario and planning problems can be visualized with the fun
 ---------------
 
 When settings of a plot should be changed with ``draw_params``, they have to be passed as a nested ``dict`` that refers to the hierarchy in which the objects are plotted. The complete structure of ``draw_params`` is given by the default parameters: ::
-	
+
     {'time_begin': 0,
      'time_end': 50,
      'antialiased': True,
      'scenario':
             {'dynamic_obstacle':
-                {'occupancy':
-                    {'draw_occupancies': 0,
-                     'shape': shape_parameters
-                    },
-                 'shape': shape_parameters,
+                {'shape': shape_parameters,
                  'draw_shape': True,
                  'draw_icon': False,
                  'draw_bounding_box': True,
-                 'show_label': False,
-                 'trajectory_steps': 40,
-                 'zorder': 20
-                },
+                 'show_label': False,  # show id of obstacle
+                 'zorder': 20,
+                 'draw_signals': True,  # draw signal states
+                 'signal_radius': 0.5,  # size of a signal states
+                 'indicator_color': '#ebc200',  # turn light
+                 'braking_color': 'red',  # braking light
+                 'blue_lights_color': 'blue',
+                 'horn_color': 'red',  # horn is visualized as red center dot
+                 'occupancy':
+                     {'draw_occupancies': 0,
+                      'shape': shape_parameters
+                     },
+                 'trajectory':
+                    {'draw_trajectory':True,
+                     'facecolor': '#000000',
+                     'draw_continuous': False, # use continuous lines
+                     'unique_colors': False, # use different color for each trajectory
+                     'line_width': 0.17,
+                     'z_order': 24
+                     },
             'static_obstacle':
                 {'shape': shape_parameters},
             'lanelet_network':
-                {'lanelet':
-                    {'left_bound_color': '#555555',
-                     'right_bound_color': '#555555',
-                     'center_bound_color': '#dddddd',
-                     'draw_left_bound': True,
-                     'draw_right_bound': True,
-                     'draw_center_bound': True,
-                     'draw_border_vertices': False,
-                     'draw_start_and_direction': True,
-                     'show_label': False,
-                     'draw_linewidth': 0.5,
-                     'fill_lanelet': True,
-                     'facecolor': '#c7c7c7'
-                    }
+                {'kwargs_traffic_light_signs': {}, # further properties for
+                  # AnnotationBox, see
+                  # https://matplotlib.org/3.1.0/gallery/text_labels_and_annotations/demo_annotation_box.html
+                 'traffic_light':
+                     {'draw_traffic_lights': True,
+                      'red_color': 'red',
+                      'yellow_color': '#feb609',
+                      'green_color': '#00aa16',
+                      'red_yellow_color': '#fe4009ff',
+                      'show_label': False,
+                      'scale_factor': 0.25,
+                      'zorder': 30
+                     },
+                 'traffic_sign':
+                     {'draw_traffic_signs': False,
+                      'show_traffic_signs': 'all',  # 'all' or list of TrafficSignIDs
+                      'speed_limit_unit': 'auto',  # 'mph', 'kmh', 'ms', 'auto'
+                      'show_label': False,
+                      'scale_factor': 0.25,
+                      'zorder': 30
+                     },
+                 'intersection':
+                     {'draw_intersections': False,
+                      'draw_incoming_lanelets': True,
+                      'incoming_lanelets_color': '#24b582',
+                      'draw_crossings': True,
+                      'crossings_color': '#b62a55',
+                      'draw_successors': True,
+                      'successors_left_color': 'red',
+                      'successors_straight_color': 'blue',
+                      'successors_right_color': '#ccff00',
+                      'show_label': False,  # show incoming id and incoming left
+                      },
+                 'lanelet':
+                     {'left_bound_color': '#555555',
+                      'right_bound_color': '#555555',
+                      'center_bound_color': '#dddddd',
+                      'unique_colors': False,  # colorizes center_vertices and labels of each lanelet differently
+                      'draw_stop_line':True,
+                      'stop_line_color':'#ffffff',
+                      'draw_line_markings':True,
+                      'draw_left_bound': True,
+                      'draw_right_bound': True,
+                      'draw_center_bound': True,
+                      'draw_border_vertices': False,
+                      'draw_start_and_direction': True,
+                      'show_label': False,
+                      'draw_linewidth': 0.5,
+                      'fill_lanelet': True,
+                      'facecolor': '#c7c7c7'
+                      }
                 }
             },
          'planning_problem_set':
@@ -100,7 +149,7 @@ The defaults for ``shape_parameters`` are::
 				}
 			    }
 
-Notice that specifying the the type of a shape in ``shape_parameters`` is optional and can be omitted. 
+Notice that specifying the the type of a shape in ``shape_parameters`` is optional and can be omitted.
 
 
 Passing custom ``draw_params``
@@ -109,7 +158,7 @@ Passing custom ``draw_params``
 In case no ``draw_params`` is passed to :meth:`~commonroad.visualization.draw_dispatch_cr.draw_object`, the default parameters are applied. To set a parameter manually, this needs to be done in accordance to the structure above. If for instance a complete scenario is plotted and the ``face_color`` of a dynamic obstacle should be set to black, this parameter can be specified by::
 
 	draw_params = {'scenario': {'dynamic_obstacle': {'shape': {'facecolor':'#000000'}}}}
-	draw_object(scenario,draw_params)
+	draw_object(scenario, draw_params=draw_params)
 
 
 When the parameter of an object is extracted from ``draw_params``, the search starts at the lowest level of the ``dict``'s hierarchy. Therefore, it is sufficient to start with the specification on the lowest level of the dict, that unambiguously defines a parameter. Therefore, the expression above can be simplified to ::
@@ -133,12 +182,12 @@ Example plot with ``matplotlib``
 .. _matplotlib-API: https://matplotlib.org/api
 
 The drawing function is used in combination with maplotlib. Therefore, every command from the matplotlib-API_ can be combined with ``draw_object``. A simple example for plotting scenario and the corresponding planning problem set with default parameters would be::
-	
+
 	import os
 	import matplotlib.pyplot as plt
 	from commonroad.common.file_reader import CommonRoadFileReader
 	from commonroad.visualization.draw_dispatch_cr import draw_object
-	filename = os.getcwd() + /scenarios/NGSIM/US101/USA_US101-2_1_T-1.xml'
+	filename = os.getcwd() + /commonroad-scenarios/scenarios/NGSIM/US101/USA_US101-2_1_T-1.xml'
 	scenario, planning_problem_set = CommonRoadFileReader(filename).open()
 
 	plt.style.use('classic')
@@ -154,31 +203,13 @@ The drawing function is used in combination with maplotlib. Therefore, every com
 
 .. plot::
    :align: center
-	
-	#import os
-	#import matplotlib.pyplot as plt
-	#from commonroad.common.file_reader import CommonRoadFileReader
-	#from commonroad.visualization.draw_dispatch_cr import draw_object
-	#filename = os.getcwd() + '/../../../../../../scenarios/hand-crafted/DEU_Muc-1_1_T-1.xml'
-	#scenario, planning_problem_set = CommonRoadFileReader(filename).open()
 
-	#plt.style.use('classic')
-	#inch_in_cm = 2.54
-	#figsize = [20, 8]
-	#plot_limits = [-80, 80, -60, 30]
-	#plt.figure(figsize=(8,4.5))
-	#plt.gca().axis('equal')
 
-	#draw_object(scenario, plot_limits=plot_limits)
-	#draw_object(planning_problem_set, plot_limits=plot_limits)
-	#plt.tight_layout()
-	#plt.show()
-	
 	import os
 	import matplotlib.pyplot as plt
 	from commonroad.common.file_reader import CommonRoadFileReader
 	from commonroad.visualization.draw_dispatch_cr import draw_object
-	filename = os.getcwd() + '/../../../../../../../scenarios/NGSIM/US101/USA_US101-2_1_T-1.xml'
+	filename = os.getcwd() + '/../files/USA_US101-2_1_T-1.xml'
 	scenario, planning_problem_set = CommonRoadFileReader(filename).open()
 
 	plt.style.use('classic')
@@ -195,6 +226,7 @@ The drawing function is used in combination with maplotlib. Therefore, every com
 
 .. _plot-helper:
 
+
 Speed up plotting for real-time applications
 --------------------------------------------
 
@@ -203,7 +235,7 @@ Plotting of a typical scenario can be too slow when using for real-time applicat
 Furthermore the number of plotted graphic elements should be minimized. These parameters help to improve run time considerably (ordered by impact)::
 
 	draw_params = {'lanelet': {'draw_start_and_direction': False, 'draw_center_bound': False},
-		       'dynamic_obstacle': {'trajectory_steps': 15}}
+		       'dynamic_obstacle': {'show_label': True}}
 
 Additionally the plotted area should be restricted by using ``draw_object`` 's option ``plot_limits``. Effectively update rates of more than 20 frames/s are possible even for complex scenarios.
 
@@ -212,9 +244,9 @@ A minimal example would be::
 	import matplotlib as mpl
 	mpl.use('Qt5Agg') # sets the backend for matplotlib
 	import mpl.pyplot as plt
-	from commonroad.visualization.plot_helper import * 
+	from commonroad.visualization.plot_helper import *
 
-	filename = os.getcwd() + /scenarios/NGSIM/US101/USA_US101-2_1_T-1.xml'
+	filename = os.getcwd() + /commonroad-scenarios/scenarios/NGSIM/US101/USA_US101-2_1_T-1.xml'
 	scenario, planning_problem_set = CommonRoadFileReader(filename).open()
 
 	set_non_blocking() # ensures interactive plotting is activated
@@ -223,14 +255,14 @@ A minimal example would be::
 	figsize = [30, 8]
 	fig = plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
 	handles = {}  # collects handles of obstacles for fast updating of figures
-	
-	# inital plot including the lanelet network		
+
+	# inital plot including the lanelet network
 	draw_object(scenario, handles=handles)
 	fig.canvas.draw()
-	
+
 	# loop where obstacle positions are modified
 	for i in range(0,100):
 		#...
 		# modifying the scenario
 		#...
-		redraw_dynamic_obstacles(scenario, handles=handles, figure_handle=fig)
+		redraw_obstacles(scenario, handles=handles, figure_handle=fig)

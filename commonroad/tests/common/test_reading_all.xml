@@ -1,54 +1,147 @@
 <?xml version="1.0" ?>
-<commonRoad affiliation="TU Munich" author="PrinceOfZAM" benchmarkID="ZAM_test_0-0-1" commonRoadVersion="2018b" date="2018-10-25" source="unittest" tags="original" timeStepSize="0.1">
+<commonRoad affiliation="TU Munich" author="PrinceOfZAM" benchmarkID="ZAM_test_0-1" commonRoadVersion="2020a" date="2020-01-07" source="unittest" timeStepSize="0.1">
+  <location>
+    <geoNameId>2867714</geoNameId>
+    <gpsLatitude>48.262333</gpsLatitude>
+    <gpsLongitude>11.668775</gpsLongitude>
+    <environment>
+      <time>09:12:00</time>
+      <timeOfDay>night</timeOfDay>
+      <weather>light_rain</weather>
+      <underground>ice</underground>
+    </environment>
+  </location>
+   <scenarioTags>
+    <intersection/>
+    <urban/>
+  </scenarioTags>
   <lanelet id="100">
     <leftBound>
       <point>
         <x>0.0</x>
-        <y>0.0</y>
+        <y>2.0</y>
       </point>
       <point>
         <x>1.0</x>
-        <y>0.0</y>
+        <y>2.0</y>
       </point>
       <point>
         <x>2.0</x>
-        <y>0.0</y>
+        <y>2.0</y>
       </point>
+      <lineMarking>dashed</lineMarking>
     </leftBound>
     <rightBound>
       <point>
         <x>0.0</x>
-        <y>2.0</y>
+        <y>0.0</y>
       </point>
       <point>
         <x>1.0</x>
-        <y>2.0</y>
+        <y>0.0</y>
       </point>
       <point>
         <x>2.0</x>
-        <y>2.0</y>
+        <y>0.0</y>
       </point>
+      <lineMarking>solid</lineMarking>
     </rightBound>
-    <predecessor ref="101"/>
     <successor ref="101"/>
-    <adjacentLeft drivingDir="opposite" ref="101"/>
-    <adjacentRight drivingDir="same" ref="101"/>
-    <speedLimit>10.0</speedLimit>
+    <adjacentLeft drivingDir="same" ref="103"/>
+    <laneletType>highway</laneletType>
+    <laneletType>mainCarriageWay</laneletType>
+    <userOneWay>vehicle</userOneWay>
+    <trafficSignRef ref="201"/>
   </lanelet>
   <lanelet id="101">
     <leftBound>
       <point>
-        <x>0.0</x>
-        <y>0.0</y>
+        <x>2.0</x>
+        <y>2.0</y>
       </point>
       <point>
-        <x>1.0</x>
-        <y>0.0</y>
+        <x>3.0</x>
+        <y>2.0</y>
       </point>
+      <point>
+        <x>4.0</x>
+        <y>2.0</y>
+      </point>
+      <lineMarking>broad_dashed</lineMarking>
+    </leftBound>
+    <rightBound>
       <point>
         <x>2.0</x>
         <y>0.0</y>
       </point>
+      <point>
+        <x>3.0</x>
+        <y>0.0</y>
+      </point>
+      <point>
+        <x>4.0</x>
+        <y>0.0</y>
+      </point>
+      <lineMarking>broad_solid</lineMarking>
+    </rightBound>
+    <predecessor ref="100"/>
+    <successor ref="102"/>
+    <adjacentLeft drivingDir="same" ref="104"/>
+    <laneletType>urban</laneletType>
+    <laneletType>busLane</laneletType>
+    <userBidirectional>bus</userBidirectional>
+  </lanelet>
+  <lanelet id="102">
+  <leftBound>
+      <point>
+        <x>4.0</x>
+        <y>2.0</y>
+      </point>
+      <point>
+        <x>5.0</x>
+        <y>2.0</y>
+      </point>
+      <point>
+        <x>6.0</x>
+        <y>2.0</y>
+      </point>
+      <lineMarking>broad_solid</lineMarking>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>4.0</x>
+        <y>0.0</y>
+      </point>
+      <point>
+        <x>5.0</x>
+        <y>0.0</y>
+      </point>
+      <point>
+        <x>6.0</x>
+        <y>0.0</y>
+      </point>
+      <lineMarking>broad_dashed</lineMarking>
+    </rightBound>
+    <predecessor ref="101"/>
+    <adjacentLeft drivingDir="same" ref="105"/>
+    <laneletType>urban</laneletType>
+    <userBidirectional>vehicle</userBidirectional>
+  </lanelet>
+  <lanelet id="103">
+    <leftBound>
+      <point>
+        <x>0.0</x>
+        <y>4.0</y>
+      </point>
+      <point>
+        <x>1.0</x>
+        <y>4.0</y>
+      </point>
+      <point>
+        <x>2.0</x>
+        <y>4.0</y>
+      </point>
+      <lineMarking>broad_solid</lineMarking>
     </leftBound>
     <rightBound>
       <point>
@@ -63,21 +156,99 @@
         <x>2.0</x>
         <y>2.0</y>
       </point>
+      <lineMarking>broad_dashed</lineMarking>
     </rightBound>
-    <predecessor ref="100"/>
-    <successor ref="100"/>
-    <adjacentLeft drivingDir="opposite" ref="100"/>
+    <successor ref="104"/>
     <adjacentRight drivingDir="same" ref="100"/>
-    <speedLimit>10.0</speedLimit>
+    <laneletType>urban</laneletType>
+    <userBidirectional>vehicle</userBidirectional>
   </lanelet>
-  <obstacle id="0">
-    <role>static</role>
+  <lanelet id="104">
+    <leftBound>
+      <point>
+        <x>2.0</x>
+        <y>4.0</y>
+      </point>
+      <point>
+        <x>3.0</x>
+        <y>4.0</y>
+      </point>
+      <point>
+        <x>4.0</x>
+        <y>4.0</y>
+      </point>
+      <lineMarking>broad_solid</lineMarking>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>2.0</x>
+        <y>2.0</y>
+      </point>
+      <point>
+        <x>3.0</x>
+        <y>2.0</y>
+      </point>
+      <point>
+        <x>4.0</x>
+        <y>2.0</y>
+      </point>
+      <lineMarking>broad_dashed</lineMarking>
+    </rightBound>
+    <predecessor ref="103"/>
+    <successor ref="105"/>
+    <adjacentRight drivingDir="same" ref="101"/>
+    <laneletType>urban</laneletType>
+    <userBidirectional>vehicle</userBidirectional>
+  </lanelet>
+  <lanelet id="105">
+    <leftBound>
+      <point>
+        <x>4.0</x>
+        <y>5.0</y>
+      </point>
+      <point>
+        <x>5.0</x>
+        <y>4.0</y>
+      </point>
+      <point>
+        <x>6.0</x>
+        <y>4.0</y>
+      </point>
+      <lineMarking>unknown</lineMarking>
+    </leftBound>
+    <rightBound>
+      <point>
+        <x>4.0</x>
+        <y>2.0</y>
+      </point>
+      <point>
+        <x>5.0</x>
+        <y>2.0</y>
+      </point>
+      <point>
+        <x>6.0</x>
+        <y>2.0</y>
+      </point>
+      <lineMarking>no_marking</lineMarking>
+    </rightBound>
+    <predecessor ref="104"/>
+    <adjacentRight drivingDir="same" ref="102"/>
+    <laneletType>urban</laneletType>
+    <userBidirectional>vehicle</userBidirectional>
+  </lanelet>
+  <trafficSign id="201">
+    <trafficSignElement>
+      <trafficSignID>274</trafficSignID>
+      <additionalValue>10</additionalValue>
+    </trafficSignElement>
+  </trafficSign>
+  <staticObstacle id="3">
     <type>unknown</type>
     <shape>
       <circle>
         <radius>2.0</radius>
         <center>
-          <x>10.0</x>
+          <x>0.0</x>
           <y>0.0</y>
         </center>
       </circle>
@@ -96,9 +267,8 @@
         <exact>0</exact>
       </time>
     </initialState>
-  </obstacle>
-  <obstacle id="1">
-    <role>dynamic</role>
+  </staticObstacle>
+  <dynamicObstacle id="1">
     <type>unknown</type>
     <shape>
       <rectangle>
@@ -123,27 +293,11 @@
     <occupancySet>
       <occupancy>
         <shape>
-          <rectangle>
-            <length>4.3</length>
-            <width>8.9</width>
-            <orientation>1.7</orientation>
-            <center>
-              <x>2.5</x>
-              <y>-1.8</y>
-            </center>
-          </rectangle>
-        </shape>
-        <time>
-          <exact>0</exact>
-        </time>
-      </occupancy>
-      <occupancy>
-        <shape>
           <circle>
             <radius>2.0</radius>
             <center>
-              <x>10.0</x>
-              <y>0.0</y>
+              <x>0.1</x>
+              <y>0.5</y>
             </center>
           </circle>
         </shape>
@@ -181,7 +335,7 @@
           <circle>
             <radius>2.0</radius>
             <center>
-              <x>10.0</x>
+              <x>0.0</x>
               <y>0.0</y>
             </center>
           </circle>
@@ -191,9 +345,8 @@
         </time>
       </occupancy>
     </occupancySet>
-  </obstacle>
-  <obstacle id="2">
-    <role>dynamic</role>
+  </dynamicObstacle>
+  <dynamicObstacle id="2">
     <type>unknown</type>
     <shape>
       <rectangle>
@@ -215,21 +368,15 @@
         <exact>0</exact>
       </time>
     </initialState>
+    <initialSignalState>
+      <time>
+        <exact>0</exact>
+      </time>
+      <horn>true</horn>
+      <brakingLights>false</brakingLights>
+      <hazardWarningLights>true</hazardWarningLights>
+    </initialSignalState>
     <trajectory>
-      <state>
-        <position>
-          <point>
-            <x>0.0</x>
-            <y>0.0</y>
-          </point>
-        </position>
-        <orientation>
-          <exact>0.0</exact>
-        </orientation>
-        <time>
-          <exact>0</exact>
-        </time>
-      </state>
       <state>
         <position>
           <point>
@@ -245,7 +392,94 @@
         </time>
       </state>
     </trajectory>
-  </obstacle>
+    <signalSeries>
+      <signalState>
+        <time>
+          <exact>1</exact>
+        </time>
+        <horn>false</horn>
+        <brakingLights>true</brakingLights>
+        <indicatorLights>true</indicatorLights>
+        <hazardWarningLights>false</hazardWarningLights>
+      </signalState>
+    </signalSeries>
+  </dynamicObstacle>
+  <environmentObstacle id="1234">
+    <type>building</type>
+    <shape>
+      <polygon>
+        <point>
+      <x>0.0</x>
+      <y>0.0</y>
+      </point>
+      <point>
+        <x>8.0</x>
+        <y>0.0</y>
+      </point>
+      <point>
+        <x>4.0</x>
+        <y>-4.0</y>
+    </point>
+      </polygon>
+    </shape>
+  </environmentObstacle>
+  <phantomObstacle id="5678">
+    <occupancySet>
+      <occupancy>
+        <shape>
+          <circle>
+            <radius>2.0</radius>
+            <center>
+              <x>0.1</x>
+              <y>0.5</y>
+            </center>
+          </circle>
+        </shape>
+        <time>
+          <exact>1</exact>
+        </time>
+      </occupancy>
+      <occupancy>
+        <shape>
+          <polygon>
+            <point>
+              <x>0.0</x>
+              <y>0.0</y>
+            </point>
+            <point>
+              <x>0.0</x>
+              <y>1.0</y>
+            </point>
+            <point>
+              <x>1.0</x>
+              <y>1.0</y>
+            </point>
+            <point>
+              <x>1.0</x>
+              <y>0.0</y>
+            </point>
+          </polygon>
+        </shape>
+        <time>
+          <exact>2</exact>
+        </time>
+      </occupancy>
+      <occupancy>
+        <shape>
+          <circle>
+            <radius>2.0</radius>
+            <center>
+              <x>0.0</x>
+              <y>0.0</y>
+            </center>
+          </circle>
+        </shape>
+        <time>
+          <exact>3</exact>
+        </time>
+      </occupancy>
+    </occupancySet>
+  </phantomObstacle>
   <planningProblem id="1000">
     <initialState>
       <position>
