@@ -18,16 +18,15 @@ from commonroad.visualization.renderer import IRenderer
 
 TRAFFIC_SIGN_VALIDITY_START = {'WARNING_DANGER_SPOT', 'WARNING_RIGHT_BEFORE_LEFT', 'WARNING_STEEP_HILL_DOWNWARDS',
                                'WARNING_SLIPPERY_ROAD', 'WARNING_CONSTRUCTION_SITE', 'WARNING_CROSSING_CYCLIST',
-                               'WARNING_ANIMAL_CROSSING_RIGHT',
-
-                               'PRIORITY_OPPOSITE_DIRECTION', 'BIKEWAY', 'SIDEWALK', 'PEDESTRIAN_ZONE_START',
-                               'BICYCLE_ROAD_START', 'BUS_LANE', 'BAN_ALL_VEHICLES', 'BAN_CARS', 'BAN_TRUCKS',
-                               'BAN_BICYCLE', 'BAN_MOTORCYCLE', 'BAN_BUS', 'BAN_PEDESTRIAN',
-                               'BAN_CAR_TRUCK_BUS_MOTORCYCLE', 'BAN_VEHICLES_CARRYING_DANGEROUS_GOODS', 'NO_ENTRY',
+                               'WARNING_ANIMAL_CROSSING_RIGHT', 'RAILWAY', 'PRIORITY_OPPOSITE_DIRECTION', 'TURN_RIGHT_AHEAD', 'TURN_LEFT_AHEAD',
+                               'ONEWAY_RIGHT', 'ONEWAY_LEFT', 'PRESCRIBED_PASSING_LEFT', 'PRESCRIBED_PASSING_RIGHT', 'BIKEWAY', 'SIDEWALK',
+                               'PEDESTRIAN_ZONE_START', 'BICYCLE_ROAD_START', 'BUS_LANE', 'BAN_ALL_VEHICLES', 'BAN_CARS', 'BAN_TRUCKS',
+                               'BAN_BICYCLE', 'BAN_MOTORCYCLE', 'BAN_BUS', 'BAN_PEDESTRIAN','BAN_CAR_TRUCK_BUS_MOTORCYCLE',
+                               'BAN_VEHICLES_CARRYING_DANGEROUS_GOODS', 'NO_ENTRY', 'MAX_WEIGHT', 'MAX_WIDTH', 'MAX_HEIGHT', 'MAX_LENGTH',
                                'MAX_SPEED', 'MAX_SPEED_ZONE_START', 'MIN_SPEED',  'NO_OVERTAKING_START',
-                               'NO_OVERTAKING_TRUCKS_START', 'TRAFFIC_CALMED_AREA_START'
+                               'NO_OVERTAKING_TRUCKS_START', 'TRAFFIC_CALMED_AREA_START', 'PRIORITY_OVER_ONCOMING',
+                               'TOWN_SIGN', 'TUNNEL', 'INTERSTATE_START', 'HIGHWAY_START', 'PEDESTRIANS_CROSSING'}
 
-                               'PRIORITY_OVER_ONCOMING', 'TOWN_SIGN', 'TUNNEL', 'INTERSTATE_START', 'HIGHWAY_START'}
 LEFT_HAND_TRAFFIC = {'AUS', 'JPN', 'HKG', 'IND', 'JEY', 'IMN', 'IRL', 'JAM',
                      'KEN', 'MLT', 'MYS', 'NPL', 'NZL', 'ZAF', 'SGP', 'THA',
                      'GBR', 'IDN', 'MAC', 'PAK', 'CYP'}
@@ -64,7 +63,8 @@ class TrafficSignIDGermany(enum.Enum):
     YIELD = '205'
     STOP = '206'
     PRIORITY_OPPOSITE_DIRECTION = '208'
-    TURN_RIGHT_AHEAD = '209'
+    TURN_RIGHT_AHEAD = '209-10'
+    TURN_LEFT_AHEAD = '209-20'
     ROUNDABOUT = '215'
     ONEWAY_RIGHT = '220-10'
     ONEWAY_LEFT = '220-20'
@@ -114,6 +114,7 @@ class TrafficSignIDGermany(enum.Enum):
     HIGHWAY_END = '331.2'
     EXIT_BUILT_UP = '333-21'
     EXIT_GENERAL = '333-22'
+    PEDESTRIANS_CROSSING = '350'
     DEAD_END = '357'
     DIRECTION_SIGN_LEFT_SINGLE = '625-10'
     DIRECTION_SIGN_LEFT_SMALL = '625-11'
@@ -172,7 +173,8 @@ class TrafficSignIDZamunda(enum.Enum):  # default traffic sign IDs (similar to G
     YIELD = '205'
     STOP = '206'
     PRIORITY_OPPOSITE_DIRECTION = '208'
-    TURN_RIGHT_AHEAD = '209'
+    TURN_RIGHT_AHEAD = '209-10'
+    TURN_LEFT_AHEAD = '209-20'
     ROUNDABOUT = '215'
     ONEWAY_RIGHT = '220-10'
     ONEWAY_LEFT = '220-20'
@@ -222,6 +224,7 @@ class TrafficSignIDZamunda(enum.Enum):  # default traffic sign IDs (similar to G
     HIGHWAY_END = '331.2'
     EXIT_BUILT_UP = '333-21'
     EXIT_GENERAL = '333-22'
+    PEDESTRIANS_CROSSING = '350'
     DEAD_END = '357'
     DIRECTION_SIGN_LEFT_SINGLE = '625-10'
     DIRECTION_SIGN_LEFT_SMALL = '625-11'
