@@ -526,7 +526,7 @@ class TestScenarioID(unittest.TestCase):
         self.assertEqual(s_id.map_name, "US101")
         self.assertEqual(s_id.map_id, 33)
         self.assertEqual(s_id.configuration_id, 2)
-        self.assertEqual(s_id.prediction_type, 'T')
+        self.assertEqual(s_id.obstacle_behavior, 'T')
         self.assertEqual(s_id.prediction_id, 1)
         self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
 
@@ -538,7 +538,19 @@ class TestScenarioID(unittest.TestCase):
         self.assertEqual(s_id.map_name, "US101")
         self.assertEqual(s_id.map_id, 33)
         self.assertEqual(s_id.configuration_id, 2)
-        self.assertEqual(s_id.prediction_type, 'T')
+        self.assertEqual(s_id.obstacle_behavior, 'T')
+        self.assertEqual(s_id.prediction_id, 1)
+        self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
+
+        id_single = "USA_US101-33_2_I-1"
+        s_id = ScenarioID.from_benchmark_id(id_single, SCENARIO_VERSION)
+        self.assertEqual(id_single, str(s_id))
+        self.assertEqual(s_id.cooperative, False)
+        self.assertEqual(s_id.country_id, "USA")
+        self.assertEqual(s_id.map_name, "US101")
+        self.assertEqual(s_id.map_id, 33)
+        self.assertEqual(s_id.configuration_id, 2)
+        self.assertEqual(s_id.obstacle_behavior, 'I')
         self.assertEqual(s_id.prediction_id, 1)
         self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
 
@@ -550,7 +562,7 @@ class TestScenarioID(unittest.TestCase):
         self.assertEqual(s_id.map_name, "US101")
         self.assertEqual(s_id.map_id, 33)
         self.assertEqual(s_id.configuration_id, 2)
-        self.assertEqual(s_id.prediction_type, None)
+        self.assertEqual(s_id.obstacle_behavior, None)
         self.assertEqual(s_id.prediction_id, None)
         self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
 
@@ -562,7 +574,7 @@ class TestScenarioID(unittest.TestCase):
         self.assertEqual(s_id.map_name, "US101")
         self.assertEqual(s_id.map_id, 33)
         self.assertEqual(s_id.configuration_id, None)
-        self.assertEqual(s_id.prediction_type, None)
+        self.assertEqual(s_id.obstacle_behavior, None)
         self.assertEqual(s_id.prediction_id, None)
         self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
 
