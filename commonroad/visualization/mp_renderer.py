@@ -297,7 +297,7 @@ class MPRenderer(IRenderer):
             return artists
 
         # Min frame rate is 1 fps
-        dt = max(1000.0, dt)
+        dt = min(1000.0, dt)
         frame_count = (time_end - time_begin) // delta_time_steps
         plt.ioff()
         # Interval determines the duration of each frame in ms
