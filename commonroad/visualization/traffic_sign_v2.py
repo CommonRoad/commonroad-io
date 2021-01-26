@@ -190,8 +190,7 @@ def create_img_boxes_traffic_sign(
                 # plot traffic sign
                 sign_img = Image.open(path)
                 boxes.append(
-                        OffsetImage(sign_img, zoom=scale_factor, zorder=zorder,
-                                    interpolation='bicubic'))
+                        OffsetImage(sign_img, zoom=scale_factor, zorder=zorder, resample=True))
 
             # already stack label and img in case both are shown (prevents
             # misalignment with additional text)
@@ -282,8 +281,7 @@ def create_img_boxes_traffic_lights(
 
         boxes = []  # collect matplotlib offset boxes for text and images
         sign_img = Image.open(path)
-        boxes.append(OffsetImage(sign_img, zoom=scale_factor, zorder=zorder,
-                                 interpolation='bicubic'))
+        boxes.append(OffsetImage(sign_img, zoom=scale_factor, zorder=zorder, resample=True))
 
         if show_label:
             boxes.append(TextArea(str(state.value)))
