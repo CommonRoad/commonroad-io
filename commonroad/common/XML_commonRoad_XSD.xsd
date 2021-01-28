@@ -309,6 +309,7 @@ __status__ = "released"
       <xs:enumeration value="shoulder"/>
       <xs:enumeration value="driveWay"/>
       <xs:enumeration value="busStop"/>
+      <xs:enumeration value="intersection"/>
       <xs:enumeration value="unknown"/>
     </xs:restriction>
   </xs:simpleType>
