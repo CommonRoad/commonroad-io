@@ -1,4 +1,5 @@
 import math
+import os
 import unittest
 
 import matplotlib.pyplot as plt
@@ -24,13 +25,14 @@ class TestUncertainStates(unittest.TestCase):
 
     def setUp(self) -> None:
         super().setUp()
-        self.scenario_path = "visualization/DEU_A9-3_1_T-1.xml"
         self.params = ParamServer()
         self.params["occupancy"]["draw_occupancies"] = 1
         self.rnd = MPRenderer(self.params)
 
     def test_draw(self):
-        scenario, _ = CommonRoadFileReader(self.scenario_path).open()
+        full_path = os.path.dirname(os.path.abspath(__file__))
+        scenario_path = full_path + "/DEU_A9-3_1_T-1.xml"
+        scenario, _ = CommonRoadFileReader(scenario_path).open()
         plot_limits = approximate_bounding_box_dyn_obstacles(
                 scenario.dynamic_obstacles, 0)
         f, ax = plt.subplots(1, 1, figsize=(20, 40))
