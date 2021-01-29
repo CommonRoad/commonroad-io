@@ -185,19 +185,27 @@ def approximate_bounding_box_dyn_obstacles(obj: list, time_step=0) -> Union[
     x_int = [np.inf, -np.inf]
     y_int = [np.inf, -np.inf]
     bounds = [x_int, y_int]
-
+    shapely_set = None
     for obs in dynamic_obstacles_filtered:
         occ = obs.occupancy_at_time(time_step)
         if occ is None:
             continue
         shape = occ.shape
-        if hasattr(shape, 'center'):  # Rectangle, Circle
+        if hasattr(shape, "_shapely_polygon"):
+            if shapely_set is None:
+                shapely_set = shape._shapely_polygon
+            else:
+                shapely_set = shapely_set.union(shape._shapely_polygon)
+        elif hasattr(shape, 'center'):  # Rectangle, Circle
             bounds = update_bounds(shape.center, bounds=bounds)
         elif hasattr(shape, 'vertices'):  # Polygon, Triangle
             v = shape.vertices
             bounds = update_bounds(np.min(v, axis=0), bounds=bounds)
             bounds = update_bounds(np.max(v, axis=0), bounds=bounds)
-
+    envelope_bounds = shapely_set.envelope.bounds
+    envelope_bounds = np.array(envelope_bounds).reshape((2, 2))
+    bounds = update_bounds(envelope_bounds[0], bounds)
+    bounds = update_bounds(envelope_bounds[1], bounds)
     if np.inf in bounds[0] or -np.inf in bounds[0] or np.inf in bounds[
         1] or -np.inf in bounds[1]:
         return None

@@ -510,3 +510,63 @@ class ShapeGroup(Shape):
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         for s in self._shapes:
             s.draw(renderer, draw_params, call_stack)
+
+
+def occupancy_shape_from_state(shape, state):
+    if state.is_uncertain_position or state.is_uncertain_orientation:
+        # From M. Althoff and J. M. Dolan, “Online Verification of Automated Road Vehicles Using Reachability Analysis,”
+        # IEEE Transactions on Robotics, vol. 30, no. 4, pp. 903–918, Aug. 2014, doi: 10.1109/TRO.2014.2312453.
+        # Section IV.C
+        if isinstance(shape, Rectangle) or isinstance(shape, Polygon):
+            min_x, min_y, max_x, max_y = shape.shapely_object.bounds
+            l_v = np.abs(max_x - min_x)
+            w_v = np.abs(max_y - min_y)
+        elif isinstance(shape, Circle):
+            w_v = 2.0*shape.radius
+            l_v = 2.0*shape.radius
+        else:
+            raise ValueError
+
+        if state.is_uncertain_orientation:
+            # Using middle of orientation interval as reference orientation
+            psi_d = state.orientation.start + 0.5 * state.orientation.length
+            delta_psi = 0.5 * state.orientation.length
+        else:
+            psi_d = state.orientation
+            delta_psi = 0.0
+
+        if state.is_uncertain_position:
+            center = state.position.center
+            if isinstance(state.position, Rectangle) or isinstance(
+                    state.position, Polygon):
+                # Rotate shape to obtain bounding box with edges parallel to the
+                # frame of the reference trajectory
+                rot_shape = state.position.rotate_translate_local(
+                    np.array([0, 0]), -psi_d)
+                min_x, min_y, max_x, max_y = rot_shape.shapely_object.bounds
+                l_s = np.abs(max_x - min_x)
+                w_s = np.abs(max_y - min_y)
+            elif isinstance(state.position, Circle):
+                l_s = 2.0*state.position.radius
+                w_s = l_s
+            else:
+                raise ValueError
+        else:
+            l_s = 0.0
+            w_s = 0.0
+            center = state.position
+
+        # Maximum enlargement at these angles
+        delta_psi_l = min(delta_psi, np.arctan(w_v / l_v))
+        delta_psi_w = min(delta_psi, np.arctan(l_v / w_v))
+        l_psi = np.abs(
+            (1.0 - np.cos(delta_psi_l)) * l_v - np.sin(delta_psi_l) * w_v)
+        w_psi = np.abs(
+            (1.0 - np.cos(delta_psi_w)) * w_v - np.sin(delta_psi_w) * l_v)
+        l_enclosing = l_s + l_v + l_psi
+        w_enclosing = w_s + w_v + w_psi
+        occupied_region = Rectangle(l_enclosing, w_enclosing, center, psi_d)
+    else:
+        occupied_region = shape.rotate_translate_local(state.position,
+                                                       state.orientation)
+    return occupied_region

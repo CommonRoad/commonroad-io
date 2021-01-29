@@ -4,9 +4,12 @@ import numpy as np
 from typing import Union, Set, List, Optional, Tuple
 from abc import ABC, abstractmethod
 
-from commonroad.common.validity import is_valid_orientation, is_real_number_vector, is_real_number, ValidTypes
-from commonroad.common.util import AngleInterval
-from commonroad.geometry.shape import Shape, Rectangle, Circle, Polygon
+from commonroad.common.validity import is_valid_orientation, is_real_number_vector, is_real_number
+from commonroad.geometry.shape import Shape, \
+    Rectangle, \
+    Circle, \
+    Polygon, \
+    occupancy_shape_from_state
 from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.trajectory import State
 
@@ -187,8 +190,7 @@ class Obstacle(IDrawable):
         assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of wrong type. ' \
                                                  'Expected types: %s. Got type: %s.' % (State, type(initial_state))
         self._initial_state = initial_state
-        self._initial_occupancy_shape = self._obstacle_shape.rotate_translate_local(
-            initial_state.position, initial_state.orientation)
+        self._initial_occupancy_shape = occupancy_shape_from_state(self._obstacle_shape, initial_state)
 
     @property
     def initial_center_lanelet_ids(self) -> Union[None, Set[int]]:

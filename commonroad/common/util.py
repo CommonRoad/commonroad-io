@@ -1,5 +1,4 @@
 from typing import Union, Tuple
-
 from commonroad.common import validity
 from commonroad.common.validity import *
 
