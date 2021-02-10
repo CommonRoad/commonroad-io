@@ -1,3 +1,6 @@
+import numpy as np
+from scipy.spatial.transform.rotation import Rotation
+from scipy.spatial.transform import Slerp
 from typing import Union, Tuple
 
 from commonroad.common import validity
@@ -10,6 +13,20 @@ __version__ = "2020.3"
 __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
+
+
+def interpolate_angle(x: Union[float, np.array], xp: np.array, fp: np.array, degrees=False):
+    """
+    :param x: The x-coordinates at which to evaluate the interpolated values.
+    :param xp: The x-coordinates of the data points.
+    :param fp: The y-coordinates (angles) of the data points, same length as xp.
+    :param degrees: True if the input and returned angles are in degrees
+    :return: The interpolated angles in radian, same shape as x.
+    """
+
+    rotations = Rotation.from_euler("z", fp, degrees=degrees)
+    slerp = Slerp(xp, rotations)
+    return slerp(x).as_euler("zxy", degrees=degrees)[0]
 
 
 def make_valid_orientation(angle: float) -> float:
