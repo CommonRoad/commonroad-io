@@ -1,8 +1,8 @@
+import math
 import os
 import platform
 import re
 import subprocess
-import warnings
 from xml.dom import minidom
 import numpy as np
 import xml.etree.ElementTree as et
@@ -10,15 +10,16 @@ from enum import Enum, unique
 from typing import List, Tuple, Union
 from datetime import datetime
 
-from commonroad import SUPPORTED_COMMONROAD_VERSIONS
+from commonroad.common.validity import is_real_number, is_positive
+from commonroad.scenario.scenario import ScenarioID
 from commonroad.scenario.trajectory import State, Trajectory
 
 __author__ = "Murat Üste, Christina Miller, Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW CAR@TUM"]
-__version__ = "2020.2"
+__version__ = "2020.3"
 __maintainer__ = "Moritz Klischat"
-__email__ = "commonroad-i06@in.tum.de"
+__email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
 
@@ -389,27 +390,24 @@ class Solution:
     """Stores a solution to a CommonRoad benchmark and additional meta data."""
 
     def __init__(self,
-                 scenario_id: str,
-                 commonroad_version: str,
+                 scenario_id: ScenarioID,
                  planning_problem_solutions: List[PlanningProblemSolution],
                  date: datetime = datetime.today(),
                  computation_time: Union[float, None] = None,
                  processor_name: Union[str, None] = None):
         """
         :param scenario_id: Scenario ID of the Solution
-        :param commonroad_version: valid CommonRoad Version (see `:py:data:`~common.file_reader.SUPPORTED_COMMONROAD_VERSIONS`)
         :param planning_problem_solutions: List of PlanningProblemSolution for corresponding
             to the planning problems of the scenario
         :param date: The date solution was produced. Default=datetime.today()
-        :param computation_time: The computation time it took for the Solution. Default=None
+        :param computation_time: The computation time measured in seconds for the Solution. Default=None
         :param processor_name: The processor model used for the Solution. Determined automatically if set to 'auto'.
             Default=None.
         """
-        assert commonroad_version in SUPPORTED_COMMONROAD_VERSIONS
         self.scenario_id = scenario_id
-        self.commonroad_version = commonroad_version
         self.planning_problem_solutions = planning_problem_solutions
         self.date = date
+        self._computation_time = None
         self.computation_time = computation_time
         self.processor_name = processor_name
 
@@ -423,9 +421,9 @@ class Solution:
             VehicleModel = PM
             VehicleType = FORD_ESCORT
             CostFunction = JB1
-            Version = 2018b
+            Version = 2020a
 
-            Benchmark ID = PM1:JB1:TEST:2018b
+            Benchmark ID = PM1:JB1:TEST:2020a
 
         Collaborative Solution Example:
             Scenario ID = TEST
@@ -435,7 +433,7 @@ class Solution:
             2nd VehicleModel = PM
             2nd VehicleType = VW_VANAGON
             2nd CostFunction = SA1
-            Version = 2018b
+            Version = 2020a
 
             Benchmark ID = [PM1,PM3]:[JB1,SA1]:TEST:2020a
 
@@ -445,7 +443,7 @@ class Solution:
         cost_ids = self.cost_ids
         vehicles_str = vehicle_ids[0] if len(vehicle_ids) == 1 else '[%s]' % ','.join(vehicle_ids)
         costs_str = cost_ids[0] if len(cost_ids) == 1 else '[%s]' % ','.join(cost_ids)
-        return '%s:%s:%s:%s' % (vehicles_str, costs_str, self.scenario_id, self.commonroad_version)
+        return '%s:%s:%s:%s' % (vehicles_str, costs_str, str(self.scenario_id), self.scenario_id.scenario_version)
 
     @property
     def vehicle_ids(self) -> List[str]:
@@ -507,6 +505,24 @@ class Solution:
         """
         return [pp_solution.trajectory_type for pp_solution in self.planning_problem_solutions]
 
+    @property
+    def computation_time(self) -> Union[None, float]:
+        """
+        Return the computation time [s] for the trajectory.
+        :return:
+        """
+        return self._computation_time
+
+    @computation_time.setter
+    def computation_time(self, computation_time):
+        if computation_time is not None:
+            assert is_real_number(computation_time), "<Solution> computation_time provided as type {}," \
+                                                     "but expected type float," \
+                                                     "measured in seconds!".format(type(computation_time))
+            assert is_positive(computation_time), "<Solution> computation_time needs to be positive!"\
+                .format(type(computation_time))
+        self._computation_time = computation_time
+
 
 class CommonRoadSolutionReader:
     """Reads solution xml files created with the CommonRoadSolutionWriter"""
@@ -540,10 +556,10 @@ class CommonRoadSolutionReader:
     def _parse_solution(cls, root_node: et.Element) -> Solution:
         """ Parses the Solution XML root node. """  # TODO
         benchmark_id, date, computation_time, processor_name = cls._parse_header(root_node)
-        vehicle_ids, cost_ids, scenario_id, version = cls._parse_benchmark_id(benchmark_id)
+        vehicle_ids, cost_ids, scenario_id = cls._parse_benchmark_id(benchmark_id)
         pp_solutions = [cls._parse_planning_problem_solution(vehicle_ids[idx], cost_ids[idx], trajectory_node)
                         for idx, trajectory_node in enumerate(root_node)]
-        return Solution(scenario_id, version, pp_solutions, date, computation_time, processor_name)
+        return Solution(scenario_id, pp_solutions, date, computation_time, processor_name)
 
     @staticmethod
     def _parse_header(root_node: et.Element) -> Tuple[str, Union[None, datetime], Union[None, float], Union[None, str]]:
@@ -613,10 +629,14 @@ class CommonRoadSolutionReader:
                 state_vals[field_name] = np.array([cls._parse_sub_element(state_node, name) for name in xml_name])
             else:
                 state_vals[field_name] = cls._parse_sub_element(state_node, xml_name, as_float=(not xml_name == 'time'))
+
+            if not 'orientation' in state_vals and ('velocity' in state_vals and 'velocity_y' in state_vals):
+                state_vals['orientation'] = math.atan2(state_vals['velocity_y'], state_vals['velocity'])
+
         return State(**state_vals)
 
     @staticmethod
-    def _parse_benchmark_id(benchmark_id: str) -> (List[str], List[str], str, str):
+    def _parse_benchmark_id(benchmark_id: str) -> (List[str], List[str], str):
         """ Parses the given benchmark id string. """
         segments = benchmark_id.replace(' ', '').split(':')
 
@@ -625,10 +645,9 @@ class CommonRoadSolutionReader:
 
         vehicle_model_ids = re.sub(r'[\[\]]', '', segments[0]).split(',')
         cost_function_ids = re.sub(r'[\[\]]', '', segments[1]).split(',')
-        scenario_id = segments[2]
-        version = segments[3]
+        scenario_id = ScenarioID.from_benchmark_id(segments[2], segments[3])
 
-        return vehicle_model_ids, cost_function_ids, scenario_id, version
+        return vehicle_model_ids, cost_function_ids, scenario_id
 
     @staticmethod
     def _parse_vehicle_id(vehicle_id: str) -> Tuple[VehicleModel, VehicleType]:
@@ -676,7 +695,7 @@ class CommonRoadSolutionWriter:
         elif platform.system() == "Darwin":
             os.environ['PATH'] = os.environ['PATH'] + os.pathsep + '/usr/sbin'
             command = "sysctl -n machdep.cpu.brand_string"
-            return str(subprocess.check_output(command).strip())
+            return str(subprocess.check_output(command, shell=True).strip())
         elif platform.system() == "Linux":
             command = "cat /proc/cpuinfo"
             all_info = str(subprocess.check_output(command, shell=True).strip())

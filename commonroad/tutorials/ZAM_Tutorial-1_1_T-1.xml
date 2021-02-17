@@ -1614,7 +1614,7 @@
         <y>-1.75</y>
       </point>
     </rightBound>
-    <adjacentLeft drivingDir="opposite" ref="2"/>
+    <adjacentLeft drivingDir="same" ref="2"/>
     <laneletType>highway</laneletType>
   </lanelet>
   <lanelet id="2">
@@ -3223,7 +3223,7 @@
       </point>
     </rightBound>
     <adjacentLeft drivingDir="same" ref="3"/>
-    <adjacentRight drivingDir="opposite" ref="1"/>
+    <adjacentRight drivingDir="same" ref="1"/>
     <laneletType>highway</laneletType>
   </lanelet>
   <lanelet id="3">

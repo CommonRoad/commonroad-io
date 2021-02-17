@@ -1,10 +1,13 @@
 import unittest
 from copy import deepcopy
 
+from commonroad import SCENARIO_VERSION
+from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.geometry.shape import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import *
-from commonroad.scenario.scenario import Scenario, Environment, TimeOfDay, Time, Underground, Weather, Location
+from commonroad.scenario.scenario import Scenario, Environment, TimeOfDay, Time, Underground, Weather, Location, \
+    ScenarioID
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany
 from commonroad.scenario.trajectory import *
 from commonroad.common.util import Interval
@@ -103,13 +106,36 @@ class TestScenario(unittest.TestCase):
         self.scenario.remove_obstacle(self.static_obs)
         self.scenario.remove_obstacle(self.dyn_traj_obs)
 
-        self.assertEqual(expected_id_dyn_traj, self.scenario.obstacles[0].obstacle_id)
-        self.assertEqual(expected_id_lanelet1, self.scenario.lanelet_network.lanelets[0].lanelet_id)
-        self.assertEqual(expected_id_lanelet2, self.scenario.lanelet_network.lanelets[1].lanelet_id)
+        self.assertEqual(expected_id_dyn_traj,
+                         self.scenario.obstacles[0].obstacle_id)
+        self.assertEqual(expected_id_lanelet1,
+                         self.scenario.lanelet_network.lanelets[0].lanelet_id)
+        self.assertEqual(expected_id_lanelet2,
+                         self.scenario.lanelet_network.lanelets[1].lanelet_id)
 
         with self.assertRaises(AssertionError):
             self.scenario.remove_obstacle(self.lanelet1)
             self.scenario.remove_obstacle(self.static_obs)
+
+    def test_generate_object_id_empty(self):
+        expected_generated_id = 1
+        self.assertEqual(expected_generated_id,
+                         self.scenario.generate_object_id())
+
+    def test_generate_object_id_unique(self):
+        expected_generated_id = 3
+
+        self.scenario.add_objects(self.static_obs)
+        self.scenario.add_objects(self.dyn_traj_obs)
+
+        self.assertEqual(expected_generated_id,
+                         self.scenario.generate_object_id())
+
+        expected_generated_id = 4
+        self.scenario.remove_obstacle([self.static_obs, self.dyn_traj_obs])
+        # Ids should not be reused even when removing all objects
+        self.assertEqual(expected_generated_id,
+                         self.scenario.generate_object_id())
 
     def test_generate_object_id_positive(self):
         expected_generated_id = 3
@@ -117,7 +143,8 @@ class TestScenario(unittest.TestCase):
         self.scenario.add_objects(self.static_obs)
         self.scenario.add_objects(self.dyn_traj_obs)
 
-        self.assertEqual(expected_generated_id, self.scenario.generate_object_id())
+        self.assertEqual(expected_generated_id,
+                         self.scenario.generate_object_id())
 
     def test_generate_object_id_negative(self):
         self.static_obs = StaticObstacle(-5, ObstacleType("unknown"), obstacle_shape=self.circ,
@@ -417,7 +444,7 @@ class TestScenario(unittest.TestCase):
                                             initial_state=traj_pred.trajectory.state_at_time_step(0),
                                             prediction=traj_pred, obstacle_shape=self.rectangle,
                                             initial_shape_lanelet_ids=None)
-        sc = Scenario(dt=0.1, benchmark_id='test')
+        sc = Scenario(dt=0.1, scenario_id='test')
         right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
         left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
         center_vertices = np.array(
@@ -487,6 +514,100 @@ class TestScenario(unittest.TestCase):
                          scenario_tmp.obstacle_by_id(3).prediction.center_lanelet_assignment)
         self.assertEqual(exp_dynamic_lanelet_of_obstacle,
                          scenario_tmp.obstacle_by_id(3).prediction.shape_lanelet_assignment)
+
+
+class TestScenarioID(unittest.TestCase):
+    def test_from_benchmark_id(self):
+        id_coop = "C-USA_US101-33_2_T-1"
+        s_id = ScenarioID.from_benchmark_id(id_coop, SCENARIO_VERSION)
+        self.assertEqual(id_coop, str(s_id))
+        self.assertEqual(s_id.cooperative, True)
+        self.assertEqual(s_id.country_id, "USA")
+        self.assertEqual(s_id.map_name, "US101")
+        self.assertEqual(s_id.map_id, 33)
+        self.assertEqual(s_id.configuration_id, 2)
+        self.assertEqual(s_id.obstacle_behavior, 'T')
+        self.assertEqual(s_id.prediction_id, 1)
+        self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
+
+        id_single = "USA_US101-33_2_T-1"
+        s_id = ScenarioID.from_benchmark_id(id_single, SCENARIO_VERSION)
+        self.assertEqual(id_single, str(s_id))
+        self.assertEqual(s_id.cooperative, False)
+        self.assertEqual(s_id.country_id, "USA")
+        self.assertEqual(s_id.map_name, "US101")
+        self.assertEqual(s_id.map_id, 33)
+        self.assertEqual(s_id.configuration_id, 2)
+        self.assertEqual(s_id.obstacle_behavior, 'T')
+        self.assertEqual(s_id.prediction_id, 1)
+        self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
+
+        id_interactive = "USA_US101-33_2_I-1-1"
+        s_id = ScenarioID.from_benchmark_id(id_interactive, SCENARIO_VERSION)
+        self.assertEqual(id_interactive, str(s_id))
+        self.assertEqual(s_id.cooperative, False)
+        self.assertEqual(s_id.country_id, "USA")
+        self.assertEqual(s_id.map_name, "US101")
+        self.assertEqual(s_id.map_id, 33)
+        self.assertEqual(s_id.configuration_id, 2)
+        self.assertEqual(s_id.obstacle_behavior, 'I')
+        self.assertEqual(s_id.prediction_id, [1,1])
+        self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
+
+        id_interactive_c = "C-USA_US101-33_2_I-1-1"
+        s_id = ScenarioID.from_benchmark_id(id_interactive_c, SCENARIO_VERSION)
+        self.assertEqual(id_interactive_c, str(s_id))
+        self.assertEqual(s_id.cooperative, True)
+        self.assertEqual(s_id.country_id, "USA")
+        self.assertEqual(s_id.map_name, "US101")
+        self.assertEqual(s_id.map_id, 33)
+        self.assertEqual(s_id.configuration_id, 2)
+        self.assertEqual(s_id.obstacle_behavior, 'I')
+        self.assertEqual(s_id.prediction_id, [1,1])
+        self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
+
+        id_no_pred = "USA_US101-33_2"
+        s_id = ScenarioID.from_benchmark_id(id_no_pred, SCENARIO_VERSION)
+        self.assertEqual(id_no_pred, str(s_id))
+        self.assertEqual(s_id.cooperative, False)
+        self.assertEqual(s_id.country_id, "USA")
+        self.assertEqual(s_id.map_name, "US101")
+        self.assertEqual(s_id.map_id, 33)
+        self.assertEqual(s_id.configuration_id, 2)
+        self.assertEqual(s_id.obstacle_behavior, None)
+        self.assertEqual(s_id.prediction_id, None)
+        self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
+
+        id_map_only = "USA_US101-33"
+        s_id = ScenarioID.from_benchmark_id(id_map_only, SCENARIO_VERSION)
+        self.assertEqual(id_map_only, str(s_id))
+        self.assertEqual(s_id.cooperative, False)
+        self.assertEqual(s_id.country_id, "USA")
+        self.assertEqual(s_id.map_name, "US101")
+        self.assertEqual(s_id.map_id, 33)
+        self.assertEqual(s_id.configuration_id, None)
+        self.assertEqual(s_id.obstacle_behavior, None)
+        self.assertEqual(s_id.prediction_id, None)
+        self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
+
+    def test_country_name(self):
+        id_zam = "ZAM_US101-33_2"
+        s_id = ScenarioID.from_benchmark_id(id_zam, SCENARIO_VERSION)
+        self.assertEqual(s_id.country_name, "Zamunda")
+
+        id_us = "USA_US101-33_2"
+        s_id = ScenarioID.from_benchmark_id(id_us, SCENARIO_VERSION)
+        self.assertEqual(s_id.country_name, "United States of America")
+    # def test_read_all_files(self):
+    #     folder = 'commonroad-scenarios/scenarios'
+    #     from pathlib import Path
+    #     files = list(Path(folder).rglob('*.xml'))
+    #     for file in files:
+    #         # if not "C-USA_Lanker-1_2_T-1" in str(file):
+    #         #     continue
+    #         sc, _ = CommonRoadFileReader(file).open()
+    #         self.assertEqual(sc.orig_bid, str(sc.scenario_id))
+    #         print(file)
 
 
 if __name__ == '__main__':

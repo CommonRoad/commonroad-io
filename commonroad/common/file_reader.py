@@ -1,9 +1,7 @@
 from collections import defaultdict
-from typing import Union, List, Tuple, Dict, Set
+from typing import Dict
 from xml.etree import ElementTree
-import numpy as np
 from abc import ABC
-import warnings
 
 from commonroad.common.validity import ValidTypes
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
@@ -14,23 +12,20 @@ from commonroad.planning.planning_problem import PlanningProblemSet, PlanningPro
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
 from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, EnvironmentObstacle, \
-    SignalState
+    SignalState, PhantomObstacle
 from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, \
-    TimeOfDay, Weather, Underground
+    TimeOfDay, Weather, Underground, ScenarioID
 from commonroad.scenario.trajectory import State, Trajectory
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLight, TrafficLightCycleElement, \
-    TrafficLightState, TrafficLightDirection, TrafficSignIDGermany, TrafficSignIDUsa, TrafficSignIDChina, \
-    TrafficSignIDRussia, TrafficSignIDSpain, TrafficSignIDZamunda, SupportedTrafficSignCountry, LEFT_HAND_TRAFFIC, \
-    TRAFFIC_SIGN_VALIDITY_START
+from commonroad.scenario.traffic_sign import *
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 
 
 __author__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles", "CAR@TUM"]
-__version__ = "2020.2"
+__version__ = "2020.3"
 __maintainer__ = "Stefanie Manzinger, Sebastian Maierhofer"
-__email__ = "commonroad-i06@in.tum.de"
+__email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
 
@@ -205,23 +200,27 @@ class ScenarioFactory:
             meta_data["location"] = LocationFactory.create_from_xml_node(xml_node)
         else:
             LaneletFactory._speed_limits = {}
-        scenario = Scenario(dt, benchmark_id, **meta_data)
+
+        scenario_id = ScenarioID.from_benchmark_id(benchmark_id, commonroad_version)
+        scenario = Scenario(dt, scenario_id, **meta_data)
 
         scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
         if commonroad_version == '2018b':
             scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network, lanelet_assignment))
             for key, value in LaneletFactory._speed_limits.items():
                 for lanelet in value:
-                    if SupportedTrafficSignCountry.GERMANY.value in benchmark_id:
+                    if SupportedTrafficSignCountry.GERMANY.value == scenario_id.country_id:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.USA.value in benchmark_id:
+                    elif SupportedTrafficSignCountry.USA.value == scenario_id.country_id:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDUsa.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.CHINA.value in benchmark_id:
+                    elif SupportedTrafficSignCountry.CHINA.value == scenario_id.country_id:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDChina.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.SPAIN.value in benchmark_id:
+                    elif SupportedTrafficSignCountry.SPAIN.value == scenario_id.country_id:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.RUSSIA.value in benchmark_id:
+                    elif SupportedTrafficSignCountry.RUSSIA.value == scenario_id.country_id:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAX_SPEED, [str(key)])
+                    elif SupportedTrafficSignCountry.ZAMUNDA.value == scenario_id.country_id:
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
                     else:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
                         warnings.warn("Unknown country: Default traffic sign IDs are used.")
@@ -271,6 +270,8 @@ class ScenarioFactory:
             obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment))
         for o in xml_node.findall('environmentObstacle'):
             obstacles.append(EnvironmentObstacleFactory.create_from_xml_node(o))
+        for o in xml_node.findall('phantomObstacle'):
+            obstacles.append(PhantomObstacleFactory.create_from_xml_node(o))
         return obstacles
 
 
@@ -408,12 +409,15 @@ class LaneletNetworkFactory:
         occurences = {}
         for lanelet in lanelet_network.lanelets:
             for traffic_sign in lanelet.traffic_signs:
+                # create set object if none exist
                 if occurences.get(traffic_sign) is None:
                     occurences[traffic_sign] = set()
+                # if there exists no predecessor, current lanelet is first occurence
                 if len(lanelet.predecessor) == 0:
                     occurences[traffic_sign].add(lanelet.lanelet_id)
-                elif any(traffic_sign not in lanelet_network.find_lanelet_by_id(pre).traffic_signs
-                       for pre in lanelet.predecessor):
+                # if no predecessor references the traffic sign, this is the first occurence
+                elif all(traffic_sign not in
+                         lanelet_network.find_lanelet_by_id(pre).traffic_signs for pre in lanelet.predecessor):
                     occurences[traffic_sign].add(lanelet.lanelet_id)
 
         return occurences
@@ -440,10 +444,24 @@ class LaneletNetworkFactory:
             return SupportedTrafficSignCountry.SPAIN
         elif SupportedTrafficSignCountry.RUSSIA.value == country:
             return SupportedTrafficSignCountry.RUSSIA
+        elif SupportedTrafficSignCountry.ARGENTINA.value == country:
+            return SupportedTrafficSignCountry.ARGENTINA
+        elif SupportedTrafficSignCountry.ITALY.value == country:
+            return SupportedTrafficSignCountry.ITALY
+        elif SupportedTrafficSignCountry.FRANCE.value == country:
+            return SupportedTrafficSignCountry.FRANCE
+        elif SupportedTrafficSignCountry.PUERTO_RICO.value == country:
+            return SupportedTrafficSignCountry.PUERTO_RICO
+        elif SupportedTrafficSignCountry.CROATIA.value == country:
+            return SupportedTrafficSignCountry.CROATIA
+        elif SupportedTrafficSignCountry.GREECE.value == country:
+            return SupportedTrafficSignCountry.GREECE
+        elif SupportedTrafficSignCountry.BELGIUM.value == country:
+            return SupportedTrafficSignCountry.BELGIUM
         elif SupportedTrafficSignCountry.ZAMUNDA.value == country:
             return SupportedTrafficSignCountry.ZAMUNDA
         else:
-            warnings.warn("Unknown country: Default traffic sign IDs are used.")
+            warnings.warn("Unknown country: Default traffic sign IDs are used. Specified country: " + country)
             return SupportedTrafficSignCountry.ZAMUNDA
 
 
@@ -667,7 +685,7 @@ class LaneletFactory:
         :param xml_node: XML element
         :return: the type of the line marking of the lanelet boundary (None if not specified).
         """
-        line_marking = None
+        line_marking = LineMarking.UNKNOWN
         if xml_node.find('lineMarking') is not None:
             if LineMarking(xml_node.find('lineMarking').text) is not None:
                 line_marking = LineMarking(xml_node.find('lineMarking').text)
@@ -815,11 +833,26 @@ class TrafficSignElementFactory:
                 traffic_sign_element_id = TrafficSignIDSpain(xml_node.find('trafficSignID').text)
             elif country is SupportedTrafficSignCountry.RUSSIA:
                 traffic_sign_element_id = TrafficSignIDRussia(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.ARGENTINA:
+                traffic_sign_element_id = TrafficSignIDArgentina(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.ITALY:
+                traffic_sign_element_id = TrafficSignIDItaly(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.FRANCE:
+                traffic_sign_element_id = TrafficSignIDFrance(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.PUERTO_RICO:
+                traffic_sign_element_id = TrafficSignIDPuertoRico(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.CROATIA:
+                traffic_sign_element_id = TrafficSignIDCroatia(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.GREECE:
+                traffic_sign_element_id = TrafficSignIDGreece(xml_node.find('trafficSignID').text)
+            elif country is SupportedTrafficSignCountry.BELGIUM:
+                traffic_sign_element_id = TrafficSignIDBelgium(xml_node.find('trafficSignID').text)
             else:
-                warnings.warn("Unknown country: Default traffic sign ID is used.")
+                warnings.warn("Unknown country: Default traffic sign ID is used. Specified country: " + country.value)
                 traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find('trafficSignID').text)
         except ValueError:
-            warnings.warn("<FileReader>: Unknown TrafficElementID! Default traffic sign ID is used.")
+            warnings.warn("<FileReader>: Unknown TrafficElementID! Default traffic sign ID is used. Specified country: "
+                          + country.value + " / Specified traffic sign ID: " + xml_node.find('trafficSignID').text)
             traffic_sign_element_id = TrafficSignIDZamunda.UNKNOWN
 
         additional_values = []
@@ -1115,7 +1148,7 @@ class DynamicObstacleFactory(ObstacleFactory):
         obstacle_id = DynamicObstacleFactory.read_id(xml_node)
         shape = DynamicObstacleFactory.read_shape(xml_node.find('shape'))
         initial_state = DynamicObstacleFactory.read_initial_state(xml_node.find('initialState'))
-        initial_signal_state = StaticObstacleFactory.read_initial_signal_state(xml_node.find('initialSignalState'))
+        initial_signal_state = DynamicObstacleFactory.read_initial_signal_state(xml_node.find('initialSignalState'))
         signal_series = SignalSeriesFactory.create_from_xml_node((xml_node.find('signalSeries')))
         initial_center_lanelet_ids = set()
         initial_shape_lanelet_ids = set()
@@ -1447,11 +1480,23 @@ class PointFactory:
 
 
 class EnvironmentObstacleFactory(ObstacleFactory):
-    """ Class to create a list of objects of class Building from an XML element."""
+    """ Class to create a list of objects of type EnvironmentObstacle from an XML element."""
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element) -> EnvironmentObstacle:
         obstacle_type = EnvironmentObstacleFactory.read_type(xml_node)
-        obstacle_id = StaticObstacleFactory.read_id(xml_node)
-        shape = StaticObstacleFactory.read_shape(xml_node.find('shape'))
+        obstacle_id = EnvironmentObstacleFactory.read_id(xml_node)
+        shape = EnvironmentObstacleFactory.read_shape(xml_node.find('shape'))
 
         return EnvironmentObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type, obstacle_shape=shape)
+
+
+class PhantomObstacleFactory(ObstacleFactory):
+    """ Class to create a list of objects of class PhantomObstacle from an XML element."""
+    @classmethod
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> PhantomObstacle:
+        obstacle_id = PhantomObstacleFactory.read_id(xml_node)
+        if xml_node.find('occupancySet') is not None:
+            prediction = SetBasedPredictionFactory.create_from_xml_node(xml_node.find('occupancySet'))
+        else:
+            prediction = None
+        return PhantomObstacle(obstacle_id=obstacle_id, prediction=prediction)

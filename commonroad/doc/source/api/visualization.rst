@@ -11,6 +11,14 @@ draw_dispatch_cr
    :undoc-members:
    :member-order: bysource
 
+video
+-----------
+
+.. automodule:: commonroad.visualization.video
+  :members:
+  :undoc-members:
+  :member-order: bysource
+
 plot_Helper
 -----------
 
@@ -19,3 +27,14 @@ plot_Helper
    :undoc-members:
    :member-order: bysource
 
+drawing API v2
+------------
+.. automodule:: commonroad.visualization.v2.mp_renderer
+   :members:
+   :undoc-members:
+   :member-order: bysource
+
+.. automodule:: commonroad.visualization.v2.param_server
+   :members:
+   :undoc-members:
+   :member-order: bysource

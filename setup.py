@@ -10,7 +10,7 @@ with open(path.join(this_directory, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='commonroad-io',
-    version='2020.2',
+    version='2020.3',
     description='Python tool to read, write, and visualize CommonRoad scenarios and solutions for automated vehicles.',
     keywords = 'autonomous automated vehicles driving motion planning',
     url='https://commonroad.in.tum.de/',
@@ -20,16 +20,18 @@ setup(
         'Source': 'https://gitlab.lrz.de/tum-cps/commonroad_io',
     },
     author='Cyber-Physical Systems Group, Technical University of Munich',
-    author_email='commonroad-i06@in.tum.de',
+    author_email='commonroad@lists.lrz.de',
     license="GNU General Public License v3.0",
     packages=find_packages(exclude=['doc', 'tests', 'tutorials']),
 	install_requires=[
 		'numpy>=1.13',
-		'Shapely>=1.6.4',
+		'scipy>=1.5.2',
+        'shapely>=1.6.4',
 		'matplotlib>=3.0.0',
 		'lxml>=4.2.2',
 		'networkx>=2.2',
-		'Pillow>=7.0.0'
+		'Pillow>=7.0.0',
+        'iso3166>=1.0.1',
 	],
 	extras_require={
 		'doc':	['sphinx>=1.3.6',

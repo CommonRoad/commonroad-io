@@ -2,7 +2,6 @@ import os
 import unittest
 
 from commonroad.common.file_reader import CommonRoadFileReader
-from commonroad.geometry.shape import *
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
 from commonroad.prediction.prediction import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
@@ -62,9 +61,19 @@ class TestFileReader(unittest.TestCase):
                                        initial_state=init_state,
                                        prediction=traj_pred, obstacle_shape=rectangle,
                                        initial_signal_state=initial_signal_state, signal_series=signal_series)
+
         dyn_traj_obs_uncertain = DynamicObstacle(4, ObstacleType("unknown"),
                                        initial_state=init_state_uncertain,
                                        prediction=traj_pred_uncertain, obstacle_shape=rectangle)
+
+        environment_obstacle_shape = Polygon(np.array([[0, 0], [8, 0], [4, -4]]))
+        environment_obstacle_id = 1234
+        self._environment_obstacle = EnvironmentObstacle(environment_obstacle_id, ObstacleType.BUILDING,
+                                                         environment_obstacle_shape)
+
+        phantom_obstacle_id = 5678
+        self._phantom_obstacle = PhantomObstacle(phantom_obstacle_id, set_pred)
+
         lanelet1 = Lanelet(right_vertices=np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]),
                            center_vertices=np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                            left_vertices=np.array([[0.0, 2], [1.0, 2], [2, 2]]), lanelet_id=100,
@@ -131,9 +140,10 @@ class TestFileReader(unittest.TestCase):
         geo_transformation = GeoTransformation("test", 0.0, 0.0, 0.0, 0.0)
         location = Location(2867714, 0.0, 0.0, geo_transformation)
 
-        self.scenario = Scenario(0.1, 'ZAM_test_0-0-1', tags=tags, location=location)
-        self.scenario.add_objects([static_obs, dyn_set_obs, dyn_traj_obs, dyn_traj_obs_uncertain, self.lanelet_network,
-                                   self._environment_obstacle])
+        self.scenario = Scenario(0.1, 'ZAM_test_0-1', tags=tags, location=location)
+        self.scenario.add_objects([static_obs, dyn_set_obs, dyn_traj_obs, dyn_traj_obs_uncertain,
+                                   self._environment_obstacle, self._phantom_obstacle,
+                                   self.lanelet_network,])
 
         goal_region = GoalRegion([State(time_step=Interval(0, 1), velocity=Interval(0.0, 1), position=rectangle),
                                   State(time_step=Interval(1, 2), velocity=Interval(0.0, 1), position=circ)],
@@ -264,7 +274,7 @@ class TestFileReader(unittest.TestCase):
         exp_obstacle_one_shape = self.scenario.obstacles[1].obstacle_shape.__class__
         exp_obstacle_one_attributes = len(self.scenario.obstacles[1].initial_state.attributes)
         exp_obstacle_one_orientation = self.scenario.obstacles[1].initial_state.orientation
-        exp_obstacle_one_predicition_zero_shape_center = \
+        exp_obstacle_one_prediction_zero_shape_center = \
             self.scenario.obstacles[1].prediction.occupancy_set[0].shape.center
 
         exp_obstacle_two_id = self.scenario.obstacles[2].obstacle_id
@@ -310,10 +320,10 @@ class TestFileReader(unittest.TestCase):
                          len(obstacles_test_scenario[0].obstacles[1].initial_state.attributes))
         self.assertEqual(exp_obstacle_one_orientation,
                          obstacles_test_scenario[0].obstacles[1].initial_state.orientation)
-        self.assertEqual(exp_obstacle_one_predicition_zero_shape_center[0],
+        self.assertEqual(exp_obstacle_one_prediction_zero_shape_center[0],
                          obstacles_test_scenario[0].obstacles[1].prediction.occupancy_set[
                              0].shape.center[0])
-        self.assertEqual(exp_obstacle_one_predicition_zero_shape_center[1],
+        self.assertEqual(exp_obstacle_one_prediction_zero_shape_center[1],
                          obstacles_test_scenario[0].obstacles[1].prediction.occupancy_set[
                              0].shape.center[1])
 
@@ -379,7 +389,7 @@ class TestFileReader(unittest.TestCase):
         exp_num_lanelet_scenario = len(self.scenario.lanelet_network.lanelets)
         exp_num_obstacles_scenario = len(self.scenario.obstacles)
         exp_num_planning_problems = len(self.planning_problem_set.planning_problem_dict)
-        exp_benchmark_id = self.scenario.benchmark_id
+        exp_scenario_id = self.scenario.scenario_id
         exp_dt = self.scenario.dt
 
         exp_obstacle_zero_id = self.scenario.obstacles[0].obstacle_id
@@ -395,7 +405,7 @@ class TestFileReader(unittest.TestCase):
         exp_obstacle_one_shape = self.scenario.obstacles[1].obstacle_shape.__class__
         exp_obstacle_one_attributes = len(self.scenario.obstacles[1].initial_state.attributes)
         exp_obstacle_one_orientation = self.scenario.obstacles[1].initial_state.orientation
-        exp_obstacle_one_predicition_zero_shape_center = \
+        exp_obstacle_one_prediction_zero_shape_center = \
             self.scenario.obstacles[1].prediction.occupancy_set[0].shape.center
 
         exp_obstacle_two_id = self.scenario.obstacles[2].obstacle_id
@@ -476,9 +486,9 @@ class TestFileReader(unittest.TestCase):
         xml_file = CommonRoadFileReader(self.filename_all).open(lanelet_assignment=True)
 
         self.assertEqual(exp_num_lanelet_scenario,len(xml_file[0].lanelet_network.lanelets))
-        self.assertEqual(exp_num_obstacles_scenario,len(xml_file[0].obstacles))
+        self.assertEqual(exp_num_obstacles_scenario, len(xml_file[0].obstacles))
         self.assertEqual(exp_num_planning_problems, len(xml_file[1].planning_problem_dict))
-        self.assertEqual(exp_benchmark_id, xml_file[0].benchmark_id)
+        self.assertEqual(exp_scenario_id, xml_file[0].scenario_id)
         self.assertEqual(exp_dt, xml_file[0].dt)
 
         self.assertEqual(exp_obstacle_zero_id, xml_file[0].obstacles[0].obstacle_id)
@@ -495,9 +505,9 @@ class TestFileReader(unittest.TestCase):
         self.assertEqual(exp_obstacle_one_shape, xml_file[0].obstacles[1].obstacle_shape.__class__)
         self.assertEqual(exp_obstacle_one_attributes, len(xml_file[0].obstacles[1].initial_state.attributes))
         self.assertEqual(exp_obstacle_one_orientation, xml_file[0].obstacles[1].initial_state.orientation)
-        self.assertEqual(exp_obstacle_one_predicition_zero_shape_center[0],
+        self.assertEqual(exp_obstacle_one_prediction_zero_shape_center[0],
                          xml_file[0].obstacles[1].prediction.occupancy_set[0].shape.center[0])
-        self.assertEqual(exp_obstacle_one_predicition_zero_shape_center[1],
+        self.assertEqual(exp_obstacle_one_prediction_zero_shape_center[1],
                          xml_file[0].obstacles[1].prediction.occupancy_set[0].shape.center[1])
 
         self.assertEqual(exp_obstacle_two_id, xml_file[0].obstacles[2].obstacle_id)
@@ -795,40 +805,91 @@ class TestFileReader(unittest.TestCase):
         np.testing.assert_array_almost_equal(exp_environment_obstacle_shape.vertices,
                                              xml_file[0].environment_obstacle[0].obstacle_shape.vertices)
 
+    def test_read_phantom_obstacle(self):
+        exp_phantom_obstacle_id = self._phantom_obstacle.obstacle_id
+        exp_phantom_obstacle_role = self._phantom_obstacle.obstacle_role
+        exp_obstacle_one_prediction_zero_shape_center = \
+            self.scenario.obstacles[1].prediction.occupancy_set[0].shape.center
+
+        xml_file = CommonRoadFileReader(self.filename_all).open(lanelet_assignment=False)
+        self.assertEqual(exp_phantom_obstacle_id, xml_file[0].phantom_obstacle[0].obstacle_id)
+        self.assertEqual(exp_phantom_obstacle_role, xml_file[0].phantom_obstacle[0].obstacle_role)
+        self.assertEqual(exp_obstacle_one_prediction_zero_shape_center[0],
+                         xml_file[0].obstacles[1].prediction.occupancy_set[0].shape.center[0])
+        self.assertEqual(exp_obstacle_one_prediction_zero_shape_center[1],
+                         xml_file[0].obstacles[1].prediction.occupancy_set[0].shape.center[1])
+
 
     # def test_open_all_scenarios(self):
-    #     scenarios = "update"
-    #     cooperative = scenarios + "/cooperative"
-    #     hand_crafted = scenarios + "/hand-crafted"
-    #     ngsim_lankershim = scenarios + "/NGSIM/Lankershim"
-    #     ngsim_us101 = scenarios + "/NGSIM/US101"
-    #     sumo = scenarios + "/SUMO"
-    #     bicycle = scenarios + "/THI-Bicycle"
+    #     scenarios_2020a = "todo"
+    #     scenarios_2018b = "todo"
     #
-    #     for scenario in os.listdir(hand_crafted):
-    #         full_path = hand_crafted + "/" + scenario
+    #     factory_2020a = scenarios_2020a + "/scenario-factory"
+    #     hand_crafted_2020a = scenarios_2020a + "/hand-crafted"
+    #     ngsim_lankershim_2020a = scenarios_2020a + "/NGSIM/Lankershim"
+    #     ngsim_us101_2020a = scenarios_2020a + "/NGSIM/US101"
+    #     ngsim_peachtree_2020a = scenarios_2020a + "/NGSIM/Peachtree"
+    #     bicycle_2020a = scenarios_2020a + "/THI-Bicycle"
+    #
+    #     cooperative_2018b = scenarios_2018b + "/cooperative"
+    #     bicycle_2018b = scenarios_2018b + "/THI-Bicycle"
+    #     sumo_2018b = scenarios_2018b + "/SUMO"
+    #     hand_crafted_2018b = scenarios_2018b + "/hand-crafted"
+    #     ngsim_lankershim_2018b = scenarios_2018b + "/NGSIM/Lankershim"
+    #     ngsim_us101_2018b = scenarios_2018b + "/NGSIM/US101"
+    #     ngsim_peachtree_2018b = scenarios_2018b + "/NGSIM/Peachtree"
+    #
+    #     for scenario in os.listdir(hand_crafted_2020a):
+    #         full_path = hand_crafted_2020a + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
     #
-    #     for scenario in os.listdir(ngsim_lankershim):
-    #         full_path = ngsim_lankershim + "/" + scenario
+    #     for scenario in os.listdir(ngsim_lankershim_2020a):
+    #         full_path = ngsim_lankershim_2020a + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
     #
-    #     for scenario in os.listdir(ngsim_us101):
-    #         full_path = ngsim_us101 + "/" + scenario
+    #     for scenario in os.listdir(ngsim_us101_2020a):
+    #         full_path = ngsim_us101_2020a + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
     #
-    #     for scenario in os.listdir(cooperative):
-    #         full_path = cooperative + "/" + scenario
+    #     for scenario in os.listdir(ngsim_peachtree_2020a):
+    #         full_path = ngsim_peachtree_2020a + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
     #
-    #     for scenario in os.listdir(sumo):
-    #         full_path = sumo + "/" + scenario
+    #     for scenario in os.listdir(bicycle_2020a):
+    #         full_path = bicycle_2020a + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
     #
-    #     for scenario in os.listdir(bicycle):
-    #         full_path = bicycle + "/" + scenario
+    #     for scenario in os.listdir(factory_2020a):
+    #         full_path = factory_2020a + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
-
+    #
+    #     for scenario in os.listdir(cooperative_2018b):
+    #         full_path = cooperative_2018b + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(sumo_2018b):
+    #         full_path = sumo_2018b + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(bicycle_2018b):
+    #         full_path = bicycle_2018b + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(ngsim_lankershim_2018b):
+    #         full_path = ngsim_lankershim_2018b + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(ngsim_us101_2018b):
+    #         full_path = ngsim_us101_2018b + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(ngsim_peachtree_2018b):
+    #         full_path = ngsim_peachtree_2018b + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
+    #
+    #     for scenario in os.listdir(hand_crafted_2018b):
+    #         full_path = hand_crafted_2018b + "/" + scenario
+    #         CommonRoadFileReader(full_path).open()
 
 if __name__ == '__main__':
     unittest.main()
