@@ -246,7 +246,7 @@ class Location:
 class ScenarioID:
     def __init__(self, cooperative: bool = False, country_id: str = "ZAM", map_name: str = "Test", map_id: int = 1,
                  configuration_id: Union[None, int] = None, obstacle_behavior: Union[None, str] = None,
-                 prediction_id: Union[None, int] = None, scenario_version: str = SCENARIO_VERSION):
+                 prediction_id: Union[None, int, List[int]] = None, scenario_version: str = SCENARIO_VERSION):
         """
         Implements the scenario ID as specified in the scenario documentation
         (see https://gitlab.lrz.de/tum-cps/commonroad-scenarios/-/tree/master/documentation)
@@ -271,7 +271,7 @@ class ScenarioID:
         self.map_id: int = map_id
         self.configuration_id: Union[None, int] = configuration_id
         self.obstacle_behavior: Union[None, str] = obstacle_behavior
-        self.prediction_id: Union[None, int] = prediction_id
+        self.prediction_id: Union[None, int, List[int]] = prediction_id
 
     def __str__(self):
         scenario_id = ""
@@ -288,7 +288,10 @@ class ScenarioID:
         if self.obstacle_behavior is not None:
             scenario_id += "_" + self.obstacle_behavior + "-"
         if self.prediction_id is not None:
-            scenario_id += str(self.prediction_id)
+            if type(self.prediction_id) == list:
+                scenario_id += "-".join([str(i) for i in self.prediction_id])
+            else:
+                scenario_id += str(self.prediction_id)
         return scenario_id
 
     @property
@@ -311,7 +314,10 @@ class ScenarioID:
 
     @property
     def country_name(self):
-        return iso3166.countries_by_alpha3[self.country_id].name
+        if self.country_id == "ZAM":
+            return "Zamunda"
+        else:
+            return iso3166.countries_by_alpha3[self.country_id].name
 
     @classmethod
     def from_benchmark_id(cls, benchmark_id: str, scenario_version: str):
@@ -321,8 +327,8 @@ class ScenarioID:
         :param scenario_version: scenario format version (e.g. 2020a)
         :return:
         """
-        if not (benchmark_id.count('_') in (1, 2, 3) and benchmark_id.count('-') in (1, 2, 3)):
-            warnings.warn('Not a valid scenario id: ' + benchmark_id)
+        if not (benchmark_id.count('_') in (1, 2, 3) and benchmark_id.count('-') in (1, 2, 3, 4)):
+            warnings.warn('Not a valid scenario ID: ' + benchmark_id)
             return ScenarioID(None, None, benchmark_id, 0, None, None, None)
 
         # extract sub IDs from string
@@ -343,7 +349,10 @@ class ScenarioID:
             assert sub_ids[4] in ('S', 'T', 'I'), "prediction type must be one of (S, T, I) but is {}".format(
                 sub_ids[4])
             prediction_type = sub_ids[4]
-            prediction_id = int(sub_ids[5])
+            if len(sub_ids) == 6:
+                prediction_id = int(sub_ids[5])
+            else:
+                prediction_id = [int(s) for s in sub_ids[5:]]
 
         return ScenarioID(cooperative, country_id, map_name, map_id, configuration_id, prediction_type, prediction_id,
                           scenario_version)
