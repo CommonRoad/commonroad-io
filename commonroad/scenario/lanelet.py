@@ -54,6 +54,7 @@ class LaneletType(enum.Enum):
     SIDEWALK = 'sidewalk'
     CROSSWALK = 'crosswalk'
     INTERSTATE = 'interstate'
+    INTERSECTION = 'intersection'
     UNKNOWN = 'unknown'
 
 

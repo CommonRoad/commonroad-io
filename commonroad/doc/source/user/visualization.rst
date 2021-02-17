@@ -14,8 +14,8 @@ All objects of the scenario and planning problems can be visualized with the fun
 
 When settings of a plot should be changed with ``draw_params``, they have to be passed as a nested ``dict`` that refers to the hierarchy in which the objects are plotted. The complete structure of ``draw_params`` is given by the default parameters: ::
 
-    {'time_begin': 0,
-     'time_end': 50,
+    {'time_begin': 0,  # first time_step of the scenario or dynamic obstacle which is plotted
+     'time_end': 50,  # time_step until which the predictions of obstacles are plotted (not included)
      'antialiased': True,
      'scenario':
             {'dynamic_obstacle':

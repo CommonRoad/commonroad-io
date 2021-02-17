@@ -245,7 +245,7 @@ class Location:
 
 class ScenarioID:
     def __init__(self, cooperative: bool = False, country_id: str = "ZAM", map_name: str = "Test", map_id: int = 1,
-                 configuration_id: Union[None, int] = None, prediction_type: Union[None, str] = None,
+                 configuration_id: Union[None, int] = None, obstacle_behavior: Union[None, str] = None,
                  prediction_id: Union[None, int] = None, scenario_version: str = SCENARIO_VERSION):
         """
         Implements the scenario ID as specified in the scenario documentation
@@ -256,21 +256,22 @@ class ScenarioID:
         :param map_name: name of the map (e.g. US101)
         :param map_id: index of the map (e.g. 33)
         :param configuration_id: enumerates initial configuration of vehicles on the map (e.g. 2)
-        :param prediction_type: type of the prediction for surrounding vehicles (e.g. T)
+        :param obstacle_behavior: describes how behavior of surrounding vehicles is defined;
+        interactive (I) or prediction type (S, T)
         :param prediction_id: enumerates different predictions for the same initial configuration (e.g. 1)
         :param scenario_version: scenario version identifier (e.g. 2020a)
         """
         assert scenario_version in SUPPORTED_COMMONROAD_VERSIONS, 'Scenario_version {} not supported.' \
             .format(scenario_version)
-        self.scenario_version = scenario_version
-        self.cooperative = cooperative
+        self.scenario_version: str = scenario_version
+        self.cooperative: bool = cooperative
         self._country_id = None
-        self.country_id = country_id
-        self.map_name = map_name
-        self.map_id = map_id
-        self.configuration_id = configuration_id
-        self.prediction_type = prediction_type
-        self.prediction_id = prediction_id
+        self.country_id: str = country_id
+        self.map_name: str = map_name
+        self.map_id: int = map_id
+        self.configuration_id: Union[None, int] = configuration_id
+        self.obstacle_behavior: Union[None, str] = obstacle_behavior
+        self.prediction_id: Union[None, int] = prediction_id
 
     def __str__(self):
         scenario_id = ""
@@ -284,8 +285,8 @@ class ScenarioID:
             scenario_id += str(self.map_id)
         if self.configuration_id is not None:
             scenario_id += "_" + str(self.configuration_id)
-        if self.prediction_type is not None:
-            scenario_id += "_" + self.prediction_type + "-"
+        if self.obstacle_behavior is not None:
+            scenario_id += "_" + self.obstacle_behavior + "-"
         if self.prediction_id is not None:
             scenario_id += str(self.prediction_id)
         return scenario_id
@@ -302,6 +303,11 @@ class ScenarioID:
             self._country_id = country_id
         else:
             raise ValueError('Country ID {} is not in the ISO-3166 three-letter format. '.format(country_id))
+
+    @property
+    def prediction_type(self):
+        warnings.warn("prediction_type renamed to obstacle_behavior", DeprecationWarning)
+        return self.obstacle_behavior
 
     @property
     def country_name(self):
