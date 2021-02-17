@@ -542,16 +542,28 @@ class TestScenarioID(unittest.TestCase):
         self.assertEqual(s_id.prediction_id, 1)
         self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
 
-        id_single = "USA_US101-33_2_I-1"
-        s_id = ScenarioID.from_benchmark_id(id_single, SCENARIO_VERSION)
-        self.assertEqual(id_single, str(s_id))
+        id_interactive = "USA_US101-33_2_I-1-1"
+        s_id = ScenarioID.from_benchmark_id(id_interactive, SCENARIO_VERSION)
+        self.assertEqual(id_interactive, str(s_id))
         self.assertEqual(s_id.cooperative, False)
         self.assertEqual(s_id.country_id, "USA")
         self.assertEqual(s_id.map_name, "US101")
         self.assertEqual(s_id.map_id, 33)
         self.assertEqual(s_id.configuration_id, 2)
         self.assertEqual(s_id.obstacle_behavior, 'I')
-        self.assertEqual(s_id.prediction_id, 1)
+        self.assertEqual(s_id.prediction_id, [1,1])
+        self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
+
+        id_interactive_c = "C-USA_US101-33_2_I-1-1"
+        s_id = ScenarioID.from_benchmark_id(id_interactive_c, SCENARIO_VERSION)
+        self.assertEqual(id_interactive_c, str(s_id))
+        self.assertEqual(s_id.cooperative, True)
+        self.assertEqual(s_id.country_id, "USA")
+        self.assertEqual(s_id.map_name, "US101")
+        self.assertEqual(s_id.map_id, 33)
+        self.assertEqual(s_id.configuration_id, 2)
+        self.assertEqual(s_id.obstacle_behavior, 'I')
+        self.assertEqual(s_id.prediction_id, [1,1])
         self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
 
         id_no_pred = "USA_US101-33_2"
@@ -578,6 +590,14 @@ class TestScenarioID(unittest.TestCase):
         self.assertEqual(s_id.prediction_id, None)
         self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
 
+    def test_country_name(self):
+        id_zam = "ZAM_US101-33_2"
+        s_id = ScenarioID.from_benchmark_id(id_zam, SCENARIO_VERSION)
+        self.assertEqual(s_id.country_name, "Zamunda")
+
+        id_us = "USA_US101-33_2"
+        s_id = ScenarioID.from_benchmark_id(id_us, SCENARIO_VERSION)
+        self.assertEqual(s_id.country_name, "United States of America")
     # def test_read_all_files(self):
     #     folder = 'commonroad-scenarios/scenarios'
     #     from pathlib import Path
