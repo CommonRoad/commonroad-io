@@ -1,4 +1,4 @@
-<commonRoad timeStepSize="0.2" commonRoadVersion="2018b" author="Christian Pek, Stefanie Manzinger, Markus Koschi" affiliation="Technical University of Munich" source="BMW" tags="urban, lane_change, multi_lane" benchmarkID="DEU_A9-3_1_T-1" date="2020-08-12">
+<commonRoad timeStepSize="0.2" commonRoadVersion="2018b" author="Christian Pek, Stefanie Manzinger, Markus Koschi" affiliation="Technical University of Munich" source="BMW" tags="urban lane_change multi_lane" benchmarkID="DEU_A9-3_1_T-1" date="2020-08-12">
   <lanelet id="436">
     <leftBound>
       <point>
