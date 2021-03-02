@@ -497,7 +497,7 @@ class LaneletXMLNode:
 
         if hasattr(lanelet, 'line_marking_left_vertices') and isinstance(
             lanelet.line_marking_left_vertices, LineMarking
-        ):
+        ) and lanelet.line_marking_left_vertices is not LineMarking.UNKNOWN:
             line_marking_left = etree.Element('lineMarking')
             line_marking_left.text = lanelet.line_marking_left_vertices.value
             left_boundary.append(line_marking_left)
@@ -512,7 +512,7 @@ class LaneletXMLNode:
 
         if hasattr(lanelet, 'line_marking_right_vertices') and isinstance(
             lanelet.line_marking_right_vertices, LineMarking
-        ):
+        ) and lanelet.line_marking_right_vertices is not LineMarking.UNKNOWN:
             line_marking_right = etree.Element('lineMarking')
             line_marking_right.text = lanelet.line_marking_right_vertices.value
             right_boundary.append(line_marking_right)
@@ -1350,7 +1350,7 @@ class LineMarkingXMLNode:
         return str(line_marking.name.lower())
 
     @classmethod
-    def create_node(cls, line_marking) -> etree.Element:
+    def create_node(cls, line_marking: LineMarking) -> etree.Element:
         line_marking_node = etree.Element('lineMarking')
         line_marking_node.text = cls._line_marking_enum_to_string(line_marking)
         return line_marking_node
