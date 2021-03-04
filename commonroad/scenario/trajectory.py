@@ -386,24 +386,44 @@ class Trajectory(IDrawable):
                     translation, angle)
 
     @classmethod
-    def interpolate_state_list_for_step_size(cls, states: list, time: np.ndarray, dT: float, N: float, t_0 = 0) -> 'Trajectory':
+    def resample_continuous_time_state_list(cls, states: List[State],
+                                            time_stamps_cont: np.ndarray,
+                                            resampled_dt: float,
+                                            num_resampled_states: int,
+                                            initial_time_cont: float = 0) -> 'Trajectory':
         """
-        This method interpolates a given state list with continuous time vector at given discrete time steps. The interpolation is done in a linear fashion.
+        This method resamples a given state list with continuous time vector in a fixed time resolution. The interpolation is done in a linear fashion.
         :param states: The list of states to interpolate
-        :param time: The vector of continuous time points (corresponding to the states)
-        :param dT: The discrete time step (as specified in a scenario)
-        :param N: The number of interpolated points. It must hold (t_0+N*dT)\in time interval
-        :param t_0: The initial time of the interpolation (default 0). It must hold t\in time interval
-        :return: Trajectory with the interpolated states at the specified discrete time steps
+        :param time_stamps_cont: The vector of continuous time stamps (corresponding to the states)
+        :param resampled_dt: Target time step length
+        :param num_resampled_states: The resulting number of states. It must hold (t_0+N*dT) \in time interval
+        :param initial_time_cont: The initial continuous time stamp (default 0). It must hold t\in time interval
+        :return: The resampled trajectory
         """
-        assert is_positive(dT), '<Trajectory/interpolate_state_list>: Time step size must be a positive number! dT = {}'.format(dT)
-        assert isinstance(states, list) and all(isinstance(x, State) for x in states), '<Trajectory/interpolate_state_list>: Provided state list is not in the correct format! State list = {}'.format(states)
-        assert is_real_number_vector(time) , '<Trajectory/interpolate_state_list>: Provided time vector is not in the correct format! time = {}'.format(time)
-        assert len(states) == len(time), '<Trajectory/interpolate_state_list>: Provided time and state lists do not share the same length! Time = {} / States = {}'.format(len(time), len(states))
-        assert is_positive(N) and is_natural_number(N), '<Trajectory/interpolate_state_list>: Provided state horizon must be a positive Integer! N = {}'.format(N)
-        assert is_real_number(t_0), '<Trajectory/interpolate_state_list>: Provided initial time must be a real number! t_0 = {}'.format(t_0)
-        assert any(time <= t_0) and any(t_0 <= time), '<Trajectory/interpolate_state_list>: Provided initial time is not within time vector! t_0 = {}'.format(t_0)
-        assert any(t_0+N*dT <= time), '<Trajectory/interpolate_state_list>: Provided end time is not within time vector! t_h = {}'.format(t_0+N*dT)
+        assert is_positive(
+                resampled_dt), '<Trajectory/interpolate_state_list>: Time step size must be a positive number! dT = {}'.format(
+                resampled_dt)
+        assert isinstance(states, list) and all(isinstance(x, State) for x in
+                                                states), '<Trajectory/interpolate_state_list>: Provided state list is not in the correct format! State list = {}'.format(
+                states)
+        assert is_real_number_vector(
+                time_stamps_cont), '<Trajectory/interpolate_state_list>: Provided time vector is not in the correct format! time = {}'.format(
+                time_stamps_cont)
+        assert len(states) == len(
+                time_stamps_cont), '<Trajectory/interpolate_state_list>: Provided time and state lists do not share the same length! Time = {} / States = {}'.format(
+                len(time_stamps_cont), len(states))
+        assert is_positive(num_resampled_states) and is_natural_number(
+                num_resampled_states), '<Trajectory/interpolate_state_list>: Provided state horizon must be a positive Integer! N = {}'.format(
+                num_resampled_states)
+        assert is_real_number(
+                initial_time_cont), '<Trajectory/interpolate_state_list>: Provided initial time must be a real number! t_0 = {}'.format(
+                initial_time_cont)
+        assert any(time_stamps_cont <= initial_time_cont) and any(
+                initial_time_cont <= time_stamps_cont), '<Trajectory/interpolate_state_list>: Provided initial time is not within time vector! t_0 = {}'.format(
+                initial_time_cont)
+        assert any(
+                initial_time_cont + num_resampled_states * resampled_dt <= time_stamps_cont), '<Trajectory/interpolate_state_list>: Provided end time is not within time vector! t_h = {}'.format(
+                initial_time_cont + num_resampled_states * resampled_dt)
 
         # prepare interpolation by determining all slots with values
         slots = list()
@@ -415,7 +435,9 @@ class Trajectory(IDrawable):
                 values.append([])
 
         # create interpolation vector
-        t_i = np.arange(t_0, t_0+N*dT+dT,dT)
+        t_i = np.arange(initial_time_cont,
+                        initial_time_cont + num_resampled_states * resampled_dt + resampled_dt,
+                        resampled_dt)
         values_i = list()
 
         for s in slots:
@@ -425,7 +447,9 @@ class Trajectory(IDrawable):
             for x in states:
                 if hasattr(x, s):
                     val = getattr(x, s)
-                    assert is_real_number(val) or is_real_number_vector(val),'<Trajectory/interpolate_state_list>: Currently, this method only supports states with real numbers! val = {}'.format(val)
+                    assert is_real_number(val) or is_real_number_vector(
+                            val), '<Trajectory/interpolate_state_list>: Currently, this method only supports states with real numbers! val = {}'.format(
+                            val)
                     # check if slot is defined for multiple values
                     if not multiple and hasattr(val, 'shape'):
                         if len(val) > 1:
@@ -439,19 +463,19 @@ class Trajectory(IDrawable):
                     else:
                         values.append(val)
                 else:
-                    raise ValueError('<Trajectory/interpolate_state_list>: States do not share the same amount of variables!')
+                    raise ValueError(
+                            '<Trajectory/interpolate_state_list>: States do not share the same amount of variables!')
 
             # do the interpolation
             if multiple:
                 temp = list()
                 for v in values:
-                    temp.append(np.interp(t_i, time, v))
+                    temp.append(np.interp(t_i, time_stamps_cont, v))
                 # stack values again
                 values_i.append(np.array(temp).transpose())
 
             else:
-                values_i.append(np.interp(t_i, time, values))
-
+                values_i.append(np.interp(t_i, time_stamps_cont, values))
 
         # create new trajectory
         states_new = list()
@@ -462,20 +486,7 @@ class Trajectory(IDrawable):
             variables['time_step'] = i
             states_new.append(State(**variables))
 
-        return Trajectory(states_new[0].time_step, states_new)
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return cls(states_new[0].time_step, states_new)
 
     def __str__(self):
         traffic_str = '\n'

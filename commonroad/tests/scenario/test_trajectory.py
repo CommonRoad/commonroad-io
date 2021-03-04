@@ -107,7 +107,7 @@ class TestTrajectory(unittest.TestCase):
         states.append(State(**{'time_step': 5, 'position': np.array([10, 10]), 'velocity': 10, 'orientation': 20}))
         time = np.array([0,5,10])
 
-        traj_new = Trajectory.interpolate_state_list_for_step_size(states, time, 2.5, 4)
+        traj_new = Trajectory.resample_continuous_time_state_list(states, time, 2.5, 4)
         x_t = np.interp(np.arange(0,2.5*4+2.5,2.5), time, [0, 5, 10])
         for i, x in enumerate(traj_new.state_list):
             self.assertEqual(x.velocity, x_t[i])
@@ -116,7 +116,7 @@ class TestTrajectory(unittest.TestCase):
             self.assertEqual(x.position[1], x_t[i])
             self.assertEqual(x.orientation, 10+x_t[i])
 
-        traj_new = Trajectory.interpolate_state_list_for_step_size(states, time, 2.5, 2, t_0=5)
+        traj_new = Trajectory.resample_continuous_time_state_list(states, time, 2.5, 2, initial_time_cont=5)
         x_t = np.interp(np.arange(5, 2.5 * 4 + 2.5, 2.5), time, [0, 5, 10])
         for i, x in enumerate(traj_new.state_list):
             self.assertEqual(x.velocity, x_t[i])
