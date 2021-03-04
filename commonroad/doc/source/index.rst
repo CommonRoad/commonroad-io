@@ -3,36 +3,73 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-=====================================
-CommonRoad_io Documentation
-=====================================
 
-The CommonRoad_io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks. Each benchmark is composed by a `vehicle model <https://commonroad.in.tum.de/documentation/vehicle_model_doc/>`_
-, a `cost function <https://commonroad.in.tum.de/documentation/cost_func_doc/>`_
-, and a `scenario <https://commonroad.in.tum.de/scenarios/>`_ (including goals and constraints). With CommonRoad_io those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`_ .
+CommonRoad_io
+=============
 
+The CommonRoad_io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tools of the CommonRoad Framework.
+With CommonRoad_io, those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`__.
 
-Installation
-============
+CommonRoad_io 2020.3 is compatible with CommonRoad scenarios of version 2020a and supports reading 2018b scenarios.
 
-The package is written in Python 3.6 and tested on MacOs and Linux. The usage of the Anaconda_ Python distribution is recommended.
+The software is written in Python 3.6 and tested on Linux. The usage of the Anaconda_ Python distribution is strongly recommended.
 
 .. _Anaconda: http://www.anaconda.com/download/#download
 
-The CommonRoad_io release 2019.1 is compatible only with `CommonRoad scenarios <https://gitlab.com/commonroad/commonroad.gitlab.io/tree/master>`_ from release 2018b.
+Documentation
+=============
 
-The package is listed on `pypi.org/project/commonroad_io <https://pypi.org/project/commonroad_io/>`_ and can be installed from console via pip:
+The full documentation of the API and introducing examples can be found under `commonroad.in.tum.de <https://commonroad.in.tum.de/static/docs/commonroad-io/index.html>`__.
 
-.. code-block:: console
+For getting started, we recommend our `tutorials <https://commonroad.in.tum.de/tutorials/>`__.
 
-	pip install commonroad-io
+Additional Tools
+================
+Based on CommonRoad_io, we have developed a list of tools for implementing motion-planning algorithms:
 
-The required dependencies for running CommonRoad_io will be automatically installed when using the pip command above:
+* `Drivability Checker <https://gitlab.lrz.de/tum-cps/commonroad-drivability-checker>`__
+* `CommonRoad-SUMO Interface <https://gitlab.lrz.de/tum-cps/commonroad-sumo-interface>`__
+* `OpenDRIVE to Lanelet converter <https://pypi.org/project/opendrive2lanelet>`__
+* `Vehicle Models <https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models/tree/master/Python>`__
+
+Requirements
+============
+
+The required dependencies for running CommonRoad_io are:
 
 * numpy>=1.13
 * shapely>=1.6.4
 * matplotlib>=2.2.2
+* lxml>=4.2.2
 * networkx>=2.2
+* Pillow>=7.0.0
+
+Installation
+============
+
+CommonRoad_io can be installed with::
+
+	pip install commonroad-io
+
+Alternatively, clone from our gitlab repository::
+
+	git clone https://gitlab.lrz.de/tum-cps/commonroad_io.git
+
+and add the folder commonroad_io to your Python environment.
+
+Changelog
+============
+Compared to version 2020.2, the following features were added:
+
+* Support of environment obstacles, e.g. buildings
+* Several new traffic signs
+* New ScenarioID class for the representation of benchmarks
+* New line marking types *unknown* and *no_marking*
+* The creation of lanelet assignments for obstacles is now optional.This decreases the loading time of scenarios. The lanelet assignment can still be performed manually after loading a scenario.
+* Function *generate_object_id* works now if no element has been added before and reserves ID if object will be added later
+* Various small bug fixes
+
+A detailed overview about the changes in each version is provided in the `Changelog <https://gitlab.lrz.de/tum-cps/commonroad_io/-/blob/master/CHANGELOG.md>`__.
 
 Getting Started
 ===============
@@ -59,4 +96,4 @@ Contact information
 ===================
 
 :Website: `http://commonroad.in.tum.de <https://commonroad.in.tum.de/>`_
-:Email: `commonroad-i06@in.tum.de <commonroad-i06@in.tum.de>`_
+:Email: `commonroad@lists.lrz.de <commonroad@lists.lrz.de>`_

@@ -1,18 +1,19 @@
 CommonRoad
 ============
 
-Numerical experiments for motion planning of road vehicles require numerous ingredients: vehicle dynamics, a road network, static obstacles,dynamic obstacles and their movement over time, goal regions, a cost function, etc. Providing a description of the numerical experiment precise enough to reproduce it might require several pages of information. Thus, only key aspects are typically described in scientific publications, making it impossible to reproduce results - yet, reproducibility is an important asset of good science.
+Numerical experiments for motion planning of road vehicles require numerous ingredients: vehicle dynamics, a road network, static obstacles, dynamic obstacles and their movement over time, goal regions, a cost function, etc. Providing a description of the numerical experiment precise enough to reproduce it might require several pages of information. Thus, only key aspects are typically described in scientific publications, making it impossible to reproduce results - yet, reproducibility is an important asset of good science.
 
 Composable benchmarks for motion planning on roads (CommonRoad) are proposed so that numerical experiments are fully defined by a unique ID; all required information to reconstruct the experiment can be found on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`_
-. Each benchmark is composed by a `vehicle model <https://commonroad.in.tum.de/documentation/vehicle_model_doc/>`_
-, a `cost function <https://commonroad.in.tum.de/documentation/cost_func_doc/>`_
-, and a `scenario <https://commonroad.in.tum.de/scenarios/>`_ (including goals and constraints). The scenarios are partly recorded from real traffic and partly hand-crafted to create dangerous situations. Solutions to the benchmarks can be uploaded and ranked on the CommonRoad Website.
+. Each benchmark is composed of a `vehicle model <https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models/blob/master/vehicleModels_commonRoad.pdf>`__, a `cost function <https://gitlab.lrz.de/tum-cps/commonroad-cost-functions/blob/master/costFunctions_commonRoad.pdf>`__, and a `scenario <https://commonroad.in.tum.de/scenarios/>`__ (including goals and constraints). The scenarios are partly recorded from real traffic and partly hand-crafted to create dangerous situations. Solutions to the benchmarks can be uploaded and ranked on the CommonRoad Website.
+Learn more about the scenario specification `here <https://gitlab.lrz.de/tum-cps/commonroad-scenarios/blob/master/documentation/XML_commonRoad_2020a.pdf>`__.
 
 CommonRoad_io
 =============
 
-The CommonRoad_io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tool of the CommonRoad Framework.
-With CommonRoad_io, those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`_.
+The CommonRoad_io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tools of the CommonRoad Framework.
+With CommonRoad_io, those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`__.
+
+CommonRoad_io 2020.3 is compatible with CommonRoad scenario in version 2020a and supports reading 2018b scenarios.
 
 The software is written in Python 3.6 and tested on MacOs and Linux. The usage of the Anaconda_ Python distribution is strongly recommended.
 
@@ -21,18 +22,18 @@ The software is written in Python 3.6 and tested on MacOs and Linux. The usage o
 Documentation
 =============
 
-The full documentation of the API and introducing examples can be found under `commonroad.in.tum.de <https://commonroad.in.tum.de/static/docs/commonroad-io/index.html>`_.
+The full documentation of the API and introducing examples can be found under `commonroad.in.tum.de <https://commonroad-io.readthedocs.io/en/latest/>`__.
 
-For getting started, we recommend our `tutorials <https://commonroad.in.tum.de/tutorials/>`_.
+For getting started, we recommend our `tutorials <https://commonroad.in.tum.de/commonroad_io>`__.
 
 Additional Tools
 ================
 Based on CommonRoad_io, we have developed a list of tools for implementing motion-planning algorithms:
 
-* `Collision Checker <https://gitlab.lrz.de/tum-cps/commonroad-collision-checker>`_
-* `CommonRoad-SUMO Interface <https://gitlab.lrz.de/tum-cps/commonroad-sumo-interface>`_
-* `OpenDRIVE to Lanelet converter <https://pypi.org/project/opendrive2lanelet>`_
-* `Vehicle Models <https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models/tree/master/Python>`_
+* `Drivability Checker <https://gitlab.lrz.de/tum-cps/commonroad-drivability-checker>`__
+* `CommonRoad-SUMO Interface <https://gitlab.lrz.de/tum-cps/commonroad-sumo-interface>`__
+* `OpenDRIVE to Lanelet converter <https://pypi.org/project/opendrive2lanelet>`__
+* `Vehicle Models <https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models/tree/master/Python>`__
 
 Requirements
 ============
@@ -40,9 +41,12 @@ Requirements
 The required dependencies for running CommonRoad_io are:
 
 * numpy>=1.13
+* scipy>=1.5.2
 * shapely>=1.6.4
 * matplotlib>=2.2.2
+* lxml>=4.2.2
 * networkx>=2.2
+* Pillow>=7.0.0
 
 Installation
 ============
@@ -50,3 +54,23 @@ Installation
 CommonRoad_io can be installed with::
 
 	pip install commonroad-io
+
+Alternatively, clone from our gitlab repository::
+
+	git clone https://gitlab.lrz.de/tum-cps/commonroad_io.git
+
+and add the folder commonroad_io to your Python environment.
+
+Changelog
+============
+Compared to version 2020.2, the following features were added:
+
+* Support of environment obstacles, e.g. buildings
+* Several new traffic signs
+* New ScenarioID class for the representation of benchmarks
+* New line marking types *unknown* and *no_marking*
+* The creation of lanelet assignments for obstacles is now optional.This decreases the loading time of scenarios. The lanelet assignment can still be performed manually after loading a scenario.
+* Function *generate_object_id* works now if no element has been added before and reserves ID if object will be added later
+* Various small bug fixes
+
+A detailed overview about the changes in each version is provided in the Changelog.

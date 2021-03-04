@@ -3,14 +3,16 @@ import numpy as np
 from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.geometry.shape import Rectangle
+from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany, \
+    TrafficLight, TrafficLightCycleElement, TrafficLightState
 from commonroad.scenario.trajectory import State
 
 __author__ = "Moritz Untersperger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2019.1"
+__version__ = "2020.3"
 __maintainer__ = "Moritz Untersperger"
-__email__ = "commonroad@in.tum.de"
+__email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
 
@@ -27,16 +29,19 @@ class TestLaneletNetwork(unittest.TestCase):
         self.adjacent_right = 4
         self.adjacent_right_same_dir = True
         self.adjacent_left_same_dir = False
-        self.speed_limit = 15
         self.line_marking_right = LineMarking.SOLID
         self.line_marking_left = LineMarking.DASHED
+        traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED.value, ["15"])
+        self.traffic_sign = TrafficSign(1, [traffic_sign_max_speed], {5}, np.array([0.0, 0.0]))
 
-        self.lanelet = Lanelet(self.left_vertices, self.center_vertices, self.right_vertices, self.lanelet_id, self.predecessor, self.successor,
-                               self.adjacent_left, self.adjacent_left_same_dir, self.adjacent_right, self.adjacent_right_same_dir, self.speed_limit,
-                               self.line_marking_left, self.line_marking_right)
+        self.lanelet = Lanelet(self.left_vertices, self.center_vertices, self.right_vertices, self.lanelet_id,
+                               self.predecessor, self.successor, self.adjacent_left, self.adjacent_left_same_dir,
+                               self.adjacent_right, self.adjacent_right_same_dir, self.line_marking_left,
+                               self.line_marking_right,None, None, None, None, {self.traffic_sign.traffic_sign_id})
 
         self.lanelet_network = LaneletNetwork()
         self.lanelet_network.add_lanelet(self.lanelet)
+        self.lanelet_network.add_traffic_sign(self.traffic_sign, set())
 
     def test_initialize_lanelets(self):
         s1 = np.sqrt(1.25)
@@ -78,8 +83,7 @@ class TestLaneletNetwork(unittest.TestCase):
         np.testing.assert_array_almost_equal(actual_lanelet_found.center_vertices, self.lanelet.center_vertices)
         np.testing.assert_array_almost_equal(actual_lanelet_found.left_vertices, self.lanelet.left_vertices)
         self.assertEqual(actual_lanelet_found.lanelet_id, self.lanelet.lanelet_id)
-        with self.assertRaises(KeyError):
-            print(self.lanelet_network.find_lanelet_by_id(2))
+        self.assertEqual(self.lanelet_network.find_lanelet_by_id(2), None)
 
     def test_add_lanelet(self):
         right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
@@ -93,6 +97,26 @@ class TestLaneletNetwork(unittest.TestCase):
         np.testing.assert_array_almost_equal(self.lanelet_network.lanelets[0].center_vertices, self.lanelet.center_vertices)
         np.testing.assert_array_almost_equal(self.lanelet_network.lanelets[0].left_vertices, self.lanelet.left_vertices)
         self.assertEqual(self.lanelet_network.lanelets[0].lanelet_id, self.lanelet.lanelet_id)
+
+    def test_add_traffic_sign(self):
+        traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED.value, ["15"])
+        traffic_sign = TrafficSign(123, [traffic_sign_max_speed], {5}, np.array([0.0, 0.0]))
+
+        self.assertTrue(self.lanelet_network.add_traffic_sign(traffic_sign, {5}))
+
+        self.assertEqual(self.lanelet_network.traffic_signs[1].traffic_sign_id, traffic_sign.traffic_sign_id)
+        self.assertSetEqual(self.lanelet_network.lanelets[0].traffic_signs, {123, 1})
+
+    def test_add_traffic_light(self):
+        cycle = [TrafficLightCycleElement(TrafficLightState.GREEN, 2),
+                 TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
+                 TrafficLightCycleElement(TrafficLightState.RED, 2)]
+        traffic_light = TrafficLight(234, cycle, time_offset=0, position=np.array([10., 10.]))
+
+        self.assertTrue(self.lanelet_network.add_traffic_light(traffic_light, {5}))
+
+        self.assertEqual(self.lanelet_network.traffic_lights[0].traffic_light_id, traffic_light.traffic_light_id)
+        self.assertSetEqual(self.lanelet_network.lanelets[0].traffic_lights, {234})
 
     def test_add_lanelets_from_network(self):
 
@@ -109,10 +133,13 @@ class TestLaneletNetwork(unittest.TestCase):
 
         self.lanelet_network.translate_rotate(np.array([2, -4]), np.pi / 2)
 
-        desired_center = np.array([[3.5, 2], [3.5, 3], [3.5, 4], [3, 5], [2.5, 6], [2.5, 7], [2.5,  8], [3.5, 9],
+        desired_lanelet_center = np.array([[3.5, 2], [3.5, 3], [3.5, 4], [3, 5], [2.5, 6], [2.5, 7], [2.5,  8], [3.5, 9],
                                    [3.5, 10]])
+        desired_traffic_sign_position = np.array([4, 2])
 
-        np.testing.assert_array_almost_equal(self.lanelet_network.lanelets[0].center_vertices, desired_center)
+        np.testing.assert_array_almost_equal(self.lanelet_network.lanelets[0].center_vertices, desired_lanelet_center)
+        np.testing.assert_array_almost_equal(self.lanelet_network.traffic_signs[0].position,
+                                             desired_traffic_sign_position)
 
     def test_translate_invalid(self):
 

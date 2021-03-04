@@ -54,14 +54,6 @@ class TestTrajectory(unittest.TestCase):
 
         self.assertRaises(AssertionError, Trajectory, 0, states)
 
-        states = list()
-        states.append(State(**{'position': np.array([1.35, -2.4]), 'orientation': 0.87, 'time_step': 6}))
-        states.append(State(**{'position': np.array([2.35, -2.4]), 'orientation': 0.97, 'time_step': 7}))
-        states.append(State(**{'position': np.array([3.35, -2.4]), 'orientation': 1.07, 'time_step': 8}))
-        states.append(State(**{'position': np.array([4.35, -2.4]), 'orientation': 1.17, 'time_step': 9}))
-        states.append(State(**{'position': np.array([5.35, -2.4]), 'orientation': 1.27, 'time_step': 10}))
-        self.assertRaises(AssertionError, Trajectory, 0, states)
-
     def test_translate_rotate(self):
         states = list()
         states.append(State(**{'position': np.array([1.35, -2.4]), 'orientation': 0.87, 'time_step': 0}))

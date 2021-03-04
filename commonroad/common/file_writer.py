@@ -4,41 +4,34 @@ File Writer for scenarios to commonroad xml-format
 import datetime
 import enum
 import pathlib
-import io
 import os
-from typing import Union, List, Dict
+from typing import Union, List, Set
 import numpy as np
 import decimal
 import warnings
+
+from commonroad import SCENARIO_VERSION
 from lxml import etree, objectify
 
 from commonroad.common.util import Interval
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import SetBasedPrediction, TrajectoryPrediction
-from commonroad.scenario.lanelet import Lanelet, LineMarking
-from commonroad.scenario.obstacle import (
-    ObstacleRole,
-    ObstacleType,
-    DynamicObstacle,
-    StaticObstacle,
-    Obstacle,
-    Occupancy,
-    Shape,
-)
-from commonroad.scenario.scenario import Scenario
+from commonroad.scenario.intersection import Intersection
+from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine, LaneletType
+from commonroad.scenario.obstacle import ObstacleRole, ObstacleType, DynamicObstacle, StaticObstacle, Obstacle, \
+    Occupancy, Shape, SignalState, EnvironmentObstacle, PhantomObstacle
+from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficLightCycleElement
 from commonroad.scenario.trajectory import Trajectory, State
 
-__author__ = "Stefanie Manzinger, Moritz Klischat"
+__author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2019.1"
-__maintainer__ = "Moritz Klischat"
-__email__ = "commonroad@in.tum.de"
+__version__ = "2020.3"
+__maintainer__ = "Sebastian Maierhofer"
+__email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
-
-
-SCENARIO_VERSION = '2018b'
 
 # create a new context for this task
 ctx = decimal.Context()
@@ -50,7 +43,7 @@ def float_to_str(f):
     without resorting to scientific notation
     """
     d1 = ctx.create_decimal(repr(f))
-    return '{:.4f}'.format(d1)
+    return format(d1, 'f')
 
 
 def create_exact_node_float(value: Union[int, float]) -> etree.Element:
@@ -129,10 +122,11 @@ class CommonRoadFileWriter:
         self,
         scenario: Scenario,
         planning_problem_set: PlanningProblemSet,
-        author: str,
-        affiliation: str,
-        source: str,
-        tags: str,
+        author: str = None,
+        affiliation: str = None,
+        source: str = None,
+        tags: Set[Tag] = None,
+        location: Location = None,
         decimal_precision: int = 8,
     ):
         """
@@ -143,17 +137,24 @@ class CommonRoadFileWriter:
         :param author: author's name
         :param affiliation: affiliation of the author
         :param source: source of dataset (d.h. database, handcrafted, etc.)
-        :param tags: keywords describing the scenario (e.g. road type(one-lane road, multilane),
+        :param tags: list of keywords describing the scenario (e.g. road type(one-lane road, multilane),
                 required maneuver etc., see commonroad.in.tum.de for full list))
         :param decimal_precision: number of decimal places used when writing float values
         """
-        self.scenario = scenario
-        self.planning_problem_set = planning_problem_set
+        assert not (author is None and scenario.author is None)
+        assert not (affiliation is None and scenario.affiliation is None)
+        assert not (source is None and scenario.source is None)
+        assert not (tags is None and scenario.tags is None)
+
+        self.scenario: Scenario = scenario
+        self.planning_problem_set: PlanningProblemSet = planning_problem_set
         self._root_node = etree.Element('commonRoad')
-        self.author = author
-        self.affiliation = affiliation
-        self.source = source
-        self.tags = tags
+        self.author = author if author is not None else scenario.author
+        self.affiliation = affiliation if affiliation is not None else scenario.affiliation
+        self.source = source if source is not None else scenario.source
+        self.location = location if location is not None else scenario.location
+        self.tags = tags if tags is not None else scenario.tags
+
 
         # set decimal precision
         ctx.prec = decimal_precision
@@ -213,11 +214,9 @@ class CommonRoadFileWriter:
 
     @tags.setter
     def tags(self, tags):
-        assert isinstance(
-            tags, str
-        ), '<CommonRoadFileWriter/tags> tags must be a string, but has type {}'.format(
-            type(tags)
-        )
+        for tag in tags:
+            assert isinstance(tag, Tag), '<CommonRoadFileWriter/tags> tag must ' \
+                                         'be a enum of type Tag, but has type {}'.format(type(tag))
         self._tags = tags
 
     def _write_header(self):
@@ -226,20 +225,30 @@ class CommonRoadFileWriter:
         self._root_node.set('author', self.author)
         self._root_node.set('affiliation', self.affiliation)
         self._root_node.set('source', self.source)
-        self._root_node.set('tags', self.tags)
 
         try:
-            if self.scenario.benchmark_id:
-                self._root_node.set('benchmarkID', self.scenario.benchmark_id)
+            if self.scenario.scenario_id:
+                self._root_node.set('benchmarkID', str(self.scenario.scenario_id))
         except:
             self._root_node.set('benchmarkID', '-1')
-            print('Warning: No benchmark id set.')
+            print('Warning: No scenario_id set.')
 
         self._root_node.set('date', datetime.datetime.today().strftime('%Y-%m-%d'))
 
     def _add_all_objects_from_scenario(self):
+        if self.location is not None:
+            self._root_node.append(LocationXMLNode.create_node(self.location))
+        else:
+            self._root_node.append(LocationXMLNode.create_node(Location()))
+        self._root_node.append(TagXMLNode.create_node(self.tags))
         for l in self.scenario.lanelet_network.lanelets:
             self._root_node.append(LaneletXMLNode.create_node(l))
+        for sign in self.scenario.lanelet_network.traffic_signs:
+            self._root_node.append(TrafficSignXMLNode.create_node(sign))
+        for light in self.scenario.lanelet_network.traffic_lights:
+            self._root_node.append(TrafficLightXMLNode.create_node(light))
+        for intersection in self.scenario.lanelet_network.intersections:
+            self._root_node.append(IntersectionXMLNode.create_node(intersection))
         for o in self.scenario.obstacles:
             self._root_node.append(ObstacleXMLNode.create_node(o))
 
@@ -251,26 +260,27 @@ class CommonRoadFileWriter:
 
     def _dump(self):
         rough_string = etree.tostring(
-            self._root_node, pretty_print=True, encoding='unicode'
+            self._root_node, pretty_print=True, encoding='UTF-8'
         )
+        rough_string = rough_string
         return rough_string
-        # reparsed = minidom.parseString(rough_string)
-        # return reparsed.toprettyxml(indent='  ')
 
     def write_to_file(
         self,
         filename: Union[str, None] = None,
         overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+        check_validity: bool = False
     ):
         """
         Write a scenario including planning-problem. If file already exists, it will be overwritten of skipped
 
         :param filename: filename of the xml output file. If 'None', the Benchmark ID is taken
         :param overwrite_existing_file: Specify whether an already existing file should be overwritten or skipped
+        :param check_validity: check xml file against .xsd definition
         :return:
         """
         if filename is None:
-            filename = self.scenario.benchmark_id
+            filename = str(self.scenario.scenario_id)
 
         if pathlib.Path(filename).is_file():
             if overwrite_existing_file is OverwriteExistingFile.ASK_USER_INPUT:
@@ -290,17 +300,20 @@ class CommonRoadFileWriter:
             else:
                 print('Replace file {}'.format(filename))
 
-        file = open(filename, 'w')
         self._write_header()
         self._add_all_objects_from_scenario()
         self._add_all_planning_problems_from_planning_problem_set()
-        file.write(self._dump())
-        file.close()
+        if check_validity:
+            # validate xml format 
+            self.check_validity_of_commonroad_file(self._dump())
+
+        tree = etree.ElementTree(self._root_node)
+        tree.write(filename, pretty_print=True, xml_declaration=True, encoding="utf-8")
 
     def write_scenario_to_file(
         self,
         filename: Union[str, None] = None,
-        overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+        overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT
     ):
         """
         Write a scenario without planning-problem. If file already exists, it will be overwritten of skipped.
@@ -310,7 +323,7 @@ class CommonRoadFileWriter:
         :return: None
         """
         if filename is None:
-            filename = self.scenario.benchmark_id
+            filename = str(self.scenario.scenario_id)
 
         if pathlib.Path(filename).is_file():
             if overwrite_existing_file is OverwriteExistingFile.ASK_USER_INPUT:
@@ -334,44 +347,11 @@ class CommonRoadFileWriter:
             else:
                 print('Replace file {}'.format(filename))
 
-        with open(filename, 'w') as file_out:
-            self._write_header()
-            self._add_all_objects_from_scenario()
-            file_out.write(self._dump())
-
-    def write_scenario_to_file_io(self, file_io: io.IOBase):
-        """Write a scenario without planning-problem to file_io.
-
-        Args:
-          file_io: File to write to.
-
-        """
         self._write_header()
         self._add_all_objects_from_scenario()
-        self._write_xml_output_to_file(file_io)
 
-    def write_to_file_io(self, file_io: io.IOBase):
-        """Write a scenario including planning-problem to file_io.
-
-        Args:
-          file_io: File to write to.
-
-        """
-        self._write_header()
-        self._add_all_objects_from_scenario()
-        self._add_all_planning_problems_from_planning_problem_set()
-        self._write_xml_output_to_file(file_io)
-
-    def _write_xml_output_to_file(self, file_io: io.IOBase):
-        """Write the dump from self._dump() to file_io.
-
-        Args:
-          file_io: File to write to.
-
-        """
-        output_str = self._dump()
-        CommonRoadFileWriter.check_validity_of_commonroad_file(output_str)
-        file_io.write(output_str)
+        tree = etree.ElementTree(self._root_node)
+        tree.write(filename, pretty_print=True, xml_declaration=True, encoding="utf-8")
 
     @staticmethod
     def check_validity_of_commonroad_file(commonroad_str: str):
@@ -384,7 +364,7 @@ class CommonRoadFileWriter:
 
         """
         with open(
-            os.path.dirname(os.path.abspath(__file__)) + '/commonroad_validity.xsd',
+            os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/XML_commonRoad_XSD.xsd',
             'rb',
         ) as schema_file:
             schema = etree.XMLSchema(etree.parse(schema_file))
@@ -397,6 +377,105 @@ class CommonRoadFileWriter:
             raise Exception(
                 'Could not produce valid CommonRoad file! Error: {}'.format(error.msg)
             )
+
+
+class LocationXMLNode:
+    @classmethod
+    def create_node(cls, location: Location) -> etree.Element:
+        """
+        Create XML-Node for a location
+        :param location: location object
+        :return: node
+        """
+        location_node = etree.Element('location')
+        geo_name_id_node = etree.Element("geoNameId")
+        geo_name_id_node.text = str(location.geo_name_id)
+        location_node.append(geo_name_id_node)
+        gps_latitude_node = etree.Element("gpsLatitude")
+        gps_latitude_node.text = str(location.gps_latitude)
+        location_node.append(gps_latitude_node)
+        gps_longitude_node = etree.Element("gpsLongitude")
+        gps_longitude_node.text = str(location.gps_longitude)
+        location_node.append(gps_longitude_node)
+        if location.geo_transformation is not None:
+            location_node.append(GeoTransformationXMLNode.create_node(location.geo_transformation))
+        if location.environment is not None:
+            location_node.append(EnvironmentXMLNode.create_node(location.environment))
+
+        return location_node
+
+
+class GeoTransformationXMLNode:
+    @classmethod
+    def create_node(cls, geo_transformation: GeoTransformation) -> etree.Element:
+        """
+        Create XML-Node for a location
+        :param geo_transformation: GeoTransformation object
+        :return: node
+        """
+        geotransform_node = etree.Element('geoTransformation')
+        geo_reference_node = etree.Element("geoReference")
+        geo_reference_node.text = geo_transformation.geo_reference
+        geotransform_node.append(geo_reference_node)
+        additional_transformation_node = etree.Element('additionalTransformation')
+        x_translation_node = etree.Element("xTranslation")
+        x_translation_node.text = str(geo_transformation.x_translation)
+        additional_transformation_node.append(x_translation_node)
+        y_translation_node = etree.Element("yTranslation")
+        y_translation_node.text = str(geo_transformation.y_translation)
+        additional_transformation_node.append(y_translation_node)
+        z_rotation_node = etree.Element("zRotation")
+        z_rotation_node.text = str(geo_transformation.z_rotation)
+        additional_transformation_node.append(z_rotation_node)
+        scaling_node = etree.Element("scaling")
+        scaling_node.text = str(geo_transformation.scaling)
+        additional_transformation_node.append(scaling_node)
+        geotransform_node.append(additional_transformation_node)
+
+        return geotransform_node
+
+
+class EnvironmentXMLNode:
+    @classmethod
+    def create_node(cls, environment: Environment) -> etree.Element:
+        """
+        Create XML-Node for a environment
+        :param environment: Environment object
+        :return: node
+        """
+        environment_node = etree.Element('environment')
+        time_node = etree.Element('time')
+        if environment.time.hours < 10:
+            time_node.text = "0" + str(environment.time.hours) + ":" + str(environment.time.minutes) + ":00"
+        else:
+            time_node.text = str(environment.time.hours) + ":" + str(environment.time.minutes)
+        environment_node.append(time_node)
+        time_of_day_node = etree.Element('timeOfDay')
+        time_of_day_node.text = environment.time_of_day.value
+        environment_node.append(time_of_day_node)
+        weather_node = etree.Element('weather')
+        weather_node.text = environment.weather.value
+        environment_node.append(weather_node)
+        underground_node = etree.Element('underground')
+        underground_node.text = environment.underground.value
+        environment_node.append(underground_node)
+
+        return environment_node
+
+
+class TagXMLNode:
+    @classmethod
+    def create_node(cls, tags: Set[Tag]) -> etree.Element:
+        """
+        Create XML-Node for a tag element
+        :param tags: list of tags of the scenario
+        :return: node
+        """
+        tags_node = etree.Element('scenarioTags')
+        for tag in tags:
+            tags_node.append(etree.Element(tag.value))
+
+        return tags_node
 
 
 class LaneletXMLNode:
@@ -418,12 +497,9 @@ class LaneletXMLNode:
 
         if hasattr(lanelet, 'line_marking_left_vertices') and isinstance(
             lanelet.line_marking_left_vertices, LineMarking
-        ):
+        ) and lanelet.line_marking_left_vertices is not LineMarking.UNKNOWN:
             line_marking_left = etree.Element('lineMarking')
-            if lanelet.line_marking_left_vertices is LineMarking.DASHED:
-                line_marking_left.text = 'dashed'
-            elif lanelet.line_marking_left_vertices is LineMarking.SOLID:
-                line_marking_left.text = 'solid'
+            line_marking_left.text = lanelet.line_marking_left_vertices.value
             left_boundary.append(line_marking_left)
 
         lanelet_node.append(left_boundary)
@@ -436,12 +512,9 @@ class LaneletXMLNode:
 
         if hasattr(lanelet, 'line_marking_right_vertices') and isinstance(
             lanelet.line_marking_right_vertices, LineMarking
-        ):
+        ) and lanelet.line_marking_right_vertices is not LineMarking.UNKNOWN:
             line_marking_right = etree.Element('lineMarking')
-            if lanelet.line_marking_right_vertices is LineMarking.DASHED:
-                line_marking_right.text = 'dashed'
-            elif lanelet.line_marking_right_vertices is LineMarking.SOLID:
-                line_marking_right.text = 'solid'
+            line_marking_right.text = lanelet.line_marking_right_vertices.value
             right_boundary.append(line_marking_right)
 
         lanelet_node.append(right_boundary)
@@ -474,22 +547,51 @@ class LaneletXMLNode:
                 adjacent_right.set('drivingDir', 'opposite')
             lanelet_node.append(adjacent_right)
 
-        if lanelet.speed_limit:
-            speed_limit = etree.Element('speedLimit')
-            if np.isinf(lanelet.speed_limit):
-                return lanelet_node
-                # speed_limit.text = str('INF')
-            else:
-                speed_limit.text = str(lanelet.speed_limit)
+        if lanelet.stop_line:
+            stop_line_node = LaneletStopLineXMLNode.create_node(lanelet.stop_line)
+            lanelet_node.append(stop_line_node)
 
-            lanelet_node.append(speed_limit)
+        if len(lanelet.lanelet_type) > 0:
+            for lanelet_type_element in lanelet.lanelet_type:
+                lanelet_type_node = etree.Element('laneletType')
+                lanelet_type_node.text = str(lanelet_type_element.value)
+                lanelet_node.append(lanelet_type_node)
+        else:
+            warnings.warn('<CommonRoadFileWriter/lanelet.lanelet_type> Lanelet %s has no '
+                          'lanelet type! Default lanelet type is used!' % lanelet.lanelet_id)
+            lanelet_type_node = etree.Element('laneletType')
+            lanelet_type_node.text = str(LaneletType.UNKNOWN.value)
+            lanelet_node.append(lanelet_type_node)
+
+        if lanelet.user_one_way:
+            for user_one_way in lanelet.user_one_way:
+                user_one_way_node = etree.Element('userOneWay')
+                user_one_way_node.text = str(user_one_way.value)
+                lanelet_node.append(user_one_way_node)
+
+        if lanelet.user_bidirectional:
+            for user in lanelet.user_bidirectional:
+                user_node = etree.Element('userBidirectional')
+                user_node.text = str(user.value)
+                lanelet_node.append(user_node)
+
+        if lanelet.traffic_signs:
+            for traffic_sign in lanelet.traffic_signs:
+                traffic_sign_node = TrafficSignXMLNode.create_ref_node(traffic_sign)
+                lanelet_node.append(traffic_sign_node)
+
+        if lanelet.traffic_lights:
+            for traffic_light in lanelet.traffic_lights:
+                traffic_light_node = TrafficLightXMLNode.create_ref_node(traffic_light)
+                lanelet_node.append(traffic_light_node)
 
         return lanelet_node
 
 
 class ObstacleXMLNode:
     @classmethod
-    def create_node(cls, obstacle: Obstacle) -> etree.Element:
+    def create_node(cls, obstacle: Union[Obstacle, DynamicObstacle, StaticObstacle, EnvironmentObstacle,
+                                         PhantomObstacle]) -> etree.Element:
         """
         Create XML-Node for an Obstacle
         :param obstacle: Obstacle for creating a node
@@ -499,59 +601,63 @@ class ObstacleXMLNode:
             return DynamicObstacleXMLNode.create_node(obstacle)
         elif type(obstacle) == StaticObstacle:
             return StaticObstacleXMLNode.create_node(obstacle)
+        elif type(obstacle) == EnvironmentObstacle:
+            return EnvironmentObstacleXMLNode.create_node(obstacle)
+        elif type(obstacle) == PhantomObstacle:
+            return PhantomObstacleXMLNode.create_node(obstacle)
         else:
             raise Exception()
-
-    @classmethod
-    def _obstacle_type_enum_to_string(cls, obstacle_type: ObstacleType):
-        """
-        Create string for obstacle type
-        """
-        if obstacle_type == ObstacleType.CAR:
-            return 'car'
-        elif obstacle_type == ObstacleType.UNKNOWN:
-            return 'unknown'
-        elif obstacle_type == ObstacleType.BICYCLE:
-            return 'bicycle'
-        elif obstacle_type == ObstacleType.PEDESTRIAN:
-            return 'pedestrian'
-        elif obstacle_type == ObstacleType.PARKED_VEHICLE:
-            return 'parkedVehicle'
-        elif obstacle_type == ObstacleType.ROAD_BOUNDARY:
-            return 'roadBoundary'
-        elif obstacle_type == ObstacleType.TRUCK:
-            return 'truck'
-        elif obstacle_type == ObstacleType.BUS:
-            return 'bus'
-        elif obstacle_type == ObstacleType.PRIORITY_VEHICLE:
-            return 'priorityVehicle'
-        elif obstacle_type == ObstacleType.CONSTRUCTION_ZONE:
-            return 'constructionZone'
-        elif obstacle_type == ObstacleType.TRAIN:
-            return 'train'
-
-    @classmethod
-    def _obstacle_role_enum_to_string(cls, obstacle_role: ObstacleRole):
-        """
-        Create string for obstalce role
-        """
-        if obstacle_role == ObstacleRole.STATIC:
-            return 'static'
-        elif obstacle_role == ObstacleRole.DYNAMIC:
-            return 'dynamic'
 
     @classmethod
     def create_obstacle_node_header(
         cls, obstacle_id: int, obstacle_role: ObstacleRole, obstacle_type: ObstacleType
     ):
-        obstacle_node = etree.Element('obstacle')
+        obstacle_node = etree.Element(obstacle_role.value+'Obstacle')
         obstacle_node.set('id', str(obstacle_id))
-        role_node = etree.Element('role')
-        role_node.text = cls._obstacle_role_enum_to_string(obstacle_role)
-        obstacle_node.append(role_node)
         type_node = etree.Element('type')
-        type_node.text = cls._obstacle_type_enum_to_string(obstacle_type)
+        type_node.text = obstacle_type.value
         obstacle_node.append(type_node)
+        return obstacle_node
+
+
+class EnvironmentObstacleXMLNode:
+    @classmethod
+    def create_node(cls, environment_obstacle: EnvironmentObstacle) -> etree.Element:
+        """
+        Create XML-Node for a EnvironmentObstacle
+        :param environment_obstacle: EnvironmentObstacle for creating a node
+        :return: node
+        """
+        node = ObstacleXMLNode.create_obstacle_node_header(
+            environment_obstacle.obstacle_id,
+            environment_obstacle.obstacle_role,
+            environment_obstacle.obstacle_type,
+        )
+        shape_node = etree.Element('shape')
+        shape_node.extend(ShapeXMLNode.create_node(environment_obstacle.obstacle_shape))
+        node.append(shape_node)
+
+        return node
+
+
+class PhantomObstacleXMLNode:
+    @classmethod
+    def create_node(cls, phantom_obstacle: PhantomObstacle) -> etree.Element:
+        """
+        Create XML-Node for a PhantomObstacle
+        :param phantom_obstacle: PhantomObstacle for creating a node
+        :return: node
+        """
+        node = PhantomObstacleXMLNode.create_obstacle_node_header(phantom_obstacle.obstacle_id,
+                                                                  phantom_obstacle.obstacle_role)
+        if isinstance(phantom_obstacle.prediction, SetBasedPrediction):
+            node.append(DynamicObstacleXMLNode.create_occupancy_node(phantom_obstacle.prediction.occupancy_set))
+        return node
+
+    @classmethod
+    def create_obstacle_node_header(cls, obstacle_id: int, obstacle_role: ObstacleRole):
+        obstacle_node = etree.Element(obstacle_role.value+'Obstacle')
+        obstacle_node.set('id', str(obstacle_id))
         return obstacle_node
 
 
@@ -614,15 +720,29 @@ class DynamicObstacleXMLNode:
         )
         obstacle_node.append(initial_state_node)
 
+        # write initial signal state if one exists
+        if dynamic_obstacle.initial_signal_state is not None:
+            initial_signal_state_node = etree.Element('initialSignalState')
+            SignalStateXMLNode.create_signal_state_node(
+                dynamic_obstacle.initial_signal_state,
+                initial_signal_state_node,
+                time_step=dynamic_obstacle.initial_signal_state.time_step,
+            )
+            obstacle_node.append(initial_signal_state_node)
+
         # write prediction depending on type
         if isinstance(dynamic_obstacle.prediction, SetBasedPrediction):
             obstacle_node.append(
-                cls._create_occupancy_node(dynamic_obstacle.prediction.occupancy_set)
+                cls.create_occupancy_node(dynamic_obstacle.prediction.occupancy_set)
             )
         elif isinstance(dynamic_obstacle.prediction, TrajectoryPrediction):
             obstacle_node.append(
                 cls._create_trajectory_node(dynamic_obstacle.prediction.trajectory)
             )
+
+        # write signal series if it exists
+        if dynamic_obstacle.signal_series is not None and len(dynamic_obstacle.signal_series) > 0:
+            obstacle_node.append(cls._create_signal_series_node(dynamic_obstacle.signal_series))
 
         return obstacle_node
 
@@ -642,7 +762,7 @@ class DynamicObstacleXMLNode:
         return traj_node
 
     @classmethod
-    def _create_occupancy_node(cls, occupancy_set: List[Occupancy]) -> etree.Element:
+    def create_occupancy_node(cls, occupancy_set: List[Occupancy]) -> etree.Element:
         """
         Create XML-Node for an occupancy_set
         :param occupancy_set: occupancy_set for creating a node
@@ -652,6 +772,21 @@ class DynamicObstacleXMLNode:
         for occupancy in occupancy_set:
             occupancy_set_node.append(OccupancyXMLNode.create_node(occupancy))
         return occupancy_set_node
+
+    @classmethod
+    def _create_signal_series_node(cls, signal_series: List[SignalState]) -> etree.Element:
+        """
+        Create XML-Node for a Trajectory
+        :param trajectory: trajectory for creating a node
+        :return: node
+        """
+        series_node = etree.Element('signalSeries')
+        for signal_state in signal_series:
+            signal_state_node = etree.Element('signalState')
+            series_node.append(
+                SignalStateXMLNode.create_signal_state_node(signal_state, signal_state_node, signal_state.time_step)
+            )
+        return series_node
 
 
 class OccupancyXMLNode:
@@ -807,12 +942,10 @@ class PolygonXMLNode:
 
 class StateXMLNode:
     @classmethod
-    def create_goal_state_node(
-        cls, state: State, goal_lanelet_ids: List[int]
-    ) -> etree.Element:
+    def create_goal_state_node(cls, state: State, goal_lanelet_ids: List[int]) -> etree.Element:
         """
-        Create XML-Node for a polygon
-        :param polygon: polygon for creating a node
+        Create XML-Node for a state
+        :param state: CommonRoad state
         :param goal_lanelet_ids: contains a list of lanelet ids if a goal state's position is specified lanelet id(s)
         :return: node
         """
@@ -884,7 +1017,8 @@ class StateXMLNode:
         elif type(position) is list:
             raise ValueError('A goal state cannot contain multiple items. Use a list of goal states instead.')
         else:
-            raise ValueError('Case should not occur, position={}, goal_lanelet_ids={}.'.format(position,goal_lanelet_ids))
+            raise ValueError('Case should not occur, position={}, goal_lanelet_ids={}.'.format(position,
+                                                                                               goal_lanelet_ids))
         return node
 
     @classmethod
@@ -1021,17 +1155,24 @@ class PlanningProblemXMLNode:
 
 
 class Point:
-    def __init__(self, x: Union[int, float], y: Union[int, float]):
+    def __init__(self, x: Union[int, float], y: Union[int, float], z: Union[int, float, None] = None):
         self.x: Union[int, float] = x
         self.y: Union[int, float] = y
+        self.z: Union[int, float] = z
 
     def as_numpy_array(self):
-        return np.array([self.x, self.y])
+        if self.z is None:
+            return np.array([self.x, self.y])
+        else:
+            return np.array([self.x, self.y, self.z])
 
     @classmethod
     def create_from_numpy_array(cls, point: Union[np.array, list]):
-        assert len(point) == 2
-        return cls(point[0], point[1])
+        assert 2 <= len(point) <= 3
+        if len(point) == 2:
+            return cls(point[0], point[1])
+        else:
+            return cls(point[0], point[1], point[2])
 
     def create_node(self):
         point_node = etree.Element('point')
@@ -1041,6 +1182,10 @@ class Point:
         y = etree.Element('y')
         y.text = float_to_str(np.float64(self.y))
         point_node.append(y)
+        if self.z is not None:
+            z = etree.Element('z')
+            z.text = float_to_str(np.float64(self.z))
+            point_node.append(z)
         return point_node
 
 
@@ -1058,3 +1203,224 @@ class Pointlist:
     def add_points_to_node(self, xml_node: etree.Element):
         for point in self.points:
             xml_node.append(point.create_node())
+
+
+class IntersectionXMLNode:
+    @classmethod
+    def create_node(cls, intersection: Intersection) -> etree.Element:
+        """
+        Create a xml node for an intersection
+        :param intersection: intersection for the node
+        :return:
+        """
+        intersection_node = etree.Element('intersection')
+        intersection_node.set('id', str(intersection.intersection_id))
+
+        for incoming in intersection.incomings:
+            incoming_node = etree.Element('incoming')
+            incoming_node.set('id', str(incoming.incoming_id))
+            for incoming_lanelet in incoming.incoming_lanelets:
+                incoming_lanelet_node = etree.Element('incomingLanelet')
+                incoming_lanelet_node.set('ref', str(incoming_lanelet))
+                incoming_node.append(incoming_lanelet_node)
+
+            if incoming.successors_right:
+                for successor_right in incoming.successors_right:
+                    successor_right_node = etree.Element('successorsRight')
+                    successor_right_node.set('ref', str(successor_right))
+                    incoming_node.append(successor_right_node)
+
+            if incoming.successors_straight:
+                for successor_straight in incoming.successors_straight:
+                    successor_straight_node = etree.Element('successorsStraight')
+                    successor_straight_node.set('ref', str(successor_straight))
+                    incoming_node.append(successor_straight_node)
+
+            if incoming.successors_left:
+                for successor_left in incoming.successors_left:
+                    successor_left_node = etree.Element('successorsLeft')
+                    successor_left_node.set('ref', str(successor_left))
+                    incoming_node.append(successor_left_node)
+
+            if incoming.left_of:
+                is_left_of_node = etree.Element('isLeftOf')
+                is_left_of_node.set('ref', str(incoming.left_of))
+                incoming_node.append(is_left_of_node)
+
+            intersection_node.append(incoming_node)
+
+        if intersection.crossings is not None and len(intersection.crossings) > 0:
+            crossing_node = etree.Element('crossing')
+            for crossing_lanelet in intersection.crossings:
+                crossing_lanelet_node = etree.Element('crossingLanelet')
+                crossing_lanelet_node.set('ref', str(crossing_lanelet))
+                crossing_node.append(crossing_lanelet_node)
+            intersection_node.append(crossing_node)
+
+        return intersection_node
+
+
+class TrafficSignXMLNode:
+    @classmethod
+    def create_node(cls, traffic_sign: TrafficSign) -> etree.Element:
+        traffic_sign_node = etree.Element('trafficSign')
+        traffic_sign_node.set('id', str(traffic_sign.traffic_sign_id))
+        for element in traffic_sign.traffic_sign_elements:
+            element_node = etree.Element('trafficSignElement')
+            sign_id_node = etree.Element('trafficSignID')
+            sign_id_node.text = str(element.traffic_sign_element_id.value)
+            if str(element.traffic_sign_element_id.value) == '':
+                warnings.warn('<FileWriter>: Invalid traffic sign ID!')
+            element_node.append(sign_id_node)
+            for value in element.additional_values:
+                value_node = etree.Element('additionalValue')
+                value_node.text = str(value)
+                element_node.append(value_node)
+            traffic_sign_node.append(element_node)
+
+        if traffic_sign.position is not None:
+            position_node = etree.Element('position')
+            position_node.append(Point(traffic_sign.position[0],
+                                       traffic_sign.position[1]).create_node())
+            traffic_sign_node.append(position_node)
+
+        if traffic_sign.virtual is not None:
+            virtual_node = etree.Element('virtual')
+            virtual_node.text = str(traffic_sign.virtual).lower()
+            traffic_sign_node.append(virtual_node)
+        return traffic_sign_node
+
+    @classmethod
+    def create_ref_node(cls, traffic_sign_ref) -> etree.Element:
+        traffic_sign_ref_node = etree.Element('trafficSignRef')
+        traffic_sign_ref_node.set('ref', str(traffic_sign_ref))
+        return traffic_sign_ref_node
+
+
+class TrafficLightXMLNode:
+    @classmethod
+    def create_node(cls, traffic_light: TrafficLight) -> etree.Element:
+        traffic_light_node = etree.Element('trafficLight')
+        traffic_light_node.set('id', str(traffic_light.traffic_light_id))
+        cycle_node = etree.Element('cycle')
+        for state in traffic_light.cycle:
+            element_node = TrafficLightCycleElementXMLNode.create_node(state)
+            cycle_node.append(element_node)
+        if traffic_light.time_offset is not None and traffic_light.time_offset > 0:
+            offset_node = etree.Element('timeOffset')
+            offset_node.text = str(traffic_light.time_offset)
+            cycle_node.append(offset_node)
+        traffic_light_node.append(cycle_node)
+
+        if traffic_light.position is not None:
+            position_node = etree.Element('position')
+            position_node.append(Point(traffic_light.position[0],
+                                       traffic_light.position[1]).create_node())
+            traffic_light_node.append(position_node)
+        if traffic_light.active is not None:
+            active_node = etree.Element('active')
+            active_node.text = str(traffic_light.active).lower()
+            traffic_light_node.append(active_node)
+        return traffic_light_node
+
+    @classmethod
+    def create_ref_node(cls, traffic_light_ref) -> etree.Element:
+        traffic_light_ref_node = etree.Element('trafficLightRef')
+        traffic_light_ref_node.set('ref', str(traffic_light_ref))
+        return traffic_light_ref_node
+
+
+class TrafficLightCycleElementXMLNode:
+    @classmethod
+    def create_node(cls, cycle_element: TrafficLightCycleElement) -> etree.Element:
+        element_node = etree.Element("cycleElement")
+        duration_node = etree.Element("duration")
+        duration_node.text = str(cycle_element.duration)
+        element_node.append(duration_node)
+        color_node = etree.Element("color")
+        color_node.text = cycle_element.state.value
+        element_node.append(color_node)
+
+        return element_node
+
+
+class LineMarkingXMLNode:
+    @classmethod
+    def _line_marking_enum_to_string(cls, line_marking):
+        return str(line_marking.name.lower())
+
+    @classmethod
+    def create_node(cls, line_marking: LineMarking) -> etree.Element:
+        line_marking_node = etree.Element('lineMarking')
+        line_marking_node.text = cls._line_marking_enum_to_string(line_marking)
+        return line_marking_node
+
+
+class LaneletStopLineXMLNode:
+    @classmethod
+    def create_node(cls, stop_line: StopLine) -> etree.Element:
+        stop_line_node = etree.Element('stopLine')
+
+        if stop_line.start is not None or stop_line.end is not None:
+            start_node = Point(stop_line.start[0], stop_line.start[1]).create_node()
+            stop_line_node.append(start_node)
+            end_node = Point(stop_line.end[0], stop_line.end[1]).create_node()
+            stop_line_node.append(end_node)
+
+        if stop_line.line_marking:
+            line_marking_node = LineMarkingXMLNode.create_node(stop_line.line_marking)
+            stop_line_node.append(line_marking_node)
+
+        if stop_line.traffic_sign_ref is not None:
+            for sign in stop_line.traffic_sign_ref:
+                traffic_sign_ref_node = TrafficSignXMLNode.create_ref_node(sign)
+                stop_line_node.append(traffic_sign_ref_node)
+
+        if stop_line.traffic_light_ref is not None:
+            for light in stop_line.traffic_light_ref:
+                traffic_light_ref_node = TrafficLightXMLNode.create_ref_node(light)
+                stop_line_node.append(traffic_light_ref_node)
+
+        return stop_line_node
+
+
+class SignalStateXMLNode:
+    @classmethod
+    def create_signal_state_node(cls, signal_state: SignalState, signal_state_node: etree.Element,
+                          time_step: int) -> etree.Element:
+        """
+        Create XML-Node for a state
+        :param signal_state: value of the signal state
+        :param signal_state_node: node of the overlying state
+        :return: node
+        """
+        time_node = etree.Element('time')
+        time_node.append(create_exact_node_int(time_step))
+        signal_state_node.append(time_node)
+
+        if hasattr(signal_state, 'indicator_left'):
+            indicator_left = etree.Element('indicatorLeft')
+            indicator_left.text = str(signal_state.indicator_left).lower()
+            signal_state_node.append(indicator_left)
+
+        if hasattr(signal_state, 'indicator_right'):
+            indicator_right = etree.Element('indicatorRight')
+            indicator_right.text = str(signal_state.indicator_right).lower()
+            signal_state_node.append(indicator_right)
+
+        if hasattr(signal_state, 'braking_lights'):
+            braking_lights = etree.Element('brakingLights')
+            braking_lights.text = str(signal_state.braking_lights).lower()
+            signal_state_node.append(braking_lights)
+
+        if hasattr(signal_state, 'hazard_warning_lights'):
+            hazard_warning_lights = etree.Element('hazardWarningLights')
+            hazard_warning_lights.text = str(signal_state.braking_lights).lower()
+            signal_state_node.append(hazard_warning_lights)
+
+        if hasattr(signal_state, 'flashing_blue_lights'):
+            flashing_blue_lights = etree.Element('flashingBlueLights')
+            flashing_blue_lights.text = str(signal_state.flashing_blue_lights).lower()
+            signal_state_node.append(flashing_blue_lights)
+
+        return signal_state_node

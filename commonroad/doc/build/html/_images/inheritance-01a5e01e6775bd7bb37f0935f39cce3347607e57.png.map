@@ -1,6 +1,0 @@
-<map id="inheritancefc0628eef0" name="inheritancefc0628eef0">
-<area shape="rect" id="node1" title="Helper class that provides a standard way to create an ABC using" alt="" coords="5,31,77,56"/>
-<area shape="rect" id="node3" href="#commonroad.scenario.obstacle.Obstacle" target="_top" title="Superclass for dynamic and static obstacles holding common properties defined in CommonRoad." alt="" coords="125,31,204,56"/>
-<area shape="rect" id="node2" href="#commonroad.scenario.obstacle.DynamicObstacle" target="_top" title="Class representing dynamic obstacles as defined in CommonRoad. Each dynamic obstacle has stored its predicted" alt="" coords="252,5,387,31"/>
-<area shape="rect" id="node4" href="#commonroad.scenario.obstacle.StaticObstacle" target="_top" title="Class representing static obstacles as defined in CommonRoad." alt="" coords="262,55,377,80"/>
-</map>
