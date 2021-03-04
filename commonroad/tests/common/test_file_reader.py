@@ -16,12 +16,12 @@ from commonroad.scenario.intersection import Intersection, IntersectionIncomingE
 class TestFileReader(unittest.TestCase):
     def setUp(self):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
-        self.filename_all = self.cwd_path + '/test_reading_all.xml'
-        self.filename_urban = self.cwd_path + '/test_reading_intersection_traffic_sign.xml'
-        self.filename_lanelets = self.cwd_path + '/test_reading_lanelets.xml'
-        self.filename_obstacle = self.cwd_path + '/test_reading_obstacles.xml'
-        self.filename_planning_problem = self.cwd_path + '/test_reading_planning_problem.xml'
-        self.filename_2018b = self.cwd_path + "/USA_Lanker-1_1_T-1.xml"
+        self.filename_all = self.cwd_path + '/../test_scenarios/test_reading_all.xml'
+        self.filename_urban = self.cwd_path + '/../test_scenarios/test_reading_intersection_traffic_sign.xml'
+        self.filename_lanelets = self.cwd_path + '/../test_scenarios/test_reading_lanelets.xml'
+        self.filename_obstacle = self.cwd_path + '/../test_scenarios/test_reading_obstacles.xml'
+        self.filename_planning_problem = self.cwd_path + '/../test_scenarios/test_reading_planning_problem.xml'
+        self.filename_2018b = self.cwd_path + "/../test_scenarios/USA_Lanker-1_1_T-1.xml"
 
         # setup for reading obstacles, lanelets, planning problem and all (without intersection)
         rectangle = Rectangle(4.3, 8.9, center=np.array([0.1, 0.5]), orientation=1.7)

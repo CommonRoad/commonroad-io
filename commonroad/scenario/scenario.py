@@ -325,7 +325,7 @@ class ScenarioID:
         Create ScenarioID from benchmark_id and scenario_version in the XML header.
         :param benchmark_id: scenario ID provided as a string
         :param scenario_version: scenario format version (e.g. 2020a)
-        :return: 
+        :return:
         """
         if not (benchmark_id.count('_') in (1, 2, 3) and benchmark_id.count('-') in (1, 2, 3, 4)):
             warnings.warn('Not a valid scenario ID: ' + benchmark_id)

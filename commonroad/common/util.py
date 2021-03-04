@@ -2,7 +2,6 @@ import numpy as np
 from scipy.spatial.transform.rotation import Rotation
 from scipy.spatial.transform import Slerp
 from typing import Union, Tuple
-
 from commonroad.common import validity
 from commonroad.common.validity import *
 

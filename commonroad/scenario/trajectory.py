@@ -239,6 +239,14 @@ class State:
                 attributes.append(slot)
         return attributes
 
+    @property
+    def is_uncertain_position(self):
+        return isinstance(self.position, Shape)
+
+    @property
+    def is_uncertain_orientation(self):
+        return isinstance(self.orientation, AngleInterval)
+
     def __str__(self):
         traffic_str = '\n'
         for attr in self.attributes:
