@@ -13,7 +13,7 @@ from commonroad.scenario.traffic_sign import TrafficSign, \
     TrafficSignIDChina
 import numpy as np
 
-# mpl.use('TkAgg')
+#mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import unittest
 from commonroad.common.file_reader import CommonRoadFileReader
@@ -80,7 +80,7 @@ class TestVisualizationV2(unittest.TestCase):
                                 'draw_traffic_signs': True,
                                 'show_label':         False,
                                 'show_traffic_signs': 'all',
-                                'scale_factor':       0.15
+                                'scale_factor':       1.0
                         }
                 }, 'lanelet': {
                         'draw_lane_marking': False, 'show_label': False
@@ -104,8 +104,8 @@ class TestVisualizationV2(unittest.TestCase):
                          first_occurrence=set())
         ts.draw(self.rnd, draw_params={
                 'traffic_sign': {
-                        'speed_limit_unit': 'mph',
-                        'scale_factor':     0.3,
+                        'speed_limit_unit': 'auto',
+                        'scale_factor':     1.0,
                         'kwargs':           {
                                 'arrowprops': {'arrowstyle': "simple"}
                         }

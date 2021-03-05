@@ -1,5 +1,6 @@
 import math
 import os
+from collections import defaultdict
 
 from typing import Dict, Set
 
@@ -125,6 +126,8 @@ class MPRenderer(IRenderer):
         self.traffic_sign_call_stack = tuple()
         self.traffic_sign_draw_params = self.draw_params
 
+        self.callbacks = defaultdict(list)
+
     @property
     def plot_limits(self):
         return self._plot_limits
@@ -135,6 +138,9 @@ class MPRenderer(IRenderer):
             self._plot_limits = val[0] + val[1]
         else:
             self._plot_limits = val
+
+    def add_callback(self, event, func):
+        self.callbacks[event].append(func)
 
     def draw_list(self, drawable_list: List[IDrawable],
                   draw_params: Union[ParamServer, dict, None] = None,
@@ -191,7 +197,8 @@ class MPRenderer(IRenderer):
         artist_list = []
         traffic_sign_artists = draw_traffic_light_signs(self.traffic_signs,
                                                         self.traffic_sign_draw_params,
-                                                        self.traffic_sign_call_stack)
+                                                        self.traffic_sign_call_stack,
+                                                        self)
         for art in self.dynamic_artists:
             self.ax.add_artist(art)
             artist_list.append(art)
@@ -232,16 +239,23 @@ class MPRenderer(IRenderer):
         self.ax.cla()
         artists_list = self.render_static()
         artists_list.extend(self.render_dynamic())
+
+        for event, funcs in self.callbacks.items():
+            for fun in funcs:
+                self.ax.callbacks.connect(event, fun)
+
         if self.plot_limits is None:
             self.ax.autoscale(True)
         else:
             self.ax.set_xlim(self.plot_limits[0])
             self.ax.set_ylim(self.plot_limits[1])
-        self.ax.set_aspect('equal')
+        self.ax.set_aspect('equal', adjustable='box')
         if filename is not None:
             self.f.savefig(filename, bbox_inches='tight')
         if show:
             self.f.show()
+
+
         self.clear()
 
     def create_video(self, obj_lists: List[IDrawable], file_path: str,
@@ -1537,3 +1551,4 @@ class MPRenderer(IRenderer):
         else:
             warnings.warn('Plotting signal states only implemented for '
                           'obstacle_shapes Rectangle.')
+

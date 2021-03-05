@@ -187,7 +187,7 @@
     "green_color": "#00aa16",
     "red_yellow_color": "#fe4009ff",
     "show_label": false,
-    "scale_factor": 0.25,
+    "scale_factor": 1.0,
     "zorder": 30
   },
   "traffic_sign": {
@@ -195,7 +195,7 @@
     "show_traffic_signs": "all",
     "speed_limit_unit": "auto",
     "show_label": false,
-    "scale_factor": 0.25,
+    "scale_factor": 1.0,
     "zorder": 30
   },
   "intersection": {
