@@ -17,12 +17,12 @@ from commonroad.scenario.trajectory import *
 class TestFileWriter(unittest.TestCase):
     def setUp(self):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
-        self.xsd_path = self.cwd_path + "/../../common/XML_commonRoad_XSD.xsd"
+        self.xsd_path = self.cwd_path + "/../../xml_definition_files/XML_commonRoad_XSD.xsd"
         self.out_path = self.cwd_path + "/../.pytest_cache"
-        self.filename_read_1 = self.cwd_path + "/test_reading_intersection_traffic_sign.xml"
-        self.filename_read_2 = self.cwd_path + "/test_reading_all.xml"
-        self.filename_2018b = self.cwd_path + "/USA_Lanker-1_1_T-1.xml"
-        self.filename_invalid = self.cwd_path + "/test_writing_invalid.xml"
+        self.filename_read_1 = self.cwd_path + "/../test_scenarios/test_reading_intersection_traffic_sign.xml"
+        self.filename_read_2 = self.cwd_path + "/../test_scenarios/test_reading_all.xml"
+        self.filename_2018b = self.cwd_path + "/../test_scenarios/USA_Lanker-1_1_T-1.xml"
+        self.filename_invalid = self.cwd_path + "/../test_scenarios/test_writing_invalid.xml"
         if not os.path.isdir(self.out_path):
             os.makedirs(self.out_path)
         else:

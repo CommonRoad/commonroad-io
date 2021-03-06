@@ -34,7 +34,7 @@ class TestVisualization(unittest.TestCase):
         full_path = os.path.dirname(os.path.abspath(__file__))
         # filename = full_path +
         # '/../../../../../scenarios/cooperative/C-USA_Lanker-2_4_T-1.xml'
-        filename = full_path + '/../common/test_reading_all.xml'
+        filename = full_path + '/../test_scenarios/test_reading_all.xml'
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         scenario: Scenario = scenario
 
@@ -98,7 +98,7 @@ class TestVisualization(unittest.TestCase):
         print(full_path)
         # filename = full_path +
         # '/../../../../../scenarios/cooperative/C-USA_Lanker-2_4_T-1.xml'
-        filename = full_path + '/../common/test_reading_all.xml'
+        filename = full_path + '/../test_scenarios/test_reading_all.xml'
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         planning_problem_set: PlanningProblemSet = planning_problem_set
         with pytest.warns(DeprecationWarning) as record_warnings:
@@ -189,7 +189,7 @@ class TestVisualization(unittest.TestCase):
         # plt.ioff()
         # set_non_blocking()
         full_path = os.path.dirname(os.path.abspath(__file__))
-        filename = full_path + '/../common/USA_US101-3_3_T-1.xml'
+        filename = full_path + '/../test_scenarios/USA_US101-3_3_T-1.xml'
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         scenario: Scenario = scenario
         # plt.autoscale(False)

@@ -27,8 +27,8 @@ class TestVisualizationV2(unittest.TestCase):
     def setUp(self) -> None:
         self.rnd = MPRenderer()
         full_path = os.path.dirname(os.path.abspath(__file__))
-        self.ngsim_scen_1 = full_path + '/../common/USA_Lanker-1_1_T-1.xml'
-        self.ngsim_scen_2 = full_path + '/../common/USA_US101-3_3_T-1.xml'
+        self.ngsim_scen_1 = full_path + '/../test_scenarios/USA_Lanker-1_1_T-1.xml'
+        self.ngsim_scen_2 = full_path + '/../test_scenarios/USA_US101-3_3_T-1.xml'
 
     def test_primitive(self):
         params = ParamServer()
@@ -111,7 +111,7 @@ class TestVisualizationV2(unittest.TestCase):
         # print(full_path)
         # filename = full_path +
         # '/../../../../../scenarios/cooperative/C-USA_Lanker-2_4_T-1.xml'
-        filename = full_path + '/../common/test_reading_all.xml'
+        filename = full_path + '/../test_scenarios/test_reading_all.xml'
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         planning_problem_set: PlanningProblemSet = planning_problem_set
 

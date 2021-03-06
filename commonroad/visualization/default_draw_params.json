@@ -151,7 +151,30 @@
     "draw_continuous": false,
     "unique_colors": false,
     "line_width": 0.17,
-    "z_order": 24
+    "z_order": 24,
+    "shape": {
+        "polygon": {
+          "opacity": 1.0,
+          "facecolor": "#000000",
+          "edgecolor": "#ff0000",
+          "linewidth": 0.5,
+          "zorder": 24
+        },
+        "rectangle": {
+          "opacity": 1.0,
+          "facecolor": "#000000",
+          "edgecolor": "#ff0000",
+          "linewidth": 0.5,
+          "zorder": 24
+        },
+        "circle": {
+          "opacity": 1.0,
+          "facecolor": "#000000",
+          "edgecolor": "#ff0000",
+          "linewidth": 0.5,
+          "zorder": 24
+        }
+      }
   },
   "lanelet_network": {
     "kwargs_traffic_light_signs": {},
@@ -229,6 +252,28 @@
         "edgecolor": "#0066cc",
         "linewidth": 0.5,
         "zorder": 18
+      }
+    },
+    "uncertain_position": {
+      "shape": {
+        "polygon": {
+          "opacity": 0.6,
+          "facecolor": "#000000",
+          "edgecolor": "#ff0000",
+          "linewidth": 0.5
+        },
+        "rectangle": {
+          "opacity": 0.6,
+          "facecolor": "#000000",
+          "edgecolor": "#ff0000",
+          "linewidth": 0.5
+        },
+        "circle": {
+          "opacity": 0.6,
+          "facecolor": "#000000",
+          "edgecolor": "#ff0000",
+          "linewidth": 0.5
+        }
       }
     }
   },

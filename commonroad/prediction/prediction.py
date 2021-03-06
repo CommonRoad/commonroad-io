@@ -4,7 +4,8 @@ import numpy as np
 
 from commonroad.common.util import Interval
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector
-from commonroad.geometry.shape import Shape
+from commonroad.geometry.shape import Shape, \
+    occupancy_shape_from_state
 from commonroad.scenario.trajectory import Trajectory
 
 __author__ = "Stefanie Manzinger"
@@ -270,7 +271,6 @@ class TrajectoryPrediction(Prediction):
         """ Computes the occupancy set over time given the predicted trajectory and shape of the object."""
         occupancy_set = list()
         for k, state in enumerate(self._trajectory.state_list):
-            occupied_region = self._shape.rotate_translate_local(
-                state.position, state.orientation)
+            occupied_region = occupancy_shape_from_state(self._shape, state)
             occupancy_set.append(Occupancy(state.time_step, occupied_region))
         return occupancy_set
