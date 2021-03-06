@@ -558,6 +558,34 @@ class Lanelet:
             warnings.warn(
                 '<Lanelet/traffic_lights>: traffic_lights of lanelet is immutable!')
 
+    def add_predecessor(self, lanelet: int):
+        """
+        Adds the ID of a predecessor lanelet to the list of predecessors.
+        :param lanelet: Predecessor lanelet ID.
+        """
+        self.predecessor.append(lanelet)
+
+    def remove_predecessor(self, lanelet: int):
+        """
+        Removes the ID of a predecessor lanelet from the list of predecessors.
+        :param lanelet: Predecessor lanelet ID.
+        """
+        self.predecessor.remove(lanelet)
+
+    def add_successor(self, lanelet: int):
+        """
+        Adds the ID of a successor lanelet to the list of successors.
+        :param lanelet: Successor lanelet ID.
+        """
+        self.successor.append(lanelet)
+
+    def remove_successor(self, lanelet: int):
+        """
+        Removes the ID of a successor lanelet from the list of successors.
+        :param lanelet: Successor lanelet ID.
+        """
+        self.successor.remove(lanelet)
+
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """
         This method translates and rotates a lanelet

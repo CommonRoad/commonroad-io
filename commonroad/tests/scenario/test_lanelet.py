@@ -259,6 +259,76 @@ class TestLanelet(unittest.TestCase):
         np.testing.assert_array_almost_equal(merged_lanelets[0].right_vertices, out_vertices_right)
         np.testing.assert_array_almost_equal(merged_lanelets[0].center_vertices, out_vertices_center)
 
+    def test_add_predecessor(self):
+        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
+        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
+        center_vertices = np.array([[0, .5], [1, .5], [2, .5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, .5], [8, .5]])
+        lanelet_id = 5
+        predecessor = [1, 2]
+        successor = [6, 7]
+        adjacent_left = 3
+        adjacent_right = 4
+        adjacent_right_same_dir = True
+        adjacent_left_same_dir = False
+
+        lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
+                          adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
+        lanelet.add_predecessor(10)
+        lanelet.add_predecessor(12)
+        self.assertListEqual(lanelet.predecessor, [1, 2, 10, 12])
+
+    def test_remove_predecessor(self):
+        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
+        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
+        center_vertices = np.array([[0, .5], [1, .5], [2, .5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, .5], [8, .5]])
+        lanelet_id = 5
+        predecessor = [1, 2]
+        successor = [6, 7]
+        adjacent_left = 3
+        adjacent_right = 4
+        adjacent_right_same_dir = True
+        adjacent_left_same_dir = False
+
+        lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
+                          adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
+        lanelet.remove_predecessor(1)
+        self.assertListEqual(lanelet.predecessor, [2])
+
+    def test_add_successor(self):
+        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
+        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
+        center_vertices = np.array([[0, .5], [1, .5], [2, .5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, .5], [8, .5]])
+        lanelet_id = 5
+        predecessor = [1, 2]
+        successor = [6, 7]
+        adjacent_left = 3
+        adjacent_right = 4
+        adjacent_right_same_dir = True
+        adjacent_left_same_dir = False
+
+        lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
+                          adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
+        lanelet.add_successor(10)
+        lanelet.add_successor(12)
+        self.assertListEqual(lanelet.successor, [6, 7, 10, 12])
+
+    def test_remove_successor(self):
+        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
+        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
+        center_vertices = np.array([[0, .5], [1, .5], [2, .5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, .5], [8, .5]])
+        lanelet_id = 5
+        predecessor = [1, 2]
+        successor = [6, 7]
+        adjacent_left = 3
+        adjacent_right = 4
+        adjacent_right_same_dir = True
+        adjacent_left_same_dir = False
+
+        lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
+                          adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
+        lanelet.remove_successor(7)
+        self.assertListEqual(lanelet.successor, [6])
+
 
 if __name__ == '__main__':
     unittest.main()
