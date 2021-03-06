@@ -275,6 +275,7 @@ class TestLanelet(unittest.TestCase):
                           adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
         lanelet.add_predecessor(10)
         lanelet.add_predecessor(12)
+        lanelet.add_predecessor(1)
         self.assertListEqual(lanelet.predecessor, [1, 2, 10, 12])
 
     def test_remove_predecessor(self):
@@ -292,6 +293,7 @@ class TestLanelet(unittest.TestCase):
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
                           adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
         lanelet.remove_predecessor(1)
+        lanelet.remove_predecessor(20)
         self.assertListEqual(lanelet.predecessor, [2])
 
     def test_add_successor(self):
@@ -310,6 +312,7 @@ class TestLanelet(unittest.TestCase):
                           adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
         lanelet.add_successor(10)
         lanelet.add_successor(12)
+        lanelet.add_successor(6)
         self.assertListEqual(lanelet.successor, [6, 7, 10, 12])
 
     def test_remove_successor(self):
@@ -327,6 +330,7 @@ class TestLanelet(unittest.TestCase):
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
                           adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
         lanelet.remove_successor(7)
+        lanelet.remove_predecessor(20)
         self.assertListEqual(lanelet.successor, [6])
 
 

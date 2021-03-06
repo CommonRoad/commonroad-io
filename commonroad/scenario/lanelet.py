@@ -563,28 +563,32 @@ class Lanelet:
         Adds the ID of a predecessor lanelet to the list of predecessors.
         :param lanelet: Predecessor lanelet ID.
         """
-        self.predecessor.append(lanelet)
+        if not lanelet in self.predecessor:
+            self.predecessor.append(lanelet)
 
     def remove_predecessor(self, lanelet: int):
         """
         Removes the ID of a predecessor lanelet from the list of predecessors.
         :param lanelet: Predecessor lanelet ID.
         """
-        self.predecessor.remove(lanelet)
+        if lanelet in self.predecessor:
+            self.predecessor.remove(lanelet)
 
     def add_successor(self, lanelet: int):
         """
         Adds the ID of a successor lanelet to the list of successors.
         :param lanelet: Successor lanelet ID.
         """
-        self.successor.append(lanelet)
+        if lanelet not in self.successor:
+            self.successor.append(lanelet)
 
     def remove_successor(self, lanelet: int):
         """
         Removes the ID of a successor lanelet from the list of successors.
         :param lanelet: Successor lanelet ID.
         """
-        self.successor.remove(lanelet)
+        if lanelet in self.successor:
+            self.successor.remove(lanelet)
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """
