@@ -249,7 +249,7 @@ class MPRenderer(IRenderer):
         else:
             self.ax.set_xlim(self.plot_limits[0])
             self.ax.set_ylim(self.plot_limits[1])
-        self.ax.set_aspect('equal', adjustable='box')
+        self.ax.set_aspect('equal')
         if filename is not None:
             self.f.savefig(filename, bbox_inches='tight')
         if show:

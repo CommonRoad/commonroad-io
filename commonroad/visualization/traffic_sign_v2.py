@@ -198,10 +198,7 @@ class OffsetImageAutoscale(OffsetImage):
         super().set_offset(xy)
         self.text_area.offset_transform.clear()
         w, h, _, _ = self.get_extent()
-        try:
-            xy = (xy[0] + w * self.txt_offset_x, xy[1] + h * self.txt_offset_y)
-        except:
-            ddf = 0
+        xy = (xy[0] + w * self.txt_offset_x, xy[1] + h * self.txt_offset_y)
         self.text_area.offset_transform.translate(xy[0], xy[1])
 
 
