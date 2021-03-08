@@ -7,7 +7,7 @@
 - New visualization module which supports MVC pattern
 
 ## Changed
-
+- Scaling of traffic signs is coupled with the zoom level
 
 ### Fixed
 - Various small bug fixes
