@@ -1033,6 +1033,15 @@ class LaneletNetwork(IDrawable):
             new_lanelet_network.add_lanelet(copy.deepcopy(l))
         return new_lanelet_network
 
+    def remove_lanelet(self, lanelet_id: int):
+        """
+        Removes a lanelet from a lanelet network and deletes all references.
+
+        @param lanelet_id: ID of lanelet which should be removed.
+        """
+        del self._lanelets[lanelet_id]
+        self.cleanup_lanelet_references()
+
     def cleanup_lanelet_references(self):
         """
         Deletes ids which do not exist in the lanelet network. Useful when cutting out lanelet networks.

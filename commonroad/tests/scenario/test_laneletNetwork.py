@@ -200,6 +200,10 @@ class TestLaneletNetwork(unittest.TestCase):
 
         self.assertTrue(len(actual_in_proximity), 1)
 
+    def test_remove_lanelet(self):
+        self.lanelet_network.remove_lanelet(self.lanelet.lanelet_id)
+        self.assertEqual(len(self.lanelet_network.lanelets), 0)
+
 
 if __name__ == '__main__':
     unittest.main()
