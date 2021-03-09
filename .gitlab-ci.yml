@@ -1,18 +1,26 @@
 image: python
 
 stages:
+- style_check
 - test
 - deploy
 
 before_script:
 - curl -O https://bootstrap.pypa.io/get-pip.py
 - python get-pip.py
-- pip install tox coverage
+
+style_checks:
+  stage: style_check
+  script:
+    - pip install pycodestyle
+    - git  diff ${CI_COMMIT_BEFORE_SHA}...${CI_COMMIT_SHA} -- '*.py' | pycodestyle --max-line-length=80 --diff
+  allow_failure: True
 
 build_and_test:
   image: python:3.6
   stage: test
   script:
+    - pip install tox coverage
     - pip install -r ./requirements.txt
     - pip install -e .[tests]
     - coverage run commonroad/tests/run_tests.py
