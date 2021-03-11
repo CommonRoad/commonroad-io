@@ -18,6 +18,7 @@ from matplotlib.offsetbox import OffsetImage, \
     VPacker, \
     OffsetBox
 
+# path to traffic sign .png files
 traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
 
 speed_limit_factors = {'mph': 2.23694, 'kmh': 3.6, 'ms': 1.0}
@@ -226,53 +227,97 @@ is_speed_limit_id = ['274', '275', 'R2-1']
 
 
 def text_prop_dict() -> dict:
-    """Properties of text for additional_value."""
+    """Properties of text for additional_value.
+    mpl_args: text properties
+    rescale_threshold: max. length of additional value string. Above this length, the font size is scaled down
+    position_offset_y: vertical offset of additional text measured from the bottom of the traffic sign
+        (proportional to traffic sign size)
+    """
     return {
-        '274': {
-            'mpl_args': {'weight': 'bold', 'size': 13.5},
+        'default': {
+            'mpl_args': {
+                'weight': 'bold', 'size': 13.5
+            },
             'rescale_threshold': 2,
-            'position_offset': -21.0,
             'position_offset_y': 0.45
-        }, '275': {
+        },
+        '262': {
+            'mpl_args': {
+                'weight': 'bold', 'size': 8
+            },
+            'rescale_threshold': 2,
+            'position_offset_y': 0.53
+        },
+        '264': {
+            'mpl_args': {
+                'weight': 'bold', 'size': 12
+            },
+            'rescale_threshold': 2,
+            'position_offset_y': 0.47
+        },
+        '265': {
+            'mpl_args': {
+                'weight': 'bold', 'size': 13
+            },
+            'rescale_threshold': 2,
+            'position_offset_y': 0.45
+        },
+        '266': {
+            'mpl_args': {
+                'weight': 'bold', 'size': 5
+            },
+            'rescale_threshold': 2,
+            'position_offset_y': 0.37
+        },
+        '274': {
+            'mpl_args': {
+                'weight': 'bold', 'size': 13.5
+            },
+            'rescale_threshold': 2,
+            'position_offset_y': 0.45
+        },
+        '275': {
             'mpl_args': {
                 'weight': 'bold', 'color': 'white', 'size': 13.5
             }, 'rescale_threshold': 2,
-            'position_offset': -21.0,
             'position_offset_y': 0.45
-        }, '278': {
+        },
+        '278': {
             'mpl_args': {
                 'weight': 'bold', 'color': 'gray', 'size': 10
             },
             'position_offset': -16.5,
             'position_offset_y': 0.45
-        }, '279': {
+        },
+        '279': {
             'mpl_args': {
                 'weight': 'bold', 'color': 'white', 'size': 10
             },
             'position_offset': -16.5,
             'position_offset_y': 0.45
-        }, '310': {
+        },
+        '310': {
             'mpl_args': {
                 'weight': 'normal', 'color': 'black', 'size': 10,
             },
             'position_offset_y': -0.55
-        }, '380': {
+        },
+        '380': {
             'mpl_args': {
                 'weight': 'bold', 'color': 'white', 'size': 10
             },
-            'position_offset': -16.5,
             'position_offset_y': 0.45
-        }, '381': {
+        },
+        '381': {
             'mpl_args': {
                 'weight': 'bold', 'color': 'white', 'size': 10
             },
-            'position_offset': -16.5,
             'position_offset_y': 0.45
-        }, 'R2-1': {
+        },
+        'R2-1': {
             'mpl_args': {
                 'weight': 'normal', 'color': 'black', 'size': 10.5
             },
-            'position_offset': -13.5,
             'position_offset_y': 0.3
         }
     }
@@ -297,10 +342,10 @@ def rescale_text(string: str, prop: dict, scale_factor: float,
         if len(string) > prop['rescale_threshold']:
             if 'mpl_args' in prop and 'size' in prop['mpl_args']:
                 prop['mpl_args']['size'] *= prop['rescale_threshold'] / len(
-                    string) * 1.1
+                        string) * 1.1
             if 'position_offset' in prop:
                 prop['position_offset'] *= prop['rescale_threshold'] / len(
-                    string) * 1.35
+                        string) * 1.35
 
     return prop
 
@@ -329,25 +374,25 @@ def create_img_boxes_traffic_sign(
     scale_factor = draw_params.by_callstack(call_stack,
                                             ('traffic_sign', 'scale_factor'))
     speed_limit_unit = draw_params.by_callstack(call_stack, (
-        'traffic_sign', 'speed_limit_unit'))
+            'traffic_sign', 'speed_limit_unit'))
     show_label_default = draw_params.by_callstack(call_stack, (
-        'traffic_sign', 'show_label'))
+            'traffic_sign', 'show_label'))
     show_traffic_signs = draw_params.by_callstack(call_stack, (
-        'traffic_sign', 'show_traffic_signs'))
+            'traffic_sign', 'show_traffic_signs'))
     zorder = draw_params.by_callstack(call_stack, ('traffic_sign', 'zorder'))
 
     scale_factor_default = draw_params.by_callstack(call_stack, (
-        'traffic_sign', 'scale_factor'))
+            'traffic_sign', 'scale_factor'))
 
     assert any([show_traffic_signs == 'all',
                 isinstance(show_traffic_signs, list) and type(
-                    show_traffic_signs[0] is enum)]), 'Plotting option ' \
-                                                      'traffic_sign.show_traffic_signs must ' \
-                                                      'be either "all" or ' \
-                                                      '' \
-                                                      '' \
-                                                      'list of type ' \
-                                                      'TrafficSignID'
+                        show_traffic_signs[0] is enum)]), 'Plotting option ' \
+                                                          'traffic_sign.show_traffic_signs must ' \
+                                                          'be either "all" or ' \
+                                                          '' \
+                                                          '' \
+                                                          'list of type ' \
+                                                          'TrafficSignID'
 
     prop_dict = text_prop_dict()
     imageboxes_all = defaultdict(list)
@@ -371,9 +416,9 @@ def create_img_boxes_traffic_sign(
                 if not os.path.exists(path):
                     show_label = True
                     warnings.warn(
-                        'No png file for traffic sign id {} exists under '
-                        'path '
-                        '{}, skipped plotting.'.format(el_id, path))
+                            'No png file for traffic sign id {} exists under '
+                            'path '
+                            '{}, skipped plotting.'.format(el_id, path))
                     plot_img = False
 
             boxes = []  # collect matplotlib offset boxes for text and images
@@ -397,9 +442,8 @@ def create_img_boxes_traffic_sign(
                     else:
                         add_text = '\n'.join(element.additional_values)
 
-                    props = prop_dict[el_id.value] if el_id.value in prop_dict else {
-                        'mpl_args': {}
-                    }
+                    props = prop_dict[el_id.value] if el_id.value in prop_dict else prop_dict['default']
+
 
                     props = rescale_text(add_text, props, scale_factor,
                                          scale_factor_default)
@@ -431,21 +475,21 @@ def create_img_boxes_traffic_sign(
             if not plot_img:
                 if element.traffic_sign_element_id.value in is_speed_limit_id \
                         and isfloat(
-                    element.additional_values[0]):
+                        element.additional_values[0]):
                     if speed_limit_unit == 'auto':
                         speed_factor = speed_limit_factor(
-                            element.traffic_sign_element_id)
+                                element.traffic_sign_element_id)
                     else:
                         speed_factor = speed_limit_factors[speed_limit_unit]
 
                     add_text = str(round(
-                        speed_factor * float(element.additional_values[0])))
+                            speed_factor * float(element.additional_values[0])))
                 else:
                     add_text = '\n'.join(element.additional_values)
 
                 props = prop_dict[
                     el_id.value] if el_id.value in prop_dict else {
-                    'mpl_args': {}
+                        'mpl_args': {}
                 }
                 props = rescale_text(add_text, props, scale_factor,
                                      scale_factor_default)
@@ -453,10 +497,6 @@ def create_img_boxes_traffic_sign(
                                                textprops=props['mpl_args']))
                 # add callback for automatic rescaling of text
                 rnd.add_callback('xlim_changed', boxes[-1].ax_update)
-
-                # position text label on png image
-                if plot_img and 'position_offset' in props:
-                    sep = props['position_offset']
 
             # stack boxes vertically
             img = VPacker(children=boxes, pad=0, sep=sep, align='center')
@@ -506,7 +546,7 @@ def create_img_boxes_traffic_lights(
         if traffic_light.active:
             state = traffic_light.get_state_at_time_step(time_begin)
             path = os.path.join(traffic_sign_path, 'traffic_light_state_' + str(
-                state.value) + '.png')
+                    state.value) + '.png')
         else:
             path = os.path.join(traffic_sign_path,
                                 'traffic_light_state_inactive.png')
@@ -550,7 +590,7 @@ def draw_traffic_light_signs(traffic_lights_signs: Union[
     :return:
     """
     kwargs = draw_params.by_callstack(call_stack, (
-        'lanelet_network', 'kwargs_traffic_light_signs'))
+    'lanelet_network', 'kwargs_traffic_light_signs'))
 
     zorder_0 = draw_params.by_callstack(call_stack, ('traffic_light', 'zorder'))
 

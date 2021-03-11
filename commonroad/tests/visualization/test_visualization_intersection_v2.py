@@ -88,6 +88,10 @@ class TestVisualizationV2(unittest.TestCase):
         }
         scenario.lanelet_network.draw(self.rnd, draw_params=draw_params)
         ts = TrafficSign(traffic_sign_id=100000, traffic_sign_elements=[
+            TrafficSignElement(TrafficSignIDGermany.MAX_WIDTH,
+                               additional_values=[str(3)]),
+            TrafficSignElement(TrafficSignIDGermany.MAX_LENGTH,
+                               additional_values=[str(3)]),
                 TrafficSignElement(TrafficSignIDUsa.MAX_SPEED,
                                    additional_values=[str(50 / 2.23694)]),
                 TrafficSignElement(TrafficSignIDGermany.MIN_SPEED,
@@ -98,8 +102,10 @@ class TestVisualizationV2(unittest.TestCase):
                                    additional_values=[str(130 / 3.6)]),
                 TrafficSignElement(TrafficSignIDGermany.NO_OVERTAKING_START,
                                    additional_values=['test']),
-                TrafficSignElement(TrafficSignIDGermany.STOP,
-                                   additional_values=['80'])],
+                TrafficSignElement(TrafficSignIDGermany.MAX_HEIGHT,
+                                   additional_values=['80']),
+                 TrafficSignElement(TrafficSignIDGermany.MAX_WEIGHT,
+                                    additional_values=['80'])],
                          position=np.array([159., -88.]), virtual=False,
                          first_occurrence=set())
         ts.draw(self.rnd, draw_params={
