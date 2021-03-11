@@ -13,13 +13,14 @@ from commonroad.geometry.shape import Rectangle, Circle, Polygon
 from commonroad.geometry.shape import ShapeGroup
 from commonroad.planning.planning_problem import PlanningProblemSet
 from commonroad.prediction.prediction import Occupancy
+from commonroad.scenario.traffic_sign import TRAFFIC_SIGN_WITH_ADDITIONAL_VALUE, TrafficSignIDGermany
 from commonroad.scenario.trajectory import State
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.scenario.scenario import Scenario
 
 from commonroad.visualization.mp_renderer import MPRenderer
-from commonroad.visualization.param_server import ParamServer, \
-    write_default_params
+from commonroad.visualization.param_server import ParamServer, write_default_params
+from commonroad.visualization.traffic_sign_v2 import text_prop_dict
 
 
 class TestVisualizationV2(unittest.TestCase):
@@ -34,8 +35,7 @@ class TestVisualizationV2(unittest.TestCase):
         params = ParamServer()
 
         rect = Rectangle(1, 2, np.array([1.5, 2.0]), math.pi * 0.25)
-        poly = Polygon(np.array(
-                [[.2, .2], [.2, .4], [.3, .6], [.4, .4], [.4, .2], [.2, .2]]))
+        poly = Polygon(np.array([[.2, .2], [.2, .4], [.3, .6], [.4, .4], [.4, .2], [.2, .2]]))
         circ = Circle(2, np.array([3, 3]))
 
         rect.draw(self.rnd, params, tuple())
@@ -46,8 +46,7 @@ class TestVisualizationV2(unittest.TestCase):
     def test_scenario(self):
 
         # test draw_object for all possible object types
-        scenario, planning_problem_set = CommonRoadFileReader(
-                self.ngsim_scen_1).open()
+        scenario, planning_problem_set = CommonRoadFileReader(self.ngsim_scen_1).open()
         scenario: Scenario = scenario
 
         rnd = MPRenderer()
@@ -57,25 +56,17 @@ class TestVisualizationV2(unittest.TestCase):
             # visualization
             circ = Circle(2.0, np.array([10.0, 0.0]))
             obs = StaticObstacle(1000, ObstacleType.CAR, circ,
-                                 initial_state=State(position=np.array([0, 0]),
-                                                     orientation=0.4))
+                                 initial_state=State(position=np.array([0, 0]), orientation=0.4))
             scenario.add_objects(obs)
             for obs in scenario.static_obstacles:
                 obs.draw(rnd)
             rnd.render()
 
-            draw_params = ParamServer({
-                    'scenario': {
-                            'dynamic_obstacle': {
-                                    'occupancy': {'draw_occupancy': True}
-                            }
-                    }
-            })
+            draw_params = ParamServer({'scenario': {'dynamic_obstacle': {'occupancy': {'draw_occupancy': True}}}})
             rnd.draw_list(scenario.dynamic_obstacles, draw_params=draw_params)
             rnd.render()
 
-            rnd.draw_list(
-                    scenario.dynamic_obstacles[0].prediction.occupancy_set)
+            rnd.draw_list(scenario.dynamic_obstacles[0].prediction.occupancy_set)
             scenario.draw(rnd)
             rnd.render()
 
@@ -89,8 +80,7 @@ class TestVisualizationV2(unittest.TestCase):
             rnd.render()
 
             rnd.clear()
-            poly = Polygon(
-                    np.array([[0.0, 0.0], [0.0, 1.0], [1.0, 1.0], [1.0, 0.0]]))
+            poly = Polygon(np.array([[0.0, 0.0], [0.0, 1.0], [1.0, 1.0], [1.0, 0.0]]))
             poly.draw(rnd)
             rnd.render()
 
@@ -119,8 +109,7 @@ class TestVisualizationV2(unittest.TestCase):
             planning_problem_set.draw(self.rnd)
             self.rnd.render()
             self.rnd.clear()
-            problem = list(planning_problem_set.planning_problem_dict.values())[
-                0]
+            problem = list(planning_problem_set.planning_problem_dict.values())[0]
             problem.draw(self.rnd)
             problem.goal.draw(self.rnd)
             problem.initial_state.draw(self.rnd)
@@ -130,10 +119,8 @@ class TestVisualizationV2(unittest.TestCase):
         plt.close('all')
 
     def test_trajectory_unique_colors(self):
-        scenario, planning_problem_set = CommonRoadFileReader(
-                self.ngsim_scen_2).open()
-        traj = list(
-            map(lambda x: x.prediction.trajectory, scenario.dynamic_obstacles))
+        scenario, planning_problem_set = CommonRoadFileReader(self.ngsim_scen_2).open()
+        traj = list(map(lambda x: x.prediction.trajectory, scenario.dynamic_obstacles))
         params = {'trajectory': {'unique_colors': True}}
         scenario.lanelet_network.draw(self.rnd)
         self.rnd.draw_list(scenario.dynamic_obstacles)
@@ -146,8 +133,7 @@ class TestVisualizationV2(unittest.TestCase):
         plt.close('all')
         # plt.ioff()
         # set_non_blocking()
-        scenario, planning_problem_set = CommonRoadFileReader(
-                self.ngsim_scen_2).open()
+        scenario, planning_problem_set = CommonRoadFileReader(self.ngsim_scen_2).open()
         scenario: Scenario = scenario
         # plt.autoscale(False)
         plt.style.use('classic')
@@ -161,21 +147,9 @@ class TestVisualizationV2(unittest.TestCase):
         for i in range(0, nrun):
             t1 = time.time()
             draw_params = {
-                    'planning_problem_set': {
-                            'draw_ids': [list(
-                                    planning_problem_set.planning_problem_dict.keys())[
-                                             0]]
-                    },
-                    'time_begin':           15,
-                    'time_end':             25,
-                    'dynamic_obstacle':     {
-                            'occupancy': {
-                                    'draw_occupancies': 0, 'shape': {
-                                            'rectangle': {'facecolor': 'g'}
-                                    }
-                            }
-                    }
-            }
+                'planning_problem_set': {'draw_ids': [list(planning_problem_set.planning_problem_dict.keys())[0]]},
+                'time_begin': 15, 'time_end': 25,
+                'dynamic_obstacle': {'occupancy': {'draw_occupancies': 0, 'shape': {'rectangle': {'facecolor': 'g'}}}}}
             scenario.draw(self.rnd, draw_params=draw_params)
             # plt.tight_layout()
             planning_problem_set.draw(self.rnd, draw_params=draw_params)
@@ -185,6 +159,12 @@ class TestVisualizationV2(unittest.TestCase):
 
         print('time: {}'.format(tt / nrun))
 
+    def test_traffic_sign_plotting_properties(self):
+        vis_dict = text_prop_dict()
+        for t_id in TRAFFIC_SIGN_WITH_ADDITIONAL_VALUE:
+            self.assertTrue(TrafficSignIDGermany[t_id].value in vis_dict,
+                            f"Create plot settings for traffic sign {t_id} with ID {TrafficSignIDGermany[t_id].value}")
+
     def test_stylesheet(self):
         # Write default params to file
         json_filename = 'test_params.json'
@@ -192,14 +172,13 @@ class TestVisualizationV2(unittest.TestCase):
         # Now modify stylesheet file and read it
         params = ParamServer.from_json(json_filename)
         # Use for drawing
-        scenario, planning_problem_set = CommonRoadFileReader(
-                self.ngsim_scen_2).open()
+        scenario, planning_problem_set = CommonRoadFileReader(self.ngsim_scen_2).open()
         scenario.draw(self.rnd, draw_params=params)
 
-    # Deactivated as ffmpeg not installe on CI  # def test_video(self):  #
-    # scenario, _ = CommonRoadFileReader(self.ngsim_scen_2).open()  #
-    # self.rnd.create_video([scenario], str(scenario.scenario_id),  #
-    # draw_params={'time_begin': 0, 'time_end': 10})
+    # Deactivated as ffmpeg not installe on CI
+    # def test_video(self):  #  # scenario, _ = CommonRoadFileReader(
+    # self.ngsim_scen_2).open()  #  # self.rnd.create_video([scenario], str(scenario.scenario_id),
+    #  # draw_params={'time_begin': 0, 'time_end': 10})
 
 
 if __name__ == '__main__':

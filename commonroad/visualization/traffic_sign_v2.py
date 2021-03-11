@@ -223,7 +223,7 @@ def speed_limit_factor(country_code) -> float:
 
 
 # denotes traffic signs that are speed limits
-is_speed_limit_id = ['274', '275', 'R2-1']
+unit_conversion_required = ['274', '274.1', '275', '1004-31', 'R2-1']
 
 
 def text_prop_dict() -> dict:
@@ -257,7 +257,7 @@ def text_prop_dict() -> dict:
         },
         '265': {
             'mpl_args': {
-                'weight': 'bold', 'size': 13
+                'weight': 'normal', 'size': 13
             },
             'rescale_threshold': 2,
             'position_offset_y': 0.45
@@ -275,6 +275,13 @@ def text_prop_dict() -> dict:
             },
             'rescale_threshold': 2,
             'position_offset_y': 0.45
+        },
+        '274.1': {
+            'mpl_args': {
+                'weight': 'bold', 'size': 8.5
+            },
+            'rescale_threshold': 2,
+            'position_offset_y': 0.65
         },
         '275': {
             'mpl_args': {
@@ -313,6 +320,24 @@ def text_prop_dict() -> dict:
                 'weight': 'bold', 'color': 'white', 'size': 10
             },
             'position_offset_y': 0.45
+        },
+        '1040-30': {
+            'mpl_args': {
+                'weight': 'normal', 'color': 'black', 'size': 8
+            },
+            'position_offset_y': 0.4
+        },
+        '1001-30': {
+            'mpl_args': {
+                'weight': 'normal', 'color': 'black', 'size': 8
+            },
+            'position_offset_y': 0.4
+        },
+        '1004-31': {
+            'mpl_args': {
+                'weight': 'normal', 'color': 'black', 'size': 8
+            },
+            'position_offset_y': 0.4
         },
         'R2-1': {
             'mpl_args': {
@@ -429,7 +454,7 @@ def create_img_boxes_traffic_sign(
                 # plot traffic sign
                 sign_img = Image.open(path)
                 if len(element.additional_values) > 0:
-                    if element.traffic_sign_element_id.value in is_speed_limit_id \
+                    if element.traffic_sign_element_id.value in unit_conversion_required \
                             and isfloat(element.additional_values[0]):
                         if speed_limit_unit == 'auto':
                             speed_factor = speed_limit_factor(
@@ -473,7 +498,7 @@ def create_img_boxes_traffic_sign(
             sep = 0
             # get additional values string (like speed limits) in case the image is not plotted
             if not plot_img:
-                if element.traffic_sign_element_id.value in is_speed_limit_id \
+                if element.traffic_sign_element_id.value in unit_conversion_required \
                         and isfloat(
                         element.additional_values[0]):
                     if speed_limit_unit == 'auto':

@@ -13,7 +13,7 @@ from commonroad.scenario.traffic_sign import TrafficSign, \
     TrafficSignIDChina
 import numpy as np
 
-#mpl.use('TkAgg')
+# mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import unittest
 from commonroad.common.file_reader import CommonRoadFileReader
@@ -90,20 +90,28 @@ class TestVisualizationV2(unittest.TestCase):
         ts = TrafficSign(traffic_sign_id=100000, traffic_sign_elements=[
             TrafficSignElement(TrafficSignIDGermany.MAX_WIDTH,
                                additional_values=[str(3)]),
-            TrafficSignElement(TrafficSignIDGermany.MAX_LENGTH,
+            TrafficSignElement(TrafficSignIDGermany.MAX_SPEED_ZONE_START,
+                               additional_values=[str(30/3.6)]),
+            TrafficSignElement(TrafficSignIDGermany.ADDITION_VALID_IN_X_KILOMETERS,
                                additional_values=[str(3)]),
-                TrafficSignElement(TrafficSignIDUsa.MAX_SPEED,
-                                   additional_values=[str(50 / 2.23694)]),
-                TrafficSignElement(TrafficSignIDGermany.MIN_SPEED,
-                                   additional_values=[str(30 / 3.6)]),
-                TrafficSignElement(TrafficSignIDGermany.MAX_SPEED,
-                                   additional_values=[str(80 / 3.6)]),
-                TrafficSignElement(TrafficSignIDGermany.MAX_SPEED,
-                                   additional_values=[str(130 / 3.6)]),
-                TrafficSignElement(TrafficSignIDGermany.NO_OVERTAKING_START,
-                                   additional_values=['test']),
-                TrafficSignElement(TrafficSignIDGermany.MAX_HEIGHT,
-                                   additional_values=['80']),
+            TrafficSignElement(TrafficSignIDGermany.ADDITION_VALID_FOR_X_METERS,
+                               additional_values=[str(3)]),
+            TrafficSignElement(TrafficSignIDGermany.ADDITION_TIME_PERIOD_PERMITTED,
+                               additional_values=[str(3)]),
+            # TrafficSignElement(TrafficSignIDGermany.MAX_LENGTH,
+            #                    additional_values=[str(3)]),
+            #     TrafficSignElement(TrafficSignIDUsa.MAX_SPEED,
+            #                        additional_values=[str(50 / 2.23694)]),
+            #     TrafficSignElement(TrafficSignIDGermany.MIN_SPEED,
+            #                        additional_values=[str(30 / 3.6)]),
+            #     TrafficSignElement(TrafficSignIDGermany.MAX_SPEED,
+            #                        additional_values=[str(80 / 3.6)]),
+            #     TrafficSignElement(TrafficSignIDGermany.MAX_SPEED,
+            #                        additional_values=[str(130 / 3.6)]),
+            #     TrafficSignElement(TrafficSignIDGermany.NO_OVERTAKING_START,
+            #                        additional_values=['test']),
+            #     TrafficSignElement(TrafficSignIDGermany.MAX_HEIGHT,
+            #                        additional_values=['80']),
                  TrafficSignElement(TrafficSignIDGermany.MAX_WEIGHT,
                                     additional_values=['80'])],
                          position=np.array([159., -88.]), virtual=False,
