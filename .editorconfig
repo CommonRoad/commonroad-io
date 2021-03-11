@@ -14,7 +14,6 @@ ij_smart_tabs = false
 ij_wrap_on_typing = false
 
 [{*.py,*.pyw}]
-max_line_length = 80
 ij_visual_guides = 80
 ij_python_align_collections_and_comprehensions = true
 ij_python_align_multiline_imports = true
