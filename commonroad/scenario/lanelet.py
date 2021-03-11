@@ -11,6 +11,9 @@ from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Sh
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.obstacle import Obstacle
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.renderer import IRenderer
 
 __author__ = "Christian Pek, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -19,10 +22,6 @@ __version__ = "2020.3"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "released"
-
-from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.param_server import ParamServer
-from commonroad.visualization.renderer import IRenderer
 
 
 class LineMarking(enum.Enum):

@@ -6,8 +6,8 @@ from typing import Union, List, Set, Dict, Tuple, Optional
 import numpy as np
 import enum
 import iso3166
-from commonroad import SCENARIO_VERSION, SUPPORTED_COMMONROAD_VERSIONS
 
+from commonroad import SCENARIO_VERSION, SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.util import Interval
 from commonroad.common.validity import is_real_number, is_real_number_vector, is_valid_orientation, is_natural_number
 from commonroad.scenario.lanelet import Lanelet
@@ -19,6 +19,9 @@ from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Enviro
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.renderer import IRenderer
 
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -27,10 +30,6 @@ __version__ = "2020.3"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
-
-from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.param_server import ParamServer
-from commonroad.visualization.renderer import IRenderer
 
 
 @enum.unique
@@ -769,14 +768,14 @@ class Scenario(IDrawable):
         return obstacle_list
 
     def obstacles_by_position_intervals(
-            self, position_intervals: List[Interval],
-            obstacle_role: Tuple[ObstacleRole] = (ObstacleRole.DYNAMIC, ObstacleRole.STATIC),
-            time_step: int = None) -> List[Obstacle]:
+            self, position_intervals: List[Interval], obstacle_role: Tuple[ObstacleRole] =
+            (ObstacleRole.DYNAMIC, ObstacleRole.STATIC), time_step: int = None) -> List[Obstacle]:
         """
         Returns obstacles which center is located within in the given x-/y-position intervals.
 
         :param position_intervals: list of intervals for x- and y-coordinates [interval_x,  interval_y]
         :param obstacle_role: tuple containing the desired obstacle roles
+        :param time_step: Time step of interest.
         :return: list of obstacles in the position intervals
         """
 
