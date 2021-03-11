@@ -1,10 +1,11 @@
 # Changelog
 
-## [2021.1] - 2021-01-X
+## [2021.1] - 2021-03-X
 ### Added
 - Support for over 50 new traffic signs from Germany
 - Phantom obstacles
 - New visualization module which supports MVC pattern
+- Functions for removing traffic signs and traffic lights from a scenario or lanelet network
 
 ## Changed
 - Scaling of traffic signs is coupled with the zoom level

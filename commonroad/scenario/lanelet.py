@@ -1,15 +1,19 @@
 import copy
 import enum
 from typing import *
-import numpy as np
+
 import networkx as nx
+import numpy as np
 
 import commonroad.geometry.transform
 from commonroad.common.validity import *
 from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape
+from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.obstacle import Obstacle
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
-from commonroad.scenario.intersection import Intersection
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.renderer import IRenderer
 
 __author__ = "Christian Pek, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -18,10 +22,6 @@ __version__ = "2020.3"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "released"
-
-from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.param_server import ParamServer
-from commonroad.visualization.renderer import IRenderer
 
 
 class LineMarking(enum.Enum):
@@ -558,6 +558,38 @@ class Lanelet:
             warnings.warn(
                 '<Lanelet/traffic_lights>: traffic_lights of lanelet is immutable!')
 
+    def add_predecessor(self, lanelet: int):
+        """
+        Adds the ID of a predecessor lanelet to the list of predecessors.
+        :param lanelet: Predecessor lanelet ID.
+        """
+        if not lanelet in self.predecessor:
+            self.predecessor.append(lanelet)
+
+    def remove_predecessor(self, lanelet: int):
+        """
+        Removes the ID of a predecessor lanelet from the list of predecessors.
+        :param lanelet: Predecessor lanelet ID.
+        """
+        if lanelet in self.predecessor:
+            self.predecessor.remove(lanelet)
+
+    def add_successor(self, lanelet: int):
+        """
+        Adds the ID of a successor lanelet to the list of successors.
+        :param lanelet: Successor lanelet ID.
+        """
+        if lanelet not in self.successor:
+            self.successor.append(lanelet)
+
+    def remove_successor(self, lanelet: int):
+        """
+        Removes the ID of a successor lanelet from the list of successors.
+        :param lanelet: Successor lanelet ID.
+        """
+        if lanelet in self.successor:
+            self.successor.remove(lanelet)
+
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """
         This method translates and rotates a lanelet
@@ -820,7 +852,7 @@ class Lanelet:
             return [lanelet], [[lanelet.lanelet_id]]
 
         # Create Graph from network
-        Net = nx.DiGraph() 
+        Net = nx.DiGraph()
         lanelets = network._lanelets.values()
         leafs = list()
         for elements in lanelets:
@@ -870,7 +902,7 @@ class Lanelet:
 
                 merge_jobs_final.append(merge_jobs_tmp)
             merged_lanelets.append(pred)
-            
+
         return merged_lanelets, merge_jobs_final
 
     def add_dynamic_obstacle_to_lanelet(self, obstacle_id: int, time_step: int):
@@ -1001,25 +1033,72 @@ class LaneletNetwork(IDrawable):
             new_lanelet_network.add_lanelet(copy.deepcopy(l))
         return new_lanelet_network
 
+    def remove_lanelet(self, lanelet_id: int):
+        """
+        Removes a lanelet from a lanelet network and deletes all references.
+
+        @param lanelet_id: ID of lanelet which should be removed.
+        """
+        if lanelet_id in self._lanelets.keys():
+            del self._lanelets[lanelet_id]
+            self.cleanup_lanelet_references()
+
     def cleanup_lanelet_references(self):
         """
-        Deletes ids which do not exist in the lanelet network. Useful when cutting out lanelet networks.
+        Deletes lanelet IDs which do not exist in the lanelet network. Useful when cutting out lanelet networks.
         :return:
         """
-        exisiting_ids = set(self._lanelets.keys())
-        for l in self.lanelets:
-            l._predecessor = list(set(l._predecessor).intersection(exisiting_ids))
-            l._successor = list(set(l._successor).intersection(exisiting_ids))
-            l._adj_left = None if l._adj_left is None or l._adj_left not in exisiting_ids else l._adj_left
-            prev = copy.deepcopy(l._adj_left_same_direction)
-            l._adj_left_same_direction = None if l._adj_left_same_direction is None \
-                                                 or l.adj_left not in exisiting_ids \
-                else l._adj_left_same_direction
-            l._adj_right = None if l._adj_right is None or l._adj_right not in exisiting_ids else l._adj_right
-            prev = copy.deepcopy(l._adj_right_same_direction)
-            l._adj_right_same_direction = None if l._adj_right_same_direction is None \
-                                                  or l.adj_right not in exisiting_ids \
-                else l._adj_right_same_direction
+        existing_ids = set(self._lanelets.keys())
+        for la in self.lanelets:
+            la._predecessor = list(set(la.predecessor).intersection(existing_ids))
+            la._successor = list(set(la.successor).intersection(existing_ids))
+            la._adj_left = None if la.adj_left is None or la.adj_left not in existing_ids else la.adj_left
+
+            la._adj_left_same_direction = None if la.adj_left_same_direction is None or la.adj_left not in \
+                                                  existing_ids else la.adj_left_same_direction
+            la._adj_right = None if la.adj_right is None or la.adj_right not in existing_ids else la.adj_right
+            la._adj_right_same_direction = None if la.adj_right_same_direction is None or la.adj_right not in \
+                                                   existing_ids else la.adj_right_same_direction
+
+    def remove_traffic_sign(self, traffic_sign_id: int):
+        """
+        Removes a lanelet from a lanelet network and deletes all references.
+
+        @param traffic_sign_id: ID of traffic sign which should be removed.
+        """
+        if traffic_sign_id in self._traffic_signs.keys():
+            del self._traffic_signs[traffic_sign_id]
+            self.cleanup_traffic_sign_references()
+
+    def cleanup_traffic_sign_references(self):
+        """
+        Deletes traffic sign IDs which do not exist in the lanelet network. Useful when cutting out lanelet networks.
+        """
+        existing_ids = set(self._traffic_signs.keys())
+        for la in self.lanelets:
+            la._traffic_signs = la.traffic_signs.intersection(existing_ids)
+            if la.stop_line is not None:
+                la.stop_line._traffic_sign_ref = la.stop_line.traffic_sign_ref.intersection(existing_ids)
+
+    def remove_traffic_light(self, traffic_light_id: int):
+        """
+        Removes a lanelet from a lanelet network and deletes all references.
+
+        @param traffic_light_id: ID of traffic sign which should be removed.
+        """
+        if traffic_light_id in self._traffic_lights.keys():
+            del self._traffic_lights[traffic_light_id]
+        self.cleanup_traffic_light_references()
+
+    def cleanup_traffic_light_references(self):
+        """
+        Deletes traffic light IDs which do not exist in the lanelet network. Useful when cutting out lanelet networks.
+        """
+        existing_ids = set(self._traffic_lights.keys())
+        for la in self.lanelets:
+            la._traffic_lights = la.traffic_lights.intersection(existing_ids)
+            if la.stop_line is not None:
+                la.stop_line._traffic_light_ref = la.stop_line.traffic_light_ref.intersection(existing_ids)
 
     def find_lanelet_by_id(self, lanelet_id: int) -> Lanelet:
         """
@@ -1292,7 +1371,7 @@ class LaneletNetwork(IDrawable):
 
         return mapping
 
-    def lanelets_in_proximity(self, point: list, radius: float) -> List[Lanelet]:
+    def lanelets_in_proximity(self, point: np.ndarray, radius: float) -> List[Lanelet]:
         """
         Finds all lanelets which intersect a given circle, defined by the center point and radius
 

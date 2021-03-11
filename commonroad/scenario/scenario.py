@@ -6,8 +6,8 @@ from typing import Union, List, Set, Dict, Tuple, Optional
 import numpy as np
 import enum
 import iso3166
-from commonroad import SCENARIO_VERSION, SUPPORTED_COMMONROAD_VERSIONS
 
+from commonroad import SCENARIO_VERSION, SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.util import Interval
 from commonroad.common.validity import is_real_number, is_real_number_vector, is_valid_orientation, is_natural_number
 from commonroad.scenario.lanelet import Lanelet
@@ -19,6 +19,9 @@ from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Enviro
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.renderer import IRenderer
 
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -27,10 +30,6 @@ __version__ = "2020.3"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
-
-from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.param_server import ParamServer
-from commonroad.visualization.renderer import IRenderer
 
 
 @enum.unique
@@ -534,7 +533,7 @@ class Scenario(IDrawable):
     def _add_static_obstacle_to_lanelets(self, obstacle_id: int, lanelet_ids: Set[int]):
         """ Adds a static obstacle reference to all lanelets the obstacle is on.
 
-        :param obstacle_id: obstacle ID to be removed
+        :param obstacle_id: obstacle ID to be added
         :param lanelet_ids: list of lanelet IDs on which the obstacle is on
         """
         if lanelet_ids is None or len(self.lanelet_network.lanelets) == 0:
@@ -545,7 +544,7 @@ class Scenario(IDrawable):
     def _remove_static_obstacle_from_lanelets(self, obstacle_id: int, lanelet_ids: Set[int]):
         """ Remove a static obstacle reference from all lanelets the obstacle is on.
 
-        :param obstacle_id: obstacle ID to be added
+        :param obstacle_id: obstacle ID to be removed
         :param lanelet_ids: list of lanelet IDs on which the obstacle is on
         """
         if lanelet_ids is None:
@@ -635,6 +634,60 @@ class Scenario(IDrawable):
             warnings.warn('<Scenario/remove_obstacle> Cannot remove obstacle with ID %s, '
                           'since it is not contained in the scenario.' % obstacle.obstacle_id)
 
+    def remove_lanelet(self, lanelet: Union[List[Lanelet], Lanelet]):
+        """
+        Removes a lanelet or a list of lanelets from a scenario.
+
+        :param lanelet: Lanelet which should be removed from scenario.
+        """
+        assert isinstance(lanelet, (list, Lanelet)), \
+            '<Scenario/remove_lanelet> argument "lanelet" of wrong type. ' \
+            'Expected type: %s. Got type: %s.' % (Lanelet, type(lanelet))
+        if isinstance(lanelet, list):
+            for la in lanelet:
+                self.lanelet_network.remove_lanelet(la.lanelet_id)
+                self._id_set.remove(la.lanelet_id)
+            return
+
+        self.lanelet_network.remove_lanelet(lanelet.lanelet_id)
+        self._id_set.remove(lanelet.lanelet_id)
+
+    def remove_traffic_sign(self, traffic_sign: Union[List[TrafficSign], TrafficSign]):
+        """
+        Removes a traffic sign or a list of traffic signs from the scenario.
+
+        :param traffic_sign: Traffic sign which should be removed from scenario.
+        """
+        assert isinstance(traffic_sign, (list, TrafficSign)), \
+            '<Scenario/remove_traffic_sign> argument "traffic_sign" of wrong type. ' \
+            'Expected type: %s. Got type: %s.' % (TrafficSign, type(traffic_sign))
+        if isinstance(traffic_sign, list):
+            for sign in traffic_sign:
+                self.lanelet_network.remove_traffic_sign(sign.traffic_sign_id)
+                self._id_set.remove(sign.traffic_sign_id)
+            return
+
+        self.lanelet_network.remove_traffic_sign(traffic_sign.traffic_sign_id)
+        self._id_set.remove(traffic_sign.traffic_sign_id)
+
+    def remove_traffic_light(self, traffic_light: Union[List[TrafficLight], TrafficLight]):
+        """
+        Removes a traffic sign or a list of traffic signs from the scenario.
+
+        :param traffic_light: Traffic light which should be removed from scenario.
+        """
+        assert isinstance(traffic_light, (list, TrafficLight)), \
+            '<Scenario/remove_traffic_light> argument "traffic_light" of wrong type. ' \
+            'Expected type: %s. Got type: %s.' % (TrafficLight, type(traffic_light))
+        if isinstance(traffic_light, list):
+            for light in traffic_light:
+                self.lanelet_network.remove_traffic_light(light.traffic_light_id)
+                self._id_set.remove(light.traffic_light_id)
+            return
+
+        self.lanelet_network.remove_traffic_light(traffic_light.traffic_light_id)
+        self._id_set.remove(traffic_light.traffic_light_id)
+
     def generate_object_id(self) -> int:
         """ Generates a unique ID which is not assigned to any object in the scenario.
 
@@ -715,14 +768,14 @@ class Scenario(IDrawable):
         return obstacle_list
 
     def obstacles_by_position_intervals(
-            self, position_intervals: List[Interval],
-            obstacle_role: Tuple[ObstacleRole] = (ObstacleRole.DYNAMIC, ObstacleRole.STATIC),
-            time_step: int = None) -> List[Obstacle]:
+            self, position_intervals: List[Interval], obstacle_role: Tuple[ObstacleRole] =
+            (ObstacleRole.DYNAMIC, ObstacleRole.STATIC), time_step: int = None) -> List[Obstacle]:
         """
         Returns obstacles which center is located within in the given x-/y-position intervals.
 
         :param position_intervals: list of intervals for x- and y-coordinates [interval_x,  interval_y]
         :param obstacle_role: tuple containing the desired obstacle roles
+        :param time_step: Time step of interest.
         :return: list of obstacles in the position intervals
         """
 

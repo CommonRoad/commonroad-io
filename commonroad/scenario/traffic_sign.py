@@ -7,7 +7,7 @@ __email__ = "commonroad@lists.lrz.de"
 __status__ = "Release"
 
 import enum
-from typing import List, Union, Set, Optional, Tuple
+from typing import List, Set, Optional, Tuple
 import numpy as np
 
 from commonroad.common.validity import *
@@ -18,14 +18,20 @@ from commonroad.visualization.renderer import IRenderer
 
 TRAFFIC_SIGN_VALIDITY_START = {'WARNING_DANGER_SPOT', 'WARNING_RIGHT_BEFORE_LEFT', 'WARNING_STEEP_HILL_DOWNWARDS',
                                'WARNING_SLIPPERY_ROAD', 'WARNING_CONSTRUCTION_SITE', 'WARNING_CROSSING_CYCLIST',
-                               'WARNING_ANIMAL_CROSSING_RIGHT', 'RAILWAY', 'PRIORITY_OPPOSITE_DIRECTION', 'TURN_RIGHT_AHEAD', 'TURN_LEFT_AHEAD',
-                               'ONEWAY_RIGHT', 'ONEWAY_LEFT', 'PRESCRIBED_PASSING_LEFT', 'PRESCRIBED_PASSING_RIGHT', 'BIKEWAY', 'SIDEWALK',
-                               'PEDESTRIAN_ZONE_START', 'BICYCLE_ROAD_START', 'BUS_LANE', 'BAN_ALL_VEHICLES', 'BAN_CARS', 'BAN_TRUCKS',
-                               'BAN_BICYCLE', 'BAN_MOTORCYCLE', 'BAN_BUS', 'BAN_PEDESTRIAN','BAN_CAR_TRUCK_BUS_MOTORCYCLE',
-                               'BAN_VEHICLES_CARRYING_DANGEROUS_GOODS', 'NO_ENTRY', 'MAX_WEIGHT', 'MAX_WIDTH', 'MAX_HEIGHT', 'MAX_LENGTH',
-                               'MAX_SPEED', 'MAX_SPEED_ZONE_START', 'MIN_SPEED',  'NO_OVERTAKING_START',
+                               'WARNING_ANIMAL_CROSSING_RIGHT', 'RAILWAY', 'PRIORITY_OPPOSITE_DIRECTION',
+                               'TURN_RIGHT_AHEAD', 'TURN_LEFT_AHEAD', 'ONEWAY_RIGHT', 'ONEWAY_LEFT',
+                               'PRESCRIBED_PASSING_LEFT', 'PRESCRIBED_PASSING_RIGHT', 'BIKEWAY', 'SIDEWALK',
+                               'PEDESTRIAN_ZONE_START', 'BICYCLE_ROAD_START', 'BUS_LANE', 'BAN_ALL_VEHICLES',
+                               'BAN_CARS', 'BAN_TRUCKS', 'BAN_BICYCLE', 'BAN_MOTORCYCLE', 'BAN_BUS', 'BAN_PEDESTRIAN',
+                               'BAN_CAR_TRUCK_BUS_MOTORCYCLE', 'BAN_VEHICLES_CARRYING_DANGEROUS_GOODS', 'NO_ENTRY',
+                               'MAX_WEIGHT', 'MAX_WIDTH', 'MAX_HEIGHT', 'MAX_LENGTH', 'MAX_SPEED',
+                               'MAX_SPEED_ZONE_START', 'MIN_SPEED',  'NO_OVERTAKING_START',
                                'NO_OVERTAKING_TRUCKS_START', 'TRAFFIC_CALMED_AREA_START', 'PRIORITY_OVER_ONCOMING',
                                'TOWN_SIGN', 'TUNNEL', 'INTERSTATE_START', 'HIGHWAY_START', 'PEDESTRIANS_CROSSING'}
+
+TRAFFIC_SIGN_WITH_ADDITIONAL_VALUE = {'MAX_WEIGHT', 'MAX_WIDTH', 'MAX_HEIGHT', 'MAX_LENGTH', 'MAX_SPEED',
+                                      'MAX_SPEED_ZONE_START', 'MIN_SPEED', 'ADDITION_VALID_FOR_X_METERS',
+                                      'ADDITION_VALID_IN_X_KILOMETERS', 'ADDITION_TIME_PERIOD_PERMITTED'}
 
 LEFT_HAND_TRAFFIC = {'AUS', 'JPN', 'HKG', 'IND', 'JEY', 'IMN', 'IRL', 'JAM',
                      'KEN', 'MLT', 'MYS', 'NPL', 'NZL', 'ZAF', 'SGP', 'THA',
