@@ -373,7 +373,7 @@ class TrafficSignElement:
     """ Class which represents a collection of traffic signs at one position"""
     def __init__(self, traffic_sign_element_id: Union[TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSignIDSpain,
                                                       TrafficSignIDGermany, TrafficSignIDChina, TrafficSignIDRussia],
-                 additional_values: List[str]):
+                 additional_values: List[str] = []):
         """
 
         :param traffic_sign_element_id: ID of traffic sign element (must be element of a traffic sign element enum)

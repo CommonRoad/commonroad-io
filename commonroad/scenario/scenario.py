@@ -486,7 +486,7 @@ class Scenario(IDrawable):
         """
         if isinstance(scenario_object, list):
             for obj in scenario_object:
-                self.add_objects(obj)
+                self.add_objects(obj, lanelet_ids)
         elif isinstance(scenario_object, StaticObstacle):
             self._mark_object_id_as_used(scenario_object.obstacle_id)
             self._static_obstacles[scenario_object.obstacle_id] = scenario_object
@@ -510,9 +510,11 @@ class Scenario(IDrawable):
             self._mark_object_id_as_used(scenario_object.lanelet_id)
             self._lanelet_network.add_lanelet(scenario_object)
         elif isinstance(scenario_object, TrafficSign):
+            lanelet_ids = set() if lanelet_ids is None else lanelet_ids
             self._mark_object_id_as_used(scenario_object.traffic_sign_id)
             self._lanelet_network.add_traffic_sign(scenario_object, lanelet_ids)
         elif isinstance(scenario_object, TrafficLight):
+            lanelet_ids = set() if lanelet_ids is None else lanelet_ids
             self._mark_object_id_as_used(scenario_object.traffic_light_id)
             self._lanelet_network.add_traffic_light(scenario_object, lanelet_ids)
         elif isinstance(scenario_object, Intersection):
