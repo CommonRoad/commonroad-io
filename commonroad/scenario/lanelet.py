@@ -90,9 +90,17 @@ class StopLine:
     def start(self) -> np.ndarray:
         return self._start
 
+    @start.setter
+    def start(self, value: np.ndarray):
+        self._start = value
+
     @property
     def end(self) -> np.ndarray:
         return self._end
+
+    @end.setter
+    def end(self, value: np.ndarray):
+        self._end = value
 
     @property
     def line_marking(self) -> LineMarking:

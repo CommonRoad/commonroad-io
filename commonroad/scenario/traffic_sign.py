@@ -563,6 +563,10 @@ class TrafficLight(IDrawable):
     def direction(self) -> TrafficLightDirection:
         return self._direction
 
+    @direction.setter
+    def direction(self, direction: TrafficLightDirection):
+        self._direction = direction
+
     @property
     def active(self) -> bool:
         return self._active
