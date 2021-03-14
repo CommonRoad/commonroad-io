@@ -5,31 +5,41 @@
   "dynamic_obstacle": {
     "draw_shape": true,
     "draw_icon": false,
+    "draw_direction": false,
     "draw_bounding_box": true,
     "show_label": false,
     "zorder": 20,
     "draw_signals": true,
     "vehicle_shape": {
+        "direction": {
+            "shape": {"polygon": {
+                "opacity": 1.0,
+                "facecolor": "red",
+                "edgecolor": "red",
+                "linewidth": 0.5,
+                "zorder": 20
+            }}
+        },
       "occupancy": {
         "shape": {
           "polygon": {
             "opacity": 1.0,
             "facecolor": "#1d7eea",
-            "edgecolor": "#0066cc",
+            "edgecolor": "#00478f",
             "linewidth": 0.5,
             "zorder": 20
           },
           "rectangle": {
             "opacity": 1.0,
             "facecolor": "#1d7eea",
-            "edgecolor": "#0066cc",
+            "edgecolor": "#00478f",
             "linewidth": 0.5,
             "zorder": 20
           },
           "circle": {
             "opacity": 1.0,
             "facecolor": "#1d7eea",
-            "edgecolor": "#0066cc",
+            "edgecolor": "#00478f",
             "linewidth": 0.5,
             "zorder": 20
           }
@@ -235,21 +245,21 @@
       "polygon": {
         "opacity": 0.2,
         "facecolor": "#1d7eea",
-        "edgecolor": "#0066cc",
+        "edgecolor": "#00478f",
         "linewidth": 0.5,
         "zorder": 18
       },
       "rectangle": {
         "opacity": 0.2,
         "facecolor": "#1d7eea",
-        "edgecolor": "#0066cc",
+        "edgecolor": "#00478f",
         "linewidth": 0.5,
         "zorder": 18
       },
       "circle": {
         "opacity": 0.2,
         "facecolor": "#1d7eea",
-        "edgecolor": "#0066cc",
+        "edgecolor": "#00478f",
         "linewidth": 0.5,
         "zorder": 18
       }
