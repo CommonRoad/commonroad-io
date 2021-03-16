@@ -106,13 +106,25 @@ class StopLine:
     def line_marking(self) -> LineMarking:
         return self._line_marking
 
+    @line_marking.setter
+    def line_marking(self, marking: LineMarking):
+        self._line_marking = marking
+
     @property
     def traffic_sign_ref(self) -> Set[int]:
         return self._traffic_sign_ref
 
+    @traffic_sign_ref.setter
+    def traffic_sign_ref(self, references: Set[int]):
+        self._traffic_sign_ref = references
+
     @property
     def traffic_light_ref(self) -> Set[int]:
         return self._traffic_light_ref
+
+    @traffic_light_ref.setter
+    def traffic_light_ref(self, references: Set[int]):
+        self._traffic_light_ref = references
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """
