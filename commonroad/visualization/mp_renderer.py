@@ -289,7 +289,7 @@ class MPRenderer(IRenderer):
 
         def update(frame=0):
             draw_params.update({'time_begin': time_begin + delta_time_steps * frame,
-                'time_end': time_begin + min(frame_count, delta_time_steps * frame + plotting_horizon)})
+                                'time_end': time_begin + min(frame_count, delta_time_steps * frame + plotting_horizon)})
             self.remove_dynamic()
             self.clear()
             self.draw_list(obj_lists, draw_params=draw_params)
@@ -326,7 +326,7 @@ class MPRenderer(IRenderer):
         for obj_name, text in legend.items():
             try:
                 color = draw_params[obj_name]
-            except:
+            except KeyError:
                 color = None
             if color is not None:
                 handles.append(mpl.patches.Patch(color=color, label=text))
@@ -355,12 +355,12 @@ class MPRenderer(IRenderer):
             # dynamic obstacles
             dyn_obs = obj.obstacles_by_position_intervals([Interval(self.plot_limits[0], self.plot_limits[1]),
                                                            Interval(self.plot_limits[2], self.plot_limits[3])],
-                    tuple([ObstacleRole.DYNAMIC]), time_begin)
+                                                          tuple([ObstacleRole.DYNAMIC]), time_begin)
 
             # static obstacles
             static_obs = obj.obstacles_by_position_intervals([Interval(self.plot_limits[0], self.plot_limits[1]),
                                                               Interval(self.plot_limits[2], self.plot_limits[3])],
-                    tuple([ObstacleRole.STATIC]))
+                                                             tuple([ObstacleRole.STATIC]))
         else:
             dyn_obs = obj.dynamic_obstacles
             static_obs = obj.static_obstacles
@@ -397,7 +397,7 @@ class MPRenderer(IRenderer):
             zorder_circle = draw_params.by_callstack(call_stack, ("occupancy", "shape", "circle", "zorder")) + 0.1
             draw_params = {"occupancy": {"uncertain_position": {
                 "shape": {"polygon": {"zorder": zorder_polygon}, "rectangle": {"zorder": zorder_rectangle},
-                    "circle": {"zorder": zorder_circle}}}}}
+                          "circle": {"zorder": zorder_circle}}}}}
             state.position.draw(self, draw_params, call_stack + ('occupancy', 'uncertain_position'))
 
     def draw_dynamic_obstacle(self, obj: DynamicObstacle, draw_params: Union[ParamServer, dict, None],
@@ -431,16 +431,17 @@ class MPRenderer(IRenderer):
             self._draw_history(obj, call_stack, draw_params)
 
         # draw car icon
-        if draw_icon and obj.obstacle_type in (ObstacleType.CAR, ObstacleType.PARKED_VEHICLE, ObstacleType.TAXI)\
-                and type(obj.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:
+        if draw_icon and obj.obstacle_type in (
+                ObstacleType.CAR, ObstacleType.PARKED_VEHICLE, ObstacleType.TAXI) and type(
+                obj.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:
 
             try:
-                l = obj.obstacle_shape.length
-                w = obj.obstacle_shape.width
-                if l > 7.0:
+                length = obj.obstacle_shape.length
+                width = obj.obstacle_shape.width
+                if length > 7.0:
                     draw_shape = True
                     draw_icon = False
-            except:
+            except AttributeError:
                 draw_shape = True
                 draw_icon = False
 
@@ -455,11 +456,10 @@ class MPRenderer(IRenderer):
                     facecolor = draw_params.by_callstack(call_stack, 'facecolor')
                     edgecolor = draw_params.by_callstack(call_stack, 'edgecolor')
 
-
                     self.obstacle_patches.extend(
                             get_car_patch(inital_state.position[0], inital_state.position[1], inital_state.orientation,
-                                          length=l, width=w,
-                                          carcolor=facecolor, edgecolor=edgecolor, zorder=ZOrders.CAR_PATCH))
+                                          length=length, width=width, carcolor=facecolor, edgecolor=edgecolor,
+                                          zorder=ZOrders.CAR_PATCH))
         else:
             draw_shape = True
 
@@ -645,8 +645,9 @@ class MPRenderer(IRenderer):
             self.dynamic_collections.append(
                     collections.EllipseCollection(np.ones([traj_points.shape[0], 1]) * line_width,
                                                   np.ones([traj_points.shape[0], 1]) * line_width,
-                            np.zeros([traj_points.shape[0], 1]), offsets=traj_points, units='xy', linewidths=0,
-                            zorder=z_order, transOffset=self.ax.transData, facecolor=line_color))
+                                                  np.zeros([traj_points.shape[0], 1]), offsets=traj_points, units='xy',
+                                                  linewidths=0, zorder=z_order, transOffset=self.ax.transData,
+                                                  facecolor=line_color))
 
         # Draw uncertain states
         for p in position_sets:
@@ -1012,8 +1013,9 @@ class MPRenderer(IRenderer):
             elif draw_center_bound:
                 if unique_colors:
                     center_paths.append(mpl.patches.PathPatch(Path(lanelet.center_vertices, closed=False),
-                            edgecolor=center_bound_color, facecolor='none', lw=draw_linewidth,
-                            zorder=ZOrders.CENTER_BOUND, antialiased=antialiased))
+                                                              edgecolor=center_bound_color, facecolor='none',
+                                                              lw=draw_linewidth, zorder=ZOrders.CENTER_BOUND,
+                                                              antialiased=antialiased))
                 elif colormap_tangent:
                     relative_angle = draw_params['relative_angle']
                     points = lanelet.center_vertices.reshape(-1, 1, 2)
@@ -1130,8 +1132,8 @@ class MPRenderer(IRenderer):
 
         # fill lanelets with facecolor
         self.static_collections.append(
-            collections.PolyCollection(vertices_fill, transOffset=self.ax.transData, zorder=ZOrders.LANELET_POLY,
-                                       facecolor=facecolor, edgecolor='none', antialiased=antialiased))
+                collections.PolyCollection(vertices_fill, transOffset=self.ax.transData, zorder=ZOrders.LANELET_POLY,
+                                           facecolor=facecolor, edgecolor='none', antialiased=antialiased))
         if incoming_vertices_fill:
             self.static_collections.append(
                     collections.PolyCollection(incoming_vertices_fill, transOffset=self.ax.transData,
@@ -1149,17 +1151,17 @@ class MPRenderer(IRenderer):
             self.static_collections.append(
                     collections.EllipseCollection(np.ones([coordinates_left_border_vertices.shape[0], 1]) * 1,
                                                   np.ones([coordinates_left_border_vertices.shape[0], 1]) * 1,
-                            np.zeros([coordinates_left_border_vertices.shape[0], 1]),
-                            offsets=coordinates_left_border_vertices, color=left_bound_color,
-                            transOffset=self.ax.transData))
+                                                  np.zeros([coordinates_left_border_vertices.shape[0], 1]),
+                                                  offsets=coordinates_left_border_vertices, color=left_bound_color,
+                                                  transOffset=self.ax.transData))
 
             # right_vertices
             self.static_collections.append(
                     collections.EllipseCollection(np.ones([coordinates_right_border_vertices.shape[0], 1]) * 1,
                                                   np.ones([coordinates_right_border_vertices.shape[0], 1]) * 1,
-                            np.zeros([coordinates_right_border_vertices.shape[0], 1]),
-                            offsets=coordinates_right_border_vertices, color=right_bound_color,
-                            transOffset=self.ax.transData))
+                                                  np.zeros([coordinates_right_border_vertices.shape[0], 1]),
+                                                  offsets=coordinates_right_border_vertices, color=right_bound_color,
+                                                  transOffset=self.ax.transData))
 
         if draw_traffic_signs:
             # draw actual traffic sign
@@ -1229,7 +1231,7 @@ class MPRenderer(IRenderer):
 
         obj.draw(self, draw_params, call_stack)
         self.static_artists.append(
-            text.Annotation(label, xy=(obj.position[0] + 1, obj.position[1]), textcoords='data', zorder=zorder))
+                text.Annotation(label, xy=(obj.position[0] + 1, obj.position[1]), textcoords='data', zorder=zorder))
 
     def draw_goal_region(self, obj: GoalRegion, draw_params: Union[ParamServer, dict, None],
                          call_stack: Tuple[str, ...]) -> None:
