@@ -45,7 +45,7 @@ from commonroad.visualization.util import LineDataUnits, \
     line_marking_to_linestyle, \
     traffic_light_color_dict, \
     get_tangent_angle, \
-    approximate_bounding_box_dyn_obstacles
+    approximate_bounding_box_dyn_obstacles, get_vehicle_direction_triangle
 from matplotlib.path import Path
 
 __author__ = "Luis Gressenbuch"
@@ -462,27 +462,30 @@ class MPRenderer(IRenderer):
         draw_icon = draw_params.by_callstack(call_stack, 'draw_icon')
         show_label = draw_params.by_callstack(call_stack, 'show_label')
         draw_shape = draw_params.by_callstack(call_stack, 'draw_shape')
-        draw_initial_state = draw_params.by_callstack(call_stack,
-                                                      'draw_initial_state')
-        draw_occupancies = draw_params.by_callstack(call_stack, (
-            'occupancy', 'draw_occupancies'))
+        draw_direction = draw_params.by_callstack(call_stack, 'draw_direction')
+        draw_initial_state = draw_params.by_callstack(call_stack, 'draw_initial_state')
+        draw_occupancies = draw_params.by_callstack(call_stack, ('occupancy', 'draw_occupancies'))
         draw_signals = draw_params.by_callstack(call_stack, 'draw_signals')
-        draw_trajectory = draw_params.by_callstack(call_stack, (
-            'trajectory', 'draw_trajectory'))
+        draw_trajectory = draw_params.by_callstack(call_stack, ('trajectory', 'draw_trajectory'))
 
-        draw_history = draw_params.by_callstack(call_stack,
-                                                ('history', 'draw_history'))
+        draw_history = draw_params.by_callstack(call_stack, ('history', 'draw_history'))
         if draw_history and isinstance(obj.prediction,
                                        commonroad.prediction.prediction.TrajectoryPrediction):
             self._draw_history(obj, call_stack, draw_params)
 
         # draw shape
         if draw_shape:
-            self._draw_occupancy(obj.occupancy_at_time(time_begin), obj.initial_state, draw_params,
+            veh_occ = obj.occupancy_at_time(time_begin)
+            self._draw_occupancy(veh_occ, obj.initial_state, draw_params,
                                  call_stack + ('vehicle_shape',))
+            veh_shape =veh_occ.shape
+            if draw_direction and type(veh_shape) == Rectangle:
+                v_tri = get_vehicle_direction_triangle(veh_shape)
+                self.draw_polygon(v_tri, draw_params, call_stack + ('vehicle_shape','direction'))
+
             if draw_signals:
                 sig = obj.signal_state_at_time_step(time_begin)
-                occ = obj.occupancy_at_time(time_begin)
+                occ = veh_occ
                 if occ is not None and sig is not None:
                     self._draw_signal_state(sig, occ, draw_params, call_stack)
 

@@ -7,12 +7,15 @@ import matplotlib.collections as collections
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
+from commonroad.geometry.shape import Rectangle, Polygon
+from commonroad.geometry.transform import rotate_translate
 from commonroad.scenario.lanelet import LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.traffic_sign import TrafficLightState, \
     TrafficLight, \
     TrafficLightDirection
+from commonroad.scenario.trajectory import State
 from matplotlib.lines import Line2D
 from matplotlib.path import Path
 
@@ -348,6 +351,17 @@ def get_car_patch(pos_x: Union[int, float], pos_y: Union[int, float],
                                 zorder=zorder, lw=lw)]
     return patch_list
 
+def get_vehicle_direction_triangle(rect: Rectangle) -> np.ndarray:
+    """
+    :returns vertices of triangle pointing in the driving direction
+    """
+    l = rect.length * 0.5
+    w = rect.width * 0.5
+    dist = min(l, w)
+    vertices = np.array([[l - dist,  w],
+                         [l - dist, -w],
+                         [l, 0.0]])
+    return rotate_translate(vertices, rect.center, rect.orientation)
 
 def set_non_blocking() -> None:
     """
