@@ -24,8 +24,8 @@ traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
 speed_limit_factors = {'mph': 2.23694, 'kmh': 3.6, 'ms': 1.0}
 
 # default scaling for traffic sign images and annotations
-px_per_metre = 0.03
-px_per_metre_text = 0.13
+px_per_metre = 0.018
+px_per_metre_text = 0.078
 
 
 class TextAreaAutoscale(TextArea):
