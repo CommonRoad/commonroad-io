@@ -14,9 +14,9 @@
         "direction": {
             "shape": {"polygon": {
                 "opacity": 1.0,
-                "facecolor": "red",
-                "edgecolor": "red",
-                "linewidth": 0.5,
+                "facecolor": "#00478f",
+                "edgecolor": "#00478f",
+                "linewidth": 0,
                 "zorder": 20
             }}
         },
