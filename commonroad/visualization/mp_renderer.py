@@ -467,9 +467,8 @@ class MPRenderer(IRenderer):
         if draw_shape:
             veh_occ = obj.occupancy_at_time(time_begin)
             self._draw_occupancy(veh_occ, obj.initial_state, draw_params, call_stack + ('vehicle_shape',))
-            veh_shape = veh_occ.shape
-            if draw_direction and type(veh_shape) == Rectangle:
-                v_tri = get_vehicle_direction_triangle(veh_shape)
+            if draw_direction and veh_occ is not None and type(veh_occ.shape) == Rectangle:
+                v_tri = get_vehicle_direction_triangle(veh_occ.shape)
                 self.draw_polygon(v_tri, draw_params, call_stack + ('vehicle_shape', 'direction'))
 
             if draw_signals:
