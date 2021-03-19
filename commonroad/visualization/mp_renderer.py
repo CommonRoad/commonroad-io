@@ -152,7 +152,7 @@ class MPRenderer(IRenderer):
             draw_params = ParamServer(params=draw_params)
         return draw_params
 
-    def clear(self) -> None:
+    def clear(self, keep_static_artists=False) -> None:
         """
         Clears the internal drawing buffer
         :return: None
@@ -163,8 +163,9 @@ class MPRenderer(IRenderer):
         self.traffic_sign_draw_params = self.draw_params
         self.dynamic_artists.clear()
         self.dynamic_collections.clear()
-        self.static_artists.clear()
-        self.static_collections.clear()
+        if keep_static_artists is False:
+            self.static_artists.clear()
+            self.static_collections.clear()
 
     def remove_dynamic(self) -> None:
         """
@@ -211,7 +212,7 @@ class MPRenderer(IRenderer):
 
         return self.static_collections + self.static_artists
 
-    def render(self, show: bool = False, filename: str = None) -> None:
+    def render(self, show: bool = False, filename: str = None, keep_static_artists=False) -> None:
         """
         Render all objects from buffer
         :param show: Show the resulting figure
@@ -237,7 +238,7 @@ class MPRenderer(IRenderer):
         if show:
             self.f.show()
 
-        self.clear()
+        self.clear(keep_static_artists)
 
     def create_video(self, obj_lists: List[IDrawable], file_path: str, delta_time_steps: int = 1, plotting_horizon=0,
                      draw_params: Union[dict, ParamServer, None] = None, fig_size: Union[list, None] = None, dt=500,
