@@ -109,6 +109,7 @@ class MPRenderer(IRenderer):
         self.static_artists = []
         self.static_collections = []
         self.obstacle_patches = []
+        self.traffic_sign_artists = []
         self.traffic_signs = []
         self.traffic_sign_call_stack = tuple()
         self.traffic_sign_draw_params = self.draw_params
@@ -163,6 +164,7 @@ class MPRenderer(IRenderer):
         self.traffic_sign_draw_params = self.draw_params
         self.dynamic_artists.clear()
         self.dynamic_collections.clear()
+        self.traffic_sign_artists.clear()
         if keep_static_artists is False:
             self.static_artists.clear()
             self.static_collections.clear()
@@ -181,12 +183,12 @@ class MPRenderer(IRenderer):
         :return: List of drawn object's artists
         """
         artist_list = []
-        traffic_sign_artists = draw_traffic_light_signs(self.traffic_signs, self.traffic_sign_draw_params,
+        self.traffic_sign_artists = draw_traffic_light_signs(self.traffic_signs, self.traffic_sign_draw_params,
                                                         self.traffic_sign_call_stack, self)
         for art in self.dynamic_artists:
             self.ax.add_artist(art)
             artist_list.append(art)
-        for art in traffic_sign_artists:
+        for art in self.traffic_sign_artists:
             self.ax.add_artist(art)
             artist_list.append(art)
         for col in self.dynamic_collections:
@@ -997,7 +999,7 @@ class MPRenderer(IRenderer):
                     line = LineDataUnits(tmp_center[:, 0], tmp_center[:, 1], zorder=zorder, linewidth=linewidth_metres,
                                          alpha=0.7, color=traffic_light_color_dict(light_state, traffic_light_colors),
                                          linestyle=linestyle, dashes=dashes)
-                    self.static_artists.append(line)
+                    self.dynamic_artists.append(line)
 
             # draw colored center bound. Hierarchy or colors: successors > usual
             # center bound
