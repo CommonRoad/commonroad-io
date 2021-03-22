@@ -90,21 +90,41 @@ class StopLine:
     def start(self) -> np.ndarray:
         return self._start
 
+    @start.setter
+    def start(self, value: np.ndarray):
+        self._start = value
+
     @property
     def end(self) -> np.ndarray:
         return self._end
+
+    @end.setter
+    def end(self, value: np.ndarray):
+        self._end = value
 
     @property
     def line_marking(self) -> LineMarking:
         return self._line_marking
 
+    @line_marking.setter
+    def line_marking(self, marking: LineMarking):
+        self._line_marking = marking
+
     @property
     def traffic_sign_ref(self) -> Set[int]:
         return self._traffic_sign_ref
 
+    @traffic_sign_ref.setter
+    def traffic_sign_ref(self, references: Set[int]):
+        self._traffic_sign_ref = references
+
     @property
     def traffic_light_ref(self) -> Set[int]:
         return self._traffic_light_ref
+
+    @traffic_light_ref.setter
+    def traffic_light_ref(self, references: Set[int]):
+        self._traffic_light_ref = references
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """
@@ -157,11 +177,11 @@ class Lanelet:
         """
         Constructor of a Lanelet object
         :param left_vertices: The vertices of the left boundary of the Lanelet described as a
-        polyline [[x0,x1,...,xn],[y0,y1,...,yn]]
+        polyline [[x0,x0],[x1,y1],...,[xn,yn]]
         :param center_vertices: The vertices of the center line of the Lanelet described as a
-        polyline [[x0,x1,...,xn],[y0,y1,...,yn]]
+        polyline [[x0,x0],[x1,y1],...,[xn,yn]]
         :param right_vertices: The vertices of the right boundary of the Lanelet described as a
-        polyline [[x0,x1,...,xn],[y0,y1,...,yn]]
+        polyline [[x0,x0],[x1,y1],...,[xn,yn]]
         :param lanelet_id: The unique id (natural number) of the lanelet
         :param predecessor: The list of predecessor lanelets (None if not existing)
         :param successor: The list of successor lanelets (None if not existing)
