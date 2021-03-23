@@ -244,8 +244,9 @@ def colormap_idx(max_x):
 
 
 def get_car_patch(pos_x: Union[int, float], pos_y: Union[int, float],
-                  rotate: Union[int, float], scale: Union[int, float],
-                  zorder: float = 5, carcolor: str = '#ffffff', lw=0.5):
+                  rotate: Union[int, float], length: Union[int, float],
+                  width: Union[int, float],
+                  zorder: float = 5, carcolor: str = '#ffffff', edgecolor='black', lw=0.5):
     rotate = rotate + np.pi
 
     def reshape_and_addup(verts):
@@ -254,12 +255,12 @@ def get_car_patch(pos_x: Union[int, float], pos_y: Union[int, float],
             verts[i] = verts[i] + verts[i - 1]
         return verts
 
-    def transform(vertices, pos_x, pos_y, rotate, scale):
+    def transform(vertices, pos_x, pos_y, rotate):
         vertices = np.asarray(np.bmat([vertices, np.ones((len(vertices), 1))]))
         tmat = np.array([[np.cos(rotate), -np.sin(rotate), pos_x],
                          [np.sin(rotate), np.cos(rotate), pos_y], [0, 0, 1]])
         scalemat = np.array(
-                [[scale * 1 / 356.3211, 0, 0], [0, scale * 1 / 356.3211, 0],
+                [[length/884.071996, 0, 0], [0, width/318.57232, 0],
                  [0, 0, 1]])
         centermat = np.array([[1, 0, -250], [0, 1, -889], [0, 0, 1]])
         tmat = tmat.dot(scalemat.dot(centermat))
@@ -321,43 +322,53 @@ def get_car_patch(pos_x: Union[int, float], pos_y: Union[int, float],
     verts7 = reshape_and_addup(verts7)  # rueckspiegel rechts
     verts8 = reshape_and_addup(verts8)  # umriss
 
-    verts1 = transform(verts1, pos_x, pos_y, rotate, scale)
-    verts2 = transform(verts2, pos_x, pos_y, rotate, scale)
-    verts3 = transform(verts3, pos_x, pos_y, rotate, scale)
-    verts4 = transform(verts4, pos_x, pos_y, rotate, scale)
-    verts5 = transform(verts5, pos_x, pos_y, rotate, scale)
-    verts6 = transform(verts6, pos_x, pos_y, rotate, scale)
-    verts7 = transform(verts7, pos_x, pos_y, rotate, scale)
-    verts8 = transform(verts8, pos_x, pos_y, rotate, scale)
+    verts1 = transform(verts1, pos_x, pos_y, rotate)
+    verts2 = transform(verts2, pos_x, pos_y, rotate)
+    verts3 = transform(verts3, pos_x, pos_y, rotate)
+    verts4 = transform(verts4, pos_x, pos_y, rotate)
+    verts5 = transform(verts5, pos_x, pos_y, rotate)
+    verts6 = transform(verts6, pos_x, pos_y, rotate)
+    verts7 = transform(verts7, pos_x, pos_y, rotate)
+    verts8 = transform(verts8, pos_x, pos_y, rotate)
 
-    windowcolor = '#555555'
+    windowcolor = edgecolor
+
     patch_list = [
-            mpl.patches.Polygon(verts1, closed=True, facecolor=windowcolor,
-                                zorder=zorder + 1, lw=lw),
-            mpl.patches.Polygon(verts2, closed=True, facecolor=windowcolor,
-                                zorder=zorder + 1, lw=lw),
-            mpl.patches.Polygon(verts3, closed=True, facecolor=windowcolor,
-                                zorder=zorder + 1, lw=lw),
-            mpl.patches.Polygon(verts4, closed=True, facecolor=windowcolor,
-                                zorder=zorder + 1, lw=lw),
+            mpl.patches.Polygon(verts1, closed=True,
+                                facecolor=windowcolor,
+                                zorder=zorder + 1, lw=0),
+            mpl.patches.Polygon(verts2, closed=True,
+                                facecolor=windowcolor,
+                                zorder=zorder + 1, lw=0),
+            mpl.patches.Polygon(verts3, closed=True,
+                                facecolor=windowcolor,
+                                zorder=zorder + 1, lw=0),
+            mpl.patches.Polygon(verts4, closed=True,
+                                facecolor=windowcolor,
+                                zorder=zorder + 1, lw=0),
             # mpl.patches.PathPatch(Path(verts5, closed=True), fill=False,
             # zorder=zorder + 1,
             #                       color='#000000', lw=lw),
-            mpl.patches.Polygon(verts6, closed=True, facecolor=windowcolor,
-                                zorder=zorder + 1, lw=lw),
-            mpl.patches.Polygon(verts7, closed=True, facecolor=windowcolor,
-                                zorder=zorder + 1, lw=lw),
-            mpl.patches.Polygon(verts8, closed=True, edgecolor='#000000',
+            mpl.patches.Polygon(verts6, closed=True,
+                                facecolor=windowcolor,
+                                zorder=zorder + 1, lw=0),
+            mpl.patches.Polygon(verts7, closed=True,
+                                facecolor=windowcolor,
+                                zorder=zorder + 1, lw=0),
+            mpl.patches.Polygon(verts8, closed=True,
+                                edgecolor=edgecolor,
+                                facecolor=carcolor,
                                 zorder=zorder, lw=lw)]
     return patch_list
+
 
 def get_vehicle_direction_triangle(rect: Rectangle) -> np.ndarray:
     """
     :returns vertices of triangle pointing in the driving direction
     """
-    l = rect.length * 0.5
-    w = rect.width * 0.5
-    dist = min(l, w)
+    l = rect.length * 0.49
+    w = rect.width * 0.49
+    dist = min(l+1.0, 0.65*rect.width)
     vertices = np.array([[l - dist,  w],
                          [l - dist, -w],
                          [l, 0.0]])

@@ -8,7 +8,7 @@
 - Functions for removing traffic signs and traffic lights from a scenario or lanelet network
 
 ## Changed
-
+- Scaling of traffic signs is coupled with the zoom level
 
 ### Fixed
 - Various small bug fixes
