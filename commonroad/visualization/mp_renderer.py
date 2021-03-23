@@ -191,6 +191,8 @@ class MPRenderer(IRenderer):
         for art in self.traffic_sign_artists:
             self.ax.add_artist(art)
             artist_list.append(art)
+        for art in self.dynamic_artists:
+            self.ax.add_artist(art)
         for col in self.dynamic_collections:
             self.ax.add_collection(col)
             artist_list.append(col)

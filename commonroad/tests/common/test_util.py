@@ -1,7 +1,8 @@
+import math
 import unittest
 import numpy as np
 
-from commonroad.common.util import Interval, interpolate_angle
+from commonroad.common.util import Interval, interpolate_angle, subtract_orientations
 
 
 class TestInterval(unittest.TestCase):
@@ -108,6 +109,12 @@ class TestInterval(unittest.TestCase):
         self.assertAlmostEqual(c, np.pi)
         self.assertAlmostEqual(d, 180.)
 
+    def test_subtract_orientations(self):
+        self.assertAlmostEqual(subtract_orientations(0.1, -0.1), 0.2)
+        self.assertAlmostEqual(subtract_orientations(0.0, -0.1), 0.1)
+        self.assertAlmostEqual(subtract_orientations(-0.1, 0.1), -0.2)
+        self.assertAlmostEqual(subtract_orientations(0.0, 2 * math.pi), 0.0)
+        self.assertAlmostEqual(subtract_orientations(1.9 * math.pi, 0.1 * math.pi), -0.2 * math.pi)
 
 if __name__ == '__main__':
     unittest.main()
