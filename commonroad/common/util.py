@@ -1,4 +1,5 @@
 import numpy as np
+import math
 from scipy.spatial.transform.rotation import Rotation
 from scipy.spatial.transform import Slerp
 from typing import Union, Tuple
@@ -26,6 +27,18 @@ def interpolate_angle(x: Union[float, np.array], xp: np.array, fp: np.array, deg
     rotations = Rotation.from_euler("z", fp, degrees=degrees)
     slerp = Slerp(xp, rotations)
     return slerp(x).as_euler("zxy", degrees=degrees)[0]
+
+
+def subtract_orientations(lhs, rhs):
+    """Return the signed difference between angles lhs and rhs
+    :param lhs: lhs of the subtraction
+    :param rhs: rhs of the subtraction
+    :return: ``(lhs - rhs)``, the value will be within ``[-math.pi, math.pi)``.
+    Both ``lhs`` and ``rhs`` may either be zero-based (within
+    ``[0, 2*math.pi]``), or ``-pi``-based (within ``[-math.pi, math.pi]``).
+    """
+
+    return math.fmod((lhs - rhs) + math.pi * 3.0, 2.0 * math.pi) - math.pi
 
 
 def make_valid_orientation(angle: float) -> float:
