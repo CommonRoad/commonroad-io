@@ -116,5 +116,6 @@ class TestInterval(unittest.TestCase):
         self.assertAlmostEqual(subtract_orientations(0.0, 2 * math.pi), 0.0)
         self.assertAlmostEqual(subtract_orientations(1.9 * math.pi, 0.1 * math.pi), -0.2 * math.pi)
 
+
 if __name__ == '__main__':
     unittest.main()
