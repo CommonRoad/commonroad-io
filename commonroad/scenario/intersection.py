@@ -38,7 +38,7 @@ class IntersectionIncomingElement:
         self.successors_right = successors_right
         self.successors_straight = successors_straight
         self.successors_left = successors_left
-        self.left_of = left_of
+        self._left_of = left_of
 
     @property
     def incoming_id(self) -> int:
@@ -91,7 +91,10 @@ class IntersectionIncomingElement:
         """
         :param successors_right: set of IDs of incoming lanelets which turn right
         """
-        self._successors_right = successors_right
+        if successors_right is None:
+            self._successors_right = set()
+        else:
+            self._successors_right = successors_right
 
     @property
     def successors_straight(self) -> Set[int]:
@@ -105,7 +108,10 @@ class IntersectionIncomingElement:
         """
         :param successors_straight: set of IDs of incoming lanelets which go straight
         """
-        self._successors_straight = successors_straight
+        if successors_straight is None:
+            self._successors_straight = set()
+        else:
+            self._successors_straight = successors_straight
 
     @property
     def successors_left(self) -> Set[int]:
@@ -119,7 +125,10 @@ class IntersectionIncomingElement:
         """
         :param successors_left: set of IDs of incoming lanelets which turn left
         """
-        self._successors_left = successors_left
+        if successors_left is None:
+            self._successors_left = set()
+        else:
+            self._successors_left = successors_left
 
     @property
     def left_of(self) -> int:
