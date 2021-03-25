@@ -2,23 +2,23 @@ import unittest
 from copy import deepcopy
 
 from commonroad import SCENARIO_VERSION
+from commonroad.common.util import Interval
 from commonroad.geometry.shape import *
+from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario, Environment, TimeOfDay, Time, Underground, Weather, Location, \
     ScenarioID
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany, \
-    TrafficLight, TrafficLightCycleElement, TrafficLightState
-from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany, TrafficLight, \
+    TrafficLightCycleElement, TrafficLightState
 from commonroad.scenario.trajectory import *
-from commonroad.common.util import Interval
 
 
 class TestScenario(unittest.TestCase):
     def setUp(self):
         self.rectangle = Rectangle(4, 5)
         polygon = Polygon(
-            np.array([np.array((0.0, 0.0)), np.array((0.0, 1.0)), np.array((1.0, 1.0)), np.array((1.0, 0.0))]))
+                np.array([np.array((0.0, 0.0)), np.array((0.0, 1.0)), np.array((1.0, 1.0)), np.array((1.0, 0.0))]))
         self.circ = Circle(2.0)
         sg = ShapeGroup([self.circ, self.rectangle])
         occupancy_list = list()
@@ -29,9 +29,8 @@ class TestScenario(unittest.TestCase):
         occupancy_list.append(Occupancy(3, self.circ))
 
         self.lanelet1 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
-                           np.array([[0.0, 2], [1.0, 2], [2, 2]]), 100,
-                           [101], [101], 101, False, 101, True,
-                           LineMarking.DASHED, LineMarking.DASHED,None, None, None,None, {1})
+                                np.array([[0.0, 2], [1.0, 2], [2, 2]]), 100, [101], [101], 101, False, 101, True,
+                                LineMarking.DASHED, LineMarking.DASHED, None, None, None, None, {1})
         self.lanelet1.add_static_obstacle_to_lanelet(0)
         self.lanelet2 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                                 np.array([[0.0, 2], [1.0, 2], [2, 2]]), 101, [100], [100], 100, False, 100, True,
@@ -80,7 +79,6 @@ class TestScenario(unittest.TestCase):
         self.scenario = Scenario(0.1, 'test', location=self.location)
 
     def test_add_objects(self):
-
         expected_id_static_obs = self.static_obs.obstacle_id
         expected_id_dyn_set_obs = self.dyn_set_obs.obstacle_id
         expected_id_dyn_traj = self.dyn_traj_obs.obstacle_id
@@ -115,12 +113,9 @@ class TestScenario(unittest.TestCase):
         self.scenario.remove_obstacle(self.static_obs)
         self.scenario.remove_obstacle(self.dyn_traj_obs)
 
-        self.assertEqual(expected_id_dyn_traj,
-                         self.scenario.obstacles[0].obstacle_id)
-        self.assertEqual(expected_id_lanelet1,
-                         self.scenario.lanelet_network.lanelets[0].lanelet_id)
-        self.assertEqual(expected_id_lanelet2,
-                         self.scenario.lanelet_network.lanelets[1].lanelet_id)
+        self.assertEqual(expected_id_dyn_traj, self.scenario.obstacles[0].obstacle_id)
+        self.assertEqual(expected_id_lanelet1, self.scenario.lanelet_network.lanelets[0].lanelet_id)
+        self.assertEqual(expected_id_lanelet2, self.scenario.lanelet_network.lanelets[1].lanelet_id)
 
         with self.assertRaises(AssertionError):
             self.scenario.remove_obstacle(self.lanelet1)
@@ -135,7 +130,7 @@ class TestScenario(unittest.TestCase):
         self.assertEqual(len(self.scenario.lanelet_network.lanelets), 1)
         self.scenario.remove_lanelet(self.lanelet2)
         self.assertEqual(len(self.scenario.lanelet_network.lanelets), 0)
-        self.scenario.add_objects(self.lanelet2)   # add again to check whether ID was removed successfully
+        self.scenario.add_objects(self.lanelet2)  # add again to check whether ID was removed successfully
         self.assertEqual(len(self.scenario.lanelet_network.lanelets), 1)
 
         with self.assertRaises(AssertionError):
@@ -165,8 +160,8 @@ class TestScenario(unittest.TestCase):
         self.assertEqual(len(self.scenario.lanelet_network.traffic_lights), 1)
 
         with self.assertRaises(AssertionError):
-         self.scenario.remove_traffic_light(self.traffic_sign)
-         self.scenario.remove_traffic_light(self.static_obs)
+            self.scenario.remove_traffic_light(self.traffic_sign)
+            self.scenario.remove_traffic_light(self.static_obs)
 
     def test_remove_intersection(self):
         self.scenario.add_objects(self.intersection, set())
@@ -178,13 +173,12 @@ class TestScenario(unittest.TestCase):
         self.assertEqual(len(self.scenario.lanelet_network.intersections), 1)
 
         with self.assertRaises(AssertionError):
-         self.scenario.remove_traffic_light(self.traffic_sign)
-         self.scenario.remove_traffic_light(self.static_obs)
+            self.scenario.remove_traffic_light(self.traffic_sign)
+            self.scenario.remove_traffic_light(self.static_obs)
 
     def test_generate_object_id_empty(self):
         expected_generated_id = 1
-        self.assertEqual(expected_generated_id,
-                         self.scenario.generate_object_id())
+        self.assertEqual(expected_generated_id, self.scenario.generate_object_id())
 
     def test_generate_object_id_unique(self):
         expected_generated_id = 3
@@ -192,14 +186,12 @@ class TestScenario(unittest.TestCase):
         self.scenario.add_objects(self.static_obs)
         self.scenario.add_objects(self.dyn_traj_obs)
 
-        self.assertEqual(expected_generated_id,
-                         self.scenario.generate_object_id())
+        self.assertEqual(expected_generated_id, self.scenario.generate_object_id())
 
         expected_generated_id = 4
         self.scenario.remove_obstacle([self.static_obs, self.dyn_traj_obs])
         # Ids should not be reused even when removing all objects
-        self.assertEqual(expected_generated_id,
-                         self.scenario.generate_object_id())
+        self.assertEqual(expected_generated_id, self.scenario.generate_object_id())
 
     def test_generate_object_id_positive(self):
         expected_generated_id = 3
@@ -207,8 +199,7 @@ class TestScenario(unittest.TestCase):
         self.scenario.add_objects(self.static_obs)
         self.scenario.add_objects(self.dyn_traj_obs)
 
-        self.assertEqual(expected_generated_id,
-                         self.scenario.generate_object_id())
+        self.assertEqual(expected_generated_id, self.scenario.generate_object_id())
 
     def test_generate_object_id_negative(self):
         self.static_obs = StaticObstacle(-5, ObstacleType("unknown"), obstacle_shape=self.circ,
@@ -253,8 +244,7 @@ class TestScenario(unittest.TestCase):
                                      initial_state=self.init_state)
         static_obs2 = StaticObstacle(0, ObstacleType("unknown"), obstacle_shape=self.circ,
                                      initial_state=self.init_state)
-        static_obs3 = StaticObstacle(5000, ObstacleType("car"), obstacle_shape=self.circ,
-                                     initial_state=self.init_state)
+        static_obs3 = StaticObstacle(5000, ObstacleType("car"), obstacle_shape=self.circ, initial_state=self.init_state)
         dyn_set_obs1 = DynamicObstacle(20, ObstacleType("unknown"),
                                        initial_state=self.traj_pred.trajectory.state_at_time_step(0),
                                        prediction=self.set_pred, obstacle_shape=self.rectangle)
@@ -306,19 +296,19 @@ class TestScenario(unittest.TestCase):
                                      initial_state=self.init_state)
         static_obs3 = StaticObstacle(3, ObstacleType("car"), obstacle_shape=self.circ, initial_state=self.init_state)
         dyn_set_obs1 = DynamicObstacle(4, ObstacleType("unknown"),
-                                           initial_state=self.traj_pred.trajectory.state_at_time_step(0),
-                                           prediction=self.set_pred, obstacle_shape=self.rectangle)
+                                       initial_state=self.traj_pred.trajectory.state_at_time_step(0),
+                                       prediction=self.set_pred, obstacle_shape=self.rectangle)
         dyn_set_obs2 = DynamicObstacle(5, ObstacleType("car"),
-                                           initial_state=self.traj_pred.trajectory.state_at_time_step(0),
-                                           prediction=self.set_pred, obstacle_shape=self.rectangle)
+                                       initial_state=self.traj_pred.trajectory.state_at_time_step(0),
+                                       prediction=self.set_pred, obstacle_shape=self.rectangle)
 
         expected_obstacle_num_static_obstacles = 3
         expected_obstacle_num_dny_obstacles = 2
         expected_obstacle_num_obstacle_typ_one = 2
         expected_obstacle_num_obstacle_typ_one_and_dyn = 1
 
-        self.scenario.add_objects([static_obs1,static_obs2,static_obs3, dyn_set_obs1, dyn_set_obs2])
-        #self.scenario.add_objects(self.lanelet_network)
+        self.scenario.add_objects([static_obs1, static_obs2, static_obs3, dyn_set_obs1, dyn_set_obs2])
+        # self.scenario.add_objects(self.lanelet_network)
 
         output_one = self.scenario.obstacles_by_role_and_type(ObstacleRole.STATIC)
         output_two = self.scenario.obstacles_by_role_and_type(ObstacleRole.DYNAMIC)
@@ -358,7 +348,7 @@ class TestScenario(unittest.TestCase):
 
         self.scenario.add_objects([static_obs1, static_obs2, static_obs3, static_obs4, dyn_set_obs1])
 
-        obstacles_in_interval= self.scenario.obstacles_by_position_intervals([interval_x, interval_y])
+        obstacles_in_interval = self.scenario.obstacles_by_position_intervals([interval_x, interval_y])
         obstacle_ids_in_interval = []
         for obstacle in obstacles_in_interval:
             obstacle_ids_in_interval.append(obstacle.obstacle_id)
@@ -391,14 +381,12 @@ class TestScenario(unittest.TestCase):
         static_obs2 = StaticObstacle(-10, ObstacleType("unknown"), obstacle_shape=self.circ,
                                      initial_state=self.init_state, initial_shape_lanelet_ids={100, 101})
         lanelet1 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
-                                np.array([[0.0, 2], [1.0, 2], [2, 2]]), 100,
-                                [101], [101], 101, False, 101, True,
-                                LineMarking.DASHED, LineMarking.DASHED)
+                           np.array([[0.0, 2], [1.0, 2], [2, 2]]), 100, [101], [101], 101, False, 101, True,
+                           LineMarking.DASHED, LineMarking.DASHED)
 
         lanelet2 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
-                                np.array([[0.0, 2], [1.0, 2], [2, 2]]), 101,
-                                [100], [100], 100, False, 100, True,
-                                LineMarking.DASHED, LineMarking.DASHED)
+                           np.array([[0.0, 2], [1.0, 2], [2, 2]]), 101, [100], [100], 100, False, 100, True,
+                           LineMarking.DASHED, LineMarking.DASHED)
 
         self.scenario.add_objects(lanelet1)
 
@@ -408,7 +396,7 @@ class TestScenario(unittest.TestCase):
 
         self.assertTrue(self.scenario._is_object_id_used(101))
 
-        self.scenario.add_objects([static_obs1,static_obs2])
+        self.scenario.add_objects([static_obs1, static_obs2])
 
         self.assertTrue(self.scenario._is_object_id_used(10))
         self.assertTrue(self.scenario._is_object_id_used(-10))
@@ -419,8 +407,7 @@ class TestScenario(unittest.TestCase):
 
     def test_mark_object_id_as_used(self):
         lanelet1 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
-                           np.array([[0.0, 2], [1.0, 2], [2, 2]]), 100,
-                           [101], [101], 101, False, 101, True,
+                           np.array([[0.0, 2], [1.0, 2], [2, 2]]), 100, [101], [101], 101, False, 101, True,
                            LineMarking.DASHED, LineMarking.DASHED)
 
         self.scenario.add_objects(self.static_obs)
@@ -512,16 +499,14 @@ class TestScenario(unittest.TestCase):
 
         traj_pred = TrajectoryPrediction(trajectory, self.rectangle)
         dyn_traj_obs = DynamicObstacle(2, ObstacleType("unknown"),
-                                            initial_state=traj_pred.trajectory.state_at_time_step(0),
-                                            prediction=traj_pred, obstacle_shape=self.rectangle,
-                                            initial_shape_lanelet_ids=None)
+                                       initial_state=traj_pred.trajectory.state_at_time_step(0), prediction=traj_pred,
+                                       obstacle_shape=self.rectangle, initial_shape_lanelet_ids=None)
         sc = Scenario(dt=0.1, scenario_id='test')
         right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
         left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
-        center_vertices = np.array(
-            [[0, .5], [1, .5], [2, .5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, .5], [8, .5]])
-        lanelet = Lanelet(right_vertices=right_vertices,left_vertices=left_vertices,
-                          center_vertices=center_vertices,lanelet_id=1)
+        center_vertices = np.array([[0, .5], [1, .5], [2, .5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, .5], [8, .5]])
+        lanelet = Lanelet(right_vertices=right_vertices, left_vertices=left_vertices, center_vertices=center_vertices,
+                          lanelet_id=1)
         sc.add_objects([lanelet, dyn_traj_obs])
         scenario_tmp: Scenario = deepcopy(sc)
         # assign all time steps
@@ -530,8 +515,7 @@ class TestScenario(unittest.TestCase):
         exp_dynamic_lanelet_of_obstacle = {0: {1}, 1: {1}}
         self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
                          scenario_tmp.lanelet_network.find_lanelet_by_id(1).dynamic_obstacles_on_lanelet)
-        self.assertEqual(exp_dynamic_lanelet_of_obstacle[0],
-                         scenario_tmp.obstacle_by_id(2).initial_center_lanelet_ids)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle[0], scenario_tmp.obstacle_by_id(2).initial_center_lanelet_ids)
         self.assertEqual(exp_dynamic_lanelet_of_obstacle,
                          scenario_tmp.obstacle_by_id(2).prediction.center_lanelet_assignment)
         self.assertEqual(exp_dynamic_lanelet_of_obstacle,
@@ -543,8 +527,7 @@ class TestScenario(unittest.TestCase):
         exp_dynamic_lanelet_of_obstacle = {1: {1}}
         self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
                          scenario_tmp.lanelet_network.find_lanelet_by_id(1).dynamic_obstacles_on_lanelet)
-        self.assertEqual(None,
-                         scenario_tmp.obstacle_by_id(2).initial_center_lanelet_ids)
+        self.assertEqual(None, scenario_tmp.obstacle_by_id(2).initial_center_lanelet_ids)
         self.assertEqual(exp_dynamic_lanelet_of_obstacle,
                          scenario_tmp.obstacle_by_id(2).prediction.center_lanelet_assignment)
         self.assertEqual(exp_dynamic_lanelet_of_obstacle,
@@ -556,32 +539,25 @@ class TestScenario(unittest.TestCase):
         exp_dynamic_lanelet_of_obstacle = {0: {1}, 1: {1}}
         self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
                          scenario_tmp.lanelet_network.find_lanelet_by_id(1).dynamic_obstacles_on_lanelet)
-        self.assertEqual(exp_dynamic_lanelet_of_obstacle[0],
-                         scenario_tmp.obstacle_by_id(2).initial_center_lanelet_ids)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle[0], scenario_tmp.obstacle_by_id(2).initial_center_lanelet_ids)
         self.assertEqual(exp_dynamic_lanelet_of_obstacle,
                          scenario_tmp.obstacle_by_id(2).prediction.center_lanelet_assignment)
-        self.assertEqual(None,
-                         scenario_tmp.obstacle_by_id(2).prediction.shape_lanelet_assignment)
+        self.assertEqual(None, scenario_tmp.obstacle_by_id(2).prediction.shape_lanelet_assignment)
         # assign only a selected obstacle
         scenario_tmp: Scenario = deepcopy(sc)
         dyn_traj_obs_3 = DynamicObstacle(3, ObstacleType("unknown"),
-                                       initial_state=traj_pred.trajectory.state_at_time_step(0),
-                                       prediction=traj_pred, obstacle_shape=self.rectangle,
-                                       initial_shape_lanelet_ids=None)
+                                         initial_state=traj_pred.trajectory.state_at_time_step(0), prediction=traj_pred,
+                                         obstacle_shape=self.rectangle, initial_shape_lanelet_ids=None)
         scenario_tmp.add_objects(dyn_traj_obs_3)
         scenario_tmp.assign_obstacles_to_lanelets(time_steps=None, obstacle_ids={3})
         exp_dynamic_obstacles_on_lanelet_zero = {0: {3}, 1: {3}}
         exp_dynamic_lanelet_of_obstacle = {0: {1}, 1: {1}}
         self.assertEqual(exp_dynamic_obstacles_on_lanelet_zero,
                          scenario_tmp.lanelet_network.find_lanelet_by_id(1).dynamic_obstacles_on_lanelet)
-        self.assertEqual(None,
-                         scenario_tmp.obstacle_by_id(2).initial_center_lanelet_ids)
-        self.assertEqual(None,
-                         scenario_tmp.obstacle_by_id(2).prediction.center_lanelet_assignment)
-        self.assertEqual(None,
-                         scenario_tmp.obstacle_by_id(2).prediction.shape_lanelet_assignment)
-        self.assertEqual(exp_dynamic_lanelet_of_obstacle[0],
-                         scenario_tmp.obstacle_by_id(3).initial_center_lanelet_ids)
+        self.assertEqual(None, scenario_tmp.obstacle_by_id(2).initial_center_lanelet_ids)
+        self.assertEqual(None, scenario_tmp.obstacle_by_id(2).prediction.center_lanelet_assignment)
+        self.assertEqual(None, scenario_tmp.obstacle_by_id(2).prediction.shape_lanelet_assignment)
+        self.assertEqual(exp_dynamic_lanelet_of_obstacle[0], scenario_tmp.obstacle_by_id(3).initial_center_lanelet_ids)
         self.assertEqual(exp_dynamic_lanelet_of_obstacle,
                          scenario_tmp.obstacle_by_id(3).prediction.center_lanelet_assignment)
         self.assertEqual(exp_dynamic_lanelet_of_obstacle,
@@ -623,7 +599,7 @@ class TestScenarioID(unittest.TestCase):
         self.assertEqual(s_id.map_id, 33)
         self.assertEqual(s_id.configuration_id, 2)
         self.assertEqual(s_id.obstacle_behavior, 'I')
-        self.assertEqual(s_id.prediction_id, [1,1])
+        self.assertEqual(s_id.prediction_id, [1, 1])
         self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
 
         id_interactive_c = "C-USA_US101-33_2_I-1-1"
@@ -635,7 +611,7 @@ class TestScenarioID(unittest.TestCase):
         self.assertEqual(s_id.map_id, 33)
         self.assertEqual(s_id.configuration_id, 2)
         self.assertEqual(s_id.obstacle_behavior, 'I')
-        self.assertEqual(s_id.prediction_id, [1,1])
+        self.assertEqual(s_id.prediction_id, [1, 1])
         self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
 
         id_no_pred = "USA_US101-33_2"
@@ -669,17 +645,12 @@ class TestScenarioID(unittest.TestCase):
 
         id_us = "USA_US101-33_2"
         s_id = ScenarioID.from_benchmark_id(id_us, SCENARIO_VERSION)
-        self.assertEqual(s_id.country_name, "United States of America")
-    # def test_read_all_files(self):
-    #     folder = 'commonroad-scenarios/scenarios'
-    #     from pathlib import Path
-    #     files = list(Path(folder).rglob('*.xml'))
-    #     for file in files:
-    #         # if not "C-USA_Lanker-1_2_T-1" in str(file):
-    #         #     continue
-    #         sc, _ = CommonRoadFileReader(file).open()
-    #         self.assertEqual(sc.orig_bid, str(sc.scenario_id))
-    #         print(file)
+        self.assertEqual(s_id.country_name,
+                         "United States of America")  # def test_read_all_files(self):  #     folder =
+        # 'commonroad-scenarios/scenarios'  #     from pathlib import Path  #     files = list(Path(folder).rglob(
+        # '*.xml'))  #     for file in files:  #         # if not "C-USA_Lanker-1_2_T-1" in str(file):  #         #
+        # continue  #         sc, _ = CommonRoadFileReader(file).open()  #         self.assertEqual(sc.orig_bid,
+        # str(sc.scenario_id))  #         print(file)
 
 
 if __name__ == '__main__':
