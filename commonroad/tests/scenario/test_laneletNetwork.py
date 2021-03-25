@@ -6,12 +6,13 @@ from commonroad.geometry.shape import Rectangle
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany, \
     TrafficLight, TrafficLightCycleElement, TrafficLightState
 from commonroad.scenario.trajectory import State
+from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 
-__author__ = "Moritz Untersperger"
+__author__ = "Moritz Untersperger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
+__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles, BMW Car@TUM"]
 __version__ = "2020.3"
-__maintainer__ = "Moritz Untersperger"
+__maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
@@ -41,6 +42,10 @@ class TestLaneletNetwork(unittest.TestCase):
         self.stop_line = StopLine(self.left_vertices[-1], self.right_vertices[-1], LineMarking.SOLID,
                                   {self.traffic_sign.traffic_sign_id}, {self.traffic_light.traffic_light_id})
 
+        incoming_1 = IntersectionIncomingElement(2, {10, 11}, {12, 13}, {14, 15}, {16, 17}, 18)
+        incoming_2 = IntersectionIncomingElement(3, {20, 21}, {22, 23}, {24, 25}, {26, 27}, 28)
+        self.intersection = Intersection(1, [incoming_1, incoming_2], {30, 31})
+
         self.lanelet = Lanelet(self.left_vertices, self.center_vertices, self.right_vertices, self.lanelet_id,
                                self.predecessor, self.successor, self.adjacent_left, self.adjacent_left_same_dir,
                                self.adjacent_right, self.adjacent_right_same_dir, self.line_marking_left,
@@ -51,6 +56,7 @@ class TestLaneletNetwork(unittest.TestCase):
         self.lanelet_network.add_lanelet(self.lanelet)
         self.lanelet_network.add_traffic_sign(self.traffic_sign, set())
         self.lanelet_network.add_traffic_light(self.traffic_light, set())
+        self.lanelet_network.add_intersection(self.intersection)
 
     def test_initialize_lanelets(self):
         s1 = np.sqrt(1.25)
@@ -240,6 +246,13 @@ class TestLaneletNetwork(unittest.TestCase):
         self.lanelet_network.remove_traffic_light(self.traffic_light.traffic_light_id)  # delete existing traffic light
         self.assertEqual(len(self.lanelet.traffic_lights), 0)
         self.assertEqual(len(self.lanelet.stop_line.traffic_light_ref), 0)
+
+    def test_remove_intersection(self):
+        self.lanelet_network.remove_intersection(123456789)  # delete non-existing intersection
+        self.assertEqual(len(self.lanelet_network.intersections), 1)
+
+        self.lanelet_network.remove_intersection(self.intersection.intersection_id)  # delete existing traffic light
+        self.assertEqual(len(self.lanelet_network.intersections), 0)
 
 
 if __name__ == '__main__':

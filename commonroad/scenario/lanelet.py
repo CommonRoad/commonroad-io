@@ -1082,7 +1082,7 @@ class LaneletNetwork(IDrawable):
 
     def remove_traffic_sign(self, traffic_sign_id: int):
         """
-        Removes a lanelet from a lanelet network and deletes all references.
+        Removes a traffic sign from a lanelet network and deletes all references.
 
         @param traffic_sign_id: ID of traffic sign which should be removed.
         """
@@ -1102,7 +1102,7 @@ class LaneletNetwork(IDrawable):
 
     def remove_traffic_light(self, traffic_light_id: int):
         """
-        Removes a lanelet from a lanelet network and deletes all references.
+        Removes a traffic light from a lanelet network and deletes all references.
 
         @param traffic_light_id: ID of traffic sign which should be removed.
         """
@@ -1119,6 +1119,15 @@ class LaneletNetwork(IDrawable):
             la._traffic_lights = la.traffic_lights.intersection(existing_ids)
             if la.stop_line is not None:
                 la.stop_line._traffic_light_ref = la.stop_line.traffic_light_ref.intersection(existing_ids)
+
+    def remove_intersection(self, intersection_id: int):
+        """
+        Removes a intersection from a lanelet network and deletes all references.
+
+        @param intersection_id: ID of intersection which should be removed.
+        """
+        if intersection_id in self._intersections.keys():
+            del self._intersections[intersection_id]
 
     def find_lanelet_by_id(self, lanelet_id: int) -> Lanelet:
         """

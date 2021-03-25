@@ -690,6 +690,24 @@ class Scenario(IDrawable):
         self.lanelet_network.remove_traffic_light(traffic_light.traffic_light_id)
         self._id_set.remove(traffic_light.traffic_light_id)
 
+    def remove_intersection(self, intersection: Union[List[Intersection], Intersection]):
+        """
+        Removes an intersection or a list of intersections from the scenario.
+
+        :param intersection: Intersection which should be removed from scenario.
+        """
+        assert isinstance(intersection, (list, Intersection)), \
+            '<Scenario/remove_intersection> argument "intersection" of wrong type. ' \
+            'Expected type: %s. Got type: %s.' % (Intersection, type(intersection))
+        if isinstance(intersection, list):
+            for inter in intersection:
+                self.lanelet_network.remove_intersection(inter.intersection_id)
+                self._id_set.remove(inter.intersection_id)
+            return
+
+        self.lanelet_network.remove_intersection(intersection.intersection_id)
+        self._id_set.remove(intersection.intersection_id)
+
     def generate_object_id(self) -> int:
         """ Generates a unique ID which is not assigned to any object in the scenario.
 

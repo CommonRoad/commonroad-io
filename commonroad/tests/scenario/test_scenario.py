@@ -9,6 +9,7 @@ from commonroad.scenario.scenario import Scenario, Environment, TimeOfDay, Time,
     ScenarioID
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany, \
     TrafficLight, TrafficLightCycleElement, TrafficLightState
+from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.trajectory import *
 from commonroad.common.util import Interval
 
@@ -68,6 +69,10 @@ class TestScenario(unittest.TestCase):
                                             initial_state=self.traj_pred.trajectory.state_at_time_step(0),
                                             prediction=self.traj_pred, obstacle_shape=self.rectangle,
                                             initial_shape_lanelet_ids={100, 101})
+
+        incoming_1 = IntersectionIncomingElement(2, {10, 11}, {12, 13}, {14, 15}, {16, 17}, 18)
+        incoming_2 = IntersectionIncomingElement(3, {20, 21}, {22, 23}, {24, 25}, {26, 27}, 28)
+        self.intersection = Intersection(1, [incoming_1, incoming_2], {30, 31})
 
         self.environment = Environment(Time(12, 15), TimeOfDay.NIGHT, Weather.SNOW, Underground.ICE)
         self.location = Location(geo_name_id=123, gps_latitude=456, gps_longitude=789, environment=self.environment)
@@ -158,6 +163,19 @@ class TestScenario(unittest.TestCase):
         self.assertEqual(len(self.scenario.lanelet_network.traffic_lights), 0)
         self.scenario.add_objects(self.traffic_light, set())  # add again to check whether ID was removed successfully
         self.assertEqual(len(self.scenario.lanelet_network.traffic_lights), 1)
+
+        with self.assertRaises(AssertionError):
+         self.scenario.remove_traffic_light(self.traffic_sign)
+         self.scenario.remove_traffic_light(self.static_obs)
+
+    def test_remove_intersection(self):
+        self.scenario.add_objects(self.intersection, set())
+
+        self.assertEqual(len(self.scenario.lanelet_network.intersections), 1)
+        self.scenario.remove_intersection(self.intersection)
+        self.assertEqual(len(self.scenario.lanelet_network.intersections), 0)
+        self.scenario.add_objects(self.intersection, set())  # add again to check whether ID was removed successfully
+        self.assertEqual(len(self.scenario.lanelet_network.intersections), 1)
 
         with self.assertRaises(AssertionError):
          self.scenario.remove_traffic_light(self.traffic_sign)
