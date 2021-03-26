@@ -82,6 +82,9 @@ class TrafficSigInterpreter:
         :param lanelet_ids: IDs of lanelets the vehicle is on
         :returns: minimum required speed of provided lanelets or None if no required speed exists
         """
+        if not hasattr(self.traffic_sign_ids, 'MIN_SPEED'):
+            return None
+
         required_velocities = []
         for lanelet_id in lanelet_ids:
             lanelet = self._lanelet_network.find_lanelet_by_id(lanelet_id)
