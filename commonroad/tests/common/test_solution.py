@@ -659,6 +659,20 @@ class TestSolution(unittest.TestCase):
         assert solution_single.benchmark_id == 'KS1:JB1:USA_US101-33_2_T-1:2020a'
         assert solution_collab.benchmark_id == '[KS1,ST2]:[JB1,SA1]:USA_US101-33_2_T-1:2020a'
 
+    def test_orientation_computation(self):
+        pp_solution_1 = PlanningProblemSolution(
+            planning_problem_id=1,
+            vehicle_model=VehicleModel.PM,
+            vehicle_type=VehicleType.FORD_ESCORT,
+            cost_function=CostFunction.JB1,
+            trajectory=DummyDataGenerator.create_random_pm_trajectory()
+        )
+
+        solution_single = Solution(scenario_id=self.scenario_id,
+                                   planning_problem_solutions=[pp_solution_1])
+        assert all(hasattr(s, 'orientation')
+                   for s in solution_single.planning_problem_solutions[0]._trajectory.state_list)
+
 
 class TestCommonRoadSolutionWriter(unittest.TestCase):
 
@@ -769,8 +783,8 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
                                         planning_problem_solutions=[self.pp_solution1,
                                                                     self.pp_solution2])
 
-        CommonRoadSolutionWriter(self.solution_single).write_to_file()
-        CommonRoadSolutionWriter(self.solution_collab).write_to_file()
+        CommonRoadSolutionWriter(self.solution_single).write_to_file(overwrite=True)
+        CommonRoadSolutionWriter(self.solution_collab).write_to_file(overwrite=True)
 
         self.solution_single_path = './solution_' + self.solution_single.benchmark_id + '.xml'
         self.solution_collab_path = './solution_' + self.solution_collab.benchmark_id + '.xml'
@@ -806,6 +820,8 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
         assert parsed_solution_collab.trajectory_types == self.solution_collab.trajectory_types
         assert parsed_solution_single.scenario_id == self.solution_single.scenario_id
         assert parsed_solution_collab.scenario_id == self.solution_collab.scenario_id
+        assert all(hasattr(s, 'orientation')
+                   for s in parsed_solution_single.planning_problem_solutions[0]._trajectory.state_list)
 
     def test_fromstring_computation_time(self):
         self.solution_single.computation_time = 1.10
