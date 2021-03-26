@@ -309,7 +309,7 @@ class PlanningProblemSolution:
         :param trajectory_type: TrajectoryType
         :return: True if valid.
         """
-        if self._vehicle_model == VehicleModel.PM:
+        if self._vehicle_model == VehicleModel.PM and self._trajectory_type == TrajectoryType.PM:
             for state in self._trajectory.state_list:
                 if not hasattr(state, 'orientation'):
                     state.orientation = math.atan2(state.velocity_y, state.velocity)
