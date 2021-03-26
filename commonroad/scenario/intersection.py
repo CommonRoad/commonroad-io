@@ -219,8 +219,6 @@ class Intersection:
             if crossings is None:
                 self._crossings = set()
             else:
-                assert len(crossings) > 0, '<Intersection/crossings>: Intersection crossing ' \
-                                           'must consist of at least one crossing lanelet '
                 self._crossings = crossings
         else:
             warnings.warn('<Intersection/crossings>: crossings of intersection are immutable')

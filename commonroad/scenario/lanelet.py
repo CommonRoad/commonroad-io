@@ -1097,7 +1097,7 @@ class LaneletNetwork(IDrawable):
         existing_ids = set(self._traffic_signs.keys())
         for la in self.lanelets:
             la._traffic_signs = la.traffic_signs.intersection(existing_ids)
-            if la.stop_line is not None:
+            if la.stop_line is not None and la.stop_line.traffic_sign_ref is not None:
                 la.stop_line._traffic_sign_ref = la.stop_line.traffic_sign_ref.intersection(existing_ids)
 
     def remove_traffic_light(self, traffic_light_id: int):
@@ -1117,7 +1117,7 @@ class LaneletNetwork(IDrawable):
         existing_ids = set(self._traffic_lights.keys())
         for la in self.lanelets:
             la._traffic_lights = la.traffic_lights.intersection(existing_ids)
-            if la.stop_line is not None:
+            if la.stop_line is not None and la.stop_line.traffic_light_ref is not None:
                 la.stop_line._traffic_light_ref = la.stop_line.traffic_light_ref.intersection(existing_ids)
 
     def remove_intersection(self, intersection_id: int):
