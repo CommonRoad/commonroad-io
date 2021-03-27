@@ -1317,10 +1317,16 @@ class TrafficLightXMLNode:
             position_node.append(Point(traffic_light.position[0],
                                        traffic_light.position[1]).create_node())
             traffic_light_node.append(position_node)
+
+        direction_node = etree.Element('direction')
+        direction_node.text = traffic_light.direction.value
+        traffic_light_node.append(direction_node)
+
         if traffic_light.active is not None:
             active_node = etree.Element('active')
             active_node.text = str(traffic_light.active).lower()
             traffic_light_node.append(active_node)
+
         return traffic_light_node
 
     @classmethod
