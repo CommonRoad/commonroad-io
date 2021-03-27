@@ -271,6 +271,8 @@ class TrajectoryPrediction(Prediction):
         """ Computes the occupancy set over time given the predicted trajectory and shape of the object."""
         occupancy_set = list()
         for k, state in enumerate(self._trajectory.state_list):
+            if not hasattr(state, "orientation"):
+                state.orientation = np.arctan2(state.velocity_y, state.velocity)
             occupied_region = occupancy_shape_from_state(self._shape, state)
             occupancy_set.append(Occupancy(state.time_step, occupied_region))
         return occupancy_set

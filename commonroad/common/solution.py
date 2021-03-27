@@ -301,8 +301,7 @@ class PlanningProblemSolution:
                                                                                         vehicle_model.name))
         return True
 
-    @staticmethod
-    def _check_trajectory_supported(vehicle_model: VehicleModel, trajectory_type: TrajectoryType) -> bool:
+    def _check_trajectory_supported(self, vehicle_model: VehicleModel, trajectory_type: TrajectoryType) -> bool:
         """
         Checks whether given vehicle model is valid for the given trajectory type.
 
@@ -310,6 +309,11 @@ class PlanningProblemSolution:
         :param trajectory_type: TrajectoryType
         :return: True if valid.
         """
+        if self._vehicle_model == VehicleModel.PM and self._trajectory_type == TrajectoryType.PM:
+            for state in self._trajectory.state_list:
+                if not hasattr(state, 'orientation'):
+                    state.orientation = math.atan2(state.velocity_y, state.velocity)
+
         if not trajectory_type.valid_vehicle_model(vehicle_model):
             raise SolutionException('Vehicle model %s is not valid for the trajectory type %s!'
                                     % (vehicle_model.name, trajectory_type.name))
@@ -629,9 +633,6 @@ class CommonRoadSolutionReader:
                 state_vals[field_name] = np.array([cls._parse_sub_element(state_node, name) for name in xml_name])
             else:
                 state_vals[field_name] = cls._parse_sub_element(state_node, xml_name, as_float=(not xml_name == 'time'))
-
-            if not 'orientation' in state_vals and ('velocity' in state_vals and 'velocity_y' in state_vals):
-                state_vals['orientation'] = math.atan2(state_vals['velocity_y'], state_vals['velocity'])
 
         return State(**state_vals)
 
