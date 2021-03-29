@@ -1033,7 +1033,6 @@ class LaneletNetwork(IDrawable):
     def cleanup_lanelet_references(self):
         """
         Deletes lanelet IDs which do not exist in the lanelet network. Useful when cutting out lanelet networks.
-        :return:
         """
         existing_ids = set(self._lanelets.keys())
         for la in self.lanelets:
