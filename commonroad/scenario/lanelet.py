@@ -924,7 +924,45 @@ class Lanelet:
             merged_lanelets.append(pred)
 
         return merged_lanelets, merge_jobs_final
+    
+    def find_lanelet_successors_by_range(self, lanelet_network: "LaneletNetwork", max_length=50.0):
+        """
+        Finds all possible successor paths (id sequences) within max_length.
+        :param range: combined max. length of all lanelets in each path
+        :return: list of lanelet IDs
+        """
+        paths = [[s] for s in self.successor]
+        paths_final = []
+        lengths = [0.0 for _ in paths]
+        i_p = 0
+        while paths:
+            paths_next = []
+            lengths_next = []
+            for p, l in zip(paths, lengths):
+                successors = lanelet_network.find_lanelet_by_id(p[-1]).successor
+                if not successors:
+                    paths_final.append(p)
+                else:
+                    for s in successors:
+                        if s in p:
+                            # prevent loops
+                            continue
 
+                        l_next = l + lanelet_network.find_lanelet_by_id(s).distance[-1]
+                        if l_next < max_length:
+                            paths_next.append(p + [s])
+                            lengths_next.append(l_next)
+                        else:
+                            paths_final.append(p + [s])
+
+            paths = paths_next
+            lengths = lengths_next
+
+        return paths_final
+
+
+            
+            
     def add_dynamic_obstacle_to_lanelet(self, obstacle_id: int, time_step: int):
         """
         Adds a dynamic obstacle ID to lanelet
@@ -1140,7 +1178,7 @@ class LaneletNetwork(IDrawable):
             lanelet_id), '<LaneletNetwork/find_lanelet_by_id>: provided id is not valid! id = {}'.format(lanelet_id)
 
         return self._lanelets[lanelet_id] if lanelet_id in self._lanelets else None
-
+        
     def find_traffic_sign_by_id(self, traffic_sign_id: int) -> TrafficSign:
         """
         Finds a traffic sign for a given traffic_sign_id
