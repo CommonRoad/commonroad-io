@@ -42,7 +42,7 @@ class TestLaneletNetwork(unittest.TestCase):
         self.stop_line = StopLine(self.left_vertices[-1], self.right_vertices[-1], LineMarking.SOLID,
                                   {self.traffic_sign.traffic_sign_id}, {self.traffic_light.traffic_light_id})
 
-        incoming_1 = IntersectionIncomingElement(2, {10, 11}, {12, 13}, {14, 15}, {16, 17}, 18)
+        incoming_1 = IntersectionIncomingElement(2, {self.lanelet_id, 11}, {12, 13}, {14, 15}, {16, 17}, 18)
         incoming_2 = IntersectionIncomingElement(3, {20, 21}, {22, 23}, {24, 25}, {26, 27}, 28)
         self.intersection = Intersection(1, [incoming_1, incoming_2], {30, 31})
 
@@ -52,8 +52,13 @@ class TestLaneletNetwork(unittest.TestCase):
                                self.line_marking_right, traffic_signs={self.traffic_sign.traffic_sign_id},
                                traffic_lights={self.traffic_light.traffic_light_id}, stop_line=self.stop_line)
 
+        self.lanelet_2 = Lanelet(np.array([[8, 1], [9, 1]]), np.array([[8, .5], [9, .5]]), np.array([[8, 0], [9, 0]]),
+                                 6, [self.lanelet.lanelet_id], [678], 910, True, 750, False,
+                                 LineMarking.UNKNOWN, LineMarking.UNKNOWN)
+
         self.lanelet_network = LaneletNetwork()
         self.lanelet_network.add_lanelet(self.lanelet)
+        self.lanelet_network.add_lanelet(self.lanelet_2)
         self.lanelet_network.add_traffic_sign(self.traffic_sign, set())
         self.lanelet_network.add_traffic_light(self.traffic_light, set())
         self.lanelet_network.add_intersection(self.intersection)
@@ -218,10 +223,10 @@ class TestLaneletNetwork(unittest.TestCase):
 
     def test_remove_lanelet(self):
         self.lanelet_network.remove_lanelet(123456789)  # delete non-existing lanelet
-        self.assertEqual(len(self.lanelet_network.lanelets), 1)
+        self.assertEqual(len(self.lanelet_network.lanelets), 2)
 
         self.lanelet_network.remove_lanelet(self.lanelet.lanelet_id)   # delete existing lanelet
-        self.assertEqual(len(self.lanelet_network.lanelets), 0)
+        self.assertEqual(len(self.lanelet_network.lanelets), 1)
 
     def test_remove_traffic_sign(self):
         self.lanelet_network.remove_traffic_sign(123456789)  # delete non-existing traffic sign
@@ -237,22 +242,29 @@ class TestLaneletNetwork(unittest.TestCase):
         self.lanelet_network.remove_traffic_light(self.traffic_light.traffic_light_id)  # delete existing traffic light
         self.assertEqual(len(self.lanelet_network.traffic_lights), 0)
 
-    def test_cleanup_traffic_sign_references(self):
-        self.lanelet_network.remove_traffic_sign(self.traffic_sign.traffic_sign_id)  # delete existing traffic sign
-        self.assertEqual(len(self.lanelet.traffic_signs), 0)
-        self.assertEqual(len(self.lanelet.stop_line.traffic_sign_ref), 0)
-
-    def test_cleanup_traffic_light_references(self):
-        self.lanelet_network.remove_traffic_light(self.traffic_light.traffic_light_id)  # delete existing traffic light
-        self.assertEqual(len(self.lanelet.traffic_lights), 0)
-        self.assertEqual(len(self.lanelet.stop_line.traffic_light_ref), 0)
-
     def test_remove_intersection(self):
         self.lanelet_network.remove_intersection(123456789)  # delete non-existing intersection
         self.assertEqual(len(self.lanelet_network.intersections), 1)
 
         self.lanelet_network.remove_intersection(self.intersection.intersection_id)  # delete existing traffic light
         self.assertEqual(len(self.lanelet_network.intersections), 0)
+
+    def test_cleanup_lanelet_references(self):
+        # intersection contains dummy references which will be deleted during cleanup
+        self.assertEqual(len(self.intersection.incomings[0].incoming_lanelets), 2)
+        self.lanelet_network.remove_lanelet(self.lanelet.lanelet_id)  # delete existing traffic sign
+        self.assertEqual(len(self.lanelet_2.predecessor), 0)
+        self.assertEqual(len(self.intersection.incomings[0].incoming_lanelets), 0)
+
+    def test_cleanup_traffic_light_references(self):
+        self.lanelet_network.remove_traffic_light(self.traffic_light.traffic_light_id)  # delete existing traffic light
+        self.assertEqual(len(self.lanelet.traffic_lights), 0)
+        self.assertEqual(len(self.lanelet.stop_line.traffic_light_ref), 0)
+
+    def test_cleanup_traffic_sign_references(self):
+        self.lanelet_network.remove_traffic_sign(self.traffic_sign.traffic_sign_id)  # delete existing traffic sign
+        self.assertEqual(len(self.lanelet.traffic_signs), 0)
+        self.assertEqual(len(self.lanelet.stop_line.traffic_sign_ref), 0)
 
 
 if __name__ == '__main__':
