@@ -45,7 +45,6 @@ class TestScenario(unittest.TestCase):
                  TrafficLightCycleElement(TrafficLightState.RED, 2)]
         self.traffic_light = TrafficLight(42, cycle, position=np.array([10., 10.]))
 
-        #self.lanelet_network.add_traffic_sign(self.traffic_sign, [])
         self.set_pred = SetBasedPrediction(0, occupancy_list)
 
         states = list()
