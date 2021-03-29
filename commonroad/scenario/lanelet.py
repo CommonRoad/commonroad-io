@@ -523,7 +523,7 @@ class Lanelet:
 
     @user_one_way.setter
     def user_one_way(self, user_one_way: Set[RoadUser]):
-        if self._user_one_way is None :
+        if self._user_one_way is None:
             assert isinstance(user_one_way, set) and all(isinstance(elem, RoadUser) for elem in user_one_way),\
                 '<Lanelet/user_one_way>: ''Provided type is not valid! type = {}'.format(
                 type(user_one_way))
@@ -539,9 +539,9 @@ class Lanelet:
     @user_bidirectional.setter
     def user_bidirectional(self, user_bidirectional: Set[RoadUser]):
         if self._user_bidirectional is None:
-            assert isinstance(user_bidirectional, set) and \
-                   all(isinstance(elem, RoadUser) for elem in user_bidirectional), \
-                '<Lanelet/user_bidirectional>: ''Provided type is not valid! type = {}'.format(
+            assert isinstance(user_bidirectional, set) \
+                   and all(isinstance(elem, RoadUser) for elem in user_bidirectional), \
+                   '<Lanelet/user_bidirectional>: Provided type is not valid! type = {}'.format(
                     type(user_bidirectional))
             self._user_bidirectional = user_bidirectional
         else:
@@ -583,7 +583,7 @@ class Lanelet:
         Adds the ID of a predecessor lanelet to the list of predecessors.
         :param lanelet: Predecessor lanelet ID.
         """
-        if not lanelet in self.predecessor:
+        if lanelet not in self.predecessor:
             self.predecessor.append(lanelet)
 
     def remove_predecessor(self, lanelet: int):
@@ -665,11 +665,11 @@ class Lanelet:
         """
         assert is_real_number(distance) and np.greater_equal(self.distance[-1],distance)\
                and np.greater_equal(distance, 0), '<Lanelet/interpolate_position>: provided distance is not valid! ' \
-                                                 'distance = {}'.format(distance)
+                                                  'distance = {}'.format(distance)
         idx = 0
 
         # find
-        while (not (self.distance[idx] <= distance <= self.distance[idx + 1])):
+        while not (self.distance[idx] <= distance <= self.distance[idx + 1]):
             idx += 1
         r = (distance - self.distance[idx]) / (self.distance[idx + 1] -
                                                self.distance[idx])
@@ -877,7 +877,7 @@ class Lanelet:
         leafs = list()
         for elements in lanelets:
             Net.add_node(elements)
-            if elements.successor and not lanelet.lanelet_id in elements.successor:
+            if elements.successor and lanelet.lanelet_id not in elements.successor:
                 for successors in elements.successor:
                     successor = network.find_lanelet_by_id(successors)
                     if lanelet_type is None or lanelet_type in successor.lanelet_type:
@@ -895,13 +895,12 @@ class Lanelet:
         for leaf in leafs:
             path = nx.all_simple_paths(Net, start, leaf)
             path = list(path)
-            if len(path) < 2 and len(path) > 0:
+            if 2 > len(path) > 0:
                 merge_jobs.append(path)
             else:
                 for i in range(len(path)):
 
                     merge_jobs.append([path[i]])
-
 
         # Create merged lanelets from paths
         merged_lanelets = list()
@@ -914,7 +913,7 @@ class Lanelet:
                 for k in range(1, len(j)):
                     merge_jobs_tmp.append(j[k].lanelet_id)
                     if k > 0:
-                        # do not consider length of inital lanelet for conservativeness
+                        # do not consider length of initial lanelet for conservativeness
                         tmp_length += j[k].distance[-1]
                     pred = Lanelet.merge_lanelets(pred,j[k])
                     if tmp_length >= max_length:
@@ -1008,7 +1007,7 @@ class LaneletNetwork(IDrawable):
         return list(self._traffic_lights.values())
 
     @property
-    def map_inc_lanelets_to_intersections(self) -> Dict[int,Intersection]:
+    def map_inc_lanelets_to_intersections(self) -> Dict[int, Intersection]:
         """
         :returns: dict that maps lanelet ids to the intersection of which it is an incoming lanelet.
         """
@@ -1016,7 +1015,7 @@ class LaneletNetwork(IDrawable):
                 for l_id in list(intersection.map_incoming_lanelets.keys())}
 
     @classmethod
-    def create_from_lanelet_list(cls, lanelets: list, cleanup_ids: bool=False):
+    def create_from_lanelet_list(cls, lanelets: list, cleanup_ids: bool = False):
         """
         Creates a LaneletNetwork object from a given list of lanelets
 
@@ -1074,11 +1073,19 @@ class LaneletNetwork(IDrawable):
             la._successor = list(set(la.successor).intersection(existing_ids))
             la._adj_left = None if la.adj_left is None or la.adj_left not in existing_ids else la.adj_left
 
-            la._adj_left_same_direction = None if la.adj_left_same_direction is None or la.adj_left not in \
-                                                  existing_ids else la.adj_left_same_direction
+            la._adj_left_same_direction = None if la.adj_left_same_direction is None \
+                                                  or la.adj_left not in existing_ids else la.adj_left_same_direction
             la._adj_right = None if la.adj_right is None or la.adj_right not in existing_ids else la.adj_right
-            la._adj_right_same_direction = None if la.adj_right_same_direction is None or la.adj_right not in \
-                                                   existing_ids else la.adj_right_same_direction
+            la._adj_right_same_direction = None if la.adj_right_same_direction is None \
+                                                   or la.adj_right not in existing_ids else la.adj_right_same_direction
+
+        for inter in self.intersections:
+            for inc in inter.incomings:
+                inc._incoming_lanelets = set(inc.incoming_lanelets).intersection(existing_ids)
+                inc._successors_straight = set(inc.successors_straight).intersection(existing_ids)
+                inc._successors_right = set(inc.successors_right).intersection(existing_ids)
+                inc._successors_left = set(inc.successors_left).intersection(existing_ids)
+            inter._crossings = set(inter.crossings).intersection(existing_ids)
 
     def remove_traffic_sign(self, traffic_sign_id: int):
         """
@@ -1354,7 +1361,6 @@ class LaneletNetwork(IDrawable):
         # look at each lanelet
         polygons = [(l.lanelet_id, l.convert_to_polygon()) for l in self.lanelets]
 
-
         for lanelet_id, poly in polygons:
             if poly.shapely_object.intersects(shape.shapely_object):
                 res.append(lanelet_id)
@@ -1443,11 +1449,11 @@ class LaneletNetwork(IDrawable):
                     distance_list.append(np.min(distance))
 
                 # check if adjacent lanelets can be added as well
-                index_minDist = np.argmin(distance - rad_sqr)
+                index_min_dist = np.argmin(distance - rad_sqr)
 
                 # check right side of lanelet
                 if lanelet.adj_right is not None:
-                    p = (lanelet.right_vertices[index_minDist, :] - point) ** 2
+                    p = (lanelet.right_vertices[index_min_dist, :] - point) ** 2
                     p = p[0] + p[1]
                     if np.greater(rad_sqr, p) and lanelet.adj_right not in lanes:
                         lanes[lanelet.adj_right] = self.find_lanelet_by_id(lanelet.adj_right)
@@ -1455,7 +1461,7 @@ class LaneletNetwork(IDrawable):
 
                 # check left side of lanelet
                 if lanelet.adj_left is not None:
-                    p = (lanelet.left_vertices[index_minDist, :] - point) ** 2
+                    p = (lanelet.left_vertices[index_min_dist, :] - point) ** 2
                     p = p[0] + p[1]
                     if np.greater(rad_sqr, p) and lanelet.adj_left not in lanes:
                         lanes[lanelet.adj_left] = self.find_lanelet_by_id(lanelet.adj_left)
