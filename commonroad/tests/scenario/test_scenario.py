@@ -39,13 +39,13 @@ class TestScenario(unittest.TestCase):
         self.lanelet1.add_dynamic_obstacle_to_lanelet(2, 1)
         self.lanelet_network = LaneletNetwork().create_from_lanelet_list(list([self.lanelet1, self.lanelet2]))
         traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED.value, ['10.0'])
-        self.traffic_sign = TrafficSign(3, [traffic_sign_max_speed], {100}, np.array([0.0, 2]))
+        self.traffic_sign = TrafficSign(41, [traffic_sign_max_speed], {100}, np.array([0.0, 2]))
         cycle = [TrafficLightCycleElement(TrafficLightState.GREEN, 2),
                  TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
                  TrafficLightCycleElement(TrafficLightState.RED, 2)]
-        self.traffic_light = TrafficLight(567, cycle, position=np.array([10., 10.]))
+        self.traffic_light = TrafficLight(42, cycle, position=np.array([10., 10.]))
 
-        self.lanelet_network.add_traffic_sign(self.traffic_sign, [])
+        #self.lanelet_network.add_traffic_sign(self.traffic_sign, [])
         self.set_pred = SetBasedPrediction(0, occupancy_list)
 
         states = list()
@@ -69,9 +69,9 @@ class TestScenario(unittest.TestCase):
                                             prediction=self.traj_pred, obstacle_shape=self.rectangle,
                                             initial_shape_lanelet_ids={100, 101})
 
-        incoming_1 = IntersectionIncomingElement(2, {10, 11}, {12, 13}, {14, 15}, {16, 17}, 18)
-        incoming_2 = IntersectionIncomingElement(3, {20, 21}, {22, 23}, {24, 25}, {26, 27}, 28)
-        self.intersection = Intersection(1, [incoming_1, incoming_2], {30, 31})
+        self.incoming_1 = IntersectionIncomingElement(22, {10, 11}, {12, 13}, {14, 15}, {16, 17}, 18)
+        self.incoming_2 = IntersectionIncomingElement(23, {20, 21}, {22, 23}, {24, 25}, {26, 27}, 28)
+        self.intersection = Intersection(21, [self.incoming_1, self.incoming_2], {30, 31})
 
         self.environment = Environment(Time(12, 15), TimeOfDay.NIGHT, Weather.SNOW, Underground.ICE)
         self.location = Location(geo_name_id=123, gps_latitude=456, gps_longitude=789, environment=self.environment)
@@ -84,17 +84,37 @@ class TestScenario(unittest.TestCase):
         expected_id_dyn_traj = self.dyn_traj_obs.obstacle_id
         expected_id_lanelet1 = self.lanelet1.lanelet_id
         expected_id_lanelet2 = self.lanelet2.lanelet_id
+        expected_id_traffic_sign = self.traffic_sign.traffic_sign_id
+        expected_id_traffic_light = self.traffic_light.traffic_light_id
+        expected_id_intersection = self.intersection.intersection_id
+        expected_id_intersection_incoming1 = self.incoming_1.incoming_id
+        expected_id_intersection_incoming2 = self.incoming_2.incoming_id
 
         self.scenario.add_objects(self.lanelet_network)
         self.scenario.add_objects(self.static_obs)
         self.scenario.add_objects(self.dyn_set_obs)
         self.scenario.add_objects(self.dyn_traj_obs)
+        self.scenario.add_objects(self.traffic_light)
+        self.scenario.add_objects(self.traffic_sign)
+        self.scenario.add_objects(self.intersection)
 
         self.assertEqual(expected_id_static_obs, self.scenario.obstacles[0].obstacle_id)
         self.assertEqual(expected_id_dyn_set_obs, self.scenario.obstacles[1].obstacle_id)
         self.assertEqual(expected_id_dyn_traj, self.scenario.obstacles[2].obstacle_id)
         self.assertEqual(expected_id_lanelet1, self.scenario.lanelet_network.lanelets[0].lanelet_id)
         self.assertEqual(expected_id_lanelet2, self.scenario.lanelet_network.lanelets[1].lanelet_id)
+        self.assertEqual(expected_id_traffic_sign, self.scenario.lanelet_network.traffic_signs[0].traffic_sign_id)
+        self.assertEqual(expected_id_traffic_light, self.scenario.lanelet_network.traffic_lights[0].traffic_light_id)
+        self.assertEqual(expected_id_intersection, self.scenario.lanelet_network.intersections[0].intersection_id)
+        self.assertEqual(expected_id_intersection_incoming1,
+                         self.scenario.lanelet_network.intersections[0].incomings[0].incoming_id)
+        self.assertEqual(expected_id_intersection_incoming2,
+                         self.scenario.lanelet_network.intersections[0].incomings[1].incoming_id)
+
+        self.assertTrue(self.scenario._is_object_id_used(
+                self.scenario.lanelet_network.intersections[0].incomings[0].incoming_id))
+        self.assertTrue(self.scenario._is_object_id_used(
+                self.scenario.lanelet_network.intersections[0].incomings[1].incoming_id))
 
         with self.assertRaises(ValueError):
             self.scenario.add_objects(self.rectangle)
@@ -130,6 +150,8 @@ class TestScenario(unittest.TestCase):
         self.assertEqual(len(self.scenario.lanelet_network.lanelets), 1)
         self.scenario.remove_lanelet(self.lanelet2)
         self.assertEqual(len(self.scenario.lanelet_network.lanelets), 0)
+        self.assertFalse(self.scenario._is_object_id_used(self.lanelet1.lanelet_id))
+        self.assertFalse(self.scenario._is_object_id_used(self.lanelet2.lanelet_id))
         self.scenario.add_objects(self.lanelet2)  # add again to check whether ID was removed successfully
         self.assertEqual(len(self.scenario.lanelet_network.lanelets), 1)
 
@@ -143,6 +165,7 @@ class TestScenario(unittest.TestCase):
         self.assertEqual(len(self.scenario.lanelet_network.traffic_signs), 1)
         self.scenario.remove_traffic_sign(self.traffic_sign)
         self.assertEqual(len(self.scenario.lanelet_network.traffic_signs), 0)
+        self.assertFalse(self.scenario._is_object_id_used(self.traffic_sign.traffic_sign_id))
         self.scenario.add_objects(self.traffic_sign, set())  # add again to check whether ID was removed successfully
         self.assertEqual(len(self.scenario.lanelet_network.traffic_signs), 1)
 
@@ -156,6 +179,7 @@ class TestScenario(unittest.TestCase):
         self.assertEqual(len(self.scenario.lanelet_network.traffic_lights), 1)
         self.scenario.remove_traffic_light(self.traffic_light)
         self.assertEqual(len(self.scenario.lanelet_network.traffic_lights), 0)
+        self.assertFalse(self.scenario._is_object_id_used(self.traffic_light.traffic_light_id))
         self.scenario.add_objects(self.traffic_light, set())  # add again to check whether ID was removed successfully
         self.assertEqual(len(self.scenario.lanelet_network.traffic_lights), 1)
 
@@ -169,6 +193,9 @@ class TestScenario(unittest.TestCase):
         self.assertEqual(len(self.scenario.lanelet_network.intersections), 1)
         self.scenario.remove_intersection(self.intersection)
         self.assertEqual(len(self.scenario.lanelet_network.intersections), 0)
+        self.assertFalse(self.scenario._is_object_id_used(self.intersection.intersection_id))
+        self.assertFalse(self.scenario._is_object_id_used(self.intersection.incomings[0].incoming_id))
+        self.assertFalse(self.scenario._is_object_id_used(self.intersection.incomings[1].incoming_id))
         self.scenario.add_objects(self.intersection, set())  # add again to check whether ID was removed successfully
         self.assertEqual(len(self.scenario.lanelet_network.intersections), 1)
 
