@@ -22,7 +22,7 @@ from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine, LaneletT
 from commonroad.scenario.obstacle import ObstacleRole, ObstacleType, DynamicObstacle, StaticObstacle, Obstacle, \
     Occupancy, Shape, SignalState, EnvironmentObstacle, PhantomObstacle
 from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficLightCycleElement
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficLightCycleElement, TrafficLightDirection
 from commonroad.scenario.trajectory import Trajectory, State
 
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
@@ -304,7 +304,7 @@ class CommonRoadFileWriter:
         self._add_all_objects_from_scenario()
         self._add_all_planning_problems_from_planning_problem_set()
         if check_validity:
-            # validate xml format 
+            # validate xml format
             self.check_validity_of_commonroad_file(self._dump())
 
         tree = etree.ElementTree(self._root_node)
@@ -1318,9 +1318,10 @@ class TrafficLightXMLNode:
                                        traffic_light.position[1]).create_node())
             traffic_light_node.append(position_node)
 
-        direction_node = etree.Element('direction')
-        direction_node.text = traffic_light.direction.value
-        traffic_light_node.append(direction_node)
+        if traffic_light.direction is not TrafficLightDirection.ALL:
+            direction_node = etree.Element('direction')
+            direction_node.text = traffic_light.direction.value
+            traffic_light_node.append(direction_node)
 
         if traffic_light.active is not None:
             active_node = etree.Element('active')
