@@ -522,6 +522,8 @@ class Scenario(IDrawable):
             self._lanelet_network.add_traffic_light(scenario_object, lanelet_ids)
         elif isinstance(scenario_object, Intersection):
             self._mark_object_id_as_used(scenario_object.intersection_id)
+            for inc in scenario_object.incomings:
+                self._mark_object_id_as_used(inc.incoming_id)
             self._lanelet_network.add_intersection(scenario_object)
         elif isinstance(scenario_object, EnvironmentObstacle):
             self._mark_object_id_as_used(scenario_object.obstacle_id)
@@ -710,6 +712,8 @@ class Scenario(IDrawable):
 
         self.lanelet_network.remove_intersection(intersection.intersection_id)
         self._id_set.remove(intersection.intersection_id)
+        for inc in intersection.incomings:
+            self._id_set.remove(inc.incoming_id)
 
     def generate_object_id(self) -> int:
         """ Generates a unique ID which is not assigned to any object in the scenario.
