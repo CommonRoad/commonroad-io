@@ -21,7 +21,8 @@ from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine, LaneletType
 from commonroad.scenario.obstacle import ObstacleRole, ObstacleType, DynamicObstacle, StaticObstacle, Obstacle, \
     Occupancy, Shape, SignalState, EnvironmentObstacle, PhantomObstacle
-from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment
+from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment, Weather, TimeOfDay, \
+    Underground
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficLightCycleElement, TrafficLightDirection
 from commonroad.scenario.trajectory import Trajectory, State
 
@@ -444,21 +445,24 @@ class EnvironmentXMLNode:
         :return: node
         """
         environment_node = etree.Element('environment')
-        time_node = etree.Element('time')
-        if environment.time.hours < 10:
-            time_node.text = "0" + str(environment.time.hours) + ":" + str(environment.time.minutes) + ":00"
-        else:
-            time_node.text = str(environment.time.hours) + ":" + str(environment.time.minutes)
-        environment_node.append(time_node)
-        time_of_day_node = etree.Element('timeOfDay')
-        time_of_day_node.text = environment.time_of_day.value
-        environment_node.append(time_of_day_node)
-        weather_node = etree.Element('weather')
-        weather_node.text = environment.weather.value
-        environment_node.append(weather_node)
-        underground_node = etree.Element('underground')
-        underground_node.text = environment.underground.value
-        environment_node.append(underground_node)
+        if environment.time_of_day.value is not TimeOfDay.UNKNOWN:
+            time_node = etree.Element('time')
+            if environment.time.hours < 10:
+                time_node.text = "0" + str(environment.time.hours) + ":" + str(environment.time.minutes) + ":00"
+            else:
+                time_node.text = str(environment.time.hours) + ":" + str(environment.time.minutes)
+            environment_node.append(time_node)
+            time_of_day_node = etree.Element('timeOfDay')
+            time_of_day_node.text = environment.time_of_day.value
+            environment_node.append(time_of_day_node)
+        if environment.weather.value is not Weather.UNKNOWN:
+            weather_node = etree.Element('weather')
+            weather_node.text = environment.weather.value
+            environment_node.append(weather_node)
+        if environment.underground.value is not Underground.UNKNOWN:
+            underground_node = etree.Element('underground')
+            underground_node.text = environment.underground.value
+            environment_node.append(underground_node)
 
         return environment_node
 

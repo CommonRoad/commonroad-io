@@ -70,6 +70,7 @@ class TimeOfDay(enum.Enum):
     """ Enum containing all possible time of days."""
     DAY = "day"
     NIGHT = "night"
+    UNKNOWN = "unknown"
 
 
 @enum.unique
@@ -81,6 +82,7 @@ class Weather(enum.Enum):
     FOG = "fog"
     SNOW = "snow"
     HAIL = "hail"
+    UNKNOWN = "unknown"
 
 
 @enum.unique
@@ -92,6 +94,7 @@ class Underground(enum.Enum):
     DAMAGED = "damaged"
     SNOW = "snow"
     ICE = "ice"
+    UNKNOWN = "unknown"
 
 
 class Time:
