@@ -19,6 +19,7 @@ def _obstacle_icon_assignment():
         ObstacleType.CAR: draw_car_icon,
         ObstacleType.PARKED_VEHICLE: draw_car_icon,
         ObstacleType.TAXI: draw_car_icon,
+        ObstacleType.TRUCK: draw_truck_icon,
     }
 
     return assign_dict
@@ -100,6 +101,73 @@ def _transform_to_global(
     return abs_coord
 
 
+def draw_truck_icon(
+    pos_x: Union[int, float],
+    pos_y: Union[int, float],
+    orientation: Union[int, float],
+    vehicle_length: Union[int, float],
+    vehicle_width: Union[int, float],
+    zorder: float = 5,
+    vehicle_color: str = "#ffffff",
+    edgecolor="black",
+    lw=0.5,
+):
+    """Return the patches of the car icon.
+
+    Define vertices in a normed rectangle.
+    -50 <= x <= 50 and -50 <= y <= 50
+    """
+    # region Define your points in the norm square (-50<=x<=50, -50<=y<=50)
+    # x -> length |  y -> width
+    v_trailer = np.array([[-50, -46], [20, -46], [20, 46], [-50, 46]])
+    v_driver_cabin = np.array([[25, -42], [50, -42], [50, 42], [25, 42]])
+    v_roof = np.array([[25, -34], [44, -34], [44, 34], [25, 34]])
+    v_a_col_l = np.array([v_roof[2], v_driver_cabin[2]])
+    v_a_col_r = np.array([v_roof[1], v_driver_cabin[1]])
+    v_connection = np.array(
+        [
+            v_trailer[2],
+            [v_driver_cabin[3][0], v_driver_cabin[3][1] - 3],
+            [v_driver_cabin[0][0], v_driver_cabin[0][1] + 3],
+            v_trailer[1],
+        ]
+    )
+    v_mirror_l = np.array([[43, 42], [41, 42], [41, 50], [43, 50]])
+    v_mirror_r = np.array([[43, -42], [41, -42], [41, -50], [43, -50]])
+    # endregion
+
+    # Transform your coords
+    truck = [
+        v_trailer,
+        v_driver_cabin,
+        v_roof,
+        v_a_col_l,
+        v_a_col_r,
+        v_connection,
+        v_mirror_l,
+        v_mirror_r,
+    ]
+    truck = [
+        _transform_to_global(
+            vertices=part,
+            pos_x=pos_x,
+            pos_y=pos_y,
+            orientation=orientation,
+            vehicle_length=vehicle_length,
+            vehicle_width=vehicle_width,
+        )
+        for part in truck
+    ]
+    patch_list = [
+        mpl.patches.Polygon(
+            part, fc=vehicle_color, ec=edgecolor, lw=lw, zorder=zorder, closed=True
+        )
+        for part in truck
+    ]
+
+    return patch_list
+
+
 def draw_car_icon(
     pos_x: Union[int, float],
     pos_y: Union[int, float],
@@ -116,9 +184,7 @@ def draw_car_icon(
     Define vertices in a normed rectangle.
     -50 <= x <= 50 and -50 <= y <= 50
     """
-    window_color = "#555555"
-    line_width = 0.5
-    car_color = "#ffffff"
+    window_color = edgecolor
 
     front_window = np.array(
         [
@@ -281,16 +347,16 @@ def draw_car_icon(
         mpl.patches.Polygon(
             window,
             fc=window_color,
-            ec=window_color,
-            lw=line_width,
-            zorder=40,
+            ec=edgecolor,
+            lw=lw,
+            zorder=zorder+1,
             closed=True,
         )
         for window in windows
     ]
     car_patches = [
         mpl.patches.Polygon(
-            part, fc=car_color, ec=window_color, lw=line_width, zorder=39, closed=True
+            part, fc=vehicle_color, ec=edgecolor, lw=lw, zorder=zorder, closed=True
         )
         for part in car
     ]
