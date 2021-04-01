@@ -443,9 +443,6 @@ class MPRenderer(IRenderer):
             try:
                 length = obj.obstacle_shape.length
                 width = obj.obstacle_shape.width
-                if length > 7.0:
-                    draw_shape = True
-                    draw_icon = False
             except AttributeError:
                 draw_shape = True
                 draw_icon = False

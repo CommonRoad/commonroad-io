@@ -20,6 +20,7 @@ def _obstacle_icon_assignment():
         ObstacleType.PARKED_VEHICLE: draw_car_icon,
         ObstacleType.TAXI: draw_car_icon,
         ObstacleType.TRUCK: draw_truck_icon,
+        ObstacleType.BUS: draw_bus_icon,
     }
 
     return assign_dict
@@ -101,6 +102,102 @@ def _transform_to_global(
     return abs_coord
 
 
+def draw_bus_icon(
+    pos_x: Union[int, float],
+    pos_y: Union[int, float],
+    orientation: Union[int, float],
+    vehicle_length: Union[int, float],
+    vehicle_width: Union[int, float],
+    zorder: float = 5,
+    vehicle_color: str = "#ffffff",
+    edgecolor="black",
+    lw=0.5,
+):
+    """Return the patches of the truck icon.
+
+    Define vertices in a normed rectangle.
+    -50 <= x <= 50 and -50 <= y <= 50
+    """
+    window_color = edgecolor
+
+    outline = np.array([[-50, -50], [50, -50], [50, 50], [-50, 50]])
+    front_window = np.array([[47, -42], [50, -46], [50, 46], [47, 42]])
+    right_window = np.array([[-20, -50], [-15, -42], [40, -42], [45, -50]])
+    left_window = np.array([[-20, 50], [-15, 42], [40, 42], [45, 50]])
+    roof_hatch = np.array([[-40, -27], [-15, -27], [-15, 27], [-40, 27]])
+    hatch_circles = [[-35, 0], [-27.5, 0], [-20, 0]]
+    roof_line = np.array([[-7, -27], [-7, 27]])
+    bus_list = [outline, roof_hatch, roof_line]
+    window_list = [front_window, right_window, left_window]
+
+    bus_list = [
+        _transform_to_global(
+            vertices=part,
+            pos_x=pos_x,
+            pos_y=pos_y,
+            orientation=orientation,
+            vehicle_length=vehicle_length,
+            vehicle_width=vehicle_width,
+        )
+        for part in bus_list
+    ]
+    window_list = [
+        _transform_to_global(
+            vertices=window,
+            pos_x=pos_x,
+            pos_y=pos_y,
+            orientation=orientation,
+            vehicle_length=vehicle_length,
+            vehicle_width=vehicle_width,
+        )
+        for window in window_list
+    ]
+    hatch_circles = _transform_to_global(
+        vertices=hatch_circles,
+        pos_x=pos_x,
+        pos_y=pos_y,
+        orientation=orientation,
+        vehicle_length=vehicle_length,
+        vehicle_width=vehicle_width,
+    )
+
+    bus_list_patches = [
+        mpl.patches.Polygon(
+            part,
+            fc=vehicle_color,
+            ec=edgecolor,
+            lw=lw,
+            zorder=zorder,
+            closed=True,
+        )
+        for part in bus_list
+    ]
+    window_list_patches = [
+        mpl.patches.Polygon(
+            window,
+            fc=window_color,
+            ec=edgecolor,
+            lw=lw,
+            zorder=zorder + 1,
+            closed=True,
+        )
+        for window in window_list
+    ]
+    hatch_circle_patches = [
+        mpl.patches.Circle(
+            point,
+            radius=vehicle_length * 2.5 / 100,
+            facecolor=vehicle_color,
+            zorder=zorder + 1,
+            linewidth=lw,
+            edgecolor=edgecolor,
+        )
+        for point in hatch_circles
+    ]
+
+    return bus_list_patches + window_list_patches + hatch_circle_patches
+
+
 def draw_truck_icon(
     pos_x: Union[int, float],
     pos_y: Union[int, float],
@@ -112,10 +209,12 @@ def draw_truck_icon(
     edgecolor="black",
     lw=0.5,
 ):
-    """Return the patches of the car icon.
+    """Return the patches of the truck icon.
 
     Define vertices in a normed rectangle.
     -50 <= x <= 50 and -50 <= y <= 50
+
+    Credits to Tobias Geißenberger for defining the vertices.
     """
     # region Define your points in the norm square (-50<=x<=50, -50<=y<=50)
     # x -> length |  y -> width
@@ -349,7 +448,7 @@ def draw_car_icon(
             fc=window_color,
             ec=edgecolor,
             lw=lw,
-            zorder=zorder+1,
+            zorder=zorder + 1,
             closed=True,
         )
         for window in windows
