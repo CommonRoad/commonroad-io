@@ -464,8 +464,10 @@ class MPRenderer(IRenderer):
                     self.obstacle_patches.extend(
                             get_obstacle_icon_patch(obj.obstacle_type, inital_state.position[0],
                                                     inital_state.position[1], inital_state.orientation,
-                                                    length=length, width=width, carcolor=facecolor, edgecolor=edgecolor,
-                                                    zorder=ZOrders.CAR_PATCH))
+                                                    vehicle_length=length, vehicle_width=width,
+                                                    vehicle_color=facecolor, edgecolor=edgecolor,
+                                                    zorder=ZOrders.CAR_PATCH)
+                                                )
         else:
             draw_shape = True
 

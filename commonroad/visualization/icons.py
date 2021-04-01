@@ -2,7 +2,7 @@
 from typing import Union
 import numpy as np
 import matplotlib as mpl
-
+from commonroad.scenario.obstacle import ObstacleType
 
 __author__ = "Simon Sagmeister"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -12,8 +12,6 @@ __version__ = "2020.4"
 # __email__ = "commonroad-i06@in.tum.de"
 __status__ = "Development"
 
-from commonroad.scenario.obstacle import ObstacleType
-
 
 def _obstacle_icon_assignment():
 
@@ -21,7 +19,7 @@ def _obstacle_icon_assignment():
         ObstacleType.CAR: draw_car_icon,
         ObstacleType.PARKED_VEHICLE: draw_car_icon,
         ObstacleType.TAXI: draw_car_icon,
-        }
+    }
 
     return assign_dict
 
@@ -30,129 +28,271 @@ def supported_icons():
     return list(_obstacle_icon_assignment().keys())
 
 
-def get_obstacle_icon_patch(obstacle_type: ObstacleType,  pos_x: Union[int, float], pos_y: Union[int, float],
-                            rotate: Union[int, float], length: Union[int, float],
-                            width: Union[int, float],
-                            zorder: float = 5, carcolor: str = '#ffffff', edgecolor='black', lw=0.5):
+def get_obstacle_icon_patch(
+    obstacle_type: ObstacleType,
+    pos_x: Union[int, float],
+    pos_y: Union[int, float],
+    orientation: Union[int, float],
+    vehicle_length: Union[int, float],
+    vehicle_width: Union[int, float],
+    zorder: float = 5,
+    vehicle_color: str = "#ffffff",
+    edgecolor="black",
+    lw=0.5,
+):
     draw_func = _obstacle_icon_assignment()[obstacle_type]
-    patch = draw_func(pos_x, pos_y, rotate, length, width, zorder, carcolor, edgecolor, lw)
+    patch = draw_func(
+        pos_x=pos_x,
+        pos_y=pos_y,
+        orientation=orientation,
+        vehicle_length=vehicle_length,
+        vehicle_width=vehicle_width,
+        zorder=zorder,
+        vehicle_color=vehicle_color,
+        edgecolor=edgecolor,
+        lw=lw,
+    )
     return patch
 
 
-def draw_car_icon(pos_x: Union[int, float], pos_y: Union[int, float],
-                  rotate: Union[int, float], length: Union[int, float],
-                  width: Union[int, float],
-                  zorder: float = 5, carcolor: str = '#ffffff', edgecolor='black', lw=0.5):
-    rotate = rotate + np.pi
+def _transform_to_global(
+    vertices: list,
+    pos_x: Union[int, float],
+    pos_y: Union[int, float],
+    orientation: Union[int, float],
+    vehicle_length: Union[int, float],
+    vehicle_width: Union[int, float],
+):
+    """Transform absolute coordinate to car-relative coordinate.
 
-    def reshape_and_addup(verts):
-        verts = verts.reshape((int(len(verts) / 2), 2))
-        for i in range(1, len(verts)):
-            verts[i] = verts[i] + verts[i - 1]
-        return verts
+    Args:
+        vertices: Shape: (N,2)
+        pos_x: -
+        pos_y: -
+        orientation: -
+        vehicle_length: -
+        vehicle_width: -
 
-    def transform(vertices, pos_x, pos_y, rotate):
-        vertices = np.asarray(np.bmat([vertices, np.ones((len(vertices), 1))]))
-        tmat = np.array([[np.cos(rotate), -np.sin(rotate), pos_x],
-                         [np.sin(rotate), np.cos(rotate), pos_y], [0, 0, 1]])
-        scalemat = np.array(
-                [[length/884.071996, 0, 0], [0, width/318.57232, 0],
-                 [0, 0, 1]])
-        centermat = np.array([[1, 0, -250], [0, 1, -889], [0, 0, 1]])
-        tmat = tmat.dot(scalemat.dot(centermat))
-        vertices = tmat.dot(vertices.transpose())
-        vertices = np.array([[1, 0, 0], [0, 1, 0]]).dot(vertices).transpose()
-        return vertices
+    Returns:
+        np_array: transformed absolute coordinate in the form (x,y) (shape: (N,2))
+    """
+    # Norm the array
+    vertices = np.array(vertices)
+    vertices = vertices * 0.01
+    # Scale it to vehicle dim
+    vertices[:, 0] = vertices[:, 0] * vehicle_length
+    vertices[:, 1] = vertices[:, 1] * vehicle_width
+    # Preprocess current pos
+    curr_pos = np.array([pos_x, pos_y])
+    curr_pos = curr_pos.reshape(2, 1)
+    # Rotate points
+    vertices = np.transpose(vertices)
+    rot_mat = np.array(
+        [
+            [np.cos(orientation), -np.sin(orientation)],
+            [np.sin(orientation), np.cos(orientation)],
+        ]
+    )
+    vertices = np.matmul(rot_mat, vertices)
+    # Translate points
+    vertices = vertices + curr_pos
+    abs_coord = np.transpose(vertices)
+    return abs_coord
 
-    verts1 = np.array(
-            [193.99383, 752.94359, -22.66602, 38, -9.33398, 52.66797, -2.60743,
-             44.82812, -0.0586, 0, 0.0293, 0.91992, -0.0293, 0.91797, 0.0586, 0,
-             2.60743, 44.82813, 9.33398, 52.66797, 22.66602, 38.00003, 59.33398,
-             -7.334, 62, -10.666, -6, -50.00003, -2.65234, -68.41407, 2.65234,
-             -68.41601, 6, -50, -62, -10.66602])
 
-    verts2 = np.array(
-            [715.99381, 768.27757, -101.332, 6.66602, 10.666, 62.66797, 3.3223,
-             50.41797, -3.3223, 50.41796, -10.666, 62.66601, 101.332, 6.668, 22,
-             -42.66799, 9.9824, -76.83594,  # 0.018,0,
-             # -0.01,-0.24804,
-             # 0.01,-0.24805,
-             # -0.018,0,
-             -9.9824, -76.83789, 0, 0])
+def draw_car_icon(
+    pos_x: Union[int, float],
+    pos_y: Union[int, float],
+    orientation: Union[int, float],
+    vehicle_length: Union[int, float],
+    vehicle_width: Union[int, float],
+    zorder: float = 5,
+    vehicle_color: str = "#ffffff",
+    edgecolor="black",
+    lw=0.5,
+):
+    """Return the patches of the car icon.
 
-    verts3 = np.array(
-            [421.06111, 751.61113, 190.2667, 3.33333, 13.3333, 5.33334,
-             -108.6666, 12.66666, -134, 0, -119.3334, -18.66666, 127.6456,
-             -2.96473])
+    Define vertices in a normed rectangle.
+    -50 <= x <= 50 and -50 <= y <= 50
+    """
+    window_color = "#555555"
+    line_width = 0.5
+    car_color = "#ffffff"
 
-    verts4 = np.array(
-            [271.32781, 712.14446, -6, -0.8, -16, 12, -14.8, 19.2, -4, 6, 20.4,
-             0.4, 3.6, -4.4, 4.8, -2.8])
-    verts5 = np.array(
-            [191.32781, 753.94359, -99.999996, 11, -63, 18.5, -59, 38.5, -20,
-             77, 20, 59.52734, 57, 36.49998, 65, 20.49999, 99.999996, 11.0001])
+    front_window = np.array(
+        [
+            [-21.36, -38.33],
+            [-23.93, -27.66],
+            [-24.98, -12.88],
+            [-25.28, -0.3],
+            [-25.29, -0.3],
+            [-25.28, -0.04],
+            [-25.29, 0.22],
+            [-25.28, 0.22],
+            [-24.98, 12.8],
+            [-23.93, 27.58],
+            [-21.36, 38.24],
+            [-14.65, 36.18],
+            [-7.64, 33.19],
+            [-8.32, 19.16],
+            [-8.62, -0.04],
+            [-8.32, -19.24],
+            [-7.64, -33.27],
+            [-14.65, -36.27],
+        ]
+    )
 
-    verts6 = np.array([421.06111, 1027.399, 190.2667, -3.3333, 13.3333, -5.3333,
-                       -108.6666, -12.6667, -134, 0, -119.3334, 18.6667,
-                       127.6456, 2.9647])
+    rear_window = np.array(
+        [
+            [37.68, -34.02],
+            [26.22, -32.15],
+            [27.43, -14.56],
+            [27.8, -0.41],
+            [27.43, 13.74],
+            [26.22, 31.32],
+            [37.68, 33.19],
+            [40.17, 21.22],
+            [41.3, -0.34],
+            [40.17, -21.91],
+            [40.17, -21.91],
+        ]
+    )
 
-    verts7 = np.array(
-            [271.32781, 1066.8657, -6, 0.8, -16, -12, -14.8, -19.2, -4, -6,
-             20.4, -0.4, 3.6, 4.4, 4.8, 2.8])
+    left_window = np.array(
+        [
+            [4.32, -38.7],
+            [25.84, -37.76],
+            [27.35, -36.27],
+            [15.06, -32.71],
+            [-0.1, -32.71],
+            [-13.6, -37.95],
+            [0.84, -38.78],
+        ]
+    )
 
-    verts8 = np.array(
-            [389.79851, 728.34788, -343.652396, 10.16016, -68.666, 22.42969,
-             -29.2558, 74.57031, -7.3164, 60.35742, -0.074, 0, 0.037, 0.76758,
-             -0.037, 0.76758, 0.074, 0, 7.3164, 42.35937, 29.2558, 74.57031,
-             68.666, 22.4278, 343.652396, 10.1621, 259.5859, -4.6192, 130.2539,
-             -17.5527, 24.0196, -18.4766, 17.5527, -65.58788, 3.6953, -37.42773,
-             0, -13.24414, -3.6953, -55.42774, -17.5527, -65.58984, -24.0196,
-             -18.47656, -130.2539, -17.55274])
+    left_mirror = np.array(
+        [
+            [-12.62, -49.78],
+            [-13.3, -50.0],
+            [-15.11, -46.63],
+            [-16.78, -41.24],
+            [-17.23, -39.56],
+            [-14.92, -39.45],
+            [-14.52, -40.68],
+            [-13.97, -41.47],
+        ]
+    )
 
-    verts1 = reshape_and_addup(verts1)  # vorderscheibe
-    verts2 = reshape_and_addup(verts2)  # rueckscheibe
-    verts3 = reshape_and_addup(verts3)  # seitenscheibe rechts
-    verts4 = reshape_and_addup(verts4)  # rueckspiegel links
-    verts5 = reshape_and_addup(verts5)  # motorhaube
-    verts6 = reshape_and_addup(verts6)  # fenster rechts
-    verts7 = reshape_and_addup(verts7)  # rueckspiegel rechts
-    verts8 = reshape_and_addup(verts8)  # umriss
+    engine_hood = np.array(
+        [
+            [-21.67, -38.04],
+            [-32.98, -34.96],
+            [-40.1, -29.77],
+            [-46.78, -18.96],
+            [-49.04, 2.65],
+            [-46.78, 19.35],
+            [-40.33, 29.6],
+            [-32.98, 35.35],
+            [-21.67, 38.44],
+        ]
+    )
 
-    verts1 = transform(verts1, pos_x, pos_y, rotate)
-    verts2 = transform(verts2, pos_x, pos_y, rotate)
-    verts3 = transform(verts3, pos_x, pos_y, rotate)
-    verts4 = transform(verts4, pos_x, pos_y, rotate)
-    verts5 = transform(verts5, pos_x, pos_y, rotate)
-    verts6 = transform(verts6, pos_x, pos_y, rotate)
-    verts7 = transform(verts7, pos_x, pos_y, rotate)
-    verts8 = transform(verts8, pos_x, pos_y, rotate)
+    right_window = np.array(
+        [
+            [4.32, 38.7],
+            [25.84, 37.76],
+            [27.35, 36.27],
+            [15.06, 32.71],
+            [-0.1, 32.71],
+            [-13.6, 37.95],
+            [0.84, 38.78],
+        ]
+    )
 
-    windowcolor = edgecolor
+    right_mirror = np.array(
+        [
+            [-12.62, 49.78],
+            [-13.3, 50.0],
+            [-15.11, 46.63],
+            [-16.78, 41.24],
+            [-17.23, 39.56],
+            [-14.92, 39.45],
+            [-14.52, 40.68],
+            [-13.97, 41.47],
+        ]
+    )
 
-    patch_list = [
-            mpl.patches.Polygon(verts1, closed=True,
-                                facecolor=windowcolor,
-                                zorder=zorder + 1, lw=0),
-            mpl.patches.Polygon(verts2, closed=True,
-                                facecolor=windowcolor,
-                                zorder=zorder + 1, lw=0),
-            mpl.patches.Polygon(verts3, closed=True,
-                                facecolor=windowcolor,
-                                zorder=zorder + 1, lw=0),
-            mpl.patches.Polygon(verts4, closed=True,
-                                facecolor=windowcolor,
-                                zorder=zorder + 1, lw=0),
-            # mpl.patches.PathPatch(Path(verts5, closed=True), fill=False,
-            # zorder=zorder + 1,
-            #                       color='#000000', lw=lw),
-            mpl.patches.Polygon(verts6, closed=True,
-                                facecolor=windowcolor,
-                                zorder=zorder + 1, lw=0),
-            mpl.patches.Polygon(verts7, closed=True,
-                                facecolor=windowcolor,
-                                zorder=zorder + 1, lw=0),
-            mpl.patches.Polygon(verts8, closed=True,
-                                edgecolor=edgecolor,
-                                facecolor=carcolor,
-                                zorder=zorder, lw=lw)]
-    return patch_list
+    outline = np.array(
+        [
+            [0.78, -45.23],
+            [-38.09, -42.38],
+            [-45.85, -36.08],
+            [-49.16, -15.15],
+            [-49.99, 1.79],
+            [-50.0, 1.79],
+            [-50.0, 2.0],
+            [-50.0, 2.22],
+            [-49.99, 2.22],
+            [-49.16, 14.1],
+            [-45.85, 35.03],
+            [-38.09, 41.33],
+            [0.78, 44.18],
+            [30.15, 42.88],
+            [44.88, 37.96],
+            [47.6, 32.77],
+            [49.58, 14.36],
+            [50.0, 3.86],
+            [50.0, 0.14],
+            [49.58, -15.41],
+            [47.6, -33.82],
+            [44.88, -39.01],
+            [30.15, -43.93],
+        ]
+    )
+
+    windows = [-front_window, -rear_window, -left_window, -right_window]
+    car = [-outline, -left_mirror, -right_mirror, -engine_hood]
+
+    windows = [
+        _transform_to_global(
+            vertices=window,
+            pos_x=pos_x,
+            pos_y=pos_y,
+            orientation=orientation,
+            vehicle_length=vehicle_length,
+            vehicle_width=vehicle_width,
+        )
+        for window in windows
+    ]
+    car = [
+        _transform_to_global(
+            vertices=part,
+            pos_x=pos_x,
+            pos_y=pos_y,
+            orientation=orientation,
+            vehicle_length=vehicle_length,
+            vehicle_width=vehicle_width,
+        )
+        for part in car
+    ]
+
+    window_patches = [
+        mpl.patches.Polygon(
+            window,
+            fc=window_color,
+            ec=window_color,
+            lw=line_width,
+            zorder=40,
+            closed=True,
+        )
+        for window in windows
+    ]
+    car_patches = [
+        mpl.patches.Polygon(
+            part, fc=car_color, ec=window_color, lw=line_width, zorder=39, closed=True
+        )
+        for part in car
+    ]
+
+    return car_patches + window_patches
