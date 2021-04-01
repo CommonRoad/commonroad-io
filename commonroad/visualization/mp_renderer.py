@@ -31,8 +31,9 @@ from commonroad.scenario.trajectory import Trajectory, State
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.traffic_sign_v2 import draw_traffic_light_signs
 from commonroad.visualization.util import LineDataUnits, collect_center_line_colors, get_arrow_path_at, colormap_idx, \
-    get_car_patch, line_marking_to_linestyle, traffic_light_color_dict, get_tangent_angle, \
+    line_marking_to_linestyle, traffic_light_color_dict, get_tangent_angle, \
     approximate_bounding_box_dyn_obstacles, get_vehicle_direction_triangle
+from commonroad.visualization.icons import supported_icons, get_obstacle_icon_patch
 from matplotlib.path import Path
 
 __author__ = "Luis Gressenbuch"
@@ -436,8 +437,7 @@ class MPRenderer(IRenderer):
             self._draw_history(obj, call_stack, draw_params)
 
         # draw car icon
-        if draw_icon and obj.obstacle_type in (
-                ObstacleType.CAR, ObstacleType.PARKED_VEHICLE, ObstacleType.TAXI) and type(
+        if draw_icon and obj.obstacle_type in supported_icons() and type(
                 obj.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:
 
             try:
@@ -462,9 +462,10 @@ class MPRenderer(IRenderer):
                     edgecolor = draw_params.by_callstack(call_stack, 'edgecolor')
 
                     self.obstacle_patches.extend(
-                            get_car_patch(inital_state.position[0], inital_state.position[1], inital_state.orientation,
-                                          length=length, width=width, carcolor=facecolor, edgecolor=edgecolor,
-                                          zorder=ZOrders.CAR_PATCH))
+                            get_obstacle_icon_patch(obj.obstacle_type, inital_state.position[0],
+                                                    inital_state.position[1], inital_state.orientation,
+                                                    length=length, width=width, carcolor=facecolor, edgecolor=edgecolor,
+                                                    zorder=ZOrders.CAR_PATCH))
         else:
             draw_shape = True
 
