@@ -3,9 +3,6 @@ from typing import Union
 import numpy as np
 import matplotlib as mpl
 
-import sys, pathlib
-sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
-
 
 __author__ = "Simon Sagmeister"
 __copyright__ = "TUM Cyber-Physical Systems Group"
