@@ -6,15 +6,13 @@ from commonroad.scenario.obstacle import ObstacleType
 
 __author__ = "Simon Sagmeister"
 __copyright__ = "TUM Cyber-Physical Systems Group"
-# __credits__ = ["Tobias Geissenberger"]
 __version__ = "2020.4"
-# __maintainer__ = "Luis Gressenbuch"
-# __email__ = "commonroad-i06@in.tum.de"
+__email__ = "simon.sagmeister@tum.de"
 __status__ = "Development"
 
 
 def _obstacle_icon_assignment():
-
+    """Assign obstacle type to icon."""
     assign_dict = {
         ObstacleType.CAR: draw_car_icon,
         ObstacleType.PARKED_VEHICLE: draw_car_icon,
@@ -28,6 +26,7 @@ def _obstacle_icon_assignment():
 
 
 def supported_icons():
+    """Return a list of obstacle types, that have a icon."""
     return list(_obstacle_icon_assignment().keys())
 
 
@@ -43,6 +42,7 @@ def get_obstacle_icon_patch(
     edgecolor="black",
     lw=0.5,
 ):
+    """Get a list of mpl.patches to draw a obstacle specific icon."""
     draw_func = _obstacle_icon_assignment()[obstacle_type]
     patch = draw_func(
         pos_x=pos_x,
