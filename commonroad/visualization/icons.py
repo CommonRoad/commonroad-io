@@ -19,7 +19,7 @@ def _obstacle_icon_assignment():
         ObstacleType.TAXI: draw_car_icon,
         ObstacleType.TRUCK: draw_truck_icon,
         ObstacleType.BUS: draw_bus_icon,
-        ObstacleType.BICYCLE: draw_bicycle_icon
+        ObstacleType.BICYCLE: draw_bicycle_icon,
     }
 
     return assign_dict
@@ -43,6 +43,14 @@ def get_obstacle_icon_patch(
     lw=0.5,
 ):
     """Get a list of mpl.patches to draw a obstacle specific icon."""
+    if obstacle_type not in supported_icons():
+        error_string = (
+            f"There is no icon available for vehicle type: {str(obstacle_type)}\n\n"
+            + "Ensure to call the get_obstacle_icon_patch(...) function\n"
+            + "only for vehicle types supported.\nThese can be retrieved "
+            + "by calling commonroad.visualization.icons.supported_icons()"
+        )
+        raise TypeError(error_string)
     draw_func = _obstacle_icon_assignment()[obstacle_type]
     patch = draw_func(
         pos_x=pos_x,
@@ -107,8 +115,8 @@ def draw_bus_icon(
     pos_x: Union[int, float],
     pos_y: Union[int, float],
     orientation: Union[int, float],
-    vehicle_length: Union[int, float],
-    vehicle_width: Union[int, float],
+    vehicle_length: Union[int, float] = 12,
+    vehicle_width: Union[int, float] = 2.5,
     zorder: float = 5,
     vehicle_color: str = "#ffffff",
     edgecolor="black",
@@ -203,8 +211,8 @@ def draw_truck_icon(
     pos_x: Union[int, float],
     pos_y: Union[int, float],
     orientation: Union[int, float],
-    vehicle_length: Union[int, float],
-    vehicle_width: Union[int, float],
+    vehicle_length: Union[int, float] = 10,
+    vehicle_width: Union[int, float] = 2.5,
     zorder: float = 5,
     vehicle_color: str = "#ffffff",
     edgecolor="black",
@@ -272,8 +280,8 @@ def draw_bicycle_icon(
     pos_x: Union[int, float],
     pos_y: Union[int, float],
     orientation: Union[int, float],
-    vehicle_length: Union[int, float],
-    vehicle_width: Union[int, float],
+    vehicle_length: Union[int, float] = 2.5,
+    vehicle_width: Union[int, float] = 0.8,
     zorder: float = 5,
     vehicle_color: str = "#ffffff",
     edgecolor="black",
@@ -354,8 +362,8 @@ def draw_car_icon(
     pos_x: Union[int, float],
     pos_y: Union[int, float],
     orientation: Union[int, float],
-    vehicle_length: Union[int, float],
-    vehicle_width: Union[int, float],
+    vehicle_length: Union[int, float] = 5,
+    vehicle_width: Union[int, float] = 2,
     zorder: float = 5,
     vehicle_color: str = "#ffffff",
     edgecolor="black",
