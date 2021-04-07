@@ -871,61 +871,25 @@ class Lanelet:
         if lanelet.successor is None or len(lanelet.successor) == 0:
             return [lanelet], [[lanelet.lanelet_id]]
 
-        # Create Graph from network
-        Net = nx.DiGraph()
-        lanelets = network._lanelets.values()
-        leafs = list()
-        for elements in lanelets:
-            Net.add_node(elements)
-            if elements.successor and not lanelet.lanelet_id in elements.successor:
-                for successors in elements.successor:
-                    successor = network.find_lanelet_by_id(successors)
-                    if lanelet_type is None or lanelet_type in successor.lanelet_type:
-                        Net.add_edge(elements, successor)
-            # Find leave Nodes
-            else:
-                leafs.append(elements)
-
-        merge_jobs = list()
-
-        # Get start node for search
-        start = network.find_lanelet_by_id(lanelet.lanelet_id)
-
-        # Calculate all paths (i.e. id sequences) to leaf nodes
-        for leaf in leafs:
-            path = nx.all_simple_paths(Net, start, leaf)
-            path = list(path)
-            if len(path) < 2 and len(path) > 0:
-                merge_jobs.append(path)
-            else:
-                for i in range(len(path)):
-
-                    merge_jobs.append([path[i]])
-
+        merge_jobs = lanelet.find_lanelet_successors_in_range(network, max_length=max_length)
+        merge_jobs = [[lanelet] + [network.find_lanelet_by_id(p) for p in path] for path in merge_jobs]
 
         # Create merged lanelets from paths
         merged_lanelets = list()
         merge_jobs_final = []
-        for i in range(len(merge_jobs)):
-            for j in merge_jobs[i]:
-                pred = j[0]
-                tmp_length = 0.0
-                merge_jobs_tmp = [pred.lanelet_id]
-                for k in range(1, len(j)):
-                    merge_jobs_tmp.append(j[k].lanelet_id)
-                    if k > 0:
-                        # do not consider length of inital lanelet for conservativeness
-                        tmp_length += j[k].distance[-1]
-                    pred = Lanelet.merge_lanelets(pred,j[k])
-                    if tmp_length >= max_length:
-                        break
+        for path in merge_jobs:
+            pred = path[0]
+            merge_jobs_tmp = [pred.lanelet_id]
+            for l in path[1:]:
+                merge_jobs_tmp.append(l.lanelet_id)
+                pred = Lanelet.merge_lanelets(pred, l)
 
-                merge_jobs_final.append(merge_jobs_tmp)
+            merge_jobs_final.append(merge_jobs_tmp)
             merged_lanelets.append(pred)
 
         return merged_lanelets, merge_jobs_final
     
-    def find_lanelet_successors_by_range(self, lanelet_network: "LaneletNetwork", max_length=50.0):
+    def find_lanelet_successors_in_range(self, lanelet_network: "LaneletNetwork", max_length=50.0):
         """
         Finds all possible successor paths (id sequences) within max_length.
         :param range: combined max. length of all lanelets in each path
@@ -944,8 +908,9 @@ class Lanelet:
                     paths_final.append(p)
                 else:
                     for s in successors:
-                        if s in p:
+                        if s in p or s == self.lanelet_id:
                             # prevent loops
+                            paths_final.append(p)
                             continue
 
                         l_next = l + lanelet_network.find_lanelet_by_id(s).distance[-1]
@@ -953,16 +918,13 @@ class Lanelet:
                             paths_next.append(p + [s])
                             lengths_next.append(l_next)
                         else:
-                            paths_final.append(p + [s])
+                            paths_final.append(p)
 
             paths = paths_next
             lengths = lengths_next
 
         return paths_final
 
-
-            
-            
     def add_dynamic_obstacle_to_lanelet(self, obstacle_id: int, time_step: int):
         """
         Adds a dynamic obstacle ID to lanelet
