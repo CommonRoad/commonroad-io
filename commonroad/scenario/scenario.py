@@ -360,7 +360,7 @@ class ScenarioID:
                           scenario_version)
 
     def __eq__(self, other: 'ScenarioID'):
-        return str(self) == str(other)
+        return str(self) == str(other) and self.scenario_version == other.scenario_version
 
 
 class Scenario(IDrawable):
