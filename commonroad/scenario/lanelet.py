@@ -2,7 +2,6 @@ import copy
 import enum
 from typing import *
 
-import networkx as nx
 import numpy as np
 
 import commonroad.geometry.transform
@@ -285,7 +284,7 @@ class Lanelet:
         return self._distance
 
     @distance.setter
-    def distance(self, dist: np.ndarray):
+    def distance(self, _):
         warnings.warn('<Lanelet/distance> distance of lanelet is immutable')
 
     @property
@@ -849,9 +848,9 @@ class Lanelet:
         for path in merge_jobs:
             pred = path[0]
             merge_jobs_tmp = [pred.lanelet_id]
-            for l in path[1:]:
-                merge_jobs_tmp.append(l.lanelet_id)
-                pred = Lanelet.merge_lanelets(pred, l)
+            for lanelet in path[1:]:
+                merge_jobs_tmp.append(lanelet.lanelet_id)
+                pred = Lanelet.merge_lanelets(pred, lanelet)
 
             merge_jobs_final.append(merge_jobs_tmp)
             merged_lanelets.append(pred)
@@ -862,13 +861,13 @@ class Lanelet:
         """
         Finds all possible successor paths (id sequences) within max_length.
 
-        :param range: combined max. length of all lanelets in each path
+        :param lanelet_network: lanelet network
+        :param max_length: abort once length of path is reached
         :return: list of lanelet IDs
         """
         paths = [[s] for s in self.successor]
         paths_final = []
         lengths = [0.0 for _ in paths]
-        i_p = 0
         while paths:
             paths_next = []
             lengths_next = []
@@ -962,7 +961,7 @@ class LaneletNetwork(IDrawable):
         return list(self._lanelets.values())
 
     @lanelets.setter
-    def lanelets(self, lanelets: list):
+    def lanelets(self, _):
         warnings.warn('<LaneletNetwork/lanelets>: lanelets of network are immutable')
 
     @property

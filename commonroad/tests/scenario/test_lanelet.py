@@ -30,10 +30,10 @@ class TestLanelet(unittest.TestCase):
                           line_marking_left, line_marking_right, stop_line, None, None, None,
                           {traffic_sign.traffic_sign_id})
 
-
         s1 = np.sqrt(1.25)
         s2 = np.sqrt(2.0)
-        desired_dist = [0.0, 1.0, 2.0, 2.0 + s1, 2.0 + 2*s1, 3.0 + 2*s1, 4.0 + 2*s1, 4.0 + 2*s1 + s2, 5.0 + 2*s1 + s2]
+        desired_dist = [0.0, 1.0, 2.0, 2.0 + s1, 2.0 + 2 * s1, 3.0 + 2 * s1, 4.0 + 2 * s1, 4.0 + 2 * s1 + s2,
+                        5.0 + 2 * s1 + s2]
         for i, dist in enumerate(lanelet.distance):
             self.assertAlmostEqual(dist, desired_dist[i])
 
@@ -60,10 +60,10 @@ class TestLanelet(unittest.TestCase):
 
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, 1, stop_line=stop_line)
 
-        lanelet.translate_rotate(np.array([2, -4]), np.pi/2)
+        lanelet.translate_rotate(np.array([2, -4]), np.pi / 2)
 
-        desired_lanelet_center = np.array([[3.5, 2], [3.5, 3], [3.5, 4], [3, 5], [2.5, 6], [2.5, 7], [2.5,  8], [3.5, 9],
-                                   [3.5, 10]])
+        desired_lanelet_center = np.array(
+                [[3.5, 2], [3.5, 3], [3.5, 4], [3, 5], [2.5, 6], [2.5, 7], [2.5, 8], [3.5, 9], [3.5, 10]])
         desired_stop_line_start = np.array([4, 2])
         desired_stop_line_end = np.array([3, 2])
 
@@ -127,15 +127,14 @@ class TestLanelet(unittest.TestCase):
         state_list = [State(position=np.array([0.0, 2]), orientation=0.0, time_step=1),
                       State(position=np.array([10.0, 5]), orientation=0.0, time_step=2),
                       State(position=np.array([20.0, 6]), orientation=0.0, time_step=3),
-                      State(position=np.array([20.0, 6]), orientation=3.14/2., time_step=4)]
+                      State(position=np.array([20.0, 6]), orientation=3.14 / 2., time_step=4)]
         trajectory = Trajectory(1, state_list)
         prediction = TrajectoryPrediction(trajectory, rect)
 
         # without inital_state
-        dynamic_obs = DynamicObstacle(obstacle_id=30, obstacle_type=ObstacleType.PARKED_VEHICLE,
-                                      prediction=prediction,
-                                      initial_state=State(**{'position': np.array([0, 2]), 'orientation': 0,
-                                                             'time_step': 0}),
+        dynamic_obs = DynamicObstacle(obstacle_id=30, obstacle_type=ObstacleType.PARKED_VEHICLE, prediction=prediction,
+                                      initial_state=State(
+                                          **{'position': np.array([0, 2]), 'orientation': 0, 'time_step': 0}),
                                       obstacle_shape=rect)
 
         self.assertTrue(lanelet.get_obstacles([dynamic_obs]))
@@ -162,15 +161,13 @@ class TestLanelet(unittest.TestCase):
         left_vertices1 = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5]])
         center_vertices1 = np.array([[0, .5], [1, .5], [2, .5], [3, 1]])
 
-        lanelet1 = Lanelet(left_vertices1, center_vertices1, right_vertices1, 1,
-                           successor=[2], predecessor=[5, 7])
+        lanelet1 = Lanelet(left_vertices1, center_vertices1, right_vertices1, 1, successor=[2], predecessor=[5, 7])
 
         right_vertices2 = np.array([[3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
         left_vertices2 = np.array([[3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
         center_vertices2 = np.array([[3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, .5], [8, .5]])
 
-        lanelet2 = Lanelet(left_vertices2, center_vertices2, right_vertices2, 2,
-                           predecessor=[1], successor=[10, 11])
+        lanelet2 = Lanelet(left_vertices2, center_vertices2, right_vertices2, 2, predecessor=[1], successor=[10, 11])
 
         lanelet1.add_static_obstacle_to_lanelet(100)
         lanelet2.add_static_obstacle_to_lanelet(101)
@@ -195,8 +192,8 @@ class TestLanelet(unittest.TestCase):
 
         # merging of obstacle assignment
         self.assertSetEqual(merged_lanelet.static_obstacles_on_lanelet, {100, 101})
-        self.assertEqual(merged_lanelet.dynamic_obstacles_on_lanelet, {0: {102, 103}, 1: {102, 103},
-                                                                       2: {102, 103}, 3: {103}})
+        self.assertEqual(merged_lanelet.dynamic_obstacles_on_lanelet,
+                         {0: {102, 103}, 1: {102, 103}, 2: {102, 103}, 3: {103}})
 
         # merging works also in reverse order
         merged_lanelet = Lanelet.merge_lanelets(lanelet2, lanelet1)
@@ -228,12 +225,9 @@ class TestLanelet(unittest.TestCase):
         lanelet2 = Lanelet(v_left2, v_center2, v_right2, lanelet_id=2, successor=[3], predecessor=[1])
         lanelet3 = Lanelet(v_left3, v_center3, v_right3, lanelet_id=3, successor=[1], predecessor=[2])
 
-        lanelet_network = LaneletNetwork.create_from_lanelet_list([lanelet1,
-                                                                   lanelet2,
-                                                                   lanelet3])
+        lanelet_network = LaneletNetwork.create_from_lanelet_list([lanelet1, lanelet2, lanelet3])
 
-        merged_lanelets, output_ids = Lanelet.all_lanelets_by_merging_successors_from_lanelet(lanelet1,
-                                                                                              lanelet_network,
+        merged_lanelets, output_ids = Lanelet.all_lanelets_by_merging_successors_from_lanelet(lanelet1, lanelet_network,
                                                                                               max_length=100.0)
 
         expected = [[1, 2, 3]]
@@ -245,9 +239,8 @@ class TestLanelet(unittest.TestCase):
         np.testing.assert_array_almost_equal(merged_lanelets[0].right_vertices, out_vertices_right)
         np.testing.assert_array_almost_equal(merged_lanelets[0].center_vertices, out_vertices_center)
 
-        ### test length restriction
-        merged_lanelets, output_ids = Lanelet.all_lanelets_by_merging_successors_from_lanelet(lanelet1,
-                                                                                              lanelet_network,
+        # test length restriction
+        merged_lanelets, output_ids = Lanelet.all_lanelets_by_merging_successors_from_lanelet(lanelet1, lanelet_network,
                                                                                               max_length=1.0)
 
         expected = [[1, 2]]
@@ -275,9 +268,9 @@ class TestLanelet(unittest.TestCase):
 
         lanelet1 = Lanelet(v_left1, v_center1, v_right1, lanelet_id=1, successor=[2], predecessor=[3])
         lanelet2 = Lanelet(v_left2, v_center2, v_right2, lanelet_id=2, successor=[3], predecessor=[1])
-        lanelet3 = Lanelet(v_left3, v_center3, v_right3, lanelet_id=3, successor=[1,4], predecessor=[2])
-        lanelet4 = Lanelet(v_left4, v_center4, v_right4, lanelet_id=4, successor=[ ], predecessor=[3])
-        ln = LaneletNetwork.create_from_lanelet_list([lanelet1,lanelet2,lanelet3,lanelet4])
+        lanelet3 = Lanelet(v_left3, v_center3, v_right3, lanelet_id=3, successor=[1, 4], predecessor=[2])
+        lanelet4 = Lanelet(v_left4, v_center4, v_right4, lanelet_id=4, successor=[], predecessor=[3])
+        ln = LaneletNetwork.create_from_lanelet_list([lanelet1, lanelet2, lanelet3, lanelet4])
 
         paths = lanelet1.find_lanelet_successors_in_range(ln)
         self.assertIn([2, 3], paths)
