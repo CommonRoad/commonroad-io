@@ -27,13 +27,17 @@ class ParamServer:
     are used.
     """
 
-    def __init__(self, params=None, warn_default=False):
+    def __init__(self, params=None, warn_default=False, default=None):
         """
         :param params: Optional parameters to initialize parameter server with 
         :param warn_default: Produce a warning when default parameters are used
+        :param default: Optional default parameter set.
+        If provided, overrides the defaults in default_draw_params.json.
+        This has to be a full parameter set!
         """
         self._params = params or {}
         self._warn_default = warn_default
+        self._default = default or default_params
 
     @staticmethod
     def _resolve_key(param_dict, key):
@@ -90,8 +94,7 @@ class ParamServer:
             param_path = (param_path,)
 
         val, depth = ParamServer._resolve_key(self._params, param_path)
-        val_default, depth_default = ParamServer._resolve_key(default_params,
-                                                              param_path)
+        val_default, depth_default = ParamServer._resolve_key(self._default, param_path)
         if val is None and val_default is None:
             logging.error('Value for key {} not found!'.format(param_path))
             return None

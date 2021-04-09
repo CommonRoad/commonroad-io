@@ -151,7 +151,7 @@ class MPRenderer(IRenderer):
         if draw_params is None:
             draw_params = self.draw_params
         elif isinstance(draw_params, dict):
-            draw_params = ParamServer(params=draw_params)
+            draw_params = ParamServer(params=draw_params, default=self.draw_params._params)
         return draw_params
 
     def clear(self, keep_static_artists=False) -> None:
@@ -433,6 +433,10 @@ class MPRenderer(IRenderer):
         draw_trajectory = draw_params.by_callstack(call_stack, ('trajectory', 'draw_trajectory'))
 
         draw_history = draw_params.by_callstack(call_stack, ('history', 'draw_history'))
+
+        if obj.prediction.final_time_step < time_begin or obj.initial_state.time_step > time_end:
+            return
+
         if draw_history and isinstance(obj.prediction, commonroad.prediction.prediction.TrajectoryPrediction):
             self._draw_history(obj, call_stack, draw_params)
 
@@ -470,6 +474,8 @@ class MPRenderer(IRenderer):
 
         # draw shape
         if draw_shape:
+            if time_begin < obj.initial_state.time_step <= time_end:
+                time_begin = obj.initial_state.time_step
             veh_occ = obj.occupancy_at_time(time_begin)
             self._draw_occupancy(veh_occ, obj.initial_state, draw_params, call_stack + ('vehicle_shape',))
             if draw_direction and veh_occ is not None and type(veh_occ.shape) == Rectangle:
