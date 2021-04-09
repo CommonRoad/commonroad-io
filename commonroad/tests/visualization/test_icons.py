@@ -1,13 +1,18 @@
+import copy
 import unittest
-from commonroad.visualization import icons
-from commonroad.scenario.obstacle import ObstacleType
 
-# This needs to be imported. I don't know why but otherwise,
-# the mpl patches can not be imported.
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 import numpy as np
+from matplotlib import patches
 
+from commonroad.geometry.shape import Rectangle
+from commonroad.prediction.prediction import TrajectoryPrediction
+from commonroad.scenario.obstacle import ObstacleType, DynamicObstacle
+from commonroad.scenario.scenario import Scenario, ScenarioID
+from commonroad.scenario.trajectory import State, Trajectory
+from commonroad.tests.util import parallel_lanelets
+from commonroad.visualization import icons
+from commonroad.visualization.mp_renderer import MPRenderer
 
 __author__ = "Simon Sagmeister"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -21,17 +26,33 @@ class TestIcons(unittest.TestCase):
     def _get_draw_funcs():
         return set(icons._obstacle_icon_assignment().values())
 
+    def test_draw_scenario(self):
+        """Draw a full scenario with different icons"""
+        lanelets = parallel_lanelets(1)
+        scn = Scenario(0.1, ScenarioID())
+        scn.lanelet_network.add_lanelet(lanelets[0])
+        shape = Rectangle(5, 2)
+        state = State(time_step=0, position=np.array((0, 2)), orientation=0.0)
+        for i, veh_type in enumerate(icons.supported_icons()):
+            init_state = copy.deepcopy(state)
+            init_state.position[0] = (i + 1) * 10
+            traj_state = copy.deepcopy(init_state)
+            traj_state.time_step = 1
+            traj_state.position[0] += 5
+            prediction = TrajectoryPrediction(Trajectory(1, [traj_state]), shape)
+            obs = DynamicObstacle(i, veh_type, shape, init_state, prediction)
+            scn.add_objects(obs)
+        rnd = MPRenderer()
+        scn.draw(rnd, {"time_begin": 1, "dynamic_obstacle": {"draw_icon": True}})
+        rnd.render()
+
     def test_icons_for_execution(self):
         """Test if the icons return patches without raising an exception."""
 
         for draw_func in self._get_draw_funcs():
-            patch_list = draw_func(
-                pos_x=0,
-                pos_y=0,
-                orientation=0,
-            )
+            patch_list = draw_func(pos_x=0, pos_y=0, orientation=0, )
             for patch in patch_list:
-                assert isinstance(patch, mpl.patches.Patch)
+                assert isinstance(patch, patches.Patch)
 
     def test_show_icons(self):
         """Draw the icons that are generated from individual draw funcs."""
@@ -59,10 +80,7 @@ class TestIcons(unittest.TestCase):
         for counter, vehicle_type in enumerate(vehicle_types):
 
             # Draw the bounding box
-            ax.add_patch(
-                mpl.patches.Rectangle(
-                    (110 * counter - 50, -50), 100, 100, color="#0065BD"
-                )
+            ax.add_patch(patches.Rectangle((110 * counter - 50, -50), 100, 100, color="#0065BD")
             )
 
             # Add vehicle type as text.
