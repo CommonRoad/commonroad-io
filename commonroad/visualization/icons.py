@@ -4,6 +4,7 @@ from typing import Union
 import matplotlib as mpl
 import numpy as np
 
+from commonroad.geometry.transform import rotate_translate
 from commonroad.scenario.obstacle import ObstacleType
 
 __author__ = "Simon Sagmeister"
@@ -69,15 +70,8 @@ def _transform_to_global(vertices: list, pos_x: Union[int, float], pos_y: Union[
     vertices[:, 1] = vertices[:, 1] * vehicle_width
     # Preprocess current pos
     curr_pos = np.array([pos_x, pos_y])
-    curr_pos = curr_pos.reshape(2, 1)
-    # Rotate points
-    vertices = np.transpose(vertices)
-    rot_mat = np.array([[np.cos(orientation), -np.sin(orientation)], [np.sin(orientation), np.cos(orientation)], ])
-    vertices = np.matmul(rot_mat, vertices)
-    # Translate points
-    vertices = vertices + curr_pos
-    abs_coord = np.transpose(vertices)
-    return abs_coord
+    vertices = rotate_translate(vertices, curr_pos, orientation)
+    return vertices
 
 
 def draw_bus_icon(pos_x: Union[int, float], pos_y: Union[int, float], orientation: Union[int, float],
