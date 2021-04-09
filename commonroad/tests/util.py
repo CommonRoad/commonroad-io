@@ -32,6 +32,6 @@ def parallel_lanelets(num_lanes, lanelet_width=4.0, lanelet_length=90.0) -> List
         else:
             adjacent_left = i + 1
         lanelets.append(Lanelet(left_vertices_lane, center_vertices_lane, right_vertices_lane, lanelet_id=i,
-                adjacent_left=adjacent_left, adjacent_right=adjacent_right, adjacent_right_same_direction=True,
-                adjacent_left_same_direction=True, ))
+                                adjacent_left=adjacent_left, adjacent_right=adjacent_right,
+                                adjacent_right_same_direction=True, adjacent_left_same_direction=True, ))
     return lanelets
