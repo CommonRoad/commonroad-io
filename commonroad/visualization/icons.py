@@ -9,9 +9,10 @@ from commonroad.scenario.obstacle import ObstacleType
 
 __author__ = "Simon Sagmeister"
 __copyright__ = "TUM Cyber-Physical Systems Group"
-__version__ = "2020.4"
-__email__ = "simon.sagmeister@tum.de"
-__status__ = "Development"
+__version__ = "2021.1"
+__maintainer__ = "Luis Gressenbuch"
+__email__ = "commonroad@lists.lrz.de"
+__status__ = "Released"
 
 
 def _obstacle_icon_assignment():

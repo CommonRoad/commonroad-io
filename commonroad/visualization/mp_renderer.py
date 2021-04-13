@@ -24,7 +24,7 @@ from commonroad.planning.planning_problem import PlanningProblemSet, PlanningPro
 from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction
 from commonroad.scenario.lanelet import LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, ObstacleRole, SignalState, PhantomObstacle, \
-    EnvironmentObstacle, ObstacleType
+    EnvironmentObstacle
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.traffic_sign import TrafficLightState, TrafficLight, TrafficSign
 from commonroad.scenario.trajectory import Trajectory, State
@@ -39,10 +39,10 @@ from matplotlib.path import Path
 __author__ = "Luis Gressenbuch"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = [""]
-__version__ = "2020.4"
+__version__ = "2021.1"
 __maintainer__ = "Luis Gressenbuch"
-__email__ = "commonroad-i06@in.tum.de"
-__status__ = "Development"
+__email__ = "commonroad@lists.lrz.de"
+__status__ = "Released"
 
 traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
 

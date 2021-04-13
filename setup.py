@@ -10,7 +10,7 @@ with open(path.join(this_directory, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='commonroad-io',
-    version='2020.3',
+    version='2021.1',
     description='Python tool to read, write, and visualize CommonRoad scenarios and solutions for automated vehicles.',
     keywords='autonomous automated vehicles driving motion planning',
     url='https://commonroad.in.tum.de/',

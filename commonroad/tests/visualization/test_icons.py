@@ -16,9 +16,9 @@ from commonroad.visualization.mp_renderer import MPRenderer
 
 __author__ = "Simon Sagmeister"
 __copyright__ = "TUM Cyber-Physical Systems Group"
-__version__ = "2020.4"
+__version__ = "2021.1"
 __email__ = "simon.sagmeister@tum.de"
-__status__ = "Development"
+__status__ = "Released"
 
 
 class TestIcons(unittest.TestCase):

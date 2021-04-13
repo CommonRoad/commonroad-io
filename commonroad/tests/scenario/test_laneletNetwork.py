@@ -11,7 +11,7 @@ from commonroad.scenario.intersection import Intersection, IntersectionIncomingE
 __author__ = "Moritz Untersperger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles, BMW Car@TUM"]
-__version__ = "2020.3"
+__version__ = "2021.1"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"

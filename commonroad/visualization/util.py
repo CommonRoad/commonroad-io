@@ -22,7 +22,7 @@ from matplotlib.path import Path
 __author__ = "Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = [""]
-__version__ = "2020.3"
+__version__ = "2021.1"
 __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
