@@ -495,7 +495,8 @@ class Lanelet:
         if self._lanelet_type is None or len(self._lanelet_type) == 0:
             assert isinstance(lanelet_type, set) and all(isinstance(elem, LaneletType) for elem in
                                                          lanelet_type), '<Lanelet/lanelet_type>: ''Provided type is ' \
-                                                                        'not valid! type = {}'.format(
+                                                                        'not valid! type = {}, ' \
+                                                                        'expected = Set[LaneletType]'.format(
                 type(lanelet_type))
             self._lanelet_type = lanelet_type
         else:
