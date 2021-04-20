@@ -67,7 +67,6 @@ class TextAreaAutoscale(TextArea):
         # Get the range for the new area
         _, _, xdelta, ydelta = ax.viewLim.bounds
         self.set_ax_lims(xdelta, ydelta, width_px, height_px)
-        ax.figure.canvas.draw_idle()
 
     def get_extent(self, renderer):
         correction_x = self.dx_pix / self.dx_m * self.px_per_metre
@@ -166,8 +165,6 @@ class OffsetImageAutoscale(OffsetImage):
         _, _, xdelta, ydelta = ax.viewLim.bounds
         self.set_ax_lims(xdelta, ydelta, width_px, height_px)
         self.text_area.set_ax_lims(xdelta, ydelta, width_px, height_px)
-        dd = ax.get_transform()
-        ax.figure.canvas.draw_idle()
 
     def get_extent(self, renderer=None):
         self.text_area._text.figure = self.figure
@@ -468,8 +465,6 @@ def create_img_boxes_traffic_sign(
                         add_text = '\n'.join(element.additional_values)
 
                     props = prop_dict[el_id.value] if el_id.value in prop_dict else prop_dict['default']
-
-
                     props = rescale_text(add_text, props, scale_factor,
                                          scale_factor_default)
                     props_txt = props['mpl_args']
