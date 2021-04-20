@@ -203,6 +203,7 @@ class MPRenderer(IRenderer):
         self.ax.add_collection(patch_col)
         artist_list.append(patch_col)
         self.dynamic_artists = artist_list
+        self._connect_callbacks()
         return artist_list
 
     def render_static(self) -> List[artists.Artist]:
@@ -215,6 +216,7 @@ class MPRenderer(IRenderer):
         for art in self.static_artists:
             self.ax.add_artist(art)
 
+        self._connect_callbacks()
         return self.static_collections + self.static_artists
 
     def render(self, show: bool = False, filename: str = None, keep_static_artists=False) -> None:
@@ -228,10 +230,6 @@ class MPRenderer(IRenderer):
         artists_list = self.render_static()
         artists_list.extend(self.render_dynamic())
 
-        for event, funcs in self.callbacks.items():
-            for fun in funcs:
-                self.ax.callbacks.connect(event, fun)
-
         if self.plot_limits is None:
             self.ax.autoscale(True)
         else:
@@ -244,6 +242,17 @@ class MPRenderer(IRenderer):
             self.f.show()
 
         self.clear(keep_static_artists)
+
+    def _connect_callbacks(self):
+        """
+        Connects collected callbacks with ax object.
+        :return:
+        """
+        for event, funcs in self.callbacks.items():
+            for fun in funcs:
+                self.ax.callbacks.connect(event, fun)
+
+        self.ax_updated = False
 
     def create_video(self, obj_lists: List[IDrawable], file_path: str, delta_time_steps: int = 1, plotting_horizon=0,
                      draw_params: Union[dict, ParamServer, None] = None, fig_size: Union[list, None] = None, dt=500,
@@ -291,6 +300,9 @@ class MPRenderer(IRenderer):
                     self.ax.ylim(limits[1][0] - 10, limits[1][1] + 10)
                 else:
                     self.ax.autoscale()
+            else:
+                self.ax.set_xlim(self.plot_limits[0], self.plot_limits[1])
+                self.ax.set_ylim(self.plot_limits[2], self.plot_limits[3])
             return artists
 
         def update(frame=0):
@@ -300,6 +312,18 @@ class MPRenderer(IRenderer):
             self.clear()
             self.draw_list(obj_lists, draw_params=draw_params)
             artists = self.render_dynamic()
+            if self.plot_limits is None:
+                self.ax.autoscale()
+            elif self.plot_limits == 'auto':
+                limits = approximate_bounding_box_dyn_obstacles(obj_lists, time_begin)
+                if limits is not None:
+                    self.ax.xlim(limits[0][0] - 10, limits[0][1] + 10)
+                    self.ax.ylim(limits[1][0] - 10, limits[1][1] + 10)
+                else:
+                    self.ax.autoscale()
+            else:
+                self.ax.set_xlim(self.plot_limits[0], self.plot_limits[1])
+                self.ax.set_ylim(self.plot_limits[2], self.plot_limits[3])
             return artists
 
         # Min frame rate is 1 fps
@@ -1256,7 +1280,7 @@ class MPRenderer(IRenderer):
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
-        if call_stack is ():
+        if call_stack == ():
             call_stack = tuple(['planning_problem_set'])
         call_stack = tuple(list(call_stack) + ['goal_region'])
         for goal_state in obj.state_list:
