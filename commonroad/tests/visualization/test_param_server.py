@@ -1,4 +1,5 @@
 import unittest
+
 from commonroad.visualization.param_server import ParamServer
 
 
@@ -39,3 +40,16 @@ class TestParamServer(unittest.TestCase):
         fetched = self.param_server[('dynamic_obstacle',) + path]
 
         self.assertEqual(default_color, fetched)
+
+    def test_chaining(self):
+        param_a = ParamServer(params={"param_a": "a", "param_c": "a"})
+        param_b = ParamServer(params={"param_b": "b", "param_a": "b"}, default=param_a)
+
+        self.assertEqual(param_b["param_b"], "b")
+        self.assertEqual(param_b["param_a"], "b")
+        self.assertEqual(param_b["param_c"], "a")
+        self.assertEqual(param_b["time_begin"], 0)
+
+
+if __name__ == '__main__':
+    unittest.main()
