@@ -1,22 +1,20 @@
 import sys
-import warnings
-from typing import Dict, Callable, Tuple, Any
+from typing import Dict, Callable, Any
 
 import matplotlib as mpl
-import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
+
 import commonroad
+import commonroad.visualization.planning
+import commonroad.visualization.scenario
 from commonroad.geometry.shape import *
-from commonroad.planning.planning_problem import GoalRegion, \
-    PlanningProblemSet, \
-    PlanningProblem
+from commonroad.planning.planning_problem import GoalRegion, PlanningProblemSet, PlanningProblem
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.traffic_sign import TrafficSign
 from commonroad.scenario.trajectory import Trajectory, State
-import commonroad.visualization.scenario
-import commonroad.visualization.planning
 
 __author__ = "Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -160,13 +158,11 @@ def _retrieve_alternate_value(style_sheet: dict, call_stack: Tuple[str, ...],
     Like retrieve_value(...), but retrieves value from value_path_2 if
     value_path_1 does not exist in style_sheet
 
-    :param style_sheet: parameters for plotting given by a nested dict (see
-    draw_params in draw_object)
+    :param style_sheet: parameters for plotting given by a nested dict (see draw_params in draw_object)
     :param call_stack: tuple of string containing the call stack
     :param value_path_1: string tuple that contains the path to the value
     :param value_path_2: alternate value_path
-    :return: the value from style_sheet defined by value_path_1 (or
-    value_path_2)
+    :return: the value from style_sheet defined by value_path_1 (or value_path_2)
     """
     # first: try to retrieve value with call stack, start from deepest level
     for idx_r in range(0, len(call_stack)):
@@ -251,10 +247,9 @@ def _add_legend(legend: Dict[Tuple[str, ...], str], draw_params):
     """
     Adds legend with color of objects specified by legend.keys() and texts
     specified by legend.values().
-    :param legend: color of objects specified by path in legend.keys() and
-    texts specified by legend.values()
-    :param draw_params: draw parameters used for plotting (color is extracted
-    using path in legend.keys())
+
+    :param legend: color of objects specified by path in legend.keys() and texts specified by legend.values()
+    :param draw_params: draw parameters used for plotting (color is extracted using path in legend.keys())
     :return:
     """
     handles = []
@@ -288,32 +283,23 @@ def draw_object(obj: Union[plottable_types, List[plottable_types]],
     """
     Main function for drawing objects from the scenario and planning modules.
 
-    :param obj: the object or list of objects (with all the same type) to be
-    plotted
-    :param plot_limits:  list of [x_min, x_max, y_min, y_max that defines the
-    plotted area of the scenario
+    :param obj: the object or list of objects (with all the same type) to be plotted
+    :param plot_limits:  list of [x_min, x_max, y_min, y_max that defines the plotted area of the scenario
     :param ax: axes object from matplotlib
-    :param draw_params: parameters for plotting given by a nested dict that
-    recreates the structure of an object,
-           see documentation for full overview over the structure. If
-           parameters are not set,
-           the default setting are used. An example for specifying the color
-           of circle obstacles:
-           {'scenario': {'static_obstacle':{'shape':{'circle':{
-           'facecolor':#3399ff, edgecolor': '#0066cc'}}}}}
-    :param draw_func: specify the drawing function (usually not necessary to
-    change default)
-    :param handles: dict that assign to every object_id of all plotted
-    obstacles the corresponding patch handles
-    :param call_stack: tuple of string containing the call stack,
-    which allows for differentiation of plotting styles
-           depending on the call stack of draw_object, (usually 'None'!)
+    :param draw_params: parameters for plotting given by a nested dict that recreates the structure of an object,
+       see documentation for full overview over the structure. If parameters are not set,
+       the default setting are used. An example for specifying the color of circle obstacles:
+       ``{'scenario': {'static_obstacle':{'shape':{'circle':{
+       'facecolor':#3399ff, edgecolor': '#0066cc'}}}}}``
+    :param draw_func: specify the drawing function (usually not necessary to change default)
+    :param handles: dict that assign to every object_id of all plotted obstacles the corresponding patch handles
+    :param call_stack: tuple of string containing the call stack, which allows for differentiation of plotting styles
+        depending on the call stack of draw_object, (usually 'None'!)
     :param legend: names of objects that should appear in the legend
     :return: Returns matplotlib patch object for draw_funcs that actually
-    draw a patch (used internally for creating handles dict)
+        draw a patch (used internally for creating handles dict)
     """
-    warnings.warn('draw_object is deprecated, use renderer interface instead',
-                  DeprecationWarning)
+    warnings.warn('draw_object is deprecated, use renderer interface instead', DeprecationWarning)
     assert isinstance(draw_params,
                       dict) or draw_params is None, \
         '<visualization/draw_dispatch_cr/draw_object>:' \

@@ -13,6 +13,7 @@ with open(default_params_path) as fp:
 def write_default_params(filename: str) -> None:
     """
     Write default parameters to the give file as JSON
+
     :param filename: Destination JSON file
     :return: None
     """
@@ -27,46 +28,71 @@ class ParamServer:
     are used.
     """
 
-    def __init__(self, params=None, warn_default=False, default=None):
+    def __init__(self, params: dict = None, warn_default: bool = False, default=None):
         """
-        :param params: Optional parameters to initialize parameter server with 
+        :param params: Optional parameters to initialize parameter server with
         :param warn_default: Produce a warning when default parameters are used
-        :param default: Optional default parameter set.
-        If provided, overrides the defaults in default_draw_params.json.
-        This has to be a full parameter set!
+        :param default: Optional default parameter set. If provided, overrides the defaults in default_draw_params.json.
         """
         self._params = params or {}
         self._warn_default = warn_default
-        self._default = default or default_params
+        if isinstance(default, dict):
+            self._default = ParamServer(params=default)
+        elif isinstance(default, ParamServer):
+            self._default = default
+        else:
+            self._default = default_params
 
     @staticmethod
     def _resolve_key(param_dict, key):
-        if len(key) == 0:
-            return None, 0
-        tmp_dict = param_dict
-        l_key = list(key)
-        # Try to find most special version of element
-        while len(l_key) > 0:
-            k = l_key.pop(0)
-            if k in tmp_dict.keys():
-                tmp_dict = tmp_dict[k]
-            else:
-                tmp_dict = None
-                break
-        if tmp_dict is None and len(key) > 0:
-            # If not found, remove first level and try again
-            return ParamServer._resolve_key(param_dict, key[1:])
+        if isinstance(param_dict, ParamServer):
+            return param_dict.resolve_key(key)
         else:
-            return tmp_dict, len(key)
+            if len(key) == 0:
+                return None, 0
+            tmp_dict = param_dict
+            l_key = list(key)
+            # Try to find most special version of element
+            while len(l_key) > 0:
+                k = l_key.pop(0)
+                if k in tmp_dict.keys():
+                    tmp_dict = tmp_dict[k]
+                else:
+                    tmp_dict = None
+                    break
+            if tmp_dict is None and len(key) > 0:
+                # If not found, remove first level and try again
+                return ParamServer._resolve_key(param_dict, key[1:])
+            else:
+                return tmp_dict, len(key)
 
-    def by_callstack(self, call_stack: Tuple[str, ...],
-                     param_path: Union[str, Tuple[str, ...]]):
+    def resolve_key(self, param_path):
+        val, depth = ParamServer._resolve_key(self._params, param_path)
+        val_default, depth_default = ParamServer._resolve_key(self._default, param_path)
+        if val is None and val_default is None:
+            return None, None
+
+        if val_default is not None and val is None:
+            if self._warn_default:
+                logging.warning('Using default for key {}!'.format(param_path))
+            return val_default, depth_default
+
+        if val is not None and val_default is None:
+            return val, depth
+
+        if val is not None and val_default is not None:
+            if depth >= depth_default:
+                return val, depth
+            else:
+                return val_default, depth_default
+
+    def by_callstack(self, call_stack: Tuple[str, ...], param_path: Union[str, Tuple[str, ...]]):
         """
         Resolves the parameter path using the callstack. If it nothing can be
         found returns None
+
         :param call_stack: Tuple of string containing the call stack,
-        which allows for differentiation of plotting styles
-               depending on the call stack
+            which allows for differentiation of plotting styles depending on the call stack
         :param param_path: Key or tuple of keys leading to the parameter
         :return: the parameter
         """
@@ -87,35 +113,22 @@ class ParamServer:
         a) the specified path cannot be resolved in the contained parameters or
         b) the default parameters contain a more specific version than the
         contained parameters
+
         :param param_path: Key or tuple of keys leading to the parameter
         :return: the parameter
         """
         if not isinstance(param_path, tuple):
             param_path = (param_path,)
 
-        val, depth = ParamServer._resolve_key(self._params, param_path)
-        val_default, depth_default = ParamServer._resolve_key(self._default, param_path)
-        if val is None and val_default is None:
+        val, _ = self.resolve_key(param_path)
+        if val is None:
             logging.error('Value for key {} not found!'.format(param_path))
-            return None
-
-        if val_default is not None and val is None:
-            if self._warn_default:
-                logging.warning('Using default for key {}!'.format(param_path))
-            return val_default
-
-        if val is not None and val_default is None:
-            return val
-
-        if val is not None and val_default is not None:
-            if depth >= depth_default:
-                return val
-            else:
-                return val_default
+        return val
 
     def __setitem__(self, param_path, value):
         """
         Sets the value under the given key
+
         :param param_path: key or tuple of keys leading to the parameter
         :param value: the value
         :return: None
@@ -160,6 +173,7 @@ class ParamServer:
     def from_json(fname: str):
         """
         Restores a parameter server from a JSON file
+
         :param fname: file name and path of the JSON file
         :return: the parameter server
         """

@@ -19,9 +19,9 @@ The software is written in Python 3.6 and tested on Linux. The usage of the Anac
 Documentation
 =============
 
-The full documentation of the API and introducing examples can be found under `commonroad.in.tum.de <https://commonroad.in.tum.de/static/docs/commonroad-io/index.html>`__.
+The full documentation of the API and introducing examples can be found under `commonroad.in.tum.de <https://commonroad-io.readthedocs.io/en/latest/>`__.
 
-For getting started, we recommend our `tutorials <https://commonroad.in.tum.de/tutorials/>`__.
+For getting started, we recommend our `tutorials <https://commonroad.in.tum.de/commonroad-io>`__.
 
 Additional Tools
 ================
