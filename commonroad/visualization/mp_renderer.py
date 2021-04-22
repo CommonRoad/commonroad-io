@@ -1202,9 +1202,8 @@ class MPRenderer(IRenderer):
     def draw_planning_problem_set(self, obj: PlanningProblemSet, draw_params: Union[ParamServer, dict, None],
                                   call_stack: Tuple[str, ...]) -> None:
         """
-        Draws all or selected planning problems from the planning problem 
-        set. Planning problems can be selected by providing IDs in 
-        `drawing_params[planning_problem_set][draw_ids]`
+        Draws all or selected planning problems from the planning problem set. Planning problems can be selected by
+        providing IDs in`drawing_params[planning_problem_set][draw_ids]`
 
         :param obj: object to be plotted
         :param draw_params: parameters for plotting given by a nested dict

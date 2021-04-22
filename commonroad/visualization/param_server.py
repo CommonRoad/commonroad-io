@@ -30,7 +30,7 @@ class ParamServer:
 
     def __init__(self, params: dict = None, warn_default: bool = False, default=None):
         """
-        :param params: Optional parameters to initialize parameter server with 
+        :param params: Optional parameters to initialize parameter server with
         :param warn_default: Produce a warning when default parameters are used
         :param default: Optional default parameter set. If provided, overrides the defaults in default_draw_params.json.
         """
@@ -124,7 +124,6 @@ class ParamServer:
         if val is None:
             logging.error('Value for key {} not found!'.format(param_path))
         return val
-
 
     def __setitem__(self, param_path, value):
         """
