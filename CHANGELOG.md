@@ -1,6 +1,6 @@
 # Changelog
 
-## [2021.1] - 2021-04-16
+## [2021.1] - 2021-04-23
 ### Added
 - Support for over 50 new traffic signs from Germany
 - Support of phantom obstacles
