@@ -181,7 +181,8 @@ class TestObstacle(unittest.TestCase):
                 assert dynamic_obs.state_at_time(i) is None
 
     def test_environmental_obstacle(self):
-        environmental_obstacle_shape = Polygon(np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [4, 2], [3, 1], [2, 1], [1, 1]]))
+        environmental_obstacle_shape = Polygon(np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [4, 2], [3, 1],
+                                                         [2, 1], [1, 1]]))
         environmental_obstacle_id = 1234
         environmental_obstacle_type = ObstacleType.BUILDING
         environmental_obstacle = EnvironmentObstacle(environmental_obstacle_id, environmental_obstacle_type,
@@ -192,6 +193,26 @@ class TestObstacle(unittest.TestCase):
         self.assertEqual(environmental_obstacle.obstacle_type, environmental_obstacle_type)
         np.testing.assert_array_almost_equal(environmental_obstacle_shape.vertices,
                                              environmental_obstacle.obstacle_shape.vertices)
+
+    def test_phantom_obstacle(self):
+        s1 = Rectangle(3, 10)
+        s2 = Circle(4, np.array([2.0, 1.0]))
+        s3 = ShapeGroup([s1, s2])
+        self.occ1 = Occupancy(2, s1)
+        self.occ2 = Occupancy(3, s3)
+        sp = SetBasedPrediction(2, [self.occ1, self.occ2])
+
+        phantom_obstacle_id = 1234
+        phantom_obstacle_role = ObstacleRole.Phantom
+        phantom_obstacle = PhantomObstacle(obstacle_id=phantom_obstacle_id, prediction=sp)
+
+        self.assertEqual(phantom_obstacle.obstacle_id, phantom_obstacle_id)
+        self.assertEqual(phantom_obstacle.obstacle_role, phantom_obstacle_role)
+        np.testing.assert_array_almost_equal(s1.vertices, phantom_obstacle.occupancy_at_time(2).shape.vertices)
+        np.testing.assert_array_almost_equal(s3.shapes[0].vertices,
+                                             phantom_obstacle.occupancy_at_time(3).shape.shapes[0].vertices)
+        np.testing.assert_array_almost_equal(s3.shapes[1].center,
+                                             phantom_obstacle.occupancy_at_time(3).shape.shapes[1].center)
 
 
 if __name__ == '__main__':
