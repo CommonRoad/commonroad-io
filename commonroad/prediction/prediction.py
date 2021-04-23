@@ -1,27 +1,36 @@
 import abc
-from typing import Union, List, Dict, Set
+from typing import Union, List, Dict, Set, Optional, Tuple
 import numpy as np
 
 from commonroad.common.util import Interval
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector
-from commonroad.geometry.shape import Shape
+from commonroad.geometry.shape import Shape, \
+    occupancy_shape_from_state
 from commonroad.scenario.trajectory import Trajectory
 
 __author__ = "Stefanie Manzinger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles", "CAR@TUM"]
-__version__ = "2020.3"
+__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles",
+               "CAR@TUM"]
+__version__ = "2021.1"
 __maintainer__ = "Stefanie Manzinger"
-__email__ = "commonroad-i06@in.tum.de"
+__email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.renderer import IRenderer
 
-class Occupancy:
-    """ Class describing an occupied area in the position domain. The occupied area can be defined for a certain time
+
+class Occupancy(IDrawable):
+    """ Class describing an occupied area in the position domain. The
+    occupied area can be defined for a certain time
     step or a time interval."""
+
     def __init__(self, time_step: Union[int, Interval], shape: Shape):
         """
-        :param time_step: a time interval or time step for which the occupancy is defined
+        :param time_step: a time interval or time step for which the
+        occupancy is defined
         :param shape: occupied region in the position domain
         """
         self.time_step: Union[int, Interval] = time_step
@@ -53,14 +62,27 @@ class Occupancy:
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ Translates and rotates the occupied area.
 
-        :param translation: translation vector [x_off, y_off] in x- and y-direction
+        :param translation: translation vector [x_off, y_off] in x- and
+        y-direction
         :param angle: rotation angle in radian (counter-clockwise)
         """
-        assert is_real_number_vector(translation, 2), '<Occupancy/translate_rotate>: argument "translation" is ' \
-                                                      'not a vector of real numbers of length 2.'
-        assert is_valid_orientation(angle), '<Occupancy/translate_rotate>: argument "orientation" is not valid.'
+        assert is_real_number_vector(translation,
+                                     2), '<Occupancy/translate_rotate>: ' \
+                                         'argument "translation" is ' \
+                                         'not a vector of real numbers of ' \
+                                         'length 2.'
+        assert is_valid_orientation(
+                angle), '<Occupancy/translate_rotate>: argument "orientation" ' \
+                        'is ' \
+                        'not valid.'
 
         self._shape = self._shape.translate_rotate(translation, angle)
+
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
+        call_stack = tuple(list(call_stack) + ['occupancy'])
+        self.shape.draw(renderer, draw_params, call_stack)
 
 
 class Prediction:
@@ -249,7 +271,8 @@ class TrajectoryPrediction(Prediction):
         """ Computes the occupancy set over time given the predicted trajectory and shape of the object."""
         occupancy_set = list()
         for k, state in enumerate(self._trajectory.state_list):
-            occupied_region = self._shape.rotate_translate_local(
-                state.position, state.orientation)
+            if not hasattr(state, "orientation"):
+                state.orientation = np.arctan2(state.velocity_y, state.velocity)
+            occupied_region = occupancy_shape_from_state(self._shape, state)
             occupancy_set.append(Occupancy(state.time_step, occupied_region))
         return occupancy_set

@@ -1,7 +1,6 @@
 Module Scenario
 ===============
 
-
 Scenario
 --------
 
@@ -10,42 +9,15 @@ Scenario
 ``Scenario`` class
 ^^^^^^^^^^^^^^^^^^
 .. autoclass:: Scenario
-   :undoc-members:
    :members:
    :member-order: bysource
-
-
-``ScenarioID`` class
-^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: ScenarioID
-   :undoc-members:
-   :members:
-   :member-order: bysource
-
 
 ``Tag`` class
-^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: Tag
   :undoc-members:
   :members:
   :member-order: bysource
-
-
-``Time`` class
-^^^^^^^^^^^^^^
-.. autoclass:: Time
-  :undoc-members:
-  :members:
-  :member-order: bysource
-
-
-``Environment`` class
-^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: Environment
-  :undoc-members:
-  :members:
-  :member-order: bysource
-
 
 ``GeoTransformation`` class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -53,7 +25,6 @@ Scenario
   :undoc-members:
   :members:
   :member-order: bysource
-
 
 ``Location`` class
 ^^^^^^^^^^^^^^^^^^

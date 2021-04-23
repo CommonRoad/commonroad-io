@@ -8,9 +8,9 @@ from commonroad.scenario.lanelet import LaneletNetwork
 __author__ = "Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["CAR@TUM"]
-__version__ = "2020.3"
+__version__ = "2021.1"
 __maintainer__ = "Sebastian Maierhofer"
-__email__ = "commonroad-i06@in.tum.de"
+__email__ = "commonroad@lists.lrz.de"
 __status__ = "Release"
 
 
@@ -82,6 +82,9 @@ class TrafficSigInterpreter:
         :param lanelet_ids: IDs of lanelets the vehicle is on
         :returns: minimum required speed of provided lanelets or None if no required speed exists
         """
+        if not hasattr(self.traffic_sign_ids, 'MIN_SPEED'):
+            return None
+
         required_velocities = []
         for lanelet_id in lanelet_ids:
             lanelet = self._lanelet_network.find_lanelet_by_id(lanelet_id)

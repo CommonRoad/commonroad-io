@@ -1,9 +1,9 @@
 __author__ = "Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["CAR@TUM"]
-__version__ = "2020.3"
+__version__ = "2021.1"
 __maintainer__ = "Sebastian Maierhofer"
-__email__ = "commonroad-i06@in.tum.de"
+__email__ = "commonroad@lists.lrz.de"
 __status__ = "Release"
 
 from typing import List, Set, Dict
@@ -38,7 +38,7 @@ class IntersectionIncomingElement:
         self.successors_right = successors_right
         self.successors_straight = successors_straight
         self.successors_left = successors_left
-        self.left_of = left_of
+        self._left_of = left_of
 
     @property
     def incoming_id(self) -> int:
@@ -91,7 +91,10 @@ class IntersectionIncomingElement:
         """
         :param successors_right: set of IDs of incoming lanelets which turn right
         """
-        self._successors_right = successors_right
+        if successors_right is None:
+            self._successors_right = set()
+        else:
+            self._successors_right = successors_right
 
     @property
     def successors_straight(self) -> Set[int]:
@@ -105,7 +108,10 @@ class IntersectionIncomingElement:
         """
         :param successors_straight: set of IDs of incoming lanelets which go straight
         """
-        self._successors_straight = successors_straight
+        if successors_straight is None:
+            self._successors_straight = set()
+        else:
+            self._successors_straight = successors_straight
 
     @property
     def successors_left(self) -> Set[int]:
@@ -119,7 +125,10 @@ class IntersectionIncomingElement:
         """
         :param successors_left: set of IDs of incoming lanelets which turn left
         """
-        self._successors_left = successors_left
+        if successors_left is None:
+            self._successors_left = set()
+        else:
+            self._successors_left = successors_left
 
     @property
     def left_of(self) -> int:
@@ -210,8 +219,6 @@ class Intersection:
             if crossings is None:
                 self._crossings = set()
             else:
-                assert len(crossings) > 0, '<Intersection/crossings>: Intersection crossing ' \
-                                           'must consist of at least one crossing lanelet '
                 self._crossings = crossings
         else:
             warnings.warn('<Intersection/crossings>: crossings of intersection are immutable')

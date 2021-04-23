@@ -1,12 +1,13 @@
 import numpy as npy
 import warnings
+from typing import Union
 
 __author__ = "Christian Pek"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW Group CAR@TUM"]
-__version__ = "2020.3"
+__version__ = "2021.1"
 __maintainer__ = "Christian Pek"
-__email__ = "commonroad-i06@in.tum.de"
+__email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
 from commonroad import TWO_PI
@@ -19,7 +20,7 @@ class ValidTypes:
     NUMBERS = (float, int, npy.number)  # real numbers
     NAT_NUMBERS = (int, npy.integer)  # natural numbers
 
-    LISTS = (list)  # vectors
+    LISTS = list  # vectors
     ARRAY = (npy.ndarray,)
 
 
@@ -62,13 +63,13 @@ def is_negative(n: float) -> bool:
 def is_valid_length(length: int) -> bool:
     """
     Checks if a provided length/width is non-zero and positive
-    :param l: The length/width to check
+    :param length: The length/width to check
     :return: True if the provided length/width is valid
     """
     return is_natural_number(length) and length > 0
 
 
-def is_real_number_vector(x: npy.ndarray, length=None):
+def is_real_number_vector(x: Union[npy.ndarray, float], length=None):
     """
     Checks if a provided variable is a vector of real numbers
     :param x: The variable to check
@@ -86,8 +87,10 @@ def is_natural_number_vector(x: npy.ndarray, length=None):
     :param length: optional parameter which tests if the vector is a natural number vector of specified length
     :return: True if the specified variable is a vector of real numbers
     """
-    return isinstance(x, ValidTypes.ARRAY) and all(
-        isinstance(elem, ValidTypes.NAT_NUMBERS) for elem in x) and (len(x) >= 0 if length is None else len(x) == length)
+    return \
+        isinstance(x, ValidTypes.ARRAY) and all(isinstance(elem, ValidTypes.NAT_NUMBERS) for elem in x) \
+        and (len(x) >= 0 if length is None else len(x) == length)
+
 
 def is_list_of_numbers(x: list, length=None):
     """
@@ -96,7 +99,8 @@ def is_list_of_numbers(x: list, length=None):
     :param length: optional parameter which tests if the list is a list of specified length
     :return: True if the specified variable is a list of numbers
     """
-    return isinstance(x, list) and is_real_number_vector(npy.array(x),length)
+    return isinstance(x, list) and is_real_number_vector(npy.array(x), length)
+
 
 def is_list_of_natural_numbers(x: list, length=None):
     """
@@ -105,7 +109,17 @@ def is_list_of_natural_numbers(x: list, length=None):
     :param length: optional parameter which tests if the list is a list of specified length
     :return: True if the specified variable is a list of natural numbers
     """
-    return isinstance(x, list) and is_natural_number_vector(npy.array(x),length)
+    return isinstance(x, list) and is_natural_number_vector(npy.array(x), length)
+
+
+def is_set_of_natural_numbers(x: set, length=None):
+    """
+    Checks if a provided variable is a set of natural numbers
+    :param x: The variable to check
+    :param length: optional parameter which tests if the list is a list of specified length
+    :return: True if the specified variable is a set of natural numbers
+    """
+    return isinstance(x, set) and is_natural_number_vector(npy.array(x), length)
 
 
 def is_in_interval(x: float, x_min: float, x_max: float) -> bool:
@@ -152,9 +166,9 @@ def is_valid_velocity(v: float, v_min=None, v_max=None):
 def is_valid_acceleration(a: float, a_min=None, a_max=None):
     """
     Checks if a provided acceleration is a valid acceleration
-    :param v: The acceleration to check (either scalar or vector)
-    :param v_min: Default parameter: if provided this is the minimum acceleration
-    :param v_max: Default parameter: if provided this is the maximum acceleration
+    :param a: The acceleration to check (either scalar or vector)
+    :param a_min: Default parameter: if provided this is the minimum acceleration
+    :param a_max: Default parameter: if provided this is the maximum acceleration
     :return: True if the provided acceleration is a valid acceleration (with respect to specified acceleration range)
     """
     if a_min is None and a_max is None:
@@ -174,7 +188,9 @@ def is_valid_orientation(theta: float) -> bool:
 
 def is_valid_polyline(polyline: npy.ndarray, length=None):
     """
-    Checks if a provided polyline is a valid polyline, i.e. it is a list of points (xi,yi)^T. The list must have a shape of (2,n), resulting in [[x0,x1,...,xn],[y0,y1,...,yn]]. By providing the optional parameter length, it is checked whether the provided has the desired length.
+    Checks if a provided polyline is a valid polyline, i.e. it is a list of points (xi,yi)^T.
+    The list must have a shape of (2,n), resulting in [[x0,x1,...,xn],[y0,y1,...,yn]].
+    By providing the optional parameter length, it is checked whether the provided has the desired length.
     :param polyline: The polyline to check
     :param length: The assumed length of the polyline
     :return: True if the polyline is a valid polyline, False otherwise
@@ -183,7 +199,7 @@ def is_valid_polyline(polyline: npy.ndarray, length=None):
         assert is_valid_length(length)
 
     return isinstance(polyline, ValidTypes.ARRAY) and len(polyline) >= 2 and all(
-        is_real_number_vector(elem,2) for elem in polyline) and (
+        is_real_number_vector(elem, 2) for elem in polyline) and (
            len(polyline) == length if length is not None else True)
 
 

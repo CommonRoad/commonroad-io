@@ -5,17 +5,105 @@ Visualization Manual
 ====================
 
 .. _matplotlib: https://matplotlib.org
+.. _`visitor pattern`: https://en.wikipedia.org/wiki/Visitor_pattern
+.. _matplotlib-API: https://matplotlib.org/api
+
+For the visualization of CommonRoad, we use the `visitor pattern`_. A visitor object, which we call *renderer* subsequently, has first to be instantiated. Afterward, the drawing function :meth:`~commonroad.visualization.drawable.IDrawable.draw` of the :class:`~commonroad.visualization.drawable.IDrawable` interface has to be called on all objects that should be visualized. All objects of the scenario and planning problems implement this function and can be individually drawn. Finally when all objects were drawn, :meth:`~commonroad.visualization.mp_renderer.MPRenderer.render` is called on the renderer to show the objects. Currently, matplotlib_ is the only supported rendering engine in CommonRoad. It is implemented in the :class:`~commonroad.visualization.mp_renderer.MPRenderer`-class.
+
+Creating plots in CommonRoad
+----------------------------
+The drawing function is used in combination with matplotlib_. Therefore, the visualization of CommonRoad objects can be combined with standard matplotlib drawing functions. A simple example for plotting scenario and the corresponding planning problem set with default parameters would be::
+
+    from commonroad.common.file_reader import CommonRoadFileReader
+    from commonroad.visualization.mp_renderer import MPRenderer
+    filename = 'path/to/scenario/USA_US101-2_1_T-1.xml'
+    scenario, planning_problem_set = CommonRoadFileReader(filename).open()
+
+    rnd = MPRenderer(plot_limits=[-30, 120, -140, 20], figsize=(8,4.5))
+    scenario.draw(rnd)
+    planning_problem_set.draw(rnd)
+    rnd.render()
+
+.. plot::
+   :align: center
+
+
+    import os
+    import matplotlib.pyplot as plt
+    from commonroad.common.file_reader import CommonRoadFileReader
+    from commonroad.visualization.mp_renderer import MPRenderer
+    filename = os.getcwd() + '/../files/USA_US101-2_1_T-1.xml'
+    scenario, planning_problem_set = CommonRoadFileReader(filename).open()
+
+    rnd = MPRenderer(plot_limits=[-30, 120, -140, 20], figsize=(8,4.5))
+    scenario.draw(rnd)
+    planning_problem_set.draw(rnd)
+    rnd.render()
+
+
+
+Styling options
+---------------
+
+The plotting style of the visualization module can be adjusted via two mechanisms:
+
+    1. Setting a set of default parameters in the constructor of :class:`~commonroad.visualization.mp_renderer.MPRenderer`, and
+    2. Overriding the default parameters by setting parameters on a per-object basis, when calling individual :meth:`~commonroad.visualization.drawable.IDrawable.draw` functions.
+
+The full set of available parameters can be written to a file in JSON format by calling :meth:`~commonroad.visualization.param_server.write_default_params`. Parameters can be passed as nested dictionary, where the levels correspond to the hierarchy of elements in a compound object. The resolution of plotting properties starts at the most specific (deepest) level. If the property is not found, the topmost level is removed and resolution is restarted. For example, the default vehicle shape's color is specified on the path ``draw_params["dynamic_obstacle"]["vehicle_shape"]["occupancy"]["shape"]["rectangle"]["facecolor"]``. When a dynamic obstacle is drawn as part of a scenario, the resolution process is started at ``draw_params["scenario"]["dynamic_obstacle"]["vehicle_shape"]...["facecolor"]``. As the key is not found in the default parameter set, resolution is retried with ``draw_params["dynamic_obstacle"]["vehicle_shape"]...["facecolor"]`` and is successful.
+
+Example
+"""""""
+.. _`matplotlib colors`: https://matplotlib.org/stable/tutorials/colors/colors.html
+
+We want to draw dynamic obstacles with a rectangular shape in a scenario with a green and individual dynamic obstacles with a rectangular shape in yellow. This can be achieved by passing the following drawing parameters: ::
+
+    {
+        "dynamic_obstacle": {
+            "occupancy": {
+                "shape": {
+                    "rectangle": {
+                        "facecolor": "yellow",
+                    },
+                }
+            }
+        },
+        "scenario": {
+            "dynamic_obstacle": {
+                "occupancy": {
+                    "shape": {
+                        "rectangle": {
+                            "facecolor": "green",
+                        },
+                    }
+                }
+            }
+        }
+    }
+
+Note, that colors are specified as `matplotlib colors`_.
+
+``plot_limits``
+---------------
+
+The drawn area of a scenario can be clipped by providing axes limits with :code:`plot_limits=[x_min, x_max, y_min, y_max]` to the renderer. In cases where performance matters, this option should be preferred over setting axes limits with :code:`pyplot.get_gca().set_xlim`. The latter would only crop the shown area of the scenario after drawing the whole scenario.
+
+Visualization API v1 (legacy)
+---------------------------------
+.. deprecated:: 2021.1
+    This API is deprecated and will be no longer maintained. Please use the new visualization API.
 
 All objects of the scenario and planning problems can be visualized with the function :meth:`~commonroad.visualization.draw_dispatch_cr.draw_object` combined with matplotlib_. It is possible to pass either complete scenarios, single objects of the framework or lists of them to the drawing function. In case a list is passed, all objects therein have to be of the same type. Moreover, :meth:`~commonroad.visualization.draw_dispatch_cr.draw_object` provides customizable settings with the parameter ``draw_params`` and calls other specific drawing functions depending on the object type passed as an argument. For example ``draw_object(scenario)`` calls itself a specific function which is designed to draw a scenario. Often these functions itself call :meth:`~commonroad.visualization.draw_dispatch_cr.draw_object` for objects which belong to the original object. Nevertheless, the user only needs to call :meth:`~commonroad.visualization.draw_dispatch_cr.draw_object`.
 
+The style of the visualization is controlled by the ``draw_params``-parameter. The renderer object takes a set of default parameters. When calling the ``draw``-function of individual objects, the default parameters can be overwritten. The given parameters are applied to the current object only.
 
 ``draw_params``
----------------
+"""""""""""""""
 
 When settings of a plot should be changed with ``draw_params``, they have to be passed as a nested ``dict`` that refers to the hierarchy in which the objects are plotted. The complete structure of ``draw_params`` is given by the default parameters: ::
 
-    {'time_begin': 0,
-     'time_end': 50,
+    {'time_begin': 0,  # first time_step of the scenario or dynamic obstacle which is plotted
+     'time_end': 50,  # time_step until which the predictions of obstacles are plotted (not included)
      'antialiased': True,
      'scenario':
             {'dynamic_obstacle':
@@ -129,57 +217,51 @@ When settings of a plot should be changed with ``draw_params``, they have to be 
 
 The defaults for ``shape_parameters`` are::
 
-	shape_parameters = {'polygon':
-			    	{'opacity': 0.2,
-                       		 'facecolor': '#1d7eea',
-	                         'edgecolor': '#0066cc',
-	                         'zorder': 18
-	                     	},
-   	 		    'rectangle':
-				{'opacity': 0.2,
-				 'facecolor': '#1d7eea',
-				 'edgecolor': '#0066cc',
-				 'zorder': 18
-				},
-			    'circle':
-				{'opacity': 0.2,
-				 'facecolor': '#1d7eea',
-				 'edgecolor': '#0066cc',
-				 'zorder': 18
-				}
-			    }
+    shape_parameters = {'polygon':
+                    {'opacity': 0.2,
+                             'facecolor': '#1d7eea',
+                             'edgecolor': '#0066cc',
+                             'zorder': 18
+                            },
+                'rectangle':
+                {'opacity': 0.2,
+                 'facecolor': '#1d7eea',
+                 'edgecolor': '#0066cc',
+                 'zorder': 18
+                },
+                'circle':
+                {'opacity': 0.2,
+                 'facecolor': '#1d7eea',
+                 'edgecolor': '#0066cc',
+                 'zorder': 18
+                }
+                }
 
 Notice that specifying the the type of a shape in ``shape_parameters`` is optional and can be omitted.
 
 
 Passing custom ``draw_params``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""""""""""""
 
 In case no ``draw_params`` is passed to :meth:`~commonroad.visualization.draw_dispatch_cr.draw_object`, the default parameters are applied. To set a parameter manually, this needs to be done in accordance to the structure above. If for instance a complete scenario is plotted and the ``face_color`` of a dynamic obstacle should be set to black, this parameter can be specified by::
 
-	draw_params = {'scenario': {'dynamic_obstacle': {'shape': {'facecolor':'#000000'}}}}
-	draw_object(scenario, draw_params=draw_params)
+    draw_params = {'scenario': {'dynamic_obstacle': {'shape': {'facecolor':'#000000'}}}}
+    draw_object(scenario, draw_params=draw_params)
 
 
 When the parameter of an object is extracted from ``draw_params``, the search starts at the lowest level of the ``dict``'s hierarchy. Therefore, it is sufficient to start with the specification on the lowest level of the dict, that unambiguously defines a parameter. Therefore, the expression above can be simplified to ::
 
-	draw_params = {'dynamic_obstacle':{'shape':{'facecolor':'#000000'}}}
+    draw_params = {'dynamic_obstacle':{'shape':{'facecolor':'#000000'}}}
 
 since ``dynamic_obstacle`` appears at no other point in the ``draw_params``' structure. On the other hand, in case you write::
 
-	draw_params = {'shape':{'facecolor':'#000000'}}
+    draw_params = {'shape':{'facecolor':'#000000'}}
 
 all shapes in the plot will be drawn in black.
 
-``plot_limits``
----------------
-
-The drawn area of a scenario can be clipped by providing axes limits with :code:`plot_limits=[x_min, x_max, y_min, y_max]`. In cases where performance matters, this option should be preferred over setting axes limits with :code:`pyplot.get_gca().set_xlim`. The latter would only crop the shown area of the scenario after drawing the whole scenario.
 
 Example plot with ``matplotlib``
---------------------------------
-
-.. _matplotlib-API: https://matplotlib.org/api
+""""""""""""""""""""""""""""""""
 
 The drawing function is used in combination with maplotlib. Therefore, every command from the matplotlib-API_ can be combined with ``draw_object``. A simple example for plotting scenario and the corresponding planning problem set with default parameters would be::
 
@@ -228,41 +310,41 @@ The drawing function is used in combination with maplotlib. Therefore, every com
 
 
 Speed up plotting for real-time applications
---------------------------------------------
+""""""""""""""""""""""""""""""""""""""""""""
 
 Plotting of a typical scenario can be too slow when using for real-time applications, where updated scenarios have have be redrawn at high rates. For those applications we provide the helper function ``redraw_obstacles()`` . Since plotting of the lanelet network requires most of the runtime, this function only updates obstacles of a scenario, while maintaining an initially plotted ``lanelet_network`` . Further speed improvements can be achieved by selecting a fast backend for matplotlib, like ``Qt5Agg`` or ``TkAgg`` .
 
 Furthermore the number of plotted graphic elements should be minimized. These parameters help to improve run time considerably (ordered by impact)::
 
-	draw_params = {'lanelet': {'draw_start_and_direction': False, 'draw_center_bound': False},
-		       'dynamic_obstacle': {'show_label': True}}
+    draw_params = {'lanelet': {'draw_start_and_direction': False, 'draw_center_bound': False},
+               'dynamic_obstacle': {'show_label': True}}
 
 Additionally the plotted area should be restricted by using ``draw_object`` 's option ``plot_limits``. Effectively update rates of more than 20 frames/s are possible even for complex scenarios.
 
 A minimal example would be::
 
-	import matplotlib as mpl
-	mpl.use('Qt5Agg') # sets the backend for matplotlib
-	import mpl.pyplot as plt
-	from commonroad.visualization.plot_helper import *
+    import matplotlib as mpl
+    mpl.use('Qt5Agg') # sets the backend for matplotlib
+    import mpl.pyplot as plt
+    from commonroad.visualization.plot_helper import *
 
-	filename = os.getcwd() + /commonroad-scenarios/scenarios/NGSIM/US101/USA_US101-2_1_T-1.xml'
-	scenario, planning_problem_set = CommonRoadFileReader(filename).open()
+    filename = os.getcwd() + /commonroad-scenarios/scenarios/NGSIM/US101/USA_US101-2_1_T-1.xml'
+    scenario, planning_problem_set = CommonRoadFileReader(filename).open()
 
-	set_non_blocking() # ensures interactive plotting is activated
-	plt.style.use('classic')
-	inch_in_cm = 2.54
-	figsize = [30, 8]
-	fig = plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
-	handles = {}  # collects handles of obstacles for fast updating of figures
+    set_non_blocking() # ensures interactive plotting is activated
+    plt.style.use('classic')
+    inch_in_cm = 2.54
+    figsize = [30, 8]
+    fig = plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
+    handles = {}  # collects handles of obstacles for fast updating of figures
 
-	# inital plot including the lanelet network
-	draw_object(scenario, handles=handles)
-	fig.canvas.draw()
+    # inital plot including the lanelet network
+    draw_object(scenario, handles=handles)
+    fig.canvas.draw()
 
-	# loop where obstacle positions are modified
-	for i in range(0,100):
-		#...
-		# modifying the scenario
-		#...
-		redraw_obstacles(scenario, handles=handles, figure_handle=fig)
+    # loop where obstacle positions are modified
+    for i in range(0,100):
+        #...
+        # modifying the scenario
+        #...
+        redraw_obstacles(scenario, handles=handles, figure_handle=fig)

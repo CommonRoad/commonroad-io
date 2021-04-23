@@ -2,29 +2,33 @@ import itertools
 import re
 import warnings
 from collections import defaultdict
-from typing import Union, List, Set, Dict, Tuple
+from typing import Union, List, Set, Dict, Tuple, Optional
 import numpy as np
 import enum
 import iso3166
-from commonroad import SCENARIO_VERSION, SUPPORTED_COMMONROAD_VERSIONS
 
+from commonroad import SCENARIO_VERSION, SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.util import Interval
 from commonroad.common.validity import is_real_number, is_real_number_vector, is_valid_orientation, is_natural_number
 from commonroad.scenario.lanelet import Lanelet
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.obstacle import ObstacleRole
 from commonroad.scenario.obstacle import ObstacleType
-from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, Obstacle, State
+from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, Obstacle, State, \
+    PhantomObstacle
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.renderer import IRenderer
 
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2020.3"
+__version__ = "2021.1"
 __maintainer__ = "Sebastian Maierhofer"
-__email__ = "commonroad-i06@in.tum.de"
+__email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
 
@@ -66,6 +70,7 @@ class TimeOfDay(enum.Enum):
     """ Enum containing all possible time of days."""
     DAY = "day"
     NIGHT = "night"
+    UNKNOWN = "unknown"
 
 
 @enum.unique
@@ -77,6 +82,7 @@ class Weather(enum.Enum):
     FOG = "fog"
     SNOW = "snow"
     HAIL = "hail"
+    UNKNOWN = "unknown"
 
 
 @enum.unique
@@ -88,6 +94,7 @@ class Underground(enum.Enum):
     DAMAGED = "damaged"
     SNOW = "snow"
     ICE = "ice"
+    UNKNOWN = "unknown"
 
 
 class Time:
@@ -240,8 +247,8 @@ class Location:
 
 class ScenarioID:
     def __init__(self, cooperative: bool = False, country_id: str = "ZAM", map_name: str = "Test", map_id: int = 1,
-                 configuration_id: Union[None, int] = None, prediction_type: Union[None, str] = None,
-                 prediction_id: Union[None, int] = None, scenario_version: str = SCENARIO_VERSION):
+                 configuration_id: Union[None, int] = None, obstacle_behavior: Union[None, str] = None,
+                 prediction_id: Union[None, int, List[int]] = None, scenario_version: str = SCENARIO_VERSION):
         """
         Implements the scenario ID as specified in the scenario documentation
         (see https://gitlab.lrz.de/tum-cps/commonroad-scenarios/-/tree/master/documentation)
@@ -251,21 +258,22 @@ class ScenarioID:
         :param map_name: name of the map (e.g. US101)
         :param map_id: index of the map (e.g. 33)
         :param configuration_id: enumerates initial configuration of vehicles on the map (e.g. 2)
-        :param prediction_type: type of the prediction for surrounding vehicles (e.g. T)
+        :param obstacle_behavior: describes how behavior of surrounding vehicles is defined;
+        interactive (I) or prediction type (S, T)
         :param prediction_id: enumerates different predictions for the same initial configuration (e.g. 1)
         :param scenario_version: scenario version identifier (e.g. 2020a)
         """
         assert scenario_version in SUPPORTED_COMMONROAD_VERSIONS, 'Scenario_version {} not supported.' \
             .format(scenario_version)
-        self.scenario_version = scenario_version
-        self.cooperative = cooperative
+        self.scenario_version: str = scenario_version
+        self.cooperative: bool = cooperative
         self._country_id = None
-        self.country_id = country_id
-        self.map_name = map_name
-        self.map_id = map_id
-        self.configuration_id = configuration_id
-        self.prediction_type = prediction_type
-        self.prediction_id = prediction_id
+        self.country_id: str = country_id
+        self.map_name: str = map_name
+        self.map_id: int = map_id
+        self.configuration_id: Union[None, int] = configuration_id
+        self.obstacle_behavior: Union[None, str] = obstacle_behavior
+        self.prediction_id: Union[None, int, List[int]] = prediction_id
 
     def __str__(self):
         scenario_id = ""
@@ -279,10 +287,13 @@ class ScenarioID:
             scenario_id += str(self.map_id)
         if self.configuration_id is not None:
             scenario_id += "_" + str(self.configuration_id)
-        if self.prediction_type is not None:
-            scenario_id += "_" + self.prediction_type + "-"
+        if self.obstacle_behavior is not None:
+            scenario_id += "_" + self.obstacle_behavior + "-"
         if self.prediction_id is not None:
-            scenario_id += str(self.prediction_id)
+            if type(self.prediction_id) == list:
+                scenario_id += "-".join([str(i) for i in self.prediction_id])
+            else:
+                scenario_id += str(self.prediction_id)
         return scenario_id
 
     @property
@@ -299,8 +310,16 @@ class ScenarioID:
             raise ValueError('Country ID {} is not in the ISO-3166 three-letter format. '.format(country_id))
 
     @property
+    def prediction_type(self):
+        warnings.warn("prediction_type renamed to obstacle_behavior", DeprecationWarning)
+        return self.obstacle_behavior
+
+    @property
     def country_name(self):
-        return iso3166.countries_by_alpha3[self.country_id].name
+        if self.country_id == "ZAM":
+            return "Zamunda"
+        else:
+            return iso3166.countries_by_alpha3[self.country_id].name
 
     @classmethod
     def from_benchmark_id(cls, benchmark_id: str, scenario_version: str):
@@ -308,10 +327,10 @@ class ScenarioID:
         Create ScenarioID from benchmark_id and scenario_version in the XML header.
         :param benchmark_id: scenario ID provided as a string
         :param scenario_version: scenario format version (e.g. 2020a)
-        :return: 
+        :return:
         """
-        if not (benchmark_id.count('_') in (1, 2, 3) and benchmark_id.count('-') in (1, 2, 3)):
-            warnings.warn('Not a valid scenario id: ' + benchmark_id)
+        if not (benchmark_id.count('_') in (1, 2, 3) and benchmark_id.count('-') in (1, 2, 3, 4)):
+            warnings.warn('Not a valid scenario ID: ' + benchmark_id)
             return ScenarioID(None, None, benchmark_id, 0, None, None, None)
 
         # extract sub IDs from string
@@ -332,22 +351,29 @@ class ScenarioID:
             assert sub_ids[4] in ('S', 'T', 'I'), "prediction type must be one of (S, T, I) but is {}".format(
                 sub_ids[4])
             prediction_type = sub_ids[4]
-            prediction_id = int(sub_ids[5])
+            if len(sub_ids) == 6:
+                prediction_id = int(sub_ids[5])
+            else:
+                prediction_id = [int(s) for s in sub_ids[5:]]
 
         return ScenarioID(cooperative, country_id, map_name, map_id, configuration_id, prediction_type, prediction_id,
                           scenario_version)
 
     def __eq__(self, other: 'ScenarioID'):
-        return str(self) == str(other)
+        return str(self) == str(other) and self.scenario_version == other.scenario_version
 
 
-class Scenario:
-    """ Class which describes a Scenario entity according to the CommonRoad specification. Each scenario is described by
-     a road network consisting of lanelets (see :class:`commonroad.scenario.lanelet.LaneletNetwork`) and a set of
-     obstacles which can be either static or dynamic (see :class:`commonroad.scenario.obstacle.Obstacle`)."""
+class Scenario(IDrawable):
+    """ Class which describes a Scenario entity according to the CommonRoad
+    specification. Each scenario is described by
+     a road network consisting of lanelets (see
+     :class:`commonroad.scenario.lanelet.LaneletNetwork`) and a set of
+     obstacles which can be either static or dynamic (see
+     :class:`commonroad.scenario.obstacle.Obstacle`)."""
 
     def __init__(self, dt: float, scenario_id: Union[str, ScenarioID],
-                 author: str = None, tags: Set[Tag] = None, affiliation: str = None, source: str = None,
+                 author: str = None, tags: Set[Tag] = None,
+                 affiliation: str = None, source: str = None,
                  location: Location = None, benchmark_id: str = None):
         """
         Constructor of a Scenario object
@@ -375,8 +401,8 @@ class Scenario:
 
         self._static_obstacles: Dict[int, StaticObstacle] = defaultdict()
         self._dynamic_obstacles: Dict[int, DynamicObstacle] = defaultdict()
-        self._environment_obstacle: Dict[
-            int, EnvironmentObstacle] = defaultdict()
+        self._environment_obstacle: Dict[int, EnvironmentObstacle] = defaultdict()
+        self._phantom_obstacle: Dict[int, PhantomObstacle] = defaultdict()
 
         self._id_set: Set[int] = set()
         # Count ids generated but not necessarily added yet
@@ -433,15 +459,22 @@ class Scenario:
         return list(self._static_obstacles.values())
 
     @property
-    def obstacles(self) -> List[Union[Obstacle, StaticObstacle, DynamicObstacle]]:
-        """ Returns a list of all static and dynamic obstacles in the scenario."""
+    def obstacles(self) -> List[Union[Obstacle, StaticObstacle, DynamicObstacle, EnvironmentObstacle, PhantomObstacle]]:
+        """ Returns a list of all obstacles roles in the scenario."""
         return list(itertools.chain(self._static_obstacles.values(),
-                                    self._dynamic_obstacles.values()))
+                                    self._dynamic_obstacles.values(),
+                                    self._phantom_obstacle.values(),
+                                    self._environment_obstacle.values()))
 
     @property
     def environment_obstacle(self) -> List[EnvironmentObstacle]:
-        """ Returns a list of all environment_obstacles in the scenario."""
+        """ Returns a list of all environment obstacles in the scenario."""
         return list(self._environment_obstacle.values())
+
+    @property
+    def phantom_obstacle(self) -> List[PhantomObstacle]:
+        """ Returns a list of all phantom obstacles in the scenario."""
+        return list(self._phantom_obstacle.values())
 
     def add_objects(self, scenario_object: Union[List[Union[Obstacle, Lanelet, LaneletNetwork, TrafficSign,
                                                             TrafficLight, Intersection, EnvironmentObstacle]], Obstacle,
@@ -456,7 +489,7 @@ class Scenario:
         """
         if isinstance(scenario_object, list):
             for obj in scenario_object:
-                self.add_objects(obj)
+                self.add_objects(obj, lanelet_ids)
         elif isinstance(scenario_object, StaticObstacle):
             self._mark_object_id_as_used(scenario_object.obstacle_id)
             self._static_obstacles[scenario_object.obstacle_id] = scenario_object
@@ -480,17 +513,24 @@ class Scenario:
             self._mark_object_id_as_used(scenario_object.lanelet_id)
             self._lanelet_network.add_lanelet(scenario_object)
         elif isinstance(scenario_object, TrafficSign):
+            lanelet_ids = set() if lanelet_ids is None else lanelet_ids
             self._mark_object_id_as_used(scenario_object.traffic_sign_id)
             self._lanelet_network.add_traffic_sign(scenario_object, lanelet_ids)
         elif isinstance(scenario_object, TrafficLight):
+            lanelet_ids = set() if lanelet_ids is None else lanelet_ids
             self._mark_object_id_as_used(scenario_object.traffic_light_id)
             self._lanelet_network.add_traffic_light(scenario_object, lanelet_ids)
         elif isinstance(scenario_object, Intersection):
             self._mark_object_id_as_used(scenario_object.intersection_id)
+            for inc in scenario_object.incomings:
+                self._mark_object_id_as_used(inc.incoming_id)
             self._lanelet_network.add_intersection(scenario_object)
         elif isinstance(scenario_object, EnvironmentObstacle):
             self._mark_object_id_as_used(scenario_object.obstacle_id)
             self._environment_obstacle[scenario_object.obstacle_id] = scenario_object
+        elif isinstance(scenario_object, PhantomObstacle):
+            self._mark_object_id_as_used(scenario_object.obstacle_id)
+            self._phantom_obstacle[scenario_object.obstacle_id] = scenario_object
 
         else:
             raise ValueError('<Scenario/add_objects> argument "scenario_object" of wrong type. '
@@ -500,7 +540,7 @@ class Scenario:
     def _add_static_obstacle_to_lanelets(self, obstacle_id: int, lanelet_ids: Set[int]):
         """ Adds a static obstacle reference to all lanelets the obstacle is on.
 
-        :param obstacle_id: obstacle ID to be removed
+        :param obstacle_id: obstacle ID to be added
         :param lanelet_ids: list of lanelet IDs on which the obstacle is on
         """
         if lanelet_ids is None or len(self.lanelet_network.lanelets) == 0:
@@ -511,7 +551,7 @@ class Scenario:
     def _remove_static_obstacle_from_lanelets(self, obstacle_id: int, lanelet_ids: Set[int]):
         """ Remove a static obstacle reference from all lanelets the obstacle is on.
 
-        :param obstacle_id: obstacle ID to be added
+        :param obstacle_id: obstacle ID to be removed
         :param lanelet_ids: list of lanelet IDs on which the obstacle is on
         """
         if lanelet_ids is None:
@@ -566,14 +606,18 @@ class Scenario:
                         lanelet_dict[time_step] = set()
                     lanelet_dict[time_step].add(obstacle.obstacle_id)
 
-    def remove_obstacle(self, obstacle: Union[Obstacle, List[Obstacle]]):
-        """ Removes a static, dynamic or a list of obstacles from the scenario. If the obstacle ID is not assigned,
+    def remove_obstacle(self, obstacle: Union[Obstacle, DynamicObstacle, PhantomObstacle, EnvironmentObstacle,
+                                              StaticObstacle, List[Union[Obstacle, DynamicObstacle, PhantomObstacle,
+                                                                   EnvironmentObstacle,  StaticObstacle]]]):
+        """ Removes an obstacle or a list of obstacles from the scenario. If the obstacle ID is not assigned,
         a warning message is given.
 
         :param obstacle: obstacle to be removed
         """
-        assert isinstance(obstacle, (list, Obstacle)), '<Scenario/remove_obstacle> argument "obstacle" of wrong type. ' \
-                                                       'Expected type: %s. Got type: %s.' % (Obstacle, type(obstacle))
+        assert isinstance(obstacle, (list, Obstacle, DynamicObstacle, PhantomObstacle, EnvironmentObstacle,
+                                     StaticObstacle)), \
+            '<Scenario/remove_obstacle> argument "obstacle" of wrong type. ' \
+            'Expected type: %s. Got type: %s.' % (Obstacle, type(obstacle))
         if isinstance(obstacle, list):
             for obs in obstacle:
                 self.remove_obstacle(obs)
@@ -587,9 +631,89 @@ class Scenario:
             self._remove_dynamic_obstacle_from_lanelets(obstacle)
             del self._dynamic_obstacles[obstacle.obstacle_id]
             self._id_set.remove(obstacle.obstacle_id)
+        elif obstacle.obstacle_id in self._environment_obstacle:
+            del self._environment_obstacle[obstacle.obstacle_id]
+            self._id_set.remove(obstacle.obstacle_id)
+        elif obstacle.obstacle_id in self._phantom_obstacle:
+            del self._phantom_obstacle[obstacle.obstacle_id]
+            self._id_set.remove(obstacle.obstacle_id)
         else:
             warnings.warn('<Scenario/remove_obstacle> Cannot remove obstacle with ID %s, '
                           'since it is not contained in the scenario.' % obstacle.obstacle_id)
+
+    def remove_lanelet(self, lanelet: Union[List[Lanelet], Lanelet]):
+        """
+        Removes a lanelet or a list of lanelets from a scenario.
+
+        :param lanelet: Lanelet which should be removed from scenario.
+        """
+        assert isinstance(lanelet, (list, Lanelet)), \
+            '<Scenario/remove_lanelet> argument "lanelet" of wrong type. ' \
+            'Expected type: %s. Got type: %s.' % (Lanelet, type(lanelet))
+        if isinstance(lanelet, list):
+            for la in lanelet:
+                self.lanelet_network.remove_lanelet(la.lanelet_id)
+                self._id_set.remove(la.lanelet_id)
+            return
+
+        self.lanelet_network.remove_lanelet(lanelet.lanelet_id)
+        self._id_set.remove(lanelet.lanelet_id)
+
+    def remove_traffic_sign(self, traffic_sign: Union[List[TrafficSign], TrafficSign]):
+        """
+        Removes a traffic sign or a list of traffic signs from the scenario.
+
+        :param traffic_sign: Traffic sign which should be removed from scenario.
+        """
+        assert isinstance(traffic_sign, (list, TrafficSign)), \
+            '<Scenario/remove_traffic_sign> argument "traffic_sign" of wrong type. ' \
+            'Expected type: %s. Got type: %s.' % (TrafficSign, type(traffic_sign))
+        if isinstance(traffic_sign, list):
+            for sign in traffic_sign:
+                self.lanelet_network.remove_traffic_sign(sign.traffic_sign_id)
+                self._id_set.remove(sign.traffic_sign_id)
+            return
+
+        self.lanelet_network.remove_traffic_sign(traffic_sign.traffic_sign_id)
+        self._id_set.remove(traffic_sign.traffic_sign_id)
+
+    def remove_traffic_light(self, traffic_light: Union[List[TrafficLight], TrafficLight]):
+        """
+        Removes a traffic sign or a list of traffic signs from the scenario.
+
+        :param traffic_light: Traffic light which should be removed from scenario.
+        """
+        assert isinstance(traffic_light, (list, TrafficLight)), \
+            '<Scenario/remove_traffic_light> argument "traffic_light" of wrong type. ' \
+            'Expected type: %s. Got type: %s.' % (TrafficLight, type(traffic_light))
+        if isinstance(traffic_light, list):
+            for light in traffic_light:
+                self.lanelet_network.remove_traffic_light(light.traffic_light_id)
+                self._id_set.remove(light.traffic_light_id)
+            return
+
+        self.lanelet_network.remove_traffic_light(traffic_light.traffic_light_id)
+        self._id_set.remove(traffic_light.traffic_light_id)
+
+    def remove_intersection(self, intersection: Union[List[Intersection], Intersection]):
+        """
+        Removes an intersection or a list of intersections from the scenario.
+
+        :param intersection: Intersection which should be removed from scenario.
+        """
+        assert isinstance(intersection, (list, Intersection)), \
+            '<Scenario/remove_intersection> argument "intersection" of wrong type. ' \
+            'Expected type: %s. Got type: %s.' % (Intersection, type(intersection))
+        if isinstance(intersection, list):
+            for inter in intersection:
+                self.lanelet_network.remove_intersection(inter.intersection_id)
+                self._id_set.remove(inter.intersection_id)
+            return
+
+        self.lanelet_network.remove_intersection(intersection.intersection_id)
+        self._id_set.remove(intersection.intersection_id)
+        for inc in intersection.incomings:
+            self._id_set.remove(inc.incoming_id)
 
     def generate_object_id(self) -> int:
         """ Generates a unique ID which is not assigned to any object in the scenario.
@@ -638,6 +762,10 @@ class Scenario:
             obstacle = self._static_obstacles[obstacle_id]
         elif obstacle_id in self._dynamic_obstacles:
             obstacle = self._dynamic_obstacles[obstacle_id]
+        elif obstacle_id in self._phantom_obstacle:
+            obstacle = self._phantom_obstacle[obstacle_id]
+        elif obstacle_id in self._environment_obstacle:
+            obstacle = self._environment_obstacle[obstacle_id]
         else:
             warnings.warn('<Scenario/obstacle_by_id> Obstacle with ID %s is not contained in the scenario.'
                           % obstacle_id)
@@ -667,14 +795,14 @@ class Scenario:
         return obstacle_list
 
     def obstacles_by_position_intervals(
-            self, position_intervals: List[Interval],
-            obstacle_role: Tuple[ObstacleRole] = (ObstacleRole.DYNAMIC, ObstacleRole.STATIC),
-            time_step: int = None) -> List[Obstacle]:
+            self, position_intervals: List[Interval], obstacle_role: Tuple[ObstacleRole] =
+            (ObstacleRole.DYNAMIC, ObstacleRole.STATIC), time_step: int = None) -> List[Obstacle]:
         """
         Returns obstacles which center is located within in the given x-/y-position intervals.
 
         :param position_intervals: list of intervals for x- and y-coordinates [interval_x,  interval_y]
         :param obstacle_role: tuple containing the desired obstacle roles
+        :param time_step: Time step of interest.
         :return: list of obstacles in the position intervals
         """
 
@@ -846,3 +974,8 @@ class Scenario:
         traffic_str += "- Lanelets:\n"
         traffic_str += str(self._lanelet_network)
         return traffic_str
+
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
+        renderer.draw_scenario(self, draw_params, call_stack)

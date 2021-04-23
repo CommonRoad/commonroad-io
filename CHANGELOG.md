@@ -1,5 +1,20 @@
 # Changelog
 
+## [2021.1] - 2021-04-16
+### Added
+- Support for over 50 new traffic signs from Germany
+- Support of phantom obstacles
+- New visualization module which supports MVC pattern
+- Functions for adding and removing traffic signs, traffic lights, and intersections from a scenario or lanelet network
+- New icon visualization interface and new icons for bus, truck, and bicycle (developed by Simon Sagmeister - TUM FTM)
+
+### Changed
+- Scaling of traffic signs is coupled with the zoom level
+
+### Fixed
+- Various small bug fixes
+
+
 ## [2020.3] - 2020-10-30
 ### Added
 - Support of environment obstacles, e.g. buildings
@@ -8,7 +23,7 @@
 - New line marking types *unknown* and *no_marking*
 - Crossings for intersections
 
-## Changed
+### Changed
 The creation of lanelet assignments for obstacles is now optional. This decreases the loading time of scenarios.
 The lanelet assignment can still be performed manually after loading a scenario.
 

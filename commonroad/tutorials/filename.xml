@@ -1,18 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="author" affiliation="affiliation" source="source" benchmarkID="USA_Lanker-1_1_T-1" date="2020-11-11">
+<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="author" affiliation="affiliation" source="source"
+            benchmarkID="USA_Lanker-1_1_T-1" date="2020-11-10">
   <location>
     <geoNameId>-999</geoNameId>
     <gpsLatitude>999</gpsLatitude>
     <gpsLongitude>999</gpsLongitude>
   </location>
   <scenarioTags>
-    <intersection/>
     <lane_following/>
-    <urban/>
-    <oncoming_traffic/>
-    <multi_lane/>
     <comfort/>
+    <intersection/>
     <speed_limit/>
+    <multi_lane/>
+    <oncoming_traffic/>
+    <urban/>
   </scenarioTags>
   <lanelet id="3419">
     <leftBound>

@@ -1,22 +1,30 @@
 import enum
 import warnings
 import numpy as np
-from typing import Union, Set, List
+from typing import Union, Set, List, Optional, Tuple
 from abc import ABC, abstractmethod
 
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector, is_real_number
-from commonroad.geometry.shape import Shape, Rectangle, Circle, Polygon
+from commonroad.geometry.shape import Shape, \
+    Rectangle, \
+    Circle, \
+    Polygon, \
+    occupancy_shape_from_state
 from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.trajectory import State
 
-
 __author__ = "Stefanie Manzinger, Christian Pek, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles, BMW Group, KO-HAF"]
-__version__ = "2020.3"
+__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles, "
+               "BMW Group, KO-HAF"]
+__version__ = "2021.1"
 __maintainer__ = "Sebastian Maierhofer"
-__email__ = "commonroad-i06@in.tum.de"
+__email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
+
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.renderer import IRenderer
 
 
 @enum.unique
@@ -25,6 +33,7 @@ class ObstacleRole(enum.Enum):
     STATIC = "static"
     DYNAMIC = "dynamic"
     ENVIRONMENT = "environment"
+    Phantom = "phantom"
 
 
 @enum.unique
@@ -78,14 +87,17 @@ class SignalState:
             setattr(self, field, value)
 
 
-class Obstacle(ABC):
-    """ Superclass for dynamic and static obstacles holding common properties defined in CommonRoad."""
+class Obstacle(IDrawable):
+    """ Superclass for dynamic and static obstacles holding common properties
+    defined in CommonRoad."""
 
     def __init__(self, obstacle_id: int, obstacle_role: ObstacleRole,
-                 obstacle_type: ObstacleType, obstacle_shape: Shape, initial_state: State = None,
+                 obstacle_type: ObstacleType, obstacle_shape: Shape,
+                 initial_state: State = None,
                  initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
-                 initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None):
+                 initial_signal_state: Union[None, SignalState] = None,
+                 signal_series: List[SignalState] = None):
         """
         :param obstacle_id: unique ID of the obstacle
         :param obstacle_role: obstacle role as defined in CommonRoad
@@ -178,8 +190,7 @@ class Obstacle(ABC):
         assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of wrong type. ' \
                                                  'Expected types: %s. Got type: %s.' % (State, type(initial_state))
         self._initial_state = initial_state
-        self._initial_occupancy_shape = self._obstacle_shape.rotate_translate_local(
-            initial_state.position, initial_state.orientation)
+        self._initial_occupancy_shape = occupancy_shape_from_state(self._obstacle_shape, initial_state)
 
     @property
     def initial_center_lanelet_ids(self) -> Union[None, Set[int]]:
@@ -339,6 +350,11 @@ class StaticObstacle(Obstacle):
         obs_str += '\ninitial state: {}'.format(self.initial_state)
         return obs_str
 
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
+        renderer.draw_static_obstacle(self, draw_params, call_stack)
+
 
 class DynamicObstacle(Obstacle):
     """ Class representing dynamic obstacles as defined in CommonRoad. Each dynamic obstacle has stored its predicted
@@ -428,7 +444,8 @@ class DynamicObstacle(Obstacle):
         if self._prediction is not None:
             self.prediction.translate_rotate(translation, angle)
 
-        self.initial_state = self._initial_state.translate_rotate(translation, angle)
+        self.initial_state = self._initial_state.translate_rotate(translation,
+                                                                  angle)
 
     def __str__(self):
         obs_str = 'Dynamic Obstacle:\n'
@@ -436,11 +453,112 @@ class DynamicObstacle(Obstacle):
         obs_str += '\ninitial state: {}'.format(self.initial_state)
         return obs_str
 
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
+        renderer.draw_dynamic_obstacle(self, draw_params, call_stack)
 
-class EnvironmentObstacle():
+
+class PhantomObstacle(IDrawable):
+    """ Class representing phantom obstacles as defined in CommonRoad. Each phantom obstacle has stored its predicted
+    movement in future time steps as occupancy set.
+    """
+
+    def __init__(self, obstacle_id: int,
+                 prediction: SetBasedPrediction = None):
+        """
+            :param obstacle_id: unique ID of the obstacle
+            :param prediction: set-based prediction of phantom obstacle
+            :param initial_shape_lanelet_ids: initial IDs of lanelets the obstacle shape is on
+        """
+        self.obstacle_id = obstacle_id
+        self.prediction: SetBasedPrediction = prediction
+        self.obstacle_role: ObstacleRole = ObstacleRole.Phantom
+
+    @property
+    def prediction(self) -> Union[SetBasedPrediction, None]:
+        """ Prediction describing the movement of the dynamic obstacle over time."""
+        return self._prediction
+
+    @prediction.setter
+    def prediction(self, prediction: Union[Prediction, TrajectoryPrediction, SetBasedPrediction,  None]):
+        assert isinstance(prediction, (SetBasedPrediction, type(None))), \
+            '<PhantomObstacle/prediction>: argument prediction of wrong type. Expected types: %s, %s. Got type: ' \
+            '%s.' % (SetBasedPrediction, type(None), type(prediction))
+        self._prediction = prediction
+
+    @property
+    def obstacle_role(self) -> ObstacleRole:
+        """ Obstacle role as defined in CommonRoad."""
+        return self._obstacle_role
+
+    @obstacle_role.setter
+    def obstacle_role(self, obstacle_role: ObstacleRole):
+        assert isinstance(obstacle_role, ObstacleRole), '<Obstacle/obstacle_role>: argument obstacle_role of wrong ' \
+                                                        'type. Expected type: %s. Got type: %s.' \
+                                                        % (ObstacleRole, type(obstacle_role))
+        if not hasattr(self, '_obstacle_role'):
+            self._obstacle_role = obstacle_role
+        else:
+            warnings.warn('<Obstacle/obstacle_role>: Obstacle role is immutable.')
+
+    def occupancy_at_time(self, time_step: int) -> Union[None, Occupancy]:
+        """
+        Returns the predicted occupancy of the obstacle at a specific time step.
+
+        :param time_step: discrete time step
+        :return: predicted occupancy of the obstacle at time step
+        """
+        occupancy = None
+        if self._prediction is not None and self._prediction.occupancy_at_time_step(time_step) is not None:
+            occupancy = self._prediction.occupancy_at_time_step(time_step)
+        else:
+            warnings.warn("<PhantomObstacle/occupancy_at_time>: Time step does not exist!")
+
+        return occupancy
+
+    @staticmethod
+    def state_at_time() -> Union[None, State]:
+        """
+        Returns the predicted state of the obstacle at a specific time step.
+
+        :param time_step: discrete time step
+        :return: predicted state of the obstacle at time step
+        """
+        warnings.warn("<PhantomObstacle/state_at_time>: Set-based prediction is used. State cannot be returned!")
+        return None
+
+    def translate_rotate(self, translation: np.ndarray, angle: float):
+        """ First translates the dynamic obstacle, then rotates the dynamic obstacle around the origin.
+
+            :param translation: translation vector [x_off, y_off] in x- and y-direction
+            :param angle: rotation angle in radian (counter-clockwise)
+        """
+        assert is_real_number_vector(translation, 2), '<DynamicObstacle/translate_rotate>: argument translation is ' \
+                                                      'not a vector of real numbers of length 2.'
+        assert is_real_number(angle), '<DynamicObstacle/translate_rotate>: argument angle must be a scalar. ' \
+                                      'angle = %s' % angle
+        assert is_valid_orientation(angle), '<DynamicObstacle/translate_rotate>: argument angle must be within the ' \
+                                            'interval [-2pi, 2pi]. angle = %s' % angle
+        if self._prediction is not None:
+            self.prediction.translate_rotate(translation, angle)
+
+    def __str__(self):
+        obs_str = 'Phantom Obstacle:\n'
+        obs_str += '\nid: {}'.format(self.obstacle_id)
+        return obs_str
+
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
+        renderer.draw_phantom_obstacle(self, draw_params, call_stack)
+
+
+class EnvironmentObstacle(IDrawable):
     """ Class representing environment obstacles as defined in CommonRoad."""
 
-    def __init__(self, obstacle_id: int, obstacle_type: ObstacleType, obstacle_shape: Shape):
+    def __init__(self, obstacle_id: int, obstacle_type: ObstacleType,
+                 obstacle_shape: Shape):
         """
             :param obstacle_id: unique ID of the obstacle
             :param obstacle_type: type of obstacle (e.g. BUILDING)
@@ -511,7 +629,21 @@ class EnvironmentObstacle():
         else:
             warnings.warn('<Obstacle/obstacle_shape>: Obstacle shape is immutable.')
 
+    def occupancy_at_time(self, time_step: int) -> Occupancy:
+        """
+        Returns the predicted occupancy of the obstacle at a specific time step.
+
+        :param time_step: discrete time step
+        :return: occupancy of the static obstacle at time step
+        """
+        return Occupancy(time_step=time_step, shape=self._obstacle_shape)
+
     def __str__(self):
         obs_str = 'Environment Obstacle:\n'
         obs_str += '\nid: {}'.format(self.obstacle_id)
         return obs_str
+
+    def draw(self, renderer: IRenderer,
+             draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
+        renderer.draw_environment_obstacle(self, draw_params, call_stack)
