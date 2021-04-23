@@ -65,7 +65,7 @@ and add the folder commonroad_io to your Python environment.
 
 Changelog
 ============
-Compared to version 2020.3, the following features were added or changed:
+Compared to version 2020.3, the following features have been added or changed:
 
 * Support for over 50 new traffic signs from Germany
 * Phantom obstacles

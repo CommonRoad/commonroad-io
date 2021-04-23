@@ -18,8 +18,7 @@ from commonroad.scenario.trajectory import State
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.scenario.scenario import Scenario
 from commonroad.visualization.plot_helper import *
-from commonroad.visualization.draw_dispatch_cr import draw_object, \
-    _retrieve_value
+from commonroad.visualization.draw_dispatch_cr import draw_object, _retrieve_value
 
 
 class TestVisualization(unittest.TestCase):
@@ -48,18 +47,11 @@ class TestVisualization(unittest.TestCase):
             # visualization
             circ = Circle(2.0, np.array([10.0, 0.0]))
             obs = StaticObstacle(1000, ObstacleType.CAR, circ,
-                                 initial_state=State(position=np.array([0, 0]),
-                                                     orientation=0.4))
+                                 initial_state=State(position=np.array([0, 0]), orientation=0.4))
             scenario.add_objects(obs)
             draw_object(scenario.static_obstacles)
 
-            draw_params = {
-                    'scenario': {
-                            'dynamic_obstacle': {
-                                    'occupancy': {'draw_occupancy': True}
-                            }
-                    }
-            }
+            draw_params = {'scenario': {'dynamic_obstacle': {'occupancy': {'draw_occupancy': True}}}}
             draw_object(scenario.dynamic_obstacles, draw_params=draw_params)
 
             draw_object(scenario.dynamic_obstacles[0].prediction.occupancy_set)
@@ -67,8 +59,7 @@ class TestVisualization(unittest.TestCase):
 
             draw_object(circ)
 
-            poly = Polygon(
-                    np.array([[0.0, 0.0], [0.0, 1.0], [1.0, 1.0], [1.0, 0.0]]))
+            poly = Polygon(np.array([[0.0, 0.0], [0.0, 1.0], [1.0, 1.0], [1.0, 0.0]]))
             draw_object(poly)
 
             rect = Rectangle(2.0, 4.0, np.array([2.0, 2.0]))
@@ -104,8 +95,7 @@ class TestVisualization(unittest.TestCase):
         with pytest.warns(DeprecationWarning) as record_warnings:
             draw_object(planning_problem_set)
             INT = planning_problem_set.planning_problem_dict.values()
-            problem = list(planning_problem_set.planning_problem_dict.values())[
-                0]
+            problem = list(planning_problem_set.planning_problem_dict.values())[0]
             draw_object(problem)
             draw_object(problem.goal)
             draw_object(problem.initial_state)
@@ -117,55 +107,38 @@ class TestVisualization(unittest.TestCase):
         # call with callstack, a value is not provided in default params
         # -> retrieve deepest possible value 'some_value': 1
         call_stack1 = ('scenario', 'dynamic_obstacle')
-        draw_params = {
-                'some_value': 0, 'scenario': {
-                        'some_value': 0, 'dynamic_obstacle': {'some_value': 1}
-                }
-        }
-        retrieved_value1 = _retrieve_value(draw_params, call_stack1,
-                                           tuple(['some_value']))
+        draw_params = {'some_value': 0, 'scenario': {'some_value': 0, 'dynamic_obstacle': {'some_value': 1}}}
+        retrieved_value1 = _retrieve_value(draw_params, call_stack1, tuple(['some_value']))
         assert (retrieved_value1 == 1)
 
         # dont call with callstack, a value that is not provided in default
         # params -> retrieve 'some_value': 0
         call_stack2 = tuple()
-        retrieved_value2 = _retrieve_value(draw_params, call_stack2,
-                                           tuple(['some_value']))
+        retrieved_value2 = _retrieve_value(draw_params, call_stack2, tuple(['some_value']))
         assert (retrieved_value2 == 0)
 
         # dont call with callstack, retrieve a parameter that is also in
         # default params
         # -> nevertheless retrieve 'trajectory_steps': 1
         call_stack1 = ('scenario', 'dynamic_obstacle')
-        draw_params3 = {
-                'scenario': {'dynamic_obstacle': {'trajectory_steps': 1}}
-        }
-        retrieved_value3 = _retrieve_value(draw_params3, call_stack1,
-                                           tuple(['trajectory_steps']))
+        draw_params3 = {'scenario': {'dynamic_obstacle': {'trajectory_steps': 1}}}
+        retrieved_value3 = _retrieve_value(draw_params3, call_stack1, tuple(['trajectory_steps']))
         assert (retrieved_value3 == 1)
 
         # provide draw_params, but try to retrieve a non-provided parameter
         # -> get the default parameter
-        draw_params3 = {
-                'trajectory_steps': 0, 'scenario': {
-                        'dynamic_obstacle': {'trajectory_steps': 1}
-                }
-        }
-        retrieved_value4 = _retrieve_value(draw_params3, call_stack1,
-                                           tuple(['zorder']))
+        draw_params3 = {'trajectory_steps': 0, 'scenario': {'dynamic_obstacle': {'trajectory_steps': 1}}}
+        retrieved_value4 = _retrieve_value(draw_params3, call_stack1, tuple(['zorder']))
         assert (retrieved_value4 == 20)  # adapt to default value in
         # visualization/scenario.create_default_draw_params()!
 
         # provide draw_params, but try to retrieve a non-provided parameter
         # that is only available on the top level of default parameters)
         # -> get the default parameter
-        draw_params5 = {
-                'scenario': {'dynamic_obstacle': {'trajectory_steps': 1}}
-        }
-        retrieved_value5 = _retrieve_value(draw_params5, call_stack1,
-                                           tuple(['time_begin']))
+        draw_params5 = {'scenario': {'dynamic_obstacle': {'trajectory_steps': 1}}}
+        retrieved_value5 = _retrieve_value(draw_params5, call_stack1, tuple(['time_begin']))
         assert (
-                retrieved_value5 == 0)  # adapt to default value in  #
+                retrieved_value5 == 0)  # adapt to default value in  #  #
         # visualization/draw_dispatch.create_default_draw_params()!
 
     def plot_object(self, object, draw_params=None):
@@ -198,37 +171,21 @@ class TestVisualization(unittest.TestCase):
             plt.style.use('classic')
             inch_in_cm = 2.54
             figsize = [20, 15]
-            plt.figure(
-                    figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
-            plt.gca().set(
-                    title='occupancies should be be plotted with opacity, '
-                          'plot limits: [-50,60,-50,50]')
+            plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
+            plt.gca().set(title='occupancies should be be plotted with opacity, '
+                                'plot limits: [-50,60,-50,50]')
             plt.gca().autoscale_view(False, False, False)
 
             t1 = time.time()
             draw_params = {
-                    'planning_problem_set': {
-                            'draw_ids': [list(
-                                    planning_problem_set.planning_problem_dict.keys())[
-                                             0]]
-                    },
-                    'time_begin':           15,
-                    'time_end':             25,
-                    'dynamic_obstacle':     {
-                            'occupancy': {
-                                    'draw_occupancies': 0, 'shape': {
-                                            'rectangle': {'facecolor': 'g'}
-                                    }
-                            }
-                    }
-            }
-            draw_object(scenario, draw_params=draw_params,
-                        plot_limits=[-50, 60, -50, 50])
+                'planning_problem_set': {'draw_ids': [list(planning_problem_set.planning_problem_dict.keys())[0]]},
+                'time_begin': 15, 'time_end': 25,
+                'dynamic_obstacle': {'occupancy': {'draw_occupancies': 0, 'shape': {'rectangle': {'facecolor': 'g'}}}}}
+            draw_object(scenario, draw_params=draw_params, plot_limits=[-50, 60, -50, 50])
             plt.gca().axis('equal')
             # plt.gca().autoscale()
             # plt.tight_layout()
-            draw_object(planning_problem_set, draw_params=draw_params,
-                        plot_limits=[-50, 60, -50, 50])
+            draw_object(planning_problem_set, draw_params=draw_params, plot_limits=[-50, 60, -50, 50])
             # draw_object(scenario.obj[0],draw_params=draw_params)
             plt.show(block=False)
             tt += time.time() - t1
@@ -237,121 +194,195 @@ class TestVisualization(unittest.TestCase):
 
         print('time: {}'.format(tt / nrun))
 
+    # #
+    #     def plot_limits(self, lims):
+    #         plt.clf()
+    #         full_path = os.path.dirname(os.path.abspath(__file__))
+    #         filename = full_path +
+    #         '/../../../../scenarios/cooperative/C-USA_Lanker-2_4_T-1.xml'
+    #         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
+    #         scenario: Scenario = scenario
+    #         set_non_blocking()
+    #         plt.style.use('classic')
+    #         inch_in_cm = 2.54
+    #         figsize = [30, 8]
+    #         fig = plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] /
+    #         inch_in_cm))
+    #         # fig, axx= plt.subplots()
+    #         plt.gca().set(title='one vehicle should be green and its occupancy
+    #         be plotted with opacity')
+    #         plt.gca().axis('equal')
+    #         # plt.gca().autoscale()
+    #         plt.tight_layout()
+    #         handles = {}
+    #         draw_object(scenario, plot_limits=lims, handles=handles)
+    #         fig.canvas.draw()
+    #         import time
+    #         t2 = time.time()
+    #
+    #         for ii in range(0,10):
+    #
+    #             # draw_object(scenario, lims,handles=handles)
+    #             # plt.draw()
+    #             # plt.pause(0.001)
+    #             lims[0] = lims[0] + 5
+    #             lims[1] = lims[1] + 5
+    #             redraw_obstacles(scenario,handles,plot_limits=lims,
+    #             figure_handle=fig)
+    #             # fig.canvas.draw()
+    #             # fig.canvas.flush_events()
+    #
+    #         print(time.time() - t2)
+    #         iii=1
+    #         # plt.close()
+    #
+    #     def test_plot_limits(self):
+    #
+    #         self.plot_limits([-50, 40, -20, 50])
+    #
+    #         # t1=time.time()
+    #         # for i in range(0,1):
+    #         #     self.plot_limits(None)
+    #         # print(time.time()-t1)
 
-# #
-#     def plot_limits(self, lims):
-#         plt.clf()
-#         full_path = os.path.dirname(os.path.abspath(__file__))
-#         filename = full_path +
-#         '/../../../../scenarios/cooperative/C-USA_Lanker-2_4_T-1.xml'
-#         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
-#         scenario: Scenario = scenario
-#         set_non_blocking()
-#         plt.style.use('classic')
-#         inch_in_cm = 2.54
-#         figsize = [30, 8]
-#         fig = plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] /
-#         inch_in_cm))
-#         # fig, axx= plt.subplots()
-#         plt.gca().set(title='one vehicle should be green and its occupancy
-#         be plotted with opacity')
-#         plt.gca().axis('equal')
-#         # plt.gca().autoscale()
-#         plt.tight_layout()
-#         handles = {}
-#         draw_object(scenario, plot_limits=lims, handles=handles)
-#         fig.canvas.draw()
-#         import time
-#         t2 = time.time()
-#
-#         for ii in range(0,10):
-#
-#             # draw_object(scenario, lims,handles=handles)
-#             # plt.draw()
-#             # plt.pause(0.001)
-#             lims[0] = lims[0] + 5
-#             lims[1] = lims[1] + 5
-#             redraw_obstacles(scenario,handles,plot_limits=lims,
-#             figure_handle=fig)
-#             # fig.canvas.draw()
-#             # fig.canvas.flush_events()
-#
-#         print(time.time() - t2)
-#         iii=1
-#         # plt.close()
-#
-#     def test_plot_limits(self):
-#
-#         self.plot_limits([-50, 40, -20, 50])
-#
-#         # t1=time.time()
-#         # for i in range(0,1):
-#         #     self.plot_limits(None)
-#         # print(time.time()-t1)
-
-# def test_visualize_all_scenarios(self):
-#     scenarios = "update"
-#     factory = scenarios + "/scenario-factory"
-#     #cooperative = scenarios + "/cooperative"
-#     hand_crafted = scenarios + "/hand-crafted"
-#     ngsim_lankershim = scenarios + "/NGSIM/Lankershim"
-#     ngsim_us101 = scenarios + "/NGSIM/US101"
-#     ngsim_peachtree = scenarios + "/NGSIM/Peachtree"
-#     #sumo = scenarios + "/SUMO"
-#     bicycle = scenarios + "/THI-Bicycle"
-#
-#     for scenario in os.listdir(hand_crafted):
-#         full_path = hand_crafted + "/" + scenario
-#         scenario, planning_problem_set = CommonRoadFileReader(
-#         full_path).open()
-#         draw_object(scenario)
-#         draw_object(planning_problem_set)
-#         plt.pause(0.0001)
-#         plt.clf()
-#
-#     for scenario in os.listdir(ngsim_lankershim):
-#         full_path = ngsim_lankershim + "/" + scenario
-#         scenario, planning_problem_set = CommonRoadFileReader(
-#         full_path).open()
-#         draw_object(scenario)
-#         draw_object(planning_problem_set)
-#         plt.pause(0.0001)
-#         plt.clf()
-#
-#     for scenario in os.listdir(ngsim_us101):
-#         full_path = ngsim_us101 + "/" + scenario
-#         scenario, planning_problem_set = CommonRoadFileReader(
-#         full_path).open()
-#         draw_object(scenario)
-#         draw_object(planning_problem_set)
-#         plt.pause(0.0001)
-#         plt.clf()
-#
-#     # for scenario in os.listdir(cooperative):
-#     #     full_path = cooperative + "/" + scenario
-#     #     CommonRoadFileReader(full_path).open()
-#     #
-#     # for scenario in os.listdir(sumo):
-#     #     full_path = sumo + "/" + scenario
-#     #     CommonRoadFileReader(full_path).open()
-#
-#     for scenario in os.listdir(bicycle):
-#         full_path = bicycle + "/" + scenario
-#         scenario, planning_problem_set = CommonRoadFileReader(
-#         full_path).open()
-#         draw_object(scenario)
-#         draw_object(planning_problem_set)
-#         plt.pause(0.0001)
-#         plt.clf()
-#
-#     for scenario in os.listdir(factory):
-#         full_path = factory + "/" + scenario
-#         scenario, planning_problem_set = CommonRoadFileReader(
-#         full_path).open()
-#         draw_object(scenario)
-#         draw_object(planning_problem_set)
-#         plt.pause(0.0001)
-#         plt.clf()
+    # def test_visualize_all_scenarios(self):
+    #     scenarios_2020a = "TODO"
+    #     scenarios_2018b = "TODO"
+    #
+    #     factory_2020a = scenarios_2020a + "/scenario-factory"
+    #     hand_crafted_2020a = scenarios_2020a + "/hand-crafted"
+    #     ngsim_lankershim_2020a = scenarios_2020a + "/NGSIM/Lankershim"
+    #     ngsim_us101_2020a = scenarios_2020a + "/NGSIM/US101"
+    #     ngsim_peachtree_2020a = scenarios_2020a + "/NGSIM/Peachtree"
+    #     bicycle_2020a = scenarios_2020a + "/THI-Bicycle"
+    #
+    #     cooperative_2018b = scenarios_2018b + "/cooperative"
+    #     bicycle_2018b = scenarios_2018b + "/THI-Bicycle"
+    #     sumo_2018b = scenarios_2018b + "/SUMO"
+    #     hand_crafted_2018b = scenarios_2018b + "/hand-crafted"
+    #     ngsim_lankershim_2018b = scenarios_2018b + "/NGSIM/Lankershim"
+    #     ngsim_us101_2018b = scenarios_2018b + "/NGSIM/US101"
+    #     ngsim_peachtree_2018b = scenarios_2018b + "/NGSIM/Peachtree"
+    #
+    #     for scenario in os.listdir(hand_crafted_2018b):
+    #         full_path = hand_crafted_2018b + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     for scenario in os.listdir(ngsim_lankershim_2018b):
+    #         full_path = ngsim_lankershim_2018b + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     for scenario in os.listdir(ngsim_us101_2018b):
+    #         full_path = ngsim_us101_2018b + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     for scenario in os.listdir(ngsim_peachtree_2018b):
+    #         full_path = ngsim_peachtree_2018b + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     for scenario in os.listdir(cooperative_2018b):
+    #         full_path = cooperative_2018b + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     for scenario in os.listdir(bicycle_2018b):
+    #         full_path = bicycle_2018b + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     for scenario in os.listdir(bicycle_2018b):
+    #         full_path = bicycle_2018b + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     for scenario in os.listdir(bicycle_2018b):
+    #         full_path = bicycle_2018b + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     for scenario in os.listdir(sumo_2018b):
+    #         full_path = sumo_2018b + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     for scenario in os.listdir(factory_2020a):
+    #         full_path = factory_2020a + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     for scenario in os.listdir(hand_crafted_2020a):
+    #         full_path = hand_crafted_2020a + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     for scenario in os.listdir(ngsim_lankershim_2020a):
+    #         full_path = ngsim_lankershim_2020a + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     for scenario in os.listdir(ngsim_us101_2020a):
+    #         full_path = ngsim_us101_2020a + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     for scenario in os.listdir(ngsim_peachtree_2020a):
+    #         full_path = ngsim_peachtree_2020a + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
+    #
+    #     for scenario in os.listdir(bicycle_2020a):
+    #         full_path = bicycle_2020a + "/" + scenario
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         draw_object(scenario)
+    #         draw_object(planning_problem_set)
+    #         plt.pause(0.0001)
+    #         plt.clf()
 
 
 if __name__ == '__main__':

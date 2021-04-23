@@ -751,10 +751,9 @@ class TestFileReader(unittest.TestCase):
         self.assertEqual(exp_obstacle_one_prediction_zero_shape_center[1],
                          xml_file[0].obstacles[1].prediction.occupancy_set[0].shape.center[1])
 
-
     # def test_open_all_scenarios(self):
-    #     scenarios_2020a = "todo"
-    #     scenarios_2018b = "todo"
+    #     scenarios_2020a = "TODO"
+    #     scenarios_2018b = "TODO"
     #
     #     factory_2020a = scenarios_2020a + "/scenario-factory"
     #     hand_crafted_2020a = scenarios_2020a + "/hand-crafted"
@@ -822,6 +821,7 @@ class TestFileReader(unittest.TestCase):
     #     for scenario in os.listdir(hand_crafted_2018b):
     #         full_path = hand_crafted_2018b + "/" + scenario
     #         CommonRoadFileReader(full_path).open()
+
 
 if __name__ == '__main__':
     unittest.main()

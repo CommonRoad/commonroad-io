@@ -63,14 +63,14 @@ and add the folder commonroad_io to your Python environment.
 
 Changelog
 ============
-Compared to version 2020.2, the following features were added:
+Compared to version 2020.3, the following features have been added or changed:
 
-* Support of environment obstacles, e.g. buildings
-* Several new traffic signs
-* New ScenarioID class for the representation of benchmarks
-* New line marking types *unknown* and *no_marking*
-* The creation of lanelet assignments for obstacles is now optional.This decreases the loading time of scenarios. The lanelet assignment can still be performed manually after loading a scenario.
-* Function *generate_object_id* works now if no element has been added before and reserves ID if object will be added later
+* Support for over 50 new traffic signs from Germany
+* Support of phantom obstacles
+* New visualization module which supports MVC pattern
+* Functions for adding and removing traffic signs, traffic lights, and intersections from a scenario or lanelet network
+* New icon visualization interface and new icons for bus, truck, and bicycle (developed by Simon Sagmeister - TUM FTM)
+* Scaling of traffic signs is coupled with the zoom level
 * Various small bug fixes
 
 A detailed overview about the changes in each version is provided in the Changelog.

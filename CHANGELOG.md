@@ -3,7 +3,7 @@
 ## [2021.1] - 2021-04-16
 ### Added
 - Support for over 50 new traffic signs from Germany
-- Phantom obstacles
+- Support of phantom obstacles
 - New visualization module which supports MVC pattern
 - Functions for adding and removing traffic signs, traffic lights, and intersections from a scenario or lanelet network
 - New icon visualization interface and new icons for bus, truck, and bicycle (developed by Simon Sagmeister - TUM FTM)

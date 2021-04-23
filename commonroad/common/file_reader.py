@@ -204,6 +204,7 @@ class ScenarioFactory:
         scenario = Scenario(dt, scenario_id, **meta_data)
 
         scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
+        large_num = 10000
         if commonroad_version == '2018b':
             scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network, lanelet_assignment))
             for key, value in LaneletFactory._speed_limits.items():
@@ -223,7 +224,8 @@ class ScenarioFactory:
                     else:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
                         warnings.warn("Unknown country: Default traffic sign IDs are used.")
-                    traffic_sign = TrafficSign(scenario.generate_object_id(), [traffic_sign_element], {lanelet},
+                    traffic_sign = TrafficSign(scenario.generate_object_id() + large_num, [traffic_sign_element],
+                                               {lanelet},
                                                scenario.lanelet_network.find_lanelet_by_id(lanelet).right_vertices[0])
                     scenario.add_objects(traffic_sign, {lanelet})
             LaneletFactory._speed_limits = {}
