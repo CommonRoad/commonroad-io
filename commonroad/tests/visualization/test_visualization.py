@@ -162,7 +162,7 @@ class TestVisualization(unittest.TestCase):
         # plt.ioff()
         # set_non_blocking()
         full_path = os.path.dirname(os.path.abspath(__file__))
-        filename = full_path + '/../test_scenarios/USA_US101-3_3_T-1.xml'
+        filename = full_path + '/../test_scenarios/USA_US101-4_1_T-1.xml'
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         scenario: Scenario = scenario
         # plt.autoscale(False)
