@@ -8,6 +8,7 @@ stages:
 before_script:
 - curl -O https://bootstrap.pypa.io/get-pip.py
 - python get-pip.py
+- apt-get update -qq && apt-get install -y -qq ffmpeg
 
 style_checks:
   stage: style_check
