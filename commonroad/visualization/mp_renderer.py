@@ -588,7 +588,7 @@ class MPRenderer(IRenderer):
                 position = state.position
                 self.dynamic_labels.append(
                         text.Text(position[0] + 0.5, position[1], str(obj.obstacle_id), clip_on=True,
-                                  zorder=ZOrders.LABELS+1000))
+                                  zorder=ZOrders.LABELS))
 
         # draw initial state
         if draw_initial_state:
