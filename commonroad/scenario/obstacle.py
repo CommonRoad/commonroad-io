@@ -347,6 +347,7 @@ class StaticObstacle(Obstacle):
     def __str__(self):
         obs_str = 'Static Obstacle:\n'
         obs_str += '\nid: {}'.format(self.obstacle_id)
+        obs_str += '\ntype: {}'.format(self.obstacle_type.value)
         obs_str += '\ninitial state: {}'.format(self.initial_state)
         return obs_str
 
@@ -450,6 +451,7 @@ class DynamicObstacle(Obstacle):
     def __str__(self):
         obs_str = 'Dynamic Obstacle:\n'
         obs_str += '\nid: {}'.format(self.obstacle_id)
+        obs_str += '\ntype: {}'.format(self.obstacle_type.value)
         obs_str += '\ninitial state: {}'.format(self.initial_state)
         return obs_str
 
