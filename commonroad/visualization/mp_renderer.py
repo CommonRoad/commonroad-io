@@ -524,10 +524,10 @@ class MPRenderer(IRenderer):
                 else:
                     inital_state = obj.prediction.trajectory.state_at_time_step(time_begin)
                 if inital_state is not None:
-                    call_stack = tuple(list(call_stack) + ['occupancy', 'shape', 'polygon'])
+                    call_stack_tmp = call_stack + ('occupancy', 'shape', 'polygon')
 
-                    facecolor = draw_params.by_callstack(call_stack, 'facecolor')
-                    edgecolor = draw_params.by_callstack(call_stack, 'edgecolor')
+                    facecolor = draw_params.by_callstack(call_stack_tmp, 'facecolor')
+                    edgecolor = draw_params.by_callstack(call_stack_tmp, 'edgecolor')
 
                     self.obstacle_patches.extend(
                         get_obstacle_icon_patch(obj.obstacle_type, inital_state.position[0], inital_state.position[1],
