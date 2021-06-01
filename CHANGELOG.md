@@ -1,5 +1,9 @@
 # Changelog
 
+## [2021.2] - ???
+### Added
+- Parameter `draw_params={"focus_obstacle_id": obstacle_id}` focuses the plot or video on a dynamic_obstacle
+
 ## [2021.1] - 2021-04-23
 ### Added
 - Support for over 50 new traffic signs from Germany

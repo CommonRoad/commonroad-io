@@ -1,6 +1,8 @@
 {
     "time_begin": 0,
     "time_end": 200,
+    "axis_visible": true,
+    "focus_obstacle_id": false,
     "relative_angle": 0.0,
     "dynamic_obstacle": {
         "draw_shape": true,
