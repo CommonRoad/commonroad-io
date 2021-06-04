@@ -264,7 +264,7 @@ class TrafficSignIDGermany(enum.Enum):
 @enum.unique
 class TrafficSignIDZamunda(enum.Enum):  # default traffic sign IDs (similar to German IDs)
     WARNING_DANGER_SPOT = '101'
-    WARNING_RIGHT_BEFORE_LEFTNO_STOP_START_RIGHT = '102'
+    WARNING_RIGHT_BEFORE_LEFT = '102'
     WARNING_STEEP_HILL_DOWNWARDS = '108'
     WARNING_SLIPPERY_ROAD = '114'
     WARNING_CONSTRUCTION_SITE = '123'
