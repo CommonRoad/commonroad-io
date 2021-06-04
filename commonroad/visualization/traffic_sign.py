@@ -54,7 +54,7 @@ def speed_limit_factor(country_code) -> float:
 
 
 # denotes traffic signs that are speed limits
-is_speed_limit_id = ['274', '275', 'R2-1']
+is_speed_limit_id = ['274', '275', 'R2-1', 'r301']
 
 
 def text_prop_dict() -> dict:

@@ -302,7 +302,6 @@ class TrafficSignIDSpain(enum.Enum):
     NO_OVERTAKING_START = 'r305'
     NO_STOPPING = 'r307'
     NO_WAITING = 'r308'
-
     PEDESTRIANS_CROSSING = 's13'
     UNKNOWN = ''
 
