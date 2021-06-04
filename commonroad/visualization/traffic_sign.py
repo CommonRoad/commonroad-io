@@ -213,6 +213,8 @@ def create_img_boxes_traffic_sign(
             if plot_img:
                 # plot traffic sign
                 sign_img = Image.open(path)
+                if sign_img.mode != "RGBA":
+                    sign_img = sign_img.convert("RGBA")
                 boxes.append(
                         OffsetImage(sign_img, zoom=scale_factor, zorder=zorder,
                                     interpolation='bicubic'))
