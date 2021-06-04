@@ -136,7 +136,6 @@ class TrafficSignIDGermany(enum.Enum):
     HIGHWAY_START = '331.1'
     HIGHWAY_END = '331.2'
     HIGHWAY_EXIT_WITH_PLACE_NAME = '332'
-    HIGHWAY_EXIT = '333'
     HIGHWAY_EXIT = '333-20'
     EXIT_BUILT_UP = '333-21'
     EXIT_GENERAL = '333-22'
