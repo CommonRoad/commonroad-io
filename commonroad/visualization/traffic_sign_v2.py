@@ -481,6 +481,9 @@ def create_img_boxes_traffic_sign(
                     props_txt = None
                     add_text = None
 
+                if sign_img.mode != "RGBA":
+                    sign_img = sign_img.convert("RGBA")
+
                 boxes.append(
                     OffsetImageAutoscale(sign_img, text=add_text,
                                          px_per_metre=px_per_metre*scale_factor,
