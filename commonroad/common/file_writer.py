@@ -34,8 +34,12 @@ __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
-# create a new context for this task
-ctx = decimal.Context()
+
+class DecimalPrecision:
+    decimals = 4
+
+
+precision = DecimalPrecision
 
 
 def float_to_str(f):
@@ -43,8 +47,14 @@ def float_to_str(f):
     Convert the given float to a string,
     without resorting to scientific notation
     """
-    d1 = ctx.create_decimal(repr(f))
-    return format(d1, 'f')
+    fstring = str(f)
+    if "e" in fstring:
+        return format(f, ".{}f".format(precision.decimals))
+    f_list = fstring.split(".")
+    if len(f_list) > 1:
+        return f_list[0] + "." + f_list[1][:precision.decimals]
+    else:
+        return f_list[0]
 
 
 def create_exact_node_float(value: Union[int, float]) -> etree.Element:
@@ -128,7 +138,7 @@ class CommonRoadFileWriter:
         source: str = None,
         tags: Set[Tag] = None,
         location: Location = None,
-        decimal_precision: int = 8,
+        decimal_precision: int = 4,
     ):
         """
         Initialize the FileWriter with a scenario and tags for the xml-header
@@ -156,9 +166,8 @@ class CommonRoadFileWriter:
         self.location = location if location is not None else scenario.location
         self.tags = tags if tags is not None else scenario.tags
 
-
         # set decimal precision
-        ctx.prec = decimal_precision
+        precision.decimals = decimal_precision
 
     @property
     def root_node(self):
