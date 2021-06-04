@@ -299,7 +299,7 @@ class TrafficSignIDSpain(enum.Enum):
     MAX_WEIGHT = 'r107'
     MAX_HEIGHT = 'r205'
     MAX_SPEED = 'r301'
-    NO_OVERTAKING_START = '305'
+    NO_OVERTAKING_START = 'r305'
     NO_STOPPING = 'r307'
     NO_WAITING = 'r308'
 
