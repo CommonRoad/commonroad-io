@@ -280,6 +280,18 @@ class TrafficSignIDZamunda(enum.Enum):  # default traffic sign IDs (similar to G
 class TrafficSignIDUsa(enum.Enum):
     MAX_SPEED = 'R2-1'
     U_TURN = 'R3-4'
+    ROAD_WORK_AHEAD = 'CW20-1'
+    NO_PARKING = 'R7-1'
+    NO_STANDING = 'R7-4'
+    TOW_AWAY_ZONE = 'R7-201a'
+    ONE_WAY_LEFT = 'R6-1L'
+    ONE_WAY_RIGHT = 'R6-1R'
+    DO_NOT_ENTER = 'R5-1'
+    NO_LEFT_TURN = 'R3-2'
+    RIGHT_TURN_ONLY = 'R3-5R'
+    TURN_ONLY_LANES = 'R3-8b'
+    NO_RIGHT_TURN = 'R3-1'
+    KEEP_RIGHT = 'R4-7'
     UNKNOWN = ''
 
 
