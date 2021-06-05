@@ -385,7 +385,18 @@ class TrafficSignIDChina(enum.Enum):
 
 @enum.unique
 class TrafficSignIDSpain(enum.Enum):
-    MAX_SPEED = '274'  # TODO: change to actual ID
+    YIELD = 'r1'
+    STOP = 'r2'
+    BAN_ALL_VEHICLES = 'r100'
+    NO_ENTRY = 'r101'
+    BAN_TRUCKS = 'r106'
+    MAX_WEIGHT = 'r107'
+    MAX_HEIGHT = 'r205'
+    MAX_SPEED = 'r301'
+    NO_OVERTAKING_START = 'r305'
+    NO_STOPPING = 'r307'
+    NO_WAITING = 'r308'
+    PEDESTRIANS_CROSSING = 's13'
     UNKNOWN = ''
 
 
