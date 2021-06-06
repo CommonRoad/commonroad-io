@@ -138,11 +138,11 @@ class GeoTransformation:
         :param z_rotation: rotation value around origin
         :param scaling: multiplication value of x- and y-coordinates
         """
-        self._geo_reference = geo_reference
-        self._x_translation = x_translation
-        self._y_translation = y_translation
-        self._z_rotation = z_rotation
-        self._scaling = scaling
+        self.geo_reference = geo_reference
+        self.x_translation = x_translation
+        self.y_translation = y_translation
+        self.z_rotation = z_rotation
+        self.scaling = scaling
 
     @property
     def geo_reference(self) -> str:
@@ -163,6 +163,26 @@ class GeoTransformation:
     @property
     def scaling(self) -> float:
         return self._scaling
+
+    @geo_reference.setter
+    def geo_reference(self, geo_reference):
+        self._geo_reference = geo_reference if geo_reference is not None else 0
+
+    @x_translation.setter
+    def x_translation(self, x_translation):
+        self._x_translation = x_translation if x_translation is not None else 0
+
+    @y_translation.setter
+    def y_translation(self, y_translation):
+        self._y_translation = y_translation if y_translation is not None else 0
+
+    @z_rotation.setter
+    def z_rotation(self, z_rotation):
+        self._z_rotation = z_rotation if z_rotation is not None else 0
+
+    @scaling.setter
+    def scaling(self, scaling):
+        self._scaling = scaling if scaling is not None else 1
 
 
 class Environment:
@@ -863,13 +883,14 @@ class Scenario(IDrawable):
         assigned.
         """
 
-        def assign_dynamic_obstacle_shape_at_time(obstacle: DynamicObstacle, time_step):
+        def assign_dynamic_obstacle_shape_at_time(obstacle: DynamicObstacle, time_step) -> bool:
             # assign center of obstacle
             # print(time_step, [state.time_step for state in obstacle.prediction.trajectory.state_list])
             if time_step == obstacle.initial_state.time_step:
                 position = obstacle.initial_state.position
-            elif not isinstance(obstacle.prediction, TrajectoryPrediction):
-                return
+            elif not isinstance(obstacle.prediction, TrajectoryPrediction)\
+                    or obstacle.prediction.final_time_step < time_step:
+                return False
             else:
                 position = obstacle.prediction.trajectory.state_at_time_step(time_step).position
 
@@ -891,6 +912,8 @@ class Scenario(IDrawable):
             for l_id in lanelet_ids:
                 self.lanelet_network.find_lanelet_by_id(l_id) \
                     .add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle.obstacle_id, time_step=time_step)
+
+            return True
 
         def assign_static_obstacle(obstacle: StaticObstacle):
             shape = obstacle.occupancy_at_time(0).shape

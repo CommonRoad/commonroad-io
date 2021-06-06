@@ -642,10 +642,8 @@ class Lanelet:
         assert is_real_number(distance) and np.greater_equal(self.distance[-1], distance) \
                and np.greater_equal(distance, 0), \
                '<Lanelet/interpolate_position>: provided distance is not valid! distance = {}'.format(distance)
-        idx = 0
-
-        # find
-        while not (self.distance[idx] <= distance <= self.distance[idx + 1]):
+        idx = np.searchsorted(self.distance, distance) - 1
+        while not self.distance[idx] <= distance:
             idx += 1
         r = (distance - self.distance[idx]) / (self.distance[idx + 1] - self.distance[idx])
         return ((1 - r) * self._center_vertices[idx] + r * self._center_vertices[idx + 1],

@@ -331,12 +331,15 @@ class GeoTransformationFactory:
         :return: GeoTransformation object
         """
         geo_reference = xml_node.find('geoReference').text
-        x_translation = float(xml_node.find('xTranslation').text)
-        y_translation = float(xml_node.find('yTranslation').text)
-        z_rotation = float(xml_node.find('zRotation').text)
-        scaling = float(xml_node.find('scaling').text)
-
-        return GeoTransformation(geo_reference, x_translation, y_translation, z_rotation, scaling)
+        if xml_node.find('additionalTransformation') is not None:
+            add_trans_node = xml_node.find('additionalTransformation')
+            x_translation = float(add_trans_node.find('xTranslation').text)
+            y_translation = float(add_trans_node.find('yTranslation').text)
+            z_rotation = float(add_trans_node.find('zRotation').text)
+            scaling = float(add_trans_node.find('scaling').text)
+            return GeoTransformation(geo_reference, x_translation, y_translation, z_rotation, scaling)
+        else:
+            return GeoTransformation(geo_reference)
 
 
 class EnvironmentFactory:
