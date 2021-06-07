@@ -4,6 +4,8 @@
 import os
 import time
 import unittest
+import warnings
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
@@ -13,14 +15,16 @@ from commonroad.geometry.shape import Rectangle, Circle, Polygon
 from commonroad.geometry.shape import ShapeGroup
 from commonroad.planning.planning_problem import PlanningProblemSet
 from commonroad.prediction.prediction import Occupancy
-from commonroad.scenario.traffic_sign import TRAFFIC_SIGN_WITH_ADDITIONAL_VALUE, TrafficSignIDGermany
+from commonroad.scenario.traffic_sign import TRAFFIC_SIGN_WITH_ADDITIONAL_VALUE, TrafficSignIDGermany, \
+    TrafficSignIDRussia, TrafficSignIDSpain, TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSignIDChina, TrafficSign, \
+    TrafficSignElement
 from commonroad.scenario.trajectory import State
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.scenario.scenario import Scenario
 
 from commonroad.visualization.mp_renderer import MPRenderer
 from commonroad.visualization.param_server import ParamServer, write_default_params
-from commonroad.visualization.traffic_sign_v2 import text_prop_dict
+from commonroad.visualization.traffic_sign_v2 import text_prop_dict, draw_traffic_light_signs
 
 
 class TestVisualizationV2(unittest.TestCase):
@@ -126,6 +130,23 @@ class TestVisualizationV2(unittest.TestCase):
             assert rnd.plot_limits_focused[0] == x0
 
         plt.close('all')
+
+    def test_plotting_all_traffic_signs(self):
+        traffic_sign_types = [TrafficSignIDZamunda, TrafficSignIDGermany, TrafficSignIDUsa,
+                 TrafficSignIDSpain]
+        rnd = MPRenderer()
+        with warnings.catch_warnings(record=True) as w:
+            for ts_type in traffic_sign_types:
+                for v in ts_type:
+                    # print(v)
+                    ts = TrafficSign(100, [TrafficSignElement(v, ["test1","test2"])],
+                                     first_occurrence={0},
+                                     position=np.array([0.0, 0.0]),
+                                virtual=False)
+                    draw_traffic_light_signs(ts,draw_params=rnd.draw_params, call_stack=tuple(), rnd=rnd)
+
+            self.assertEqual(len(w), 0, msg="The following warnings were raised:\n" +
+                                            "\n".join(str(w_tmp.message) for w_tmp in w))
 
     def test_planning(self):
         # test draw_object for all possible object types
