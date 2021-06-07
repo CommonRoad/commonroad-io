@@ -221,7 +221,7 @@ def speed_limit_factor(country_code) -> float:
 
 
 # denotes traffic signs that are speed limits
-unit_conversion_required = ['274', '274.1', '275', '1004-31', 'R2-1']
+unit_conversion_required = ['274', '274.1', '275', '1004-31', 'R2-1', 'r301']
 
 
 def text_prop_dict() -> dict:
@@ -342,7 +342,14 @@ def text_prop_dict() -> dict:
                 'weight': 'normal', 'color': 'black', 'size': 10.5
             },
             'position_offset_y': 0.3
-        }
+        },
+        'r301': {
+            'mpl_args': {
+                'weight': 'bold', 'size': 13.5
+            },
+            'rescale_threshold': 2,
+            'position_offset_y': 0.45
+        },
     }
 
 
@@ -470,6 +477,9 @@ def create_img_boxes_traffic_sign(
                     txt_offset_y = -0.2
                     props_txt = None
                     add_text = None
+
+                if sign_img.mode != "RGBA":
+                    sign_img = sign_img.convert("RGBA")
 
                 boxes.append(
                     OffsetImageAutoscale(sign_img, text=add_text,
