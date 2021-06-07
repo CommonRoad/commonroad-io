@@ -7,11 +7,12 @@ __email__ = "commonroad@lists.lrz.de"
 __status__ = "Release"
 
 import enum
-from typing import List, Set, Optional, Tuple
+from typing import List, Optional, Set, Tuple
+
 import numpy as np
 
-from commonroad.common.validity import *
 import commonroad.geometry.transform
+from commonroad.common.validity import *
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
@@ -374,6 +375,32 @@ class TrafficSignIDZamunda(enum.Enum):  # default traffic sign IDs (similar to G
 class TrafficSignIDUsa(enum.Enum):
     MAX_SPEED = 'R2-1'
     U_TURN = 'R3-4'
+    ROAD_WORK_AHEAD = 'CW20-1'
+    NO_PARKING_ANY_TIME = 'R7-1'
+    NO_STANDING = 'R7-4'
+    TOW_AWAY_ZONE = 'R7-201a'
+    ONE_WAY_LEFT = 'R6-1L'
+    ONE_WAY_RIGHT = 'R6-1R'
+    DO_NOT_ENTER = 'R5-1'
+    NO_LEFT_TURN = 'R3-2'
+    RIGHT_TURN_ONLY = 'R3-5R'
+    TURN_ONLY_LANES = 'R3-8b'
+    NO_RIGHT_TURN = 'R3-1'
+    KEEP_RIGHT = 'R4-7'
+    SIGNAL_AHEAD = 'W3-3'
+    LOADING_ZONE = 'R8-3gP'
+    NO_PARKING = 'R8-3'
+    LEFT_TURN_ONLY = 'R3-5L'
+    NO_STRAIGHT_THROUGH = 'R3-27'
+    LEFT_REVERSE_TURN = 'W1-3L'
+    PEDESTRIAN_WARNING = 'W11-2'
+    DIAGONAL_DOWNWARD_LEFT_ARROW = 'M6-2aL'
+    RIGHT_LANE_ENDS = 'W4-2R'
+    RESERVED_HANDICAP_PARKING = 'R7-8'
+    NO_PARKING_BUS_STOP = 'R7-107'
+    ON_PAVEMENT = 'R8-3C'
+    DO_NOT_BLOCK_INTERSECTION = 'R10-7'
+    WARNING_ARROW_LEFT = 'W1-6L'
     UNKNOWN = ''
 
 
