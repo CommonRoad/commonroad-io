@@ -1,6 +1,7 @@
 import copy
 import enum
 import os
+import warnings
 from collections import defaultdict
 from typing import Dict
 
@@ -440,14 +441,10 @@ def create_img_boxes_traffic_sign(
             plot_img = True
             # get png image
             if not os.path.exists(path):
-                path = os.path.join(traffic_sign_path, 'TrafficSignIDZamunda',
-                                    el_id.value + '.png')
+                warnings.warn(f"File for traffic sign {element} at {path} does not exist!")
+                path = os.path.join(traffic_sign_path, '.png')
                 if not os.path.exists(path):
                     show_label = True
-                    warnings.warn(
-                            'No png file for traffic sign id {} exists under '
-                            'path '
-                            '{}, skipped plotting.'.format(el_id, path))
                     plot_img = False
 
             boxes = []  # collect matplotlib offset boxes for text and images
@@ -601,7 +598,7 @@ def create_img_boxes_traffic_lights(
 
 
 def draw_traffic_light_signs(traffic_lights_signs: Union[
-    List[Union[TrafficLight, TrafficSign]], Union[TrafficLight, TrafficSign]],
+    List[Union[TrafficLight, TrafficSign]], TrafficLight, TrafficSign],
                              draw_params: ParamServer,
                              call_stack: Tuple[str, ...],
                              rnd):
