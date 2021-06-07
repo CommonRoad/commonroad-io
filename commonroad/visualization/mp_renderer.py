@@ -1225,19 +1225,21 @@ class MPRenderer(IRenderer):
         if draw_border_vertices:
             # left vertices
             self.static_collections.append(
-                    collections.EllipseCollection(np.ones([coordinates_left_border_vertices.shape[0], 1]) * 1,
-                                                  np.ones([coordinates_left_border_vertices.shape[0], 1]) * 1,
+                    collections.EllipseCollection(np.ones([coordinates_left_border_vertices.shape[0], 1]) * 1.5,
+                                                  np.ones([coordinates_left_border_vertices.shape[0], 1]) * 1.5,
                                                   np.zeros([coordinates_left_border_vertices.shape[0], 1]),
                                                   offsets=coordinates_left_border_vertices, color=left_bound_color,
-                                                  transOffset=self.ax.transData))
+                                                  transOffset=self.ax.transData,
+                                                  zorder=ZOrders.LEFT_BOUND + 0.1,))
 
             # right_vertices
             self.static_collections.append(
-                    collections.EllipseCollection(np.ones([coordinates_right_border_vertices.shape[0], 1]) * 1,
-                                                  np.ones([coordinates_right_border_vertices.shape[0], 1]) * 1,
+                    collections.EllipseCollection(np.ones([coordinates_right_border_vertices.shape[0], 1]) * 1.5,
+                                                  np.ones([coordinates_right_border_vertices.shape[0], 1]) * 1.5,
                                                   np.zeros([coordinates_right_border_vertices.shape[0], 1]),
                                                   offsets=coordinates_right_border_vertices, color=right_bound_color,
-                                                  transOffset=self.ax.transData))
+                                                  transOffset=self.ax.transData,
+                                                  zorder=ZOrders.LEFT_BOUND + 0.1,))
 
         if draw_traffic_signs:
             # draw actual traffic sign
