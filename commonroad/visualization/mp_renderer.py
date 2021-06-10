@@ -253,7 +253,7 @@ class MPRenderer(IRenderer):
         self._connect_callbacks()
         return self.static_collections + self.static_artists
 
-    def render(self, show: bool = False, filename: str = None, keep_static_artists=False) -> None:
+    def render(self, show: bool = False, filename: str = None, keep_static_artists=False) -> List[artists.Artist]:
         """
         Render all objects from buffer
 
@@ -1043,7 +1043,7 @@ class MPRenderer(IRenderer):
             if draw_start_and_direction:
                 center = lanelet.center_vertices[0]
                 tan_vec = np.array(lanelet.right_vertices[0]) - np.array(lanelet.left_vertices[0])
-                path = get_arrow_path_at(center[0], center[1], np.arctan2(tan_vec[1], tan_vec[0]) + 0.5 * np.pi)
+                path = get_arrow_path_at(center[0], center[1], math.atan2(tan_vec[1], tan_vec[0]) + 0.5 * np.pi)
                 if unique_colors:
                     direction_list.append(mpl.patches.PathPatch(path, color=center_bound_color, lw=0.5,
                                                                 zorder=ZOrders.DIRECTION_ARROW,
@@ -1151,7 +1151,7 @@ class MPRenderer(IRenderer):
                     # compute normal angle of label box
                     clr_positions = lanelet.interpolate_position(0.5 * lanelet.distance[-1])
                     normal_vector = np.array(clr_positions[1]) - np.array(clr_positions[2])
-                    angle = np.rad2deg(np.arctan2(normal_vector[1], normal_vector[0])) - 90
+                    angle = np.rad2deg(math.atan2(normal_vector[1], normal_vector[0])) - 90
                     angle = angle if Interval(-90, 90).contains(angle) else angle - 180
 
                     self.static_artists.append(text.Text(clr_positions[0][0], clr_positions[0][1], label_string,

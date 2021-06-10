@@ -3,6 +3,7 @@ from typing import Union
 
 import matplotlib as mpl
 import numpy as np
+import math
 
 from commonroad.geometry.transform import rotate_translate
 from commonroad.scenario.obstacle import ObstacleType
@@ -164,7 +165,7 @@ def draw_bicycle_icon(pos_x: Union[int, float], pos_y: Union[int, float], orient
         arc = []
         angle_list = np.linspace(start_angle, end_angle, 50)
         for angle in angle_list:
-            arc.append([center[0] + major * np.cos(angle), center[1] + minor * np.sin(angle)])
+            arc.append([center[0] + major * math.cos(angle), center[1] + minor * math.sin(angle)])
 
         return np.array(arc)
 
