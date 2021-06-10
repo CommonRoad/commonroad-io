@@ -1,9 +1,9 @@
 import copy
 import enum
 import os
-import warnings
 from collections import defaultdict
 from typing import Dict
+from scipy.cluster.hierarchy import linkage, fcluster
 
 from PIL import Image
 from commonroad.geometry.shape import *
@@ -659,28 +659,22 @@ def draw_traffic_light_signs(traffic_lights_signs: Union[
     box_lists = list(img_boxes.values())
 
     # group objects based on their positions' distances
-    groups = dict()
-    grouped = set()  # set of already assigned keys
-    i = 1
-    for pos, box_list in zip(positions[:-1], box_lists[:-1]):
-        i += 1
-        group_tmp = list(box_list)
-        if pos in grouped:
-            continue
-        gr_pos_tmp = [np.array(pos)]  # collect positions of members
-        for pos2, box_list2 in zip(positions[i:], box_lists[i:]):
-            if pos2 in grouped:
-                continue
-            if np.linalg.norm(np.array(pos) - np.array(pos2),
-                              ord=np.inf) < threshold_grouping:
-                group_tmp.extend(box_list2)
-                gr_pos_tmp.append(np.array(pos2))
+    group_boxes = defaultdict(list)
+    group_positions = defaultdict(list)
+    groups = defaultdict(list)
 
-        grouped.add(pos)  # collect ids of all objects
-        groups[tuple(np.average(gr_pos_tmp, axis=0).tolist())] = group_tmp
+    # find clusters where minimal pairwise distance is below distance threshold_grouping
+    if len(positions) <= 1:
+        groups[positions[0]] = box_lists[0]
+    else:
+        Z = linkage(np.array(positions), 'single')
+        clusters = fcluster(Z, threshold_grouping, criterion='distance')
+        for i, cluster_id in enumerate(clusters):
+            group_boxes[cluster_id].extend(box_lists[i])
+            group_positions[cluster_id].append(positions[i])
 
-    if positions[-1] not in grouped:
-        groups[positions[-1]] = box_lists[-1]
+        for cluster_id, boxes in group_boxes.items():
+            groups[tuple(np.average(group_positions[cluster_id], axis=0).tolist())] = boxes
 
     # add default AnnotationBox args if not specified by user
     default_params = dict(xycoords='data', frameon=False)
