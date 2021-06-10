@@ -1,7 +1,6 @@
 import numpy as np
+import math
 from typing import List, Union
-
-from commonroad.common.validity import is_real_number_vector, is_valid_orientation, is_valid_array_of_vertices
 
 __author__ = "Christina Miller"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -56,8 +55,8 @@ def rotation_translation_matrix(translation: Union[np.array, List[float]], angle
         cos_angle = 1.0
         sin_angle = 0.0
     else:
-        cos_angle = np.cos(angle)
-        sin_angle = np.sin(angle)
+        cos_angle = math.cos(angle)
+        sin_angle = math.sin(angle)
 
     return np.array([[cos_angle, -sin_angle, translation[0]],
                      [sin_angle,  cos_angle, translation[1]],
@@ -79,8 +78,8 @@ def translation_rotation_matrix(translation: Union[np.array, List[float]], angle
         cos_angle = 1.0
         sin_angle = angle
     else:
-        cos_angle = np.cos(angle)
-        sin_angle = np.sin(angle)
+        cos_angle = math.cos(angle)
+        sin_angle = math.sin(angle)
 
     rotation_matrix = np.array([[cos_angle, -sin_angle, 0.0],
                                 [sin_angle, cos_angle, 0.0],
