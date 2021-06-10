@@ -667,7 +667,7 @@ def draw_traffic_light_signs(traffic_lights_signs: Union[
     if len(positions) <= 1:
         groups[positions[0]] = box_lists[0]
     else:
-        Z = linkage(np.array(positions), 'single')
+        Z = linkage(np.array(positions), 'single', metric='chebyshev')
         clusters = fcluster(Z, threshold_grouping, criterion='distance')
         for i, cluster_id in enumerate(clusters):
             group_boxes[cluster_id].extend(box_lists[i])
