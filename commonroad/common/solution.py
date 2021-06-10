@@ -7,10 +7,16 @@ from xml.dom import minidom
 import numpy as np
 import xml.etree.ElementTree as et
 from enum import Enum, unique
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Dict
 from datetime import datetime
+import vehiclemodels.parameters_vehicle1 as p1
+import vehiclemodels.parameters_vehicle2 as p2
+import vehiclemodels.parameters_vehicle3 as p3
 
 from commonroad.common.validity import is_real_number, is_positive
+from commonroad.geometry.shape import Rectangle
+from commonroad.prediction.prediction import TrajectoryPrediction
+from commonroad.scenario.obstacle import DynamicObstacle, ObstacleType
 from commonroad.scenario.scenario import ScenarioID
 from commonroad.scenario.trajectory import State, Trajectory
 
@@ -21,6 +27,9 @@ __version__ = "2021.1"
 __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
+
+from vehiclemodels.parameters_vehicle1 import parameters_vehicle1
+from vehiclemodels.parameters_vehicle3 import parameters_vehicle3
 
 
 class SolutionException(Exception):
@@ -49,6 +58,11 @@ class VehicleType(Enum):
     FORD_ESCORT = 1
     BMW_320i = 2
     VW_VANAGON = 3
+
+
+vehicle_parameters = {VehicleType.FORD_ESCORT: p1.parameters_vehicle1(),
+                      VehicleType.BMW_320i: p2.parameters_vehicle2(),
+                      VehicleType.VW_VANAGON: p3.parameters_vehicle3()}
 
 
 @unique
@@ -410,11 +424,20 @@ class Solution:
             Default=None.
         """
         self.scenario_id = scenario_id
+        self._planning_problem_solutions: Dict[int, PlanningProblemSolution] = {}
         self.planning_problem_solutions = planning_problem_solutions
         self.date = date
         self._computation_time = None
         self.computation_time = computation_time
         self.processor_name = processor_name
+
+    @property
+    def planning_problem_solutions(self) -> List[PlanningProblemSolution]:
+        return list(self._planning_problem_solutions.values())
+
+    @planning_problem_solutions.setter
+    def planning_problem_solutions(self, planning_problem_solutions: List[PlanningProblemSolution]):
+        self._planning_problem_solutions = {s.planning_problem_id: s for s in planning_problem_solutions}
 
     @property
     def benchmark_id(self) -> str:
@@ -527,6 +550,26 @@ class Solution:
             assert is_positive(computation_time), "<Solution> computation_time needs to be positive!"\
                 .format(type(computation_time))
         self._computation_time = computation_time
+
+    def create_dynamic_obstacle(self) -> Dict[int, DynamicObstacle]:
+        """
+        Creates dynamic obstacle(s) from solution(s) for every planning problem.
+        :return:
+        """
+        obs = {}
+        for pp_id, solution in self._planning_problem_solutions.items():
+            shape = Rectangle(length=vehicle_parameters[solution.vehicle_type].l,
+                              width=vehicle_parameters[solution.vehicle_type].w)
+            trajectory = Trajectory(initial_time_step=solution.trajectory.initial_time_step + 1,
+                              state_list=solution.trajectory.state_list[1:])
+            prediction = TrajectoryPrediction(trajectory, shape=shape)
+            obs[pp_id] = DynamicObstacle(obstacle_id=pp_id,
+                                         obstacle_type=ObstacleType.CAR,
+                                         obstacle_shape=shape,
+                                         initial_state=solution.trajectory.state_list[0],
+                                         prediction=prediction)
+
+        return obs
 
 
 class CommonRoadSolutionReader:
