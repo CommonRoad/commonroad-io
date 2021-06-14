@@ -326,8 +326,8 @@ class DummyDataGenerator:
             %s
         </CommonRoadSolution>
         ''' % (benchmark_id,
-               computation_str,
                date_str,
+               computation_str,
                processor_str,
                ''.join(trajectory_xmls))
         return solution_xml.strip()

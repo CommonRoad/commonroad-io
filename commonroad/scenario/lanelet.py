@@ -856,7 +856,7 @@ class Lanelet:
 
         return merged_lanelets, merge_jobs_final
     
-    def find_lanelet_successors_in_range(self, lanelet_network: "LaneletNetwork", max_length=50.0):
+    def find_lanelet_successors_in_range(self, lanelet_network: "LaneletNetwork", max_length=50.0) -> List[List[int]]:
         """
         Finds all possible successor paths (id sequences) within max_length.
 
@@ -866,7 +866,7 @@ class Lanelet:
         """
         paths = [[s] for s in self.successor]
         paths_final = []
-        lengths = [0.0 for _ in paths]
+        lengths = [lanelet_network.find_lanelet_by_id(s).distance[-1] for s in self.successor]
         while paths:
             paths_next = []
             lengths_next = []
@@ -876,8 +876,8 @@ class Lanelet:
                     paths_final.append(p)
                 else:
                     for s in successors:
-                        if s in p or s == self.lanelet_id:
-                            # prevent loops
+                        if s in p or s == self.lanelet_id or l >= max_length:
+                            # prevent loops and consider length of first successor
                             paths_final.append(p)
                             continue
 
@@ -886,7 +886,7 @@ class Lanelet:
                             paths_next.append(p + [s])
                             lengths_next.append(l_next)
                         else:
-                            paths_final.append(p)
+                            paths_final.append(p + [s])
 
             paths = paths_next
             lengths = lengths_next
