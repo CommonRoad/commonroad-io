@@ -47,6 +47,7 @@ The required dependencies for running CommonRoad_io are:
 * lxml>=4.2.2
 * networkx>=2.2
 * Pillow>=7.0.0
+* commonroad-vehicle-models>=2.0.0'
 
 Installation
 ============
