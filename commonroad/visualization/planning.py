@@ -174,7 +174,7 @@ def draw_planning_problem_set(obj: PlanningProblemSet,
         print(call_stack)
 
     for id, problem in obj.planning_problem_dict.items():
-        if draw_ids is 'all' or id in draw_ids:
+        if draw_ids == 'all' or id in draw_ids:
             draw_planning_problem(problem, plot_limits, ax, draw_params,
                                   draw_func, handles, call_stack)
 
@@ -259,7 +259,7 @@ def draw_goal_region(obj: GoalRegion, plot_limits: List[Union[int, float]],
            depending on the call stack of draw_object
     :return: None
     """
-    if call_stack is ():
+    if call_stack == ():
         call_stack = tuple(['planning_problem_set'])
     call_stack = tuple(list(call_stack) + ['goal_region'])
     for goal_state in obj.state_list:
