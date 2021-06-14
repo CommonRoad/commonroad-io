@@ -661,19 +661,30 @@ class Scenario(IDrawable):
             warnings.warn('<Scenario/remove_obstacle> Cannot remove obstacle with ID %s, '
                           'since it is not contained in the scenario.' % obstacle.obstacle_id)
 
-    def remove_lanelet(self, lanelet: Union[List[Lanelet], Lanelet]):
+    def remove_lanelet(self, lanelet: Union[List[Lanelet], Lanelet], referenced_elements: bool = True):
         """
         Removes a lanelet or a list of lanelets from a scenario.
 
         :param lanelet: Lanelet which should be removed from scenario.
         """
-        assert isinstance(lanelet, (list, Lanelet)), \
+        assert isinstance(lanelet, (list, Lanelet), referenced_elements), \
             '<Scenario/remove_lanelet> argument "lanelet" of wrong type. ' \
-            'Expected type: %s. Got type: %s.' % (Lanelet, type(lanelet))
-        if isinstance(lanelet, list):
+            'Expected type: %s. Got type: %s.' % (Lanelet, type(lanelet), referenced_elements)
+        if isinstance(lanelet, list, referenced_elements):
             for la in lanelet:
-                self.lanelet_network.remove_lanelet(la.lanelet_id)
-                self._id_set.remove(la.lanelet_id)
+                if referenced_elements == True:
+                    for val in self.lanelet_network.lanelets.values(): #checks all lanelets
+                        if traffic_signs #verbunden mit anderen lanelets: #wie suchen?
+                            self.lanelet_network.remove_lanelet(la.lanelet_id)
+                            self._id_set.remove(la.lanelet_id)
+                        else:
+                            self.lanelet_network.remove_lanelet(la.lanelet_id)
+                            self._id_set.remove(la.lanelet_id)
+                            self.lanelet_network.remove_traffic_sign(sign.traffic_sign_id)
+                        #dann nochmal für traffic_lights?
+                else:
+                    self.lanelet_network.remove_lanelet(la.lanelet_id)
+                    self._id_set.remove(la.lanelet_id)
             return
 
         self.lanelet_network.remove_lanelet(lanelet.lanelet_id)
