@@ -932,6 +932,7 @@ class MPRenderer(IRenderer):
             # collect incoming lanelets
             if draw_incoming_lanelets:
                 incomings: List[set] = []
+                inc_2_intersections = obj.map_inc_lanelets_to_intersections
                 for intersection in intersections:
                     for incoming in intersection.incomings:
                         incomings.append(incoming.incoming_lanelets)
@@ -991,13 +992,16 @@ class MPRenderer(IRenderer):
                 if draw_line_markings and lanelet.line_marking_left_vertices is not LineMarking.UNKNOWN and \
                         lanelet.line_marking_left_vertices is not LineMarking.NO_MARKING:
                     linestyle, dashes, linewidth_metres = line_marking_to_linestyle(lanelet.line_marking_left_vertices)
-                    tmp_left = lanelet.left_vertices.copy()
-                    tmp_left[0, :] = lanelet.interpolate_position(linewidth_metres / 2)[2]
-                    tmp_left[-1, :] = lanelet.interpolate_position(lanelet.distance[-1] - linewidth_metres / 2)[2]
-                    line = LineDataUnits(tmp_left[:, 0], tmp_left[:, 1], zorder=ZOrders.LEFT_BOUND,
-                                         linewidth=linewidth_metres, alpha=1.0, color=left_bound_color,
-                                         linestyle=linestyle, dashes=dashes)
-                    self.static_artists.append(line)
+                    if lanelet.distance[-1] <= linewidth_metres:
+                        left_paths.append(Path(lanelet.left_vertices, closed=False))
+                    else:
+                        tmp_left = lanelet.left_vertices.copy()
+                        tmp_left[0, :] = lanelet.interpolate_position(linewidth_metres / 2)[2]
+                        tmp_left[-1, :] = lanelet.interpolate_position(lanelet.distance[-1] - linewidth_metres / 2)[2]
+                        line = LineDataUnits(tmp_left[:, 0], tmp_left[:, 1], zorder=ZOrders.LEFT_BOUND,
+                                             linewidth=linewidth_metres, alpha=1.0, color=left_bound_color,
+                                             linestyle=linestyle, dashes=dashes)
+                        self.static_artists.append(line)
                 else:
                     left_paths.append(Path(lanelet.left_vertices, closed=False))
 
@@ -1010,13 +1014,16 @@ class MPRenderer(IRenderer):
                 if draw_line_markings and lanelet.line_marking_right_vertices is not LineMarking.UNKNOWN and \
                         lanelet.line_marking_right_vertices is not LineMarking.NO_MARKING:
                     linestyle, dashes, linewidth_metres = line_marking_to_linestyle(lanelet.line_marking_right_vertices)
-                    tmp_right = lanelet.right_vertices.copy()
-                    tmp_right[0, :] = lanelet.interpolate_position(linewidth_metres / 2)[1]
-                    tmp_right[-1, :] = lanelet.interpolate_position(lanelet.distance[-1] - linewidth_metres / 2)[1]
-                    line = LineDataUnits(tmp_right[:, 0], tmp_right[:, 1], zorder=ZOrders.RIGHT_BOUND,
-                                         linewidth=linewidth_metres, alpha=1.0, color=right_bound_color,
-                                         linestyle=linestyle, dashes=dashes)
-                    self.static_artists.append(line)
+                    if lanelet.distance[-1] <= linewidth_metres:
+                        right_paths.append(Path(lanelet.right_vertices, closed=False))
+                    else:
+                        tmp_right = lanelet.right_vertices.copy()
+                        tmp_right[0, :] = lanelet.interpolate_position(linewidth_metres / 2)[1]
+                        tmp_right[-1, :] = lanelet.interpolate_position(lanelet.distance[-1] - linewidth_metres / 2)[1]
+                        line = LineDataUnits(tmp_right[:, 0], tmp_right[:, 1], zorder=ZOrders.RIGHT_BOUND,
+                                             linewidth=linewidth_metres, alpha=1.0, color=right_bound_color,
+                                             linestyle=linestyle, dashes=dashes)
+                        self.static_artists.append(line)
                 else:
                     right_paths.append(Path(lanelet.right_vertices, closed=False))
 
@@ -1127,6 +1134,7 @@ class MPRenderer(IRenderer):
                 if show_label:
                     strings.append(str(lanelet.lanelet_id))
                 if is_incoming_lanelet and show_intersection_labels:
+                    strings.append(f'int_id: {inc_2_intersections[lanelet.lanelet_id].intersection_id}')
                     strings.append('inc_id: ' + str(incomings_id[lanelet.lanelet_id]))
                     strings.append('inc_left: ' + str(incomings_left[lanelet.lanelet_id]))
                 if draw_traffic_signs and show_traffic_sign_label:
