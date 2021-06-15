@@ -82,6 +82,7 @@ class CostFunction(Enum):
     SM2 = 4
     SM3 = 5
     MW1 = 6
+    CR1 = 7
 
 
 @unique
