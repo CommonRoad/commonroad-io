@@ -175,7 +175,7 @@ class GoalRegion(IDrawable):
         """
         state_new = copy.deepcopy(state)
         if {'velocity', 'velocity_y'}.issubset(state_fields) \
-            and {'orientation'}.issubset(goal_state_fields) \
+            and ({'orientation'}.issubset(goal_state_fields) or {'velocity'}.issubset(goal_state_fields))\
             and not {'velocity', 'velocity_y'}.issubset(goal_state_fields):
 
             if not 'orientation' in state_fields:
