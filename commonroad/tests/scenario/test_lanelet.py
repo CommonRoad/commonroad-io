@@ -34,8 +34,10 @@ class TestLanelet(unittest.TestCase):
         s2 = np.sqrt(2.0)
         desired_dist = [0.0, 1.0, 2.0, 2.0 + s1, 2.0 + 2 * s1, 3.0 + 2 * s1, 4.0 + 2 * s1, 4.0 + 2 * s1 + s2,
                         5.0 + 2 * s1 + s2]
-        for i, dist in enumerate(lanelet.distance):
+        for i, (min_dist, dist) in enumerate(zip(lanelet.inner_distance, lanelet.distance)):
             self.assertAlmostEqual(dist, desired_dist[i])
+            self.assertLessEqual(min_dist, dist)
+            print(min_dist, dist)
 
         self.assertEqual(lanelet.lanelet_id, lanelet_id)
         np.testing.assert_array_almost_equal(lanelet.right_vertices, right_vertices)
@@ -241,7 +243,7 @@ class TestLanelet(unittest.TestCase):
 
         # test length restriction
         merged_lanelets, output_ids = Lanelet.all_lanelets_by_merging_successors_from_lanelet(lanelet1, lanelet_network,
-                                                                                              max_length=1.0)
+                                                                                              max_length=1)
 
         expected = [[1, 2]]
         self.assertListEqual(output_ids[0], expected[0])
