@@ -232,12 +232,8 @@ class Lanelet:
             self.adj_right = adjacent_right
             self.adj_right_same_direction = adjacent_right_same_direction
 
-        self._distance = [0.0]
-        for i in range(1, len(self.center_vertices)):
-            self._distance.append(self._distance[i - 1] + np.linalg.norm(
-                np.array(self.center_vertices[i]) - np.array(self.center_vertices[i - 1])))
-        self._distance = np.array(self._distance)
-
+        self._distance = None
+        self._inner_distance = None
         # create empty polygon
         self._polygon = None
 
@@ -281,11 +277,26 @@ class Lanelet:
 
     @property
     def distance(self) -> np.ndarray:
+        """
+        :returns cumulative distance along center vertices
+        """
+        if self._distance is None:
+            self._distance = self._compute_polyline_cumsum_dist([self.center_vertices])
         return self._distance
 
     @distance.setter
     def distance(self, _):
         warnings.warn('<Lanelet/distance> distance of lanelet is immutable')
+
+    @property
+    def inner_distance(self) -> np.ndarray:
+        """
+        :returns minimum cumulative distance along left and right vertices, i.e., along the inner curve:
+        """
+        if self._inner_distance is None:
+            self._inner_distance = self._compute_polyline_cumsum_dist([self.left_vertices, self.right_vertices])
+
+        return self._inner_distance
 
     @property
     def lanelet_id(self) -> int:
@@ -306,10 +317,10 @@ class Lanelet:
     @left_vertices.setter
     def left_vertices(self, polyline: np.ndarray):
         if self._left_vertices is None:
-            assert is_valid_polyline(
-                    polyline), '<Lanelet/left_vertices>: The provided polyline is not valid! polyline = {}'.format(
-                polyline)
             self._left_vertices = polyline
+            assert is_valid_polyline(
+                    polyline), '<Lanelet/left_vertices>: The provided polyline is not valid! id = {} polyline = {}'\
+                .format(self._lanelet_id, polyline)
         else:
             warnings.warn('<Lanelet/left_vertices>: left_vertices of lanelet are immutable!')
 
@@ -321,11 +332,22 @@ class Lanelet:
     def right_vertices(self, polyline: np.ndarray):
         if self._right_vertices is None:
             assert is_valid_polyline(
-                    polyline), '<Lanelet/right_vertices>: The provided polyline is not valid! polyline = {}'.format(
-                    polyline)
+                    polyline), '<Lanelet/right_vertices>: The provided polyline is not valid! id = {}, polyline = {}'\
+                .format(self._lanelet_id, polyline)
             self._right_vertices = polyline
         else:
             warnings.warn('<Lanelet/right_vertices>: right_vertices of lanelet are immutable!')
+
+    @staticmethod
+    def _compute_polyline_cumsum_dist(polylines: List[np.ndarray], comparator=np.amin):
+        d = []
+        for polyline in polylines:
+            d.append(np.diff(polyline, axis=0))
+        segment_distances = np.empty((len(polylines[0]), len(polylines)))
+        for i, d_tmp in enumerate(d):
+            segment_distances[:, i] = np.append([0], np.sqrt((np.square(d_tmp)).sum(axis=1)))
+
+        return np.cumsum(comparator(segment_distances, axis=1))
 
     @property
     def center_vertices(self) -> np.ndarray:
@@ -484,7 +506,7 @@ class Lanelet:
                 type(stop_line))
             self._stop_line = stop_line
         else:
-            warnings.warn('<Lanelet/stop_line>: stop_line of lanelet is immutable!')
+            warnings.warn('<Lanelet/stop_line>: stop_line of lanelet is immutable!', stacklevel=1)
 
     @property
     def lanelet_type(self) -> Set[LaneletType]:
