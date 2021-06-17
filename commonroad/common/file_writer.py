@@ -304,7 +304,7 @@ class CommonRoadFileWriter:
             else:
                 overwrite = 'y'
 
-            if overwrite is 'n':
+            if overwrite == 'n':
                 print('Writing of file {} skipped'.format(filename))
                 return
             else:
@@ -347,7 +347,7 @@ class CommonRoadFileWriter:
             else:
                 overwrite = 'y'
 
-            if overwrite is 'n':
+            if overwrite == 'n':
                 print(
                     'Writing skipped for file, since it already exists {}'.format(
                         filename
