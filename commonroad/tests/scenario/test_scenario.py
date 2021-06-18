@@ -86,8 +86,6 @@ class TestScenario(unittest.TestCase):
         self.location = Location(geo_name_id=123, gps_latitude=456, gps_longitude=789, environment=self.environment)
 
         self.scenario = Scenario(0.1, 'test', location=self.location)
-        self.scenario.add_objects([ self.traffic_sign1, self.traffic_sign2, self.traffic_sign3, self.traffic_sign4])
-        self.scenario.add_objects([self.traffic_light100,self.traffic_light101,self.traffic_light102,self.traffic_light103])
 
     def test_add_objects(self):
         expected_id_static_obs = self.static_obs.obstacle_id
@@ -154,11 +152,12 @@ class TestScenario(unittest.TestCase):
 
     def test_remove_lanelet(self):
         self.scenario.add_objects([self.lanelet1, self.lanelet2])
+        self.scenario.add_objects([ self.traffic_sign1, self.traffic_sign2, self.traffic_sign3, self.traffic_sign4])
+        self.scenario.add_objects([self.traffic_light100,self.traffic_light101,self.traffic_light102,self.traffic_light103])
 
         self.assertEqual(len(self.scenario.lanelet_network.lanelets), 2)
         self.assertEqual(len(self.scenario.lanelet_network.lanelets), 2)
         self.scenario.remove_hanging_lanelet_members([self.lanelet1])
-        #print(self.scenario.lanelet_network.traffic_lights)
         self.assertEqual(self.scenario.lanelet_network._traffic_lights.keys(),{201,202,203})
         self.assertEqual(self.scenario.lanelet_network._traffic_signs.keys(), {301, 302, 303})
         self.scenario.remove_lanelet(self.lanelet1)
