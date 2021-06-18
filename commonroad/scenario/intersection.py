@@ -197,7 +197,7 @@ class Intersection:
         :param incomings: i_id ID of intersection element
         """
         if self._incomings is None:
-            assert len(incomings) > 1, '<Intersection/incomings>: Intersection ' \
+            assert len(incomings) > 0, '<Intersection/incomings>: Intersection ' \
                                                'must consist of at least two incomings '
             self._incomings = incomings
         else:
