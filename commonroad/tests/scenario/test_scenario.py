@@ -30,11 +30,13 @@ class TestScenario(unittest.TestCase):
 
         self.lanelet1 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                                 np.array([[0.0, 2], [1.0, 2], [2, 2]]), 100, [101], [101], 101, False, 101, True,
-                                LineMarking.DASHED, LineMarking.DASHED, None, None, None, None, {300,301,302}, {200,201,202})
+                                LineMarking.DASHED, LineMarking.DASHED, None, None, None, None, {300, 301, 302},
+                                {200, 201, 202})
         self.lanelet1.add_static_obstacle_to_lanelet(0)
         self.lanelet2 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                                 np.array([[0.0, 2], [1.0, 2], [2, 2]]), 101, [100], [100], 100, False, 100, True,
-                                LineMarking.DASHED, LineMarking.DASHED, None, None, None, None, {301,302,303}, {201,202,203})
+                                LineMarking.DASHED, LineMarking.DASHED, None, None, None, None, {301, 302, 303},
+                                {201, 202, 203})
         self.lanelet1.add_dynamic_obstacle_to_lanelet(2, 0)
         self.lanelet1.add_dynamic_obstacle_to_lanelet(2, 1)
         self.lanelet_network = LaneletNetwork().create_from_lanelet_list(list([self.lanelet1, self.lanelet2]))
@@ -52,8 +54,6 @@ class TestScenario(unittest.TestCase):
         self.traffic_light101 = TrafficLight(201, cycle, position=np.array([10., 10.]))
         self.traffic_light102 = TrafficLight(202, cycle, position=np.array([10., 10.]))
         self.traffic_light103 = TrafficLight(203, cycle, position=np.array([10., 10.]))
-
-
 
         self.set_pred = SetBasedPrediction(0, occupancy_list)
 
@@ -150,16 +150,24 @@ class TestScenario(unittest.TestCase):
             self.scenario.remove_obstacle(self.lanelet1)
             self.scenario.remove_obstacle(self.static_obs)
 
+    def test_remove_hanging_lanelet_members(self):
+        self.scenario.add_objects([self.lanelet1, self.lanelet2])
+        self.scenario.add_objects([self.traffic_sign1, self.traffic_sign2, self.traffic_sign3, self.traffic_sign4])
+        self.scenario.add_objects(
+                [self.traffic_light100, self.traffic_light101, self.traffic_light102, self.traffic_light103])
+
+        self.scenario.remove_hanging_lanelet_members([self.lanelet1])
+        self.assertEqual(self.scenario.lanelet_network._traffic_lights.keys(), {201, 202, 203})
+        self.assertEqual(self.scenario.lanelet_network._traffic_signs.keys(), {301, 302, 303})
+
     def test_remove_lanelet(self):
         self.scenario.add_objects([self.lanelet1, self.lanelet2])
-        self.scenario.add_objects([ self.traffic_sign1, self.traffic_sign2, self.traffic_sign3, self.traffic_sign4])
-        self.scenario.add_objects([self.traffic_light100,self.traffic_light101,self.traffic_light102,self.traffic_light103])
+        self.scenario.add_objects([self.traffic_sign1, self.traffic_sign2, self.traffic_sign3, self.traffic_sign4])
+        self.scenario.add_objects(
+                [self.traffic_light100, self.traffic_light101, self.traffic_light102, self.traffic_light103])
 
         self.assertEqual(len(self.scenario.lanelet_network.lanelets), 2)
         self.assertEqual(len(self.scenario.lanelet_network.lanelets), 2)
-        self.scenario.remove_hanging_lanelet_members([self.lanelet1])
-        self.assertEqual(self.scenario.lanelet_network._traffic_lights.keys(),{201,202,203})
-        self.assertEqual(self.scenario.lanelet_network._traffic_signs.keys(), {301, 302, 303})
         self.scenario.remove_lanelet(self.lanelet1)
         self.assertEqual(len(self.scenario.lanelet_network.lanelets), 1)
         self.scenario.remove_lanelet(self.lanelet2)
@@ -168,9 +176,6 @@ class TestScenario(unittest.TestCase):
         self.assertFalse(self.scenario._is_object_id_used(self.lanelet2.lanelet_id))
         self.scenario.add_objects(self.lanelet2)  # add again to check whether ID was removed successfully
         self.assertEqual(len(self.scenario.lanelet_network.lanelets), 1)
-        self.lanelet1.traffic_signs
-
-
 
         with self.assertRaises(AssertionError):
             self.scenario.remove_lanelet(self.traffic_light)
@@ -690,8 +695,8 @@ class TestScenarioID(unittest.TestCase):
         id_us = "USA_US101-33_2"
         s_id = ScenarioID.from_benchmark_id(id_us, SCENARIO_VERSION)
         self.assertEqual(s_id.country_name,
-                         "United States of America")  # def test_read_all_files(self):  #     folder =
-        # 'commonroad-scenarios/scenarios'  #     from pathlib import Path  #     files = list(Path(folder).rglob(
+                         "United States of America")  # def test_read_all_files(self):  #     folder =  #
+        # 'commonroad-scenarios/scenarios'  #     from pathlib import Path  #     files = list(Path(folder).rglob(  #
         # '*.xml'))  #     for file in files:  #         # if not "C-USA_Lanker-1_2_T-1" in str(file):  #         #
         # continue  #         sc, _ = CommonRoadFileReader(file).open()  #         self.assertEqual(sc.orig_bid,
         # str(sc.scenario_id))  #         print(file)
