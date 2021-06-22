@@ -661,23 +661,57 @@ class Scenario(IDrawable):
             warnings.warn('<Scenario/remove_obstacle> Cannot remove obstacle with ID %s, '
                           'since it is not contained in the scenario.' % obstacle.obstacle_id)
 
-    def remove_lanelet(self, lanelet: Union[List[Lanelet], Lanelet]):
+    def remove_hanging_lanelet_members(self, remove_lanelet: Union[List[Lanelet], Lanelet]):
+        """
+        After removing lanelet(s) from remove_lanelet, this function removes all traffic lights and signs that are
+        not used by other lanelets.
+
+        :param remove_lanelet: Lanelet that should be removed from scenario.
+        """
+        all_lanelets = self.lanelet_network.lanelets
+        remove_lanelet_ids = [l.lanelet_id for l in remove_lanelet]
+        remaining_lanelets = [l for l in all_lanelets if l.lanelet_id not in remove_lanelet_ids]
+
+
+        traffic_signs_to_delete = set().union(*[l.traffic_signs for l in remove_lanelet])
+        traffic_lights_to_delete = set().union(*[l.traffic_lights for l in remove_lanelet])
+        traffic_signs_to_save = set().union(*[l.traffic_signs for l in remaining_lanelets])
+        traffic_lights_to_save = set().union(*[l.traffic_lights for l in remaining_lanelets])
+
+        remove_traffic_signs = []
+        remove_traffic_lights = []
+
+        for t in self.lanelet_network.traffic_signs:
+            if t.traffic_sign_id in set(traffic_signs_to_delete-traffic_signs_to_save):
+                remove_traffic_signs.append(self.lanelet_network.find_traffic_sign_by_id(t.traffic_sign_id))
+
+        for t in self.lanelet_network.traffic_lights:
+            if t.traffic_light_id in set(traffic_lights_to_delete - traffic_lights_to_save):
+                remove_traffic_lights.append(self.lanelet_network.find_traffic_light_by_id(t.traffic_light_id))
+
+        self.remove_traffic_sign(remove_traffic_signs)
+        self.remove_traffic_light(remove_traffic_lights)
+
+    def remove_lanelet(self, lanelet: Union[List[Lanelet], Lanelet], referenced_elements: bool = True):
         """
         Removes a lanelet or a list of lanelets from a scenario.
 
         :param lanelet: Lanelet which should be removed from scenario.
         """
-        assert isinstance(lanelet, (list, Lanelet)), \
-            '<Scenario/remove_lanelet> argument "lanelet" of wrong type. ' \
-            'Expected type: %s. Got type: %s.' % (Lanelet, type(lanelet))
-        if isinstance(lanelet, list):
-            for la in lanelet:
-                self.lanelet_network.remove_lanelet(la.lanelet_id)
-                self._id_set.remove(la.lanelet_id)
-            return
+        assert isinstance(lanelet, (list, Lanelet)), '<Scenario/remove_lanelet> argument "lanelet" of wrong type. ' \
+                                                     'Expected type: %s. Got type: %s.' % (Lanelet, type(lanelet))
+        assert isinstance(referenced_elements,
+                          bool), '<Scenario/remove_lanelet> argument "referenced_elements" of wrong type. ' \
+                                 'Expected type: %s, Got type: %s.' % (bool, type(referenced_elements))
+        if not isinstance(lanelet, list):
+            lanelet = [lanelet]
 
-        self.lanelet_network.remove_lanelet(lanelet.lanelet_id)
-        self._id_set.remove(lanelet.lanelet_id)
+        if referenced_elements:
+            self.remove_hanging_lanelet_members(lanelet)
+
+        for la in lanelet:
+            self.lanelet_network.remove_lanelet(la.lanelet_id)
+            self._id_set.remove(la.lanelet_id)
 
     def remove_traffic_sign(self, traffic_sign: Union[List[TrafficSign], TrafficSign]):
         """
