@@ -10,7 +10,7 @@ with open(path.join(this_directory, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='commonroad-io',
-    version='2021.1',
+    version='2021.2',
     description='Python tool to read, write, and visualize CommonRoad scenarios and solutions for automated vehicles.',
     keywords='autonomous automated vehicles driving motion planning',
     url='https://commonroad.in.tum.de/',
@@ -32,6 +32,7 @@ setup(
         'networkx>=2.2',
         'Pillow>=7.0.0',
         'iso3166>=1.0.1',
+        'commonroad-vehicle-models>=2.0.0'
     ],
     extras_require={
         'doc': ['sphinx>=1.3.6',

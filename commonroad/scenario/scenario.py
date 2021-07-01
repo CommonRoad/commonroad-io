@@ -26,7 +26,7 @@ from commonroad.visualization.renderer import IRenderer
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2021.1"
+__version__ = "2021.2"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -138,11 +138,11 @@ class GeoTransformation:
         :param z_rotation: rotation value around origin
         :param scaling: multiplication value of x- and y-coordinates
         """
-        self._geo_reference = geo_reference
-        self._x_translation = x_translation
-        self._y_translation = y_translation
-        self._z_rotation = z_rotation
-        self._scaling = scaling
+        self.geo_reference = geo_reference
+        self.x_translation = x_translation
+        self.y_translation = y_translation
+        self.z_rotation = z_rotation
+        self.scaling = scaling
 
     @property
     def geo_reference(self) -> str:
@@ -163,6 +163,26 @@ class GeoTransformation:
     @property
     def scaling(self) -> float:
         return self._scaling
+
+    @geo_reference.setter
+    def geo_reference(self, geo_reference):
+        self._geo_reference = geo_reference if geo_reference is not None else 0
+
+    @x_translation.setter
+    def x_translation(self, x_translation):
+        self._x_translation = x_translation if x_translation is not None else 0
+
+    @y_translation.setter
+    def y_translation(self, y_translation):
+        self._y_translation = y_translation if y_translation is not None else 0
+
+    @z_rotation.setter
+    def z_rotation(self, z_rotation):
+        self._z_rotation = z_rotation if z_rotation is not None else 0
+
+    @scaling.setter
+    def scaling(self, scaling):
+        self._scaling = scaling if scaling is not None else 1
 
 
 class Environment:
@@ -641,23 +661,57 @@ class Scenario(IDrawable):
             warnings.warn('<Scenario/remove_obstacle> Cannot remove obstacle with ID %s, '
                           'since it is not contained in the scenario.' % obstacle.obstacle_id)
 
-    def remove_lanelet(self, lanelet: Union[List[Lanelet], Lanelet]):
+    def remove_hanging_lanelet_members(self, remove_lanelet: Union[List[Lanelet], Lanelet]):
+        """
+        After removing lanelet(s) from remove_lanelet, this function removes all traffic lights and signs that are
+        not used by other lanelets.
+
+        :param remove_lanelet: Lanelet that should be removed from scenario.
+        """
+        all_lanelets = self.lanelet_network.lanelets
+        remove_lanelet_ids = [l.lanelet_id for l in remove_lanelet]
+        remaining_lanelets = [l for l in all_lanelets if l.lanelet_id not in remove_lanelet_ids]
+
+
+        traffic_signs_to_delete = set().union(*[l.traffic_signs for l in remove_lanelet])
+        traffic_lights_to_delete = set().union(*[l.traffic_lights for l in remove_lanelet])
+        traffic_signs_to_save = set().union(*[l.traffic_signs for l in remaining_lanelets])
+        traffic_lights_to_save = set().union(*[l.traffic_lights for l in remaining_lanelets])
+
+        remove_traffic_signs = []
+        remove_traffic_lights = []
+
+        for t in self.lanelet_network.traffic_signs:
+            if t.traffic_sign_id in set(traffic_signs_to_delete-traffic_signs_to_save):
+                remove_traffic_signs.append(self.lanelet_network.find_traffic_sign_by_id(t.traffic_sign_id))
+
+        for t in self.lanelet_network.traffic_lights:
+            if t.traffic_light_id in set(traffic_lights_to_delete - traffic_lights_to_save):
+                remove_traffic_lights.append(self.lanelet_network.find_traffic_light_by_id(t.traffic_light_id))
+
+        self.remove_traffic_sign(remove_traffic_signs)
+        self.remove_traffic_light(remove_traffic_lights)
+
+    def remove_lanelet(self, lanelet: Union[List[Lanelet], Lanelet], referenced_elements: bool = True):
         """
         Removes a lanelet or a list of lanelets from a scenario.
 
         :param lanelet: Lanelet which should be removed from scenario.
         """
-        assert isinstance(lanelet, (list, Lanelet)), \
-            '<Scenario/remove_lanelet> argument "lanelet" of wrong type. ' \
-            'Expected type: %s. Got type: %s.' % (Lanelet, type(lanelet))
-        if isinstance(lanelet, list):
-            for la in lanelet:
-                self.lanelet_network.remove_lanelet(la.lanelet_id)
-                self._id_set.remove(la.lanelet_id)
-            return
+        assert isinstance(lanelet, (list, Lanelet)), '<Scenario/remove_lanelet> argument "lanelet" of wrong type. ' \
+                                                     'Expected type: %s. Got type: %s.' % (Lanelet, type(lanelet))
+        assert isinstance(referenced_elements,
+                          bool), '<Scenario/remove_lanelet> argument "referenced_elements" of wrong type. ' \
+                                 'Expected type: %s, Got type: %s.' % (bool, type(referenced_elements))
+        if not isinstance(lanelet, list):
+            lanelet = [lanelet]
 
-        self.lanelet_network.remove_lanelet(lanelet.lanelet_id)
-        self._id_set.remove(lanelet.lanelet_id)
+        if referenced_elements:
+            self.remove_hanging_lanelet_members(lanelet)
+
+        for la in lanelet:
+            self.lanelet_network.remove_lanelet(la.lanelet_id)
+            self._id_set.remove(la.lanelet_id)
 
     def remove_traffic_sign(self, traffic_sign: Union[List[TrafficSign], TrafficSign]):
         """
@@ -863,13 +917,14 @@ class Scenario(IDrawable):
         assigned.
         """
 
-        def assign_dynamic_obstacle_shape_at_time(obstacle: DynamicObstacle, time_step):
+        def assign_dynamic_obstacle_shape_at_time(obstacle: DynamicObstacle, time_step) -> bool:
             # assign center of obstacle
             # print(time_step, [state.time_step for state in obstacle.prediction.trajectory.state_list])
             if time_step == obstacle.initial_state.time_step:
                 position = obstacle.initial_state.position
-            elif not isinstance(obstacle.prediction, TrajectoryPrediction):
-                return
+            elif not isinstance(obstacle.prediction, TrajectoryPrediction)\
+                    or obstacle.prediction.final_time_step < time_step:
+                return False
             else:
                 position = obstacle.prediction.trajectory.state_at_time_step(time_step).position
 
@@ -891,6 +946,8 @@ class Scenario(IDrawable):
             for l_id in lanelet_ids:
                 self.lanelet_network.find_lanelet_by_id(l_id) \
                     .add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle.obstacle_id, time_step=time_step)
+
+            return True
 
         def assign_static_obstacle(obstacle: StaticObstacle):
             shape = obstacle.occupancy_at_time(0).shape

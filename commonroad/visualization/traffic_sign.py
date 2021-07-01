@@ -54,7 +54,7 @@ def speed_limit_factor(country_code) -> float:
 
 
 # denotes traffic signs that are speed limits
-is_speed_limit_id = ['274', '275', 'R2-1']
+is_speed_limit_id = ['274', '275', 'R2-1', 'r301']
 
 
 def text_prop_dict() -> dict:
@@ -213,6 +213,8 @@ def create_img_boxes_traffic_sign(
             if plot_img:
                 # plot traffic sign
                 sign_img = Image.open(path)
+                if sign_img.mode != "RGBA":
+                    sign_img = sign_img.convert("RGBA")
                 boxes.append(
                         OffsetImage(sign_img, zoom=scale_factor, zorder=zorder,
                                     interpolation='bicubic'))

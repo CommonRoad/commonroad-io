@@ -1,9 +1,11 @@
+# import matplotlib
 # matplotlib.use('Qt5Agg')
-import matplotlib
 # matplotlib.use('TkAgg')
 import os
 import time
 import unittest
+import warnings
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
@@ -13,23 +15,34 @@ from commonroad.geometry.shape import Rectangle, Circle, Polygon
 from commonroad.geometry.shape import ShapeGroup
 from commonroad.planning.planning_problem import PlanningProblemSet
 from commonroad.prediction.prediction import Occupancy
-from commonroad.scenario.traffic_sign import TRAFFIC_SIGN_WITH_ADDITIONAL_VALUE, TrafficSignIDGermany
+from commonroad.scenario.traffic_sign import TRAFFIC_SIGN_WITH_ADDITIONAL_VALUE, TrafficSignIDGermany, \
+    TrafficSignIDRussia, TrafficSignIDSpain, TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSignIDChina, TrafficSign, \
+    TrafficSignElement
 from commonroad.scenario.trajectory import State
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.scenario.scenario import Scenario
 
 from commonroad.visualization.mp_renderer import MPRenderer
 from commonroad.visualization.param_server import ParamServer, write_default_params
-from commonroad.visualization.traffic_sign_v2 import text_prop_dict
+from commonroad.visualization.traffic_sign_v2 import text_prop_dict, draw_traffic_light_signs
 
 
 class TestVisualizationV2(unittest.TestCase):
 
     def setUp(self) -> None:
         self.rnd = MPRenderer()
+        self.cwd_path = os.path.dirname(os.path.abspath(__file__))
         full_path = os.path.dirname(os.path.abspath(__file__))
-        self.ngsim_scen_1 = full_path + '/../test_scenarios/USA_Lanker-1_1_T-1.xml'
-        self.ngsim_scen_2 = full_path + '/../test_scenarios/USA_US101-3_3_T-1.xml'
+        self.out_path = self.cwd_path + "/../.pytest_cache"
+        self.ngsim_scen_1 = full_path + '/../test_scenarios/USA_Peach-4_8_T-1.xml'
+        self.ngsim_scen_2 = full_path + '/../test_scenarios/USA_US101-4_1_T-1.xml'
+        if not os.path.isdir(self.out_path):
+            os.makedirs(self.out_path)
+        else:
+            for (dirpath, dirnames, filenames) in os.walk(self.out_path):
+                for file in filenames:
+                    if file.endswith('.mp4') or file.endswith('.gif') or file.endswith('.png'):
+                        os.remove(os.path.join(dirpath, file))
 
     def test_primitive(self):
         params = ParamServer()
@@ -94,6 +107,46 @@ class TestVisualizationV2(unittest.TestCase):
             rnd.render()
 
         plt.close('all')
+
+    def test_focus_obstacle(self):
+
+        # test draw_object for all possible object types
+        scenario, planning_problem_set = CommonRoadFileReader(self.ngsim_scen_1).open()
+        scenario: Scenario = scenario
+        x0 = -40
+        rnd = MPRenderer(plot_limits=[x0,40,-40,40])
+        with pytest.warns(None) as record_warnings:
+            scenario.lanelet_network.draw(rnd)
+
+            draw_params = ParamServer({'focus_obstacle_id': 1239, "time_begin":0,
+                                       'scenario': {'dynamic_obstacle': {'occupancy': {'draw_occupancy': True}}}})
+            rnd.draw_list(scenario.dynamic_obstacles, draw_params=draw_params)
+            assert rnd.plot_limits_focused[0] != 40
+
+            draw_params = ParamServer({'focus_obstacle_id': False, "time_begin":0,
+                                       'scenario': {'dynamic_obstacle': {'occupancy': {'draw_occupancy': True}}}})
+            rnd.clear(keep_static_artists=True)
+            rnd.draw_list(scenario.dynamic_obstacles, draw_params=draw_params)
+            assert rnd.plot_limits_focused[0] == x0
+
+        plt.close('all')
+
+    def test_plotting_all_traffic_signs(self):
+        traffic_sign_types = [TrafficSignIDZamunda, TrafficSignIDGermany, TrafficSignIDUsa,
+                 TrafficSignIDSpain]
+        rnd = MPRenderer()
+        with warnings.catch_warnings(record=True) as w:
+            for ts_type in traffic_sign_types:
+                for v in ts_type:
+                    # print(v)
+                    ts = TrafficSign(100, [TrafficSignElement(v, ["test1","test2"])],
+                                     first_occurrence={0},
+                                     position=np.array([0.0, 0.0]),
+                                virtual=False)
+                    draw_traffic_light_signs(ts,draw_params=rnd.draw_params, call_stack=tuple(), rnd=rnd)
+
+            self.assertEqual(len(w), 0, msg="The following warnings were raised:\n" +
+                                            "\n".join(str(w_tmp.message) for w_tmp in w))
 
     def test_planning(self):
         # test draw_object for all possible object types
@@ -176,9 +229,19 @@ class TestVisualizationV2(unittest.TestCase):
         scenario.draw(self.rnd, draw_params=params)
 
     # Deactivated as ffmpeg not installe on CI
-    # def test_video(self):  #  # scenario, _ = CommonRoadFileReader(
-    # self.ngsim_scen_2).open()  #  # self.rnd.create_video([scenario], str(scenario.scenario_id),
-    #  # draw_params={'time_begin': 0, 'time_end': 10})
+    def test_video(self):
+        scenario, _ = CommonRoadFileReader(self.ngsim_scen_1).open()  #
+        t0 = time.time()
+        self.rnd.plot_limits = [-40,40,-40,40]
+        for _ in range(1):
+            self.rnd.create_video([scenario], os.path.join(self.out_path, str(scenario.scenario_id) + ".mp4"),
+            draw_params={'time_begin': 0, 'time_end': 10,
+                         "focus_obstacle_id": 520,
+                         "dynamic_obstacle": {"show_label": False,
+                                              "draw_icon": True,
+                                              "draw_shape": True}})
+
+        print(time.time() - t0)
 
     # def test_visualize_all_scenarios(self):
     #     scenarios_2020a = "TODO"

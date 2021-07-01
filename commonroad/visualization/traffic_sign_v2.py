@@ -3,6 +3,7 @@ import enum
 import os
 from collections import defaultdict
 from typing import Dict
+from scipy.cluster.hierarchy import linkage, fcluster
 
 from PIL import Image
 from commonroad.geometry.shape import *
@@ -220,7 +221,7 @@ def speed_limit_factor(country_code) -> float:
 
 
 # denotes traffic signs that are speed limits
-unit_conversion_required = ['274', '274.1', '275', '1004-31', 'R2-1']
+unit_conversion_required = ['274', '274.1', '275', '1004-31', 'R2-1', 'r301']
 
 
 def text_prop_dict() -> dict:
@@ -341,7 +342,14 @@ def text_prop_dict() -> dict:
                 'weight': 'normal', 'color': 'black', 'size': 10.5
             },
             'position_offset_y': 0.3
-        }
+        },
+        'r301': {
+            'mpl_args': {
+                'weight': 'bold', 'size': 13.5
+            },
+            'rescale_threshold': 2,
+            'position_offset_y': 0.45
+        },
     }
 
 
@@ -433,14 +441,10 @@ def create_img_boxes_traffic_sign(
             plot_img = True
             # get png image
             if not os.path.exists(path):
-                path = os.path.join(traffic_sign_path, 'TrafficSignIDZamunda',
-                                    el_id.value + '.png')
+                warnings.warn(f"File for traffic sign {element} at {path} does not exist!")
+                path = os.path.join(traffic_sign_path, '.png')
                 if not os.path.exists(path):
                     show_label = True
-                    warnings.warn(
-                            'No png file for traffic sign id {} exists under '
-                            'path '
-                            '{}, skipped plotting.'.format(el_id, path))
                     plot_img = False
 
             boxes = []  # collect matplotlib offset boxes for text and images
@@ -473,6 +477,9 @@ def create_img_boxes_traffic_sign(
                     txt_offset_y = -0.2
                     props_txt = None
                     add_text = None
+
+                if sign_img.mode != "RGBA":
+                    sign_img = sign_img.convert("RGBA")
 
                 boxes.append(
                     OffsetImageAutoscale(sign_img, text=add_text,
@@ -591,7 +598,7 @@ def create_img_boxes_traffic_lights(
 
 
 def draw_traffic_light_signs(traffic_lights_signs: Union[
-    List[Union[TrafficLight, TrafficSign]], Union[TrafficLight, TrafficSign]],
+    List[Union[TrafficLight, TrafficSign]], TrafficLight, TrafficSign],
                              draw_params: ParamServer,
                              call_stack: Tuple[str, ...],
                              rnd):
@@ -652,28 +659,22 @@ def draw_traffic_light_signs(traffic_lights_signs: Union[
     box_lists = list(img_boxes.values())
 
     # group objects based on their positions' distances
-    groups = dict()
-    grouped = set()  # set of already assigned keys
-    i = 1
-    for pos, box_list in zip(positions[:-1], box_lists[:-1]):
-        i += 1
-        group_tmp = list(box_list)
-        if pos in grouped:
-            continue
-        gr_pos_tmp = [np.array(pos)]  # collect positions of members
-        for pos2, box_list2 in zip(positions[i:], box_lists[i:]):
-            if pos2 in grouped:
-                continue
-            if np.linalg.norm(np.array(pos) - np.array(pos2),
-                              ord=np.inf) < threshold_grouping:
-                group_tmp.extend(box_list2)
-                gr_pos_tmp.append(np.array(pos2))
+    group_boxes = defaultdict(list)
+    group_positions = defaultdict(list)
+    groups = defaultdict(list)
 
-        grouped.add(pos)  # collect ids of all objects
-        groups[tuple(np.average(gr_pos_tmp, axis=0).tolist())] = group_tmp
+    # find clusters where minimal pairwise distance is below distance threshold_grouping
+    if len(positions) <= 1:
+        groups[positions[0]] = box_lists[0]
+    else:
+        Z = linkage(np.array(positions), 'single', metric='chebyshev')
+        clusters = fcluster(Z, threshold_grouping, criterion='distance')
+        for i, cluster_id in enumerate(clusters):
+            group_boxes[cluster_id].extend(box_lists[i])
+            group_positions[cluster_id].append(positions[i])
 
-    if positions[-1] not in grouped:
-        groups[positions[-1]] = box_lists[-1]
+        for cluster_id, boxes in group_boxes.items():
+            groups[tuple(np.average(group_positions[cluster_id], axis=0).tolist())] = boxes
 
     # add default AnnotationBox args if not specified by user
     default_params = dict(xycoords='data', frameon=False)

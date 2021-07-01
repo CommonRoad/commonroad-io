@@ -1,6 +1,16 @@
 # Changelog
 
-## [2021.1] - 2021-04-16
+## [2021.2] - 2021-07-01
+### Added
+- Parameter `draw_params={"focus_obstacle_id": obstacle_id}` focuses the plot or video on a dynamic_obstacle
+- About 150 new traffic signs from Germany, Spain, and US added
+- added new cost function TR1 to SolutionWriter
+
+### Fixed
+- Various small bug fixes
+
+
+## [2021.1] - 2021-04-23
 ### Added
 - Support for over 50 new traffic signs from Germany
 - Support of phantom obstacles
