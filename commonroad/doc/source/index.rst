@@ -69,6 +69,7 @@ Compared to version 2021.1, the following features have been added or changed:
 
 * Parameter `draw_params={"focus_obstacle_id": obstacle_id}` focuses the plot or video on a dynamic_obstacle
 * About 150 new traffic signs from Germany, Spain, and US added
+* Added new cost function TR1 to SolutionWriter
 * Various small bug fixes
 
 A detailed overview about the changes in each version is provided in the `Changelog <https://gitlab.lrz.de/tum-cps/commonroad_io/-/blob/master/CHANGELOG.md>`__.

@@ -4,6 +4,7 @@
 ### Added
 - Parameter `draw_params={"focus_obstacle_id": obstacle_id}` focuses the plot or video on a dynamic_obstacle
 - About 150 new traffic signs from Germany, Spain, and US added
+- added new cost function TR1 to SolutionWriter
 
 ### Fixed
 - Various small bug fixes
