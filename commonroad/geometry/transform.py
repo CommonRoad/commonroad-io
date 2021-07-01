@@ -5,7 +5,7 @@ from typing import List, Union
 __author__ = "Christina Miller"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW CAR@TUM"]
-__version__ = "2021.1"
+__version__ = "2021.2"
 __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"

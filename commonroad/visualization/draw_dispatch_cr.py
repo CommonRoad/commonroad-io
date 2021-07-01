@@ -19,7 +19,7 @@ from commonroad.scenario.trajectory import Trajectory, State
 __author__ = "Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = [""]
-__version__ = "2021.1"
+__version__ = "2021.2"
 __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"

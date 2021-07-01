@@ -10,7 +10,7 @@ from commonroad.scenario.obstacle import ObstacleType
 
 __author__ = "Simon Sagmeister"
 __copyright__ = "TUM Cyber-Physical Systems Group"
-__version__ = "2021.1"
+__version__ = "2021.2"
 __maintainer__ = "Luis Gressenbuch"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
