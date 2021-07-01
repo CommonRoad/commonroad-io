@@ -218,9 +218,11 @@ commonroad/doc/build/*
 *.egg-info
 *.ipynb_checkpoints/
 
-# pytest
-.coverage
-
 # pycharm
 *.idea
 
+# pytest
+.coverage
+
+#spot
+*spot_prediction.py

@@ -11,7 +11,7 @@ from commonroad.scenario.trajectory import State
 __author__ = "Christina Miller and Stefanie Manzinger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2021.1"
+__version__ = "2021.2"
 __maintainer__ = "Christina Miller"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -86,7 +86,7 @@ class GoalRegion(IDrawable):
             goal_state_fields = set([slot for slot in goal_state.__slots__ if hasattr(goal_state, slot)])
             state_fields = set([slot for slot in goal_state.__slots__ if hasattr(state, slot)])
             state_new, state_fields, goal_state_tmp, goal_state_fields =\
-                self._harmonize_state_types(state,goal_state_tmp, state_fields, goal_state_fields)
+                self._harmonize_state_types(state, goal_state_tmp, state_fields, goal_state_fields)
 
             if not goal_state_fields.issubset(state_fields):
                 raise ValueError('The goal states {} are not a subset of the provided states {}!'
@@ -166,7 +166,9 @@ class GoalRegion(IDrawable):
                                      '%s only (except from position and orientation); got "%s" for '
                                      'attribute "%s"' % (Interval, getattr(state, attr).__class__, attr))
 
-    def _harmonize_state_types(self, state:State, goal_state: State,  state_fields: Set[str], goal_state_fields: Set[str]):
+    @staticmethod
+    def _harmonize_state_types(state: State, goal_state: State,  state_fields: Set[str],
+                               goal_state_fields: Set[str]):
         """
         Transforms states from value_x, value_y to orientation, value representation if required.
         :param state: state to check for goal
@@ -175,10 +177,10 @@ class GoalRegion(IDrawable):
         """
         state_new = copy.deepcopy(state)
         if {'velocity', 'velocity_y'}.issubset(state_fields) \
-            and {'orientation'}.issubset(goal_state_fields) \
-            and not {'velocity', 'velocity_y'}.issubset(goal_state_fields):
+                and ({'orientation'}.issubset(goal_state_fields) or {'velocity'}.issubset(goal_state_fields))\
+                and not {'velocity', 'velocity_y'}.issubset(goal_state_fields):
 
-            if not 'orientation' in state_fields:
+            if 'orientation' not in state_fields:
                 state_new.orientation = math.atan2(state_new.velocity_y,
                                                    state_new.velocity)
                 state_fields.add('orientation')

@@ -17,7 +17,7 @@ __author__ = "Stefanie Manzinger, Christian Pek, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles, "
                "BMW Group, KO-HAF"]
-__version__ = "2021.1"
+__version__ = "2021.2"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -347,6 +347,7 @@ class StaticObstacle(Obstacle):
     def __str__(self):
         obs_str = 'Static Obstacle:\n'
         obs_str += '\nid: {}'.format(self.obstacle_id)
+        obs_str += '\ntype: {}'.format(self.obstacle_type.value)
         obs_str += '\ninitial state: {}'.format(self.initial_state)
         return obs_str
 
@@ -450,6 +451,7 @@ class DynamicObstacle(Obstacle):
     def __str__(self):
         obs_str = 'Dynamic Obstacle:\n'
         obs_str += '\nid: {}'.format(self.obstacle_id)
+        obs_str += '\ntype: {}'.format(self.obstacle_type.value)
         obs_str += '\ninitial state: {}'.format(self.initial_state)
         return obs_str
 

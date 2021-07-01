@@ -17,7 +17,7 @@ from commonroad.visualization.renderer import IRenderer
 __author__ = "Christian Pek, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW CAR@TUM"]
-__version__ = "2021.1"
+__version__ = "2021.2"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "released"
@@ -232,12 +232,8 @@ class Lanelet:
             self.adj_right = adjacent_right
             self.adj_right_same_direction = adjacent_right_same_direction
 
-        self._distance = [0.0]
-        for i in range(1, len(self.center_vertices)):
-            self._distance.append(self._distance[i - 1] + np.linalg.norm(
-                np.array(self.center_vertices[i]) - np.array(self.center_vertices[i - 1])))
-        self._distance = np.array(self._distance)
-
+        self._distance = None
+        self._inner_distance = None
         # create empty polygon
         self._polygon = None
 
@@ -281,11 +277,26 @@ class Lanelet:
 
     @property
     def distance(self) -> np.ndarray:
+        """
+        :returns cumulative distance along center vertices
+        """
+        if self._distance is None:
+            self._distance = self._compute_polyline_cumsum_dist([self.center_vertices])
         return self._distance
 
     @distance.setter
     def distance(self, _):
         warnings.warn('<Lanelet/distance> distance of lanelet is immutable')
+
+    @property
+    def inner_distance(self) -> np.ndarray:
+        """
+        :returns minimum cumulative distance along left and right vertices, i.e., along the inner curve:
+        """
+        if self._inner_distance is None:
+            self._inner_distance = self._compute_polyline_cumsum_dist([self.left_vertices, self.right_vertices])
+
+        return self._inner_distance
 
     @property
     def lanelet_id(self) -> int:
@@ -306,10 +317,10 @@ class Lanelet:
     @left_vertices.setter
     def left_vertices(self, polyline: np.ndarray):
         if self._left_vertices is None:
-            assert is_valid_polyline(
-                    polyline), '<Lanelet/left_vertices>: The provided polyline is not valid! polyline = {}'.format(
-                polyline)
             self._left_vertices = polyline
+            assert is_valid_polyline(
+                    polyline), '<Lanelet/left_vertices>: The provided polyline is not valid! id = {} polyline = {}'\
+                .format(self._lanelet_id, polyline)
         else:
             warnings.warn('<Lanelet/left_vertices>: left_vertices of lanelet are immutable!')
 
@@ -321,11 +332,22 @@ class Lanelet:
     def right_vertices(self, polyline: np.ndarray):
         if self._right_vertices is None:
             assert is_valid_polyline(
-                    polyline), '<Lanelet/right_vertices>: The provided polyline is not valid! polyline = {}'.format(
-                    polyline)
+                    polyline), '<Lanelet/right_vertices>: The provided polyline is not valid! id = {}, polyline = {}'\
+                .format(self._lanelet_id, polyline)
             self._right_vertices = polyline
         else:
             warnings.warn('<Lanelet/right_vertices>: right_vertices of lanelet are immutable!')
+
+    @staticmethod
+    def _compute_polyline_cumsum_dist(polylines: List[np.ndarray], comparator=np.amin):
+        d = []
+        for polyline in polylines:
+            d.append(np.diff(polyline, axis=0))
+        segment_distances = np.empty((len(polylines[0]), len(polylines)))
+        for i, d_tmp in enumerate(d):
+            segment_distances[:, i] = np.append([0], np.sqrt((np.square(d_tmp)).sum(axis=1)))
+
+        return np.cumsum(comparator(segment_distances, axis=1))
 
     @property
     def center_vertices(self) -> np.ndarray:
@@ -484,7 +506,7 @@ class Lanelet:
                 type(stop_line))
             self._stop_line = stop_line
         else:
-            warnings.warn('<Lanelet/stop_line>: stop_line of lanelet is immutable!')
+            warnings.warn('<Lanelet/stop_line>: stop_line of lanelet is immutable!', stacklevel=1)
 
     @property
     def lanelet_type(self) -> Set[LaneletType]:
@@ -642,10 +664,8 @@ class Lanelet:
         assert is_real_number(distance) and np.greater_equal(self.distance[-1], distance) \
                and np.greater_equal(distance, 0), \
                '<Lanelet/interpolate_position>: provided distance is not valid! distance = {}'.format(distance)
-        idx = 0
-
-        # find
-        while not (self.distance[idx] <= distance <= self.distance[idx + 1]):
+        idx = np.searchsorted(self.distance, distance) - 1
+        while not self.distance[idx] <= distance:
             idx += 1
         r = (distance - self.distance[idx]) / (self.distance[idx + 1] - self.distance[idx])
         return ((1 - r) * self._center_vertices[idx] + r * self._center_vertices[idx + 1],
@@ -858,7 +878,7 @@ class Lanelet:
 
         return merged_lanelets, merge_jobs_final
     
-    def find_lanelet_successors_in_range(self, lanelet_network: "LaneletNetwork", max_length=50.0):
+    def find_lanelet_successors_in_range(self, lanelet_network: "LaneletNetwork", max_length=50.0) -> List[List[int]]:
         """
         Finds all possible successor paths (id sequences) within max_length.
 
@@ -868,7 +888,7 @@ class Lanelet:
         """
         paths = [[s] for s in self.successor]
         paths_final = []
-        lengths = [0.0 for _ in paths]
+        lengths = [lanelet_network.find_lanelet_by_id(s).distance[-1] for s in self.successor]
         while paths:
             paths_next = []
             lengths_next = []
@@ -878,8 +898,8 @@ class Lanelet:
                     paths_final.append(p)
                 else:
                     for s in successors:
-                        if s in p or s == self.lanelet_id:
-                            # prevent loops
+                        if s in p or s == self.lanelet_id or l >= max_length:
+                            # prevent loops and consider length of first successor
                             paths_final.append(p)
                             continue
 
@@ -888,7 +908,7 @@ class Lanelet:
                             paths_next.append(p + [s])
                             lengths_next.append(l_next)
                         else:
-                            paths_final.append(p)
+                            paths_final.append(p + [s])
 
             paths = paths_next
             lengths = lengths_next
