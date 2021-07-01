@@ -24,7 +24,7 @@ Documentation
 
 The full documentation of the API and introducing examples can be found under `commonroad.in.tum.de <https://commonroad-io.readthedocs.io/en/latest/>`__.
 
-For getting started, we recommend our `tutorials <https://commonroad.in.tum.de/commonroad_io>`__.
+For getting started, we recommend our `tutorials <https://commonroad.in.tum.de/commonroad-io>`__.
 
 Additional Tools
 ================
