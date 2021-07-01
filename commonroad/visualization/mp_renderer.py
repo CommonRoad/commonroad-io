@@ -501,7 +501,8 @@ class MPRenderer(IRenderer):
 
         draw_history = draw_params.by_callstack(call_stack, ('history', 'draw_history'))
 
-        if obj.prediction.final_time_step < time_begin or obj.initial_state.time_step > time_end:
+        if obj.prediction is None or \
+            obj.prediction.final_time_step < time_begin or obj.initial_state.time_step > time_end:
             return
 
         if draw_history and isinstance(obj.prediction, commonroad.prediction.prediction.TrajectoryPrediction):
