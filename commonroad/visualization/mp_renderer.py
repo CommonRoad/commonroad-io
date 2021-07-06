@@ -843,7 +843,7 @@ class MPRenderer(IRenderer):
             sin = math.sin(state.orientation)
             x = state.position[0]
             y = state.position[1]
-            self.obstacle_patches.append(mpl.patches.Arrow(x=x, y=y, dx=state.velocity * cos * scale_factor,
+            self.obstacle_patches.append(mpl.patches.FancyArrow(x=x, y=y, dx=state.velocity * cos * scale_factor,
                                                            dy=state.velocity * sin * scale_factor, zorder=ZOrders.STATE,
                                                            **arrow_args))
 
