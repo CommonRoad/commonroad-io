@@ -298,6 +298,7 @@
     "zorder": 20,
     "state": {
         "draw_arrow": false,
+        "radius": 0.5,
         "scale_factor": 1.0,
         "kwargs": {},
         "facecolor": "#000080",
@@ -307,11 +308,13 @@
         "label_zorder": 35,
         "label": "",
         "state": {
-            "draw_arrow": false,
-            "scale_factor": 1.0,
-            "kwargs": {
-            },
-            "facecolor": "#000080",
+            "draw_arrow": true,
+            "radius": 1.5,
+            "scale_factor": 0.7,
+            "kwargs": {"color": "g",
+                "alpha": 0.8,
+                "width": 3.5},
+            "facecolor": "g",
             "zorder": 25
         }
     },

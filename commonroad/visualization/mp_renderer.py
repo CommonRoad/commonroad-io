@@ -834,6 +834,10 @@ class MPRenderer(IRenderer):
         scale_factor = draw_params.by_callstack(call_stack, 'scale_factor')
         arrow_args = draw_params.by_callstack(call_stack, 'kwargs')
         draw_arrow = draw_params.by_callstack(call_stack, 'draw_arrow')
+        radius = draw_params.by_callstack(call_stack, 'radius')
+        facecolor = draw_params.by_callstack(call_stack, 'facecolor')
+        self.obstacle_patches.append(mpl.patches.Circle(state.position, radius=radius, zorder=ZOrders.STATE,
+                                                        color=facecolor))
         if draw_arrow:
             cos = math.cos(state.orientation)
             sin = math.sin(state.orientation)
@@ -842,8 +846,7 @@ class MPRenderer(IRenderer):
             self.obstacle_patches.append(mpl.patches.Arrow(x=x, y=y, dx=state.velocity * cos * scale_factor,
                                                            dy=state.velocity * sin * scale_factor, zorder=ZOrders.STATE,
                                                            **arrow_args))
-        else:
-            self.obstacle_patches.append(mpl.patches.Circle(state.position, radius=0.5, zorder=ZOrders.STATE))
+
 
     def draw_lanelet_network(self, obj: LaneletNetwork, draw_params: Union[ParamServer, dict, None],
                              call_stack: Tuple[str, ...]) -> None:
