@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork, StopLine
+from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork, StopLine, LaneletType
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.geometry.shape import Rectangle
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany, \
@@ -11,7 +11,7 @@ from commonroad.scenario.intersection import Intersection, IntersectionIncomingE
 __author__ = "Moritz Untersperger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles, BMW Car@TUM"]
-__version__ = "2021.2"
+__version__ = "2021.1"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -87,6 +87,52 @@ class TestLaneletNetwork(unittest.TestCase):
         self.assertEqual(self.lanelet_network.lanelets[0].lanelet_id, self.lanelet.lanelet_id)
 
     def test_create_from_lanelet_network(self):
+        lanelet_network = LaneletNetwork()
+
+        right_vertices = np.array([[0, 0], [1, 0]])
+        left_vertices = np.array([[0, 1], [1, 1]])
+        center_vertices = np.array([[0, .5], [1, .5]])
+        lanelet_id = 5
+        lanelet1 = Lanelet(left_vertices, right_vertices, center_vertices, lanelet_id)
+        lanelet_network.add_lanelet(lanelet1)
+
+        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1]])
+        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2]])
+        center_vertices = np.array([[0, .5], [1, .5], [2, .5], [3, 1], [4, 1.5]])
+        lanelet_id = 6
+        lanelet_type = {LaneletType.URBAN}
+        lanelet2 = Lanelet(left_vertices, right_vertices, center_vertices, lanelet_id, None, None, None, None, None,
+                           None, None, None, None, lanelet_type)
+        lanelet_network.add_lanelet(lanelet2)
+
+        right_vertices = np.array([[5, 1], [6, 1], [7, 0], [8, 0]])
+        left_vertices = np.array([[5, 2], [6, 2], [7, 1], [8, 1]])
+        center_vertices = np.array([[5, 1.5], [6, 1.5], [7, .5], [8, .5]])
+        lanelet_id = 7
+        lanelet3 = Lanelet(left_vertices, right_vertices, center_vertices, lanelet_id)
+        lanelet_network.add_lanelet(lanelet3)
+
+        self.assertEqual(lanelet1.lanelet_id,
+            lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2)).lanelets[0].lanelet_id)
+        self.assertEqual(lanelet2.lanelet_id,
+            lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2)).lanelets[1].lanelet_id)
+    
+        lanelets_in_network = []
+        for i in range(0,
+                    len(lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2)).lanelets)):
+            lanelets_in_network.append(lanelet_network.create_from_lanelet_network(lanelet_network,
+                                                                                    Rectangle(2, 2)).lanelets[i])
+        self.assertNotIn(lanelet3.lanelet_id, lanelets_in_network)
+
+        lanelets_in_network = []
+        for i in range(0,
+                    len(lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2),
+                                                                lanelet2.lanelet_type).lanelets)):
+            lanelets_in_network.append(
+                    lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2),
+                                                                lanelet2.lanelet_type).lanelets[i])
+        self.assertNotIn(lanelet2.lanelet_id, lanelets_in_network)
+
         actual_network = LaneletNetwork()
         actual_network = actual_network.create_from_lanelet_list([self.lanelet])
 

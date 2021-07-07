@@ -165,11 +165,11 @@ class Lanelet:
         """
         Constructor of a Lanelet object
         :param left_vertices: The vertices of the left boundary of the Lanelet described as a
-        polyline [[x0,x0],[x1,y1],...,[xn,yn]]
+        polyline [[x0,y0],[x1,y1],...,[xn,yn]]
         :param center_vertices: The vertices of the center line of the Lanelet described as a
-        polyline [[x0,x0],[x1,y1],...,[xn,yn]]
+        polyline [[x0,y0],[x1,y1],...,[xn,yn]]
         :param right_vertices: The vertices of the right boundary of the Lanelet described as a
-        polyline [[x0,x0],[x1,y1],...,[xn,yn]]
+        polyline [[x0,y0],[x1,y1],...,[xn,yn]]
         :param lanelet_id: The unique id (natural number) of the lanelet
         :param predecessor: The list of predecessor lanelets (None if not existing)
         :param successor: The list of successor lanelets (None if not existing)
@@ -1031,7 +1031,7 @@ class LaneletNetwork(IDrawable):
         return lanelet_network
 
     @classmethod
-    def create_from_lanelet_network(cls, lanelet_network: 'LaneletNetwork'):
+    def create_from_lanelet_network(cls, lanelet_network: 'LaneletNetwork', shape=None, exclude_lanelet_types={}):
         """
         Creates a lanelet network from a given lanelet network (copy)
 
@@ -1039,8 +1039,38 @@ class LaneletNetwork(IDrawable):
         :return: The deep copy of the lanelet network
         """
         new_lanelet_network = cls()
-        for la in lanelet_network.lanelets:
-            new_lanelet_network.add_lanelet(copy.deepcopy(la))
+
+        if shape is not None:
+            for la in lanelet_network.lanelets:
+                fully_contained = True
+                partially_contained = False
+                for lv in la.left_vertices:
+                    if shape.contains_point(lv):
+                        partially_contained = True
+                    else:
+                        fully_contained = False
+                for rv in la.right_vertices:
+                    if shape.contains_point(rv):
+                        partially_contained = True
+                    else:
+                        fully_contained = False
+                for cv in la.center_vertices:
+                    if shape.contains_point(cv):
+                        partially_contained = True
+                    else:
+                        fully_contained = False
+                if fully_contained:
+                    new_lanelet_network.add_lanelet(copy.deepcopy(la))
+                elif partially_contained:
+                    new_lanelet_network.add_lanelet(copy.deepcopy(la))
+        else:
+            for la in lanelet_network.lanelets:
+                new_lanelet_network.add_lanelet(copy.deepcopy(la))
+
+        for lanelet_type in exclude_lanelet_types:
+            new_lanelet_network.remove_lanelet(
+                lanelet_type)  # set of ids  # new_lanelet_network.remove_lanelet(lanelet.lanelet_id)#set if of lanelets
+
         return new_lanelet_network
 
     def remove_lanelet(self, lanelet_id: int):
