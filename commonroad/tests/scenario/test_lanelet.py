@@ -356,6 +356,5 @@ class TestLanelet(unittest.TestCase):
         lanelet.remove_predecessor(20)
         self.assertListEqual(lanelet.successor, [6])
 
-
 if __name__ == '__main__':
     unittest.main()
