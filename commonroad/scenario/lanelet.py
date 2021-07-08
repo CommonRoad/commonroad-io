@@ -1309,19 +1309,8 @@ class LaneletNetwork(IDrawable):
         #     point_list)
 
         # output list
-        res = list()
-
-        # look at each lanelet
-        # polygons = [(la.lanelet_id, la.convert_to_polygon()) for la in self.lanelets]
-
-        for point in point_list:
-            mapped = list()
-            for lanelet_id, poly in self._polygons.items():
-                if poly.contains_point(point):
-                    mapped.append(lanelet_id)
-            res.append(mapped)
-
-        return res
+        return [[lanelet_id for lanelet_id, poly in self._polygons.items() if poly.contains_point(point)] for point in
+                point_list]
 
     def find_lanelet_by_shape(self, shape: Shape) -> List[int]:
         """
@@ -1335,16 +1324,8 @@ class LaneletNetwork(IDrawable):
                                                                 'type = {}'.format(type(shape))
 
         # output list
-        res = []
-
-        # look at each lanelet
-        # polygons = [(la.lanelet_id, la.convert_to_polygon()) for la in self.lanelets]
-
-        for lanelet_id, poly in self._polygons.items():
-            if poly.shapely_object.intersects(shape.shapely_object):
-                res.append(lanelet_id)
-
-        return res
+        return [lanelet_id for lanelet_id, poly in self._polygons.items() if
+                poly.shapely_object.intersects(shape.shapely_object)]
 
     def filter_obstacles_in_network(self, obstacles: List[Obstacle]) -> List[Obstacle]:
         """
