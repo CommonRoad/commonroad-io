@@ -34,7 +34,7 @@ Solution Reader and Writer
 
 The following classes help with creating a CommonRoad solution xml file from a
 trajectory that solves CommonRoad benchmarks. The files can be submitted on our
-`website <https://commonroad.in.tum.de/documentation/vehicle_model_doc/>`_.
+`website <https://commonroad.in.tum.de>`_.
 Create a Solution and write using the CommonRoadSolutionWriter.
 
 .. automodule:: commonroad.common.solution
@@ -53,7 +53,7 @@ Create a Solution and write using the CommonRoadSolutionWriter.
    :undoc-members:
    :member-order: bysource
 
-Detailed information about the listed vehicle models in `Vehicle Model Documentation <https://commonroad.in.tum.de/documentation/vehicle_model_doc/>`_.
+Detailed information about the listed vehicle models in `Vehicle Model Documentation <https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models/-/blob/master/vehicleModels_commonRoad.pdf>`_.
 
 ``CostFunction`` class
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -62,7 +62,7 @@ Detailed information about the listed vehicle models in `Vehicle Model Documenta
    :undoc-members:
    :member-order: bysource
 
-Detailed information about the listed cost functions in `Cost Function Documentation <https://commonroad.in.tum.de/documentation/cost_func_doc/>`_.
+Detailed information about the listed cost functions in `Cost Function Documentation <https://gitlab.lrz.de/tum-cps/commonroad-cost-functions/-/blob/master/costFunctions_commonRoad.pdf>`_.
 
 ``PlanningProblemSolution`` class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
