@@ -953,6 +953,7 @@ class LaneletNetwork(IDrawable):
 
     def __init__(self):
         self._lanelets: Dict[int, Lanelet] = {}
+        self._polygons: Dict[int, Polygon] = {}
         self._intersections: Dict[int, Intersection] = {}
         self._traffic_signs: Dict[int, TrafficSign] = {}
         self._traffic_lights: Dict[int, TrafficLight] = {}
@@ -960,6 +961,10 @@ class LaneletNetwork(IDrawable):
     @property
     def lanelets(self) -> List[Lanelet]:
         return list(self._lanelets.values())
+
+    @property
+    def lanelet_polygons(self) -> List[Polygon]:
+        return list(self._polygons.values())
 
     @lanelets.setter
     def lanelets(self, _):
@@ -1031,6 +1036,7 @@ class LaneletNetwork(IDrawable):
         """
         if lanelet_id in self._lanelets.keys():
             del self._lanelets[lanelet_id]
+            del self._polygons[lanelet_id]
             self.cleanup_lanelet_references()
 
     def cleanup_lanelet_references(self):
@@ -1175,6 +1181,7 @@ class LaneletNetwork(IDrawable):
             return False
         else:
             self._lanelets[lanelet.lanelet_id] = lanelet
+            self._polygons[lanelet.lanelet_id] = lanelet.convert_to_polygon()
             return True
 
     def add_traffic_sign(self, traffic_sign: TrafficSign, lanelet_ids: Set[int]):
@@ -1305,11 +1312,11 @@ class LaneletNetwork(IDrawable):
         res = list()
 
         # look at each lanelet
-        polygons = [(la.lanelet_id, la.convert_to_polygon()) for la in self.lanelets]
+        # polygons = [(la.lanelet_id, la.convert_to_polygon()) for la in self.lanelets]
 
         for point in point_list:
             mapped = list()
-            for lanelet_id, poly in polygons:
+            for lanelet_id, poly in self._polygons.items():
                 if poly.contains_point(point):
                     mapped.append(lanelet_id)
             res.append(mapped)
@@ -1331,9 +1338,9 @@ class LaneletNetwork(IDrawable):
         res = []
 
         # look at each lanelet
-        polygons = [(la.lanelet_id, la.convert_to_polygon()) for la in self.lanelets]
+        # polygons = [(la.lanelet_id, la.convert_to_polygon()) for la in self.lanelets]
 
-        for lanelet_id, poly in polygons:
+        for lanelet_id, poly in self._polygons.items():
             if poly.shapely_object.intersects(shape.shapely_object):
                 res.append(lanelet_id)
 
