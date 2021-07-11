@@ -316,6 +316,31 @@ class Circle(Shape):
                               draw_params, call_stack)
 
 
+class LaneletPolygon(shapely.geometry.Polygon):
+
+    def __init__(self, shell=None, holes=None, lanelet_id: int = -1):
+        super().__init__(shell, holes)
+        self.lanelet_id = lanelet_id
+
+    @property
+    def __array_interface__(self):
+        raise NotImplementedError("A polygon does not itself provide the array interface. Its rings do.")
+
+    def _get_coords(self):
+        raise NotImplementedError("Component rings have coordinate sequences, but the polygon does not")
+
+    def _set_coords(self, ob):
+        raise NotImplementedError("Component rings have coordinate sequences, but the polygon does not")
+
+    @property
+    def coords(self):
+        raise NotImplementedError("Component rings have coordinate sequences, but the polygon does not")
+
+    @property
+    def xy(self):
+        raise NotImplementedError("Component rings have coordinate sequences, but the polygon does not")
+
+
 class Polygon(Shape):
     """ The class Polygon can be used to model occupied regions or obstacles. A polygon is defined by an array of
     ordered points (clockwise or counterclockwise)."""

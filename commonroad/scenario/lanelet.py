@@ -3,10 +3,13 @@ import enum
 from typing import *
 
 import numpy as np
+from shapely.geometry import Point
+from shapely.strtree import STRtree
+from line_profiler_pycharm import profile
 
 import commonroad.geometry.transform
 from commonroad.common.validity import *
-from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape
+from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape, LaneletPolygon
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.obstacle import Obstacle
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
@@ -954,6 +957,7 @@ class LaneletNetwork(IDrawable):
     def __init__(self):
         self._lanelets: Dict[int, Lanelet] = {}
         self._polygons: Dict[int, Polygon] = {}
+        self._strtee = None
         self._intersections: Dict[int, Intersection] = {}
         self._traffic_signs: Dict[int, TrafficSign] = {}
         self._traffic_lights: Dict[int, TrafficLight] = {}
@@ -1013,6 +1017,9 @@ class LaneletNetwork(IDrawable):
 
         if cleanup_ids:
             lanelet_network.cleanup_lanelet_references()
+
+        lanelet_network.create_strtree()
+
         return lanelet_network
 
     @classmethod
@@ -1026,7 +1033,14 @@ class LaneletNetwork(IDrawable):
         new_lanelet_network = cls()
         for la in lanelet_network.lanelets:
             new_lanelet_network.add_lanelet(copy.deepcopy(la))
+
+        new_lanelet_network.create_strtree()
+
         return new_lanelet_network
+
+    def create_strtree(self):
+        self._strtee = STRtree([LaneletPolygon(lanelet_polygon.shapely_object, holes=None, lanelet_id=lanelet_id) for
+                                lanelet_id, lanelet_polygon in self._polygons.items()])
 
     def remove_lanelet(self, lanelet_id: int):
         """
@@ -1294,6 +1308,7 @@ class LaneletNetwork(IDrawable):
         for traffic_light in self._traffic_lights.values():
             traffic_light.translate_rotate(translation, angle)
 
+    @profile
     def find_lanelet_by_position(self, point_list: List[np.ndarray]) -> List[List[int]]:
         """
         Finds the lanelet id of a given position
@@ -1309,8 +1324,11 @@ class LaneletNetwork(IDrawable):
         #     point_list)
 
         # output list
-        return [[lanelet_id for lanelet_id, poly in self._polygons.items() if poly.contains_point(point)] for point in
-                point_list]
+        point_list2 = [Point(point) for point in point_list]
+        lanelet_polygon_list = sum([self._strtee.query(point) for point in point_list2], [])
+        ret_list = [[lanelet_polygon.lanelet_id for lanelet_polygon in lanelet_polygon_list if lanelet_polygon.contains(point)] for point in point_list2]
+
+        return ret_list
 
     def find_lanelet_by_shape(self, shape: Shape) -> List[int]:
         """
