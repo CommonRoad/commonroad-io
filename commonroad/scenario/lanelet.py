@@ -5,7 +5,6 @@ from typing import *
 import numpy as np
 from shapely.geometry import Point
 from shapely.strtree import STRtree
-from line_profiler_pycharm import profile
 
 import commonroad.geometry.transform
 from commonroad.common.validity import *
@@ -1315,7 +1314,6 @@ class LaneletNetwork(IDrawable):
         for traffic_light in self._traffic_lights.values():
             traffic_light.translate_rotate(translation, angle)
 
-    @profile
     def find_lanelet_by_position(self, point_list: List[np.ndarray], epsilon=1e-12) -> List[List[int]]:
         """
         Finds the lanelet id of a given position
