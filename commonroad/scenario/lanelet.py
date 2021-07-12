@@ -860,8 +860,8 @@ class Lanelet:
             merged_lanelets.append(pred)
 
         return merged_lanelets, merge_jobs_final
-    
-    def find_lanelet_successors_in_range(self, lanelet_network: "LaneletNetwork", max_length=50.0):
+
+    def find_lanelet_successors_in_range(self, lanelet_network: "LaneletNetwork", max_length=50.0) -> List[List[int]]:
         """
         Finds all possible successor paths (id sequences) within max_length.
 
@@ -1018,7 +1018,7 @@ class LaneletNetwork(IDrawable):
         if cleanup_ids:
             lanelet_network.cleanup_lanelet_references()
 
-        lanelet_network.create_strtree()
+        lanelet_network._create_strtree()
 
         return lanelet_network
 
@@ -1034,11 +1034,17 @@ class LaneletNetwork(IDrawable):
         for la in lanelet_network.lanelets:
             new_lanelet_network.add_lanelet(copy.deepcopy(la))
 
-        new_lanelet_network.create_strtree()
+        new_lanelet_network._create_strtree()
 
         return new_lanelet_network
 
-    def create_strtree(self):
+    def _create_strtree(self):
+        """
+        Creates spatial index for lanelets for faster querying the lanelets by position.
+
+        Since it is an immutable object, it has to be recreated after every lanelet addition or it should be done
+        once after all lanelets are added.
+        """
         self._strtee = STRtree([LaneletPolygon(lanelet_polygon.shapely_object, holes=None, lanelet_id=lanelet_id) for
                                 lanelet_id, lanelet_polygon in self._polygons.items()])
 
@@ -1196,6 +1202,7 @@ class LaneletNetwork(IDrawable):
         else:
             self._lanelets[lanelet.lanelet_id] = lanelet
             self._polygons[lanelet.lanelet_id] = lanelet.convert_to_polygon()
+            self._create_strtree()
             return True
 
     def add_traffic_sign(self, traffic_sign: TrafficSign, lanelet_ids: Set[int]):
@@ -1309,11 +1316,13 @@ class LaneletNetwork(IDrawable):
             traffic_light.translate_rotate(translation, angle)
 
     @profile
-    def find_lanelet_by_position(self, point_list: List[np.ndarray]) -> List[List[int]]:
+    def find_lanelet_by_position(self, point_list: List[np.ndarray], epsilon=1e-12) -> List[List[int]]:
         """
         Finds the lanelet id of a given position
 
         :param point_list: The list of positions to check
+        :param epsilon: Grows the lanet polygons with this value, it the point is not contained in the lanelet and
+                        rechecks it. It is reasonable because of numerical inaccuracies in shapely.
         :return: A list of lanelet ids. If the position could not be matched to a lanelet, an empty list is returned
         """
         assert isinstance(point_list,
@@ -1323,12 +1332,20 @@ class LaneletNetwork(IDrawable):
         #     point_list), 'Lanelet/contains_points>: provided list of points is malformed! points = {}'.format(
         #     point_list)
 
-        # output list
+        # create point list
         point_list2 = [Point(point) for point in point_list]
-        lanelet_polygon_list = sum([self._strtee.query(point) for point in point_list2], [])
-        ret_list = [[lanelet_polygon.lanelet_id for lanelet_polygon in lanelet_polygon_list if lanelet_polygon.contains(point)] for point in point_list2]
 
-        return ret_list
+        # it could be more optimized for a lot of points - because now we gather all the possible lanlets for all points
+        # and after that we check if the given point is cointained in the
+        lanelet_polygon_list = sum([self._strtee.query(point) for point in point_list2], [])
+        # chain cheaper and expensive tests (contains(...) and buffer(epsilon).contains(...)) because numerical
+        # stability
+        ret_list = [[lanelet_polygon.lanelet_id for lanelet_polygon in lanelet_polygon_list if
+                     lanelet_polygon.contains(point) or lanelet_polygon.buffer(epsilon).contains(point)] for point in
+                    point_list2]
+
+        # filter same lanelet_ids out
+        return [list(set(seq)) for seq in ret_list]
 
     def find_lanelet_by_shape(self, shape: Shape) -> List[int]:
         """

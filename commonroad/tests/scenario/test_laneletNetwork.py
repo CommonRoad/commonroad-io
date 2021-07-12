@@ -177,8 +177,19 @@ class TestLaneletNetwork(unittest.TestCase):
 
     def test_find_lanelet_by_position(self):
 
-        observed_lanelet = self.lanelet_network.find_lanelet_by_position([np.array([1, 1])])
+        # import matplotlib as mpl
+        # from matplotlib import pyplot as plt
+        # mpl.use('Qt5Agg')
+        # from commonroad.visualization.draw_dispatch_cr import draw_object
+        # fig = plt.figure(num=0, figsize=(12, 8), dpi=100)
+        # fig.clf()
+        # ax = fig.add_subplot(111)
+        # draw_object(self.lanelet_network, ax=ax, draw_params={'lanelet': {'show_label': True}})
+        # plt.plot(1, 1)
+        # fig.gca().set_aspect('equal')
+        # fig.show()
 
+        observed_lanelet = self.lanelet_network.find_lanelet_by_position([np.array([1.0, 1.0])]) #, np.array([0.0, 0.0])])
         self.assertEqual(observed_lanelet[0][0], self.lanelet.lanelet_id)
         self.assertEqual(len(self.lanelet_network.find_lanelet_by_position([np.array([-5, -5])])[0]), 0)
 
