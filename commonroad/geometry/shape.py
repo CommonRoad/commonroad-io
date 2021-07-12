@@ -1,5 +1,7 @@
 import warnings
 import abc
+from copy import deepcopy
+
 import numpy as np
 from typing import List, Union, Optional, Tuple
 
@@ -318,9 +320,30 @@ class Circle(Shape):
 
 class LaneletPolygon(shapely.geometry.Polygon):
 
-    def __init__(self, shell=None, holes=None, lanelet_id: int = -1):
-        super().__init__(shell, holes)
+    def __init__(self, lanelet_id, shell=None, holes=None):
+        super(LaneletPolygon, self).__init__(shell, holes)
         self.lanelet_id = lanelet_id
+        # super(MyPoly, self).init(
+
+    # def __deepcopy__(self, memo):
+    #     deepcopy_method = self.__deepcopy__
+    #     self.__deepcopy__ = None
+    #     cp = deepcopy(self, memo)
+    #     self.__deepcopy__ = deepcopy_method
+    #     cp.__deepcopy__ = deepcopy_method
+    #
+    #     # custom treatments
+    #     # for instance: cp.id = None
+    #
+    #     return cp
+
+    def __deepcopy__(self, memo):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            setattr(result, k, deepcopy(v, memo))
+        return result
 
     @property
     def __array_interface__(self):

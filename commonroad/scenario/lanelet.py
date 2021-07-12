@@ -1044,8 +1044,9 @@ class LaneletNetwork(IDrawable):
         Since it is an immutable object, it has to be recreated after every lanelet addition or it should be done
         once after all lanelets are added.
         """
-        self._strtee = STRtree([LaneletPolygon(lanelet_polygon.shapely_object, holes=None, lanelet_id=lanelet_id) for
-                                lanelet_id, lanelet_polygon in self._polygons.items()])
+        self._strtee = STRtree(
+                [LaneletPolygon(lanelet_id=lanelet_id, shell=lanelet_polygon.shapely_object, holes=None) for
+                 lanelet_id, lanelet_polygon in self._polygons.items()])
 
     def remove_lanelet(self, lanelet_id: int):
         """
