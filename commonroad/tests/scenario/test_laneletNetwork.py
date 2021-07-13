@@ -89,9 +89,9 @@ class TestLaneletNetwork(unittest.TestCase):
     def test_create_from_lanelet_network(self):
         lanelet_network = LaneletNetwork()
 
-        right_vertices = np.array([[0, 0], [1, 0]])
-        left_vertices = np.array([[0, 1], [1, 1]])
-        center_vertices = np.array([[0, .5], [1, .5]])
+        right_vertices = np.array([[0, 0], [1, 0], [1.1, 0.1]])
+        left_vertices = np.array([[0, 1], [1, 1], [1.1, 1.1]])
+        center_vertices = np.array([[0, .5], [1, .5], [1.1, .6]])
         lanelet_id = 5
         lanelet1 = Lanelet(left_vertices, right_vertices, center_vertices, lanelet_id)
         lanelet_network.add_lanelet(lanelet1)
@@ -116,7 +116,7 @@ class TestLaneletNetwork(unittest.TestCase):
             lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2)).lanelets[0].lanelet_id)
         self.assertEqual(lanelet2.lanelet_id,
             lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2)).lanelets[1].lanelet_id)
-    
+
         lanelets_in_network = []
         for i in range(0,
                     len(lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2)).lanelets)):
@@ -127,10 +127,10 @@ class TestLaneletNetwork(unittest.TestCase):
         lanelets_in_network = []
         for i in range(0,
                     len(lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2),
-                                                                lanelet2.lanelet_type).lanelets)):
+                                                                {LaneletType.URBAN}).lanelets)):
             lanelets_in_network.append(
                     lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2),
-                                                                lanelet2.lanelet_type).lanelets[i])
+                                                                {LaneletType.URBAN}).lanelets[i])
         self.assertNotIn(lanelet2.lanelet_id, lanelets_in_network)
 
         actual_network = LaneletNetwork()

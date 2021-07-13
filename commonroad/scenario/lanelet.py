@@ -3,6 +3,7 @@ import enum
 from typing import *
 
 import numpy as np
+from shapely import geometry
 
 import commonroad.geometry.transform
 from commonroad.common.validity import *
@@ -1031,7 +1032,7 @@ class LaneletNetwork(IDrawable):
         return lanelet_network
 
     @classmethod
-    def create_from_lanelet_network(cls, lanelet_network: 'LaneletNetwork', shape=None, exclude_lanelet_types={}):
+    def create_from_lanelet_network(cls, lanelet_network: 'LaneletNetwork', shape_input=None, exclude_lanelet_types={}):
         """
         Creates a lanelet network from a given lanelet network (copy)
 
@@ -1040,36 +1041,23 @@ class LaneletNetwork(IDrawable):
         """
         new_lanelet_network = cls()
 
-        if shape is not None:
+        if shape_input is not None:
             for la in lanelet_network.lanelets:
-                fully_contained = True
-                partially_contained = False
-                for lv in la.left_vertices:
-                    if shape.contains_point(lv):
-                        partially_contained = True
-                    else:
-                        fully_contained = False
-                for rv in la.right_vertices:
-                    if shape.contains_point(rv):
-                        partially_contained = True
-                    else:
-                        fully_contained = False
-                for cv in la.center_vertices:
-                    if shape.contains_point(cv):
-                        partially_contained = True
-                    else:
-                        fully_contained = False
-                if fully_contained:
-                    new_lanelet_network.add_lanelet(copy.deepcopy(la))
-                elif partially_contained:
-                    new_lanelet_network.add_lanelet(copy.deepcopy(la))
+                if la.lanelet_type == set() or not la.lanelet_type.issubset(exclude_lanelet_types):
+                    partially_contained_lanelets = False
+                    poly_shape_input = geometry.Polygon(shape_input.shapely_object)
+                    poly_left = geometry.Polygon(la.left_vertices)
+                    poly_right = geometry.Polygon(la.right_vertices)
+                    if geometry.Polygon.intersects(poly_shape_input, poly_left):
+                        partially_contained_lanelets = True
+                    if geometry.Polygon.intersects(poly_shape_input, poly_right):
+                        partially_contained_lanelets = True
+                    if partially_contained_lanelets:
+                        new_lanelet_network.add_lanelet(copy.deepcopy(la))
         else:
             for la in lanelet_network.lanelets:
-                new_lanelet_network.add_lanelet(copy.deepcopy(la))
-
-        for lanelet_type in exclude_lanelet_types:
-            new_lanelet_network.remove_lanelet(
-                lanelet_type)  # set of ids  # new_lanelet_network.remove_lanelet(lanelet.lanelet_id)#set if of lanelets
+                if la.lanelet_type.issubset(exclude_lanelet_types):
+                    new_lanelet_network.add_lanelet(copy.deepcopy(la))
 
         return new_lanelet_network
 
