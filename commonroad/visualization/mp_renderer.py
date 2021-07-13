@@ -78,7 +78,7 @@ class MPRenderer(IRenderer):
 
     def __init__(self, draw_params: Union[ParamServer, dict, None] = None,
                  plot_limits: Union[List[Union[int, float]], None] = None, ax: Union[mpl.axes.Axes, None] = None,
-                 figsize: Union[None, Tuple[float, float]]=None, focus_obstacle: Union[None, Obstacle] = None):
+                 figsize: Union[None, Tuple[float, float]] = None, focus_obstacle: Union[None, Obstacle] = None):
         """
         Creates an renderer for matplotlib
 
@@ -294,9 +294,9 @@ class MPRenderer(IRenderer):
 
         self.ax_updated = False
 
-    def create_video(self, obj_lists: List[IDrawable], ego: IDrawable, file_path: str, delta_time_steps: int = 1, plotting_horizon=0,
-                     draw_params: Union[dict, ParamServer, None] = None, fig_size: Union[list, None] = None, dt=100,
-                     dpi=120) -> None:
+    def create_video(self, obj_lists: List[IDrawable], ego: IDrawable, file_path: str, delta_time_steps: int = 1,
+                     plotting_horizon=0, draw_params: Union[dict, ParamServer, None] = None,
+                     fig_size: Union[list, None] = None, dt=100, dpi=120) -> None:
         """
         Creates a video of one or multiple CommonRoad objects in mp4, gif,
         or avi format.
@@ -323,7 +323,7 @@ class MPRenderer(IRenderer):
         if fig_size is None:
             fig_size = [15, 8]
 
-        self.ax.clear()
+        # self.ax.clear()
         self.f.set_size_inches(*fig_size)
         self.ax.set_aspect('equal')
 
@@ -337,6 +337,9 @@ class MPRenderer(IRenderer):
 
             self.render_static()
             artists = self.render_dynamic()
+
+            self.plot_center = None
+
             if self.plot_limits is None:
                 self.ax.autoscale()
             elif self.plot_limits == 'auto':
@@ -358,10 +361,15 @@ class MPRenderer(IRenderer):
         def update(frame=0):
             draw_params.update({'time_begin': time_begin + delta_time_steps * frame,
                                 'time_end': time_begin + min(frame_count, delta_time_steps * frame + plotting_horizon)})
+            draw_params_ego.update({'time_begin': time_begin + delta_time_steps * frame,
+                                    'time_end': time_begin + min(frame_count,
+                                                                 delta_time_steps * frame + plotting_horizon)})
             self.remove_dynamic()
             self.clear()
             self.draw_list(obj_lists, draw_params=draw_params)
             self.draw_dynamic_obstacle(ego, draw_params_ego, ())
+
+            self.plot_center = None
 
             artists = self.render_dynamic()
             if self.plot_limits is None:
@@ -390,9 +398,7 @@ class MPRenderer(IRenderer):
         fps = int(math.ceil(1000.0 / dt))
         interval_seconds = dt / 1000.0
         anim.save(file_path, dpi=dpi, writer='ffmpeg', fps=fps,
-                  extra_args=["-g", "1", "-keyint_min", str(interval_seconds)])
-        self.clear()
-        self.ax.clear()
+                  extra_args=["-g", "1", "-keyint_min", str(interval_seconds)])  # self.clear()  # self.ax.clear()
 
     def add_legend(self, legend: Dict[Tuple[str, ...], str],
                    draw_params: Union[ParamServer, dict, None] = None) -> None:
@@ -509,8 +515,8 @@ class MPRenderer(IRenderer):
 
         draw_history = draw_params.by_callstack(call_stack, ('history', 'draw_history'))
 
-        if obj.prediction is None or \
-            obj.prediction.final_time_step < time_begin or obj.initial_state.time_step > time_end:
+        if obj.prediction is None or obj.prediction.final_time_step < time_begin or obj.initial_state.time_step > \
+                time_end:
             return
 
         if draw_history and isinstance(obj.prediction, commonroad.prediction.prediction.TrajectoryPrediction):
@@ -538,10 +544,12 @@ class MPRenderer(IRenderer):
                     facecolor = draw_params.by_callstack(call_stack_tmp, 'facecolor')
                     edgecolor = draw_params.by_callstack(call_stack_tmp, 'edgecolor')
 
-                    self.obstacle_patches.extend(
-                        get_obstacle_icon_patch(obj.obstacle_type, inital_state.position[0], inital_state.position[1],
-                                                inital_state.orientation, vehicle_length=length, vehicle_width=width,
-                                                vehicle_color=facecolor, edgecolor=edgecolor, zorder=ZOrders.CAR_PATCH))
+                    self.obstacle_patches.extend(get_obstacle_icon_patch(obj.obstacle_type, inital_state.position[0],
+                                                                         inital_state.position[1],
+                                                                         inital_state.orientation,
+                                                                         vehicle_length=length, vehicle_width=width,
+                                                                         vehicle_color=facecolor, edgecolor=edgecolor,
+                                                                         zorder=ZOrders.CAR_PATCH))
         elif draw_icon is True:
             draw_shape = True
 
@@ -595,9 +603,8 @@ class MPRenderer(IRenderer):
         if show_label:
             if state is not None:
                 position = state.position
-                self.dynamic_labels.append(
-                        text.Text(position[0] + 0.5, position[1], str(obj.obstacle_id), clip_on=True,
-                                  zorder=ZOrders.LABELS))
+                self.dynamic_labels.append(text.Text(position[0] + 0.5, position[1], str(obj.obstacle_id), clip_on=True,
+                                                     zorder=ZOrders.LABELS))
 
         # draw initial state
         if draw_initial_state:
@@ -842,19 +849,16 @@ class MPRenderer(IRenderer):
         scale_factor = draw_params.by_callstack(call_stack, 'scale_factor')
         arrow_args = draw_params.by_callstack(call_stack, 'kwargs')
         draw_arrow = draw_params.by_callstack(call_stack, 'draw_arrow')
-        radius = draw_params.by_callstack(call_stack, 'radius')
-        facecolor = draw_params.by_callstack(call_stack, 'facecolor')
-        self.obstacle_patches.append(mpl.patches.Circle(state.position, radius=radius, zorder=ZOrders.STATE,
-                                                        color=facecolor))
         if draw_arrow:
             cos = math.cos(state.orientation)
             sin = math.sin(state.orientation)
             x = state.position[0]
             y = state.position[1]
-            self.obstacle_patches.append(mpl.patches.FancyArrow(x=x, y=y, dx=state.velocity * cos * scale_factor,
+            self.obstacle_patches.append(mpl.patches.Arrow(x=x, y=y, dx=state.velocity * cos * scale_factor,
                                                            dy=state.velocity * sin * scale_factor, zorder=ZOrders.STATE,
                                                            **arrow_args))
-
+        else:
+            self.obstacle_patches.append(mpl.patches.Circle(state.position, radius=0.5, zorder=ZOrders.STATE))
 
     def draw_lanelet_network(self, obj: LaneletNetwork, draw_params: Union[ParamServer, dict, None],
                              call_stack: Tuple[str, ...]) -> None:
@@ -1064,9 +1068,9 @@ class MPRenderer(IRenderer):
                 tan_vec = np.array(lanelet.right_vertices[0]) - np.array(lanelet.left_vertices[0])
                 path = get_arrow_path_at(center[0], center[1], math.atan2(tan_vec[1], tan_vec[0]) + 0.5 * np.pi)
                 if unique_colors:
-                    direction_list.append(mpl.patches.PathPatch(path, color=center_bound_color, lw=0.5,
-                                                                zorder=ZOrders.DIRECTION_ARROW,
-                                                                antialiased=antialiased))
+                    direction_list.append(
+                        mpl.patches.PathPatch(path, color=center_bound_color, lw=0.5, zorder=ZOrders.DIRECTION_ARROW,
+                                              antialiased=antialiased))
                 else:
                     direction_list.append(path)
 
@@ -1107,10 +1111,10 @@ class MPRenderer(IRenderer):
 
             elif draw_center_bound:
                 if unique_colors:
-                    center_paths.append(mpl.patches.PathPatch(Path(lanelet.center_vertices, closed=False),
-                                                              edgecolor=center_bound_color, facecolor='none',
-                                                              lw=draw_linewidth, zorder=ZOrders.CENTER_BOUND,
-                                                              antialiased=antialiased))
+                    center_paths.append(
+                        mpl.patches.PathPatch(Path(lanelet.center_vertices, closed=False), edgecolor=center_bound_color,
+                                              facecolor='none', lw=draw_linewidth, zorder=ZOrders.CENTER_BOUND,
+                                              antialiased=antialiased))
                 elif colormap_tangent:
                     relative_angle = draw_params['relative_angle']
                     points = lanelet.center_vertices.reshape(-1, 1, 2)
@@ -1195,9 +1199,9 @@ class MPRenderer(IRenderer):
                             collections.PatchCollection(center_paths, match_original=True, zorder=ZOrders.CENTER_BOUND,
                                                         antialiased=antialiased))
                 if draw_start_and_direction:
-                    self.static_collections.append(collections.PatchCollection(direction_list, match_original=True,
-                                                                               zorder=ZOrders.DIRECTION_ARROW,
-                                                                               antialiased=antialiased))
+                    self.static_collections.append(
+                        collections.PatchCollection(direction_list, match_original=True, zorder=ZOrders.DIRECTION_ARROW,
+                                                    antialiased=antialiased))
 
         elif not colormap_tangent:
             if draw_center_bound:
@@ -1249,8 +1253,7 @@ class MPRenderer(IRenderer):
                                                   np.ones([coordinates_left_border_vertices.shape[0], 1]) * 1.5,
                                                   np.zeros([coordinates_left_border_vertices.shape[0], 1]),
                                                   offsets=coordinates_left_border_vertices, color=left_bound_color,
-                                                  transOffset=self.ax.transData,
-                                                  zorder=ZOrders.LEFT_BOUND + 0.1,))
+                                                  transOffset=self.ax.transData, zorder=ZOrders.LEFT_BOUND + 0.1, ))
 
             # right_vertices
             self.static_collections.append(
@@ -1258,8 +1261,7 @@ class MPRenderer(IRenderer):
                                                   np.ones([coordinates_right_border_vertices.shape[0], 1]) * 1.5,
                                                   np.zeros([coordinates_right_border_vertices.shape[0], 1]),
                                                   offsets=coordinates_right_border_vertices, color=right_bound_color,
-                                                  transOffset=self.ax.transData,
-                                                  zorder=ZOrders.LEFT_BOUND + 0.1,))
+                                                  transOffset=self.ax.transData, zorder=ZOrders.LEFT_BOUND + 0.1, ))
 
         if draw_traffic_signs:
             # draw actual traffic sign
