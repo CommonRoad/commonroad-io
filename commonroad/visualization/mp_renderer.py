@@ -294,7 +294,7 @@ class MPRenderer(IRenderer):
 
         self.ax_updated = False
 
-    def create_video(self, obj_lists: List[IDrawable], file_path: str, delta_time_steps: int = 1, plotting_horizon=0,
+    def create_video(self, obj_lists: List[IDrawable], ego: IDrawable, file_path: str, delta_time_steps: int = 1, plotting_horizon=0,
                      draw_params: Union[dict, ParamServer, None] = None, fig_size: Union[list, None] = None, dt=100,
                      dpi=120) -> None:
         """
@@ -302,6 +302,7 @@ class MPRenderer(IRenderer):
         or avi format.
 
         :param obj_lists: list of objects to be plotted.
+        :param ego: ego vehicle to be plotted green.
         :param file_path: filename of generated video (ends on .mp4/.gif/.avi, default mp4, when nothing is specified)
         :param delta_time_steps: plot every delta_time_steps time steps of scenario
         :param plotting_horizon: time steps of prediction plotted in each frame
@@ -326,9 +327,14 @@ class MPRenderer(IRenderer):
         self.f.set_size_inches(*fig_size)
         self.ax.set_aspect('equal')
 
+        draw_params_ego = {'time_begin': time_begin, 'time_end': time_begin + delta_time_steps, 'dynamic_obstacle': {
+            'vehicle_shape': {"occupancy": {"shape": {"rectangle": {"facecolor": "green"}}}}}}
+
         def init_frame():
             draw_params.update({'time_begin': time_begin, 'time_end': time_begin + delta_time_steps})
             self.draw_list(obj_lists, draw_params=draw_params)
+            self.draw_dynamic_obstacle(ego, draw_params_ego, ())
+
             self.render_static()
             artists = self.render_dynamic()
             if self.plot_limits is None:
@@ -355,6 +361,8 @@ class MPRenderer(IRenderer):
             self.remove_dynamic()
             self.clear()
             self.draw_list(obj_lists, draw_params=draw_params)
+            self.draw_dynamic_obstacle(ego, draw_params_ego, ())
+
             artists = self.render_dynamic()
             if self.plot_limits is None:
                 self.ax.autoscale()
