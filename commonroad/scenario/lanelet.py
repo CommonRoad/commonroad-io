@@ -1044,15 +1044,11 @@ class LaneletNetwork(IDrawable):
         if shape_input is not None:
             for la in lanelet_network.lanelets:
                 if la.lanelet_type == set() or not la.lanelet_type.issubset(exclude_lanelet_types):
-                    partially_contained_lanelets = False
                     poly_shape_input = geometry.Polygon(shape_input.shapely_object)
                     poly_left = geometry.Polygon(la.left_vertices)
                     poly_right = geometry.Polygon(la.right_vertices)
-                    if geometry.Polygon.intersects(poly_shape_input, poly_left):
-                        partially_contained_lanelets = True
-                    if geometry.Polygon.intersects(poly_shape_input, poly_right):
-                        partially_contained_lanelets = True
-                    if partially_contained_lanelets:
+                    if geometry.Polygon.intersects(poly_shape_input, poly_left) or geometry.Polygon.intersects(
+                            poly_shape_input, poly_right):
                         new_lanelet_network.add_lanelet(copy.deepcopy(la))
         else:
             for la in lanelet_network.lanelets:
