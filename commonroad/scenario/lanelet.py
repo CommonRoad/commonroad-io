@@ -1043,7 +1043,7 @@ class LaneletNetwork(IDrawable):
 
         if shape_input is not None:
             for la in lanelet_network.lanelets:
-                if la.lanelet_type == set() or not la.lanelet_type.issubset(exclude_lanelet_types):
+                if la.lanelet_type.intersection(exclude_lanelet_types) == set():
                     poly_shape_input = geometry.Polygon(shape_input.shapely_object)
                     lanelet_polygon = la.convert_to_polygon().shapely_object
                     if geometry.Polygon.intersects(poly_shape_input, lanelet_polygon):
