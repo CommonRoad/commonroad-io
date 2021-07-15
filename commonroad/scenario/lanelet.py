@@ -1040,7 +1040,7 @@ class LaneletNetwork(IDrawable):
         :return: The deep copy of the lanelet network
         """
         new_lanelet_network = cls()
-
+        lanelet_network.traffic_lights[0].traffic_light_id
         if shape_input is not None:
             for la in lanelet_network.lanelets:
                 if la.lanelet_type.intersection(exclude_lanelet_types) == set():
@@ -1048,6 +1048,13 @@ class LaneletNetwork(IDrawable):
                     lanelet_polygon = la.convert_to_polygon().shapely_object
                     if geometry.Polygon.intersects(poly_shape_input, lanelet_polygon):
                         new_lanelet_network.add_lanelet(copy.deepcopy(la))
+                    for sign_id in la.traffic_signs:
+                        new_lanelet_network.add_traffic_sign(lanelet_network.find_traffic_sign_by_id(sign_id),
+                                                             {la.lanelet_id})
+                    for light_id in la.traffic_lights:
+                        new_lanelet_network.add_traffic_light(lanelet_network.find_traffic_light_by_id(light_id),
+                                                              {la.lanelet_id})
+
         else:
             for la in lanelet_network.lanelets:
                 if la.lanelet_type.issubset(exclude_lanelet_types):
