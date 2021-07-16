@@ -2,7 +2,7 @@
 
 ## [2021.3] - 2021-XX-XX
 ### Changed
-- The function LaneletNetwork.create_from_lanelet_network accepts now a shape and set of relevant lanelet types
+- The function LaneletNetwork.create_from_lanelet_network accepts now a shape and set of lanelet types to excluded
 
 ### Fixed
 - Various small bug fixes
