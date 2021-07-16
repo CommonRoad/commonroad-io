@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork, StopLine
+from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork, StopLine, LaneletType
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.geometry.shape import Rectangle
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany, \
@@ -87,6 +87,75 @@ class TestLaneletNetwork(unittest.TestCase):
         self.assertEqual(self.lanelet_network.lanelets[0].lanelet_id, self.lanelet.lanelet_id)
 
     def test_create_from_lanelet_network(self):
+        lanelet_network = LaneletNetwork()
+
+        right_vertices = np.array([[0, 0], [1, 0], [1.1, 0.1]])
+        left_vertices = np.array([[0, 1], [1, 1], [1.1, 1.1]])
+        center_vertices = np.array([[0, .5], [1, .5], [1.1, .6]])
+        lanelet_id = 5
+        lanelet1 = Lanelet(left_vertices, right_vertices, center_vertices, lanelet_id)
+        lanelet_network.add_lanelet(lanelet1)
+        lanelet_network.add_traffic_sign(self.traffic_sign, {lanelet1.lanelet_id})
+        lanelet_network.add_traffic_light(self.traffic_light, {lanelet1.lanelet_id})
+
+        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1]])
+        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2]])
+        center_vertices = np.array([[0, .5], [1, .5], [2, .5], [3, 1], [4, 1.5]])
+        lanelet_id = 6
+        lanelet_type = {LaneletType.URBAN}
+        lanelet2 = Lanelet(left_vertices, right_vertices, center_vertices, lanelet_id, None, None, None, None, None,
+                           None, None, None, None, lanelet_type, None, None, {self.traffic_sign.traffic_sign_id},
+                               {self.traffic_light.traffic_light_id})
+        lanelet_network.add_lanelet(lanelet2)
+
+
+        right_vertices = np.array([[5, 1], [6, 1], [7, 0], [8, 0]])
+        left_vertices = np.array([[5, 2], [6, 2], [7, 1], [8, 1]])
+        center_vertices = np.array([[5, 1.5], [6, 1.5], [7, .5], [8, .5]])
+        lanelet_id = 7
+        lanelet3 = Lanelet(left_vertices, right_vertices, center_vertices, lanelet_id)
+        lanelet_network.add_lanelet(lanelet3)
+
+        new_network = lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2))
+
+        a = False
+        for i in range(0, len(new_network.lanelets)):
+            if lanelet1.lanelet_id == new_network.lanelets[i].lanelet_id:
+                a = True
+        self.assertTrue(a)
+
+        a = False
+        for i in range(0, len(new_network.lanelets)):
+            if lanelet2.lanelet_id == new_network.lanelets[i].lanelet_id:
+                a = True
+        self.assertTrue(a)
+
+        a = False
+        for i in range(0, len(new_network.lanelets)):
+            if lanelet3.lanelet_id == new_network.lanelets[i].lanelet_id:
+                a = True
+        self.assertFalse(a)
+
+        self.assertEqual(lanelet2.traffic_signs, {1})
+        self.assertEqual(lanelet2.traffic_lights, {567})
+        self.assertEqual(lanelet1.traffic_signs, {1})
+        self.assertEqual(lanelet1.traffic_lights, {567})
+
+        lanelets_in_network = []
+        for i in range(0, len(new_network.lanelets)):
+            lanelets_in_network.append(new_network.lanelets[i])
+        self.assertNotIn(lanelet3.lanelet_id, lanelets_in_network)
+
+        new_network_lanelet_types = lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2),
+                                                                                            {LaneletType.URBAN})
+        lanelets_in_network = []
+        for i in range(0, len(new_network_lanelet_types.lanelets)):
+            lanelets_in_network.append(new_network_lanelet_types.lanelets[i])
+
+        self.assertNotIn(lanelet2.lanelet_id, lanelets_in_network)
+        self.assertEquals(lanelet1.traffic_signs, new_network_lanelet_types.lanelets[0].traffic_signs)
+        self.assertEquals(lanelet1.traffic_lights, new_network_lanelet_types.lanelets[0].traffic_lights)
+
         actual_network = LaneletNetwork()
         actual_network = actual_network.create_from_lanelet_list([self.lanelet])
 
