@@ -104,9 +104,10 @@ class TestLaneletNetwork(unittest.TestCase):
         lanelet_id = 6
         lanelet_type = {LaneletType.URBAN}
         lanelet2 = Lanelet(left_vertices, right_vertices, center_vertices, lanelet_id, None, None, None, None, None,
-                           None, None, None, None, lanelet_type, None, None
-                           )
+                           None, None, None, None, lanelet_type, None, None, {self.traffic_sign.traffic_sign_id},
+                               {self.traffic_light.traffic_light_id})
         lanelet_network.add_lanelet(lanelet2)
+
 
         right_vertices = np.array([[5, 1], [6, 1], [7, 0], [8, 0]])
         left_vertices = np.array([[5, 2], [6, 2], [7, 1], [8, 1]])
@@ -116,10 +117,27 @@ class TestLaneletNetwork(unittest.TestCase):
         lanelet_network.add_lanelet(lanelet3)
 
         new_network = lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2))
-        self.assertEqual(lanelet1.lanelet_id, new_network.lanelets[0].lanelet_id)
-        self.assertEqual(lanelet2.lanelet_id, new_network.lanelets[1].lanelet_id)
 
-        self.assertEqual(lanelet2.traffic_signs, set())
+        a = False
+        for i in range(0, len(new_network.lanelets)):
+            if lanelet1.lanelet_id == new_network.lanelets[i].lanelet_id:
+                a = True
+        self.assertTrue(a)
+
+        a = False
+        for i in range(0, len(new_network.lanelets)):
+            if lanelet2.lanelet_id == new_network.lanelets[i].lanelet_id:
+                a = True
+        self.assertTrue(a)
+
+        a = False
+        for i in range(0, len(new_network.lanelets)):
+            if lanelet3.lanelet_id == new_network.lanelets[i].lanelet_id:
+                a = True
+        self.assertFalse(a)
+
+        self.assertEqual(lanelet2.traffic_signs, {1})
+        self.assertEqual(lanelet2.traffic_lights, {567})
         self.assertEqual(lanelet1.traffic_signs, {1})
         self.assertEqual(lanelet1.traffic_lights, {567})
 

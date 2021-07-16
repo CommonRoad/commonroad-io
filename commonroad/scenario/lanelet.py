@@ -1034,31 +1034,48 @@ class LaneletNetwork(IDrawable):
     @classmethod
     def create_from_lanelet_network(cls, lanelet_network: 'LaneletNetwork', shape_input=None, exclude_lanelet_types={}):
         """
-        Creates a lanelet network from a given lanelet network (copy)
+        Creates a lanelet network from a given lanelet network (copy); adding a shape reduces the lanelets to those
+        that intersect the shape provided and specifying a lanelet_type set excludes the lanelet types in the new
+        created network.
 
         :param lanelet_network: The existing lanelet network
-        :return: The deep copy of the lanelet network
+        :param shape_input: The lanelets intersecting this shape will be in the new network
+        :param exclude_lanelet_types: Removes all lanets with these lanelet_types
+        :return: The new lanelet network
         """
         new_lanelet_network = cls()
-        lanelet_network.traffic_lights[0].traffic_light_id
+        traffic_sign_ids = set()
+        traffic_light_ids = set()
+        lanelets = set()
+
         if shape_input is not None:
             for la in lanelet_network.lanelets:
                 if la.lanelet_type.intersection(exclude_lanelet_types) == set():
                     poly_shape_input = geometry.Polygon(shape_input.shapely_object)
                     lanelet_polygon = la.convert_to_polygon().shapely_object
                     if geometry.Polygon.intersects(poly_shape_input, lanelet_polygon):
-                        new_lanelet_network.add_lanelet(copy.deepcopy(la))
-                    for sign_id in la.traffic_signs:
-                        new_lanelet_network.add_traffic_sign(lanelet_network.find_traffic_sign_by_id(sign_id),
-                                                             {la.lanelet_id})
-                    for light_id in la.traffic_lights:
-                        new_lanelet_network.add_traffic_light(lanelet_network.find_traffic_light_by_id(light_id),
-                                                              {la.lanelet_id})
+                        for sign_id in la.traffic_signs:
+                            traffic_sign_ids.add(sign_id)
+                        for light_id in la.traffic_lights:
+                            traffic_light_ids.add(light_id)
+                        lanelets.add(la)
 
         else:
             for la in lanelet_network.lanelets:
-                if la.lanelet_type.issubset(exclude_lanelet_types):
+                if la.lanelet_type.intersection(exclude_lanelet_types) == set():
                     new_lanelet_network.add_lanelet(copy.deepcopy(la))
+                for sign_id in la.traffic_signs:
+                    traffic_sign_ids.add(sign_id)
+                for light_id in la.traffic_lights:
+                    traffic_light_ids.add(light_id)
+                lanelets.add(la)
+
+        for sign_id in traffic_sign_ids:
+            new_lanelet_network.add_traffic_sign(lanelet_network.find_traffic_sign_by_id(sign_id), {})
+        for light_id in traffic_light_ids:
+            new_lanelet_network.add_traffic_light(lanelet_network.find_traffic_light_by_id(light_id), {})
+        for la in lanelets:
+            new_lanelet_network.add_lanelet(copy.deepcopy(la))
 
         return new_lanelet_network
 
