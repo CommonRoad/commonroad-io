@@ -10,6 +10,13 @@ before_script:
 - python get-pip.py
 - apt-get update -qq && apt-get install -y -qq ffmpeg
 
+.install-and-run: &install-and-run
+    - pip install tox coverage
+    - pip install -r ./requirements.txt
+    - pip install -e .[tests]
+    - coverage run commonroad/tests/run_tests.py
+    - coverage report -m || true
+
 style_checks:
   stage: style_check
   script:
@@ -17,15 +24,29 @@ style_checks:
     - git  diff ${CI_COMMIT_BEFORE_SHA}...${CI_COMMIT_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff
   allow_failure: True
 
-build_and_test:
+build_and_test_python_3_6:
   image: python:3.6
   stage: test
   script:
-    - pip install tox coverage
-    - pip install -r ./requirements.txt
-    - pip install -e .[tests]
-    - coverage run commonroad/tests/run_tests.py
-    - coverage report -m || true
+    - *install-and-run
+
+build_and_test_python_3_7:
+  image: python:3.7
+  stage: test
+  script:
+    - *install-and-run
+
+build_and_test_python_3_8:
+  image: python:3.8
+  stage: test
+  script:
+    - *install-and-run
+
+build_and_test_python_3_9:
+  image: python:3.9
+  stage: test
+  script:
+    - *install-and-run
 
 push_to_internal_pipy_registry:
   # push the development version to the internal pipy registry https://gitlab.lrz.de/cps/commonroad-io/-/packages
