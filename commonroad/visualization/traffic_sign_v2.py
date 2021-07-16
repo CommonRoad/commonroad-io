@@ -33,13 +33,10 @@ class TextAreaAutoscale(TextArea):
     def __init__(self, s,
                  px_per_metre=px_per_metre_text,
                  textprops=None,
-                 multilinebaseline=None,
-                 minimumdescent=True,
-                 ):
+                 multilinebaseline=None):
         super().__init__(s,
                          textprops=textprops,
-                         multilinebaseline=multilinebaseline,
-                         minimumdescent=minimumdescent)
+                         multilinebaseline=multilinebaseline)
 
         self.px_per_metre = px_per_metre
         textprops_init = copy.copy(textprops)
