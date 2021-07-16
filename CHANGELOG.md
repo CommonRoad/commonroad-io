@@ -1,5 +1,12 @@
 # Changelog
 
+## [2021.3] - 2021-XX-XX
+### Changed
+- The function LaneletNetwork.create_from_lanelet_network accepts now a shape and set of relevant lanelet types
+
+### Fixed
+- Various small bug fixes
+
 ## [2021.2] - 2021-07-01
 ### Added
 - Parameter `draw_params={"focus_obstacle_id": obstacle_id}` focuses the plot or video on a dynamic_obstacle
