@@ -96,14 +96,8 @@ class TextAreaAutoscale(TextArea):
             d = d_new
 
         else:  # single line
-
             h_d = max(h_ - d_, h - d)
-
-            if self.get_minimumdescent():
-                ## to have a minimum descent, #i.e., "l" and "p" have same
-                ## descents.
-                d = max(d, d_)
-
+            d = max(d, d_)
             h = h_d + d
 
         return w * corr, h * corr, 0., d * corr
