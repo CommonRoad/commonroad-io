@@ -1077,9 +1077,10 @@ class LaneletNetwork(IDrawable):
                 lanelets.add(la)
 
         for sign_id in traffic_sign_ids:
-            new_lanelet_network.add_traffic_sign(lanelet_network.find_traffic_sign_by_id(sign_id), set())
+            new_lanelet_network.add_traffic_sign(copy.deepcopy(lanelet_network.find_traffic_sign_by_id(sign_id)), set())
         for light_id in traffic_light_ids:
-            new_lanelet_network.add_traffic_light(lanelet_network.find_traffic_light_by_id(light_id), set())
+            new_lanelet_network.add_traffic_light(copy.deepcopy(lanelet_network.find_traffic_light_by_id(light_id)),
+                                                  set())
         for la in lanelets:
             new_lanelet_network.add_lanelet(copy.deepcopy(la))
 
