@@ -726,10 +726,6 @@ class TestCommonRoadSolutionWriter(unittest.TestCase):
         solution_xml_single = CommonRoadSolutionWriter(self.solution_single).dump()
         solution_xml_collab = CommonRoadSolutionWriter(self.solution_collab).dump()
 
-        print(self.remove_whitespaces(solution_xml_single))
-
-        print(self.remove_whitespaces(expected_solution_xml_single))
-
         assert self.remove_whitespaces(solution_xml_single) == self.remove_whitespaces(expected_solution_xml_single)
         assert self.remove_whitespaces(solution_xml_collab) == self.remove_whitespaces(expected_solution_xml_collab)
 
