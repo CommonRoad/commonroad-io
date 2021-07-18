@@ -28,9 +28,6 @@ __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
-from vehiclemodels.parameters_vehicle1 import parameters_vehicle1
-from vehiclemodels.parameters_vehicle3 import parameters_vehicle3
-
 
 class SolutionException(Exception):
     """
@@ -186,25 +183,30 @@ class StateType(Enum):
             state_fields_all = [StateFields[str(desired_vehicle_model.name)], StateFields.Input, StateFields.PMInput]
             state_fields_add = []
             for sf in StateFields:
-                if sf not in state_fields_all: state_fields_add.append(sf)
+                if sf not in state_fields_all:
+                    state_fields_add.append(sf)
 
             state_fields_all += state_fields_add
 
             for state_fields in state_fields_all:
-                if not len(attrs) >= len(state_fields.value): continue  # >=
-                if not all([sf in attrs for sf in state_fields.value]): continue
+                if not len(attrs) >= len(state_fields.value):
+                    continue  # >=
+                if not all([sf in attrs for sf in state_fields.value]):
+                    continue
                 return cls[state_fields.name]
         else:
             state_fields_all = StateFields
             for state_fields in state_fields_all:
-                if not len(attrs) == len(state_fields.value): continue  # ==
-                if not all([sf in attrs for sf in state_fields.value]): continue
+                if not len(attrs) == len(state_fields.value):
+                    continue  # ==
+                if not all([sf in attrs for sf in state_fields.value]):
+                    continue
                 return cls[state_fields.name]
 
         raise StateTypeException('Given state is not valid!')
 
     @classmethod
-    def check_state_type(cls, vehicle_model: VehicleModel) -> bool:
+    def check_state_type(cls, vehicle_model: VehicleModel) -> None:
         """
         Checks whether vehicle model can be supported by trajectory.
         :param vehicle_model: vehicle model enum
@@ -562,7 +564,7 @@ class Solution:
             shape = Rectangle(length=vehicle_parameters[solution.vehicle_type].l,
                               width=vehicle_parameters[solution.vehicle_type].w)
             trajectory = Trajectory(initial_time_step=solution.trajectory.initial_time_step + 1,
-                              state_list=solution.trajectory.state_list[1:])
+                                    state_list=solution.trajectory.state_list[1:])
             prediction = TrajectoryPrediction(trajectory, shape=shape)
             obs[pp_id] = DynamicObstacle(obstacle_id=pp_id,
                                          obstacle_type=ObstacleType.CAR,
@@ -613,7 +615,7 @@ class CommonRoadSolutionReader:
     @staticmethod
     def _parse_header(root_node: et.Element) -> Tuple[str, Union[None, datetime], Union[None, float], Union[None, str]]:
         """ Parses the header attributes for the given Solution XML root node. """
-        benchmark_id = root_node.get('benchmark_id', None)
+        benchmark_id = root_node.get('benchmark_id')
         if not benchmark_id:
             SolutionException("Solution xml does not have a benchmark id!")
 
@@ -729,8 +731,8 @@ class CommonRoadSolutionWriter:
         delete_from_cpu_name = ['(R)', '(TM)']
 
         def strip_substrings(string: str):
-            for del_str in delete_from_cpu_name:
-                string = string.replace(del_str, '')
+            for del_string in delete_from_cpu_name:
+                string = string.replace(del_string, '')
             return string
 
         if platform.system() == "Windows":
@@ -767,10 +769,13 @@ class CommonRoadSolutionWriter:
         """ Creates the root node of the Solution XML. """
         root_node = et.Element('CommonRoadSolution')
         root_node.set('benchmark_id', solution.benchmark_id)
-        if solution.date is not None: root_node.set('date', solution.date.strftime('%Y-%m-%d'))
-        if solution.computation_time is not None: root_node.set('computation_time', str(solution.computation_time))
+        if solution.computation_time is not None:
+            root_node.set('computation_time', str(solution.computation_time))
+        if solution.date is not None:
+            root_node.set('date', solution.date.strftime('%Y-%m-%d'))
         processor_name = cls._get_processor_name() if solution.processor_name == 'auto' else solution.processor_name
-        if processor_name is not None: root_node.set('processor_name', processor_name)
+        if processor_name is not None:
+            root_node.set('processor_name', processor_name)
         return root_node
 
     @classmethod

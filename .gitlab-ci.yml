@@ -42,11 +42,11 @@ build_and_test_python_3_8:
   script:
     - *install-and-run
 
-#build_and_test_python_3_9:
-#  image: python:3.9
-#  stage: test
-#  script:
-#    - *install-and-run
+build_and_test_python_3_9:
+  image: python:3.9
+  stage: test
+  script:
+    - *install-and-run
 
 push_to_internal_pipy_registry:
   # push the development version to the internal pipy registry https://gitlab.lrz.de/cps/commonroad-io/-/packages
