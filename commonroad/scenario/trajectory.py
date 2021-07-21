@@ -324,6 +324,9 @@ class Trajectory(IDrawable):
             % state_list[0].attributes
         )
         self._state_list = state_list
+        assert self.state_list[0].time_step == self.initial_time_step, \
+            f"state_list[0].time_step={self.state_list[0].time_step} != " \
+            f"self.initial_time_step={self.initial_time_step}"
 
     @property
     def final_state(self) -> State:
@@ -337,10 +340,6 @@ class Trajectory(IDrawable):
         :param time_step: considered time step
         :return: state of the trajectory at time_step
         """
-        assert isinstance(time_step, int), (
-            '<Trajectory/state_at_time_step>: argument time_step of '
-            'wrong type. Expected type: %s. Got type: %s.' % (int, type(time_step))
-        )
         state = None
         if (
             self._initial_time_step

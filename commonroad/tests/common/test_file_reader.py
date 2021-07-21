@@ -38,7 +38,7 @@ class TestFileReader(unittest.TestCase):
 
         states = []
         states.append(State(time_step=1, orientation=0, position=np.array([0, 1])))
-        trajectory = Trajectory(0, states)
+        trajectory = Trajectory(1, states)
         init_state = State(time_step=0, orientation=0, position=np.array([0, 0]))
         traj_pred = TrajectoryPrediction(trajectory, rectangle)
 
@@ -47,10 +47,10 @@ class TestFileReader(unittest.TestCase):
 
         static_obs = StaticObstacle(3, ObstacleType("unknown"), obstacle_shape=circ, initial_state=init_state)
         dyn_set_obs = DynamicObstacle(1, ObstacleType("unknown"),
-                                      initial_state=traj_pred.trajectory.state_at_time_step(0),
+                                      initial_state=init_state,
                                       prediction=set_pred, obstacle_shape=rectangle)
         dyn_traj_obs = DynamicObstacle(2, ObstacleType("unknown"),
-                                       initial_state=traj_pred.trajectory.state_at_time_step(0),
+                                       initial_state=init_state,
                                        prediction=traj_pred, obstacle_shape=rectangle,
                                        initial_signal_state=initial_signal_state, signal_series=signal_series)
 

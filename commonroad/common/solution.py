@@ -540,6 +540,7 @@ class Solution:
     def computation_time(self) -> Union[None, float]:
         """
         Return the computation time [s] for the trajectory.
+
         :return:
         """
         return self._computation_time
