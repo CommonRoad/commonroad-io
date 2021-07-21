@@ -520,12 +520,13 @@ class MPRenderer(IRenderer):
                 draw_icon = False
 
             if draw_icon:
-                if time_begin == 0:
+                draw_shape = False
+                if time_begin == obj.initial_state.time_step:
                     inital_state = obj.initial_state
                 else:
                     inital_state = obj.prediction.trajectory.state_at_time_step(time_begin)
                 if inital_state is not None:
-                    call_stack_tmp = call_stack + ('occupancy', 'shape', 'polygon')
+                    call_stack_tmp = call_stack + ('vehicle_shape', 'occupancy', 'shape', 'polygon')
 
                     facecolor = draw_params.by_callstack(call_stack_tmp, 'facecolor')
                     edgecolor = draw_params.by_callstack(call_stack_tmp, 'edgecolor')
@@ -547,11 +548,12 @@ class MPRenderer(IRenderer):
                 v_tri = get_vehicle_direction_triangle(veh_occ.shape)
                 self.draw_polygon(v_tri, draw_params, call_stack + ('vehicle_shape', 'direction'))
 
-            if draw_signals:
-                sig = obj.signal_state_at_time_step(time_begin)
-                occ = veh_occ
-                if occ is not None and sig is not None:
-                    self._draw_signal_state(sig, occ, draw_params, call_stack)
+        # draw signals
+        if draw_signals and (draw_shape or draw_icon):
+            sig = obj.signal_state_at_time_step(time_begin)
+            veh_occ = obj.occupancy_at_time(time_begin)
+            if veh_occ is not None and sig is not None:
+                self._draw_signal_state(sig, veh_occ, draw_params, call_stack)
 
         # draw occupancies
         if (draw_occupancies == 1 or type(obj.prediction) == commonroad.prediction.prediction.SetBasedPrediction):
