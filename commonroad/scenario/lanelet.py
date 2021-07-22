@@ -3,12 +3,15 @@ import enum
 from typing import *
 
 import numpy as np
-from shapely.geometry import Point
+from shapely.geometry import Point as ShapelyPoint
+from shapely.geometry import MultiPolygon as ShapelyMultiPolygon
+from shapely.geometry import Polygon as ShapelyPolygon
 from shapely.strtree import STRtree
+from line_profiler_pycharm import profile
 
 import commonroad.geometry.transform
 from commonroad.common.validity import *
-from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape, LaneletPolygon
+from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape, LaneletPolygon, LaneletMultiPolygon
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.obstacle import Obstacle
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
@@ -956,7 +959,8 @@ class LaneletNetwork(IDrawable):
     def __init__(self):
         self._lanelets: Dict[int, Lanelet] = {}
         self._polygons: Dict[int, Polygon] = {}
-        self._strtee = None
+        self._buffered_polygons: Dict[int, LaneletPolygon] = {}
+        self._buffered_strtee = None
         self._intersections: Dict[int, Intersection] = {}
         self._traffic_signs: Dict[int, TrafficSign] = {}
         self._traffic_lights: Dict[int, TrafficLight] = {}
@@ -977,12 +981,12 @@ class LaneletNetwork(IDrawable):
     def __deepcopy__(self, memo):
         cls = self.__class__
         result = cls.__new__(cls)
-        self._strtee = None
+        self._buffered_strtee = None
         memo[id(self)] = result
         for k, v in self.__dict__.items():
             setattr(result, k, copy.deepcopy(v, memo))
 
-        result._create_strtree()
+        result._create_buffered_strtree()
 
         return result
 
@@ -1042,7 +1046,7 @@ class LaneletNetwork(IDrawable):
         if cleanup_ids:
             lanelet_network.cleanup_lanelet_references()
 
-        lanelet_network._create_strtree()
+        lanelet_network._create_buffered_strtree()
 
         return lanelet_network
 
@@ -1058,20 +1062,31 @@ class LaneletNetwork(IDrawable):
         for la in lanelet_network.lanelets:
             new_lanelet_network.add_lanelet(copy.deepcopy(la))
 
-        new_lanelet_network._create_strtree()
+        new_lanelet_network._create_buffered_strtree()
 
         return new_lanelet_network
 
-    def _create_strtree(self):
+    def _create_buffered_strtree(self):
         """
         Creates spatial index for lanelets for faster querying the lanelets by position.
 
         Since it is an immutable object, it has to be recreated after every lanelet addition or it should be done
         once after all lanelets are added.
         """
-        self._strtee = STRtree(
-                [LaneletPolygon(lanelet_id=lanelet_id, shell=lanelet_polygon.shapely_object, holes=None) for
-                 lanelet_id, lanelet_polygon in self._polygons.items()])
+        lanelet_polygon_list = list()
+        for lanelet_id, lanelet_buffered_polygon in self._buffered_polygons.items():
+            if isinstance(lanelet_buffered_polygon, ShapelyPolygon):
+                lanelet_polygon_list.append(LaneletPolygon(lanelet_id, shell=lanelet_buffered_polygon))
+            elif isinstance(lanelet_buffered_polygon, ShapelyMultiPolygon):
+                for inner_lanelet_buffered_polygon in lanelet_buffered_polygon:
+                    if isinstance(inner_lanelet_buffered_polygon, ShapelyPolygon):
+                        lanelet_polygon_list.append(LaneletPolygon(lanelet_id, shell=inner_lanelet_buffered_polygon))
+                    else:
+                        raise Exception("should not be the case")
+            else:
+                raise Exception("should not be the case")
+
+        self._buffered_strtee = STRtree(lanelet_polygon_list)
 
     def remove_lanelet(self, lanelet_id: int):
         """
@@ -1082,6 +1097,7 @@ class LaneletNetwork(IDrawable):
         if lanelet_id in self._lanelets.keys():
             del self._lanelets[lanelet_id]
             del self._polygons[lanelet_id]
+            del self._buffered_polygons[lanelet_id]
             self.cleanup_lanelet_references()
 
     def cleanup_lanelet_references(self):
@@ -1209,11 +1225,12 @@ class LaneletNetwork(IDrawable):
 
         return self._intersections[intersection_id] if intersection_id in self._intersections else None
 
-    def add_lanelet(self, lanelet: Lanelet):
+    def add_lanelet(self, lanelet: Lanelet, eps: float = 1e-15):
         """
         Adds a lanelet to the LaneletNetwork
 
         :param lanelet: The lanelet to add
+        :param eps: The size increase of the buffered polygons
         :return: True if the lanelet has successfully been added to the network, false otherwise
         """
 
@@ -1227,7 +1244,8 @@ class LaneletNetwork(IDrawable):
         else:
             self._lanelets[lanelet.lanelet_id] = lanelet
             self._polygons[lanelet.lanelet_id] = lanelet.convert_to_polygon()
-            self._create_strtree()
+            self._buffered_polygons[lanelet.lanelet_id] = lanelet.convert_to_polygon().shapely_object.buffer(eps)
+            self._create_buffered_strtree()
             return True
 
     def add_traffic_sign(self, traffic_sign: TrafficSign, lanelet_ids: Set[int]):
@@ -1340,6 +1358,7 @@ class LaneletNetwork(IDrawable):
         for traffic_light in self._traffic_lights.values():
             traffic_light.translate_rotate(translation, angle)
 
+    @profile
     def find_lanelet_by_position(self, point_list: List[np.ndarray], epsilon=1e-12) -> List[List[int]]:
         """
         Finds the lanelet id of a given position
@@ -1357,16 +1376,22 @@ class LaneletNetwork(IDrawable):
         #     point_list)
 
         # create point list
-        point_list2 = [Point(point) for point in point_list]
+        point_list2 = [ShapelyPoint(point) for point in point_list]
 
         # it could be more optimized for a lot of points - because now we gather all the possible lanlets for all points
         # and after that we check if the given point is cointained in the
-        lanelet_polygon_list = sum([self._strtee.query(point) for point in point_list2], [])
+
+        # lanelet_buffered_polygon_list = sum([self._buffered_strtee.query(point) for point in point_list2], [])
+
         # chain cheaper and expensive tests (contains(...) and buffer(epsilon).contains(...)) because numerical
         # stability
-        ret_list = [[lanelet_polygon.lanelet_id for lanelet_polygon in lanelet_polygon_list if
-                     lanelet_polygon.contains(point) or lanelet_polygon.buffer(epsilon).contains(point)] for point in
-                    point_list2]
+        # ret_list = [
+        #     [lanelet_buffered_polygon.lanelet_id for lanelet_buffered_polygon in lanelet_buffered_polygon_list if
+        #      self._polygons[lanelet_buffered_polygon.lanelet_id].shapely_object.contains(
+        #              point) or lanelet_buffered_polygon.contains(point)] for point in point_list2]
+
+        # only checks for buffered polygons
+        ret_list = [[lanelet_buffered_polygon.lanelet_id for lanelet_buffered_polygon in self._buffered_strtee.query(point) if lanelet_buffered_polygon.contains(point)] for point in point_list2]
 
         # filter same lanelet_ids out
         return [list(set(seq)) for seq in ret_list]
