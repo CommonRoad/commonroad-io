@@ -3,15 +3,14 @@ import enum
 from typing import *
 
 import numpy as np
-from shapely.geometry import Point as ShapelyPoint
 from shapely.geometry import MultiPolygon as ShapelyMultiPolygon
+from shapely.geometry import Point as ShapelyPoint
 from shapely.geometry import Polygon as ShapelyPolygon
 from shapely.strtree import STRtree
-from line_profiler_pycharm import profile
 
 import commonroad.geometry.transform
 from commonroad.common.validity import *
-from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape, LaneletPolygon, LaneletMultiPolygon
+from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape, LaneletPolygon
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.obstacle import Obstacle
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
@@ -1358,43 +1357,24 @@ class LaneletNetwork(IDrawable):
         for traffic_light in self._traffic_lights.values():
             traffic_light.translate_rotate(translation, angle)
 
-    @profile
-    def find_lanelet_by_position(self, point_list: List[np.ndarray], epsilon=1e-12) -> List[List[int]]:
+    def find_lanelet_by_position(self, point_list: List[np.ndarray]) -> List[List[int]]:
         """
         Finds the lanelet id of a given position
 
         :param point_list: The list of positions to check
-        :param epsilon: Grows the lanet polygons with this value, it the point is not contained in the lanelet and
-                        rechecks it. It is reasonable because of numerical inaccuracies in shapely.
         :return: A list of lanelet ids. If the position could not be matched to a lanelet, an empty list is returned
         """
-        assert isinstance(point_list,
-                          ValidTypes.LISTS), '<Lanelet/contains_points>: provided list of points is not a list! ' \
-                                             'type = {}'.format(type(point_list))
-        # assert is_valid_polyline(
-        #     point_list), 'Lanelet/contains_points>: provided list of points is malformed! points = {}'.format(
-        #     point_list)
+        assert isinstance(point_list, ValidTypes.LISTS), \
+            '<Lanelet/contains_points>: provided list of points is not a list! type = {}'.format(type(point_list))
 
         # create point list
         point_list2 = [ShapelyPoint(point) for point in point_list]
 
-        # it could be more optimized for a lot of points - because now we gather all the possible lanlets for all points
-        # and after that we check if the given point is cointained in the
+        ret_list = [
+            [lanelet_buffered_polygon.lanelet_id for lanelet_buffered_polygon in self._buffered_strtee.query(point) if
+             lanelet_buffered_polygon.contains(point)] for point in point_list2]
 
-        # lanelet_buffered_polygon_list = sum([self._buffered_strtee.query(point) for point in point_list2], [])
-
-        # chain cheaper and expensive tests (contains(...) and buffer(epsilon).contains(...)) because numerical
-        # stability
-        # ret_list = [
-        #     [lanelet_buffered_polygon.lanelet_id for lanelet_buffered_polygon in lanelet_buffered_polygon_list if
-        #      self._polygons[lanelet_buffered_polygon.lanelet_id].shapely_object.contains(
-        #              point) or lanelet_buffered_polygon.contains(point)] for point in point_list2]
-
-        # only checks for buffered polygons
-        ret_list = [[lanelet_buffered_polygon.lanelet_id for lanelet_buffered_polygon in self._buffered_strtee.query(point) if lanelet_buffered_polygon.contains(point)] for point in point_list2]
-
-        # filter same lanelet_ids out
-        return [list(set(seq)) for seq in ret_list]
+        return ret_list
 
     def find_lanelet_by_shape(self, shape: Shape) -> List[int]:
         """

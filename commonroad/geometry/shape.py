@@ -29,14 +29,12 @@ class Shape(IDrawable, metaclass=abc.ABCMeta):
     """ Abstract class for CommonRoad shapes."""
 
     @abc.abstractmethod
-    def translate_rotate(self, translation: np.ndarray,
-                         angle: float) -> 'Shape':
+    def translate_rotate(self, translation: np.ndarray, angle: float) -> 'Shape':
         """ First translates and then rotates a shape around the origin."""
         pass
 
     @abc.abstractmethod
-    def rotate_translate_local(self, translation: np.ndarray,
-                               angle: float) -> 'Shape':
+    def rotate_translate_local(self, translation: np.ndarray, angle: float) -> 'Shape':
         """ First rotates a shape around the center and the translates it."""
         pass
 
@@ -211,8 +209,7 @@ class Rectangle(Shape):
         output += '\t orientation: {} \n'.format(self._orientation)
         return output
 
-    def draw(self, renderer: IRenderer,
-             draw_params: Union[ParamServer, dict, None] = None,
+    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_rectangle(self.vertices, draw_params, call_stack)
 
@@ -423,8 +420,7 @@ class Polygon(Shape):
         self._max: np.ndarray = np.max(vertices, axis=0)
         self._shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self._vertices)
         # ensure that vertices are sorted clockwise and the first and last point are the same
-        self._vertices = np.array(shapely.geometry.polygon.orient(
-            self._shapely_polygon, sign=-1.0).exterior.coords)
+        self._vertices = np.array(shapely.geometry.polygon.orient(self._shapely_polygon, sign=-1.0).exterior.coords)
 
     @property
     def vertices(self) -> np.ndarray:
@@ -479,8 +475,8 @@ class Polygon(Shape):
                                                       '{}'.format(translation)
         assert is_valid_orientation(angle), '<Polygon/rotate_translate_local>: argument "orientation" is not valid.' \
                                             'orientation = {}'.format(angle)
-        rotated_shapely_polygon = shapely.affinity.rotate(
-            self._shapely_polygon, angle, origin='centroid', use_radians=True)
+        rotated_shapely_polygon = shapely.affinity.rotate(self._shapely_polygon, angle, origin='centroid',
+                                                          use_radians=True)
         new_vertices = np.array(rotated_shapely_polygon.exterior.coords) + translation
         return Polygon(new_vertices)
 
@@ -511,8 +507,7 @@ class Polygon(Shape):
         output += '\t center: {} \n'.format(self.center)
         return output
 
-    def draw(self, renderer: IRenderer,
-             draw_params: Union[ParamServer, dict, None] = None,
+    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_polygon(self.vertices, draw_params, call_stack)
 
@@ -587,8 +582,7 @@ class ShapeGroup(Shape):
                                                 'argument "point" is ' \
                                                 'not a vector of real numbers' \
                                                 ' of length 2. point = {' \
-                                                '}'.format(
-            point)
+                                                '}'.format(point)
         for s in self._shapes:
             if s.contains_point(point):
                 return True
@@ -599,8 +593,7 @@ class ShapeGroup(Shape):
         output += '\t number of shapes: {} \n'.format(len(self._shapes))
         return output
 
-    def draw(self, renderer: IRenderer,
-             draw_params: Union[ParamServer, dict, None] = None,
+    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         for s in self._shapes:
             s.draw(renderer, draw_params, call_stack)
@@ -616,8 +609,8 @@ def occupancy_shape_from_state(shape, state):
             l_v = np.abs(max_x - min_x)
             w_v = np.abs(max_y - min_y)
         elif isinstance(shape, Circle):
-            w_v = 2.0*shape.radius
-            l_v = 2.0*shape.radius
+            w_v = 2.0 * shape.radius
+            l_v = 2.0 * shape.radius
         else:
             raise ValueError
 
@@ -631,17 +624,15 @@ def occupancy_shape_from_state(shape, state):
 
         if state.is_uncertain_position:
             center = state.position.center
-            if isinstance(state.position, Rectangle) or isinstance(
-                    state.position, Polygon):
+            if isinstance(state.position, Rectangle) or isinstance(state.position, Polygon):
                 # Rotate shape to obtain bounding box with edges parallel to the
                 # frame of the reference trajectory
-                rot_shape = state.position.rotate_translate_local(
-                    np.array([0, 0]), -psi_d)
+                rot_shape = state.position.rotate_translate_local(np.array([0, 0]), -psi_d)
                 min_x, min_y, max_x, max_y = rot_shape.shapely_object.bounds
                 l_s = np.abs(max_x - min_x)
                 w_s = np.abs(max_y - min_y)
             elif isinstance(state.position, Circle):
-                l_s = 2.0*state.position.radius
+                l_s = 2.0 * state.position.radius
                 w_s = l_s
             else:
                 raise ValueError
@@ -653,14 +644,11 @@ def occupancy_shape_from_state(shape, state):
         # Maximum enlargement at these angles
         delta_psi_l = min(delta_psi, np.arctan(w_v / l_v))
         delta_psi_w = min(delta_psi, np.arctan(l_v / w_v))
-        l_psi = np.abs(
-            (1.0 - np.cos(delta_psi_l)) * l_v - np.sin(delta_psi_l) * w_v)
-        w_psi = np.abs(
-            (1.0 - np.cos(delta_psi_w)) * w_v - np.sin(delta_psi_w) * l_v)
+        l_psi = np.abs((1.0 - np.cos(delta_psi_l)) * l_v - np.sin(delta_psi_l) * w_v)
+        w_psi = np.abs((1.0 - np.cos(delta_psi_w)) * w_v - np.sin(delta_psi_w) * l_v)
         l_enclosing = l_s + l_v + l_psi
         w_enclosing = w_s + w_v + w_psi
         occupied_region = Rectangle(l_enclosing, w_enclosing, center, psi_d)
     else:
-        occupied_region = shape.rotate_translate_local(state.position,
-                                                       state.orientation)
+        occupied_region = shape.rotate_translate_local(state.position, state.orientation)
     return occupied_region
