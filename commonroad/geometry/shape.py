@@ -317,19 +317,7 @@ class LaneletPolygon(shapely.geometry.Polygon):
 
     def __init__(self, lanelet_id, shell=None, holes=None):
         super(LaneletPolygon, self).__init__(shell, holes)
-        self.lanelet_id = lanelet_id  # super(MyPoly, self).init(
-
-    # def __deepcopy__(self, memo):
-    #     deepcopy_method = self.__deepcopy__
-    #     self.__deepcopy__ = None
-    #     cp = deepcopy(self, memo)
-    #     self.__deepcopy__ = deepcopy_method
-    #     cp.__deepcopy__ = deepcopy_method
-    #
-    #     # custom treatments
-    #     # for instance: cp.id = None
-    #
-    #     return cp
+        self.lanelet_id = lanelet_id
 
     def __deepcopy__(self, memo):
         cls = self.__class__
@@ -362,19 +350,7 @@ class LaneletMultiPolygon(shapely.geometry.MultiPolygon):
 
     def __init__(self, lanelet_id, polygons=None, context_type='polygons'):
         super(LaneletMultiPolygon, self).__init__(polygons, context_type)
-        self.lanelet_id = lanelet_id  # super(MyPoly, self).init(
-
-    # def __deepcopy__(self, memo):
-    #     deepcopy_method = self.__deepcopy__
-    #     self.__deepcopy__ = None
-    #     cp = deepcopy(self, memo)
-    #     self.__deepcopy__ = deepcopy_method
-    #     cp.__deepcopy__ = deepcopy_method
-    #
-    #     # custom treatments
-    #     # for instance: cp.id = None
-    #
-    #     return cp
+        self.lanelet_id = lanelet_id
 
     def __deepcopy__(self, memo):
         cls = self.__class__
