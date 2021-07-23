@@ -964,19 +964,6 @@ class LaneletNetwork(IDrawable):
         self._traffic_signs: Dict[int, TrafficSign] = {}
         self._traffic_lights: Dict[int, TrafficLight] = {}
 
-    # def __deepcopy__(self, memo):
-    #     deepcopy_method = self.__deepcopy__
-    #     self.__deepcopy__ = None
-    #     cp = copy.deepcopy(self, memo)
-    #     self.__deepcopy__ = deepcopy_method
-    #     cp.__deepcopy__ = deepcopy_method
-    #
-    #     # custom treatments
-    #     # for instance: cp.id = None
-    #     cp._create_strtree()
-    #
-    #     return cp
-
     def __deepcopy__(self, memo):
         cls = self.__class__
         result = cls.__new__(cls)
