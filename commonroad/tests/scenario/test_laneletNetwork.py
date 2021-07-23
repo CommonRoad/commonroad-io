@@ -177,7 +177,8 @@ class TestLaneletNetwork(unittest.TestCase):
 
     def test_find_lanelet_by_position(self):
 
-        observed_lanelet = self.lanelet_network.find_lanelet_by_position([np.array([1.0, 1.0])])
+        observed_lanelet = self.lanelet_network.find_lanelet_by_position([np.array([1, 1])])
+
         self.assertEqual(observed_lanelet[0][0], self.lanelet.lanelet_id)
         self.assertEqual(len(self.lanelet_network.find_lanelet_by_position([np.array([-5, -5])])[0]), 0)
 
