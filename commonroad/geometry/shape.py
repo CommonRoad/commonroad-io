@@ -516,11 +516,27 @@ class Truck(ShapeGroup):
     """ The class Truck represents a collection of two rectangles,
     which will model the shape of a truck."""
 
-    def __init__(self, shapes: List[Shape]):
+    def __init__(self, length: float, width: float, trailer_length: float, center: np.ndarray = np.array([0.0, 0.0]),
+                 orientation: float = 0.0, hitch: float = 0.0):
         """
         :param shapes: list of shapes
         """
-        self.shapes = shapes
+
+        self.length = length
+        self.width = width
+        self.center = center
+        self.trailer_length = trailer_length
+        self.orientation = orientation
+        self.hitch = hitch
+        self.trailer_dist = 0.5
+
+        head_length = length - trailer_length - self.trailer_dist
+        head_center = center + np.array([abs(int(length - head_length) / 2), width * np.sin(orientation)])
+        head = Rectangle(head_length, width, head_center, orientation)
+
+        trailer_center = center - np.array([abs(length - trailer_length), -np.sin(orientation) / width])
+        trailer = Rectangle(trailer_length, width, trailer_center, 0)
+        self.shapes = [head, trailer]
 
 
 def occupancy_shape_from_state(shape, state):

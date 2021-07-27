@@ -5,7 +5,7 @@ from abc import ABC
 
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.util import Interval, AngleInterval
-from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
+from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape, Truck
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
@@ -1222,6 +1222,8 @@ class ShapeFactory:
             return CircleFactory.create_from_xml_node(xml_node)
         elif tag_string == 'polygon':
             return PolygonFactory.create_from_xml_node(xml_node)
+        elif tag_string == 'truck':
+            return TruckFactory.create_from_xml_node(xml_node)
 
     @classmethod
     def _create_shape_group_if_needed(cls, shape_list: List[Shape]) -> Shape:
@@ -1266,6 +1268,29 @@ class PolygonFactory:
     def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Polygon:
         vertices = PointListFactory.create_from_xml_node(xml_node)
         return Polygon(vertices)
+
+class TruckFactory:
+    @classmethod
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Truck:
+        length = float(xml_node.find('length').text)
+        width = float(xml_node.find('width').text)
+        if xml_node.find('orientation') is not None:
+            orientation = float(xml_node.find('orientation').text)
+        else:
+            orientation = 0.0
+        if xml_node.find('hitch') is not None:
+            hitch = float(xml_node.find('hitch').text)
+        else:
+            hitch = 0.0
+        if xml_node.find('center') is not None:
+            center = PointFactory.create_from_xml_node(xml_node.find('center'))
+        else:
+            center = np.array([0.0, 0.0])
+        if xml_node.find('trailer_length') is not None:
+            trailer_length = float(xml_node.find('trailer_length').text)
+        else:
+            trailer_length = length * 0.7
+        return Truck(length, width, trailer_length, center, orientation, hitch)
 
 
 class PlanningProblemSetFactory:
