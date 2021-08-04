@@ -153,6 +153,9 @@ class Interval:
         else:
             return True if self._end < other.start else False
 
+    def __contains__(self, value: Union[int, float]):
+        return self.start <= value <= self.end
+
 
 class AngleInterval(Interval):
     """ Allows only angles from interval [-2pi,2pi]"""
