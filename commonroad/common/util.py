@@ -6,7 +6,7 @@ from typing import Union, Tuple
 from commonroad.common import validity
 from commonroad.common.validity import *
 
-__author__ = "Stefanie Manzinger, Moritz Klischat"
+__author__ = "Stefanie Manzinger, Moritz Klischat, Xiao Wang"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
 __version__ = "2021.2"
@@ -188,4 +188,13 @@ class AngleInterval(Interval):
 
     def intersect(self, other: 'Interval'):
         raise NotImplementedError()
+
+    def contains(self, other: Union[float, 'Interval']) -> bool:
+        if type(other) is Interval:
+            return self.start % TWO_PI <= other.start % TWO_PI  and other.end % TWO_PI  <= self.end % TWO_PI
+        else:
+            return self.start % TWO_PI <= other % TWO_PI <= self.end % TWO_PI
+
+    def __contains__(self, value: Union[int, float]):
+        return self.start % TWO_PI <= value % TWO_PI <= self.end % TWO_PI
 
