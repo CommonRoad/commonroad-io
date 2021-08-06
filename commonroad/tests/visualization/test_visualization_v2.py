@@ -24,7 +24,7 @@ from commonroad.scenario.scenario import Scenario
 
 from commonroad.visualization.mp_renderer import MPRenderer
 from commonroad.visualization.param_server import ParamServer, write_default_params
-from commonroad.visualization.traffic_sign_v2 import text_prop_dict, draw_traffic_light_signs
+from commonroad.visualization.traffic_sign import text_prop_dict, draw_traffic_light_signs
 
 
 class TestVisualizationV2(unittest.TestCase):

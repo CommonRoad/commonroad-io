@@ -85,7 +85,7 @@ class TestScenario(unittest.TestCase):
         self.environment = Environment(Time(12, 15), TimeOfDay.NIGHT, Weather.SNOW, Underground.ICE)
         self.location = Location(geo_name_id=123, gps_latitude=456, gps_longitude=789, environment=self.environment)
 
-        self.scenario = Scenario(0.1, 'test', location=self.location)
+        self.scenario = Scenario(0.1, location=self.location)
 
     def test_add_objects(self):
         expected_id_static_obs = self.static_obs.obstacle_id
@@ -550,7 +550,7 @@ class TestScenario(unittest.TestCase):
         dyn_traj_obs = DynamicObstacle(2, ObstacleType("unknown"),
                                        initial_state=traj_pred.trajectory.state_at_time_step(0), prediction=traj_pred,
                                        obstacle_shape=self.rectangle, initial_shape_lanelet_ids=None)
-        sc = Scenario(dt=0.1, scenario_id='test')
+        sc = Scenario(dt=0.1)
         right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
         left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
         center_vertices = np.array([[0, .5], [1, .5], [2, .5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, .5], [8, .5]])
