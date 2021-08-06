@@ -374,7 +374,7 @@ class CommonRoadFileWriter:
 
         """
         with open(
-            os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/XML_commonRoad_XSD.xsd',
+            os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadScenario_schema.xsd',
             'rb',
         ) as schema_file:
             schema = etree.XMLSchema(etree.parse(schema_file))
