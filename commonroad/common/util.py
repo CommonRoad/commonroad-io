@@ -111,11 +111,14 @@ class Interval:
             assert end >= self._start, '<common.util/Interval> start of interval must be <= end, but start {} > end {}'.format(self._start, end)
         self._end = end
 
-    def contains(self, other: Union[float, 'Interval']) -> bool:
+    def contains(self, other: Union[int, float, 'Interval']) -> bool:
         if type(other) is Interval:
             return self.start <= other.start and other.end <= self.end
         else:
             return self.start <= other <= self.end
+
+    def __contains__(self, value: Union[int, float, "Interval"]):
+        return self.contains(value)
 
     def overlaps(self, interval: 'Interval') -> bool:
         return self.end >= interval.start and interval.end >= self.start
@@ -152,9 +155,6 @@ class Interval:
             return True if self._end < other else False
         else:
             return True if self._end < other.start else False
-
-    def __contains__(self, value: Union[int, float]):
-        return self.start <= value <= self.end
 
 
 class AngleInterval(Interval):

@@ -391,15 +391,15 @@ class Scenario(IDrawable):
      obstacles which can be either static or dynamic (see
      :class:`commonroad.scenario.obstacle.Obstacle`)."""
 
-    def __init__(self, dt: float, scenario_id: Union[str, ScenarioID],
+    def __init__(self, dt: float, scenario_id: ScenarioID = ScenarioID(),
                  author: str = None, tags: Set[Tag] = None,
                  affiliation: str = None, source: str = None,
-                 location: Location = None, benchmark_id: str = None):
+                 location: Location = None):
         """
         Constructor of a Scenario object
 
         :param dt: global time step size of the time-discrete scenario
-        :param benchmark_id: unique CommonRoad benchmark ID of the scenario
+        :param scenario_id: unique CommonRoad benchmark ID of the scenario
         :param author: authors of the CommonRoad scenario
         :param tags: tags describing and classifying the scenario
         :param affiliation: institution of the authors
@@ -408,15 +408,8 @@ class Scenario(IDrawable):
         :param benchmark_id: for backwards compatibility
         """
         self.dt: float = dt
+        assert isinstance(scenario_id, ScenarioID)
         self.scenario_id = scenario_id
-        if isinstance(scenario_id, str):
-            self.scenario_id = ScenarioID.from_benchmark_id(scenario_id, SCENARIO_VERSION)
-        elif scenario_id is None and benchmark_id is not None:
-            warnings.warn('Use the  the class commonroad.scenario.ScenarioID to define the scenario id.',
-                          DeprecationWarning)
-            self.scenario_id = ScenarioID.from_benchmark_id(benchmark_id,
-                                                            SCENARIO_VERSION)
-
         self.lanelet_network: LaneletNetwork = LaneletNetwork()
 
         self._static_obstacles: Dict[int, StaticObstacle] = defaultdict()
@@ -445,16 +438,6 @@ class Scenario(IDrawable):
         assert is_real_number(dt), '<Scenario/dt> argument "dt" of wrong type. ' \
                                    'Expected a real number. Got type: %s.' % type(dt)
         self._dt = dt
-
-    @property
-    def benchmark_id(self) -> str:
-        """ Unique benchmark ID of a scenario as specified in the CommonRoad XML-file."""
-        warnings.warn('benchmark_id is deprecated, use scenario_id instead', DeprecationWarning)
-        return str(self.scenario_id)
-
-    @benchmark_id.setter
-    def benchmark_id(self, benchmark_id):
-        raise ValueError('benchmark_id is deprecated, use scenario_id instead')
 
     @property
     def lanelet_network(self) -> LaneletNetwork:

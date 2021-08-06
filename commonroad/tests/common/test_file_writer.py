@@ -2,6 +2,7 @@ import logging
 import os
 import unittest
 
+from commonroad import SCENARIO_VERSION
 from commonroad.common.file_writer import CommonRoadFileWriter, OverwriteExistingFile, float_to_str
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.geometry.shape import *
@@ -10,7 +11,7 @@ from commonroad.planning.planning_problem import PlanningProblem, PlanningProble
 from commonroad.prediction.prediction import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType
 from commonroad.scenario.obstacle import *
-from commonroad.scenario.scenario import Scenario, Tag, Location
+from commonroad.scenario.scenario import Scenario, Tag, Location, ScenarioID
 from commonroad.scenario.trajectory import *
 
 
@@ -95,7 +96,7 @@ class TestFileWriter(unittest.TestCase):
                            LineMarking.SOLID, LineMarking.DASHED, lanelet_type={LaneletType.URBAN})
 
         lanelet_network = LaneletNetwork().create_from_lanelet_list(list([lanelet1, lanelet2]))
-        scenario = Scenario(0.1, 'ZAM_test_0-1')
+        scenario = Scenario(0.1, ScenarioID.from_benchmark_id('ZAM_test_0-1', scenario_version=SCENARIO_VERSION))
         scenario.add_objects([static_obs, lanelet_network])
 
         goal_region = GoalRegion([State(time_step=Interval(0, 1), velocity=Interval(0.0, 1), position=rectangle),
@@ -144,8 +145,8 @@ class TestFileWriter(unittest.TestCase):
         f4 = 1e-23
         f5 = 0
         cw = CommonRoadFileWriter(decimal_precision=3,
-                                  scenario=Scenario(dt=0.1, scenario_id=None, tags=set(), author="sdf", affiliation="",
-                                                    source="", benchmark_id="sdf"),
+                                  scenario=Scenario(dt=0.1, tags=set(), author="sdf", affiliation="",
+                                                    source=""),
                                   planning_problem_set=PlanningProblemSet())
         str1 = float_to_str(f)
         self.assertEqual(str1, "123456789.123")
@@ -166,8 +167,8 @@ class TestFileWriter(unittest.TestCase):
         f4 = 1e-23
         f5 = 0
         cw = CommonRoadFileWriter(decimal_precision=5,
-                                  scenario=Scenario(dt=0.1, scenario_id=None, tags=set(), author="sdf", affiliation="",
-                                                    source="", benchmark_id="sdf"),
+                                  scenario=Scenario(dt=0.1, tags=set(), author="sdf", affiliation="",
+                                                    source=""),
                                   planning_problem_set=PlanningProblemSet())
         str1 = float_to_str(f)
         self.assertEqual(str1, "123456789.12345")

@@ -31,7 +31,7 @@ from commonroad.scenario.traffic_sign import TrafficLightState, TrafficLight, Tr
 from commonroad.scenario.trajectory import Trajectory, State
 from commonroad.visualization.icons import supported_icons, get_obstacle_icon_patch
 from commonroad.visualization.param_server import ParamServer
-from commonroad.visualization.traffic_sign_v2 import draw_traffic_light_signs
+from commonroad.visualization.traffic_sign import draw_traffic_light_signs
 from commonroad.visualization.util import LineDataUnits, collect_center_line_colors, get_arrow_path_at, colormap_idx, \
     line_marking_to_linestyle, traffic_light_color_dict, get_tangent_angle, approximate_bounding_box_dyn_obstacles, \
     get_vehicle_direction_triangle
