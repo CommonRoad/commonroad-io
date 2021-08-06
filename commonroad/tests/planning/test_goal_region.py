@@ -78,9 +78,11 @@ class TestIsReached(unittest.TestCase):
         state_1 = State(time_step=3.1, orientation=0.5, velocity=25)
         state_2 = State(time_step=3.1, orientation=0.5, velocity=17)
         state_7 = State(time_step=3.2, orientation=0.5, velocity=30)
+        state_8 = State(time_step=3.2, orientation=0.5-2*np.pi, velocity=30)
         self.assertTrue(goal_region.is_reached(state_1))
         self.assertTrue(goal_region.is_reached(state_2))
         self.assertTrue(goal_region.is_reached(state_7))
+        self.assertTrue(goal_region.is_reached(state_8))
 
         state_3 = State(time_step=2, orientation=0.5, velocity=25)
         state_4 = State(time_step=3.1, orientation=0.0, velocity=25)
