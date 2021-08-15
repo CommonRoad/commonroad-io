@@ -57,6 +57,7 @@ class TestLaneletNetwork(unittest.TestCase):
                                  LineMarking.UNKNOWN, LineMarking.UNKNOWN)
 
         self.lanelet_network = LaneletNetwork()
+        self.lanelet_network_rtree = LaneletNetwork(init_rtree=True)
         self.lanelet_network.add_lanelet(self.lanelet)
         self.lanelet_network.add_lanelet(self.lanelet_2)
         self.lanelet_network.add_traffic_sign(self.traffic_sign, set())
@@ -86,6 +87,9 @@ class TestLaneletNetwork(unittest.TestCase):
 
         self.assertEqual(self.lanelet_network.lanelets[0].lanelet_id, self.lanelet.lanelet_id)
 
+        self.assertIsNone(self.lanelet_network._rtree)
+        self.assertIsNotNone(self.lanelet_network_rtree._rtree)
+
     def test_create_from_lanelet_network(self):
         lanelet_network = LaneletNetwork()
 
@@ -107,7 +111,6 @@ class TestLaneletNetwork(unittest.TestCase):
                            None, None, None, None, lanelet_type, None, None, {self.traffic_sign.traffic_sign_id},
                                {self.traffic_light.traffic_light_id})
         lanelet_network.add_lanelet(lanelet2)
-
 
         right_vertices = np.array([[5, 1], [6, 1], [7, 0], [8, 0]])
         left_vertices = np.array([[5, 2], [6, 2], [7, 1], [8, 1]])
@@ -146,8 +149,10 @@ class TestLaneletNetwork(unittest.TestCase):
             lanelets_in_network.append(new_network.lanelets[i])
         self.assertNotIn(lanelet3.lanelet_id, lanelets_in_network)
 
+        self.assertIsNone(new_network._rtree)
+
         new_network_lanelet_types = lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2),
-                                                                                            {LaneletType.URBAN})
+                                                                                {LaneletType.URBAN})
         lanelets_in_network = []
         for i in range(0, len(new_network_lanelet_types.lanelets)):
             lanelets_in_network.append(new_network_lanelet_types.lanelets[i])
@@ -156,14 +161,21 @@ class TestLaneletNetwork(unittest.TestCase):
         self.assertEquals(lanelet1.traffic_signs, new_network_lanelet_types.lanelets[0].traffic_signs)
         self.assertEquals(lanelet1.traffic_lights, new_network_lanelet_types.lanelets[0].traffic_lights)
 
-        actual_network = LaneletNetwork()
-        actual_network = actual_network.create_from_lanelet_list([self.lanelet])
+        new_network_lanelet_rtree = lanelet_network.create_from_lanelet_network(lanelet_network, init_rtree=True)
+        self.assertIsNotNone(new_network_lanelet_rtree._rtree)
 
-        for lanelet_act, lanelet_des in zip(actual_network.lanelets, self.lanelet_network.lanelets):
+    def create_from_lanelet_list(self):
+        new_network = LaneletNetwork.create_from_lanelet_list([self.lanelet])
+
+        for lanelet_act, lanelet_des in zip(new_network.lanelets, self.lanelet_network.lanelets):
             np.testing.assert_array_almost_equal(lanelet_act.right_vertices, lanelet_des.right_vertices)
             np.testing.assert_array_almost_equal(lanelet_act.center_vertices, lanelet_des.center_vertices)
             np.testing.assert_array_almost_equal(lanelet_act.left_vertices, lanelet_des.left_vertices)
             self.assertEqual(lanelet_act.lanelet_id, lanelet_des.lanelet_id)
+        self.assertIsNone(new_network._rtree)
+
+        new_network_rtree = LaneletNetwork.create_from_lanelet_list([self.lanelet], init_rtree=True)
+        self.assertIsNotNone(new_network_rtree._rtree)
 
     def test_find_lanelet_by_id(self):
         actual_lanelet_found = self.lanelet_network.find_lanelet_by_id(5)
@@ -245,11 +257,15 @@ class TestLaneletNetwork(unittest.TestCase):
             self.lanelet_network.translate_rotate(0.0, np.pi / 2)
 
     def test_find_lanelet_by_position(self):
+        additional_lanelet_network = LaneletNetwork.create_from_lanelet_network(self.lanelet_network, init_rtree=True)
 
         observed_lanelet = self.lanelet_network.find_lanelet_by_position([np.array([1, 1])])
-
         self.assertEqual(observed_lanelet[0][0], self.lanelet.lanelet_id)
         self.assertEqual(len(self.lanelet_network.find_lanelet_by_position([np.array([-5, -5])])[0]), 0)
+
+        observed_lanelet = additional_lanelet_network.find_lanelet_by_position([np.array([1, 1])])
+        self.assertEqual(observed_lanelet[0][0], self.lanelet.lanelet_id)
+        self.assertEqual(len(additional_lanelet_network.find_lanelet_by_position([np.array([-5, -5])])[0]), 0)
 
     def test_filter_obstacles_in_network_positive_map_obstacles_to_lanelet_postive(self):
         initial_state = State(**{'position': np.array([0, 0]), 'orientation': 0.0})
@@ -334,6 +350,11 @@ class TestLaneletNetwork(unittest.TestCase):
         self.lanelet_network.remove_traffic_sign(self.traffic_sign.traffic_sign_id)  # delete existing traffic sign
         self.assertEqual(len(self.lanelet.traffic_signs), 0)
         self.assertEqual(len(self.lanelet.stop_line.traffic_sign_ref), 0)
+
+    def test_to_string(self):
+        self.assertMultiLineEqual(self.lanelet_network.__str__(),
+                                  '{:8d} lanelet\n'.format(5) +
+                                  '{:8d} lanelet\n'.format(6))
 
 
 if __name__ == '__main__':
