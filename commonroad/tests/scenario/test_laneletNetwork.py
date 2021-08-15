@@ -109,7 +109,7 @@ class TestLaneletNetwork(unittest.TestCase):
         lanelet_type = {LaneletType.URBAN}
         lanelet2 = Lanelet(left_vertices, right_vertices, center_vertices, lanelet_id, None, None, None, None, None,
                            None, None, None, None, lanelet_type, None, None, {self.traffic_sign.traffic_sign_id},
-                               {self.traffic_light.traffic_light_id})
+                           {self.traffic_light.traffic_light_id})
         lanelet_network.add_lanelet(lanelet2)
 
         right_vertices = np.array([[5, 1], [6, 1], [7, 0], [8, 0]])
