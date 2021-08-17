@@ -528,15 +528,16 @@ class Truck(ShapeGroup):
         self.trailer_length = trailer_length
         self.orientation = orientation
         self.hitch = hitch
-        self.trailer_dist = 0
+        self.trailer_dist = 0.5
 
         # TODO: change this to not subtracting it from the length
-        self.head_length = length
-        head_center = center + np.array([np.cos(orientation) * self.head_length, self.head_length * np.sin(orientation)]) / 2
-        head = Rectangle(self.head_length, width, head_center, orientation)
+        self.head_length = self.trailer_dist + self.length
+        head_center = self.center + np.array([np.cos(self.orientation) * self.head_length, self.head_length * np.sin(self.orientation)]) / 2
+        head = Rectangle(self.head_length, self.width, head_center, self.orientation)
 
-        trailer_center = center - np.array([np.cos(orientation + hitch) * trailer_length, trailer_length * np.sin(orientation + hitch)]) / 2
-        trailer = Rectangle(trailer_length, width, trailer_center, self.hitch + self.orientation)
+        trailer_center = self.center - np.array([np.cos(self.orientation + self.hitch) * self.trailer_length,
+                                                 self.trailer_length * np.sin(self.orientation + self.hitch)]) / 2
+        trailer = Rectangle(self.trailer_length, self.width, trailer_center, self.hitch + self.orientation)
         self.shapes = [head, trailer]
 
     def rotate_translate_local(self, translation: np.ndarray, orientation: float, hitch: float) -> 'Truck':
