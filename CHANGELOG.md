@@ -1,6 +1,9 @@
 # Changelog
 
 ## [2021.3] - 2021-XX-XX
+### Added
+- Spatial indexing via RTree in LaneletNetwork for faster computation of lanelet searches via positions 
+
 ### Changed
 - The function LaneletNetwork.create_from_lanelet_network accepts now a shape and set of lanelet types to excluded
 

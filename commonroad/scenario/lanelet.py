@@ -4,6 +4,7 @@ from typing import *
 
 import numpy as np
 from shapely import geometry
+from rtree import index
 
 import commonroad.geometry.transform
 from commonroad.common.validity import *
@@ -320,8 +321,8 @@ class Lanelet:
         if self._left_vertices is None:
             self._left_vertices = polyline
             assert is_valid_polyline(
-                    polyline), '<Lanelet/left_vertices>: The provided polyline is not valid! id = {} polyline = {' \
-                               '}'.format(self._lanelet_id, polyline)
+                    polyline), '<Lanelet/left_vertices>: The provided polyline ' \
+                               'is not valid! id = {} polyline = {}'.format(self._lanelet_id, polyline)
         else:
             warnings.warn('<Lanelet/left_vertices>: left_vertices of lanelet are immutable!')
 
@@ -333,8 +334,8 @@ class Lanelet:
     def right_vertices(self, polyline: np.ndarray):
         if self._right_vertices is None:
             assert is_valid_polyline(
-                    polyline), '<Lanelet/right_vertices>: The provided polyline is not valid! id = {}, polyline = {' \
-                               '}'.format(self._lanelet_id, polyline)
+                    polyline), '<Lanelet/right_vertices>: The provided polyline ' \
+                               'is not valid! id = {}, polyline = {}'.format(self._lanelet_id, polyline)
             self._right_vertices = polyline
         else:
             warnings.warn('<Lanelet/right_vertices>: right_vertices of lanelet are immutable!')
@@ -977,11 +978,21 @@ class LaneletNetwork(IDrawable):
     Class which represents a network of connected lanelets
     """
 
-    def __init__(self):
+    def __init__(self, init_rtree: bool = False):
+        """
+        Constructor for LaneletNetwork
+
+        :param init_rtree: Boolean indicating whether rtree should be initialized.
+        """
         self._lanelets: Dict[int, Lanelet] = {}
         self._intersections: Dict[int, Intersection] = {}
         self._traffic_signs: Dict[int, TrafficSign] = {}
         self._traffic_lights: Dict[int, TrafficLight] = {}
+        if init_rtree:
+            p = index.Property()
+            self._rtree = index.Index(properties=p)
+        else:
+            self._rtree = None
 
     @property
     def lanelets(self) -> List[Lanelet]:
@@ -1012,12 +1023,13 @@ class LaneletNetwork(IDrawable):
                 list(intersection.map_incoming_lanelets.keys())}
 
     @classmethod
-    def create_from_lanelet_list(cls, lanelets: list, cleanup_ids: bool = False):
+    def create_from_lanelet_list(cls, lanelets: list, cleanup_ids: bool = False, init_rtree: bool = False):
         """
         Creates a LaneletNetwork object from a given list of lanelets
 
         :param lanelets: The list of lanelets
         :param cleanup_ids: cleans up unused ids
+        :param init_rtree: Boolean indicating whether rtree should be initialized.
         :return: The LaneletNetwork for the given list of lanelets
         """
         assert isinstance(lanelets, list) and all(
@@ -1026,7 +1038,10 @@ class LaneletNetwork(IDrawable):
                                                              'lanelets = {}'.format(lanelets)
 
         # create lanelet network
-        lanelet_network = cls()
+        if init_rtree:
+            lanelet_network = cls(init_rtree=init_rtree)
+        else:
+            lanelet_network = cls()
 
         # add each lanelet to the lanelet network
         for la in lanelets:
@@ -1038,7 +1053,7 @@ class LaneletNetwork(IDrawable):
 
     @classmethod
     def create_from_lanelet_network(cls, lanelet_network: 'LaneletNetwork', shape_input=None,
-                                    exclude_lanelet_types=set()):
+                                    exclude_lanelet_types=set(), init_rtree: bool = False):
         """
         Creates a lanelet network from a given lanelet network (copy); adding a shape reduces the lanelets to those
         that intersect the shape provided and specifying a lanelet_type set excludes the lanelet types in the new
@@ -1046,10 +1061,14 @@ class LaneletNetwork(IDrawable):
 
         :param lanelet_network: The existing lanelet network
         :param shape_input: The lanelets intersecting this shape will be in the new network
-        :param exclude_lanelet_types: Removes all lanets with these lanelet_types
+        :param exclude_lanelet_types: Removes all lanelets with these lanelet_types
+        :param init_rtree: Boolean indicating whether rtree should be initialized.
         :return: The new lanelet network
         """
-        new_lanelet_network = cls()
+        if init_rtree:
+            new_lanelet_network = cls(init_rtree=init_rtree)
+        else:
+            new_lanelet_network = cls()
         traffic_sign_ids = set()
         traffic_light_ids = set()
         lanelets = set()
@@ -1236,6 +1255,11 @@ class LaneletNetwork(IDrawable):
             return False
         else:
             self._lanelets[lanelet.lanelet_id] = lanelet
+            if self._rtree is not None:
+                vertices = np.concatenate((lanelet.left_vertices, lanelet.right_vertices))
+                x_y_max = np.amax(vertices, 0)
+                x_y_min = np.amin(vertices, 0)
+                self._rtree.insert(lanelet.lanelet_id, (x_y_min[0], x_y_min[1], x_y_max[0], x_y_max[1]))
             return True
 
     def add_traffic_sign(self, traffic_sign: TrafficSign, lanelet_ids: Set[int]):
@@ -1358,19 +1382,23 @@ class LaneletNetwork(IDrawable):
         assert isinstance(point_list,
                           ValidTypes.LISTS), '<Lanelet/contains_points>: provided list of points is not a list! ' \
                                              'type = {}'.format(type(point_list))
-        # assert is_valid_polyline(
-        #     point_list), 'Lanelet/contains_points>: provided list of points is malformed! points = {}'.format(
-        #     point_list)
 
         # output list
         res = list()
 
-        # look at each lanelet
-        polygons = [(la.lanelet_id, la.convert_to_polygon()) for la in self.lanelets]
+        if self._rtree is None:
+            polygons = [(la.lanelet_id, la.convert_to_polygon()) for la in self.lanelets]  # look at each lanelet
+        else:
+            polygons = []
 
         for point in point_list:
             mapped = list()
-            for lanelet_id, poly in polygons:
+            if self._rtree is not None:
+                relevant_polygons = [(la, self.find_lanelet_by_id(la).convert_to_polygon())
+                                     for la in self._rtree.intersection((point[0], point[1], point[0], point[1]))]
+            else:
+                relevant_polygons = polygons
+            for lanelet_id, poly in relevant_polygons:
                 if poly.contains_point(point):
                     mapped.append(lanelet_id)
             res.append(mapped)
