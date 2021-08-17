@@ -1272,7 +1272,8 @@ class PolygonFactory:
 class TruckFactory:
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Truck:
-        length = float(xml_node.find('length').text)
+        front_length = float(xml_node.find('front_length').text)
+        back_length = float(xml_node.find('back_length').text)
         width = float(xml_node.find('width').text)
         if xml_node.find('orientation') is not None:
             orientation = float(xml_node.find('orientation').text)
@@ -1286,11 +1287,7 @@ class TruckFactory:
             center = PointFactory.create_from_xml_node(xml_node.find('center'))
         else:
             center = np.array([0.0, 0.0])
-        if xml_node.find('trailer_length') is not None:
-            trailer_length = float(xml_node.find('trailer_length').text)
-        else:
-            trailer_length = length * 0.7
-        return Truck(length, width, trailer_length, center, orientation, hitch)
+        return Truck(front_length, width, back_length, center, orientation, hitch)
 
 
 class PlanningProblemSetFactory:
@@ -1362,6 +1359,9 @@ class StateFactory:
         if xml_node.find('slipAngle') is not None:
             slip_angle = read_value_exact_or_interval(xml_node.find('slipAngle'))
             state_args['slip_angle'] = slip_angle
+        if xml_node.find('hitch') is not None:
+            hitch = read_value_exact_or_interval(xml_node.find('hitch'))
+            state_args['hitch'] = hitch
         return State(**state_args)
 
     @classmethod

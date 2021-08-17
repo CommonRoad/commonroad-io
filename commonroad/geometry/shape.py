@@ -528,15 +528,44 @@ class Truck(ShapeGroup):
         self.trailer_length = trailer_length
         self.orientation = orientation
         self.hitch = hitch
-        self.trailer_dist = 0.5
+        self.trailer_dist = 0
 
-        head_length = length - trailer_length - self.trailer_dist
-        head_center = center + np.array([abs(int(length - head_length) / 2), width * np.sin(orientation)])
-        head = Rectangle(head_length, width, head_center, orientation)
+        # TODO: change this to not subtracting it from the length
+        self.head_length = length
+        head_center = center + np.array([np.cos(orientation) * self.head_length, self.head_length * np.sin(orientation)]) / 2
+        head = Rectangle(self.head_length, width, head_center, orientation)
 
-        trailer_center = center - np.array([abs(length - trailer_length), -np.sin(orientation) / width])
-        trailer = Rectangle(trailer_length, width, trailer_center, 0)
+        trailer_center = center - np.array([np.cos(orientation + hitch) * trailer_length, trailer_length * np.sin(orientation + hitch)]) / 2
+        trailer = Rectangle(trailer_length, width, trailer_center, self.hitch + self.orientation)
         self.shapes = [head, trailer]
+
+    def rotate_translate_local(self, translation: np.ndarray, orientation: float, hitch: float) -> 'Truck':
+        """ A new truck position is created by first rotating each shape around its center and then translating it.
+
+            :param translation: translation vector [x_off, y_off] in x- and y-direction
+            :param orientation: rotation angle of the truck head in radian (counter-clockwise)
+            :param hitch: rotation angle of the truck trailer in radian (counter-clockwise)
+            :return: transformed truck
+        """
+        assert is_real_number_vector(translation, 2), '<Truck/rotate_translate_local>: argument "translation" ' \
+                                                      'is not a vector of real numbers of length 2. translation = ' \
+                                                      '{}'.format(translation)
+        assert is_valid_orientation(orientation), '<Truck/rotate_translate_local>: argument "orientation" is not ' \
+                                            'valid. orientation = {}'.format(orientation)
+        assert is_valid_orientation(orientation + hitch), '<Truck/rotate_translate_local>: argument "hitch" is not ' \
+                                                  'valid. hitch = {}'.format(hitch)
+
+        new_shapes = list()
+        head_translation = translation + np.array([np.cos(orientation) * self.head_length, self.head_length * np.sin(orientation)]) / 2
+        # head_translation = translation + np.array(
+        #         [np.cos(orientation) * self.head_length, self.head_length * np.sin(orientation)]) / 2
+        new_shapes.append(self._shapes[0].rotate_translate_local(head_translation, orientation))
+        trailer_translation = translation - np.array(
+                [np.cos(orientation + hitch) * self.trailer_length, self.trailer_length * np.sin(orientation + hitch)]) / 2
+        # trailer_translation = translation - np.array([(np.cos(orientation) + np.sin(hitch)) * self.trailer_length,
+        #                                               self.trailer_length * (np.sin(orientation) - np.cos(hitch))]) / 2
+        new_shapes.append(self._shapes[1].rotate_translate_local(trailer_translation, orientation + hitch))
+        return ShapeGroup(new_shapes)
 
 
 def occupancy_shape_from_state(shape, state):
@@ -594,6 +623,10 @@ def occupancy_shape_from_state(shape, state):
         w_enclosing = w_s + w_v + w_psi
         occupied_region = Rectangle(l_enclosing, w_enclosing, center, psi_d)
     else:
-        occupied_region = shape.rotate_translate_local(state.position,
+        if isinstance(shape, Truck):
+            occupied_region = shape.rotate_translate_local(state.position,
+                                            state.orientation, state.hitch)
+        else:
+            occupied_region = shape.rotate_translate_local(state.position,
                                                        state.orientation)
     return occupied_region
