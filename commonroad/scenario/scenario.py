@@ -479,10 +479,10 @@ class Scenario(IDrawable):
         """ Returns a list of all phantom obstacles in the scenario."""
         return list(self._phantom_obstacle.values())
 
-    def add_objects(self, scenario_object: Union[List[Union[Obstacle, Lanelet, LaneletNetwork, TrafficSign,
-                                                            TrafficLight, Intersection, EnvironmentObstacle]], Obstacle,
-                                                 Lanelet, LaneletNetwork, TrafficSign, TrafficLight, Intersection,
-                                                 EnvironmentObstacle],
+    def add_objects(self, scenario_object: Union[List[Union[
+        Obstacle, Lanelet, LaneletNetwork, TrafficSign, TrafficLight, Intersection, PhantomObstacle,
+        EnvironmentObstacle]], Obstacle, Lanelet, LaneletNetwork, TrafficSign, TrafficLight, Intersection,
+                                                 PhantomObstacle, EnvironmentObstacle],
                     lanelet_ids: Set[int] = None):
         """ Function to add objects, e.g., lanelets, dynamic and static obstacles, to the scenario.
 
