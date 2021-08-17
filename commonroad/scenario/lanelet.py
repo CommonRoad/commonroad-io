@@ -724,34 +724,25 @@ class Lanelet:
 
         # output list
         res = list()
-
+        lanelet_shapely_obj = self.convert_to_polygon().shapely_object
         # look at each obstacle
         for o in obstacles:
             o_shape = o.occupancy_at_time(time_step).shape
 
             # vertices to check
-            vertices = list()
+            shape_shapely_objects = list()
 
             # distinguish between shape and shape group and extract vertices
             if isinstance(o_shape, ShapeGroup):
-                for sh in o_shape.shapes:
-                    # distinguish between type of shape (circle has no vertices)
-                    if isinstance(sh, Circle):
-                        vertices.append(sh.center)
-                    else:
-                        vertices.append(sh.vertices)
-                        vertices = np.append(vertices, [o_shape.center], axis=0)
+                shape_shapely_objects.extend([sh.shapely_object for sh in o_shape.shapes])
             else:
-                # distinguish between type of shape (circle has no vertices)
-                if isinstance(o_shape, Circle):
-                    vertices = o_shape.center
-                else:
-                    vertices = o_shape.vertices
-                    vertices = np.append(vertices, [o_shape.center], axis=0)
+                shape_shapely_objects.append(o_shape.shapely_object)
 
             # check if obstacle is in lane
-            if any(self.contains_points(np.array(vertices))):
-                res.append(o)
+            for shapely_obj in shape_shapely_objects:
+                if lanelet_shapely_obj.intersects(shapely_obj):
+                    res.append(o)
+                    break
 
         return res
 
