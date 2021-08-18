@@ -1,23 +1,24 @@
+import enum
 import itertools
 import re
 import warnings
 from collections import defaultdict
 from typing import Union, List, Set, Dict, Tuple, Optional
-import numpy as np
-import enum
+
 import iso3166
+import numpy as np
 
 from commonroad import SCENARIO_VERSION, SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.util import Interval
 from commonroad.common.validity import is_real_number, is_real_number_vector, is_valid_orientation, is_natural_number
+from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
+from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.lanelet import Lanelet
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.obstacle import ObstacleRole
 from commonroad.scenario.obstacle import ObstacleType
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, Obstacle, State, \
     PhantomObstacle
-from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
-from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.param_server import ParamServer
@@ -850,12 +851,8 @@ class Scenario(IDrawable):
 
         if time_step is None:
             time_step = 0
-
+        obstacle_role = set(obstacle_role)
         obstacle_list = list()
-        if ObstacleRole.STATIC in obstacle_role:
-            for obstacle in self.static_obstacles:
-                if contained_in_interval(obstacle.initial_state.position):
-                    obstacle_list.append(obstacle)
         if ObstacleRole.DYNAMIC in obstacle_role:
             for obstacle in self.dynamic_obstacles:
                 occ = obstacle.occupancy_at_time(time_step)
@@ -864,6 +861,28 @@ class Scenario(IDrawable):
                         obstacle_list.append(obstacle)
                     elif contained_in_interval(occ.shape.center):
                         obstacle_list.append(obstacle)
+
+        if ObstacleRole.Phantom in obstacle_role:
+            for obstacle in self.phantom_obstacle:
+                occ = obstacle.occupancy_at_time(time_step)
+                if occ is not None:
+                    if not hasattr(occ.shape, 'center'):
+                        obstacle_list.append(obstacle)
+                    elif contained_in_interval(occ.shape.center):
+                        obstacle_list.append(obstacle)
+
+        if ObstacleRole.STATIC in obstacle_role:
+            for obstacle in self.static_obstacles:
+                if contained_in_interval(obstacle.initial_state.position):
+                    obstacle_list.append(obstacle)
+
+        if ObstacleRole.ENVIRONMENT in obstacle_role:
+            for obstacle in self.environment_obstacle:
+                if not hasattr(obstacle.obstacle_shape, 'center'):
+                    obstacle_list.append(obstacle)
+                elif contained_in_interval(obstacle.obstacle_shape.center):
+                    obstacle_list.append(obstacle)
+
         return obstacle_list
 
     def obstacle_states_at_time_step(self, time_step: int) -> Dict[int, State]:
