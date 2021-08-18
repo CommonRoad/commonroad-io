@@ -1410,8 +1410,11 @@ class LaneletNetwork(IDrawable):
         # output list
         res = []
 
-        # look at each lanelet
-        polygons = [(la.lanelet_id, la.convert_to_polygon()) for la in self.lanelets]
+        if self._rtree is None:
+            polygons = [(la.lanelet_id, la.convert_to_polygon()) for la in self.lanelets]  # look at each lanelet
+        else:
+            polygons = [(la, self.find_lanelet_by_id(la).convert_to_polygon())
+                        for la in self._rtree.intersection(shape.shapely_object.bounds)]
 
         for lanelet_id, poly in polygons:
             if poly.shapely_object.intersects(shape.shapely_object):
