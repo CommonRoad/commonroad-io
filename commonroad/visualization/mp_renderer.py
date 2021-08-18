@@ -10,7 +10,6 @@ import matplotlib.colors
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import matplotlib.text as text
-import numpy as np
 from matplotlib.animation import FuncAnimation
 from matplotlib.colors import hsv_to_rgb, rgb_to_hsv, to_rgb, to_hex
 from matplotlib.path import Path
@@ -78,7 +77,7 @@ class MPRenderer(IRenderer):
 
     def __init__(self, draw_params: Union[ParamServer, dict, None] = None,
                  plot_limits: Union[List[Union[int, float]], None] = None, ax: Union[mpl.axes.Axes, None] = None,
-                 figsize: Union[None, Tuple[float, float]]=None, focus_obstacle: Union[None, Obstacle] = None):
+                 figsize: Union[None, Tuple[float, float]] = None, focus_obstacle: Union[None, Obstacle] = None):
         """
         Creates an renderer for matplotlib
 
@@ -222,8 +221,6 @@ class MPRenderer(IRenderer):
         for art in self.traffic_sign_artists:
             self.ax.add_artist(art)
             artist_list.append(art)
-        for art in self.dynamic_artists:
-            self.ax.add_artist(art)
         for col in self.dynamic_collections:
             self.ax.add_collection(col)
             artist_list.append(col)
@@ -428,21 +425,13 @@ class MPRenderer(IRenderer):
         if focus_obstacle_id is False and type(self.plot_limits) == list:
             time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
             # dynamic obstacles
-            dyn_obs = obj.obstacles_by_position_intervals([Interval(self.plot_limits[0], self.plot_limits[1]),
-                                                           Interval(self.plot_limits[2], self.plot_limits[3])],
-                                                          tuple([ObstacleRole.DYNAMIC]), time_begin)
-
-            # static obstacles
-            static_obs = obj.obstacles_by_position_intervals([Interval(self.plot_limits[0], self.plot_limits[1]),
-                                                              Interval(self.plot_limits[2], self.plot_limits[3])],
-                                                             tuple([ObstacleRole.STATIC]))
+            obs = obj.obstacles_by_position_intervals([Interval(self.plot_limits[0], self.plot_limits[1]),
+                                                       Interval(self.plot_limits[2], self.plot_limits[3])],
+                                                      tuple(ObstacleRole), time_begin)
         else:
-            dyn_obs = obj.dynamic_obstacles
-            static_obs = obj.static_obstacles
+            obs = obj.obstacles
         # Draw all objects
-        for o in dyn_obs:
-            o.draw(self, draw_params, call_stack)
-        for o in static_obs:
+        for o in obs:
             o.draw(self, draw_params, call_stack)
 
     def draw_static_obstacle(self, obj: StaticObstacle, draw_params: Union[ParamServer, dict, None],
@@ -501,8 +490,8 @@ class MPRenderer(IRenderer):
 
         draw_history = draw_params.by_callstack(call_stack, ('history', 'draw_history'))
 
-        if obj.prediction is None or \
-            obj.prediction.final_time_step < time_begin or obj.initial_state.time_step > time_end:
+        if obj.prediction is None or obj.prediction.final_time_step < time_begin or obj.initial_state.time_step > \
+                time_end:
             return
 
         if draw_history and isinstance(obj.prediction, commonroad.prediction.prediction.TrajectoryPrediction):
@@ -589,9 +578,8 @@ class MPRenderer(IRenderer):
         if show_label:
             if state is not None:
                 position = state.position
-                self.dynamic_labels.append(
-                        text.Text(position[0] + 0.5, position[1], str(obj.obstacle_id), clip_on=True,
-                                  zorder=ZOrders.LABELS))
+                self.dynamic_labels.append(text.Text(position[0] + 0.5, position[1], str(obj.obstacle_id), clip_on=True,
+                                                     zorder=ZOrders.LABELS))
 
         # draw initial state
         if draw_initial_state:
@@ -612,29 +600,27 @@ class MPRenderer(IRenderer):
         time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
         time_end = draw_params.by_callstack(call_stack, ('time_end',))
 
-        call_stack = tuple(list(call_stack) + ['dynamic_obstacle'])
+        call_stack = call_stack + ('phantom_obstacle',)
         draw_shape = draw_params.by_callstack(call_stack, 'draw_shape')
         draw_occupancies = draw_params.by_callstack(call_stack, ('occupancy', 'draw_occupancies'))
-
-        # draw occupancies
-        if (draw_occupancies == 1 or (
-                draw_occupancies == 0 and type(obj.prediction) == commonroad.prediction.prediction.SetBasedPrediction)):
-            if draw_shape:
-                # occupancy already plotted
-                time_begin_occ = time_begin + 1
-            else:
-                time_begin_occ = time_begin
-
-            for time_step in range(time_begin_occ, time_end):
-                occ = obj.occupancy_at_time(time_step)
-                if occ is not None:
-                    occ.draw(self, draw_params, call_stack)
 
         # draw shape
         if draw_shape:
             occ = obj.occupancy_at_time(time_begin)
             if occ is not None:
                 occ.draw(self, draw_params, call_stack + ('vehicle_shape',))
+
+        # draw occupancies
+        if draw_occupancies == 1:
+            if draw_shape:
+                # Initial shape already drawn
+                occ_time_begin = time_begin + 1
+            else:
+                occ_time_begin = time_begin
+            for time_step in range(occ_time_begin, time_end):
+                occ = obj.occupancy_at_time(time_step)
+                if occ is not None:
+                    occ.draw(self, draw_params, call_stack)
 
     def draw_environment_obstacle(self, obj: EnvironmentObstacle, draw_params: Union[ParamServer, dict, None],
                                   call_stack: Tuple[str, ...]) -> None:
@@ -648,7 +634,7 @@ class MPRenderer(IRenderer):
         """
         draw_params = self._get_draw_params(draw_params)
         time_begin = draw_params.by_callstack(tuple(), ('time_begin',))
-        call_stack = tuple(list(call_stack) + ['static_obstacle'])
+        call_stack = call_stack + ('environment_obstacle',)
         obj.occupancy_at_time(time_begin).draw(self, draw_params, call_stack)
 
     def _draw_history(self, dyn_obs: DynamicObstacle, call_stack: Tuple[str, ...], draw_params: ParamServer):
@@ -838,17 +824,16 @@ class MPRenderer(IRenderer):
         draw_arrow = draw_params.by_callstack(call_stack, 'draw_arrow')
         radius = draw_params.by_callstack(call_stack, 'radius')
         facecolor = draw_params.by_callstack(call_stack, 'facecolor')
-        self.obstacle_patches.append(mpl.patches.Circle(state.position, radius=radius, zorder=ZOrders.STATE,
-                                                        color=facecolor))
+        self.obstacle_patches.append(
+                mpl.patches.Circle(state.position, radius=radius, zorder=ZOrders.STATE, color=facecolor))
         if draw_arrow:
             cos = math.cos(state.orientation)
             sin = math.sin(state.orientation)
             x = state.position[0]
             y = state.position[1]
             self.obstacle_patches.append(mpl.patches.FancyArrow(x=x, y=y, dx=state.velocity * cos * scale_factor,
-                                                           dy=state.velocity * sin * scale_factor, zorder=ZOrders.STATE,
-                                                           **arrow_args))
-
+                                                                dy=state.velocity * sin * scale_factor,
+                                                                zorder=ZOrders.STATE, **arrow_args))
 
     def draw_lanelet_network(self, obj: LaneletNetwork, draw_params: Union[ParamServer, dict, None],
                              call_stack: Tuple[str, ...]) -> None:
@@ -1243,8 +1228,7 @@ class MPRenderer(IRenderer):
                                                   np.ones([coordinates_left_border_vertices.shape[0], 1]) * 1.5,
                                                   np.zeros([coordinates_left_border_vertices.shape[0], 1]),
                                                   offsets=coordinates_left_border_vertices, color=left_bound_color,
-                                                  transOffset=self.ax.transData,
-                                                  zorder=ZOrders.LEFT_BOUND + 0.1,))
+                                                  transOffset=self.ax.transData, zorder=ZOrders.LEFT_BOUND + 0.1, ))
 
             # right_vertices
             self.static_collections.append(
@@ -1252,8 +1236,7 @@ class MPRenderer(IRenderer):
                                                   np.ones([coordinates_right_border_vertices.shape[0], 1]) * 1.5,
                                                   np.zeros([coordinates_right_border_vertices.shape[0], 1]),
                                                   offsets=coordinates_right_border_vertices, color=right_bound_color,
-                                                  transOffset=self.ax.transData,
-                                                  zorder=ZOrders.LEFT_BOUND + 0.1,))
+                                                  transOffset=self.ax.transData, zorder=ZOrders.LEFT_BOUND + 0.1, ))
 
         if draw_traffic_signs:
             # draw actual traffic sign

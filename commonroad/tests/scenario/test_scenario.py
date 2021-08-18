@@ -391,18 +391,18 @@ class TestScenario(unittest.TestCase):
                                        initial_state=self.traj_pred.trajectory.state_at_time_step(0),
                                        prediction=self.set_pred, obstacle_shape=self.rectangle)
 
-        expected_obstacle_ids_in_interval = [1, 2, 5]
+        expected_obstacle_ids_in_interval = {1, 2, 5}
         interval_x = Interval(-10, 10)
         interval_y = Interval(-10, 10)
 
         self.scenario.add_objects([static_obs1, static_obs2, static_obs3, static_obs4, dyn_set_obs1])
 
         obstacles_in_interval = self.scenario.obstacles_by_position_intervals([interval_x, interval_y])
-        obstacle_ids_in_interval = []
+        obstacle_ids_in_interval = set()
         for obstacle in obstacles_in_interval:
-            obstacle_ids_in_interval.append(obstacle.obstacle_id)
+            obstacle_ids_in_interval.add(obstacle.obstacle_id)
 
-        np.testing.assert_array_equal(expected_obstacle_ids_in_interval, obstacle_ids_in_interval)
+        self.assertEqual(expected_obstacle_ids_in_interval, obstacle_ids_in_interval)
 
     def test_translate_rotate(self):
         rotation = np.pi
