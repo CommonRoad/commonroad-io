@@ -10,7 +10,7 @@ CommonRoad_io
 The CommonRoad_io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tools of the CommonRoad Framework.
 With CommonRoad_io, those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`__.
 
-CommonRoad_io 2021.1 is compatible with CommonRoad scenarios of version 2020a and supports reading 2018b scenarios.
+CommonRoad_io 2021.3 is compatible with CommonRoad scenarios of version 2020a and supports reading 2018b scenarios.
 
 The software is written in Python 3.6 and tested on Linux. The usage of the Anaconda_ Python distribution is strongly recommended.
 
@@ -27,13 +27,15 @@ Additional Tools
 ================
 Based on CommonRoad_io, we have developed a list of tools for implementing motion-planning algorithms:
 
-* `Drivability Checker <https://gitlab.lrz.de/tum-cps/commonroad-drivability-checker>`__
-* `CommonRoad-SUMO Interface <https://gitlab.lrz.de/tum-cps/commonroad-sumo-interface>`__
-* `OpenDRIVE to Lanelet converter <https://pypi.org/project/opendrive2lanelet>`__
-* `Vehicle Models <https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models/tree/master/Python>`__
-* `Dateset Converters <https://gitlab.lrz.de/tum-cps/dataset-converters>`__
-* `Interactive Scenarios <https://gitlab.lrz.de/tum-cps/commonroad-interactive-scenarios>`__
-* `Apollo Interface <https://gitlab.lrz.de/tum-cps/commonroad-apollo-interface>`__
+.. seealso::
+
+    * `Drivability Checker <https://gitlab.lrz.de/tum-cps/commonroad-drivability-checker>`__
+    * `CommonRoad-SUMO Interface <https://gitlab.lrz.de/tum-cps/commonroad-sumo-interface>`__
+    * `OpenDRIVE to Lanelet converter <https://pypi.org/project/opendrive2lanelet>`__
+    * `Vehicle Models <https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models/tree/master/Python>`__
+    * `Dateset Converters <https://gitlab.lrz.de/tum-cps/dataset-converters>`__
+    * `Interactive Scenarios <https://gitlab.lrz.de/tum-cps/commonroad-interactive-scenarios>`__
+    * `Apollo Interface <https://gitlab.lrz.de/tum-cps/commonroad-apollo-interface>`__
 
 Requirements
 ============
@@ -65,15 +67,11 @@ and add the folder commonroad_io to your Python environment.
 
 Changelog
 ============
-Compared to version 2020.3, the following features have been added or changed:
+Compared to version 2021.2, the following features have been added or changed:
 
-* Support for over 50 new traffic signs from Germany
-* Phantom obstacles
-* New visualization module which supports MVC pattern
-* Functions for adding and removing traffic signs, traffic lights, and intersections from a scenario or lanelet network
-* New icon visualization interface and new icons for bus, truck, and bicycle (developed by Simon Sagmeister - TUM FTM)
-* Scaling of traffic signs is coupled with the zoom level
-* Various small bug fixes
+- parameter draw_params={"focus_obstacle_id": obstacle_id} focuses the plot or video on a dynamic_obstacle
+- about 150 new traffic signs from Germany, Spain, and US added
+- added new cost function TR1 to SolutionWriter
 
 A detailed overview about the changes in each version is provided in the `Changelog <https://gitlab.lrz.de/tum-cps/commonroad_io/-/blob/master/CHANGELOG.md>`__.
 

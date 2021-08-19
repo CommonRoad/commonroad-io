@@ -1,12 +1,14 @@
 import os
 import unittest
 
+from commonroad import SCENARIO_VERSION
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
 from commonroad.prediction.prediction import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
 from commonroad.scenario.obstacle import *
-from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Underground, Weather, TimeOfDay
+from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Underground, Weather, TimeOfDay, \
+    ScenarioID
 from commonroad.scenario.trajectory import *
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLightDirection, TrafficLight, \
     TrafficLightCycleElement, TrafficLightState, TrafficSignIDGermany
@@ -38,7 +40,7 @@ class TestFileReader(unittest.TestCase):
 
         states = []
         states.append(State(time_step=1, orientation=0, position=np.array([0, 1])))
-        trajectory = Trajectory(0, states)
+        trajectory = Trajectory(1, states)
         init_state = State(time_step=0, orientation=0, position=np.array([0, 0]))
         traj_pred = TrajectoryPrediction(trajectory, rectangle)
 
@@ -47,10 +49,10 @@ class TestFileReader(unittest.TestCase):
 
         static_obs = StaticObstacle(3, ObstacleType("unknown"), obstacle_shape=circ, initial_state=init_state)
         dyn_set_obs = DynamicObstacle(1, ObstacleType("unknown"),
-                                      initial_state=traj_pred.trajectory.state_at_time_step(0),
+                                      initial_state=init_state,
                                       prediction=set_pred, obstacle_shape=rectangle)
         dyn_traj_obs = DynamicObstacle(2, ObstacleType("unknown"),
-                                       initial_state=traj_pred.trajectory.state_at_time_step(0),
+                                       initial_state=init_state,
                                        prediction=traj_pred, obstacle_shape=rectangle,
                                        initial_signal_state=initial_signal_state, signal_series=signal_series)
 
@@ -122,7 +124,8 @@ class TestFileReader(unittest.TestCase):
         geo_transformation = GeoTransformation("test", 0.0, 0.0, 0.0, 0.0)
         location = Location(2867714, 0.0, 0.0, geo_transformation)
 
-        self.scenario = Scenario(0.1, 'ZAM_test_0-1', tags=tags, location=location)
+        self.scenario = Scenario(0.1, ScenarioID.from_benchmark_id('ZAM_test_0-1', scenario_version=SCENARIO_VERSION),
+                                 tags=tags, location=location)
         self.scenario.add_objects([static_obs, dyn_set_obs, dyn_traj_obs, self.lanelet_network,
                                    self._environment_obstacle, self._phantom_obstacle])
 

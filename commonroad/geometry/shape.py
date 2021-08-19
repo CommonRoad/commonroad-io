@@ -15,7 +15,7 @@ from commonroad.common.util import make_valid_orientation
 __author__ = "Stefanie Manzinger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2021.1"
+__version__ = "2021.2"
 __maintainer__ = "Stefanie Manzinger"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"

@@ -7,7 +7,9 @@ import matplotlib.collections as collections
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
-from commonroad.geometry.shape import Rectangle, Polygon
+import math
+
+from commonroad.geometry.shape import Rectangle
 from commonroad.geometry.transform import rotate_translate
 from commonroad.scenario.lanelet import LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle
@@ -15,14 +17,13 @@ from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.traffic_sign import TrafficLightState, \
     TrafficLight, \
     TrafficLightDirection
-from commonroad.scenario.trajectory import State
 from matplotlib.lines import Line2D
 from matplotlib.path import Path
 
 __author__ = "Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = [""]
-__version__ = "2021.1"
+__version__ = "2021.2"
 __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -226,8 +227,8 @@ def get_arrow_path_at(x, y, angle):
                     [0.0, -0.5, 1.0]])
     scale_m = np.array(
             [[scale_direction, 0, 0], [0, scale_direction, 0], [0, 0, 1]])
-    transform = np.array([[np.cos(angle), -np.sin(angle), x],
-                          [np.sin(angle), np.cos(angle), y], [0, 0, 1]])
+    transform = np.array([[math.cos(angle), -math.sin(angle), x],
+                          [math.sin(angle), math.cos(angle), y], [0, 0, 1]])
     ptr_trans = transform.dot(scale_m.dot(pts.transpose()))
     ptr_trans = ptr_trans[0:2, :]
     ptr_trans = ptr_trans.transpose()

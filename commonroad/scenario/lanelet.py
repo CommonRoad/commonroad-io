@@ -21,7 +21,7 @@ from commonroad.visualization.renderer import IRenderer
 __author__ = "Christian Pek, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW CAR@TUM"]
-__version__ = "2021.1"
+__version__ = "2021.2"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "released"
@@ -169,11 +169,11 @@ class Lanelet:
         """
         Constructor of a Lanelet object
         :param left_vertices: The vertices of the left boundary of the Lanelet described as a
-        polyline [[x0,x0],[x1,y1],...,[xn,yn]]
+        polyline [[x0,y0],[x1,y1],...,[xn,yn]]
         :param center_vertices: The vertices of the center line of the Lanelet described as a
-        polyline [[x0,x0],[x1,y1],...,[xn,yn]]
+        polyline [[x0,y0],[x1,y1],...,[xn,yn]]
         :param right_vertices: The vertices of the right boundary of the Lanelet described as a
-        polyline [[x0,x0],[x1,y1],...,[xn,yn]]
+        polyline [[x0,y0],[x1,y1],...,[xn,yn]]
         :param lanelet_id: The unique id (natural number) of the lanelet
         :param predecessor: The list of predecessor lanelets (None if not existing)
         :param successor: The list of successor lanelets (None if not existing)
@@ -236,12 +236,8 @@ class Lanelet:
             self.adj_right = adjacent_right
             self.adj_right_same_direction = adjacent_right_same_direction
 
-        self._distance = [0.0]
-        for i in range(1, len(self.center_vertices)):
-            self._distance.append(self._distance[i - 1] + np.linalg.norm(
-                np.array(self.center_vertices[i]) - np.array(self.center_vertices[i - 1])))
-        self._distance = np.array(self._distance)
-
+        self._distance = None
+        self._inner_distance = None
         # create empty polygon
         self._polygon = None
 
@@ -285,11 +281,26 @@ class Lanelet:
 
     @property
     def distance(self) -> np.ndarray:
+        """
+        :returns cumulative distance along center vertices
+        """
+        if self._distance is None:
+            self._distance = self._compute_polyline_cumsum_dist([self.center_vertices])
         return self._distance
 
     @distance.setter
     def distance(self, _):
         warnings.warn('<Lanelet/distance> distance of lanelet is immutable')
+
+    @property
+    def inner_distance(self) -> np.ndarray:
+        """
+        :returns minimum cumulative distance along left and right vertices, i.e., along the inner curve:
+        """
+        if self._inner_distance is None:
+            self._inner_distance = self._compute_polyline_cumsum_dist([self.left_vertices, self.right_vertices])
+
+        return self._inner_distance
 
     @property
     def lanelet_id(self) -> int:
@@ -310,10 +321,10 @@ class Lanelet:
     @left_vertices.setter
     def left_vertices(self, polyline: np.ndarray):
         if self._left_vertices is None:
-            assert is_valid_polyline(
-                    polyline), '<Lanelet/left_vertices>: The provided polyline is not valid! polyline = {}'.format(
-                polyline)
             self._left_vertices = polyline
+            assert is_valid_polyline(
+                    polyline), '<Lanelet/left_vertices>: The provided polyline ' \
+                               'is not valid! id = {} polyline = {}'.format(self._lanelet_id, polyline)
         else:
             warnings.warn('<Lanelet/left_vertices>: left_vertices of lanelet are immutable!')
 
@@ -325,11 +336,22 @@ class Lanelet:
     def right_vertices(self, polyline: np.ndarray):
         if self._right_vertices is None:
             assert is_valid_polyline(
-                    polyline), '<Lanelet/right_vertices>: The provided polyline is not valid! polyline = {}'.format(
-                    polyline)
+                    polyline), '<Lanelet/right_vertices>: The provided polyline ' \
+                               'is not valid! id = {}, polyline = {}'.format(self._lanelet_id, polyline)
             self._right_vertices = polyline
         else:
             warnings.warn('<Lanelet/right_vertices>: right_vertices of lanelet are immutable!')
+
+    @staticmethod
+    def _compute_polyline_cumsum_dist(polylines: List[np.ndarray], comparator=np.amin):
+        d = []
+        for polyline in polylines:
+            d.append(np.diff(polyline, axis=0))
+        segment_distances = np.empty((len(polylines[0]), len(polylines)))
+        for i, d_tmp in enumerate(d):
+            segment_distances[:, i] = np.append([0], np.sqrt((np.square(d_tmp)).sum(axis=1)))
+
+        return np.cumsum(comparator(segment_distances, axis=1))
 
     @property
     def center_vertices(self) -> np.ndarray:
@@ -485,10 +507,10 @@ class Lanelet:
         if self._stop_line is None:
             assert isinstance(stop_line,
                               StopLine), '<Lanelet/stop_line>: ''Provided type is not valid! type = {}'.format(
-                type(stop_line))
+                    type(stop_line))
             self._stop_line = stop_line
         else:
-            warnings.warn('<Lanelet/stop_line>: stop_line of lanelet is immutable!')
+            warnings.warn('<Lanelet/stop_line>: stop_line of lanelet is immutable!', stacklevel=1)
 
     @property
     def lanelet_type(self) -> Set[LaneletType]:
@@ -501,7 +523,7 @@ class Lanelet:
                                                          lanelet_type), '<Lanelet/lanelet_type>: ''Provided type is ' \
                                                                         'not valid! type = {}, ' \
                                                                         'expected = Set[LaneletType]'.format(
-                type(lanelet_type))
+                    type(lanelet_type))
             self._lanelet_type = lanelet_type
         else:
             warnings.warn('<Lanelet/lanelet_type>: type of lanelet is immutable!')
@@ -513,9 +535,10 @@ class Lanelet:
     @user_one_way.setter
     def user_one_way(self, user_one_way: Set[RoadUser]):
         if self._user_one_way is None:
-            assert isinstance(user_one_way, set) and all(isinstance(elem, RoadUser) for elem in
-                                                         user_one_way), '<Lanelet/user_one_way>: ''Provided type is ' \
-                                                                        'not valid! type = {}'.format(
+            assert isinstance(user_one_way, set) and all(
+                    isinstance(elem, RoadUser) for elem in user_one_way), '<Lanelet/user_one_way>: ' \
+                                                                          'Provided type is ' \
+                                                                          'not valid! type = {}'.format(
                     type(user_one_way))
             self._user_one_way = user_one_way
         else:
@@ -528,11 +551,10 @@ class Lanelet:
     @user_bidirectional.setter
     def user_bidirectional(self, user_bidirectional: Set[RoadUser]):
         if self._user_bidirectional is None:
-            assert isinstance(user_bidirectional, set) and all(isinstance(elem, RoadUser) for elem in
-                                                               user_bidirectional), '<Lanelet/user_bidirectional>: ' \
-                                                                                    'Provided type is not valid! type' \
-                                                                                    ' = {}'.format(
-                    type(user_bidirectional))
+            assert isinstance(user_bidirectional, set) and all(
+                    isinstance(elem, RoadUser) for elem in user_bidirectional), '<Lanelet/user_bidirectional>: ' \
+                                                                                'Provided type is not valid! type' \
+                                                                                ' = {}'.format(type(user_bidirectional))
             self._user_bidirectional = user_bidirectional
         else:
             warnings.warn('<Lanelet/user_bidirectional>: user_bidirectional of lanelet is immutable!')
@@ -643,13 +665,12 @@ class Lanelet:
         :return: The interpolated positions on the center/right/left polyline
         in the form [[x_c,y_c],[x_r,y_r],[x_l,y_l]]
         """
-        assert is_real_number(distance) and np.greater_equal(self.distance[-1], distance) \
-               and np.greater_equal(distance, 0), \
-               '<Lanelet/interpolate_position>: provided distance is not valid! distance = {}'.format(distance)
-        idx = 0
-
-        # find
-        while not (self.distance[idx] <= distance <= self.distance[idx + 1]):
+        assert is_real_number(distance) and np.greater_equal(self.distance[-1], distance) and np.greater_equal(distance,
+                                                                                                               0), \
+            '<Lanelet/interpolate_position>: provided distance is not valid! distance = {}'.format(
+                distance)
+        idx = np.searchsorted(self.distance, distance) - 1
+        while not self.distance[idx] <= distance:
             idx += 1
         r = (distance - self.distance[idx]) / (self.distance[idx + 1] - self.distance[idx])
         return ((1 - r) * self._center_vertices[idx] + r * self._center_vertices[idx + 1],
@@ -705,34 +726,25 @@ class Lanelet:
 
         # output list
         res = list()
-
+        lanelet_shapely_obj = self.convert_to_polygon().shapely_object
         # look at each obstacle
         for o in obstacles:
             o_shape = o.occupancy_at_time(time_step).shape
 
             # vertices to check
-            vertices = list()
+            shape_shapely_objects = list()
 
             # distinguish between shape and shape group and extract vertices
             if isinstance(o_shape, ShapeGroup):
-                for sh in o_shape.shapes:
-                    # distinguish between type of shape (circle has no vertices)
-                    if isinstance(sh, Circle):
-                        vertices.append(sh.center)
-                    else:
-                        vertices.append(sh.vertices)
-                        vertices = np.append(vertices, [o_shape.center], axis=0)
+                shape_shapely_objects.extend([sh.shapely_object for sh in o_shape.shapes])
             else:
-                # distinguish between type of shape (circle has no vertices)
-                if isinstance(o_shape, Circle):
-                    vertices = o_shape.center
-                else:
-                    vertices = o_shape.vertices
-                    vertices = np.append(vertices, [o_shape.center], axis=0)
+                shape_shapely_objects.append(o_shape.shapely_object)
 
             # check if obstacle is in lane
-            if any(self.contains_points(np.array(vertices))):
-                res.append(o)
+            for shapely_obj in shape_shapely_objects:
+                if lanelet_shapely_obj.intersects(shapely_obj):
+                    res.append(o)
+                    break
 
         return res
 
@@ -783,10 +795,13 @@ class Lanelet:
         assert isinstance(lanelet1, Lanelet), '<Lanelet/merge_lanelets>: lanelet1 is not a valid lanelet object!'
         assert isinstance(lanelet2, Lanelet), '<Lanelet/merge_lanelets>: lanelet1 is not a valid lanelet object!'
         # check connection via successor / predecessor
-        assert lanelet1.lanelet_id in lanelet2.successor or lanelet2.lanelet_id in lanelet1.successor or \
-               lanelet1.lanelet_id in lanelet2.predecessor or lanelet2.lanelet_id in lanelet1.predecessor, \
-               '<Lanelet/merge_lanelets>: cannot merge two not connected lanelets! ' \
-               'successors of l1 = {}, successors of l2 = {}'.format(lanelet1.successor, lanelet2.successor)
+        assert lanelet1.lanelet_id in lanelet2.successor \
+               or lanelet2.lanelet_id in lanelet1.successor \
+               or lanelet1.lanelet_id in lanelet2.predecessor \
+               or lanelet2.lanelet_id in lanelet1.predecessor, '<Lanelet/merge_lanelets>: cannot merge two not ' \
+                                                               'connected lanelets! successors of l1 = {}, ' \
+                                                               'successors of l2 = {}'.format(lanelet1.successor,
+                                                                                              lanelet2.successor)
 
         # check pred and successor
         if lanelet1.lanelet_id in lanelet2.predecessor or lanelet2.lanelet_id in lanelet1.successor:
@@ -824,7 +839,8 @@ class Lanelet:
     @classmethod
     def all_lanelets_by_merging_successors_from_lanelet(cls, lanelet: 'Lanelet', network: 'LaneletNetwork',
                                                         max_length: float = 150.0, lanelet_type: LaneletType = None) \
-            -> Tuple[List['Lanelet'], List[List[int]]]:
+            -> \
+            Tuple[List['Lanelet'], List[List[int]]]:
         """
         Computes all reachable lanelets starting from a provided lanelet
         and merges them to a single lanelet for each route.
@@ -872,7 +888,7 @@ class Lanelet:
         """
         paths = [[s] for s in self.successor]
         paths_final = []
-        lengths = [0.0 for _ in paths]
+        lengths = [lanelet_network.find_lanelet_by_id(s).distance[-1] for s in self.successor]
         while paths:
             paths_next = []
             lengths_next = []
@@ -882,8 +898,8 @@ class Lanelet:
                     paths_final.append(p)
                 else:
                     for s in successors:
-                        if s in p or s == self.lanelet_id:
-                            # prevent loops
+                        if s in p or s == self.lanelet_id or l >= max_length:
+                            # prevent loops and consider length of first successor
                             paths_final.append(p)
                             continue
 
@@ -892,7 +908,7 @@ class Lanelet:
                             paths_next.append(p + [s])
                             lengths_next.append(l_next)
                         else:
-                            paths_final.append(p)
+                            paths_final.append(p + [s])
 
             paths = paths_next
             lengths = lengths_next
@@ -955,7 +971,12 @@ class LaneletNetwork(IDrawable):
     Class which represents a network of connected lanelets
     """
 
-    def __init__(self):
+    def __init__(self, init_rtree: bool = False):
+        """
+        Constructor for LaneletNetwork
+
+        :param init_rtree: Boolean indicating whether rtree should be initialized.
+        """
         self._lanelets: Dict[int, Lanelet] = {}
         self._polygons: Dict[int, Polygon] = {}
         self._buffered_polygons: Dict[int, LaneletPolygon] = {}
@@ -1037,18 +1058,52 @@ class LaneletNetwork(IDrawable):
         return lanelet_network
 
     @classmethod
-    def create_from_lanelet_network(cls, lanelet_network: 'LaneletNetwork'):
+    def create_from_lanelet_network(cls, lanelet_network: 'LaneletNetwork', shape_input=None,
+                                    exclude_lanelet_types=set()):
         """
-        Creates a lanelet network from a given lanelet network (copy)
+        Creates a lanelet network from a given lanelet network (copy); adding a shape reduces the lanelets to those
+        that intersect the shape provided and specifying a lanelet_type set excludes the lanelet types in the new
+        created network.
 
         :param lanelet_network: The existing lanelet network
-        :return: The deep copy of the lanelet network
+        :param shape_input: The lanelets intersecting this shape will be in the new network
+        :param exclude_lanelet_types: Removes all lanelets with these lanelet_types
+        :return: The new lanelet network
         """
         new_lanelet_network = cls()
-        for la in lanelet_network.lanelets:
-            new_lanelet_network.add_lanelet(copy.deepcopy(la))
+        traffic_sign_ids = set()
+        traffic_light_ids = set()
+        lanelets = set()
 
-        new_lanelet_network._create_buffered_strtree()
+        if shape_input is not None:
+            for la in lanelet_network.lanelets:
+                if la.lanelet_type.intersection(exclude_lanelet_types) == set():
+                    poly_shape_input = Polygon(shape_input.shapely_object)
+                    lanelet_polygon = la.convert_to_polygon().shapely_object
+                    if Polygon.intersects(poly_shape_input, lanelet_polygon):
+                        for sign_id in la.traffic_signs:
+                            traffic_sign_ids.add(sign_id)
+                        for light_id in la.traffic_lights:
+                            traffic_light_ids.add(light_id)
+                        lanelets.add(la)
+
+        else:
+            for la in lanelet_network.lanelets:
+                if la.lanelet_type.intersection(exclude_lanelet_types) == set():
+                    new_lanelet_network.add_lanelet(copy.deepcopy(la))
+                for sign_id in la.traffic_signs:
+                    traffic_sign_ids.add(sign_id)
+                for light_id in la.traffic_lights:
+                    traffic_light_ids.add(light_id)
+                lanelets.add(la)
+
+        for sign_id in traffic_sign_ids:
+            new_lanelet_network.add_traffic_sign(copy.deepcopy(lanelet_network.find_traffic_sign_by_id(sign_id)), set())
+        for light_id in traffic_light_ids:
+            new_lanelet_network.add_traffic_light(copy.deepcopy(lanelet_network.find_traffic_light_by_id(light_id)),
+                                                  set())
+        for la in lanelets:
+            new_lanelet_network.add_lanelet(copy.deepcopy(la))
 
         return new_lanelet_network
 
@@ -1096,13 +1151,11 @@ class LaneletNetwork(IDrawable):
             la._successor = list(set(la.successor).intersection(existing_ids))
             la._adj_left = None if la.adj_left is None or la.adj_left not in existing_ids else la.adj_left
 
-            la._adj_left_same_direction = \
-                None if la.adj_left_same_direction is None or la.adj_left not in existing_ids \
-                else la.adj_left_same_direction
+            la._adj_left_same_direction = None if la.adj_left_same_direction is None or la.adj_left not in \
+                                                  existing_ids else la.adj_left_same_direction
             la._adj_right = None if la.adj_right is None or la.adj_right not in existing_ids else la.adj_right
-            la._adj_right_same_direction = \
-                None if la.adj_right_same_direction is None or la.adj_right not in existing_ids \
-                else la.adj_right_same_direction
+            la._adj_right_same_direction = None if la.adj_right_same_direction is None or la.adj_right not in \
+                                                   existing_ids else la.adj_right_same_direction
 
         for inter in self.intersections:
             for inc in inter.incomings:
@@ -1431,7 +1484,7 @@ class LaneletNetwork(IDrawable):
                                                        'not valid! point = {}'.format(point)
         assert is_positive(
                 radius), '<LaneletNetwork/lanelets_in_proximity>: provided radius is not valid! radius = {}'.format(
-            radius)
+                radius)
 
         # get list of lanelet ids
         ids = self._lanelets.keys()

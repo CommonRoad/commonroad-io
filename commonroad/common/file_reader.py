@@ -22,7 +22,7 @@ from commonroad.scenario.intersection import Intersection, IntersectionIncomingE
 __author__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles", "CAR@TUM"]
-__version__ = "2021.1"
+__version__ = "2021.2"
 __maintainer__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -70,37 +70,41 @@ class CommonRoadFileReader:
         self._benchmark_id = None
         self._meta_data = None
 
-    def open(self, lanelet_assignment: bool = False) -> Tuple[Scenario, PlanningProblemSet]:
+    def open(self, lanelet_assignment: bool = False, rtree: bool = False) -> Tuple[Scenario, PlanningProblemSet]:
         """
         Reads a CommonRoad XML-file.
 
         :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
+        :param rtree: activates usage of rtree for occupied lanelets calculation
         :return: the scenario containing the road network and the obstacles and the planning problem set \
         containing the planning problems---initial states and goal regions--for all ego vehicles.
         """
         self._read_header()
-        scenario = self._open_scenario(lanelet_assignment)
+        scenario = self._open_scenario(lanelet_assignment, rtree)
         planning_problem_set = self._open_planning_problem_set(scenario.lanelet_network)
         return scenario, planning_problem_set
 
-    def open_lanelet_network(self) -> LaneletNetwork:
+    def open_lanelet_network(self, rtree: bool = False) -> LaneletNetwork:
         """
         Reads the lanelet network of a CommonRoad XML-file.
 
+        :param rtree: activates usage of rtree for occupied lanelets calculation
         :return: object of class LaneletNetwork
         """
         self._read_header()
-        return LaneletNetworkFactory.create_from_xml_node(self._tree)
+        return LaneletNetworkFactory.create_from_xml_node(self._tree, rtree)
 
-    def _open_scenario(self, lanelet_assignment: bool) -> Scenario:
+    def _open_scenario(self, lanelet_assignment: bool, rtree: bool) -> Scenario:
         """
         Reads the lanelet network and obstacles from the CommonRoad XML-file.
 
         :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
+        :param rtree: activates usage of rtree for occupied lanelets calculation
         :return: object of class scenario containing the road network and the obstacles
         """
         scenario = ScenarioFactory.create_from_xml_node(self._tree, self._dt, self._benchmark_id,
-                                                        self._commonroad_version, self._meta_data, lanelet_assignment)
+                                                        self._commonroad_version, self._meta_data, lanelet_assignment,
+                                                        rtree)
         return scenario
 
     def _open_planning_problem_set(self, lanelet_network: LaneletNetwork) \
@@ -185,13 +189,14 @@ class ScenarioFactory:
     """ Class to create an object of class Scenario from an XML element."""
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element, dt: float, benchmark_id: str, commonroad_version: str,
-                             meta_data: dict, lanelet_assignment: bool):
+                             meta_data: dict, lanelet_assignment: bool, rtree: bool):
         """
         :param xml_node: XML element
         :param dt: time step size of the scenario
         :param benchmark_id: unique CommonRoad benchmark ID
         :param commonroad_version: CommonRoad version of the file
         :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
+        :param rtree: activates usage of rtree for occupied lanelets calculation
         :return: CommonRoad scenario
         """
         if commonroad_version != '2018b':
@@ -201,11 +206,11 @@ class ScenarioFactory:
             LaneletFactory._speed_limits = {}
 
         scenario_id = ScenarioID.from_benchmark_id(benchmark_id, commonroad_version)
-        scenario = Scenario(dt, scenario_id, **meta_data)
+        scenario = Scenario(dt, scenario_id, **meta_data, init_lanelet_network_rtree=rtree)
 
-        scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
-        large_num = 10000
+        scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node, rtree))
         if commonroad_version == '2018b':
+            large_num = 10000
             scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network, lanelet_assignment))
             for key, value in LaneletFactory._speed_limits.items():
                 for lanelet in value:
@@ -331,12 +336,15 @@ class GeoTransformationFactory:
         :return: GeoTransformation object
         """
         geo_reference = xml_node.find('geoReference').text
-        x_translation = float(xml_node.find('xTranslation').text)
-        y_translation = float(xml_node.find('yTranslation').text)
-        z_rotation = float(xml_node.find('zRotation').text)
-        scaling = float(xml_node.find('scaling').text)
-
-        return GeoTransformation(geo_reference, x_translation, y_translation, z_rotation, scaling)
+        if xml_node.find('additionalTransformation') is not None:
+            add_trans_node = xml_node.find('additionalTransformation')
+            x_translation = float(add_trans_node.find('xTranslation').text)
+            y_translation = float(add_trans_node.find('yTranslation').text)
+            z_rotation = float(add_trans_node.find('zRotation').text)
+            scaling = float(add_trans_node.find('scaling').text)
+            return GeoTransformation(geo_reference, x_translation, y_translation, z_rotation, scaling)
+        else:
+            return GeoTransformation(geo_reference)
 
 
 class EnvironmentFactory:
@@ -373,16 +381,17 @@ class TimeFactory:
 
 class LaneletNetworkFactory:
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> LaneletNetwork:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, rtree: bool) -> LaneletNetwork:
         """
         Reads all lanelets specified in a CommonRoad XML-file.
         :param xml_node: XML element
+        :param rtree: activates usage of rtree for occupied lanelets calculation
         :return: list of lanelets
         """
         lanelets = []
         for lanelet_node in xml_node.findall('lanelet'):
             lanelets.append(LaneletFactory.create_from_xml_node(lanelet_node))
-        lanelet_network = LaneletNetwork.create_from_lanelet_list(lanelets)
+        lanelet_network = LaneletNetwork.create_from_lanelet_list(lanelets, init_rtree=rtree)
 
         country = cls._find_country( xml_node)
         first_traffic_sign_occurence = cls._find_first_traffic_sign_occurence(lanelet_network)

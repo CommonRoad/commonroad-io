@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork, StopLine
+from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork, StopLine, LaneletType
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.geometry.shape import Rectangle
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany, \
@@ -11,7 +11,7 @@ from commonroad.scenario.intersection import Intersection, IntersectionIncomingE
 __author__ = "Moritz Untersperger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles, BMW Car@TUM"]
-__version__ = "2021.1"
+__version__ = "2021.2"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -57,6 +57,7 @@ class TestLaneletNetwork(unittest.TestCase):
                                  LineMarking.UNKNOWN, LineMarking.UNKNOWN)
 
         self.lanelet_network = LaneletNetwork()
+        self.lanelet_network_rtree = LaneletNetwork(init_rtree=True)
         self.lanelet_network.add_lanelet(self.lanelet)
         self.lanelet_network.add_lanelet(self.lanelet_2)
         self.lanelet_network.add_traffic_sign(self.traffic_sign, set())
@@ -86,15 +87,95 @@ class TestLaneletNetwork(unittest.TestCase):
 
         self.assertEqual(self.lanelet_network.lanelets[0].lanelet_id, self.lanelet.lanelet_id)
 
-    def test_create_from_lanelet_network(self):
-        actual_network = LaneletNetwork()
-        actual_network = actual_network.create_from_lanelet_list([self.lanelet])
+        self.assertIsNone(self.lanelet_network._rtree)
+        self.assertIsNotNone(self.lanelet_network_rtree._rtree)
 
-        for lanelet_act, lanelet_des in zip(actual_network.lanelets, self.lanelet_network.lanelets):
+    def test_create_from_lanelet_network(self):
+        lanelet_network = LaneletNetwork()
+
+        right_vertices = np.array([[0, 0], [1, 0], [1.1, 0.1]])
+        left_vertices = np.array([[0, 1], [1, 1], [1.1, 1.1]])
+        center_vertices = np.array([[0, .5], [1, .5], [1.1, .6]])
+        lanelet_id = 5
+        lanelet1 = Lanelet(left_vertices, right_vertices, center_vertices, lanelet_id)
+        lanelet_network.add_lanelet(lanelet1)
+        lanelet_network.add_traffic_sign(self.traffic_sign, {lanelet1.lanelet_id})
+        lanelet_network.add_traffic_light(self.traffic_light, {lanelet1.lanelet_id})
+
+        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1]])
+        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2]])
+        center_vertices = np.array([[0, .5], [1, .5], [2, .5], [3, 1], [4, 1.5]])
+        lanelet_id = 6
+        lanelet_type = {LaneletType.URBAN}
+        lanelet2 = Lanelet(left_vertices, right_vertices, center_vertices, lanelet_id, None, None, None, None, None,
+                           None, None, None, None, lanelet_type, None, None, {self.traffic_sign.traffic_sign_id},
+                           {self.traffic_light.traffic_light_id})
+        lanelet_network.add_lanelet(lanelet2)
+
+        right_vertices = np.array([[5, 1], [6, 1], [7, 0], [8, 0]])
+        left_vertices = np.array([[5, 2], [6, 2], [7, 1], [8, 1]])
+        center_vertices = np.array([[5, 1.5], [6, 1.5], [7, .5], [8, .5]])
+        lanelet_id = 7
+        lanelet3 = Lanelet(left_vertices, right_vertices, center_vertices, lanelet_id)
+        lanelet_network.add_lanelet(lanelet3)
+
+        new_network = lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2))
+
+        a = False
+        for i in range(0, len(new_network.lanelets)):
+            if lanelet1.lanelet_id == new_network.lanelets[i].lanelet_id:
+                a = True
+        self.assertTrue(a)
+
+        a = False
+        for i in range(0, len(new_network.lanelets)):
+            if lanelet2.lanelet_id == new_network.lanelets[i].lanelet_id:
+                a = True
+        self.assertTrue(a)
+
+        a = False
+        for i in range(0, len(new_network.lanelets)):
+            if lanelet3.lanelet_id == new_network.lanelets[i].lanelet_id:
+                a = True
+        self.assertFalse(a)
+
+        self.assertEqual(lanelet2.traffic_signs, {1})
+        self.assertEqual(lanelet2.traffic_lights, {567})
+        self.assertEqual(lanelet1.traffic_signs, {1})
+        self.assertEqual(lanelet1.traffic_lights, {567})
+
+        lanelets_in_network = []
+        for i in range(0, len(new_network.lanelets)):
+            lanelets_in_network.append(new_network.lanelets[i])
+        self.assertNotIn(lanelet3.lanelet_id, lanelets_in_network)
+
+        self.assertIsNone(new_network._rtree)
+
+        new_network_lanelet_types = lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2),
+                                                                                {LaneletType.URBAN})
+        lanelets_in_network = []
+        for i in range(0, len(new_network_lanelet_types.lanelets)):
+            lanelets_in_network.append(new_network_lanelet_types.lanelets[i])
+
+        self.assertNotIn(lanelet2.lanelet_id, lanelets_in_network)
+        self.assertEquals(lanelet1.traffic_signs, new_network_lanelet_types.lanelets[0].traffic_signs)
+        self.assertEquals(lanelet1.traffic_lights, new_network_lanelet_types.lanelets[0].traffic_lights)
+
+        new_network_lanelet_rtree = lanelet_network.create_from_lanelet_network(lanelet_network, init_rtree=True)
+        self.assertIsNotNone(new_network_lanelet_rtree._rtree)
+
+    def create_from_lanelet_list(self):
+        new_network = LaneletNetwork.create_from_lanelet_list([self.lanelet])
+
+        for lanelet_act, lanelet_des in zip(new_network.lanelets, self.lanelet_network.lanelets):
             np.testing.assert_array_almost_equal(lanelet_act.right_vertices, lanelet_des.right_vertices)
             np.testing.assert_array_almost_equal(lanelet_act.center_vertices, lanelet_des.center_vertices)
             np.testing.assert_array_almost_equal(lanelet_act.left_vertices, lanelet_des.left_vertices)
             self.assertEqual(lanelet_act.lanelet_id, lanelet_des.lanelet_id)
+        self.assertIsNone(new_network._rtree)
+
+        new_network_rtree = LaneletNetwork.create_from_lanelet_list([self.lanelet], init_rtree=True)
+        self.assertIsNotNone(new_network_rtree._rtree)
 
     def test_find_lanelet_by_id(self):
         actual_lanelet_found = self.lanelet_network.find_lanelet_by_id(5)
@@ -176,11 +257,15 @@ class TestLaneletNetwork(unittest.TestCase):
             self.lanelet_network.translate_rotate(0.0, np.pi / 2)
 
     def test_find_lanelet_by_position(self):
+        additional_lanelet_network = LaneletNetwork.create_from_lanelet_network(self.lanelet_network, init_rtree=True)
 
         observed_lanelet = self.lanelet_network.find_lanelet_by_position([np.array([1, 1])])
-
         self.assertEqual(observed_lanelet[0][0], self.lanelet.lanelet_id)
         self.assertEqual(len(self.lanelet_network.find_lanelet_by_position([np.array([-5, -5])])[0]), 0)
+
+        observed_lanelet = additional_lanelet_network.find_lanelet_by_position([np.array([1, 1])])
+        self.assertEqual(observed_lanelet[0][0], self.lanelet.lanelet_id)
+        self.assertEqual(len(additional_lanelet_network.find_lanelet_by_position([np.array([-5, -5])])[0]), 0)
 
     def test_filter_obstacles_in_network_positive_map_obstacles_to_lanelet_postive(self):
         initial_state = State(**{'position': np.array([0, 0]), 'orientation': 0.0})
@@ -265,6 +350,11 @@ class TestLaneletNetwork(unittest.TestCase):
         self.lanelet_network.remove_traffic_sign(self.traffic_sign.traffic_sign_id)  # delete existing traffic sign
         self.assertEqual(len(self.lanelet.traffic_signs), 0)
         self.assertEqual(len(self.lanelet.stop_line.traffic_sign_ref), 0)
+
+    def test_to_string(self):
+        self.assertMultiLineEqual(self.lanelet_network.__str__(),
+                                  '{:8d} lanelet\n'.format(5) +
+                                  '{:8d} lanelet\n'.format(6))
 
 
 if __name__ == '__main__':

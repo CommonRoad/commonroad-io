@@ -7,17 +7,23 @@ from xml.dom import minidom
 import numpy as np
 import xml.etree.ElementTree as et
 from enum import Enum, unique
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Dict
 from datetime import datetime
+import vehiclemodels.parameters_vehicle1 as p1
+import vehiclemodels.parameters_vehicle2 as p2
+import vehiclemodels.parameters_vehicle3 as p3
 
 from commonroad.common.validity import is_real_number, is_positive
+from commonroad.geometry.shape import Rectangle
+from commonroad.prediction.prediction import TrajectoryPrediction
+from commonroad.scenario.obstacle import DynamicObstacle, ObstacleType
 from commonroad.scenario.scenario import ScenarioID
 from commonroad.scenario.trajectory import State, Trajectory
 
 __author__ = "Murat Üste, Christina Miller, Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW CAR@TUM"]
-__version__ = "2021.1"
+__version__ = "2021.2"
 __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -51,6 +57,11 @@ class VehicleType(Enum):
     VW_VANAGON = 3
 
 
+vehicle_parameters = {VehicleType.FORD_ESCORT: p1.parameters_vehicle1(),
+                      VehicleType.BMW_320i: p2.parameters_vehicle2(),
+                      VehicleType.VW_VANAGON: p3.parameters_vehicle3()}
+
+
 @unique
 class VehicleModel(Enum):
     PM = 0
@@ -68,6 +79,7 @@ class CostFunction(Enum):
     SM2 = 4
     SM3 = 5
     MW1 = 6
+    TR1 = 7
 
 
 @unique
@@ -171,25 +183,30 @@ class StateType(Enum):
             state_fields_all = [StateFields[str(desired_vehicle_model.name)], StateFields.Input, StateFields.PMInput]
             state_fields_add = []
             for sf in StateFields:
-                if sf not in state_fields_all: state_fields_add.append(sf)
+                if sf not in state_fields_all:
+                    state_fields_add.append(sf)
 
             state_fields_all += state_fields_add
 
             for state_fields in state_fields_all:
-                if not len(attrs) >= len(state_fields.value): continue  # >=
-                if not all([sf in attrs for sf in state_fields.value]): continue
+                if not len(attrs) >= len(state_fields.value):
+                    continue  # >=
+                if not all([sf in attrs for sf in state_fields.value]):
+                    continue
                 return cls[state_fields.name]
         else:
             state_fields_all = StateFields
             for state_fields in state_fields_all:
-                if not len(attrs) == len(state_fields.value): continue  # ==
-                if not all([sf in attrs for sf in state_fields.value]): continue
+                if not len(attrs) == len(state_fields.value):
+                    continue  # ==
+                if not all([sf in attrs for sf in state_fields.value]):
+                    continue
                 return cls[state_fields.name]
 
         raise StateTypeException('Given state is not valid!')
 
     @classmethod
-    def check_state_type(cls, vehicle_model: VehicleModel) -> bool:
+    def check_state_type(cls, vehicle_model: VehicleModel) -> None:
         """
         Checks whether vehicle model can be supported by trajectory.
         :param vehicle_model: vehicle model enum
@@ -410,11 +427,20 @@ class Solution:
             Default=None.
         """
         self.scenario_id = scenario_id
+        self._planning_problem_solutions: Dict[int, PlanningProblemSolution] = {}
         self.planning_problem_solutions = planning_problem_solutions
         self.date = date
         self._computation_time = None
         self.computation_time = computation_time
         self.processor_name = processor_name
+
+    @property
+    def planning_problem_solutions(self) -> List[PlanningProblemSolution]:
+        return list(self._planning_problem_solutions.values())
+
+    @planning_problem_solutions.setter
+    def planning_problem_solutions(self, planning_problem_solutions: List[PlanningProblemSolution]):
+        self._planning_problem_solutions = {s.planning_problem_id: s for s in planning_problem_solutions}
 
     @property
     def benchmark_id(self) -> str:
@@ -514,6 +540,7 @@ class Solution:
     def computation_time(self) -> Union[None, float]:
         """
         Return the computation time [s] for the trajectory.
+
         :return:
         """
         return self._computation_time
@@ -527,6 +554,26 @@ class Solution:
             assert is_positive(computation_time), "<Solution> computation_time needs to be positive!"\
                 .format(type(computation_time))
         self._computation_time = computation_time
+
+    def create_dynamic_obstacle(self) -> Dict[int, DynamicObstacle]:
+        """
+        Creates dynamic obstacle(s) from solution(s) for every planning problem.
+        :return:
+        """
+        obs = {}
+        for pp_id, solution in self._planning_problem_solutions.items():
+            shape = Rectangle(length=vehicle_parameters[solution.vehicle_type].l,
+                              width=vehicle_parameters[solution.vehicle_type].w)
+            trajectory = Trajectory(initial_time_step=solution.trajectory.initial_time_step + 1,
+                                    state_list=solution.trajectory.state_list[1:])
+            prediction = TrajectoryPrediction(trajectory, shape=shape)
+            obs[pp_id] = DynamicObstacle(obstacle_id=pp_id,
+                                         obstacle_type=ObstacleType.CAR,
+                                         obstacle_shape=shape,
+                                         initial_state=solution.trajectory.state_list[0],
+                                         prediction=prediction)
+
+        return obs
 
 
 class CommonRoadSolutionReader:
@@ -569,7 +616,7 @@ class CommonRoadSolutionReader:
     @staticmethod
     def _parse_header(root_node: et.Element) -> Tuple[str, Union[None, datetime], Union[None, float], Union[None, str]]:
         """ Parses the header attributes for the given Solution XML root node. """
-        benchmark_id = root_node.get('benchmark_id', None)
+        benchmark_id = root_node.get('benchmark_id')
         if not benchmark_id:
             SolutionException("Solution xml does not have a benchmark id!")
 
@@ -685,8 +732,8 @@ class CommonRoadSolutionWriter:
         delete_from_cpu_name = ['(R)', '(TM)']
 
         def strip_substrings(string: str):
-            for del_str in delete_from_cpu_name:
-                string = string.replace(del_str, '')
+            for del_string in delete_from_cpu_name:
+                string = string.replace(del_string, '')
             return string
 
         if platform.system() == "Windows":
@@ -723,10 +770,13 @@ class CommonRoadSolutionWriter:
         """ Creates the root node of the Solution XML. """
         root_node = et.Element('CommonRoadSolution')
         root_node.set('benchmark_id', solution.benchmark_id)
-        if solution.date is not None: root_node.set('date', solution.date.strftime('%Y-%m-%d'))
-        if solution.computation_time is not None: root_node.set('computation_time', str(solution.computation_time))
+        if solution.computation_time is not None:
+            root_node.set('computation_time', str(solution.computation_time))
+        if solution.date is not None:
+            root_node.set('date', solution.date.strftime('%Y-%m-%d'))
         processor_name = cls._get_processor_name() if solution.processor_name == 'auto' else solution.processor_name
-        if processor_name is not None: root_node.set('processor_name', processor_name)
+        if processor_name is not None:
+            root_node.set('processor_name', processor_name)
         return root_node
 
     @classmethod
