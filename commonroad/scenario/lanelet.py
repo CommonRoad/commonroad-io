@@ -1375,8 +1375,9 @@ class LaneletNetwork(IDrawable):
                                                                 'type = {}'.format(type(shape))
 
         # output list
-        return [lanelet_id for lanelet_id, poly in self._polygons.items() if
-                poly.shapely_object.intersects(shape.shapely_object)]
+        return [lanelet_buffered_polygon.lanelet_id
+                for lanelet_buffered_polygon in self._buffered_strtee.query(shape.shapely_object) if
+                lanelet_buffered_polygon.intersects(shape.shapely_object)]
 
     def filter_obstacles_in_network(self, obstacles: List[Obstacle]) -> List[Obstacle]:
         """
