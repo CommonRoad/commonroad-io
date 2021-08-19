@@ -88,7 +88,7 @@ class Rectangle(Shape):
     def length(self, length: float):
         if not hasattr(self, '_length'):
             assert is_real_number(length), '<Rectangle/length>: argument "length" is not valid. length = {}'.format(
-                length)
+                    length)
             self._length = length
         else:
             warnings.warn('<Rectangle/length>: length of rectangle is immutable.')
@@ -187,18 +187,14 @@ class Rectangle(Shape):
             :return: true if the rectangle’s interior or boundary intersects with the given point, otherwise false
         """
         assert is_real_number_vector(point, 2), '<Rectangle/contains_point>: argument "point" is ' \
-                                                'not a vector of real numbers of length 2. point = {}' \
-            .format(point)
+                                                'not a vector of real numbers of length 2. point = {}'.format(point)
         return self._shapely_polygon.intersects(shapely.geometry.Point(point))
 
     def _compute_vertices(self) -> np.ndarray:
         """ Computes the vertices of the rectangle."""
-        vertices = np.array(
-            [[- 0.5 * self._length, - 0.5 * self._width],
-             [- 0.5 * self._length, + 0.5 * self._width],
-             [+ 0.5 * self._length, + 0.5 * self._width],
-             [+ 0.5 * self._length, - 0.5 * self._width],
-             [- 0.5 * self._length, - 0.5 * self._width]])
+        vertices = np.array([[- 0.5 * self._length, - 0.5 * self._width], [- 0.5 * self._length, + 0.5 * self._width],
+                             [+ 0.5 * self._length, + 0.5 * self._width], [+ 0.5 * self._length, - 0.5 * self._width],
+                             [- 0.5 * self._length, - 0.5 * self._width]])
         return rotate_translate(vertices, self._center, self._orientation)
 
     def __str__(self):
@@ -294,13 +290,11 @@ class Circle(Shape):
             :param point: 2D point [x, y]
             :return: true if the circles’s interior or boundary intersects with the given point, otherwise false
         """
-        assert is_real_number_vector(point,
-                                     2), '<Circle/contains_point>: argument ' \
-                                         '"point" is ' \
-                                         'not a vector of real numbers of ' \
-                                         'length 2. point = {}'.format(point)
-        return np.greater_equal(self._radius,
-                                np.linalg.norm(point - self._center))
+        assert is_real_number_vector(point, 2), '<Circle/contains_point>: argument ' \
+                                                '"point" is ' \
+                                                'not a vector of real numbers of ' \
+                                                'length 2. point = {}'.format(point)
+        return np.greater_equal(self._radius, np.linalg.norm(point - self._center))
 
     def __str__(self):
         output = "Circle: \n"
@@ -463,11 +457,10 @@ class Polygon(Shape):
             :return: true if the polygons’s interior or boundary intersects
             with the given point, otherwise false
         """
-        assert is_real_number_vector(point,
-                                     2), '<Polygon/contains_point>: argument ' \
-                                         '"point" is ' \
-                                         'not a vector of real numbers of ' \
-                                         'length 2. point = {}'.format(point)
+        assert is_real_number_vector(point, 2), '<Polygon/contains_point>: argument ' \
+                                                '"point" is ' \
+                                                'not a vector of real numbers of ' \
+                                                'length 2. point = {}'.format(point)
 
         def in_axis_aligned_bounding_box(point: np.ndarray) -> bool:
             """
@@ -506,8 +499,10 @@ class ShapeGroup(Shape):
     @shapes.setter
     def shapes(self, shapes: List[Shape]):
         if not hasattr(self, '_shapes'):
-            assert isinstance(shapes, list) and all(isinstance(elem, Shape) for elem in shapes), \
-                '<ShapeGroup/shapes>: argument "shapes" is not a valid list of shapes. shapes = {}'.format(shapes)
+            assert isinstance(shapes, list) and all(isinstance(elem, Shape) for elem in
+                                                    shapes), '<ShapeGroup/shapes>: argument "shapes" is not a valid ' \
+                                                             'list of shapes. shapes = {}'.format(
+                shapes)
             self._shapes = shapes
         else:
             warnings.warn('<ShapeGroup/shapes>: shapes of shape group are immutable.')
