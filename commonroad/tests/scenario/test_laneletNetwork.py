@@ -266,7 +266,6 @@ class TestLaneletNetwork(unittest.TestCase):
         observed_lanelets = self.lanelet_network.find_lanelet_by_shape(rectangle3)
         self.assertEqual([self.lanelet_2.lanelet_id, self.lanelet.lanelet_id], observed_lanelets)
 
-
     def test_filter_obstacles_in_network_positive_map_obstacles_to_lanelet_postive(self):
         initial_state = State(**{'position': np.array([0, 0]), 'orientation': 0.0})
         rect_shape = Rectangle(2, 2)
