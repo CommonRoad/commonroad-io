@@ -1,5 +1,4 @@
 import unittest
-from copy import deepcopy
 
 from commonroad import SCENARIO_VERSION
 from commonroad.common.util import Interval

@@ -254,6 +254,19 @@ class TestLaneletNetwork(unittest.TestCase):
         self.assertEqual(observed_lanelet[0][0], self.lanelet.lanelet_id)
         self.assertEqual(len(additional_lanelet_network.find_lanelet_by_position([np.array([-5, -5])])[0]), 0)
 
+    def test_find_lanelet_by_shape(self):
+        rectangle1 = Rectangle(2, 2)
+        rectangle2 = Rectangle(2, 2, np.array([100.0, 100.0]))
+        rectangle3 = Rectangle(2, 2, np.array([9.0, 0.0]))
+
+        observed_lanelet = self.lanelet_network.find_lanelet_by_shape(rectangle1)
+        self.assertEqual(observed_lanelet[0], self.lanelet.lanelet_id)
+        observed_lanelet = self.lanelet_network.find_lanelet_by_shape(rectangle2)
+        self.assertEqual(observed_lanelet, [])
+        observed_lanelets = self.lanelet_network.find_lanelet_by_shape(rectangle3)
+        self.assertEqual([self.lanelet_2.lanelet_id, self.lanelet.lanelet_id], observed_lanelets)
+
+
     def test_filter_obstacles_in_network_positive_map_obstacles_to_lanelet_postive(self):
         initial_state = State(**{'position': np.array([0, 0]), 'orientation': 0.0})
         rect_shape = Rectangle(2, 2)

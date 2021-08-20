@@ -340,43 +340,6 @@ class LaneletPolygon(shapely.geometry.Polygon):
         raise NotImplementedError("Component rings have coordinate sequences, but the polygon does not")
 
 
-class LaneletMultiPolygon(shapely.geometry.MultiPolygon):
-
-    def __init__(self, lanelet_id, polygons=None, context_type='polygons'):
-        super(LaneletMultiPolygon, self).__init__(polygons, context_type)
-        self.lanelet_id = lanelet_id
-
-    def __deepcopy__(self, memo):
-        cls = self.__class__
-        result = cls.__new__(cls)
-        memo[id(self)] = result
-        for k, v in self.__dict__.items():
-            setattr(result, k, deepcopy(v, memo))
-        return result
-
-    @property
-    def ctypes(self):
-        raise NotImplementedError("The polygon does not have coordinate sequences")
-
-    @property
-    def __array_interface__(self):
-        raise NotImplementedError("A polygon does not itself provide the array interface. Its rings do.")
-
-    def _get_coords(self):
-        raise NotImplementedError("Component rings have coordinate sequences, but the polygon does not")
-
-    def _set_coords(self, ob):
-        raise NotImplementedError("Component rings have coordinate sequences, but the polygon does not")
-
-    @property
-    def coords(self):
-        raise NotImplementedError("Component rings have coordinate sequences, but the polygon does not")
-
-    @property
-    def xy(self):
-        raise NotImplementedError("Component rings have coordinate sequences, but the polygon does not")
-
-
 class Polygon(Shape):
     """ The class Polygon can be used to model occupied regions or obstacles. A polygon is defined by an array of
     ordered points (clockwise or counterclockwise)."""
@@ -549,11 +512,8 @@ class ShapeGroup(Shape):
             :param point: 2D point [x, y]
             :return: true if the interior or boundary of any shape intersects with the given point, otherwise false
         """
-        assert is_real_number_vector(point, 2), '<ShapeGroup/contains_point>: ' \
-                                                'argument "point" is ' \
-                                                'not a vector of real numbers' \
-                                                ' of length 2. point = {' \
-                                                '}'.format(point)
+        assert is_real_number_vector(point, 2), '<ShapeGroup/contains_point>: argument "point" is not a vector ' \
+                                                'of real numbers of length 2. point = {}'.format(point)
         for s in self._shapes:
             if s.contains_point(point):
                 return True

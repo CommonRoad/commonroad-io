@@ -239,7 +239,7 @@ class Lanelet:
         self._distance = None
         self._inner_distance = None
         # create empty polygon
-        self._polygon = None
+        self._polygon = Polygon(np.concatenate((self.right_vertices, np.flip(self.left_vertices, 0))))
 
         self._dynamic_obstacles_on_lanelet = {}
         self._static_obstacles_on_lanelet = set()
@@ -322,9 +322,8 @@ class Lanelet:
     def left_vertices(self, polyline: np.ndarray):
         if self._left_vertices is None:
             self._left_vertices = polyline
-            assert is_valid_polyline(
-                    polyline), '<Lanelet/left_vertices>: The provided polyline ' \
-                               'is not valid! id = {} polyline = {}'.format(self._lanelet_id, polyline)
+            assert is_valid_polyline(polyline), '<Lanelet/left_vertices>: The provided polyline ' \
+                                                'is not valid! id = {} polyline = {}'.format(self._lanelet_id, polyline)
         else:
             warnings.warn('<Lanelet/left_vertices>: left_vertices of lanelet are immutable!')
 
@@ -335,9 +334,9 @@ class Lanelet:
     @right_vertices.setter
     def right_vertices(self, polyline: np.ndarray):
         if self._right_vertices is None:
-            assert is_valid_polyline(
-                    polyline), '<Lanelet/right_vertices>: The provided polyline ' \
-                               'is not valid! id = {}, polyline = {}'.format(self._lanelet_id, polyline)
+            assert is_valid_polyline(polyline), '<Lanelet/right_vertices>: The provided polyline ' \
+                                                'is not valid! id = {}, polyline = {}'.format(self._lanelet_id,
+                                                                                              polyline)
             self._right_vertices = polyline
         else:
             warnings.warn('<Lanelet/right_vertices>: right_vertices of lanelet are immutable!')
@@ -585,6 +584,10 @@ class Lanelet:
         else:
             warnings.warn('<Lanelet/traffic_lights>: traffic_lights of lanelet is immutable!')
 
+    @property
+    def polygon(self) -> Polygon:
+        return self._polygon
+
     def add_predecessor(self, lanelet: int):
         """
         Adds the ID of a predecessor lanelet to the list of predecessors.
@@ -652,9 +655,7 @@ class Lanelet:
             self._stop_line.translate_rotate(translation, angle)
 
         # recreate polygon in case it existed
-        if self._polygon is not None:
-            self._polygon = None
-            self._polygon = self.convert_to_polygon()
+        self._polygon = Polygon(np.concatenate((self.right_vertices, np.flip(self.left_vertices, 0))))
 
     def interpolate_position(self, distance: float) -> tuple:
         """
@@ -683,8 +684,7 @@ class Lanelet:
 
         :return: The polygon of the lanelet
         """
-        if self._polygon is None:
-            self._polygon = Polygon(np.concatenate((self.right_vertices, np.flip(self.left_vertices, 0))))
+        warnings.warn("Use the lanelet property <polygon> instead", DeprecationWarning)
         return self._polygon
 
     def contains_points(self, point_list: np.ndarray) -> List[bool]:
@@ -692,7 +692,7 @@ class Lanelet:
         Checks if a list of points is enclosed in the lanelet
 
         :param point_list: The list of points in the form [[px1,py1],[px2,py2,],...]
-        :return: List of bools with True indicating point is enclosed and False otherwise
+        :return: List of Boolean values with True indicating point is enclosed and False otherwise
         """
         assert isinstance(point_list,
                           ValidTypes.ARRAY), '<Lanelet/contains_points>: provided list of points is not a list! type ' \
@@ -705,9 +705,8 @@ class Lanelet:
         res = list()
 
         # get polygon shape of lanelet
-        poly = self.convert_to_polygon()
         for p in point_list:
-            res.append(poly.contains_point(p))
+            res.append(self._polygon.contains_point(p))
 
         return res
 
@@ -726,7 +725,7 @@ class Lanelet:
 
         # output list
         res = list()
-        lanelet_shapely_obj = self.convert_to_polygon().shapely_object
+        lanelet_shapely_obj = self._polygon.shapely_object
         # look at each obstacle
         for o in obstacles:
             o_shape = o.occupancy_at_time(time_step).shape
@@ -795,13 +794,12 @@ class Lanelet:
         assert isinstance(lanelet1, Lanelet), '<Lanelet/merge_lanelets>: lanelet1 is not a valid lanelet object!'
         assert isinstance(lanelet2, Lanelet), '<Lanelet/merge_lanelets>: lanelet1 is not a valid lanelet object!'
         # check connection via successor / predecessor
-        assert lanelet1.lanelet_id in lanelet2.successor \
-               or lanelet2.lanelet_id in lanelet1.successor \
-               or lanelet1.lanelet_id in lanelet2.predecessor \
-               or lanelet2.lanelet_id in lanelet1.predecessor, '<Lanelet/merge_lanelets>: cannot merge two not ' \
-                                                               'connected lanelets! successors of l1 = {}, ' \
-                                                               'successors of l2 = {}'.format(lanelet1.successor,
-                                                                                              lanelet2.successor)
+        assert lanelet1.lanelet_id in lanelet2.successor or \
+               lanelet2.lanelet_id in lanelet1.successor or \
+               lanelet1.lanelet_id in lanelet2.predecessor or \
+               lanelet2.lanelet_id in lanelet1.predecessor, '<Lanelet/merge_lanelets>: cannot merge two not ' \
+                                                            'connected lanelets! successors of l1 = {}, successors ' \
+                                                            'of l2 = {}'.format(lanelet1.successor, lanelet2.successor)
 
         # check pred and successor
         if lanelet1.lanelet_id in lanelet2.predecessor or lanelet2.lanelet_id in lanelet1.successor:
@@ -837,10 +835,9 @@ class Lanelet:
         return new_lanelet
 
     @classmethod
-    def all_lanelets_by_merging_successors_from_lanelet(cls, lanelet: 'Lanelet', network: 'LaneletNetwork',
-                                                        max_length: float = 150.0, lanelet_type: LaneletType = None) \
-            -> \
-            Tuple[List['Lanelet'], List[List[int]]]:
+    def all_lanelets_by_merging_successors_from_lanelet(cls, lanelet: 'Lanelet',
+                                                        network: 'LaneletNetwork', max_length: float = 150.0) \
+            -> Tuple[List['Lanelet'], List[List[int]]]:
         """
         Computes all reachable lanelets starting from a provided lanelet
         and merges them to a single lanelet for each route.
@@ -848,7 +845,6 @@ class Lanelet:
         :param lanelet: The lanelet to start from
         :param network: The network which contains all lanelets
         :param max_length: maximal length of merged lanelets can be provided
-        :param lanelet_type: allowed type of lanelets which should be merged
         :return: List of merged lanelets, Lists of lanelet ids of which each merged lanelet consists
         """
         assert isinstance(lanelet, Lanelet), '<Lanelet>: provided lanelet is not a valid Lanelet!'
@@ -892,18 +888,18 @@ class Lanelet:
         while paths:
             paths_next = []
             lengths_next = []
-            for p, l in zip(paths, lengths):
+            for p, le in zip(paths, lengths):
                 successors = lanelet_network.find_lanelet_by_id(p[-1]).successor
                 if not successors:
                     paths_final.append(p)
                 else:
                     for s in successors:
-                        if s in p or s == self.lanelet_id or l >= max_length:
+                        if s in p or s == self.lanelet_id or le >= max_length:
                             # prevent loops and consider length of first successor
                             paths_final.append(p)
                             continue
 
-                        l_next = l + lanelet_network.find_lanelet_by_id(s).distance[-1]
+                        l_next = le + lanelet_network.find_lanelet_by_id(s).distance[-1]
                         if l_next < max_length:
                             paths_next.append(p + [s])
                             lengths_next.append(l_next)
@@ -976,7 +972,6 @@ class LaneletNetwork(IDrawable):
         Constructor for LaneletNetwork
         """
         self._lanelets: Dict[int, Lanelet] = {}
-        self._polygons: Dict[int, Polygon] = {}
         self._buffered_polygons: Dict[int, LaneletPolygon] = {}
         self._buffered_strtee = None
         self._intersections: Dict[int, Intersection] = {}
@@ -1001,7 +996,7 @@ class LaneletNetwork(IDrawable):
 
     @property
     def lanelet_polygons(self) -> List[Polygon]:
-        return list(self._polygons.values())
+        return [la.polygon for la in self.lanelets]
 
     @lanelets.setter
     def lanelets(self, _):
@@ -1046,7 +1041,8 @@ class LaneletNetwork(IDrawable):
 
         # add each lanelet to the lanelet network
         for la in lanelets:
-            lanelet_network.add_lanelet(copy.deepcopy(la))
+            lanelet_network.add_lanelet(copy.deepcopy(la), rtree=False)
+        lanelet_network._create_buffered_strtree()
 
         if cleanup_ids:
             lanelet_network.cleanup_lanelet_references()
@@ -1057,7 +1053,7 @@ class LaneletNetwork(IDrawable):
 
     @classmethod
     def create_from_lanelet_network(cls, lanelet_network: 'LaneletNetwork', shape_input=None,
-                                    exclude_lanelet_types=set()):
+                                    exclude_lanelet_types=None):
         """
         Creates a lanelet network from a given lanelet network (copy); adding a shape reduces the lanelets to those
         that intersect the shape provided and specifying a lanelet_type set excludes the lanelet types in the new
@@ -1068,6 +1064,8 @@ class LaneletNetwork(IDrawable):
         :param exclude_lanelet_types: Removes all lanelets with these lanelet_types
         :return: The new lanelet network
         """
+        if exclude_lanelet_types is None:
+            exclude_lanelet_types = set()
         new_lanelet_network = cls()
         traffic_sign_ids = set()
         traffic_light_ids = set()
@@ -1076,7 +1074,7 @@ class LaneletNetwork(IDrawable):
         if shape_input is not None:
             for la in lanelet_network.lanelets:
                 if la.lanelet_type.intersection(exclude_lanelet_types) == set():
-                    lanelet_polygon = la.convert_to_polygon().shapely_object
+                    lanelet_polygon = la.polygon.shapely_object
                     if shape_input.shapely_object.intersects(lanelet_polygon):
                         for sign_id in la.traffic_signs:
                             traffic_sign_ids.add(sign_id)
@@ -1100,7 +1098,8 @@ class LaneletNetwork(IDrawable):
             new_lanelet_network.add_traffic_light(copy.deepcopy(lanelet_network.find_traffic_light_by_id(light_id)),
                                                   set())
         for la in lanelets:
-            new_lanelet_network.add_lanelet(copy.deepcopy(la))
+            new_lanelet_network.add_lanelet(copy.deepcopy(la), rtree=False)
+        lanelet_network._create_buffered_strtree()
 
         return new_lanelet_network
 
@@ -1134,7 +1133,6 @@ class LaneletNetwork(IDrawable):
         """
         if lanelet_id in self._lanelets.keys():
             del self._lanelets[lanelet_id]
-            del self._polygons[lanelet_id]
             del self._buffered_polygons[lanelet_id]
             self.cleanup_lanelet_references()
 
@@ -1261,12 +1259,13 @@ class LaneletNetwork(IDrawable):
 
         return self._intersections[intersection_id] if intersection_id in self._intersections else None
 
-    def add_lanelet(self, lanelet: Lanelet, eps: float = 1e-15):
+    def add_lanelet(self, lanelet: Lanelet, eps: float = 1e-15, rtree: bool = True):
         """
         Adds a lanelet to the LaneletNetwork
 
         :param lanelet: The lanelet to add
         :param eps: The size increase of the buffered polygons
+        :param rtree: Boolean indicating whether rtree should be initialized
         :return: True if the lanelet has successfully been added to the network, false otherwise
         """
 
@@ -1279,9 +1278,9 @@ class LaneletNetwork(IDrawable):
             return False
         else:
             self._lanelets[lanelet.lanelet_id] = lanelet
-            self._polygons[lanelet.lanelet_id] = lanelet.convert_to_polygon()
-            self._buffered_polygons[lanelet.lanelet_id] = lanelet.convert_to_polygon().shapely_object.buffer(eps)
-            self._create_buffered_strtree()
+            self._buffered_polygons[lanelet.lanelet_id] = lanelet.polygon.shapely_object.buffer(eps)
+            if rtree:
+                self._create_buffered_strtree()
             return True
 
     def add_traffic_sign(self, traffic_sign: TrafficSign, lanelet_ids: Set[int]):
@@ -1401,17 +1400,14 @@ class LaneletNetwork(IDrawable):
         :param point_list: The list of positions to check
         :return: A list of lanelet ids. If the position could not be matched to a lanelet, an empty list is returned
         """
-        assert isinstance(point_list, ValidTypes.LISTS), \
-            '<Lanelet/contains_points>: provided list of points is not a list! type = {}'.format(type(point_list))
+        assert isinstance(point_list,
+                          ValidTypes.LISTS), '<Lanelet/contains_points>: provided list of points is not a list! type ' \
+                                             '= {}'.format(
+            type(point_list))
 
-        # create point list
-        point_list2 = [ShapelyPoint(point) for point in point_list]
-
-        ret_list = [
+        return [
             [lanelet_buffered_polygon.lanelet_id for lanelet_buffered_polygon in self._buffered_strtee.query(point) if
-             lanelet_buffered_polygon.contains(point)] for point in point_list2]
-
-        return ret_list
+             lanelet_buffered_polygon.contains(point)] for point in [ShapelyPoint(point) for point in point_list]]
 
     def find_lanelet_by_shape(self, shape: Shape) -> List[int]:
         """
@@ -1424,9 +1420,8 @@ class LaneletNetwork(IDrawable):
                                                                 'provided shape is not a shape! ' \
                                                                 'type = {}'.format(type(shape))
 
-        # output list
-        return [lanelet_buffered_polygon.lanelet_id
-                for lanelet_buffered_polygon in self._buffered_strtee.query(shape.shapely_object) if
+        return [lanelet_buffered_polygon.lanelet_id for lanelet_buffered_polygon in
+                self._buffered_strtee.query(shape.shapely_object) if
                 lanelet_buffered_polygon.intersects(shape.shapely_object)]
 
     def filter_obstacles_in_network(self, obstacles: List[Obstacle]) -> List[Obstacle]:
