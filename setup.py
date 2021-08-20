@@ -33,7 +33,6 @@ setup(
         'Pillow>=7.0.0',
         'iso3166>=1.0.1',
         'commonroad-vehicle-models>=2.0.0',
-        'rtree>=0.8.3',
     ],
     extras_require={
         'doc': ['sphinx>=1.3.6',
