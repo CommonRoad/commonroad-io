@@ -9,6 +9,7 @@ from commonroad.geometry.shape import Shape, \
     Rectangle, \
     Circle, \
     Polygon, \
+    ShapeGroup, \
     occupancy_shape_from_state
 from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.trajectory import State
@@ -190,7 +191,17 @@ class Obstacle(IDrawable):
         assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of wrong type. ' \
                                                  'Expected types: %s. Got type: %s.' % (State, type(initial_state))
         self._initial_state = initial_state
-        self._initial_occupancy_shape = occupancy_shape_from_state(self._obstacle_shape, initial_state)
+        if self.obstacle_role == ObstacleRole.DYNAMIC and isinstance(self.obstacle_shape, ShapeGroup):
+            shapes = self.obstacle_shape.shapes
+            shape_0 = occupancy_shape_from_state(shapes[0], initial_state)
+            orient_1 = initial_state.orientation + initial_state.hitch
+            pos_1 = (initial_state.position - (shapes[0].length / 2 + 0.5) * np.array(
+                    [np.cos(initial_state.orientation), np.sin(initial_state.orientation)]) - shapes[1].length / 2 *
+                     np.array([np.cos(orient_1), np.sin(orient_1)]))
+            shape_1 = shapes[1].rotate_translate_local(pos_1, orient_1)
+            self._initial_occupancy_shape = ShapeGroup([shape_0, shape_1])
+        else:
+            self._initial_occupancy_shape = occupancy_shape_from_state(self._obstacle_shape, initial_state)
 
     @property
     def initial_center_lanelet_ids(self) -> Union[None, Set[int]]:

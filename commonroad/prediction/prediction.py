@@ -5,7 +5,7 @@ import numpy as np
 
 from commonroad.common.util import Interval
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector
-from commonroad.geometry.shape import Shape, \
+from commonroad.geometry.shape import Shape, ShapeGroup, \
     occupancy_shape_from_state
 from commonroad.scenario.trajectory import Trajectory
 
@@ -271,9 +271,26 @@ class TrajectoryPrediction(Prediction):
     def _create_occupancy_set(self):
         """ Computes the occupancy set over time given the predicted trajectory and shape of the object."""
         occupancy_set = list()
-        for k, state in enumerate(self._trajectory.state_list):
-            if not hasattr(state, "orientation"):
-                state.orientation = math.atan2(state.velocity_y, state.velocity)
-            occupied_region = occupancy_shape_from_state(self._shape, state)
-            occupancy_set.append(Occupancy(state.time_step, occupied_region))
+        if not isinstance(self._shape, ShapeGroup):
+            for k, state in enumerate(self._trajectory.state_list):
+                if not hasattr(state, "orientation"):
+                    state.orientation = math.atan2(state.velocity_y, state.velocity)
+                occupied_region = occupancy_shape_from_state(self._shape, state)
+                occupancy_set.append(Occupancy(state.time_step, occupied_region))
+        else:
+            for k, state in enumerate(self._trajectory.state_list):
+                if not hasattr(state, "orientation"):
+                    state.orientation = math.atan2(state.velocity_y, state.velocity)
+                if not hasattr(state, "hitch"):
+                    occupied_region = occupancy_shape_from_state(self._shape, state)
+                    occupancy_set.append(Occupancy(state.time_step, occupied_region))
+                else:
+                    shapes = self._shape.shapes
+                    shape_0 = shapes[0].rotate_translate_local(state.position, state.orientation)
+
+                    orient_1 = state.orientation + state.hitch
+                    pos_1 = (state.position - (shapes[0].length/2 + 0.5) * np.array([math.cos(state.orientation), math.sin(state.orientation)]) - shapes[1].length/2*np.array([math.cos(orient_1), math.sin(orient_1)]))
+                    shape_1 = shapes[1].rotate_translate_local(pos_1, orient_1)
+                    occupied_region = ShapeGroup([shape_0, shape_1])
+                    occupancy_set.append(Occupancy(state.time_step, occupied_region))
         return occupancy_set
