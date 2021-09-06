@@ -1155,7 +1155,7 @@ class DynamicObstacleFactory(ObstacleFactory):
             else:
                 shape_lanelet_assignment = None
                 center_lanelet_assignment = None
-            prediction = TrajectoryPrediction(trajectory, shape, center_lanelet_assignment, shape_lanelet_assignment)
+            prediction = TrajectoryPrediction(trajectory, shape, center_lanelet_assignment, shape_lanelet_assignment, initial_state)
         elif xml_node.find('occupancySet') is not None:
             prediction = SetBasedPredictionFactory.create_from_xml_node(xml_node.find('occupancySet'))
         else:
@@ -1362,6 +1362,9 @@ class StateFactory:
         if xml_node.find('hitch') is not None:
             hitch = read_value_exact_or_interval(xml_node.find('hitch'))
             state_args['hitch'] = hitch
+        if xml_node.find('trailer_dist') is not None:
+            trailer_dist = read_value_exact_or_interval(xml_node.find('trailer_dist'))
+            state_args['trailer_dist'] = trailer_dist
         return State(**state_args)
 
     @classmethod

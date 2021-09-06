@@ -10,6 +10,7 @@ from commonroad.geometry.shape import Shape, \
     Circle, \
     Polygon, \
     ShapeGroup, \
+    Truck, \
     occupancy_shape_from_state
 from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.trajectory import State
@@ -191,11 +192,12 @@ class Obstacle(IDrawable):
         assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of wrong type. ' \
                                                  'Expected types: %s. Got type: %s.' % (State, type(initial_state))
         self._initial_state = initial_state
-        if self.obstacle_role == ObstacleRole.DYNAMIC and isinstance(self.obstacle_shape, ShapeGroup):
+        # TODO: prettify this
+        if self.obstacle_role == ObstacleRole.DYNAMIC and isinstance(self.obstacle_shape, Truck):
             shapes = self.obstacle_shape.shapes
             shape_0 = occupancy_shape_from_state(shapes[0], initial_state)
             orient_1 = initial_state.orientation + initial_state.hitch
-            pos_1 = (initial_state.position - (shapes[0].length / 2 + 0.5) * np.array(
+            pos_1 = (initial_state.position - (shapes[0].length / 2 + initial_state.trailer_dist) * np.array(
                     [np.cos(initial_state.orientation), np.sin(initial_state.orientation)]) - shapes[
                          1].length / 2 * np.array([np.cos(orient_1), np.sin(orient_1)]))
             shape_1 = shapes[1].rotate_translate_local(pos_1, orient_1)

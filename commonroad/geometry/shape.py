@@ -528,7 +528,6 @@ class Truck(ShapeGroup):
         self.trailer_length = trailer_length
         self.orientation = orientation
         self.hitch = hitch
-        self.trailer_dist = 0.5
 
         head = Rectangle(self.length, self.width, self.center, self.orientation)
         trailer = Rectangle(self.trailer_length, self.width, self.center, self.hitch + self.orientation)

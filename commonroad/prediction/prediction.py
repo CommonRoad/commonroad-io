@@ -7,7 +7,7 @@ from commonroad.common.util import Interval
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector
 from commonroad.geometry.shape import Shape, ShapeGroup, \
     occupancy_shape_from_state
-from commonroad.scenario.trajectory import Trajectory
+from commonroad.scenario.trajectory import Trajectory, State
 
 __author__ = "Stefanie Manzinger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -191,7 +191,8 @@ class TrajectoryPrediction(Prediction):
     state sequence over time. The occupancy of an obstacle along a trajectory is uniquely defined given its shape."""
     def __init__(self, trajectory: Trajectory, shape: Shape,
                  center_lanelet_assignment: Union[None, Dict[int, Set[int]]] = None,
-                 shape_lanelet_assignment: Union[None, Dict[int, Set[int]]] = None):
+                 shape_lanelet_assignment: Union[None, Dict[int, Set[int]]] = None,
+                 initial_state: State = None):
         """
         :param trajectory: predicted trajectory of the obstacle
         :param shape: shape of the obstacle
@@ -200,6 +201,7 @@ class TrajectoryPrediction(Prediction):
         self.trajectory: Trajectory = trajectory
         self.shape_lanelet_assignment: Dict[int, Set[int]] = shape_lanelet_assignment
         self.center_lanelet_assignment: Dict[int, Set[int]] = center_lanelet_assignment
+        self.initial_state = initial_state
         Prediction.__init__(self, self._trajectory.initial_time_step, self._create_occupancy_set())
 
     @property
@@ -279,6 +281,11 @@ class TrajectoryPrediction(Prediction):
                 occupancy_set.append(Occupancy(state.time_step, occupied_region))
             return occupancy_set
 
+        if self.initial_state and hasattr(self.initial_state, "trailer_dist"):
+            trailer_dist = self.initial_state.trailer_dist
+        else:
+            trailer_dist = 0.5
+
         for k, state in enumerate(self._trajectory.state_list):
             if not hasattr(state, "orientation"):
                 state.orientation = math.atan2(state.velocity_y, state.velocity)
@@ -290,7 +297,7 @@ class TrajectoryPrediction(Prediction):
                 shape_0 = shapes[0].rotate_translate_local(state.position, state.orientation)
 
                 orient_1 = state.orientation + state.hitch
-                pos_1 = state.position - (shapes[0].length / 2 + 0.5) * np.array(
+                pos_1 = state.position - (shapes[0].length / 2 + trailer_dist) * np.array(
                         [math.cos(state.orientation), math.sin(state.orientation)]) - shapes[1].length / 2 * np.array(
                         [math.cos(orient_1), math.sin(orient_1)])
                 shape_1 = shapes[1].rotate_translate_local(pos_1, orient_1)

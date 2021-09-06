@@ -4883,6 +4883,9 @@
       <acceleration>
         <exact>0.0</exact>
       </acceleration>
+      <trailer_dist>
+        <exact>2.0</exact>
+      </trailer_dist>
     </initialState>
     <trajectory>
   <state>
