@@ -71,6 +71,38 @@ class TestValidity(unittest.TestCase):
         self.assertFalse(is_real_number(list()))
         self.assertFalse(is_real_number(object()))
 
+    def test_integer_number(self):
+        """
+        This test case tests the function is_integer_number
+        :return:
+        """
+
+        # test cases for true
+        self.assertTrue(is_integer_number(1))
+        self.assertTrue(is_integer_number(np.int16(8)))
+        self.assertTrue(is_integer_number(-1))
+        self.assertTrue(is_integer_number(-12))
+        self.assertTrue(is_integer_number(47))
+        self.assertTrue(is_integer_number(123))
+        self.assertTrue(is_integer_number(np.int16(12)))
+        self.assertTrue(is_integer_number(np.int16(-39)))
+        self.assertTrue(is_integer_number(np.int32(445)))
+        self.assertTrue(is_integer_number(np.int32(-385)))
+
+        # test cases for false
+        self.assertFalse(is_integer_number(1.))
+        self.assertFalse(is_integer_number(12.3))
+        self.assertFalse(is_integer_number(-123.1))
+        self.assertFalse(is_integer_number(-10000.1))
+        self.assertFalse(is_integer_number(44.78234234))
+        self.assertFalse(is_integer_number(123.))
+        self.assertFalse(is_integer_number(np.float64(12)))
+        self.assertFalse(is_integer_number(np.float64(123)))
+        self.assertFalse(is_integer_number('a'))
+        self.assertFalse(is_integer_number(None))
+        self.assertFalse(is_integer_number(list()))
+        self.assertFalse(is_integer_number(object()))
+
     def test_natural_number(self):
         """
         This test case tests the function is_natural_number
@@ -78,21 +110,34 @@ class TestValidity(unittest.TestCase):
         """
 
         # test cases for true
+        self.assertTrue(is_natural_number(0))
+        self.assertTrue(is_natural_number(-0))
         self.assertTrue(is_natural_number(1))
-        self.assertTrue(is_natural_number(-12))
+        self.assertTrue(is_natural_number(np.int16(8)))
         self.assertTrue(is_natural_number(47))
         self.assertTrue(is_natural_number(123))
         self.assertTrue(is_natural_number(np.int16(12)))
         self.assertTrue(is_natural_number(np.int32(445)))
 
         # test cases for false
+        self.assertFalse(is_natural_number(0.))
+        self.assertFalse(is_natural_number(-0.))
+        self.assertFalse(is_natural_number(-1))
+        self.assertFalse(is_natural_number(-12))
+        self.assertFalse(is_natural_number(np.int16(-39)))
+        self.assertFalse(is_natural_number(np.int32(-385)))
+        self.assertFalse(is_natural_number(1.))
+        self.assertFalse(is_natural_number(12.3))
+        self.assertFalse(is_natural_number(-123.1))
+        self.assertFalse(is_natural_number(-10000.1))
+        self.assertFalse(is_natural_number(44.78234234))
+        self.assertFalse(is_natural_number(123.))
+        self.assertFalse(is_natural_number(np.float64(12)))
+        self.assertFalse(is_natural_number(np.float64(123)))
         self.assertFalse(is_natural_number('a'))
         self.assertFalse(is_natural_number(None))
         self.assertFalse(is_natural_number(list()))
         self.assertFalse(is_natural_number(object()))
-        self.assertFalse(is_natural_number(1.))
-        self.assertFalse(is_natural_number(12.3))
-        self.assertFalse(is_natural_number(np.float64(123)))
 
     def test_positive(self):
         """
@@ -202,6 +247,46 @@ class TestValidity(unittest.TestCase):
         self.assertFalse(is_real_number_vector(np.arange(1, 4), 2))
         self.assertFalse(is_real_number_vector(np.zeros(12), 11))
 
+    def test_integer_number_vector(self):
+        """
+        This test case tests the function is_integer_number_vector
+        :return:
+        """
+
+        # test cases for true
+        self.assertTrue(is_integer_number_vector(np.array([1])))
+        self.assertTrue(is_integer_number_vector(np.array([1, -2, 3, 4, 6])))
+        self.assertTrue(is_integer_number_vector(np.array([-1, 2, 3, 7, 120])))
+        self.assertTrue(is_integer_number_vector(np.arange(1, 4)))
+        self.assertTrue(is_integer_number_vector(np.zeros(12, dtype=int)))
+
+        # test cases for false
+        self.assertFalse(is_integer_number_vector('a'))
+        self.assertFalse(is_integer_number_vector(None))
+        self.assertFalse(is_integer_number_vector(list()))
+        self.assertFalse(is_integer_number_vector(object()))
+        self.assertFalse(is_integer_number_vector([1, 'a']))
+        self.assertFalse(is_integer_number_vector(['a']))
+        self.assertFalse(is_integer_number_vector([1, None]))
+        self.assertFalse(is_integer_number_vector([None, 123]))
+        self.assertFalse(is_integer_number_vector(np.array([-1, 2, 3, 7.0238420358, 120])))
+        self.assertFalse(is_integer_number_vector(np.arange(1, 4, 0.25)))
+        self.assertFalse(is_integer_number_vector(np.zeros(12)))
+
+        # test cases for true using the optional parameter LENGTH
+        self.assertTrue(is_integer_number_vector(np.array([1]), 1))
+        self.assertTrue(is_integer_number_vector(np.array([1, -2, 3, 4, 6]), 5))
+        self.assertTrue(is_integer_number_vector(np.array([-1, 2, 3, 7, 120]), 5))
+        self.assertTrue(is_integer_number_vector(np.arange(1, 4), 3))
+        self.assertTrue(is_integer_number_vector(np.zeros(12, dtype=int), 12))
+
+        # test cases for false using the optional parameter LENGTH
+        self.assertFalse(is_integer_number_vector([1], 2))
+        self.assertFalse(is_integer_number_vector([1, -2, 3, 4, 6], 51))
+        self.assertFalse(is_integer_number_vector(np.array([-1, 2, 3, 7, 120], dtype=int), 15))
+        self.assertFalse(is_integer_number_vector(np.arange(1, 4, dtype=int), 2))
+        self.assertFalse(is_integer_number_vector(np.zeros(12, dtype=int), 11))
+
     def test_natural_number_vector(self):
         """
         This test case tests the function is_natural_number_vector
@@ -210,8 +295,8 @@ class TestValidity(unittest.TestCase):
 
         # test cases for true
         self.assertTrue(is_natural_number_vector(np.array([1])))
-        self.assertTrue(is_natural_number_vector(np.array([1, -2, 3, 4, 6])))
-        self.assertTrue(is_natural_number_vector(np.array([-1, 2, 3, 7, 120])))
+        self.assertTrue(is_natural_number_vector(np.array([0, 1])))
+        self.assertTrue(is_natural_number_vector(np.array([-0, 11])))
         self.assertTrue(is_natural_number_vector(np.arange(1, 4)))
         self.assertTrue(is_natural_number_vector(np.zeros(12, dtype=int)))
 
@@ -224,18 +309,22 @@ class TestValidity(unittest.TestCase):
         self.assertFalse(is_natural_number_vector(['a']))
         self.assertFalse(is_natural_number_vector([1, None]))
         self.assertFalse(is_natural_number_vector([None, 123]))
+        self.assertFalse(is_natural_number_vector(np.array([1, -2, 3, 4, 6])))
+        self.assertFalse(is_natural_number_vector(np.array([-1, 2, 3, 7, 120])))
         self.assertFalse(is_natural_number_vector(np.array([-1, 2, 3, 7.0238420358, 120])))
         self.assertFalse(is_natural_number_vector(np.arange(1, 4, 0.25)))
         self.assertFalse(is_natural_number_vector(np.zeros(12)))
 
         # test cases for true using the optional parameter LENGTH
         self.assertTrue(is_natural_number_vector(np.array([1]), 1))
-        self.assertTrue(is_natural_number_vector(np.array([1, -2, 3, 4, 6]), 5))
-        self.assertTrue(is_natural_number_vector(np.array([-1, 2, 3, 7, 120]), 5))
+        self.assertTrue(is_natural_number_vector(np.array([0, 2, 3, 4, 6]), 5))
+        self.assertTrue(is_natural_number_vector(np.array([-0, 1, 3, 7, 120]), 5))
         self.assertTrue(is_natural_number_vector(np.arange(1, 4), 3))
         self.assertTrue(is_natural_number_vector(np.zeros(12, dtype=int), 12))
 
         # test cases for false using the optional parameter LENGTH
+        self.assertFalse(is_natural_number_vector(np.array([1, -2, 3, 4, 6]), 5))
+        self.assertFalse(is_natural_number_vector(np.array([-1, 2, 3, 7, 120]), 5))
         self.assertFalse(is_natural_number_vector([1], 2))
         self.assertFalse(is_natural_number_vector([1, -2, 3, 4, 6], 51))
         self.assertFalse(is_natural_number_vector(np.array([-1, 2, 3, 7, 120], dtype=int), 15))
@@ -313,10 +402,10 @@ class TestValidity(unittest.TestCase):
         # test cases for false with desired length
         self.assertFalse(is_valid_polyline(np.array([[-1, 2, 3, 4], [10, 5, 23, 12]]).transpose(), length=2))
         self.assertFalse(
-            is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=10))
+                is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=10))
         self.assertFalse(is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=1))
         self.assertFalse(
-            is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=1909))
+                is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=1909))
         self.assertFalse(is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=1))
         self.assertFalse(is_valid_polyline(np.array([np.zeros(100), np.ones(100)]).transpose(), length=99))
 

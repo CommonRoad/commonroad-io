@@ -10,7 +10,8 @@ import numpy as np
 
 from commonroad import SCENARIO_VERSION, SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.util import Interval
-from commonroad.common.validity import is_real_number, is_real_number_vector, is_valid_orientation, is_natural_number
+from commonroad.common.validity import is_real_number, is_real_number_vector, is_valid_orientation, is_natural_number, \
+    is_integer_number
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.lanelet import Lanelet
@@ -792,7 +793,7 @@ class Scenario(IDrawable):
         :param obstacle_id: ID of the queried obstacle
         :return: the obstacle object if the ID exists, otherwise None
         """
-        assert is_natural_number(obstacle_id), '<Scenario/obstacle_by_id> argument "obstacle_id" of wrong type. ' \
+        assert is_integer_number(obstacle_id), '<Scenario/obstacle_by_id> argument "obstacle_id" of wrong type. ' \
                                                'Expected type: %s. Got type: %s.' % (int, type(obstacle_id))
         obstacle = None
         if obstacle_id in self._static_obstacles:
