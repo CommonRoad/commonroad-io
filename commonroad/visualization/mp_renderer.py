@@ -188,6 +188,7 @@ class MPRenderer(IRenderer):
         self.dynamic_artists.clear()
         self.dynamic_collections.clear()
         self.traffic_sign_artists.clear()
+        self.dynamic_labels.clear()
         if keep_static_artists is False:
             self.static_artists.clear()
             self.static_collections.clear()
