@@ -923,14 +923,15 @@ class Scenario(IDrawable):
             # print(time_step, [state.time_step for state in obstacle.prediction.trajectory.state_list])
             if time_step == obstacle.initial_state.time_step:
                 position = obstacle.initial_state.position
-            elif not isinstance(obstacle.prediction, TrajectoryPrediction)\
+            elif not isinstance(obstacle.prediction, TrajectoryPrediction) \
                     or obstacle.prediction.final_time_step < time_step:
                 return False
             else:
                 position = obstacle.prediction.trajectory.state_at_time_step(time_step).position
 
             lanelet_ids_center = set(self.lanelet_network.find_lanelet_by_position([position])[0])
-            obstacle.prediction.center_lanelet_assignment[time_step] = lanelet_ids_center
+            if obstacle.prediction is not None:
+                obstacle.prediction.center_lanelet_assignment[time_step] = lanelet_ids_center
 
             if use_center_only:
                 lanelet_ids = lanelet_ids_center
@@ -938,7 +939,8 @@ class Scenario(IDrawable):
                 # assign shape of obstacle
                 shape = obstacle.occupancy_at_time(time_step).shape
                 lanelet_ids = set(self.lanelet_network.find_lanelet_by_shape(shape))
-                obstacle.prediction.shape_lanelet_assignment[time_step] = lanelet_ids
+                if obstacle.prediction is not None:
+                    obstacle.prediction.shape_lanelet_assignment[time_step] = lanelet_ids
 
             if time_step == obstacle.initial_state.time_step:
                 if not use_center_only:
@@ -971,15 +973,19 @@ class Scenario(IDrawable):
             if isinstance(obs, DynamicObstacle):
                 if time_steps is None:
                     # assign all time steps
-                    time_steps_tmp = range(obs.initial_state.time_step,
-                                           obs.prediction.final_time_step + 1)
+                    if obs.prediction is None:
+                        time_steps_tmp = [obs.initial_state.time_step]
+                    else:
+                        time_steps_tmp = range(obs.initial_state.time_step,
+                                               obs.prediction.final_time_step + 1)
                 else:
                     time_steps_tmp = time_steps
 
-                if not use_center_only and obs.prediction.shape_lanelet_assignment is None:
-                    obs.prediction.shape_lanelet_assignment = {}
-                if obs.prediction.center_lanelet_assignment is None:
-                    obs.prediction.center_lanelet_assignment = {}
+                if obs.prediction is not None:
+                    if not use_center_only and obs.prediction.shape_lanelet_assignment is None:
+                        obs.prediction.shape_lanelet_assignment = {}
+                    if obs.prediction.center_lanelet_assignment is None:
+                        obs.prediction.center_lanelet_assignment = {}
 
                 for t in time_steps_tmp:
                     assign_dynamic_obstacle_shape_at_time(obs, t)
