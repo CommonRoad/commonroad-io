@@ -267,15 +267,21 @@ class TestVisualizationV2(unittest.TestCase):
         scn.draw(self.rnd)
         self.rnd.render(show=True)
 
+    def test_label_clearing(self):
+        scenario, _ = CommonRoadFileReader(self.ngsim_scen_1).open()
+        render = MPRenderer()
+        for i in range(10):
+            draw_params = ParamServer({"scenario": {"time_begin": i, "dynamic_obstacle": {"show_label": True}}})
+            scenario.draw(render, draw_params)
+            render.render(show=True)
+
     # def test_visualize_all_scenarios(self):  #     scenarios_2020a = "TODO"  #     scenarios_2018b = "TODO"  #  #
-    #  factory_2020a = scenarios_2020a + "/scenario-factory"  #     hand_crafted_2020a = scenarios_2020a +
+    #  factory_2020a = scenarios_2020a + "/scenario-factory"  #     hand_crafted_2020a = scenarios_2020a +  #
     #  "/hand-crafted"  #     ngsim_lankershim_2020a = scenarios_2020a + "/NGSIM/Lankershim"  #     ngsim_us101_2020a
-    #  = scenarios_2020a + "/NGSIM/US101"  #     ngsim_peachtree_2020a = scenarios_2020a + "/NGSIM/Peachtree"
-    #     bicycle_2020a = scenarios_2020a + "/THI-Bicycle"
-    #
-    #     # cooperative_2018b = scenarios_2018b + "/cooperative"
-    #     # bicycle_2018b = scenarios_2018b + "/THI-Bicycle"
-    #     # sumo_2018b = scenarios_2018b + "/SUMO"
+    #  = scenarios_2020a + "/NGSIM/US101"  #     ngsim_peachtree_2020a = scenarios_2020a + "/NGSIM/Peachtree"  #
+    #  bicycle_2020a = scenarios_2020a + "/THI-Bicycle"  #  #     # cooperative_2018b = scenarios_2018b +
+    #  "/cooperative"  #     # bicycle_2018b = scenarios_2018b + "/THI-Bicycle"  #     # sumo_2018b = scenarios_2018b
+    #  + "/SUMO"
     #     # hand_crafted_2018b = scenarios_2018b + "/hand-crafted"
     #     # ngsim_lankershim_2018b = scenarios_2018b + "/NGSIM/Lankershim"
     #     # ngsim_us101_2018b = scenarios_2018b + "/NGSIM/US101"
