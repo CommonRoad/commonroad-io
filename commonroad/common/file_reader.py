@@ -5,13 +5,13 @@ from abc import ABC
 
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.util import Interval, AngleInterval
-from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape, Truck
+from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
 from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, EnvironmentObstacle, \
-    SignalState, PhantomObstacle
+    SignalState, PhantomObstacle, Truck
 from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, \
     TimeOfDay, Weather, Underground, ScenarioID
 from commonroad.scenario.trajectory import State, Trajectory
@@ -1077,6 +1077,13 @@ class StaticObstacleFactory(ObstacleFactory):
 
 
 class DynamicObstacleFactory(ObstacleFactory):
+    @classmethod
+    def read_trailer_dist(cls, xml_node: ElementTree.Element) -> ObstacleType:
+        trailer_dist = 0.5
+        if xml_node.find('trailer_dist') is not None:
+            trailer_dist = float(xml_node.find('trailer_dist').text)
+        return trailer_dist
+
     @staticmethod
     def find_obstacle_shape_lanelets(initial_state: State, state_list: List[State], lanelet_network: LaneletNetwork,
                                      obstacle_id: int, shape: Shape) -> Dict[int, Set[int]]:
@@ -1128,6 +1135,7 @@ class DynamicObstacleFactory(ObstacleFactory):
                              lanelet_assignment: bool) -> DynamicObstacle:
         obstacle_type = DynamicObstacleFactory.read_type(xml_node)
         obstacle_id = DynamicObstacleFactory.read_id(xml_node)
+        trailer_dist = DynamicObstacleFactory.read_trailer_dist(xml_node)
         shape = DynamicObstacleFactory.read_shape(xml_node.find('shape'))
         initial_state = DynamicObstacleFactory.read_initial_state(xml_node.find('initialState'))
         initial_signal_state = DynamicObstacleFactory.read_initial_signal_state(xml_node.find('initialSignalState'))
@@ -1155,11 +1163,22 @@ class DynamicObstacleFactory(ObstacleFactory):
             else:
                 shape_lanelet_assignment = None
                 center_lanelet_assignment = None
-            prediction = TrajectoryPrediction(trajectory, shape, center_lanelet_assignment, shape_lanelet_assignment, initial_state)
+            if obstacle_type != ObstacleType.TRUCK:
+                trailer_dist = 0.0
+            prediction = TrajectoryPrediction(trajectory, shape, center_lanelet_assignment, shape_lanelet_assignment, trailer_dist)
         elif xml_node.find('occupancySet') is not None:
             prediction = SetBasedPredictionFactory.create_from_xml_node(xml_node.find('occupancySet'))
         else:
             prediction = None
+
+        if obstacle_type == ObstacleType.TRUCK:
+            return Truck(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
+                         obstacle_shape=shape, initial_state=initial_state, trailer_dist=trailer_dist,
+                         prediction=prediction, initial_center_lanelet_ids=initial_center_lanelet_ids,
+                         initial_shape_lanelet_ids=initial_shape_lanelet_ids,
+                         initial_signal_state=initial_signal_state,
+                         signal_series=signal_series)
+
         return DynamicObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
                                obstacle_shape=shape, initial_state=initial_state, prediction=prediction,
                                initial_center_lanelet_ids=initial_center_lanelet_ids,
@@ -1222,8 +1241,7 @@ class ShapeFactory:
             return CircleFactory.create_from_xml_node(xml_node)
         elif tag_string == 'polygon':
             return PolygonFactory.create_from_xml_node(xml_node)
-        elif tag_string == 'truck':
-            return TruckFactory.create_from_xml_node(xml_node)
+
 
     @classmethod
     def _create_shape_group_if_needed(cls, shape_list: List[Shape]) -> Shape:
@@ -1268,26 +1286,6 @@ class PolygonFactory:
     def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Polygon:
         vertices = PointListFactory.create_from_xml_node(xml_node)
         return Polygon(vertices)
-
-class TruckFactory:
-    @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Truck:
-        front_length = float(xml_node.find('front_length').text)
-        back_length = float(xml_node.find('back_length').text)
-        width = float(xml_node.find('width').text)
-        if xml_node.find('orientation') is not None:
-            orientation = float(xml_node.find('orientation').text)
-        else:
-            orientation = 0.0
-        if xml_node.find('hitch') is not None:
-            hitch = float(xml_node.find('hitch').text)
-        else:
-            hitch = 0.0
-        if xml_node.find('center') is not None:
-            center = PointFactory.create_from_xml_node(xml_node.find('center'))
-        else:
-            center = np.array([0.0, 0.0])
-        return Truck(front_length, width, back_length, center, orientation, hitch)
 
 
 class PlanningProblemSetFactory:
@@ -1362,9 +1360,6 @@ class StateFactory:
         if xml_node.find('hitch') is not None:
             hitch = read_value_exact_or_interval(xml_node.find('hitch'))
             state_args['hitch'] = hitch
-        if xml_node.find('trailer_dist') is not None:
-            trailer_dist = read_value_exact_or_interval(xml_node.find('trailer_dist'))
-            state_args['trailer_dist'] = trailer_dist
         return State(**state_args)
 
     @classmethod

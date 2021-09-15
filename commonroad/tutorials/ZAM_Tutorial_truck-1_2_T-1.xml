@@ -4854,12 +4854,16 @@
   <obstacle id="42">
     <role>dynamic</role>
     <type>truck</type>
+    <trailer_dist>1.0</trailer_dist>
     <shape>
-      <truck>
-        <front_length>3.0</front_length>
-        <back_length>7.0</back_length>
+      <rectangle>
+        <length>3.0</length>
         <width>2.0</width>
-      </truck>
+      </rectangle>
+      <rectangle>
+        <length>7.0</length>
+        <width>2.0</width>
+      </rectangle>
     </shape>
     <initialState>
       <position>
@@ -4883,9 +4887,6 @@
       <acceleration>
         <exact>0.0</exact>
       </acceleration>
-      <trailer_dist>
-        <exact>2.0</exact>
-      </trailer_dist>
     </initialState>
     <trajectory>
   <state>

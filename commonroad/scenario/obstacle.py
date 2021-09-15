@@ -10,7 +10,6 @@ from commonroad.geometry.shape import Shape, \
     Circle, \
     Polygon, \
     ShapeGroup, \
-    Truck, \
     occupancy_shape_from_state
 from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.trajectory import State
@@ -192,20 +191,7 @@ class Obstacle(IDrawable):
         assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of wrong type. ' \
                                                  'Expected types: %s. Got type: %s.' % (State, type(initial_state))
         self._initial_state = initial_state
-        # TODO: prettify this
-        if self.obstacle_role == ObstacleRole.DYNAMIC and isinstance(self.obstacle_shape, Truck):
-            shapes = self.obstacle_shape.shapes
-            shape_0 = occupancy_shape_from_state(shapes[0], initial_state)
-            orient_1 = initial_state.orientation + initial_state.hitch
-            pos_1 = (initial_state.position - (shapes[0].length / 2 + initial_state.trailer_dist) * np.array(
-                    [np.cos(initial_state.orientation), np.sin(initial_state.orientation)]) - shapes[
-                         1].length / 2 * np.array([np.cos(orient_1), np.sin(orient_1)]))
-            shape_1 = shapes[1].rotate_translate_local(pos_1, orient_1)
-            self._initial_occupancy_shape = ShapeGroup([shape_0, shape_1])
-        else:
-            self._initial_occupancy_shape = occupancy_shape_from_state(self._obstacle_shape, initial_state)
-
-#        self._initial_occupancy_shape = occupancy_shape_from_state(self._obstacle_shape, initial_state)
+        self._initial_occupancy_shape = occupancy_shape_from_state(self._obstacle_shape, initial_state)
 
     @property
     def initial_center_lanelet_ids(self) -> Union[None, Set[int]]:
@@ -372,6 +358,8 @@ class StaticObstacle(Obstacle):
         renderer.draw_static_obstacle(self, draw_params, call_stack)
 
 
+# TODO: try adding a Truck subclass of DynamicObstacle + override initial_state() and add trailer_dist
+# TODO: add trailer_dist as a parameter of obstacle also in the xml file (not in state)
 class DynamicObstacle(Obstacle):
     """ Class representing dynamic obstacles as defined in CommonRoad. Each dynamic obstacle has stored its predicted
     movement in future time steps.
@@ -474,6 +462,56 @@ class DynamicObstacle(Obstacle):
              draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_dynamic_obstacle(self, draw_params, call_stack)
+
+
+class Truck(DynamicObstacle):
+    """ Class representing dynamic obstacles as defined in CommonRoad. Each dynamic obstacle has stored its predicted
+    movement in future time steps.
+    """
+
+    def __init__(self, obstacle_id: int, obstacle_type: ObstacleType,
+                 obstacle_shape: Shape, initial_state: State, trailer_dist: float,
+                 prediction: Union[None, Prediction, TrajectoryPrediction, SetBasedPrediction] = None,
+                 initial_center_lanelet_ids: Union[None, Set[int]] = None,
+                 initial_shape_lanelet_ids: Union[None, Set[int]] = None,
+                 initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None):
+        """
+            :param obstacle_id: unique ID of the obstacle
+            :param obstacle_type: type of obstacle (e.g. PARKED_VEHICLE)
+            :param obstacle_shape: shape of the static obstacle
+            :param initial_state: initial state of the static obstacle
+            :param trailer_dist: trailer dist
+            :param prediction: predicted movement of the dynamic obstacle
+            :param initial_center_lanelet_ids: initial IDs of lanelets the obstacle center is on
+            :param initial_shape_lanelet_ids: initial IDs of lanelets the obstacle shape is on
+            :param initial_signal_state: initial signal state of static obstacle
+            :param signal_series: list of signal states over time
+        """
+        self.trailer_dist = trailer_dist
+        DynamicObstacle.__init__(self, obstacle_id=obstacle_id, obstacle_type=obstacle_type,
+                          obstacle_shape=obstacle_shape, initial_state=initial_state,
+                          prediction=prediction, initial_center_lanelet_ids=initial_center_lanelet_ids,
+                          initial_shape_lanelet_ids=initial_shape_lanelet_ids,
+                          initial_signal_state=initial_signal_state, signal_series=signal_series)
+
+    @property
+    def initial_state(self) -> State:
+        """ Initial state of the obstacle, e.g., obtained through sensor measurements."""
+        return self._initial_state
+
+    @initial_state.setter
+    def initial_state(self, initial_state: State):
+        assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of wrong type. ' \
+                                                 'Expected types: %s. Got type: %s.' % (State, type(initial_state))
+        self._initial_state = initial_state
+        shapes = self.obstacle_shape.shapes
+        shape_0 = occupancy_shape_from_state(shapes[0], initial_state)
+        orient_1 = initial_state.orientation + initial_state.hitch
+        pos_1 = (initial_state.position - (shapes[0].length / 2 + self.trailer_dist) * np.array(
+                [np.cos(initial_state.orientation), np.sin(initial_state.orientation)]) - shapes[
+                     1].length / 2 * np.array([np.cos(orient_1), np.sin(orient_1)]))
+        shape_1 = shapes[1].rotate_translate_local(pos_1, orient_1)
+        self._initial_occupancy_shape = ShapeGroup([shape_0, shape_1])
 
 
 class PhantomObstacle(IDrawable):

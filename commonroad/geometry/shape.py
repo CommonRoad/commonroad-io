@@ -511,29 +511,8 @@ class ShapeGroup(Shape):
         for s in self._shapes:
             s.draw(renderer, draw_params, call_stack)
 
-
-class Truck(ShapeGroup):
-    """ The class Truck represents a collection of two rectangles,
-    which will model the shape of a truck."""
-
-    def __init__(self, length: float, width: float, trailer_length: float, center: np.ndarray = np.array([0.0, 0.0]),
-                 orientation: float = 0.0, hitch: float = 0.0):
-        """
-        :param shapes: list of shapes
-        """
-
-        self.length = length
-        self.width = width
-        self.center = center
-        self.trailer_length = trailer_length
-        self.orientation = orientation
-        self.hitch = hitch
-
-        head = Rectangle(self.length, self.width, self.center, self.orientation)
-        trailer = Rectangle(self.trailer_length, self.width, self.center, self.hitch + self.orientation)
-        self.shapes = [head, trailer]
-
-
+# TODO: remove Truck from shape.py for the drivability checker!
+# TODO: see if we can run the scenarios sent per mail
 def occupancy_shape_from_state(shape, state):
     if state.is_uncertain_position or state.is_uncertain_orientation:
         # From M. Althoff and J. M. Dolan, “Online Verification of Automated Road Vehicles Using Reachability Analysis,”
