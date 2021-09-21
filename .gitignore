@@ -226,3 +226,6 @@ commonroad/doc/build/*
 
 #spot
 *spot_prediction.py
+/.eggs/
+/build/
+/dist/
