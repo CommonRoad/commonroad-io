@@ -275,99 +275,104 @@ class TestVisualizationV2(unittest.TestCase):
             scenario.draw(render, draw_params)
             render.render(show=True)
 
-    # def test_visualize_all_scenarios(self):  #     scenarios_2020a = "TODO"  #     scenarios_2018b = "TODO"  #  #
-    #  factory_2020a = scenarios_2020a + "/scenario-factory"  #     hand_crafted_2020a = scenarios_2020a +  #
-    #  "/hand-crafted"  #     ngsim_lankershim_2020a = scenarios_2020a + "/NGSIM/Lankershim"  #     ngsim_us101_2020a
-    #  = scenarios_2020a + "/NGSIM/US101"  #     ngsim_peachtree_2020a = scenarios_2020a + "/NGSIM/Peachtree"  #
-    #  bicycle_2020a = scenarios_2020a + "/THI-Bicycle"  #  #     # cooperative_2018b = scenarios_2018b +
-    #  "/cooperative"  #     # bicycle_2018b = scenarios_2018b + "/THI-Bicycle"  #     # sumo_2018b = scenarios_2018b
-    #  + "/SUMO"
-    #     # hand_crafted_2018b = scenarios_2018b + "/hand-crafted"
-    #     # ngsim_lankershim_2018b = scenarios_2018b + "/NGSIM/Lankershim"
-    #     # ngsim_us101_2018b = scenarios_2018b + "/NGSIM/US101"
-    #     # ngsim_peachtree_2018b = scenarios_2018b + "/NGSIM/Peachtree"
+    # def test_visualize_all_scenarios(self):
+    #     scenarios_2020a = "TODO"
+    #     scenarios_2018b = "TODO"
+    #     factory_2020a = scenarios_2020a + "/scenario-factory"
+    #     hand_crafted_2020a = scenarios_2020a +  "/hand-crafted"
+    #     ngsim_lankershim_2020a = scenarios_2020a + "/NGSIM/Lankershim"
+    #     ngsim_us101_2020a = scenarios_2020a + "/NGSIM/US101"
+    #     ngsim_peachtree_2020a = scenarios_2020a + "/NGSIM/Peachtree"
+    #     bicycle_2020a = scenarios_2020a + "/THI-Bicycle"
+    #     cooperative_2018b = scenarios_2018b + "/cooperative"
+    #     bicycle_2018b = scenarios_2018b + "/THI-Bicycle"
+    #     sumo_2018b = scenarios_2018b + "/SUMO"
+    #     hand_crafted_2018b = scenarios_2018b + "/hand-crafted"
+    #     ngsim_lankershim_2018b = scenarios_2018b + "/NGSIM/Lankershim"
+    #     ngsim_us101_2018b = scenarios_2018b + "/NGSIM/US101"
+    #     ngsim_peachtree_2018b = scenarios_2018b + "/NGSIM/Peachtree"
     #
     #     rnd = MPRenderer()
-    #     # for scenario in os.listdir(hand_crafted_2018b):
-    #     #     full_path = hand_crafted_2018b + "/" + scenario
-    #     #     print(full_path)
-    #     #     scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
-    #     #     scenario.draw(rnd)
-    #     #     planning_problem_set.draw(rnd)
-    #     #     rnd.render()
-    #     #     rnd.clear()
-    #     #
-    #     # for scenario in os.listdir(ngsim_lankershim_2018b):
-    #     #     full_path = ngsim_lankershim_2018b + "/" + scenario
-    #     #     print(full_path)
-    #     #     scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
-    #     #     scenario.draw(rnd)
-    #     #     planning_problem_set.draw(rnd)
-    #     #     rnd.render()
-    #     #     rnd.clear()
-    #     #
-    #     # for scenario in os.listdir(ngsim_us101_2018b):
-    #     #     full_path = ngsim_us101_2018b + "/" + scenario
-    #     #     print(full_path)
-    #     #     scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
-    #     #     scenario.draw(rnd)
-    #     #     planning_problem_set.draw(rnd)
-    #     #     rnd.render()
-    #     #     rnd.clear()
-    #     #
-    #     # for scenario in os.listdir(ngsim_peachtree_2018b):
-    #     #     full_path = ngsim_peachtree_2018b + "/" + scenario
-    #     #     print(full_path)
-    #     #     scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
-    #     #     scenario.draw(rnd)
-    #     #     planning_problem_set.draw(rnd)
-    #     #     rnd.render()
-    #     #     rnd.clear()
-    #     #
-    #     # for scenario in os.listdir(cooperative_2018b):
-    #     #     full_path = cooperative_2018b + "/" + scenario
-    #     #     print(full_path)
-    #     #     scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
-    #     #     scenario.draw(rnd)
-    #     #     planning_problem_set.draw(rnd)
-    #     #     rnd.render()
-    #     #     rnd.clear()
-    #     #
-    #     # for scenario in os.listdir(bicycle_2018b):
-    #     #     full_path = bicycle_2018b + "/" + scenario
-    #     #     print(full_path)
-    #     #     scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
-    #     #     scenario.draw(rnd)
-    #     #     planning_problem_set.draw(rnd)
-    #     #     rnd.render()
-    #     #     rnd.clear()
-    #     #
-    #     # for scenario in os.listdir(bicycle_2018b):
-    #     #     full_path = bicycle_2018b + "/" + scenario
-    #     #     print(full_path)
-    #     #     scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
-    #     #     scenario.draw(rnd)
-    #     #     planning_problem_set.draw(rnd)
-    #     #     rnd.render()
-    #     #     rnd.clear()
-    #     #
-    #     # for scenario in os.listdir(bicycle_2018b):
-    #     #     full_path = bicycle_2018b + "/" + scenario
-    #     #     print(full_path)
-    #     #     scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
-    #     #     scenario.draw(rnd)
-    #     #     planning_problem_set.draw(rnd)
-    #     #     rnd.render()
-    #     #     rnd.clear()
-    #     #
-    #     # for scenario in os.listdir(sumo_2018b):
-    #     #     full_path = sumo_2018b + "/" + scenario
-    #     #     print(full_path)
-    #     #     scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
-    #     #     scenario.draw(rnd)
-    #     #     planning_problem_set.draw(rnd)
-    #     #     rnd.render()
-    #     #     rnd.clear()
+    #     for scenario in os.listdir(hand_crafted_2018b):
+    #         full_path = hand_crafted_2018b + "/" + scenario
+    #         print(full_path)
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         scenario.draw(rnd)
+    #         planning_problem_set.draw(rnd)
+    #         rnd.render()
+    #         rnd.clear()
+    #
+    #     for scenario in os.listdir(ngsim_lankershim_2018b):
+    #         full_path = ngsim_lankershim_2018b + "/" + scenario
+    #         print(full_path)
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         scenario.draw(rnd)
+    #         planning_problem_set.draw(rnd)
+    #         rnd.render()
+    #         rnd.clear()
+    #
+    #     for scenario in os.listdir(ngsim_us101_2018b):
+    #         full_path = ngsim_us101_2018b + "/" + scenario
+    #         print(full_path)
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         scenario.draw(rnd)
+    #         planning_problem_set.draw(rnd)
+    #         rnd.render()
+    #         rnd.clear()
+    #
+    #     for scenario in os.listdir(ngsim_peachtree_2018b):
+    #         full_path = ngsim_peachtree_2018b + "/" + scenario
+    #         print(full_path)
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         scenario.draw(rnd)
+    #         planning_problem_set.draw(rnd)
+    #         rnd.render()
+    #         rnd.clear()
+    #
+    #     for scenario in os.listdir(cooperative_2018b):
+    #         full_path = cooperative_2018b + "/" + scenario
+    #         print(full_path)
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         scenario.draw(rnd)
+    #         planning_problem_set.draw(rnd)
+    #         rnd.render()
+    #         rnd.clear()
+    #
+    #     for scenario in os.listdir(bicycle_2018b):
+    #         full_path = bicycle_2018b + "/" + scenario
+    #         print(full_path)
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         scenario.draw(rnd)
+    #         planning_problem_set.draw(rnd)
+    #         rnd.render()
+    #         rnd.clear()
+    #
+    #     for scenario in os.listdir(bicycle_2018b):
+    #         full_path = bicycle_2018b + "/" + scenario
+    #         print(full_path)
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         scenario.draw(rnd)
+    #         planning_problem_set.draw(rnd)
+    #         rnd.render()
+    #         rnd.clear()
+    #
+    #     for scenario in os.listdir(bicycle_2018b):
+    #         full_path = bicycle_2018b + "/" + scenario
+    #         print(full_path)
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         scenario.draw(rnd)
+    #         planning_problem_set.draw(rnd)
+    #         rnd.render()
+    #         rnd.clear()
+    #
+    #     for scenario in os.listdir(sumo_2018b):
+    #         full_path = sumo_2018b + "/" + scenario
+    #         print(full_path)
+    #         scenario, planning_problem_set = CommonRoadFileReader(full_path).open()
+    #         scenario.draw(rnd)
+    #         planning_problem_set.draw(rnd)
+    #         rnd.render()
+    #         rnd.clear()
     #
     #     for scenario in os.listdir(factory_2020a):
     #         full_path = factory_2020a + "/" + scenario

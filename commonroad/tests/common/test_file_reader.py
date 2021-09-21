@@ -775,55 +775,55 @@ class TestFileReader(unittest.TestCase):
     #
     #     for scenario in os.listdir(hand_crafted_2020a):
     #         full_path = hand_crafted_2020a + "/" + scenario
-    #         CommonRoadFileReader(full_path).open()
+    #         CommonRoadFileReader(full_path).open(lanelet_assignment=True)
     #
     #     for scenario in os.listdir(ngsim_lankershim_2020a):
     #         full_path = ngsim_lankershim_2020a + "/" + scenario
-    #         CommonRoadFileReader(full_path).open()
+    #         CommonRoadFileReader(full_path).open(lanelet_assignment=True)
     #
     #     for scenario in os.listdir(ngsim_us101_2020a):
     #         full_path = ngsim_us101_2020a + "/" + scenario
-    #         CommonRoadFileReader(full_path).open()
+    #         CommonRoadFileReader(full_path).open(lanelet_assignment=True)
     #
     #     for scenario in os.listdir(ngsim_peachtree_2020a):
     #         full_path = ngsim_peachtree_2020a + "/" + scenario
-    #         CommonRoadFileReader(full_path).open()
+    #         CommonRoadFileReader(full_path).open(lanelet_assignment=True)
     #
     #     for scenario in os.listdir(bicycle_2020a):
     #         full_path = bicycle_2020a + "/" + scenario
-    #         CommonRoadFileReader(full_path).open()
+    #         CommonRoadFileReader(full_path).open(lanelet_assignment=True)
     #
     #     for scenario in os.listdir(factory_2020a):
     #         full_path = factory_2020a + "/" + scenario
-    #         CommonRoadFileReader(full_path).open()
+    #         CommonRoadFileReader(full_path).open(lanelet_assignment=True)
     #
     #     for scenario in os.listdir(cooperative_2018b):
     #         full_path = cooperative_2018b + "/" + scenario
-    #         CommonRoadFileReader(full_path).open()
+    #         CommonRoadFileReader(full_path).open(lanelet_assignment=True)
     #
     #     for scenario in os.listdir(sumo_2018b):
     #         full_path = sumo_2018b + "/" + scenario
-    #         CommonRoadFileReader(full_path).open()
+    #         CommonRoadFileReader(full_path).open(lanelet_assignment=True)
     #
     #     for scenario in os.listdir(bicycle_2018b):
     #         full_path = bicycle_2018b + "/" + scenario
-    #         CommonRoadFileReader(full_path).open()
+    #         CommonRoadFileReader(full_path).open(lanelet_assignment=True)
     #
     #     for scenario in os.listdir(ngsim_lankershim_2018b):
     #         full_path = ngsim_lankershim_2018b + "/" + scenario
-    #         CommonRoadFileReader(full_path).open()
+    #         CommonRoadFileReader(full_path).open(lanelet_assignment=True)
     #
     #     for scenario in os.listdir(ngsim_us101_2018b):
     #         full_path = ngsim_us101_2018b + "/" + scenario
-    #         CommonRoadFileReader(full_path).open()
+    #         CommonRoadFileReader(full_path).open(lanelet_assignment=True)
     #
     #     for scenario in os.listdir(ngsim_peachtree_2018b):
     #         full_path = ngsim_peachtree_2018b + "/" + scenario
-    #         CommonRoadFileReader(full_path).open()
+    #         CommonRoadFileReader(full_path).open(lanelet_assignment=True)
     #
     #     for scenario in os.listdir(hand_crafted_2018b):
     #         full_path = hand_crafted_2018b + "/" + scenario
-    #         CommonRoadFileReader(full_path).open()
+    #         CommonRoadFileReader(full_path).open(lanelet_assignment=True)
 
 
 if __name__ == '__main__':
