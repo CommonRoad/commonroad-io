@@ -5,7 +5,7 @@ from typing import Union
 __author__ = "Christian Pek"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW Group CAR@TUM"]
-__version__ = "2021.2"
+__version__ = "2021.3"
 __maintainer__ = "Christian Pek"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -18,7 +18,7 @@ class ValidTypes:
     Default Type Lists
     """
     NUMBERS = (float, int, npy.number)  # real numbers
-    NAT_NUMBERS = (int, npy.integer)  # natural numbers
+    INT_NUMBERS = (int, npy.integer)  # integer numbers
 
     LISTS = list  # vectors
     ARRAY = (npy.ndarray,)
@@ -30,7 +30,16 @@ def is_real_number(n: float) -> bool:
     :param n: The number to check
     :return: True if the provided variable is a scalar number, False otherwise
     """
-    return n is not None and isinstance(n, ValidTypes.NUMBERS)
+    return isinstance(n, ValidTypes.NUMBERS)
+
+
+def is_integer_number(n: int) -> bool:
+    """
+    Checks if a provided variable is an integer number
+    :param n: The number to check
+    :return: True if the provided variable is a integer number, False otherwise
+    """
+    return isinstance(n, ValidTypes.INT_NUMBERS)
 
 
 def is_natural_number(n: int) -> bool:
@@ -39,7 +48,7 @@ def is_natural_number(n: int) -> bool:
     :param n: The number to check
     :return: True if the provided variable is a natural number, False otherwise
     """
-    return n is not None and isinstance(n, ValidTypes.NAT_NUMBERS)
+    return is_integer_number(n) and n >= 0
 
 
 def is_positive(n: float) -> bool:
@@ -76,8 +85,19 @@ def is_real_number_vector(x: Union[npy.ndarray, float], length=None):
     :param length: optional parameter which tests if the vector is a real vector of specified length
     :return: True if the specified variable is a vector of real numbers
     """
-    return isinstance(x, ValidTypes.ARRAY) and all(
-        isinstance(elem, ValidTypes.NUMBERS) for elem in x) and (len(x) >= 0 if length is None else len(x) == length)
+    return isinstance(x, ValidTypes.ARRAY) and all(is_real_number(elem) for elem in x) and (
+        len(x) >= 0 if length is None else len(x) == length)
+
+
+def is_integer_number_vector(x: Union[npy.ndarray, float], length=None):
+    """
+    Checks if a provided variable is a vector of integer numbers
+    :param x: The variable to check
+    :param length: optional parameter which tests if the vector is a real vector of specified length
+    :return: True if the specified variable is a vector of integer numbers
+    """
+    return isinstance(x, ValidTypes.ARRAY) and all(is_integer_number(elem) for elem in x) and (
+        len(x) >= 0 if length is None else len(x) == length)
 
 
 def is_natural_number_vector(x: npy.ndarray, length=None):
@@ -87,9 +107,8 @@ def is_natural_number_vector(x: npy.ndarray, length=None):
     :param length: optional parameter which tests if the vector is a natural number vector of specified length
     :return: True if the specified variable is a vector of real numbers
     """
-    return \
-        isinstance(x, ValidTypes.ARRAY) and all(isinstance(elem, ValidTypes.NAT_NUMBERS) for elem in x) \
-        and (len(x) >= 0 if length is None else len(x) == length)
+    return isinstance(x, ValidTypes.ARRAY) and all(is_natural_number(elem) for elem in x) and (
+        len(x) >= 0 if length is None else len(x) == length)
 
 
 def is_list_of_numbers(x: list, length=None):
@@ -100,6 +119,16 @@ def is_list_of_numbers(x: list, length=None):
     :return: True if the specified variable is a list of numbers
     """
     return isinstance(x, list) and is_real_number_vector(npy.array(x), length)
+
+
+def is_list_of_integer_numbers(x: list, length=None):
+    """
+    Checks if a provided variable is a list of numbers
+    :param x: The variable to check
+    :param length: optional parameter which tests if the list is a list of specified length
+    :return: True if the specified variable is a list of numbers
+    """
+    return isinstance(x, list) and is_integer_number_vector(npy.array(x), length)
 
 
 def is_list_of_natural_numbers(x: list, length=None):
@@ -199,8 +228,8 @@ def is_valid_polyline(polyline: npy.ndarray, length=None):
         assert is_valid_length(length)
 
     return isinstance(polyline, ValidTypes.ARRAY) and len(polyline) >= 2 and all(
-        is_real_number_vector(elem, 2) for elem in polyline) and (
-           len(polyline) == length if length is not None else True)
+            is_real_number_vector(elem, 2) for elem in polyline) and (
+               len(polyline) == length if length is not None else True)
 
 
 def is_valid_list_of_vertices(vertices: npy.ndarray, number_of_vertices=None):
@@ -216,8 +245,8 @@ def is_valid_list_of_vertices(vertices: npy.ndarray, number_of_vertices=None):
         assert is_valid_length(number_of_vertices)
 
     return isinstance(vertices, ValidTypes.LISTS) and len(vertices) >= 1 and all(
-        is_real_number_vector(elem, 2) for elem in vertices) and (
-           len(vertices) == number_of_vertices if number_of_vertices is not None else True)
+            is_real_number_vector(elem, 2) for elem in vertices) and (
+               len(vertices) == number_of_vertices if number_of_vertices is not None else True)
 
 
 def is_valid_array_of_vertices(vertices: npy.ndarray, number_of_vertices=None):
@@ -233,5 +262,5 @@ def is_valid_array_of_vertices(vertices: npy.ndarray, number_of_vertices=None):
         assert is_valid_length(number_of_vertices)
 
     return isinstance(vertices, ValidTypes.ARRAY) and len(vertices) >= 1 and all(
-        is_real_number_vector(elem, 2) for elem in vertices) and (
-           len(vertices) == number_of_vertices if number_of_vertices is not None else True)
+            is_real_number_vector(elem, 2) for elem in vertices) and (
+               len(vertices) == number_of_vertices if number_of_vertices is not None else True)
