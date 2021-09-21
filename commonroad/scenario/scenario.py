@@ -534,8 +534,8 @@ class Scenario(IDrawable):
 
         else:
             raise ValueError('<Scenario/add_objects> argument "scenario_object" of wrong type. '
-                             'Expected types: %s, %s, %s, and %s. Got type: %s.' % (
-                             list, Obstacle, Lanelet, LaneletNetwork, type(scenario_object)))
+                             'Expected types: %s, %s, %s, and %s. '
+                             'Got type: %s.' % (list, Obstacle, Lanelet, LaneletNetwork, type(scenario_object)))
 
     def _add_static_obstacle_to_lanelets(self, obstacle_id: int, lanelet_ids: Set[int]):
         """ Adds a static obstacle reference to all lanelets the obstacle is on.
@@ -615,8 +615,8 @@ class Scenario(IDrawable):
         :param obstacle: obstacle to be removed
         """
         assert isinstance(obstacle, (list, Obstacle, DynamicObstacle, PhantomObstacle, EnvironmentObstacle,
-                                     StaticObstacle)), '<Scenario/remove_obstacle> argument "obstacle" of wrong type. ' \
-                                                       '' \
+                                     StaticObstacle)), '<Scenario/remove_obstacle> argument ' \
+                                                       '"obstacle" of wrong type. ' \
                                                        'Expected type: %s. Got type: %s.' % (Obstacle, type(obstacle))
         if isinstance(obstacle, list):
             for obs in obstacle:
@@ -649,13 +649,13 @@ class Scenario(IDrawable):
         :param remove_lanelet: Lanelet that should be removed from scenario.
         """
         all_lanelets = self.lanelet_network.lanelets
-        remove_lanelet_ids = [l.lanelet_id for l in remove_lanelet]
-        remaining_lanelets = [l for l in all_lanelets if l.lanelet_id not in remove_lanelet_ids]
+        remove_lanelet_ids = [la.lanelet_id for la in remove_lanelet]
+        remaining_lanelets = [la for la in all_lanelets if la.lanelet_id not in remove_lanelet_ids]
 
-        traffic_signs_to_delete = set().union(*[l.traffic_signs for l in remove_lanelet])
-        traffic_lights_to_delete = set().union(*[l.traffic_lights for l in remove_lanelet])
-        traffic_signs_to_save = set().union(*[l.traffic_signs for l in remaining_lanelets])
-        traffic_lights_to_save = set().union(*[l.traffic_lights for l in remaining_lanelets])
+        traffic_signs_to_delete = set().union(*[la.traffic_signs for la in remove_lanelet])
+        traffic_lights_to_delete = set().union(*[la.traffic_lights for la in remove_lanelet])
+        traffic_signs_to_save = set().union(*[la.traffic_signs for la in remaining_lanelets])
+        traffic_lights_to_save = set().union(*[la.traffic_lights for la in remaining_lanelets])
 
         remove_traffic_signs = []
         remove_traffic_lights = []
@@ -717,9 +717,10 @@ class Scenario(IDrawable):
 
         :param traffic_light: Traffic light which should be removed from scenario.
         """
-        assert isinstance(traffic_light, (
-        list, TrafficLight)), '<Scenario/remove_traffic_light> argument "traffic_light" of wrong type. ' \
-                              'Expected type: %s. Got type: %s.' % (TrafficLight, type(traffic_light))
+        assert isinstance(traffic_light, (list, TrafficLight)), '<Scenario/remove_traffic_light> ' \
+                                                                'argument "traffic_light" of wrong type. ' \
+                                                                'Expected type: %s. ' \
+                                                                'Got type: %s.' % (TrafficLight, type(traffic_light))
         if isinstance(traffic_light, list):
             for light in traffic_light:
                 self.lanelet_network.remove_traffic_light(light.traffic_light_id)
@@ -735,9 +736,9 @@ class Scenario(IDrawable):
 
         :param intersection: Intersection which should be removed from scenario.
         """
-        assert isinstance(intersection, (
-        list, Intersection)), '<Scenario/remove_intersection> argument "intersection" of wrong type. ' \
-                              'Expected type: %s. Got type: %s.' % (Intersection, type(intersection))
+        assert isinstance(intersection, (list, Intersection)), '<Scenario/remove_intersection> argument ' \
+                                                               '"intersection" of wrong type. Expected type: %s. ' \
+                                                               'Got type: %s.' % (Intersection, type(intersection))
         if isinstance(intersection, list):
             for inter in intersection:
                 self.lanelet_network.remove_intersection(inter.intersection_id)
@@ -762,8 +763,8 @@ class Scenario(IDrawable):
         self._id_counter += 1
         return self._id_counter
 
-    def occupancies_at_time_step(self, time_step: int, obstacle_role: Union[None, ObstacleRole] = None) -> List[
-        Occupancy]:
+    def occupancies_at_time_step(self, time_step: int,
+                                 obstacle_role: Union[None, ObstacleRole] = None) -> List[Occupancy]:
         """ Returns the occupancies of all static and dynamic obstacles at a specific time step.
 
             :param time_step: occupancies of obstacles at this time step
@@ -828,9 +829,9 @@ class Scenario(IDrawable):
         return obstacle_list
 
     def obstacles_by_position_intervals(self, position_intervals: List[Interval],
-            obstacle_role: Tuple[ObstacleRole] = (ObstacleRole.DYNAMIC, ObstacleRole.STATIC), time_step: int = None) \
-            -> \
-    List[Obstacle]:
+                                        obstacle_role: Tuple[ObstacleRole] = (ObstacleRole.DYNAMIC,
+                                                                              ObstacleRole.STATIC),
+                                        time_step: int = None) -> List[Obstacle]:
         """
         Returns obstacles which center is located within in the given x-/y-position intervals.
 
