@@ -22,7 +22,7 @@ from commonroad.scenario.intersection import Intersection, IntersectionIncomingE
 __author__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles", "CAR@TUM"]
-__version__ = "2021.2"
+__version__ = "2021.3"
 __maintainer__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -204,8 +204,8 @@ class ScenarioFactory:
         scenario = Scenario(dt, scenario_id, **meta_data)
 
         scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
-        large_num = 10000
         if commonroad_version == '2018b':
+            large_num = 10000
             scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network, lanelet_assignment))
             for key, value in LaneletFactory._speed_limits.items():
                 for lanelet in value:

@@ -27,34 +27,3 @@ Parameter server
    :members:
    :undoc-members:
    :member-order: bysource
-
-
-Visualization API v1 (legacy)
------------------------------
-
-.. deprecated:: 2021.1
-    This API is deprecated and will be no longer maintained. Please use the new visualization API.
-
-draw_dispatch_cr
-^^^^^^^^^^^^^^^^^
-
-.. automodule:: commonroad.visualization.draw_dispatch_cr
-   :members:
-   :undoc-members:
-   :member-order: bysource
-
-video
-^^^^^
-
-.. automodule:: commonroad.visualization.video
-  :members:
-  :undoc-members:
-  :member-order: bysource
-
-plot_Helper
-^^^^^^^^^^^
-
-.. automodule:: commonroad.visualization.plot_helper
-   :members:
-   :undoc-members:
-   :member-order: bysource

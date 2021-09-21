@@ -159,6 +159,89 @@
             }
         }
     },
+    "phantom_obstacle": {
+        "draw_shape": true,
+        "vehicle_shape": {
+            "occupancy": {
+                "shape": {
+                    "polygon": {
+                        "opacity": 1.0,
+                        "facecolor": "#c641f6",
+                        "edgecolor": "#00478f",
+                        "linewidth": 0.5,
+                        "zorder": 20
+                    },
+                    "rectangle": {
+                        "opacity": 1.0,
+                        "facecolor": "#c641f6",
+                        "edgecolor": "#00478f",
+                        "linewidth": 0.5,
+                        "zorder": 20
+                    },
+                    "circle": {
+                        "opacity": 1.0,
+                        "facecolor": "#c641f6",
+                        "edgecolor": "#00478f",
+                        "linewidth": 0.5,
+                        "zorder": 20
+                    }
+                }
+            }
+        },
+        "occupancy": {
+            "draw_occupancies": 1,
+            "shape": {
+                "polygon": {
+                    "opacity": 1.0,
+                    "facecolor": "#e59dff",
+                    "edgecolor": "#00478f",
+                    "linewidth": 0.5,
+                    "zorder": 20
+                },
+                "rectangle": {
+                    "opacity": 1.0,
+                    "facecolor": "#e59dff",
+                    "edgecolor": "#00478f",
+                    "linewidth": 0.5,
+                    "zorder": 20
+                },
+                "circle": {
+                    "opacity": 1.0,
+                    "facecolor": "#e59dff",
+                    "edgecolor": "#00478f",
+                    "linewidth": 0.5,
+                    "zorder": 20
+                }
+            }
+        }
+    },
+    "environment_obstacle": {
+        "occupancy": {
+            "shape": {
+                "polygon": {
+                    "opacity": 1.0,
+                    "facecolor": "#0e6000",
+                    "edgecolor": "#831d20",
+                    "linewidth": 0.5,
+                    "zorder": 20
+                },
+                "rectangle": {
+                    "opacity": 1.0,
+                    "facecolor": "#0e6000",
+                    "edgecolor": "#831d20",
+                    "linewidth": 0.5,
+                    "zorder": 20
+                },
+                "circle": {
+                    "opacity": 1.0,
+                    "facecolor": "#0e6000",
+                    "edgecolor": "#831d20",
+                    "linewidth": 0.5,
+                    "zorder": 20
+                }
+            }
+        }
+    },
     "trajectory": {
         "draw_trajectory": true,
         "facecolor": "#000000",
@@ -298,6 +381,7 @@
     "zorder": 20,
     "state": {
         "draw_arrow": false,
+        "radius": 0.5,
         "scale_factor": 1.0,
         "kwargs": {},
         "facecolor": "#000080",
@@ -307,11 +391,14 @@
         "label_zorder": 35,
         "label": "",
         "state": {
-            "draw_arrow": false,
-            "scale_factor": 1.0,
+            "draw_arrow": true,
+            "radius": 1.2,
+            "scale_factor": 0.7,
             "kwargs": {
+                "color": "g",
+                "width": 1.0
             },
-            "facecolor": "#000080",
+            "facecolor": "g",
             "zorder": 25
         }
     },

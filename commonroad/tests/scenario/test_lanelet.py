@@ -136,7 +136,7 @@ class TestLanelet(unittest.TestCase):
         # without inital_state
         dynamic_obs = DynamicObstacle(obstacle_id=30, obstacle_type=ObstacleType.PARKED_VEHICLE, prediction=prediction,
                                       initial_state=State(
-                                          **{'position': np.array([0, 2]), 'orientation': 0, 'time_step': 0}),
+                                              **{'position': np.array([0, 2]), 'orientation': 0, 'time_step': 0}),
                                       obstacle_shape=rect)
 
         self.assertTrue(lanelet.get_obstacles([dynamic_obs]))

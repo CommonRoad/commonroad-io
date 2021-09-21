@@ -10,7 +10,6 @@ import matplotlib.colors
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import matplotlib.text as text
-import numpy as np
 from matplotlib.animation import FuncAnimation
 from matplotlib.colors import hsv_to_rgb, rgb_to_hsv, to_rgb, to_hex
 from matplotlib.path import Path
@@ -31,7 +30,7 @@ from commonroad.scenario.traffic_sign import TrafficLightState, TrafficLight, Tr
 from commonroad.scenario.trajectory import Trajectory, State
 from commonroad.visualization.icons import supported_icons, get_obstacle_icon_patch
 from commonroad.visualization.param_server import ParamServer
-from commonroad.visualization.traffic_sign_v2 import draw_traffic_light_signs
+from commonroad.visualization.traffic_sign import draw_traffic_light_signs
 from commonroad.visualization.util import LineDataUnits, collect_center_line_colors, get_arrow_path_at, colormap_idx, \
     line_marking_to_linestyle, traffic_light_color_dict, get_tangent_angle, approximate_bounding_box_dyn_obstacles, \
     get_vehicle_direction_triangle
@@ -39,7 +38,7 @@ from commonroad.visualization.util import LineDataUnits, collect_center_line_col
 __author__ = "Luis Gressenbuch"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = [""]
-__version__ = "2021.2"
+__version__ = "2021.3"
 __maintainer__ = "Luis Gressenbuch"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -78,7 +77,7 @@ class MPRenderer(IRenderer):
 
     def __init__(self, draw_params: Union[ParamServer, dict, None] = None,
                  plot_limits: Union[List[Union[int, float]], None] = None, ax: Union[mpl.axes.Axes, None] = None,
-                 figsize: Union[None, Tuple[float, float]]=None, focus_obstacle: Union[None, Obstacle] = None):
+                 figsize: Union[None, Tuple[float, float]] = None, focus_obstacle: Union[None, Obstacle] = None):
         """
         Creates an renderer for matplotlib
 
@@ -189,6 +188,7 @@ class MPRenderer(IRenderer):
         self.dynamic_artists.clear()
         self.dynamic_collections.clear()
         self.traffic_sign_artists.clear()
+        self.dynamic_labels.clear()
         if keep_static_artists is False:
             self.static_artists.clear()
             self.static_collections.clear()
@@ -222,8 +222,6 @@ class MPRenderer(IRenderer):
         for art in self.traffic_sign_artists:
             self.ax.add_artist(art)
             artist_list.append(art)
-        for art in self.dynamic_artists:
-            self.ax.add_artist(art)
         for col in self.dynamic_collections:
             self.ax.add_collection(col)
             artist_list.append(col)
@@ -428,21 +426,13 @@ class MPRenderer(IRenderer):
         if focus_obstacle_id is False and type(self.plot_limits) == list:
             time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
             # dynamic obstacles
-            dyn_obs = obj.obstacles_by_position_intervals([Interval(self.plot_limits[0], self.plot_limits[1]),
-                                                           Interval(self.plot_limits[2], self.plot_limits[3])],
-                                                          tuple([ObstacleRole.DYNAMIC]), time_begin)
-
-            # static obstacles
-            static_obs = obj.obstacles_by_position_intervals([Interval(self.plot_limits[0], self.plot_limits[1]),
-                                                              Interval(self.plot_limits[2], self.plot_limits[3])],
-                                                             tuple([ObstacleRole.STATIC]))
+            obs = obj.obstacles_by_position_intervals([Interval(self.plot_limits[0], self.plot_limits[1]),
+                                                       Interval(self.plot_limits[2], self.plot_limits[3])],
+                                                      tuple(ObstacleRole), time_begin)
         else:
-            dyn_obs = obj.dynamic_obstacles
-            static_obs = obj.static_obstacles
+            obs = obj.obstacles
         # Draw all objects
-        for o in dyn_obs:
-            o.draw(self, draw_params, call_stack)
-        for o in static_obs:
+        for o in obs:
             o.draw(self, draw_params, call_stack)
 
     def draw_static_obstacle(self, obj: StaticObstacle, draw_params: Union[ParamServer, dict, None],
@@ -501,8 +491,11 @@ class MPRenderer(IRenderer):
 
         draw_history = draw_params.by_callstack(call_stack, ('history', 'draw_history'))
 
-        if obj.prediction is None or \
-            obj.prediction.final_time_step < time_begin or obj.initial_state.time_step > time_end:
+        if obj.prediction is None \
+                and obj.initial_state.time_step < time_begin or obj.initial_state.time_step > time_end:
+            return
+        elif (obj.prediction is not None and obj.prediction.final_time_step < time_begin) \
+                or obj.initial_state.time_step > time_end:
             return
 
         if draw_history and isinstance(obj.prediction, commonroad.prediction.prediction.TrajectoryPrediction):
@@ -520,12 +513,13 @@ class MPRenderer(IRenderer):
                 draw_icon = False
 
             if draw_icon:
-                if time_begin == 0:
+                draw_shape = False
+                if time_begin == obj.initial_state.time_step:
                     inital_state = obj.initial_state
                 else:
                     inital_state = obj.prediction.trajectory.state_at_time_step(time_begin)
                 if inital_state is not None:
-                    call_stack_tmp = call_stack + ('occupancy', 'shape', 'polygon')
+                    call_stack_tmp = call_stack + ('vehicle_shape', 'occupancy', 'shape', 'polygon')
 
                     facecolor = draw_params.by_callstack(call_stack_tmp, 'facecolor')
                     edgecolor = draw_params.by_callstack(call_stack_tmp, 'edgecolor')
@@ -547,11 +541,12 @@ class MPRenderer(IRenderer):
                 v_tri = get_vehicle_direction_triangle(veh_occ.shape)
                 self.draw_polygon(v_tri, draw_params, call_stack + ('vehicle_shape', 'direction'))
 
-            if draw_signals:
-                sig = obj.signal_state_at_time_step(time_begin)
-                occ = veh_occ
-                if occ is not None and sig is not None:
-                    self._draw_signal_state(sig, occ, draw_params, call_stack)
+        # draw signals
+        if draw_signals and (draw_shape or draw_icon):
+            sig = obj.signal_state_at_time_step(time_begin)
+            veh_occ = obj.occupancy_at_time(time_begin)
+            if veh_occ is not None and sig is not None:
+                self._draw_signal_state(sig, veh_occ, draw_params, call_stack)
 
         # draw occupancies
         if (draw_occupancies == 1 or type(obj.prediction) == commonroad.prediction.prediction.SetBasedPrediction):
@@ -587,9 +582,8 @@ class MPRenderer(IRenderer):
         if show_label:
             if state is not None:
                 position = state.position
-                self.dynamic_labels.append(
-                        text.Text(position[0] + 0.5, position[1], str(obj.obstacle_id), clip_on=True,
-                                  zorder=ZOrders.LABELS))
+                self.dynamic_labels.append(text.Text(position[0] + 0.5, position[1], str(obj.obstacle_id), clip_on=True,
+                                                     zorder=ZOrders.LABELS))
 
         # draw initial state
         if draw_initial_state:
@@ -610,29 +604,27 @@ class MPRenderer(IRenderer):
         time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
         time_end = draw_params.by_callstack(call_stack, ('time_end',))
 
-        call_stack = tuple(list(call_stack) + ['dynamic_obstacle'])
+        call_stack = call_stack + ('phantom_obstacle',)
         draw_shape = draw_params.by_callstack(call_stack, 'draw_shape')
         draw_occupancies = draw_params.by_callstack(call_stack, ('occupancy', 'draw_occupancies'))
-
-        # draw occupancies
-        if (draw_occupancies == 1 or (
-                draw_occupancies == 0 and type(obj.prediction) == commonroad.prediction.prediction.SetBasedPrediction)):
-            if draw_shape:
-                # occupancy already plotted
-                time_begin_occ = time_begin + 1
-            else:
-                time_begin_occ = time_begin
-
-            for time_step in range(time_begin_occ, time_end):
-                occ = obj.occupancy_at_time(time_step)
-                if occ is not None:
-                    occ.draw(self, draw_params, call_stack)
 
         # draw shape
         if draw_shape:
             occ = obj.occupancy_at_time(time_begin)
             if occ is not None:
                 occ.draw(self, draw_params, call_stack + ('vehicle_shape',))
+
+        # draw occupancies
+        if draw_occupancies == 1:
+            if draw_shape:
+                # Initial shape already drawn
+                occ_time_begin = time_begin + 1
+            else:
+                occ_time_begin = time_begin
+            for time_step in range(occ_time_begin, time_end):
+                occ = obj.occupancy_at_time(time_step)
+                if occ is not None:
+                    occ.draw(self, draw_params, call_stack)
 
     def draw_environment_obstacle(self, obj: EnvironmentObstacle, draw_params: Union[ParamServer, dict, None],
                                   call_stack: Tuple[str, ...]) -> None:
@@ -646,7 +638,7 @@ class MPRenderer(IRenderer):
         """
         draw_params = self._get_draw_params(draw_params)
         time_begin = draw_params.by_callstack(tuple(), ('time_begin',))
-        call_stack = tuple(list(call_stack) + ['static_obstacle'])
+        call_stack = call_stack + ('environment_obstacle',)
         obj.occupancy_at_time(time_begin).draw(self, draw_params, call_stack)
 
     def _draw_history(self, dyn_obs: DynamicObstacle, call_stack: Tuple[str, ...], draw_params: ParamServer):
@@ -834,16 +826,18 @@ class MPRenderer(IRenderer):
         scale_factor = draw_params.by_callstack(call_stack, 'scale_factor')
         arrow_args = draw_params.by_callstack(call_stack, 'kwargs')
         draw_arrow = draw_params.by_callstack(call_stack, 'draw_arrow')
+        radius = draw_params.by_callstack(call_stack, 'radius')
+        facecolor = draw_params.by_callstack(call_stack, 'facecolor')
+        self.obstacle_patches.append(
+                mpl.patches.Circle(state.position, radius=radius, zorder=ZOrders.STATE, color=facecolor))
         if draw_arrow:
             cos = math.cos(state.orientation)
             sin = math.sin(state.orientation)
             x = state.position[0]
             y = state.position[1]
-            self.obstacle_patches.append(mpl.patches.Arrow(x=x, y=y, dx=state.velocity * cos * scale_factor,
-                                                           dy=state.velocity * sin * scale_factor, zorder=ZOrders.STATE,
-                                                           **arrow_args))
-        else:
-            self.obstacle_patches.append(mpl.patches.Circle(state.position, radius=0.5, zorder=ZOrders.STATE))
+            self.obstacle_patches.append(mpl.patches.FancyArrow(x=x, y=y, dx=state.velocity * cos * scale_factor,
+                                                                dy=state.velocity * sin * scale_factor,
+                                                                zorder=ZOrders.STATE, **arrow_args))
 
     def draw_lanelet_network(self, obj: LaneletNetwork, draw_params: Union[ParamServer, dict, None],
                              call_stack: Tuple[str, ...]) -> None:
@@ -1238,8 +1232,7 @@ class MPRenderer(IRenderer):
                                                   np.ones([coordinates_left_border_vertices.shape[0], 1]) * 1.5,
                                                   np.zeros([coordinates_left_border_vertices.shape[0], 1]),
                                                   offsets=coordinates_left_border_vertices, color=left_bound_color,
-                                                  transOffset=self.ax.transData,
-                                                  zorder=ZOrders.LEFT_BOUND + 0.1,))
+                                                  transOffset=self.ax.transData, zorder=ZOrders.LEFT_BOUND + 0.1, ))
 
             # right_vertices
             self.static_collections.append(
@@ -1247,8 +1240,7 @@ class MPRenderer(IRenderer):
                                                   np.ones([coordinates_right_border_vertices.shape[0], 1]) * 1.5,
                                                   np.zeros([coordinates_right_border_vertices.shape[0], 1]),
                                                   offsets=coordinates_right_border_vertices, color=right_bound_color,
-                                                  transOffset=self.ax.transData,
-                                                  zorder=ZOrders.LEFT_BOUND + 0.1,))
+                                                  transOffset=self.ax.transData, zorder=ZOrders.LEFT_BOUND + 0.1, ))
 
         if draw_traffic_signs:
             # draw actual traffic sign

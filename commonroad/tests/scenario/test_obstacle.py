@@ -32,7 +32,7 @@ class TestObstacle(unittest.TestCase):
         state_list = [State(position=np.array([0.0, 0.0]), orientation=0.3, time_step=0),
                       State(position=np.array([1.0, 1.0]), orientation=0.3, time_step=1),
                       State(position=np.array([2.0, 1.0]), orientation=0.3, time_step=2)]
-        trajectory = Trajectory(0, state_list[1::])
+        trajectory = Trajectory(1, state_list[1::])
         shape = Rectangle(5.1, 2.6, np.array([0, 0]), 0)
         prediction = TrajectoryPrediction(trajectory, shape)
         initial_state = state_list[0]
@@ -61,7 +61,7 @@ class TestObstacle(unittest.TestCase):
         obstacle_type = ObstacleType.CAR
 
         state_list = [State(position=np.array([1.0, 1.0]), orientation=0.3, time_step=1)]
-        trajectory = Trajectory(0, state_list)
+        trajectory = Trajectory(1, state_list)
         shape = Rectangle(5.1, 2.6, np.array([0, 0]), 0)
         prediction = TrajectoryPrediction(trajectory, shape)
         initial_state = State(position=np.array([0.0, 0.0]), orientation=0.3, time_step=0)
