@@ -373,8 +373,7 @@ def rescale_text(string: str, prop: dict, scale_factor: float,
 
 def create_img_boxes_traffic_sign(
         traffic_signs: Union[List[TrafficSign], TrafficSign],
-        draw_params: ParamServer, call_stack: Tuple[str, ...], rnd) -> Dict[
-    Tuple[float, float], List[OffsetBox]]:
+        draw_params: ParamServer, call_stack: Tuple[str, ...], rnd) -> Dict[Tuple[float, float], List[OffsetBox]]:
     """
     For each Traffic sign an OffsetBox is created, containing the png image
     and optionally labels. These boxes can
@@ -531,8 +530,7 @@ def create_img_boxes_traffic_sign(
 
 def create_img_boxes_traffic_lights(
         traffic_lights: Union[List[TrafficLight], TrafficLight],
-        draw_params: ParamServer, call_stack: Tuple[str, ...], rnd) -> Dict[
-    Tuple[float, float], List[OffsetBox]]:
+        draw_params: ParamServer, call_stack: Tuple[str, ...], rnd) -> Dict[Tuple[float, float], List[OffsetBox]]:
     """
     For each Traffic light an OffsetBox is created, containing the png image
     and optionally labels. These boxes can
@@ -607,8 +605,7 @@ def draw_traffic_light_signs(traffic_lights_signs: Union[
     :param rnd: MPRenderer
     :return:
     """
-    kwargs = draw_params.by_callstack(call_stack, (
-    'lanelet_network', 'kwargs_traffic_light_signs'))
+    kwargs = draw_params.by_callstack(call_stack, ('lanelet_network', 'kwargs_traffic_light_signs'))
 
     zorder_0 = draw_params.by_callstack(call_stack, ('traffic_light', 'zorder'))
 
