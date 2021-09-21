@@ -1150,8 +1150,8 @@ class LaneletNetwork(IDrawable):
                 if la.adj_left_same_direction is None or la.adj_left not in existing_ids else la.adj_left_same_direction
             la._adj_right = None if la.adj_right is None or la.adj_right not in existing_ids else la.adj_right
             la._adj_right_same_direction = None \
-                if la.adj_right_same_direction \
-                   is None or la.adj_right not in existing_ids else la.adj_right_same_direction
+                if la.adj_right_same_direction is None or la.adj_right not in existing_ids else \
+                la.adj_right_same_direction
 
         for inter in self.intersections:
             for inc in inter.incomings:
