@@ -1,6 +1,6 @@
 # Changelog
 
-## [2021.3] - 2021-XX-XX
+## [2021.3] - 2021-09-21
 ### Added
 - Spatial indexing via STRTree in LaneletNetwork for faster computation of lanelet searches via positions or shapes
 
