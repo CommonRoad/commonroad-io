@@ -981,12 +981,16 @@ class LaneletNetwork(IDrawable):
     def __deepcopy__(self, memo):
         cls = self.__class__
         result = cls.__new__(cls)
+        # reset
         self._buffered_strtee = None
+
         memo[id(self)] = result
         for k, v in self.__dict__.items():
             setattr(result, k, copy.deepcopy(v, memo))
 
         result._create_buffered_strtree()
+        # restore
+        self._create_buffered_strtree()
 
         return result
 
