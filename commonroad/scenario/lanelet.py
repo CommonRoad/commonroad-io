@@ -3,6 +3,7 @@ import enum
 from typing import *
 
 import numpy as np
+from line_profiler_pycharm import profile
 from shapely.geometry import MultiPolygon as ShapelyMultiPolygon
 from shapely.geometry import Point as ShapelyPoint
 from shapely.geometry import Polygon as ShapelyPolygon
@@ -955,6 +956,7 @@ class LaneletNetwork(IDrawable):
         self._traffic_signs: Dict[int, TrafficSign] = {}
         self._traffic_lights: Dict[int, TrafficLight] = {}
 
+    @profile
     def __deepcopy__(self, memo):
         cls = self.__class__
         result = cls.__new__(cls)
