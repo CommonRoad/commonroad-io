@@ -1359,8 +1359,11 @@ class StateFactory:
             slip_angle = read_value_exact_or_interval(xml_node.find('slipAngle'))
             state_args['slip_angle'] = slip_angle
         if xml_node.find('hitch') is not None:
-            hitch = read_value_exact_or_interval(xml_node.find('hitch'))
-            state_args['hitch'] = hitch
+            hitch_list = list()
+            for h in list(xml_node.find('hitch')):
+                value = float(h.text)
+                hitch_list.append(value)
+            state_args['hitch'] = hitch_list
         return State(**state_args)
 
     @classmethod

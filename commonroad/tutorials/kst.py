@@ -32,23 +32,40 @@ sx0 = 0
 sy0 = 0
 alpha0 = 0
 initialState = [sx0, sy0, delta0, vel0, Psi0, dotPsi0, beta0]  # initial state for simulation
-x0_KST = init_kst(initialState, alpha0)  # initial state for kinematic single-track trailer model
+x0_KST = init_kst(initialState, [0, 0])  # initial state for kinematic single-track trailer model
 
 
 # ********* Simulate maneuver ************
 # cornering left
 t = numpy.arange(0, tFinal, 0.1)
-v_delta = 0.1           # steering angle velocity
+v_delta = 0.2           # steering angle velocity
 a_long = 0              # longitudinal acceleration
 u = [v_delta, a_long]   # input vector
 
 # simulate kinematic single-track trailer model
 x_left_kst = odeint(func_KST, x0_KST, t, args=(u, p))
 
+last_res = x_left_kst[39]
+
+iniState = [last_res[0], last_res[1], -last_res[2], last_res[3], last_res[4], last_res[5], last_res[6]]
+x0_KST2 = init_kst(iniState, [last_res[5], last_res[6]])
+t1 = numpy.arange(tFinal, 2 * tFinal, 0.1)
+v_delta = 0.3           # steering angle velocity
+a_long = 0              # longitudinal acceleration
+u = [v_delta, a_long]   # input vector
+# simulate kinematic single-track trailer model
+x_left_kst1 = odeint(func_KST, x0_KST2, t1, args=(u, p))
+
+results = []
+for sol in x_left_kst:
+    results.append(sol)
+for sol in x_left_kst1:
+    results.append(sol)
+
 time = 1
 with open("trajectory", 'w') as traj:
     traj.write("<trajectory>")
-    for sol in x_left_kst:
+    for sol in results:
         traj.write("\n  <state>")
         traj.write("\n    <position>")
         traj.write("\n      <point>")
@@ -70,6 +87,7 @@ with open("trajectory", 'w') as traj:
         traj.write("\n    </acceleration>")
         traj.write("\n    <hitch>")
         traj.write("\n      <exact>" + str(sol[5]) + "</exact>")
+        traj.write("\n      <exact>" + str(sol[6]) + "</exact>")
         traj.write("\n    </hitch>")
         traj.write("\n  </state>")
         time += 1
@@ -78,22 +96,31 @@ with open("trajectory", 'w') as traj:
 # ********* Plot results ****************
 # plot results
 # positions
+timeeee = []
+for t0 in t:
+    timeeee.append(t0)
+for t0 in t1:
+    timeeee.append(t0)
 title('positions')
-plt.plot([tmp[0] for tmp in x_left_kst], [tmp[1] for tmp in x_left_kst])
+plt.plot([tmp[0] for tmp in results], [tmp[1] for tmp in results])
 plt.show()
 # steering angle
 title('steering angle')
-plt.plot(t, [tmp[2] for tmp in x_left_kst])
+plt.plot(timeeee, [tmp[2] for tmp in results])
 plt.show()
 # velocity
 title('velocity')
-plt.plot(t, [tmp[3] for tmp in x_left_kst])
+plt.plot(timeeee, [tmp[3] for tmp in results])
 plt.show()
 # yaw angle truck
 title('yaw angle truck')
-plt.plot(t, [tmp[4] for tmp in x_left_kst])
+plt.plot(timeeee, [tmp[4] for tmp in results])
 plt.show()
 # hitch angle
-title('hitch angle')
-plt.plot(t, [tmp[5] for tmp in x_left_kst])
+title('hitch angle1')
+plt.plot(timeeee, [tmp[5] for tmp in results])
+plt.show()
+# hitch angle
+title('hitch angle2')
+plt.plot(timeeee, [tmp[6] for tmp in results])
 plt.show()

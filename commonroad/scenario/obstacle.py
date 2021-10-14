@@ -1,5 +1,6 @@
 import enum
 import warnings
+import math
 import numpy as np
 from typing import Union, Set, List, Optional, Tuple
 from abc import ABC, abstractmethod
@@ -358,8 +359,6 @@ class StaticObstacle(Obstacle):
         renderer.draw_static_obstacle(self, draw_params, call_stack)
 
 
-# TODO: try adding a Truck subclass of DynamicObstacle + override initial_state() and add trailer_dist
-# TODO: add trailer_dist as a parameter of obstacle also in the xml file (not in state)
 class DynamicObstacle(Obstacle):
     """ Class representing dynamic obstacles as defined in CommonRoad. Each dynamic obstacle has stored its predicted
     movement in future time steps.
@@ -506,12 +505,24 @@ class Truck(DynamicObstacle):
         self._initial_state = initial_state
         shapes = self.obstacle_shape.shapes
         shape_0 = occupancy_shape_from_state(shapes[0], initial_state)
-        orient_1 = initial_state.orientation + initial_state.hitch
-        pos_1 = (initial_state.position - (shapes[0].length / 2 + self.trailer_dist) * np.array(
-                [np.cos(initial_state.orientation), np.sin(initial_state.orientation)]) - shapes[
-                     1].length / 2 * np.array([np.cos(orient_1), np.sin(orient_1)]))
+        orient_1 = initial_state.orientation + initial_state.hitch[0]
+        pos_1 = initial_state.position - \
+                (shapes[0].length / 2 + self.trailer_dist) * \
+                np.array([math.cos(initial_state.orientation), math.sin(initial_state.orientation)]) - \
+                (shapes[1].length / 2) * np.array([math.cos(orient_1), math.sin(orient_1)])
         shape_1 = shapes[1].rotate_translate_local(pos_1, orient_1)
-        self._initial_occupancy_shape = ShapeGroup([shape_0, shape_1])
+        orient_2 = orient_1 + initial_state.hitch[1]
+        pos_2 = initial_state.position - \
+                (shapes[0].length / 2 + self.trailer_dist) * \
+                np.array([math.cos(initial_state.orientation), math.sin(initial_state.orientation)]) - \
+                (shapes[1].length + self.trailer_dist) * \
+                np.array([math.cos(orient_1), math.sin(orient_1)]) - \
+                (shapes[2].length / 2) * np.array([math.cos(orient_2), math.sin(orient_2)])
+        shape_2 = shapes[2].rotate_translate_local(pos_2, orient_2)
+        self._initial_occupancy_shape = ShapeGroup([shape_0, shape_1, shape_2])
+
+
+# TODO: check if occupancy is constructed correctly based on the model (KST/ST)
 
 
 class PhantomObstacle(IDrawable):
