@@ -282,21 +282,20 @@ class TrajectoryPrediction(Prediction):
                 occupancy_set.append(Occupancy(state.time_step, occupied_region))
             else:
                 shapes = self._shape.shapes
-                shape_0 = shapes[0].rotate_translate_local(state.position, state.orientation)
-                orient_1 = state.orientation + state.hitch[0]
-                pos_1 = state.position - \
-                        (shapes[0].length / 2 + self.trailer_dist) * \
-                        np.array([math.cos(state.orientation), math.sin(state.orientation)]) - \
-                        (shapes[1].length / 2) * np.array([math.cos(orient_1), math.sin(orient_1)])
-                shape_1 = shapes[1].rotate_translate_local(pos_1, orient_1)
-                orient_2 = orient_1 + state.hitch[1]
-                pos_2 = state.position - \
-                        (shapes[0].length / 2 + self.trailer_dist) * \
-                        np.array([math.cos(state.orientation), math.sin(state.orientation)]) - \
-                        (shapes[1].length + self.trailer_dist) * \
-                        np.array([math.cos(orient_1), math.sin(orient_1)]) - \
-                        (shapes[2].length / 2) * np.array([math.cos(orient_2), math.sin(orient_2)])
-                shape_2 = shapes[2].rotate_translate_local(pos_2, orient_2)
-                occupied_region = ShapeGroup([shape_0, shape_1, shape_2])
+                list_of_shapes = []
+                orient = state.orientation
+                nr_of_shapes = len(shapes)
+                pos = state.position
+                list_of_shapes.append(shapes[0].rotate_translate_local(state.position, state.orientation))
+
+                for i in range(1, nr_of_shapes):
+                    new_orient = orient + state.hitch[i - 1]
+                    pos = pos - (shapes[i - 1].length / 2 + self.trailer_dist) * np.array([math.cos(orient), math.sin(orient)]) - \
+                          (shapes[i].length / 2) * np.array([math.cos(new_orient), math.sin(new_orient)])
+                    orient = new_orient
+                    shape = shapes[i].rotate_translate_local(pos, orient)
+                    list_of_shapes.append(shape)
+
+                occupied_region = ShapeGroup(list_of_shapes)
                 occupancy_set.append(Occupancy(state.time_step, occupied_region))
         return occupancy_set

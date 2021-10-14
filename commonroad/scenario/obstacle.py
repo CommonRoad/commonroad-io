@@ -504,22 +504,22 @@ class Truck(DynamicObstacle):
                                                  'Expected types: %s. Got type: %s.' % (State, type(initial_state))
         self._initial_state = initial_state
         shapes = self.obstacle_shape.shapes
-        shape_0 = occupancy_shape_from_state(shapes[0], initial_state)
-        orient_1 = initial_state.orientation + initial_state.hitch[0]
-        pos_1 = initial_state.position - \
-                (shapes[0].length / 2 + self.trailer_dist) * \
-                np.array([math.cos(initial_state.orientation), math.sin(initial_state.orientation)]) - \
-                (shapes[1].length / 2) * np.array([math.cos(orient_1), math.sin(orient_1)])
-        shape_1 = shapes[1].rotate_translate_local(pos_1, orient_1)
-        orient_2 = orient_1 + initial_state.hitch[1]
-        pos_2 = initial_state.position - \
-                (shapes[0].length / 2 + self.trailer_dist) * \
-                np.array([math.cos(initial_state.orientation), math.sin(initial_state.orientation)]) - \
-                (shapes[1].length + self.trailer_dist) * \
-                np.array([math.cos(orient_1), math.sin(orient_1)]) - \
-                (shapes[2].length / 2) * np.array([math.cos(orient_2), math.sin(orient_2)])
-        shape_2 = shapes[2].rotate_translate_local(pos_2, orient_2)
-        self._initial_occupancy_shape = ShapeGroup([shape_0, shape_1, shape_2])
+        list_of_shapes = []
+        orient = initial_state.orientation
+        nr_of_shapes = len(shapes)
+        pos = initial_state.position
+        list_of_shapes.append(shapes[0].rotate_translate_local(initial_state.position, initial_state.orientation))
+
+        for i in range(1, nr_of_shapes):
+            new_orient = orient + initial_state.hitch[i - 1]
+            pos = pos - (shapes[i - 1].length / 2 + self.trailer_dist) * np.array(
+                    [math.cos(orient), math.sin(orient)]) - (shapes[i].length / 2) * np.array(
+                    [math.cos(new_orient), math.sin(new_orient)])
+            orient = new_orient
+            shape = shapes[i].rotate_translate_local(pos, orient)
+            list_of_shapes.append(shape)
+
+        self._initial_occupancy_shape = ShapeGroup(list_of_shapes)
 
 
 # TODO: check if occupancy is constructed correctly based on the model (KST/ST)
