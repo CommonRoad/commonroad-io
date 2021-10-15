@@ -108,7 +108,7 @@ class TestInterval(unittest.TestCase):
         a = Interval(-0.5, -0.1)
         result = a - 5.0
         self.assertEqual(-5.5, result.start)
-        self.assertEqual(-0.1-5.0, result.end)
+        self.assertEqual(-0.1 - 5.0, result.end)
 
     def test_product(self):
         a = Interval(-0.5, -0.1)
@@ -154,7 +154,7 @@ class TestInterval(unittest.TestCase):
         self.assertEqual(b > a, True)
 
     def test__contains__(self):
-        self.assertTrue(1.0 in Interval(0,2))
+        self.assertTrue(1.0 in Interval(0, 2))
         self.assertTrue(1.0 in Interval(1, 2))
         self.assertTrue(2.0 in Interval(0, 2))
         self.assertFalse(-1.0 in Interval(0, 2))
