@@ -93,6 +93,16 @@ class TestIsReached(unittest.TestCase):
         self.assertFalse(goal_region.is_reached(state_5))
         self.assertFalse(goal_region.is_reached(state_6))
 
+        # Regression tests
+        goal_state = State(
+                time_step=Interval(3.0, 3.2),
+                orientation=AngleInterval(-0.1965, 0.2034),
+                velocity=Interval(20, 30.5)
+        )
+        goal_region = GoalRegion([goal_state])
+        state = State(time_step=3.1, orientation=0.0034, velocity=25)
+        self.assertTrue(goal_region.is_reached(state))
+
 
 if __name__ == '__main__':
     unittest.main()
