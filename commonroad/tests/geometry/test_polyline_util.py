@@ -9,9 +9,11 @@ class TestPolylineUtil(unittest.TestCase):
 
     def test_compute_polyline_lengths(self):
         polylines = [np.array([[-1, 0], [1, 0], [4, 0]]),
-                     np.array([[0, 0], [1, 1], [3, 3], [0, 0]])]
+                     np.array([[0, 0], [1, 1], [3, 3], [0, 0]]),
+                     np.array([[-7, -7], [7, 7]])]
         lengths_exps = [[0., 2., 5.],
-                        [0., 1.41421356, 4.24264069, 8.48528137]]
+                        [0., 1.41421356, 4.24264069, 8.48528137],
+                        [0., 19.79898987322333]]
 
         for p in range(0, len(polylines)):
             polyline = polylines[p]
@@ -24,8 +26,9 @@ class TestPolylineUtil(unittest.TestCase):
 
     def test_compute_polyline_length(self):
         polylines = [np.array([[1, 1], [3, 1], [7, 1], [0, 1]]),
-                     np.array([[1, 1], [-2, -2], [-3, -2], [0, -2]])]
-        length_exps = [13., 8.242640687119284]
+                     np.array([[1, 1], [-2, -2], [-3, -2], [0, -2]]),
+                     np.array([[-7, -7], [7, 7]])]
+        length_exps = [13., 8.242640687119284, 19.79898987322333]
 
         for i in range(0, len(polylines)):
             polyline = polylines[i]
@@ -37,11 +40,17 @@ class TestPolylineUtil(unittest.TestCase):
         polylines = [np.array([[-7, 0], [-3, 0], [1, 0], [5, 0]]),
                      np.array([[-2, 0], [-1, 0.5], [0, 1], [1, 0.5], [2, 0]]),
                      np.array([[-2, 0], [-1, -0.5], [0, -1], [1, -0.5], [2, 0]]),
-                     np.array([[-2, 0], [-1, 1], [0, 0], [1, -1], [2, 0]])]
+                     np.array([[-2, 0], [-1, 1], [0, 0], [1, -1], [2, 0]]),
+                     np.array([[0, 0], [1, 1], [2, 2]]),
+                     np.array([[1, 1], [2, 3], [3, 6]]),
+                     np.array([[4, 6], [5, 5], [6, 3]])]
         curvatures_exps = [[0., 0., 0., 0.],
                            [0., -0.17888544, -0.5, -0.17888544, 0.],
                            [0., 0.17888544, 0.5, 0.17888544, 0.],
-                           [-0.35355339, -1., 0., 1., 0.35355339]]
+                           [-0.35355339, -1., 0., 1., 0.35355339],
+                           [0., 0., 0.],
+                           [0.044721359549995794, 0.025613150093386463, 0.015811388300841896],
+                           [-0.17677669529663687, -0.08533849172695833, -0.044721359549995794]]
 
         for p in range(0, len(polylines)):
             polyline = polylines[p]
