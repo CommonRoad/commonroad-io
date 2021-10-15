@@ -24,7 +24,7 @@ style_checks:
     - pip install pycodestyle
     - git  diff ${CI_COMMIT_BEFORE_SHA}...${CI_COMMIT_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff
   except:
-  - merge_results
+  - merge_requests
   allow_failure: true
 
 style_check_merge_result:
@@ -33,7 +33,7 @@ style_check_merge_result:
     - pip install pycodestyle
     - git  diff ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA}...${CI_MERGE_REQUEST_SOURCE_BRANCH_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff
   only:
-  - merge_results
+  - merge_requests
 
 build_and_test_python_3_6:
   image: python:3.6
