@@ -88,6 +88,27 @@ class StopLine:
         self._traffic_sign_ref = traffic_sign_ref
         self._traffic_light_ref = traffic_light_ref
 
+    def __eq__(self, other):
+        if not isinstance(other, StopLine):
+            return False
+        thresh = 1e-10
+        eq = True
+
+        polylines = [self._start, self._end]
+        polylines_other = [other.start, other.end]
+        for i in range(0, len(polylines)):
+            polyline = polylines[i]
+            polyline_other = polylines_other[i]
+            if polyline is not None and polyline_other is not None:
+                eq = eq and np.allclose(polyline, polyline_other, rtol=thresh, atol=thresh)
+            elif (polyline is None and polyline_other is not None) or (polyline is not None and polyline_other is None):
+                return False
+
+        eq = eq and self._line_marking == other.line_marking and self._traffic_sign_ref == other.traffic_sign_ref and \
+            self._traffic_light_ref == other.traffic_light_ref
+
+        return eq
+
     @property
     def start(self) -> np.ndarray:
         return self._start
@@ -278,6 +299,49 @@ class Lanelet:
             self._traffic_lights = set()
         else:
             self.traffic_lights = traffic_lights
+
+    def __eq__(self, other):
+        if not isinstance(other, Lanelet):
+            return False
+        thresh = 1e-10
+        eq = self.lanelet_id == other.lanelet_id
+
+        polylines = [self.distance, self.inner_distance, self._left_vertices, self._right_vertices,
+                     self._center_vertices]
+        polylines_other = [other.distance, other.inner_distance, other.left_vertices, other.right_vertices,
+                           other.center_vertices]
+
+        for i in range(0, len(polylines)):
+            polyline = polylines[i]
+            polyline_other = polylines_other[i]
+            if (polyline is None and polyline_other is not None) or (polyline is not None and polyline_other is None):
+                return False
+            else:
+                if polyline is not None and polyline_other is not None:
+                    eq = eq and np.allclose(polyline, polyline_other, rtol=thresh, atol=thresh)
+
+        eq = eq and self._line_marking_left_vertices == other.line_marking_left_vertices and \
+            self._line_marking_right_vertices == other.line_marking_right_vertices
+
+        eq = eq and self._stop_line == other.stop_line
+
+        eq = eq and self._predecessor == other.predecessor and self._successor == other.successor and \
+            self._adj_left == other.adj_left and self._adj_right == other.adj_right
+
+        eq = eq and self._adj_left_same_direction == other.adj_left_same_direction and \
+            self._adj_right_same_direction == other.adj_right_same_direction
+
+        eq = eq and self._dynamic_obstacles_on_lanelet == other.dynamic_obstacles_on_lanelet and \
+            self._static_obstacles_on_lanelet == other.static_obstacles_on_lanelet
+
+        eq = eq and self._lanelet_type == other.lanelet_type and self._user_one_way == self.user_one_way and \
+            self._user_bidirectional == other.user_bidirectional
+
+        eq = eq and self._traffic_signs == other.traffic_signs and self._traffic_lights == other.traffic_lights
+
+        eq = eq and self._polygon == other.polygon
+
+        return eq
 
     @property
     def distance(self) -> np.ndarray:

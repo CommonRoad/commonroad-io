@@ -355,6 +355,16 @@ class Polygon(Shape):
         # ensure that vertices are sorted clockwise and the first and last point are the same
         self._vertices = np.array(shapely.geometry.polygon.orient(self._shapely_polygon, sign=-1.0).exterior.coords)
 
+    def __eq__(self, other):
+        if isinstance(other, Polygon):
+            return False
+
+        # vertices
+
+        # center
+
+        # shapely_object
+
     @property
     def vertices(self) -> np.ndarray:
         """ Vertices of the polygon [[x_0, y_0], [x_1, y_1], ...]. The vertices are sorted clockwise and the
