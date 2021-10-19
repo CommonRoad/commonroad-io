@@ -3,6 +3,8 @@ import unittest
 import numpy as np
 
 from commonroad.geometry import polyline_util
+from commonroad.geometry.polyline_util import compare_polylines_equality, compute_polyline_include_point, \
+    compute_polyline_intersections
 
 
 class TestPolylineUtil(unittest.TestCase):
@@ -91,6 +93,57 @@ class TestPolylineUtil(unittest.TestCase):
 
             self.assertAlmostEqual(orientation, orientation_exp)
 
+    def test_compute_polyline_include_point(self):
+        polyline = np.array([[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]])
+        self.assertTrue(compute_polyline_include_point(polyline, 2.5, 0))
+        self.assertTrue(compute_polyline_include_point(polyline, 0, 0))
+        self.assertTrue(compute_polyline_include_point(polyline, 4, 0))
+
+        polyline = np.array([[-1, -1], [0, 0], [1, 1], [2, 1], [3, 1]])
+        self.assertTrue(compute_polyline_include_point(polyline, -0.5, -0.5))
+        self.assertFalse(compute_polyline_include_point(polyline, -1.1, -1.1))
+        self.assertTrue(compute_polyline_include_point(polyline, 1.5, 1))
+        self.assertFalse(compute_polyline_include_point(polyline, 3.05, 1))
+        self.assertFalse(compute_polyline_include_point(polyline, 0.95, 1))
+
+        polyline = np.array([[-10, -10], [-10, 10]])
+        self.assertTrue(compute_polyline_include_point(polyline, -10, 0))
+        self.assertFalse(compute_polyline_include_point(polyline, -9.99, 0))
+        self.assertTrue(compute_polyline_include_point(polyline, -10, -10))
+        self.assertFalse(compute_polyline_include_point(polyline, -10.1, -10))
+
+    def test_compute_polyline_intersections(self):
+        polyline_1 = np.array([[0, 0], [1, 0], [2, 0], [3, 0]])
+        polyline_2 = np.array([[0, -1], [1, -1], [2, -1], [3, -1]])
+        intersections = compute_polyline_intersections(polyline_1, polyline_2)
+        self.assertEqual(intersections.size, 0)
+
+        polyline_2 = np.array([[1.5, 0.5], [1.5, 1], [1.5, 1.5], [1.5, 2]])
+        intersections = compute_polyline_intersections(polyline_1, polyline_2)
+        print(intersections)
+        self.assertEqual(intersections.size, 0)
+
+        polylines_1 = [np.array([[0, 0], [1, 0], [2, 0], [3, 0]]),
+                       np.array([[-1, -1], [0, 0], [1, 1]]),
+                       np.array([[2, -5], [2, -3], [2, 2]]),
+                       np.array([[-2, -2], [2, 2]])]
+        polylines_2 = [np.array([[2.5, -1.5], [2.5, 2], [2.5, 3]]),
+                       np.array([[1, 0], [1, 0.5], [1, 1]]),
+                       np.array([[0, 0], [3, 0], [3, -1], [0, -1], [0, -2], [7, -2]]),
+                       np.array([[-2, 2], [2, -2]])]
+        intersections_exps = [[[2.5, 0.]], [[1, 1]], [[2, 0], [2, -1], [2, -2]], [[0, 0]]]
+        for i in range(0, len(polylines_1)):
+            polyline_1 = polylines_1[i]
+            polyline_2 = polylines_2[i]
+            intersections_exp = intersections_exps[i]
+            intersections = compute_polyline_intersections(polyline_1, polyline_2)
+            print(intersections)
+            for j in range(0, len(intersections_exp)):
+                x_exp, y_exp = intersections_exp[j]
+                x, y = intersections[j]
+                self.assertAlmostEqual(x, x_exp)
+                self.assertAlmostEqual(y, y_exp)
+
     def test_compute_polyline_self_intersection(self):
         polylines = [np.array([[0, 0], [1, 0], [2, 0], [7, 0]]),
                      np.array([[0, 0], [1, 0], [1, 1], [0.5, 1], [0.5, -1]]),
@@ -105,6 +158,22 @@ class TestPolylineUtil(unittest.TestCase):
 
             self.assertEqual(self_intersection, self_intersection_exp)
 
+    def test_compare_polylines_equality(self):
+        polyline_1 = np.array([[0, 0], [1, 0], [2, 0], [3, 0]])
+        polyline_2 = np.array([[0, 0], [1, 0], [2, 0], [3, 0]])
+        self.assertTrue(compare_polylines_equality(polyline_1, polyline_2))
+
+        polyline_2 = np.array([[0, 0], [1, 0], [2, 0.0000000000001], [3, 0]])
+        self.assertTrue(compare_polylines_equality(polyline_1, polyline_2))
+
+        polyline_2 = np.array([[0, 0], [1, 0], [2, 0.0000001], [3, 0]])
+        self.assertFalse(compare_polylines_equality(polyline_1, polyline_2))
+        self.assertTrue(compare_polylines_equality(polyline_1, polyline_2, threshold=0.00001))
+
+        polyline_1 = np.array([[0, 0.0000000001], [1.0000000000001, 0], [2, 0], [3.0000000000009, 0]])
+        polyline_2 = np.array([[0, 0.00000000001], [0.99999999999, 0], [2, 0], [2.999999999999, 0]])
+        self.assertTrue(compare_polylines_equality(polyline_1, polyline_2))
+
     def test_assert_valid_polyline(self):
         polyline = [[0, 0], [1, 0], [2, 0]]
         with self.assertRaises(AssertionError):
@@ -118,7 +187,7 @@ class TestPolylineUtil(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 polyline_util.assert_valid_polyline(polyline, 2)
 
-        polyline = [[0, 0], [1, 1]]
+        polyline = np.array([[0, 0], [1, 1]])
         with self.assertRaises(AssertionError):
             polyline_util.assert_valid_polyline(polyline, 3)
 
