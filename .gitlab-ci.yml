@@ -2,6 +2,7 @@ image: python
 
 stages:
 - style_check
+- style_check_merge_result
 - test
 - deploy
 
@@ -22,6 +23,17 @@ style_checks:
   script:
     - pip install pycodestyle
     - git  diff ${CI_COMMIT_BEFORE_SHA}...${CI_COMMIT_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff
+  except:
+  - merge_requests
+  allow_failure: true
+
+style_check_merge_result:
+  stage: style_check
+  script:
+    - pip install pycodestyle
+    - git  diff ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA}...${CI_MERGE_REQUEST_SOURCE_BRANCH_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff
+  only:
+  - merge_requests
 
 build_and_test_python_3_6:
   image: python:3.6

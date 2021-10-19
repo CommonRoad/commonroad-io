@@ -59,6 +59,20 @@ def make_valid_orientation_interval(angle_start: float, angle_end: float) -> Tup
     return angle_start, angle_end
 
 
+def vectorized_angle_difference(lhs: float, rhs: float) -> float:
+    """
+    Calculates the difference between given two angles by calculating
+    the arctan2 between the unit vectors with the given angles.
+
+    :param lhs: lhs of the subtraction, ``[- 2k * math.pi, 2k * math.pi]``
+    :param rhs: rhs of the subtraction, ``[- 2k * math.pi, 2k * math.pi]``
+    :return: angle difference within range of ``[-math.pi, math.pi)``.
+    """
+    diff = math.fmod(lhs - rhs, TWO_PI)
+    angle_diff = np.arctan2(np.sin(diff), np.cos(diff))
+    return angle_diff
+
+
 class Interval:
     def __init__(self, start: Union[int, float], end: Union[int, float]):
         self._start = None
@@ -190,14 +204,20 @@ class AngleInterval(Interval):
                                        'but start {} > end {}'.format(self._start, end)
         self._end = end
 
-    def intersect(self, other: 'Interval'):
+    def intersect(self, other: 'AngleInterval'):
         raise NotImplementedError()
 
-    def contains(self, other: Union[float, 'Interval']) -> bool:
-        if type(other) is Interval:
-            return self.start % TWO_PI <= other.start % TWO_PI and other.end % TWO_PI <= self.end % TWO_PI
-        else:
-            return self.start % TWO_PI <= other % TWO_PI <= self.end % TWO_PI
+    def contains(self, other: Union[float, 'AngleInterval']) -> bool:
+        if isinstance(other, float):
+            return self.__contains__(other)
+        interval_diff = vectorized_angle_difference(self.end, self.start)
+        assert interval_diff >= 0
+        start_diff = vectorized_angle_difference(other.start, self.start)
+        end_diff = vectorized_angle_difference(other.end, self.start)
+        return 0 <= start_diff <= interval_diff and 0 <= end_diff <= interval_diff
 
     def __contains__(self, value: Union[int, float]):
-        return self.start % TWO_PI <= value % TWO_PI <= self.end % TWO_PI
+        interval_diff = vectorized_angle_difference(self.end, self.start)
+        assert interval_diff >= 0
+        diff = vectorized_angle_difference(value, self.start)
+        return 0 <= diff <= interval_diff

@@ -2,7 +2,61 @@ import math
 import unittest
 import numpy as np
 
-from commonroad.common.util import Interval, interpolate_angle, subtract_orientations
+from commonroad.common.util import Interval, interpolate_angle, subtract_orientations, vectorized_angle_difference, \
+    AngleInterval
+
+
+class TestUtils(unittest.TestCase):
+    def test_interpolate_angle(self):
+        a = interpolate_angle(x=0.5, xp=np.array([0., 1.]), fp=np.array([0., 2 * np.pi]), degrees=False)
+        b = interpolate_angle(x=0.5, xp=np.array([0., 1.]), fp=np.array([0., 360.]), degrees=True)
+        c = interpolate_angle(x=0.5, xp=np.array([0., 1.]), fp=np.array([-np.pi, np.pi]), degrees=False)
+        d = interpolate_angle(x=0.5, xp=np.array([0., 1.]), fp=np.array([-180., 180.]), degrees=True)
+        self.assertAlmostEqual(a, 0.)
+        self.assertAlmostEqual(b, 0.)
+        self.assertAlmostEqual(c, np.pi)
+        self.assertAlmostEqual(d, 180.)
+
+    def test_subtract_orientations(self):
+        self.assertAlmostEqual(subtract_orientations(0.1, -0.1), 0.2)
+        self.assertAlmostEqual(subtract_orientations(0.0, -0.1), 0.1)
+        self.assertAlmostEqual(subtract_orientations(-0.1, 0.1), -0.2)
+        self.assertAlmostEqual(subtract_orientations(0.0, 2 * math.pi), 0.0)
+        self.assertAlmostEqual(subtract_orientations(1.9 * math.pi, 0.1 * math.pi), -0.2 * math.pi)
+
+    def test_vectorized_angle_difference(self):
+        pi = np.pi
+
+        self.assertEqual(0.0, vectorized_angle_difference(0, 0))
+        self.assertEqual(0.0, vectorized_angle_difference(2 * pi, 0))
+        self.assertEqual(0.0, vectorized_angle_difference(4 * pi, 0))
+        self.assertEqual(0.0, vectorized_angle_difference(-2 * pi, 0))
+        self.assertEqual(0.0, vectorized_angle_difference(-4 * pi, 0))
+
+        self.assertEqual(0.0, vectorized_angle_difference(pi / 2, pi / 2))
+        self.assertEqual(0.0, vectorized_angle_difference(5 / 2 * pi, pi / 2))
+        self.assertEqual(0.0, vectorized_angle_difference(9 / 2 * pi, pi / 2))
+        self.assertEqual(0.0, vectorized_angle_difference(-3 * pi / 2, pi / 2))
+        self.assertEqual(0.0, vectorized_angle_difference(-7 * pi / 2, pi / 2))
+
+        self.assertEqual(0.0, vectorized_angle_difference(pi, pi))
+        self.assertEqual(0.0, vectorized_angle_difference(3 * pi, pi))
+        self.assertEqual(0.0, vectorized_angle_difference(5 * pi, pi))
+        self.assertEqual(0.0, vectorized_angle_difference(-1 * pi, pi))
+        self.assertEqual(0.0, vectorized_angle_difference(-3 * pi, pi))
+
+        self.assertEqual(0.0, vectorized_angle_difference(3 * pi / 2, 3 * pi / 2))
+        self.assertEqual(0.0, vectorized_angle_difference(7 * pi / 2, 3 * pi / 2))
+        self.assertAlmostEqual(0.0, vectorized_angle_difference(11 * pi / 2, 3 * pi / 2))
+        self.assertEqual(0.0, vectorized_angle_difference(-1 * pi / 2, 3 * pi / 2))
+        self.assertEqual(0.0, vectorized_angle_difference(-5 * pi / 2, 3 * pi / 2))
+
+        self.assertEqual(pi / 2, vectorized_angle_difference(pi / 2, 0))
+        self.assertAlmostEqual(-pi / 2, vectorized_angle_difference(-pi / 2, 0))
+        self.assertEqual(pi / 2, vectorized_angle_difference(5 * pi / 2, 0))
+        self.assertAlmostEqual(-pi / 2, vectorized_angle_difference(-5 * pi / 2, 0))
+
+        self.assertEqual(pi, vectorized_angle_difference(pi / 2, -pi / 2))
 
 
 class TestInterval(unittest.TestCase):
@@ -54,7 +108,7 @@ class TestInterval(unittest.TestCase):
         a = Interval(-0.5, -0.1)
         result = a - 5.0
         self.assertEqual(-5.5, result.start)
-        self.assertEqual(-0.1-5.0, result.end)
+        self.assertEqual(-0.1 - 5.0, result.end)
 
     def test_product(self):
         a = Interval(-0.5, -0.1)
@@ -99,29 +153,78 @@ class TestInterval(unittest.TestCase):
         self.assertEqual(a > b, False)
         self.assertEqual(b > a, True)
 
-    def test_interpolate_angle(self):
-        a = interpolate_angle(x=0.5, xp=np.array([0., 1.]), fp=np.array([0., 2 * np.pi]), degrees=False)
-        b = interpolate_angle(x=0.5, xp=np.array([0., 1.]), fp=np.array([0., 360.]), degrees=True)
-        c = interpolate_angle(x=0.5, xp=np.array([0., 1.]), fp=np.array([-np.pi, np.pi]), degrees=False)
-        d = interpolate_angle(x=0.5, xp=np.array([0., 1.]), fp=np.array([-180., 180.]), degrees=True)
-        self.assertAlmostEqual(a, 0.)
-        self.assertAlmostEqual(b, 0.)
-        self.assertAlmostEqual(c, np.pi)
-        self.assertAlmostEqual(d, 180.)
-
-    def test_subtract_orientations(self):
-        self.assertAlmostEqual(subtract_orientations(0.1, -0.1), 0.2)
-        self.assertAlmostEqual(subtract_orientations(0.0, -0.1), 0.1)
-        self.assertAlmostEqual(subtract_orientations(-0.1, 0.1), -0.2)
-        self.assertAlmostEqual(subtract_orientations(0.0, 2 * math.pi), 0.0)
-        self.assertAlmostEqual(subtract_orientations(1.9 * math.pi, 0.1 * math.pi), -0.2 * math.pi)
-
     def test__contains__(self):
-        self.assertTrue(1.0 in Interval(0,2))
+        self.assertTrue(1.0 in Interval(0, 2))
         self.assertTrue(1.0 in Interval(1, 2))
         self.assertTrue(2.0 in Interval(0, 2))
         self.assertFalse(-1.0 in Interval(0, 2))
         self.assertFalse(3.0 in Interval(0, 2))
+
+
+class TestAngleInterval(unittest.TestCase):
+
+    def test__contains__(self):
+        interval = AngleInterval(-np.pi / 2, np.pi / 2)
+        self.assertTrue(interval.__contains__(0.0))
+        self.assertTrue(interval.__contains__(np.pi / 2))
+        self.assertTrue(interval.__contains__(-np.pi / 2))
+        self.assertTrue(interval.__contains__(np.pi / 4))
+        self.assertTrue(interval.__contains__(-np.pi / 4))
+        self.assertTrue(interval.__contains__(5 * np.pi / 2))
+        self.assertTrue(interval.__contains__(-5 * np.pi / 2))
+        self.assertTrue(interval.__contains__(9 * np.pi / 2))
+        self.assertTrue(interval.__contains__(-9 * np.pi / 2))
+        self.assertTrue(interval.__contains__(2 * np.pi))
+        self.assertTrue(interval.__contains__(-2 * np.pi))
+        self.assertFalse(interval.__contains__(np.pi))
+        self.assertFalse(interval.__contains__(-np.pi))
+        self.assertFalse(interval.__contains__(3 * np.pi))
+        self.assertFalse(interval.__contains__(-3 * np.pi))
+        self.assertFalse(interval.__contains__(5 * np.pi))
+        self.assertFalse(interval.__contains__(-5 * np.pi))
+
+        # Regression test
+        interval = AngleInterval(-0.1965, 0.2034)
+        self.assertTrue(interval.__contains__(0.0034))
+
+    def test_contains(self):
+        interval = AngleInterval(-np.pi / 2, np.pi / 2)
+        self.assertTrue(interval.contains(0.0))
+        self.assertTrue(interval.contains(np.pi / 2))
+        self.assertTrue(interval.contains(-np.pi / 2))
+        self.assertTrue(interval.contains(np.pi / 4))
+        self.assertTrue(interval.contains(-np.pi / 4))
+        self.assertTrue(interval.contains(5 * np.pi / 2))
+        self.assertTrue(interval.contains(-5 * np.pi / 2))
+        self.assertTrue(interval.contains(9 * np.pi / 2))
+        self.assertTrue(interval.contains(-9 * np.pi / 2))
+        self.assertTrue(interval.contains(2 * np.pi))
+        self.assertTrue(interval.contains(-2 * np.pi))
+        self.assertFalse(interval.contains(np.pi))
+        self.assertFalse(interval.contains(-np.pi))
+        self.assertFalse(interval.contains(3 * np.pi))
+        self.assertFalse(interval.contains(-3 * np.pi))
+        self.assertFalse(interval.contains(5 * np.pi))
+        self.assertFalse(interval.contains(-5 * np.pi))
+
+        # Regression test
+        interval = AngleInterval(-0.1965, 0.2034)
+        self.assertTrue(interval.contains(0.0034))
+
+    def test_contains_interval(self):
+        interval = AngleInterval(-np.pi / 2, np.pi / 2)
+
+        other_interval = AngleInterval(-np.pi / 2, np.pi / 2)
+        self.assertTrue(interval.contains(other_interval))
+
+        other_interval = AngleInterval(-2 * np.pi / 3, 2 * np.pi / 3)
+        self.assertFalse(interval.contains(other_interval))
+
+        other_interval = AngleInterval(3 * np.pi / 4, 5 * np.pi / 4)
+        self.assertFalse(interval.contains(other_interval))
+
+        other_interval = AngleInterval(-np.pi / 2, -np.pi / 4)
+        self.assertTrue(interval.contains(other_interval))
 
 
 if __name__ == '__main__':
