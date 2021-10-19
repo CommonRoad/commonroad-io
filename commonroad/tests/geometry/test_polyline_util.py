@@ -137,7 +137,6 @@ class TestPolylineUtil(unittest.TestCase):
             polyline_2 = polylines_2[i]
             intersections_exp = intersections_exps[i]
             intersections = compute_polyline_intersections(polyline_1, polyline_2)
-            print(intersections)
             for j in range(0, len(intersections_exp)):
                 x_exp, y_exp = intersections_exp[j]
                 x, y = intersections[j]

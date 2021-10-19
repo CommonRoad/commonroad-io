@@ -90,14 +90,14 @@ def compute_polyline_orientation(polyline: np.ndarray) -> float:
     return orientations[0]
 
 
-def compute_polyline_include_point(polyline: np.ndarray, p_x: float, p_y: float) -> bool:
+def compute_polyline_include_point(polyline: np.ndarray, point_x: float, point_y: float) -> bool:
     """
     Computes whether a given point lies on a polyline. That means, the point is between the starting
     and ending point of the polyline.
 
     :param polyline: Polyline with 2D points
-    :param p_x: X value of 2D point
-    :param p_y: Y value of 2D point
+    :param point_x: X value of 2D point
+    :param point_y: Y value of 2D point
     :return: Lies on polyline or not
     """
     assert_valid_polyline(polyline, 2)
@@ -108,13 +108,13 @@ def compute_polyline_include_point(polyline: np.ndarray, p_x: float, p_y: float)
         l_x_2 = polyline[i + 1][0]
         l_y_2 = polyline[i + 1][1]
 
-        cross_product = (p_y - l_y_1) * (l_x_2 - l_x_1) - (p_x - l_x_1) * (l_y_2 - l_y_1)
+        cross_product = (point_y - l_y_1) * (l_x_2 - l_x_1) - (point_x - l_x_1) * (l_y_2 - l_y_1)
 
         epsilon = 1e-12
         if abs(cross_product) > epsilon:
             continue
 
-        dot_product = (p_x - l_x_1) * (l_x_2 - l_x_1) + (p_y - l_y_1) * (l_y_2 - l_y_1)
+        dot_product = (point_x - l_x_1) * (l_x_2 - l_x_1) + (point_y - l_y_1) * (l_y_2 - l_y_1)
         if dot_product < 0:
             continue
 
