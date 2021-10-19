@@ -56,8 +56,7 @@ def compute_polyline_orientations(polyline: np.ndarray) -> np.ndarray:
     """
     Computes the orientation of a given polyline travelled from initial
     to final coordinate. The orientation of the last coordinate is always
-    assigned with the computed orientation of the penultimate one. The
-    orientation is given by degree.
+    assigned with the computed orientation of the penultimate one.
 
     :param polyline: Polyline with 2D points
     :return: Orientations of the polyline for each coordinate
@@ -69,7 +68,7 @@ def compute_polyline_orientations(polyline: np.ndarray) -> np.ndarray:
         pt_1 = polyline[i]
         pt_2 = polyline[i + 1]
         tmp = pt_2 - pt_1
-        orient = np.arctan2(tmp[1], tmp[0]) * 180 / np.pi
+        orient = np.arctan2(tmp[1], tmp[0])
         orientation.append(orient)
         if i == len(polyline) - 2:
             orientation.append(orient)
@@ -80,7 +79,7 @@ def compute_polyline_orientations(polyline: np.ndarray) -> np.ndarray:
 def compute_polyline_orientation(polyline: np.ndarray) -> float:
     """
     Computes the orientation of the initial coordinate with respect to the succeeding
-    coordinate. The orientation is given by degree.
+    coordinate.
 
     :param polyline: Polyline with 2D points
     :return: Orientation of the initial coordinate

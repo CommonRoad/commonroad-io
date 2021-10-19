@@ -66,9 +66,9 @@ class TestPolylineUtil(unittest.TestCase):
     def test_compute_polyline_orientations(self):
         polylines = [np.array([[0, 0], [4, 0], [4, 4], [0, 4], [0, 0]]), np.array([[1, 1], [2, 2], [-7, -7]]),
                      np.array([[5, 5], [0, 4]])]
-        orientations_exps = [[0., 90., 180., -90., -90.],
-                             [45., -135., -135.],
-                             [-168.69006753, -168.69006753]]
+        orientations_exps = [[0., 1.5707963267948966, 3.141592653589793, -1.5707963267948966, -1.5707963267948966],
+                             [0.7853981633974483, -2.356194490192345, -2.356194490192345],
+                             [-2.9441970937399127, -2.9441970937399127]]
 
         for p in range(0, len(polylines)):
             polyline = polylines[p]
@@ -84,7 +84,7 @@ class TestPolylineUtil(unittest.TestCase):
                      np.array([[1, 1], [7, 1]]),
                      np.array([[-1, -1], [-1, 1], [3, 2], [7, 4]]),
                      np.array([[0, 0], [9, 0.1]])]
-        orientation_exps = [-45., 0., 90., 0.6365935759634864]
+        orientation_exps = [-0.7853981633974483, 0., 1.5707963267948966, 0.011110653897607473]
 
         for i in range(0, len(polylines)):
             polyline = polylines[i]
