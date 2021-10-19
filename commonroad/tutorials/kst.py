@@ -1,9 +1,7 @@
 from scipy.integrate import odeint
 import numpy
 import matplotlib.pyplot as plt
-from matplotlib.pyplot import title, legend
-import math
-
+from matplotlib.pyplot import title
 from vehiclemodels.parameters_vehicle4 import parameters_vehicle4
 from vehiclemodels.init_kst import init_kst
 from vehiclemodels.vehicle_dynamics_kst import vehicle_dynamics_kst
@@ -32,7 +30,7 @@ sx0 = 0
 sy0 = 0
 alpha0 = 0
 initialState = [sx0, sy0, delta0, vel0, Psi0, dotPsi0, beta0]  # initial state for simulation
-x0_KST = init_kst(initialState, [0, 0])  # initial state for kinematic single-track trailer model
+x0_KST = init_kst(initialState, [0, 0, 0])  # initial state for kinematic single-track trailer model
 
 
 # ********* Simulate maneuver ************
@@ -47,8 +45,8 @@ x_left_kst = odeint(func_KST, x0_KST, t, args=(u, p))
 
 last_res = x_left_kst[39]
 
-iniState = [last_res[0], last_res[1], -last_res[2], last_res[3], last_res[4], last_res[5], last_res[6]]
-x0_KST2 = init_kst(iniState, [last_res[5], last_res[6]])
+iniState = [last_res[0], last_res[1], -last_res[2], last_res[3], last_res[4], last_res[5], last_res[6], last_res[7]]
+x0_KST2 = init_kst(iniState, [last_res[5], last_res[6], last_res[7]])
 t1 = numpy.arange(tFinal, 2 * tFinal, 0.1)
 v_delta = 0.3           # steering angle velocity
 a_long = 0              # longitudinal acceleration
@@ -88,6 +86,7 @@ with open("trajectory", 'w') as traj:
         traj.write("\n    <hitch>")
         traj.write("\n      <exact>" + str(sol[5]) + "</exact>")
         traj.write("\n      <exact>" + str(sol[6]) + "</exact>")
+        traj.write("\n      <exact>" + str(sol[7]) + "</exact>")
         traj.write("\n    </hitch>")
         traj.write("\n  </state>")
         time += 1
@@ -123,4 +122,8 @@ plt.show()
 # hitch angle
 title('hitch angle2')
 plt.plot(timeeee, [tmp[6] for tmp in results])
+plt.show()
+# hitch angle
+title('hitch angle3')
+plt.plot(timeeee, [tmp[7] for tmp in results])
 plt.show()
