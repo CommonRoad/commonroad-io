@@ -1,5 +1,7 @@
 import warnings
 import abc
+from copy import deepcopy
+
 import numpy as np
 from typing import List, Union, Optional, Tuple
 
@@ -13,7 +15,7 @@ from commonroad.common.util import make_valid_orientation
 __author__ = "Stefanie Manzinger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2021.2"
+__version__ = "2021.3"
 __maintainer__ = "Stefanie Manzinger"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -27,14 +29,12 @@ class Shape(IDrawable, metaclass=abc.ABCMeta):
     """ Abstract class for CommonRoad shapes."""
 
     @abc.abstractmethod
-    def translate_rotate(self, translation: np.ndarray,
-                         angle: float) -> 'Shape':
+    def translate_rotate(self, translation: np.ndarray, angle: float) -> 'Shape':
         """ First translates and then rotates a shape around the origin."""
         pass
 
     @abc.abstractmethod
-    def rotate_translate_local(self, translation: np.ndarray,
-                               angle: float) -> 'Shape':
+    def rotate_translate_local(self, translation: np.ndarray, angle: float) -> 'Shape':
         """ First rotates a shape around the center and the translates it."""
         pass
 
@@ -88,7 +88,7 @@ class Rectangle(Shape):
     def length(self, length: float):
         if not hasattr(self, '_length'):
             assert is_real_number(length), '<Rectangle/length>: argument "length" is not valid. length = {}'.format(
-                length)
+                    length)
             self._length = length
         else:
             warnings.warn('<Rectangle/length>: length of rectangle is immutable.')
@@ -187,18 +187,14 @@ class Rectangle(Shape):
             :return: true if the rectangle’s interior or boundary intersects with the given point, otherwise false
         """
         assert is_real_number_vector(point, 2), '<Rectangle/contains_point>: argument "point" is ' \
-                                                'not a vector of real numbers of length 2. point = {}' \
-            .format(point)
+                                                'not a vector of real numbers of length 2. point = {}'.format(point)
         return self._shapely_polygon.intersects(shapely.geometry.Point(point))
 
     def _compute_vertices(self) -> np.ndarray:
         """ Computes the vertices of the rectangle."""
-        vertices = np.array(
-            [[- 0.5 * self._length, - 0.5 * self._width],
-             [- 0.5 * self._length, + 0.5 * self._width],
-             [+ 0.5 * self._length, + 0.5 * self._width],
-             [+ 0.5 * self._length, - 0.5 * self._width],
-             [- 0.5 * self._length, - 0.5 * self._width]])
+        vertices = np.array([[- 0.5 * self._length, - 0.5 * self._width], [- 0.5 * self._length, + 0.5 * self._width],
+                             [+ 0.5 * self._length, + 0.5 * self._width], [+ 0.5 * self._length, - 0.5 * self._width],
+                             [- 0.5 * self._length, - 0.5 * self._width]])
         return rotate_translate(vertices, self._center, self._orientation)
 
     def __str__(self):
@@ -209,8 +205,7 @@ class Rectangle(Shape):
         output += '\t orientation: {} \n'.format(self._orientation)
         return output
 
-    def draw(self, renderer: IRenderer,
-             draw_params: Union[ParamServer, dict, None] = None,
+    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_rectangle(self.vertices, draw_params, call_stack)
 
@@ -295,13 +290,11 @@ class Circle(Shape):
             :param point: 2D point [x, y]
             :return: true if the circles’s interior or boundary intersects with the given point, otherwise false
         """
-        assert is_real_number_vector(point,
-                                     2), '<Circle/contains_point>: argument ' \
-                                         '"point" is ' \
-                                         'not a vector of real numbers of ' \
-                                         'length 2. point = {}'.format(point)
-        return np.greater_equal(self._radius,
-                                np.linalg.norm(point - self._center))
+        assert is_real_number_vector(point, 2), '<Circle/contains_point>: argument ' \
+                                                '"point" is ' \
+                                                'not a vector of real numbers of ' \
+                                                'length 2. point = {}'.format(point)
+        return np.greater_equal(self._radius, np.linalg.norm(point - self._center))
 
     def __str__(self):
         output = "Circle: \n"
@@ -309,11 +302,42 @@ class Circle(Shape):
         output += '\t center: {} \n'.format(self._center)
         return output
 
-    def draw(self, renderer: IRenderer,
-             draw_params: Union[ParamServer, dict, None] = None,
+    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_ellipse(self.center, self.radius, self.radius,
-                              draw_params, call_stack)
+        renderer.draw_ellipse(self.center, self.radius, self.radius, draw_params, call_stack)
+
+
+class LaneletPolygon(shapely.geometry.Polygon):
+
+    def __init__(self, lanelet_id, shell=None, holes=None):
+        super(LaneletPolygon, self).__init__(shell, holes)
+        self.lanelet_id = lanelet_id
+
+    def __deepcopy__(self, memo):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            setattr(result, k, deepcopy(v, memo))
+        return result
+
+    @property
+    def __array_interface__(self):
+        raise NotImplementedError("A polygon does not itself provide the array interface. Its rings do.")
+
+    def _get_coords(self):
+        raise NotImplementedError("Component rings have coordinate sequences, but the polygon does not")
+
+    def _set_coords(self, ob):
+        raise NotImplementedError("Component rings have coordinate sequences, but the polygon does not")
+
+    @property
+    def coords(self):
+        raise NotImplementedError("Component rings have coordinate sequences, but the polygon does not")
+
+    @property
+    def xy(self):
+        raise NotImplementedError("Component rings have coordinate sequences, but the polygon does not")
 
 
 class Polygon(Shape):
@@ -329,8 +353,7 @@ class Polygon(Shape):
         self._max: np.ndarray = np.max(vertices, axis=0)
         self._shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self._vertices)
         # ensure that vertices are sorted clockwise and the first and last point are the same
-        self._vertices = np.array(shapely.geometry.polygon.orient(
-            self._shapely_polygon, sign=-1.0).exterior.coords)
+        self._vertices = np.array(shapely.geometry.polygon.orient(self._shapely_polygon, sign=-1.0).exterior.coords)
 
     @property
     def vertices(self) -> np.ndarray:
@@ -385,8 +408,8 @@ class Polygon(Shape):
                                                       '{}'.format(translation)
         assert is_valid_orientation(angle), '<Polygon/rotate_translate_local>: argument "orientation" is not valid.' \
                                             'orientation = {}'.format(angle)
-        rotated_shapely_polygon = shapely.affinity.rotate(
-            self._shapely_polygon, angle, origin='centroid', use_radians=True)
+        rotated_shapely_polygon = shapely.affinity.rotate(self._shapely_polygon, angle, origin='centroid',
+                                                          use_radians=True)
         new_vertices = np.array(rotated_shapely_polygon.exterior.coords) + translation
         return Polygon(new_vertices)
 
@@ -397,11 +420,10 @@ class Polygon(Shape):
             :return: true if the polygons’s interior or boundary intersects
             with the given point, otherwise false
         """
-        assert is_real_number_vector(point,
-                                     2), '<Polygon/contains_point>: argument ' \
-                                         '"point" is ' \
-                                         'not a vector of real numbers of ' \
-                                         'length 2. point = {}'.format(point)
+        assert is_real_number_vector(point, 2), '<Polygon/contains_point>: argument ' \
+                                                '"point" is ' \
+                                                'not a vector of real numbers of ' \
+                                                'length 2. point = {}'.format(point)
 
         def in_axis_aligned_bounding_box(point: np.ndarray) -> bool:
             """
@@ -417,8 +439,7 @@ class Polygon(Shape):
         output += '\t center: {} \n'.format(self.center)
         return output
 
-    def draw(self, renderer: IRenderer,
-             draw_params: Union[ParamServer, dict, None] = None,
+    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_polygon(self.vertices, draw_params, call_stack)
 
@@ -441,8 +462,10 @@ class ShapeGroup(Shape):
     @shapes.setter
     def shapes(self, shapes: List[Shape]):
         if not hasattr(self, '_shapes'):
-            assert isinstance(shapes, list) and all(isinstance(elem, Shape) for elem in shapes), \
-                '<ShapeGroup/shapes>: argument "shapes" is not a valid list of shapes. shapes = {}'.format(shapes)
+            assert isinstance(shapes, list) and all(isinstance(elem, Shape) for elem in
+                                                    shapes), '<ShapeGroup/shapes>: argument "shapes" is not a valid ' \
+                                                             'list of shapes. shapes = {}'.format(
+                shapes)
             self._shapes = shapes
         else:
             warnings.warn('<ShapeGroup/shapes>: shapes of shape group are immutable.')
@@ -489,12 +512,8 @@ class ShapeGroup(Shape):
             :param point: 2D point [x, y]
             :return: true if the interior or boundary of any shape intersects with the given point, otherwise false
         """
-        assert is_real_number_vector(point, 2), '<ShapeGroup/contains_point>: ' \
-                                                'argument "point" is ' \
-                                                'not a vector of real numbers' \
-                                                ' of length 2. point = {' \
-                                                '}'.format(
-            point)
+        assert is_real_number_vector(point, 2), '<ShapeGroup/contains_point>: argument "point" is not a vector ' \
+                                                'of real numbers of length 2. point = {}'.format(point)
         for s in self._shapes:
             if s.contains_point(point):
                 return True
@@ -505,8 +524,7 @@ class ShapeGroup(Shape):
         output += '\t number of shapes: {} \n'.format(len(self._shapes))
         return output
 
-    def draw(self, renderer: IRenderer,
-             draw_params: Union[ParamServer, dict, None] = None,
+    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         for s in self._shapes:
             s.draw(renderer, draw_params, call_stack)
@@ -522,8 +540,8 @@ def occupancy_shape_from_state(shape, state):
             l_v = np.abs(max_x - min_x)
             w_v = np.abs(max_y - min_y)
         elif isinstance(shape, Circle):
-            w_v = 2.0*shape.radius
-            l_v = 2.0*shape.radius
+            w_v = 2.0 * shape.radius
+            l_v = 2.0 * shape.radius
         else:
             raise ValueError
 
@@ -537,17 +555,15 @@ def occupancy_shape_from_state(shape, state):
 
         if state.is_uncertain_position:
             center = state.position.center
-            if isinstance(state.position, Rectangle) or isinstance(
-                    state.position, Polygon):
+            if isinstance(state.position, Rectangle) or isinstance(state.position, Polygon):
                 # Rotate shape to obtain bounding box with edges parallel to the
                 # frame of the reference trajectory
-                rot_shape = state.position.rotate_translate_local(
-                    np.array([0, 0]), -psi_d)
+                rot_shape = state.position.rotate_translate_local(np.array([0, 0]), -psi_d)
                 min_x, min_y, max_x, max_y = rot_shape.shapely_object.bounds
                 l_s = np.abs(max_x - min_x)
                 w_s = np.abs(max_y - min_y)
             elif isinstance(state.position, Circle):
-                l_s = 2.0*state.position.radius
+                l_s = 2.0 * state.position.radius
                 w_s = l_s
             else:
                 raise ValueError
@@ -559,14 +575,11 @@ def occupancy_shape_from_state(shape, state):
         # Maximum enlargement at these angles
         delta_psi_l = min(delta_psi, np.arctan(w_v / l_v))
         delta_psi_w = min(delta_psi, np.arctan(l_v / w_v))
-        l_psi = np.abs(
-            (1.0 - np.cos(delta_psi_l)) * l_v - np.sin(delta_psi_l) * w_v)
-        w_psi = np.abs(
-            (1.0 - np.cos(delta_psi_w)) * w_v - np.sin(delta_psi_w) * l_v)
+        l_psi = np.abs((1.0 - np.cos(delta_psi_l)) * l_v - np.sin(delta_psi_l) * w_v)
+        w_psi = np.abs((1.0 - np.cos(delta_psi_w)) * w_v - np.sin(delta_psi_w) * l_v)
         l_enclosing = l_s + l_v + l_psi
         w_enclosing = w_s + w_v + w_psi
         occupied_region = Rectangle(l_enclosing, w_enclosing, center, psi_d)
     else:
-        occupied_region = shape.rotate_translate_local(state.position,
-                                                       state.orientation)
+        occupied_region = shape.rotate_translate_local(state.position, state.orientation)
     return occupied_region

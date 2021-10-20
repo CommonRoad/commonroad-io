@@ -50,6 +50,7 @@ The required dependencies for running CommonRoad_io are:
 * networkx>=2.2
 * Pillow>=7.0.0
 * iso3166>=1.0.1
+* rtree>=0.8.3
 
 
 Installation
@@ -69,9 +70,10 @@ Changelog
 ============
 Compared to version 2021.2, the following features have been added or changed:
 
-- parameter draw_params={"focus_obstacle_id": obstacle_id} focuses the plot or video on a dynamic_obstacle
-- about 150 new traffic signs from Germany, Spain, and US added
-- added new cost function TR1 to SolutionWriter
+- Spatial indexing via STRTree in LaneletNetwork for faster computation of lanelet queries via positions or shapes
+- The function LaneletNetwork.create_from_lanelet_network accepts now a shape and set of lanelet types which should be excluded
+- Shapely polygon for lanelets is created by default
+- Function convert_to_polygon() within Lanelet class is deprecated and will be removed in the next release
 
 A detailed overview about the changes in each version is provided in the `Changelog <https://gitlab.lrz.de/tum-cps/commonroad_io/-/blob/master/CHANGELOG.md>`__.
 

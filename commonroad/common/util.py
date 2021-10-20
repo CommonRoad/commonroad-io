@@ -2,14 +2,14 @@ import numpy as np
 import math
 from scipy.spatial.transform.rotation import Rotation
 from scipy.spatial.transform import Slerp
-from typing import Union, Tuple
+from typing import Tuple
 from commonroad.common import validity
 from commonroad.common.validity import *
 
 __author__ = "Stefanie Manzinger, Moritz Klischat, Xiao Wang"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2021.2"
+__version__ = "2021.3"
 __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -59,6 +59,20 @@ def make_valid_orientation_interval(angle_start: float, angle_end: float) -> Tup
     return angle_start, angle_end
 
 
+def vectorized_angle_difference(lhs: float, rhs: float) -> float:
+    """
+    Calculates the difference between given two angles by calculating
+    the arctan2 between the unit vectors with the given angles.
+
+    :param lhs: lhs of the subtraction, ``[- 2k * math.pi, 2k * math.pi]``
+    :param rhs: rhs of the subtraction, ``[- 2k * math.pi, 2k * math.pi]``
+    :return: angle difference within range of ``[-math.pi, math.pi)``.
+    """
+    diff = math.fmod(lhs - rhs, TWO_PI)
+    angle_diff = np.arctan2(np.sin(diff), np.cos(diff))
+    return angle_diff
+
+
 class Interval:
     def __init__(self, start: Union[int, float], end: Union[int, float]):
         self._start = None
@@ -76,7 +90,7 @@ class Interval:
         else:
             return type(self)(self._end / other, self._start / other)
 
-    def __mul__(self, other: Union[int,float]) -> 'Interval':
+    def __mul__(self, other: Union[int, float]) -> 'Interval':
         if other > 0.0:
             return type(self)(self._start * other, self._end * other)
         else:
@@ -98,7 +112,8 @@ class Interval:
     @start.setter
     def start(self, start: Union[int, float]):
         if self._end is not None:
-            assert start <= self._end, '<common.util/Interval> start of interval must be <= end, but start {} > end {}'.format(start,self._end)
+            assert start <= self._end, '<common.util/Interval> start of interval must be <= end, ' \
+                                       'but start {} > end {}'.format(start, self._end)
         self._start = start
 
     @property
@@ -108,7 +123,8 @@ class Interval:
     @end.setter
     def end(self, end: Union[int, float]):
         if self._start is not None:
-            assert end >= self._start, '<common.util/Interval> start of interval must be <= end, but start {} > end {}'.format(self._start, end)
+            assert end >= self._start, '<common.util/Interval> start of interval must be <= end, ' \
+                                       'but start {} > end {}'.format(self._start, end)
         self._end = end
 
     def contains(self, other: Union[int, float, 'Interval']) -> bool:
@@ -160,7 +176,7 @@ class Interval:
 class AngleInterval(Interval):
     """ Allows only angles from interval [-2pi,2pi]"""
     def __init__(self, start: Union[int, float], end: Union[int, float]):
-        start, end = make_valid_orientation_interval(start,end)
+        start, end = make_valid_orientation_interval(start, end)
         assert end - start < TWO_PI, '<common.util/AngleInterval> Interval must not be |start-end| > 2pi'
         Interval.__init__(self, start, end)
 
@@ -172,7 +188,8 @@ class AngleInterval(Interval):
     def start(self, start: Union[int, float]):
         assert is_valid_orientation(start), '<common.util/AngleInterval> start angle needs to be in interval [-2pi,2pi]'
         if self._end is not None:
-            assert start <= self._end, '<common.util/Interval> start of interval must be <= end, but start {} > end {}'.format(start,self._end)
+            assert start <= self._end, '<common.util/Interval> start of interval must be <= end, ' \
+                                       'but start {} > end {}'.format(start, self._end)
         self._start = start
 
     @property
@@ -183,18 +200,24 @@ class AngleInterval(Interval):
     def end(self, end: Union[int, float]):
         assert is_valid_orientation(end), '<common.util/AngleInterval> end angle needs to be in interval [-2pi,2pi]'
         if self._start is not None:
-            assert end >= self._start, '<common.util/Interval> start of interval must be <= end, but start {} > end {}'.format(self._start, end)
+            assert end >= self._start, '<common.util/Interval> start of interval must be <= end, ' \
+                                       'but start {} > end {}'.format(self._start, end)
         self._end = end
 
-    def intersect(self, other: 'Interval'):
+    def intersect(self, other: 'AngleInterval'):
         raise NotImplementedError()
 
-    def contains(self, other: Union[float, 'Interval']) -> bool:
-        if type(other) is Interval:
-            return self.start % TWO_PI <= other.start % TWO_PI  and other.end % TWO_PI  <= self.end % TWO_PI
-        else:
-            return self.start % TWO_PI <= other % TWO_PI <= self.end % TWO_PI
+    def contains(self, other: Union[float, 'AngleInterval']) -> bool:
+        if isinstance(other, float):
+            return self.__contains__(other)
+        interval_diff = vectorized_angle_difference(self.end, self.start)
+        assert interval_diff >= 0
+        start_diff = vectorized_angle_difference(other.start, self.start)
+        end_diff = vectorized_angle_difference(other.end, self.start)
+        return 0 <= start_diff <= interval_diff and 0 <= end_diff <= interval_diff
 
     def __contains__(self, value: Union[int, float]):
-        return self.start % TWO_PI <= value % TWO_PI <= self.end % TWO_PI
-
+        interval_diff = vectorized_angle_difference(self.end, self.start)
+        assert interval_diff >= 0
+        diff = vectorized_angle_difference(value, self.start)
+        return 0 <= diff <= interval_diff

@@ -1,11 +1,19 @@
 # Changelog
 
-## [2021.3] - 2021-XX-XX
+## [2021.3] - 2021-09-21
+### Added
+- Spatial indexing via STRTree in LaneletNetwork for faster computation of lanelet queries via positions or shapes
+
 ### Changed
-- The function LaneletNetwork.create_from_lanelet_network accepts now a shape and set of lanelet types to excluded
+- The function LaneletNetwork.create_from_lanelet_network accepts now a shape 
+and set of lanelet types which should be excluded
+- Shapely polygon for lanelets is created by default
+- Function convert_to_polygon() within Lanelet class is deprecated 
+and will be removed in the next release
 
 ### Fixed
 - Various small bug fixes
+
 
 ## [2021.2] - 2021-07-01
 ### Added
