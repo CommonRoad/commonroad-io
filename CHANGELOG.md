@@ -1,5 +1,12 @@
 # Changelog
 
+## [2021.4] - 2021-10-20
+###Added
+- Polyline functions from different repositories for maintenance reason
+- Resampling of polylines
+- Computing path length, orientation, and curvature of a polyline
+- Computing existence of self-intersection of one polyline or all intersection points between two polylines
+
 ## [2021.3] - 2021-09-21
 ### Added
 - Spatial indexing via STRTree in LaneletNetwork for faster computation of lanelet queries via positions or shapes
