@@ -1115,7 +1115,7 @@ class LaneletNetwork(IDrawable):
                                                   set())
         for la in lanelets:
             new_lanelet_network.add_lanelet(copy.deepcopy(la), rtree=False)
-        lanelet_network._create_buffered_strtree()
+        new_lanelet_network._create_buffered_strtree()
 
         return new_lanelet_network
 
