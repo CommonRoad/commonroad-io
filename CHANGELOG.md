@@ -1,5 +1,9 @@
 # Changelog
 
+## [2021.4] - 2021-X-X
+###Added
+- Polyline utility functions, e.g., resampling, path length, orientation, curvature, intersection
+
 ## [2021.3] - 2021-09-21
 ### Added
 - Spatial indexing via STRTree in LaneletNetwork for faster computation of lanelet queries via positions or shapes
