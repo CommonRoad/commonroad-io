@@ -978,6 +978,18 @@ class LaneletNetwork(IDrawable):
         self._traffic_signs: Dict[int, TrafficSign] = {}
         self._traffic_lights: Dict[int, TrafficLight] = {}
 
+    # pickling of STRtree is not supported by shapely at the moment
+    # use this workaround described in this issue:
+    # https://github.com/Toblerity/Shapely/issues/1033
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state["_buffered_strtee"]
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._create_buffered_strtree()
+
     def __deepcopy__(self, memo):
         cls = self.__class__
         result = cls.__new__(cls)
@@ -1103,7 +1115,7 @@ class LaneletNetwork(IDrawable):
                                                   set())
         for la in lanelets:
             new_lanelet_network.add_lanelet(copy.deepcopy(la), rtree=False)
-        lanelet_network._create_buffered_strtree()
+        new_lanelet_network._create_buffered_strtree()
 
         return new_lanelet_network
 
