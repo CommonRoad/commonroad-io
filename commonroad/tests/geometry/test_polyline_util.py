@@ -197,7 +197,6 @@ class TestPolylineUtil(unittest.TestCase):
             distance = distances[i]
             resample_polyline_number = resample_polyline_with_number(polyline, number)
             resample_polyline_distance = resample_polyline_with_distance(polyline, distance)
-            print(resample_polyline_distance)
             for resample_polyline in [resample_polyline_number, resample_polyline_distance]:
                 for j in range(0, len(resample_polyline_exp)):
                     x_exp, y_exp = resample_polyline_exp[j]
@@ -215,7 +214,7 @@ class TestPolylineUtil(unittest.TestCase):
     def test_assert_valid_polyline(self):
         polyline = [[0, 0], [1, 0], [2, 0]]
         with self.assertRaises(AssertionError):
-            polyline_util.assert_valid_polyline(np.array(polyline))
+            polyline_util.assert_valid_polyline(polyline)  # noqa
 
         polylines = [np.array([[0, 0]]), np.array([[[0, 0], [1, 1]], [[2, 2], [3, 3]], [[4, 4], [5, 5]]]),
                      np.array([[0, 0, 0], [1, 0], [2, 0]])]
