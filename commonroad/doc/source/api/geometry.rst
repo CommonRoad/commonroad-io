@@ -57,7 +57,7 @@ Polyline Utility Functions
 
 .. autofunction:: compute_polyline_lengths
 
-.. autofunction:: compute_polyline_complete_length
+.. autofunction:: compute_total_polyline_length
 
 .. autofunction:: compute_polyline_curvatures
 

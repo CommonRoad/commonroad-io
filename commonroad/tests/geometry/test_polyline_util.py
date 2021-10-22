@@ -214,7 +214,7 @@ class TestPolylineUtil(unittest.TestCase):
     def test_assert_valid_polyline(self):
         polyline = [[0, 0], [1, 0], [2, 0]]
         with self.assertRaises(AssertionError):
-            polyline_util.assert_valid_polyline(polyline)  # noqa
+            polyline_util.assert_valid_polyline(polyline)
 
         polylines = [np.array([[0, 0]]), np.array([[[0, 0], [1, 1]], [[2, 2], [3, 3]], [[4, 4], [5, 5]]]),
                      np.array([[0, 0, 0], [1, 0], [2, 0]])]
