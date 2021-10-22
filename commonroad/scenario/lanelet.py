@@ -91,23 +91,13 @@ class StopLine:
     def __eq__(self, other):
         if not isinstance(other, StopLine):
             return False
+
         thresh = 1e-10
-        eq = True
 
-        polylines = [self._start, self._end]
-        polylines_other = [other.start, other.end]
-        for i in range(0, len(polylines)):
-            polyline = polylines[i]
-            polyline_other = polylines_other[i]
-            if polyline is not None and polyline_other is not None:
-                eq = eq and np.allclose(polyline, polyline_other, rtol=thresh, atol=thresh)
-            elif (polyline is None and polyline_other is not None) or (polyline is not None and polyline_other is None):
-                return False
-
-        eq = eq and self._line_marking == other.line_marking and self._traffic_sign_ref == other.traffic_sign_ref and \
-            self._traffic_light_ref == other.traffic_light_ref
-
-        return eq
+        return np.allclose(self._start, other.start, rtol=thresh, atol=thresh) \
+            and np.allclose(self._end, other.end, rtol=thresh, atol=thresh) \
+            and self._line_marking == other.line_marking and self._traffic_sign_ref == other.traffic_sign_ref \
+            and self._traffic_light_ref == other.traffic_light_ref
 
     @property
     def start(self) -> np.ndarray:
@@ -303,22 +293,24 @@ class Lanelet:
     def __eq__(self, other):
         if not isinstance(other, Lanelet):
             return False
+
         thresh = 1e-10
+
         eq = self.lanelet_id == other.lanelet_id
 
-        polylines = [self.distance, self.inner_distance, self._left_vertices, self._right_vertices,
-                     self._center_vertices]
-        polylines_other = [other.distance, other.inner_distance, other.left_vertices, other.right_vertices,
-                           other.center_vertices]
+        properties = [self.distance, self.inner_distance, self._left_vertices, self._right_vertices,
+                      self._center_vertices]
+        properties_other = [other.distance, other.inner_distance, other.left_vertices, other.right_vertices,
+                            other.center_vertices]
 
-        for i in range(0, len(polylines)):
-            polyline = polylines[i]
-            polyline_other = polylines_other[i]
-            if (polyline is None and polyline_other is not None) or (polyline is not None and polyline_other is None):
+        for i in range(0, len(properties)):
+            prop = properties[i]
+            prop_other = properties_other[i]
+            if (prop is None and prop_other is not None) or (prop is not None and prop_other is None):
                 return False
             else:
-                if polyline is not None and polyline_other is not None:
-                    eq = eq and np.allclose(polyline, polyline_other, rtol=thresh, atol=thresh)
+                if prop is not None and prop_other is not None:
+                    eq = eq and np.allclose(prop, prop_other, rtol=thresh, atol=thresh)
 
         eq = eq and self._line_marking_left_vertices == other.line_marking_left_vertices and \
             self._line_marking_right_vertices == other.line_marking_right_vertices
@@ -1069,6 +1061,13 @@ class LaneletNetwork(IDrawable):
         self._create_buffered_strtree()
 
         return result
+
+    def __eq__(self, other):
+        if not isinstance(other, LaneletNetwork):
+            return False
+
+        return self._lanelets == other.lanelets and self._intersections == other.intersections \
+            and self._traffic_signs == other.traffic_signs and self._traffic_lights == other.traffic_lights
 
     @property
     def lanelets(self) -> List[Lanelet]:

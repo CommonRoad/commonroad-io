@@ -600,12 +600,23 @@ class TrafficSign(IDrawable):
         self._virtual = virtual
         self._first_occurrence = first_occurrence
 
+    def __eq__(self, other):
+        if not isinstance(other, TrafficSign):
+            return False
+
+        thresh = 1e-10
+
+        return self._traffic_sign_id == other.traffic_sign_id \
+            and np.allclose(self._position, other.position, rtol=thresh, atol=thresh) \
+            and self._traffic_sign_elements == other.traffic_sign_elements and self._virtual == other.virtual \
+            and self._first_occurrence == other.first_occurrence
+
     @property
     def traffic_sign_id(self) -> int:
         return self._traffic_sign_id
 
     @property
-    def position(self) -> Union[None,np.ndarray]:
+    def position(self) -> Union[None, np.ndarray]:
         return self._position
 
     @property
@@ -662,6 +673,12 @@ class TrafficLightCycleElement:
         self._state = state
         self._duration = duration
 
+    def __eq__(self, other):
+        if isinstance(other, TrafficLightCycleElement):
+            return False
+
+        return self._state == other.state and self._duration == other.duration
+
     @property
     def state(self) -> TrafficLightState:
         return self._state
@@ -696,6 +713,17 @@ class TrafficLight(IDrawable):
         self._position = position
         self._direction = direction
         self._active = active
+
+    def __eq__(self, other):
+        if not isinstance(other, TrafficLight):
+            return False
+
+        thresh = 1e-10
+
+        return self._traffic_light_id == other.traffic_light_id and self._cycle == other.cycle \
+            and self._time_offset == other.time_offset \
+            and np.allclose(self._position, other.position, rtol=thresh, atol=thresh) \
+            and self._direction == other.direction and self._active == other.active
 
     @property
     def traffic_light_id(self) -> int:

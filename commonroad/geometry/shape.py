@@ -356,14 +356,13 @@ class Polygon(Shape):
         self._vertices = np.array(shapely.geometry.polygon.orient(self._shapely_polygon, sign=-1.0).exterior.coords)
 
     def __eq__(self, other):
-        if isinstance(other, Polygon):
+        if not isinstance(other, Polygon):
             return False
 
-        # vertices
+        thresh = 1e-10
 
-        # center
-
-        # shapely_object
+        return np.allclose(self._vertices, other.vertices, rtol=thresh, atol=thresh) \
+            and self._shapely_polygon == other.shapely_object
 
     @property
     def vertices(self) -> np.ndarray:
@@ -474,8 +473,7 @@ class ShapeGroup(Shape):
         if not hasattr(self, '_shapes'):
             assert isinstance(shapes, list) and all(isinstance(elem, Shape) for elem in
                                                     shapes), '<ShapeGroup/shapes>: argument "shapes" is not a valid ' \
-                                                             'list of shapes. shapes = {}'.format(
-                shapes)
+                                                             'list of shapes. shapes = {}'.format(shapes)
             self._shapes = shapes
         else:
             warnings.warn('<ShapeGroup/shapes>: shapes of shape group are immutable.')

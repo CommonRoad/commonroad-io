@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from commonroad.scenario.traffic_sign import TrafficLight, TrafficLightCycleElement, TrafficLightState, TrafficSign, \
-    TrafficSignElement, TrafficSignIDZamunda
+    TrafficSignElement, TrafficSignIDZamunda, TrafficSignIDGermany
 
 
 class TestTrafficSign(unittest.TestCase):
@@ -14,6 +14,28 @@ class TestTrafficSign(unittest.TestCase):
         desired_traffic_light_position = np.array([3, 3])
 
         np.testing.assert_array_almost_equal(traffic_sign.position, desired_traffic_light_position)
+
+    def test_equality(self):
+        traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, ["15"])
+        traffic_sign_one = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0]))
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0]))
+        self.assertTrue(traffic_sign_one == traffic_sign_two)
+
+        traffic_sign_two = TrafficSign(2, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0]))
+        self.assertFalse(traffic_sign_one == traffic_sign_two)
+
+        traffic_sign_town_sign = TrafficSignElement(TrafficSignIDGermany.TOWN_SIGN, ["15"])
+        traffic_sign_two = TrafficSign(2, [traffic_sign_town_sign], {3}, np.array([10.0, 7.0]))
+        self.assertFalse(traffic_sign_one == traffic_sign_two)
+
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {4}, np.array([10.0, 7.0]))
+        self.assertFalse(traffic_sign_one == traffic_sign_two)
+
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 6.9999999999]))
+        self.assertTrue(traffic_sign_one == traffic_sign_two)
+
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.1]))
+        self.assertFalse(traffic_sign_one == traffic_sign_two)
 
 
 class TestTrafficLight(unittest.TestCase):

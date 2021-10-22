@@ -20,9 +20,9 @@ class IntersectionIncomingElement:
     is valid for and to facilitate the calculation of priorities at intersections.
     The left incoming is used to infer the right-before-left-rule.
     """
+
     def __init__(self, incoming_id: int, incoming_lanelets: Set[int] = None, successors_right: Set[int] = None,
-                 successors_straight: Set[int] = None, successors_left: Set[int] = None,
-                 left_of: int = None):
+                 successors_straight: Set[int] = None, successors_left: Set[int] = None, left_of: int = None):
         """
         :param incoming_id: incoming element ID
         :param incoming_lanelets: set of IDs of incoming lanelets
@@ -39,6 +39,15 @@ class IntersectionIncomingElement:
         self.successors_straight = successors_straight
         self.successors_left = successors_left
         self._left_of = left_of
+
+    def __eq__(self, other):
+        if not isinstance(other, IntersectionIncomingElement):
+            return False
+
+        return self._incoming_id == other.incoming_id and self._incoming_lanelets == other.incoming_lanelets \
+            and self._successors_right == other.successors_right \
+            and self._successors_straight == other.successors_straight \
+            and self._successors_left == other.successors_left and self._left_of == other.left_of
 
     @property
     def incoming_id(self) -> int:
@@ -151,6 +160,7 @@ class Intersection:
     An intersection element is defined by at least one incoming and an optional crossing element.
     The crossing element models lanelets which cross other lanelets, e.g., these are usually lanelets of type crosswalk.
     """
+
     def __init__(self, intersection_id: int, incomings: List[IntersectionIncomingElement], crossings: Set[int] = None):
         """
         :param intersection_id: ID of intersection element
@@ -164,6 +174,13 @@ class Intersection:
         self.intersection_id = intersection_id
         self.incomings = incomings
         self.crossings = crossings
+
+    def __eq__(self, other):
+        if not isinstance(other, Intersection):
+            return False
+
+        return self._intersection_id == other.intersection_id and self._incomings == other.incomings and \
+            self._crossings == other.crossings
 
     @property
     def intersection_id(self) -> int:
@@ -198,7 +215,7 @@ class Intersection:
         """
         if self._incomings is None:
             assert len(incomings) > 0, '<Intersection/incomings>: Intersection ' \
-                                               'must consist of at least two incomings '
+                                       'must consist of at least two incomings '
             self._incomings = incomings
         else:
             warnings.warn('<Intersection/incomings>: incomings of intersection are immutable')
