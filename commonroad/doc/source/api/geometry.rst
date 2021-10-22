@@ -50,7 +50,7 @@ Transform
 
 .. autofunction:: from_homogeneous_coordinates
 
-Polyline util
+Polyline Utility Functions
 -------------
 
 .. automodule:: geometry.polyline_util

@@ -35,7 +35,7 @@ class TestPolylineUtil(unittest.TestCase):
         for i in range(0, len(polylines)):
             polyline = polylines[i]
             length_exp = length_exps[i]
-            length = polyline_util.compute_polyline_complete_length(polyline)
+            length = polyline_util.compute_total_polyline_length(polyline)
             self.assertAlmostEqual(length, length_exp)
 
     def test_compute_polyline_curvatures(self):
@@ -215,7 +215,7 @@ class TestPolylineUtil(unittest.TestCase):
     def test_assert_valid_polyline(self):
         polyline = [[0, 0], [1, 0], [2, 0]]
         with self.assertRaises(AssertionError):
-            polyline_util.assert_valid_polyline(polyline)  # noqa
+            polyline_util.assert_valid_polyline(np.array(polyline))
 
         polylines = [np.array([[0, 0]]), np.array([[[0, 0], [1, 1]], [[2, 2], [3, 3]], [[4, 4], [5, 5]]]),
                      np.array([[0, 0, 0], [1, 0], [2, 0]])]
@@ -223,7 +223,7 @@ class TestPolylineUtil(unittest.TestCase):
         for i in range(0, len(polylines)):
             polyline = polylines[i]
             with self.assertRaises(AssertionError):
-                polyline_util.assert_valid_polyline(polyline, 2)
+                polyline_util.assert_valid_polyline(polyline)
 
         polyline = np.array([[0, 0], [1, 1]])
         with self.assertRaises(AssertionError):

@@ -1,7 +1,5 @@
 import math
-
 import numpy as np
-import numpy.linalg
 from shapely.geometry import LineString
 
 
@@ -13,7 +11,7 @@ def compute_polyline_lengths(polyline: np.ndarray) -> np.ndarray:
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
     :return: Path lengths of the polyline for each coordinate in m
     """
-    assert_valid_polyline(polyline, 2)
+    assert_valid_polyline(polyline)
 
     distance = [0]
     for i in range(1, len(polyline)):
@@ -22,12 +20,12 @@ def compute_polyline_lengths(polyline: np.ndarray) -> np.ndarray:
     return np.array(distance)
 
 
-def compute_polyline_complete_length(polyline: np.ndarray) -> float:
+def compute_total_polyline_length(polyline: np.ndarray) -> float:
     """
     Computes the complete path length of a given polyline.
 
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
-    :return: Path length of the polyline in m
+    :return: Path length of the polyline [m]
     """
     lengths = compute_polyline_lengths(polyline)
 
@@ -40,7 +38,7 @@ def compute_polyline_curvatures(polyline: np.ndarray) -> np.ndarray:
     to final coordinate.
 
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
-    :return: Curvatures of the polyline for each coordinate
+    :return: Curvatures of the polyline for each coordinate [1/rad]
     """
     assert_valid_polyline(polyline, 3)
 
@@ -59,9 +57,9 @@ def compute_polyline_orientations(polyline: np.ndarray) -> np.ndarray:
     assigned with the computed orientation of the penultimate one.
 
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
-    :return: Orientations of the polyline for each coordinate in rad
+    :return: Orientations of the polyline for each coordinate [rad]
     """
-    assert_valid_polyline(polyline, 2)
+    assert_valid_polyline(polyline)
 
     orientation = []
     for i in range(0, len(polyline) - 1):
@@ -82,7 +80,7 @@ def compute_polyline_initial_orientation(polyline: np.ndarray) -> float:
     coordinate.
 
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
-    :return: Orientation of the initial coordinate in rad
+    :return: Orientation of the initial coordinate [rad]
     """
     orientations = compute_polyline_orientations(polyline)
 
@@ -96,9 +94,9 @@ def is_point_on_polyline(polyline: np.ndarray, point: np.ndarray) -> bool:
 
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
     :param point: 2D point [x, y]
-    :return: Lies on polyline or not
+    :return: Boolean indicating whether point lies on polyline or not
     """
-    assert_valid_polyline(polyline, 2)
+    assert_valid_polyline(polyline)
 
     for i in range(0, len(polyline) - 1):
         l_x_1 = polyline[i][0]
@@ -133,8 +131,8 @@ def compute_polyline_intersections(polyline_1: np.ndarray, polyline_2: np.ndarra
     :param polyline_2: Second polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
     :return: Intersection points
     """
-    assert_valid_polyline(polyline_1, 2)
-    assert_valid_polyline(polyline_2, 2)
+    assert_valid_polyline(polyline_1)
+    assert_valid_polyline(polyline_2)
 
     intersection_points = []
 
@@ -173,7 +171,7 @@ def is_polyline_self_intersection(polyline: np.ndarray) -> bool:
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
     :return: Self-intersection or not
     """
-    assert_valid_polyline(polyline, 2)
+    assert_valid_polyline(polyline)
 
     line = [(x, y) for x, y in polyline]
     line_string = LineString(line)
@@ -190,8 +188,8 @@ def compare_polylines_equality(polyline_1: np.ndarray, polyline_2: np.ndarray, t
     :param threshold: Threshold for equality of values
     :return: Equality of both polylines or not
     """
-    assert_valid_polyline(polyline_1, 2)
-    assert_valid_polyline(polyline_2, 2)
+    assert_valid_polyline(polyline_1)
+    assert_valid_polyline(polyline_2)
 
     return np.allclose(polyline_1, polyline_2, rtol=threshold, atol=threshold)
 
@@ -200,12 +198,13 @@ def resample_polyline_with_number(polyline: np.ndarray, number: int) -> np.ndarr
     """
     Resamples the given polyline with a fixed number of points. The number
     of coordinates can be resampled down or up.
+    There exists also an efficient C++ implementation with Python interface in the CommonRoad Drivability Checker.
 
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
     :param number: Fixed number of 2D points
     :return: Resampled polyline
     """
-    assert_valid_polyline(polyline, 2)
+    assert_valid_polyline(polyline)
     assert number > 1, 'Number n={} has to be at least two'.format(number)
 
     line = LineString(polyline)
@@ -222,12 +221,13 @@ def resample_polyline_with_distance(polyline: np.ndarray, distance: float) -> np
     """
     Resamples the given polyline with a specific distance. For a higher distance than the length
     of the given polyline the polyline is not resampled.
+    There exists also an efficient C++ implementation with Python interface in the CommonRoad Drivability Checker.
 
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
-    :param distance: Specific distance
+    :param distance: Specific distance [m]
     :return: Resampled polyline
     """
-    assert_valid_polyline(polyline, 2)
+    assert_valid_polyline(polyline)
     assert distance > 0, 'Distance d={} has to be greater than 0'.format(distance)
 
     line = LineString(polyline)

@@ -1,11 +1,8 @@
 # Changelog
 
-## [2021.4] - 2021-10-20
+## [2021.4] - 2021-X-X
 ###Added
-- Polyline functions from different repositories for maintenance reason
-- Resampling of polylines
-- Computing path length, orientation, and curvature of a polyline
-- Computing existence of self-intersection of one polyline or all intersection points between two polylines
+- Polyline utility functions, e.g., resampling, path length, orientation, curvature, intersection
 
 ## [2021.3] - 2021-09-21
 ### Added
