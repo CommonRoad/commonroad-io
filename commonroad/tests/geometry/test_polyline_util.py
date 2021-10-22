@@ -26,7 +26,7 @@ class TestPolylineUtil(unittest.TestCase):
             for i in range(0, len(lengths_exp)):
                 self.assertAlmostEqual(lengths[i], lengths_exp[i])
 
-    def test_compute_polyline_complete_length(self):
+    def test_compute_total_polyline_length(self):
         polylines = [np.array([[1, 1], [3, 1], [7, 1], [0, 1]]),
                      np.array([[1, 1], [-2, -2], [-3, -2], [0, -2]]),
                      np.array([[-7, -7], [7, 7]])]
