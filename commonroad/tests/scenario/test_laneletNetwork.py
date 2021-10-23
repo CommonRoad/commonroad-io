@@ -355,6 +355,9 @@ class TestLaneletNetwork(unittest.TestCase):
                                   '{:8d} lanelet\n'.format(5) +
                                   '{:8d} lanelet\n'.format(6))
 
+    def test_equality(self):
+        pass
+
 
 if __name__ == '__main__':
     unittest.main()

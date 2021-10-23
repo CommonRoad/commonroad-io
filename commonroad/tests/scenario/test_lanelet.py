@@ -358,6 +358,54 @@ class TestLanelet(unittest.TestCase):
         lanelet.remove_predecessor(20)
         self.assertListEqual(lanelet.successor, [6])
 
+    def test_equality(self):
+        right_vertices = np.array([[-1, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
+        left_vertices = np.array([[-1, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
+        center_vertices = np.array([[-1, .5], [1, .5], [2, .5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, .5], [8, .5]])
+        lanelet_id = 7
+        predecessor = [1, 2]
+        successor = [6, 7]
+        adjacent_left = 3
+        adjacent_right = 4
+        adjacent_right_same_dir = True
+        adjacent_left_same_dir = False
+
+        lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
+                          adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
+
+        pass
+
+
+class TestStopLine(unittest.TestCase):
+    def test_equality(self):
+        stop_line_1 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
+        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
+        self.assertTrue(stop_line_1 == stop_line_2)
+
+        stop_line_2 = StopLine(np.array([0, 0.0000000001]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
+        self.assertTrue(stop_line_1 == stop_line_2)
+
+        stop_line_2 = StopLine(np.array([0, 0.005]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
+        self.assertFalse(stop_line_1 == stop_line_2)
+
+        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 0.9999999999]), LineMarking.SOLID, {1, 2}, {3, 4})
+        self.assertTrue(stop_line_1 == stop_line_2)
+
+        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1.05]), LineMarking.SOLID, {1, 2}, {3, 4})
+        self.assertFalse(stop_line_1 == stop_line_2)
+
+        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.DASHED, {1, 2}, {3, 4})
+        self.assertFalse(stop_line_1 == stop_line_2)
+
+        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2, 5}, {3, 4})
+        self.assertFalse(stop_line_1 == stop_line_2)
+
+        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3})
+        self.assertFalse(stop_line_1 == stop_line_2)
+
+        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID)
+        self.assertFalse(stop_line_1 == stop_line_2)
+
 
 if __name__ == '__main__':
     unittest.main()

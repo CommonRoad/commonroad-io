@@ -7,7 +7,7 @@ from commonroad.scenario.intersection import Intersection, IntersectionIncomingE
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario, Environment, TimeOfDay, Time, Underground, Weather, Location, \
-    ScenarioID
+    ScenarioID, GeoTransformation
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany, TrafficLight, \
     TrafficLightCycleElement, TrafficLightState
 from commonroad.scenario.trajectory import *
@@ -699,6 +699,87 @@ class TestScenarioID(unittest.TestCase):
         # '*.xml'))  #     for file in files:  #         # if not "C-USA_Lanker-1_2_T-1" in str(file):  #         #
         # continue  #         sc, _ = CommonRoadFileReader(file).open()  #         self.assertEqual(sc.orig_bid,
         # str(sc.scenario_id))  #         print(file)
+
+
+class TestLocation(unittest.TestCase):
+    def test_equality(self):
+        geo_transformation = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.4)
+        environment = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.CLEAN)
+        location_1 = Location(123, 456, 789, geo_transformation, environment)
+        location_2 = Location(123, 456, 789, geo_transformation, environment)
+        self.assertTrue(location_1 == location_2)
+
+        location_2 = Location(321, 456, 789, geo_transformation, environment)
+        self.assertFalse(location_1 == location_2)
+
+        location_2 = Location(123, 654, 789, geo_transformation, environment)
+        self.assertFalse(location_1 == location_2)
+
+        location_2 = Location(123, 456, 987, geo_transformation, environment)
+        self.assertFalse(location_1 == location_2)
+
+        geo_transformation = GeoTransformation('4321', 1.1, 1.2, 1.3, 1.4)
+        location_2 = Location(123, 456, 789, geo_transformation, environment)
+        self.assertFalse(location_1 == location_2)
+
+        geo_transformation = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.4)
+        environment = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.DIRTY)
+        location_2 = Location(123, 456, 789, geo_transformation, environment)
+        self.assertFalse(location_1 == location_2)
+
+
+class TestGeoTransformation(unittest.TestCase):
+    def test_equality(self):
+        geo_transformation_1 = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.4)
+        geo_transformation_2 = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.4)
+        self.assertTrue(geo_transformation_1 == geo_transformation_2)
+
+        geo_transformation_2 = GeoTransformation('1233', 1.1, 1.2, 1.3, 1.4)
+        self.assertFalse(geo_transformation_1 == geo_transformation_2)
+
+        geo_transformation_2 = GeoTransformation('1234', 1.0, 1.2, 1.3, 1.4)
+        self.assertFalse(geo_transformation_1 == geo_transformation_2)
+
+        geo_transformation_2 = GeoTransformation('1234', 1.1, 1.1, 1.3, 1.4)
+        self.assertFalse(geo_transformation_1 == geo_transformation_2)
+
+        geo_transformation_2 = GeoTransformation('1234', 1.1, 1.2, 1.2, 1.4)
+        self.assertFalse(geo_transformation_1 == geo_transformation_2)
+
+        geo_transformation_2 = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.3)
+        self.assertFalse(geo_transformation_1 == geo_transformation_2)
+
+
+class TestTime(unittest.TestCase):
+    def test_equality(self):
+        time_1 = Time(8, 30)
+        time_2 = Time(8, 30)
+        self.assertTrue(time_1 == time_2)
+
+        time_2 = Time(9, 30)
+        self.assertFalse(time_1 == time_2)
+
+        time_2 = Time(8, 59)
+        self.assertFalse(time_1 == time_2)
+
+
+class TestEnvironment(unittest.TestCase):
+    def test_equality(self):
+        environment_1 = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.CLEAN)
+        environment_2 = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.CLEAN)
+        self.assertTrue(environment_1 == environment_2)
+
+        environment_2 = Environment(Time(9, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.CLEAN)
+        self.assertFalse(environment_1 == environment_2)
+
+        environment_2 = Environment(Time(8, 30), TimeOfDay.UNKNOWN, Weather.SUNNY, Underground.CLEAN)
+        self.assertFalse(environment_1 == environment_2)
+
+        environment_2 = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SNOW, Underground.CLEAN)
+        self.assertFalse(environment_1 == environment_2)
+
+        environment_2 = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.ICE)
+        self.assertFalse(environment_1 == environment_2)
 
 
 if __name__ == '__main__':
