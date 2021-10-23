@@ -298,19 +298,16 @@ class Lanelet:
 
         eq = self.lanelet_id == other.lanelet_id
 
-        properties = [self.distance, self.inner_distance, self._left_vertices, self._right_vertices,
-                      self._center_vertices]
-        properties_other = [other.distance, other.inner_distance, other.left_vertices, other.right_vertices,
-                            other.center_vertices]
+        polylines = [self._left_vertices, self._right_vertices, self._center_vertices]
+        polylines_other = [other.left_vertices, other.right_vertices, other.center_vertices]
 
-        for i in range(0, len(properties)):
-            prop = properties[i]
-            prop_other = properties_other[i]
-            if (prop is None and prop_other is not None) or (prop is not None and prop_other is None):
+        for i in range(0, len(polylines)):
+            polyline = polylines[i]
+            polyline_other = polylines_other[i]
+            if polyline is not None and polyline_other is not None:
+                eq = eq and np.allclose(polyline, polyline_other, rtol=thresh, atol=thresh)
+            elif (polyline is None and polyline_other is not None) or (polyline is not None and polyline_other is None):
                 return False
-            else:
-                if prop is not None and prop_other is not None:
-                    eq = eq and np.allclose(prop, prop_other, rtol=thresh, atol=thresh)
 
         eq = eq and self._line_marking_left_vertices == other.line_marking_left_vertices and \
             self._line_marking_right_vertices == other.line_marking_right_vertices
@@ -330,8 +327,6 @@ class Lanelet:
             self._user_bidirectional == other.user_bidirectional
 
         eq = eq and self._traffic_signs == other.traffic_signs and self._traffic_lights == other.traffic_lights
-
-        eq = eq and self._polygon == other.polygon
 
         return eq
 
@@ -1066,8 +1061,8 @@ class LaneletNetwork(IDrawable):
         if not isinstance(other, LaneletNetwork):
             return False
 
-        return self._lanelets == other.lanelets and self._intersections == other.intersections \
-            and self._traffic_signs == other.traffic_signs and self._traffic_lights == other.traffic_lights
+        return self._lanelets == other._lanelets and self._intersections == other._intersections \
+            and self._traffic_signs == other._traffic_signs and self._traffic_lights == other._traffic_lights
 
     @property
     def lanelets(self) -> List[Lanelet]:
