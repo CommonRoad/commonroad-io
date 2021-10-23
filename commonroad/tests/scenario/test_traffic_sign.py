@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from commonroad.scenario.traffic_sign import TrafficLight, TrafficLightCycleElement, TrafficLightState, TrafficSign, \
-    TrafficSignElement, TrafficSignIDZamunda, TrafficSignIDGermany
+    TrafficSignElement, TrafficSignIDZamunda, TrafficSignIDGermany, TrafficLightDirection
 
 
 class TestTrafficSign(unittest.TestCase):
@@ -37,6 +37,9 @@ class TestTrafficSign(unittest.TestCase):
         traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.1]))
         self.assertFalse(traffic_sign_one == traffic_sign_two)
 
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0]), True)
+        self.assertFalse(traffic_sign_one == traffic_sign_two)
+
 
 class TestTrafficLight(unittest.TestCase):
     def test_get_state_at_time_step(self):
@@ -63,6 +66,49 @@ class TestTrafficLight(unittest.TestCase):
         desired_traffic_light_position = np.array([3, 3])
 
         np.testing.assert_array_almost_equal(traffic_light.position, desired_traffic_light_position)
+
+    def test_equality(self):
+        cycle = [TrafficLightCycleElement(TrafficLightState.GREEN, 2)]
+        traffic_light_1 = TrafficLight(234, cycle, np.array([10., 10.]), 5)
+        traffic_light_2 = TrafficLight(234, cycle, np.array([10., 10.]), 5)
+        self.assertTrue(traffic_light_1 == traffic_light_2)
+
+        traffic_light_2 = TrafficLight(235, cycle, np.array([10., 10.]), 5)
+        self.assertFalse(traffic_light_1 == traffic_light_2)
+
+        cycle = [TrafficLightCycleElement(TrafficLightState.RED, 2)]
+        traffic_light_2 = TrafficLight(234, cycle, np.array([10., 10.]), 5)
+        self.assertFalse(traffic_light_1 == traffic_light_2)
+
+        cycle = [TrafficLightCycleElement(TrafficLightState.GREEN, 2)]
+        traffic_light_2 = TrafficLight(234, cycle, np.array([10., 9.999999999]), 5)
+        self.assertTrue(traffic_light_1 == traffic_light_2)
+
+        cycle = [TrafficLightCycleElement(TrafficLightState.GREEN, 2)]
+        traffic_light_2 = TrafficLight(234, cycle, np.array([10., 9.95]), 5)
+        self.assertFalse(traffic_light_1 == traffic_light_2)
+
+        traffic_light_2 = TrafficLight(234, cycle, np.array([10., 10.]), 6)
+        self.assertFalse(traffic_light_1 == traffic_light_2)
+
+        traffic_light_2 = TrafficLight(234, cycle, np.array([10., 10.]), 5, TrafficLightDirection.STRAIGHT)
+        self.assertFalse(traffic_light_1 == traffic_light_2)
+
+        traffic_light_2 = TrafficLight(234, cycle, np.array([10., 10.]), 5, active=False)
+        self.assertFalse(traffic_light_1 == traffic_light_2)
+
+
+class TestTrafficLightCycleElement(unittest.TestCase):
+    def test_equality(self):
+        cycle_element_1 = TrafficLightCycleElement(TrafficLightState.GREEN, 2)
+        cycle_element_2 = TrafficLightCycleElement(TrafficLightState.GREEN, 2)
+        self.assertTrue(cycle_element_1 == cycle_element_2)
+
+        cycle_element_2 = TrafficLightCycleElement(TrafficLightState.YELLOW, 2)
+        self.assertFalse(cycle_element_1 == cycle_element_2)
+
+        cycle_element_2 = TrafficLightCycleElement(TrafficLightState.GREEN, 7)
+        self.assertFalse(cycle_element_1 == cycle_element_2)
 
 
 if __name__ == '__main__':

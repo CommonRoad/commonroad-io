@@ -674,7 +674,7 @@ class TrafficLightCycleElement:
         self._duration = duration
 
     def __eq__(self, other):
-        if isinstance(other, TrafficLightCycleElement):
+        if not isinstance(other, TrafficLightCycleElement):
             return False
 
         return self._state == other.state and self._duration == other.duration
