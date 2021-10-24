@@ -608,8 +608,8 @@ class TrafficSign(IDrawable):
 
         return self._traffic_sign_id == other.traffic_sign_id \
             and np.allclose(self._position, other.position, rtol=thresh, atol=thresh) \
-            and self._traffic_sign_elements == other.traffic_sign_elements and self._virtual == other.virtual \
-            and self._first_occurrence == other.first_occurrence
+            and set(self._traffic_sign_elements) == set(other.traffic_sign_elements) \
+            and self._virtual == other.virtual and self._first_occurrence == other.first_occurrence
 
     @property
     def traffic_sign_id(self) -> int:
@@ -679,6 +679,9 @@ class TrafficLightCycleElement:
 
         return self._state == other.state and self._duration == other.duration
 
+    def __hash__(self):
+        return hash((self._state, self._duration))
+
     @property
     def state(self) -> TrafficLightState:
         return self._state
@@ -720,10 +723,14 @@ class TrafficLight(IDrawable):
 
         thresh = 1e-10
 
-        return self._traffic_light_id == other.traffic_light_id and self._cycle == other.cycle \
+        return self._traffic_light_id == other.traffic_light_id and set(self._cycle) == set(other.cycle) \
             and self._time_offset == other.time_offset \
             and np.allclose(self._position, other.position, rtol=thresh, atol=thresh) \
             and self._direction == other.direction and self._active == other.active
+
+    def __hash__(self):
+        # TODO hash position
+        return hash((self._traffic_light_id, set(self._cycle), self._time_offset, self._direction, self._active))
 
     @property
     def traffic_light_id(self) -> int:

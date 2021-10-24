@@ -727,6 +727,16 @@ class TestLocation(unittest.TestCase):
         location_2 = Location(123, 456, 789, geo_transformation, environment)
         self.assertFalse(location_1 == location_2)
 
+    def test_hash(self):
+        geo_transformation = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.4)
+        environment = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.CLEAN)
+        location_1 = Location(123, 456, 789, geo_transformation, environment)
+        location_2 = Location(123, 456, 789, geo_transformation, environment)
+        self.assertEqual(hash(location_1), hash(location_2))
+
+        location_2 = Location(123, 457, 789, geo_transformation, environment)
+        self.assertNotEqual(hash(location_1), hash(location_2))
+
 
 class TestGeoTransformation(unittest.TestCase):
     def test_equality(self):
@@ -749,6 +759,14 @@ class TestGeoTransformation(unittest.TestCase):
         geo_transformation_2 = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.3)
         self.assertFalse(geo_transformation_1 == geo_transformation_2)
 
+    def test_hash(self):
+        geo_transformation_1 = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.4)
+        geo_transformation_2 = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.4)
+        self.assertEqual(hash(geo_transformation_1), hash(geo_transformation_2))
+
+        geo_transformation_2 = GeoTransformation('1235', 1.1, 1.2, 1.3, 1.4)
+        self.assertNotEqual(hash(geo_transformation_1), hash(geo_transformation_2))
+
 
 class TestTime(unittest.TestCase):
     def test_equality(self):
@@ -761,6 +779,14 @@ class TestTime(unittest.TestCase):
 
         time_2 = Time(8, 59)
         self.assertFalse(time_1 == time_2)
+
+    def test_hash(self):
+        time_1 = Time(8, 30)
+        time_2 = Time(8, 30)
+        self.assertEqual(hash(time_1), hash(time_2))
+
+        time_2 = Time(8, 31)
+        self.assertNotEqual(hash(time_1), hash(time_2))
 
 
 class TestEnvironment(unittest.TestCase):
@@ -780,6 +806,14 @@ class TestEnvironment(unittest.TestCase):
 
         environment_2 = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.ICE)
         self.assertFalse(environment_1 == environment_2)
+
+    def test_hash(self):
+        environment_1 = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.CLEAN)
+        environment_2 = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.CLEAN)
+        self.assertEqual(hash(environment_1), hash(environment_2))
+
+        environment_2 = Environment(Time(8, 30), TimeOfDay.NIGHT, Weather.SUNNY, Underground.CLEAN)
+        self.assertNotEqual(hash(environment_1), hash(environment_2))
 
 
 if __name__ == '__main__':

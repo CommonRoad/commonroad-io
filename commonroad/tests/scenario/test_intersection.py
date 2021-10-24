@@ -80,6 +80,16 @@ class TestIntersection(unittest.TestCase):
         intersection_2 = Intersection(1, [incoming_1, incoming_2], {30, 31, 34})
         self.assertFalse(intersection_1 == intersection_2)
 
+    def test_hash(self):
+        incoming = IntersectionIncomingElement(3, {20, 21}, {22, 23}, {24, 25}, {26, 27}, 28)
+        intersection_1 = Intersection(1, [incoming], {30, 31})
+        intersection_2 = Intersection(1, [incoming], {30, 31})
+        self.assertEqual(hash(intersection_1), hash(intersection_2))
+
+        incoming = IntersectionIncomingElement(3, {20, 21}, {22, 23}, {24, 25}, {26, 28}, 28)
+        intersection_2 = Intersection(1, [incoming], {30, 31})
+        self.assertNotEqual(hash(intersection_1), hash(intersection_2))
+
 
 class TestIntersectionIncomingElement(unittest.TestCase):
     def test_initialization_IntersectionIncomingElement(self):
@@ -135,6 +145,14 @@ class TestIntersectionIncomingElement(unittest.TestCase):
 
         incoming_2 = IntersectionIncomingElement(2, {10, 11}, {1, 2, 3, 4}, {14, 15}, {16, 17}, 18)
         self.assertFalse(incoming_1 == incoming_2)
+
+    def test_hash(self):
+        incoming_1 = IntersectionIncomingElement(2, {10, 11}, {12, 13}, {14, 15}, {16, 17}, 18)
+        incoming_2 = IntersectionIncomingElement(2, {10, 11}, {12, 13}, {14, 15}, {16, 17}, 18)
+        self.assertEqual(hash(incoming_1), hash(incoming_2))
+
+        incoming_2 = IntersectionIncomingElement(2, {10, 11}, {12, 17}, {14, 15}, {16, 17}, 18)
+        self.assertNotEqual(hash(incoming_1), hash(incoming_2))
 
 
 if __name__ == '__main__':

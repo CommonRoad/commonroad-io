@@ -110,6 +110,14 @@ class TestTrafficLightCycleElement(unittest.TestCase):
         cycle_element_2 = TrafficLightCycleElement(TrafficLightState.GREEN, 7)
         self.assertFalse(cycle_element_1 == cycle_element_2)
 
+    def test_hash(self):
+        cycle_element_1 = TrafficLightCycleElement(TrafficLightState.GREEN, 2)
+        cycle_element_2 = TrafficLightCycleElement(TrafficLightState.GREEN, 2)
+        self.assertEqual(cycle_element_1, cycle_element_2)
+
+        cycle_element_2 = TrafficLightCycleElement(TrafficLightState.GREEN, 3)
+        self.assertNotEqual(cycle_element_1, cycle_element_2)
+
 
 if __name__ == '__main__':
     unittest.main()

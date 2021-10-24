@@ -49,6 +49,10 @@ class IntersectionIncomingElement:
             and self._successors_straight == other.successors_straight \
             and self._successors_left == other.successors_left and self._left_of == other.left_of
 
+    def __hash__(self):
+        return hash((self._incoming_id, frozenset(self._incoming_lanelets), frozenset(self._successors_right),
+                     frozenset(self._successors_straight), frozenset(self._successors_left), self._left_of))
+
     @property
     def incoming_id(self) -> int:
         """
@@ -179,8 +183,11 @@ class Intersection:
         if not isinstance(other, Intersection):
             return False
 
-        return self._intersection_id == other.intersection_id and self._incomings == other.incomings and \
+        return self._intersection_id == other.intersection_id and set(self._incomings) == set(other.incomings) and \
             self._crossings == other.crossings
+
+    def __hash__(self):
+        return hash((self._intersection_id, frozenset(self._incomings), frozenset(self._crossings)))
 
     @property
     def intersection_id(self) -> int:

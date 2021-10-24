@@ -314,7 +314,8 @@ class Lanelet:
 
         eq = eq and self._stop_line == other.stop_line
 
-        eq = eq and self._predecessor == other.predecessor and self._successor == other.successor and \
+        eq = eq and set(self._predecessor) == set(other.predecessor) and \
+            set(self._successor) == set(other.successor) and \
             self._adj_left == other.adj_left and self._adj_right == other.adj_right
 
         eq = eq and self._adj_left_same_direction == other.adj_left_same_direction and \
@@ -1061,8 +1062,13 @@ class LaneletNetwork(IDrawable):
         if not isinstance(other, LaneletNetwork):
             return False
 
-        return self._lanelets == other._lanelets and self._intersections == other._intersections \
-            and self._traffic_signs == other._traffic_signs and self._traffic_lights == other._traffic_lights
+        return set(self._lanelets) == set(other._lanelets) and set(self._intersections) == set(other._intersections) \
+            and set(self._traffic_signs) == set(other._traffic_signs) \
+            and set(self._traffic_lights) == set(other._traffic_lights)
+
+    def __hash__(self):
+        return hash((frozenset(self._lanelets.items()), frozenset(self._intersections.items()),
+                     frozenset(self._traffic_signs.items()), frozenset(self._traffic_lights.items())))
 
     @property
     def lanelets(self) -> List[Lanelet]:

@@ -405,9 +405,17 @@ class TestLanelet(unittest.TestCase):
                             adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
         self.assertFalse(lanelet_1 == lanelet_2)
 
+        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, [4, 3], successor,
+                            adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
+        self.assertTrue(lanelet_1 == lanelet_2)
+
         lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, [2], adjacent_left,
                             adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
         self.assertFalse(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, [7, 8, 6], adjacent_left,
+                            adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
+        self.assertTrue(lanelet_1 == lanelet_2)
 
         lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor, 1,
                             adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
