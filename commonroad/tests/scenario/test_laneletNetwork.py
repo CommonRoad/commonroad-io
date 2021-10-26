@@ -355,7 +355,7 @@ class TestLaneletNetwork(unittest.TestCase):
                                   '{:8d} lanelet\n'.format(5) +
                                   '{:8d} lanelet\n'.format(6))
 
-    def test_equality(self):
+    def test_equality_hash(self):
         left_vertices = np.array([[0, 1], [1, 1], [2, 1]])
         center_vertices = np.array([[0, 0], [1, 0], [2, 0]])
         right_vertices = np.array([[0, -1], [1, -1], [2, -1]])
@@ -379,21 +379,26 @@ class TestLaneletNetwork(unittest.TestCase):
             lanelet_network.add_traffic_sign(traffic_sign, {3})
             lanelet_network.add_traffic_light(traffic_light, {3})
         self.assertTrue(lanelet_network_1 == lanelet_network_2)
+        self.assertTrue(hash(lanelet_network_1), hash(lanelet_network_2))
 
         lanelet_network_2.remove_lanelet(3)
         self.assertFalse(lanelet_network_1 == lanelet_network_2)
+        self.assertNotEqual(hash(lanelet_network_1), hash(lanelet_network_2))
 
         lanelet_network_2.add_lanelet(lanelet)
         lanelet_network_2.add_intersection(Intersection(2, [incoming], {30, 31}))
         self.assertFalse(lanelet_network_1 == lanelet_network_2)
+        self.assertNotEqual(hash(lanelet_network_1), hash(lanelet_network_2))
 
         lanelet_network_2.remove_intersection(2)
         lanelet_network_2.add_traffic_sign(TrafficSign(4, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0])), {3})
         self.assertFalse(lanelet_network_1 == lanelet_network_2)
+        self.assertNotEqual(hash(lanelet_network_1), hash(lanelet_network_2))
 
         lanelet_network_2.remove_traffic_sign(4)
         lanelet_network_2.remove_traffic_light(234)
         self.assertFalse(lanelet_network_1 == lanelet_network_2)
+        self.assertNotEqual(hash(lanelet_network_1), hash(lanelet_network_2))
 
 
 if __name__ == '__main__':

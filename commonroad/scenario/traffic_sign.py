@@ -558,18 +558,17 @@ class TrafficSignElement:
     def additional_values(self) -> List[str]:
         return self._additional_values
 
-    def __eq__(self, other: 'TrafficSignElement'):
-        if self.traffic_sign_element_id == other.traffic_sign_element_id \
-                and self.additional_values == other.additional_values:
-            return True
-        else:
+    def __eq__(self, other):
+        if not isinstance(other, TrafficSignElement):
             return False
+        return self.traffic_sign_element_id == other.traffic_sign_element_id \
+            and set(self.additional_values) == set(other.additional_values)
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(str(self. _traffic_sign_element_id) + str(self.additional_values))
+        return hash((self._traffic_sign_element_id, frozenset(self.additional_values)))
 
     def __str__(self):
         return f"Sign Element with id {self._traffic_sign_element_id} and values {self._additional_values} "
@@ -604,12 +603,18 @@ class TrafficSign(IDrawable):
         if not isinstance(other, TrafficSign):
             return False
 
-        thresh = 1e-10
+        position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
+        position_other_string = np.array2string(np.around(other.position.astype(float), 10), precision=10)
 
         return self._traffic_sign_id == other.traffic_sign_id \
-            and np.allclose(self._position, other.position, rtol=thresh, atol=thresh) \
+            and position_string == position_other_string \
             and set(self._traffic_sign_elements) == set(other.traffic_sign_elements) \
             and self._virtual == other.virtual and self._first_occurrence == other.first_occurrence
+
+    def __hash__(self):
+        position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
+        return hash((self._traffic_sign_id, position_string, frozenset(self._traffic_sign_elements),
+                     self._virtual, frozenset(self._first_occurrence)))
 
     @property
     def traffic_sign_id(self) -> int:
@@ -721,16 +726,18 @@ class TrafficLight(IDrawable):
         if not isinstance(other, TrafficLight):
             return False
 
-        thresh = 1e-10
+        position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
+        position_other_string = np.array2string(np.around(other.position.astype(float), 10), precision=10)
 
         return self._traffic_light_id == other.traffic_light_id and set(self._cycle) == set(other.cycle) \
             and self._time_offset == other.time_offset \
-            and np.allclose(self._position, other.position, rtol=thresh, atol=thresh) \
+            and position_string == position_other_string \
             and self._direction == other.direction and self._active == other.active
 
     def __hash__(self):
-        # TODO hash position
-        return hash((self._traffic_light_id, set(self._cycle), self._time_offset, self._direction, self._active))
+        position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
+        return hash((self._traffic_light_id, frozenset(self._cycle), self._time_offset, position_string, self._direction,
+                     self._active))
 
     @property
     def traffic_light_id(self) -> int:

@@ -92,12 +92,21 @@ class StopLine:
         if not isinstance(other, StopLine):
             return False
 
-        thresh = 1e-10
+        prec = 10
+        start_string = np.array2string(np.around(self._start.astype(float), prec), precision=prec)
+        start_other_string = np.array2string(np.around(other.start.astype(float), prec), precision=prec)
+        end_string = np.array2string(np.around(self._end.astype(float), prec), precision=prec)
+        end_other_string = np.array2string(np.around(other.end.astype(float), prec), precision=prec)
 
-        return np.allclose(self._start, other.start, rtol=thresh, atol=thresh) \
-            and np.allclose(self._end, other.end, rtol=thresh, atol=thresh) \
+        return start_string == start_other_string and end_string == end_other_string \
             and self._line_marking == other.line_marking and self._traffic_sign_ref == other.traffic_sign_ref \
             and self._traffic_light_ref == other.traffic_light_ref
+
+    def __hash__(self):
+        start_string = np.array2string(np.around(self._start.astype(float), 10), precision=10)
+        end_string = np.array2string(np.around(self._end.astype(float), 10), precision=10)
+        return hash((start_string, end_string, self._line_marking, frozenset(self._traffic_sign_ref),
+                     frozenset(self._traffic_light_ref)))
 
     @property
     def start(self) -> np.ndarray:
@@ -294,8 +303,6 @@ class Lanelet:
         if not isinstance(other, Lanelet):
             return False
 
-        thresh = 1e-10
-
         eq = self.lanelet_id == other.lanelet_id
 
         polylines = [self._left_vertices, self._right_vertices, self._center_vertices]
@@ -305,7 +312,9 @@ class Lanelet:
             polyline = polylines[i]
             polyline_other = polylines_other[i]
             if polyline is not None and polyline_other is not None:
-                eq = eq and np.allclose(polyline, polyline_other, rtol=thresh, atol=thresh)
+                polyline_string = np.array2string(np.around(polyline.astype(float), 10), precision=10)
+                polyline_other_string = np.array2string(np.around(polyline_other.astype(float), 10), precision=10)
+                eq = eq and polyline_string == polyline_other_string
             elif (polyline is None and polyline_other is not None) or (polyline is not None and polyline_other is None):
                 return False
 
@@ -321,15 +330,26 @@ class Lanelet:
         eq = eq and self._adj_left_same_direction == other.adj_left_same_direction and \
             self._adj_right_same_direction == other.adj_right_same_direction
 
-        eq = eq and self._dynamic_obstacles_on_lanelet == other.dynamic_obstacles_on_lanelet and \
-            self._static_obstacles_on_lanelet == other.static_obstacles_on_lanelet
-
         eq = eq and self._lanelet_type == other.lanelet_type and self._user_one_way == self.user_one_way and \
             self._user_bidirectional == other.user_bidirectional
 
         eq = eq and self._traffic_signs == other.traffic_signs and self._traffic_lights == other.traffic_lights
 
         return eq
+
+    def __hash__(self):
+        polylines = [self._left_vertices, self._right_vertices, self._center_vertices]
+        polyline_strings = []
+        for polyline in polylines:
+            polyline_string = np.array2string(np.around(polyline.astype(float), 10), precision=10)
+            polyline_strings.append(polyline_string)
+
+        return hash((self._lanelet_id, polyline_strings[0], polyline_strings[1], polyline_strings[2],
+                     self._line_marking_left_vertices, self._line_marking_right_vertices, self._stop_line,
+                     frozenset(self._predecessor), frozenset(self._successor), self._adj_left, self._adj_right,
+                     self._adj_left_same_direction, self._adj_right_same_direction, frozenset(self._lanelet_type),
+                     frozenset(self._user_one_way), frozenset(self._user_bidirectional), frozenset(self.traffic_signs),
+                     frozenset(self._traffic_lights)))
 
     @property
     def distance(self) -> np.ndarray:
