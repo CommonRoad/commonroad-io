@@ -340,7 +340,7 @@ class Lanelet:
                     self._user_bidirectional, self._traffic_signs, self._traffic_lights]
         frozen_elements = [frozenset(e) for e in elements]
 
-        return hash((self._lanelet_id, tuple(polylines), self._line_marking_left_vertices,
+        return hash((self._lanelet_id, tuple(polyline_strings), self._line_marking_left_vertices,
                      self._line_marking_right_vertices, self._stop_line, self._adj_left, self._adj_right,
                      self._adj_left_same_direction, self._adj_right_same_direction, tuple(frozen_elements)))
 
