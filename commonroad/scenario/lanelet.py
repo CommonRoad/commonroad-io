@@ -311,12 +311,9 @@ class Lanelet:
         for i in range(0, len(polylines)):
             polyline = polylines[i]
             polyline_other = polylines_other[i]
-            if polyline is not None and polyline_other is not None:
-                polyline_string = np.array2string(np.around(polyline.astype(float), 10), precision=10)
-                polyline_other_string = np.array2string(np.around(polyline_other.astype(float), 10), precision=10)
-                eq = eq and polyline_string == polyline_other_string
-            elif (polyline is None and polyline_other is not None) or (polyline is not None and polyline_other is None):
-                return False
+            polyline_string = np.array2string(np.around(polyline.astype(float), 10), precision=10)
+            polyline_other_string = np.array2string(np.around(polyline_other.astype(float), 10), precision=10)
+            eq = eq and polyline_string == polyline_other_string
 
         return eq and self._line_marking_left_vertices == other.line_marking_left_vertices and \
             self._line_marking_right_vertices == other.line_marking_right_vertices and \
