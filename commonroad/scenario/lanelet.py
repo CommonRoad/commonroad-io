@@ -318,24 +318,22 @@ class Lanelet:
             elif (polyline is None and polyline_other is not None) or (polyline is not None and polyline_other is None):
                 return False
 
-        eq = eq and self._line_marking_left_vertices == other.line_marking_left_vertices and \
-            self._line_marking_right_vertices == other.line_marking_right_vertices
+        predecessor = None if self._predecessor is None else set(self._predecessor)
+        predecessor_other = None if other.predecessor is None else set(other.predecessor)
 
-        eq = eq and self._stop_line == other.stop_line
+        successor = None if self._successor is None else set(self._successor)
+        successor_other = None if other.successor is None else set(other.successor)
 
-        eq = eq and set(self._predecessor) == set(other.predecessor) and \
-            set(self._successor) == set(other.successor) and \
-            self._adj_left == other.adj_left and self._adj_right == other.adj_right
-
-        eq = eq and self._adj_left_same_direction == other.adj_left_same_direction and \
-            self._adj_right_same_direction == other.adj_right_same_direction
-
-        eq = eq and self._lanelet_type == other.lanelet_type and self._user_one_way == self.user_one_way and \
-            self._user_bidirectional == other.user_bidirectional
-
-        eq = eq and self._traffic_signs == other.traffic_signs and self._traffic_lights == other.traffic_lights
-
-        return eq
+        return eq and self._line_marking_left_vertices == other.line_marking_left_vertices and \
+            self._line_marking_right_vertices == other.line_marking_right_vertices and \
+            self._stop_line == other.stop_line and predecessor == predecessor_other and \
+            successor == successor_other and \
+            self._adj_left == other.adj_left and self._adj_right == other.adj_right and \
+            self._adj_left_same_direction == other.adj_left_same_direction and \
+            self._adj_right_same_direction == other.adj_right_same_direction and \
+            self._lanelet_type == other.lanelet_type and self._user_one_way == self.user_one_way and \
+            self._user_bidirectional == other.user_bidirectional and self._traffic_signs == other.traffic_signs and \
+            self._traffic_lights == other.traffic_lights
 
     def __hash__(self):
         polylines = [self._left_vertices, self._right_vertices, self._center_vertices]
@@ -344,12 +342,18 @@ class Lanelet:
             polyline_string = np.array2string(np.around(polyline.astype(float), 10), precision=10)
             polyline_strings.append(polyline_string)
 
-        return hash((self._lanelet_id, polyline_strings[0], polyline_strings[1], polyline_strings[2],
-                     self._line_marking_left_vertices, self._line_marking_right_vertices, self._stop_line,
-                     frozenset(self._predecessor), frozenset(self._successor), self._adj_left, self._adj_right,
-                     self._adj_left_same_direction, self._adj_right_same_direction, frozenset(self._lanelet_type),
-                     frozenset(self._user_one_way), frozenset(self._user_bidirectional), frozenset(self.traffic_signs),
-                     frozenset(self._traffic_lights)))
+        elements = [self._predecessor, self._successor, self._lanelet_type, self._user_one_way,
+                    self._user_bidirectional, self._traffic_signs, self._traffic_lights]
+        frozen_elements = []
+        for e in elements:
+            if e is not None:
+                frozen_elements.append(frozenset(e))
+            else:
+                frozen_elements.append(None)
+
+        return hash((self._lanelet_id, tuple(polyline_strings), self._line_marking_left_vertices,
+                     self._line_marking_right_vertices, self._stop_line, self._adj_left, self._adj_right,
+                     self._adj_left_same_direction, self._adj_right_same_direction, tuple(frozen_elements)))
 
     @property
     def distance(self) -> np.ndarray:
