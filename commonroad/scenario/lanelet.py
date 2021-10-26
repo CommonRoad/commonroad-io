@@ -318,16 +318,10 @@ class Lanelet:
             elif (polyline is None and polyline_other is not None) or (polyline is not None and polyline_other is None):
                 return False
 
-        predecessor = None if self._predecessor is None else set(self._predecessor)
-        predecessor_other = None if other.predecessor is None else set(other.predecessor)
-
-        successor = None if self._successor is None else set(self._successor)
-        successor_other = None if other.successor is None else set(other.successor)
-
         return eq and self._line_marking_left_vertices == other.line_marking_left_vertices and \
             self._line_marking_right_vertices == other.line_marking_right_vertices and \
-            self._stop_line == other.stop_line and predecessor == predecessor_other and \
-            successor == successor_other and \
+            self._stop_line == other.stop_line and set(self._predecessor) == set(other.predecessor) and \
+            set(self._successor) == set(other.successor) and \
             self._adj_left == other.adj_left and self._adj_right == other.adj_right and \
             self._adj_left_same_direction == other.adj_left_same_direction and \
             self._adj_right_same_direction == other.adj_right_same_direction and \
@@ -344,16 +338,12 @@ class Lanelet:
 
         elements = [self._predecessor, self._successor, self._lanelet_type, self._user_one_way,
                     self._user_bidirectional, self._traffic_signs, self._traffic_lights]
-        frozen_elements = []
-        for e in elements:
-            if e is not None:
-                frozen_elements.append(frozenset(e))
-            else:
-                frozen_elements.append(None)
+        frozen_elements = [frozenset(e) for e in elements]
 
-        return hash((self._lanelet_id, tuple(polyline_strings), self._line_marking_left_vertices,
-                     self._line_marking_right_vertices, self._stop_line, self._adj_left, self._adj_right,
-                     self._adj_left_same_direction, self._adj_right_same_direction, tuple(frozen_elements)))
+        return hash((self._lanelet_id, polyline_strings[0], polyline_strings[1], polyline_strings[2],
+                     self._line_marking_left_vertices, self._line_marking_right_vertices, self._stop_line,
+                     self._adj_left, self._adj_right, self._adj_left_same_direction, self._adj_right_same_direction,
+                     tuple(frozen_elements)))
 
     @property
     def distance(self) -> np.ndarray:
