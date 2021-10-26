@@ -4927,12 +4927,12 @@
   <state>
     <position>
       <point>
-        <x>0.9999992281382054</x>
-        <y>0.0009259774777587065</y>
+        <x>0.9999992278723178</x>
+        <y>0.0009259770592440488</y>
       </point>
     </position>
     <orientation>
-      <exact>0.002777963024794483</exact>
+      <exact>0.0027779630250570515</exact>
     </orientation>
     <time>
       <exact>2</exact>
@@ -4944,20 +4944,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.0026670879200427827</exact>
-      <exact>-0.002559572644027263</exact>
-      <exact>-0.0024553355712285388</exact>
+      <exact>-0.0026670879685004962</exact>
+      <exact>-0.00010751552504390405</exact>
+      <exact>-3.27770540997894e-06</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>1.9999752992969901</x>
-        <y>0.007408542496892961</y>
+        <x>1.9999752992230868</x>
+        <y>0.007408541926145641</y>
       </point>
     </position>
     <orientation>
-      <exact>0.011114075381757241</exact>
+      <exact>0.011114075382746464</exact>
     </orientation>
     <time>
       <exact>3</exact>
@@ -4969,20 +4969,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.010253218480156194</exact>
-      <exact>-0.00944360404456131</exact>
-      <exact>-0.008682785050961284</exact>
+      <exact>-0.010253218611242758</exact>
+      <exact>-0.0008096470338990876</exact>
+      <exact>-4.874328572329197e-05</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>2.9998123442395865</x>
-        <y>0.025007901312788145</y>
+        <x>2.9998123440353233</x>
+        <y>0.02500789959838501</y>
       </point>
     </position>
     <orientation>
-      <exact>0.02501501446411818</exact>
+      <exact>0.02501501446829323</exact>
     </orientation>
     <time>
       <exact>4</exact>
@@ -4994,20 +4994,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.02219349472972454</exact>
-      <exact>-0.019619599603652213</exact>
-      <exact>-0.017275884023476545</exact>
+      <exact>-0.022193495146008716</exact>
+      <exact>-0.002574358921308787</exact>
+      <exact>-0.00022952543263433982</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>3.9992087427492464</x>
-        <y>0.05928886238849036</y>
+        <x>3.9992087425885687</x>
+        <y>0.0592888609060952</y>
       </point>
     </position>
     <orientation>
-      <exact>0.04449193296099154</exact>
+      <exact>0.04449193296465143</exact>
     </orientation>
     <time>
       <exact>5</exact>
@@ -5019,20 +5019,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.03799314101740079</exact>
-      <exact>-0.03224243003088613</exact>
-      <exact>-0.027170466054112656</exact>
+      <exact>-0.03799314129353675</exact>
+      <exact>-0.005753598251116034</exact>
+      <exact>-0.0006751803845311279</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>4.997583518995655</x>
-        <y>0.11581669475372372</y>
+        <x>4.997583518943218</x>
+        <y>0.11581669327985294</y>
       </point>
     </position>
     <orientation>
-      <exact>0.06956049481026759</exact>
+      <exact>0.06956049481146771</exact>
     </orientation>
     <time>
       <exact>6</exact>
@@ -5044,20 +5044,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.05721985204378844</exact>
-      <exact>-0.046627324504155444</exact>
-      <exact>-0.03758230888168717</exact>
+      <exact>-0.05721985206118564</exact>
+      <exact>-0.010603978708465552</exact>
+      <exact>-0.0015352705541025703</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>5.993982147014222</x>
-        <y>0.2001451862427296</y>
+        <x>5.993982147130325</x>
+        <y>0.20014518405644574</y>
       </point>
     </position>
     <orientation>
-      <exact>0.10024092569098207</exact>
+      <exact>0.1002409256922986</exact>
     </orientation>
     <time>
       <exact>7</exact>
@@ -5069,20 +5069,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.07949725026387161</exact>
-      <exact>-0.062227378088442496</exact>
-      <exact>-0.04795566503660554</exact>
+      <exact>-0.07949725023535702</exact>
+      <exact>-0.01730407849044917</exact>
+      <exact>-0.002966978466457171</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>6.986982032689504</x>
-        <y>0.3177941661235678</y>
+        <x>6.986982031428191</x>
+        <y>0.31779416742073513</y>
       </point>
     </position>
     <orientation>
-      <exact>0.1365580786319691</exact>
+      <exact>0.1365580786326042</exact>
     </orientation>
     <time>
       <exact>8</exact>
@@ -5094,20 +5094,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.10449929611661439</exact>
-      <exact>-0.07861456131711025</exact>
-      <exact>-0.05791998519871121</exact>
+      <exact>-0.10449929626619273</exact>
+      <exact>-0.025968854701005833</exact>
+      <exact>-0.0051260058712298785</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>7.974598351584126</x>
-        <y>0.4742137782271712</y>
+        <x>7.974598349574814</x>
+        <y>0.47421378132822295</y>
       </point>
     </position>
     <orientation>
-      <exact>0.1785415150737098</exact>
+      <exact>0.17854151507398527</exact>
     </orientation>
     <time>
       <exact>9</exact>
@@ -5119,20 +5119,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.13194548224032845</exact>
-      <exact>-0.09546336154887115</exact>
-      <exact>-0.06725295224648264</exact>
+      <exact>-0.13194548244784474</exact>
+      <exact>-0.03666170854228731</exact>
+      <exact>-0.008160007561495333</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>8.95419147296123</x>
-        <y>0.6747326511984583</y>
+        <x>8.954191465524989</x>
+        <y>0.6747326652976228</y>
       </point>
     </position>
     <orientation>
-      <exact>0.22622560199560482</exact>
+      <exact>0.22622560199353176</exact>
     </orientation>
     <time>
       <exact>10</exact>
@@ -5144,20 +5144,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.16159667887837764</exact>
-      <exact>-0.11253652620563068</exact>
-      <exact>-0.07584897970790612</exact>
+      <exact>-0.16159667950514342</exact>
+      <exact>-0.04940460784893037</exact>
+      <exact>-0.012204018799062664</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>9.922377817060383</x>
-        <y>0.9244872417733537</y>
+        <x>9.922377802502407</x>
+        <y>0.9244872645601211</y>
       </point>
     </position>
     <orientation>
-      <exact>0.27964962577799063</exact>
+      <exact>0.27964962577355035</exact>
     </orientation>
     <time>
       <exact>11</exact>
@@ -5169,20 +5169,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.19325152711765642</exact>
-      <exact>-0.12967260608974082</exact>
-      <exact>-0.08369276524328402</exact>
+      <exact>-0.1932515279122708</exact>
+      <exact>-0.06418661099607266</exact>
+      <exact>-0.01737742112324801</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>10.87494680385197</x>
-        <y>1.2283296335432206</y>
+        <x>10.874946782638652</x>
+        <y>1.2283296613834906</y>
       </point>
     </position>
     <orientation>
-      <exact>0.33885792361751327</exact>
+      <exact>0.33885792361124073</exact>
     </orientation>
     <time>
       <exact>12</exact>
@@ -5194,20 +5194,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.2267432983217901</exact>
-      <exact>-0.146775127599167</exact>
-      <exact>-0.09083761779985375</exact>
+      <exact>-0.22674329912548213</exact>
+      <exact>-0.08097104777556878</exact>
+      <exact>-0.023782112198143496</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>11.806787453756327</x>
-        <y>1.5907113450367385</y>
+        <x>11.806787417037974</x>
+        <y>1.5907113795160244</y>
       </point>
     </position>
     <orientation>
-      <exact>0.4039000334462459</exact>
+      <exact>0.40390003343627484</exact>
     </orientation>
     <time>
       <exact>13</exact>
@@ -5219,20 +5219,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.26193716465220274</exact>
-      <exact>-0.163803330075146</exact>
-      <exact>-0.09738832260913365</exact>
+      <exact>-0.2619371654590934</exact>
+      <exact>-0.09970158484697592</exact>
+      <exact>-0.031501577981321624</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>12.711829139395155</x>
-        <y>2.015541125910951</y>
+        <x>12.711829091255332</x>
+        <y>2.01554116082153</y>
       </point>
     </position>
     <orientation>
-      <exact>0.47483086343659664</exact>
+      <exact>0.47483086342429576</exact>
     </orientation>
     <time>
       <exact>14</exact>
@@ -5244,20 +5244,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.2987278445950568</exact>
-      <exact>-0.18076444871607864</exact>
-      <exact>-0.10348826808174756</exact>
+      <exact>-0.29872784529045476</exact>
+      <exact>-0.12030732752959124</exact>
+      <exact>-0.04060066661169749</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>13.583002272463704</x>
-        <y>2.5060152746247915</y>
+        <x>13.583002245602138</x>
+        <y>2.5060153077345113</y>
       </point>
     </position>
     <orientation>
-      <exact>0.551710882378425</exact>
+      <exact>0.551710882370773</exact>
     </orientation>
     <time>
       <exact>15</exact>
@@ -5269,20 +5269,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.33703760198172916</exact>
-      <exact>-0.19770754895910217</exact>
-      <exact>-0.10931052923807381</exact>
+      <exact>-0.3370376025351086</exact>
+      <exact>-0.14270708467030707</exact>
+      <exact>-0.05112588675374083</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>14.412225767578612</x>
-        <y>3.0644200295978083</y>
+        <x>14.412225754034399</x>
+        <y>3.064420067122151</y>
       </point>
     </position>
     <orientation>
-      <exact>0.6346063323625796</exact>
+      <exact>0.6346063323577209</exact>
     </orientation>
     <time>
       <exact>16</exact>
@@ -5294,20 +5294,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.3768145916351762</exact>
-      <exact>-0.2147189341823711</exact>
-      <exact>-0.11505263390092607</exact>
+      <exact>-0.3768145921336477</exact>
+      <exact>-0.16681289082933617</exact>
+      <exact>-0.06310609699653288</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>15.190429166106677</x>
-        <y>3.691906925752789</y>
+        <x>15.190429160201528</x>
+        <y>3.6919069741664408</y>
       </point>
     </position>
     <orientation>
-      <exact>0.7235894653718592</exact>
+      <exact>0.7235894653685694</exact>
     </orientation>
     <time>
       <exact>17</exact>
@@ -5319,20 +5319,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.4180315553254344</exact>
-      <exact>-0.2319191647295878</exact>
-      <exact>-0.12093482137737364</exact>
+      <exact>-0.4180315558130363</exact>
+      <exact>-0.1925328535803129</exact>
+      <exact>-0.07655348002725282</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>15.907618830951513</x>
-        <y>4.388243597711916</y>
+        <x>15.907618830778777</x>
+        <y>4.3882436608501205</y>
       </point>
     </position>
     <orientation>
-      <exact>0.8187388056967633</exact>
+      <exact>0.8187388056950552</exact>
     </orientation>
     <time>
       <exact>18</exact>
@@ -5344,20 +5344,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.460684878913268</exact>
-      <exact>-0.24946175388465586</exact>
-      <exact>-0.12720172137440686</exact>
+      <exact>-0.4606848794055163</exact>
+      <exact>-0.21977338079019118</exact>
+      <exact>-0.09146471014409942</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>16.552998194755087</x>
-        <y>5.151544934923894</y>
+        <x>16.552998198257804</x>
+        <y>5.151545017599517</y>
       </point>
     </position>
     <orientation>
-      <exact>0.9201394402519573</exact>
+      <exact>0.9201394402521386</exact>
     </orientation>
     <time>
       <exact>19</exact>
@@ -5369,20 +5369,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.5047940338917368</exact>
-      <exact>-0.2675336544532397</exact>
-      <exact>-0.1341276199604527</exact>
+      <exact>-0.5047940343873186</exact>
+      <exact>-0.24844082310379326</exact>
+      <exact>-0.10782224044832137</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>17.115152799907854</x>
-        <y>5.977992262902202</y>
+        <x>17.115152803266145</x>
+        <y>5.977992369312204</y>
       </point>
     </position>
     <orientation>
-      <exact>1.027883339179858</exact>
+      <exact>1.0278833391821818</exact>
     </orientation>
     <time>
       <exact>20</exact>
@@ -5394,20 +5394,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.5504014349161765</exact>
-      <exact>-0.2863577194541981</exact>
-      <exact>-0.1420257655267475</exact>
+      <exact>-0.5504014354356158</exact>
+      <exact>-0.2784425551404636</exact>
+      <exact>-0.12559564498813153</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>17.58231097777278</x>
-        <y>6.86155164377956</y>
+        <x>17.582310975592215</x>
+        <y>6.861551777400162</y>
       </point>
     </position>
     <orientation>
-      <exact>1.1420697094407346</exact>
+      <exact>1.1420697094454404</exact>
     </orientation>
     <time>
       <exact>21</exact>
@@ -5419,20 +5419,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.5975727573481602</exact>
-      <exact>-0.30619742688249296</exact>
-      <exact>-0.15126259589861604</exact>
+      <exact>-0.5975727579096345</exact>
+      <exact>-0.3096875056624435</exact>
+      <exact>-0.1447429555106007</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>17.942690354853838</x>
-        <y>7.79370643696331</y>
+        <x>17.94269034019251</x>
+        <y>7.793706600473004</y>
       </point>
     </position>
     <orientation>
-      <exact>1.2628053844379492</exact>
+      <exact>1.2628053844453004</exact>
     </orientation>
     <time>
       <exact>22</exact>
@@ -5444,20 +5444,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.6463977737210526</exact>
-      <exact>-0.32736430961586876</exact>
-      <exact>-0.16227837336078746</exact>
+      <exact>-0.6463977743486788</exact>
+      <exact>-0.34208613012481304</exact>
+      <exact>-0.16521194039078782</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>18.18493869867924</x>
-        <y>8.763223812721032</y>
+        <x>18.18493866304789</x>
+        <y>8.763224007540904</y>
       </point>
     </position>
     <orientation>
-      <exact>1.3902052531265277</exact>
+      <exact>1.3902052531368152</exact>
     </orientation>
     <time>
       <exact>23</exact>
@@ -5469,20 +5469,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.6969917877041956</exact>
-      <exact>-0.3502287473109372</exact>
-      <exact>-0.17561660618790206</exact>
+      <exact>-0.6969917884299563</exact>
+      <exact>-0.3755498006029248</exact>
+      <exact>-0.1869412749771662</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>18.298674594918413</x>
-        <y>9.755979856767778</y>
+        <x>18.29867452834733</x>
+        <y>9.755980082581063</y>
       </point>
     </position>
     <orientation>
-      <exact>1.5243927325083784</exact>
+      <exact>1.5243927325219278</exact>
     </orientation>
     <time>
       <exact>24</exact>
@@ -5494,20 +5494,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.7494977698879409</exact>
-      <exact>-0.37523508361356606</exact>
-      <exact>-0.19196596913126002</exact>
+      <exact>-0.7494977707514502</exact>
+      <exact>-0.4099895623646692</exact>
+      <exact>-0.20986155676641272</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>18.275128752863317</x>
-        <y>10.754872958688074</y>
+        <x>18.275128615927095</x>
+        <y>10.754873230225801</y>
       </point>
     </position>
     <orientation>
-      <exact>1.665500287934288</exact>
+      <exact>1.6655002879537966</exact>
     </orientation>
     <time>
       <exact>25</exact>
@@ -5519,20 +5519,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.8040893339908077</exact>
-      <exact>-0.4029224675689625</exact>
-      <exact>-0.21222045134715178</exact>
+      <exact>-0.8040893352322972</exact>
+      <exact>-0.44531417308116933</exact>
+      <exact>-0.23389612157711887</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>18.10787980635594</x>
-        <y>11.739860078188663</y>
+        <x>18.107879572934046</x>
+        <y>11.739860385259314</y>
       </point>
     </position>
     <orientation>
-      <exact>1.8136700062403</exact>
+      <exact>1.8136700062667632</exact>
     </orientation>
     <time>
       <exact>26</exact>
@@ -5544,20 +5544,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.860974739564861</exact>
-      <exact>-0.4339534618866577</exact>
-      <exact>-0.23756662591965869</exact>
+      <exact>-0.8609747413083074</exact>
+      <exact>-0.4814272959067133</exact>
+      <exact>-0.2589616186844283</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>17.79366970039214</x>
-        <y>12.68815412860148</y>
+        <x>17.79366932731753</x>
+        <y>12.688154461051692</y>
       </point>
     </position>
     <orientation>
-      <exact>1.969054227394776</exact>
+      <exact>1.9690542274305922</exact>
     </orientation>
     <time>
       <exact>27</exact>
@@ -5569,20 +5569,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.9204021673680159</exact>
-      <exact>-0.46915333152936367</exact>
-      <exact>-0.26961142781553576</exact>
+      <exact>-0.9204021699417145</exact>
+      <exact>-0.5182236569375357</exact>
+      <exact>-0.2849683048705975</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>17.33327147583101</x>
-        <y>13.574623429972993</y>
+        <x>17.333270946683722</x>
+        <y>13.57462375290398</y>
       </point>
     </position>
     <orientation>
-      <exact>2.1318162411674466</exact>
+      <exact>2.1318162412130337</exact>
     </orientation>
     <time>
       <exact>28</exact>
@@ -5594,20 +5594,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.9826666035297686</exact>
-      <exact>-0.509564275466045</exact>
-      <exact>-0.3105707462131696</exact>
+      <exact>-0.9826666071332427</exact>
+      <exact>-0.5555838952751142</exact>
+      <exact>-0.3118200174648531</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>16.73248987876428</x>
-        <y>14.372537494465883</y>
+        <x>16.73249117363953</x>
+        <y>14.372535372725073</y>
       </point>
     </position>
     <orientation>
-      <exact>2.301171642993484</exact>
+      <exact>2.301171632164013</exact>
     </orientation>
     <time>
       <exact>29</exact>
@@ -5619,20 +5619,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-1.0471692775922874</exact>
-      <exact>-0.5555604672706986</exact>
-      <exact>-0.36256608632724435</exact>
+      <exact>-1.0471693466238012</exact>
+      <exact>-0.5933578745709779</exact>
+      <exact>-0.3394136445922073</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>16.005281631756603</x>
-        <y>15.057193168276363</y>
+        <x>16.00528074885386</x>
+        <y>15.05719292581904</y>
       </point>
     </position>
     <orientation>
-      <exact>2.4714786691180444</exact>
+      <exact>2.4714786360067946</exact>
     </orientation>
     <time>
       <exact>30</exact>
@@ -5644,20 +5644,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-1.1087123432512043</exact>
-      <exact>-0.6029340263546598</exact>
-      <exact>-0.423430009767688</exact>
+      <exact>-1.1087123342131244</exact>
+      <exact>-0.6311708565420951</exact>
+      <exact>-0.36763019134909825</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>15.172554869498478</x>
-        <y>15.608692517650228</y>
+        <x>15.172553808132232</x>
+        <y>15.608692343083392</y>
       </point>
     </position>
     <orientation>
-      <exact>2.641785695242601</exact>
+      <exact>2.6417856398495734</exact>
     </orientation>
     <time>
       <exact>31</exact>
@@ -5669,20 +5669,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-1.1669571145820625</exact>
-      <exact>-0.6521734738219779</exact>
-      <exact>-0.49582151002339075</exact>
+      <exact>-1.16695708965766</exact>
+      <exact>-0.6685322779822723</exact>
+      <exact>-0.3963174234896521</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>14.25840459192789</x>
-        <y>16.011078557862266</y>
+        <x>14.25840350928896</x>
+        <y>16.01107840889902</y>
       </point>
     </position>
     <orientation>
-      <exact>2.8120927213671587</exact>
+      <exact>2.812092643692352</exact>
     </orientation>
     <time>
       <exact>32</exact>
@@ -5694,20 +5694,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-1.2224415558600044</exact>
-      <exact>-0.7046757396652455</exact>
-      <exact>-0.5839098168492725</exact>
+      <exact>-1.2224415094673047</exact>
+      <exact>-0.7050715451951675</exact>
+      <exact>-0.4253017457122788</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>13.289281135680081</x>
-        <y>16.252708490680313</y>
+        <x>13.289280112975666</x>
+        <y>16.252708326670554</y>
       </point>
     </position>
     <orientation>
-      <exact>2.982399747491717</exact>
+      <exact>2.982399647535131</exact>
     </orientation>
     <time>
       <exact>33</exact>
@@ -5719,20 +5719,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-1.2756345419554356</exact>
-      <exact>-0.7618763458859796</exact>
-      <exact>-0.6926509471208419</exact>
+      <exact>-1.2756344730601654</exact>
+      <exact>-0.7405160538650555</exact>
+      <exact>-0.45440469341239853</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>12.29322557072565</x>
-        <y>16.32659088539769</y>
+        <x>12.29322454312348</x>
+        <y>16.326590760371868</y>
       </point>
     </position>
     <orientation>
-      <exact>3.1527067736162744</exact>
+      <exact>3.15270665137791</exact>
     </orientation>
     <time>
       <exact>34</exact>
@@ -5744,20 +5744,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-1.3269496325133596</exact>
-      <exact>-0.8253283434012019</exact>
-      <exact>-0.8278206451869524</exact>
+      <exact>-1.326949542986304</exact>
+      <exact>-0.774665624227565</exact>
+      <exact>-0.48345377004735524</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>11.299058210487782</x>
-        <y>16.23058799022094</y>
+        <x>11.29905717515026</x>
+        <y>16.230587900063952</y>
       </point>
     </position>
     <orientation>
-      <exact>3.3230137997408318</exact>
+      <exact>3.323013655220689</exact>
     </orientation>
     <time>
       <exact>35</exact>
@@ -5769,20 +5769,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-1.3767565591664814</exact>
-      <exact>-0.8967806978455065</exact>
-      <exact>-0.9955955727420075</exact>
+      <exact>-1.376756449167279</exact>
+      <exact>-0.8073723247884801</exact>
+      <exact>-0.5122890151822939</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>10.335544735325774</x>
-        <y>15.967477599833945</y>
+        <x>10.335543717982246</x>
+        <y>15.96747779759805</y>
       </point>
     </position>
     <orientation>
-      <exact>3.4933208258653905</exact>
+      <exact>3.4933206590634662</exact>
     </orientation>
     <time>
       <exact>36</exact>
@@ -5794,20 +5794,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-1.4253908928353478</exact>
-      <exact>-0.9782579247152859</exact>
-      <exact>-1.201186149706524</exact>
+      <exact>-1.425390765321466</exact>
+      <exact>-0.8385246064941447</exact>
+      <exact>-0.5407664596896357</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>9.430563873673284</x>
-        <y>15.544872660631823</y>
+        <x>9.430562806152686</x>
+        <y>15.544873030596246</y>
       </point>
     </position>
     <orientation>
-      <exact>3.6636278519899497</exact>
+      <exact>3.663627662906245</exact>
     </orientation>
     <time>
       <exact>37</exact>
@@ -5819,20 +5819,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-1.4731623126305933</exact>
-      <exact>-1.0721380030936234</exact>
-      <exact>-1.4459596514022919</exact>
+      <exact>-1.4731621652697293</exact>
+      <exact>-0.8680348205109661</exact>
+      <exact>-0.5687593791392437</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>8.610300916580869</x>
-        <y>14.975001133855184</y>
+        <x>8.610299594658937</x>
+        <y>14.97500156031107</y>
       </point>
     </position>
     <orientation>
-      <exact>3.8339348781145106</exact>
+      <exact>3.8339346667490233</exact>
     </orientation>
     <time>
       <exact>38</exact>
@@ -5844,20 +5844,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-1.5203618317819247</exact>
-      <exact>-1.181216362245437</exact>
-      <exact>-1.5708213118997651</exact>
+      <exact>-1.5203616621630347</exact>
+      <exact>-0.895829206882524</exact>
+      <exact>-0.5961581139900413</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>7.898489310483183</x>
-        <y>14.274351600288094</y>
+        <x>7.898487919494283</x>
+        <y>14.274352293412688</y>
       </point>
     </position>
     <orientation>
-      <exact>4.00424190423907</exact>
+      <exact>4.004241670591801</exact>
     </orientation>
     <time>
       <exact>39</exact>
@@ -5869,20 +5869,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-1.5672682712627628</exact>
-      <exact>-1.3087259379574296</exact>
-      <exact>-1.5712751278376191</exact>
+      <exact>-1.5672680795842657</exact>
+      <exact>-0.9218398255242243</exact>
+      <exact>-0.6228688838649211</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>7.315725146739548</x>
-        <y>13.463197665386039</y>
+        <x>7.315723681818769</x>
+        <y>13.463198159810213</y>
       </point>
     </position>
     <orientation>
-      <exact>4.174548930363634</exact>
+      <exact>4.174548674434573</exact>
     </orientation>
     <time>
       <exact>40</exact>
@@ -5894,20 +5894,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-1.57598176191556</exact>
-      <exact>-1.4562562670849495</exact>
-      <exact>-1.6033945094151258</exact>
+      <exact>-1.571575788184133</exact>
+      <exact>-0.9460329656547027</exact>
+      <exact>-0.6488126097983989</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>7.315725146739548</x>
-        <y>13.463197665386039</y>
+        <x>7.315723681818769</x>
+        <y>13.463198159810213</y>
       </point>
     </position>
     <orientation>
-      <exact>4.174548930363634</exact>
+      <exact>4.174548674434573</exact>
     </orientation>
     <time>
       <exact>41</exact>
@@ -5919,20 +5919,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-1.57598176191556</exact>
-      <exact>-1.4562562670849495</exact>
-      <exact>-1.6033945094151258</exact>
+      <exact>-1.571575788184133</exact>
+      <exact>-0.9460329656547027</exact>
+      <exact>-0.6488126097983989</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>6.734451928284872</x>
-        <y>12.650877186588097</y>
+        <x>6.734450268115868</x>
+        <y>12.650877825031758</y>
       </point>
     </position>
     <orientation>
-      <exact>4.00990630654927</exact>
+      <exact>4.009906072510855</exact>
     </orientation>
     <time>
       <exact>42</exact>
@@ -5944,20 +5944,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-1.284402204349182</exact>
-      <exact>-1.248668387050673</exact>
-      <exact>-1.5192198078292583</exact>
+      <exact>-1.284402234706224</exact>
+      <exact>-0.9668647402257695</exact>
+      <exact>-0.673900892543787</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>6.031737852141846</x>
-        <y>11.94078631547116</y>
+        <x>6.031736048996893</x>
+        <y>11.940787113344022</y>
       </point>
     </position>
     <orientation>
-      <exact>3.8563322027410014</exact>
+      <exact>3.856331989870272</exact>
     </orientation>
     <time>
       <exact>43</exact>
@@ -5969,20 +5969,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-1.0185019808748839</exact>
-      <exact>-1.00222001662123</exact>
-      <exact>-1.4360756232680758</exact>
+      <exact>-1.0185020810450893</exact>
+      <exact>-0.9771325410006181</exact>
+      <exact>-0.6977613809820227</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>5.231774959156256</x>
-        <y>11.342154885747043</y>
+        <x>5.231773025585698</x>
+        <y>11.342155842444843</y>
       </point>
     </position>
     <orientation>
-      <exact>3.713465268050949</exact>
+      <exact>3.7134650756485037</exact>
     </orientation>
     <time>
       <exact>44</exact>
@@ -5994,20 +5994,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.7794230145197008</exact>
-      <exact>-0.73954737813619</exact>
-      <exact>-1.2927351756320862</exact>
+      <exact>-0.7794230955555927</exact>
+      <exact>-0.971116313789664</exact>
+      <exact>-0.7196213195922158</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>4.357132752819447</x>
-        <y>10.85889601844284</y>
+        <x>4.357130730868574</x>
+        <y>10.858897134343112</y>
       </point>
     </position>
     <orientation>
-      <exact>3.5809799508575817</exact>
+      <exact>3.5809797783353665</exact>
     </orientation>
     <time>
       <exact>45</exact>
@@ -6019,20 +6019,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.57019323761113</exact>
-      <exact>-0.4896631809529507</exact>
-      <exact>-1.0856466055084166</exact>
+      <exact>-0.5701933271457983</exact>
+      <exact>-0.9466971677242567</exact>
+      <exact>-0.7385156773939648</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>3.428072109992218</x>
-        <y>10.490659024111194</y>
+        <x>3.428070027945949</x>
+        <y>10.490660288691972</y>
       </point>
     </position>
     <orientation>
-      <exact>3.458583213191013</exact>
+      <exact>3.4585830600113243</exact>
     </orientation>
     <time>
       <exact>46</exact>
@@ -6044,20 +6044,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.3910637944104591</exact>
-      <exact>-0.2745677834796429</exact>
-      <exact>-0.8457058556756906</exact>
+      <exact>-0.3910638785805216</exact>
+      <exact>-0.904688675427684</exact>
+      <exact>-0.7534351887936921</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>2.4621656544600645</x>
-        <y>10.23381455857184</y>
+        <x>2.4621635530261012</x>
+        <y>10.233815947395497</y>
       </point>
     </position>
     <orientation>
-      <exact>3.3460116914014253</exact>
+      <exact>3.346011557112259</exact>
     </orientation>
     <time>
       <exact>47</exact>
@@ -6069,20 +6069,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.2404578546354804</exact>
-      <exact>-0.10320875466060032</exact>
-      <exact>-0.618321978192438</exact>
+      <exact>-0.24045791507467734</exact>
+      <exact>-0.8477927396754481</exact>
+      <exact>-0.7634146992157682</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>1.4741530570974586</x>
-        <y>10.082329993481641</y>
+        <x>1.4741509444847982</x>
+        <y>10.08233149656109</y>
       </point>
     </position>
     <orientation>
-      <exact>3.243029239834348</exact>
+      <exact>3.2430291239863775</exact>
     </orientation>
     <time>
       <exact>48</exact>
@@ -6094,20 +6094,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.11585992588254042</exact>
-      <exact>0.025628514591790833</exact>
-      <exact>-0.4333702688539204</exact>
+      <exact>-0.11585997961645128</exact>
+      <exact>-0.7796263088645189</exact>
+      <exact>-0.7676071577468142</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>0.4759677464563206</x>
-        <y>10.028514763030211</y>
+        <x>0.4759656323865997</x>
+        <y>10.028516364354346</y>
       </point>
     </position>
     <orientation>
-      <exact>3.14942480520623</exact>
+      <exact>3.1494247074088806</exact>
     </orientation>
     <time>
       <exact>49</exact>
@@ -6119,20 +6119,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.014444546926640562</exact>
-      <exact>0.11785627046309742</exact>
-      <exact>-0.2975830303688248</exact>
+      <exact>-0.01444460085545314</exact>
+      <exact>-0.7040039510589678</exact>
+      <exact>-0.7653605073645785</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-0.5231183951474926</x>
-        <y>10.063630762131218</y>
+        <x>-0.5231205110494641</x>
+        <y>10.063632458728527</y>
       </point>
     </position>
     <orientation>
-      <exact>3.0650105883211882</exact>
+      <exact>3.06501050820268</exact>
     </orientation>
     <time>
       <exact>50</exact>
@@ -6144,20 +6144,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>0.0665577225239917</exact>
-      <exact>0.18031519253798536</exact>
-      <exact>-0.20467646568927655</exact>
+      <exact>0.06655764710990064</exact>
+      <exact>-0.624486981060378</exact>
+      <exact>-0.7562884758508334</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-1.5162752812480977</x>
-        <y>10.178372949136588</y>
+        <x>-1.5162773899349116</x>
+        <y>10.178374717269094</y>
       </point>
     </position>
     <orientation>
-      <exact>2.9896204571131655</exact>
+      <exact>2.9896203943823294</exact>
     </orientation>
     <time>
       <exact>51</exact>
@@ -6169,20 +6169,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>0.12968463458253662</exact>
-      <exact>0.21912187587563323</exact>
-      <exact>-0.1450882292131775</exact>
+      <exact>0.12968454979549335</exact>
+      <exact>-0.5441443112387597</exact>
+      <exact>-0.7403178067973197</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-2.498852851970308</x>
-        <y>10.363231367260022</y>
+        <x>-2.4988549535292734</x>
+        <y>10.36323319145876</y>
       </point>
     </position>
     <orientation>
-      <exact>2.923108581069166</exact>
+      <exact>2.9231085354589195</exact>
     </orientation>
     <time>
       <exact>52</exact>
@@ -6194,20 +6194,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>0.17718171855953013</exact>
-      <exact>0.23925259274417862</exact>
-      <exact>-0.11021900028984317</exact>
+      <exact>0.1771816224860999</exact>
+      <exact>-0.4654613731470414</exact>
+      <exact>-0.717700078800663</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-3.468101556948696</x>
-        <y>10.608748922657385</y>
+        <x>-3.4681036519236743</x>
+        <y>10.608750786512573</y>
       </point>
     </position>
     <orientation>
-      <exact>2.8653482621468105</exact>
+      <exact>2.8653482334284575</exact>
     </orientation>
     <time>
       <exact>53</exact>
@@ -6219,20 +6219,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>0.21100229604452184</exact>
-      <exact>0.24463344351925578</exact>
-      <exact>-0.09335337678507669</exact>
+      <exact>0.21100219149137067</exact>
+      <exact>-0.39034429716040414</exact>
+      <exact>-0.6889868642412115</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-4.422891942254935</x>
-        <y>10.905690336833317</y>
+        <x>-4.42289403264421</x>
+        <y>10.905692223543598</y>
       </point>
     </position>
     <orientation>
-      <exact>2.816230941551116</exact>
+      <exact>2.816230929531423</exact>
     </orientation>
     <time>
       <exact>54</exact>
@@ -6244,20 +6244,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>0.23283455404290926</exact>
-      <exact>0.23836705396336352</exact>
-      <exact>-0.08942268098208687</exact>
+      <exact>0.23283444384914964</exact>
+      <exact>-0.3201784340222257</exact>
+      <exact>-0.6549759314878218</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-5.363444144269181</x>
-        <y>11.245137446142165</y>
+        <x>-5.363446234011423</x>
+        <y>11.245139339999941</y>
       </point>
     </position>
     <orientation>
-      <exact>2.7756653653334546</exact>
+      <exact>2.775665369851589</exact>
     </orientation>
     <time>
       <exact>55</exact>
@@ -6269,20 +6269,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>0.2441372780333481</exact>
-      <exact>0.22295059992191846</exact>
-      <exact>-0.09456514118616069</exact>
+      <exact>0.2441371638704281</exact>
+      <exact>-0.2559119133538765</exact>
+      <exact>-0.6166405615671114</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-6.291073299423611</x>
-        <y>11.618524984396196</y>
+        <x>-6.291075393783835</x>
+        <y>11.618526875415226</y>
       </point>
     </position>
     <orientation>
-      <exact>2.74357689486707</exact>
+      <exact>2.743576915789695</exact>
     </orientation>
     <time>
       <exact>56</exact>
@@ -6294,20 +6294,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>0.24617513172030042</exact>
-      <exact>0.20044288278852032</exact>
-      <exact>-0.10577138607626703</exact>
+      <exact>0.24617501414534154</exact>
+      <exact>-0.1981443906009597</exact>
+      <exact>-0.5750542744087606</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-7.207953197889912</x>
-        <y>12.017629566297591</y>
+        <x>-7.207955302838698</x>
+        <y>12.017631437601741</y>
       </point>
     </position>
     <orientation>
-      <exact>2.7199069509289044</exact>
+      <exact>2.7199069881594986</exact>
     </orientation>
     <time>
       <exact>57</exact>
@@ -6319,20 +6319,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>0.24004956899069188</exact>
-      <exact>0.17257773286690614</exact>
-      <exact>-0.1206573385119887</exact>
+      <exact>0.24004944919196486</exact>
+      <exact>-0.1472091014956385</exact>
+      <exact>-0.5313207963384955</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-8.116897757920201</x>
-        <y>12.43452307208199</y>
+        <x>-8.116899880494843</x>
+        <y>12.434524908642047</y>
       </point>
     </position>
     <orientation>
-      <exact>2.7046125824710323</exact>
+      <exact>2.70461263594154</exact>
     </orientation>
     <time>
       <exact>58</exact>
@@ -6344,20 +6344,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>0.22672419092884272</exact>
-      <exact>0.14083384277897437</exact>
-      <exact>-0.13733586342683887</exact>
+      <exact>0.2267240694589385</exact>
+      <exact>-0.10324234463899155</exact>
+      <exact>-0.48651567961027975</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-9.021157900634973</x>
-        <y>12.861500209085527</y>
+        <x>-9.02116004640428</x>
+        <y>12.86150199642481</y>
       </point>
     </position>
     <orientation>
-      <exact>2.6976661532760606</exact>
+      <exact>2.6976662229487287</exact>
     </orientation>
     <time>
       <exact>59</exact>
@@ -6369,20 +6369,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>0.20704469129596545</exact>
-      <exact>0.10647371959688778</exact>
-      <exact>-0.15434757549750566</exact>
+      <exact>0.20704456893504908</exact>
+      <exact>-0.0662387446100831</exact>
+      <exact>-0.4416425226020789</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-9.924230026195115</x>
-        <y>13.290988832636732</y>
+        <x>-9.92423219189242</x>
+        <y>13.290990570020849</y>
       </point>
     </position>
     <orientation>
-      <exact>2.699055141613828</exact>
+      <exact>2.699055227475589</exact>
     </orientation>
     <time>
       <exact>60</exact>
@@ -6394,20 +6394,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>0.18175410553711674</exact>
-      <exact>0.07056338161792673</exact>
-      <exact>-0.1706183761108732</exact>
+      <exact>0.18175398423230396</exact>
+      <exact>-0.03609305728921346</exact>
+      <exact>-0.3976041088307484</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-10.829671415975655</x>
-        <y>13.71545073774688</y>
+        <x>-10.829673605264208</x>
+        <y>13.715452411621852</y>
       </point>
     </position>
     <orientation>
-      <exact>2.7087820497896224</exact>
+      <exact>2.7087821518649307</exact>
     </orientation>
     <time>
       <exact>61</exact>
@@ -6419,20 +6419,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>0.15150426070209622</exact>
-      <exact>0.033982153082818586</exact>
-      <exact>-0.18542267707037902</exact>
+      <exact>0.15150414026885073</exact>
+      <exact>-0.012630543521385056</exact>
+      <exact>-0.35518691105465156</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-11.740917394226672</x>
-        <y>14.127280101198277</y>
+        <x>-11.740919611058603</x>
+        <y>14.127281698576791</y>
       </point>
     </position>
     <orientation>
-      <exact>2.726864422205679</exact>
+      <exact>2.7268645405482568</exact>
     </orientation>
     <time>
       <exact>62</exact>
@@ -6444,20 +6444,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>0.11686431397890859</exact>
-      <exact>-0.0025707767672275717</exact>
-      <exact>-0.19834235058071448</exact>
+      <exact>0.11686419425553644</exact>
+      <exact>0.004371614474599796</exact>
+      <exact>-0.3150563466151819</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-12.66109497868015</x>
-        <y>14.518706633087872</y>
+        <x>-12.661097232254999</x>
+        <y>14.518708133523853</y>
       </point>
     </position>
     <orientation>
-      <exact>2.753334972201312</exact>
+      <exact>2.7533351068934317</exact>
     </orientation>
     <time>
       <exact>63</exact>
@@ -6469,20 +6469,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>0.07832715678326047</exact>
-      <exact>-0.0385689237427377</exact>
-      <exact>-0.2092195001690326</exact>
+      <exact>0.07832703674474908</exact>
+      <exact>0.015169557702529559</exact>
+      <exact>-0.27775990967066805</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-13.59282797827462</x>
-        <y>14.881710754853753</y>
+        <x>-13.592830270383953</x>
+        <y>14.881712145132708</y>
       </point>
     </position>
     <orientation>
-      <exact>2.7882418196392202</exact>
+      <exact>2.788241970793304</exact>
     </orientation>
     <time>
       <exact>64</exact>
@@ -6494,20 +6494,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>0.036314314450106105</exact>
-      <exact>-0.07364836345260416</exact>
-      <exact>-0.21810601653375222</exact>
+      <exact>0.0363141940372395</exact>
+      <exact>0.020042606913312073</exact>
+      <exact>-0.24373536243130312</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-14.538029096665849</x>
-        <y>15.207958758329</y>
+        <x>-14.538031428082093</x>
+        <y>15.207960027226527</y>
       </point>
     </position>
     <orientation>
-      <exact>2.8316488429023696</exact>
+      <exact>2.8316490106646794</exact>
     </orientation>
     <time>
       <exact>65</exact>
@@ -6519,20 +6519,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.008820182676098264</exact>
-      <exact>-0.10759467359514872</exact>
-      <exact>-0.22521451287848443</exact>
+      <exact>-0.008820303695914801</exact>
+      <exact>0.019286170909212235</exact>
+      <exact>-0.21332167773423902</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-15.497675648756275</x>
-        <y>15.488766902463299</y>
+        <x>-15.497678022948882</x>
+        <y>15.488768030982282</y>
       </point>
     </position>
     <orientation>
-      <exact>2.883636150829236</exact>
+      <exact>2.8836363353747254</exact>
     </orientation>
     <time>
       <exact>66</exact>
@@ -6544,20 +6544,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.05678663369763171</exact>
-      <exact>-0.14032788689650513</exact>
-      <exact>-0.23087497088805212</exact>
+      <exact>-0.056786755930238894</exact>
+      <exact>0.01320650995553701</exact>
+      <exact>-0.18677090053799303</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-16.471567066532465</x>
-        <y>15.71510468159559</y>
+        <x>-16.471569484520288</x>
+        <y>15.715105658675984</y>
       </point>
     </position>
     <orientation>
-      <exact>2.9443006820723623</exact>
+      <exact>2.94430088361575</exact>
     </orientation>
     <time>
       <exact>67</exact>
@@ -6569,20 +6569,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.10735701449129245</exact>
-      <exact>-0.17188687377786374</exact>
-      <exact>-0.23550011439354257</exact>
+      <exact>-0.10735713832895868</exact>
+      <exact>0.0021165671796432575</exact>
+      <exact>-0.1642597035099568</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-17.4580645816989</x>
-        <y>15.877648956804425</y>
+        <x>-17.45806705634211</x>
+        <y>15.877649823438242</y>
       </point>
     </position>
     <orientation>
-      <exact>3.013756941533564</exact>
+      <exact>3.013757160372977</exact>
     </orientation>
     <time>
       <exact>68</exact>
@@ -6594,20 +6594,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.16036275816186696</exact>
-      <exact>-0.202414713011691</exact>
-      <exact>-0.23956121025312987</exact>
+      <exact>-0.1603628840194797</exact>
+      <exact>-0.013667614428331785</exact>
+      <exact>-0.14589989495923986</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-18.45381653573366</x>
-        <y>15.966902172275951</y>
+        <x>-18.45381908160298</x>
+        <y>15.966902912277867</y>
       </point>
     </position>
     <orientation>
-      <exact>3.0921378860112116</exact>
+      <exact>3.0921381224381648</exact>
     </orientation>
     <time>
       <exact>69</exact>
@@ -6619,20 +6619,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.21569298277360283</exact>
-      <exact>-0.2321464986432277</exact>
-      <exact>-0.2435749806486542</exact>
+      <exact>-0.21569311129970173</exact>
+      <exact>-0.03383013000790141</exact>
+      <exact>-0.13174751991530814</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-19.453476792212975</x>
-        <y>15.973389198227768</y>
+        <x>-19.453479433554403</x>
+        <y>15.973389804615627</y>
       </point>
     </position>
     <orientation>
-      <exact>3.1795959739835102</exact>
+      <exact>3.1795962283447174</exact>
     </orientation>
     <time>
       <exact>70</exact>
@@ -6644,20 +6644,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.27329325344448724</exact>
-      <exact>-0.2614008297336027</exact>
-      <exact>-0.2481019182818149</exact>
+      <exact>-0.2732933852278385</exact>
+      <exact>-0.05805816995032831</exact>
+      <exact>-0.12181046456113219</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-20.449429007543475</x>
-        <y>15.887948161310145</y>
+        <x>-20.449431692747197</x>
+        <y>15.887948615920639</y>
       </point>
     </position>
     <orientation>
-      <exact>3.276304397747911</exact>
+      <exact>3.276304670383637</exact>
     </orientation>
     <time>
       <exact>71</exact>
@@ -6669,20 +6669,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.33316502758832106</exact>
-      <exact>-0.2905760813700816</exact>
-      <exact>-0.2537565331040673</exact>
+      <exact>-0.3331651626201814</exact>
+      <exact>-0.08604460032816899</exact>
+      <exact>-0.11605469386117308</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-21.431535536538483</x>
-        <y>15.702130492526623</y>
+        <x>-21.431538275599305</x>
+        <y>15.702130779489497</y>
       </point>
     </position>
     <orientation>
-      <exact>3.3824585196604926</exact>
+      <exact>3.3824588109911935</exact>
     </orientation>
     <time>
       <exact>72</exact>
@@ -6694,20 +6694,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.3953659823750077</exact>
-      <exact>-0.3201525414291706</exact>
-      <exact>-0.26123084972103816</exact>
+      <exact>-0.39536612135417853</exact>
+      <exact>-0.11749000786498494</exact>
+      <exact>-0.11440929774485097</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-22.386938648402843</x>
-        <y>15.408723858680304</y>
+        <x>-22.38694157152921</x>
+        <y>15.408723902260508</y>
       </point>
     </position>
     <orientation>
-      <exact>3.498277539320021</exact>
+      <exact>3.498277849884595</exact>
     </orientation>
     <time>
       <exact>73</exact>
@@ -6719,20 +6719,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.4600114881232589</exact>
-      <exact>-0.3507016665460008</exact>
-      <exact>-0.2713341542079274</exact>
+      <exact>-0.4600116324249567</exact>
+      <exact>-0.15210396446199234</exact>
+      <exact>-0.11677058557796914</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-23.29995027899478</x>
-        <y>15.002407196763134</y>
+        <x>-23.29995333398333</x>
+        <y>15.002406973731386</y>
       </point>
     </position>
     <orientation>
-      <exact>3.62400642352058</exact>
+      <exact>3.624006753822278</exact>
     </orientation>
     <time>
       <exact>74</exact>
@@ -6744,20 +6744,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.527277548169105</exact>
-      <exact>-0.3829042336126411</exact>
-      <exact>-0.2850545901574322</exact>
+      <exact>-0.5272776981564484</exact>
+      <exact>-0.1896052208763931</exact>
+      <exact>-0.12300543167212334</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-24.152075331568867</x>
-        <y>14.48054077851623</y>
+        <x>-24.152078589293755</x>
+        <y>14.480540211450297</y>
       </point>
     </position>
     <orientation>
-      <exact>3.7599181365076224</exact>
+      <exact>3.7599184871874893</exact>
     </orientation>
     <time>
       <exact>75</exact>
@@ -6769,20 +6769,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.5974056096273841</exact>
-      <exact>-0.4175798664500053</exact>
-      <exact>-0.30365171703546706</exact>
+      <exact>-0.5974057669339021</exact>
+      <exact>-0.229720478332201</exact>
+      <exact>-0.1329540324994696</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-24.92222762299516</x>
-        <y>13.844081294746342</y>
+        <x>-24.922230954915143</x>
+        <y>13.844080308427717</y>
       </point>
     </position>
     <orientation>
-      <exact>3.9063162179032656</exact>
+      <exact>3.906316589534138</exact>
     </orientation>
     <time>
       <exact>76</exact>
@@ -6794,20 +6794,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.6707097942105251</exact>
-      <exact>-0.4557319180701518</exact>
-      <exact>-0.32879631114179164</exact>
+      <exact>-0.6707099592364869</exact>
+      <exact>-0.27218130569885823</exact>
+      <exact>-0.14643216572513074</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-25.587203316933504</x>
-        <y>13.098595419606442</y>
+        <x>-25.587206535981558</x>
+        <y>13.098594046199578</y>
       </point>
     </position>
     <orientation>
-      <exact>4.0635377631396565</exact>
+      <exact>4.063538156319743</exact>
     </orientation>
     <time>
       <exact>77</exact>
@@ -6819,20 +6819,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.7475872538380466</exact>
-      <exact>-0.4986136674636591</exact>
-      <exact>-0.3627827342062168</exact>
+      <exact>-0.7475874268877716</exact>
+      <exact>-0.316718635088988</exact>
+      <exact>-0.16323296571316623</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-26.122548013735493</x>
-        <y>12.25535492720651</y>
+        <x>-26.12255083891059</x>
+        <y>12.25535368476877</y>
       </point>
     </position>
     <orientation>
-      <exact>4.231317295093989</exact>
+      <exact>4.231317684535409</exact>
     </orientation>
     <time>
       <exact>78</exact>
@@ -6844,20 +6844,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.8278989641595816</exact>
-      <exact>-0.5471889166596886</exact>
-      <exact>-0.40820892488660493</exact>
+      <exact>-0.8278991370697094</exact>
+      <exact>-0.36304820502795043</exact>
+      <exact>-0.1831280907489188</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-26.507737580726513</x>
-        <y>11.33382663332282</y>
+        <x>-26.507740083357287</x>
+        <y>11.333825192520347</y>
       </point>
     </position>
     <orientation>
-      <exact>4.401624330778402</exact>
+      <exact>4.401624693670341</exact>
     </orientation>
     <time>
       <exact>79</exact>
@@ -6869,20 +6869,20 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.9041440436518542</exact>
-      <exact>-0.5952064908702435</exact>
-      <exact>-0.4607648749176841</exact>
+      <exact>-0.9041441807825956</exact>
+      <exact>-0.41054975381697767</exact>
+      <exact>-0.20585580805104559</exact>
     </hitch>
   </state>
   <state>
     <position>
       <point>
-        <x>-26.731169369992895</x>
-        <y>10.36034651953243</y>
+        <x>-26.731171595822197</x>
+        <y>10.360344740805727</y>
       </point>
     </position>
     <orientation>
-      <exact>4.571931366462816</exact>
+      <exact>4.571931702805271</exact>
     </orientation>
     <time>
       <exact>80</exact>
@@ -6894,9 +6894,9 @@
       <exact>0</exact>
     </acceleration>
     <hitch>
-      <exact>-0.9747811824907078</exact>
-      <exact>-0.6421369835061728</exact>
-      <exact>-0.5216046636940246</exact>
+      <exact>-0.9747812936593008</exact>
+      <exact>-0.4582631809652803</exact>
+      <exact>-0.23107888424048853</exact>
     </hitch>
   </state>
 </trajectory>

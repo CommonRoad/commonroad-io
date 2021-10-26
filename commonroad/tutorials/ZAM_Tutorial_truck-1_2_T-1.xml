@@ -4890,7 +4890,7 @@
     </initialState>
     <trajectory>
   <state>
-    <position>
+    <position>z
       <point>
         <x>0.0</x>
         <y>0.0</y>
