@@ -736,8 +736,8 @@ class TrafficLight(IDrawable):
 
     def __hash__(self):
         position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
-        return hash((self._traffic_light_id, frozenset(self._cycle), self._time_offset, position_string, self._direction,
-                     self._active))
+        return hash((self._traffic_light_id, frozenset(self._cycle), self._time_offset, position_string,
+                     self._direction, self._active))
 
     @property
     def traffic_light_id(self) -> int:
