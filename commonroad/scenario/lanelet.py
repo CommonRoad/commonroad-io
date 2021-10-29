@@ -1099,8 +1099,9 @@ class LaneletNetwork(IDrawable):
                      frozenset(self._traffic_signs.items()), frozenset(self._traffic_lights.items())))
 
     def __str__(self):
-        return f"LaneletNetwork consisting of lanelets {self._lanelets}, intersections {self._intersections}, " \
-               f"traffic signs {self._traffic_signs}, and traffic lights {self._traffic_lights}"
+        return f"LaneletNetwork consisting of lanelets {set(self._lanelets.keys())}, " \
+               f"intersections {set(self._intersections.keys())}, " \
+               f"traffic signs {set(self._traffic_signs.keys())}, and traffic lights {set(self._traffic_lights.keys())}"
 
     def __repr__(self):
         return f"LaneletNetwork(lanelets={repr(self._lanelets)}, intersections={repr(self._intersections)}, " \
