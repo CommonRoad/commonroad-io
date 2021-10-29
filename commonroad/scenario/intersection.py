@@ -200,15 +200,17 @@ class Intersection:
             return False
 
         ln_elements_eq = True
-        for e in self._incomings:
-            for e_other in other.incomings:
-                if e.incoming_id == e_other.incoming_id:
-                    if e != e_other:
-                        return False
-                    break
-            ln_elements_eq = False
+        incomings = {incoming.incoming_id: incoming for incoming in self._incomings}
+        incomings_other = {incoming.incoming_id: incoming for incoming in other.incomings}
+        eq = len(incomings) == len(incomings_other)
+        for k in incomings.keys():
+            if k not in incomings_other:
+                eq = False
+                break
+            if incomings.get(k) != incomings_other.get(k):
+                ln_elements_eq = False
 
-        if self._intersection_id == other.intersection_id and self._crossings == other.crossings:
+        if eq and self._intersection_id == other.intersection_id and self._crossings == other.crossings:
             return ln_elements_eq
 
         warnings.warn(f"Inequality of Intersection {repr(self)} and the other one {repr(other)}")

@@ -1109,6 +1109,7 @@ class LaneletNetwork(IDrawable):
         for i in range(0, len(elements)):
             e = elements[i]
             e_other = elements_other[i]
+            eq = eq and len(e) == len(e_other)
             for k in e.keys():
                 if k not in e_other:
                     eq = False
