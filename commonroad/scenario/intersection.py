@@ -42,12 +42,18 @@ class IntersectionIncomingElement:
 
     def __eq__(self, other):
         if not isinstance(other, IntersectionIncomingElement):
+            warnings.warn(f"Inequality between IntersectionIncomingElement "
+                          f"{repr(self)} and different type {type(other)}")
             return False
 
-        return self._incoming_id == other.incoming_id and self._incoming_lanelets == other.incoming_lanelets \
-            and self._successors_right == other.successors_right \
-            and self._successors_straight == other.successors_straight \
-            and self._successors_left == other.successors_left and self._left_of == other.left_of
+        if self._incoming_id == other.incoming_id and self._incoming_lanelets == other.incoming_lanelets \
+                and self._successors_right == other.successors_right \
+                and self._successors_straight == other.successors_straight \
+                and self._successors_left == other.successors_left and self._left_of == other.left_of:
+            return True
+
+        warnings.warn(f"Inequality of IntersectionIncomingElement {repr(self)} and the other one {repr(other)}")
+        return False
 
     def __hash__(self):
         return hash((self._incoming_id, frozenset(self._incoming_lanelets), frozenset(self._successors_right),
@@ -190,10 +196,23 @@ class Intersection:
 
     def __eq__(self, other):
         if not isinstance(other, Intersection):
+            warnings.warn(f"Inequality between Intersection {repr(self)} and different type {type(other)}")
             return False
 
-        return self._intersection_id == other.intersection_id and set(self._incomings) == set(other.incomings) and \
-            self._crossings == other.crossings
+        ln_elements_eq = True
+        for e in self._incomings:
+            for e_other in other.incomings:
+                if e.incoming_id == e_other.incoming_id:
+                    if e != e_other:
+                        return False
+                    break
+            ln_elements_eq = False
+
+        if self._intersection_id == other.intersection_id and self._crossings == other.crossings:
+            return ln_elements_eq
+
+        warnings.warn(f"Inequality of Intersection {repr(self)} and the other one {repr(other)}")
+        return False
 
     def __hash__(self):
         return hash((self._intersection_id, frozenset(self._incomings), frozenset(self._crossings)))

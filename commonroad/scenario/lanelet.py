@@ -90,6 +90,7 @@ class StopLine:
 
     def __eq__(self, other):
         if not isinstance(other, StopLine):
+            warnings.warn(f"Inequality between StopLine {repr(self)} and different type {type(other)}")
             return False
 
         prec = 10
@@ -98,9 +99,13 @@ class StopLine:
         end_string = np.array2string(np.around(self._end.astype(float), prec), precision=prec)
         end_other_string = np.array2string(np.around(other.end.astype(float), prec), precision=prec)
 
-        return start_string == start_other_string and end_string == end_other_string \
-            and self._line_marking == other.line_marking and self._traffic_sign_ref == other.traffic_sign_ref \
-            and self._traffic_light_ref == other.traffic_light_ref
+        if start_string == start_other_string and end_string == end_other_string \
+                and self._line_marking == other.line_marking and self._traffic_sign_ref == other.traffic_sign_ref \
+                and self._traffic_light_ref == other.traffic_light_ref:
+            return True
+
+        warnings.warn(f"Inequality of StopLine {repr(self)} and the other one {repr(other)}")
+        return False
 
     def __hash__(self):
         start_string = np.array2string(np.around(self._start.astype(float), 10), precision=10)
@@ -305,10 +310,12 @@ class Lanelet:
 
     def __eq__(self, other):
         if not isinstance(other, Lanelet):
+            warnings.warn(f"Inequality between Lanelet {repr(self)} and different type {type(other)}")
             return False
 
-        eq = self.lanelet_id == other.lanelet_id
+        ln_elements_eq = self._stop_line == other.stop_line
 
+        eq = True
         polylines = [self._left_vertices, self._right_vertices, self._center_vertices]
         polylines_other = [other.left_vertices, other.right_vertices, other.center_vertices]
 
@@ -319,16 +326,20 @@ class Lanelet:
             polyline_other_string = np.array2string(np.around(polyline_other.astype(float), 10), precision=10)
             eq = eq and polyline_string == polyline_other_string
 
-        return eq and self._line_marking_left_vertices == other.line_marking_left_vertices and \
-            self._line_marking_right_vertices == other.line_marking_right_vertices and \
-            self._stop_line == other.stop_line and set(self._predecessor) == set(other.predecessor) and \
-            set(self._successor) == set(other.successor) and \
-            self._adj_left == other.adj_left and self._adj_right == other.adj_right and \
-            self._adj_left_same_direction == other.adj_left_same_direction and \
-            self._adj_right_same_direction == other.adj_right_same_direction and \
-            self._lanelet_type == other.lanelet_type and self._user_one_way == self.user_one_way and \
-            self._user_bidirectional == other.user_bidirectional and self._traffic_signs == other.traffic_signs and \
-            self._traffic_lights == other.traffic_lights
+        if eq and self.lanelet_id == other.lanelet_id \
+                and self._line_marking_left_vertices == other.line_marking_left_vertices \
+                and self._line_marking_right_vertices == other.line_marking_right_vertices \
+                and set(self._predecessor) == set(other.predecessor) and set(self._successor) == set(other.successor) \
+                and self._adj_left == other.adj_left and self._adj_right == other.adj_right \
+                and self._adj_left_same_direction == other.adj_left_same_direction \
+                and self._adj_right_same_direction == other.adj_right_same_direction \
+                and self._lanelet_type == other.lanelet_type and self._user_one_way == self.user_one_way \
+                and self._user_bidirectional == other.user_bidirectional \
+                and self._traffic_signs == other.traffic_signs and self._traffic_lights == other.traffic_lights:
+            return ln_elements_eq
+
+        warnings.warn(f"Inequality of Lanelet {repr(self)} and the other one {repr(other)}")
+        return False
 
     def __hash__(self):
         polylines = [self._left_vertices, self._right_vertices, self._center_vertices]
@@ -1088,11 +1099,27 @@ class LaneletNetwork(IDrawable):
 
     def __eq__(self, other):
         if not isinstance(other, LaneletNetwork):
+            warnings.warn(f"Inequality between LaneletNetwork {repr(self)} and different type {type(other)}")
             return False
 
-        return set(self._lanelets) == set(other._lanelets) and set(self._intersections) == set(other._intersections) \
-            and set(self._traffic_signs) == set(other._traffic_signs) \
-            and set(self._traffic_lights) == set(other._traffic_lights)
+        ld_elements_eq = True
+        eq = True
+        elements = [self._lanelets, self._intersections, self._traffic_signs, self._traffic_lights]
+        elements_other = [other._lanelets, other._intersections, other._traffic_signs, other._traffic_lights]
+        for i in range(0, len(elements)):
+            e = elements[i]
+            e_other = elements_other[i]
+            for k in e.keys():
+                if k not in e_other:
+                    eq = False
+                    break
+                if e.get(k) != e_other.get(k):
+                    ld_elements_eq = False
+
+        if not eq:
+            warnings.warn(f"Inequality of LaneletNetwork {repr(self)} and the other one {repr(other)}")
+
+        return eq and ld_elements_eq
 
     def __hash__(self):
         return hash((frozenset(self._lanelets.items()), frozenset(self._intersections.items()),
