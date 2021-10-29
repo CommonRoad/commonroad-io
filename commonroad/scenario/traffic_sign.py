@@ -619,7 +619,7 @@ class TrafficSign(IDrawable):
         for k in traffic_sign_elements.keys():
             if k not in traffic_sign_elements_other:
                 eq = False
-                break
+                continue
             if traffic_sign_elements.get(k) != traffic_sign_elements_other.get(k):
                 ln_elements_eq = False
 

@@ -60,7 +60,9 @@ class IntersectionIncomingElement:
                      frozenset(self._successors_straight), frozenset(self._successors_left), self._left_of))
 
     def __str__(self):
-        return f"IntersectionIncomingElement with id {self._incoming_id}"
+        return f"IntersectionIncomingElement with id {self._incoming_id} represents the incoming " \
+               f"lanelets {self._incoming_lanelets} and has right successors {self._successors_right}, " \
+               f"straight successors {self._successors_straight}, and left successors {self._successors_left}"
 
     def __repr__(self):
         return f"IntersectionIncomingElement(incoming_id={self._incoming_id}, " \
@@ -206,7 +208,7 @@ class Intersection:
         for k in incomings.keys():
             if k not in incomings_other:
                 eq = False
-                break
+                continue
             if incomings.get(k) != incomings_other.get(k):
                 ln_elements_eq = False
 
@@ -220,7 +222,8 @@ class Intersection:
         return hash((self._intersection_id, frozenset(self._incomings), frozenset(self._crossings)))
 
     def __str__(self):
-        return f"Intersection with id {self._intersection_id} consisting of {len(self._incomings)} incoming elements"
+        return f"Intersection with id {self._intersection_id} consisting of {len(self._incomings)} incoming elements " \
+               f"and crossings {self._crossings}"
 
     def __repr__(self):
         return f"Intersection(intersection_id={self._intersection_id}, incomings={repr(self._incomings)}, " \

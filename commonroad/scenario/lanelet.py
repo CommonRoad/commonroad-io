@@ -357,7 +357,10 @@ class Lanelet:
                      self._adj_left_same_direction, self._adj_right_same_direction, tuple(frozen_elements)))
 
     def __str__(self):
-        return f"Lanelet with id {self._lanelet_id}"
+        return f"Lanelet with id {self._lanelet_id} has predecessors {set(self._predecessor)}, successors " \
+               f"{set(self._successor)}, left adjacency {self._adj_left} with " \
+               f"{'same' if self._adj_left_same_direction else 'opposite'} direction, and " \
+               f"right adjacency with {'same' if self._adj_right_same_direction else 'opposite'} direction"
 
     def __repr__(self):
         return f"Lanelet(left_vertices={self._left_vertices.tolist()}, " \
@@ -1113,7 +1116,7 @@ class LaneletNetwork(IDrawable):
             for k in e.keys():
                 if k not in e_other:
                     eq = False
-                    break
+                    continue
                 if e.get(k) != e_other.get(k):
                     ld_elements_eq = False
 
@@ -1127,7 +1130,7 @@ class LaneletNetwork(IDrawable):
                      frozenset(self._traffic_signs.items()), frozenset(self._traffic_lights.items())))
 
     def __str__(self):
-        return f"LaneletNetwork consisting of lanelets {set(self._lanelets.keys())}, " \
+        return f"LaneletNetwork consists of lanelets {set(self._lanelets.keys())}, " \
                f"intersections {set(self._intersections.keys())}, " \
                f"traffic signs {set(self._traffic_signs.keys())}, and traffic lights {set(self._traffic_lights.keys())}"
 
