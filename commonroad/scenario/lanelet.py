@@ -108,6 +108,13 @@ class StopLine:
         return hash((start_string, end_string, self._line_marking, frozenset(self._traffic_sign_ref),
                      frozenset(self._traffic_light_ref)))
 
+    def __str__(self):
+        return f'StopLine from {self._start} to {self._end}'
+
+    def __repr__(self):
+        return f"StopLine(start={self._start.tolist()}, end={self._end.tolist()}, line_marking={self._line_marking}, " \
+               f"traffic_sign_ref={self._traffic_sign_ref}, traffic_light_ref={self._traffic_light_ref})"
+
     @property
     def start(self) -> np.ndarray:
         return self._start
@@ -168,9 +175,6 @@ class StopLine:
         tmp = t_m.dot(np.vstack((line_vertices.transpose(), np.ones((1, line_vertices.shape[0])))))
         tmp = tmp[0:2, :].transpose()
         self._start, self._end = tmp[0], tmp[1]
-
-    def __str__(self):
-        return f'StopLine from {self._start} to  {self._end}'
 
 
 class Lanelet:
@@ -340,6 +344,23 @@ class Lanelet:
         return hash((self._lanelet_id, tuple(polyline_strings), self._line_marking_left_vertices,
                      self._line_marking_right_vertices, self._stop_line, self._adj_left, self._adj_right,
                      self._adj_left_same_direction, self._adj_right_same_direction, tuple(frozen_elements)))
+
+    def __str__(self):
+        return f"Lanelet with id {self._lanelet_id}"
+
+    def __repr__(self):
+        return f"Lanelet(left_vertices={self._left_vertices.tolist()}, " \
+               f"center_vertices={self._center_vertices.tolist()}, " \
+               f"right_vertices={self._right_vertices.tolist()}, lanelet_id={self._lanelet_id}, " \
+               f"predecessor={self._predecessor}, successor={self._successor}, adjacent_left={self._adj_left}, " \
+               f"adjacent_left_same_direction={self._adj_left_same_direction}, adjacent_right={self._adj_right}, " \
+               f"adjacent_right_same_direction={self._adj_right_same_direction}, " \
+               f"line_marking_left_vertices={self._line_marking_left_vertices}, " \
+               f"line_marking_right_vertices={self._line_marking_right_vertices}), " \
+               f"stop_line={repr(self._stop_line)}, lanelet_type={self._lanelet_type}, " \
+               f"user_one_way={self._user_one_way}, " \
+               f"user_bidirectional={self._user_bidirectional}, traffic_signs={self._traffic_signs}, " \
+               f"traffic_lights={self._traffic_lights}"
 
     @property
     def distance(self) -> np.ndarray:
@@ -1020,9 +1041,6 @@ class Lanelet:
         else:
             return set()
 
-    def __str__(self):
-        return 'Lanelet with id:' + str(self.lanelet_id)
-
 
 class LaneletNetwork(IDrawable):
     """
@@ -1079,6 +1097,14 @@ class LaneletNetwork(IDrawable):
     def __hash__(self):
         return hash((frozenset(self._lanelets.items()), frozenset(self._intersections.items()),
                      frozenset(self._traffic_signs.items()), frozenset(self._traffic_lights.items())))
+
+    def __str__(self):
+        return f"LaneletNetwork consisting of lanelets {self._lanelets}, intersections {self._intersections}, " \
+               f"traffic signs {self._traffic_signs}, and traffic lights {self._traffic_lights}"
+
+    def __repr__(self):
+        return f"LaneletNetwork(lanelets={repr(self._lanelets)}, intersections={repr(self._intersections)}, " \
+               f"traffic_signs={repr(self._traffic_signs)}, traffic_lights={repr(self._traffic_lights)})"
 
     @property
     def lanelets(self) -> List[Lanelet]:
@@ -1621,12 +1647,6 @@ class LaneletNetwork(IDrawable):
 
         # return sorted list
         return [lanelets[i] for i in indices]
-
-    def __str__(self):
-        return_str = ''
-        for lanelet_id in self._lanelets.keys():
-            return_str += '{:8d} lanelet\n'.format(lanelet_id)
-        return return_str
 
     def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):

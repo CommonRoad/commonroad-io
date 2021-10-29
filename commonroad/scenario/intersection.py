@@ -53,6 +53,15 @@ class IntersectionIncomingElement:
         return hash((self._incoming_id, frozenset(self._incoming_lanelets), frozenset(self._successors_right),
                      frozenset(self._successors_straight), frozenset(self._successors_left), self._left_of))
 
+    def __str__(self):
+        return f"IntersectionIncomingElement with id {self._incoming_id}"
+
+    def __repr__(self):
+        return f"IntersectionIncomingElement(incoming_id={self._incoming_id}, " \
+               f"incoming_lanelets={self._incoming_lanelets}, successors_right={self._successors_right}, " \
+               f"successors_straight={self._successors_straight}, successors_left={self._successors_left}, " \
+               f"left_of={self._left_of})"
+
     @property
     def incoming_id(self) -> int:
         """
@@ -188,6 +197,13 @@ class Intersection:
 
     def __hash__(self):
         return hash((self._intersection_id, frozenset(self._incomings), frozenset(self._crossings)))
+
+    def __str__(self):
+        return f"Intersection with id {self._intersection_id} consisting of {len(self._incomings)} incoming elements"
+
+    def __repr__(self):
+        return f"Intersection(intersection_id={self._intersection_id}, incomings={repr(self._incomings)}, " \
+               f"crossings={self._crossings})"
 
     @property
     def intersection_id(self) -> int:

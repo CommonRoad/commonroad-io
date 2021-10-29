@@ -561,6 +561,7 @@ class TrafficSignElement:
     def __eq__(self, other):
         if not isinstance(other, TrafficSignElement):
             return False
+
         return self.traffic_sign_element_id == other.traffic_sign_element_id \
             and set(self.additional_values) == set(other.additional_values)
 
@@ -571,10 +572,11 @@ class TrafficSignElement:
         return hash((self._traffic_sign_element_id, frozenset(self.additional_values)))
 
     def __str__(self):
-        return f"Sign Element with id {self._traffic_sign_element_id} and values {self._additional_values} "
+        return f"TrafficSignElement with id {self._traffic_sign_element_id} and values {self._additional_values}"
 
     def __repr__(self):
-        return f"Sign Element with id {self._traffic_sign_element_id} and values {self._additional_values} "
+        return f"TrafficSignElement(traffic_sign_element_id={self._traffic_sign_element_id}, " \
+               f"additional_values={self._additional_values})"
 
 
 class TrafficSign(IDrawable):
@@ -615,6 +617,15 @@ class TrafficSign(IDrawable):
         position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
         return hash((self._traffic_sign_id, position_string, frozenset(self._traffic_sign_elements),
                      self._virtual, frozenset(self._first_occurrence)))
+
+    def __str__(self):
+        return f"TrafficSign with id {self._traffic_sign_id} placed at {self._position}"
+
+    def __repr__(self):
+        return f"TrafficSign(traffic_sign_id={self._traffic_sign_id}, " \
+               f"traffic_sign_elements={repr(self._traffic_sign_elements)}, " \
+               f"first_occurrence={self._first_occurrence}, " \
+               f"position={self._position.tolist()}, virtual={self._virtual})"
 
     @property
     def traffic_sign_id(self) -> int:
@@ -659,9 +670,6 @@ class TrafficSign(IDrawable):
         self._position = commonroad.geometry.transform.translate_rotate(
                 np.array([self._position]), translation, angle)[0]
 
-    def __str__(self):
-        return f"Sign At {self._position} with {self._traffic_sign_elements} "
-
     def draw(self, renderer: IRenderer,
              draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
@@ -686,6 +694,12 @@ class TrafficLightCycleElement:
 
     def __hash__(self):
         return hash((self._state, self._duration))
+
+    def __str__(self):
+        return f"TrafficLightCycleElement with state {self._state} and duration {self._duration}"
+
+    def __repr__(self):
+        return f"TrafficLightCycleElement(state={self._state}, duration={self._duration})"
 
     @property
     def state(self) -> TrafficLightState:
@@ -738,6 +752,14 @@ class TrafficLight(IDrawable):
         position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
         return hash((self._traffic_light_id, frozenset(self._cycle), self._time_offset, position_string,
                      self._direction, self._active))
+
+    def __str__(self):
+        return f"TrafficLight with id {self._traffic_light_id} placed at {self._position}"
+
+    def __repr__(self):
+        return f"TrafficLight(traffic_light_id={self._traffic_light_id}, cycle={repr(self._cycle)}, " \
+               f"time_offset={self._time_offset}, position={self._position.tolist()}, direction={self._direction}, " \
+               f"active={self._active})"
 
     @property
     def traffic_light_id(self) -> int:
