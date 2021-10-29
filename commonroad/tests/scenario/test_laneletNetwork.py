@@ -350,11 +350,6 @@ class TestLaneletNetwork(unittest.TestCase):
         self.assertEqual(len(self.lanelet.traffic_signs), 0)
         self.assertEqual(len(self.lanelet.stop_line.traffic_sign_ref), 0)
 
-    def test_to_string(self):
-        self.assertMultiLineEqual(self.lanelet_network.__str__(),
-                                  "LaneletNetwork consisting of lanelets {5, 6}, intersections {1}, "
-                                  "traffic signs {1}, and traffic lights {567}")
-
     def test_equality_hash(self):
         left_vertices = np.array([[0, 1], [1, 1], [2, 1]])
         center_vertices = np.array([[0, 0], [1, 0], [2, 0]])
