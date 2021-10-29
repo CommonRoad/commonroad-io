@@ -610,25 +610,26 @@ class TrafficSign(IDrawable):
             warnings.warn(f"Inequality between TrafficSign {repr(self)} and different type {type(other)}")
             return False
 
-        ln_elements_eq = True
+        list_elements_eq = True
         traffic_sign_elements = {traffic_sign_element.traffic_sign_element_id: traffic_sign_element
                                  for traffic_sign_element in self._traffic_sign_elements}
         traffic_sign_elements_other = {traffic_sign_element.traffic_sign_element_id: traffic_sign_element
                                        for traffic_sign_element in other._traffic_sign_elements}
-        eq = len(traffic_sign_elements) == len(traffic_sign_elements_other)
+        traffic_sign_eq = len(traffic_sign_elements) == len(traffic_sign_elements_other)
         for k in traffic_sign_elements.keys():
             if k not in traffic_sign_elements_other:
-                eq = False
+                traffic_sign_eq = False
                 continue
             if traffic_sign_elements.get(k) != traffic_sign_elements_other.get(k):
-                ln_elements_eq = False
+                list_elements_eq = False
 
         position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
         position_other_string = np.array2string(np.around(other.position.astype(float), 10), precision=10)
 
-        if eq and self._traffic_sign_id == other.traffic_sign_id and position_string == position_other_string \
-                and self._virtual == other.virtual and self._first_occurrence == other.first_occurrence:
-            return ln_elements_eq
+        if traffic_sign_eq and self._traffic_sign_id == other.traffic_sign_id \
+                and position_string == position_other_string and self._virtual == other.virtual \
+                and self._first_occurrence == other.first_occurrence:
+            return list_elements_eq
 
         warnings.warn(f"Inequality of TrafficSign {repr(self)} and the other one {repr(other)}")
         return False

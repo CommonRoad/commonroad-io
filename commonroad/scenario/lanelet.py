@@ -313,9 +313,9 @@ class Lanelet:
             warnings.warn(f"Inequality between Lanelet {repr(self)} and different type {type(other)}")
             return False
 
-        ln_elements_eq = self._stop_line == other.stop_line
+        list_elements_eq = self._stop_line == other.stop_line
 
-        eq = True
+        lanelet_eq = True
         polylines = [self._left_vertices, self._right_vertices, self._center_vertices]
         polylines_other = [other.left_vertices, other.right_vertices, other.center_vertices]
 
@@ -324,9 +324,9 @@ class Lanelet:
             polyline_other = polylines_other[i]
             polyline_string = np.array2string(np.around(polyline.astype(float), 10), precision=10)
             polyline_other_string = np.array2string(np.around(polyline_other.astype(float), 10), precision=10)
-            eq = eq and polyline_string == polyline_other_string
+            lanelet_eq = lanelet_eq and polyline_string == polyline_other_string
 
-        if eq and self.lanelet_id == other.lanelet_id \
+        if lanelet_eq and self.lanelet_id == other.lanelet_id \
                 and self._line_marking_left_vertices == other.line_marking_left_vertices \
                 and self._line_marking_right_vertices == other.line_marking_right_vertices \
                 and set(self._predecessor) == set(other.predecessor) and set(self._successor) == set(other.successor) \
@@ -336,7 +336,7 @@ class Lanelet:
                 and self._lanelet_type == other.lanelet_type and self._user_one_way == self.user_one_way \
                 and self._user_bidirectional == other.user_bidirectional \
                 and self._traffic_signs == other.traffic_signs and self._traffic_lights == other.traffic_lights:
-            return ln_elements_eq
+            return list_elements_eq
 
         warnings.warn(f"Inequality of Lanelet {repr(self)} and the other one {repr(other)}")
         return False
@@ -1105,25 +1105,25 @@ class LaneletNetwork(IDrawable):
             warnings.warn(f"Inequality between LaneletNetwork {repr(self)} and different type {type(other)}")
             return False
 
-        ld_elements_eq = True
-        eq = True
+        list_elements_eq = True
+        lanelet_network_eq = True
         elements = [self._lanelets, self._intersections, self._traffic_signs, self._traffic_lights]
         elements_other = [other._lanelets, other._intersections, other._traffic_signs, other._traffic_lights]
         for i in range(0, len(elements)):
             e = elements[i]
             e_other = elements_other[i]
-            eq = eq and len(e) == len(e_other)
+            lanelet_network_eq = lanelet_network_eq and len(e) == len(e_other)
             for k in e.keys():
                 if k not in e_other:
-                    eq = False
+                    lanelet_network_eq = False
                     continue
                 if e.get(k) != e_other.get(k):
-                    ld_elements_eq = False
+                    list_elements_eq = False
 
-        if not eq:
+        if not lanelet_network_eq:
             warnings.warn(f"Inequality of LaneletNetwork {repr(self)} and the other one {repr(other)}")
 
-        return eq and ld_elements_eq
+        return lanelet_network_eq and list_elements_eq
 
     def __hash__(self):
         return hash((frozenset(self._lanelets.items()), frozenset(self._intersections.items()),

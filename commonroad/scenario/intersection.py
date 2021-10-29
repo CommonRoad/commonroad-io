@@ -201,19 +201,19 @@ class Intersection:
             warnings.warn(f"Inequality between Intersection {repr(self)} and different type {type(other)}")
             return False
 
-        ln_elements_eq = True
+        list_elements_eq = True
         incomings = {incoming.incoming_id: incoming for incoming in self._incomings}
         incomings_other = {incoming.incoming_id: incoming for incoming in other.incomings}
-        eq = len(incomings) == len(incomings_other)
+        intersection_eq = len(incomings) == len(incomings_other)
         for k in incomings.keys():
             if k not in incomings_other:
-                eq = False
+                intersection_eq = False
                 continue
             if incomings.get(k) != incomings_other.get(k):
-                ln_elements_eq = False
+                list_elements_eq = False
 
-        if eq and self._intersection_id == other.intersection_id and self._crossings == other.crossings:
-            return ln_elements_eq
+        if intersection_eq and self._intersection_id == other.intersection_id and self._crossings == other.crossings:
+            return list_elements_eq
 
         warnings.warn(f"Inequality of Intersection {repr(self)} and the other one {repr(other)}")
         return False
