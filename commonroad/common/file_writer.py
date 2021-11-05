@@ -139,6 +139,7 @@ class CommonRoadFileWriter:
         tags: Set[Tag] = None,
         location: Location = None,
         decimal_precision: int = 4,
+        flag: str = None
     ):
         """
         Initialize the FileWriter with a scenario and tags for the xml-header
@@ -151,6 +152,7 @@ class CommonRoadFileWriter:
         :param tags: list of keywords describing the scenario (e.g. road type(one-lane road, multilane),
                 required maneuver etc., see commonroad.in.tum.de for full list))
         :param decimal_precision: number of decimal places used when writing float values
+        :param flag: check out valdiate RoadNetwork or ObstaclePlanning
         """
         assert not (author is None and scenario.author is None)
         assert not (affiliation is None and scenario.affiliation is None)
@@ -165,6 +167,7 @@ class CommonRoadFileWriter:
         self.source = source if source is not None else scenario.source
         self.location = location if location is not None else scenario.location
         self.tags = tags if tags is not None else scenario.tags
+        self.flag = flag
         
         # set decimal precision
         precision.decimals = decimal_precision
@@ -230,27 +233,33 @@ class CommonRoadFileWriter:
         self._tags = tags
 
     def _write_header(self):
-        self._root_node.set('timeStepSize', str(self.scenario.dt))
+        if self.flag != "RoadNetwork":
+            self._root_node.set('timeStepSize', str(self.scenario.dt))
         self._root_node.set('commonRoadVersion', SCENARIO_VERSION)
         self._root_node.set('author', self.author)
         self._root_node.set('affiliation', self.affiliation)
         self._root_node.set('source', self.source)
 
-        try:
-            if self.scenario.scenario_id:
-                self._root_node.set('benchmarkID', str(self.scenario.scenario_id))
-        except:
-            self._root_node.set('benchmarkID', '-1')
-            print('Warning: No scenario_id set.')
+        if self.flag != "RoadNetwork":
+            try:
+                if self.scenario.scenario_id:
+                    self._root_node.set('benchmarkID', str(self.scenario.scenario_id))
+            except:
+                self._root_node.set('benchmarkID', '-1')
+                print('Warning: No scenario_id set.')
 
         self._root_node.set('date', datetime.datetime.today().strftime('%Y-%m-%d'))
 
     def _add_all_objects_from_scenario(self):
+        self._root_node.append(TagXMLNode.create_node(self.tags))
+        for o in self.scenario.obstacles:
+            self._root_node.append(ObstacleXMLNode.create_node(o))
+    
+    def _add_all_lanelets_from_scenario(self):
         if self.location is not None:
             self._root_node.append(LocationXMLNode.create_node(self.location))
         else:
             self._root_node.append(LocationXMLNode.create_node(Location()))
-        self._root_node.append(TagXMLNode.create_node(self.tags))
         for l in self.scenario.lanelet_network.lanelets:
             self._root_node.append(LaneletXMLNode.create_node(l))
         for sign in self.scenario.lanelet_network.traffic_signs:
@@ -259,8 +268,6 @@ class CommonRoadFileWriter:
             self._root_node.append(TrafficLightXMLNode.create_node(light))
         for intersection in self.scenario.lanelet_network.intersections:
             self._root_node.append(IntersectionXMLNode.create_node(intersection))
-        for o in self.scenario.obstacles:
-            self._root_node.append(ObstacleXMLNode.create_node(o))
 
     def _add_all_planning_problems_from_planning_problem_set(self):
         for (
@@ -279,8 +286,7 @@ class CommonRoadFileWriter:
         self,
         filename: Union[str, None] = None,
         overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
-        check_validity: bool = False,
-        flag: str = "RoadNetwork"
+        check_validity: bool = False
     ):
         """
         Write a scenario including planning-problem. If file already exists, it will be overwritten of skipped
@@ -312,11 +318,20 @@ class CommonRoadFileWriter:
                 print('Replace file {}'.format(filename))
 
         self._write_header()
-        self._add_all_objects_from_scenario()
-        self._add_all_planning_problems_from_planning_problem_set()
+
+        if self.flag == 'ObstaclesPlanning':
+            self._add_all_objects_from_scenario()
+            self._add_all_planning_problems_from_planning_problem_set()
+        elif self.flag == 'RoadNetwork':
+            self._add_all_lanelets_from_scenario()
+        else:
+            self._add_all_objects_from_scenario()
+            self._add_all_lanelets_from_scenario()
+            self._add_all_planning_problems_from_planning_problem_set()
+        
         if check_validity:
             # validate xml format
-            self.check_validity_of_commonroad_file(self._dump(), flag)
+            self.check_validity_of_commonroad_file(self._dump(), self.flag)
 
         tree = etree.ElementTree(self._root_node)
         tree.write(filename, pretty_print=True, xml_declaration=True, encoding="utf-8")
@@ -325,8 +340,7 @@ class CommonRoadFileWriter:
         self,
         filename: Union[str, None] = None,
         overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
-        check_validity: bool = False,
-        flag: str = None
+        check_validity: bool = False
     ):
         """
         Write a scenario without planning-problem. If file already exists, it will be overwritten of skipped.
@@ -361,10 +375,17 @@ class CommonRoadFileWriter:
                 print('Replace file {}'.format(filename))
 
         self._write_header()
-        self._add_all_objects_from_scenario()
+        if self.flag == 'ObstaclesPlanning':
+            self._add_all_objects_from_scenario()
+        elif self.flag == 'RoadNetwork':
+            self._add_all_lanelets_from_scenario()
+        else:
+            self._add_all_objects_from_scenario()
+            self._add_all_lanelets_from_scenario()
+
         if check_validity:
             # validate xml format
-            self.check_validity_of_commonroad_file(self._dump(), flag)
+            self.check_validity_of_commonroad_file(self._dump(), self.flag)
 
         tree = etree.ElementTree(self._root_node)
         tree.write(filename, pretty_print=True, xml_declaration=True, encoding="utf-8")
@@ -377,14 +398,9 @@ class CommonRoadFileWriter:
 
         Args:
           commonroad_str: XML formatted string which should be checked.
-
         """
         ### change into road.xsd, obstacleplanning.xsd
-        #with open(
-        #    os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadScenario_schema.xsd',
-        #    'rb',
-        #) as schema_file:
-        #    schema = etree.XMLSchema(etree.parse(schema_file))
+
         if flag == 'RoadNetwork':
             with open(
                 os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadRoadNetwork_schema.xsd',
@@ -394,6 +410,12 @@ class CommonRoadFileWriter:
         elif flag == 'ObstaclesPlanning':
             with open(
                 os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadObstaclesPlanningProblem_schema.xsd',
+                'rb',
+            ) as schema_file:
+                schema = etree.XMLSchema(etree.parse(schema_file))
+        else:
+            with open(
+               os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadScenario_schema.xsd',
                 'rb',
             ) as schema_file:
                 schema = etree.XMLSchema(etree.parse(schema_file))
