@@ -165,7 +165,7 @@ class CommonRoadFileWriter:
         self.source = source if source is not None else scenario.source
         self.location = location if location is not None else scenario.location
         self.tags = tags if tags is not None else scenario.tags
-
+        
         # set decimal precision
         precision.decimals = decimal_precision
 
@@ -279,7 +279,8 @@ class CommonRoadFileWriter:
         self,
         filename: Union[str, None] = None,
         overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
-        check_validity: bool = False
+        check_validity: bool = False,
+        flag: str = "RoadNetwork"
     ):
         """
         Write a scenario including planning-problem. If file already exists, it will be overwritten of skipped
@@ -315,7 +316,7 @@ class CommonRoadFileWriter:
         self._add_all_planning_problems_from_planning_problem_set()
         if check_validity:
             # validate xml format
-            self.check_validity_of_commonroad_file(self._dump())
+            self.check_validity_of_commonroad_file(self._dump(), flag)
 
         tree = etree.ElementTree(self._root_node)
         tree.write(filename, pretty_print=True, xml_declaration=True, encoding="utf-8")
@@ -323,7 +324,9 @@ class CommonRoadFileWriter:
     def write_scenario_to_file(
         self,
         filename: Union[str, None] = None,
-        overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT
+        overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+        check_validity: bool = False,
+        flag: str = None
     ):
         """
         Write a scenario without planning-problem. If file already exists, it will be overwritten of skipped.
@@ -359,12 +362,15 @@ class CommonRoadFileWriter:
 
         self._write_header()
         self._add_all_objects_from_scenario()
+        if check_validity:
+            # validate xml format
+            self.check_validity_of_commonroad_file(self._dump(), flag)
 
         tree = etree.ElementTree(self._root_node)
         tree.write(filename, pretty_print=True, xml_declaration=True, encoding="utf-8")
 
-    @staticmethod
-    def check_validity_of_commonroad_file(commonroad_str: str):
+    @staticmethod #road/obstacle as flag
+    def check_validity_of_commonroad_file(commonroad_str: str, flag: str):
         """Check the validity of a generated xml_string in terms of
         commonroad with an existing XSD schema.
         Throw an error if it is not valid.
@@ -373,11 +379,24 @@ class CommonRoadFileWriter:
           commonroad_str: XML formatted string which should be checked.
 
         """
-        with open(
-            os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadScenario_schema.xsd',
-            'rb',
-        ) as schema_file:
-            schema = etree.XMLSchema(etree.parse(schema_file))
+        ### change into road.xsd, obstacleplanning.xsd
+        #with open(
+        #    os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadScenario_schema.xsd',
+        #    'rb',
+        #) as schema_file:
+        #    schema = etree.XMLSchema(etree.parse(schema_file))
+        if flag == 'RoadNetwork':
+            with open(
+                os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadRoadNetwork_schema.xsd',
+                'rb',
+            ) as schema_file:
+                schema = etree.XMLSchema(etree.parse(schema_file))
+        elif flag == 'ObstaclesPlanning':
+            with open(
+                os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadObstaclesPlanningProblem_schema.xsd',
+                'rb',
+            ) as schema_file:
+                schema = etree.XMLSchema(etree.parse(schema_file))
 
         parser = objectify.makeparser(schema=schema, encoding='utf-8')
 
