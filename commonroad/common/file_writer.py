@@ -7,7 +7,6 @@ import pathlib
 import os
 from typing import Union, List, Set
 import numpy as np
-import decimal
 import warnings
 
 from commonroad import SCENARIO_VERSION
@@ -290,7 +289,7 @@ class CommonRoadFileWriter:
         :return:
         """
         if filename is None:
-            filename = str(self.scenario.scenario_id)
+            filename = str(self.scenario.scenario_id) + ".xml"
 
         if pathlib.Path(filename).is_file():
             if overwrite_existing_file is OverwriteExistingFile.ASK_USER_INPUT:
@@ -329,7 +328,7 @@ class CommonRoadFileWriter:
         Write a scenario without planning-problem. If file already exists, it will be overwritten of skipped.
 
         :param filename: filename of the xml output file. If 'None', the Benchmark ID is taken
-        :param OverwriteExistingFile: Specify whether an already existing file should be overwritten or skipped
+        :param overwrite_existing_file: Specify whether an already existing file should be overwritten or skipped
         :return: None
         """
         if filename is None:
@@ -532,14 +531,14 @@ class LaneletXMLNode:
 
         lanelet_node.append(right_boundary)
 
-        for l in lanelet.predecessor:
+        for la in lanelet.predecessor:
             predecessor = etree.Element('predecessor')
-            predecessor.set('ref', str(l))
+            predecessor.set('ref', str(la))
             lanelet_node.append(predecessor)
 
-        for l in lanelet.successor:
+        for la in lanelet.successor:
             successor = etree.Element('successor')
-            successor.set('ref', str(l))
+            successor.set('ref', str(la))
             lanelet_node.append(successor)
 
         if lanelet.adj_left:
@@ -790,7 +789,7 @@ class DynamicObstacleXMLNode:
     def _create_signal_series_node(cls, signal_series: List[SignalState]) -> etree.Element:
         """
         Create XML-Node for a Trajectory
-        :param trajectory: trajectory for creating a node
+        :param signal_series: list of signal states
         :return: node
         """
         series_node = etree.Element('signalSeries')
@@ -849,7 +848,7 @@ class ShapeXMLNode:
 
     @classmethod
     def _create_single_element(
-        cls, shape: Shape, dynamic_obstacle_shape: bool
+        cls, shape: Union[Shape, Circle, Rectangle, Polygon], dynamic_obstacle_shape: bool
     ) -> etree.Element:
         """
         Create XML-Node for a single shape element
@@ -1011,19 +1010,15 @@ class StateXMLNode:
         :return: node
         """
         if len(goal_lanelet_ids) > 0:
-            for id in goal_lanelet_ids:
+            for la_id in goal_lanelet_ids:
                 lanelet = etree.Element('lanelet')
-                lanelet.set('ref', str(id))
+                lanelet.set('ref', str(la_id))
                 node.append(lanelet)
         elif isinstance(position, int):
             lanelet = etree.Element('lanelet')
             lanelet.set('ref', str(position))
             node.append(lanelet)
-        elif(
-            isinstance(position, Rectangle)
-            or isinstance(position, Circle)
-            or isinstance(position, Polygon)
-            ):
+        elif isinstance(position, Rectangle) or isinstance(position, Circle) or isinstance(position, Polygon):
             node.extend(ShapeXMLNode.create_node(position))
         elif isinstance(position, ShapeGroup):
             node.extend(ShapeXMLNode.create_node(position))
@@ -1080,6 +1075,7 @@ class StateXMLNode:
         Create XML-Node for a state
         :param state: value of the state
         :param state_node: node of the overlying state
+        :param time_step: time step for which state should be created
         :return: node
         """
 
