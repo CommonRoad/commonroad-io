@@ -1366,7 +1366,7 @@ class LaneletNetwork(IDrawable):
 
         ret_list = [
             [lanelet_buffered_polygon.lanelet_id for lanelet_buffered_polygon in self._buffered_strtee.query(point) if
-             lanelet_buffered_polygon.contains(point)] for point in point_list2]
+             lanelet_buffered_polygon.intersects(point)] for point in point_list2]
 
         return ret_list
 
