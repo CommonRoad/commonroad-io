@@ -4,7 +4,8 @@ import numpy as np
 
 from commonroad.geometry import polyline_util
 from commonroad.geometry.polyline_util import compare_polylines_equality, is_point_on_polyline, \
-    compute_polyline_intersections, resample_polyline_with_number, resample_polyline_with_distance
+    compute_polyline_intersections, resample_polyline_with_number, resample_polyline_with_distance, insert_vertices, \
+    merge_polylines
 
 
 class TestPolylineUtil(unittest.TestCase):
@@ -211,22 +212,33 @@ class TestPolylineUtil(unittest.TestCase):
         with self.assertRaises(AssertionError):
             resample_polyline_with_distance(polyline, 0)
 
-    def test_assert_valid_polyline(self):
-        polyline = [[0, 0], [1, 0], [2, 0]]
+    def test_insert_vertices(self):
+        long_polylines = [np.array([[0., 0.], [1., 0.], [2., 0.], [3., 0.]]),
+                          np.array([[0., 1.], [0., 2.], [0., 3.], [0., 4.], [0., 5.]])]
+        short_polylines = [np.array([[0., 1.], [1., 1.], [3., 1.]]),
+                           np.array([[1., 1.], [1., 5.]])]
+        expected_polylines = [np.array([[0., 1.], [1., 1.], [2., 1.], [3., 1.]]),
+                              np.array([[1., 1.], [1., 2.], [1., 3.], [1., 4.], [1., 5.]])]
+
+        for i in range(0, len(long_polylines)):
+            long_polyline = long_polylines[i]
+            short_polyline = short_polylines[i]
+            expected_polyline = expected_polylines[i]
+            self.assertEqual(expected_polyline.tolist(), insert_vertices(long_polyline, short_polyline).tolist())
+
+        long_polyline = np.array([[0., 0.], [4., 0.]])
+        short_polyline = np.array([[0., 1.], [2., 1.], [4., 1.]])
+
         with self.assertRaises(AssertionError):
-            polyline_util.assert_valid_polyline(polyline)
+            insert_vertices(long_polyline, short_polyline)
 
-        polylines = [np.array([[0, 0]]), np.array([[[0, 0], [1, 1]], [[2, 2], [3, 3]], [[4, 4], [5, 5]]]),
-                     np.array([[0, 0, 0], [1, 0], [2, 0]])]
+    def test_merge_polylines(self):
+        left_polyline = np.array([[0., 0.], [1., 0.], [2., 0.], [3., 0], [4., 0]])
+        right_polyline = np.array([[5., 0], [6., 0.], [7., 0.]])
 
-        for i in range(0, len(polylines)):
-            polyline = polylines[i]
-            with self.assertRaises(AssertionError):
-                polyline_util.assert_valid_polyline(polyline)
+        expected_polyline = np.array([[0., 0.], [1., 0.], [2., 0.], [3., 0], [4., 0], [5., 0], [6., 0.], [7., 0.]])
 
-        polyline = np.array([[0, 0], [1, 1]])
-        with self.assertRaises(AssertionError):
-            polyline_util.assert_valid_polyline(polyline, 3)
+        self.assertEqual(expected_polyline.tolist(), merge_polylines(left_polyline, right_polyline).tolist())
 
 
 if __name__ == '__main__':

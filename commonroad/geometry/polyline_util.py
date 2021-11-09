@@ -1,4 +1,6 @@
 import math
+from typing import List
+
 import numpy as np
 from shapely.geometry import LineString
 
@@ -13,8 +15,7 @@ def compute_polyline_lengths(polyline: np.ndarray) -> np.ndarray:
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
     :return: Path lengths of the polyline for each coordinate in m
     """
-    assert is_valid_polyline(polyline, compute_total_polyline_length(polyline)), \
-        "Polyline p={} is malformed!".format(polyline)
+    assert is_valid_polyline(polyline), "Polyline p={} is malformed!".format(polyline)
 
     distance = [0]
     for i in range(1, len(polyline)):
@@ -43,8 +44,7 @@ def compute_polyline_curvatures(polyline: np.ndarray) -> np.ndarray:
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
     :return: Curvatures of the polyline for each coordinate [1/rad]
     """
-    assert is_valid_polyline(polyline, compute_total_polyline_length(polyline)) and len(polyline) >= 3, \
-        "Polyline p={} is malformed!".format(polyline)
+    assert is_valid_polyline(polyline) and len(polyline) >= 3, "Polyline p={} is malformed!".format(polyline)
 
     x_d = np.gradient(polyline[:, 0])
     x_dd = np.gradient(x_d)
@@ -63,8 +63,7 @@ def compute_polyline_orientations(polyline: np.ndarray) -> np.ndarray:
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
     :return: Orientations of the polyline for each coordinate [rad]
     """
-    assert is_valid_polyline(polyline, compute_total_polyline_length(polyline)), \
-        "Polyline p={} is malformed!".format(polyline)
+    assert is_valid_polyline(polyline), "Polyline p={} is malformed!".format(polyline)
 
     orientation = []
     for i in range(0, len(polyline) - 1):
@@ -101,8 +100,7 @@ def is_point_on_polyline(polyline: np.ndarray, point: np.ndarray) -> bool:
     :param point: 2D point [x, y]
     :return: Boolean indicating whether point lies on polyline or not
     """
-    assert is_valid_polyline(polyline, compute_total_polyline_length(polyline)), \
-        "Polyline p={} is malformed!".format(polyline)
+    assert is_valid_polyline(polyline), "Polyline p={} is malformed!".format(polyline)
 
     for i in range(0, len(polyline) - 1):
         l_x_1 = polyline[i][0]
@@ -137,10 +135,8 @@ def compute_polyline_intersections(polyline_1: np.ndarray, polyline_2: np.ndarra
     :param polyline_2: Second polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
     :return: Intersection points
     """
-    assert is_valid_polyline(polyline_1, compute_total_polyline_length(polyline_1)), \
-        "First polyline p={} is malformed!".format(polyline_1)
-    assert is_valid_polyline(polyline_2, compute_total_polyline_length(polyline_2)), \
-        "Second polyline p={} is malformed!".format(polyline_2)
+    assert is_valid_polyline(polyline_1), "First polyline p={} is malformed!".format(polyline_1)
+    assert is_valid_polyline(polyline_2), "Second polyline p={} is malformed!".format(polyline_2)
 
     intersection_points = []
 
@@ -179,8 +175,7 @@ def is_polyline_self_intersection(polyline: np.ndarray) -> bool:
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
     :return: Self-intersection or not
     """
-    assert is_valid_polyline(polyline, compute_total_polyline_length(polyline)), \
-        "Polyline p={} is malformed!".format(polyline)
+    assert is_valid_polyline(polyline), "Polyline p={} is malformed!".format(polyline)
 
     line = [(x, y) for x, y in polyline]
     line_string = LineString(line)
@@ -197,10 +192,8 @@ def compare_polylines_equality(polyline_1: np.ndarray, polyline_2: np.ndarray, t
     :param threshold: Threshold for equality of values
     :return: Equality of both polylines or not
     """
-    assert is_valid_polyline(polyline_1, compute_total_polyline_length(polyline_1)), \
-        "First polyline p={} is malformed!".format(polyline_1)
-    assert is_valid_polyline(polyline_2, compute_total_polyline_length(polyline_2)), \
-        "Second polyline p={} is malformed!".format(polyline_2)
+    assert is_valid_polyline(polyline_1), "First polyline p={} is malformed!".format(polyline_1)
+    assert is_valid_polyline(polyline_2), "Second polyline p={} is malformed!".format(polyline_2)
 
     return np.allclose(polyline_1, polyline_2, rtol=threshold, atol=threshold)
 
@@ -215,8 +208,7 @@ def resample_polyline_with_number(polyline: np.ndarray, number: int) -> np.ndarr
     :param number: Fixed number of 2D points
     :return: Resampled polyline
     """
-    assert is_valid_polyline(polyline, compute_total_polyline_length(polyline)), \
-        "Polyline p={} is malformed!".format(polyline)
+    assert is_valid_polyline(polyline), "Polyline p={} is malformed!".format(polyline)
     assert number > 1, 'Number n={} has to be at least two'.format(number)
 
     line = LineString(polyline)
@@ -239,8 +231,7 @@ def resample_polyline_with_distance(polyline: np.ndarray, distance: float) -> np
     :param distance: Specific distance [m]
     :return: Resampled polyline
     """
-    assert is_valid_polyline(polyline, compute_total_polyline_length(polyline)), \
-        "Polyline p={} is malformed!".format(polyline)
+    assert is_valid_polyline(polyline), "Polyline p={} is malformed!".format(polyline)
     assert distance > 0, 'Distance d={} has to be greater than 0'.format(distance)
 
     line = LineString(polyline)
@@ -255,3 +246,99 @@ def resample_polyline_with_distance(polyline: np.ndarray, distance: float) -> np
 
     return np.array(polyline_resampled)
 
+
+def insert_vertices(long_polyline: np.ndarray, short_polyline: np.ndarray) -> np.ndarray:
+    """
+    Inserts vertices into a polyline to be of the same length than other polyline.
+
+    :param long_polyline: Polyline with higher number of vertices
+    :param short_polyline: Polyline with lower number of vertices
+    :return: Short polyline with equal length as long polyline
+    """
+    assert is_valid_polyline(long_polyline), "Long polyline p={} is malformed!".format(long_polyline)
+    assert is_valid_polyline(short_polyline), "Short polyline p={} is malformed!".format(short_polyline)
+    assert len(long_polyline) > len(short_polyline), "The number of vertices of long polyline p={} must be greater " \
+                                                     "compared to short polyline p={}!".format(long_polyline,
+                                                                                               short_polyline)
+
+    path_length_long = compute_polyline_lengths(long_polyline)
+    path_length_percentage_long = path_length_long / path_length_long[-1]
+    if len(short_polyline) > 2:
+        path_length_short = compute_polyline_lengths(short_polyline)
+        path_length_percentage_short = path_length_short / path_length_short[-1]
+    else:
+        path_length_percentage_short = [0, 1]
+
+    index_mapping = create_mapping(path_length_percentage_long, path_length_percentage_short)
+
+    org_polyline = short_polyline
+    last_key = 0
+    counter = 0
+    for key, value in enumerate(index_mapping):
+        if value == -1:
+            counter += 1
+        elif counter > 0 and value > -1:
+            ub = org_polyline[value]
+            lb = short_polyline[last_key]
+            for idx in range(1, counter + 1):
+                insertion_factor = \
+                    (path_length_percentage_long[last_key + idx] - path_length_percentage_long[last_key]) / \
+                    (path_length_percentage_long[key] - path_length_percentage_long[last_key])
+                new_vertex = insertion_factor * (ub - lb) + lb
+                short_polyline_updated = np.insert(short_polyline, last_key + idx, new_vertex, 0)
+                short_polyline = short_polyline_updated
+            last_key = key
+            counter = 0
+        else:
+            last_key = key
+    return short_polyline
+
+
+def create_mapping(path_length_percentage_long: np.ndarray, path_length_percentage_short: np.ndarray) -> List[int]:
+    """
+    Extracts places (indices) where new vertices have to be added in shorter lanelet.
+
+    :param path_length_percentage_long: Proportional path length along longer polyline
+    :param path_length_percentage_short: Proportional path length along shorter polyline
+    :return: Mapping of existing indices of shorter polyline to longer polyline
+    """
+    index_mapping = [-1] * len(path_length_percentage_long)
+    index_mapping[0] = 0
+    index_mapping[-1] = len(path_length_percentage_short) - 1
+
+    finished = False
+
+    last_idx_long = 1
+    for key in range(1, len(path_length_percentage_short) - 1):
+        value = path_length_percentage_short[key]
+        threshold = 0.01
+        while key not in index_mapping and not finished:
+            for idx_long in range(last_idx_long,
+                                  len(path_length_percentage_long) - (len(path_length_percentage_short) - key) + 1):
+                if abs(path_length_percentage_long[idx_long] - value) < threshold and index_mapping[idx_long] == -1:
+                    index_mapping[idx_long] = key
+                    last_idx_long = idx_long
+                    if len(path_length_percentage_short) - key + 1 == len(index_mapping) - idx_long + 1:
+                        for idx in range(idx_long + 1, len(index_mapping)):
+                            index_mapping[idx] = key + 1
+                            key += 1
+                        finished = True
+                    break
+            threshold *= 2
+        if finished:
+            break
+
+    return index_mapping
+
+
+def merge_polylines(left_polyline: np.ndarray, right_polyline: np.ndarray) -> np.ndarray:
+    """
+    Merges a left and right polyline. The vertices of the left polyline starts successively before the right one.
+
+    :param left_polyline: Left polyline
+    :param right_polyline: Right polyline
+    """
+    assert is_valid_polyline(left_polyline), "Left polyline p={} is malformed!".format(left_polyline)
+    assert is_valid_polyline(right_polyline), "Right polyline p={} is malformed!".format(right_polyline)
+
+    return np.concatenate((left_polyline, right_polyline), axis=0)
