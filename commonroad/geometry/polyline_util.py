@@ -2,6 +2,8 @@ import math
 import numpy as np
 from shapely.geometry import LineString
 
+from commonroad.common.validity import is_valid_polyline
+
 
 def compute_polyline_lengths(polyline: np.ndarray) -> np.ndarray:
     """
@@ -11,7 +13,8 @@ def compute_polyline_lengths(polyline: np.ndarray) -> np.ndarray:
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
     :return: Path lengths of the polyline for each coordinate in m
     """
-    assert_valid_polyline(polyline)
+    assert is_valid_polyline(polyline, compute_total_polyline_length(polyline)), \
+        "Polyline p={} is malformed!".format(polyline)
 
     distance = [0]
     for i in range(1, len(polyline)):
@@ -40,7 +43,8 @@ def compute_polyline_curvatures(polyline: np.ndarray) -> np.ndarray:
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
     :return: Curvatures of the polyline for each coordinate [1/rad]
     """
-    assert_valid_polyline(polyline, 3)
+    assert is_valid_polyline(polyline, compute_total_polyline_length(polyline)) and len(polyline) >= 3, \
+        "Polyline p={} is malformed!".format(polyline)
 
     x_d = np.gradient(polyline[:, 0])
     x_dd = np.gradient(x_d)
@@ -59,7 +63,8 @@ def compute_polyline_orientations(polyline: np.ndarray) -> np.ndarray:
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
     :return: Orientations of the polyline for each coordinate [rad]
     """
-    assert_valid_polyline(polyline)
+    assert is_valid_polyline(polyline, compute_total_polyline_length(polyline)), \
+        "Polyline p={} is malformed!".format(polyline)
 
     orientation = []
     for i in range(0, len(polyline) - 1):
@@ -96,7 +101,8 @@ def is_point_on_polyline(polyline: np.ndarray, point: np.ndarray) -> bool:
     :param point: 2D point [x, y]
     :return: Boolean indicating whether point lies on polyline or not
     """
-    assert_valid_polyline(polyline)
+    assert is_valid_polyline(polyline, compute_total_polyline_length(polyline)), \
+        "Polyline p={} is malformed!".format(polyline)
 
     for i in range(0, len(polyline) - 1):
         l_x_1 = polyline[i][0]
@@ -131,8 +137,10 @@ def compute_polyline_intersections(polyline_1: np.ndarray, polyline_2: np.ndarra
     :param polyline_2: Second polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
     :return: Intersection points
     """
-    assert_valid_polyline(polyline_1)
-    assert_valid_polyline(polyline_2)
+    assert is_valid_polyline(polyline_1, compute_total_polyline_length(polyline_1)), \
+        "First polyline p={} is malformed!".format(polyline_1)
+    assert is_valid_polyline(polyline_2, compute_total_polyline_length(polyline_2)), \
+        "Second polyline p={} is malformed!".format(polyline_2)
 
     intersection_points = []
 
@@ -171,7 +179,8 @@ def is_polyline_self_intersection(polyline: np.ndarray) -> bool:
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
     :return: Self-intersection or not
     """
-    assert_valid_polyline(polyline)
+    assert is_valid_polyline(polyline, compute_total_polyline_length(polyline)), \
+        "Polyline p={} is malformed!".format(polyline)
 
     line = [(x, y) for x, y in polyline]
     line_string = LineString(line)
@@ -188,8 +197,10 @@ def compare_polylines_equality(polyline_1: np.ndarray, polyline_2: np.ndarray, t
     :param threshold: Threshold for equality of values
     :return: Equality of both polylines or not
     """
-    assert_valid_polyline(polyline_1)
-    assert_valid_polyline(polyline_2)
+    assert is_valid_polyline(polyline_1, compute_total_polyline_length(polyline_1)), \
+        "First polyline p={} is malformed!".format(polyline_1)
+    assert is_valid_polyline(polyline_2, compute_total_polyline_length(polyline_2)), \
+        "Second polyline p={} is malformed!".format(polyline_2)
 
     return np.allclose(polyline_1, polyline_2, rtol=threshold, atol=threshold)
 
@@ -204,7 +215,8 @@ def resample_polyline_with_number(polyline: np.ndarray, number: int) -> np.ndarr
     :param number: Fixed number of 2D points
     :return: Resampled polyline
     """
-    assert_valid_polyline(polyline)
+    assert is_valid_polyline(polyline, compute_total_polyline_length(polyline)), \
+        "Polyline p={} is malformed!".format(polyline)
     assert number > 1, 'Number n={} has to be at least two'.format(number)
 
     line = LineString(polyline)
@@ -227,7 +239,8 @@ def resample_polyline_with_distance(polyline: np.ndarray, distance: float) -> np
     :param distance: Specific distance [m]
     :return: Resampled polyline
     """
-    assert_valid_polyline(polyline)
+    assert is_valid_polyline(polyline, compute_total_polyline_length(polyline)), \
+        "Polyline p={} is malformed!".format(polyline)
     assert distance > 0, 'Distance d={} has to be greater than 0'.format(distance)
 
     line = LineString(polyline)
@@ -242,16 +255,3 @@ def resample_polyline_with_distance(polyline: np.ndarray, distance: float) -> np
 
     return np.array(polyline_resampled)
 
-
-def assert_valid_polyline(polyline: np.ndarray, min_size=2) -> None:
-    """
-    Makes assertions for a valid polyline. A valid polyline is instanced from the type np.ndarray,
-    is constructed of at least a specified number of coordinates, and is two-dimensional.
-
-    :param: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
-    """
-    assert polyline is not None and isinstance(polyline, np.ndarray), \
-        'Polyline p={} is not instanced from np.ndarray'.format(polyline)
-    assert len(polyline) > min_size - 1, 'Polyline p={} is not constructed of at least two coordinates'.format(polyline)
-    for i in range(0, len(polyline)):
-        assert polyline.ndim == 2 and len(polyline[i, :]) == 2, 'Polyline p={} is not two-dimensional'.format(polyline)
