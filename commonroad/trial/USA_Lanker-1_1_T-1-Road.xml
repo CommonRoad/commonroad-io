@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<commonRoad commonRoadVersion="2020a" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" date="2021-11-05">
+<commonRoad commonRoadVersion="2020a" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="USA_Lanker-1" date="2021-11-12">
   <location>
     <geoNameId>-999</geoNameId>
     <gpsLatitude>999</gpsLatitude>

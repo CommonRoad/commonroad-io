@@ -9,6 +9,7 @@ from typing import Union, List, Set
 import numpy as np
 import decimal
 import warnings
+import re
 
 from commonroad import SCENARIO_VERSION
 from lxml import etree, objectify
@@ -240,7 +241,13 @@ class CommonRoadFileWriter:
         self._root_node.set('affiliation', self.affiliation)
         self._root_node.set('source', self.source)
 
-        if self.flag != "RoadNetwork":
+        if self.flag == "RoadNetwork":
+            sub_ids = re.split('_|-', str(self.scenario.scenario_id))
+            country_id, map_name, map_id = sub_ids[:3]
+            benchmark = country_id + '_' + map_name + '-' + map_id
+
+            self._root_node.set('benchmarkID', benchmark)
+        else:
             try:
                 if self.scenario.scenario_id:
                     self._root_node.set('benchmarkID', str(self.scenario.scenario_id))

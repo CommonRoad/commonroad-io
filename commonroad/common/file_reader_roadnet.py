@@ -55,22 +55,20 @@ def read_time(xml_node: ElementTree.Element) -> Union[int, Interval]:
     return value
 
 
-class CommonRoadFileReader:
+class CommonRoadNetworkReader:
     """ Class which reads CommonRoad XML-files. The XML-files are composed of
     (1) a formal representation of the road network,
     (2) static and dynamic obstacles,
     (3) the planning problem of the ego vehicle(s). """
-    def __init__(self, filename: str, flag: str = None):
+    def __init__(self, filename: str):
         """
         :param filename: full path + filename of the CommonRoad XML-file,
-        :param flag: "RoadNetwrok" or "ObstaclePlanning"
         """
         self._filename = filename
         self._tree = None
         self._dt = None
         self._benchmark_id = None
         self._meta_data = None
-        self._flag = flag
 
     def open(self, lanelet_assignment: bool = False) -> Tuple[Scenario, PlanningProblemSet]:
         """
@@ -102,7 +100,7 @@ class CommonRoadFileReader:
         :return: object of class scenario containing the road network and the obstacles
         """
         scenario = ScenarioFactory.create_from_xml_node(self._tree, self._dt, self._benchmark_id,
-                                                        self._commonroad_version, self._meta_data, lanelet_assignment, self._flag)
+                                                        self._commonroad_version, self._meta_data, lanelet_assignment)
         return scenario
 
     def _open_planning_problem_set(self, lanelet_network: LaneletNetwork) \
@@ -127,9 +125,8 @@ class CommonRoadFileReader:
                                                                     'version: {}.'.format(self._filename,
                                                                                           SUPPORTED_COMMONROAD_VERSIONS,
                                                                                           commonroad_version)
-        if self._flag != "RoadNetwork":
-            self._dt = self._get_dt()
-            self._benchmark_id = self._get_benchmark_id()
+        self._dt = self._get_dt()
+        self._benchmark_id = self._get_benchmark_id()
         self._commonroad_version = commonroad_version
         if commonroad_version == '2018b':
             self._meta_data = {'author': self._get_author(),
@@ -148,7 +145,8 @@ class CommonRoadFileReader:
 
     def _get_dt(self) -> float:
         """ Reads the time step size of the time-discrete scenario."""
-        return float(self._tree.getroot().get('timeStepSize'))
+        #return float(self._tree.getroot().get('timeStepSize'))
+        return float(0)
 
     def _get_benchmark_id(self) -> str:
         """ Reads the unique CommonRoad benchmark ID of the scenario."""
@@ -188,7 +186,7 @@ class ScenarioFactory:
     """ Class to create an object of class Scenario from an XML element."""
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element, dt: float, benchmark_id: str, commonroad_version: str,
-                             meta_data: dict, lanelet_assignment: bool, flag: str):
+                             meta_data: dict, lanelet_assignment: bool):
         """
         :param xml_node: XML element
         :param dt: time step size of the scenario
@@ -198,14 +196,12 @@ class ScenarioFactory:
         :return: CommonRoad scenario
         """
         if commonroad_version != '2018b':
-            if flag != "RoadNetwork":
-                meta_data["tags"] = TagsFactory.create_from_xml_node(xml_node)
+            #meta_data["tags"] = TagsFactory.create_from_xml_node(xml_node)
             meta_data["location"] = LocationFactory.create_from_xml_node(xml_node)
         else:
             LaneletFactory._speed_limits = {}
-        
-        if flag != "RoadNetwork":
-            scenario_id = ScenarioID.from_benchmark_id(benchmark_id, commonroad_version)
+
+        scenario_id = ScenarioID.from_benchmark_id(benchmark_id, commonroad_version)
         scenario = Scenario(dt, scenario_id, **meta_data)
 
         scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))

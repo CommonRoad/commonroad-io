@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="USA_Lanker-1_1_T-1" date="2021-11-05">
+<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="USA_Lanker-1_1_T-1" date="2021-11-12">
   <scenarioTags>
-    <interstate/>
     <critical/>
+    <interstate/>
   </scenarioTags>
   <dynamicObstacle id="1213">
     <type>car</type>
