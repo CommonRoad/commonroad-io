@@ -214,11 +214,14 @@ class TestPolylineUtil(unittest.TestCase):
 
     def test_insert_vertices(self):
         long_polylines = [np.array([[0., 0.], [1., 0.], [2., 0.], [3., 0.]]),
-                          np.array([[0., 1.], [0., 2.], [0., 3.], [0., 4.], [0., 5.]])]
+                          np.array([[0., 1.], [0., 2.], [0., 3.], [0., 4.], [0., 5.]]),
+                          np.array([[0., 0.], [4.5, 0.], [5., 0.], [9.5, 0.], [10., 0.]])]
         short_polylines = [np.array([[0., 1.], [1., 1.], [3., 1.]]),
-                           np.array([[1., 1.], [1., 5.]])]
+                           np.array([[1., 1.], [1., 5.]]),
+                           np.array([[-1., 0.], [10., 0.]])]
         expected_polylines = [np.array([[0., 1.], [1., 1.], [2., 1.], [3., 1.]]),
-                              np.array([[1., 1.], [1., 2.], [1., 3.], [1., 4.], [1., 5.]])]
+                              np.array([[1., 1.], [1., 2.], [1., 3.], [1., 4.], [1., 5.]]),
+                              np.array([[-1.0, 0.0], [3.95, 0.0], [4.5, 0.0], [9.45, 0.0], [10.0, 0.0]])]
 
         for i in range(0, len(long_polylines)):
             long_polyline = long_polylines[i]
