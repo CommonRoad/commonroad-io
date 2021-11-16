@@ -4,7 +4,7 @@ from typing import List
 import numpy as np
 from shapely.geometry import LineString
 
-from commonroad.common.validity import is_valid_polyline
+from commonroad.common.validity import is_valid_polyline, ValidTypes
 
 
 def compute_polyline_lengths(polyline: np.ndarray) -> np.ndarray:
@@ -269,7 +269,7 @@ def insert_vertices(long_polyline: np.ndarray, short_polyline: np.ndarray) -> np
     else:
         path_length_percentage_short = [0, 1]
 
-    index_mapping = create_mapping(path_length_percentage_long, path_length_percentage_short)
+    index_mapping = create_indices_mapping(path_length_percentage_long, path_length_percentage_short)
 
     org_polyline = short_polyline
     last_key = 0
@@ -294,14 +294,32 @@ def insert_vertices(long_polyline: np.ndarray, short_polyline: np.ndarray) -> np
     return short_polyline
 
 
-def create_mapping(path_length_percentage_long: np.ndarray, path_length_percentage_short: np.ndarray) -> List[int]:
+def create_indices_mapping(path_length_percentage_long: np.ndarray, path_length_percentage_short: np.ndarray) -> List[int]:
     """
-    Extracts places (indices) where new vertices have to be added in shorter lanelet.
+    Extracts places (indices) where new vertices have to be added in shorter polyline.
 
     :param path_length_percentage_long: Proportional path length along longer polyline
     :param path_length_percentage_short: Proportional path length along shorter polyline
     :return: Mapping of existing indices of shorter polyline to longer polyline
     """
+    path_length_percentages = [path_length_percentage_long, path_length_percentage_short]
+    path_length_percentage_names = ['Long path length percentage', 'Short path length percentage']
+    for i in range(0, len(path_length_percentages)):
+        path_length_percentage = path_length_percentages[i]
+        path_length_percentage_name = path_length_percentage_names[i]
+        valid_path_percentage = True
+        p = 0
+        for percentage in path_length_percentage:
+            if p > percentage:
+                valid_path_percentage = False
+                break
+            p = percentage
+        assert valid_path_percentage and len(path_length_percentage) > 1, \
+            str(path_length_percentage_name) + " p={} are malformed!".format(path_length_percentage)
+    assert len(path_length_percentage_long) > len(path_length_percentage_short), \
+        "The number of long path length percentage p={} must be greater compared to the number of short path length " \
+        "percentage p={}!".format(path_length_percentage_long, path_length_percentage_short)
+
     index_mapping = [-1] * len(path_length_percentage_long)
     index_mapping[0] = 0
     index_mapping[-1] = len(path_length_percentage_short) - 1

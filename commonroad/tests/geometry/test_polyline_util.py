@@ -5,7 +5,7 @@ import numpy as np
 from commonroad.geometry import polyline_util
 from commonroad.geometry.polyline_util import compare_polylines_equality, is_point_on_polyline, \
     compute_polyline_intersections, resample_polyline_with_number, resample_polyline_with_distance, insert_vertices, \
-    merge_polylines
+    merge_polylines, create_indices_mapping
 
 
 class TestPolylineUtil(unittest.TestCase):
@@ -215,13 +215,13 @@ class TestPolylineUtil(unittest.TestCase):
     def test_insert_vertices(self):
         long_polylines = [np.array([[0., 0.], [1., 0.], [2., 0.], [3., 0.]]),
                           np.array([[0., 1.], [0., 2.], [0., 3.], [0., 4.], [0., 5.]]),
-                          np.array([[0., 0.], [4.5, 0.], [5., 0.], [9.5, 0.], [10., 0.]])]
+                          np.array([[0., 0.], [1., 0.], [4., 0.], [10., 0.]])]
         short_polylines = [np.array([[0., 1.], [1., 1.], [3., 1.]]),
                            np.array([[1., 1.], [1., 5.]]),
-                           np.array([[-1., 0.], [10., 0.]])]
+                           np.array([[0., 0.], [0.1, 0.], [0.2, 0.]])]
         expected_polylines = [np.array([[0., 1.], [1., 1.], [2., 1.], [3., 1.]]),
                               np.array([[1., 1.], [1., 2.], [1., 3.], [1., 4.], [1., 5.]]),
-                              np.array([[-1.0, 0.0], [3.95, 0.0], [4.5, 0.0], [9.45, 0.0], [10.0, 0.0]])]
+                              np.array([[0.0, 0.0], [0.025, 0.0], [0.1, 0.0], [0.2, 0.0]])]
 
         for i in range(0, len(long_polylines)):
             long_polyline = long_polylines[i]
@@ -234,6 +234,31 @@ class TestPolylineUtil(unittest.TestCase):
 
         with self.assertRaises(AssertionError):
             insert_vertices(long_polyline, short_polyline)
+
+    def test_create_mapping(self):
+        long_path_length_percentages = [np.array([0., 0.3333333, 1.]),
+                                        np.array([0., 0.3333333, 0.6666666, 1.]),
+                                        np.array([0., 0.05, 0.95, 1.])]
+        short_path_length_percentages = [np.array([0., 1.]),
+                                         np.array([0., 0.5, 1.]),
+                                         np.array([0., 0.99, 1.])]
+        expected_index_mappings = [[0, -1, 1], [0, 1, -1, 2], [0, -1, 1, 2]]
+
+        for i in range(0, len(long_path_length_percentages)):
+            long_path_length_percentage = long_path_length_percentages[i]
+            short_path_length_percentage = short_path_length_percentages[i]
+            expected_index_mapping = expected_index_mappings[i]
+            self.assertEqual(expected_index_mapping,
+                             create_indices_mapping(long_path_length_percentage, short_path_length_percentage))
+
+        with self.assertRaises(AssertionError):
+            create_indices_mapping(np.array([0., 0.5, 1.]), np.array([0., 0.75, 1.]))
+
+        with self.assertRaises(AssertionError):
+            create_indices_mapping(np.array([0., 0.5, 1.]), np.array([0.]))
+
+        with self.assertRaises(AssertionError):
+            create_indices_mapping(np.array([0., -0.5, 1.]), np.array([0., 1.]))
 
     def test_merge_polylines(self):
         left_polyline = np.array([[0., 0.], [1., 0.], [2., 0.], [3., 0], [4., 0]])

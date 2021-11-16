@@ -79,6 +79,6 @@ Polyline Utility Functions
 
 .. autofunction:: insert_vertices
 
-.. autofunction:: create_mapping
+.. autofunction:: create_indices_mapping
 
 .. autofunction:: merge_polylines
