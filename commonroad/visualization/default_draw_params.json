@@ -327,7 +327,7 @@
         "facecolor": "#c7c7c7"
     },
     "occupancy": {
-        "draw_occupancies": 0,
+        "draw_occupancies": false,
         "shape": {
             "polygon": {
                 "opacity": 0.2,
