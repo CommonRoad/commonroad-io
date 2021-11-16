@@ -4,7 +4,7 @@ from typing import List
 import numpy as np
 from shapely.geometry import LineString
 
-from commonroad.common.validity import is_valid_polyline, ValidTypes
+from commonroad.common.validity import is_valid_polyline
 
 
 def compute_polyline_lengths(polyline: np.ndarray) -> np.ndarray:
@@ -294,7 +294,8 @@ def insert_vertices(long_polyline: np.ndarray, short_polyline: np.ndarray) -> np
     return short_polyline
 
 
-def create_indices_mapping(path_length_percentage_long: np.ndarray, path_length_percentage_short: np.ndarray) -> List[int]:
+def create_indices_mapping(path_length_percentage_long: np.ndarray,
+                           path_length_percentage_short: np.ndarray) -> List[int]:
     """
     Extracts places (indices) where new vertices have to be added in shorter polyline.
 
