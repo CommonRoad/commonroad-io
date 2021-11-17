@@ -827,8 +827,12 @@ class MPRenderer(IRenderer):
         draw_arrow = draw_params.by_callstack(call_stack, 'draw_arrow')
         radius = draw_params.by_callstack(call_stack, 'radius')
         facecolor = draw_params.by_callstack(call_stack, 'facecolor')
+        zorder = draw_params.by_callstack(call_stack, 'zorder')
+        if zorder is None:
+            zorder = ZOrders.STATE
         self.obstacle_patches.append(
-                mpl.patches.Circle(state.position, radius=radius, zorder=ZOrders.STATE, color=facecolor))
+                mpl.patches.Circle(state.position, radius=radius, zorder=zorder, color=facecolor))
+
         if draw_arrow:
             cos = math.cos(state.orientation)
             sin = math.sin(state.orientation)
@@ -836,7 +840,7 @@ class MPRenderer(IRenderer):
             y = state.position[1]
             self.obstacle_patches.append(mpl.patches.FancyArrow(x=x, y=y, dx=state.velocity * cos * scale_factor,
                                                                 dy=state.velocity * sin * scale_factor,
-                                                                zorder=ZOrders.STATE, **arrow_args))
+                                                                zorder=zorder, **arrow_args))
 
     def draw_lanelet_network(self, obj: LaneletNetwork, draw_params: Union[ParamServer, dict, None],
                              call_stack: Tuple[str, ...]) -> None:
@@ -1285,7 +1289,6 @@ class MPRenderer(IRenderer):
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
-        call_stack = tuple(list(call_stack) + ['planning_problem'])
         self.draw_initital_state(obj.initial_state, draw_params, call_stack)
         self.draw_goal_region(obj.goal, draw_params, call_stack)
 
