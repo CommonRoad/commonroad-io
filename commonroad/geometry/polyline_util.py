@@ -316,7 +316,7 @@ def create_indices_mapping(path_length_percentage_long: np.ndarray,
                 break
             p = percentage
         assert valid_path_percentage and len(path_length_percentage) > 1, \
-            str(path_length_percentage_name) + " p={} are malformed!".format(path_length_percentage)
+            str(path_length_percentage_name) + " p={} is malformed!".format(path_length_percentage)
     assert len(path_length_percentage_long) > len(path_length_percentage_short), \
         "The number of long path length percentage p={} must be greater compared to the number of short path length " \
         "percentage p={}!".format(path_length_percentage_long, path_length_percentage_short)
@@ -352,7 +352,7 @@ def create_indices_mapping(path_length_percentage_long: np.ndarray,
 
 def merge_polylines(left_polyline: np.ndarray, right_polyline: np.ndarray) -> np.ndarray:
     """
-    Merges a left and right polyline. The vertices of the left polyline starts successively before the right one.
+    Merges a left and right polyline. The left polyline represents the first part of the merged polyline.
 
     :param left_polyline: Left polyline
     :param right_polyline: Right polyline
