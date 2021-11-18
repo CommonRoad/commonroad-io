@@ -247,7 +247,7 @@ def resample_polyline_with_distance(polyline: np.ndarray, distance: float) -> np
     return np.array(polyline_resampled)
 
 
-def insert_vertices(long_polyline: np.ndarray, short_polyline: np.ndarray) -> np.ndarray:
+def equalize_polyline_length(long_polyline: np.ndarray, short_polyline: np.ndarray) -> np.ndarray:
     """
     Inserts vertices into a polyline to be of the same length than other polyline.
 
@@ -269,7 +269,7 @@ def insert_vertices(long_polyline: np.ndarray, short_polyline: np.ndarray) -> np
     else:
         path_length_percentage_short = [0, 1]
 
-    index_mapping = create_indices_mapping(path_length_percentage_long, path_length_percentage_short)
+    index_mapping = _create_indices_mapping(path_length_percentage_long, path_length_percentage_short)
 
     org_polyline = short_polyline
     last_key = 0
@@ -295,9 +295,10 @@ def insert_vertices(long_polyline: np.ndarray, short_polyline: np.ndarray) -> np
 
 
 def create_indices_mapping(path_length_percentage_long: np.ndarray,
-                           path_length_percentage_short: np.ndarray) -> List[int]:
+                            path_length_percentage_short: np.ndarray) -> List[int]:
     """
     Extracts places (indices) where new vertices have to be added in shorter polyline.
+    Helper function for insert_vertices
 
     :param path_length_percentage_long: Proportional path length along longer polyline
     :param path_length_percentage_short: Proportional path length along shorter polyline
@@ -350,14 +351,14 @@ def create_indices_mapping(path_length_percentage_long: np.ndarray,
     return index_mapping
 
 
-def merge_polylines(left_polyline: np.ndarray, right_polyline: np.ndarray) -> np.ndarray:
+def concatenate_polylines(head: np.ndarray, tail: np.ndarray) -> np.ndarray:
     """
-    Merges a left and right polyline. The left polyline represents the first part of the merged polyline.
+    Concatenates two polylines. The head represents the first part of the new polyline.
 
-    :param left_polyline: Left polyline
-    :param right_polyline: Right polyline
+    :param head: First part of new polyline
+    :param tail: Second part of new polyline
     """
-    assert is_valid_polyline(left_polyline), "Left polyline p={} is malformed!".format(left_polyline)
-    assert is_valid_polyline(right_polyline), "Right polyline p={} is malformed!".format(right_polyline)
+    assert is_valid_polyline(head), "Left polyline p={} is malformed!".format(head)
+    assert is_valid_polyline(tail), "Right polyline p={} is malformed!".format(tail)
 
-    return np.concatenate((left_polyline, right_polyline), axis=0)
+    return np.concatenate((head, tail), axis=0)

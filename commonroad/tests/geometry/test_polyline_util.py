@@ -4,8 +4,8 @@ import numpy as np
 
 from commonroad.geometry import polyline_util
 from commonroad.geometry.polyline_util import compare_polylines_equality, is_point_on_polyline, \
-    compute_polyline_intersections, resample_polyline_with_number, resample_polyline_with_distance, insert_vertices, \
-    merge_polylines, create_indices_mapping
+    compute_polyline_intersections, resample_polyline_with_number, resample_polyline_with_distance, \
+    equalize_polyline_length, concatenate_polylines, create_indices_mapping
 
 
 class TestPolylineUtil(unittest.TestCase):
@@ -212,7 +212,7 @@ class TestPolylineUtil(unittest.TestCase):
         with self.assertRaises(AssertionError):
             resample_polyline_with_distance(polyline, 0)
 
-    def test_insert_vertices(self):
+    def test_equalize_polyline_length(self):
         long_polylines = [np.array([[0., 0.], [1., 0.], [2., 0.], [3., 0.]]),
                           np.array([[0., 1.], [0., 2.], [0., 3.], [0., 4.], [0., 5.]]),
                           np.array([[0., 0.], [1., 0.], [4., 0.], [10., 0.]])]
@@ -227,13 +227,14 @@ class TestPolylineUtil(unittest.TestCase):
             long_polyline = long_polylines[i]
             short_polyline = short_polylines[i]
             expected_polyline = expected_polylines[i]
-            self.assertEqual(expected_polyline.tolist(), insert_vertices(long_polyline, short_polyline).tolist())
+            self.assertEqual(expected_polyline.tolist(), equalize_polyline_length(long_polyline,
+                                                                                  short_polyline).tolist())
 
         long_polyline = np.array([[0., 0.], [4., 0.]])
         short_polyline = np.array([[0., 1.], [2., 1.], [4., 1.]])
 
         with self.assertRaises(AssertionError):
-            insert_vertices(long_polyline, short_polyline)
+            equalize_polyline_length(long_polyline, short_polyline)
 
     def test_create_mapping(self):
         long_path_length_percentages = [np.array([0., 0.3333333, 1.]),
@@ -260,13 +261,13 @@ class TestPolylineUtil(unittest.TestCase):
         with self.assertRaises(AssertionError):
             create_indices_mapping(np.array([0., -0.5, 1.]), np.array([0., 1.]))
 
-    def test_merge_polylines(self):
+    def test_concatenate_polylines(self):
         left_polyline = np.array([[0., 0.], [1., 0.], [2., 0.], [3., 0], [4., 0]])
         right_polyline = np.array([[5., 0], [6., 0.], [7., 0.]])
 
         expected_polyline = np.array([[0., 0.], [1., 0.], [2., 0.], [3., 0], [4., 0], [5., 0], [6., 0.], [7., 0.]])
 
-        self.assertEqual(expected_polyline.tolist(), merge_polylines(left_polyline, right_polyline).tolist())
+        self.assertEqual(expected_polyline.tolist(), concatenate_polylines(left_polyline, right_polyline).tolist())
 
 
 if __name__ == '__main__':
