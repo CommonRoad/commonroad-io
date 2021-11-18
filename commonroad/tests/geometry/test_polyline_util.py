@@ -4,7 +4,8 @@ import numpy as np
 
 from commonroad.geometry import polyline_util
 from commonroad.geometry.polyline_util import compare_polylines_equality, is_point_on_polyline, \
-    compute_polyline_intersections, resample_polyline_with_number, resample_polyline_with_distance
+    compute_polyline_intersections, resample_polyline_with_number, resample_polyline_with_distance, \
+    equalize_polyline_length, concatenate_polylines, create_indices_mapping
 
 
 class TestPolylineUtil(unittest.TestCase):
@@ -211,22 +212,62 @@ class TestPolylineUtil(unittest.TestCase):
         with self.assertRaises(AssertionError):
             resample_polyline_with_distance(polyline, 0)
 
-    def test_assert_valid_polyline(self):
-        polyline = [[0, 0], [1, 0], [2, 0]]
+    def test_equalize_polyline_length(self):
+        long_polylines = [np.array([[0., 0.], [1., 0.], [2., 0.], [3., 0.]]),
+                          np.array([[0., 1.], [0., 2.], [0., 3.], [0., 4.], [0., 5.]]),
+                          np.array([[0., 0.], [1., 0.], [4., 0.], [10., 0.]])]
+        short_polylines = [np.array([[0., 1.], [1., 1.], [3., 1.]]),
+                           np.array([[1., 1.], [1., 5.]]),
+                           np.array([[0., 0.], [0.1, 0.], [0.2, 0.]])]
+        expected_polylines = [np.array([[0., 1.], [1., 1.], [2., 1.], [3., 1.]]),
+                              np.array([[1., 1.], [1., 2.], [1., 3.], [1., 4.], [1., 5.]]),
+                              np.array([[0.0, 0.0], [0.025, 0.0], [0.1, 0.0], [0.2, 0.0]])]
+
+        for i in range(0, len(long_polylines)):
+            long_polyline = long_polylines[i]
+            short_polyline = short_polylines[i]
+            expected_polyline = expected_polylines[i]
+            self.assertEqual(expected_polyline.tolist(), equalize_polyline_length(long_polyline,
+                                                                                  short_polyline).tolist())
+
+        long_polyline = np.array([[0., 0.], [4., 0.]])
+        short_polyline = np.array([[0., 1.], [2., 1.], [4., 1.]])
+
         with self.assertRaises(AssertionError):
-            polyline_util.assert_valid_polyline(polyline)
+            equalize_polyline_length(long_polyline, short_polyline)
 
-        polylines = [np.array([[0, 0]]), np.array([[[0, 0], [1, 1]], [[2, 2], [3, 3]], [[4, 4], [5, 5]]]),
-                     np.array([[0, 0, 0], [1, 0], [2, 0]])]
+    def test_create_mapping(self):
+        long_path_length_percentages = [np.array([0., 0.3333333, 1.]),
+                                        np.array([0., 0.3333333, 0.6666666, 1.]),
+                                        np.array([0., 0.05, 0.95, 1.])]
+        short_path_length_percentages = [np.array([0., 1.]),
+                                         np.array([0., 0.5, 1.]),
+                                         np.array([0., 0.99, 1.])]
+        expected_index_mappings = [[0, -1, 1], [0, 1, -1, 2], [0, -1, 1, 2]]
 
-        for i in range(0, len(polylines)):
-            polyline = polylines[i]
-            with self.assertRaises(AssertionError):
-                polyline_util.assert_valid_polyline(polyline)
+        for i in range(0, len(long_path_length_percentages)):
+            long_path_length_percentage = long_path_length_percentages[i]
+            short_path_length_percentage = short_path_length_percentages[i]
+            expected_index_mapping = expected_index_mappings[i]
+            self.assertEqual(expected_index_mapping,
+                             create_indices_mapping(long_path_length_percentage, short_path_length_percentage))
 
-        polyline = np.array([[0, 0], [1, 1]])
         with self.assertRaises(AssertionError):
-            polyline_util.assert_valid_polyline(polyline, 3)
+            create_indices_mapping(np.array([0., 0.5, 1.]), np.array([0., 0.75, 1.]))
+
+        with self.assertRaises(AssertionError):
+            create_indices_mapping(np.array([0., 0.5, 1.]), np.array([0.]))
+
+        with self.assertRaises(AssertionError):
+            create_indices_mapping(np.array([0., -0.5, 1.]), np.array([0., 1.]))
+
+    def test_concatenate_polylines(self):
+        left_polyline = np.array([[0., 0.], [1., 0.], [2., 0.], [3., 0], [4., 0]])
+        right_polyline = np.array([[5., 0], [6., 0.], [7., 0.]])
+
+        expected_polyline = np.array([[0., 0.], [1., 0.], [2., 0.], [3., 0], [4., 0], [5., 0], [6., 0.], [7., 0.]])
+
+        self.assertEqual(expected_polyline.tolist(), concatenate_polylines(left_polyline, right_polyline).tolist())
 
 
 if __name__ == '__main__':
