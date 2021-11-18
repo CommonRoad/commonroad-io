@@ -20,9 +20,9 @@ class IntersectionIncomingElement:
     is valid for and to facilitate the calculation of priorities at intersections.
     The left incoming is used to infer the right-before-left-rule.
     """
+
     def __init__(self, incoming_id: int, incoming_lanelets: Set[int] = None, successors_right: Set[int] = None,
-                 successors_straight: Set[int] = None, successors_left: Set[int] = None,
-                 left_of: int = None):
+                 successors_straight: Set[int] = None, successors_left: Set[int] = None, left_of: int = None):
         """
         :param incoming_id: incoming element ID
         :param incoming_lanelets: set of IDs of incoming lanelets
@@ -39,6 +39,36 @@ class IntersectionIncomingElement:
         self.successors_straight = successors_straight
         self.successors_left = successors_left
         self._left_of = left_of
+
+    def __eq__(self, other):
+        if not isinstance(other, IntersectionIncomingElement):
+            warnings.warn(f"Inequality between IntersectionIncomingElement "
+                          f"{repr(self)} and different type {type(other)}")
+            return False
+
+        if self._incoming_id == other.incoming_id and self._incoming_lanelets == other.incoming_lanelets \
+                and self._successors_right == other.successors_right \
+                and self._successors_straight == other.successors_straight \
+                and self._successors_left == other.successors_left and self._left_of == other.left_of:
+            return True
+
+        warnings.warn(f"Inequality of IntersectionIncomingElement {repr(self)} and the other one {repr(other)}")
+        return False
+
+    def __hash__(self):
+        return hash((self._incoming_id, frozenset(self._incoming_lanelets), frozenset(self._successors_right),
+                     frozenset(self._successors_straight), frozenset(self._successors_left), self._left_of))
+
+    def __str__(self):
+        return f"IntersectionIncomingElement with id {self._incoming_id} represents the incoming " \
+               f"lanelets {self._incoming_lanelets} and has right successors {self._successors_right}, " \
+               f"straight successors {self._successors_straight}, and left successors {self._successors_left}"
+
+    def __repr__(self):
+        return f"IntersectionIncomingElement(incoming_id={self._incoming_id}, " \
+               f"incoming_lanelets={self._incoming_lanelets}, successors_right={self._successors_right}, " \
+               f"successors_straight={self._successors_straight}, successors_left={self._successors_left}, " \
+               f"left_of={self._left_of})"
 
     @property
     def incoming_id(self) -> int:
@@ -151,6 +181,7 @@ class Intersection:
     An intersection element is defined by at least one incoming and an optional crossing element.
     The crossing element models lanelets which cross other lanelets, e.g., these are usually lanelets of type crosswalk.
     """
+
     def __init__(self, intersection_id: int, incomings: List[IntersectionIncomingElement], crossings: Set[int] = None):
         """
         :param intersection_id: ID of intersection element
@@ -164,6 +195,39 @@ class Intersection:
         self.intersection_id = intersection_id
         self.incomings = incomings
         self.crossings = crossings
+
+    def __eq__(self, other):
+        if not isinstance(other, Intersection):
+            warnings.warn(f"Inequality between Intersection {repr(self)} and different type {type(other)}")
+            return False
+
+        list_elements_eq = True
+        incomings = {incoming.incoming_id: incoming for incoming in self._incomings}
+        incomings_other = {incoming.incoming_id: incoming for incoming in other.incomings}
+        intersection_eq = len(incomings) == len(incomings_other)
+        for k in incomings.keys():
+            if k not in incomings_other:
+                intersection_eq = False
+                continue
+            if incomings.get(k) != incomings_other.get(k):
+                list_elements_eq = False
+
+        if intersection_eq and self._intersection_id == other.intersection_id and self._crossings == other.crossings:
+            return list_elements_eq
+
+        warnings.warn(f"Inequality of Intersection {repr(self)} and the other one {repr(other)}")
+        return False
+
+    def __hash__(self):
+        return hash((self._intersection_id, frozenset(self._incomings), frozenset(self._crossings)))
+
+    def __str__(self):
+        return f"Intersection with id {self._intersection_id} consisting of {len(self._incomings)} incoming elements " \
+               f"and crossings {self._crossings}"
+
+    def __repr__(self):
+        return f"Intersection(intersection_id={self._intersection_id}, incomings={repr(self._incomings)}, " \
+               f"crossings={self._crossings})"
 
     @property
     def intersection_id(self) -> int:
@@ -198,7 +262,7 @@ class Intersection:
         """
         if self._incomings is None:
             assert len(incomings) > 0, '<Intersection/incomings>: Intersection ' \
-                                               'must consist of at least two incomings '
+                                       'must consist of at least two incomings '
             self._incomings = incomings
         else:
             warnings.warn('<Intersection/incomings>: incomings of intersection are immutable')

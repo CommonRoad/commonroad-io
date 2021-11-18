@@ -355,6 +355,15 @@ class Polygon(Shape):
         # ensure that vertices are sorted clockwise and the first and last point are the same
         self._vertices = np.array(shapely.geometry.polygon.orient(self._shapely_polygon, sign=-1.0).exterior.coords)
 
+    def __eq__(self, other):
+        if not isinstance(other, Polygon):
+            return False
+
+        thresh = 1e-10
+
+        return np.allclose(self._vertices, other.vertices, rtol=thresh, atol=thresh) \
+            and self._shapely_polygon == other.shapely_object
+
     @property
     def vertices(self) -> np.ndarray:
         """ Vertices of the polygon [[x_0, y_0], [x_1, y_1], ...]. The vertices are sorted clockwise and the
@@ -464,8 +473,7 @@ class ShapeGroup(Shape):
         if not hasattr(self, '_shapes'):
             assert isinstance(shapes, list) and all(isinstance(elem, Shape) for elem in
                                                     shapes), '<ShapeGroup/shapes>: argument "shapes" is not a valid ' \
-                                                             'list of shapes. shapes = {}'.format(
-                shapes)
+                                                             'list of shapes. shapes = {}'.format(shapes)
             self._shapes = shapes
         else:
             warnings.warn('<ShapeGroup/shapes>: shapes of shape group are immutable.')

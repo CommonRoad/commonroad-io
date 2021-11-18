@@ -533,13 +533,12 @@ class MPRenderer(IRenderer):
 
         # draw shape
         if draw_shape:
-            if time_begin < obj.initial_state.time_step <= time_end:
-                time_begin = obj.initial_state.time_step
             veh_occ = obj.occupancy_at_time(time_begin)
-            self._draw_occupancy(veh_occ, obj.initial_state, draw_params, call_stack + ('vehicle_shape',))
-            if draw_direction and veh_occ is not None and type(veh_occ.shape) == Rectangle:
-                v_tri = get_vehicle_direction_triangle(veh_occ.shape)
-                self.draw_polygon(v_tri, draw_params, call_stack + ('vehicle_shape', 'direction'))
+            if veh_occ is not None:
+                self._draw_occupancy(veh_occ, obj.initial_state, draw_params, call_stack + ('vehicle_shape',))
+                if draw_direction and veh_occ is not None and type(veh_occ.shape) == Rectangle:
+                    v_tri = get_vehicle_direction_triangle(veh_occ.shape)
+                    self.draw_polygon(v_tri, draw_params, call_stack + ('vehicle_shape', 'direction'))
 
         # draw signals
         if draw_signals and (draw_shape or draw_icon):
@@ -549,7 +548,7 @@ class MPRenderer(IRenderer):
                 self._draw_signal_state(sig, veh_occ, draw_params, call_stack)
 
         # draw occupancies
-        if (draw_occupancies == 1 or type(obj.prediction) == commonroad.prediction.prediction.SetBasedPrediction):
+        if draw_occupancies or type(obj.prediction) == commonroad.prediction.prediction.SetBasedPrediction:
             if draw_shape:
                 # occupancy already plotted
                 time_begin_occ = time_begin + 1
@@ -586,7 +585,7 @@ class MPRenderer(IRenderer):
                                                      zorder=ZOrders.LABELS))
 
         # draw initial state
-        if draw_initial_state:
+        if draw_initial_state and state is not None:
             state.draw(self, draw_params, call_stack)
 
     def draw_phantom_obstacle(self, obj: PhantomObstacle, draw_params: Union[ParamServer, dict, None],
@@ -828,8 +827,12 @@ class MPRenderer(IRenderer):
         draw_arrow = draw_params.by_callstack(call_stack, 'draw_arrow')
         radius = draw_params.by_callstack(call_stack, 'radius')
         facecolor = draw_params.by_callstack(call_stack, 'facecolor')
+        zorder = draw_params.by_callstack(call_stack, 'zorder')
+        if zorder is None:
+            zorder = ZOrders.STATE
         self.obstacle_patches.append(
-                mpl.patches.Circle(state.position, radius=radius, zorder=ZOrders.STATE, color=facecolor))
+                mpl.patches.Circle(state.position, radius=radius, zorder=zorder, color=facecolor))
+
         if draw_arrow:
             cos = math.cos(state.orientation)
             sin = math.sin(state.orientation)
@@ -837,7 +840,7 @@ class MPRenderer(IRenderer):
             y = state.position[1]
             self.obstacle_patches.append(mpl.patches.FancyArrow(x=x, y=y, dx=state.velocity * cos * scale_factor,
                                                                 dy=state.velocity * sin * scale_factor,
-                                                                zorder=ZOrders.STATE, **arrow_args))
+                                                                zorder=zorder, **arrow_args))
 
     def draw_lanelet_network(self, obj: LaneletNetwork, draw_params: Union[ParamServer, dict, None],
                              call_stack: Tuple[str, ...]) -> None:
@@ -1286,7 +1289,6 @@ class MPRenderer(IRenderer):
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
-        call_stack = tuple(list(call_stack) + ['planning_problem'])
         self.draw_initital_state(obj.initial_state, draw_params, call_stack)
         self.draw_goal_region(obj.goal, draw_params, call_stack)
 
