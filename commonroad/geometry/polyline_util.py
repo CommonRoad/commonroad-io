@@ -269,7 +269,7 @@ def equalize_polyline_length(long_polyline: np.ndarray, short_polyline: np.ndarr
     else:
         path_length_percentage_short = [0, 1]
 
-    index_mapping = _create_indices_mapping(path_length_percentage_long, path_length_percentage_short)
+    index_mapping = create_indices_mapping(path_length_percentage_long, path_length_percentage_short)
 
     org_polyline = short_polyline
     last_key = 0
@@ -295,7 +295,7 @@ def equalize_polyline_length(long_polyline: np.ndarray, short_polyline: np.ndarr
 
 
 def create_indices_mapping(path_length_percentage_long: np.ndarray,
-                            path_length_percentage_short: np.ndarray) -> List[int]:
+                           path_length_percentage_short: np.ndarray) -> List[int]:
     """
     Extracts places (indices) where new vertices have to be added in shorter polyline.
     Helper function for insert_vertices

@@ -77,8 +77,8 @@ Polyline Utility Functions
 
 .. autofunction:: resample_polyline_with_distance
 
-.. autofunction:: insert_vertices
+.. autofunction:: equalize_polyline_length
 
 .. autofunction:: create_indices_mapping
 
-.. autofunction:: merge_polylines
+.. autofunction:: concatenate_polylines
