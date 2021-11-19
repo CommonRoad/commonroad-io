@@ -145,7 +145,7 @@
       </xs:element>
     </xs:sequence>
     <xs:attribute name="benchmark_id" type="xs:string" use="required"/>
-    <xs:attribute name="date" type="xs:date"/>
+    <xs:attribute name="date" type="xs:dateTime"/>
     <xs:attribute name="computation_time" type="xs:float"/>
     <xs:attribute name="processor_name" type="xs:string"/>
   </xs:complexType>
