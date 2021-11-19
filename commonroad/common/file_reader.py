@@ -60,15 +60,17 @@ class CommonRoadFileReader:
     (1) a formal representation of the road network,
     (2) static and dynamic obstacles,
     (3) the planning problem of the ego vehicle(s). """
-    def __init__(self, filename: str):
+    def __init__(self, filename: str, key: str = None):
         """
         :param filename: full path + filename of the CommonRoad XML-file,
+        :param key: choose to read "roadNetwork", "obstaclesPlanning"
         """
         self._filename = filename
         self._tree = None
         self._dt = None
         self._benchmark_id = None
         self._meta_data = None
+        self.key = key
 
     def open(self, lanelet_assignment: bool = False) -> Tuple[Scenario, PlanningProblemSet]:
         """
@@ -100,7 +102,7 @@ class CommonRoadFileReader:
         :return: object of class scenario containing the road network and the obstacles
         """
         scenario = ScenarioFactory.create_from_xml_node(self._tree, self._dt, self._benchmark_id,
-                                                        self._commonroad_version, self._meta_data, lanelet_assignment)
+                                                        self._commonroad_version, self._meta_data, lanelet_assignment, self.key)
         return scenario
 
     def _open_planning_problem_set(self, lanelet_network: LaneletNetwork) \
@@ -145,7 +147,11 @@ class CommonRoadFileReader:
 
     def _get_dt(self) -> float:
         """ Reads the time step size of the time-discrete scenario."""
-        return float(self._tree.getroot().get('timeStepSize'))
+        if self.key != "roadNetwork":
+            dt = float(self._tree.getroot().get('timeStepSize'))
+        else:
+            dt = float(0.1)
+        return dt
 
     def _get_benchmark_id(self) -> str:
         """ Reads the unique CommonRoad benchmark ID of the scenario."""
@@ -185,7 +191,7 @@ class ScenarioFactory:
     """ Class to create an object of class Scenario from an XML element."""
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element, dt: float, benchmark_id: str, commonroad_version: str,
-                             meta_data: dict, lanelet_assignment: bool):
+                             meta_data: dict, lanelet_assignment: bool, key: str):
         """
         :param xml_node: XML element
         :param dt: time step size of the scenario
@@ -195,7 +201,8 @@ class ScenarioFactory:
         :return: CommonRoad scenario
         """
         if commonroad_version != '2018b':
-            meta_data["tags"] = TagsFactory.create_from_xml_node(xml_node)
+            if key != "roadNetwork":
+                meta_data["tags"] = TagsFactory.create_from_xml_node(xml_node)
             meta_data["location"] = LocationFactory.create_from_xml_node(xml_node)
         else:
             LaneletFactory._speed_limits = {}

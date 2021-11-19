@@ -352,8 +352,8 @@ class CommonRoadFileWriter:
 
         else: # write to one scenario
             print("Writing obstacles, roadnetwork and planning problem to one scenario file")   
-            self._add_all_objects_from_scenario()
             self._add_all_lanelets_from_scenario()
+            self._add_all_objects_from_scenario()
             self._add_all_planning_problems_from_planning_problem_set()
         
         if check_validity:

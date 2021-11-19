@@ -146,7 +146,7 @@ class CommonRoadNetworkReader:
     def _get_dt(self) -> float:
         """ Reads the time step size of the time-discrete scenario."""
         #return float(self._tree.getroot().get('timeStepSize'))
-        return float(0)
+        return float(0.1)
 
     def _get_benchmark_id(self) -> str:
         """ Reads the unique CommonRoad benchmark ID of the scenario."""
