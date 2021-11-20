@@ -29,18 +29,12 @@ from commonroad.visualization.renderer import IRenderer
 
 
 class State:
-    """ A state can be either exact or uncertain. Uncertain state elements
-    can be either of type
-        :class:`commonroad.common.util.Interval` or of type
-        :class:`commonroad.geometry.shape.Shape`. A
-        state is composed of several elements which are determined during
-        runtime. The possible state elements
-        are defined as slots, which comprise the necessary state elements to
-        describe the states of all CommonRoad
-        vehicle models:
+    """ A state can be either exact or uncertain. Uncertain state elements can be either of type
+        :class:`commonroad.common.util.Interval` or of type :class:`commonroad.geometry.shape.Shape`. As tate is
+        composed of several elements which are determined during runtime. The possible state elements are defined
+        as slots, which comprise the necessary state elements to describe the states of all CommonRoad vehicle models:
 
-        :ivar position: :math:`s_x`- and :math:`s_y`-position in a global
-        coordinate system. Exact positions
+        :ivar position: :math:`s_x`- and :math:`s_y`-position in a global coordinate system. Exact positions
             are given as numpy array [x, y], uncertain positions are given as :class:`commonroad.geometry.shape.Shape`
         :ivar orientation: yaw angle :math:`\Psi`. Exact values are given as real number, uncertain values are given as
             :class:`commonroad.common.util.AngleInterval`
@@ -48,7 +42,8 @@ class State:
             values are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar steering_angle: steering angle :math:`\delta` of front wheels. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar steering_angle_speed: steering angle speed :math:`\dot{\delta}` of front wheels. Exact values are given as real number,
+        :ivar steering_angle_speed: steering angle speed :math:`\dot{\delta}` of front wheels.
+            Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar yaw_rate: yaw rate :math:`\dot{\Psi}`. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`

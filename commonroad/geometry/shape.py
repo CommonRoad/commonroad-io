@@ -40,6 +40,7 @@ class Shape(IDrawable, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def contains_point(self, point: np.ndarray) -> bool:
+        """ Checks whether point is contained in shape."""
         pass
 
 
@@ -426,8 +427,7 @@ class Polygon(Shape):
         """ Checks if a point is contained in the polygon.
 
             :param point: 2D point
-            :return: true if the polygons’s interior or boundary intersects
-            with the given point, otherwise false
+            :return: true if the polygons’s interior or boundary intersects with the given point, otherwise false
         """
         assert is_real_number_vector(point, 2), '<Polygon/contains_point>: argument ' \
                                                 '"point" is ' \
