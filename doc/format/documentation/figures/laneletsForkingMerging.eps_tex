@@ -1,0 +1,68 @@
+%% Creator: Inkscape inkscape 0.91, www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'laneletsForkingMerging.eps' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{922.88000031bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.70368811)%
+    \put(0,0){\includegraphics[width=\unitlength]{laneletsForkingMerging.eps}}%
+    \put(0.06137309,0.55937933){\makebox(0,0)[lb]{\smash{\Huge lanelet 1}}}%
+    \put(0.06137309,0.44518386){\makebox(0,0)[lb]{\smash{\Huge lanelet 2}}}%
+    \put(0.03883495,0.06093967){\makebox(0,0)[lb]{\smash{\Huge lanelet 4}}}%
+    \put(0.28157862,0.18060723){\rotatebox{27.68996128}{\makebox(0,0)[lb]{\smash{\Huge lanelet 5}}}}%
+    \put(0.32056198,0.06093967){\makebox(0,0)[lb]{\smash{\Huge lanelet 6}}}%
+    \put(0.32055782,0.56278953){\rotatebox{-0.47267946}{\makebox(0,0)[lb]{\smash{\Huge lanelet 3}}}}%
+    \put(0.18099861,0.68854022){\makebox(0,0)[lb]{\smash{\Huge \textbf{correct}}}}%
+    \put(0.70398752,0.68854022){\makebox(0,0)[lb]{\smash{\Huge \textbf{not advisable}}}}%
+    \put(0.62569348,0.55937933){\makebox(0,0)[lb]{\smash{\Huge lanelet 7}}}%
+    \put(0.62569348,0.44518386){\makebox(0,0)[lb]{\smash{\Huge lanelet 8}}}%
+    \put(0.81986434,0.50902115){\rotatebox{-0.47267946}{\makebox(0,0)[lb]{\smash{\Huge lanelet 9}}}}%
+    \put(0.59275312,0.06093967){\makebox(0,0)[lb]{\smash{\Huge lanelet 10}}}%
+    \put(0.83549679,0.18060723){\rotatebox{27.68996128}{\makebox(0,0)[lb]{\smash{\Huge lanelet 11}}}}%
+    \put(0.87448006,0.06093967){\makebox(0,0)[lb]{\smash{\Huge lanelet 12}}}%
+  \end{picture}%
+\endgroup%

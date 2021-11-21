@@ -10,7 +10,7 @@ from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad.scenario.obstacle import ObstacleType, DynamicObstacle
 from commonroad.scenario.scenario import Scenario, ScenarioID
 from commonroad.scenario.trajectory import State, Trajectory
-from commonroad.tests.util import parallel_lanelets
+from tests.util import parallel_lanelets
 from commonroad.visualization import icons
 from commonroad.visualization.mp_renderer import MPRenderer
 
