@@ -1,5 +1,14 @@
 # Changelog
 
+## [2021.4] - 2021-X-X
+###Added
+- Polyline utility functions, e.g., resampling, path length, orientation, curvature, intersection
+- `__eq__` functions for LaneletNetwork and related classes (e.g., traffic sign, traffic light, stop line, etc.)
+
+### Fixed
+- Various small bug fixes
+
+
 ## [2021.3] - 2021-09-21
 ### Added
 - Spatial indexing via STRTree in LaneletNetwork for faster computation of lanelet queries via positions or shapes

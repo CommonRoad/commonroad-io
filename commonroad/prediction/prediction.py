@@ -63,8 +63,7 @@ class Occupancy(IDrawable):
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ Translates and rotates the occupied area.
 
-        :param translation: translation vector [x_off, y_off] in x- and
-        y-direction
+        :param translation: translation vector [x_off, y_off] in x- and y-direction
         :param angle: rotation angle in radian (counter-clockwise)
         """
         assert is_real_number_vector(translation,

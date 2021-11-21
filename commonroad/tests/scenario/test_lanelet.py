@@ -358,6 +358,135 @@ class TestLanelet(unittest.TestCase):
         lanelet.remove_predecessor(20)
         self.assertListEqual(lanelet.successor, [6])
 
+    def test_equality(self):
+        left_vertices = np.array([[0, 1], [1, 1], [8, 1]])
+        center_vertices = np.array([[0, .5], [1, .5], [8, .5]])
+        right_vertices = np.array([[0, 0], [1, 0], [8, 0]])
+        lanelet_id = 7
+
+        lanelet_1 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
+        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
+        self.assertTrue(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(np.array([[0, 1.00000000001], [1, 1], [8, 1]]), center_vertices, right_vertices, lanelet_id)
+        self.assertTrue(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(np.array([[0, 1.0001], [1, 1], [8, 1]]), center_vertices, right_vertices, lanelet_id)
+        self.assertFalse(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(left_vertices, np.array([[0, .5], [1, .49999999999], [8, .5]]), right_vertices, lanelet_id)
+        self.assertTrue(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(left_vertices, np.array([[0, .5], [1, .6], [8, .5]]), right_vertices, lanelet_id)
+        self.assertFalse(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(left_vertices, center_vertices, np.array([[0, 0], [1, 0], [7.999999999997, 0]]), lanelet_id)
+        self.assertTrue(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(left_vertices, center_vertices, np.array([[0, 0], [1, 0], [7.7, 0]]), lanelet_id)
+        self.assertFalse(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, 8)
+        self.assertFalse(lanelet_1 == lanelet_2)
+
+        predecessor = [3, 4]
+        successor = [6, 7, 8]
+        adjacent_left = 9
+        adjacent_left_same_dir = True
+        adjacent_right = 11
+        adjacent_right_same_dir = False
+
+        lanelet_1 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
+                            adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
+        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
+                            adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
+        self.assertTrue(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, [3], successor,
+                            adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
+        self.assertFalse(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, [4, 3], successor,
+                            adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
+        self.assertTrue(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, [2], adjacent_left,
+                            adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
+        self.assertFalse(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, [7, 8, 6],
+                            adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
+        self.assertTrue(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor, 1,
+                            adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
+        self.assertFalse(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
+                            adjacent_left, False, adjacent_right, adjacent_right_same_dir)
+        self.assertFalse(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
+                            adjacent_left, adjacent_left_same_dir, 2, adjacent_right_same_dir)
+        self.assertFalse(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
+                            adjacent_left, adjacent_left_same_dir, adjacent_right, True)
+        self.assertFalse(lanelet_1 == lanelet_2)
+
+    def test_hash(self):
+        left_vertices = np.array([[0, 1], [1, 1], [8, 1]])
+        center_vertices = np.array([[0, .5], [1, .5], [8, .5]])
+        right_vertices = np.array([[0, 0], [1, 0], [8, 0]])
+        lanelet_id = 7
+
+        lanelet_1 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
+        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
+        self.assertEqual(hash(lanelet_1), hash(lanelet_2))
+
+        right_vertices = np.array([[0, 0], [1, 0.0000000001], [8, 0]])
+        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
+        self.assertNotEqual(hash(lanelet_1), hash(lanelet_2))
+
+
+class TestStopLine(unittest.TestCase):
+    def test_equality(self):
+        stop_line_1 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
+        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
+        self.assertTrue(stop_line_1 == stop_line_2)
+
+        stop_line_2 = StopLine(np.array([0, 0.00000000001]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
+        self.assertTrue(stop_line_1 == stop_line_2)
+
+        stop_line_2 = StopLine(np.array([0, 0.005]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
+        self.assertFalse(stop_line_1 == stop_line_2)
+
+        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 0.99999999999]), LineMarking.SOLID, {1, 2}, {3, 4})
+        self.assertTrue(stop_line_1 == stop_line_2)
+
+        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1.05]), LineMarking.SOLID, {1, 2}, {3, 4})
+        self.assertFalse(stop_line_1 == stop_line_2)
+
+        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.DASHED, {1, 2}, {3, 4})
+        self.assertFalse(stop_line_1 == stop_line_2)
+
+        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2, 5}, {3, 4})
+        self.assertFalse(stop_line_1 == stop_line_2)
+
+        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3})
+        self.assertFalse(stop_line_1 == stop_line_2)
+
+        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID)
+        self.assertFalse(stop_line_1 == stop_line_2)
+
+    def test_hash(self):
+        stop_line_1 = StopLine(np.array([1, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
+        stop_line_2 = StopLine(np.array([1, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
+        self.assertEqual(hash(stop_line_1), hash(stop_line_2))
+
+        stop_line_2 = StopLine(np.array([1, 0]), np.array([-0.001, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
+        self.assertNotEqual(hash(stop_line_1), hash(stop_line_2))
+
 
 if __name__ == '__main__':
     unittest.main()

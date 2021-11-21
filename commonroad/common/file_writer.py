@@ -7,7 +7,6 @@ import pathlib
 import os
 from typing import Union, List, Set
 import numpy as np
-import decimal
 import warnings
 import re
 
@@ -168,7 +167,7 @@ class CommonRoadFileWriter:
         self.location = location if location is not None else scenario.location
         self.tags = tags if tags is not None else scenario.tags
         self.key = None
-        
+
         # set decimal precision
         precision.decimals = decimal_precision
 
@@ -260,7 +259,7 @@ class CommonRoadFileWriter:
         self._root_node.append(TagXMLNode.create_node(self.tags))
         for o in self.scenario.obstacles:
             self._root_node.append(ObstacleXMLNode.create_node(o))
-    
+
     def _add_all_lanelets_from_scenario(self):
         if self.location is not None:
             self._root_node.append(LocationXMLNode.create_node(self.location))
@@ -307,8 +306,8 @@ class CommonRoadFileWriter:
         self.key = key
 
         if filename is None:
-            filename = str(self.scenario.scenario_id)
-        
+            filename = str(self.scenario.scenario_id) + ".xml"
+
         # roadNetwork and obstaclePlanning filename
         if key != None:
             filename_key = filename + "_" + key
@@ -332,7 +331,7 @@ class CommonRoadFileWriter:
                 return
             else:
                 print('Replace file {}'.format(filename_key))
-        
+
         self._write_header()
 
         if self.key == 'obstaclesPlanning':
@@ -351,11 +350,11 @@ class CommonRoadFileWriter:
             self._add_all_lanelets_from_scenario()
 
         else: # write to one scenario
-            print("Writing obstacles, roadnetwork and planning problem to one scenario file")   
+            print("Writing obstacles, roadnetwork and planning problem to one scenario file")
             self._add_all_lanelets_from_scenario()
             self._add_all_objects_from_scenario()
             self._add_all_planning_problems_from_planning_problem_set()
-        
+
         if check_validity:
             # validate xml format
             self.check_validity_of_commonroad_file(self._dump(), self.key)
@@ -374,7 +373,7 @@ class CommonRoadFileWriter:
         Write a scenario without planning-problem. If file already exists, it will be overwritten of skipped.
 
         :param filename: filename of the xml output file. If 'None', the Benchmark ID is taken
-        :param OverwriteExistingFile: Specify whether an already existing file should be overwritten or skipped
+        :param overwrite_existing_file: Specify whether an already existing file should be overwritten or skipped
         :param key: define which type of .xml file
         :return: None
         """
@@ -382,7 +381,7 @@ class CommonRoadFileWriter:
 
         if filename is None:
             filename = str(self.scenario.scenario_id)
-        
+
         # roadNetwork and obstaclePlanning filename
         if key != None:
             filename_key = filename + "_" + key
@@ -444,7 +443,7 @@ class CommonRoadFileWriter:
         Args:
           commonroad_str: XML formatted string which should be checked.
         """
-        
+
         # change into road.xsd, obstacleplanning.xsd
         if key == 'roadNetwork':
             with open(
@@ -618,14 +617,14 @@ class LaneletXMLNode:
 
         lanelet_node.append(right_boundary)
 
-        for l in lanelet.predecessor:
+        for la in lanelet.predecessor:
             predecessor = etree.Element('predecessor')
-            predecessor.set('ref', str(l))
+            predecessor.set('ref', str(la))
             lanelet_node.append(predecessor)
 
-        for l in lanelet.successor:
+        for la in lanelet.successor:
             successor = etree.Element('successor')
-            successor.set('ref', str(l))
+            successor.set('ref', str(la))
             lanelet_node.append(successor)
 
         if lanelet.adj_left:
@@ -876,7 +875,7 @@ class DynamicObstacleXMLNode:
     def _create_signal_series_node(cls, signal_series: List[SignalState]) -> etree.Element:
         """
         Create XML-Node for a Trajectory
-        :param trajectory: trajectory for creating a node
+        :param signal_series: list of signal states
         :return: node
         """
         series_node = etree.Element('signalSeries')
@@ -935,7 +934,7 @@ class ShapeXMLNode:
 
     @classmethod
     def _create_single_element(
-        cls, shape: Shape, dynamic_obstacle_shape: bool
+        cls, shape: Union[Shape, Circle, Rectangle, Polygon], dynamic_obstacle_shape: bool
     ) -> etree.Element:
         """
         Create XML-Node for a single shape element
@@ -1097,19 +1096,15 @@ class StateXMLNode:
         :return: node
         """
         if len(goal_lanelet_ids) > 0:
-            for id in goal_lanelet_ids:
+            for la_id in goal_lanelet_ids:
                 lanelet = etree.Element('lanelet')
-                lanelet.set('ref', str(id))
+                lanelet.set('ref', str(la_id))
                 node.append(lanelet)
         elif isinstance(position, int):
             lanelet = etree.Element('lanelet')
             lanelet.set('ref', str(position))
             node.append(lanelet)
-        elif(
-            isinstance(position, Rectangle)
-            or isinstance(position, Circle)
-            or isinstance(position, Polygon)
-            ):
+        elif isinstance(position, Rectangle) or isinstance(position, Circle) or isinstance(position, Polygon):
             node.extend(ShapeXMLNode.create_node(position))
         elif isinstance(position, ShapeGroup):
             node.extend(ShapeXMLNode.create_node(position))
@@ -1166,6 +1161,7 @@ class StateXMLNode:
         Create XML-Node for a state
         :param state: value of the state
         :param state_node: node of the overlying state
+        :param time_step: time step for which state should be created
         :return: node
         """
 
