@@ -447,13 +447,13 @@ class CommonRoadFileWriter:
         # change into road.xsd, obstacleplanning.xsd
         if key == 'roadNetwork':
             with open(
-                os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadRoadNetwork_schema.xsd',
+                os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadRoadStatic_schema.xsd',
                 'rb',
             ) as schema_file:
                 schema = etree.XMLSchema(etree.parse(schema_file))
         elif key == 'obstaclesPlanning':
             with open(
-                os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadObstaclesPlanningProblem_schema.xsd',
+                os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadDynamic_schema.xsd',
                 'rb',
             ) as schema_file:
                 schema = etree.XMLSchema(etree.parse(schema_file))

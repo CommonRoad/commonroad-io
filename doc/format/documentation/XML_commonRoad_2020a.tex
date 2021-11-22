@@ -172,18 +172,18 @@
 \begin{document}
 
 \mbox{} \vspace{0.8cm} \mbox{}
-\begin{center} {\Huge\textbf{CommonRoad: Documentation of the XML Format} \\[0.3cm] \huge(Version 3.0)} \end{center}
+\begin{center} {\Huge\textbf{CommonRoad: Documentation of the Format} \\[0.3cm] \huge(Version 3.0)} \end{center}
 \vspace{0.2cm}
-\begin{center} {\large Sebastian Maierhofer, Markus Koschi, Anna-Katharina Rettinger, Stefanie Manzinger, and Matthias Althoff} \\[0.2cm] Technische Universit\"at M\"unchen, 85748 Garching, Germany
+\begin{center} {\large Sebastian Maierhofer, Markus Koschi, Anna-Katharina Rettinger, Stefanie Manzinger, and Matthias Althoff} \\[0.2cm] Technical University of Munich, 85748 Garching, Germany
 \end{center}
 \vspace{0.2cm}
 
 \noindent
 
 \begin{abstract}
-This document presents the XML format in \textit{CommonRoad} for specifying road traffic scenarios. 
+This document presents the \textit{CommonRoad} (XML) format  for specifying road traffic scenarios. 
 %The provided scenarios in \textit{CommonRoad} are described in the scenario documentation.
-The \textit{CommonRoad} XML files are composed of (1) meta information about the scenario, (2) a formal representation of the road network, (3) static and dynamic obstacles, and (4) the planning problem for the ego vehicle(s). %In order to unambiguously represent traffic scenarios, we have developed the \textit{CommonRoad} XML format. %based on the OpenStreetMap (OSM) format so that we can use road data from OSM.
+The \textit{CommonRoad} format is composed of (1) meta information about the scenario, (2) a formal representation of the road network, (3) static and dynamic obstacles, and (4) the planning problem for the ego vehicle(s). %In order to unambiguously represent traffic scenarios, we have developed the \textit{CommonRoad} XML format. %based on the OpenStreetMap (OSM) format so that we can use road data from OSM.
 %In order to use road data from OpenStreetMap (OSM) for the road network and visualize it using standard software, our XML format is based on the OSM format. 
 So far, we have not discovered any limitations when building scenarios using the proposed format.
 \end{abstract}
@@ -211,12 +211,12 @@ A visualization of all scenarios is on our website\footnote{\href{https://common
 Since CommonRoad version 3.0, a CommonRoad scenario is represented by two XML files instead of a single file.
 We have separated the static and dynamic information. 
 As a brief introduction, the following snippet shows the two \textit{CommonRoad} XML files. Each file consists of an XML header (XML version and encoding type) and the \textit{CommonRoad} root element. The first file represents the static data which consists of location, lanelets, traffic signs, traffic lights, intersection elements:
-\begin{lstlisting}
+\begin{lstlisting}[language=XML]
 <?xml version="1.0" encoding="utf-8"?>
-<commonRoad commonRoadVersion='3.0' benchmarkID='short_benchmark_id' 
-date='2022-02-01' author="Sebastian Maierhofer" affiliation="Technical University of 
-Munich, Germany" source="Next Generation Simulation (NGSIM) and OpenStreetMaps 
-(OSM)" timeStepSize='0.1'>
+<commonRoad commonRoadVersion='3.0' benchmarkID="static_benchmark_id" 
+date="2022-02-01" author="Sebastian Maierhofer" 
+affiliation="Technical University of Munich, Germany" source="OpenStreetMap (OSM)" 
+sourceLink="https://www.openstreetmap.org"  license="GNU GPLv3">
     <location>
     	...
     </location>
@@ -239,12 +239,14 @@ Munich, Germany" source="Next Generation Simulation (NGSIM) and OpenStreetMaps
 </commonRoad>
 \end{lstlisting}
 The second file represents the dynamic data which includes, static and dynamic obstacles, and planning problems:
-\begin{lstlisting}
-	<?xml version="1.0" encoding="utf-8"?>
-	<commonRoad commonRoadVersion='3.0' benchmarkID='long_benchmark_id' 
-	date='2022-02-01' author="Sebastian Maierhofer" affiliation="Technical University of 
-	Munich, Germany" source="Next Generation Simulation (NGSIM) and OpenStreetMaps 
-	(OSM)" timeStepSize='0.1'>
+\begin{lstlisting}[language=XML]
+<?xml version="1.0" encoding="utf-8"?>
+<commonRoad commonRoadVersion="3.0" benchmarkID="dynamic_benchmark_id" 
+date="2022-02-01" author="Sebastian Maierhofer" 
+affiliation="Technical University of Munich, Germany" 
+source="Simulation of Urban MObility (SUMO)" timeStepSize="0.1"  
+sourceLink="https://www.openstreetmap.org"  
+license="GNU GPLv3">
 	<scenarioTags>
 	...
 	</scenarioTags>
@@ -271,6 +273,7 @@ For a quick reference, we summarize the major changes of version 3.0 compared to
 \item New intersection definition
 \item Separation of static and dynamic information into two files
 \item New scenario version definition
+\item Additional root element attributes for link to scenario source and license
 \end{itemize}
 
 \section{Specification of the XML Format}
@@ -287,7 +290,7 @@ All variables are given by decimal numbers based on SI units. We use a common Ca
 If a scenario is only defined in a two-dimensional plane (which is often the case), we use the convention that all z-coordinates are zero.
 Angles are measured counter-clockwise around the positive z-axis with the zero angle along the x-axis.
 
-The overall structure of the XML definition is shown by Fig.~\ref{fig:XMLstructure}. 
+The overall structure of the XML definition is shown by Fig.~\ref{fig:XMLstructureStatic} and Fig.~\ref{fig:XMLstructureDynamic}. 
 The \textit{CommonRoad} root element contains one or more elements of type \textit{lanelet}, \textit{staticObstacle}, \textit{dynamicObstacle}, \textit{trafficSign}, \textit{trafficLight}, \textit{intersection}, and \textit{planningProblem}. 
 Each has a unique\footnote{Unique within the whole XML document.} ID (of type positive integer) making it possible to reference it. 
 Additionally, the root element contains a \textit{location} and \textit{tag} to describe a scenario.
@@ -385,7 +388,7 @@ If an element is omitted (number of allowed elements is $ \geq 0$), the default 
 
 \subsection{Meta Information Describing CommonRoad Scenarios}\label{subsec:meta}
 \subsubsection{CommonRoad Root Element} \label{subsubsec:root_element}
-The \textit{CommonRoad} root element has the following attributes (its elements are shown in Fig.~\ref{fig:XMLstructureStatic} and Fig.~\ref{fig:XMLstructureDynamic}):
+The \textit{CommonRoad} root element has the following attributes (its elements are shown in Fig.~\ref{fig:XMLstructureStatic} and Fig.~\ref{fig:XMLstructureDynamic}), where the timeStepSize is not present in files representing static information:
 \begin{itemize}
 \item \texttt{commonRoadVersion}: version of the XML specification,
 \item \texttt{benchmarkID}: benchmark ID of the scenario (see Sec.~\ref{subsec:id}),
@@ -393,6 +396,8 @@ The \textit{CommonRoad} root element has the following attributes (its elements 
 \item \texttt{author}: author(s) of the scenario in alphabetic order,
 \item \texttt{affiliation}: affiliation of the author(s), e.g., name and country of the university or company,
 \item \texttt{source}: if applicable, description of the data source of the scenario, e.g., name of dataset or map service,
+\item \texttt{sourceLink}: link(s) to source of the scenario,
+\item \texttt{license}: name or link to license of scenario,
 \item \texttt{timeStepSize}: global step size of the time-discrete scenario. %The property \textit{timeStepSize} defines the global step size since we use discrete time steps to save time-dependent information. 
 \end{itemize}
 
@@ -411,7 +416,11 @@ If a scenario is based on an artificial road network, we use ZAM for Zamunda\foo
 \paragraph{PRED} = $\{$S,T,P$\}$-$\{1$-$9\}^*$ specifies the future behavior of the obstacles, i.e. their prediction, where S = set-based occupancies, T = single trajectories, P = probability distributions, appended by an integer to distinguish predictions on the same initial configuration but with different prediction parameters. 
 If no prediction is used (i.e. the scenario has no dynamic obstacles), we omit the element PRED in the benchmark ID.
 
-\paragraph{Version} = $\{0$-$9\}^*$-$\{0$-$9\}^*$-$\{0$-$9\}^*$ specifies the scenario version. The first two numbers represent the CommonRoad version. The last number is optional and represents minor updates in the scenario itself, e.g., if a small bug is fixed. Note that before CommonRoad version 3.0, we had a different the naming convention of the scenario version. We changed the CommonRoad version ID from year-based to number-based. Tab. \ref{tab:scenario_version_ids} maps the year-based version representation to a number-based for versions. 
+\paragraph{Version} = $\{0$-$9\}^*$-$\{0$-$9\}^*$-$\{0$-$9\}^*$ specifies the scenario version. 
+The first number represents the major revision and the second number the minor revision of the CommonRoad scenario version ID (see \ref{tab:scenario_version_ids}). 
+Scenarios with the same major revision number are compatible. 
+The last number is optional and represents minor updates in the scenario itself, e.g., if a small bug in the lanelet vertices is fixed. Note that before CommonRoad version 3.0, we had a different naming convention of the scenario version. We changed the CommonRoad version ID from year-based to number-based. 
+Tab. \ref{tab:scenario_version_ids} maps the year-based version representation to a number-based for versions. 
 \begin{table}[!htb]\centering
 	\caption{Year-base with corresponding number-based version.}
 	\ra{1.3} 
