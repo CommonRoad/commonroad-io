@@ -9,7 +9,7 @@ Shape
    :parts: 1
 
 ``Shape`` class
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
 .. autoclass:: Shape
    :members:
 
