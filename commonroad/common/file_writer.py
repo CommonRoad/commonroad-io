@@ -897,10 +897,10 @@ class RectangleXMLNode:
 
             center_node = etree.Element('center')
             x_node = etree.Element('x')
-            x_node.text = str(np.float64(rectangle.center[0]))
+            x_node.text = float_to_str(np.float64(rectangle.center[0]))
             center_node.append(x_node)
             y_node = etree.Element('y')
-            y_node.text = str(np.float64(rectangle.center[1]))
+            y_node.text = float_to_str(np.float64(rectangle.center[1]))
             center_node.append(y_node)
             rectangle_node.append(center_node)
         return rectangle_node
@@ -926,10 +926,10 @@ class CircleXMLNode:
         if not dynamic_obstacle_shape:
             center_node = etree.Element('center')
             x_node = etree.Element('x')
-            x_node.text = str(np.float64(circle.center[0]))
+            x_node.text = float_to_str(np.float64(circle.center[0]))
             center_node.append(x_node)
             y_node = etree.Element('y')
-            y_node.text = str(np.float64(circle.center[1]))
+            y_node.text = float_to_str(np.float64(circle.center[1]))
             center_node.append(y_node)
             circle_node.append(center_node)
         return circle_node
