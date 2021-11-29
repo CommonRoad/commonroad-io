@@ -1415,7 +1415,7 @@ class MPRenderer(IRenderer):
         #draw_continuous = draw_params.by_callstack(call_stack, 'draw_continuous')
         z_order = draw_params.by_callstack(call_stack, 'z_order')
 
-        self.dynamic_collections.append(
+        self.static_collections.append(
                     collections.EllipseCollection(np.ones([obj.shape[0], 1]) * line_width,
                                                   np.ones([obj.shape[0], 1]) * line_width,
                                                   np.zeros([obj.shape[0], 1]), offsets=obj, units='xy',
