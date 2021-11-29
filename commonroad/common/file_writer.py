@@ -34,6 +34,8 @@ __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
+from commonroad_route_planner.route_planner import RoutePlanner
+
 
 class DecimalPrecision:
     decimals = 4
@@ -1000,6 +1002,8 @@ class StateXMLNode:
             state_node.append(slip_angle)
         return state_node
 
+
+
     @classmethod
     def _write_goal_position(
         cls, node: etree.Element, position: Union[Shape, int, list], goal_lanelet_ids: List[int],
@@ -1129,10 +1133,28 @@ class StateXMLNode:
             state_node.append(slip_angle)
         return state_node
 
+    @classmethod
+    def create_reference_path_node(cls, scenario: Scenario, planning_problem: PlanningProblem) -> etree.Element:
+        route_planner = RoutePlanner(scenario, planning_problem, backend=RoutePlanner.Backend.NETWORKX_REVERSED)
+        candidate_holder = route_planner.plan_routes()
+        route = candidate_holder.retrieve_best_route_by_orientation()
+        reference_path = route.reference_path
+
+        state_node = etree.Element('referencePath')
+        for coordinates in reference_path.array:
+            position = etree.Element('position')
+            position_X = etree.Element('x')
+            position_X.set('ref', str(coordinates[0]))
+            position_Y = etree.Element('y')
+            position_Y.set('ref', str(coordinates[1]))
+            position.extend(position_X, position_Y)
+            state_node.append(position)
+
+
 
 class PlanningProblemXMLNode:
     @classmethod
-    def create_node(cls, planning_problem: PlanningProblem) -> etree.Element:
+    def create_node(cls, planning_problem: PlanningProblem, scenario: Scenario) -> etree.Element:
         """
         Create a xml-Node for a single planning_problem
         :param planning_problem: planning problem for creating the node
@@ -1164,7 +1186,14 @@ class PlanningProblemXMLNode:
                 StateXMLNode.create_goal_state_node(goal_state, goal_lanelet_ids)
             )
 
+
+        planning_problem_node.append(
+                StateXMLNode.create_reference_path_node(scenario,planning_problem)
+        )
+
+
         return planning_problem_node
+
 
 
 class Point:

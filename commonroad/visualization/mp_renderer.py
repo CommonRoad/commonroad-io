@@ -10,6 +10,7 @@ import matplotlib.colors
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import matplotlib.text as text
+import numpy as np
 from matplotlib.animation import FuncAnimation
 from matplotlib.colors import hsv_to_rgb, rgb_to_hsv, to_rgb, to_hex
 from matplotlib.path import Path
@@ -433,6 +434,45 @@ class MPRenderer(IRenderer):
             obs = obj.obstacles
         # Draw all objects
         for o in obs:
+            """
+            myPredictt = o.prediction
+            myTrajectt = myPredictt.trajectory
+            mySList = myTrajectt.state_list
+            firstElenList = mySList[0]
+            posElem = firstElenList.position
+            xCoord = posElem[0]
+            yCoord = posElem[1]
+            
+            xValues = []
+            yValues = []
+            if isinstance(o,DynamicObstacle):
+                for i in range(0,len(o.prediction.trajectory.state_list) - 1):
+
+                    leftPoint = o.prediction.trajectory.state_list[i]
+                    rightPoint = o.prediction.trajectory.state_list[i+1]
+
+                    x1 = leftPoint.position[0]
+                    y1 = leftPoint.position[1]
+                    x2 = rightPoint.position[0]
+                    y2 = rightPoint.position[1]
+                    if i == 0:
+                        xValues += [x1]
+                        xValues += [x2]
+                        yValues += [y1]
+                        yValues += [y2]
+                    else:
+                        xValues += [x2]
+                        yValues += [y2]
+
+                #draw lines
+
+                plt.plot(xValues, yValues, zorder=200)
+                plt.show()
+                self.dynamic_collections.append(collections.LineCollection(zip(xValues,yValues)))
+                plt.plot([0,150],[0,75])
+                self.dynamic_collections.append(collections.LineCollection([(0,0),(150,75)]))
+                plt.show()
+                """
             o.draw(self, draw_params, call_stack)
 
     def draw_static_obstacle(self, obj: StaticObstacle, draw_params: Union[ParamServer, dict, None],
@@ -1289,6 +1329,8 @@ class MPRenderer(IRenderer):
         call_stack = tuple(list(call_stack) + ['planning_problem'])
         self.draw_initital_state(obj.initial_state, draw_params, call_stack)
         self.draw_goal_region(obj.goal, draw_params, call_stack)
+        self.draw_reference_path(obj.reference_path, draw_params, call_stack)
+        self.draw_intermediate_goals(obj.intermediate_goals, draw_params, call_stack)
 
     def draw_initital_state(self, obj: State, draw_params: Union[ParamServer, dict, None],
                             call_stack: Tuple[str, ...]) -> None:
@@ -1347,8 +1389,46 @@ class MPRenderer(IRenderer):
             if type(obj.position) == list:
                 for pos in obj.position:
                     pos.draw(self, draw_params, call_stack)
+            elif type(obj.position) == np.ndarray:
+                self.draw_goal_line(obj.position,draw_params, call_stack)
             else:
                 obj.position.draw(self, draw_params, call_stack)
+
+
+    def draw_goal_line(self, obj: np.ndarray,draw_params: Union[ParamServer, dict, None],
+                         call_stack: Tuple[str, ...]) -> None:
+        draw_params = self._get_draw_params(draw_params)
+        call_stack = call_stack + ('shape', 'line',)
+        facecolor = draw_params.by_callstack(call_stack, 'facecolor')
+        linewidth = draw_params.by_callstack(call_stack, 'linewidth')
+        zorder = draw_params.by_callstack(call_stack, 'zorder')
+        line = collections.LineCollection([obj], linewidths=linewidth, facecolors=facecolor, zorder=zorder)
+        self.static_collections.append(line)
+
+    def draw_reference_path(self, obj: np.ndarray, draw_params: Union[ParamServer, dict, None],
+                         call_stack: Tuple[str, ...]) -> None:
+        draw_params = self._get_draw_params(draw_params)
+        call_stack = call_stack + ('reference_path',)
+
+        face_color = draw_params.by_callstack(call_stack, 'facecolor')
+        line_width = draw_params.by_callstack(call_stack, 'line_width')
+        #draw_continuous = draw_params.by_callstack(call_stack, 'draw_continuous')
+        z_order = draw_params.by_callstack(call_stack, 'z_order')
+
+        self.dynamic_collections.append(
+                    collections.EllipseCollection(np.ones([obj.shape[0], 1]) * line_width,
+                                                  np.ones([obj.shape[0], 1]) * line_width,
+                                                  np.zeros([obj.shape[0], 1]), offsets=obj, units='xy',
+                                                  linewidths=line_width, zorder=z_order, transOffset=self.ax.transData,
+                                                  facecolors=face_color))
+
+    def draw_intermediate_goals(self, obj: GoalRegion, draw_params: Union[ParamServer, dict, None],
+                         call_stack: Tuple[str, ...]) -> None:
+        draw_params = self._get_draw_params(draw_params)
+        for state in obj.state_list:
+            if hasattr(state, 'position'):
+                self.draw_goal_line(state.position,draw_params, call_stack)
+
 
     def draw_traffic_light_sign(self, obj: Union[TrafficLight, TrafficSign],
                                 draw_params: Union[ParamServer, dict, None], call_stack: Tuple[str, ...]):

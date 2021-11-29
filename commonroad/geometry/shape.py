@@ -442,8 +442,31 @@ class Polygon(Shape):
     def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_polygon(self.vertices, draw_params, call_stack)
+"""
+class LineString(Shape):
+    def __init__(self, vertices: np.ndarray):
+        ""
+        param vertices: of ordered vertices of the polygon [[x_0, y_0], [x_1, y_1], ...]
+        ""
+        self.vertices: np.ndarray = vertices
+       self._shapely_line_string: shapely.geometry.LineString = shapely.geometry.LineString(self._vertices)
+
+    @property
+    def vertices(self) -> np.ndarray:
+        ""Vertices of the polygon [[x_0, y_0], [x_1, y_1], ...]. The vertices are sorted clockwise and the
+            first and last point are the same.
+        ""
+        return self._vertices
 
 
+    @property
+    def shapely_object(self) -> shapely.geometry.LineString:
+        return self._shapely_line_string
+
+    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
+             call_stack: Optional[Tuple[str, ...]] = tuple()):
+        renderer.draw_polygon(self.vertices, draw_params, call_stack)
+"""
 class ShapeGroup(Shape):
     """ The class ShapeGroup represents a collection of primitive shapes, e.g., rectangles and polygons,
     which can be used to model occupied regions."""
@@ -529,6 +552,14 @@ class ShapeGroup(Shape):
         for s in self._shapes:
             s.draw(renderer, draw_params, call_stack)
 
+    @vertices.setter
+    def vertices(self, vertices: np.ndarray):
+        if not hasattr(self, '_vertices'):
+            assert is_valid_polyline(vertices), '<LineString/vertices>: argument "vertices" is not valid. vertices = ' \
+                                                '{}'.format(vertices)
+            self._vertices = vertices
+        else:
+            warnings.warn('<LineString/vertices>: vertices of polygon are immutable.')
 
 def occupancy_shape_from_state(shape, state):
     if state.is_uncertain_position or state.is_uncertain_orientation:

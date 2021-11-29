@@ -3,9 +3,16 @@ from typing import Dict
 from xml.etree import ElementTree
 from abc import ABC
 
+import numpy as np
+
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.util import Interval, AngleInterval
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
+
+#from commonroad.planning.extended_planning_problem import ExtendedPlanningProblemSet
+#from commonroad_route_planner.route_planner import RoutePlanner
+
+
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
@@ -17,6 +24,7 @@ from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Locat
 from commonroad.scenario.trajectory import State, Trajectory
 from commonroad.scenario.traffic_sign import *
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
+
 
 
 __author__ = "Stefanie Manzinger, Sebastian Maierhofer"
@@ -53,6 +61,8 @@ def read_time(xml_node: ElementTree.Element) -> Union[int, Interval]:
     else:
         raise Exception()
     return value
+
+
 
 
 class CommonRoadFileReader:
@@ -113,6 +123,7 @@ class CommonRoadFileReader:
         planning_problem_set = PlanningProblemSetFactory.create_from_xml_node(
             self._tree, lanelet_network)
         return planning_problem_set
+
 
     def _read_header(self):
         """ Parses the CommonRoad XML-file into element tree; reads the global time step size of the time-discrete
@@ -1269,40 +1280,88 @@ class PolygonFactory:
 
 
 class PlanningProblemSetFactory:
+    """
+    @classmethod
+    def create_reference_path_node(cls, scenario: Scenario, planning_problem: PlanningProblem) -> ElementTree.Element:
+        route_planner = RoutePlanner(scenario, planning_problem, backend=RoutePlanner.Backend.NETWORKX_REVERSED)
+        candidate_holder = route_planner.plan_routes()
+        route = candidate_holder.retrieve_best_route_by_orientation()
+        reference_path = route.reference_path
+        state_node = ElementTree.Element('referencePath')
+        for coordinates in reference_path.tolist():
+            position = ElementTree.Element('position')
+            position_X = ElementTree.Element('x')
+            position_X.text = str(coordinates[0])
+            position_Y = ElementTree.Element('y')
+            position_Y.text = str(coordinates[1])
+            position.append(position_X)
+            position.append(position_Y)
+            state_node.append(position)
+        return state_node
+    """
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) \
             -> PlanningProblemSet:
         planning_problem_set = PlanningProblemSet()
         for p in xml_node.findall('planningProblem'):
+            planning_problem = PlanningProblemFactory.create_from_xml_node(p, lanelet_network)
+            #p.append(cls.create_reference_path_node(scenario, planning_problem))
+            #extend_planning_problem = PlanningProblemFactory.create_from_xml_node(p, lanelet_network)
             planning_problem_set.add_planning_problem(
-                PlanningProblemFactory.create_from_xml_node(p, lanelet_network))
+                planning_problem)
         return planning_problem_set
-
 
 class PlanningProblemFactory:
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) \
             -> PlanningProblem:
         planning_problem_id = int(xml_node.get('id'))
-        initial_state = cls._add_initial_state(xml_node)
-        goal_region = GoalRegionFactory.create_from_xml_node(xml_node, lanelet_network)
-        return PlanningProblem(planning_problem_id, initial_state, goal_region)
+        reference_path = cls._add_reference_path(xml_node)
+        initial_state = cls._add_initial_state(xml_node, reference_path)
+        intermediate_goals = IntermediateGoalFactory.create_from_xml_node(xml_node, reference_path)
+        goal_region = GoalRegionFactory.create_from_xml_node(xml_node, lanelet_network, reference_path)
+        return PlanningProblem(reference_path, planning_problem_id, initial_state, intermediate_goals, goal_region) #, CommonRoadFileReader._open_scenario()
 
     @classmethod
-    def _add_initial_state(cls, xml_node: ElementTree.Element) \
+    def _add_initial_state(cls, xml_node: ElementTree.Element, reference_path: np.ndarray) \
             -> State:
-        initial_state = StateFactory.create_from_xml_node(xml_node.find('initialState'))
+        initial_state = StateFactory.create_from_xml_node(xml_node.find('initialState'), reference_path=reference_path)
         return initial_state
 
+    @classmethod
+    def _add_reference_path(cls, xml_node: ElementTree.Element)\
+            -> np.ndarray:
+        if xml_node.find('referencePath') is None:
+            return np.array([])
+
+        reference_path_list = list()
+        reference_path_node = xml_node.find('referencePath')
+        for position_node in reference_path_node.findall('position'):
+            coordinates = tuple()
+            x = float(position_node.find('x').text)
+            y = float(position_node.find('y').text)
+            coordinates = x, y
+            reference_path_list.append(coordinates)
+        reference_path_ndarr = np.array(reference_path_list)
+        return reference_path_ndarr
+
+class IntermediateGoalFactory:
+    @classmethod
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, reference_path: np.ndarray) -> GoalRegion:
+        intermediate_goals_list = list()
+        for intermediate_goal_node in xml_node.findall('intermediateGoal'):
+            intermediate_goals_list.append(StateFactory.create_from_xml_node(intermediate_goal_node, reference_path=reference_path))
+        return GoalRegion(intermediate_goals_list)
 
 class GoalRegionFactory:
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork)\
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork,
+                             reference_path: np.ndarray = None)\
             -> GoalRegion:
         state_list = list()
         lanelets_of_goal_position = defaultdict(list)
         for idx, goal_state_node in enumerate(xml_node.findall('goalState')):
-            state_list.append(StateFactory.create_from_xml_node(goal_state_node, lanelet_network))
+            state_list.append(StateFactory.create_from_xml_node(goal_state_node, lanelet_network, reference_path))
             if goal_state_node.find('position') is not None\
                     and goal_state_node.find('position').find('lanelet') is not None:
                 for l in goal_state_node.find('position').findall('lanelet'):
@@ -1314,11 +1373,13 @@ class GoalRegionFactory:
 
 class StateFactory:
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: Union[LaneletNetwork, None] = None)\
+    def create_from_xml_node(cls, xml_node: ElementTree.Element,
+                             lanelet_network: Union[LaneletNetwork, None] = None,
+                             reference_path: np.ndarray = None)\
             -> State:
         state_args = dict()
         if xml_node.find('position') is not None:
-            position = cls._read_position(xml_node.find('position'), lanelet_network)
+            position = cls._read_position(xml_node.find('position'), lanelet_network, reference_path)
             state_args['position'] = position
         if xml_node.find('time') is not None:
             state_args['time_step'] = read_time(xml_node.find('time'))
@@ -1341,8 +1402,10 @@ class StateFactory:
 
     @classmethod
     def _read_position(cls, xml_node: ElementTree.Element,
-                       lanelet_network: Union[LaneletNetwork, None] = None) \
+                       lanelet_network: Union[LaneletNetwork, None] = None,
+                       reference_path: np.ndarray = None) \
             -> Union[np.ndarray, Shape]:
+
         if xml_node.find('point') is not None:
             position = PointFactory.create_from_xml_node(xml_node.find('point'))
         elif (xml_node.find('rectangle') is not None
@@ -1356,8 +1419,26 @@ class StateFactory:
                 polygon = lanelet.convert_to_polygon()
                 position_list.append(polygon)
             position = ShapeGroup(position_list)
-        else:
-            raise Exception()
+        #else:
+            #raise Exception()
+
+        if xml_node.find('referencePathPoint') is not None:
+            intervalNode = xml_node.find('referencePathPoint')
+            start = int(intervalNode.find('start').text)
+            reference_path_list = reference_path.tolist()
+            x = reference_path_list[start][0]
+            y = reference_path_list[start][1]
+            position = np.array([x, y])
+
+        if xml_node.find('intervalStart') is not None:
+            start = int(xml_node.find('intervalStart').text)
+            end = int(xml_node.find('intervalEnd').text)
+            reference_path_list = reference_path.tolist()
+            coords_list = list()
+            for index in range(start,end):
+                coords_list.append([reference_path_list[index][0], reference_path_list[index][1]])
+            position = np.array(coords_list)
+
         return position
 
     @classmethod

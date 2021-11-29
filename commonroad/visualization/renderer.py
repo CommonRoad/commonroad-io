@@ -230,6 +230,26 @@ class IRenderer(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def draw_reference_path(self, obj, draw_params, call_stack):
+        """
+
+        """
+        pass
+
+    @abstractmethod
+    def draw_goal_line(self, obj, draw_params, call_stack):
+        """
+
+        """
+        pass
+
+    def draw_intermediate_goals(self, obj, draw_params, call_stack):
+        """
+
+        """
+        pass
+
+    @abstractmethod
     def draw_traffic_light_sign(self, obj, draw_params, call_stack):
         """
         Draw traffic sings and lights

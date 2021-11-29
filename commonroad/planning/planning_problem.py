@@ -19,12 +19,27 @@ from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
 
 
+
+#from commonroad_route_planner.route_planner import RoutePlanner
+#from commonroad.scenario.scenario import Scenario
+
 class PlanningProblem(IDrawable):
+    """
     def __init__(self, planning_problem_id: int, initial_state: State,
                  goal_region: GoalRegion):
         self.planning_problem_id = planning_problem_id
         self.initial_state = initial_state
         self.goal = goal_region
+    """
+
+    def __init__(self, reference_path: np.ndarray, planning_problem_id: int, initial_state: State,
+                 intermediate_goals: GoalRegion, goal_region: GoalRegion):
+        self.reference_path = reference_path
+        self.planning_problem_id = planning_problem_id
+        self.initial_state = initial_state
+        self.intermediate_goals = intermediate_goals
+        self.goal = goal_region
+
 
     @property
     def planning_problem_id(self) -> int:
@@ -79,6 +94,28 @@ class PlanningProblem(IDrawable):
                 return True, i
         return False, -1
 
+    @property
+    def reference_path(self) -> np.ndarray:
+        """reference path of a planning problem"""
+        return self._reference_path
+
+    @reference_path.setter
+    def reference_path(self, ref_path: np.ndarray):
+        assert(isinstance(ref_path, np.ndarray)), 'argument "reference_path" of wrong type. Expected type: %s. ' \
+                                                     'Got type: %s.' % (np.ndarray, type(np.ndarray))
+        self._reference_path = ref_path
+
+    @property
+    def intermediate_goals(self) -> GoalRegion:
+        """reference path of a planning problem"""
+        return self._intermediate_goals
+
+    @intermediate_goals.setter
+    def intermediate_goals(self, intermediate_goals: GoalRegion):
+        assert(isinstance(intermediate_goals, GoalRegion)), 'argument "intermediate_goals" of wrong type. Expected type: %s. ' \
+                                                     'Got type: %s.' % (GoalRegion, type(GoalRegion))
+        self._intermediate_goals = intermediate_goals
+
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """
         translate and rotates the planning problem with given translation and
@@ -109,7 +146,7 @@ class PlanningProblemSet(IDrawable):
         self._planning_problem_dict = {
                 planning_problem.planning_problem_id: planning_problem for
                 planning_problem in
-                                       planning_problem_list}
+                                        planning_problem_list}
 
     @property
     def planning_problem_dict(self) -> Dict[int, PlanningProblem]:
@@ -173,6 +210,9 @@ class PlanningProblemSet(IDrawable):
         """
         for planning_problem in self._planning_problem_dict.values():
             planning_problem.translate_rotate(translation, angle)
+
+    def extend_planning_problem_with_reference_path(self, planning_problem_id: int, reference_path: np.ndarray):
+        self.planning_problem_dict[planning_problem_id].reference_path = reference_path
 
     def draw(self, renderer: IRenderer,
              draw_params: Union[ParamServer, dict, None] = None,

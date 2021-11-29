@@ -152,7 +152,7 @@ class GoalRegion(IDrawable):
                 raise ValueError('<GoalRegion/_goal_state_is_valid> field error: allowed fields are '
                                  '[time_step, position, velocity, orientation]; "%s" detected' % attr)
             elif attr == 'position':
-                if not isinstance(getattr(state, attr), Shape):
+                if not isinstance(getattr(state, attr), Shape) and not isinstance(getattr(state,attr), np.ndarray):
                     raise ValueError(
                         '<GoalRegion/_goal_state_is_valid> position needs to be an instance of '
                         '%s; got instance of %s instead' % (Shape, getattr(state, attr).__class__))

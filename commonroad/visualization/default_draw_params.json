@@ -425,6 +425,12 @@
                 "facecolor": "#f1b514",
                 "edgecolor": "#302404",
                 "zorder": 15
+            },
+            "line": {
+                "opacity": 1.0,
+                "linewidth": 2.5,
+                "facecolor": "#f1b514",
+                "zorder": 150
             }
         },
         "lanelet": {
@@ -440,6 +446,23 @@
             "draw_linewidth": 0.5,
             "fill_lanelet": true,
             "facecolor": "#c7c7c7"
+        }
+    },
+    "reference_path": {
+        "draw_trajectory": true,
+        "facecolor": "#000000",
+        "draw_continuous": false,
+        "unique_colors": false,
+        "line_width": 0.17,
+        "z_order": 200,
+        "shape": {
+            "circle": {
+                "opacity": 1.0,
+                "facecolor": "#000000",
+                "edgecolor": "#ff0000",
+                "linewidth": 0.5,
+                "zorder": 200
+            }
         }
     },
     "planning_problem_set": {
