@@ -59,6 +59,12 @@ build_and_test_python_3_9:
   script:
     - *install-and-run
 
+build_and_test_python_3_10:
+  image: python:3.10
+  stage: test
+  script:
+    - *install-and-run
+
 push_to_internal_pipy_registry:
   # push the development version to the internal pipy registry https://gitlab.lrz.de/cps/commonroad-io/-/packages
   # before manually triggering the job, delete the previous package in case the version number didn't change
