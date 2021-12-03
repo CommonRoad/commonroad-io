@@ -1556,7 +1556,7 @@ class LaneletNetwork(IDrawable):
 
         return [
             [lanelet_buffered_polygon.lanelet_id for lanelet_buffered_polygon in self._buffered_strtee.query(point) if
-             lanelet_buffered_polygon.contains(point)] for point in [ShapelyPoint(point) for point in point_list]]
+             lanelet_buffered_polygon.intersects(point)] for point in [ShapelyPoint(point) for point in point_list]]
 
     def find_lanelet_by_shape(self, shape: Shape) -> List[int]:
         """
