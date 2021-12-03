@@ -802,9 +802,9 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
 
         assert str(parsed_solution_single.scenario_id) == str(self.solution_single.scenario_id)
         assert str(parsed_solution_collab.scenario_id) == str(self.solution_collab.scenario_id)
-        assert parsed_solution_single.date.strftime('%Y-%m-%dT%H:%M:%S') == 
+        assert parsed_solution_single.date.strftime('%Y-%m-%dT%H:%M:%S') == \
                                 self.solution_single.date.strftime('%Y-%m-%dT%H:%M:%S')
-        assert parsed_solution_collab.date.strftime('%Y-%m-%dT%H:%M:%S') == 
+        assert parsed_solution_collab.date.strftime('%Y-%m-%dT%H:%M:%S') == \
                                 self.solution_collab.date.strftime('%Y-%m-%dT%H:%M:%S')
         assert parsed_solution_single.computation_time == self.solution_single.computation_time
         assert parsed_solution_collab.computation_time == self.solution_collab.computation_time
@@ -844,9 +844,9 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
 
         assert str(parsed_solution_single.scenario_id) == str(self.solution_single.scenario_id)
         assert str(parsed_solution_collab.scenario_id) == str(self.solution_collab.scenario_id)
-        assert parsed_solution_single.date.strftime('%Y-%m-%dT%H:%M:%S') == 
+        assert parsed_solution_single.date.strftime('%Y-%m-%dT%H:%M:%S') == \
                                 self.solution_single.date.strftime('%Y-%m-%dT%H:%M:%S')
-        assert parsed_solution_collab.date.strftime('%Y-%m-%dT%H:%M:%S') == 
+        assert parsed_solution_collab.date.strftime('%Y-%m-%dT%H:%M:%S') == \
                                 self.solution_collab.date.strftime('%Y-%m-%dT%H:%M:%S')
         assert parsed_solution_single.computation_time == self.solution_single.computation_time
         assert parsed_solution_collab.computation_time == self.solution_collab.computation_time
@@ -871,9 +871,9 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
 
         assert str(parsed_solution_single.scenario_id) == str(self.solution_single.scenario_id)
         assert str(parsed_solution_collab.scenario_id) == str(self.solution_collab.scenario_id)
-        assert parsed_solution_single.date.strftime('%Y-%m-%dT%H:%M:%S') == 
+        assert parsed_solution_single.date.strftime('%Y-%m-%dT%H:%M:%S') == \
                                 self.solution_single.date.strftime('%Y-%m-%dT%H:%M:%S')
-        assert parsed_solution_collab.date.strftime('%Y-%m-%dT%H:%M:%S') == 
+        assert parsed_solution_collab.date.strftime('%Y-%m-%dT%H:%M:%S') == \
                                 self.solution_collab.date.strftime('%Y-%m-%dT%H:%M:%S')
         assert parsed_solution_single.computation_time == self.solution_single.computation_time
         assert parsed_solution_collab.computation_time == self.solution_collab.computation_time
