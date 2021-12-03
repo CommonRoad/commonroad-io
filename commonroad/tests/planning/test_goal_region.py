@@ -78,9 +78,11 @@ class TestIsReached(unittest.TestCase):
         state_1 = State(time_step=3.1, orientation=0.5, velocity=25)
         state_2 = State(time_step=3.1, orientation=0.5, velocity=17)
         state_7 = State(time_step=3.2, orientation=0.5, velocity=30)
+        state_8 = State(time_step=3.2, orientation=0.5-2*np.pi, velocity=30)
         self.assertTrue(goal_region.is_reached(state_1))
         self.assertTrue(goal_region.is_reached(state_2))
         self.assertTrue(goal_region.is_reached(state_7))
+        self.assertTrue(goal_region.is_reached(state_8))
 
         state_3 = State(time_step=2, orientation=0.5, velocity=25)
         state_4 = State(time_step=3.1, orientation=0.0, velocity=25)
@@ -90,6 +92,16 @@ class TestIsReached(unittest.TestCase):
         self.assertFalse(goal_region.is_reached(state_4))
         self.assertFalse(goal_region.is_reached(state_5))
         self.assertFalse(goal_region.is_reached(state_6))
+
+        # Regression tests
+        goal_state = State(
+                time_step=Interval(3.0, 3.2),
+                orientation=AngleInterval(-0.1965, 0.2034),
+                velocity=Interval(20, 30.5)
+        )
+        goal_region = GoalRegion([goal_state])
+        state = State(time_step=3.1, orientation=0.0034, velocity=25)
+        self.assertTrue(goal_region.is_reached(state))
 
 
 if __name__ == '__main__':

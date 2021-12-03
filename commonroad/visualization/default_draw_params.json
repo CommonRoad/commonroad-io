@@ -1,6 +1,8 @@
 {
     "time_begin": 0,
     "time_end": 200,
+    "axis_visible": true,
+    "focus_obstacle_id": false,
     "relative_angle": 0.0,
     "dynamic_obstacle": {
         "draw_shape": true,
@@ -157,6 +159,89 @@
             }
         }
     },
+    "phantom_obstacle": {
+        "draw_shape": true,
+        "vehicle_shape": {
+            "occupancy": {
+                "shape": {
+                    "polygon": {
+                        "opacity": 1.0,
+                        "facecolor": "#c641f6",
+                        "edgecolor": "#00478f",
+                        "linewidth": 0.5,
+                        "zorder": 20
+                    },
+                    "rectangle": {
+                        "opacity": 1.0,
+                        "facecolor": "#c641f6",
+                        "edgecolor": "#00478f",
+                        "linewidth": 0.5,
+                        "zorder": 20
+                    },
+                    "circle": {
+                        "opacity": 1.0,
+                        "facecolor": "#c641f6",
+                        "edgecolor": "#00478f",
+                        "linewidth": 0.5,
+                        "zorder": 20
+                    }
+                }
+            }
+        },
+        "occupancy": {
+            "draw_occupancies": 1,
+            "shape": {
+                "polygon": {
+                    "opacity": 1.0,
+                    "facecolor": "#e59dff",
+                    "edgecolor": "#00478f",
+                    "linewidth": 0.5,
+                    "zorder": 20
+                },
+                "rectangle": {
+                    "opacity": 1.0,
+                    "facecolor": "#e59dff",
+                    "edgecolor": "#00478f",
+                    "linewidth": 0.5,
+                    "zorder": 20
+                },
+                "circle": {
+                    "opacity": 1.0,
+                    "facecolor": "#e59dff",
+                    "edgecolor": "#00478f",
+                    "linewidth": 0.5,
+                    "zorder": 20
+                }
+            }
+        }
+    },
+    "environment_obstacle": {
+        "occupancy": {
+            "shape": {
+                "polygon": {
+                    "opacity": 1.0,
+                    "facecolor": "#0e6000",
+                    "edgecolor": "#831d20",
+                    "linewidth": 0.5,
+                    "zorder": 20
+                },
+                "rectangle": {
+                    "opacity": 1.0,
+                    "facecolor": "#0e6000",
+                    "edgecolor": "#831d20",
+                    "linewidth": 0.5,
+                    "zorder": 20
+                },
+                "circle": {
+                    "opacity": 1.0,
+                    "facecolor": "#0e6000",
+                    "edgecolor": "#831d20",
+                    "linewidth": 0.5,
+                    "zorder": 20
+                }
+            }
+        }
+    },
     "trajectory": {
         "draw_trajectory": true,
         "facecolor": "#000000",
@@ -242,7 +327,7 @@
         "facecolor": "#c7c7c7"
     },
     "occupancy": {
-        "draw_occupancies": 0,
+        "draw_occupancies": false,
         "shape": {
             "polygon": {
                 "opacity": 0.2,
@@ -296,65 +381,69 @@
     "zorder": 20,
     "state": {
         "draw_arrow": false,
+        "radius": 0.5,
         "scale_factor": 1.0,
         "kwargs": {},
         "facecolor": "#000080",
         "zorder": 25
     },
-    "initial_state": {
-        "label_zorder": 35,
-        "label": "",
-        "state": {
-            "draw_arrow": false,
-            "scale_factor": 1.0,
-            "kwargs": {
-            },
-            "facecolor": "#000080",
-            "zorder": 25
-        }
-    },
-    "goal_region": {
-        "draw_shape": true,
-        "shape": {
-            "polygon": {
-                "opacity": 1.0,
-                "linewidth": 0.5,
-                "facecolor": "#f1b514",
-                "edgecolor": "#302404",
-                "zorder": 15
-            },
-            "rectangle": {
-                "opacity": 1.0,
-                "linewidth": 0.5,
-                "facecolor": "#f1b514",
-                "edgecolor": "#302404",
-                "zorder": 15
-            },
-            "circle": {
-                "opacity": 1.0,
-                "linewidth": 0.5,
-                "facecolor": "#f1b514",
-                "edgecolor": "#302404",
-                "zorder": 15
+    "planning_problem_set": {
+        "draw_ids": "all",
+        "initial_state": {
+            "label_zorder": 35,
+            "label": "",
+            "state": {
+                "draw_arrow": true,
+                "radius": 1.0,
+                "scale_factor": 0.5,
+                "kwargs": {
+                    "color": "g",
+                    "width": 0.8
+                },
+                "facecolor": "g",
+                "zorder": 11
             }
         },
-        "lanelet": {
-            "left_bound_color": "#555555",
-            "right_bound_color": "#555555",
-            "center_bound_color": "#dddddd",
-            "draw_left_bound": true,
-            "draw_right_bound": true,
-            "draw_center_bound": true,
-            "draw_border_vertices": false,
-            "draw_start_and_direction": true,
-            "show_label": false,
-            "draw_linewidth": 0.5,
-            "fill_lanelet": true,
-            "facecolor": "#c7c7c7"
+        "goal_region": {
+            "draw_shape": true,
+            "shape": {
+                "polygon": {
+                    "opacity": 1.0,
+                    "linewidth": 0.5,
+                    "facecolor": "#f1b514",
+                    "edgecolor": "#302404",
+                    "zorder": 15
+                },
+                "rectangle": {
+                    "opacity": 1.0,
+                    "linewidth": 0.5,
+                    "facecolor": "#f1b514",
+                    "edgecolor": "#302404",
+                    "zorder": 15
+                },
+                "circle": {
+                    "opacity": 1.0,
+                    "linewidth": 0.5,
+                    "facecolor": "#f1b514",
+                    "edgecolor": "#302404",
+                    "zorder": 15
+                }
+            },
+            "lanelet": {
+                "left_bound_color": "#555555",
+                "right_bound_color": "#555555",
+                "center_bound_color": "#dddddd",
+                "draw_left_bound": true,
+                "draw_right_bound": true,
+                "draw_center_bound": true,
+                "draw_border_vertices": false,
+                "draw_start_and_direction": true,
+                "show_label": false,
+                "draw_linewidth": 0.5,
+                "fill_lanelet": true,
+                "facecolor": "#c7c7c7"
+            }
         }
-    },
-    "planning_problem_set": {
-        "draw_ids": "all"
     },
     "antialiased": true
 }

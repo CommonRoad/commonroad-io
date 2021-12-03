@@ -1,5 +1,4 @@
 import unittest
-from copy import deepcopy
 
 from commonroad import SCENARIO_VERSION
 from commonroad.common.util import Interval
@@ -8,7 +7,7 @@ from commonroad.scenario.intersection import Intersection, IntersectionIncomingE
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario, Environment, TimeOfDay, Time, Underground, Weather, Location, \
-    ScenarioID
+    ScenarioID, GeoTransformation
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany, TrafficLight, \
     TrafficLightCycleElement, TrafficLightState
 from commonroad.scenario.trajectory import *
@@ -30,20 +29,30 @@ class TestScenario(unittest.TestCase):
 
         self.lanelet1 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                                 np.array([[0.0, 2], [1.0, 2], [2, 2]]), 100, [101], [101], 101, False, 101, True,
-                                LineMarking.DASHED, LineMarking.DASHED, None, None, None, None, {1})
+                                LineMarking.DASHED, LineMarking.DASHED, None, None, None, None, {300, 301, 302},
+                                {200, 201, 202})
         self.lanelet1.add_static_obstacle_to_lanelet(0)
         self.lanelet2 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                                 np.array([[0.0, 2], [1.0, 2], [2, 2]]), 101, [100], [100], 100, False, 100, True,
-                                LineMarking.DASHED, LineMarking.DASHED, None, None, None, None, {1})
+                                LineMarking.DASHED, LineMarking.DASHED, None, None, None, None, {301, 302, 303},
+                                {201, 202, 203})
         self.lanelet1.add_dynamic_obstacle_to_lanelet(2, 0)
         self.lanelet1.add_dynamic_obstacle_to_lanelet(2, 1)
         self.lanelet_network = LaneletNetwork().create_from_lanelet_list(list([self.lanelet1, self.lanelet2]))
         traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED.value, ['10.0'])
         self.traffic_sign = TrafficSign(41, [traffic_sign_max_speed], {100}, np.array([0.0, 2]))
+        self.traffic_sign1 = TrafficSign(300, [traffic_sign_max_speed], {100}, np.array([0.0, 2]))
+        self.traffic_sign2 = TrafficSign(301, [traffic_sign_max_speed], {100}, np.array([0.0, 2]))
+        self.traffic_sign3 = TrafficSign(302, [traffic_sign_max_speed], {100}, np.array([0.0, 2]))
+        self.traffic_sign4 = TrafficSign(303, [traffic_sign_max_speed], {100}, np.array([0.0, 2]))
         cycle = [TrafficLightCycleElement(TrafficLightState.GREEN, 2),
                  TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
                  TrafficLightCycleElement(TrafficLightState.RED, 2)]
         self.traffic_light = TrafficLight(42, cycle, position=np.array([10., 10.]))
+        self.traffic_light100 = TrafficLight(200, cycle, position=np.array([10., 10.]))
+        self.traffic_light101 = TrafficLight(201, cycle, position=np.array([10., 10.]))
+        self.traffic_light102 = TrafficLight(202, cycle, position=np.array([10., 10.]))
+        self.traffic_light103 = TrafficLight(203, cycle, position=np.array([10., 10.]))
 
         self.set_pred = SetBasedPrediction(0, occupancy_list)
 
@@ -75,7 +84,7 @@ class TestScenario(unittest.TestCase):
         self.environment = Environment(Time(12, 15), TimeOfDay.NIGHT, Weather.SNOW, Underground.ICE)
         self.location = Location(geo_name_id=123, gps_latitude=456, gps_longitude=789, environment=self.environment)
 
-        self.scenario = Scenario(0.1, 'test', location=self.location)
+        self.scenario = Scenario(0.1, location=self.location)
 
     def test_add_objects(self):
         expected_id_static_obs = self.static_obs.obstacle_id
@@ -140,8 +149,21 @@ class TestScenario(unittest.TestCase):
             self.scenario.remove_obstacle(self.lanelet1)
             self.scenario.remove_obstacle(self.static_obs)
 
+    def test_remove_hanging_lanelet_members(self):
+        self.scenario.add_objects([self.lanelet1, self.lanelet2])
+        self.scenario.add_objects([self.traffic_sign1, self.traffic_sign2, self.traffic_sign3, self.traffic_sign4])
+        self.scenario.add_objects(
+                [self.traffic_light100, self.traffic_light101, self.traffic_light102, self.traffic_light103])
+
+        self.scenario.remove_hanging_lanelet_members([self.lanelet1])
+        self.assertEqual(self.scenario.lanelet_network._traffic_lights.keys(), {201, 202, 203})
+        self.assertEqual(self.scenario.lanelet_network._traffic_signs.keys(), {301, 302, 303})
+
     def test_remove_lanelet(self):
         self.scenario.add_objects([self.lanelet1, self.lanelet2])
+        self.scenario.add_objects([self.traffic_sign1, self.traffic_sign2, self.traffic_sign3, self.traffic_sign4])
+        self.scenario.add_objects(
+                [self.traffic_light100, self.traffic_light101, self.traffic_light102, self.traffic_light103])
 
         self.assertEqual(len(self.scenario.lanelet_network.lanelets), 2)
         self.assertEqual(len(self.scenario.lanelet_network.lanelets), 2)
@@ -368,18 +390,18 @@ class TestScenario(unittest.TestCase):
                                        initial_state=self.traj_pred.trajectory.state_at_time_step(0),
                                        prediction=self.set_pred, obstacle_shape=self.rectangle)
 
-        expected_obstacle_ids_in_interval = [1, 2, 5]
+        expected_obstacle_ids_in_interval = {1, 2, 5}
         interval_x = Interval(-10, 10)
         interval_y = Interval(-10, 10)
 
         self.scenario.add_objects([static_obs1, static_obs2, static_obs3, static_obs4, dyn_set_obs1])
 
         obstacles_in_interval = self.scenario.obstacles_by_position_intervals([interval_x, interval_y])
-        obstacle_ids_in_interval = []
+        obstacle_ids_in_interval = set()
         for obstacle in obstacles_in_interval:
-            obstacle_ids_in_interval.append(obstacle.obstacle_id)
+            obstacle_ids_in_interval.add(obstacle.obstacle_id)
 
-        np.testing.assert_array_equal(expected_obstacle_ids_in_interval, obstacle_ids_in_interval)
+        self.assertEqual(expected_obstacle_ids_in_interval, obstacle_ids_in_interval)
 
     def test_translate_rotate(self):
         rotation = np.pi
@@ -527,7 +549,7 @@ class TestScenario(unittest.TestCase):
         dyn_traj_obs = DynamicObstacle(2, ObstacleType("unknown"),
                                        initial_state=traj_pred.trajectory.state_at_time_step(0), prediction=traj_pred,
                                        obstacle_shape=self.rectangle, initial_shape_lanelet_ids=None)
-        sc = Scenario(dt=0.1, scenario_id='test')
+        sc = Scenario(dt=0.1)
         right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
         left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
         center_vertices = np.array([[0, .5], [1, .5], [2, .5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, .5], [8, .5]])
@@ -672,11 +694,126 @@ class TestScenarioID(unittest.TestCase):
         id_us = "USA_US101-33_2"
         s_id = ScenarioID.from_benchmark_id(id_us, SCENARIO_VERSION)
         self.assertEqual(s_id.country_name,
-                         "United States of America")  # def test_read_all_files(self):  #     folder =
-        # 'commonroad-scenarios/scenarios'  #     from pathlib import Path  #     files = list(Path(folder).rglob(
+                         "United States of America")  # def test_read_all_files(self):  #     folder =  #
+        # 'commonroad-scenarios/scenarios'  #     from pathlib import Path  #     files = list(Path(folder).rglob(  #
         # '*.xml'))  #     for file in files:  #         # if not "C-USA_Lanker-1_2_T-1" in str(file):  #         #
         # continue  #         sc, _ = CommonRoadFileReader(file).open()  #         self.assertEqual(sc.orig_bid,
         # str(sc.scenario_id))  #         print(file)
+
+
+class TestLocation(unittest.TestCase):
+    def test_equality(self):
+        geo_transformation = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.4)
+        environment = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.CLEAN)
+        location_1 = Location(123, 456, 789, geo_transformation, environment)
+        location_2 = Location(123, 456, 789, geo_transformation, environment)
+        self.assertTrue(location_1 == location_2)
+
+        location_2 = Location(321, 456, 789, geo_transformation, environment)
+        self.assertFalse(location_1 == location_2)
+
+        location_2 = Location(123, 654, 789, geo_transformation, environment)
+        self.assertFalse(location_1 == location_2)
+
+        location_2 = Location(123, 456, 987, geo_transformation, environment)
+        self.assertFalse(location_1 == location_2)
+
+        geo_transformation = GeoTransformation('4321', 1.1, 1.2, 1.3, 1.4)
+        location_2 = Location(123, 456, 789, geo_transformation, environment)
+        self.assertFalse(location_1 == location_2)
+
+        geo_transformation = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.4)
+        environment = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.DIRTY)
+        location_2 = Location(123, 456, 789, geo_transformation, environment)
+        self.assertFalse(location_1 == location_2)
+
+    def test_hash(self):
+        geo_transformation = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.4)
+        environment = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.CLEAN)
+        location_1 = Location(123, 456, 789, geo_transformation, environment)
+        location_2 = Location(123, 456, 789, geo_transformation, environment)
+        self.assertEqual(hash(location_1), hash(location_2))
+
+        location_2 = Location(123, 457, 789, geo_transformation, environment)
+        self.assertNotEqual(hash(location_1), hash(location_2))
+
+
+class TestGeoTransformation(unittest.TestCase):
+    def test_equality(self):
+        geo_transformation_1 = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.4)
+        geo_transformation_2 = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.4)
+        self.assertTrue(geo_transformation_1 == geo_transformation_2)
+
+        geo_transformation_2 = GeoTransformation('1233', 1.1, 1.2, 1.3, 1.4)
+        self.assertFalse(geo_transformation_1 == geo_transformation_2)
+
+        geo_transformation_2 = GeoTransformation('1234', 1.0, 1.2, 1.3, 1.4)
+        self.assertFalse(geo_transformation_1 == geo_transformation_2)
+
+        geo_transformation_2 = GeoTransformation('1234', 1.1, 1.1, 1.3, 1.4)
+        self.assertFalse(geo_transformation_1 == geo_transformation_2)
+
+        geo_transformation_2 = GeoTransformation('1234', 1.1, 1.2, 1.2, 1.4)
+        self.assertFalse(geo_transformation_1 == geo_transformation_2)
+
+        geo_transformation_2 = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.3)
+        self.assertFalse(geo_transformation_1 == geo_transformation_2)
+
+    def test_hash(self):
+        geo_transformation_1 = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.4)
+        geo_transformation_2 = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.4)
+        self.assertEqual(hash(geo_transformation_1), hash(geo_transformation_2))
+
+        geo_transformation_2 = GeoTransformation('1235', 1.1, 1.2, 1.3, 1.4)
+        self.assertNotEqual(hash(geo_transformation_1), hash(geo_transformation_2))
+
+
+class TestTime(unittest.TestCase):
+    def test_equality(self):
+        time_1 = Time(8, 30)
+        time_2 = Time(8, 30)
+        self.assertTrue(time_1 == time_2)
+
+        time_2 = Time(9, 30)
+        self.assertFalse(time_1 == time_2)
+
+        time_2 = Time(8, 59)
+        self.assertFalse(time_1 == time_2)
+
+    def test_hash(self):
+        time_1 = Time(8, 30)
+        time_2 = Time(8, 30)
+        self.assertEqual(hash(time_1), hash(time_2))
+
+        time_2 = Time(8, 31)
+        self.assertNotEqual(hash(time_1), hash(time_2))
+
+
+class TestEnvironment(unittest.TestCase):
+    def test_equality(self):
+        environment_1 = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.CLEAN)
+        environment_2 = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.CLEAN)
+        self.assertTrue(environment_1 == environment_2)
+
+        environment_2 = Environment(Time(9, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.CLEAN)
+        self.assertFalse(environment_1 == environment_2)
+
+        environment_2 = Environment(Time(8, 30), TimeOfDay.UNKNOWN, Weather.SUNNY, Underground.CLEAN)
+        self.assertFalse(environment_1 == environment_2)
+
+        environment_2 = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SNOW, Underground.CLEAN)
+        self.assertFalse(environment_1 == environment_2)
+
+        environment_2 = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.ICE)
+        self.assertFalse(environment_1 == environment_2)
+
+    def test_hash(self):
+        environment_1 = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.CLEAN)
+        environment_2 = Environment(Time(8, 30), TimeOfDay.DAY, Weather.SUNNY, Underground.CLEAN)
+        self.assertEqual(hash(environment_1), hash(environment_2))
+
+        environment_2 = Environment(Time(8, 30), TimeOfDay.NIGHT, Weather.SUNNY, Underground.CLEAN)
+        self.assertNotEqual(hash(environment_1), hash(environment_2))
 
 
 if __name__ == '__main__':
