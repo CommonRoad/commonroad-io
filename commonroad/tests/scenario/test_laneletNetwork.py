@@ -269,19 +269,21 @@ class TestLaneletNetwork(unittest.TestCase):
         self.assertEqual(observed_lanelet[0][0], self.lanelet.lanelet_id)
         self.assertEqual(len(additional_lanelet_network.find_lanelet_by_position([np.array([-5, -5])])[0]), 0)
 
-        import matplotlib
-        matplotlib.use("Qt5Agg")
-        import matplotlib.pyplot as plt
-        from commonroad.visualization.mp_renderer import MPRenderer
-        fig = plt.figure(1)
-        ax = fig.add_subplot(111)
-        fig.show()
-        ax.set_aspect('equal')
-        ax.autoscale()
-        mp_renderer = MPRenderer(ax=ax)
-        self.diagonal_lanelet_network.draw(mp_renderer)
-        mp_renderer.render()
-        plt.show(block=False)
+        # import matplotlib
+        # matplotlib.use("Qt5Agg")
+        # import matplotlib.pyplot as plt
+        # from commonroad.visualization.mp_renderer import MPRenderer
+        # fig = plt.figure(1)
+        # ax = fig.add_subplot(111)
+        # fig.show()
+        # ax.set_aspect('equal')
+        # ax.autoscale()
+        # mp_renderer = MPRenderer(ax=ax)
+        # self.diagonal_lanelet_network.draw(mp_renderer)
+        # mp_renderer.render()
+        # plt.show(block=False)
+
+        tolerance = 1e-14
 
         def assert_pos(vertex, lanelet_id_list):
             [ret_list] = self.diagonal_lanelet_network.find_lanelet_by_position([vertex])
@@ -291,26 +293,35 @@ class TestLaneletNetwork(unittest.TestCase):
 
         lanelet_0 = self.diagonal_lanelet_network.find_lanelet_by_id(0)
         lanelet_1 = self.diagonal_lanelet_network.find_lanelet_by_id(1)
-        for dist_i in list(np.linspace(0.0, lanelet_0.distance[2], 10)):
+        for dist_i in list(np.linspace(0.0, lanelet_0.distance[2], 1000)):
             center_vertex, right_vertex, left_vertex, _ = lanelet_0.interpolate_position(dist_i)
-            plt.plot(*left_vertex, "o", zorder=40)
+            # plt.plot(*left_vertex, "o", zorder=40)
             assert_pos(left_vertex, [0])
+            assert_pos(left_vertex + np.array([0.0, 0.5 * tolerance]), [])
 
-            plt.plot(*center_vertex, "o", zorder=40)
+            # plt.plot(*center_vertex, "o", zorder=40)
             assert_pos(center_vertex, [0])
 
-            plt.plot(*right_vertex, "o", zorder=40)
-            assert_pos(right_vertex, [0,1])
+            # plt.plot(*right_vertex, "o", zorder=40)
+            assert_pos(right_vertex, [0, 1])
+            assert_pos(right_vertex + np.array([0.0, 0.5 * tolerance]), [0])
+            assert_pos(right_vertex - np.array([0.0, 0.5 * tolerance]), [1])
 
             center_vertex, right_vertex, left_vertex, _ = lanelet_1.interpolate_position(dist_i)
-            plt.plot(*left_vertex, "o", zorder=40)
-            assert_pos(left_vertex, [0,1])
+            # plt.plot(*left_vertex, "o", zorder=40)
+            assert_pos(left_vertex, [0, 1])
+            assert_pos(left_vertex + np.array([0.0, 0.5 * tolerance]), [0])
+            assert_pos(left_vertex - np.array([0.0, 0.5 * tolerance]), [1])
 
-            plt.plot(*center_vertex, "o", zorder=40)
+            # plt.plot(*center_vertex, "o", zorder=40)
             assert_pos(center_vertex, [1])
 
-            plt.plot(*right_vertex, "o", zorder=40)
+            # plt.plot(*right_vertex, "o", zorder=40)
             assert_pos(right_vertex, [1])
+            assert_pos(right_vertex - np.array([0.0, 0.5 * tolerance]), [])
+
+        assert_pos(np.array([-tolerance, 0.]), [])
+        assert_pos(np.array([lanelet_0.center_vertices[-1][0] + tolerance, 0.]), [])
 
     def test_find_lanelet_by_shape(self):
         rectangle1 = Rectangle(2, 2)
