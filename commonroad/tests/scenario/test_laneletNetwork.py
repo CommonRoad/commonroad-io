@@ -290,18 +290,27 @@ class TestLaneletNetwork(unittest.TestCase):
             self.assertEqual(ret_list, lanelet_id_list)
 
         lanelet_0 = self.diagonal_lanelet_network.find_lanelet_by_id(0)
+        lanelet_1 = self.diagonal_lanelet_network.find_lanelet_by_id(1)
         for dist_i in list(np.linspace(0.0, lanelet_0.distance[2], 10)):
             center_vertex, right_vertex, left_vertex, _ = lanelet_0.interpolate_position(dist_i)
             plt.plot(*left_vertex, "o", zorder=40)
-            plt.plot(*center_vertex, "o", zorder=40)
-            plt.plot(*right_vertex, "o", zorder=40)
-
             assert_pos(left_vertex, [0])
+
+            plt.plot(*center_vertex, "o", zorder=40)
             assert_pos(center_vertex, [0])
+
+            plt.plot(*right_vertex, "o", zorder=40)
             assert_pos(right_vertex, [0,1])
 
-        self.assertEqual(self.diagonal_lanelet_network.find_lanelet_by_position([np.array([0.0, 0.0])])[0].sort(),
-                         [0, 1])
+            center_vertex, right_vertex, left_vertex, _ = lanelet_1.interpolate_position(dist_i)
+            plt.plot(*left_vertex, "o", zorder=40)
+            assert_pos(left_vertex, [0,1])
+
+            plt.plot(*center_vertex, "o", zorder=40)
+            assert_pos(center_vertex, [1])
+
+            plt.plot(*right_vertex, "o", zorder=40)
+            assert_pos(right_vertex, [1])
 
     def test_find_lanelet_by_shape(self):
         rectangle1 = Rectangle(2, 2)
