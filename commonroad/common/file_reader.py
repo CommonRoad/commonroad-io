@@ -4,6 +4,7 @@ from xml.etree import ElementTree
 from abc import ABC
 
 import numpy as np
+import math
 
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.util import Interval, AngleInterval
@@ -1422,22 +1423,15 @@ class StateFactory:
         #else:
             #raise Exception()
 
-        if xml_node.find('referencePathPoint') is not None:
-            intervalNode = xml_node.find('referencePathPoint')
-            start = int(intervalNode.find('start').text)
-            reference_path_list = reference_path.tolist()
-            x = reference_path_list[start][0]
-            y = reference_path_list[start][1]
-            position = np.array([x, y])
+        if xml_node.find('startPoint') is not None:
+            position = cls.read_one_dimensional_start(xml_node.find('startPoint'), reference_path)
 
-        if xml_node.find('intervalStart') is not None:
-            start = int(xml_node.find('intervalStart').text)
-            end = int(xml_node.find('intervalEnd').text)
-            reference_path_list = reference_path.tolist()
-            coords_list = list()
-            for index in range(start,end):
-                coords_list.append([reference_path_list[index][0], reference_path_list[index][1]])
-            position = np.array(coords_list)
+
+        if xml_node.find('goalStartPoint') is not None:
+            position = cls.build_goal_position_path(xml_node.find('goalStartPoint'), xml_node.find('goalEndPoint'), reference_path)
+
+        if xml_node.find('intermediateGoalStartPoint') is not None:
+            position = cls.build_goal_position_path(xml_node.find('intermediateGoalStartPoint'), xml_node.find('intermediateGoalEndPoint'), reference_path)
 
         return position
 
@@ -1453,6 +1447,73 @@ class StateFactory:
         else:
             raise Exception()
         return value
+
+    @classmethod
+    def read_one_dimensional_start(cls, xml_node: ElementTree.Element, reference_path: np.ndarray) -> np.ndarray:
+        s = float(xml_node.text)
+        coord_list = cls.coordinatesFromDistance(s, reference_path)
+        return np.array(coord_list)
+
+    @classmethod
+    def coordinatesFromDistance(cls, s: float, ref_path: np.ndarray) -> List:
+        s_coord_list = list()
+        consecutivePoints = cls.cosecutivePointsBetweenGivenDistance(s, ref_path)
+        d = cls.distanceBetweenConsecutivePoints(consecutivePoints[0],consecutivePoints[1])
+        A = consecutivePoints[0]
+        B = consecutivePoints[1]
+        a = s - cls.totalDistanceToCoordinatePoint(A, ref_path)
+        s_x = (a*(B[0] - A[0]) + d*A[0]) / d
+        s_y = (a*(B[1] - A[1]) + d*A[1]) / d
+        s_coord_list.append(s_x)
+        s_coord_list.append(s_y)
+        return s_coord_list
+
+    @classmethod
+    def cosecutivePointsBetweenGivenDistance(cls, dist: float, ref_path: np.ndarray) -> List:
+        sum = 0
+        saveIndex = 0
+        for i in range(len(ref_path.tolist()) - 1):
+            sum += cls.distanceBetweenConsecutivePoints(ref_path.tolist()[i], ref_path[i+1])
+            if sum >= dist:
+                saveIndex = i
+                break
+        result = list()
+        result.append(ref_path.tolist()[saveIndex])
+        result.append(ref_path.tolist()[saveIndex+1])
+        return result
+
+    @classmethod
+    def totalDistanceToCoordinatePoint(cls, coordPoint: List, ref_path: np.ndarray) -> float:
+        sum = 0
+        for i in range(len(ref_path.tolist()) - 1):
+            if ref_path.tolist()[i] == coordPoint:
+                break
+            sum += cls.distanceBetweenConsecutivePoints(ref_path.tolist()[i], ref_path.tolist()[i+1])
+        return sum
+
+    @classmethod
+    def distanceBetweenConsecutivePoints(cls, point: List, nextPoint: List) -> float:
+        return math.sqrt((nextPoint[0] - point[0])**2 +
+                     (nextPoint[1] - point[1])**2)
+
+    @classmethod
+    def build_goal_position_path(cls, startPositionNode: ElementTree.Element, endPositionNode: ElementTree.Element, ref_path: np.ndarray) -> np.ndarray:
+        result = list()
+        startPosition = float(startPositionNode.text)
+        endPosition = float(endPositionNode.text)
+        ref_path_low = cls.cosecutivePointsBetweenGivenDistance(startPosition, ref_path)[1]
+        ref_path_high = cls.cosecutivePointsBetweenGivenDistance(endPosition, ref_path)[0]
+        start = cls.read_one_dimensional_start(startPositionNode, ref_path).tolist()
+        end = cls.read_one_dimensional_start(endPositionNode, ref_path).tolist()
+        slice_start = ref_path.tolist().index(ref_path_low)
+        slice_end = ref_path.tolist().index(ref_path_high)
+        result.append(start)
+        for index in range(slice_start, slice_end + 1):
+            result.append(ref_path.tolist()[index])
+        result.append(end)
+        #result = start + [x,y for ref_path.tolist()[slice_start:slice_end]] + end
+        #[item for sublist in ref_path.tolist()[slice_start:slice_end] for item in sublist]
+        return np.array(result)
 
 
 class SignalStateFactory:

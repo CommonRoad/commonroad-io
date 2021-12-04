@@ -50288,9 +50288,7 @@
           <x>440.23159</x>
           <y>-402.09326</y>
         </point>
-        <referencePathPoint>
-            <start> 11 </start>
-        </referencePathPoint>
+        <startPoint>12.45</startPoint>
       </position>
       <orientation>
         <exact>-0.15818836</exact>
@@ -50311,8 +50309,8 @@
     <goalState>
       <position>
           <lanelet ref="201"/>
-          <intervalStart>100</intervalStart>
-          <intervalEnd>511</intervalEnd>
+          <goalStartPoint>30.234</goalStartPoint>
+          <goalEndPoint>35.1234</goalEndPoint>
       </position>
       <time>
         <intervalStart>99</intervalStart>
@@ -50321,8 +50319,8 @@
     </goalState>
       <intermediateGoal>
         <position>
-          <intervalStart>50</intervalStart>
-          <intervalEnd>67</intervalEnd>
+          <intermediateGoalStartPoint>2.234</intermediateGoalStartPoint>
+          <intermediateGoalEndPoint>4.1234</intermediateGoalEndPoint>
       </position>
       <time>
         <intervalStart>34</intervalStart>
@@ -50331,8 +50329,8 @@
     </intermediateGoal>
       <intermediateGoal>
         <position>
-          <intervalStart>82</intervalStart>
-          <intervalEnd>89</intervalEnd>
+          <intermediateGoalStartPoint>8.234</intermediateGoalStartPoint>
+          <intermediateGoalEndPoint>9.1234</intermediateGoalEndPoint>
       </position>
       <time>
         <intervalStart>64</intervalStart>
@@ -50341,8 +50339,8 @@
     </intermediateGoal>
       <intermediateGoal>
         <position>
-          <intervalStart>250</intervalStart>
-          <intervalEnd>267</intervalEnd>
+          <intermediateGoalStartPoint>13.234</intermediateGoalStartPoint>
+          <intermediateGoalEndPoint>15.1234</intermediateGoalEndPoint>
       </position>
       <time>
         <intervalStart>234</intervalStart>

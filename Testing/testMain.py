@@ -4,6 +4,9 @@ from IPython import display
 
 import numpy as np
 
+import math
+from typing import List
+
 # import functions to read xml file and visualize commonroad objects
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.visualization.mp_renderer import MPRenderer
@@ -17,7 +20,71 @@ file_path = "sixthScenario.xml"
 # read in the scenario and planning problem set
 scenario, planning_problem_set = CommonRoadFileReader(file_path).open()
 
+for i in range(0, 1):
+    fig = plt.figure(figsize=(40, 25))
+    rnd = MPRenderer()
+    # plot the scenario at different time step
+    scenario.draw(rnd, draw_params={'time_begin': i})
+    # plot the planning problem set
+    planning_problem_set.draw(rnd)
+    rnd.render(show=True)
+    fig.savefig('output.svg')
+    plt.show()
+
+
+
+
 """
+def distanceBetweenConsecutivePoints(point: List, nextPoint: List) -> float:
+    return math.sqrt((nextPoint[0] - point[0])**2 +
+                     (nextPoint[1] - point[1])**2)
+
+def cosecutivePointsBetweenGivenDistance(dist: float, ref_path: np.ndarray) -> List:
+    sum = 0
+    saveIndex = 0
+    for i in range(len(ref_path.tolist()) - 1):
+        sum += distanceBetweenConsecutivePoints(ref_path.tolist()[i], ref_path[i+1])
+        if sum >= dist:
+            saveIndex = i
+            break
+    result = list()
+    result.append(ref_path.tolist()[saveIndex])
+    result.append(ref_path.tolist()[saveIndex+1])
+    return result
+
+def totalDistanceToCoordinatePoint(coordPoint: List, ref_path: np.ndarray) -> float:
+    sum = 0
+    for i in range(len(ref_path.tolist()) - 1):
+        if ref_path.tolist()[i] == coordPoint:
+            break
+        sum += distanceBetweenConsecutivePoints(ref_path.tolist()[i], ref_path.tolist()[i+1])
+    return sum
+
+
+def coordinatesFromDistance(s: float, ref_path: np.ndarray) -> List:
+    s_coord_list = list()
+    consecutivePoints = cosecutivePointsBetweenGivenDistance(s, ref_path)
+    d = distanceBetweenConsecutivePoints(consecutivePoints[0],consecutivePoints[1])
+    A = consecutivePoints[0]
+    B = consecutivePoints[1]
+    a = s - totalDistanceToCoordinatePoint(A, ref_path)
+    s_x = (a*(B[0] - A[0]) + d*A[0]) / d
+    s_y = (a*(B[1] - A[1]) + d*A[1]) / d
+    s_coord_list.append(s_x)
+    s_coord_list.append(s_y)
+    return s_coord_list
+
+testArray = np.array([[-7,1],[-2,1],[1,-3], [-23,4], [-21,-8]])
+testRes = distanceBetweenConsecutivePoints(testArray.tolist()[0], testArray.tolist()[1])
+testPoints = cosecutivePointsBetweenGivenDistance(72.5, testArray)
+s = 8
+consecutivePoints = cosecutivePointsBetweenGivenDistance(s, testArray)
+distanceBetweenFoundPoints = distanceBetweenConsecutivePoints(consecutivePoints[0],consecutivePoints[1])
+testCoordiantes = coordinatesFromDistance(s, testArray)
+
+testDistanceToCoord = totalDistanceToCoordinatePoint(testArray.tolist()[1], testArray)
+
+
 planning_problem = planning_problem_set.planning_problem_dict[123]
 route_planner = RoutePlanner(scenario, planning_problem, backend=RoutePlanner.Backend.NETWORKX_REVERSED)
 candidate_holder = route_planner.plan_routes()
@@ -76,14 +143,7 @@ visualize_route(route, draw_route_lanelets=True, draw_reference_path=False, size
 visualize_route(route, draw_route_lanelets=True, draw_reference_path=True, size_x=15)
 """
 # plot the scenario for 40 time step, here each time step corresponds to 0.1 second
-for i in range(0, 40):
-    plt.figure(figsize=(40, 25))
-    rnd = MPRenderer()
-    # plot the scenario at different time step
-    scenario.draw(rnd, draw_params={'time_begin': i})
-    # plot the planning problem set
-    planning_problem_set.draw(rnd)
-    rnd.render()
+
     #plt.plot(ndArrayCoordinates, zorder=200)
 
 #plt.plot([420,500],[-400,-250], zorder=200)

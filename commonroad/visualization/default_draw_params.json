@@ -428,7 +428,7 @@
             },
             "line": {
                 "opacity": 1.0,
-                "linewidth": 2.5,
+                "linewidth": 22.5,
                 "facecolor": "#f1b514",
                 "zorder": 150
             }
