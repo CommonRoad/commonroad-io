@@ -108,7 +108,7 @@ class TestLaneletNetwork(unittest.TestCase):
         left_vertices = np.array([[0, 1], [1, 1], [1.1, 1.1]])
         center_vertices = np.array([[0, .5], [1, .5], [1.1, .6]])
         lanelet_id = 5
-        lanelet1 = Lanelet(left_vertices, right_vertices, center_vertices, lanelet_id)
+        lanelet1 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
         lanelet_network.add_lanelet(lanelet1)
         lanelet_network.add_traffic_sign(self.traffic_sign, {lanelet1.lanelet_id})
         lanelet_network.add_traffic_light(self.traffic_light, {lanelet1.lanelet_id})
@@ -127,7 +127,7 @@ class TestLaneletNetwork(unittest.TestCase):
         left_vertices = np.array([[5, 2], [6, 2], [7, 1], [8, 1]])
         center_vertices = np.array([[5, 1.5], [6, 1.5], [7, .5], [8, .5]])
         lanelet_id = 7
-        lanelet3 = Lanelet(left_vertices, right_vertices, center_vertices, lanelet_id)
+        lanelet3 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
         lanelet_network.add_lanelet(lanelet3)
 
         new_network = lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2))
