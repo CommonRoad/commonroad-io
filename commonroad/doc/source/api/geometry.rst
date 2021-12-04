@@ -51,7 +51,7 @@ Transform
 .. autofunction:: from_homogeneous_coordinates
 
 Polyline Utility Functions
--------------
+--------------------------
 
 .. automodule:: geometry.polyline_util
 

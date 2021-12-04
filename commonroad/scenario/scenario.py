@@ -428,12 +428,9 @@ class ScenarioID:
 
 
 class Scenario(IDrawable):
-    """ Class which describes a Scenario entity according to the CommonRoad
-    specification. Each scenario is described by
-     a road network consisting of lanelets (see
-     :class:`commonroad.scenario.lanelet.LaneletNetwork`) and a set of
-     obstacles which can be either static or dynamic (see
-     :class:`commonroad.scenario.obstacle.Obstacle`)."""
+    """ Class which describes a Scenario entity according to the CommonRoad specification. Each scenario is described by
+    a road network consisting of lanelets (see :class:`commonroad.scenario.lanelet.LaneletNetwork`) and a set
+    of obstacles which can be either static or dynamic (see :class:`commonroad.scenario.obstacle.Obstacle`)."""
 
     def __init__(self, dt: float, scenario_id: ScenarioID = ScenarioID(), author: str = None, tags: Set[Tag] = None,
                  affiliation: str = None, source: str = None, location: Location = None):
@@ -949,12 +946,10 @@ class Scenario(IDrawable):
         Obstacle.prediction.initial_shape_lanelet_ids, .shape_lanelet_assignment, .initial_center_lanelet_ids,
         & .center_lanelet_assignment, and Lanelet.dynamic_obstacles_on_lanelet & .static_obstacles_on_lanelet.
 
-        :param time_steps: time step for which the obstacles should be assigned. If None, all time_steps are
-        assigned.
+        :param time_steps: time step for which the obstacles should be assigned. If None, all time_steps are assigned.
         :param obstacle_ids: ids for which the assignment should be computed. If None, all obstacles are
         :param use_center_only: if False, the shape is used to find occupied lanelets.
-        Otherwise, only the center is used.
-        assigned.
+            Otherwise, only the center is used.
         """
 
         def assign_dynamic_obstacle_shape_at_time(obstacle: DynamicObstacle, time_step) -> bool:
