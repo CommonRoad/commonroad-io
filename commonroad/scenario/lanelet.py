@@ -760,6 +760,7 @@ class Lanelet:
         along the lanelet
 
         :param distance: The distance for the interpolation
+        # TODO fix documentation or code!!
         :return: The interpolated positions on the center/right/left polyline
             in the form [[x_c,y_c],[x_r,y_r],[x_l,y_l]]
         """
