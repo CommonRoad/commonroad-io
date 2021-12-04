@@ -1,3 +1,4 @@
+import copy
 import unittest
 import numpy as np
 from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork, StopLine, LaneletType
@@ -62,6 +63,20 @@ class TestLaneletNetwork(unittest.TestCase):
         self.lanelet_network.add_traffic_sign(self.traffic_sign, set())
         self.lanelet_network.add_traffic_light(self.traffic_light, set())
         self.lanelet_network.add_intersection(self.intersection)
+
+        self.diagonal_lanelet_network = LaneletNetwork()
+        lanelet_width = np.array([0.0, 3.0])
+        right_vertices = np.array([[0., 0.], [6., 0.1], [12., 0.5]])
+        left_vertices = copy.copy(right_vertices) + lanelet_width
+        center_vertices = (right_vertices + left_vertices) * 0.5
+        lanelet_id = 0
+        self.diagonal_lanelet_network.add_lanelet(Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id))
+
+        left_vertices = copy.copy(right_vertices)
+        right_vertices = copy.copy(left_vertices) - lanelet_width
+        center_vertices = (right_vertices + left_vertices) * 0.5
+        lanelet_id = 1
+        self.diagonal_lanelet_network.add_lanelet(Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id))
 
     def test_initialize_lanelets(self):
         s1 = np.sqrt(1.25)
@@ -253,6 +268,40 @@ class TestLaneletNetwork(unittest.TestCase):
         observed_lanelet = additional_lanelet_network.find_lanelet_by_position([np.array([1, 1])])
         self.assertEqual(observed_lanelet[0][0], self.lanelet.lanelet_id)
         self.assertEqual(len(additional_lanelet_network.find_lanelet_by_position([np.array([-5, -5])])[0]), 0)
+
+        import matplotlib
+        matplotlib.use("Qt5Agg")
+        import matplotlib.pyplot as plt
+        from commonroad.visualization.mp_renderer import MPRenderer
+        fig = plt.figure(1)
+        ax = fig.add_subplot(111)
+        fig.show()
+        ax.set_aspect('equal')
+        ax.autoscale()
+        mp_renderer = MPRenderer(ax=ax)
+        self.diagonal_lanelet_network.draw(mp_renderer)
+        mp_renderer.render()
+        plt.show(block=False)
+
+        def assert_pos(vertex, lanelet_id_list):
+            [ret_list] = self.diagonal_lanelet_network.find_lanelet_by_position([vertex])
+            ret_list.sort()
+            lanelet_id_list.sort()
+            self.assertEqual(ret_list, lanelet_id_list)
+
+        lanelet_0 = self.diagonal_lanelet_network.find_lanelet_by_id(0)
+        for dist_i in list(np.linspace(0.0, lanelet_0.distance[2], 10)):
+            center_vertex, right_vertex, left_vertex, _ = lanelet_0.interpolate_position(dist_i)
+            plt.plot(*left_vertex, "o", zorder=40)
+            plt.plot(*center_vertex, "o", zorder=40)
+            plt.plot(*right_vertex, "o", zorder=40)
+
+            assert_pos(left_vertex, [0])
+            assert_pos(center_vertex, [0])
+            assert_pos(right_vertex, [0,1])
+
+        self.assertEqual(self.diagonal_lanelet_network.find_lanelet_by_position([np.array([0.0, 0.0])])[0].sort(),
+                         [0, 1])
 
     def test_find_lanelet_by_shape(self):
         rectangle1 = Rectangle(2, 2)
