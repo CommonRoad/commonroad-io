@@ -799,7 +799,7 @@ class Lanelet:
                 point_list), 'Lanelet/contains_points>: provided list of points is malformed! points = {}'.format(
                 point_list)
 
-        return [p for p in point_list if self._polygon.contains_point(p)]
+        return [self._polygon.contains_point(p) for p in point_list]
 
     def get_obstacles(self, obstacles: List[Obstacle], time_step: int = 0) -> List[Obstacle]:
         """
