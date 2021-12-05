@@ -1061,7 +1061,7 @@ class LaneletNetwork(IDrawable):
         """
         self._lanelets: Dict[int, Lanelet] = {}
         # lanelet_id, shapely_polygon
-        self._shapely_lanelet_polygons: Dict[int, ShapelyPolygon] = {}
+        self._buffered_polygons: Dict[int, ShapelyPolygon] = {}
         self._strtee = None
         # id(shapely_polygon), lanelet_id
         self._lanelet_id_index_by_id: Dict[int, int] = {}
@@ -1258,9 +1258,19 @@ class LaneletNetwork(IDrawable):
         Since it is an immutable object, it has to be recreated after every lanelet addition or it should be done
         once after all lanelets are added.
         """
+
+        # validate buffered polygons
+        def assert_shapely_polygon(lanelet_id, polygon):
+            assert isinstance(polygon,
+                              ShapelyPolygon), f"Lanelet with id {lanelet_id}'s polygon is not a " \
+                                               f"<shapely.geometry.Polygon> object!"
+
+        [assert_shapely_polygon(lanelet_id, lanelet_shapely_polygon) for lanelet_id, lanelet_shapely_polygon in
+         self._buffered_polygons.items()]
+
         self._lanelet_id_index_by_id = {id(lanelet_shapely_polygon): lanelet_id for lanelet_id, lanelet_shapely_polygon
-                                        in self._shapely_lanelet_polygons.items()}
-        self._strtee = STRtree(list(self._shapely_lanelet_polygons.values()))
+                                        in self._buffered_polygons.items()}
+        self._strtee = STRtree(list(self._buffered_polygons.values()))
 
     def remove_lanelet(self, lanelet_id: int, rtree: bool = True):
         """
@@ -1271,7 +1281,7 @@ class LaneletNetwork(IDrawable):
         """
         if lanelet_id in self._lanelets.keys():
             del self._lanelets[lanelet_id]
-            del self._shapely_lanelet_polygons[lanelet_id]
+            del self._buffered_polygons[lanelet_id]
             self.cleanup_lanelet_references()
 
         if rtree:
@@ -1421,7 +1431,7 @@ class LaneletNetwork(IDrawable):
         else:
             self._lanelets[lanelet.lanelet_id] = lanelet
             # TODO check functionality without buffer
-            self._shapely_lanelet_polygons[lanelet.lanelet_id] = lanelet.polygon.shapely_object.buffer(eps)
+            self._buffered_polygons[lanelet.lanelet_id] = lanelet.polygon.shapely_object.buffer(eps)
             # self._shapely_lanelet_polygons[lanelet.lanelet_id] = lanelet.polygon.shapely_object
             if rtree:
                 self._create_strtree()
