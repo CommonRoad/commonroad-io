@@ -1450,12 +1450,27 @@ class StateFactory:
 
     @classmethod
     def read_one_dimensional_start(cls, xml_node: ElementTree.Element, reference_path: np.ndarray) -> np.ndarray:
+        """
+        converts the length given alongside the reference_path to the respective two-dimensional coordinates
+        """
         s = float(xml_node.text)
         coord_list = cls.coordinatesFromDistance(s, reference_path)
         return np.array(coord_list)
 
     @classmethod
     def coordinatesFromDistance(cls, s: float, ref_path: np.ndarray) -> List:
+        """
+        interpolates the coordiante points using the following algorithm:
+        1. finds between which exact two points of the reference_path is located
+        2. Let d be the total distance to the point 's',
+        A be the "lower" coordinate point from the reference path and B the "upper".
+        The given point(s) is located on a distance from A of a = d - totalDistToPoint(A)
+        To sum up: s is the distance to point S alongside the reference path, which is located
+        between points A and B, known from the reference path on an offset a from A and we are searching S(x) and S(y)
+        Using similar triangles the end formula for the coordinates of S are:
+        S(x) = (a*(B(x)-A(x)) + d*A(x))/d
+        S(y) = (a*(B(y)-A(y)) + d*A(y))/d
+        """
         s_coord_list = list()
         consecutivePoints = cls.cosecutivePointsBetweenGivenDistance(s, ref_path)
         d = cls.distanceBetweenConsecutivePoints(consecutivePoints[0],consecutivePoints[1])
@@ -1470,6 +1485,9 @@ class StateFactory:
 
     @classmethod
     def cosecutivePointsBetweenGivenDistance(cls, dist: float, ref_path: np.ndarray) -> List:
+        """
+        finds between which points of the reference path the point s is located
+        """
         sum = 0
         saveIndex = 0
         for i in range(len(ref_path.tolist()) - 1):
@@ -1484,6 +1502,9 @@ class StateFactory:
 
     @classmethod
     def totalDistanceToCoordinatePoint(cls, coordPoint: List, ref_path: np.ndarray) -> float:
+        """
+        computes the total distance to a given coordinate point of the reference path alongside the reference path
+        """
         sum = 0
         for i in range(len(ref_path.tolist()) - 1):
             if ref_path.tolist()[i] == coordPoint:
@@ -1493,11 +1514,24 @@ class StateFactory:
 
     @classmethod
     def distanceBetweenConsecutivePoints(cls, point: List, nextPoint: List) -> float:
+        """
+        computes the distance between two points in two-dimensional space
+        """
         return math.sqrt((nextPoint[0] - point[0])**2 +
                      (nextPoint[1] - point[1])**2)
 
     @classmethod
     def build_goal_position_path(cls, startPositionNode: ElementTree.Element, endPositionNode: ElementTree.Element, ref_path: np.ndarray) -> np.ndarray:
+        """
+        builds the goal region positionin the following way:
+        1. Finds where the startPoint of the goal region is located in two-dimensional space,
+        using the methods listed above
+        2. Finds the coordinate points of the endPoint in two-dimensional space
+        3. Connects the startPoint coordinates with the coordinate points of the next point alongside the reference path
+        4. Connects all points of the reference path, until reaching the consecutive points of the endPosition point
+        5. Connects the "lower" consecutive point of the reference path to the endPosition coordinates
+        6. returns ndarray list of coordinates that represent the position of the goal region
+        """
         result = list()
         startPosition = float(startPositionNode.text)
         endPosition = float(endPositionNode.text)

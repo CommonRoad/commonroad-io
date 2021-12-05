@@ -1399,11 +1399,23 @@ class MPRenderer(IRenderer):
                          call_stack: Tuple[str, ...]) -> None:
         draw_params = self._get_draw_params(draw_params)
         call_stack = call_stack + ('shape', 'line',)
+        opacity = draw_params.by_callstack(call_stack, 'opacity')
         facecolor = draw_params.by_callstack(call_stack, 'facecolor')
         linewidth = draw_params.by_callstack(call_stack, 'linewidth')
         zorder = draw_params.by_callstack(call_stack, 'zorder')
-        line = collections.LineCollection([obj], linewidths=linewidth, facecolors=facecolor, zorder=zorder)
-        self.static_collections.append(line)
+        #line = collections.LineCollection([obj], linewidths=linewidth, facecolors=facecolor, zorder=zorder)
+
+        #self.static_collections.append(line)
+
+        #self.obstacle_patches.append(
+                #mpl.patches.Polygon(obj, closed=False, facecolor=facecolor, zorder=zorder,
+                                    #alpha=opacity))
+        self.static_collections.append(
+                    collections.EllipseCollection(np.ones([obj.shape[0], 1]) * linewidth,
+                                                  np.ones([obj.shape[0], 1]) * linewidth,
+                                                  np.zeros([obj.shape[0], 1]), offsets=obj, units='xy',
+                                                  linewidths=linewidth, zorder=zorder, transOffset=self.ax.transData,
+                                                  facecolors=facecolor))
 
     def draw_reference_path(self, obj: np.ndarray, draw_params: Union[ParamServer, dict, None],
                          call_stack: Tuple[str, ...]) -> None:

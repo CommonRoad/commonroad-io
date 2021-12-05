@@ -112,16 +112,25 @@ __status__ = "released"
   </xs:complexType>
   <xs:complexType name="positionExact">
     <xs:all>
-      <xs:element name="point" type="point"/>
+      <xs:element name="point" type="point" minOccurs="0"/>
+      <xs:element name="startPoint" type="decimalExact"/>
     </xs:all>
   </xs:complexType>
+    <xs:complexType name="positionReferencePathExact">
+        <xs:sequence>
+            <xs:element name="x" type="decimalExact"/>
+            <xs:element name="y" type="decimalExact"/>
+        </xs:sequence>
+    </xs:complexType>
   <xs:complexType name="positionInterval">
-    <xs:choice>
-      <xs:element name="rectangle" type="rectangle" maxOccurs="unbounded"/>
-      <xs:element name="circle" type="circle" maxOccurs="unbounded"/>
-      <xs:element name="polygon" type="polygon" maxOccurs="unbounded"/>
-      <xs:element name="lanelet" type="laneletRef" maxOccurs="unbounded"/>
-    </xs:choice>
+    <xs:sequence>
+      <xs:element name="rectangle" type="rectangle" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="circle" type="circle" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="polygon" type="polygon" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="lanelet" type="laneletRef" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="goalStartPoint" type="decimalExact"/>
+      <xs:element name="goalEndPoint" type="decimalExact"/>
+    </xs:sequence>
   </xs:complexType>
   <xs:complexType name="state">
     <xs:all>
@@ -223,6 +232,11 @@ __status__ = "released"
       <xs:element name="flashingBlueLights" type="xs:boolean" minOccurs="0"/>
     </xs:all>
   </xs:complexType>
+  <xs:complexType name ="referencePathExact">
+    <xs:sequence>
+      <xs:element name="position" type="positionReferencePathExact" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
   <xs:complexType name="initialStateExact">
     <xs:all>
       <xs:element name="position" type="positionExact"/>
@@ -234,6 +248,12 @@ __status__ = "released"
       <xs:element name="acceleration" type="decimalExact" minOccurs="0"/>
     </xs:all>
   </xs:complexType>
+    <xs:complexType name="intermediateGoal">
+        <xs:all>
+            <xs:element name="position" type="positionInterval" minOccurs="0"/>
+            <xs:element name="time" type="integerIntervalGreaterZero"/>
+        </xs:all>
+    </xs:complexType>
   <xs:complexType name="goalState">
     <xs:all>
       <xs:element name="time" type="integerIntervalGreaterZero"/>
@@ -640,7 +660,9 @@ __status__ = "released"
   <!-- planning problem -->
   <xs:complexType name="planningProblem">
     <xs:sequence>
+      <xs:element name="referencePath" type="referencePathExact" minOccurs="0"/>
       <xs:element name="initialState" type="initialStateExact"/>
+      <xs:element name="intermediateGoal" type="intermediateGoal" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="goalState" type="goalState" minOccurs="1" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
@@ -769,7 +791,7 @@ __status__ = "released"
       <xs:attribute name="timeStepSize" type="xs:decimal" use="required"/>
     </xs:complexType>
     <xs:key name="id">
-      <xs:selector xpath="./lanelet | ./trafficSign | ./trafficLight | ./trafficSign | ./trafficLight | ./intersection | ./staticObstacle | ./dynamicObstacle| ./phantomObstacle | ./environmentObstacle | ./planningProblem | ./intersection/incoming"/>
+      <xs:selector xpath="./lanelet | ./trafficSign | ./trafficLight | ./trafficSign | ./trafficLight | ./intersection | ./staticObstacle | ./dynamicObstacle| ./phantomObstacle | ./environmentObstacle | ./planningProblem | ./referencePathExact | ./intersection/incoming"/>
       <xs:field xpath="@id"/>
     </xs:key>
     <xs:keyref name="idref" refer="id">
