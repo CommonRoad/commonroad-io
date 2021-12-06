@@ -1263,9 +1263,8 @@ class LaneletNetwork(IDrawable):
             if not isinstance(polygon, ShapelyPolygon):
                 warnings.warn(
                         f"Lanelet with id {lanelet_id}'s polygon is not a <shapely.geometry.Polygon> object! It will "
-                        f"be "
-                        f"OMITTED from STRtree, therefore it will NOT work with the find_lanelet_by_<position/shape>() "
-                        f"functions!!")
+                        f"be OMITTED from STRtree, therefore this lanelet will NOT be contained in the results of the "
+                        f"find_lanelet_by_<position/shape>() functions!!")
                 return False
             else:
                 return True
