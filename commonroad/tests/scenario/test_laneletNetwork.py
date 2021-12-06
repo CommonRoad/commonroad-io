@@ -280,7 +280,7 @@ class TestLaneletNetwork(unittest.TestCase):
         lanelet_0 = self.diagonal_lanelet_network.find_lanelet_by_id(0)
         lanelet_1 = self.diagonal_lanelet_network.find_lanelet_by_id(1)
         for dist_i in list(np.linspace(0.0, lanelet_0.distance[2], 1000)):
-            center_vertex, right_vertex, left_vertex, _ = lanelet_0.interpolate_position(dist_i)
+            center_vertex, right_vertex, left_vertex = lanelet_0.interpolate_position(dist_i)
             assert_pos(left_vertex, [0])
             assert_pos(left_vertex + np.array([0.0, 0.5 * tolerance]), [])
 
@@ -290,7 +290,7 @@ class TestLaneletNetwork(unittest.TestCase):
             assert_pos(right_vertex + np.array([0.0, 0.5 * tolerance]), [0])
             assert_pos(right_vertex - np.array([0.0, 0.5 * tolerance]), [1])
 
-            center_vertex, right_vertex, left_vertex, _ = lanelet_1.interpolate_position(dist_i)
+            center_vertex, right_vertex, left_vertex = lanelet_1.interpolate_position(dist_i)
             assert_pos(left_vertex, [0, 1])
             assert_pos(left_vertex + np.array([0.0, 0.5 * tolerance]), [0])
             assert_pos(left_vertex - np.array([0.0, 0.5 * tolerance]), [1])

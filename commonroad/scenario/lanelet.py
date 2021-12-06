@@ -754,13 +754,12 @@ class Lanelet:
         # recreate polygon in case it existed
         self._polygon = Polygon(np.concatenate((self.right_vertices, np.flip(self.left_vertices, 0))))
 
-    def interpolate_position(self, distance: float) -> tuple:
+    def interpolate_position(self, distance: float) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
         Computes the interpolated positions on the center/right/left polyline of the lanelet for a given distance
         along the lanelet
 
         :param distance: The distance for the interpolation
-        # TODO fix documentation or code!!
         :return: The interpolated positions on the center/right/left polyline
             in the form [[x_c,y_c],[x_r,y_r],[x_l,y_l]]
         """
@@ -774,7 +773,7 @@ class Lanelet:
         r = (distance - self.distance[idx]) / (self.distance[idx + 1] - self.distance[idx])
         return ((1 - r) * self._center_vertices[idx] + r * self._center_vertices[idx + 1],
                 (1 - r) * self._right_vertices[idx] + r * self._right_vertices[idx + 1],
-                (1 - r) * self._left_vertices[idx] + r * self._left_vertices[idx + 1], idx)
+                (1 - r) * self._left_vertices[idx] + r * self._left_vertices[idx + 1])
 
     def convert_to_polygon(self) -> Polygon:
         """
