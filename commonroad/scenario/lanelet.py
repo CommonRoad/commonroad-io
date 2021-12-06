@@ -1261,12 +1261,19 @@ class LaneletNetwork(IDrawable):
 
         # validate buffered polygons
         def assert_shapely_polygon(lanelet_id, polygon):
-            assert isinstance(polygon,
-                              ShapelyPolygon), f"Lanelet with id {lanelet_id}'s polygon is not a " \
-                                               f"<shapely.geometry.Polygon> object!"
+            if not isinstance(polygon, ShapelyPolygon):
+                warnings.warn(
+                        f"Lanelet with id {lanelet_id}'s polygon is not a <shapely.geometry.Polygon> object! It will "
+                        f"be "
+                        f"OMITTED from STRtree, therefore it will NOT work with the find_lanelet_by_<position/shape>() "
+                        f"functions!!")
+                return False
+            else:
+                return True
 
-        [assert_shapely_polygon(lanelet_id, lanelet_shapely_polygon) for lanelet_id, lanelet_shapely_polygon in
-         self._buffered_polygons.items()]
+        self._buffered_polygons = {lanelet_id: lanelet_shapely_polygon for lanelet_id, lanelet_shapely_polygon in
+                                   self._buffered_polygons.items() if
+                                   assert_shapely_polygon(lanelet_id, lanelet_shapely_polygon)}
 
         self._lanelet_id_index_by_id = {id(lanelet_shapely_polygon): lanelet_id for lanelet_id, lanelet_shapely_polygon
                                         in self._buffered_polygons.items()}
