@@ -511,8 +511,7 @@ class ShapeGroup(Shape):
         for s in self._shapes:
             s.draw(renderer, draw_params, call_stack)
 
-# TODO: remove Truck from shape.py for the drivability checker!
-# TODO: see if we can run the scenarios sent per mail
+
 def occupancy_shape_from_state(shape, state):
     if state.is_uncertain_position or state.is_uncertain_orientation:
         # From M. Althoff and J. M. Dolan, “Online Verification of Automated Road Vehicles Using Reachability Analysis,”

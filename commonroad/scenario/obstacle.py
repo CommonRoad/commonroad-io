@@ -522,9 +522,6 @@ class Truck(DynamicObstacle):
         self._initial_occupancy_shape = ShapeGroup(list_of_shapes)
 
 
-# TODO: check if occupancy is constructed correctly based on the model (KST/ST)
-
-
 class PhantomObstacle(IDrawable):
     """ Class representing phantom obstacles as defined in CommonRoad. Each phantom obstacle has stored its predicted
     movement in future time steps as occupancy set.
