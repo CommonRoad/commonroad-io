@@ -1,7 +1,7 @@
 __author__ = "Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["CAR@TUM"]
-__version__ = "2021.1"
+__version__ = "2021.3"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Release"
@@ -197,7 +197,7 @@ class Intersection:
         :param incomings: i_id ID of intersection element
         """
         if self._incomings is None:
-            assert len(incomings) > 1, '<Intersection/incomings>: Intersection ' \
+            assert len(incomings) > 0, '<Intersection/incomings>: Intersection ' \
                                                'must consist of at least two incomings '
             self._incomings = incomings
         else:
