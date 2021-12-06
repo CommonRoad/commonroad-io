@@ -59,7 +59,7 @@ class VehicleType(Enum):
     FORD_ESCORT = 1
     BMW_320i = 2
     VW_VANAGON = 3
-    TRUCK = 4 # TODO how should I call this?
+    TRUCK = 4
 
 
 vehicle_parameters = {VehicleType.FORD_ESCORT: p1.parameters_vehicle1(),

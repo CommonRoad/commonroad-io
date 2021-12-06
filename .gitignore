@@ -224,5 +224,8 @@ commonroad/doc/build/*
 # pytest
 .coverage
 
-#spot
+# spot
 *spot_prediction.py
+
+# trajectory file
+*generated_trajectory.txt

@@ -1,8 +1,8 @@
-import os
-import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+import matplotlib.pyplot as plt
 from IPython import display
 import numpy as np
+import os
 
 # import functions to read xml file and visualize commonroad objects
 from commonroad.common.file_reader import CommonRoadFileReader
