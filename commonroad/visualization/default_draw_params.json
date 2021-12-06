@@ -388,7 +388,9 @@
         "zorder": 25
     },
     "planning_problem_set": {
-        "draw_ids": "all",
+        "draw_ids": "all"
+    },
+    "planning_problem": {
         "initial_state": {
             "label_zorder": 35,
             "label": "",
