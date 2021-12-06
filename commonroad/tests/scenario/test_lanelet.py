@@ -97,13 +97,13 @@ class TestLanelet(unittest.TestCase):
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, 1)
 
         interpolated_position = lanelet.interpolate_position(5.736067977)
-        self.assertTrue(len(interpolated_position) == 3)
+        self.assertTrue(len(interpolated_position) == 4)
         desired_position = [[5.5, 1.5], [5.5, 1], [5.5, 2]]
 
         for i, elt in enumerate(desired_position):
             self.assertAlmostEqual(elt[0], interpolated_position[i][0])
             self.assertAlmostEqual(elt[1], interpolated_position[i][1])
-        # self.assertEqual(interpolated_position[3], 5)
+        self.assertEqual(interpolated_position[3], 5)
 
     def test_interpolate_position_invalid(self):
         right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
