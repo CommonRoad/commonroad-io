@@ -754,13 +754,12 @@ class Lanelet:
         # recreate polygon in case it existed
         self._polygon = Polygon(np.concatenate((self.right_vertices, np.flip(self.left_vertices, 0))))
 
-    def interpolate_position(self, distance: float) -> tuple:
+    def interpolate_position(self, distance: float) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
         Computes the interpolated positions on the center/right/left polyline of the lanelet for a given distance
         along the lanelet
 
         :param distance: The distance for the interpolation
-        # TODO fix documentation or code!!
         :return: The interpolated positions on the center/right/left polyline
             in the form [[x_c,y_c],[x_r,y_r],[x_l,y_l]]
         """
@@ -774,7 +773,7 @@ class Lanelet:
         r = (distance - self.distance[idx]) / (self.distance[idx + 1] - self.distance[idx])
         return ((1 - r) * self._center_vertices[idx] + r * self._center_vertices[idx + 1],
                 (1 - r) * self._right_vertices[idx] + r * self._right_vertices[idx + 1],
-                (1 - r) * self._left_vertices[idx] + r * self._left_vertices[idx + 1], idx)
+                (1 - r) * self._left_vertices[idx] + r * self._left_vertices[idx + 1])
 
     def convert_to_polygon(self) -> Polygon:
         """
@@ -1261,12 +1260,19 @@ class LaneletNetwork(IDrawable):
 
         # validate buffered polygons
         def assert_shapely_polygon(lanelet_id, polygon):
-            assert isinstance(polygon,
-                              ShapelyPolygon), f"Lanelet with id {lanelet_id}'s polygon is not a " \
-                                               f"<shapely.geometry.Polygon> object!"
+            if not isinstance(polygon, ShapelyPolygon):
+                warnings.warn(
+                        f"Lanelet with id {lanelet_id}'s polygon is not a <shapely.geometry.Polygon> object! It will "
+                        f"be "
+                        f"OMITTED from STRtree, therefore it will NOT work with the find_lanelet_by_<position/shape>() "
+                        f"functions!!")
+                return False
+            else:
+                return True
 
-        [assert_shapely_polygon(lanelet_id, lanelet_shapely_polygon) for lanelet_id, lanelet_shapely_polygon in
-         self._buffered_polygons.items()]
+        self._buffered_polygons = {lanelet_id: lanelet_shapely_polygon for lanelet_id, lanelet_shapely_polygon in
+                                   self._buffered_polygons.items() if
+                                   assert_shapely_polygon(lanelet_id, lanelet_shapely_polygon)}
 
         self._lanelet_id_index_by_id = {id(lanelet_shapely_polygon): lanelet_id for lanelet_id, lanelet_shapely_polygon
                                         in self._buffered_polygons.items()}

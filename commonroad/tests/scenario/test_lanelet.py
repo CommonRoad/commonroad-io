@@ -97,12 +97,13 @@ class TestLanelet(unittest.TestCase):
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, 1)
 
         interpolated_position = lanelet.interpolate_position(5.736067977)
+        self.assertTrue(len(interpolated_position) == 3)
         desired_position = [[5.5, 1.5], [5.5, 1], [5.5, 2]]
 
         for i, elt in enumerate(desired_position):
             self.assertAlmostEqual(elt[0], interpolated_position[i][0])
             self.assertAlmostEqual(elt[1], interpolated_position[i][1])
-        self.assertEqual(interpolated_position[3], 5)
+        # self.assertEqual(interpolated_position[3], 5)
 
     def test_interpolate_position_invalid(self):
         right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
@@ -402,8 +403,8 @@ class TestLanelet(unittest.TestCase):
                             adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
         self.assertTrue(lanelet_1 == lanelet_2)
 
-        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, [3], successor,
-                            adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
+        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, [3], successor, adjacent_left,
+                            adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
         self.assertFalse(lanelet_1 == lanelet_2)
 
         lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, [4, 3], successor,
