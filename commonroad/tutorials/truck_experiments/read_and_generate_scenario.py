@@ -1,20 +1,16 @@
-from vehiclemodels.vehicle_dynamics_kst import vehicle_dynamics_kst
-from vehiclemodels.parameters_vehicle4 import parameters_vehicle4
-from vehiclemodels.init_kst import init_kst
-from scipy.integrate import odeint
 import numpy as np
 import json
-import os
-print(str(os.getcwd()))
 
 # specify obstacle, poses and trajectory file
 OBSTACLE_FILE = "input/CTA_Obstacles.json"
 POSES_FILE = "input/poses_Hamburg_CTA.json"
 TRAJECTORY_FILE = "input/04M001.json"
-# offset between world anc local (CommonRoad) coordinates
+
+# offset between world and local (CommonRoad) coordinates
 OFFSET_X = 561676.6763867161
 OFFSET_Y = 5928014.473294518
 
+# template for a single state in the trajectory list
 state_template = "\n  <state>\n    <position>\n      <point>\n        <x>%s</x>\n        <y>%s</y>\n      </point>" \
         "\n    </position>\n    <orientation>\n      <exact>%s</exact>\n    </orientation>\n    <time>" \
         "\n      <exact>%s</exact>\n    </time>\n    <velocity>\n      <exact>%s</exact>\n    </velocity>" \
@@ -64,12 +60,10 @@ def get_poses(json_data):
     exit_points_left_lane, exit_points_right_lane, exit_points_side_lane = get_lanes(exit_points_parking)
 
 
-def get_local_coords(solution, x_corr, y_corr):
+def get_local_coords(x_corr, y_corr):
     local_x = []
     local_y = []
-    s_x = solution['x']
-    s_y = solution['y']
-    for i in range(len(s_x)):
+    for i in range(len(x_corr)):
         local_x.append(x_corr[i] - OFFSET_X)
         local_y.append(y_corr[i] - OFFSET_Y)
     return local_x, local_y
@@ -90,10 +84,9 @@ def check_x(x_list, s_x, s_xt, theta, alpha):
     x_fake = s_x + 0.5 * np.cos(theta) * 3.6
     x_list.append(x_fake)
     x_trailer = s_xt
-    length = (x_trailer + s_x) / np.cos(theta + alpha)
+    length = -(x_trailer + s_x) / np.cos(theta + alpha)
     print("length = " + str(length))
     print("x: %s ?= %s, diff = %s" % (str(x_fake), str(s_x), str(x_fake - s_x)))
-    # return x_fake
 
 
 def check_y(y_list, s_y, s_yt, theta, alpha):
@@ -101,49 +94,37 @@ def check_y(y_list, s_y, s_yt, theta, alpha):
     y_fake = s_y + 0.5 * np.sin(theta) * 3.6
     y_list.append(y_fake)
     y_trailer = s_yt
-    length = (y_trailer - s_y) / np.sin(theta + alpha)
+    length = -(y_trailer - s_y) / np.sin(theta + alpha)
     print("length = " + str(length))
     print("y: %s ?= %s, diff = %s" % (str(y_fake), str(s_y), str(y_fake - s_y)))
-    # return np.abs(y_fake - y_trailer)
 
 
-# TODO
-# x_trailer_center = x_f + cos(theta_f) * 1/2 * l_f
-# y_trailer_center = y_f + sin(theta_f) * 1/2 * l_f
-# check if x == x_f + cos(theta_f) * l_f
-# check if y == y_f + sin(theta_f) * l_f
-# x_center = x_f + cos(theta_f) * l_f + cos(theta) * l * 1/2 - add to xml
-# y_center = y_f + sin(theta_f) * l_f + sin(theta) * l * 1/2 - add to xml
-# TODO: update branch on gitlab!
-def check_coords(solution):
+# update coordinates with the corrected central position for truck
+# calculated from the real wheel position, angle and wheelbase length
+def update_coords(solution):
     s_x, s_y = solution['x'], solution['y']
-    s_x_trailer, s_y_trailer = solution['x_trailer'], solution['y_trailer']
     alpha, theta = solution['alpha'], solution['theta']
-    x_diff_sum, y_diff_sum = 0, 0
-    fake_x, fake_y = [], []
+    x_updated, y_updated = [], []
     for i in range(len(theta)):
-        check_x(fake_x, s_x[i], s_x_trailer[i], theta[i], alpha[i])
-        check_y(fake_y, s_y[i], s_y_trailer[i], theta[i], alpha[i])
-    return fake_x, fake_y
-
-
-def check(solution):
-    check_angles(solution)
-    fake_x, fake_y = check_coords(solution)
-    return fake_x, fake_y
+        x_updated.append(s_x[i] + 0.5 * np.cos(theta[i]) * 3.6)
+        y_updated.append(s_y[i] + 0.5 * np.sin(theta[i]) * 3.6)
+    return x_updated, y_updated
 
 
 def get_trajectory(json_data):
     solution = json_data['final_solution']
-    x_corr, y_corr = check(solution)
+    # update coordinates to the CommonRoad model
+    x_corr, y_corr = update_coords(solution)
     hitch_angles = solution['alpha']
     v_long = solution['direction']
     steering_angles = solution['phi'] # delta
     orientation = solution['theta']
-    s_x, s_y = get_local_coords(solution, x_corr, y_corr)
+    # calculate CommonRoad coordinates from world coordinates
+    s_x, s_y = get_local_coords(x_corr, y_corr)
     return hitch_angles, v_long, steering_angles, orientation, s_x, s_y
 
 
+# write trajectory entry
 def write_commonroad_trajectory(json_data):
     hitch, v_long, steering, orient, x, y = get_trajectory(json_data)
     with open("generated_trajectory.txt", 'w') as traj:
@@ -157,9 +138,11 @@ def write_commonroad_trajectory(json_data):
 # read obstacle data
 obstacle_data = read_json_file(OBSTACLE_FILE)
 local_obstacle_coords = world_to_local_coords(obstacle_data, tuple_size=2)
+
 # read poses data
 poses_data = read_json_file(POSES_FILE)
 get_poses(poses_data)
+
 # read trajectory data
 trajectory_data = read_json_file(TRAJECTORY_FILE)
 write_commonroad_trajectory(trajectory_data)
