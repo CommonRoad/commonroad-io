@@ -1435,9 +1435,7 @@ class LaneletNetwork(IDrawable):
             return False
         else:
             self._lanelets[lanelet.lanelet_id] = lanelet
-            # TODO check functionality without buffer
             self._buffered_polygons[lanelet.lanelet_id] = lanelet.polygon.shapely_object.buffer(eps)
-            # self._shapely_lanelet_polygons[lanelet.lanelet_id] = lanelet.polygon.shapely_object
             if rtree:
                 self._create_strtree()
             return True
