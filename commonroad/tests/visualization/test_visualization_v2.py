@@ -167,7 +167,7 @@ class TestVisualizationV2(unittest.TestCase):
             problem.initial_state.draw(self.rnd)
             self.rnd.render()
 
-        assert (len(record_warnings) == 0)
+        self.assertEqual(0, len(record_warnings))
         plt.close('all')
 
     def test_trajectory_unique_colors(self):

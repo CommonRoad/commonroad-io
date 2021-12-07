@@ -622,7 +622,7 @@ class CommonRoadSolutionReader:
 
         date = root_node.attrib.get('date', None)  # None if not found
         if date is not None:
-            date = datetime.strptime(date, '%Y-%m-%d')
+            date = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S')
 
         computation_time = root_node.attrib.get('computation_time', None)
         if computation_time is not None:
@@ -773,7 +773,7 @@ class CommonRoadSolutionWriter:
         if solution.computation_time is not None:
             root_node.set('computation_time', str(solution.computation_time))
         if solution.date is not None:
-            root_node.set('date', solution.date.strftime('%Y-%m-%d'))
+            root_node.set('date', solution.date.strftime('%Y-%m-%dT%H:%M:%S'))
         processor_name = cls._get_processor_name() if solution.processor_name == 'auto' else solution.processor_name
         if processor_name is not None:
             root_node.set('processor_name', processor_name)
