@@ -97,6 +97,7 @@ class TestLanelet(unittest.TestCase):
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, 1)
 
         interpolated_position = lanelet.interpolate_position(5.736067977)
+        self.assertTrue(len(interpolated_position) == 4)
         desired_position = [[5.5, 1.5], [5.5, 1], [5.5, 2]]
 
         for i, elt in enumerate(desired_position):
@@ -402,8 +403,8 @@ class TestLanelet(unittest.TestCase):
                             adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
         self.assertTrue(lanelet_1 == lanelet_2)
 
-        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, [3], successor,
-                            adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
+        lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, [3], successor, adjacent_left,
+                            adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir)
         self.assertFalse(lanelet_1 == lanelet_2)
 
         lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, [4, 3], successor,
