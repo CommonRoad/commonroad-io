@@ -1,9 +1,10 @@
 # Changelog
 
-## [2021.4] - 2021-X-X
+## [2021.4] - 2021-12-X
 ### Added
 - Polyline utility functions, e.g., resampling, path length, orientation, curvature, intersection
-- `__eq__` functions for LaneletNetwork and related classes (e.g., traffic sign, traffic light, stop line, etc.)
+- `__eq__` and `__hash__` functions for LaneletNetwork and related classes (e.g., traffic sign, traffic light, stop line, etc.)
+- Compatibility for Shapely 2.0
 
 ### Fixed
 - Various small bug fixes
