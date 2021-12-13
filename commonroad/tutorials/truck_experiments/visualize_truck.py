@@ -11,6 +11,13 @@ from commonroad.visualization.mp_renderer import MPRenderer
 # generate path of the file to be opened
 file_path = "input/ZAM_Loading_Bay-1_1_T-1.xml"
 
+# TODO: check classes and whether they make sense at this point
+# TODO: visualize video with the actual truck size, not just wheelbase
+# TODO: check style_check pipeline error
+# TODO: feasability checker - trajectory_feasability - check feasability-checker tutorial - check for MAN
+# TODO: vehicle dynamics - add comment
+# TODO: check if collision checker works for truck
+
 # read in the scenario and planning problem set
 scenario, planning_problem_set = CommonRoadFileReader(file_path).open()
 fig = plt.figure(figsize=(25, 10))

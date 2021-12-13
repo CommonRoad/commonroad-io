@@ -1077,13 +1077,6 @@ class StaticObstacleFactory(ObstacleFactory):
 
 
 class DynamicObstacleFactory(ObstacleFactory):
-    @classmethod
-    def read_trailer_dist(cls, xml_node: ElementTree.Element) -> ObstacleType:
-        trailer_dist = 0.5
-        if xml_node.find('trailer_dist') is not None:
-            trailer_dist = float(xml_node.find('trailer_dist').text)
-        return trailer_dist
-
     @staticmethod
     def find_obstacle_shape_lanelets(initial_state: State, state_list: List[State], lanelet_network: LaneletNetwork,
                                      obstacle_id: int, shape: Shape) -> Dict[int, Set[int]]:
@@ -1135,7 +1128,6 @@ class DynamicObstacleFactory(ObstacleFactory):
                              lanelet_assignment: bool) -> DynamicObstacle:
         obstacle_type = DynamicObstacleFactory.read_type(xml_node)
         obstacle_id = DynamicObstacleFactory.read_id(xml_node)
-        trailer_dist = DynamicObstacleFactory.read_trailer_dist(xml_node)
         shape = DynamicObstacleFactory.read_shape(xml_node.find('shape'))
         initial_state = DynamicObstacleFactory.read_initial_state(xml_node.find('initialState'))
         initial_signal_state = DynamicObstacleFactory.read_initial_signal_state(xml_node.find('initialSignalState'))
@@ -1163,10 +1155,7 @@ class DynamicObstacleFactory(ObstacleFactory):
             else:
                 shape_lanelet_assignment = None
                 center_lanelet_assignment = None
-            if obstacle_type == ObstacleType.TRUCK:
-                prediction = TrajectoryPrediction(trajectory, shape, center_lanelet_assignment, shape_lanelet_assignment, trailer_dist)
-            else:
-                prediction = TrajectoryPrediction(trajectory, shape, center_lanelet_assignment, shape_lanelet_assignment)
+            prediction = TrajectoryPrediction(trajectory, shape, center_lanelet_assignment, shape_lanelet_assignment)
         elif xml_node.find('occupancySet') is not None:
             prediction = SetBasedPredictionFactory.create_from_xml_node(xml_node.find('occupancySet'))
         else:
@@ -1174,7 +1163,7 @@ class DynamicObstacleFactory(ObstacleFactory):
 
         if obstacle_type == ObstacleType.TRUCK:
             return Truck(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
-                         obstacle_shape=shape, initial_state=initial_state, trailer_dist=trailer_dist,
+                         obstacle_shape=shape, initial_state=initial_state,
                          prediction=prediction, initial_center_lanelet_ids=initial_center_lanelet_ids,
                          initial_shape_lanelet_ids=initial_shape_lanelet_ids,
                          initial_signal_state=initial_signal_state,

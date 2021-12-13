@@ -4854,7 +4854,6 @@
   <obstacle id="42">
     <role>dynamic</role>
     <type>truck</type>
-    <trailer_dist>1.0</trailer_dist>
     <shape>
       <rectangle>
         <length>3.0</length>

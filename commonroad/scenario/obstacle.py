@@ -469,7 +469,7 @@ class Truck(DynamicObstacle):
     """
 
     def __init__(self, obstacle_id: int, obstacle_type: ObstacleType,
-                 obstacle_shape: Shape, initial_state: State, trailer_dist: float,
+                 obstacle_shape: Shape, initial_state: State,
                  prediction: Union[None, Prediction, TrajectoryPrediction, SetBasedPrediction] = None,
                  initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
@@ -479,14 +479,12 @@ class Truck(DynamicObstacle):
             :param obstacle_type: type of obstacle (e.g. PARKED_VEHICLE)
             :param obstacle_shape: shape of the static obstacle
             :param initial_state: initial state of the static obstacle
-            :param trailer_dist: trailer dist
             :param prediction: predicted movement of the dynamic obstacle
             :param initial_center_lanelet_ids: initial IDs of lanelets the obstacle center is on
             :param initial_shape_lanelet_ids: initial IDs of lanelets the obstacle shape is on
             :param initial_signal_state: initial signal state of static obstacle
             :param signal_series: list of signal states over time
         """
-        self.trailer_dist = trailer_dist
         DynamicObstacle.__init__(self, obstacle_id=obstacle_id, obstacle_type=obstacle_type,
                           obstacle_shape=obstacle_shape, initial_state=initial_state,
                           prediction=prediction, initial_center_lanelet_ids=initial_center_lanelet_ids,
@@ -512,7 +510,7 @@ class Truck(DynamicObstacle):
 
         for i in range(1, nr_of_shapes):
             new_orient = orient + initial_state.hitch[i - 1]
-            pos = pos - (shapes[i - 1].length / 2 + self.trailer_dist) * np.array(
+            pos = pos - 0.5 * shapes[i - 1].length / 2 * np.array(
                     [math.cos(orient), math.sin(orient)]) - (shapes[i].length / 2) * np.array(
                     [math.cos(new_orient), math.sin(new_orient)])
             orient = new_orient

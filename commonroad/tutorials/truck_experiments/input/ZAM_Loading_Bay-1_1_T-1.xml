@@ -3642,7 +3642,6 @@
   </staticObstacle>
   <dynamicObstacle id="70">
     <type>truck</type>
-    <trailer_dist>1.0</trailer_dist>
     <shape>
       <rectangle>
         <length>3.6</length>
