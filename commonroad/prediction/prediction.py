@@ -289,7 +289,7 @@ class TrajectoryPrediction(Prediction):
                 for i in range(1, nr_of_shapes):
                     new_orient = orient + state.hitch[i - 1]
                     pos = pos - 0.5 * shapes[i - 1].length * np.array([math.cos(orient), math.sin(orient)]) - \
-                          (shapes[i].length / 2) * np.array([math.cos(new_orient), math.sin(new_orient)])
+                        (shapes[i].length / 2) * np.array([math.cos(new_orient), math.sin(new_orient)])
                     orient = new_orient
                     shape = shapes[i].rotate_translate_local(pos, orient)
                     list_of_shapes.append(shape)

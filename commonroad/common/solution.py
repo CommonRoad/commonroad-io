@@ -172,6 +172,7 @@ class StateType(Enum):
         :return: XML names of the state fields as list
         """
         return XMLStateFields[self.name].value
+
     @classmethod
     def get_state_type(cls, state: State, desired_vehicle_model: VehicleModel = None) -> 'StateType':
         """

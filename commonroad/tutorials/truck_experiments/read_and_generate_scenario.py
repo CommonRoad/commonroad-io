@@ -138,7 +138,8 @@ def write_commonroad_trajectory(json_data):
     with open("generated_trajectory.txt", 'w') as traj:
         traj.write("<trajectory>")
         for i in range(len(x)):
-            s_x, s_y, ori, time, vel, hit = str(x[i]), str(y[i]), str(orient[i]), str(i + 1), str(v_long[i]), str(hitch[i])
+            s_x, s_y, ori = str(x[i]), str(y[i]), str(orient[i])
+            time, vel, hit = str(i + 1), str(v_long[i]), str(hitch[i])
             traj.write(state_template % (s_x, s_y, ori, time, vel, str(0), hit))
             state = State(
                 position=np.array([x[i], y[i]]),
