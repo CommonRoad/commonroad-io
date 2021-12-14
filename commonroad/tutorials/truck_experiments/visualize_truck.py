@@ -13,10 +13,9 @@ file_path = "input/ZAM_Loading_Bay-1_1_T-1.xml"
 
 # TODO: check classes and whether they make sense at this point
 # TODO: visualize video with the actual truck size, not just wheelbase
-# TODO: check style_check pipeline error
-# TODO: feasability checker - trajectory_feasability - check feasability-checker tutorial - check for MAN
-# TODO: vehicle dynamics - add comment
-# TODO: check if collision checker works for truck
+#       -> do we want to leave it like this, or do it like in the paper?
+#       -> like in the paper
+# TODO: check if collision checker works for truck - obstacle_collision in solution_checker.py
 
 # read in the scenario and planning problem set
 scenario, planning_problem_set = CommonRoadFileReader(file_path).open()

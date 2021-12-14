@@ -1,6 +1,11 @@
 import numpy as np
 import json
 
+from commonroad.scenario.trajectory import State, Trajectory
+from commonroad_dc.feasibility.vehicle_dynamics import VehicleDynamics
+from commonroad.common.solution import VehicleType
+import commonroad_dc.feasibility.feasibility_checker as feasibility_checker
+
 # specify obstacle, poses and trajectory file
 OBSTACLE_FILE = "input/CTA_Obstacles.json"
 POSES_FILE = "input/poses_Hamburg_CTA.json"
@@ -10,6 +15,8 @@ TRAJECTORY_FILE = "input/04M001.json"
 OFFSET_X = 561676.6763867161
 OFFSET_Y = 5928014.473294518
 
+# TODO: read steering angle as well to be able to do feasability check -- did this
+# TODO: check if params are correct (params4 in vehicle dynamics)
 # template for a single state in the trajectory list
 state_template = "\n  <state>\n    <position>\n      <point>\n        <x>%s</x>\n        <y>%s</y>\n      </point>" \
         "\n    </position>\n    <orientation>\n      <exact>%s</exact>\n    </orientation>\n    <time>" \
@@ -127,12 +134,23 @@ def get_trajectory(json_data):
 # write trajectory entry
 def write_commonroad_trajectory(json_data):
     hitch, v_long, steering, orient, x, y = get_trajectory(json_data)
+    states = []
     with open("generated_trajectory.txt", 'w') as traj:
         traj.write("<trajectory>")
         for i in range(len(x)):
             s_x, s_y, ori, time, vel, hit = str(x[i]), str(y[i]), str(orient[i]), str(i + 1), str(v_long[i]), str(hitch[i])
             traj.write(state_template % (s_x, s_y, ori, time, vel, str(0), hit))
+            state = State(
+                position=np.array([x[i], y[i]]),
+                velocity=v_long[i],
+                orientation=orient[i],
+                steering_angle=steering[i],
+                time_step=i,
+                hitch=hitch[i]
+            )
+            states.append(state)
         traj.write("\n</trajectory>")
+    return states
 
 
 # read obstacle data
@@ -145,4 +163,10 @@ get_poses(poses_data)
 
 # read trajectory data
 trajectory_data = read_json_file(TRAJECTORY_FILE)
-write_commonroad_trajectory(trajectory_data)
+states = write_commonroad_trajectory(trajectory_data)
+np.seterr(all='print')
+dt = 0.1
+vehicle = VehicleDynamics.KST(VehicleType.TRUCK)
+trajectory = Trajectory(0, states)
+feasible, reconstructed_inputs = feasibility_checker.trajectory_feasibility(trajectory, vehicle, dt)
+print('Feasible? {}'.format(feasible))
