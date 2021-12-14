@@ -486,10 +486,10 @@ class Truck(DynamicObstacle):
             :param signal_series: list of signal states over time
         """
         DynamicObstacle.__init__(self, obstacle_id=obstacle_id, obstacle_type=obstacle_type,
-                      obstacle_shape=obstacle_shape, initial_state=initial_state,
-                      prediction=prediction, initial_center_lanelet_ids=initial_center_lanelet_ids,
-                      initial_shape_lanelet_ids=initial_shape_lanelet_ids,
-                      initial_signal_state=initial_signal_state, signal_series=signal_series)
+                                 obstacle_shape=obstacle_shape, initial_state=initial_state,
+                                 prediction=prediction, initial_center_lanelet_ids=initial_center_lanelet_ids,
+                                 initial_shape_lanelet_ids=initial_shape_lanelet_ids,
+                                 initial_signal_state=initial_signal_state, signal_series=signal_series)
 
     @property
     def initial_state(self) -> State:
