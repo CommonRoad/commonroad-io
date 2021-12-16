@@ -113,7 +113,7 @@ __status__ = "released"
   <xs:complexType name="positionExact">
     <xs:all>
       <xs:element name="point" type="point" minOccurs="0"/>
-      <xs:element name="startPoint" type="decimalExact"/>
+      <xs:element name="startPoint" type="decimalExact" minOccurs="0"/>
     </xs:all>
   </xs:complexType>
     <xs:complexType name="positionReferencePathExact">
@@ -128,8 +128,8 @@ __status__ = "released"
       <xs:element name="circle" type="circle" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="polygon" type="polygon" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="lanelet" type="laneletRef" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="goalStartPoint" type="decimalExact"/>
-      <xs:element name="goalEndPoint" type="decimalExact"/>
+      <xs:element name="goalStartPoint" type="decimalExact" minOccurs="0"/>
+      <xs:element name="goalEndPoint" type="decimalExact" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="state">
@@ -251,7 +251,7 @@ __status__ = "released"
     <xs:complexType name="intermediateGoal">
         <xs:all>
             <xs:element name="position" type="positionInterval" minOccurs="0"/>
-            <xs:element name="time" type="integerIntervalGreaterZero"/>
+            <xs:element name="time" type="integerIntervalGreaterZero" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
   <xs:complexType name="goalState">
