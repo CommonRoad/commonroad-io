@@ -4,7 +4,7 @@ import unittest
 
 from commonroad import SCENARIO_VERSION
 from commonroad.common.file_writer import CommonRoadFileWriter, OverwriteExistingFile, float_to_str, Point, \
-    RectangleXMLNode, CircleXMLNode
+    RectangleXMLNode, CircleXMLNode, precision
 from commonroad.geometry.shape import Rectangle, Circle
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.geometry.shape import *
@@ -185,6 +185,7 @@ class TestFileWriter(unittest.TestCase):
 
     def test_float_to_str_shapes(self):
         values = [123456789.123456, 12327.0, 123456789, 1e-23, 0]
+        precision.decimals = 4
         expecteds = ["123456789.1234", "12327.0", "123456789.0", "0.0000", "0.0"]
 
         # Test Point
