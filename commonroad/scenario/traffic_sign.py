@@ -729,7 +729,7 @@ class TrafficSign(IDrawable):
     """Class to represent a traffic sign"""
 
     def __init__(self, traffic_sign_id: int, traffic_sign_elements: List[TrafficSignElement],
-                 first_occurrence: Set[int], position: np.ndarray, virtual: bool = False):
+                 first_occurrence: Set[int], position: np.ndarray = None, virtual: bool = False):
         """
         :param traffic_sign_id: ID of traffic sign
         :param traffic_sign_elements: list of traffic sign elements
@@ -789,7 +789,7 @@ class TrafficSign(IDrawable):
         return f"TrafficSign(traffic_sign_id={self._traffic_sign_id}, " \
                f"traffic_sign_elements={repr(self._traffic_sign_elements)}, " \
                f"first_occurrence={self._first_occurrence}, " \
-               f"position={self._position.tolist()}, virtual={self._virtual})"
+               f"position={None if self._position is None else self._position.tolist()}, virtual={self._virtual})"
 
     @property
     def traffic_sign_id(self) -> int:
@@ -880,7 +880,7 @@ class TrafficLightCycleElement:
 class TrafficLight(IDrawable):
     """ Class to represent a traffic light"""
 
-    def __init__(self, traffic_light_id: int, cycle: List[TrafficLightCycleElement], position: np.ndarray,
+    def __init__(self, traffic_light_id: int, cycle: List[TrafficLightCycleElement], position: np.ndarray = None,
                  time_offset: int = 0, direction: TrafficLightDirection = TrafficLightDirection.ALL,
                  active: bool = True):
         """
@@ -930,8 +930,9 @@ class TrafficLight(IDrawable):
 
     def __repr__(self):
         return f"TrafficLight(traffic_light_id={self._traffic_light_id}, cycle={repr(self._cycle)}, " \
-               f"time_offset={self._time_offset}, position={self._position.tolist()}, direction={self._direction}, " \
-               f"active={self._active})"
+               f"time_offset={self._time_offset}, " \
+               f"position={None if self._position is None else self._position.tolist()}, " \
+               f"direction={self._direction}, active={self._active})"
 
     @property
     def traffic_light_id(self) -> int:

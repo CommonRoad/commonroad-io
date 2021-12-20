@@ -40,6 +40,13 @@ class TestTrafficSign(unittest.TestCase):
         traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0]), True)
         self.assertFalse(traffic_sign_one == traffic_sign_two)
 
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, None, True)
+        self.assertFalse(traffic_sign_one == traffic_sign_two)
+
+        traffic_sign_one = TrafficSign(1, [traffic_sign_max_speed], {3}, None)
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, None)
+        self.assertTrue(traffic_sign_one == traffic_sign_two)
+
     def test_hash(self):
         traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.TOWN_SIGN, ["15"])
         traffic_sign_one = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0]))
@@ -48,6 +55,13 @@ class TestTrafficSign(unittest.TestCase):
 
         traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0000000001, 7.0]))
         self.assertNotEqual(hash(traffic_sign_one), hash(traffic_sign_two))
+
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, None)
+        self.assertNotEqual(hash(traffic_sign_one), hash(traffic_sign_two))
+
+        traffic_sign_one = TrafficSign(1, [traffic_sign_max_speed], {3}, None)
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, None)
+        self.assertEqual(hash(traffic_sign_one), hash(traffic_sign_two))
 
 
 class TestTrafficLight(unittest.TestCase):
@@ -106,6 +120,13 @@ class TestTrafficLight(unittest.TestCase):
         traffic_light_2 = TrafficLight(234, cycle, np.array([10., 10.]), 5, active=False)
         self.assertFalse(traffic_light_1 == traffic_light_2)
 
+        traffic_light_2 = TrafficLight(234, cycle, None, 5, active=False)
+        self.assertFalse(traffic_light_1 == traffic_light_2)
+
+        traffic_light_1 = TrafficLight(234, cycle, None, 5)
+        traffic_light_2 = TrafficLight(234, cycle, None, 5)
+        self.assertTrue(traffic_light_1 == traffic_light_2)
+
     def test_hash(self):
         cycle = [TrafficLightCycleElement(TrafficLightState.RED, 2)]
         traffic_light_1 = TrafficLight(234, cycle, np.array([10, 10]), 5)
@@ -114,6 +135,13 @@ class TestTrafficLight(unittest.TestCase):
 
         traffic_light_2 = TrafficLight(234, cycle, np.array([10., 10.0000000001]), 5)
         self.assertNotEqual(hash(traffic_light_1), hash(traffic_light_2))
+
+        traffic_light_2 = TrafficLight(234, cycle, None, 5)
+        self.assertNotEqual(hash(traffic_light_1), hash(traffic_light_2))
+
+        traffic_light_1 = TrafficLight(234, cycle, None, 5)
+        traffic_light_2 = TrafficLight(234, cycle, None, 5)
+        self.assertEqual(hash(traffic_light_1), hash(traffic_light_2))
 
 
 class TestTrafficLightCycleElement(unittest.TestCase):
