@@ -763,8 +763,10 @@ class TrafficSign(IDrawable):
             if traffic_sign_elements.get(k) != traffic_sign_elements_other.get(k):
                 list_elements_eq = False
 
-        position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
-        position_other_string = np.array2string(np.around(other.position.astype(float), 10), precision=10)
+        position_string = None if self._position is None else \
+            np.array2string(np.around(self._position.astype(float), 10), precision=10)
+        position_other_string = None if other._position is None else \
+            np.array2string(np.around(other.position.astype(float), 10), precision=10)
 
         if traffic_sign_eq and self._traffic_sign_id == other.traffic_sign_id \
                 and position_string == position_other_string and self._virtual == other.virtual \
@@ -775,7 +777,8 @@ class TrafficSign(IDrawable):
         return False
 
     def __hash__(self):
-        position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
+        position_string = None if self._position is None else \
+            np.array2string(np.around(self._position.astype(float), 10), precision=10)
         return hash((self._traffic_sign_id, position_string, frozenset(self._traffic_sign_elements), self._virtual,
                      frozenset(self._first_occurrence)))
 
@@ -903,8 +906,10 @@ class TrafficLight(IDrawable):
             warnings.warn(f"Inequality between TrafficLight {repr(self)} and different type {type(other)}")
             return False
 
-        position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
-        position_other_string = np.array2string(np.around(other.position.astype(float), 10), precision=10)
+        position_string = None if self._position is None else \
+            np.array2string(np.around(self._position.astype(float), 10), precision=10)
+        position_other_string = None if other._position is None else \
+            np.array2string(np.around(other.position.astype(float), 10), precision=10)
 
         if self._traffic_light_id == other.traffic_light_id and set(self._cycle) == set(other.cycle) \
                 and self._time_offset == other.time_offset and position_string == position_other_string \
@@ -915,10 +920,10 @@ class TrafficLight(IDrawable):
         return False
 
     def __hash__(self):
-        position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
-        return hash((
-                    self._traffic_light_id, frozenset(self._cycle), self._time_offset, position_string, self._direction,
-                    self._active))
+        position_string = None if self._position is None else \
+            np.array2string(np.around(self._position.astype(float), 10), precision=10)
+        return hash((self._traffic_light_id, frozenset(self._cycle), self._time_offset, position_string,
+                     self._direction, self._active))
 
     def __str__(self):
         return f"TrafficLight with id {self._traffic_light_id} placed at {self._position}"
