@@ -729,7 +729,7 @@ class TrafficSign(IDrawable):
     """Class to represent a traffic sign"""
 
     def __init__(self, traffic_sign_id: int, traffic_sign_elements: List[TrafficSignElement],
-                 first_occurrence: Set[int], position: np.ndarray, virtual: bool = False):
+                 first_occurrence: Set[int], position: np.ndarray = None, virtual: bool = False):
         """
         :param traffic_sign_id: ID of traffic sign
         :param traffic_sign_elements: list of traffic sign elements
@@ -763,8 +763,10 @@ class TrafficSign(IDrawable):
             if traffic_sign_elements.get(k) != traffic_sign_elements_other.get(k):
                 list_elements_eq = False
 
-        position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
-        position_other_string = np.array2string(np.around(other.position.astype(float), 10), precision=10)
+        position_string = None if self._position is None else \
+            np.array2string(np.around(self._position.astype(float), 10), precision=10)
+        position_other_string = None if other._position is None else \
+            np.array2string(np.around(other.position.astype(float), 10), precision=10)
 
         if traffic_sign_eq and self._traffic_sign_id == other.traffic_sign_id \
                 and position_string == position_other_string and self._virtual == other.virtual \
@@ -775,7 +777,8 @@ class TrafficSign(IDrawable):
         return False
 
     def __hash__(self):
-        position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
+        position_string = None if self._position is None else \
+            np.array2string(np.around(self._position.astype(float), 10), precision=10)
         return hash((self._traffic_sign_id, position_string, frozenset(self._traffic_sign_elements), self._virtual,
                      frozenset(self._first_occurrence)))
 
@@ -786,7 +789,7 @@ class TrafficSign(IDrawable):
         return f"TrafficSign(traffic_sign_id={self._traffic_sign_id}, " \
                f"traffic_sign_elements={repr(self._traffic_sign_elements)}, " \
                f"first_occurrence={self._first_occurrence}, " \
-               f"position={self._position.tolist()}, virtual={self._virtual})"
+               f"position={None if self._position is None else self._position.tolist()}, virtual={self._virtual})"
 
     @property
     def traffic_sign_id(self) -> int:
@@ -877,7 +880,7 @@ class TrafficLightCycleElement:
 class TrafficLight(IDrawable):
     """ Class to represent a traffic light"""
 
-    def __init__(self, traffic_light_id: int, cycle: List[TrafficLightCycleElement], position: np.ndarray,
+    def __init__(self, traffic_light_id: int, cycle: List[TrafficLightCycleElement], position: np.ndarray = None,
                  time_offset: int = 0, direction: TrafficLightDirection = TrafficLightDirection.ALL,
                  active: bool = True):
         """
@@ -903,8 +906,10 @@ class TrafficLight(IDrawable):
             warnings.warn(f"Inequality between TrafficLight {repr(self)} and different type {type(other)}")
             return False
 
-        position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
-        position_other_string = np.array2string(np.around(other.position.astype(float), 10), precision=10)
+        position_string = None if self._position is None else \
+            np.array2string(np.around(self._position.astype(float), 10), precision=10)
+        position_other_string = None if other._position is None else \
+            np.array2string(np.around(other.position.astype(float), 10), precision=10)
 
         if self._traffic_light_id == other.traffic_light_id and set(self._cycle) == set(other.cycle) \
                 and self._time_offset == other.time_offset and position_string == position_other_string \
@@ -915,18 +920,19 @@ class TrafficLight(IDrawable):
         return False
 
     def __hash__(self):
-        position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
-        return hash((
-                    self._traffic_light_id, frozenset(self._cycle), self._time_offset, position_string, self._direction,
-                    self._active))
+        position_string = None if self._position is None else \
+            np.array2string(np.around(self._position.astype(float), 10), precision=10)
+        return hash((self._traffic_light_id, frozenset(self._cycle), self._time_offset, position_string,
+                     self._direction, self._active))
 
     def __str__(self):
         return f"TrafficLight with id {self._traffic_light_id} placed at {self._position}"
 
     def __repr__(self):
         return f"TrafficLight(traffic_light_id={self._traffic_light_id}, cycle={repr(self._cycle)}, " \
-               f"time_offset={self._time_offset}, position={self._position.tolist()}, direction={self._direction}, " \
-               f"active={self._active})"
+               f"time_offset={self._time_offset}, " \
+               f"position={None if self._position is None else self._position.tolist()}, " \
+               f"direction={self._direction}, active={self._active})"
 
     @property
     def traffic_light_id(self) -> int:
