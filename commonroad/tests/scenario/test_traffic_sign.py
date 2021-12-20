@@ -42,6 +42,7 @@ class TestTrafficSign(unittest.TestCase):
 
         traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, None, True)
         self.assertFalse(traffic_sign_one == traffic_sign_two)
+        self.assertFalse(traffic_sign_two == traffic_sign_one)
 
         traffic_sign_one = TrafficSign(1, [traffic_sign_max_speed], {3}, None)
         traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, None)
@@ -122,6 +123,7 @@ class TestTrafficLight(unittest.TestCase):
 
         traffic_light_2 = TrafficLight(234, cycle, None, 5, active=False)
         self.assertFalse(traffic_light_1 == traffic_light_2)
+        self.assertFalse(traffic_light_2 == traffic_light_1)
 
         traffic_light_1 = TrafficLight(234, cycle, None, 5)
         traffic_light_2 = TrafficLight(234, cycle, None, 5)
