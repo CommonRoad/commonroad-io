@@ -15,7 +15,7 @@ With CommonRoad_io, those solutions can be written to xml-files for uploading th
 
 CommonRoad_io 2021.2 is compatible with CommonRoad scenario in version 2020a and supports reading 2018b scenarios.
 
-The software is written in Python 3.6 and tested on MacOs and Linux. The usage of the Anaconda_ Python distribution is strongly recommended.
+The software is written in Python and tested on Linux for the Python 3.6, 3.7, 3.8, 3.9, and 3.10. The usage of the Anaconda_ Python distribution is strongly recommended.
 
 .. _Anaconda: http://www.anaconda.com/download/#download
 
@@ -65,11 +65,14 @@ and add the folder commonroad_io to your Python environment.
 
 Changelog
 ============
-Compared to version 2021.2, the following features have been added or changed:
+Compared to version 2021.3, the following features have been added or changed:
 
-* Spatial indexing via STRTree in LaneletNetwork for faster computation of lanelet queries via positions or shapes
-* The function LaneletNetwork.create_from_lanelet_network accepts now a shape and set of lanelet types which should be excluded
-* Shapely polygon for lanelets is created by default
-* Function convert_to_polygon() within Lanelet class is deprecated and will be removed in the next release
+* Polyline utility functions, e.g., resampling, path length, orientation, curvature, intersection
+* `__eq__` and `__hash__` functions for LaneletNetwork and related classes (e.g., traffic sign, traffic light, stop
+  line, etc.)
+* Compatibility for Shapely 2.0
+* License switched to BSD-3
+* New traffic signs for Germany
+* Date in solution file now stored in the dateTime format (`%Y-%m-%dT%H:%M:%S`)
 
 A detailed overview about the changes in each version is provided in the Changelog.

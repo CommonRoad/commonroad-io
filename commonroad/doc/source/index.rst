@@ -10,9 +10,9 @@ CommonRoad_io
 The CommonRoad_io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tools of the CommonRoad Framework.
 With CommonRoad_io, those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`__.
 
-CommonRoad_io 2021.3 is compatible with CommonRoad scenarios of version 2020a and supports reading 2018b scenarios.
+CommonRoad_io 2021.4 is compatible with CommonRoad scenarios of version 2020a and supports reading 2018b scenarios.
 
-The software is written in Python 3.6 and tested on Linux. The usage of the Anaconda_ Python distribution is strongly recommended.
+The software is written in Python and tested on Linux for the Python 3.6, 3.7, 3.8, 3.9, and 3.10. The usage of the Anaconda_ Python distribution is strongly recommended.
 
 .. _Anaconda: http://www.anaconda.com/download/#download
 
@@ -31,7 +31,7 @@ Based on CommonRoad_io, we have developed a list of tools for implementing motio
 
     * `Drivability Checker <https://gitlab.lrz.de/tum-cps/commonroad-drivability-checker>`__
     * `CommonRoad-SUMO Interface <https://gitlab.lrz.de/tum-cps/commonroad-sumo-interface>`__
-    * `OpenDRIVE to Lanelet converter <https://pypi.org/project/opendrive2lanelet>`__
+    * `CommonRoad Scenario Designer <https://gitlab.lrz.de/tum-cps/commonroad-scenario-designer>`__
     * `Vehicle Models <https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models/tree/master/Python>`__
     * `Dateset Converters <https://gitlab.lrz.de/tum-cps/dataset-converters>`__
     * `Interactive Scenarios <https://gitlab.lrz.de/tum-cps/commonroad-interactive-scenarios>`__
@@ -68,12 +68,15 @@ and add the folder commonroad_io to your Python environment.
 
 Changelog
 ============
-Compared to version 2021.2, the following features have been added or changed:
+Compared to version 2021.3, the following features have been added or changed:
 
-- Spatial indexing via STRTree in LaneletNetwork for faster computation of lanelet queries via positions or shapes
-- The function LaneletNetwork.create_from_lanelet_network accepts now a shape and set of lanelet types which should be excluded
-- Shapely polygon for lanelets is created by default
-- Function convert_to_polygon() within Lanelet class is deprecated and will be removed in the next release
+- Polyline utility functions, e.g., resampling, path length, orientation, curvature, intersection
+- `__eq__` and `__hash__` functions for LaneletNetwork and related classes (e.g., traffic sign, traffic light, stop
+  line, etc.)
+- Compatibility for Shapely 2.0
+- License switched to BSD-3
+- New traffic signs for Germany
+- Date in solution file now stored in the dateTime format (`%Y-%m-%dT%H:%M:%S`)
 
 A detailed overview about the changes in each version is provided in the `Changelog <https://gitlab.lrz.de/tum-cps/commonroad_io/-/blob/master/CHANGELOG.md>`__.
 

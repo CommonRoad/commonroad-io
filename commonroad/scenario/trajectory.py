@@ -18,7 +18,7 @@ from commonroad.common.util import make_valid_orientation
 __author__ = "Stefanie Manzinger, Christian Pek"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2021.3"
+__version__ = "2021.4"
 __maintainer__ = "Stefanie Manzinger, Christian Pek"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -29,38 +29,33 @@ from commonroad.visualization.renderer import IRenderer
 
 
 class State:
-    """ A state can be either exact or uncertain. Uncertain state elements
-    can be either of type
-        :class:`commonroad.common.util.Interval` or of type
-        :class:`commonroad.geometry.shape.Shape`. A
-        state is composed of several elements which are determined during
-        runtime. The possible state elements
-        are defined as slots, which comprise the necessary state elements to
-        describe the states of all CommonRoad
-        vehicle models:
+    """ A state can be either exact or uncertain. Uncertain state elements can be either of type
+        :class:`commonroad.common.util.Interval` or of type :class:`commonroad.geometry.shape.Shape`. As tate is
+        composed of several elements which are determined during runtime. The possible state elements are defined
+        as slots, which comprise the necessary state elements to describe the states of all CommonRoad vehicle models:
 
-        :ivar position: :math:`s_x`- and :math:`s_y`-position in a global
-        coordinate system. Exact positions
+        :ivar position: :math:`s_x`- and :math:`s_y`-position in a global coordinate system. Exact positions
             are given as numpy array [x, y], uncertain positions are given as :class:`commonroad.geometry.shape.Shape`
-        :ivar orientation: yaw angle :math:`\Psi`. Exact values are given as real number, uncertain values are given as
+        :ivar orientation: yaw angle :math:`\\Psi`. Exact values are given as real number, uncertain values are given as
             :class:`commonroad.common.util.AngleInterval`
         :ivar velocity: velocity :math:`v_x` in longitudinal direction in the vehicle-fixed coordinate system. Exact
             values are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar steering_angle: steering angle :math:`\delta` of front wheels. Exact values are given as real number,
+        :ivar steering_angle: steering angle :math:`\\delta` of front wheels. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar steering_angle_speed: steering angle speed :math:`\dot{\delta}` of front wheels. Exact values are given as real number,
+        :ivar steering_angle_speed: steering angle speed :math:`\\dot{\\delta}` of front wheels.
+            Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar yaw_rate: yaw rate :math:`\dot{\Psi}`. Exact values are given as real number,
+        :ivar yaw_rate: yaw rate :math:`\\dot{\\Psi}`. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar slip_angle: slip angle :math:`\\beta`. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar roll_angle: roll angle :math:`\Phi_S`. Exact values are given as real number,
+        :ivar roll_angle: roll angle :math:`\\Phi_S`. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar roll_rate: roll rate :math:`\dot{\Phi}_S`. Exact values are given as real number,
+        :ivar roll_rate: roll rate :math:`\\dot{\\Phi}_S`. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar pitch_angle: pitch angle :math:`\Theta_S`. Exact values are given as real number,
+        :ivar pitch_angle: pitch angle :math:`\\Theta_S`. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar pitch_rate: pitch rate :math:`\dot{\Theta}_S`. Exact values are given as real number,
+        :ivar pitch_rate: pitch rate :math:`\\dot{\\Theta}_S`. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar velocity_y: velocity :math:`v_y` in lateral direction in the vehicle-fixed coordinate system. Exact
             values are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
@@ -68,9 +63,9 @@ class State:
             uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar velocity_z: velocity :math:`v_z` in vertical direction perpendicular to road plane. Exact values are
             given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar roll_angle_front: roll angle front :math:`\Phi_{UF}`. Exact values are given as real number,
+        :ivar roll_angle_front: roll angle front :math:`\\Phi_{UF}`. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar roll_rate_front: roll rate front :math:`\dot{\Phi}_{UF}`. Exact values are given as real number,
+        :ivar roll_rate_front: roll rate front :math:`\\dot{\\Phi}_{UF}`. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar velocity_y_front: velocity :math:`v_{y,UF}` in y-direction front. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
@@ -78,9 +73,9 @@ class State:
             uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar velocity_z_front: velocity :math:`v_{z,UF}` in z-direction front. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar roll_angle_rear: roll angle rear :math:`\Phi_{UR}`. Exact values are given as real number,
+        :ivar roll_angle_rear: roll angle rear :math:`\\Phi_{UR}`. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar roll_rate_rear: roll rate rear :math:`\dot{\Phi}_{UR}`. Exact values are given as real number,
+        :ivar roll_rate_rear: roll rate rear :math:`\\dot{\\Phi}_{UR}`. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar velocity_y_rear: velocity :math:`v_{y,UR}` in y-direction rear. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
@@ -88,17 +83,17 @@ class State:
             uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar velocity_z_rear: velocity :math:`v_{z,UR}` in z-direction rear. Exact values are given as real number,
             uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar left_front_wheel_angular_speed: left front wheel angular speed :math:`\omega_{LF}`. Exact values
+        :ivar left_front_wheel_angular_speed: left front wheel angular speed :math:`\\omega_{LF}`. Exact values
             are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar right_front_wheel_angular_speed: right front wheel angular speed :math:`\omega_{RF}`. Exact values
+        :ivar right_front_wheel_angular_speed: right front wheel angular speed :math:`\\omega_{RF}`. Exact values
             are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar left_rear_wheel_angular_speed: left rear wheel angular speed :math:`\omega_{LR}`. Exact values
+        :ivar left_rear_wheel_angular_speed: left rear wheel angular speed :math:`\\omega_{LR}`. Exact values
             are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar right_rear_wheel_angular_speed: right rear wheel angular speed :math:`\omega_{RR}`. Exact values
+        :ivar right_rear_wheel_angular_speed: right rear wheel angular speed :math:`\\omega_{RR}`. Exact values
             are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar delta_y_f: front lateral displacement :math:`\delta_{y,f}` of sprung mass due to roll. Exact values
+        :ivar delta_y_f: front lateral displacement :math:`\\delta_{y,f}` of sprung mass due to roll. Exact values
             are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar delta_y_r: rear lateral displacement :math:`\delta_{y,r}` of sprung mass due to roll. Exact values
+        :ivar delta_y_r: rear lateral displacement :math:`\\delta_{y,r}` of sprung mass due to roll. Exact values
             are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
         :ivar acceleration: acceleration :math:`a_x`. We optionally include acceleration as a state variable for
             obstacles to provide additional information, e.g., for motion prediction, even though acceleration is often
@@ -117,12 +112,12 @@ class State:
 
         :Example:
 
-        >>> import numpy as np
+        >>> import numpy as npy
         >>> from commonroad.scenario.trajectory import State
         >>> from commonroad.common.util import Interval
         >>> # a state with position [2.0, 3.0] m and uncertain velocity from 5.4 to 7.0 m/s
         >>> # can be created as follows:
-        >>> state = State(position=np.array([2.0, 3.0]), velocity=Interval(5.4, 7.0))
+        >>> state = State(position=npy.array([2.0, 3.0]), velocity=Interval(5.4, 7.0))
     """
 
     __slots__ = [
@@ -226,9 +221,9 @@ class State:
 
         :Example:
 
-        >>> import numpy as np
+        >>> import numpy as npy
         >>> from commonroad.scenario.trajectory import State
-        >>> state = State(position=np.array([0.0, 0.0]), orientation=0.1, velocity=3.4)
+        >>> state = State(position=npy.array([0.0, 0.0]), orientation=0.1, velocity=3.4)
         >>> print(state.attributes)
         ['position', 'orientation', 'velocity']
 
@@ -358,7 +353,7 @@ class Trajectory(IDrawable):
         :return: list of states
         """
         assert time_end >= time_begin
-        return [self.state_at_time_step(time_step) for time_step in range(time_begin,time_end+1)]
+        return [self.state_at_time_step(time_step) for time_step in range(time_begin, time_end+1)]
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ First translates each state of the trajectory, then rotates each state of the trajectory around the
@@ -391,37 +386,45 @@ class Trajectory(IDrawable):
                                             num_resampled_states: int,
                                             initial_time_cont: float = 0) -> 'Trajectory':
         """
-        This method resamples a given state list with continuous time vector in a fixed time resolution. The interpolation is done in a linear fashion.
+        This method resamples a given state list with continuous time vector in a fixed time resolution.
+        The interpolation is done in a linear fashion.
         :param states: The list of states to interpolate
         :param time_stamps_cont: The vector of continuous time stamps (corresponding to the states)
         :param resampled_dt: Target time step length
-        :param num_resampled_states: The resulting number of states. It must hold (t_0+N*dT) \in time interval
-        :param initial_time_cont: The initial continuous time stamp (default 0). It must hold t\in time interval
+        :param num_resampled_states: The resulting number of states. It must hold (t_0+N*dT) \\in time interval
+        :param initial_time_cont: The initial continuous time stamp (default 0). It must hold t\\in time interval
         :return: The resampled trajectory
         """
         assert is_positive(
-                resampled_dt), '<Trajectory/interpolate_state_list>: Time step size must be a positive number! dT = {}'.format(
-                resampled_dt)
+                resampled_dt), '<Trajectory/interpolate_state_list>: Time step size must be a positive number! ' \
+                               'dT = {}'.format(resampled_dt)
         assert isinstance(states, list) and all(isinstance(x, State) for x in
-                                                states), '<Trajectory/interpolate_state_list>: Provided state list is not in the correct format! State list = {}'.format(
+                                                states), '<Trajectory/interpolate_state_list>: Provided state list ' \
+                                                         'is not in the correct format! State list = {}'.format(
                 states)
         assert is_real_number_vector(
-                time_stamps_cont), '<Trajectory/interpolate_state_list>: Provided time vector is not in the correct format! time = {}'.format(
+                time_stamps_cont), '<Trajectory/interpolate_state_list>: Provided time vector is not in the ' \
+                                   'correct format! time = {}'.format(
                 time_stamps_cont)
         assert len(states) == len(
-                time_stamps_cont), '<Trajectory/interpolate_state_list>: Provided time and state lists do not share the same length! Time = {} / States = {}'.format(
+                time_stamps_cont), '<Trajectory/interpolate_state_list>: Provided time and state lists do not ' \
+                                   'share the same length! Time = {} / States = {}'.format(
                 len(time_stamps_cont), len(states))
         assert is_positive(num_resampled_states) and is_natural_number(
-                num_resampled_states), '<Trajectory/interpolate_state_list>: Provided state horizon must be a positive Integer! N = {}'.format(
+                num_resampled_states), '<Trajectory/interpolate_state_list>: Provided state horizon must be a ' \
+                                       'positive Integer! N = {}'.format(
                 num_resampled_states)
         assert is_real_number(
-                initial_time_cont), '<Trajectory/interpolate_state_list>: Provided initial time must be a real number! t_0 = {}'.format(
+                initial_time_cont), '<Trajectory/interpolate_state_list>: Provided initial time must be a ' \
+                                    'real number! t_0 = {}'.format(
                 initial_time_cont)
         assert any(time_stamps_cont <= initial_time_cont) and any(
-                initial_time_cont <= time_stamps_cont), '<Trajectory/interpolate_state_list>: Provided initial time is not within time vector! t_0 = {}'.format(
+                initial_time_cont <= time_stamps_cont), '<Trajectory/interpolate_state_list>: Provided initial ' \
+                                                        'time is not within time vector! t_0 = {}'.format(
                 initial_time_cont)
         assert any(
-                initial_time_cont + num_resampled_states * resampled_dt <= time_stamps_cont), '<Trajectory/interpolate_state_list>: Provided end time is not within time vector! t_h = {}'.format(
+                initial_time_cont + num_resampled_states * resampled_dt <= time_stamps_cont), \
+            '<Trajectory/interpolate_state_list>: Provided end time is not within time vector! t_h = {}'.format(
                 initial_time_cont + num_resampled_states * resampled_dt)
 
         # prepare interpolation by determining all slots with values
@@ -447,7 +450,8 @@ class Trajectory(IDrawable):
                 if hasattr(x, s):
                     val = getattr(x, s)
                     assert is_real_number(val) or is_real_number_vector(
-                            val), '<Trajectory/interpolate_state_list>: Currently, this method only supports states with real numbers! val = {}'.format(
+                            val), '<Trajectory/interpolate_state_list>: Currently, this method only ' \
+                                  'supports states with real numbers! val = {}'.format(
                             val)
                     # check if slot is defined for multiple values
                     if not multiple and hasattr(val, 'shape'):

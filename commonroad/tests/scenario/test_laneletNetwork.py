@@ -1,3 +1,4 @@
+import copy
 import unittest
 import numpy as np
 from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork, StopLine, LaneletType
@@ -11,7 +12,7 @@ from commonroad.scenario.intersection import Intersection, IntersectionIncomingE
 __author__ = "Moritz Untersperger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles, BMW Car@TUM"]
-__version__ = "2021.3"
+__version__ = "2021.4"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -63,6 +64,20 @@ class TestLaneletNetwork(unittest.TestCase):
         self.lanelet_network.add_traffic_light(self.traffic_light, set())
         self.lanelet_network.add_intersection(self.intersection)
 
+        self.diagonal_lanelet_network = LaneletNetwork()
+        lanelet_width = np.array([0.0, 3.0])
+        right_vertices = np.array([[0., 0.], [6., 0.1], [12., 0.5]])
+        left_vertices = copy.copy(right_vertices) + lanelet_width
+        center_vertices = (right_vertices + left_vertices) * 0.5
+        lanelet_id = 0
+        self.diagonal_lanelet_network.add_lanelet(Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id))
+
+        left_vertices = copy.copy(right_vertices)
+        right_vertices = copy.copy(left_vertices) - lanelet_width
+        center_vertices = (right_vertices + left_vertices) * 0.5
+        lanelet_id = 1
+        self.diagonal_lanelet_network.add_lanelet(Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id))
+
     def test_initialize_lanelets(self):
         s1 = np.sqrt(1.25)
         s2 = np.sqrt(2.0)
@@ -93,7 +108,7 @@ class TestLaneletNetwork(unittest.TestCase):
         left_vertices = np.array([[0, 1], [1, 1], [1.1, 1.1]])
         center_vertices = np.array([[0, .5], [1, .5], [1.1, .6]])
         lanelet_id = 5
-        lanelet1 = Lanelet(left_vertices, right_vertices, center_vertices, lanelet_id)
+        lanelet1 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
         lanelet_network.add_lanelet(lanelet1)
         lanelet_network.add_traffic_sign(self.traffic_sign, {lanelet1.lanelet_id})
         lanelet_network.add_traffic_light(self.traffic_light, {lanelet1.lanelet_id})
@@ -112,7 +127,7 @@ class TestLaneletNetwork(unittest.TestCase):
         left_vertices = np.array([[5, 2], [6, 2], [7, 1], [8, 1]])
         center_vertices = np.array([[5, 1.5], [6, 1.5], [7, .5], [8, .5]])
         lanelet_id = 7
-        lanelet3 = Lanelet(left_vertices, right_vertices, center_vertices, lanelet_id)
+        lanelet3 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
         lanelet_network.add_lanelet(lanelet3)
 
         new_network = lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2))
@@ -254,6 +269,40 @@ class TestLaneletNetwork(unittest.TestCase):
         self.assertEqual(observed_lanelet[0][0], self.lanelet.lanelet_id)
         self.assertEqual(len(additional_lanelet_network.find_lanelet_by_position([np.array([-5, -5])])[0]), 0)
 
+        tolerance = 1e-14
+
+        def assert_pos(vertex, lanelet_id_list):
+            [ret_list] = self.diagonal_lanelet_network.find_lanelet_by_position([vertex])
+            ret_list.sort()
+            lanelet_id_list.sort()
+            self.assertEqual(ret_list, lanelet_id_list)
+
+        lanelet_0 = self.diagonal_lanelet_network.find_lanelet_by_id(0)
+        lanelet_1 = self.diagonal_lanelet_network.find_lanelet_by_id(1)
+        for dist_i in list(np.linspace(0.0, lanelet_0.distance[2], 1000)):
+            center_vertex, right_vertex, left_vertex, _ = lanelet_0.interpolate_position(dist_i)
+            assert_pos(left_vertex, [0])
+            assert_pos(left_vertex + np.array([0.0, 0.5 * tolerance]), [])
+
+            assert_pos(center_vertex, [0])
+
+            assert_pos(right_vertex, [0, 1])
+            assert_pos(right_vertex + np.array([0.0, 0.5 * tolerance]), [0])
+            assert_pos(right_vertex - np.array([0.0, 0.5 * tolerance]), [1])
+
+            center_vertex, right_vertex, left_vertex, _ = lanelet_1.interpolate_position(dist_i)
+            assert_pos(left_vertex, [0, 1])
+            assert_pos(left_vertex + np.array([0.0, 0.5 * tolerance]), [0])
+            assert_pos(left_vertex - np.array([0.0, 0.5 * tolerance]), [1])
+
+            assert_pos(center_vertex, [1])
+
+            assert_pos(right_vertex, [1])
+            assert_pos(right_vertex - np.array([0.0, 0.5 * tolerance]), [])
+
+        assert_pos(np.array([-tolerance, 0.]), [])
+        assert_pos(np.array([lanelet_0.center_vertices[-1][0] + tolerance, 0.]), [])
+
     def test_find_lanelet_by_shape(self):
         rectangle1 = Rectangle(2, 2)
         rectangle2 = Rectangle(2, 2, np.array([100.0, 100.0]))
@@ -350,10 +399,50 @@ class TestLaneletNetwork(unittest.TestCase):
         self.assertEqual(len(self.lanelet.traffic_signs), 0)
         self.assertEqual(len(self.lanelet.stop_line.traffic_sign_ref), 0)
 
-    def test_to_string(self):
-        self.assertMultiLineEqual(self.lanelet_network.__str__(),
-                                  '{:8d} lanelet\n'.format(5) +
-                                  '{:8d} lanelet\n'.format(6))
+    def test_equality_hash(self):
+        left_vertices = np.array([[0, 1], [1, 1], [2, 1]])
+        center_vertices = np.array([[0, 0], [1, 0], [2, 0]])
+        right_vertices = np.array([[0, -1], [1, -1], [2, -1]])
+        lanelet_id = 3
+        lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
+
+        incoming = IntersectionIncomingElement(2, {9, 11}, {12, 13}, {14, 15}, {16, 17}, 18)
+        intersection = Intersection(1, [incoming], {30, 31})
+
+        traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, ["15"])
+        traffic_sign = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0]))
+
+        cycle = [TrafficLightCycleElement(TrafficLightState.GREEN, 2)]
+        traffic_light = TrafficLight(234, cycle, np.array([10., 10.]), 5)
+
+        lanelet_network_1 = LaneletNetwork()
+        lanelet_network_2 = LaneletNetwork()
+        for lanelet_network in [lanelet_network_1, lanelet_network_2]:
+            lanelet_network.add_lanelet(lanelet)
+            lanelet_network.add_intersection(intersection)
+            lanelet_network.add_traffic_sign(traffic_sign, {3})
+            lanelet_network.add_traffic_light(traffic_light, {3})
+        self.assertTrue(lanelet_network_1 == lanelet_network_2)
+        self.assertTrue(hash(lanelet_network_1), hash(lanelet_network_2))
+
+        lanelet_network_2.remove_lanelet(3)
+        self.assertFalse(lanelet_network_1 == lanelet_network_2)
+        self.assertNotEqual(hash(lanelet_network_1), hash(lanelet_network_2))
+
+        lanelet_network_2.add_lanelet(lanelet)
+        lanelet_network_2.add_intersection(Intersection(2, [incoming], {30, 31}))
+        self.assertFalse(lanelet_network_1 == lanelet_network_2)
+        self.assertNotEqual(hash(lanelet_network_1), hash(lanelet_network_2))
+
+        lanelet_network_2.remove_intersection(2)
+        lanelet_network_2.add_traffic_sign(TrafficSign(4, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0])), {3})
+        self.assertFalse(lanelet_network_1 == lanelet_network_2)
+        self.assertNotEqual(hash(lanelet_network_1), hash(lanelet_network_2))
+
+        lanelet_network_2.remove_traffic_sign(4)
+        lanelet_network_2.remove_traffic_light(234)
+        self.assertFalse(lanelet_network_1 == lanelet_network_2)
+        self.assertNotEqual(hash(lanelet_network_1), hash(lanelet_network_2))
 
 
 if __name__ == '__main__':
