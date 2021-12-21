@@ -10,7 +10,7 @@ from shapely.strtree import STRtree
 
 import commonroad.geometry.transform
 from commonroad.common.validity import *
-from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape, LaneletPolygon
+from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.obstacle import Obstacle
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
@@ -21,7 +21,7 @@ from commonroad.visualization.renderer import IRenderer
 __author__ = "Christian Pek, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW CAR@TUM"]
-__version__ = "2021.3"
+__version__ = "2021.4"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "released"
@@ -88,6 +88,38 @@ class StopLine:
         self._traffic_sign_ref = traffic_sign_ref
         self._traffic_light_ref = traffic_light_ref
 
+    def __eq__(self, other):
+        if not isinstance(other, StopLine):
+            warnings.warn(f"Inequality between StopLine {repr(self)} and different type {type(other)}")
+            return False
+
+        prec = 10
+        start_string = np.array2string(np.around(self._start.astype(float), prec), precision=prec)
+        start_other_string = np.array2string(np.around(other.start.astype(float), prec), precision=prec)
+        end_string = np.array2string(np.around(self._end.astype(float), prec), precision=prec)
+        end_other_string = np.array2string(np.around(other.end.astype(float), prec), precision=prec)
+
+        if start_string == start_other_string and end_string == end_other_string \
+                and self._line_marking == other.line_marking and self._traffic_sign_ref == other.traffic_sign_ref \
+                and self._traffic_light_ref == other.traffic_light_ref:
+            return True
+
+        warnings.warn(f"Inequality of StopLine {repr(self)} and the other one {repr(other)}")
+        return False
+
+    def __hash__(self):
+        start_string = np.array2string(np.around(self._start.astype(float), 10), precision=10)
+        end_string = np.array2string(np.around(self._end.astype(float), 10), precision=10)
+        return hash((start_string, end_string, self._line_marking, frozenset(self._traffic_sign_ref),
+                     frozenset(self._traffic_light_ref)))
+
+    def __str__(self):
+        return f'StopLine from {self._start} to {self._end}'
+
+    def __repr__(self):
+        return f"StopLine(start={self._start.tolist()}, end={self._end.tolist()}, line_marking={self._line_marking}, " \
+               f"traffic_sign_ref={self._traffic_sign_ref}, traffic_light_ref={self._traffic_light_ref})"
+
     @property
     def start(self) -> np.ndarray:
         return self._start
@@ -148,9 +180,6 @@ class StopLine:
         tmp = t_m.dot(np.vstack((line_vertices.transpose(), np.ones((1, line_vertices.shape[0])))))
         tmp = tmp[0:2, :].transpose()
         self._start, self._end = tmp[0], tmp[1]
-
-    def __str__(self):
-        return f'StopLine from {self._start} to  {self._end}'
 
 
 class Lanelet:
@@ -278,6 +307,74 @@ class Lanelet:
             self._traffic_lights = set()
         else:
             self.traffic_lights = traffic_lights
+
+    def __eq__(self, other):
+        if not isinstance(other, Lanelet):
+            warnings.warn(f"Inequality between Lanelet {repr(self)} and different type {type(other)}")
+            return False
+
+        list_elements_eq = self._stop_line == other.stop_line
+
+        lanelet_eq = True
+        polylines = [self._left_vertices, self._right_vertices, self._center_vertices]
+        polylines_other = [other.left_vertices, other.right_vertices, other.center_vertices]
+
+        for i in range(0, len(polylines)):
+            polyline = polylines[i]
+            polyline_other = polylines_other[i]
+            polyline_string = np.array2string(np.around(polyline.astype(float), 10), precision=10)
+            polyline_other_string = np.array2string(np.around(polyline_other.astype(float), 10), precision=10)
+            lanelet_eq = lanelet_eq and polyline_string == polyline_other_string
+
+        if lanelet_eq and self.lanelet_id == other.lanelet_id \
+                and self._line_marking_left_vertices == other.line_marking_left_vertices \
+                and self._line_marking_right_vertices == other.line_marking_right_vertices \
+                and set(self._predecessor) == set(other.predecessor) and set(self._successor) == set(other.successor) \
+                and self._adj_left == other.adj_left and self._adj_right == other.adj_right \
+                and self._adj_left_same_direction == other.adj_left_same_direction \
+                and self._adj_right_same_direction == other.adj_right_same_direction \
+                and self._lanelet_type == other.lanelet_type and self._user_one_way == self.user_one_way \
+                and self._user_bidirectional == other.user_bidirectional \
+                and self._traffic_signs == other.traffic_signs and self._traffic_lights == other.traffic_lights:
+            return list_elements_eq
+
+        warnings.warn(f"Inequality of Lanelet {repr(self)} and the other one {repr(other)}")
+        return False
+
+    def __hash__(self):
+        polylines = [self._left_vertices, self._right_vertices, self._center_vertices]
+        polyline_strings = []
+        for polyline in polylines:
+            polyline_string = np.array2string(np.around(polyline.astype(float), 10), precision=10)
+            polyline_strings.append(polyline_string)
+
+        elements = [self._predecessor, self._successor, self._lanelet_type, self._user_one_way,
+                    self._user_bidirectional, self._traffic_signs, self._traffic_lights]
+        frozen_elements = [frozenset(e) for e in elements]
+
+        return hash((self._lanelet_id, tuple(polyline_strings), self._line_marking_left_vertices,
+                     self._line_marking_right_vertices, self._stop_line, self._adj_left, self._adj_right,
+                     self._adj_left_same_direction, self._adj_right_same_direction, tuple(frozen_elements)))
+
+    def __str__(self):
+        return f"Lanelet with id {self._lanelet_id} has predecessors {set(self._predecessor)}, successors " \
+               f"{set(self._successor)}, left adjacency {self._adj_left} with " \
+               f"{'same' if self._adj_left_same_direction else 'opposite'} direction, and " \
+               f"right adjacency with {'same' if self._adj_right_same_direction else 'opposite'} direction"
+
+    def __repr__(self):
+        return f"Lanelet(left_vertices={self._left_vertices.tolist()}, " \
+               f"center_vertices={self._center_vertices.tolist()}, " \
+               f"right_vertices={self._right_vertices.tolist()}, lanelet_id={self._lanelet_id}, " \
+               f"predecessor={self._predecessor}, successor={self._successor}, adjacent_left={self._adj_left}, " \
+               f"adjacent_left_same_direction={self._adj_left_same_direction}, adjacent_right={self._adj_right}, " \
+               f"adjacent_right_same_direction={self._adj_right_same_direction}, " \
+               f"line_marking_left_vertices={self._line_marking_left_vertices}, " \
+               f"line_marking_right_vertices={self._line_marking_right_vertices}), " \
+               f"stop_line={repr(self._stop_line)}, lanelet_type={self._lanelet_type}, " \
+               f"user_one_way={self._user_one_way}, " \
+               f"user_bidirectional={self._user_bidirectional}, traffic_signs={self._traffic_signs}, " \
+               f"traffic_lights={self._traffic_lights}"
 
     @property
     def distance(self) -> np.ndarray:
@@ -657,14 +754,14 @@ class Lanelet:
         # recreate polygon in case it existed
         self._polygon = Polygon(np.concatenate((self.right_vertices, np.flip(self.left_vertices, 0))))
 
-    def interpolate_position(self, distance: float) -> tuple:
+    def interpolate_position(self, distance: float) -> Tuple[np.ndarray, np.ndarray, np.ndarray, int]:
         """
         Computes the interpolated positions on the center/right/left polyline of the lanelet for a given distance
         along the lanelet
 
         :param distance: The distance for the interpolation
-        :return: The interpolated positions on the center/right/left polyline
-        in the form [[x_c,y_c],[x_r,y_r],[x_l,y_l]]
+        :return: The interpolated positions on the center/right/left polyline and the segment id of the polyline where
+            the interpolation takes place in the form ([x_c,y_c],[x_r,y_r],[x_l,y_l], segment_id)
         """
         assert is_real_number(distance) and np.greater_equal(self.distance[-1], distance) and np.greater_equal(distance,
                                                                                                                0), \
@@ -701,14 +798,7 @@ class Lanelet:
                 point_list), 'Lanelet/contains_points>: provided list of points is malformed! points = {}'.format(
                 point_list)
 
-        # output list
-        res = list()
-
-        # get polygon shape of lanelet
-        for p in point_list:
-            res.append(self._polygon.contains_point(p))
-
-        return res
+        return [self._polygon.contains_point(p) for p in point_list]
 
     def get_obstacles(self, obstacles: List[Obstacle], time_step: int = 0) -> List[Obstacle]:
         """
@@ -958,9 +1048,6 @@ class Lanelet:
         else:
             return set()
 
-    def __str__(self):
-        return 'Lanelet with id:' + str(self.lanelet_id)
-
 
 class LaneletNetwork(IDrawable):
     """
@@ -972,23 +1059,84 @@ class LaneletNetwork(IDrawable):
         Constructor for LaneletNetwork
         """
         self._lanelets: Dict[int, Lanelet] = {}
-        self._buffered_polygons: Dict[int, LaneletPolygon] = {}
-        self._buffered_strtee = None
+        # lanelet_id, shapely_polygon
+        self._buffered_polygons: Dict[int, ShapelyPolygon] = {}
+        self._strtee = None
+        # id(shapely_polygon), lanelet_id
+        self._lanelet_id_index_by_id: Dict[int, int] = {}
+
         self._intersections: Dict[int, Intersection] = {}
         self._traffic_signs: Dict[int, TrafficSign] = {}
         self._traffic_lights: Dict[int, TrafficLight] = {}
 
+    # pickling of STRtree is not supported by shapely at the moment
+    # use this workaround described in this issue:
+    # https://github.com/Toblerity/Shapely/issues/1033
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state["_strtee"]
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._create_strtree()
+
     def __deepcopy__(self, memo):
         cls = self.__class__
         result = cls.__new__(cls)
-        self._buffered_strtee = None
+        # reset
+        self._strtee = None
+
         memo[id(self)] = result
         for k, v in self.__dict__.items():
             setattr(result, k, copy.deepcopy(v, memo))
 
-        result._create_buffered_strtree()
+        result._create_strtree()
+        # restore
+        self._create_strtree()
 
         return result
+
+    def __eq__(self, other):
+        if not isinstance(other, LaneletNetwork):
+            warnings.warn(f"Inequality between LaneletNetwork {repr(self)} and different type {type(other)}")
+            return False
+
+        list_elements_eq = True
+        lanelet_network_eq = True
+        elements = [self._lanelets, self._intersections, self._traffic_signs, self._traffic_lights]
+        elements_other = [other._lanelets, other._intersections, other._traffic_signs, other._traffic_lights]
+        for i in range(0, len(elements)):
+            e = elements[i]
+            e_other = elements_other[i]
+            lanelet_network_eq = lanelet_network_eq and len(e) == len(e_other)
+            for k in e.keys():
+                if k not in e_other:
+                    lanelet_network_eq = False
+                    continue
+                if e.get(k) != e_other.get(k):
+                    list_elements_eq = False
+
+        if not lanelet_network_eq:
+            warnings.warn(f"Inequality of LaneletNetwork {repr(self)} and the other one {repr(other)}")
+
+        return lanelet_network_eq and list_elements_eq
+
+    def __hash__(self):
+        return hash((frozenset(self._lanelets.items()), frozenset(self._intersections.items()),
+                     frozenset(self._traffic_signs.items()), frozenset(self._traffic_lights.items())))
+
+    def __str__(self):
+        return f"LaneletNetwork consists of lanelets {set(self._lanelets.keys())}, " \
+               f"intersections {set(self._intersections.keys())}, " \
+               f"traffic signs {set(self._traffic_signs.keys())}, and traffic lights {set(self._traffic_lights.keys())}"
+
+    def __repr__(self):
+        return f"LaneletNetwork(lanelets={repr(self._lanelets)}, intersections={repr(self._intersections)}, " \
+               f"traffic_signs={repr(self._traffic_signs)}, traffic_lights={repr(self._traffic_lights)})"
+
+    def _get_lanelet_id_by_shapely_polygon(self, polygon: ShapelyPolygon) -> int:
+        return self._lanelet_id_index_by_id[id(polygon)]
 
     @property
     def lanelets(self) -> List[Lanelet]:
@@ -1042,12 +1190,11 @@ class LaneletNetwork(IDrawable):
         # add each lanelet to the lanelet network
         for la in lanelets:
             lanelet_network.add_lanelet(copy.deepcopy(la), rtree=False)
-        lanelet_network._create_buffered_strtree()
 
         if cleanup_ids:
             lanelet_network.cleanup_lanelet_references()
 
-        lanelet_network._create_buffered_strtree()
+        lanelet_network._create_strtree()
 
         return lanelet_network
 
@@ -1099,42 +1246,51 @@ class LaneletNetwork(IDrawable):
                                                   set())
         for la in lanelets:
             new_lanelet_network.add_lanelet(copy.deepcopy(la), rtree=False)
-        lanelet_network._create_buffered_strtree()
+        new_lanelet_network._create_strtree()
 
         return new_lanelet_network
 
-    def _create_buffered_strtree(self):
+    def _create_strtree(self):
         """
         Creates spatial index for lanelets for faster querying the lanelets by position.
 
         Since it is an immutable object, it has to be recreated after every lanelet addition or it should be done
         once after all lanelets are added.
         """
-        lanelet_polygon_list = list()
-        for lanelet_id, lanelet_buffered_polygon in self._buffered_polygons.items():
-            if isinstance(lanelet_buffered_polygon, ShapelyPolygon):
-                lanelet_polygon_list.append(LaneletPolygon(lanelet_id, shell=lanelet_buffered_polygon))
-            elif isinstance(lanelet_buffered_polygon, ShapelyMultiPolygon):
-                for inner_lanelet_buffered_polygon in lanelet_buffered_polygon:
-                    if isinstance(inner_lanelet_buffered_polygon, ShapelyPolygon):
-                        lanelet_polygon_list.append(LaneletPolygon(lanelet_id, shell=inner_lanelet_buffered_polygon))
-                    else:
-                        raise Exception("should not be the case")
+
+        # validate buffered polygons
+        def assert_shapely_polygon(lanelet_id, polygon):
+            if not isinstance(polygon, ShapelyPolygon):
+                warnings.warn(
+                        f"Lanelet with id {lanelet_id}'s polygon is not a <shapely.geometry.Polygon> object! It will "
+                        f"be OMITTED from STRtree, therefore this lanelet will NOT be contained in the results of the "
+                        f"find_lanelet_by_<position/shape>() functions!!")
+                return False
             else:
-                raise Exception("should not be the case")
+                return True
 
-        self._buffered_strtee = STRtree(lanelet_polygon_list)
+        self._buffered_polygons = {lanelet_id: lanelet_shapely_polygon for lanelet_id, lanelet_shapely_polygon in
+                                   self._buffered_polygons.items() if
+                                   assert_shapely_polygon(lanelet_id, lanelet_shapely_polygon)}
 
-    def remove_lanelet(self, lanelet_id: int):
+        self._lanelet_id_index_by_id = {id(lanelet_shapely_polygon): lanelet_id for lanelet_id, lanelet_shapely_polygon
+                                        in self._buffered_polygons.items()}
+        self._strtee = STRtree(list(self._buffered_polygons.values()))
+
+    def remove_lanelet(self, lanelet_id: int, rtree: bool = True):
         """
         Removes a lanelet from a lanelet network and deletes all references.
 
         @param lanelet_id: ID of lanelet which should be removed.
+        @param rtree: Boolean indicating whether rtree should be initialized
         """
         if lanelet_id in self._lanelets.keys():
             del self._lanelets[lanelet_id]
             del self._buffered_polygons[lanelet_id]
             self.cleanup_lanelet_references()
+
+        if rtree:
+            self._create_strtree()
 
     def cleanup_lanelet_references(self):
         """
@@ -1281,7 +1437,7 @@ class LaneletNetwork(IDrawable):
             self._lanelets[lanelet.lanelet_id] = lanelet
             self._buffered_polygons[lanelet.lanelet_id] = lanelet.polygon.shapely_object.buffer(eps)
             if rtree:
-                self._create_buffered_strtree()
+                self._create_strtree()
             return True
 
     def add_traffic_sign(self, traffic_sign: TrafficSign, lanelet_ids: Set[int]):
@@ -1368,7 +1524,8 @@ class LaneletNetwork(IDrawable):
 
         # add lanelets to the network
         for la in lanelet_network.lanelets:
-            flag = flag and self.add_lanelet(la)
+            flag = flag and self.add_lanelet(la, rtree=False)
+        self._create_strtree()
 
         return flag
 
@@ -1406,9 +1563,9 @@ class LaneletNetwork(IDrawable):
                                              '= {}'.format(
             type(point_list))
 
-        return [
-            [lanelet_buffered_polygon.lanelet_id for lanelet_buffered_polygon in self._buffered_strtee.query(point) if
-             lanelet_buffered_polygon.contains(point)] for point in [ShapelyPoint(point) for point in point_list]]
+        return [[self._get_lanelet_id_by_shapely_polygon(lanelet_shapely_polygon) for lanelet_shapely_polygon in
+                 self._strtee.query(point) if lanelet_shapely_polygon.intersects(point)] for point in
+                [ShapelyPoint(point) for point in point_list]]
 
     def find_lanelet_by_shape(self, shape: Shape) -> List[int]:
         """
@@ -1421,9 +1578,8 @@ class LaneletNetwork(IDrawable):
                                                                 'provided shape is not a shape! ' \
                                                                 'type = {}'.format(type(shape))
 
-        return [lanelet_buffered_polygon.lanelet_id for lanelet_buffered_polygon in
-                self._buffered_strtee.query(shape.shapely_object) if
-                lanelet_buffered_polygon.intersects(shape.shapely_object)]
+        return [self._get_lanelet_id_by_shapely_polygon(lanelet_shapely_polygon) for lanelet_shapely_polygon in
+                self._strtee.query(shape.shapely_object) if lanelet_shapely_polygon.intersects(shape.shapely_object)]
 
     def filter_obstacles_in_network(self, obstacles: List[Obstacle]) -> List[Obstacle]:
         """
@@ -1531,12 +1687,6 @@ class LaneletNetwork(IDrawable):
 
         # return sorted list
         return [lanelets[i] for i in indices]
-
-    def __str__(self):
-        return_str = ''
-        for lanelet_id in self._lanelets.keys():
-            return_str += '{:8d} lanelet\n'.format(lanelet_id)
-        return return_str
 
     def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):

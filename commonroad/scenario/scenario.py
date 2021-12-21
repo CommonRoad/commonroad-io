@@ -28,7 +28,7 @@ from commonroad.visualization.renderer import IRenderer
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2021.3"
+__version__ = "2021.4"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -114,6 +114,15 @@ class Time:
         self._hours = hours
         self._minutes = minutes
 
+    def __eq__(self, other):
+        if not isinstance(other, Time):
+            return False
+
+        return self._hours == other.hours and self._minutes == other.minutes
+
+    def __hash__(self):
+        return hash((self._hours, self._minutes))
+
     @property
     def hours(self) -> int:
         return self._hours
@@ -145,6 +154,17 @@ class GeoTransformation:
         self.y_translation = y_translation
         self.z_rotation = z_rotation
         self.scaling = scaling
+
+    def __eq__(self, other):
+        if not isinstance(other, GeoTransformation):
+            return False
+
+        return self._geo_reference == other.geo_reference and self._x_translation == other.x_translation and \
+            self._y_translation == other.y_translation and self._z_rotation == other.z_rotation and \
+            self._scaling == other.scaling
+
+    def __hash__(self):
+        return hash((self._geo_reference, self._x_translation, self._y_translation, self._z_rotation, self._scaling))
 
     @property
     def geo_reference(self) -> str:
@@ -207,6 +227,16 @@ class Environment:
         self._weather = weather
         self._underground = underground
 
+    def __eq__(self, other):
+        if not isinstance(other, Environment):
+            return False
+
+        return self._time == other.time and self._time_of_day == other.time_of_day and \
+            self._weather == other.weather and self._underground == other.underground
+
+    def __hash__(self):
+        return hash((self._time, self._time_of_day, self._weather, self._underground))
+
     @property
     def time(self) -> Time:
         return self._time
@@ -245,6 +275,18 @@ class Location:
         self._gps_longitude = gps_longitude
         self._geo_transformation = geo_transformation
         self._environment = environment
+
+    def __eq__(self, other):
+        if not isinstance(other, Location):
+            return False
+
+        return self._geo_name_id == other.geo_name_id and self._gps_latitude == other.gps_latitude and \
+            self._gps_longitude == other.gps_longitude and self._geo_transformation == other.geo_transformation and \
+            self._environment == other.environment
+
+    def __hash__(self):
+        return hash((self._geo_name_id, self._gps_latitude, self._gps_longitude, self._geo_transformation,
+                     self._environment))
 
     @property
     def geo_name_id(self) -> int:
@@ -386,12 +428,9 @@ class ScenarioID:
 
 
 class Scenario(IDrawable):
-    """ Class which describes a Scenario entity according to the CommonRoad
-    specification. Each scenario is described by
-     a road network consisting of lanelets (see
-     :class:`commonroad.scenario.lanelet.LaneletNetwork`) and a set of
-     obstacles which can be either static or dynamic (see
-     :class:`commonroad.scenario.obstacle.Obstacle`)."""
+    """ Class which describes a Scenario entity according to the CommonRoad specification. Each scenario is described by
+    a road network consisting of lanelets (see :class:`commonroad.scenario.lanelet.LaneletNetwork`) and a set
+    of obstacles which can be either static or dynamic (see :class:`commonroad.scenario.obstacle.Obstacle`)."""
 
     def __init__(self, dt: float, scenario_id: ScenarioID = ScenarioID(), author: str = None, tags: Set[Tag] = None,
                  affiliation: str = None, source: str = None, location: Location = None):
@@ -907,12 +946,10 @@ class Scenario(IDrawable):
         Obstacle.prediction.initial_shape_lanelet_ids, .shape_lanelet_assignment, .initial_center_lanelet_ids,
         & .center_lanelet_assignment, and Lanelet.dynamic_obstacles_on_lanelet & .static_obstacles_on_lanelet.
 
-        :param time_steps: time step for which the obstacles should be assigned. If None, all time_steps are
-        assigned.
+        :param time_steps: time step for which the obstacles should be assigned. If None, all time_steps are assigned.
         :param obstacle_ids: ids for which the assignment should be computed. If None, all obstacles are
         :param use_center_only: if False, the shape is used to find occupied lanelets.
-        Otherwise, only the center is used.
-        assigned.
+            Otherwise, only the center is used.
         """
 
         def assign_dynamic_obstacle_shape_at_time(obstacle: DynamicObstacle, time_step) -> bool:

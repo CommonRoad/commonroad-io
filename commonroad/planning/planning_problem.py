@@ -9,7 +9,7 @@ from commonroad.common.validity import is_natural_number
 __author__ = "Christina Miller"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2021.3"
+__version__ = "2021.4"
 __maintainer__ = "Christina Miller"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -84,8 +84,7 @@ class PlanningProblem(IDrawable):
         translate and rotates the planning problem with given translation and
         angle around the origin (0, 0)
 
-        :param translation: translation vector [x_off, y_off] in x- and
-        y-direction
+        :param translation: translation vector [x_off, y_off] in x- and y-direction
         :param angle: rotation angle in radian (counter-clockwise)
         """
         self.initial_state = self.initial_state.translate_rotate(translation,
@@ -99,8 +98,7 @@ class PlanningProblem(IDrawable):
 
 
 class PlanningProblemSet(IDrawable):
-    def __init__(self, planning_problem_list: Union[
-        None, List[PlanningProblem]] = None):
+    def __init__(self, planning_problem_list: Union[None, List[PlanningProblem]] = None):
         if planning_problem_list is None:
             planning_problem_list = []
 
@@ -156,19 +154,16 @@ class PlanningProblemSet(IDrawable):
         raises error, if id cannot be found.
 
         :param planning_problem_id: id to find
-        :return: Planning problem with id planning_problem_id, Raises key
-        error, if id not in the dict.
+        :return: Planning problem with id planning_problem_id, Raises key error, if id not in the dict.
         """
 
         return self.planning_problem_dict[planning_problem_id]
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """
-        translate and rotates the planning problem set with given translation
-        and angle around the origin (0, 0)
+        translate and rotates the planning problem set with given translation and angle around the origin (0, 0)
 
-        :param translation: translation vector [x_off, y_off] in x- and
-        y-direction
+        :param translation: translation vector [x_off, y_off] in x- and y-direction
         :param angle: rotation angle in radian (counter-clockwise)
         """
         for planning_problem in self._planning_problem_dict.values():

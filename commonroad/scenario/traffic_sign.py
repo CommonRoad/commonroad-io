@@ -1,7 +1,7 @@
 __author__ = "Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["CAR@TUM"]
-__version__ = "2021.3"
+__version__ = "2021.4"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Release"
@@ -26,17 +26,16 @@ TRAFFIC_SIGN_VALIDITY_START = {'WARNING_DANGER_SPOT', 'WARNING_RIGHT_BEFORE_LEFT
                                'BAN_CARS', 'BAN_TRUCKS', 'BAN_BICYCLE', 'BAN_MOTORCYCLE', 'BAN_BUS', 'BAN_PEDESTRIAN',
                                'BAN_CAR_TRUCK_BUS_MOTORCYCLE', 'BAN_VEHICLES_CARRYING_DANGEROUS_GOODS', 'NO_ENTRY',
                                'MAX_WEIGHT', 'MAX_WIDTH', 'MAX_HEIGHT', 'MAX_LENGTH', 'MAX_SPEED',
-                               'MAX_SPEED_ZONE_START', 'MIN_SPEED',  'NO_OVERTAKING_START',
-                               'NO_OVERTAKING_TRUCKS_START', 'TRAFFIC_CALMED_AREA_START', 'PRIORITY_OVER_ONCOMING',
-                               'TOWN_SIGN', 'TUNNEL', 'INTERSTATE_START', 'HIGHWAY_START', 'PEDESTRIANS_CROSSING'}
+                               'MAX_SPEED_ZONE_START', 'MIN_SPEED', 'NO_OVERTAKING_START', 'NO_OVERTAKING_TRUCKS_START',
+                               'TRAFFIC_CALMED_AREA_START', 'PRIORITY_OVER_ONCOMING', 'TOWN_SIGN', 'TUNNEL',
+                               'INTERSTATE_START', 'HIGHWAY_START', 'PEDESTRIANS_CROSSING'}
 
 TRAFFIC_SIGN_WITH_ADDITIONAL_VALUE = {'MAX_WEIGHT', 'MAX_WIDTH', 'MAX_HEIGHT', 'MAX_LENGTH', 'MAX_SPEED',
                                       'MAX_SPEED_ZONE_START', 'MIN_SPEED', 'ADDITION_VALID_FOR_X_METERS',
                                       'ADDITION_VALID_IN_X_KILOMETERS', 'ADDITION_TIME_PERIOD_PERMITTED'}
 
-LEFT_HAND_TRAFFIC = {'AUS', 'JPN', 'HKG', 'IND', 'JEY', 'IMN', 'IRL', 'JAM',
-                     'KEN', 'MLT', 'MYS', 'NPL', 'NZL', 'ZAF', 'SGP', 'THA',
-                     'GBR', 'IDN', 'MAC', 'PAK', 'CYP'}
+LEFT_HAND_TRAFFIC = {'AUS', 'JPN', 'HKG', 'IND', 'JEY', 'IMN', 'IRL', 'JAM', 'KEN', 'MLT', 'MYS', 'NPL', 'NZL', 'ZAF',
+                     'SGP', 'THA', 'GBR', 'IDN', 'MAC', 'PAK', 'CYP'}
 
 
 @enum.unique
@@ -192,6 +191,7 @@ class TrafficSignIDGermany(enum.Enum):
     DETOUR_ON_DEMAND_STRAIGHTFORWARD = '460-30'
     TRANSITION_3_LEFT_2_TRANSITIONED = '501-15'
     TRANSITION_1_LEFT_1_STRAIGHT = '501-16'
+    TRANSITION_3_RIGHT = '511-22'
     LANE_BOARD_NO_OPPOSITE_TWO_LANES = '521-30'
     THREE_LANES_NO_ONCOMING_LANES = '521-31'
     FOUR_LANES_NO_ONCOMING_LANES = '521-32'
@@ -209,8 +209,10 @@ class TrafficSignIDGermany(enum.Enum):
     BARRIER_GATE_250_1600 = '600-34'
     BARRIER_GATE = '600-38'
     ROAD_WARNING_POST_SCRAPER_BEACON_RIGHT = '605-10'
-    ROAD_WARNING_POST_SCRAPER_BEACON_LEFT = '605-20'
     ROAD_WARNING_POST_ARROW_BEACON_RIGHT = '605-11'
+    ROAD_WARNING_POST_SCRAPER_BEACON_LEFT = '605-20'
+    ROAD_WARNING_POST_SCRAPER_BEACON_ARROW_RIGHT = '605-21'
+    ROAD_WARNING_POST_GUIDE_UP_THREE_ARROWS = '605-31'
     DIRECTION_SIGN_LEFT_SINGLE = '625-10'
     DIRECTION_SIGN_LEFT_SMALL = '625-11'
     DIRECTION_SIGN_LEFT_MEDIUM = '625-12'
@@ -248,6 +250,7 @@ class TrafficSignIDGermany(enum.Enum):
     ADDITION_RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD = '1002-24'
     ADDITION_VALID_IN_X_METERS = '1004-30'
     ADDITION_VALID_IN_X_KILOMETERS = '1004-31'
+    ADDITION_VALID_IN_200_KILOMETERS = '1004-32'
     ADDITION_VALID_IN_400_METRES = '1004-33'
     ADDITION_VALID_IN_600_METRES = '1004-34'
     ADDITION_VALID_IN_2_KILOMETERS = '1004-35'
@@ -294,6 +297,7 @@ class TrafficSignIDGermany(enum.Enum):
     ALLOWED_MASS_7_5_TONS = '1053-33'
     ADDITION_VALID_ON_SHOULDER = '1053-34'
     ADDITION_VALID_WHEN_WET = '1053-35'
+    LINE_MARKING_MISSING = '2113'
     UNKNOWN = ''
 
 
@@ -301,24 +305,39 @@ class TrafficSignIDGermany(enum.Enum):
 class TrafficSignIDZamunda(enum.Enum):  # default traffic sign IDs (similar to German IDs)
     WARNING_DANGER_SPOT = '101'
     WARNING_RIGHT_BEFORE_LEFT = '102'
+    WARNING_LEFT_CURVE = '103-10'
+    WARNING_RIGHT_CURVE = '103-20'
     WARNING_STEEP_HILL_DOWNWARDS = '108'
     WARNING_SLIPPERY_ROAD = '114'
     WARNING_CONSTRUCTION_SITE = '123'
+    WARNING_TRAFFIC_QUEUES_LIKELY = '124'
+    WARNING_ONCOMING_TRAFFIC = '125'
+    WARNING_TRAFFIC_LIGHTS_AHEAD = '131'
+    WARNING_PEDESTRIANS_RIGHT = '133-10'
+    WARNING_PEDESTRIANS_LEFT = '133-20'
     WARNING_CROSSING_CYCLIST = '138'
     WARNING_ANIMAL_CROSSING_RIGHT = '142-10'
+    WARNING_LOOSE_GRAVEL = '145-50'
     RAILWAY = '201'
     YIELD = '205'
     STOP = '206'
     PRIORITY_OPPOSITE_DIRECTION = '208'
     TURN_RIGHT_AHEAD = '209-10'
     TURN_LEFT_AHEAD = '209-20'
+    KEEP_STRAIGHT_AHEAD = '209-30'
+    PRESCRIBED_DIRECTION_RIGHT = '211-20'
     ROUNDABOUT = '215'
     ONEWAY_RIGHT = '220-10'
     ONEWAY_LEFT = '220-20'
     PRESCRIBED_PASSING_LEFT = '222-10'
     PRESCRIBED_PASSING_RIGHT = '222-20'
+    DO_NOT_DRIVE_ON_SHOULDER_LANE = '223.2'
+    DO_NOT_DRIVE_ON_SHOULDER_LANE_2_LANE = '223.2-50'
+    DO_NOT_DRIVE_ON_SHOULDER_LANE_3_LANE = '223.2-51'
+    BUS_STOP = '224-50'
     BIKEWAY = '237'
     SIDEWALK = '239'
+    PEDESTRIAN_AND_BICYCLE_ROAD = '240'
     PEDESTRIAN_ZONE_START = '242.1'
     PEDESTRIAN_ZONE_END = '242.2'
     BICYCLE_ROAD_START = '244.1'
@@ -338,6 +357,8 @@ class TrafficSignIDZamunda(enum.Enum):  # default traffic sign IDs (similar to G
     MAX_HEIGHT = '265'
     MAX_LENGTH = '266'
     NO_ENTRY = '267'
+    ENVIRONMENTAL_ZONE_START = '270.1'
+    ENVIRONMENTAL_ZONE_END = '270.2'
     U_TURN = '272'
     MAX_SPEED = '274'
     MAX_SPEED_ZONE_START = '274.1'
@@ -346,23 +367,97 @@ class TrafficSignIDZamunda(enum.Enum):  # default traffic sign IDs (similar to G
     NO_OVERTAKING_START = '276'
     NO_OVERTAKING_TRUCKS_START = '277'
     MAX_SPEED_END = '278'
+    NO_OVERTAKING_END = '280'
     NO_OVERTAKING_TRUCKS_END = '281'
     ALL_MAX_SPEED_AND_OVERTAKING_END = '282'
+    NO_STOP_START_RIGHT = '283-10'
+    NO_STOP_CENTER_RIGHT = '283-30'
+    RESTRICTED_STOP_CENTER_RIGHT = '286-30'
     RIGHT_OF_WAY = '301'
     PRIORITY = '306'
     PRIORITY_OVER_ONCOMING = '308'
     TOWN_SIGN = '310'
+    TOWN_SIGN_BACK = '311'
+    PARKING_AREA = '314'
+    PARKING_AREA_LEFT = '314-10'
+    PARKING_AREA_RIGHT = '314-20'
+    PARKING_AREA_RIGHT_LEFT = '314-30'
     TRAFFIC_CALMED_AREA_START = '325.1'
     TRAFFIC_CALMED_AREA_END = '325.2'
     TUNNEL = '327'
+    EMERYGECNY_STOP = '328'
     INTERSTATE_START = '330.1'
     INTERSTATE_END = '330.2'
     HIGHWAY_START = '331.1'
     HIGHWAY_END = '331.2'
+    HIGHWAY_EXIT_WITH_PLACE_NAME = '332'
+    EXIT_ROUTE = '332.1'
+    HIGHWAY_EXIT = '333'
     EXIT_BUILT_UP = '333-21'
     EXIT_GENERAL = '333-22'
     PEDESTRIANS_CROSSING = '350'
+    WATER_PROTECTION_ZONE = '354'
+    TRAFFIC_ASSISTANTS = '356'
     DEAD_END = '357'
+    POLICE = '363'
+    EMERGENCY_CALL_STATION = '365-51'
+    GAS_STATION = '365-52'
+    CAMP_AND_CARAVAN_SITE = '365-60'
+    ATTRACTION_POINT = '386.1'
+    TOURISTIC_ROUTE = '386.2'
+    NEARBY_ATTRACTION_POINT = '386.3'
+    HIGHWAY_INTERSECTION = '406-50'
+    DIRECTION_ARROW_SIGN_MULTI = '418-20'
+    DIRECTION_ARROW_SIGN_SINGLE = '419-20'
+    DIRECTION_SIGN_CONSOLIDATED = '434-50'
+    EXPRESSWAY_ARROW_DIRECTION = '430-20'
+    ARROW_SIGN_POST_POINT_OF_INTEREST_LEFT = '432-10'
+    STATION = '432-20'
+    GUIDE_SIGN_TABLE = '434'
+    ADVANCE_DIRECTION = '438'
+    DIRECTIONS_SIGN = '439'
+    EXPRESSWAY_ENTRANCE_DIRECTIONS = '440'
+    INTERSTATE_ANNOUNCEMENT = '448'
+    INTERSTATE_ADVANCE_DIRECTION = '449'
+    HIGHWAY_EXIT_AHEAD_100_METER = '450-50'
+    HIGHWAY_EXIT_AHEAD_200_METER = '450-51'
+    HIGHWAY_EXIT_AHEAD_300_METER = '450-52'
+    EXPRESSWAY_EXIT_100_METRES = '450-53'
+    EXPRESSWAY_EXIT_200_METRES = '450-54'
+    EXPRESSWAY_EXIT_300_METRES = '450-55'
+    INTERSTATE_DISTANCE = '453'
+    DETOUR_SKETCH = '458'
+    DETOUR_STRAIGHT = '455.1-30'
+    DETOUR_ON_DEMAND_LEFT = '460-10'
+    DETOUR_ON_DEMAND_GET_IN_LEFT_LANE = '460-12'
+    DETOUR_ON_DEMAND_ANNOUNCEMENT_RIGHT = '460-20'
+    DETOUR_ON_DEMAND_RIGHT = '460-21'
+    DETOUR_ON_DEMAND_GET_IN_RIGHT_LANE = '460-22'
+    DETOUR_ON_DEMAND_STRAIGHTFORWARD = '460-30'
+    TRANSITION_3_LEFT_2_TRANSITIONED = '501-15'
+    TRANSITION_1_LEFT_1_STRAIGHT = '501-16'
+    TRANSITION_3_RIGHT = '511-22'
+    LANE_BOARD_NO_OPPOSITE_TWO_LANES = '521-30'
+    THREE_LANES_NO_ONCOMING_LANES = '521-31'
+    FOUR_LANES_NO_ONCOMING_LANES = '521-32'
+    FIVE_LANES_NO_ONCOMING_LANES = '521-33'
+    LANE_BOARD_3_LANES_NO_OPPOSITE_WITH_SIGNS = '525'
+    NARROWING_LANES_1_LANE_FROM_RIGHT = '531-10'
+    NARROWING_LANES_1_LANE_FROM_LEFT = '531-20'
+    NARROWING_LANES_2_LANES_PLUS_1_LEFT = '531-21'
+    FOUR_LANES_NO_ONCOMING_TRAFFIC_TWO_RIGHT_LANES_TURN_RIGHT = '533-22'
+    MERGING_LANES_1_LANE_PLUS_1_LANE_RIGHT = '550-20'
+    BARRIER = '600-35'
+    BARRIER_GATE_100_800 = '600-30'
+    BARRIER_GATE_100_1200 = '600-31'
+    BARRIER_GATE_100_1600 = '600-32'
+    BARRIER_GATE_250_1600 = '600-34'
+    BARRIER_GATE = '600-38'
+    ROAD_WARNING_POST_SCRAPER_BEACON_RIGHT = '605-10'
+    ROAD_WARNING_POST_ARROW_BEACON_RIGHT = '605-11'
+    ROAD_WARNING_POST_SCRAPER_BEACON_LEFT = '605-20'
+    ROAD_WARNING_POST_SCRAPER_BEACON_ARROW_RIGHT = '605-21'
+    ROAD_WARNING_POST_GUIDE_UP_THREE_ARROWS = '605-31'
     DIRECTION_SIGN_LEFT_SINGLE = '625-10'
     DIRECTION_SIGN_LEFT_SMALL = '625-11'
     DIRECTION_SIGN_LEFT_MEDIUM = '625-12'
@@ -375,7 +470,11 @@ class TrafficSignIDZamunda(enum.Enum):  # default traffic sign IDs (similar to G
     WARNING_PANEL_LEFT = '626-20'
     WARNING_PANEL_STRAIGHT_BROAD = '626-30'
     WARNING_PANEL_STRAIGHT_HIGH = '626-31'
+    GUIDE_SILL_WITH_GUIDE_BEACON_RIGHT = '628-10'
+    GUIDE_RAIL_WITH_GUIDE_BEACON_RIGHT = '629-10'
+    GUIDE_PANEL_WITH_GUIDE_BEACON_RIGHT = '629-20'
     GREEN_ARROW = '720'
+    ADDITION_LEFT_DIRECTION = '1000'
     ADDITION_LEFT_DIRECTION_1 = '1000-10'
     ADDITION_LEFT_DIRECTION_DANGER_POINT = '1000-11'
     ADDITION_RIGHT_DIRECTION_1 = '1000-20'
@@ -396,14 +495,54 @@ class TrafficSignIDZamunda(enum.Enum):  # default traffic sign IDs (similar to G
     ADDITION_RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD = '1002-24'
     ADDITION_VALID_IN_X_METERS = '1004-30'
     ADDITION_VALID_IN_X_KILOMETERS = '1004-31'
+    ADDITION_VALID_IN_200_KILOMETERS = '1004-32'
+    ADDITION_VALID_IN_400_METRES = '1004-33'
+    ADDITION_VALID_IN_600_METRES = '1004-34'
+    ADDITION_VALID_IN_2_KILOMETERS = '1004-35'
+    ADDITION_OIL_ON_ROAD = '1006-30'
+    ADDITION_SMOKE = '1006-31'
+    ADDITION_LOOSE_GRAVEL = '1006-32'
+    ADDITION_BUILDING_SITE_EXIT = '1006-33'
+    ADDITION_DAMAGED_ROAD = '1006-34'
+    ADDITION_DIRTY_ROAD = '1006-35'
+    ADDITION_DANGER_OF_COLLISION = '1006-36'
+    ADDITION_TOAD_MIGRATION = '1006-37'
+    ADDITION_DANGER_OF_CONGESTION = '1006-38'
+    ADDITION_RESTRICTED_VIEW_DUE_TO_TREES = '1006-39'
+    DANGER_INDICATION_SMOKE = '1007-31'
+    ADDITION_CHILDREN_PLAYING_ON_ROAD = '1010-10'
+    ADDITION_WINTER_SPORTS_ALLOWED = '1010-11'
+    ADDITION_TRAILERS_ALLOWED_TO_PARK_MORE_THAN_14_DAYS = '1010-12'
+    ADDITION_CARAVANS_ALLOWED_TO_PARK_MORE_THAN_14_DAYS = '1010-13'
+    ADDITION_ROLLING_HIGHWAY = '1010-14'
+    ADDITION_LOADING_AREA = '1012-30'
+    ADDITION_END = '1012-31'
+    ADDITION_GET_OFF_BICYCLES = '1012-32'
+    ADDITION_NO_MOPEDS = '1012-33'
+    ADDITION_GREEN_WAVE_AT_KM_H = '1012-34'
+    ADDITION_STOP_HERE_AT_RED = '1012-35'
+    ADDITION_NOISE_CONTROL = '1012-36'
+    ADDITION_INFLOW_REGULATION = '1012-37'
+    ADDITION_SECONDARY_LANE = '1012-38'
+    ADDITION_SCHOOL = '1012-50'
+    ADDITION_KINDERGARTEN = '1012-51'
+    ADDITION_RETIREMENT_HOME = '1012-52'
+    ADDITION_HOSPITAL = '1012-53'
     ADDITION_RESIDENTS_PERMITTED = '1020-30'
     ADDITION_BICYCLES_PERMITTED = '1022-10'
     ADDITION_CARS_PERMITTED = '1024-10'
     ADDITION_AGRICULTURE_PERMITTED = '1026-36'
     ADDITION_FOREST_PERMITTED = '1026-37'
     ADDITION_AGRICULTURE_FOREST_PERMITTED = '1026-38'
+    ADDITION_GREEN_STICKER_PERMITTED = '1031-52'
     ADDITION_TIME_PERIOD_PERMITTED = '1040-30'
+    ADDITION_MOTOR_VEHICLES_ALLOWED_MASS_3_5_TONS = '1048-12'
+    ADDITION_MIN_MASS_3_5_TONS = '1049-13'
+    ADDITION_NO_WATER_POLLUTANTS_LOADED = '1052-31'
     ALLOWED_MASS_7_5_TONS = '1053-33'
+    ADDITION_VALID_ON_SHOULDER = '1053-34'
+    ADDITION_VALID_WHEN_WET = '1053-35'
+    LINE_MARKING_MISSING = '2113'
     UNKNOWN = ''
 
 
@@ -539,8 +678,10 @@ class TrafficLightState(enum.Enum):
 
 class TrafficSignElement:
     """ Class which represents a collection of traffic signs at one position"""
-    def __init__(self, traffic_sign_element_id: Union[TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSignIDSpain,
-                                                      TrafficSignIDGermany, TrafficSignIDChina, TrafficSignIDRussia],
+
+    def __init__(self, traffic_sign_element_id: Union[
+        TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSignIDSpain, TrafficSignIDGermany, TrafficSignIDChina,
+        TrafficSignIDRussia],
                  additional_values: List[str] = []):
         """
 
@@ -550,6 +691,31 @@ class TrafficSignElement:
         self._traffic_sign_element_id = traffic_sign_element_id
         self._additional_values = additional_values
 
+    def __eq__(self, other):
+        if not isinstance(other, TrafficSignElement):
+            warnings.warn(f"Inequality between TrafficSignElement {repr(self)} and different type {type(other)}")
+            return False
+
+        if self.traffic_sign_element_id == other.traffic_sign_element_id \
+                and set(self.additional_values) == set(other.additional_values):
+            return True
+
+        warnings.warn(f"Inequality of TrafficSignElement {repr(self)} and the other one {repr(other)}")
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self._traffic_sign_element_id, frozenset(self.additional_values)))
+
+    def __str__(self):
+        return f"TrafficSignElement with id {self._traffic_sign_element_id} and values {self._additional_values}"
+
+    def __repr__(self):
+        return f"TrafficSignElement(traffic_sign_element_id={self._traffic_sign_element_id}, " \
+               f"additional_values={self._additional_values})"
+
     @property
     def traffic_sign_element_id(self) -> enum:
         return self._traffic_sign_element_id
@@ -558,33 +724,12 @@ class TrafficSignElement:
     def additional_values(self) -> List[str]:
         return self._additional_values
 
-    def __eq__(self, other: 'TrafficSignElement'):
-        if self.traffic_sign_element_id == other.traffic_sign_element_id \
-                and self.additional_values == other.additional_values:
-            return True
-        else:
-            return False
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __hash__(self):
-        return hash(str(self. _traffic_sign_element_id) + str(self.additional_values))
-
-    def __str__(self):
-        return f"Sign Element with id {self._traffic_sign_element_id} and values {self._additional_values} "
-
-    def __repr__(self):
-        return f"Sign Element with id {self._traffic_sign_element_id} and values {self._additional_values} "
-
 
 class TrafficSign(IDrawable):
     """Class to represent a traffic sign"""
 
-    def __init__(self, traffic_sign_id: int,
-                 traffic_sign_elements: List[TrafficSignElement],
-                 first_occurrence: Set[int], position: np.ndarray,
-                 virtual: bool = False):
+    def __init__(self, traffic_sign_id: int, traffic_sign_elements: List[TrafficSignElement],
+                 first_occurrence: Set[int], position: np.ndarray = None, virtual: bool = False):
         """
         :param traffic_sign_id: ID of traffic sign
         :param traffic_sign_elements: list of traffic sign elements
@@ -600,12 +745,58 @@ class TrafficSign(IDrawable):
         self._virtual = virtual
         self._first_occurrence = first_occurrence
 
+    def __eq__(self, other):
+        if not isinstance(other, TrafficSign):
+            warnings.warn(f"Inequality between TrafficSign {repr(self)} and different type {type(other)}")
+            return False
+
+        list_elements_eq = True
+        traffic_sign_elements = {traffic_sign_element.traffic_sign_element_id: traffic_sign_element
+                                 for traffic_sign_element in self._traffic_sign_elements}
+        traffic_sign_elements_other = {traffic_sign_element.traffic_sign_element_id: traffic_sign_element
+                                       for traffic_sign_element in other._traffic_sign_elements}
+        traffic_sign_eq = len(traffic_sign_elements) == len(traffic_sign_elements_other)
+        for k in traffic_sign_elements.keys():
+            if k not in traffic_sign_elements_other:
+                traffic_sign_eq = False
+                continue
+            if traffic_sign_elements.get(k) != traffic_sign_elements_other.get(k):
+                list_elements_eq = False
+
+        position_string = None if self._position is None else \
+            np.array2string(np.around(self._position.astype(float), 10), precision=10)
+        position_other_string = None if other._position is None else \
+            np.array2string(np.around(other.position.astype(float), 10), precision=10)
+
+        if traffic_sign_eq and self._traffic_sign_id == other.traffic_sign_id \
+                and position_string == position_other_string and self._virtual == other.virtual \
+                and self._first_occurrence == other.first_occurrence:
+            return list_elements_eq
+
+        warnings.warn(f"Inequality of TrafficSign {repr(self)} and the other one {repr(other)}")
+        return False
+
+    def __hash__(self):
+        position_string = None if self._position is None else \
+            np.array2string(np.around(self._position.astype(float), 10), precision=10)
+        return hash((self._traffic_sign_id, position_string, frozenset(self._traffic_sign_elements), self._virtual,
+                     frozenset(self._first_occurrence)))
+
+    def __str__(self):
+        return f"TrafficSign with id {self._traffic_sign_id} placed at {self._position}"
+
+    def __repr__(self):
+        return f"TrafficSign(traffic_sign_id={self._traffic_sign_id}, " \
+               f"traffic_sign_elements={repr(self._traffic_sign_elements)}, " \
+               f"first_occurrence={self._first_occurrence}, " \
+               f"position={None if self._position is None else self._position.tolist()}, virtual={self._virtual})"
+
     @property
     def traffic_sign_id(self) -> int:
         return self._traffic_sign_id
 
     @property
-    def position(self) -> Union[None,np.ndarray]:
+    def position(self) -> Union[None, np.ndarray]:
         return self._position
 
     @property
@@ -631,29 +822,24 @@ class TrafficSign(IDrawable):
         assert is_real_number_vector(translation, 2), '<TrafficSign/translate_rotate>: argument translation is ' \
                                                       'not a vector of real ' \
                                                       'numbers of length 2.'
-        assert is_real_number(
-            angle), '<TrafficSign/translate_rotate>: argument angle must be a ' \
-                    'scalar. ' \
-                    'angle = %s' % angle
-        assert is_valid_orientation(
-                angle), '<TrafficSign/translate_rotate>: argument angle must ' \
-                        'be ' \
-                        'within the ' \
-                        'interval [-2pi, 2pi]. angle = %s' % angle
-        self._position = commonroad.geometry.transform.translate_rotate(
-                np.array([self._position]), translation, angle)[0]
+        assert is_real_number(angle), '<TrafficSign/translate_rotate>: argument angle must be a ' \
+                                      'scalar. ' \
+                                      'angle = %s' % angle
+        assert is_valid_orientation(angle), '<TrafficSign/translate_rotate>: argument angle must ' \
+                                            'be ' \
+                                            'within the ' \
+                                            'interval [-2pi, 2pi]. angle = %s' % angle
+        self._position = commonroad.geometry.transform.translate_rotate(np.array([self._position]), translation, angle)[
+            0]
 
-    def __str__(self):
-        return f"Sign At {self._position} with {self._traffic_sign_elements} "
-
-    def draw(self, renderer: IRenderer,
-             draw_params: Union[ParamServer, dict, None] = None,
+    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_traffic_light_sign(self, draw_params, call_stack)
 
 
 class TrafficLightCycleElement:
     """Class to represent a traffic light cycle"""
+
     def __init__(self, state: TrafficLightState, duration: int):
         """
         :param state: state of a traffic light cycle element
@@ -661,6 +847,26 @@ class TrafficLightCycleElement:
         """
         self._state = state
         self._duration = duration
+
+    def __eq__(self, other):
+        if not isinstance(other, TrafficLightCycleElement):
+            warnings.warn(f"Inequality between TrafficLightCycleElement {repr(self)} and different type {type(other)}")
+            return False
+
+        if self._state == other.state and self._duration == other.duration:
+            return True
+
+        warnings.warn(f"Inequality of TrafficLightCycleElement {repr(self)} and the other one {repr(other)}")
+        return False
+
+    def __hash__(self):
+        return hash((self._state, self._duration))
+
+    def __str__(self):
+        return f"TrafficLightCycleElement with state {self._state} and duration {self._duration}"
+
+    def __repr__(self):
+        return f"TrafficLightCycleElement(state={self._state}, duration={self._duration})"
 
     @property
     def state(self) -> TrafficLightState:
@@ -674,10 +880,8 @@ class TrafficLightCycleElement:
 class TrafficLight(IDrawable):
     """ Class to represent a traffic light"""
 
-    def __init__(self, traffic_light_id: int,
-                 cycle: List[TrafficLightCycleElement], position: np.ndarray,
-                 time_offset: int = 0,
-                 direction: TrafficLightDirection = TrafficLightDirection.ALL,
+    def __init__(self, traffic_light_id: int, cycle: List[TrafficLightCycleElement], position: np.ndarray = None,
+                 time_offset: int = 0, direction: TrafficLightDirection = TrafficLightDirection.ALL,
                  active: bool = True):
         """
         :param traffic_light_id: ID of traffic light
@@ -697,6 +901,39 @@ class TrafficLight(IDrawable):
         self._direction = direction
         self._active = active
 
+    def __eq__(self, other):
+        if not isinstance(other, TrafficLight):
+            warnings.warn(f"Inequality between TrafficLight {repr(self)} and different type {type(other)}")
+            return False
+
+        position_string = None if self._position is None else \
+            np.array2string(np.around(self._position.astype(float), 10), precision=10)
+        position_other_string = None if other._position is None else \
+            np.array2string(np.around(other.position.astype(float), 10), precision=10)
+
+        if self._traffic_light_id == other.traffic_light_id and set(self._cycle) == set(other.cycle) \
+                and self._time_offset == other.time_offset and position_string == position_other_string \
+                and self._direction == other.direction and self._active == other.active:
+            return True
+
+        warnings.warn(f"Inequality of TrafficLight {repr(self)} and the other one {repr(other)}")
+        return False
+
+    def __hash__(self):
+        position_string = None if self._position is None else \
+            np.array2string(np.around(self._position.astype(float), 10), precision=10)
+        return hash((self._traffic_light_id, frozenset(self._cycle), self._time_offset, position_string,
+                     self._direction, self._active))
+
+    def __str__(self):
+        return f"TrafficLight with id {self._traffic_light_id} placed at {self._position}"
+
+    def __repr__(self):
+        return f"TrafficLight(traffic_light_id={self._traffic_light_id}, cycle={repr(self._cycle)}, " \
+               f"time_offset={self._time_offset}, " \
+               f"position={None if self._position is None else self._position.tolist()}, " \
+               f"direction={self._direction}, active={self._active})"
+
     @property
     def traffic_light_id(self) -> int:
         return self._traffic_light_id
@@ -706,8 +943,8 @@ class TrafficLight(IDrawable):
         return self._cycle
 
     def get_state_at_time_step(self, time_step: int) -> TrafficLightState:
-        time_step_mod = ((time_step - self.time_offset) % (self.cycle_init_timesteps[-1] - self.time_offset))\
-                        + self.time_offset
+        time_step_mod = ((time_step - self.time_offset) % (
+                    self.cycle_init_timesteps[-1] - self.time_offset)) + self.time_offset
         i_cycle = np.argmax(time_step_mod < self.cycle_init_timesteps) - 1
         return self.cycle[i_cycle].state
 
@@ -747,26 +984,22 @@ class TrafficLight(IDrawable):
         :param angle: The rotation angle in radian (counter-clockwise defined)
         """
 
-        assert is_real_number_vector(translation,
-                                     2), '<TrafficLight/translate_rotate>: ' \
-                                         'argument translation is ' \
-                                         'not a vector of real numbers of ' \
-                                         'length 2.'
-        assert is_real_number(
-                angle), '<TrafficLight/translate_rotate>: argument angle must ' \
-                        'be ' \
-                        'a scalar. ' \
-                        'angle = %s' % angle
-        assert is_valid_orientation(
-                angle), '<TrafficLight/translate_rotate>: argument angle must ' \
-                        'be ' \
-                        'within the ' \
-                        'interval [-2pi, 2pi]. angle = %s' % angle
-        self._position = commonroad.geometry.transform.translate_rotate(
-                np.array([self._position]), translation, angle)[0]
+        assert is_real_number_vector(translation, 2), '<TrafficLight/translate_rotate>: ' \
+                                                      'argument translation is ' \
+                                                      'not a vector of real numbers of ' \
+                                                      'length 2.'
+        assert is_real_number(angle), '<TrafficLight/translate_rotate>: argument angle must ' \
+                                      'be ' \
+                                      'a scalar. ' \
+                                      'angle = %s' % angle
+        assert is_valid_orientation(angle), '<TrafficLight/translate_rotate>: argument angle must ' \
+                                            'be ' \
+                                            'within the ' \
+                                            'interval [-2pi, 2pi]. angle = %s' % angle
+        self._position = commonroad.geometry.transform.translate_rotate(np.array([self._position]), translation, angle)[
+            0]
 
-    def draw(self, renderer: IRenderer,
-             draw_params: Union[ParamServer, dict, None] = None,
+    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_traffic_light_sign(self, draw_params, call_stack)
 
@@ -777,9 +1010,7 @@ def get_default_cycle():
 
     _:returns traffic light cycle element
     """
-    cycle = [(TrafficLightState.RED, 60),
-             (TrafficLightState.RED_YELLOW, 10),
-             (TrafficLightState.GREEN, 60),
+    cycle = [(TrafficLightState.RED, 60), (TrafficLightState.RED_YELLOW, 10), (TrafficLightState.GREEN, 60),
              (TrafficLightState.YELLOW, 10)]
     cycle_element_list = [TrafficLightCycleElement(state[0], state[1]) for state in cycle]
     return cycle_element_list
