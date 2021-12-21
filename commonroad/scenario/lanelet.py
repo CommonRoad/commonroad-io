@@ -761,7 +761,7 @@ class Lanelet:
 
         :param distance: The distance for the interpolation
         :return: The interpolated positions on the center/right/left polyline and the segment id of the polyline where
-        the interpolation takes place in the form ([x_c,y_c],[x_r,y_r],[x_l,y_l], segment_id)
+            the interpolation takes place in the form ([x_c,y_c],[x_r,y_r],[x_l,y_l], segment_id)
         """
         assert is_real_number(distance) and np.greater_equal(self.distance[-1], distance) and np.greater_equal(distance,
                                                                                                                0), \
