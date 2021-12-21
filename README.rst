@@ -15,7 +15,7 @@ With CommonRoad_io, those solutions can be written to xml-files for uploading th
 
 CommonRoad_io 2021.2 is compatible with CommonRoad scenario in version 2020a and supports reading 2018b scenarios.
 
-The software is written in Python and tested on Linux for the Python 3.6, 3.7, 3.8, 3.9 and 3.10. The usage of the Anaconda_ Python distribution is strongly recommended.
+The software is written in Python and tested on Linux for the Python 3.6, 3.7, 3.8, 3.9, and 3.10. The usage of the Anaconda_ Python distribution is strongly recommended.
 
 .. _Anaconda: http://www.anaconda.com/download/#download
 
