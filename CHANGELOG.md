@@ -8,10 +8,12 @@
 - `__eq__` and `__hash__` functions for LaneletNetwork and related classes (e.g., traffic sign, traffic light, stop
   line, etc.)
 - Compatibility for Shapely 2.0
+- New traffic signs for Germany
 
 ### Changed
 
 - License switched to BSD-3
+- Date in solution file now stored in the dateTime format (`%Y-%m-%dT%H:%M:%S`)
 
 ### Fixed
 

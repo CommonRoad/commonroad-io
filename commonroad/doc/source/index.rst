@@ -75,6 +75,8 @@ Compared to version 2021.3, the following features have been added or changed:
   line, etc.)
 - Compatibility for Shapely 2.0
 - License switched to BSD-3
+- New traffic signs for Germany
+- Date in solution file now stored in the dateTime format (`%Y-%m-%dT%H:%M:%S`)
 
 A detailed overview about the changes in each version is provided in the `Changelog <https://gitlab.lrz.de/tum-cps/commonroad_io/-/blob/master/CHANGELOG.md>`__.
 
