@@ -3,7 +3,9 @@ import os
 import unittest
 
 from commonroad import SCENARIO_VERSION
-from commonroad.common.file_writer import CommonRoadFileWriter, OverwriteExistingFile, float_to_str
+from commonroad.common.file_writer import CommonRoadFileWriter, OverwriteExistingFile, float_to_str, Point, \
+    RectangleXMLNode, CircleXMLNode, precision
+from commonroad.geometry.shape import Rectangle, Circle
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.geometry.shape import *
 from lxml import etree
@@ -180,6 +182,40 @@ class TestFileWriter(unittest.TestCase):
         self.assertEqual(str4, "0.00000")
         str5 = float_to_str(f5)
         self.assertEqual(str5, "0")
+
+    def test_float_to_str_shapes(self):
+        values = [123456789.123456, 12327.0, 123456789, 1e-23, 0]
+        precision.decimals = 4
+        expecteds = ["123456789.1234", "12327.0", "123456789.0", "0.0000", "0.0"]
+
+        # Test Point
+        for value, expected in zip(values, expecteds):
+            point = Point(x=value, y=value, z=value)
+            node = point.create_node()
+            for child in node:
+                self.assertEqual(expected, child.text)
+
+        # Test Rectangle
+        rect_writer = RectangleXMLNode()
+        for value, expected in zip(values, expecteds):
+            rectangle = Rectangle(1.0, 1.0, center=np.array([value, value]), orientation=1.0)
+            node = rect_writer.create_rectangle_node(rectangle)
+            for child in node:
+                if not child.tag == "center":
+                    continue
+                for pos in child:
+                    self.assertEqual(expected, pos.text)
+
+        # Test Circle
+        circ_writer = CircleXMLNode()
+        for value, expected in zip(values, expecteds):
+            circle = Circle(2.0, np.array([value, value]))
+            node = circ_writer.create_circle_node(circle)
+            for child in node:
+                if not child.tag == "center":
+                    continue
+                for pos in child:
+                    self.assertEqual(expected, pos.text)
 
     # def test_all_scenarios(self):
     #     scenarios_2020a = "TODO"
