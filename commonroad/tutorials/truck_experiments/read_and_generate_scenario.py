@@ -15,7 +15,6 @@ TRAJECTORY_FILE = "input/04M001.json"
 OFFSET_X = 561676.6763867161
 OFFSET_Y = 5928014.473294518
 
-# TODO: read steering angle as well to be able to do feasability check -- did this
 # TODO: check if params are correct (params4 in vehicle dynamics)
 # template for a single state in the trajectory list
 state_template = "\n  <state>\n    <position>\n      <point>\n        <x>%s</x>\n        <y>%s</y>\n      </point>" \
@@ -167,7 +166,7 @@ trajectory_data = read_json_file(TRAJECTORY_FILE)
 states = write_commonroad_trajectory(trajectory_data)
 np.seterr(all='print')
 dt = 0.1
-vehicle = VehicleDynamics.KST(VehicleType.TRUCK)
+vehicle = VehicleDynamics.KST(VehicleType.TRUCK_MAN)
 trajectory = Trajectory(0, states)
 feasible, reconstructed_inputs = feasibility_checker.trajectory_feasibility(trajectory, vehicle, dt)
 print('Feasible? {}'.format(feasible))

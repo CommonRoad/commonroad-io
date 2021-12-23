@@ -57,12 +57,14 @@ class VehicleType(Enum):
     BMW_320i = 2
     VW_VANAGON = 3
     TRUCK = 4
+    TRUCK_MAN = 5
 
 
 vehicle_parameters = {VehicleType.FORD_ESCORT: p1.parameters_vehicle1(),
                       VehicleType.BMW_320i: p2.parameters_vehicle2(),
                       VehicleType.VW_VANAGON: p3.parameters_vehicle3(),
-                      VehicleType.TRUCK: p4.parameters_vehicle4()}
+                      VehicleType.TRUCK: p4.parameters_vehicle4(),
+                      VehicleType.TRUCK_MAN: p4.parameters_vehicle_MAN()}
 
 
 @unique
