@@ -15,7 +15,6 @@ TRAJECTORY_FILE = "input/04M001.json"
 OFFSET_X = 561676.6763867161
 OFFSET_Y = 5928014.473294518
 
-# TODO: check if params are correct (params4 in vehicle dynamics)
 # template for a single state in the trajectory list
 state_template = "\n  <state>\n    <position>\n      <point>\n        <x>%s</x>\n        <y>%s</y>\n      </point>" \
         "\n    </position>\n    <orientation>\n      <exact>%s</exact>\n    </orientation>\n    <time>" \

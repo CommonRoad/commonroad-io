@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Dict
+from typing import Dict, List
 from xml.etree import ElementTree
 from abc import ABC
 
@@ -1046,6 +1046,16 @@ class ObstacleFactory(ABC):
         initial_signal_state = SignalStateFactory.create_from_xml_node(xml_node)
         return initial_signal_state
 
+    @classmethod
+    def read_wheelbase(cls, xml_node: ElementTree.Element) -> List:
+        if not xml_node.find('wheelbase'):
+            return []
+        wheelbase_list = list()
+        for w in list(xml_node.find('wheelbase')):
+            value = float(w.text)
+            wheelbase_list.append(value)
+        return wheelbase_list
+
 
 class StaticObstacleFactory(ObstacleFactory):
     @classmethod
@@ -1129,6 +1139,7 @@ class DynamicObstacleFactory(ObstacleFactory):
         obstacle_type = DynamicObstacleFactory.read_type(xml_node)
         obstacle_id = DynamicObstacleFactory.read_id(xml_node)
         shape = DynamicObstacleFactory.read_shape(xml_node.find('shape'))
+        wheelbase = DynamicObstacleFactory.read_wheelbase(xml_node)
         initial_state = DynamicObstacleFactory.read_initial_state(xml_node.find('initialState'))
         initial_signal_state = DynamicObstacleFactory.read_initial_signal_state(xml_node.find('initialSignalState'))
         signal_series = SignalSeriesFactory.create_from_xml_node((xml_node.find('signalSeries')))
@@ -1155,19 +1166,20 @@ class DynamicObstacleFactory(ObstacleFactory):
             else:
                 shape_lanelet_assignment = None
                 center_lanelet_assignment = None
-            prediction = TrajectoryPrediction(trajectory, shape, center_lanelet_assignment, shape_lanelet_assignment)
+            prediction = TrajectoryPrediction(trajectory, shape, center_lanelet_assignment, shape_lanelet_assignment,
+                                              wheelbase)
         elif xml_node.find('occupancySet') is not None:
             prediction = SetBasedPredictionFactory.create_from_xml_node(xml_node.find('occupancySet'))
         else:
             prediction = None
 
-        if obstacle_type == ObstacleType.TRUCK:
+        if obstacle_type == ObstacleType.TRUCK and wheelbase:
             return Truck(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
                          obstacle_shape=shape, initial_state=initial_state,
                          prediction=prediction, initial_center_lanelet_ids=initial_center_lanelet_ids,
                          initial_shape_lanelet_ids=initial_shape_lanelet_ids,
                          initial_signal_state=initial_signal_state,
-                         signal_series=signal_series)
+                         signal_series=signal_series, wheelbase=wheelbase)
 
         return DynamicObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
                                obstacle_shape=shape, initial_state=initial_state, prediction=prediction,

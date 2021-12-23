@@ -191,7 +191,8 @@ class TrajectoryPrediction(Prediction):
     state sequence over time. The occupancy of an obstacle along a trajectory is uniquely defined given its shape."""
     def __init__(self, trajectory: Trajectory, shape: Shape,
                  center_lanelet_assignment: Union[None, Dict[int, Set[int]]] = None,
-                 shape_lanelet_assignment: Union[None, Dict[int, Set[int]]] = None):
+                 shape_lanelet_assignment: Union[None, Dict[int, Set[int]]] = None,
+                 wheelbase_lengths: List[float] = None):
         """
         :param trajectory: predicted trajectory of the obstacle
         :param shape: shape of the obstacle
@@ -200,6 +201,7 @@ class TrajectoryPrediction(Prediction):
         self.trajectory: Trajectory = trajectory
         self.shape_lanelet_assignment: Dict[int, Set[int]] = shape_lanelet_assignment
         self.center_lanelet_assignment: Dict[int, Set[int]] = center_lanelet_assignment
+        self.wheelbase_lengths: List[float] = wheelbase_lengths
         Prediction.__init__(self, self._trajectory.initial_time_step, self._create_occupancy_set())
 
     @property
@@ -288,8 +290,8 @@ class TrajectoryPrediction(Prediction):
 
                 for i in range(1, nr_of_shapes):
                     new_orient = orient + state.hitch[i - 1]
-                    pos = pos - 0.5 * shapes[i - 1].length * np.array([math.cos(orient), math.sin(orient)]) - \
-                        (shapes[i].length / 2) * np.array([math.cos(new_orient), math.sin(new_orient)])
+                    pos = pos - 0.5 * self.wheelbase_lengths[i - 1] * np.array([math.cos(orient), math.sin(orient)]) - \
+                        (self.wheelbase_lengths[i] / 2) * np.array([math.cos(new_orient), math.sin(new_orient)])
                     orient = new_orient
                     shape = shapes[i].rotate_translate_local(pos, orient)
                     list_of_shapes.append(shape)

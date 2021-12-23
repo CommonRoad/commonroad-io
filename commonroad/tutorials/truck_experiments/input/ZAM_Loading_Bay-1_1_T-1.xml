@@ -3644,14 +3644,18 @@
     <type>truck</type>
     <shape>
       <rectangle>
-        <length>3.6</length>
+        <length>5.875</length>
         <width>2.5</width>
       </rectangle>
       <rectangle>
-        <length>8.755</length>
+        <length>12.74</length>
         <width>2.46</width>
       </rectangle>
     </shape>
+    <wheelbase>
+        <exact>3.6</exact>
+        <exact>8.755</exact>
+    </wheelbase>
     <initialState>
       <position>
         <point>

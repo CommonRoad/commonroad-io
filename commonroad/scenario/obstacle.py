@@ -473,7 +473,8 @@ class Truck(DynamicObstacle):
                  prediction: Union[None, Prediction, TrajectoryPrediction, SetBasedPrediction] = None,
                  initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
-                 initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None):
+                 initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None,
+                 wheelbase: List[float] = None):
         """
             :param obstacle_id: unique ID of the obstacle
             :param obstacle_type: type of obstacle (e.g. PARKED_VEHICLE)
@@ -484,7 +485,9 @@ class Truck(DynamicObstacle):
             :param initial_shape_lanelet_ids: initial IDs of lanelets the obstacle shape is on
             :param initial_signal_state: initial signal state of static obstacle
             :param signal_series: list of signal states over time
+            :param wheelbase: list of wheelbase lengths
         """
+        self.wheelbase_lengths = wheelbase
         DynamicObstacle.__init__(self, obstacle_id=obstacle_id, obstacle_type=obstacle_type,
                                  obstacle_shape=obstacle_shape, initial_state=initial_state,
                                  prediction=prediction, initial_center_lanelet_ids=initial_center_lanelet_ids,
@@ -510,8 +513,8 @@ class Truck(DynamicObstacle):
 
         for i in range(1, nr_of_shapes):
             new_orient = orient + initial_state.hitch[i - 1]
-            pos = pos - 0.5 * shapes[i - 1].length / 2 * np.array(
-                    [math.cos(orient), math.sin(orient)]) - (shapes[i].length / 2) * np.array(
+            pos = pos - 0.5 * self.wheelbase_lengths[i - 1] / 2 * np.array(
+                    [math.cos(orient), math.sin(orient)]) - (self.wheelbase_lengths[i] / 2) * np.array(
                     [math.cos(new_orient), math.sin(new_orient)])
             orient = new_orient
             shape = shapes[i].rotate_translate_local(pos, orient)
