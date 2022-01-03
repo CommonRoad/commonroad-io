@@ -2,12 +2,11 @@ import os
 import random
 import re
 import unittest
-import warnings
 from datetime import datetime
 from glob import glob
 
 import numpy as np
-from commonroad.common.solution import StateFields, XMLStateFields, StateType, TrajectoryType, PlanningProblemSolution, \
+from commonroad.common.solution import StateFields, XMLStateFields, StateType, TrajectoryType, PlanningProblemSolution,\
     Solution, CommonRoadSolutionWriter, CommonRoadSolutionReader, VehicleModel, VehicleType, CostFunction
 from commonroad.scenario.scenario import ScenarioID
 from commonroad.scenario.trajectory import State, Trajectory
@@ -355,6 +354,7 @@ class DummyDataGenerator:
                processor_str,
                ''.join(trajectory_xmls))
         return solution_xml.strip()
+
 
 class TestStateFields(unittest.TestCase):
     """
