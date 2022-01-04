@@ -3,7 +3,9 @@ import json
 
 from commonroad.scenario.trajectory import State, Trajectory
 from commonroad_dc.feasibility.vehicle_dynamics import VehicleDynamics
-from commonroad.common.solution import VehicleType
+from commonroad.common.solution import Solution, VehicleType, PlanningProblemSolution, VehicleModel, CostFunction, \
+    CommonRoadSolutionWriter
+from commonroad.scenario.scenario import ScenarioID
 import commonroad_dc.feasibility.feasibility_checker as feasibility_checker
 
 # specify obstacle, poses and trajectory file
@@ -108,7 +110,7 @@ def check_y(y_list, s_y, s_yt, theta, alpha):
 # calculated from the real wheel position, angle and wheelbase length
 def update_coords(solution):
     s_x, s_y = solution['x'], solution['y']
-    alpha, theta = solution['alpha'], solution['theta']
+    theta = solution['theta']
     x_updated, y_updated = [], []
     for i in range(len(theta)):
         x_updated.append(s_x[i] + 0.5 * np.cos(theta[i]) * 3.6)
@@ -169,3 +171,13 @@ vehicle = VehicleDynamics.KST(VehicleType.TRUCK_MAN)
 trajectory = Trajectory(0, states)
 feasible, reconstructed_inputs = feasibility_checker.trajectory_feasibility(trajectory, vehicle, dt)
 print('Feasible? {}'.format(feasible))
+pp_solution = PlanningProblemSolution(
+            planning_problem_id=1,
+            vehicle_model=VehicleModel.KST,
+            vehicle_type=VehicleType.TRUCK_MAN,
+            cost_function=CostFunction.TR1,
+            trajectory=trajectory
+)
+solution = Solution(scenario_id=ScenarioID(), planning_problem_solutions=[pp_solution])
+csw = CommonRoadSolutionWriter(solution)
+csw.write_to_file(overwrite=True)

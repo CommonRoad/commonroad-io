@@ -286,6 +286,7 @@ class SupportedCostFunctions(Enum):
     ST = [cost_function for cost_function in CostFunction]  # Supports all cost functions
     KS = [cost_function for cost_function in CostFunction]  # Supports all cost functions
     MB = [cost_function for cost_function in CostFunction]  # Supports all cost functions
+    KST = [cost_function for cost_function in CostFunction] # Supports all cost functions
 
 
 class PlanningProblemSolution:
@@ -627,7 +628,14 @@ class CommonRoadSolutionReader:
     @staticmethod
     def _parse_header(root_node: et.Element) -> Tuple[str, Union[None, datetime], Union[None, float], Union[None, str]]:
         """ Parses the header attributes for the given Solution XML root node. """
-        benchmark_id = root_node.get('benchmark_id')
+        benchmark_id = None
+        version = root_node.get('commonRoadVersion')
+        if not version:
+            SolutionException("Solution xml does not have a CommonRoad version!")
+        if version == '2018b' or version == '2020a':
+            benchmark_id = root_node.get('benchmarkID')
+        else:
+            benchmark_id = root_node.get('benchmark_id')
         if not benchmark_id:
             SolutionException("Solution xml does not have a benchmark id!")
 
@@ -712,16 +720,16 @@ class CommonRoadSolutionReader:
     @staticmethod
     def _parse_vehicle_id(vehicle_id: str) -> Tuple[VehicleModel, VehicleType]:
         """ Parses the given vehicle id string. """
-        if not len(vehicle_id) == 3:
+        if not len(vehicle_id) == 3 and not len(vehicle_id) == 4:
             raise SolutionReaderException("Invalid Vehicle ID: " + vehicle_id)
 
-        if not vehicle_id[:2] in [vmodel.name for vmodel in VehicleModel]:
+        if not vehicle_id[:-1] in [vmodel.name for vmodel in VehicleModel]:
             raise SolutionReaderException("Invalid Vehicle ID: " + vehicle_id)
 
-        if not int(vehicle_id[2]) in [vtype.value for vtype in VehicleType]:
+        if not int(vehicle_id[-1]) in [vtype.value for vtype in VehicleType]:
             raise SolutionReaderException("Invalid Vehicle ID: " + vehicle_id)
 
-        return VehicleModel[vehicle_id[:2]], VehicleType(int(vehicle_id[2]))
+        return VehicleModel[vehicle_id[:-1]], VehicleType(int(vehicle_id[-1]))
 
 
 class CommonRoadSolutionWriter:

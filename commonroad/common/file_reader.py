@@ -11,7 +11,7 @@ from commonroad.planning.planning_problem import PlanningProblemSet, PlanningPro
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
 from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, EnvironmentObstacle, \
-    SignalState, PhantomObstacle, Truck
+    SignalState, PhantomObstacle
 from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, \
     TimeOfDay, Weather, Underground, ScenarioID
 from commonroad.scenario.trajectory import State, Trajectory
@@ -1173,20 +1173,12 @@ class DynamicObstacleFactory(ObstacleFactory):
         else:
             prediction = None
 
-        if obstacle_type == ObstacleType.TRUCK and wheelbase:
-            return Truck(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
-                         obstacle_shape=shape, initial_state=initial_state,
-                         prediction=prediction, initial_center_lanelet_ids=initial_center_lanelet_ids,
-                         initial_shape_lanelet_ids=initial_shape_lanelet_ids,
-                         initial_signal_state=initial_signal_state,
-                         signal_series=signal_series, wheelbase=wheelbase)
-
         return DynamicObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
                                obstacle_shape=shape, initial_state=initial_state, prediction=prediction,
                                initial_center_lanelet_ids=initial_center_lanelet_ids,
                                initial_shape_lanelet_ids=initial_shape_lanelet_ids,
                                initial_signal_state=initial_signal_state,
-                               signal_series=signal_series)
+                               signal_series=signal_series, wheelbase=wheelbase)
 
 
 class TrajectoryFactory:

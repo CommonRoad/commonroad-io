@@ -6,17 +6,20 @@ import os
 
 # import functions to read xml file and visualize commonroad objects
 from commonroad.common.file_reader import CommonRoadFileReader
+from commonroad.common.solution import CommonRoadSolutionReader, Solution
+from commonroad.scenario.scenario import ScenarioID
 from commonroad.visualization.mp_renderer import MPRenderer
+from commonroad_dc.feasibility.solution_checker import obstacle_collision
 
 # generate path of the file to be opened
 file_path = "input/ZAM_Loading_Bay-1_1_T-1.xml"
 
-# TODO: visualize video with the actual truck size, not just wheelbase
-#       -> do we want to leave it like this, or do it like in the paper?
-#       -> like in the paper
 # TODO: check if collision checker works for truck - obstacle_collision in solution_checker.py
-# TODO: add wheelbase parameters to the truck, not initial state
+#       -> no, there's a collision, but why? I cannot debug together with the C library
+#       -> also, in solution.py parse_header we read benchmark id as 'benchmark_id', but in all
+#           files I've seen is 'benchmarkID', is this a bug?
 # TODO: check why feasibility checker fails
+#       -> because the y coordinate difference is way too big already for the first step
 # TODO: check classes and whether they make sense at this point
 # TODO: create_collision_checker (tutorial 2) - additional param for continuous/discrete collision checking
 #       -> discrete: each time step - default
@@ -27,6 +30,8 @@ file_path = "input/ZAM_Loading_Bay-1_1_T-1.xml"
 
 # read in the scenario and planning problem set
 scenario, planning_problem_set = CommonRoadFileReader(file_path).open()
+solution = CommonRoadSolutionReader().open('./solution_KST5:JB1:ZAM_Test-1:2020a.xml')
+obstacle_collision(scenario, planning_problem_set, solution)
 fig = plt.figure(figsize=(25, 10))
 
 def animation_frame(i):

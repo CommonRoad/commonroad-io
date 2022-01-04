@@ -369,7 +369,8 @@ class DynamicObstacle(Obstacle):
                  prediction: Union[None, Prediction, TrajectoryPrediction, SetBasedPrediction] = None,
                  initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
-                 initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None):
+                 initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None,
+                 wheelbase: List[float] = None):
         """
             :param obstacle_id: unique ID of the obstacle
             :param obstacle_type: type of obstacle (e.g. PARKED_VEHICLE)
@@ -380,13 +381,44 @@ class DynamicObstacle(Obstacle):
             :param initial_shape_lanelet_ids: initial IDs of lanelets the obstacle shape is on
             :param initial_signal_state: initial signal state of static obstacle
             :param signal_series: list of signal states over time
+            :param wheelbase: list of wheelbase lengths
         """
+        self.wheelbase_lengths: List[float] = wheelbase
         Obstacle.__init__(self, obstacle_id=obstacle_id, obstacle_role=ObstacleRole.DYNAMIC,
                           obstacle_type=obstacle_type, obstacle_shape=obstacle_shape, initial_state=initial_state,
                           initial_center_lanelet_ids=initial_center_lanelet_ids,
                           initial_shape_lanelet_ids=initial_shape_lanelet_ids,
                           initial_signal_state=initial_signal_state, signal_series=signal_series)
         self.prediction: Prediction = prediction
+
+    @property
+    def initial_state(self) -> State:
+        """ Initial state of the obstacle, e.g., obtained through sensor measurements."""
+        return self._initial_state
+
+    @initial_state.setter
+    def initial_state(self, initial_state: State):
+        assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of wrong type. ' \
+                                                 'Expected types: %s. Got type: %s.' % (State, type(initial_state))
+        self._initial_state = initial_state
+        if not self.wheelbase_lengths:
+            return
+        shapes = self.obstacle_shape.shapes
+        list_of_shapes = []
+        orient = initial_state.orientation
+        nr_of_shapes = len(shapes)
+        pos = initial_state.position
+        list_of_shapes.append(shapes[0].rotate_translate_local(initial_state.position, initial_state.orientation))
+
+        for i in range(1, nr_of_shapes):
+            new_orient = orient + initial_state.hitch[i - 1]
+            pos = pos - 0.5 * self.wheelbase_lengths[i - 1] / 2 * np.array([math.cos(orient), math.sin(orient)]) - (
+                        self.wheelbase_lengths[i] / 2) * np.array([math.cos(new_orient), math.sin(new_orient)])
+            orient = new_orient
+            shape = shapes[i].rotate_translate_local(pos, orient)
+            list_of_shapes.append(shape)
+
+        self._initial_occupancy_shape = ShapeGroup(list_of_shapes)
 
     @property
     def prediction(self) -> Union[Prediction, TrajectoryPrediction, SetBasedPrediction, None]:
@@ -461,66 +493,6 @@ class DynamicObstacle(Obstacle):
              draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_dynamic_obstacle(self, draw_params, call_stack)
-
-
-class Truck(DynamicObstacle):
-    """ Class representing dynamic obstacles as defined in CommonRoad. Each dynamic obstacle has stored its predicted
-    movement in future time steps.
-    """
-
-    def __init__(self, obstacle_id: int, obstacle_type: ObstacleType,
-                 obstacle_shape: Shape, initial_state: State,
-                 prediction: Union[None, Prediction, TrajectoryPrediction, SetBasedPrediction] = None,
-                 initial_center_lanelet_ids: Union[None, Set[int]] = None,
-                 initial_shape_lanelet_ids: Union[None, Set[int]] = None,
-                 initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None,
-                 wheelbase: List[float] = None):
-        """
-            :param obstacle_id: unique ID of the obstacle
-            :param obstacle_type: type of obstacle (e.g. PARKED_VEHICLE)
-            :param obstacle_shape: shape of the static obstacle
-            :param initial_state: initial state of the static obstacle
-            :param prediction: predicted movement of the dynamic obstacle
-            :param initial_center_lanelet_ids: initial IDs of lanelets the obstacle center is on
-            :param initial_shape_lanelet_ids: initial IDs of lanelets the obstacle shape is on
-            :param initial_signal_state: initial signal state of static obstacle
-            :param signal_series: list of signal states over time
-            :param wheelbase: list of wheelbase lengths
-        """
-        self.wheelbase_lengths = wheelbase
-        DynamicObstacle.__init__(self, obstacle_id=obstacle_id, obstacle_type=obstacle_type,
-                                 obstacle_shape=obstacle_shape, initial_state=initial_state,
-                                 prediction=prediction, initial_center_lanelet_ids=initial_center_lanelet_ids,
-                                 initial_shape_lanelet_ids=initial_shape_lanelet_ids,
-                                 initial_signal_state=initial_signal_state, signal_series=signal_series)
-
-    @property
-    def initial_state(self) -> State:
-        """ Initial state of the obstacle, e.g., obtained through sensor measurements."""
-        return self._initial_state
-
-    @initial_state.setter
-    def initial_state(self, initial_state: State):
-        assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of wrong type. ' \
-                                                 'Expected types: %s. Got type: %s.' % (State, type(initial_state))
-        self._initial_state = initial_state
-        shapes = self.obstacle_shape.shapes
-        list_of_shapes = []
-        orient = initial_state.orientation
-        nr_of_shapes = len(shapes)
-        pos = initial_state.position
-        list_of_shapes.append(shapes[0].rotate_translate_local(initial_state.position, initial_state.orientation))
-
-        for i in range(1, nr_of_shapes):
-            new_orient = orient + initial_state.hitch[i - 1]
-            pos = pos - 0.5 * self.wheelbase_lengths[i - 1] / 2 * np.array(
-                    [math.cos(orient), math.sin(orient)]) - (self.wheelbase_lengths[i] / 2) * np.array(
-                    [math.cos(new_orient), math.sin(new_orient)])
-            orient = new_orient
-            shape = shapes[i].rotate_translate_local(pos, orient)
-            list_of_shapes.append(shape)
-
-        self._initial_occupancy_shape = ShapeGroup(list_of_shapes)
 
 
 class PhantomObstacle(IDrawable):
