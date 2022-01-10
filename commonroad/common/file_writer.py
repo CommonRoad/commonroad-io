@@ -1431,7 +1431,7 @@ class SignalStateXMLNode:
 
         if hasattr(signal_state, 'hazard_warning_lights'):
             hazard_warning_lights = etree.Element('hazardWarningLights')
-            hazard_warning_lights.text = str(signal_state.braking_lights).lower()
+            hazard_warning_lights.text = str(signal_state.hazard_warning_lights).lower()
             signal_state_node.append(hazard_warning_lights)
 
         if hasattr(signal_state, 'flashing_blue_lights'):
