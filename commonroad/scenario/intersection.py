@@ -15,29 +15,34 @@ class IntersectionIncomingElement:
     """
     This class represents an incoming element of an intersection.
     An incoming can consist of several adjacent lanelets which lead to an intersection, right, straight,
-    and left successor lanelets, and a reference to the incoming located on the left side.
-    The right/straight/left successors are used to infer for which lanelets the traffic light
+    and left outgoings lanelets, and a reference to the incoming located on the left side.
+    The right/straight/left outgoings are used to infer for which lanelets the traffic light
     is valid for and to facilitate the calculation of priorities at intersections.
     The left incoming is used to infer the right-before-left-rule.
     """
 
-    def __init__(self, incoming_id: int, incoming_lanelets: Set[int] = None, successors_right: Set[int] = None,
-                 successors_straight: Set[int] = None, successors_left: Set[int] = None, left_of: int = None):
+    #def __init__(self, incoming_id: int, incoming_lanelets: Set[int] = None, successors_right: Set[int] = None,
+    #             successors_straight: Set[int] = None, successors_left: Set[int] = None, left_of: int = None):
+    def __init__(self, incoming_id: int, incoming_lanelets: Set[int] = None, outgoings_right: Set[int] = None,
+                 outgoings_straight: Set[int] = None, outgoings_left: Set[int] = None, left_of: int = None):
         """
         :param incoming_id: incoming element ID
         :param incoming_lanelets: set of IDs of incoming lanelets
-        :param successors_right: set of IDs of incoming lanelets which turn right
-        :param successors_straight: set of IDs of incoming lanelets which go straight
-        :param successors_left: set of IDs of incoming lanelets which turn left
+        :param outgoings_right: set of IDs of incoming lanelets which turn right
+        :param outgoings_straight: set of IDs of incoming lanelets which go straight
+        :param outgoings_left: set of IDs of incoming lanelets which turn left
         :param left_of: incoming element ID of incoming element located left of this incoming element
         """
         self._incoming_id = None
         self._incoming_lanelets = None
         self.incoming_id = incoming_id
         self.incoming_lanelets = incoming_lanelets
-        self.successors_right = successors_right
-        self.successors_straight = successors_straight
-        self.successors_left = successors_left
+        #self.successors_right = successors_right
+        #self.successors_straight = successors_straight
+        #self.successors_left = successors_left
+        self.outgoings_right = outgoings_right
+        self.outgoings_straight = outgoings_straight
+        self.outgoings_left = outgoings_left
         self._left_of = left_of
 
     def __eq__(self, other):
@@ -46,28 +51,42 @@ class IntersectionIncomingElement:
                           f"{repr(self)} and different type {type(other)}")
             return False
 
+        #if self._incoming_id == other.incoming_id and self._incoming_lanelets == other.incoming_lanelets \
+        #        and self._successors_right == other.successors_right \
+        #        and self._successors_straight == other.successors_straight \
+        #        and self._successors_left == other.successors_left and self._left_of == other.left_of:
         if self._incoming_id == other.incoming_id and self._incoming_lanelets == other.incoming_lanelets \
-                and self._successors_right == other.successors_right \
-                and self._successors_straight == other.successors_straight \
-                and self._successors_left == other.successors_left and self._left_of == other.left_of:
+                and self._outgoings_right == other.outgoings_right \
+                and self._outgoings_straight == other.outgoings_straight \
+                and self._outgoings_left == other.outgoings_left and self._left_of == other.left_of:
             return True
 
         warnings.warn(f"Inequality of IntersectionIncomingElement {repr(self)} and the other one {repr(other)}")
         return False
 
     def __hash__(self):
-        return hash((self._incoming_id, frozenset(self._incoming_lanelets), frozenset(self._successors_right),
-                     frozenset(self._successors_straight), frozenset(self._successors_left), self._left_of))
+        #return hash((self._incoming_id, frozenset(self._incoming_lanelets), frozenset(self._successors_right),
+        #             frozenset(self._successors_straight), frozenset(self._successors_left), self._left_of))
+        return hash((self._incoming_id, frozenset(self._incoming_lanelets), frozenset(self._outgoings_right),
+                     frozenset(self._outgoings_straight), frozenset(self._outgoings_left), self._left_of))
+        
 
     def __str__(self):
+        #return f"IntersectionIncomingElement with id {self._incoming_id} represents the incoming " \
+        #       f"lanelets {self._incoming_lanelets} and has right successors {self._successors_right}, " \
+        #       f"straight successors {self._successors_straight}, and left successors {self._successors_left}"
         return f"IntersectionIncomingElement with id {self._incoming_id} represents the incoming " \
-               f"lanelets {self._incoming_lanelets} and has right successors {self._successors_right}, " \
-               f"straight successors {self._successors_straight}, and left successors {self._successors_left}"
+               f"lanelets {self._incoming_lanelets} and has right outgoings {self._outgoings_right}, " \
+               f"straight outgoings {self._outgoings_straight}, and left outgoings {self._outgoings_left}"
 
     def __repr__(self):
+        #return f"IntersectionIncomingElement(incoming_id={self._incoming_id}, " \
+        #       f"incoming_lanelets={self._incoming_lanelets}, successors_right={self._successors_right}, " \
+        #       f"successors_straight={self._successors_straight}, successors_left={self._successors_left}, " \
+        #       f"left_of={self._left_of})"
         return f"IntersectionIncomingElement(incoming_id={self._incoming_id}, " \
-               f"incoming_lanelets={self._incoming_lanelets}, successors_right={self._successors_right}, " \
-               f"successors_straight={self._successors_straight}, successors_left={self._successors_left}, " \
+               f"incoming_lanelets={self._incoming_lanelets}, outgoings_right={self._outgoings_right}, " \
+               f"outgoings_straight={self._outgoings_straight}, outgoings_left={self._outgoings_left}, " \
                f"left_of={self._left_of})"
 
     @property
@@ -110,55 +129,97 @@ class IntersectionIncomingElement:
                           'incoming are immutable')
 
     @property
-    def successors_right(self) -> Set[int]:
+    #def successors_right(self) -> Set[int]:
+    #    """
+    #    :returns set of IDs of incoming lanelets which turn right
+    #    """
+    #    return self._successors_right
+    def outgoings_right(self) -> Set[int]:
         """
         :returns set of IDs of incoming lanelets which turn right
         """
-        return self._successors_right
+        return self._outgoings_right
 
-    @successors_right.setter
-    def successors_right(self, successors_right: Set[int]):
+    #@successors_right.setter
+    #def successors_right(self, successors_right: Set[int]):
+    #    """
+    #    :param successors_right: set of IDs of incoming lanelets which turn right
+    #    """
+    #    if successors_right is None:
+    #        self._successors_right = set()
+    #    else:
+    #        self._successors_right = successors_right
+    @outgoings_right.setter
+    def outgoings_right(self, outgoings_right: Set[int]):
         """
-        :param successors_right: set of IDs of incoming lanelets which turn right
+        :param outgoings_right: set of IDs of incoming lanelets which turn right
         """
-        if successors_right is None:
-            self._successors_right = set()
+        if outgoings_right is None:
+            self._outgoings_right = set()
         else:
-            self._successors_right = successors_right
+            self._outgoings_right = outgoings_right
 
     @property
-    def successors_straight(self) -> Set[int]:
+    #def successors_straight(self) -> Set[int]:
+    #    """
+    #    :returns set of IDs of incoming lanelets which go straight
+    #    """
+    #    return self._successors_straight
+    def outgoings_straight(self) -> Set[int]:
         """
         :returns set of IDs of incoming lanelets which go straight
         """
-        return self._successors_straight
+        return self._outgoings_straight
 
-    @successors_straight.setter
-    def successors_straight(self, successors_straight: Set[int]):
+    #@successors_straight.setter
+    #def successors_straight(self, successors_straight: Set[int]):
+    #    """
+    #    :param successors_straight: set of IDs of incoming lanelets which go straight
+    #    """
+    #    if successors_straight is None:
+    #        self._successors_straight = set()
+    #    else:
+    #        self._successors_straight = successors_straight
+    @outgoings_straight.setter
+    def outgoings_straight(self, outgoings_straight: Set[int]):
         """
-        :param successors_straight: set of IDs of incoming lanelets which go straight
+        :param outgoings_straight: set of IDs of incoming lanelets which go straight
         """
-        if successors_straight is None:
-            self._successors_straight = set()
+        if outgoings_straight is None:
+            self._outgoings_straight = set()
         else:
-            self._successors_straight = successors_straight
+            self._outgoings_straight = outgoings_straight
 
     @property
-    def successors_left(self) -> Set[int]:
+    #def successors_left(self) -> Set[int]:
+    #    """
+    #    :returns set of IDs of incoming lanelets which turn left
+    #    """
+    #    return self._successors_left
+    def outgoings_left(self) -> Set[int]:
         """
         :returns set of IDs of incoming lanelets which turn left
         """
-        return self._successors_left
+        return self._outgoings_left
 
-    @successors_left.setter
-    def successors_left(self, successors_left: Set[int]):
+    #@successors_left.setter
+    #def successors_left(self, successors_left: Set[int]):
+    #    """
+    #    :param successors_left: set of IDs of incoming lanelets which turn left
+    #    """
+    #    if successors_left is None:
+    #        self._successors_left = set()
+    #    else:
+    #        self._successors_left = successors_left
+    @outgoings_left.setter
+    def outgoings_left(self, outgoings_left: Set[int]):
         """
-        :param successors_left: set of IDs of incoming lanelets which turn left
+        :param outgoings_left: set of IDs of incoming lanelets which turn left
         """
-        if successors_left is None:
-            self._successors_left = set()
+        if outgoings_left is None:
+            self._outgoings_left = set()
         else:
-            self._successors_left = successors_left
+            self._outgoings_left = outgoings_left
 
     @property
     def left_of(self) -> int:

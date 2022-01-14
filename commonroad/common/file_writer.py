@@ -310,7 +310,8 @@ class CommonRoadFileWriter:
 
         # roadNetwork and obstaclePlanning filename
         if key != None:
-            filename_key = filename + "_" + key
+            sub_ids = re.split('\.', filename)
+            filename_key = sub_ids[0] + "_" + key + ".xml"
         else:
             filename_key = filename
 
@@ -384,7 +385,8 @@ class CommonRoadFileWriter:
 
         # roadNetwork and obstaclePlanning filename
         if key != None:
-            filename_key = filename + "_" + key
+            sub_ids = re.split('\.', filename)
+            filename_key = sub_ids[0] + "_" + key + ".xml"
         else:
             filename_key = filename
 
@@ -447,7 +449,7 @@ class CommonRoadFileWriter:
         # change into road.xsd, obstacleplanning.xsd
         if key == 'roadNetwork':
             with open(
-                os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadRoadStatic_schema.xsd',
+                os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadStatic_schema.xsd',
                 'rb',
             ) as schema_file:
                 schema = etree.XMLSchema(etree.parse(schema_file))
@@ -459,7 +461,7 @@ class CommonRoadFileWriter:
                 schema = etree.XMLSchema(etree.parse(schema_file))
         else:
             with open(
-               os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadScenario_schema.xsd',
+               os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/XML_commonRoad_XSD.xsd',
                 'rb',
             ) as schema_file:
                 schema = etree.XMLSchema(etree.parse(schema_file))
@@ -1319,23 +1321,38 @@ class IntersectionXMLNode:
                 incoming_lanelet_node.set('ref', str(incoming_lanelet))
                 incoming_node.append(incoming_lanelet_node)
 
-            if incoming.successors_right:
-                for successor_right in incoming.successors_right:
-                    successor_right_node = etree.Element('successorsRight')
-                    successor_right_node.set('ref', str(successor_right))
-                    incoming_node.append(successor_right_node)
+            #if incoming.successors_right:
+            #    for successor_right in incoming.successors_right:
+            #        successor_right_node = etree.Element('successorsRight')
+            #        successor_right_node.set('ref', str(successor_right))
+            #        incoming_node.append(successor_right_node)
+            if incoming.outgoings_right:
+                for outgoing_right in incoming.outgoings_right:
+                    outgoing_right_node = etree.Element('outgoingsRight')
+                    outgoing_right_node.set('ref', str(outgoing_right))
+                    incoming_node.append(outgoing_right_node)
 
-            if incoming.successors_straight:
-                for successor_straight in incoming.successors_straight:
-                    successor_straight_node = etree.Element('successorsStraight')
-                    successor_straight_node.set('ref', str(successor_straight))
-                    incoming_node.append(successor_straight_node)
+            #if incoming.successors_straight:
+            #    for successor_straight in incoming.successors_straight:
+            #        successor_straight_node = etree.Element('successorsStraight')
+            #        successor_straight_node.set('ref', str(successor_straight))
+            #        incoming_node.append(successor_straight_node)
+            if incoming.outgoings_straight:
+                for outgoing_straight in incoming.outgoings_straight:
+                    outgoing_straight_node = etree.Element('outgoingsStraight')
+                    outgoing_straight_node.set('ref', str(outgoing_straight))
+                    incoming_node.append(outgoing_straight_node)
 
-            if incoming.successors_left:
-                for successor_left in incoming.successors_left:
-                    successor_left_node = etree.Element('successorsLeft')
-                    successor_left_node.set('ref', str(successor_left))
-                    incoming_node.append(successor_left_node)
+            #if incoming.successors_left:
+            #    for successor_left in incoming.successors_left:
+            #        successor_left_node = etree.Element('successorsLeft')
+            #        successor_left_node.set('ref', str(successor_left))
+            #        incoming_node.append(successor_left_node)
+            if incoming.outgoings_left:
+                for outgoing_left in incoming.outgoings_left:
+                    outgoing_left_node = etree.Element('outgoingsLeft')
+                    outgoing_left_node.set('ref', str(outgoing_left))
+                    incoming_node.append(outgoing_left_node)
 
             if incoming.left_of:
                 is_left_of_node = etree.Element('isLeftOf')

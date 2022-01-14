@@ -1004,6 +1004,9 @@ class IntersectionIncomingFactory:
         successors_right = set()
         successors_straight = set()
         successors_left = set()
+        #outgoings_right = set()
+        #outgoings_straight = set()
+        #outgoings_left = set()
         left_of = None
         for incoming_lanelet_ref in xml_node.findall('incomingLanelet'):
             incoming_lanelets.add(int(incoming_lanelet_ref.get('ref')))
@@ -1013,12 +1016,23 @@ class IntersectionIncomingFactory:
             successors_straight.add(int(successor_straight_ref.get('ref')))
         for successor_left_ref in xml_node.findall('successorsLeft'):
             successors_left.add(int(successor_left_ref.get('ref')))
+
+        # to generate new intersection.xml should read from successorsRight
+        #for outgoing_right_ref in xml_node.findall('outgoingsRight'):
+        #    outgoings_right.add(int(outgoing_right_ref.get('ref')))
+        #for outgoing_straight_ref in xml_node.findall('outgoingsStraight'):
+        #    outgoings_straight.add(int(outgoing_straight_ref.get('ref')))
+        #for outgoing_left_ref in xml_node.findall('outgoingsLeft'):
+        #    outgoings_left.add(int(outgoing_left_ref.get('ref')))
         for left_of_ref in xml_node.findall('isLeftOf'):
             left_of = int(left_of_ref.get('ref'))
 
         return IntersectionIncomingElement(incoming_id=incoming_id, incoming_lanelets=incoming_lanelets,
                                            successors_right=successors_right, successors_straight=successors_straight,
                                            successors_left=successors_left, left_of=left_of)
+        #return IntersectionIncomingElement(incoming_id=incoming_id, incoming_lanelets=incoming_lanelets,
+        #                                   outgoings_right=outgoings_right, outgoings_straight=outgoings_straight,
+        #                                   outgoings_left=outgoings_left, left_of=left_of)
 
 
 class ObstacleFactory(ABC):

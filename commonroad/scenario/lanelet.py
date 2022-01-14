@@ -1302,11 +1302,16 @@ class LaneletNetwork(IDrawable):
                 la.adj_right_same_direction
 
         for inter in self.intersections:
+            #for inc in inter.incomings:
+            #    inc._incoming_lanelets = set(inc.incoming_lanelets).intersection(existing_ids)
+            #    inc._successors_straight = set(inc.successors_straight).intersection(existing_ids)
+            #    inc._successors_right = set(inc.successors_right).intersection(existing_ids)
+            #    inc._successors_left = set(inc.successors_left).intersection(existing_ids)
             for inc in inter.incomings:
                 inc._incoming_lanelets = set(inc.incoming_lanelets).intersection(existing_ids)
-                inc._successors_straight = set(inc.successors_straight).intersection(existing_ids)
-                inc._successors_right = set(inc.successors_right).intersection(existing_ids)
-                inc._successors_left = set(inc.successors_left).intersection(existing_ids)
+                inc._outgoings_straight = set(inc.outgoings_straight).intersection(existing_ids)
+                inc._outgoings_right = set(inc.outgoings_right).intersection(existing_ids)
+                inc._outgoings_left = set(inc.outgoings_left).intersection(existing_ids)
             inter._crossings = set(inter.crossings).intersection(existing_ids)
 
     def remove_traffic_sign(self, traffic_sign_id: int):

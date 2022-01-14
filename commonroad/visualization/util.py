@@ -137,18 +137,24 @@ Dict[int, TrafficLightState]:
                 if direction in (
                 TrafficLightDirection.RIGHT, TrafficLightDirection.LEFT_RIGHT,
                 TrafficLightDirection.STRAIGHT_RIGHT):
+                    #update_state_dict(
+                    #        {l: state for l in inc_ele.successors_right})
                     update_state_dict(
-                            {l: state for l in inc_ele.successors_right})
+                            {l: state for l in inc_ele.outgoings_right})
                 if direction in (
                 TrafficLightDirection.LEFT, TrafficLightDirection.LEFT_RIGHT,
                 TrafficLightDirection.LEFT_STRAIGHT):
+                    #update_state_dict(
+                    #        {l: state for l in inc_ele.successors_left})
                     update_state_dict(
-                            {l: state for l in inc_ele.successors_left})
+                            {l: state for l in inc_ele.outgoings_left})
                 if direction in (TrafficLightDirection.STRAIGHT,
                                  TrafficLightDirection.STRAIGHT_RIGHT,
                                  TrafficLightDirection.LEFT_STRAIGHT):
+                    #update_state_dict(
+                    #        {l: state for l in inc_ele.successors_straight})
                     update_state_dict(
-                            {l: state for l in inc_ele.successors_straight})
+                            {l: state for l in inc_ele.outgoings_straight})
             elif len(lanelet.successor) == 1:
                 update_state_dict({lanelet.successor[0]: state})
             else:
