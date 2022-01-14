@@ -909,11 +909,11 @@ __status__ = "released"
     <xs:complexType>
       <xs:sequence>
 	<xs:element name="location" type="location"/>
-	<xs:element name="scenarioTags" type="tag"/>
         <xs:element name="lanelet" type="lanelet" minOccurs="1" maxOccurs="unbounded"/>
         <xs:element name="trafficSign" type="trafficSign" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="trafficLight" type="trafficLight" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="intersection" type="intersection" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="scenarioTags" type="tag"/>
         <xs:element name="staticObstacle" type="staticObstacle" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="dynamicObstacle" type="dynamicObstacle" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="phantomObstacle" type="phantomObstacle" minOccurs="0" maxOccurs="unbounded"/>

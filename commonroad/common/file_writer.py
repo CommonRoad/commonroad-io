@@ -310,7 +310,8 @@ class CommonRoadFileWriter:
 
         # roadNetwork and obstaclePlanning filename
         if key != None:
-            filename_key = filename + "_" + key
+            sub_ids = re.split('\.', filename)
+            filename_key = sub_ids[0] + "_" + key + ".xml"
         else:
             filename_key = filename
 
@@ -384,7 +385,8 @@ class CommonRoadFileWriter:
 
         # roadNetwork and obstaclePlanning filename
         if key != None:
-            filename_key = filename + "_" + key
+            sub_ids = re.split('\.', filename)
+            filename_key = sub_ids[0] + "_" + key + ".xml"
         else:
             filename_key = filename
 
@@ -447,7 +449,7 @@ class CommonRoadFileWriter:
         # change into road.xsd, obstacleplanning.xsd
         if key == 'roadNetwork':
             with open(
-                os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadRoadStatic_schema.xsd',
+                os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadStatic_schema.xsd',
                 'rb',
             ) as schema_file:
                 schema = etree.XMLSchema(etree.parse(schema_file))
@@ -459,7 +461,7 @@ class CommonRoadFileWriter:
                 schema = etree.XMLSchema(etree.parse(schema_file))
         else:
             with open(
-               os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadScenario_schema.xsd',
+               os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/XML_commonRoad_XSD.xsd',
                 'rb',
             ) as schema_file:
                 schema = etree.XMLSchema(etree.parse(schema_file))

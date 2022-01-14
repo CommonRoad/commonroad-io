@@ -225,4 +225,4 @@ doc/build/*
 /doc/format/xml_definition_files/CommonRoadObstaclesPlanningProblem_schema_ori.xsd
 /doc/format/xml_definition_files/CommonRoadRoadNetwork_schema_ori.xsd
 /doc/format/xml_definition_files/CommonRoadScenario_schema_ori.xsd
-/commonroad/trial/*
+/commonroad/trial
