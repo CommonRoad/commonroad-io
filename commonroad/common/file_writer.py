@@ -309,9 +309,15 @@ class CommonRoadFileWriter:
             filename = str(self.scenario.scenario_id) + ".xml"
 
         # roadNetwork and obstaclePlanning filename
-        if key != None:
-            sub_ids = re.split('\.', filename)
-            filename_key = sub_ids[0] + "_" + key + ".xml"
+        if self.key != None:
+            if self.key == "roadNetwork":
+                sub_ids = re.split('_|-', str(self.scenario.scenario_id))
+                country_id, map_name, map_id = sub_ids[:3]
+                filename_key = country_id + '_' + map_name + '-' + map_id + "_roadNetwork.xml"
+            
+            elif self.key == 'obstaclesPlanning':
+                sub_ids = re.split('\.', filename)
+                filename_key = sub_ids[0] + "_" + key + ".xml"
         else:
             filename_key = filename
 
@@ -384,9 +390,15 @@ class CommonRoadFileWriter:
             filename = str(self.scenario.scenario_id)
 
         # roadNetwork and obstaclePlanning filename
-        if key != None:
-            sub_ids = re.split('\.', filename)
-            filename_key = sub_ids[0] + "_" + key + ".xml"
+        if self.key != None:
+            if self.key == "roadNetwork":
+                sub_ids = re.split('_|-', str(self.scenario.scenario_id))
+                country_id, map_name, map_id = sub_ids[:3]
+                filename_key = country_id + '_' + map_name + '-' + map_id + "_roadNetwork.xml"
+            
+            elif self.key == 'obstaclesPlanning':
+                sub_ids = re.split('\.', filename)
+                filename_key = sub_ids[0] + "_" + key + ".xml"
         else:
             filename_key = filename
 
@@ -446,7 +458,6 @@ class CommonRoadFileWriter:
           commonroad_str: XML formatted string which should be checked.
         """
 
-        # change into road.xsd, obstacleplanning.xsd
         if key == 'roadNetwork':
             with open(
                 os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadStatic_schema.xsd',
