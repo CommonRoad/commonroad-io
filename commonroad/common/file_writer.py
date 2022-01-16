@@ -460,19 +460,19 @@ class CommonRoadFileWriter:
 
         if key == 'roadNetwork':
             with open(
-                os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadStatic_schema.xsd',
+                os.path.dirname(os.path.abspath(__file__)) + '/../../doc/format/xml_definition_files/CommonRoadStatic_schema.xsd',
                 'rb',
             ) as schema_file:
                 schema = etree.XMLSchema(etree.parse(schema_file))
         elif key == 'obstaclesPlanning':
             with open(
-                os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/CommonRoadDynamic_schema.xsd',
+                os.path.dirname(os.path.abspath(__file__)) + '/../../doc/format/xml_definition_files/CommonRoadDynamic_schema.xsd',
                 'rb',
             ) as schema_file:
                 schema = etree.XMLSchema(etree.parse(schema_file))
         else:
             with open(
-               os.path.dirname(os.path.abspath(__file__)) + '/../xml_definition_files/XML_commonRoad_XSD.xsd',
+               os.path.dirname(os.path.abspath(__file__)) + '/../../doc/format/xml_definition_files/XML_commonRoad_XSD.xsd',
                 'rb',
             ) as schema_file:
                 schema = etree.XMLSchema(etree.parse(schema_file))
