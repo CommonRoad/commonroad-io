@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import warnings
 from typing import Tuple, Union
 
 # Read defaults only once
@@ -122,7 +123,7 @@ class ParamServer:
 
         val, _ = self.resolve_key(param_path)
         if val is None:
-            logging.error('Value for key {} not found!'.format(param_path))
+            warnings.warn(f"Value for key {param_path} not found!")
         return val
 
     def __setitem__(self, param_path, value):

@@ -38,7 +38,7 @@ from commonroad.visualization.util import LineDataUnits, collect_center_line_col
 __author__ = "Luis Gressenbuch"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = [""]
-__version__ = "2021.3"
+__version__ = "2021.4"
 __maintainer__ = "Luis Gressenbuch"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -1289,6 +1289,7 @@ class MPRenderer(IRenderer):
         :return: None
         """
         draw_params = self._get_draw_params(draw_params)
+        call_stack = call_stack + ('planning_problem',)
         self.draw_initital_state(obj.initial_state, draw_params, call_stack)
         self.draw_goal_region(obj.goal, draw_params, call_stack)
 
