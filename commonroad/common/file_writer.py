@@ -1111,7 +1111,7 @@ class StateXMLNode:
         if len(goal_lanelet_ids) > 0:
             for la_id in goal_lanelet_ids:
                 lanelet = etree.Element('lanelet')
-                lanelet.set('ref', str(la_id))
+                lanelet.set('laneletRef', str(la_id))
                 node.append(lanelet)
         elif isinstance(position, int):
             lanelet = etree.Element('lanelet')
