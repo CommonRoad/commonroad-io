@@ -628,14 +628,7 @@ class CommonRoadSolutionReader:
     @staticmethod
     def _parse_header(root_node: et.Element) -> Tuple[str, Union[None, datetime], Union[None, float], Union[None, str]]:
         """ Parses the header attributes for the given Solution XML root node. """
-        benchmark_id = None
-        version = root_node.get('commonRoadVersion')
-        if not version:
-            SolutionException("Solution xml does not have a CommonRoad version!")
-        if version == '2018b' or version == '2020a':
-            benchmark_id = root_node.get('benchmarkID')
-        else:
-            benchmark_id = root_node.get('benchmark_id')
+        benchmark_id = root_node.get('benchmark_id')
         if not benchmark_id:
             SolutionException("Solution xml does not have a benchmark id!")
 

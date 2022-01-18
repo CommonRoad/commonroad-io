@@ -3,9 +3,7 @@ import json
 
 from commonroad.scenario.trajectory import State, Trajectory
 from commonroad_dc.feasibility.vehicle_dynamics import VehicleDynamics
-from commonroad.common.solution import Solution, VehicleType, PlanningProblemSolution, VehicleModel, CostFunction, \
-    CommonRoadSolutionWriter
-from commonroad.scenario.scenario import ScenarioID
+from commonroad.common.solution import VehicleType
 import commonroad_dc.feasibility.feasibility_checker as feasibility_checker
 
 # specify obstacle, poses and trajectory file
@@ -162,22 +160,15 @@ local_obstacle_coords = world_to_local_coords(obstacle_data, tuple_size=2)
 poses_data = read_json_file(POSES_FILE)
 get_poses(poses_data)
 
+# TODO: calculate derivative of phi and check max/min values
 # read trajectory data
 trajectory_data = read_json_file(TRAJECTORY_FILE)
 states = write_commonroad_trajectory(trajectory_data)
 np.seterr(all='print')
-dt = 0.1
+dt = 0.01
 vehicle = VehicleDynamics.KST(VehicleType.TRUCK_MAN)
 trajectory = Trajectory(0, states)
-feasible, reconstructed_inputs = feasibility_checker.trajectory_feasibility(trajectory, vehicle, dt)
+feasible, reconstructed_inputs, all_diffs = feasibility_checker.trajectory_feasibility(trajectory, vehicle, dt)
+diffs = np.asarray(all_diffs)
+print("Max diffs for {}".fofrmat(np.max(diffs, axis=0)))
 print('Feasible? {}'.format(feasible))
-pp_solution = PlanningProblemSolution(
-            planning_problem_id=1,
-            vehicle_model=VehicleModel.KST,
-            vehicle_type=VehicleType.TRUCK_MAN,
-            cost_function=CostFunction.TR1,
-            trajectory=trajectory
-)
-solution = Solution(scenario_id=ScenarioID(), planning_problem_solutions=[pp_solution])
-csw = CommonRoadSolutionWriter(solution)
-csw.write_to_file(overwrite=True)
