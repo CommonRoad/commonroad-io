@@ -1,4 +1,5 @@
 import math
+import math
 import os
 from collections import defaultdict
 from typing import Dict, Set
@@ -151,7 +152,7 @@ class MPRenderer(IRenderer):
     def add_callback(self, event, func):
         self.callbacks[event].append(func)
 
-    def draw_list(self, drawable_list: List[IDrawable], draw_params: Union[ParamServer, dict, None] = None,
+    def draw_list(self, drawable_list: List[IDrawable], draw_params: Union[ParamServer, List[dict], dict, None] = None,
                   call_stack: Optional[Tuple[str, ...]] = tuple()) -> None:
         """
         Simple wrapper to draw a list of drawable objects
@@ -163,9 +164,13 @@ class MPRenderer(IRenderer):
             which allows for differentiation of plotting styles depending on the call stack
         :return: None
         """
-        draw_params = self._get_draw_params(draw_params)
-        for elem in drawable_list:
-            elem.draw(self, draw_params, call_stack)
+        if not isinstance(draw_params, list):
+            draw_params = [draw_params] * len(drawable_list)
+        assert len(draw_params) == len(
+            drawable_list), f"Number of drawables has to match number of draw params {len(drawable_list)} vs. " \
+                            f"{len(draw_params)}!"
+        for elem, params in zip(drawable_list, draw_params):
+            elem.draw(self, self._get_draw_params(params), call_stack)
 
     def _get_draw_params(self, draw_params: Union[ParamServer, dict, None]) -> ParamServer:
         if draw_params is None:
@@ -293,8 +298,8 @@ class MPRenderer(IRenderer):
         self.ax_updated = False
 
     def create_video(self, obj_lists: List[IDrawable], file_path: str, delta_time_steps: int = 1, plotting_horizon=0,
-                     draw_params: Union[dict, ParamServer, None] = None, fig_size: Union[list, None] = None, dt=100,
-                     dpi=120) -> None:
+                     draw_params: Union[List[dict], dict, ParamServer, None] = None, fig_size: Union[list, None] = None,
+                     dt=100, dpi=120) -> None:
         """
         Creates a video of one or multiple CommonRoad objects in mp4, gif,
         or avi format.
@@ -310,9 +315,12 @@ class MPRenderer(IRenderer):
         :param dpi: resolution of the video
         :return: None
         """
-        draw_params = self._get_draw_params(draw_params)
-        time_begin = draw_params['time_begin']
-        time_end = draw_params['time_end']
+        if not isinstance(draw_params, list):
+            draw_params = [draw_params] * len(obj_lists)
+        for i, p in enumerate(draw_params):
+            draw_params[i] = self._get_draw_params(p)
+        time_begin = draw_params[0]['time_begin']
+        time_end = draw_params[0]['time_end']
         assert time_begin < time_end, '<video/create_scenario_video> ' \
                                       'time_begin=%i needs to smaller than ' \
                                       'time_end=%i.' % (time_begin, time_end)
@@ -325,7 +333,7 @@ class MPRenderer(IRenderer):
         self.ax.set_aspect('equal')
 
         def init_frame():
-            draw_params.update({'time_begin': time_begin, 'time_end': time_begin + delta_time_steps})
+            [p.update({'time_begin': time_begin, 'time_end': time_begin + delta_time_steps}) for p in draw_params]
             self.draw_list(obj_lists, draw_params=draw_params)
             self.render_static()
             artists = self.render_dynamic()
@@ -342,14 +350,15 @@ class MPRenderer(IRenderer):
                 self.ax.set_xlim(self.plot_limits_focused[0], self.plot_limits_focused[1])
                 self.ax.set_ylim(self.plot_limits_focused[2], self.plot_limits_focused[3])
 
-            if draw_params.by_callstack(param_path="axis_visible", call_stack=()) is False:
+            if draw_params[0].by_callstack(param_path="axis_visible", call_stack=()) is False:
                 self.ax.axes.xaxis.set_visible(False)
                 self.ax.axes.yaxis.set_visible(False)
             return artists
 
         def update(frame=0):
-            draw_params.update({'time_begin': time_begin + delta_time_steps * frame,
-                                'time_end': time_begin + min(frame_count, delta_time_steps * frame + plotting_horizon)})
+            [p.update({'time_begin': time_begin + delta_time_steps * frame,
+                       'time_end': time_begin + min(frame_count, delta_time_steps * frame + plotting_horizon)}) for p in
+             draw_params]
             self.remove_dynamic()
             self.clear()
             self.draw_list(obj_lists, draw_params=draw_params)
