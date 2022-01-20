@@ -519,15 +519,20 @@ class MPRenderer(IRenderer):
                 else:
                     inital_state = obj.prediction.trajectory.state_at_time_step(time_begin)
                 if inital_state is not None:
-                    call_stack_tmp = call_stack + ('vehicle_shape', 'occupancy', 'shape', 'polygon')
+                    if isinstance(obj.obstacle_shape, (Rectangle, Circle, Polygon)):
+                        shape_name = type(obj.obstacle_shape).__name__.lower()
+                    else:
+                        shape_name = "rectangle"
+                    call_stack_tmp = call_stack + ('vehicle_shape', 'occupancy', 'shape', shape_name)
 
                     facecolor = draw_params.by_callstack(call_stack_tmp, 'facecolor')
                     edgecolor = draw_params.by_callstack(call_stack_tmp, 'edgecolor')
-
-                    self.obstacle_patches.extend(
-                        get_obstacle_icon_patch(obj.obstacle_type, inital_state.position[0], inital_state.position[1],
-                                                inital_state.orientation, vehicle_length=length, vehicle_width=width,
-                                                vehicle_color=facecolor, edgecolor=edgecolor, zorder=ZOrders.CAR_PATCH))
+                    self.obstacle_patches.extend(get_obstacle_icon_patch(obj.obstacle_type, inital_state.position[0],
+                                                                         inital_state.position[1],
+                                                                         inital_state.orientation,
+                                                                         vehicle_length=length, vehicle_width=width,
+                                                                         vehicle_color=facecolor, edgecolor=edgecolor,
+                                                                         zorder=ZOrders.CAR_PATCH))
         elif draw_icon is True:
             draw_shape = True
 
