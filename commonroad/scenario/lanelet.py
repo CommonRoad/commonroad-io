@@ -110,8 +110,10 @@ class StopLine:
     def __hash__(self):
         start_string = np.array2string(np.around(self._start.astype(float), 10), precision=10)
         end_string = np.array2string(np.around(self._end.astype(float), 10), precision=10)
-        return hash((start_string, end_string, self._line_marking, frozenset(self._traffic_sign_ref),
-                     frozenset(self._traffic_light_ref)))
+        sign_ref = None if self._traffic_sign_ref is None else frozenset(self._traffic_sign_ref)
+        light_ref = None if self._traffic_light_ref is None else frozenset(self._traffic_light_ref)
+        return hash((start_string, end_string, self._line_marking, sign_ref,
+                     light_ref))
 
     def __str__(self):
         return f'StopLine from {self._start} to {self._end}'
