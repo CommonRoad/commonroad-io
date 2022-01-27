@@ -396,11 +396,13 @@ class DynamicObstacle(Obstacle):
         """ Initial state of the obstacle, e.g., obtained through sensor measurements."""
         return self._initial_state
 
+
     @initial_state.setter
     def initial_state(self, initial_state: State):
         assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of wrong type. ' \
                                                  'Expected types: %s. Got type: %s.' % (State, type(initial_state))
         self._initial_state = initial_state
+        self._initial_occupancy_shape = occupancy_shape_from_state(self._obstacle_shape, initial_state)
         if not self.wheelbase_lengths:
             return
         shapes = self.obstacle_shape.shapes
