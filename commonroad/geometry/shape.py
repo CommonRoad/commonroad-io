@@ -15,7 +15,7 @@ from commonroad.common.util import make_valid_orientation
 __author__ = "Stefanie Manzinger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2021.3"
+__version__ = "2021.4"
 __maintainer__ = "Stefanie Manzinger"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -40,6 +40,7 @@ class Shape(IDrawable, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def contains_point(self, point: np.ndarray) -> bool:
+        """ Checks whether point is contained in shape."""
         pass
 
 
@@ -307,39 +308,6 @@ class Circle(Shape):
         renderer.draw_ellipse(self.center, self.radius, self.radius, draw_params, call_stack)
 
 
-class LaneletPolygon(shapely.geometry.Polygon):
-
-    def __init__(self, lanelet_id, shell=None, holes=None):
-        super(LaneletPolygon, self).__init__(shell, holes)
-        self.lanelet_id = lanelet_id
-
-    def __deepcopy__(self, memo):
-        cls = self.__class__
-        result = cls.__new__(cls)
-        memo[id(self)] = result
-        for k, v in self.__dict__.items():
-            setattr(result, k, deepcopy(v, memo))
-        return result
-
-    @property
-    def __array_interface__(self):
-        raise NotImplementedError("A polygon does not itself provide the array interface. Its rings do.")
-
-    def _get_coords(self):
-        raise NotImplementedError("Component rings have coordinate sequences, but the polygon does not")
-
-    def _set_coords(self, ob):
-        raise NotImplementedError("Component rings have coordinate sequences, but the polygon does not")
-
-    @property
-    def coords(self):
-        raise NotImplementedError("Component rings have coordinate sequences, but the polygon does not")
-
-    @property
-    def xy(self):
-        raise NotImplementedError("Component rings have coordinate sequences, but the polygon does not")
-
-
 class Polygon(Shape):
     """ The class Polygon can be used to model occupied regions or obstacles. A polygon is defined by an array of
     ordered points (clockwise or counterclockwise)."""
@@ -354,6 +322,15 @@ class Polygon(Shape):
         self._shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self._vertices)
         # ensure that vertices are sorted clockwise and the first and last point are the same
         self._vertices = np.array(shapely.geometry.polygon.orient(self._shapely_polygon, sign=-1.0).exterior.coords)
+
+    def __eq__(self, other):
+        if not isinstance(other, Polygon):
+            return False
+
+        thresh = 1e-10
+
+        return np.allclose(self._vertices, other.vertices, rtol=thresh, atol=thresh) \
+            and self._shapely_polygon == other.shapely_object
 
     @property
     def vertices(self) -> np.ndarray:
@@ -417,8 +394,7 @@ class Polygon(Shape):
         """ Checks if a point is contained in the polygon.
 
             :param point: 2D point
-            :return: true if the polygons’s interior or boundary intersects
-            with the given point, otherwise false
+            :return: true if the polygons’s interior or boundary intersects with the given point, otherwise false
         """
         assert is_real_number_vector(point, 2), '<Polygon/contains_point>: argument ' \
                                                 '"point" is ' \
@@ -464,8 +440,7 @@ class ShapeGroup(Shape):
         if not hasattr(self, '_shapes'):
             assert isinstance(shapes, list) and all(isinstance(elem, Shape) for elem in
                                                     shapes), '<ShapeGroup/shapes>: argument "shapes" is not a valid ' \
-                                                             'list of shapes. shapes = {}'.format(
-                shapes)
+                                                             'list of shapes. shapes = {}'.format(shapes)
             self._shapes = shapes
         else:
             warnings.warn('<ShapeGroup/shapes>: shapes of shape group are immutable.')

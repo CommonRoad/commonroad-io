@@ -13,7 +13,7 @@ __author__ = "Stefanie Manzinger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles",
                "CAR@TUM"]
-__version__ = "2021.3"
+__version__ = "2021.4"
 __maintainer__ = "Stefanie Manzinger"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -63,8 +63,7 @@ class Occupancy(IDrawable):
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ Translates and rotates the occupied area.
 
-        :param translation: translation vector [x_off, y_off] in x- and
-        y-direction
+        :param translation: translation vector [x_off, y_off] in x- and y-direction
         :param angle: rotation angle in radian (counter-clockwise)
         """
         assert is_real_number_vector(translation,

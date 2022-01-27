@@ -2,11 +2,11 @@ import os
 import random
 import re
 import unittest
-import warnings
+from datetime import datetime
 from glob import glob
 
 import numpy as np
-from commonroad.common.solution import StateFields, XMLStateFields, StateType, TrajectoryType, PlanningProblemSolution, \
+from commonroad.common.solution import StateFields, XMLStateFields, StateType, TrajectoryType, PlanningProblemSolution,\
     Solution, CommonRoadSolutionWriter, CommonRoadSolutionReader, VehicleModel, VehicleType, CostFunction
 from commonroad.scenario.scenario import ScenarioID
 from commonroad.scenario.trajectory import State, Trajectory
@@ -311,6 +311,29 @@ class DummyDataGenerator:
 
     @classmethod
     def create_solution_xml(cls, solution: Solution):
+        benchmark_id = solution.benchmark_id
+        date_str = 'date="%s"' % solution.date.strftime('%Y-%m-%dT%H:%M:%S')
+        processor_str = '' if solution.processor_name is None else 'processor_name="%s"' % solution.processor_name
+        computation_str = '' if solution.computation_time is None else 'computation_time="%s"' % str(
+            solution.computation_time)
+        trajectory_xmls = [
+            cls.create_trajectory_xml(pp_sol.trajectory_type.value, pp_sol.planning_problem_id, pp_sol.trajectory)
+            for pp_sol in solution.planning_problem_solutions
+        ]
+        solution_xml = '''
+        <?xml version="1.0" ?>
+        <CommonRoadSolution benchmark_id="%s" %s %s %s>
+            %s
+        </CommonRoadSolution>
+        ''' % (benchmark_id,
+               computation_str,
+               date_str,
+               processor_str,
+               ''.join(trajectory_xmls))
+        return solution_xml.strip()
+
+    @classmethod
+    def create_solution_xml_old_date(cls, solution: Solution):
         benchmark_id = solution.benchmark_id
         date_str = 'date="%s"' % solution.date.strftime('%Y-%m-%d')
         processor_str = '' if solution.processor_name is None else 'processor_name="%s"' % solution.processor_name
@@ -802,8 +825,10 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
 
         assert str(parsed_solution_single.scenario_id) == str(self.solution_single.scenario_id)
         assert str(parsed_solution_collab.scenario_id) == str(self.solution_collab.scenario_id)
-        assert parsed_solution_single.date.strftime('%Y-%m-%d') == self.solution_single.date.strftime('%Y-%m-%d')
-        assert parsed_solution_collab.date.strftime('%Y-%m-%d') == self.solution_collab.date.strftime('%Y-%m-%d')
+        assert parsed_solution_single.date.strftime('%Y-%m-%dT%H:%M:%S') == \
+            self.solution_single.date.strftime('%Y-%m-%dT%H:%M:%S')
+        assert parsed_solution_collab.date.strftime('%Y-%m-%dT%H:%M:%S') == \
+            self.solution_collab.date.strftime('%Y-%m-%dT%H:%M:%S')
         assert parsed_solution_single.computation_time == self.solution_single.computation_time
         assert parsed_solution_collab.computation_time == self.solution_collab.computation_time
         assert parsed_solution_single.processor_name == self.solution_single.processor_name
@@ -829,6 +854,18 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
         parsed_solution_single = CommonRoadSolutionReader.fromstring(solution_xml_single)
         assert parsed_solution_single.computation_time == self.solution_single.computation_time
 
+    def test_datetime(self):
+        self.solution_single.date = datetime.strptime("2020-11-17T01:23:45", '%Y-%m-%dT%H:%M:%S')
+        solution_xml_single = DummyDataGenerator.create_solution_xml(self.solution_single)
+        parsed_solution_single = CommonRoadSolutionReader.fromstring(solution_xml_single)
+        self.assertEqual(datetime(2020, 11, 17, 1, 23, 45), parsed_solution_single.date)
+
+        # test parsing of solution files with old date format (version < 2021.4)
+        self.solution_single.date = datetime.strptime("2020-11-17", '%Y-%m-%d')
+        solution_xml_single = DummyDataGenerator.create_solution_xml_old_date(self.solution_single)
+        parsed_solution_single = CommonRoadSolutionReader.fromstring(solution_xml_single)
+        self.assertEqual(datetime(2020, 11, 17, 0, 0), parsed_solution_single.date)
+
     def test_fromstring_with_attribs(self):
         self.solution_single.processor_name = 'TEST_CPU'
         self.solution_collab.processor_name = 'TEST_CPU'
@@ -842,8 +879,10 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
 
         assert str(parsed_solution_single.scenario_id) == str(self.solution_single.scenario_id)
         assert str(parsed_solution_collab.scenario_id) == str(self.solution_collab.scenario_id)
-        assert parsed_solution_single.date.strftime('%Y-%m-%d') == self.solution_single.date.strftime('%Y-%m-%d')
-        assert parsed_solution_collab.date.strftime('%Y-%m-%d') == self.solution_collab.date.strftime('%Y-%m-%d')
+        assert parsed_solution_single.date.strftime('%Y-%m-%dT%H:%M:%S') == \
+            self.solution_single.date.strftime('%Y-%m-%dT%H:%M:%S')
+        assert parsed_solution_collab.date.strftime('%Y-%m-%dT%H:%M:%S') == \
+            self.solution_collab.date.strftime('%Y-%m-%dT%H:%M:%S')
         assert parsed_solution_single.computation_time == self.solution_single.computation_time
         assert parsed_solution_collab.computation_time == self.solution_collab.computation_time
         assert parsed_solution_single.processor_name == self.solution_single.processor_name
@@ -867,8 +906,10 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
 
         assert str(parsed_solution_single.scenario_id) == str(self.solution_single.scenario_id)
         assert str(parsed_solution_collab.scenario_id) == str(self.solution_collab.scenario_id)
-        assert parsed_solution_single.date.strftime('%Y-%m-%d') == self.solution_single.date.strftime('%Y-%m-%d')
-        assert parsed_solution_collab.date.strftime('%Y-%m-%d') == self.solution_collab.date.strftime('%Y-%m-%d')
+        assert parsed_solution_single.date.strftime('%Y-%m-%dT%H:%M:%S') == \
+            self.solution_single.date.strftime('%Y-%m-%dT%H:%M:%S')
+        assert parsed_solution_collab.date.strftime('%Y-%m-%dT%H:%M:%S') == \
+            self.solution_collab.date.strftime('%Y-%m-%dT%H:%M:%S')
         assert parsed_solution_single.computation_time == self.solution_single.computation_time
         assert parsed_solution_collab.computation_time == self.solution_collab.computation_time
         assert parsed_solution_single.processor_name == self.solution_single.processor_name
