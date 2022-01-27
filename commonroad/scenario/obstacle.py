@@ -396,7 +396,6 @@ class DynamicObstacle(Obstacle):
         """ Initial state of the obstacle, e.g., obtained through sensor measurements."""
         return self._initial_state
 
-
     @initial_state.setter
     def initial_state(self, initial_state: State):
         assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of wrong type. ' \

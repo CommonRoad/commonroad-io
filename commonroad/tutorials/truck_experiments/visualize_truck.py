@@ -25,16 +25,6 @@ file_path_without_truck = "input/ZAM_Loading_Bay-1_1_T-no-truck.xml"
 # TODO: check why feasibility checker fails
 #       -> because the y coordinate difference is way too big already for the first step
 #       -> plot values (how big is the difference?) - save the differences/values in an array
-# TODO: check classes and whether they make sense at this point
-# TODO: create_collision_checker (tutorial 2) - additional param for continuous/discrete collision checking
-#       -> discrete: each time step - default
-#       -> continuous: use bounding box around pos in t1 and t2 to check for collisions between the two states
-#       -> trajectory_queries.py - trajectory_preprocess_obb_sum - add this for continuous case
-#       -> added it in create_collision_checker_scenario, what happens if preprocessing fails?
-#           collide_fcl returns true if the object is null, but doesn't return timestamp
-#       -> test: try with/without and check if with, we have 1 timestamp less
-# TODO: collision checker object be more dynamic (can change the scenario)
-#       -> remove/modify collision object - C++
 
 # read in the scenario and planning problem set
 scenario, planning_problem_set = CommonRoadFileReader(file_path_without_truck).open()
