@@ -4,8 +4,8 @@ from IPython import display
 import numpy as np
 import os
 
-import commonroad_dc.pycrcc as pycrcc
 # import functions to read xml file and visualize commonroad objects
+import commonroad_dc.pycrcc as pycrcc
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.common.solution import CommonRoadSolutionReader, Solution
 from commonroad.scenario.scenario import ScenarioID
@@ -64,9 +64,9 @@ def animation_frame(i):
     # zoom in the animation (plot_limits can be removed if not needed)
     rnd = MPRenderer(plot_limits=[0, 200, 400, 600], figsize=(25, 10))
     # plot the scenario at different time step
-    scenario.draw(rnd, draw_params={'time_begin': i, 'time_end': 1573})
+    scenario_truck.draw(rnd, draw_params={'time_begin': i, 'time_end': 1573})
     # plot the planning problem set
-    planning_problem_set.draw(rnd)
+    planning_problem_set_truck.draw(rnd)
     return rnd.render()
 
 # animate

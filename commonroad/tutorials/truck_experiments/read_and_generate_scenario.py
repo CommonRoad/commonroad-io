@@ -168,7 +168,5 @@ np.seterr(all='print')
 dt = 0.01
 vehicle = VehicleDynamics.KST(VehicleType.TRUCK_MAN)
 trajectory = Trajectory(0, states)
-feasible, reconstructed_inputs, all_diffs = feasibility_checker.trajectory_feasibility(trajectory, vehicle, dt)
-diffs = np.asarray(all_diffs)
-print("Max diffs for {}".fofrmat(np.max(diffs, axis=0)))
+feasible, reconstructed_inputs = feasibility_checker.trajectory_feasibility(trajectory, vehicle, dt)
 print('Feasible? {}'.format(feasible))
