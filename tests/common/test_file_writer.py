@@ -25,6 +25,8 @@ class TestFileWriter(unittest.TestCase):
         self.filename_read_1 = self.cwd_path + "/../test_scenarios/test_reading_intersection_traffic_sign.xml"
         self.filename_read_2 = self.cwd_path + "/../test_scenarios/test_reading_all.xml"
         self.filename_2018b = self.cwd_path + "/../test_scenarios/USA_Lanker-1_1_T-1.xml"
+        self.filename_separate_1 = self.cwd_path + "/../test_scenarios/USA_Peach-4_8_T-1.xml"
+        self.filename_separate_2 = self.cwd_path + "/../test_scenarios/USA_US101-3_3_T-1.xml"
         self.filename_invalid = self.cwd_path + "/../test_scenarios/test_writing_invalid.xml"
         if not os.path.isdir(self.out_path):
             os.makedirs(self.out_path)
@@ -59,6 +61,39 @@ class TestFileWriter(unittest.TestCase):
                 filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS, check_validity=True)
 
         assert self.validate_with_xsd(self.out_path + "/USA_Lanker-1_1_T-1.xml")
+
+    def test_separate_obs_and_lanelet(self):
+        scenario_1, planning_problem_set_1 = CommonRoadFileReader(self.filename_separate_1).open()
+        filename = self.out_path + '/test_USA_Peach-4_8_T-1.xml'
+        CommonRoadFileWriter(scenario_1, planning_problem_set_1, scenario_1.author, scenario_1.affiliation, 'test',
+                             scenario_1.tags,
+                             scenario_1.location).write_to_file(filename=filename,
+                                                                overwrite_existing_file=OverwriteExistingFile.ALWAYS,
+                                                                key="roadNetwork")
+        assert self.validate_with_xsd(self.out_path + '/test_USA_Peach-4_roadNetwork.xml', key = "roadNetwork")
+
+        CommonRoadFileWriter(scenario_1, planning_problem_set_1, scenario_1.author, scenario_1.affiliation, 'test',
+                             scenario_1.tags,
+                             scenario_1.location).write_to_file(filename=filename,
+                                                                overwrite_existing_file=OverwriteExistingFile.ALWAYS,
+                                                                key="obstaclesPlanning")
+        assert self.validate_with_xsd(self.out_path + '/test_USA_Peach-4_8_T-1_obstaclesPlanning.xml', key = "obstaclesPlanning")
+
+        scenario_2, planning_problem_set_2 = CommonRoadFileReader(self.filename_separate_2).open()
+        filename = self.out_path + '/test_USA_US101-3_3_T-1.xml'
+        CommonRoadFileWriter(scenario_2, planning_problem_set_2, scenario_2.author, scenario_2.affiliation, 'test',
+                             scenario_2.tags,
+                             scenario_2.location).write_to_file(filename=filename,
+                                                                overwrite_existing_file=OverwriteExistingFile.ALWAYS,
+                                                                key="roadNetwork")
+        assert self.validate_with_xsd(self.out_path + '/test_USA_US101-3_roadNetwork.xml', key = "roadNetwork")
+
+        CommonRoadFileWriter(scenario_2, planning_problem_set_2, scenario_2.author, scenario_2.affiliation, 'test',
+                             scenario_2.tags,
+                             scenario_2.location).write_to_file(filename=filename,
+                                                                overwrite_existing_file=OverwriteExistingFile.ALWAYS,
+                                                                key="obstaclesPlanning")
+        assert self.validate_with_xsd(self.out_path + '/test_USA_US101-3_3_T-1_obstaclesPlanning.xml', key = "obstaclesPlanning")
 
     def test_writing_shapes(self):
         rectangle = Rectangle(4.3, 8.9, center=np.array([2.5, -1.8]), orientation=1.7)
