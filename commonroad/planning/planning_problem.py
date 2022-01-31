@@ -2,6 +2,8 @@ from typing import Union, List, Tuple, Dict, Optional
 import numpy as np
 import warnings
 
+import math
+
 from commonroad.scenario.trajectory import State, Trajectory
 from commonroad.planning.goal import GoalRegion
 from commonroad.common.validity import is_natural_number
@@ -133,6 +135,61 @@ class PlanningProblem(IDrawable):
              draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
         renderer.draw_planning_problem(self, draw_params, call_stack)
+
+    def is_point_part_of_reference_path(self, point: np.ndarray) -> bool:
+        for i in range(len(self.reference_path) - 1):
+            i = 158
+            self.reference_path[i][0] = round(self.reference_path[i][0], 5)
+
+            self.reference_path[i][1] = round(self.reference_path[i][1], 5)
+
+            self.reference_path[i+1][0] = round(self.reference_path[i+1][0], 5)
+
+            self.reference_path[i+1][1] = round(self.reference_path[i+1][1], 5)
+
+            dist_a_point = math.sqrt((point[0] - self.reference_path[i][0])**2
+                                     + (point[1] - self.reference_path[i][1])**2)
+
+            temp0 = point[0]
+            temp1 = self.reference_path[i+1][0]
+            temp2 = point[1]
+            temp3 = self.reference_path[i+1][1]
+
+            dist_b_point = math.sqrt((point[0] - self.reference_path[i+1][0])**2
+                                     + (point[1] - self.reference_path[i+1][1])**2)
+
+            dist_a_b = math.sqrt((self.reference_path[i+1][0] - self.reference_path[i][0])**2
+                                 + (self.reference_path[i+1][1] - self.reference_path[i][1])**2)
+
+            if dist_a_b == dist_a_point + dist_b_point:
+                return True
+
+        return False
+
+    def one_dimensional_distance_offset(self, point: np.ndarray) -> float:
+        ref_list = self.reference_path.tolist()
+        point_coords = point.tolist()
+        sum = 0.0
+        for i in range(len(ref_list)-1):
+            A = ref_list[i]
+            B = ref_list[i+1]
+            distance_from_A_to_Point = math.sqrt((A[0] - point_coords[0])**2 +
+                     (B[1] - point_coords[1])**2)
+
+            distance_from_Point_to_B = math.sqrt((point_coords[0] - B[0])**2 +
+                     (point_coords[1] - B[1])**2)
+
+            distance_from_A_to_B = math.sqrt((A[0] - B[0])**2 +
+                     (A[1] - B[1])**2)
+
+            if distance_from_A_to_Point + distance_from_Point_to_B == distance_from_A_to_B:
+                for j in range(i):
+                    sum += math.sqrt((ref_list[j][0] - ref_list[j+1][0])**2 +
+                     (ref_list[j][1] - ref_list[j+1][1])**2)
+                sum += distance_from_A_to_Point
+                break
+        return sum
+
 
 
 class PlanningProblemSet(IDrawable):

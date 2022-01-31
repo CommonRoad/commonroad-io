@@ -23,7 +23,7 @@ from commonroad.scenario.trajectory import State, Trajectory
 __author__ = "Murat Üste, Christina Miller, Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW CAR@TUM"]
-__version__ = "2021.3"
+__version__ = "2021.4"
 __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -608,25 +608,25 @@ class CommonRoadSolutionReader:
     def _parse_solution(cls, root_node: et.Element) -> Solution:
         """ Parses the Solution XML root node. """  # TODO
         benchmark_id, date, computation_time, processor_name = cls._parse_header(root_node)
-        #vehicle_ids, cost_ids, scenario_id = cls._parse_benchmark_id(benchmark_id)
-
-        vehicle_ids, cost_ids = 'PM2', 'JB1'
-        scenario_id = ScenarioID.from_benchmark_id(benchmark_id, root_node.get('commonRoadVersion'))
-        #pp_solutions = [cls._parse_planning_problem_solution(vehicle_ids, cost_ids, trajectory_node)
-                      #  for idx, trajectory_node in enumerate(root_node)]
-        pp_solutions = [cls._parse_planning_problem_solution(vehicle_ids, cost_ids, trajectory_node) for trajectory_node in root_node.findall('trajectory')]
+        vehicle_ids, cost_ids, scenario_id = cls._parse_benchmark_id(benchmark_id)
+        pp_solutions = [cls._parse_planning_problem_solution(vehicle_ids[idx], cost_ids[idx], trajectory_node)
+                        for idx, trajectory_node in enumerate(root_node)]
         return Solution(scenario_id, pp_solutions, date, computation_time, processor_name)
 
     @staticmethod
     def _parse_header(root_node: et.Element) -> Tuple[str, Union[None, datetime], Union[None, float], Union[None, str]]:
         """ Parses the header attributes for the given Solution XML root node. """
-        benchmark_id = root_node.get('benchmarkID')
+        benchmark_id = root_node.get('benchmark_id')
         if not benchmark_id:
             SolutionException("Solution xml does not have a benchmark id!")
 
         date = root_node.attrib.get('date', None)  # None if not found
         if date is not None:
-            date = datetime.strptime(date, '%Y-%m-%d')
+            try:
+                date = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S')
+            except ValueError:
+                # backward compatibility with old solution files
+                date = datetime.strptime(date, '%Y-%m-%d')
 
         computation_time = root_node.attrib.get('computation_time', None)
         if computation_time is not None:
@@ -653,10 +653,10 @@ class CommonRoadSolutionReader:
     def _parse_trajectory(cls, trajectory_node: et.Element) -> Tuple[int, Trajectory]:
         """ Parses Trajectory and planning problem id from the given XML node. """
 
-        #if trajectory_node.tag not in [ttype.value for ttype in TrajectoryType]:
-            #raise SolutionReaderException("Invalid Trajectory Type: " + trajectory_node.tag)
-        #trajectory_type = TrajectoryType(trajectory_node.tag)
-        trajectory_type = TrajectoryType.PM
+        if trajectory_node.tag not in [ttype.value for ttype in TrajectoryType]:
+            raise SolutionReaderException("Invalid Trajectory Type: " + trajectory_node.tag)
+        trajectory_type = TrajectoryType(trajectory_node.tag)
+
         planning_problem_id = int(trajectory_node.get('planningProblem'))
         state_list = [cls._parse_state(trajectory_type.state_type, state_node) for state_node in trajectory_node]
         state_list = sorted(state_list, key=lambda state: state.time_step)
@@ -678,8 +678,7 @@ class CommonRoadSolutionReader:
             raise SolutionReaderException("Given xml node is not a '%s' node!" % state_type.value)
 
         state_vals = {}
-        wut = list(zip(state_type.xml_fields, state_type.fields))
-        for mapping in wut:
+        for mapping in list(zip(state_type.xml_fields, state_type.fields)):
             xml_name = mapping[0]
             field_name = mapping[1]
             if isinstance(xml_name, tuple):
@@ -692,7 +691,7 @@ class CommonRoadSolutionReader:
     @staticmethod
     def _parse_benchmark_id(benchmark_id: str) -> (List[str], List[str], str):
         """ Parses the given benchmark id string. """
-        segments = benchmark_id.replace(' ', '').split('_')
+        segments = benchmark_id.replace(' ', '').split(':')
 
         if len(segments) != 4:
             raise SolutionReaderException("Invalid Benchmark ID: " + benchmark_id)
@@ -778,7 +777,7 @@ class CommonRoadSolutionWriter:
         if solution.computation_time is not None:
             root_node.set('computation_time', str(solution.computation_time))
         if solution.date is not None:
-            root_node.set('date', solution.date.strftime('%Y-%m-%d'))
+            root_node.set('date', solution.date.strftime('%Y-%m-%dT%H:%M:%S'))
         processor_name = cls._get_processor_name() if solution.processor_name == 'auto' else solution.processor_name
         if processor_name is not None:
             root_node.set('processor_name', processor_name)

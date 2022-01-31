@@ -17076,8 +17076,8 @@
          <state>
             <position>
                <point>
-                  <x>452.47548</x>
-                  <y>-384.88326</y>
+                   <x>452.47077</x>
+                   <y>-400.81098</y>
                </point>
             </position>
             <orientation>
@@ -50288,7 +50288,7 @@
                <x>440.23159</x>
                <y>-402.09326</y>
             </point>
-            <startPoint>12.45</startPoint>
+            <startPoint>1.45</startPoint>
          </position>
          <orientation>
             <exact>-0.15818836</exact>
@@ -50297,7 +50297,7 @@
             <exact>0</exact>
          </time>
          <velocity>
-            <exact>3.6031145</exact>
+            <exact>0.0</exact>
          </velocity>
          <yawRate>
             <exact>0.0</exact>
@@ -50319,12 +50319,12 @@
       </goalState>
       <intermediateGoal>
          <position>
-            <intermediateGoalStartPoint>2.234</intermediateGoalStartPoint>
+            <intermediateGoalStartPoint>7.234</intermediateGoalStartPoint>
             <intermediateGoalEndPoint>14.1234</intermediateGoalEndPoint>
          </position>
          <time>
-            <intervalStart>34</intervalStart>
-            <intervalEnd>37</intervalEnd>
+            <intervalStart>10</intervalStart>
+            <intervalEnd>14</intervalEnd>
          </time>
       </intermediateGoal>
       <intermediateGoal>
