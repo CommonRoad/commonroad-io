@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<commonRoad commonRoadVersion="2020a" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="USA_US101-4" date="2022-01-16">
+<commonRoad commonRoadVersion="3.0" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="USA_US101-4" date="2022-02-04">
   <location>
     <geoNameId>5404794</geoNameId>
     <gpsLatitude>34.13817</gpsLatitude>

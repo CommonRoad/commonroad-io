@@ -563,7 +563,7 @@ __status__ = "released"
             <xs:attribute name="commonRoadVersion" use="required">
                 <xs:simpleType>
                     <xs:restriction base="xs:string">
-                        <xs:enumeration value="2020a"/> <!--3.0-->
+                        <xs:enumeration value="3.0"/> <!--3.0-->
                     </xs:restriction>
                 </xs:simpleType>
             </xs:attribute>

@@ -63,7 +63,7 @@ class CommonRoadFileReader:
     def __init__(self, filename: str, key: str = None):
         """
         :param filename: full path + filename of the CommonRoad XML-file,
-        :param key: choose to read "roadNetwork", "obstaclesPlanning"
+        :param key: choose to read "road", "obsPlan"(obsPlan could be read by default)
         """
         self._filename = filename
         self._tree = None
@@ -113,7 +113,7 @@ class CommonRoadFileReader:
         :return: object of class PlanningProblemSet containing the planning problems for all ego vehicles.
         """
         planning_problem_set = PlanningProblemSetFactory.create_from_xml_node(
-            self._tree, lanelet_network)
+            self._tree, self._commonroad_version, lanelet_network)
         return planning_problem_set
 
     def _read_header(self):
@@ -147,7 +147,7 @@ class CommonRoadFileReader:
 
     def _get_dt(self) -> float:
         """ Reads the time step size of the time-discrete scenario."""
-        if self.key != "roadNetwork":
+        if self.key != "road":
             dt = float(self._tree.getroot().get('timeStepSize'))
         else:
             dt = float(0.1)
@@ -201,7 +201,7 @@ class ScenarioFactory:
         :return: CommonRoad scenario
         """
         if commonroad_version != '2018b':
-            if key != "roadNetwork":
+            if key != "road":
                 meta_data["tags"] = TagsFactory.create_from_xml_node(xml_node)
             meta_data["location"] = LocationFactory.create_from_xml_node(xml_node)
         else:
@@ -237,7 +237,7 @@ class ScenarioFactory:
                     scenario.add_objects(traffic_sign, {lanelet})
             LaneletFactory._speed_limits = {}
         else:
-            scenario.add_objects(cls._obstacles(xml_node, scenario.lanelet_network, lanelet_assignment))
+            scenario.add_objects(cls._obstacles(xml_node, commonroad_version, scenario.lanelet_network, lanelet_assignment))
 
         return scenario
 
@@ -256,14 +256,13 @@ class ScenarioFactory:
             if o.find('role').text == 'static':
                 obstacles.append(StaticObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment))
             elif o.find('role').text == 'dynamic':
-                obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment))
+                obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment, '2018b'))
             else:
                 raise ValueError('Role of obstacle is unknown. Got role: {}'.format(xml_node.find('role').text))
         return obstacles
 
     @classmethod
-    def _obstacles(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork,
-                   lanelet_assignment: bool) -> List[Obstacle]:
+    def _obstacles(cls, xml_node: ElementTree.Element, commonroad_version: str, lanelet_network: LaneletNetwork, lanelet_assignment: bool) -> List[Obstacle]:
         """
         Reads all obstacles specified in a CommonRoad XML-file.
         :param xml_node: XML element
@@ -275,7 +274,7 @@ class ScenarioFactory:
         for o in xml_node.findall('staticObstacle'):
             obstacles.append(StaticObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment))
         for o in xml_node.findall('dynamicObstacle'):
-            obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment))
+            obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment, commonroad_version))
         for o in xml_node.findall('environmentObstacle'):
             obstacles.append(EnvironmentObstacleFactory.create_from_xml_node(o))
         for o in xml_node.findall('phantomObstacle'):
@@ -1039,8 +1038,8 @@ class ObstacleFactory(ABC):
         return obstacle_id
 
     @classmethod
-    def read_initial_state(cls, xml_node: ElementTree.Element) -> State:
-        initial_state = StateFactory.create_from_xml_node(xml_node)
+    def read_initial_state(cls, xml_node: ElementTree.Element, commonroad_version) -> State:
+        initial_state = StateFactory.create_from_xml_node(xml_node, commonroad_version)
         return initial_state
 
     @classmethod
@@ -1131,12 +1130,12 @@ class DynamicObstacleFactory(ObstacleFactory):
         return lanelet_ids_per_state
 
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork,
-                             lanelet_assignment: bool) -> DynamicObstacle:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork, 
+                             lanelet_assignment: bool, commonroad_version: str) -> DynamicObstacle:
         obstacle_type = DynamicObstacleFactory.read_type(xml_node)
         obstacle_id = DynamicObstacleFactory.read_id(xml_node)
         shape = DynamicObstacleFactory.read_shape(xml_node.find('shape'))
-        initial_state = DynamicObstacleFactory.read_initial_state(xml_node.find('initialState'))
+        initial_state = DynamicObstacleFactory.read_initial_state(xml_node.find('initialState'), commonroad_version)
         initial_signal_state = DynamicObstacleFactory.read_initial_signal_state(xml_node.find('initialSignalState'))
         signal_series = SignalSeriesFactory.create_from_xml_node((xml_node.find('signalSeries')))
         initial_center_lanelet_ids = set()
@@ -1277,22 +1276,22 @@ class PolygonFactory:
 
 class PlanningProblemSetFactory:
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) \
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, commonroad_version: str, lanelet_network: LaneletNetwork) \
             -> PlanningProblemSet:
         planning_problem_set = PlanningProblemSet()
         for p in xml_node.findall('planningProblem'):
             planning_problem_set.add_planning_problem(
-                PlanningProblemFactory.create_from_xml_node(p, lanelet_network))
+                PlanningProblemFactory.create_from_xml_node(p, commonroad_version, lanelet_network))
         return planning_problem_set
 
 
 class PlanningProblemFactory:
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) \
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, commonroad_version: str, lanelet_network: LaneletNetwork) \
             -> PlanningProblem:
         planning_problem_id = int(xml_node.get('id'))
         initial_state = cls._add_initial_state(xml_node)
-        goal_region = GoalRegionFactory.create_from_xml_node(xml_node, lanelet_network)
+        goal_region = GoalRegionFactory.create_from_xml_node(xml_node, commonroad_version, lanelet_network)
         return PlanningProblem(planning_problem_id, initial_state, goal_region)
 
     @classmethod
@@ -1304,16 +1303,19 @@ class PlanningProblemFactory:
 
 class GoalRegionFactory:
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork)\
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, commonroad_version: str, lanelet_network: LaneletNetwork)\
             -> GoalRegion:
         state_list = list()
         lanelets_of_goal_position = defaultdict(list)
         for idx, goal_state_node in enumerate(xml_node.findall('goalState')):
-            state_list.append(StateFactory.create_from_xml_node(goal_state_node, lanelet_network))
+            state_list.append(StateFactory.create_from_xml_node(goal_state_node, commonroad_version, lanelet_network))
             if goal_state_node.find('position') is not None\
                     and goal_state_node.find('position').find('lanelet') is not None:
                 for l in goal_state_node.find('position').findall('lanelet'):
-                    lanelets_of_goal_position[idx].append(int(l.get('ref')))
+                    if commonroad_version == '2020a' or commonroad_version == '2018b': 
+                        lanelets_of_goal_position[idx].append(int(l.get('ref')))
+                    else:
+                        lanelets_of_goal_position[idx].append(int(l.get('laneletRef')))
         if not lanelets_of_goal_position:
             lanelets_of_goal_position = None
         return GoalRegion(state_list, lanelets_of_goal_position)
@@ -1321,11 +1323,12 @@ class GoalRegionFactory:
 
 class StateFactory:
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: Union[LaneletNetwork, None] = None)\
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, commonroad_version: str = None, 
+                             lanelet_network: Union[LaneletNetwork, None] = None) \
             -> State:
         state_args = dict()
         if xml_node.find('position') is not None:
-            position = cls._read_position(xml_node.find('position'), lanelet_network)
+            position = cls._read_position(xml_node.find('position'), commonroad_version, lanelet_network)
             state_args['position'] = position
         if xml_node.find('time') is not None:
             state_args['time_step'] = read_time(xml_node.find('time'))
@@ -1347,7 +1350,7 @@ class StateFactory:
         return State(**state_args)
 
     @classmethod
-    def _read_position(cls, xml_node: ElementTree.Element,
+    def _read_position(cls, xml_node: ElementTree.Element, commonroad_version: str = None,
                        lanelet_network: Union[LaneletNetwork, None] = None) \
             -> Union[np.ndarray, Shape]:
         if xml_node.find('point') is not None:
@@ -1359,9 +1362,15 @@ class StateFactory:
         elif lanelet_network is not None and xml_node.find('lanelet') is not None:
             position_list = list()
             for l in xml_node.findall('lanelet'):
-                lanelet = lanelet_network.find_lanelet_by_id(int(l.get('ref')))
-                polygon = lanelet.convert_to_polygon()
-                position_list.append(polygon)
+                if commonroad_version == '2020a' or commonroad_version == '2018b':
+                    lanelet = lanelet_network.find_lanelet_by_id(int(l.get('ref')))
+                else:
+                    lanelet = lanelet_network.find_lanelet_by_id(int(l.get('laneletRef')))
+                
+                # for obs_scenario, no lanelet will be found.
+                if lanelet != None:
+                    polygon = lanelet.convert_to_polygon()
+                    position_list.append(polygon)
             position = ShapeGroup(position_list)
         else:
             raise Exception()

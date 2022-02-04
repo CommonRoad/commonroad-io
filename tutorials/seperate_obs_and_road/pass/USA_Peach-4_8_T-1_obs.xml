@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="USA_Peach-4_8_T-1" date="2022-01-24">
+<commonRoad timeStepSize="0.1" commonRoadVersion="3.0" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="USA_Peach-4_8_T-1" date="2022-02-04">
   <scenarioTags>
-    <critical/>
     <interstate/>
+    <critical/>
   </scenarioTags>
   <dynamicObstacle id="507">
     <type>car</type>
@@ -7463,41 +7463,4 @@
       </state>
     </trajectory>
   </dynamicObstacle>
-  <planningProblem id="603">
-    <initialState>
-      <position>
-        <point>
-          <x>0.0</x>
-          <y>0.0</y>
-        </point>
-      </position>
-      <orientation>
-        <exact>1.5217</exact>
-      </orientation>
-      <time>
-        <exact>0</exact>
-      </time>
-      <velocity>
-        <exact>0.0121</exact>
-      </velocity>
-      <yawRate>
-        <exact>0.0</exact>
-      </yawRate>
-      <slipAngle>
-        <exact>3.0995</exact>
-      </slipAngle>
-    </initialState>
-    <goalState>
-      <position>
-        <lanelet laneletRef="43616"/>
-        <lanelet laneletRef="43482"/>
-        <lanelet laneletRef="43474"/>
-        <lanelet laneletRef="43478"/>
-      </position>
-      <time>
-        <intervalStart>52</intervalStart>
-        <intervalEnd>52</intervalEnd>
-      </time>
-    </goalState>
-  </planningProblem>
 </commonRoad>

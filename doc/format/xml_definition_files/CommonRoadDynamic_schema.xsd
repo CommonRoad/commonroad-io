@@ -399,12 +399,12 @@ __status__ = "released"
                 <xs:element name="dynamicObstacle" type="dynamicObstacle" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="phantomObstacle" type="phantomObstacle" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="environmentObstacle" type="environmentObstacle" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="planningProblem" type="planningProblem" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element name="planningProblem" type="planningProblem" minOccurs="0" maxOccurs="unbounded"/> <!--3.0 for only obs-->
             </xs:sequence>
             <xs:attribute name="commonRoadVersion" use="required">
                 <xs:simpleType>
                     <xs:restriction base="xs:string">
-                        <xs:enumeration value="2020a"/> <!--3.0-->
+                        <xs:enumeration value="3.0"/> <!--3.0-->
                     </xs:restriction>
                 </xs:simpleType>
             </xs:attribute>
