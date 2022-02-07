@@ -1,50 +1,9 @@
-import os
-import matplotlib.pyplot as plt
-from IPython import display
-
-import numpy as np
-
-import math
-from typing import List
-
-# import functions to read xml file and visualize commonroad objects
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.visualization.mp_renderer import MPRenderer
-
-from commonroad_route_planner.route_planner import RoutePlanner
-#from commonroad_route_planner.utility.visualization import visualize_route
-
-from commonroad_route_planner.utility.visualization import visualize_route
-from commonroad_dc.costs.evaluation import CostFunctionEvaluator
-from commonroad_dc.geometry.util import chaikins_corner_cutting, resample_polyline
-from commonroad_dc.pycrccosy import CurvilinearCoordinateSystem
+from commonroad.geometry.shape import Rectangle
+from commonroad.scenario.obstacle import DynamicObstacle, ObstacleType
 from commonroad.scenario.trajectory import Trajectory,State
-from commonroad.common.solution import CommonRoadSolutionReader
-
-
-
-path = os.path.abspath("")
-
-# generate path of the file to be opened
-file_path = "sixthScenario.xml"
-solution_file_path = "solutionScenario.xml"
-solution = CommonRoadSolutionReader.open(os.path.join(path, solution_file_path))
-
-# read in the scenario and planning problem set
-scenario, planning_problem_set = CommonRoadFileReader(file_path).open()
-
-planning_problem = planning_problem_set.find_planning_problem_by_id(123)
-reference_path = planning_problem.reference_path
-
-# get the initial state of the ego vehicle from the planning problem set
-planning_problem = planning_problem_set.find_planning_problem_by_id(123)
-initial_state = planning_problem.initial_state
-
-curvilinear_cosy = CurvilinearCoordinateSystem(reference_path)
-
-curvilinear_cosy.compute_and_set_curvature()
-
-init_position = planning_problem.initial_state.position
+from commonroad.prediction.prediction import TrajectoryPrediction
 
 try:
     import matplotlib.pyplot as plt
@@ -68,7 +27,38 @@ try:
     from cvxpy import *
 except ImportError:
     print('CVXPy not installed or wrong version. Please use pip(3) to install required package!')
+try:
+    import commonroad_dc
+except:
+    print('commonroad-drivability-checher not installed. Please use pip install to install required package!')
 
+from commonroad_dc.costs.evaluation import CostFunctionEvaluator
+from commonroad_dc.pycrccosy import CurvilinearCoordinateSystem
+from vehiclemodels import parameters_vehicle3
+
+# generate path of the file to be opened
+file_path = "DEU_Flensburg-6_1_T-1.xml"
+
+# read in the scenario and planning problem set
+scenario, planning_problem_set = CommonRoadFileReader(file_path).open()
+
+# take the planning problem
+planning_problem = planning_problem_set.find_planning_problem_by_id(123)
+
+# get the reference path of the planning problem
+reference_path = planning_problem.reference_path
+
+# get the initial state of the ego vehicle from the planning problem set
+initial_state = planning_problem.initial_state
+
+# get the initial position of the intial state
+init_position = planning_problem.initial_state.position
+
+# get the one-dimensional curvilinear coordinate mapping of the reference path discrete two-dimensional points
+curvilinear_cosy = CurvilinearCoordinateSystem(reference_path)
+
+
+# base constraints for acceleration, travel distance, velocity, jerk
 class TIConstraints:
     a_min = -8
     a_max = 15
@@ -79,7 +69,7 @@ class TIConstraints:
     j_min = -30
     j_max = 30
 
-
+# plots the travel distance, velocity, acceleration and jerk as one-dimensional functions
 def plot_state_vector(x : Variable, c : TIConstraints, s_obj = None):
     plt.figure(figsize=(10,10))
     N = x.shape[1]-1
@@ -128,7 +118,16 @@ def plot_state_vector(x : Variable, c : TIConstraints, s_obj = None):
     plt.show()
 
 # problem data
-N  = 100  # number of time steps
+
+# gets the maximum time-steps of the scenario
+total_time_steps = 0
+for obs in scenario.dynamic_obstacles:
+    if obs.prediction is None:
+        continue
+    if obs.prediction.trajectory.state_list[-1].time_step > total_time_steps:
+        total_time_steps = obs.prediction.trajectory.state_list[-1].time_step
+
+N  = total_time_steps  # number of time steps
 n  = 4   # length of state vector
 m  = 1   # length of input vector
 dT = scenario.dt # time step
@@ -138,18 +137,18 @@ dT = scenario.dt # time step
 x = Variable(shape=(n,N+1)) # optimization vector x contains n states per time step
 u = Variable(shape=(N)) # optimization vector u contains 1 state
 
-# set up constraints
+# set up base constraints
 c = TIConstraints()
 c.a_min = -6 # Minimum feasible acceleration of vehicle
 c.a_max = 6 # Maximum feasible acceleration of vehicle
-c.s_min = 0 # Minimum allowed position
-c.s_max = 59 # Maximum allowed position
+c.s_min = 0 # Minimum allowed travel distance
+c.s_max = curvilinear_cosy.length() # Maximum allowed travel distance
 c.v_min = 0 # Minimum allowed velocity (no driving backwards!)
 c.v_max = 35 # Maximum allowed velocity (speed limit)
 c.j_min = -15 # Minimum allowed jerk
 c.j_max = 15 # Maximum allowed jerk
 
-# weights for cost function
+# weights for the cost function
 w_s = 0
 w_v = 8
 w_a = 2
@@ -168,7 +167,7 @@ B = npy.array([(dT**4)/24,
                dT]).reshape([n,])
 
 
-# initial state of vehicle for the optimization problem (longitudinal position, velocity, acceleration, jerk)
+# initial state of vehicle for the optimization problem (longitudinal position(one-dimensional), velocity, acceleration, jerk)
 x_0 = npy.array([curvilinear_cosy.convert_to_curvilinear_coords(init_position[0], init_position[1])[0],
                  initial_state.velocity,
                  0.0,
@@ -183,6 +182,12 @@ cost = 0
 # initial state constraint
 constr = [x[:,0] == x_0]
 
+# additional constraints
+tiConstraints = [x[0,:] <= c.s_max, x[0,:] >= c.s_min]  # distance
+tiConstraints += [x[1,:] <= c.v_max, x[1,:] >= c.v_min] # velocity
+tiConstraints += [x[2,:] <= c.a_max, x[2,:] >= c.a_min] # acceleration
+tiConstraints += [x[3,:] <= c.j_max, x[3,:] >= c.j_min] # jerk
+
 for k in range(N):
     # cost function
     cost += quad_form(x[:,k+1] - npy.array([0,v_ref,0,0],), Q)\
@@ -190,9 +195,8 @@ for k in range(N):
     # time variant state and input constraints
     constr.append(x[:,k+1] == A @ x[:,k] + B * u[k])
 
-# sums problem objectives and concatenates constraints.
-# create optimization problem
-prob = Problem(Minimize(cost), constr)
+# Adjust problem
+prob = Problem(Minimize(cost), constr + tiConstraints)
 
 # Solve optimization problem
 prob.solve(verbose=True)
@@ -200,59 +204,31 @@ print("Problem is convex: ",prob.is_dcp())
 print("Problem solution is "+prob.status)
 
 # plot results
-plot_state_vector(x, TIConstraints())
-
-tiConstraints = [x[0,:] <= c.s_max, x[0,:] >= c.s_min]
-tiConstraints += [x[1,:] <= c.v_max, x[1,:] >= c.v_min] # velocity
-tiConstraints += [x[2,:] <= c.a_max, x[2,:] >= c.a_min] # acceleration
-tiConstraints += [x[3,:] <= c.j_max, x[3,:] >= c.j_min] # jerk
-
-# Adjust problem
-prob = Problem(Minimize(cost), constr + tiConstraints)
-
-# Solve optimization problem
-prob.solve()
-print("Problem is convex: ",prob.is_dcp())
-print("Problem solution is "+prob.status)
-
-# plot results
 plot_state_vector(x, c)
 
-# extract obstacle from scenario
-dyn_obstacles = scenario.dynamic_obstacles
 
 # create constraints for minimum and maximum position
 s_min = [] # minimum position constraint
 s_max = [] # maximum position constraint
 
-# go through obstacle list and distinguish between following and leading vehicle
-temp_boom = 0
+# extract dynamic obstacles from the scenario
+dyn_obstacles = scenario.dynamic_obstacles
+
+# go through obstacle list and distinguish whether a dynamic obstacle will cross or is on the reference path of the ego-vehicle
 collision_dict = {}
+
 for o in dyn_obstacles:
     states_o = o.prediction.trajectory.state_list
     for t in range(len(states_o)):
-        if o.obstacle_id == 320 and t == 47:
-            if planning_problem.is_point_part_of_reference_path(states_o[t].position):
-                coordinates_state_o = states_o[t].position
-                found_collision = curvilinear_cosy.convert_to_curvilinear_coords(coordinates_state_o[0], coordinates_state_o[1])
-                #constraint on maximum l before collision
-                collision_dict[t] = found_collision[0]
+        # search for collision on dynamic obstacle o for time step t on the reference path of the ego-vehicle
+        if planning_problem.is_point_part_of_reference_path(states_o[t].position):
+            coordinates_state_o = states_o[t].position
+            found_collision = curvilinear_cosy.convert_to_curvilinear_coords(coordinates_state_o[0], coordinates_state_o[1])
+            
+            #constraint on maximum travel distance to avoid collision at this time step
+            collision_dict[t] = found_collision[0]
 
 
-
-"""
-for o in dyn_obstacles:
-    if o.initial_state.position[0] < x_0[0]:
-        print('Following vehicle id={}'.format(o.obstacle_id))
-        prediction = o.prediction.trajectory.state_list
-        for p in prediction:
-            s_min.append(o.obstacle_shape.length/2.+2.5)
-    else:
-        print('Leading vehicle id={}'.format(o.obstacle_id))
-        prediction = o.prediction.trajectory.state_list
-        for p in prediction:
-            s_max.append(p.position[0]-o.obstacle_shape.length/2.-2.5)
-"""
 # plot vehicle motions
 plt.plot(range(1,len(s_min)+1),s_min,'b')
 plt.plot(range(1,len(s_max)+1),s_max,'r')
@@ -275,12 +251,11 @@ for k in range(N):
     # cost function
     cost += quad_form(x[:,k+1] - npy.array([0,v_ref,0,0],), Q)\
            + R * u[k] ** 2
+
     # single state and input constraints
-    #constr.append(x[0,k+1] <=  x[0,k] + 9)
-
     constr.append(x[:,k+1] == A @ x[:,k] + B * u[k])
-    # add obstacle constraint
 
+    # add obstacle constraint
     if collision_dict.get(k):
         constr.append(x[0,k+1] <= collision_dict[k] - 1)
 
@@ -290,32 +265,79 @@ prob = sum(states)
 # add constraints for all states & inputs
 prob = Problem(Minimize(cost), constr + tiConstraints)
 
-#verbose=True
+
 # Solve optimization problem
-prob.solve()
+prob.solve(verbose=True)
 
 print("Problem is convex:",prob.is_dcp())
 print("Problem solution is "+prob.status)
 
 
 x_result = x.value
+# one-dimensional list of distance traveled for each time step of the ego-vehicle
 s_ego = x_result[0,:].flatten()
+# velocity for each time step of the ego-vehicle
 v_ego = x_result[1,:].flatten()
+
+
+
+#orientation of the ego-vehicle regarding the given scenario
+orientation_angle = -0.2
+orientation_collection = {}
+for i in range(1, N):
+    if i < 32 or i == 33 or i == 34 or i > 46:
+        orientation_collection[i] = orientation_angle
+        continue
+    if i == 46:
+        orientation_angle += 0.05
+        orientation_collection[i] = orientation_angle
+        continue
+    if i == 32 or i == 41 or i == 43:
+        orientation_angle += 0.2
+        orientation_collection[i] = orientation_angle
+        continue
+    orientation_angle += 0.1
+    orientation_collection[i] = orientation_angle
 
 # generate state list of the ego vehicle's trajectory
 state_list = [initial_state]
 for i in range(1, N):
     # compute new position
     # add new state to state_list
+    # add the important parameters for point-mass model + the orientation for visualizing the two-dimensional motion planning
     state_list.append(State(**{'position': curvilinear_cosy.convert_to_cartesian_coords(s_ego[i],0.0),
+                               'orientation': orientation_collection[i],
                                'time_step': i, 'velocity': v_ego[i],
                                'velocity_y': 0}))
 
 # create the planned trajectory starting at time step 1
 ego_vehicle_trajectory = Trajectory(initial_time_step=1, state_list=state_list[1:])
 
+vehicle3 = parameters_vehicle3.parameters_vehicle3()
+ego_vehicle_shape = Rectangle(length=vehicle3.l, width=vehicle3.w)
+ego_vehicle_prediction = TrajectoryPrediction(trajectory=ego_vehicle_trajectory,
+                                              shape=ego_vehicle_shape)
+
+# the ego vehicle can be visualized by converting it into a DynamicObstacle
+ego_vehicle_type = ObstacleType.CAR
+ego_vehicle = DynamicObstacle(obstacle_id=100, obstacle_type=ego_vehicle_type,
+                              obstacle_shape=ego_vehicle_shape, initial_state=initial_state,
+                              prediction=ego_vehicle_prediction)
+
+for i in range(0, 100):
+    plt.figure(figsize=(25, 10))
+    rnd = MPRenderer()
+    scenario.draw(rnd, draw_params={'time_begin': i})
+    ego_vehicle.draw(rnd, draw_params={'time_begin': i, 'dynamic_obstacle': {
+        'vehicle_shape': {'occupancy': {'shape': {'rectangle': {
+            'facecolor': 'g'}}}}}})
+    planning_problem_set.draw(rnd)
+    rnd.render()
+
+
 from commonroad.common.solution import CommonRoadSolutionWriter, Solution, PlanningProblemSolution, VehicleModel, VehicleType, CostFunction
 
+# generate the final planning problem solution
 pps = PlanningProblemSolution(planning_problem_id=123,
                               vehicle_type=VehicleType.BMW_320i,
                               vehicle_model=VehicleModel.PM,
@@ -323,15 +345,20 @@ pps = PlanningProblemSolution(planning_problem_id=123,
                               trajectory=ego_vehicle_trajectory)
 
 
-# define the object with necessary attributes.
+# define the solution with the necessary attributes
 solution = Solution(scenario.scenario_id, [pps], computation_time=prob.solver_stats.solve_time)
 
-# write solution to a xml file
+# write the solution to a xml file
 csw = CommonRoadSolutionWriter(solution)
+csw.write_to_file(overwrite=True)
+
+# evaluate solution
 ce = CostFunctionEvaluator.init_from_solution(solution)
 cost_result = ce.evaluate_solution(scenario, planning_problem_set, solution)
 
+# print the total cost of the solution of the planning problem
 print(cost_result)
+
 
 """
 for i in range(0, 1):
@@ -345,12 +372,7 @@ for i in range(0, 1):
     fig.savefig('output.svg')
     plt.show()
 
-"""
 
-
-
-
-"""
 
 def distanceBetweenConsecutivePoints(point: List, nextPoint: List) -> float:
     return math.sqrt((nextPoint[0] - point[0])**2 +
@@ -516,7 +538,7 @@ def distanceBetweenConsecutivePoints(point: List, nextPoint: List) -> float:
                      (nextPoint[1] - point[1])**2)
 
 open("trajectory", "w").close()
-f = open("trajectory.txt", "w")
+f = open("", "w")
 f.write("<pmTrajectory planningProblem=123>\n")
 temp = 0
 for it in range(len(reference_path_list)-1):
@@ -582,5 +604,80 @@ for i in range(0, 40):
             'facecolor': 'g'}}}}}})
     planning_problem_set.draw(rnd)
     rnd.render()
+
+
+for o in dyn_obstacles:
+    if o.initial_state.position[0] < x_0[0]:
+        print('Following vehicle id={}'.format(o.obstacle_id))
+        prediction = o.prediction.trajectory.state_list
+        for p in prediction:
+            s_min.append(o.obstacle_shape.length/2.+2.5)
+    else:
+        print('Leading vehicle id={}'.format(o.obstacle_id))
+        prediction = o.prediction.trajectory.state_list
+        for p in prediction:
+            s_max.append(p.position[0]-o.obstacle_shape.length/2.-2.5)
+
+
+# sums problem objectives and concatenates constraints.
+# create optimization problem
+prob = Problem(Minimize(cost), constr)
+
+# Solve optimization problem
+prob.solve(verbose=True)
+print("Problem is convex: ",prob.is_dcp())
+print("Problem solution is "+prob.status)
+
+# plot results
+plot_state_vector(x, TIConstraints())
+
+# compute and set the curvature information for the reference path
+#curvilinear_cosy.compute_and_set_curvature()
+
+import os
+from IPython import display
+import numpy as np
+import math
+from typing import List
+from commonroad_route_planner.route_planner import RoutePlanner
+from commonroad_route_planner.utility.visualization import visualize_route
+from commonroad_route_planner.utility.visualization import visualize_route
+from commonroad_dc.geometry.util import chaikins_corner_cutting, resample_polyline
+from commonroad.scenario.trajectory import Trajectory,State
+from commonroad.common.solution import CommonRoadSolutionReader
+
+#import matplotlib.pyplot as plt
+# import functions to read xml file and visualize commonroad objects
+
+#constr.append(x[0,k+1] <=  x[0,k] + 9)
+
+
+plt.figure(figsize=(25, 10))
+    rnd = MPRenderer()
+    scenario.draw(rnd, draw_params={'time_begin': i})
+    ego_vehicle.draw(rnd, draw_params={'time_begin': i, 'dynamic_obstacle': {
+        'vehicle_shape': {'occupancy': {'shape': {'rectangle': {
+            'facecolor': 'g'}}}}}})
+    planning_problem_set.draw(rnd)
+    rnd.render()
+
+
+
+
+fig = plt.figure(figsize=(40, 25))
+    rnd = MPRenderer()
+    # plot the scenario at different time step
+    scenario.draw(rnd, draw_params={'time_begin': i})
+    ego_vehicle.draw(rnd, draw_params={'time_begin': i, 'dynamic_obstacle': {
+        'vehicle_shape': {'occupancy': {'shape': {'rectangle': {
+            'facecolor': 'g'}}}}}})
+    # plot the planning problem set
+    planning_problem_set.draw(rnd)
+    rnd.render(show=True)
+    fig.savefig('output.svg')
+    plt.show()
+
+
+
 
 """

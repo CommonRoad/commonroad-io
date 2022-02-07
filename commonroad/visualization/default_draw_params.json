@@ -430,7 +430,7 @@
                 "opacity": 1.0,
                 "linewidth": 2.5,
                 "facecolor": "#f1b514",
-                "zorder": 350
+                "zorder": 15
             }
         },
         "lanelet": {
