@@ -182,14 +182,14 @@ class PlanningProblem(IDrawable):
             distance_from_A_to_B = math.sqrt((A[0] - B[0])**2 +
                      (A[1] - B[1])**2)
 
-            if distance_from_A_to_Point + distance_from_Point_to_B == distance_from_A_to_B:
+            if distance_from_A_to_Point <= distance_from_A_to_B and \
+                    distance_from_Point_to_B <= distance_from_A_to_B:
                 for j in range(i):
                     sum += math.sqrt((ref_list[j][0] - ref_list[j+1][0])**2 +
                      (ref_list[j][1] - ref_list[j+1][1])**2)
                 sum += distance_from_A_to_Point
                 break
         return sum
-
 
 
 class PlanningProblemSet(IDrawable):

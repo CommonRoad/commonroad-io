@@ -44198,7 +44198,7 @@
             <startPoint>1.45</startPoint>
          </position>
          <orientation>
-            <exact>-0.15818836</exact>
+            <exact>-1.8</exact>
          </orientation>
          <time>
             <exact>0</exact>
@@ -44230,8 +44230,8 @@
             <intermediateGoalEndPoint>14.1234</intermediateGoalEndPoint>
          </position>
          <time>
-            <intervalStart>10</intervalStart>
-            <intervalEnd>14</intervalEnd>
+            <intervalStart>20</intervalStart>
+            <intervalEnd>35</intervalEnd>
          </time>
       </intermediateGoal>
       <intermediateGoal>
@@ -44240,8 +44240,8 @@
             <intermediateGoalEndPoint>29.1234</intermediateGoalEndPoint>
          </position>
          <time>
-            <intervalStart>64</intervalStart>
-            <intervalEnd>77</intervalEnd>
+            <intervalStart>40</intervalStart>
+            <intervalEnd>55</intervalEnd>
          </time>
       </intermediateGoal>
       <intermediateGoal>
@@ -44250,8 +44250,8 @@
             <intermediateGoalEndPoint>35.1234</intermediateGoalEndPoint>
          </position>
          <time>
-            <intervalStart>234</intervalStart>
-            <intervalEnd>273</intervalEnd>
+            <intervalStart>63</intervalStart>
+            <intervalEnd>65</intervalEnd>
          </time>
       </intermediateGoal>
    </planningProblem>

@@ -216,7 +216,7 @@ dyn_obstacles = scenario.dynamic_obstacles
 
 # go through obstacle list and distinguish whether a dynamic obstacle will cross or is on the reference path of the ego-vehicle
 collision_dict = {}
-
+"""
 for o in dyn_obstacles:
     states_o = o.prediction.trajectory.state_list
     for t in range(len(states_o)):
@@ -227,7 +227,7 @@ for o in dyn_obstacles:
             
             #constraint on maximum travel distance to avoid collision at this time step
             collision_dict[t] = found_collision[0]
-
+"""
 
 # plot vehicle motions
 plt.plot(range(1,len(s_min)+1),s_min,'b')
@@ -249,6 +249,9 @@ cost = 0
 constr = [x[:,0] == x_0]
 for k in range(N):
     # cost function
+    temp = u[k]
+    temp2 = u[k] ** 2
+    temp3 = temp2 - temp
     cost += quad_form(x[:,k+1] - npy.array([0,v_ref,0,0],), Q)\
            + R * u[k] ** 2
 
@@ -279,7 +282,7 @@ s_ego = x_result[0,:].flatten()
 # velocity for each time step of the ego-vehicle
 v_ego = x_result[1,:].flatten()
 
-
+#-0.15818836
 
 #orientation of the ego-vehicle regarding the given scenario
 orientation_angle = -0.2
@@ -333,7 +336,7 @@ for i in range(0, 100):
             'facecolor': 'g'}}}}}})
     planning_problem_set.draw(rnd)
     rnd.render()
-
+    plt.show()
 
 from commonroad.common.solution import CommonRoadSolutionWriter, Solution, PlanningProblemSolution, VehicleModel, VehicleType, CostFunction
 
