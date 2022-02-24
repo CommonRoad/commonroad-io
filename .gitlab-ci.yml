@@ -35,12 +35,6 @@ style_check_merge_result:
   only:
   - merge_requests
 
-build_and_test_python_3_6:
-  image: python:3.6
-  stage: test
-  script:
-    - *install-and-run
-
 build_and_test_python_3_7:
   image: python:3.7
   stage: test
