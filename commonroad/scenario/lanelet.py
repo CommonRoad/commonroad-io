@@ -1418,7 +1418,7 @@ class LaneletNetwork(IDrawable):
 
         return self._intersections[intersection_id] if intersection_id in self._intersections else None
 
-    def add_lanelet(self, lanelet: Lanelet, eps: float = 1e-15, rtree: bool = True):
+    def add_lanelet(self, lanelet: Lanelet, rtree: bool = True):
         """
         Adds a lanelet to the LaneletNetwork
 
@@ -1437,7 +1437,7 @@ class LaneletNetwork(IDrawable):
             return False
         else:
             self._lanelets[lanelet.lanelet_id] = lanelet
-            self._buffered_polygons[lanelet.lanelet_id] = lanelet.polygon.shapely_object.buffer(eps)
+            self._buffered_polygons[lanelet.lanelet_id] = lanelet.polygon.shapely_object
             if rtree:
                 self._create_strtree()
             return True
