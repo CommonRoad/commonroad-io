@@ -1234,12 +1234,11 @@ class LaneletNetwork(IDrawable):
         else:
             for la in lanelet_network.lanelets:
                 if la.lanelet_type.intersection(exclude_lanelet_types) == set():
-                    new_lanelet_network.add_lanelet(copy.deepcopy(la))
+                    lanelets.add(la)
                 for sign_id in la.traffic_signs:
                     traffic_sign_ids.add(sign_id)
                 for light_id in la.traffic_lights:
                     traffic_light_ids.add(light_id)
-                lanelets.add(la)
 
         for sign_id in traffic_sign_ids:
             new_lanelet_network.add_traffic_sign(copy.deepcopy(lanelet_network.find_traffic_sign_by_id(sign_id)), set())
