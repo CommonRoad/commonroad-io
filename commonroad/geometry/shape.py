@@ -50,7 +50,7 @@ class Rectangle(Shape):
     and its geometric center. If we model the shape of an obstacle, the orientation and geometric center can be
     omitted; therefore, we set the orientation, and the x- and y-coordinate of the geometric center to zero."""
 
-    def __init__(self, length: float, width: float, center: np.ndarray = np.array([0.0, 0.0]),
+    def __init__(self, length: float, width: float, center: np.ndarray = None,
                  orientation: float = 0.0):
         """
 
@@ -63,7 +63,7 @@ class Rectangle(Shape):
         """
         self.length: float = length
         self.width: float = width
-        self.center: np.ndarray = center
+        self.center: np.ndarray = center if center is not None else np.array([0.0, 0.0])
         self.orientation: float = orientation
 
         self._vertices: np.ndarray = None
@@ -216,14 +216,14 @@ class Circle(Shape):
     A circle is defined by its radius and its geometric center. If we model the shape of an obstacle,
     the geometric center can be omitted and is set to [0.0, 0.0]."""
 
-    def __init__(self, radius: float, center: np.ndarray = np.array([0.0, 0.0])):
+    def __init__(self, radius: float, center: np.ndarray = None):
         """
         :param radius: radius of the circle in [m]
         :param center: geometric center [x, y] of the circle in [m]. If we model the shape of an obstacle,
         the geometric center can be omitted and is set to [0.0, 0.0].
         """
         self.radius: float = radius
-        self.center: np.ndarray = center
+        self.center: np.ndarray = center if center is not None else np.array([0.0, 0.0])
         self._shapely_circle: shapely.geometry = shapely.geometry.Point(center[0], center[1]).buffer(radius / 2)
 
     @property
