@@ -63,7 +63,7 @@ class Rectangle(Shape):
         """
         self.length: float = length
         self.width: float = width
-        self.center: np.ndarray = center or np.array([0.0, 0.0])
+        self.center: np.ndarray = center if center is not None else np.array([0.0, 0.0])
         self.orientation: float = orientation
 
         self._vertices: np.ndarray = None
@@ -223,7 +223,7 @@ class Circle(Shape):
         the geometric center can be omitted and is set to [0.0, 0.0].
         """
         self.radius: float = radius
-        self.center: np.ndarray = center or np.array([0.0, 0.0])
+        self.center: np.ndarray = center if center is not None else np.array([0.0, 0.0])
         self._shapely_circle: shapely.geometry = shapely.geometry.Point(center[0], center[1]).buffer(radius / 2)
 
     @property
