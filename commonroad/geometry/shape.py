@@ -224,7 +224,8 @@ class Circle(Shape):
         """
         self.radius: float = radius
         self.center: np.ndarray = center if center is not None else np.array([0.0, 0.0])
-        self._shapely_circle: shapely.geometry = shapely.geometry.Point(self.center[0], self.center[1]).buffer(radius / 2)
+        self._shapely_circle: shapely.geometry = \
+            shapely.geometry.Point(self.center[0], self.center[1]).buffer(radius / 2)
 
     @property
     def radius(self) -> float:
