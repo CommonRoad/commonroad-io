@@ -56,10 +56,9 @@ def read_time(xml_node: ElementTree.Element) -> Union[int, Interval]:
 
 
 class CommonRoadFileReader:
-    """ Class which reads CommonRoad XML-files. The XML-files are composed of
-    (1) a formal representation of the road network,
-    (2) static and dynamic obstacles,
-    (3) the planning problem of the ego vehicle(s). """
+    """ Class which reads CommonRoad XML-files. The XML-files are composed of one of 
+    (1) a formal representation of the road network,     
+    (2) static and dynamic obstacles, and the planning problem of the ego vehicle(s). """
     def __init__(self, filename: str, key: str = None):
         """
         :param filename: full path + filename of the CommonRoad XML-file,
@@ -237,7 +236,10 @@ class ScenarioFactory:
                     scenario.add_objects(traffic_sign, {lanelet})
             LaneletFactory._speed_limits = {}
         else:
-            scenario.add_objects(cls._obstacles(xml_node, commonroad_version, scenario.lanelet_network, lanelet_assignment))
+            #print('#lanelets = ', len(scenario.lanelet_network.lanelets))
+            # neglect objects reading in road scenario
+            if key != "road":
+                scenario.add_objects(cls._obstacles(xml_node, commonroad_version, scenario.lanelet_network, lanelet_assignment))
 
         return scenario
 

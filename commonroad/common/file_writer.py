@@ -248,25 +248,22 @@ class CommonRoadFileWriter:
         self._tags = tags
 
     def _write_header(self):
-        #if self.key != "roadNetwork":
-        self._root_node_obs.set('timeStepSize', str(self.scenario.dt))
-        self._root_node_obs.set('commonRoadVersion', SCENARIO_VERSION)
-        self._root_node_obs.set('author', self.author)
-        self._root_node_obs.set('affiliation', self.affiliation)
-        self._root_node_obs.set('source', self.source)
-
         self._root_node_road.set('commonRoadVersion', SCENARIO_VERSION)
         self._root_node_road.set('author', self.author)
         self._root_node_road.set('affiliation', self.affiliation)
         self._root_node_road.set('source', self.source)
 
-        #if self.key == "roadNetwork":
         sub_ids = re.split('_|-', str(self.scenario.scenario_id))
         country_id, map_name, map_id = sub_ids[:3]
         benchmark_road = country_id + '_' + map_name + '-' + map_id
         self._root_node_road.set('benchmarkID', benchmark_road)
+
+        self._root_node_obs.set('timeStepSize', str(self.scenario.dt))
+        self._root_node_obs.set('commonRoadVersion', SCENARIO_VERSION)
+        self._root_node_obs.set('author', self.author)
+        self._root_node_obs.set('affiliation', self.affiliation)
+        self._root_node_obs.set('source', self.source)
         
-        #else:
         try:
             if self.scenario.scenario_id:
                 self._root_node_obs.set('benchmarkID', str(self.scenario.scenario_id))
@@ -334,7 +331,7 @@ class CommonRoadFileWriter:
         :param filename: filename of the xml output file. If 'None', the Benchmark ID is taken
         :param overwrite_existing_file: Specify whether an already existing file should be overwritten or skipped
         :param check_validity: check xml file against .xsd definition
-        :param key: define which type of .xml file
+        :param key: define which type of .xml file, e.g. 'road', 'obs'
         :return:
         """
         self.key = key
@@ -342,37 +339,31 @@ class CommonRoadFileWriter:
         if filename is None:
             filename = str(self.scenario.scenario_id) + ".xml"
 
-        # roadNetwork and obstaclePlanning filename
-        # if self.key != None:
-        #     if self.key == "roadNetwork":
-        #         sub_ids = re.split('_|-', str(self.scenario.scenario_id))
-        #         country_id, map_name, map_id = sub_ids[:3]
-        #         filename_key = country_id + '_' + map_name + '-' + map_id + "_roadNetwork.xml"
-            
-        #     elif self.key == 'obstaclesPlanning':
-        #         sub_ids = re.split('\.', filename)
-        #         filename_key = sub_ids[0] + "_" + key + ".xml"
-        # else:
-        #     filename_key = filename
-
-        sub_ids = re.split('\.', filename)
-        filename_obs = sub_ids[0] + "_obsPlan.xml"
+        filename_obs = filename
         
-        sub_ids = re.split('_|-', str(self.scenario.scenario_id))
-        country_id, map_name, map_id = sub_ids[:3]
-        filename_road = country_id + '_' + map_name + '-' + map_id + "_road.xml"
+        if '-' in filename:
+            #sub_ids = re.split('_|-', str(self.scenario.scenario_id))
+            #country_id, map_name, map_id = sub_ids[:3]
+            #filename_road = country_id + '_' + map_name + '-' + map_id + ".xml"
+            sub_ids = re.split('-', filename)
+            sec_ids = re.split('_', sub_ids[-2])
+            filename_road = sub_ids[0] + '-' + sec_ids[0] + ".xml"
+        else:
+            filename_road = os.path.splitext(filename)[0] + "_road.xml"
 
         file_list = [filename_obs, filename_road]
-        for filename_key in file_list:
+        for file_key in file_list:
             if self.key != None:
-                if self.key not in filename_key:
+                if self.key == 'obs' and file_key == filename_road:
+                    continue
+                if self.key == 'road' and file_key == filename_obs:
                     continue
 
-            if pathlib.Path(filename_key).is_file():
+            if pathlib.Path(file_key).is_file():
                 if overwrite_existing_file is OverwriteExistingFile.ASK_USER_INPUT:
                     overwrite = input(
                         'File {} already exists, replace old file (or else skip)? (y/n)'.format(
-                            filename_key
+                            file_key
                         )
                     )
                 elif overwrite_existing_file is OverwriteExistingFile.SKIP:
@@ -381,33 +372,12 @@ class CommonRoadFileWriter:
                     overwrite = 'y'
 
                 if overwrite == 'n':
-                    print('Writing of file {} skipped'.format(filename_key))
+                    print('Writing of file {} skipped'.format(file_key))
                     return
                 else:
-                    print('Replace file {}'.format(filename_key))
+                    print('Replace file {}'.format(file_key))
 
         self._write_header()
-
-        # if self.key == 'obstaclesPlanning':
-        #     # remove lanelet
-        #     lanelet_list = self.scenario.lanelet_network.lanelets
-        #     for i in range(len(lanelet_list)):
-        #         self.scenario.lanelet_network.remove_lanelet(lanelet_list[i].lanelet_id)
-        #     self._add_all_objects_from_scenario()
-        #     self._add_all_planning_problems_from_planning_problem_set()
-
-        # elif self.key == 'roadNetwork':
-        #     # remove obstacles
-        #     obstacle_list = self.scenario.obstacles
-        #     for i in range(len(obstacle_list)):
-        #         self.scenario.remove_obstacle(obstacle_list[i])
-        #     self._add_all_lanelets_from_scenario()
-
-        # else: # write to one scenario
-        #     print("Writing obstacles, roadnetwork and planning problem to one scenario file")
-        #     self._add_all_lanelets_from_scenario()
-        #     self._add_all_objects_from_scenario()
-        #     self._add_all_planning_problems_from_planning_problem_set()
 
         # obsPlan scenario: remove lanelet
         scenario_obs = copy.deepcopy(self.scenario)
@@ -424,120 +394,32 @@ class CommonRoadFileWriter:
             scenario_road.remove_obstacle(obstacle_list[i])
         self._add_all_lanelets_from_scenario(scenario_road)
 
+        keys = ['obs', 'road']
         if check_validity:
-            for filename_key in file_list:
+            for key in keys:
                 if self.key != None:
-                    if self.key not in filename_key:
+                    if self.key == keys[0] and key == 'road':
+                        continue
+                    if self.key == keys[1] and key == 'obs':
                         continue
                 # validate xml format
-                if 'obs' in filename_key:
-                    self.check_validity_of_commonroad_file(self._dump_obs(), 'obsPlan')
-                if 'road' in filename_key:
+                if key == 'obs':
+                    self.check_validity_of_commonroad_file(self._dump_obs(), 'obs')
+                if key == 'road':
                     self.check_validity_of_commonroad_file(self._dump_road(), 'road')
         
-        tree_obs = etree.ElementTree(self._root_node_obs)
-        tree_road = etree.ElementTree(self._root_node_road)
-        for filename_key in file_list:
+        for key in keys:
             if self.key != None:
-                if self.key not in filename_key:
+                if self.key == keys[0] and key == 'road':
                     continue
-            
-            if 'obs' in filename_key:
-                tree_obs.write(filename_key, pretty_print=True, xml_declaration=True, encoding="utf-8")
-            if 'road' in filename_key:
-                tree_road.write(filename_key, pretty_print=True, xml_declaration=True, encoding="utf-8")
-
-    # TODO obs without planning can't pass xsd
-    def write_scenario_to_file(
-        self,
-        filename: Union[str, None] = None,
-        overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
-        check_validity: bool = False,
-        key: str = None
-    ):
-        """
-        Write a scenario without planning-problem. If file already exists, it will be overwritten of skipped.
-
-        :param filename: filename of the xml output file. If 'None', the Benchmark ID is taken
-        :param overwrite_existing_file: Specify whether an already existing file should be overwritten or skipped
-        :param key: define which type of .xml file
-        :return: None
-        """
-        self.key = key
-
-        if filename is None:
-            filename = str(self.scenario.scenario_id)
-
-        # road and obs filename
-        sub_ids = re.split('\.', filename)
-        filename_obs = sub_ids[0] + "_obs.xml"
-        
-        sub_ids = re.split('_|-', str(self.scenario.scenario_id))
-        country_id, map_name, map_id = sub_ids[:3]
-        filename_road = country_id + '_' + map_name + '-' + map_id + "_road.xml"
-
-        file_list = [filename_obs, filename_road]
-        for filename_key in file_list:
-            if self.key != None:
-                if self.key not in filename_key:
+                if self.key == keys[1] and key == 'obs':
                     continue
-
-            if pathlib.Path(filename_key).is_file():
-                if overwrite_existing_file is OverwriteExistingFile.ASK_USER_INPUT:
-                    overwrite = input(
-                        'File {} already exists, replace old file (or else skip)? (y/n)'.format(
-                            filename_key
-                        )
-                    )
-                elif overwrite_existing_file is OverwriteExistingFile.SKIP:
-                    overwrite = 'n'
-                else:
-                    overwrite = 'y'
-
-                if overwrite == 'n':
-                    print('Writing of file {} skipped'.format(filename_key))
-                    return
-                else:
-                    print('Replace file {}'.format(filename_key))
-
-        self._write_header()
-
-        # obs scenario: remove lanelet
-        scenario_obs = copy.deepcopy(self.scenario)
-        lanelet_list = self.scenario.lanelet_network.lanelets
-        for i in range(len(lanelet_list)):
-            scenario_obs.lanelet_network.remove_lanelet(lanelet_list[i].lanelet_id)
-        self._add_all_objects_from_scenario(scenario_obs)
-
-        # road scenario: remove obstacles
-        scenario_road = copy.deepcopy(self.scenario)
-        obstacle_list = self.scenario.obstacles
-        for i in range(len(obstacle_list)):
-            scenario_road.remove_obstacle(obstacle_list[i])
-        self._add_all_lanelets_from_scenario(scenario_road)
-
-        if check_validity:
-            for filename_key in file_list:
-                if self.key != None:
-                    if self.key not in filename_key:
-                        continue
-                # validate xml format
-                if 'obs' in filename_key:
-                    self.check_validity_of_commonroad_file(self._dump_obs(), 'obsPlan')
-                if 'road' in filename_key:
-                    self.check_validity_of_commonroad_file(self._dump_road(), 'road')
-        
-        tree_obs = etree.ElementTree(self._root_node_obs)
-        tree_road = etree.ElementTree(self._root_node_road)
-        for filename_key in file_list:
-            if self.key != None:
-                if self.key not in filename_key:
-                    continue
-            
-            if 'obs' in filename_key:
-                tree_obs.write(filename_key, pretty_print=True, xml_declaration=True, encoding="utf-8")
-            if 'road' in filename_key:
-                tree_road.write(filename_key, pretty_print=True, xml_declaration=True, encoding="utf-8")
+            if key == 'obs':
+                tree_obs = etree.ElementTree(self._root_node_obs)
+                tree_obs.write(filename_obs, pretty_print=True, xml_declaration=True, encoding="utf-8")
+            if key == 'road':
+                tree_road = etree.ElementTree(self._root_node_road)
+                tree_road.write(filename_road, pretty_print=True, xml_declaration=True, encoding="utf-8")
 
     @staticmethod #road/obstacle as flag
     def check_validity_of_commonroad_file(commonroad_str: str, key: str):
@@ -555,7 +437,7 @@ class CommonRoadFileWriter:
                 'rb',
             ) as schema_file:
                 schema = etree.XMLSchema(etree.parse(schema_file))
-        elif key == 'obsPlan':
+        elif key == 'obs':
             with open(
                 os.path.dirname(os.path.abspath(__file__)) + '/../../doc/format/xml_definition_files/CommonRoadDynamic_schema.xsd',
                 'rb',
