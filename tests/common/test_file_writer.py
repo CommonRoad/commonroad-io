@@ -45,19 +45,21 @@ class TestFileWriter(unittest.TestCase):
                              scenario_1.tags,
                              scenario_1.location).write_to_file(filename=filename,
                                                                 overwrite_existing_file=OverwriteExistingFile.ALWAYS)
+        print('filename', filename)
         #assert self.validate_with_xsd(self.out_path + '/test_reading_intersection_traffic_sign.xml')
         assert self.validate_with_xsd(self.xsd_path_obs, self.out_path + '/test_reading_intersection_traffic_sign.xml')
         assert self.validate_with_xsd(self.xsd_path_road, self.out_path + '/test_reading_intersection_traffic_sign_road.xml')
 
         # TODO can't read
-        # scenario_2, planning_problem_set_2 = CommonRoadFileReader(self.filename_read_2).open()
-        # filename = self.out_path + '/test_reading_all.xml'
-        # CommonRoadFileWriter(scenario_2, planning_problem_set_2, scenario_2.author, scenario_2.affiliation, 'test',
-        #                      scenario_2.tags,
-        #                      scenario_2.location).write_to_file(filename=filename,
-        #                                                         overwrite_existing_file=OverwriteExistingFile.ALWAYS)
-        # assert self.validate_with_xsd(self.out_path + '/test_reading_all.xml')
-        # assert self.validate_with_xsd(self.out_path + '/test_reading_all.xml')
+        scenario_2, planning_problem_set_2 = CommonRoadFileReader(self.filename_read_2).open()
+        filename = self.out_path + '/test_reading_all.xml'
+        CommonRoadFileWriter(scenario_2, planning_problem_set_2, scenario_2.author, scenario_2.affiliation, 'test',
+                             scenario_2.tags,
+                             scenario_2.location).write_to_file(filename=filename,
+                                                                overwrite_existing_file=OverwriteExistingFile.ALWAYS)
+        print('filename', filename)
+        assert self.validate_with_xsd(self.xsd_path_obs, self.out_path + '/test_reading_all.xml')
+        assert self.validate_with_xsd(self.xsd_path_road, self.out_path + '/test_reading_all_road.xml')
 
     def test_read_write_2018b_file(self):
         scenario, planning_problem_set = CommonRoadFileReader(self.filename_2018b).open()

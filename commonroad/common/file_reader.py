@@ -2,6 +2,7 @@ from collections import defaultdict
 from typing import Dict
 from xml.etree import ElementTree
 from abc import ABC
+import re
 
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.util import Interval, AngleInterval
@@ -59,17 +60,19 @@ class CommonRoadFileReader:
     """ Class which reads CommonRoad XML-files. The XML-files are composed of one of 
     (1) a formal representation of the road network,     
     (2) static and dynamic obstacles, and the planning problem of the ego vehicle(s). """
-    def __init__(self, filename: str, key: str = None):
+    def __init__(self, filename: str, filename2: str = None):
         """
         :param filename: full path + filename of the CommonRoad XML-file,
-        :param key: choose to read "road", "obsPlan"(obsPlan could be read by default)
+               option: read two files together when filename2 not equals to None
         """
         self._filename = filename
+        self._filename2 = filename2
         self._tree = None
+        self._tree2 = None
         self._dt = None
         self._benchmark_id = None
         self._meta_data = None
-        self.key = key
+        self.key = None
 
     def open(self, lanelet_assignment: bool = False) -> Tuple[Scenario, PlanningProblemSet]:
         """
@@ -79,6 +82,20 @@ class CommonRoadFileReader:
         :return: the scenario containing the road network and the obstacles and the planning problem set \
         containing the planning problems---initial states and goal regions--for all ego vehicles.
         """
+        self._parse_file()
+        sub1 = re.split('_', self._get_benchmark_id())
+        
+        if self._filename2 != None:
+            sub2 = re.split('_', self._tree2.getroot().get('benchmarkID'))
+            # ensure filename correspond to obs, filename2 road
+            if len(sub1) <= 2 and len(sub2) > 2 :
+                temp = self._filename
+                self._filename = self._filename2
+                self._filename2 = temp
+        # identify wether filename correspond to road scenario
+        elif len(sub1) <= 2:
+            self.key = 'road'
+
         self._read_header()
         scenario = self._open_scenario(lanelet_assignment)
         planning_problem_set = self._open_planning_problem_set(scenario.lanelet_network)
@@ -100,7 +117,7 @@ class CommonRoadFileReader:
         :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
         :return: object of class scenario containing the road network and the obstacles
         """
-        scenario = ScenarioFactory.create_from_xml_node(self._tree, self._dt, self._benchmark_id,
+        scenario = ScenarioFactory.create_from_xml_node(self._tree, self._tree2, self._dt, self._benchmark_id,
                                                         self._commonroad_version, self._meta_data, lanelet_assignment, self.key)
         return scenario
 
@@ -126,6 +143,14 @@ class CommonRoadFileReader:
                                                                     'version: {}.'.format(self._filename,
                                                                                           SUPPORTED_COMMONROAD_VERSIONS,
                                                                                           commonroad_version)
+        if self._filename2 != None:
+            commonroad_version2 = self._tree2.getroot().get('commonRoadVersion')
+            assert commonroad_version in SUPPORTED_COMMONROAD_VERSIONS, '<CommonRoadFileReader/_read_header>: ' \
+                                                                        'CommonRoad version of XML-file {} is not ' \
+                                                                        'supported. Supported versions: {}. Got ' \
+                                                                        'version: {}.'.format(self._filename2,
+                                                                                            SUPPORTED_COMMONROAD_VERSIONS,
+                                                                                            commonroad_version2)
         self._dt = self._get_dt()
         self._benchmark_id = self._get_benchmark_id()
         self._commonroad_version = commonroad_version
@@ -143,6 +168,8 @@ class CommonRoadFileReader:
     def _parse_file(self):
         """ Parses the CommonRoad XML-file into element tree."""
         self._tree = ElementTree.parse(self._filename)
+        if self._filename2 != None:
+            self._tree2 = ElementTree.parse(self._filename2)
 
     def _get_dt(self) -> float:
         """ Reads the time step size of the time-discrete scenario."""
@@ -189,56 +216,65 @@ class CommonRoadFileReader:
 class ScenarioFactory:
     """ Class to create an object of class Scenario from an XML element."""
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, dt: float, benchmark_id: str, commonroad_version: str,
-                             meta_data: dict, lanelet_assignment: bool, key: str):
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, xml_node2: ElementTree.Element, dt: float, 
+                             benchmark_id: str, commonroad_version: str, meta_data: dict, lanelet_assignment: bool, key: str):
         """
         :param xml_node: XML element
+        :param xml_node2(option): XML element of road scenario
         :param dt: time step size of the scenario
         :param benchmark_id: unique CommonRoad benchmark ID
         :param commonroad_version: CommonRoad version of the file
         :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
         :return: CommonRoad scenario
         """
-        if commonroad_version != '2018b':
-            if key != "road":
-                meta_data["tags"] = TagsFactory.create_from_xml_node(xml_node)
-            meta_data["location"] = LocationFactory.create_from_xml_node(xml_node)
+        if commonroad_version == '3.0' and xml_node2 != None:
+            meta_data["tags"] = TagsFactory.create_from_xml_node(xml_node)
+            meta_data["location"] = LocationFactory.create_from_xml_node(xml_node2)
+            
+            scenario_id = ScenarioID.from_benchmark_id(benchmark_id, commonroad_version)
+            scenario = Scenario(dt, scenario_id, **meta_data)
+            scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node2))
+            scenario.add_objects(cls._obstacles(xml_node, commonroad_version, scenario.lanelet_network, lanelet_assignment))
+        
         else:
-            LaneletFactory._speed_limits = {}
+            if commonroad_version != '2018b':
+                if key != 'road':
+                    meta_data["tags"] = TagsFactory.create_from_xml_node(xml_node)
+                meta_data["location"] = LocationFactory.create_from_xml_node(xml_node)
+            else:
+                LaneletFactory._speed_limits = {}
 
-        scenario_id = ScenarioID.from_benchmark_id(benchmark_id, commonroad_version)
-        scenario = Scenario(dt, scenario_id, **meta_data)
+            scenario_id = ScenarioID.from_benchmark_id(benchmark_id, commonroad_version)
+            scenario = Scenario(dt, scenario_id, **meta_data)
 
-        scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
-        if commonroad_version == '2018b':
-            large_num = 10000
-            scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network, lanelet_assignment))
-            for key, value in LaneletFactory._speed_limits.items():
-                for lanelet in value:
-                    if SupportedTrafficSignCountry.GERMANY.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.USA.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDUsa.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.CHINA.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDChina.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.SPAIN.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.RUSSIA.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.ZAMUNDA.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
-                    else:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
-                        warnings.warn("Unknown country: Default traffic sign IDs are used.")
-                    traffic_sign = TrafficSign(scenario.generate_object_id() + large_num, [traffic_sign_element],
-                                               {lanelet},
-                                               scenario.lanelet_network.find_lanelet_by_id(lanelet).right_vertices[0])
-                    scenario.add_objects(traffic_sign, {lanelet})
-            LaneletFactory._speed_limits = {}
-        else:
-            #print('#lanelets = ', len(scenario.lanelet_network.lanelets))
-            # neglect objects reading in road scenario
-            if key != "road":
+            scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
+            if commonroad_version == '2018b':
+                large_num = 10000
+                scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network, lanelet_assignment))
+                for key, value in LaneletFactory._speed_limits.items():
+                    for lanelet in value:
+                        if SupportedTrafficSignCountry.GERMANY.value == scenario_id.country_id:
+                            traffic_sign_element = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, [str(key)])
+                        elif SupportedTrafficSignCountry.USA.value == scenario_id.country_id:
+                            traffic_sign_element = TrafficSignElement(TrafficSignIDUsa.MAX_SPEED, [str(key)])
+                        elif SupportedTrafficSignCountry.CHINA.value == scenario_id.country_id:
+                            traffic_sign_element = TrafficSignElement(TrafficSignIDChina.MAX_SPEED, [str(key)])
+                        elif SupportedTrafficSignCountry.SPAIN.value == scenario_id.country_id:
+                            traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAX_SPEED, [str(key)])
+                        elif SupportedTrafficSignCountry.RUSSIA.value == scenario_id.country_id:
+                            traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAX_SPEED, [str(key)])
+                        elif SupportedTrafficSignCountry.ZAMUNDA.value == scenario_id.country_id:
+                            traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
+                        else:
+                            traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
+                            warnings.warn("Unknown country: Default traffic sign IDs are used.")
+                        traffic_sign = TrafficSign(scenario.generate_object_id() + large_num, [traffic_sign_element],
+                                                {lanelet},
+                                                scenario.lanelet_network.find_lanelet_by_id(lanelet).right_vertices[0])
+                        scenario.add_objects(traffic_sign, {lanelet})
+                LaneletFactory._speed_limits = {}
+            elif key != 'road':
+                # neglect objects reading in road scenario
                 scenario.add_objects(cls._obstacles(xml_node, commonroad_version, scenario.lanelet_network, lanelet_assignment))
 
         return scenario
