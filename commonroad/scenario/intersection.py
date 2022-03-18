@@ -82,12 +82,9 @@ class IntersectionIncomingElement:
         """
         :param i_id ID of incoming
         """
-        if self._incoming_id is None:
-            assert is_natural_number(i_id), '<IntersectionIncomingElement/incoming_id>: Provided incoming_id is not ' \
-                                            'valid! id={}'.format(i_id)
-            self._incoming_id = i_id
-        else:
-            warnings.warn('<IntersectionIncomingElement/incoming_id>: incoming_id of incoming is immutable')
+        assert is_natural_number(i_id), '<IntersectionIncomingElement/incoming_id>: Provided incoming_id is not ' \
+                                        'valid! id={}'.format(i_id)
+        self._incoming_id = i_id
 
     @property
     def incoming_lanelets(self) -> Set[int]:
@@ -101,13 +98,9 @@ class IntersectionIncomingElement:
         """
         :param incoming_lanelets: set of IDs of incoming lanelets
         """
-        if self._incoming_lanelets is None:
-            assert len(incoming_lanelets) > 0, '<IntersectionIncomingElement/incoming_id>: Incoming ' \
-                                               'must consist of at least one lanelet '
-            self._incoming_lanelets = incoming_lanelets
-        else:
-            warnings.warn('<IntersectionIncomingElement/incoming_lanelets>: incoming_lanelets of '
-                          'incoming are immutable')
+        assert len(incoming_lanelets) > 0, '<IntersectionIncomingElement/incoming_id>: Incoming ' \
+                                           'must consist of at least one lanelet '
+        self._incoming_lanelets = incoming_lanelets
 
     @property
     def successors_right(self) -> Set[int]:
@@ -241,12 +234,9 @@ class Intersection:
         """
         :param i_id ID of intersection element
         """
-        if self._intersection_id is None:
-            assert is_natural_number(i_id), '<Intersection/intersection_id>: Provided intersection_id is not ' \
-                                            'valid! id={}'.format(i_id)
-            self._intersection_id = i_id
-        else:
-            warnings.warn('<Intersection/intersection_id>: intersection_id of intersection is immutable')
+        assert is_natural_number(i_id), '<Intersection/intersection_id>: Provided intersection_id is not ' \
+                                        'valid! id={}'.format(i_id)
+        self._intersection_id = i_id
 
     @property
     def incomings(self) -> List[IntersectionIncomingElement]:
@@ -260,12 +250,9 @@ class Intersection:
         """
         :param incomings: i_id ID of intersection element
         """
-        if self._incomings is None:
-            assert len(incomings) > 0, '<Intersection/incomings>: Intersection ' \
-                                       'must consist of at least two incomings '
-            self._incomings = incomings
-        else:
-            warnings.warn('<Intersection/incomings>: incomings of intersection are immutable')
+        assert len(incomings) > 0, '<Intersection/incomings>: Intersection ' \
+                                   'must consist of at least two incomings '
+        self._incomings = incomings
 
     @property
     def crossings(self) -> Set[int]:
@@ -279,13 +266,10 @@ class Intersection:
         """
         :param crossings: set of crossing elements in intersection
         """
-        if self._crossings is None:
-            if crossings is None:
-                self._crossings = set()
-            else:
-                self._crossings = crossings
+        if crossings is None:
+            self._crossings = set()
         else:
-            warnings.warn('<Intersection/crossings>: crossings of intersection are immutable')
+            self._crossings = crossings
 
     @property
     def map_incoming_lanelets(self) -> Dict[int, IntersectionIncomingElement]:

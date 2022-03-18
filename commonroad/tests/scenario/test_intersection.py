@@ -41,13 +41,6 @@ class TestIntersection(unittest.TestCase):
         self.assertEqual(self._intersection_1.incomings[1].incoming_id, self._incoming_id_2)
         self.assertSetEqual(self._intersection_1.crossings, self._crossings)
 
-        with self.assertWarns(Warning):
-            self._intersection_1.intersection_id = 5
-        with self.assertWarns(Warning):
-            self._intersection_1.crossings = {123}
-        with self.assertWarns(Warning):
-            self._intersection_1.incomings = [self._incoming_3]
-
         intersection_id_2 = '5'
         self.assertRaises(AssertionError, Intersection, intersection_id_2, [])
 
@@ -108,10 +101,6 @@ class TestIntersectionIncomingElement(unittest.TestCase):
         self.assertSetEqual(incoming_1.successors_straight, successors_straight_1)
         self.assertSetEqual(incoming_1.successors_left, successors_left_1)
         self.assertEqual(incoming_1.left_of, left_of_1)
-        with self.assertWarns(Warning):
-            incoming_1.incoming_id = 5
-        with self.assertWarns(Warning):
-            incoming_1.incoming_lanelets = {123}
 
         incoming_id_2 = '3'
         self.assertRaises(AssertionError, IntersectionIncomingElement, incoming_id_2)

@@ -388,8 +388,8 @@ class Lanelet:
         return self._distance
 
     @distance.setter
-    def distance(self, _):
-        warnings.warn('<Lanelet/distance> distance of lanelet is immutable')
+    def distance(self, distance: np.ndarray):
+        self._distance = distance
 
     @property
     def inner_distance(self) -> np.ndarray:
@@ -407,11 +407,8 @@ class Lanelet:
 
     @lanelet_id.setter
     def lanelet_id(self, l_id: int):
-        if self._lanelet_id is None:
-            assert is_natural_number(l_id), '<Lanelet/lanelet_id>: Provided lanelet_id is not valid! id={}'.format(l_id)
-            self._lanelet_id = l_id
-        else:
-            warnings.warn('<Lanelet/lanelet_id>: lanelet_id of lanelet is immutable')
+        assert is_natural_number(l_id), '<Lanelet/lanelet_id>: Provided lanelet_id is not valid! id={}'.format(l_id)
+        self._lanelet_id = l_id
 
     @property
     def left_vertices(self) -> np.ndarray:
@@ -419,12 +416,12 @@ class Lanelet:
 
     @left_vertices.setter
     def left_vertices(self, polyline: np.ndarray):
-        if self._left_vertices is None:
-            self._left_vertices = polyline
-            assert is_valid_polyline(polyline), '<Lanelet/left_vertices>: The provided polyline ' \
-                                                'is not valid! id = {} polyline = {}'.format(self._lanelet_id, polyline)
-        else:
-            warnings.warn('<Lanelet/left_vertices>: left_vertices of lanelet are immutable!')
+        """
+        If the left vertices are strongly modified, the STRtree cannot be valid anymore!
+        """
+        assert is_valid_polyline(polyline), '<Lanelet/left_vertices>: The provided polyline ' \
+                                            'is not valid! id = {} polyline = {}'.format(self._lanelet_id, polyline)
+        self._left_vertices = polyline
 
     @property
     def right_vertices(self) -> np.ndarray:
@@ -432,13 +429,12 @@ class Lanelet:
 
     @right_vertices.setter
     def right_vertices(self, polyline: np.ndarray):
-        if self._right_vertices is None:
-            assert is_valid_polyline(polyline), '<Lanelet/right_vertices>: The provided polyline ' \
-                                                'is not valid! id = {}, polyline = {}'.format(self._lanelet_id,
-                                                                                              polyline)
-            self._right_vertices = polyline
-        else:
-            warnings.warn('<Lanelet/right_vertices>: right_vertices of lanelet are immutable!')
+        """
+        If the right vertices are strongly modified, the STRtree cannot be valid anymore!
+        """
+        assert is_valid_polyline(polyline), '<Lanelet/right_vertices>: The provided polyline ' \
+                                            'is not valid! id = {}, polyline = {}'.format(self._lanelet_id, polyline)
+        self._right_vertices = polyline
 
     @staticmethod
     def _compute_polyline_cumsum_dist(polylines: List[np.ndarray], comparator=np.amin):
@@ -457,13 +453,9 @@ class Lanelet:
 
     @center_vertices.setter
     def center_vertices(self, polyline: np.ndarray):
-        if self._center_vertices is None:
-            assert is_valid_polyline(
-                    polyline), '<Lanelet/center_vertices>: The provided polyline is not valid! polyline = {}'.format(
-                    polyline)
-            self._center_vertices = polyline
-        else:
-            warnings.warn('<Lanelet/center_vertices>: center_vertices of lanelet are immutable!')
+        assert is_valid_polyline(polyline), \
+            '<Lanelet/center_vertices>: The provided polyline is not valid! polyline = {}'.format(polyline)
+        self._center_vertices = polyline
 
     @property
     def line_marking_left_vertices(self) -> LineMarking:
@@ -471,14 +463,10 @@ class Lanelet:
 
     @line_marking_left_vertices.setter
     def line_marking_left_vertices(self, line_marking_left_vertices: LineMarking):
-        if self._line_marking_left_vertices is None:
-            assert isinstance(line_marking_left_vertices,
-                              LineMarking), '<Lanelet/line_marking_left_vertices>: Provided lane marking type of ' \
-                                            'left boundary is not valid! type = {}'.format(
-                    type(line_marking_left_vertices))
-            self._line_marking_left_vertices = LineMarking.UNKNOWN
-        else:
-            warnings.warn('<Lanelet/line_marking_left_vertices>: line_marking_left_vertices of lanelet is immutable!')
+        assert isinstance(line_marking_left_vertices, LineMarking), \
+            '<Lanelet/line_marking_left_vertices>: Provided lane marking type of ' \
+            'left boundary is not valid! type = {}'.format(type(line_marking_left_vertices))
+        self._line_marking_left_vertices = line_marking_left_vertices
 
     @property
     def line_marking_right_vertices(self) -> LineMarking:
@@ -486,14 +474,10 @@ class Lanelet:
 
     @line_marking_right_vertices.setter
     def line_marking_right_vertices(self, line_marking_right_vertices: LineMarking):
-        if self._line_marking_right_vertices is None:
-            assert isinstance(line_marking_right_vertices,
-                              LineMarking), '<Lanelet/line_marking_right_vertices>: Provided lane marking type of ' \
-                                            'right boundary is not valid! type = {}'.format(
-                    type(line_marking_right_vertices))
-            self._line_marking_right_vertices = LineMarking.UNKNOWN
-        else:
-            warnings.warn('<Lanelet/line_marking_right_vertices>: line_marking_right_vertices of lanelet is immutable!')
+        assert isinstance(line_marking_right_vertices, LineMarking), \
+            '<Lanelet/line_marking_right_vertices>: Provided lane marking type of ' \
+            'right boundary is not valid! type = {}'.format(type(line_marking_right_vertices))
+        self._line_marking_right_vertices = line_marking_right_vertices
 
     @property
     def predecessor(self) -> list:
@@ -501,16 +485,9 @@ class Lanelet:
 
     @predecessor.setter
     def predecessor(self, predecessor: list):
-        if self._predecessor is None:
-            assert (is_list_of_natural_numbers(predecessor) and len(predecessor) >= 0), '<Lanelet/predecessor>: ' \
-                                                                                        'Provided list ' \
-                                                                                        'of predecessors is not ' \
-                                                                                        'valid!' \
-                                                                                        'predecessors = {}'.format(
-                    predecessor)
-            self._predecessor = predecessor
-        else:
-            warnings.warn('<Lanelet/predecessor>: predecessor of lanelet is immutable!')
+        assert (is_list_of_natural_numbers(predecessor) and len(predecessor) >= 0), \
+            '<Lanelet/predecessor>: Provided list of predecessors is not valid! predecessors = {}'.format(predecessor)
+        self._predecessor = predecessor
 
     @property
     def successor(self) -> list:
@@ -518,13 +495,9 @@ class Lanelet:
 
     @successor.setter
     def successor(self, successor: list):
-        if self._successor is None:
-            assert (is_list_of_natural_numbers(successor) and len(successor) >= 0), '<Lanelet/predecessor>: Provided ' \
-                                                                                    'list of successors is not valid!' \
-                                                                                    'successors = {}'.format(successor)
-            self._successor = successor
-        else:
-            warnings.warn('<Lanelet/successor>: successor of lanelet is immutable!')
+        assert (is_list_of_natural_numbers(successor) and len(successor) >= 0), \
+            '<Lanelet/predecessor>: Provided list of successors is not valid! successors = {}'.format(successor)
+        self._successor = successor
 
     @property
     def adj_left(self) -> int:
@@ -532,11 +505,8 @@ class Lanelet:
 
     @adj_left.setter
     def adj_left(self, l_id: int):
-        if self._adj_left is None:
-            assert is_natural_number(l_id), '<Lanelet/adj_left>: provided id is not valid! id={}'.format(l_id)
-            self._adj_left = l_id
-        else:
-            warnings.warn('<Lanelet/adj_left>: adj_left of lanelet is immutable')
+        assert is_natural_number(l_id), '<Lanelet/adj_left>: provided id is not valid! id={}'.format(l_id)
+        self._adj_left = l_id
 
     @property
     def adj_left_same_direction(self) -> bool:
@@ -544,12 +514,9 @@ class Lanelet:
 
     @adj_left_same_direction.setter
     def adj_left_same_direction(self, same: bool):
-        if self._adj_left_same_direction is None:
-            assert isinstance(same, bool), '<Lanelet/adj_left_same_direction>: provided direction ' \
-                                           'is not of type bool! type = {}'.format(type(same))
-            self._adj_left_same_direction = same
-        else:
-            warnings.warn('<Lanelet/adj_left_same_direction>: adj_left_same_direction of lanelet is immutable')
+        assert isinstance(same, bool), '<Lanelet/adj_left_same_direction>: provided direction ' \
+                                       'is not of type bool! type = {}'.format(type(same))
+        self._adj_left_same_direction = same
 
     @property
     def adj_right(self) -> int:
@@ -557,11 +524,8 @@ class Lanelet:
 
     @adj_right.setter
     def adj_right(self, l_id: int):
-        if self._adj_right is None:
-            assert is_natural_number(l_id), '<Lanelet/adj_right>: provided id is not valid! id={}'.format(l_id)
-            self._adj_right = l_id
-        else:
-            warnings.warn('<Lanelet/adj_right>: adj_right of lanelet is immutable')
+        assert is_natural_number(l_id), '<Lanelet/adj_right>: provided id is not valid! id={}'.format(l_id)
+        self._adj_right = l_id
 
     @property
     def adj_right_same_direction(self) -> bool:
@@ -569,12 +533,9 @@ class Lanelet:
 
     @adj_right_same_direction.setter
     def adj_right_same_direction(self, same: bool):
-        if self._adj_right_same_direction is None:
-            assert isinstance(same, bool), '<Lanelet/adj_right_same_direction>: provided direction ' \
-                                           'is not of type bool! type = {}'.format(type(same))
-            self._adj_right_same_direction = same
-        else:
-            warnings.warn('<Lanelet/adj_right_same_direction>: adj_right_same_direction of lanelet is immutable')
+        assert isinstance(same, bool), '<Lanelet/adj_right_same_direction>: provided direction ' \
+                                       'is not of type bool! type = {}'.format(type(same))
+        self._adj_right_same_direction = same
 
     @property
     def dynamic_obstacles_on_lanelet(self) -> Dict[int, Set[int]]:
@@ -602,13 +563,9 @@ class Lanelet:
 
     @stop_line.setter
     def stop_line(self, stop_line: StopLine):
-        if self._stop_line is None:
-            assert isinstance(stop_line,
-                              StopLine), '<Lanelet/stop_line>: ''Provided type is not valid! type = {}'.format(
-                    type(stop_line))
-            self._stop_line = stop_line
-        else:
-            warnings.warn('<Lanelet/stop_line>: stop_line of lanelet is immutable!', stacklevel=1)
+        assert isinstance(stop_line, StopLine), \
+            '<Lanelet/stop_line>: ''Provided type is not valid! type = {}'.format(type(stop_line))
+        self._stop_line = stop_line
 
     @property
     def lanelet_type(self) -> Set[LaneletType]:
@@ -616,15 +573,10 @@ class Lanelet:
 
     @lanelet_type.setter
     def lanelet_type(self, lanelet_type: Set[LaneletType]):
-        if self._lanelet_type is None or len(self._lanelet_type) == 0:
-            assert isinstance(lanelet_type, set) and all(isinstance(elem, LaneletType) for elem in
-                                                         lanelet_type), '<Lanelet/lanelet_type>: ''Provided type is ' \
-                                                                        'not valid! type = {}, ' \
-                                                                        'expected = Set[LaneletType]'.format(
-                    type(lanelet_type))
-            self._lanelet_type = lanelet_type
-        else:
-            warnings.warn('<Lanelet/lanelet_type>: type of lanelet is immutable!')
+        assert isinstance(lanelet_type, set) and all(isinstance(elem, LaneletType) for elem in lanelet_type), \
+            '<Lanelet/lanelet_type>: ''Provided type is not valid! type = {}, ' \
+            'expected = Set[LaneletType]'.format(type(lanelet_type))
+        self._lanelet_type = lanelet_type
 
     @property
     def user_one_way(self) -> Set[RoadUser]:
@@ -632,15 +584,9 @@ class Lanelet:
 
     @user_one_way.setter
     def user_one_way(self, user_one_way: Set[RoadUser]):
-        if self._user_one_way is None:
-            assert isinstance(user_one_way, set) and all(
-                    isinstance(elem, RoadUser) for elem in user_one_way), '<Lanelet/user_one_way>: ' \
-                                                                          'Provided type is ' \
-                                                                          'not valid! type = {}'.format(
-                    type(user_one_way))
-            self._user_one_way = user_one_way
-        else:
-            warnings.warn('<Lanelet/user_one_way>: user_one_way of lanelet is immutable!')
+        assert isinstance(user_one_way, set) and all(isinstance(elem, RoadUser) for elem in user_one_way), \
+            '<Lanelet/user_one_way>: Provided type is not valid! type = {}'.format(type(user_one_way))
+        self._user_one_way = user_one_way
 
     @property
     def user_bidirectional(self) -> Set[RoadUser]:
@@ -648,14 +594,9 @@ class Lanelet:
 
     @user_bidirectional.setter
     def user_bidirectional(self, user_bidirectional: Set[RoadUser]):
-        if self._user_bidirectional is None:
-            assert isinstance(user_bidirectional, set) and all(
-                    isinstance(elem, RoadUser) for elem in user_bidirectional), '<Lanelet/user_bidirectional>: ' \
-                                                                                'Provided type is not valid! type' \
-                                                                                ' = {}'.format(type(user_bidirectional))
-            self._user_bidirectional = user_bidirectional
-        else:
-            warnings.warn('<Lanelet/user_bidirectional>: user_bidirectional of lanelet is immutable!')
+        assert isinstance(user_bidirectional, set) and all(isinstance(elem, RoadUser) for elem in user_bidirectional), \
+            '<Lanelet/user_bidirectional>: Provided type is not valid! type = {}'.format(type(user_bidirectional))
+        self._user_bidirectional = user_bidirectional
 
     @property
     def traffic_signs(self) -> Set[int]:
@@ -663,12 +604,9 @@ class Lanelet:
 
     @traffic_signs.setter
     def traffic_signs(self, traffic_sign_ids: Set[int]):
-        if self._traffic_signs is None:
-            assert isinstance(traffic_sign_ids, set), '<Lanelet/traffic_signs>: provided list of ids is not a ' \
-                                                      'set! type = {}'.format(type(traffic_sign_ids))
-            self._traffic_signs = traffic_sign_ids
-        else:
-            warnings.warn('<Lanelet/traffic_signs>: traffic_signs of lanelet is immutable!')
+        assert isinstance(traffic_sign_ids, set), '<Lanelet/traffic_signs>: provided list of ids is not a ' \
+                                                  'set! type = {}'.format(type(traffic_sign_ids))
+        self._traffic_signs = traffic_sign_ids
 
     @property
     def traffic_lights(self) -> Set[int]:
@@ -676,12 +614,9 @@ class Lanelet:
 
     @traffic_lights.setter
     def traffic_lights(self, traffic_light_ids: Set[int]):
-        if self._traffic_lights is None:
-            assert isinstance(traffic_light_ids, set), '<Lanelet/traffic_lights>: provided list of ids is not a ' \
-                                                       'set! type = {}'.format(type(traffic_light_ids))
-            self._traffic_lights = traffic_light_ids
-        else:
-            warnings.warn('<Lanelet/traffic_lights>: traffic_lights of lanelet is immutable!')
+        assert isinstance(traffic_light_ids, set), '<Lanelet/traffic_lights>: provided list of ids is not a ' \
+                                                   'set! type = {}'.format(type(traffic_light_ids))
+        self._traffic_lights = traffic_light_ids
 
     @property
     def polygon(self) -> Polygon:
@@ -1147,10 +1082,6 @@ class LaneletNetwork(IDrawable):
     @property
     def lanelet_polygons(self) -> List[Polygon]:
         return [la.polygon for la in self.lanelets]
-
-    @lanelets.setter
-    def lanelets(self, _):
-        warnings.warn('<LaneletNetwork/lanelets>: lanelets of network are immutable')
 
     @property
     def intersections(self) -> List[Intersection]:
