@@ -253,9 +253,12 @@ class CommonRoadFileWriter:
         self._root_node_road.set('affiliation', self.affiliation)
         self._root_node_road.set('source', self.source)
 
-        sub_ids = re.split('_|-', str(self.scenario.scenario_id))
-        country_id, map_name, map_id = sub_ids[:3]
-        benchmark_road = country_id + '_' + map_name + '-' + map_id
+        if 'test' in str(self.scenario.scenario_id):
+            benchmark_road = str(self.scenario.scenario_id)
+        else:
+            sub_ids = re.split('_|-', str(self.scenario.scenario_id))
+            country_id, map_name, map_id = sub_ids[:3]
+            benchmark_road = country_id + '_' + map_name + '-' + map_id
         self._root_node_road.set('benchmarkID', benchmark_road)
 
         self._root_node_obs.set('timeStepSize', str(self.scenario.dt))
@@ -266,7 +269,10 @@ class CommonRoadFileWriter:
         
         try:
             if self.scenario.scenario_id:
-                self._root_node_obs.set('benchmarkID', str(self.scenario.scenario_id))
+                if 'test' in str(self.scenario.scenario_id):
+                    self._root_node_obs.set('benchmarkID', str(self.scenario.scenario_id) + '_1_T-1')
+                else:
+                    self._root_node_obs.set('benchmarkID', str(self.scenario.scenario_id))
         except:
             self._root_node_obs.set('benchmarkID', '-1')
             print('Warning: No scenario_id set.')
@@ -342,9 +348,6 @@ class CommonRoadFileWriter:
         filename_obs = filename
         
         if '-' in filename:
-            #sub_ids = re.split('_|-', str(self.scenario.scenario_id))
-            #country_id, map_name, map_id = sub_ids[:3]
-            #filename_road = country_id + '_' + map_name + '-' + map_id + ".xml"
             sub_ids = re.split('-', filename)
             sec_ids = re.split('_', sub_ids[-2])
             filename_road = sub_ids[0] + '-' + sec_ids[0] + ".xml"

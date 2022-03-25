@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<commonRoad commonRoadVersion="3.0" author="PrinceOfZAM" affiliation="Technical University of Munich, Germany" source="test" benchmarkID="ZAM_test-0" date="2022-03-11">
+<commonRoad commonRoadVersion="3.0" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="ZAM_test-0_1" date="2022-03-25">
   <location>
     <geoNameId>2867714</geoNameId>
     <gpsLatitude>48.262333</gpsLatitude>
@@ -1379,8 +1379,8 @@
         <y>-60.0</y>
       </point>
     </rightBound>
-    <laneletType>urban</laneletType>
     <laneletType>crosswalk</laneletType>
+    <laneletType>urban</laneletType>
     <userOneWay>pedestrian</userOneWay>
   </lanelet>
   <trafficSign id="101">

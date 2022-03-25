@@ -83,16 +83,21 @@ class CommonRoadFileReader:
         containing the planning problems---initial states and goal regions--for all ego vehicles.
         """
         self._parse_file()
-        sub1 = re.split('_', self._get_benchmark_id())
+        sub1 = re.split('-', self._get_benchmark_id())
         
         if self._filename2 != None:
-            sub2 = re.split('_', self._tree2.getroot().get('benchmarkID'))
+            #sub2 = re.split('_', self._tree2.getroot().get('benchmarkID'))
             # ensure filename correspond to obs, filename2 road
-            if len(sub1) <= 2 and len(sub2) > 2 :
-                temp = self._filename
-                self._filename = self._filename2
-                self._filename2 = temp
-        # identify wether filename correspond to road scenario
+            #if len(sub1) <= 2 and len(sub2) > 2 :
+            #    temp = self._filename
+            #    self._filename = self._filename2
+            #    self._filename2 = temp
+            try:
+                self._read_header()
+            except TypeError:
+                raise Exception('First filename \'{}\' not correspond to obstaclePlanning scenario. \
+                                Please first enter filename of obstaclePlanning scenario, then road scenario.'.format(self._filename))
+        # identify whether filename correspond to road scenario
         elif len(sub1) <= 2:
             self.key = 'road'
 
