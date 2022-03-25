@@ -98,8 +98,6 @@ class IntersectionIncomingElement:
         """
         :param incoming_lanelets: set of IDs of incoming lanelets
         """
-        assert len(incoming_lanelets) > 0, '<IntersectionIncomingElement/incoming_id>: Incoming ' \
-                                           'must consist of at least one lanelet '
         self._incoming_lanelets = incoming_lanelets
 
     @property
@@ -250,8 +248,6 @@ class Intersection:
         """
         :param incomings: i_id ID of intersection element
         """
-        assert len(incomings) > 0, '<Intersection/incomings>: Intersection ' \
-                                   'must consist of at least two incomings '
         self._incomings = incomings
 
     @property
