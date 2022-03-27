@@ -34,9 +34,6 @@ __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
-from commonroad_route_planner.route_planner import RoutePlanner
-
-
 class DecimalPrecision:
     decimals = 4
 
@@ -954,10 +951,30 @@ class PolygonXMLNode:
             polygon_node.append(Point(p[0], p[1]).create_node())
         return polygon_node
 
+class ReferencePathXMLNode:
+    @classmethod
+    def create_reference_path_node(cls, reference_path: np.ndarray) -> etree.Element:
+        """
+        Create XML-Node for a reference path
+        :param reference_path: a reference path for the ego vehicle
+        :return: node
+        """
+        reference_node = etree.Element('referencePath')
+        ref_list = reference_path.tolist()
+        for point in ref_list:
+            position_node = etree.Element('position')
+            x_node = etree.Element('x')
+            y_node = etree.Element('y')
+            x_node.text = float_to_str(point[0])
+            y_node.text = float_to_str(point[1])
+            position_node.append(x_node)
+            position_node.append(y_node)
+            reference_node.append(position_node)
+        return reference_node
 
 class StateXMLNode:
     @classmethod
-    def create_goal_state_node(cls, state: State, goal_lanelet_ids: List[int]) -> etree.Element:
+    def create_goal_state_node(cls, state: State, goal_lanelet_ids: List[int], intermediate_goal = False) -> etree.Element:
         """
         Create XML-Node for a state
         :param state: CommonRoad state
@@ -967,7 +984,7 @@ class StateXMLNode:
         state_node = etree.Element('goalState')
         if hasattr(state, 'position') or len(goal_lanelet_ids) > 0:
             position = etree.Element('position')
-            position = cls._write_goal_position(position, state.position, goal_lanelet_ids)
+            position = cls._write_goal_position(position, state.position, goal_lanelet_ids, intermediate_goal)
             state_node.append(position)
 
         if hasattr(state, 'orientation'):
@@ -1006,7 +1023,7 @@ class StateXMLNode:
 
     @classmethod
     def _write_goal_position(
-        cls, node: etree.Element, position: Union[Shape, int, list], goal_lanelet_ids: List[int],
+        cls, node: etree.Element, position: Union[Shape, int, float, list], goal_lanelet_ids: List[int], intermediate_goal = False
     ) -> etree.Element:
         """
         Create XML-Node for a goal position
@@ -1031,6 +1048,21 @@ class StateXMLNode:
             node.extend(ShapeXMLNode.create_node(position))
         elif isinstance(position, ShapeGroup):
             node.extend(ShapeXMLNode.create_node(position))
+        elif isinstance(position, tuple):
+            if intermediate_goal:
+                intermediateGoalStartPointNode = etree.Element('intermediateGoalStartPoint')
+                intermediateGoalEndPointNode = etree.Element('intermediateGoalEndPoint')
+                intermediateGoalStartPointNode.text = float_to_str(position[0])
+                intermediateGoalEndPointNode.text = float_to_str(position[1])
+                node.append(intermediateGoalStartPointNode)
+                node.append(intermediateGoalEndPointNode)
+            else:
+                goalStartPointNode = etree.Element('goalStartPoint')
+                goalEndPointNode = etree.Element('goalEndPoint')
+                goalStartPointNode.text = float_to_str(position[0])
+                goalEndPointNode.text = float_to_str(position[1])
+                node.append(goalStartPointNode)
+                node.append(goalEndPointNode)
         elif type(position) is list:
             raise ValueError('A goal state cannot contain multiple items. Use a list of goal states instead.')
         else:
@@ -1078,8 +1110,7 @@ class StateXMLNode:
 
     @classmethod
     def create_state_node(
-        cls, state: State, state_node: etree.Element, time_step: int
-    ) -> etree.Element:
+        cls, state: State, state_node: etree.Element, time_step: int) -> etree.Element:
         """
         Create XML-Node for a state
         :param state: value of the state
@@ -1096,6 +1127,11 @@ class StateXMLNode:
                 state_node.append(position)
             elif isinstance(state.position, Shape):
                 position.extend(ShapeXMLNode.create_node(state.position))
+                state_node.append(position)
+            elif isinstance(state.position, float):
+                startPointNode = etree.Element('start')
+                startPointNode.text = float_to_str(state.position)
+                position.append(startPointNode)
                 state_node.append(position)
             else:
                 raise Exception()
@@ -1133,28 +1169,9 @@ class StateXMLNode:
             state_node.append(slip_angle)
         return state_node
 
-    @classmethod
-    def create_reference_path_node(cls, scenario: Scenario, planning_problem: PlanningProblem) -> etree.Element:
-        route_planner = RoutePlanner(scenario, planning_problem, backend=RoutePlanner.Backend.NETWORKX_REVERSED)
-        candidate_holder = route_planner.plan_routes()
-        route = candidate_holder.retrieve_best_route_by_orientation()
-        reference_path = route.reference_path
-
-        state_node = etree.Element('referencePath')
-        for coordinates in reference_path.array:
-            position = etree.Element('position')
-            position_X = etree.Element('x')
-            position_X.set('ref', str(coordinates[0]))
-            position_Y = etree.Element('y')
-            position_Y.set('ref', str(coordinates[1]))
-            position.extend(position_X, position_Y)
-            state_node.append(position)
-
-
-
 class PlanningProblemXMLNode:
     @classmethod
-    def create_node(cls, planning_problem: PlanningProblem, scenario: Scenario) -> etree.Element:
+    def create_node(cls, planning_problem: PlanningProblem) -> etree.Element:
         """
         Create a xml-Node for a single planning_problem
         :param planning_problem: planning problem for creating the node
@@ -1162,6 +1179,14 @@ class PlanningProblemXMLNode:
         """
         planning_problem_node = etree.Element('planningProblem')
         planning_problem_node.set('id', str(planning_problem.planning_problem_id))
+
+        if planning_problem.reference_path is not None:
+            reference_path_node = etree.Element('referencePath')
+            reference_path_node.append(
+                    ReferencePathXMLNode.create_reference_path_node(planning_problem.reference_path)
+            )
+        planning_problem_node.append(reference_path_node)
+
         initial_state_node = etree.Element('initialState')
         planning_problem_node.append(
             StateXMLNode.create_state_node(
@@ -1186,11 +1211,11 @@ class PlanningProblemXMLNode:
                 StateXMLNode.create_goal_state_node(goal_state, goal_lanelet_ids)
             )
 
-
-        planning_problem_node.append(
-                StateXMLNode.create_reference_path_node(scenario,planning_problem)
-        )
-
+        if planning_problem.intermediate_goals is not None:
+            for intermediate_goal_state in planning_problem.intermediate_goals.state_list:
+                planning_problem_node.append(
+                    StateXMLNode.create_goal_state_node(intermediate_goal_state, [], intermediate_goal=True)
+                )
 
         return planning_problem_node
 

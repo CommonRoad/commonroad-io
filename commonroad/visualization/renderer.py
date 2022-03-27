@@ -232,20 +232,42 @@ class IRenderer(metaclass=ABCMeta):
     @abstractmethod
     def draw_reference_path(self, obj, draw_params, call_stack):
         """
-
+        Draw reference path for the ego vehicle
+        :param obj: object to be plotted
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object or a ParamServer object
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack
+        :return: None
         """
         pass
 
     @abstractmethod
     def draw_goal_line(self, obj, draw_params, call_stack):
         """
-
+        Draw goal states along the reference path
+        :param obj: object to be plotted
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object or a ParamServer object
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack
+        :return: None
         """
         pass
 
+    @abstractmethod
     def draw_intermediate_goals(self, obj, draw_params, call_stack):
         """
-
+        Draw intermediate goals
+        :param obj: object to be plotted
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object or a ParamServer object
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack
+        :return: None
         """
         pass
 

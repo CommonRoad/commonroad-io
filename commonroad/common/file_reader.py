@@ -10,10 +10,6 @@ from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.util import Interval, AngleInterval
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
 
-#from commonroad.planning.extended_planning_problem import ExtendedPlanningProblemSet
-#from commonroad_route_planner.route_planner import RoutePlanner
-
-
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
@@ -1281,33 +1277,13 @@ class PolygonFactory:
 
 
 class PlanningProblemSetFactory:
-    """
-    @classmethod
-    def create_reference_path_node(cls, scenario: Scenario, planning_problem: PlanningProblem) -> ElementTree.Element:
-        route_planner = RoutePlanner(scenario, planning_problem, backend=RoutePlanner.Backend.NETWORKX_REVERSED)
-        candidate_holder = route_planner.plan_routes()
-        route = candidate_holder.retrieve_best_route_by_orientation()
-        reference_path = route.reference_path
-        state_node = ElementTree.Element('referencePath')
-        for coordinates in reference_path.tolist():
-            position = ElementTree.Element('position')
-            position_X = ElementTree.Element('x')
-            position_X.text = str(coordinates[0])
-            position_Y = ElementTree.Element('y')
-            position_Y.text = str(coordinates[1])
-            position.append(position_X)
-            position.append(position_Y)
-            state_node.append(position)
-        return state_node
-    """
+
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork) \
             -> PlanningProblemSet:
         planning_problem_set = PlanningProblemSet()
         for p in xml_node.findall('planningProblem'):
             planning_problem = PlanningProblemFactory.create_from_xml_node(p, lanelet_network)
-            #p.append(cls.create_reference_path_node(scenario, planning_problem))
-            #extend_planning_problem = PlanningProblemFactory.create_from_xml_node(p, lanelet_network)
             planning_problem_set.add_planning_problem(
                 planning_problem)
         return planning_problem_set
@@ -1321,7 +1297,7 @@ class PlanningProblemFactory:
         initial_state = cls._add_initial_state(xml_node, reference_path)
         intermediate_goals = IntermediateGoalFactory.create_from_xml_node(xml_node, reference_path)
         goal_region = GoalRegionFactory.create_from_xml_node(xml_node, lanelet_network, reference_path)
-        return PlanningProblem(reference_path, planning_problem_id, initial_state, intermediate_goals, goal_region) #, CommonRoadFileReader._open_scenario()
+        return PlanningProblem(reference_path, planning_problem_id, initial_state, intermediate_goals, goal_region)
 
     @classmethod
     def _add_initial_state(cls, xml_node: ElementTree.Element, reference_path: np.ndarray) \
@@ -1420,18 +1396,14 @@ class StateFactory:
                 polygon = lanelet.convert_to_polygon()
                 position_list.append(polygon)
             position = ShapeGroup(position_list)
-        #else:
-            #raise Exception()
-
         if xml_node.find('startPoint') is not None:
-            position = cls.read_one_dimensional_start(xml_node.find('startPoint'), reference_path)
-
+            position = cls._read_one_dimensional_start(xml_node.find('startPoint'), reference_path)
 
         if xml_node.find('goalStartPoint') is not None:
-            position = cls.build_goal_position_path(xml_node.find('goalStartPoint'), xml_node.find('goalEndPoint'), reference_path)
+            position = cls._build_goal_position_path(xml_node.find('goalStartPoint'), xml_node.find('goalEndPoint'), reference_path)
 
         if xml_node.find('intermediateGoalStartPoint') is not None:
-            position = cls.build_goal_position_path(xml_node.find('intermediateGoalStartPoint'), xml_node.find('intermediateGoalEndPoint'), reference_path)
+            position = cls._build_goal_position_path(xml_node.find('intermediateGoalStartPoint'), xml_node.find('intermediateGoalEndPoint'), reference_path)
 
         return position
 
@@ -1449,34 +1421,34 @@ class StateFactory:
         return value
 
     @classmethod
-    def read_one_dimensional_start(cls, xml_node: ElementTree.Element, reference_path: np.ndarray) -> np.ndarray:
+    def _read_one_dimensional_start(cls, xml_node: ElementTree.Element, reference_path: np.ndarray) -> np.ndarray:
         """
-        converts the length given alongside the reference_path to the respective two-dimensional coordinates
+        converts the length given along the reference_path to the respective two-dimensional coordinates
         """
         s = float(xml_node.text)
-        coord_list = cls.coordinatesFromDistance(s, reference_path)
+        coord_list = cls._coordinates_from_distance(s, reference_path)
         return np.array(coord_list)
 
     @classmethod
-    def coordinatesFromDistance(cls, s: float, ref_path: np.ndarray) -> List:
+    def _coordinates_from_distance(cls, s: float, ref_path: np.ndarray) -> List:
         """
         interpolates the coordiante points using the following algorithm:
-        1. finds between which exact two points of the reference_path is located
+        1. finds between which exact two points of the reference_path s is located
         2. Let d be the total distance to the point 's',
         A be the "lower" coordinate point from the reference path and B the "upper".
         The given point(s) is located on a distance from A of a = d - totalDistToPoint(A)
-        To sum up: s is the distance to point S alongside the reference path, which is located
+        To sum up: s is the distance to point S along the reference path, which is located
         between points A and B, known from the reference path on an offset a from A and we are searching S(x) and S(y)
         Using similar triangles the end formula for the coordinates of S are:
         S(x) = (a*(B(x)-A(x)) + d*A(x))/d
         S(y) = (a*(B(y)-A(y)) + d*A(y))/d
         """
         s_coord_list = list()
-        consecutivePoints = cls.cosecutivePointsBetweenGivenDistance(s, ref_path)
-        d = cls.distanceBetweenConsecutivePoints(consecutivePoints[0],consecutivePoints[1])
+        consecutivePoints = cls._cosecutive_points_between_given_distance(s, ref_path)
+        d = cls._distance_between_consecutive_points(consecutivePoints[0],consecutivePoints[1])
         A = consecutivePoints[0]
         B = consecutivePoints[1]
-        a = s - cls.totalDistanceToCoordinatePoint(A, ref_path)
+        a = s - cls._total_distance_to_coordinate_point(A, ref_path)
         s_x = (a*(B[0] - A[0]) + d*A[0]) / d
         s_y = (a*(B[1] - A[1]) + d*A[1]) / d
         s_coord_list.append(s_x)
@@ -1484,14 +1456,14 @@ class StateFactory:
         return s_coord_list
 
     @classmethod
-    def cosecutivePointsBetweenGivenDistance(cls, dist: float, ref_path: np.ndarray) -> List:
+    def _cosecutive_points_between_given_distance(cls, dist: float, ref_path: np.ndarray) -> List:
         """
         finds between which points of the reference path the point s is located
         """
         sum = 0
         saveIndex = 0
         for i in range(len(ref_path.tolist()) - 1):
-            sum += cls.distanceBetweenConsecutivePoints(ref_path.tolist()[i], ref_path[i+1])
+            sum += cls._distance_between_consecutive_points(ref_path.tolist()[i], ref_path[i + 1])
             if sum >= dist:
                 saveIndex = i
                 break
@@ -1501,7 +1473,7 @@ class StateFactory:
         return result
 
     @classmethod
-    def totalDistanceToCoordinatePoint(cls, coordPoint: List, ref_path: np.ndarray) -> float:
+    def _total_distance_to_coordinate_point(cls, coordPoint: List, ref_path: np.ndarray) -> float:
         """
         computes the total distance to a given coordinate point of the reference path alongside the reference path
         """
@@ -1509,11 +1481,11 @@ class StateFactory:
         for i in range(len(ref_path.tolist()) - 1):
             if ref_path.tolist()[i] == coordPoint:
                 break
-            sum += cls.distanceBetweenConsecutivePoints(ref_path.tolist()[i], ref_path.tolist()[i+1])
+            sum += cls._distance_between_consecutive_points(ref_path.tolist()[i], ref_path.tolist()[i + 1])
         return sum
 
     @classmethod
-    def distanceBetweenConsecutivePoints(cls, point: List, nextPoint: List) -> float:
+    def _distance_between_consecutive_points(cls, point: List, nextPoint: List) -> float:
         """
         computes the distance between two points in two-dimensional space
         """
@@ -1521,9 +1493,9 @@ class StateFactory:
                      (nextPoint[1] - point[1])**2)
 
     @classmethod
-    def build_goal_position_path(cls, startPositionNode: ElementTree.Element, endPositionNode: ElementTree.Element, ref_path: np.ndarray) -> np.ndarray:
+    def _build_goal_position_path(cls, startPositionNode: ElementTree.Element, endPositionNode: ElementTree.Element, ref_path: np.ndarray) -> np.ndarray:
         """
-        builds the goal region positionin the following way:
+        builds the goal region position in the following way:
         1. Finds where the startPoint of the goal region is located in two-dimensional space,
         using the methods listed above
         2. Finds the coordinate points of the endPoint in two-dimensional space
@@ -1535,18 +1507,16 @@ class StateFactory:
         result = list()
         startPosition = float(startPositionNode.text)
         endPosition = float(endPositionNode.text)
-        ref_path_low = cls.cosecutivePointsBetweenGivenDistance(startPosition, ref_path)[1]
-        ref_path_high = cls.cosecutivePointsBetweenGivenDistance(endPosition, ref_path)[0]
-        start = cls.read_one_dimensional_start(startPositionNode, ref_path).tolist()
-        end = cls.read_one_dimensional_start(endPositionNode, ref_path).tolist()
+        ref_path_low = cls._cosecutive_points_between_given_distance(startPosition, ref_path)[1]
+        ref_path_high = cls._cosecutive_points_between_given_distance(endPosition, ref_path)[0]
+        start = cls._read_one_dimensional_start(startPositionNode, ref_path).tolist()
+        end = cls._read_one_dimensional_start(endPositionNode, ref_path).tolist()
         slice_start = ref_path.tolist().index(ref_path_low)
         slice_end = ref_path.tolist().index(ref_path_high)
         result.append(start)
         for index in range(slice_start, slice_end + 1):
             result.append(ref_path.tolist()[index])
         result.append(end)
-        #result = start + [x,y for ref_path.tolist()[slice_start:slice_end]] + end
-        #[item for sublist in ref_path.tolist()[slice_start:slice_end] for item in sublist]
         return np.array(result)
 
 

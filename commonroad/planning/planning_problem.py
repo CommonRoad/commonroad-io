@@ -21,10 +21,6 @@ from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
 
 
-
-#from commonroad_route_planner.route_planner import RoutePlanner
-#from commonroad.scenario.scenario import Scenario
-
 class PlanningProblem(IDrawable):
     """
     def __init__(self, planning_problem_id: int, initial_state: State,
@@ -137,8 +133,10 @@ class PlanningProblem(IDrawable):
         renderer.draw_planning_problem(self, draw_params, call_stack)
 
     def is_point_part_of_reference_path(self, point: np.ndarray) -> bool:
+        """
+        Checks if a point s given by two-dimensional coordinates is located along the reference path
+        """
         for i in range(len(self.reference_path) - 1):
-            i = 158
             self.reference_path[i][0] = round(self.reference_path[i][0], 5)
 
             self.reference_path[i][1] = round(self.reference_path[i][1], 5)
@@ -149,11 +147,6 @@ class PlanningProblem(IDrawable):
 
             dist_a_point = math.sqrt((point[0] - self.reference_path[i][0])**2
                                      + (point[1] - self.reference_path[i][1])**2)
-
-            temp0 = point[0]
-            temp1 = self.reference_path[i+1][0]
-            temp2 = point[1]
-            temp3 = self.reference_path[i+1][1]
 
             dist_b_point = math.sqrt((point[0] - self.reference_path[i+1][0])**2
                                      + (point[1] - self.reference_path[i+1][1])**2)
@@ -167,6 +160,9 @@ class PlanningProblem(IDrawable):
         return False
 
     def one_dimensional_distance_offset(self, point: np.ndarray) -> float:
+        """
+        Returns the longitude coordinate s of a point p located along the reference path
+        """
         ref_list = self.reference_path.tolist()
         point_coords = point.tolist()
         sum = 0.0

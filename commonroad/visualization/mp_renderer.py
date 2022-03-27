@@ -228,8 +228,6 @@ class MPRenderer(IRenderer):
             artist_list.append(col)
         for t in self.dynamic_labels:
             self.ax.add_artist(t)
-
-        self.obstacle_patches.sort(key=lambda x: x.zorder)
         patch_col = mpl.collections.PatchCollection(self.obstacle_patches, match_original=True,
                                                     zorder=ZOrders.OBSTACLES)
         self.ax.add_collection(patch_col)
@@ -434,45 +432,6 @@ class MPRenderer(IRenderer):
             obs = obj.obstacles
         # Draw all objects
         for o in obs:
-            """
-            myPredictt = o.prediction
-            myTrajectt = myPredictt.trajectory
-            mySList = myTrajectt.state_list
-            firstElenList = mySList[0]
-            posElem = firstElenList.position
-            xCoord = posElem[0]
-            yCoord = posElem[1]
-            
-            xValues = []
-            yValues = []
-            if isinstance(o,DynamicObstacle):
-                for i in range(0,len(o.prediction.trajectory.state_list) - 1):
-
-                    leftPoint = o.prediction.trajectory.state_list[i]
-                    rightPoint = o.prediction.trajectory.state_list[i+1]
-
-                    x1 = leftPoint.position[0]
-                    y1 = leftPoint.position[1]
-                    x2 = rightPoint.position[0]
-                    y2 = rightPoint.position[1]
-                    if i == 0:
-                        xValues += [x1]
-                        xValues += [x2]
-                        yValues += [y1]
-                        yValues += [y2]
-                    else:
-                        xValues += [x2]
-                        yValues += [y2]
-
-                #draw lines
-
-                plt.plot(xValues, yValues, zorder=200)
-                plt.show()
-                self.dynamic_collections.append(collections.LineCollection(zip(xValues,yValues)))
-                plt.plot([0,150],[0,75])
-                self.dynamic_collections.append(collections.LineCollection([(0,0),(150,75)]))
-                plt.show()
-                """
             o.draw(self, draw_params, call_stack)
 
     def draw_static_obstacle(self, obj: StaticObstacle, draw_params: Union[ParamServer, dict, None],
@@ -1397,19 +1356,21 @@ class MPRenderer(IRenderer):
 
     def draw_goal_line(self, obj: np.ndarray,draw_params: Union[ParamServer, dict, None],
                          call_stack: Tuple[str, ...]) -> None:
+        """
+        Draw goal along the reference path
+
+        :param obj: object to be plotted
+        :param draw_params: parameters for plotting given by a nested dict
+            that recreates the structure of an object or a ParamServer object
+        :param call_stack: tuple of string containing the call stack,
+            which allows for differentiation of plotting styles depending on the call stack
+        :return: None
+        """
         draw_params = self._get_draw_params(draw_params)
         call_stack = call_stack + ('shape', 'line',)
-        opacity = draw_params.by_callstack(call_stack, 'opacity')
         facecolor = draw_params.by_callstack(call_stack, 'facecolor')
         linewidth = draw_params.by_callstack(call_stack, 'linewidth')
         zorder = draw_params.by_callstack(call_stack, 'zorder')
-        #line = collections.LineCollection([obj], linewidths=linewidth, facecolors=facecolor, zorder=zorder)
-
-        #self.static_collections.append(line)
-
-        #self.obstacle_patches.append(
-                #mpl.patches.Polygon(obj, closed=False, facecolor=facecolor, zorder=zorder,
-                                    #alpha=opacity))
         self.static_collections.append(
                     collections.EllipseCollection(np.ones([obj.shape[0], 1]) * linewidth,
                                                   np.ones([obj.shape[0], 1]) * linewidth,
@@ -1419,12 +1380,21 @@ class MPRenderer(IRenderer):
 
     def draw_reference_path(self, obj: np.ndarray, draw_params: Union[ParamServer, dict, None],
                          call_stack: Tuple[str, ...]) -> None:
+        """
+        Draw reference path for the ego vehicle
+        :param obj: object to be plotted
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object or a ParamServer object
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack
+        :return: None
+        """
         draw_params = self._get_draw_params(draw_params)
         call_stack = call_stack + ('reference_path',)
 
         face_color = draw_params.by_callstack(call_stack, 'facecolor')
         line_width = draw_params.by_callstack(call_stack, 'line_width')
-        #draw_continuous = draw_params.by_callstack(call_stack, 'draw_continuous')
         z_order = draw_params.by_callstack(call_stack, 'z_order')
 
         self.static_collections.append(
@@ -1436,6 +1406,16 @@ class MPRenderer(IRenderer):
 
     def draw_intermediate_goals(self, obj: GoalRegion, draw_params: Union[ParamServer, dict, None],
                          call_stack: Tuple[str, ...]) -> None:
+        """
+        Draw intermediate goals
+        :param obj: object to be plotted
+        :param draw_params: parameters for plotting given by a nested dict
+        that recreates the structure of an object or a ParamServer object
+        :param call_stack: tuple of string containing the call stack,
+        which allows for differentiation of plotting styles
+               depending on the call stack
+        :return: None
+        """
         draw_params = self._get_draw_params(draw_params)
         for state in obj.state_list:
             if hasattr(state, 'position'):

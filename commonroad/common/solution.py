@@ -80,6 +80,7 @@ class CostFunction(Enum):
     SM3 = 5
     MW1 = 6
     TR1 = 7
+    OD1 = 8
 
 
 @unique
@@ -271,7 +272,7 @@ class SupportedCostFunctions(Enum):
     """
     Enum class for specifying which cost functions are supported for which vehicle model
     """
-    PM = [CostFunction.JB1, CostFunction.WX1, CostFunction.MW1]
+    PM = [CostFunction.JB1, CostFunction.WX1, CostFunction.MW1, CostFunction.OD1]
     ST = [cost_function for cost_function in CostFunction]  # Supports all cost functions
     KS = [cost_function for cost_function in CostFunction]  # Supports all cost functions
     MB = [cost_function for cost_function in CostFunction]  # Supports all cost functions
