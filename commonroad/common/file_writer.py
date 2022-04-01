@@ -9,7 +9,6 @@ from typing import Union, List, Set
 import numpy as np
 import warnings
 import re
-import copy
 
 from commonroad import SCENARIO_VERSION
 from lxml import etree, objectify
@@ -358,13 +357,6 @@ class CommonRoadFileWriter:
         else:
             filename_road = os.path.splitext(filename)[0] + "_road.xml"
 
-        # if '-' in filename:
-        #     sub_ids = re.split('-', filename)
-        #     sec_ids = re.split('_', sub_ids[-2])
-        #     filename_road = sub_ids[0] + '-' + sec_ids[0] + ".xml"
-        # else:
-        #     filename_road = os.path.splitext(filename)[0] + "_road.xml"
-
         file_list = [filename_obs, filename_road]
         for file_key in file_list:
             if self.key != None:
@@ -394,19 +386,19 @@ class CommonRoadFileWriter:
         self._write_header()
 
         # obsPlan scenario: remove lanelet
-        scenario_obs = copy.deepcopy(self.scenario)
-        lanelet_list = self.scenario.lanelet_network.lanelets
-        for i in range(len(lanelet_list)):
-            scenario_obs.lanelet_network.remove_lanelet(lanelet_list[i].lanelet_id)
-        self._add_all_objects_from_scenario(scenario_obs)
+        #scenario_obs = copy.deepcopy(self.scenario)
+        #lanelet_list = self.scenario.lanelet_network.lanelets
+        #for i in range(len(lanelet_list)):
+        #    scenario_obs.lanelet_network.remove_lanelet(lanelet_list[i].lanelet_id)
+        self._add_all_objects_from_scenario(self.scenario)
         self._add_all_planning_problems_from_planning_problem_set()
 
         # road scenario: remove obstacles
-        scenario_road = copy.deepcopy(self.scenario)
-        obstacle_list = self.scenario.obstacles
-        for i in range(len(obstacle_list)):
-            scenario_road.remove_obstacle(obstacle_list[i])
-        self._add_all_lanelets_from_scenario(scenario_road)
+        #scenario_road = copy.deepcopy(self.scenario)
+        #obstacle_list = self.scenario.obstacles
+        #for i in range(len(obstacle_list)):
+        #    scenario_road.remove_obstacle(obstacle_list[i])
+        self._add_all_lanelets_from_scenario(self.scenario)
 
         keys = ['obs', 'road']
         if check_validity:
