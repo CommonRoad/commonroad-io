@@ -347,12 +347,23 @@ class CommonRoadFileWriter:
 
         filename_obs = filename
         
-        if '-' in filename:
-            sub_ids = re.split('-', filename)
+        filename_road = ''
+        ids = re.split('/', filename)
+        if '-' in ids[-1]:
+            sub_ids = re.split('-', ids[-1])
             sec_ids = re.split('_', sub_ids[-2])
-            filename_road = sub_ids[0] + '-' + sec_ids[0] + ".xml"
+            for i in range(len(ids)-1):
+                filename_road = filename_road + ids[i] + '/'
+            filename_road = filename_road + sub_ids[0] + '-' + sec_ids[0] + ".xml"
         else:
             filename_road = os.path.splitext(filename)[0] + "_road.xml"
+
+        # if '-' in filename:
+        #     sub_ids = re.split('-', filename)
+        #     sec_ids = re.split('_', sub_ids[-2])
+        #     filename_road = sub_ids[0] + '-' + sec_ids[0] + ".xml"
+        # else:
+        #     filename_road = os.path.splitext(filename)[0] + "_road.xml"
 
         file_list = [filename_obs, filename_road]
         for file_key in file_list:

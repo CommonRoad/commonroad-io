@@ -83,23 +83,29 @@ class CommonRoadFileReader:
         containing the planning problems---initial states and goal regions--for all ego vehicles.
         """
         self._parse_file()
-        sub1 = re.split('-', self._get_benchmark_id())
         
         if self._filename2 != None:
-            #sub2 = re.split('_', self._tree2.getroot().get('benchmarkID'))
-            # ensure filename correspond to obs, filename2 road
-            #if len(sub1) <= 2 and len(sub2) > 2 :
-            #    temp = self._filename
-            #    self._filename = self._filename2
-            #    self._filename2 = temp
-            try:
-                self._read_header()
-            except TypeError:
-                raise Exception('First filename \'{}\' not correspond to obstaclePlanning scenario. \
-                                Please first enter filename of obstaclePlanning scenario, then road scenario.'.format(self._filename))
+            # try:
+            #     self._get_dt()
+            # except TypeError:
+            #     raise Exception('The first filename \'{}\' not correspond to obstaclePlanning scenario. \
+            #                     Please first enter filename of obstaclePlanning scenario, then road scenario.'.format(self._filename))
+            flag1 = None
+            for child in self._tree.getroot():
+                if 'planningProblem'== child.tag:
+                    flag1 = 'obs'
+            if flag1 != 'obs':
+                temp = self._filename
+                self._filename = self._filename2
+                self._filename2 = temp
         # identify whether filename correspond to road scenario
-        elif len(sub1) <= 2:
-            self.key = 'road'
+        elif self._get_commonroad_version() == '3.0':
+            flag = None
+            for child in self._tree.getroot():
+                if 'planningProblem'== child.tag:
+                    flag = 'obs'
+            if flag != 'obs':
+                self.key = 'road'
 
         self._read_header()
         scenario = self._open_scenario(lanelet_assignment)
@@ -315,7 +321,7 @@ class ScenarioFactory:
         """
         obstacles = []
         for o in xml_node.findall('staticObstacle'):
-            obstacles.append(StaticObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment))
+            obstacles.append(StaticObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment, commonroad_version))
         for o in xml_node.findall('dynamicObstacle'):
             obstacles.append(DynamicObstacleFactory.create_from_xml_node(o, lanelet_network, lanelet_assignment, commonroad_version))
         for o in xml_node.findall('environmentObstacle'):
@@ -1099,10 +1105,10 @@ class ObstacleFactory(ABC):
 class StaticObstacleFactory(ObstacleFactory):
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork,
-                             lanelet_assignment: bool) -> StaticObstacle:
+                             lanelet_assignment: bool, commonroad_version: str) -> StaticObstacle:
         obstacle_type = StaticObstacleFactory.read_type(xml_node)
         obstacle_id = StaticObstacleFactory.read_id(xml_node)
-        initial_state = StaticObstacleFactory.read_initial_state(xml_node.find('initialState'))
+        initial_state = StaticObstacleFactory.read_initial_state(xml_node.find('initialState'), commonroad_version)
         initial_signal_state = StaticObstacleFactory.read_initial_signal_state(xml_node.find('initialSignalState'))
         signal_series = SignalSeriesFactory.create_from_xml_node((xml_node.find('signalSeries')))
         shape = StaticObstacleFactory.read_shape(xml_node.find('shape'))
