@@ -83,11 +83,11 @@ class CommonRoadFileReader:
         containing the planning problems---initial states and goal regions--for all ego vehicles.
         """
         self._parse_file()
-        
+
         if self._filename2 is not None:
             flag1 = None
             for child in self._tree.getroot():
-                if 'planningProblem'== child.tag:
+                if 'planningProblem' == child.tag:
                     flag1 = 'obs'
             if flag1 != 'obs':
                 temp = self._filename
@@ -236,7 +236,7 @@ class ScenarioFactory:
         if commonroad_version == '3.0' and xml_node2 is not None:
             meta_data["tags"] = TagsFactory.create_from_xml_node(xml_node)
             meta_data["location"] = LocationFactory.create_from_xml_node(xml_node2)
-            
+
             scenario_id = ScenarioID.from_benchmark_id(benchmark_id, commonroad_version)
             scenario = Scenario(dt, scenario_id, **meta_data)
             scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node2))

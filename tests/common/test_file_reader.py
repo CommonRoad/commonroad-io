@@ -797,18 +797,18 @@ class TestFileReader(unittest.TestCase):
                          len(scenario1.lanelet_network.traffic_lights))
 
         xml_file_obs_2 = CommonRoadFileReader(self.filename_obsPlan_2).open(lanelet_assignment=False)
-        xml_file_2 = CommonRoadFileReader(self.filename_obsPlan_2, 
+        xml_file_2 = CommonRoadFileReader(self.filename_obsPlan_2,
                                           self.filename_road_2).open(lanelet_assignment=False)
 
         # test goal region of planning problem
-        point = np.array([75,-1.75])
+        point = np.array([75, -1.75])
         assert(xml_file_2[1].planning_problem_dict[100].goal.state_list[0].position.contains_point(point))
-        
+
         self.assertEqual(xml_file_obs_2[1].planning_problem_dict[100].goal.state_list[0].time_step.start,
                          xml_file_2[1].planning_problem_dict[100].goal.state_list[0].time_step.start)
         self.assertEqual(xml_file_obs_2[1].planning_problem_dict[100].goal.state_list[0].time_step.end,
                          xml_file_2[1].planning_problem_dict[100].goal.state_list[0].time_step.end)
-        
+
         self.assertEqual(xml_file_obs_2[1].planning_problem_dict[100].goal.state_list[0].orientation.start,
                          xml_file_2[1].planning_problem_dict[100].goal.state_list[0].orientation.start)
         self.assertEqual(xml_file_obs_2[1].planning_problem_dict[100].goal.state_list[0].orientation.end,

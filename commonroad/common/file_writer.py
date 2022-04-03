@@ -175,7 +175,7 @@ class CommonRoadFileWriter:
     @property
     def root_node_road(self):
         return self._root_node_road
-    
+
     @property
     def root_node_obs(self):
         return self._root_node_obs
@@ -396,7 +396,7 @@ class CommonRoadFileWriter:
                     self.check_validity_of_commonroad_file(self._dump_obs(), 'obs')
                 if key == 'road':
                     self.check_validity_of_commonroad_file(self._dump_road(), 'road')
-        
+
         for key in keys:
             if self.key is not None:
                 if self.key == keys[0] and key == 'road':
