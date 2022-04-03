@@ -359,7 +359,7 @@ class CommonRoadFileWriter:
 
         file_list = [filename_obs, filename_road]
         for file_key in file_list:
-            if self.key != None:
+            if self.key is not None:
                 if self.key == 'obs' and file_key == filename_road:
                     continue
                 if self.key == 'road' and file_key == filename_obs:
@@ -385,25 +385,17 @@ class CommonRoadFileWriter:
 
         self._write_header()
 
-        # obsPlan scenario: remove lanelet
-        #scenario_obs = copy.deepcopy(self.scenario)
-        #lanelet_list = self.scenario.lanelet_network.lanelets
-        #for i in range(len(lanelet_list)):
-        #    scenario_obs.lanelet_network.remove_lanelet(lanelet_list[i].lanelet_id)
+        # obsPlan scenario
         self._add_all_objects_from_scenario(self.scenario)
         self._add_all_planning_problems_from_planning_problem_set()
 
-        # road scenario: remove obstacles
-        #scenario_road = copy.deepcopy(self.scenario)
-        #obstacle_list = self.scenario.obstacles
-        #for i in range(len(obstacle_list)):
-        #    scenario_road.remove_obstacle(obstacle_list[i])
+        # road scenario
         self._add_all_lanelets_from_scenario(self.scenario)
 
         keys = ['obs', 'road']
         if check_validity:
             for key in keys:
-                if self.key != None:
+                if self.key is not None:
                     if self.key == keys[0] and key == 'road':
                         continue
                     if self.key == keys[1] and key == 'obs':
@@ -415,7 +407,7 @@ class CommonRoadFileWriter:
                     self.check_validity_of_commonroad_file(self._dump_road(), 'road')
         
         for key in keys:
-            if self.key != None:
+            if self.key is not None:
                 if self.key == keys[0] and key == 'road':
                     continue
                 if self.key == keys[1] and key == 'obs':

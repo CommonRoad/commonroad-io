@@ -128,7 +128,7 @@ class TestFileReader(unittest.TestCase):
         geo_transformation = GeoTransformation("test", 0.0, 0.0, 0.0, 0.0)
         location = Location(2867714, 0.0, 0.0, geo_transformation)
 
-        self.scenario = Scenario(0.1, ScenarioID.from_benchmark_id('ZAM_test_0-1', scenario_version='2020a'), #SCENARIO_VERSION
+        self.scenario = Scenario(0.1, ScenarioID.from_benchmark_id('ZAM_test_0-1', scenario_version='2020a'),
                                  tags=tags, location=location)
         self.scenario.add_objects([static_obs, dyn_set_obs, dyn_traj_obs, self.lanelet_network,
                                    self._environment_obstacle, self._phantom_obstacle])
@@ -424,7 +424,7 @@ class TestFileReader(unittest.TestCase):
 
         xml_file = CommonRoadFileReader(self.filename_all).open(lanelet_assignment=True)
 
-        self.assertEqual(exp_num_lanelet_scenario,len(xml_file[0].lanelet_network.lanelets))
+        self.assertEqual(exp_num_lanelet_scenario, len(xml_file[0].lanelet_network.lanelets))
         self.assertEqual(exp_num_obstacles_scenario, len(xml_file[0].obstacles))
         self.assertEqual(exp_num_planning_problems, len(xml_file[1].planning_problem_dict))
         self.assertEqual(exp_scenario_id, xml_file[0].scenario_id)
@@ -761,7 +761,8 @@ class TestFileReader(unittest.TestCase):
     def test_read_two_files(self):
         scenario_obs, planning_problem_obs = CommonRoadFileReader(self.filename_obsPlan).open(lanelet_assignment=False)
         xml_file_road = CommonRoadFileReader(self.filename_road).open(lanelet_assignment=False)
-        scenario1, planning_problem = CommonRoadFileReader(self.filename_obsPlan, self.filename_road).open(lanelet_assignment=False)
+        scenario1, planning_problem = CommonRoadFileReader(self.filename_obsPlan, 
+                                                           self.filename_road).open(lanelet_assignment=False)
         
         try:
             xml_file2 = CommonRoadFileReader(self.filename_road, self.filename_obsPlan).open()
@@ -776,23 +777,23 @@ class TestFileReader(unittest.TestCase):
         self.assertEqual(len(scenario_obs.phantom_obstacle), len(scenario1.phantom_obstacle))
 
         # planning problem
-        self.assertEqual(planning_problem_obs.planning_problem_dict[1].planning_problem_id, \
-            planning_problem.planning_problem_dict[1].planning_problem_id)
-        self.assertEqual(planning_problem_obs.planning_problem_dict[1].initial_state.velocity, \
-            planning_problem.planning_problem_dict[1].initial_state.velocity)
-        self.assertEqual(planning_problem_obs.planning_problem_dict[1].initial_state.slip_angle, \
-            planning_problem.planning_problem_dict[1].initial_state.slip_angle)
-        self.assertEqual(planning_problem_obs.planning_problem_dict[1].initial_state.yaw_rate, \
-            planning_problem.planning_problem_dict[1].initial_state.yaw_rate)
+        self.assertEqual(planning_problem_obs.planning_problem_dict[1].planning_problem_id,
+                         planning_problem.planning_problem_dict[1].planning_problem_id)
+        self.assertEqual(planning_problem_obs.planning_problem_dict[1].initial_state.velocity,
+                         planning_problem.planning_problem_dict[1].initial_state.velocity)
+        self.assertEqual(planning_problem_obs.planning_problem_dict[1].initial_state.slip_angle,
+                         planning_problem.planning_problem_dict[1].initial_state.slip_angle)
+        self.assertEqual(planning_problem_obs.planning_problem_dict[1].initial_state.yaw_rate,
+                         planning_problem.planning_problem_dict[1].initial_state.yaw_rate)
 
         # lanelet network
         self.assertEqual(len(xml_file_road[0].lanelet_network.lanelets), len(scenario1.lanelet_network.lanelets))
-        self.assertEqual(xml_file_road[0].lanelet_network.intersections[0].intersection_id, \
-            scenario1.lanelet_network.intersections[0].intersection_id)
-        self.assertEqual(len(xml_file_road[0].lanelet_network.traffic_signs), \
-            len(scenario1.lanelet_network.traffic_signs))
-        self.assertEqual(len(xml_file_road[0].lanelet_network.traffic_lights), \
-            len(scenario1.lanelet_network.traffic_lights))
+        self.assertEqual(xml_file_road[0].lanelet_network.intersections[0].intersection_id,
+                         scenario1.lanelet_network.intersections[0].intersection_id)
+        self.assertEqual(len(xml_file_road[0].lanelet_network.traffic_signs),
+                         len(scenario1.lanelet_network.traffic_signs))
+        self.assertEqual(len(xml_file_road[0].lanelet_network.traffic_lights),
+                         len(scenario1.lanelet_network.traffic_lights))
 
         # xml_file_obs_2 = CommonRoadFileReader(self.filename_obsPlan_2).open(lanelet_assignment=False)
         # xml_file_2 = CommonRoadFileReader(self.filename_obsPlan_2, self.filename_road_2).open(lanelet_assignment=False)
