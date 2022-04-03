@@ -160,7 +160,6 @@ class CommonRoadFileWriter:
 
         self.scenario: Scenario = scenario
         self.planning_problem_set: PlanningProblemSet = planning_problem_set
-        #self._root_node = etree.Element('commonRoad')
         self._root_node_road = etree.Element('commonRoad')
         self._root_node_obs = etree.Element('commonRoad')
         self.author = author if author is not None else scenario.author
@@ -174,8 +173,6 @@ class CommonRoadFileWriter:
         precision.decimals = decimal_precision
 
     @property
-    # def root_node(self):
-    #     return self._root_node
     def root_node_road(self):
         return self._root_node_road
     
@@ -184,7 +181,6 @@ class CommonRoadFileWriter:
         return self._root_node_obs
 
     @root_node_road.setter
-    #def root_node(self, root_node):
     def root_node_road(self, root_node):
         warnings.warn(
             '<CommonRoadFileWriter/root_node> root_node of CommonRoadFileWriter is immutable'
@@ -279,28 +275,23 @@ class CommonRoadFileWriter:
         self._root_node_obs.set('date', datetime.datetime.today().strftime('%Y-%m-%d'))
         self._root_node_road.set('date', datetime.datetime.today().strftime('%Y-%m-%d'))
 
-    def _add_all_objects_from_scenario(self, scenario: Scenario):
+    def _add_all_objects_from_scenario(self):
         self._root_node_obs.append(TagXMLNode.create_node(self.tags))
-        #for o in self.scenario.obstacles:
-        for o in scenario.obstacles:
+        for o in self.scenario.obstacles:
             self._root_node_obs.append(ObstacleXMLNode.create_node(o))
 
-    def _add_all_lanelets_from_scenario(self, scenario: Scenario):
+    def _add_all_lanelets_from_scenario(self):
         if self.location is not None:
             self._root_node_road.append(LocationXMLNode.create_node(self.location))
         else:
             self._root_node_road.append(LocationXMLNode.create_node(Location()))
-        #for l in self.scenario.lanelet_network.lanelets:
-        for l in scenario.lanelet_network.lanelets:
+        for l in self.scenario.lanelet_network.lanelets:
             self._root_node_road.append(LaneletXMLNode.create_node(l))
-        #for sign in self.scenario.lanelet_network.traffic_signs:
-        for sign in scenario.lanelet_network.traffic_signs:
+        for sign in self.scenario.lanelet_network.traffic_signs:
             self._root_node_road.append(TrafficSignXMLNode.create_node(sign))
-        #for light in self.scenario.lanelet_network.traffic_lights:
-        for light in scenario.lanelet_network.traffic_lights:
+        for light in self.scenario.lanelet_network.traffic_lights:
             self._root_node_road.append(TrafficLightXMLNode.create_node(light))
-        #for intersection in self.scenario.lanelet_network.intersections:
-        for intersection in scenario.lanelet_network.intersections:
+        for intersection in self.scenario.lanelet_network.intersections:
             self._root_node_road.append(IntersectionXMLNode.create_node(intersection))
 
     def _add_all_planning_problems_from_planning_problem_set(self):
@@ -386,11 +377,11 @@ class CommonRoadFileWriter:
         self._write_header()
 
         # obsPlan scenario
-        self._add_all_objects_from_scenario(self.scenario)
+        self._add_all_objects_from_scenario()
         self._add_all_planning_problems_from_planning_problem_set()
 
         # road scenario
-        self._add_all_lanelets_from_scenario(self.scenario)
+        self._add_all_lanelets_from_scenario()
 
         keys = ['obs', 'road']
         if check_validity:

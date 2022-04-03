@@ -46,7 +46,6 @@ class TestFileWriter(unittest.TestCase):
                              scenario_1.location).write_to_file(filename=filename,
                                                                 overwrite_existing_file=OverwriteExistingFile.ALWAYS)
         
-        #assert self.validate_with_xsd(self.out_path + '/test_reading_intersection_traffic_sign.xml')
         assert self.validate_with_xsd(self.xsd_path_obs, self.out_path + '/test_reading_intersection_traffic_sign.xml')
         assert self.validate_with_xsd(self.xsd_path_road, self.out_path + '/test_reading_intersection_traffic_sign_road.xml')
 
@@ -67,7 +66,6 @@ class TestFileWriter(unittest.TestCase):
                              str(scenario.scenario_id), scenario.tags, scenario.location).write_to_file(
                 filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS, check_validity=True)
 
-        #assert self.validate_with_xsd(self.out_path + "/USA_Lanker-1_1_T-1.xml")
         assert self.validate_with_xsd(self.xsd_path_obs, self.out_path + '/USA_Lanker-1_1_T-1.xml')
         assert self.validate_with_xsd(self.xsd_path_road, self.out_path + '/USA_Lanker-1.xml')
 
@@ -178,7 +176,6 @@ class TestFileWriter(unittest.TestCase):
         CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', {Tag.URBAN},
                              location).write_to_file(filename=filename,
                                                      overwrite_existing_file=OverwriteExistingFile.ALWAYS)
-        #assert self.validate_with_xsd(self.out_path + '/test_writing_shapes.xml')
         assert self.validate_with_xsd(self.xsd_path_obs, self.out_path + '/test_writing_shapes.xml')
         assert self.validate_with_xsd(self.xsd_path_road, self.out_path + '/test_writing_shapes_road.xml')
 
@@ -189,9 +186,6 @@ class TestFileWriter(unittest.TestCase):
         CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', {Tag.URBAN},
                              location).write_to_file(filename=filename,
                                                      overwrite_existing_file=OverwriteExistingFile.ALWAYS)
-        #CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM_no_problem', 'TU Munich', 'test', {Tag.URBAN},
-        #                     location).write_scenario_to_file(filename=filename,
-        #                                                      overwrite_existing_file=OverwriteExistingFile.ALWAYS)
 
     def validate_with_xsd(self, xsd_path: str, xml_path: str) -> bool:
         xmlschema_doc = etree.parse(xsd_path)

@@ -84,12 +84,7 @@ class CommonRoadFileReader:
         """
         self._parse_file()
         
-        if self._filename2 != None:
-            # try:
-            #     self._get_dt()
-            # except TypeError:
-            #     raise Exception('The first filename \'{}\' not correspond to obstaclePlanning scenario. \
-            #                     Please first enter filename of obstaclePlanning scenario, then road scenario.'.format(self._filename))
+        if self._filename2 is not None:
             flag1 = None
             for child in self._tree.getroot():
                 if 'planningProblem'== child.tag:
@@ -154,7 +149,7 @@ class CommonRoadFileReader:
                                                                     'version: {}.'.format(self._filename,
                                                                                           SUPPORTED_COMMONROAD_VERSIONS,
                                                                                           commonroad_version)
-        if self._filename2 != None:
+        if self._filename2 is not None:
             commonroad_version2 = self._tree2.getroot().get('commonRoadVersion')
             assert commonroad_version in SUPPORTED_COMMONROAD_VERSIONS, '<CommonRoadFileReader/_read_header>: ' \
                                                                         'CommonRoad version of XML-file {} is not ' \
@@ -179,7 +174,7 @@ class CommonRoadFileReader:
     def _parse_file(self):
         """ Parses the CommonRoad XML-file into element tree."""
         self._tree = ElementTree.parse(self._filename)
-        if self._filename2 != None:
+        if self._filename2 is not None:
             self._tree2 = ElementTree.parse(self._filename2)
 
     def _get_dt(self) -> float:
@@ -238,7 +233,7 @@ class ScenarioFactory:
         :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
         :return: CommonRoad scenario
         """
-        if commonroad_version == '3.0' and xml_node2 != None:
+        if commonroad_version == '3.0' and xml_node2 is not None:
             meta_data["tags"] = TagsFactory.create_from_xml_node(xml_node)
             meta_data["location"] = LocationFactory.create_from_xml_node(xml_node2)
             

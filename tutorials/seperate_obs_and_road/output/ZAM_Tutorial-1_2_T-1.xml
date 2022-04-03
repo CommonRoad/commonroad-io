@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<commonRoad timeStepSize="0.1" commonRoadVersion="3.0" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="ZAM_Tutorial-1_1_T-1" date="2022-04-01">
+<commonRoad timeStepSize="0.1" commonRoadVersion="3.0" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="ZAM_Tutorial-1_1_T-1" date="2022-04-03">
   <scenarioTags>
-    <critical/>
     <interstate/>
+    <critical/>
   </scenarioTags>
   <dynamicObstacle id="42">
     <type>car</type>
