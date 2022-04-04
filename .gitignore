@@ -209,8 +209,9 @@ doc/build/*
 *.egg-info
 *.ipynb_checkpoints/
 
-# pycharm
+# IDEs
 *.idea
+.vscode
 
 # pytest
 .coverage
