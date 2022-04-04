@@ -95,7 +95,7 @@ class TestFileWriter(unittest.TestCase):
                                                                 overwrite_existing_file=OverwriteExistingFile.ALWAYS)
         assert self.validate_with_xsd(self.xsd_path_obs, self.out_path + '/USA_Peach-4_8_T-1.xml')
         assert self.validate_with_xsd(self.xsd_path_road, self.out_path + '/USA_Peach-4.xml')
-                
+
         scenario_2, planning_problem_set_2 = CommonRoadFileReader(self.filename_separate_2).open()
         filename = self.out_path + '/USA_US101-3_3_T-1.xml'
         CommonRoadFileWriter(scenario_2, planning_problem_set_2, scenario_2.author, scenario_2.affiliation, 'test',

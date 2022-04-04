@@ -221,7 +221,7 @@ class CommonRoadFileReader:
 class ScenarioFactory:
     """ Class to create an object of class Scenario from an XML element."""
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, xml_node2: ElementTree.Element, dt: float, 
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, xml_node2: ElementTree.Element, dt: float,
                              benchmark_id: str, commonroad_version: str, meta_data: dict, lanelet_assignment: bool,
                              key: str):
         """
@@ -242,7 +242,7 @@ class ScenarioFactory:
             scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node2))
             scenario.add_objects(cls._obstacles(xml_node, commonroad_version, scenario.lanelet_network,
                                                 lanelet_assignment))
-        
+
         else:
             if commonroad_version != '2018b':
                 if key != 'road':
