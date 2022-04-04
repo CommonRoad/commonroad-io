@@ -6,8 +6,12 @@ import numpy as np
 from commonroad.common.util import Interval
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector
 from commonroad.geometry.shape import Shape, \
-    occupancy_shape_from_state
+    occupancy_shape_from_state, Rectangle, Polygon, ShapeGroup, Circle
 from commonroad.scenario.trajectory import Trajectory
+
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.renderer import IRenderer
 
 __author__ = "Stefanie Manzinger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -18,32 +22,28 @@ __maintainer__ = "Stefanie Manzinger"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
-from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.param_server import ParamServer
-from commonroad.visualization.renderer import IRenderer
-
 
 class Occupancy(IDrawable):
     """ Class describing an occupied area in the position domain. The
     occupied area can be defined for a certain time
     step or a time interval."""
 
-    def __init__(self, time_step: Union[int, Interval], shape: Shape):
+    def __init__(self, time_step: Union[int, Interval], shape: Union[Shape, Rectangle, Polygon, ShapeGroup, Circle]):
         """
         :param time_step: a time interval or time step for which the
         occupancy is defined
         :param shape: occupied region in the position domain
         """
         self.time_step: Union[int, Interval] = time_step
-        self.shape: Shape = shape
+        self.shape: Union[Shape, Rectangle, Polygon, ShapeGroup, Circle] = shape
 
     @property
-    def shape(self) -> Shape:
+    def shape(self) -> Union[Shape, Rectangle, Polygon, ShapeGroup, Circle]:
         """ Shape representing an occupied area in the position domain."""
         return self._shape
 
     @shape.setter
-    def shape(self, shape: Shape):
+    def shape(self, shape: Union[Shape, Rectangle, Polygon, ShapeGroup, Circle]):
         assert isinstance(shape, Shape), '<Occupancy/shape>: argument "shape" of wrong type. Expected type: %s. ' \
                                          'Got type: %s.' % (Shape, type(shape))
         self._shape = shape

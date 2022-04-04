@@ -758,13 +758,13 @@ class TestFileReader(unittest.TestCase):
                          xml_file[0].obstacles[1].prediction.occupancy_set[0].shape.center[0])
         self.assertEqual(exp_obstacle_one_prediction_zero_shape_center[1],
                          xml_file[0].obstacles[1].prediction.occupancy_set[0].shape.center[1])
-    
+
     def test_read_two_files(self):
         scenario_obs, planning_problem_obs = CommonRoadFileReader(self.filename_obsPlan).open(lanelet_assignment=False)
         xml_file_road = CommonRoadFileReader(self.filename_road).open(lanelet_assignment=False)
-        scenario1, planning_problem = CommonRoadFileReader(self.filename_obsPlan, 
+        scenario1, planning_problem = CommonRoadFileReader(self.filename_obsPlan,
                                                            self.filename_road).open(lanelet_assignment=False)
-        
+
         try:
             xml_file2 = CommonRoadFileReader(self.filename_road, self.filename_obsPlan).open()
         except TypeError:
