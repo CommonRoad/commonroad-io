@@ -46,6 +46,13 @@ class TestRectangle(unittest.TestCase):
 
         self.assertTrue(initial_rectangle.contains_point(expected_contained_point))
 
+    def test_side_effect(self):
+        # until commonroad-io 2021.4 there was a side effect where rectangle_2.center == np.ndarray([1.0, 0.0])
+        rectangle_1 = Rectangle(length=4.0, width=2.0, orientation=1.0)
+        rectangle_1.center[0] = 1.0
+        rectangle_2 = Rectangle(length=4.0, width=2.0, orientation=1.0)
+        np.testing.assert_array_equal(np.array([0.0, 0.0]), rectangle_2.center)
+
     def test__compute_vertices(self):
 
         initial_rectangle = Rectangle(1, 1)
@@ -83,6 +90,13 @@ class TestCircle(unittest.TestCase):
 
         for tc, etc in zip(transposed_circle.center, expected_transposed_center):
             self.assertAlmostEqual(tc, etc)
+
+    def test_side_effect(self):
+        # until commonroad-io 2021.4 there was a side effect where circle_2.center == np.ndarray([1.0, 0.0])
+        circle_1 = Circle(radius=1.0)
+        circle_1.center[0] = 1.0
+        circle_2 = Circle(radius=1.0)
+        np.testing.assert_array_equal(np.array([0.0, 0.0]), circle_2.center)
 
     def test_contains_point(self):
 
