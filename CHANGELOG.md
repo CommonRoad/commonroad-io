@@ -1,5 +1,23 @@
 # Changelog
 
+## [2022.1] - 2022-04-05
+
+### Added
+
+- video creation with custom draw parameters
+- obstacle icon with custom color
+
+### Changed
+
+- remove support for Python 3.6
+
+### Fixed
+
+- side-effect circle and rectangle init functions
+- parsing solution files with old time format
+- invalid lanelet occupancy compuation using buffered polygons
+- Various small bug fixes
+
 ## [2021.4] - 2021-12-21
 
 ### Added
