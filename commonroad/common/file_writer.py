@@ -28,7 +28,7 @@ from commonroad.scenario.trajectory import Trajectory, State
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2021.4"
+__version__ = "2022.1"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -1431,7 +1431,7 @@ class SignalStateXMLNode:
 
         if hasattr(signal_state, 'hazard_warning_lights'):
             hazard_warning_lights = etree.Element('hazardWarningLights')
-            hazard_warning_lights.text = str(signal_state.braking_lights).lower()
+            hazard_warning_lights.text = str(signal_state.hazard_warning_lights).lower()
             signal_state_node.append(hazard_warning_lights)
 
         if hasattr(signal_state, 'flashing_blue_lights'):

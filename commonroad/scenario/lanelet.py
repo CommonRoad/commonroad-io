@@ -21,7 +21,7 @@ from commonroad.visualization.renderer import IRenderer
 __author__ = "Christian Pek, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW CAR@TUM"]
-__version__ = "2021.4"
+__version__ = "2022.1"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "released"
@@ -110,8 +110,10 @@ class StopLine:
     def __hash__(self):
         start_string = np.array2string(np.around(self._start.astype(float), 10), precision=10)
         end_string = np.array2string(np.around(self._end.astype(float), 10), precision=10)
-        return hash((start_string, end_string, self._line_marking, frozenset(self._traffic_sign_ref),
-                     frozenset(self._traffic_light_ref)))
+        sign_ref = None if self._traffic_sign_ref is None else frozenset(self._traffic_sign_ref)
+        light_ref = None if self._traffic_light_ref is None else frozenset(self._traffic_light_ref)
+        return hash((start_string, end_string, self._line_marking, sign_ref,
+                     light_ref))
 
     def __str__(self):
         return f'StopLine from {self._start} to {self._end}'
@@ -1232,12 +1234,11 @@ class LaneletNetwork(IDrawable):
         else:
             for la in lanelet_network.lanelets:
                 if la.lanelet_type.intersection(exclude_lanelet_types) == set():
-                    new_lanelet_network.add_lanelet(copy.deepcopy(la))
+                    lanelets.add(la)
                 for sign_id in la.traffic_signs:
                     traffic_sign_ids.add(sign_id)
                 for light_id in la.traffic_lights:
                     traffic_light_ids.add(light_id)
-                lanelets.add(la)
 
         for sign_id in traffic_sign_ids:
             new_lanelet_network.add_traffic_sign(copy.deepcopy(lanelet_network.find_traffic_sign_by_id(sign_id)), set())
@@ -1416,7 +1417,7 @@ class LaneletNetwork(IDrawable):
 
         return self._intersections[intersection_id] if intersection_id in self._intersections else None
 
-    def add_lanelet(self, lanelet: Lanelet, eps: float = 1e-15, rtree: bool = True):
+    def add_lanelet(self, lanelet: Lanelet, rtree: bool = True):
         """
         Adds a lanelet to the LaneletNetwork
 
@@ -1435,7 +1436,7 @@ class LaneletNetwork(IDrawable):
             return False
         else:
             self._lanelets[lanelet.lanelet_id] = lanelet
-            self._buffered_polygons[lanelet.lanelet_id] = lanelet.polygon.shapely_object.buffer(eps)
+            self._buffered_polygons[lanelet.lanelet_id] = lanelet.polygon.shapely_object
             if rtree:
                 self._create_strtree()
             return True
@@ -1564,7 +1565,8 @@ class LaneletNetwork(IDrawable):
             type(point_list))
 
         return [[self._get_lanelet_id_by_shapely_polygon(lanelet_shapely_polygon) for lanelet_shapely_polygon in
-                 self._strtee.query(point) if lanelet_shapely_polygon.intersects(point)] for point in
+                 self._strtee.query(point) if lanelet_shapely_polygon.intersects(point)
+                 or lanelet_shapely_polygon.buffer(1e-15).intersects(point)] for point in
                 [ShapelyPoint(point) for point in point_list]]
 
     def find_lanelet_by_shape(self, shape: Shape) -> List[int]:
