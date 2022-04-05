@@ -15,7 +15,7 @@
 
 - Side-effect circle and rectangle init functions
 - Parsing solution files with old time format
-- Invalid lanelet occupancy compuation using buffered polygons
+- Invalid lanelet occupancy computation using buffered polygons
 - Various small bug fixes
 
 ## [2021.4] - 2021-12-21
