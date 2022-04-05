@@ -73,8 +73,6 @@ acs-*.bib
 #(r)(e)ledmac/(r)(e)ledpar
 *.end
 *.?end
-*.[1-9]
-*.[1-9][0-9]
 *.[1-9][0-9][0-9]
 *.[1-9]R
 *.[1-9][0-9]R
@@ -101,12 +99,8 @@ acs-*.bib
 *.gaux
 *.gtex
 
-# hyperref
-*.brf
-
 # knitr
 *-concordance.tex
-# TODO Comment the next line if you want to keep your tikz graphics files
 *.tikz
 *-tikzDictionary
 
@@ -133,9 +127,6 @@ _minted*
 
 # morewrites
 *.mw
-
-# mylatexformat
-*.fmt
 
 # nomencl
 *.nlo
@@ -226,6 +217,5 @@ commonroad/doc/build/*
 
 #spot
 *spot_prediction.py
-/.eggs/
-/build/
-/dist/
+/commonroad/tests/test_params.json
+/commonroad/tutorials/solution_PM2:JB1:USA_Lanker-1_1_T-1:2018b.xml

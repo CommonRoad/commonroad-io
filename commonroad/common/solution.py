@@ -23,7 +23,7 @@ from commonroad.scenario.trajectory import State, Trajectory
 __author__ = "Murat Üste, Christina Miller, Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW CAR@TUM"]
-__version__ = "2021.4"
+__version__ = "2022.1"
 __maintainer__ = "Moritz Klischat"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -622,7 +622,11 @@ class CommonRoadSolutionReader:
 
         date = root_node.attrib.get('date', None)  # None if not found
         if date is not None:
-            date = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S')
+            try:
+                date = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S')
+            except ValueError:
+                # backward compatibility with old solution files
+                date = datetime.strptime(date, '%Y-%m-%d')
 
         computation_time = root_node.attrib.get('computation_time', None)
         if computation_time is not None:
