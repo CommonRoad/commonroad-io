@@ -1,15 +1,24 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="USA_Peach-4_8_T-1" date="2021-12-10">
+<?xml version="1.0" ?>
+<commonRoad affiliation="Technical University of Munich, Germany" author="Markus Koschi, Sebastian Lutz, Marat Faizov, Matthias Althoff" benchmarkID="USA_Peach-4_8_T-1" commonRoadVersion="2020a" date="2019-11-11" source="Next Generation Simulation (NGSIM) and OpenStreetMaps (OSM)" timeStepSize="0.1">
   <location>
     <geoNameId>4179868</geoNameId>
     <gpsLatitude>33.785445</gpsLatitude>
     <gpsLongitude>-84.383005</gpsLongitude>
   </location>
+  <scenarioTags>
+    <urban/>
+    <intersection/>
+    <turn_left/>
+    <speed_limit/>
+    <multi_lane/>
+    <oncoming_traffic/>
+    <comfort/>
+  </scenarioTags>
   <lanelet id="43349">
     <leftBound>
       <point>
-        <x>5.2931</x>
-        <y>81.3436</y>
+        <x>5.293104</x>
+        <y>81.34366</y>
       </point>
       <point>
         <x>4.7559</x>
@@ -31,8 +40,8 @@
     </leftBound>
     <rightBound>
       <point>
-        <x>2.5602</x>
-        <y>81.5045</y>
+        <x>2.560245</x>
+        <y>81.504523</y>
       </point>
       <point>
         <x>1.9778</x>
@@ -53,17 +62,9 @@
       <lineMarking>solid</lineMarking>
     </rightBound>
     <successor ref="43590"/>
-    <adjacentLeft ref="43341" drivingDir="opposite"/>
-    <adjacentRight ref="43208" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43341"/>
+    <adjacentRight drivingDir="same" ref="43208"/>
     <stopLine>
-      <point>
-        <x>2.4627</x>
-        <y>26.4883</y>
-      </point>
-      <point>
-        <x>-0.6443</x>
-        <y>26.581</y>
-      </point>
       <lineMarking>solid</lineMarking>
       <trafficLightRef ref="43920"/>
     </stopLine>
@@ -102,8 +103,8 @@
     </rightBound>
     <predecessor ref="43349"/>
     <successor ref="43652"/>
-    <adjacentLeft ref="43596" drivingDir="opposite"/>
-    <adjacentRight ref="43592" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43596"/>
+    <adjacentRight drivingDir="same" ref="43592"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43840"/>
   </lanelet>
@@ -222,8 +223,8 @@
     <predecessor ref="43622"/>
     <predecessor ref="43652"/>
     <successor ref="43486"/>
-    <adjacentLeft ref="43604" drivingDir="opposite"/>
-    <adjacentRight ref="43602" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43604"/>
+    <adjacentRight drivingDir="same" ref="43602"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43842"/>
   </lanelet>
@@ -242,8 +243,8 @@
         <y>8.6547</y>
       </point>
       <point>
-        <x>63.3041</x>
-        <y>9.3057</y>
+        <x>63.3041811</x>
+        <y>9.3057974</y>
       </point>
       <lineMarking>broad_solid</lineMarking>
     </leftBound>
@@ -261,22 +262,22 @@
         <y>5.3859</y>
       </point>
       <point>
-        <x>63.5186</x>
-        <y>6.0369</y>
+        <x>63.5186829</x>
+        <y>6.036969</y>
       </point>
       <lineMarking>dashed</lineMarking>
     </rightBound>
     <predecessor ref="43600"/>
-    <adjacentLeft ref="43490" drivingDir="opposite"/>
-    <adjacentRight ref="43488" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43490"/>
+    <adjacentRight drivingDir="same" ref="43488"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43843"/>
   </lanelet>
   <lanelet id="43208">
     <leftBound>
       <point>
-        <x>2.5602</x>
-        <y>81.5045</y>
+        <x>2.560245</x>
+        <y>81.504523</y>
       </point>
       <point>
         <x>1.9778</x>
@@ -298,8 +299,8 @@
     </leftBound>
     <rightBound>
       <point>
-        <x>-0.3859</x>
-        <y>81.6776</y>
+        <x>-0.385993</x>
+        <y>81.677646</y>
       </point>
       <point>
         <x>-0.9524</x>
@@ -320,17 +321,9 @@
       <lineMarking>dashed</lineMarking>
     </rightBound>
     <successor ref="43592"/>
-    <adjacentLeft ref="43349" drivingDir="same"/>
-    <adjacentRight ref="43343" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43349"/>
+    <adjacentRight drivingDir="same" ref="43343"/>
     <stopLine>
-      <point>
-        <x>-0.6443</x>
-        <y>26.581</y>
-      </point>
-      <point>
-        <x>-3.5067</x>
-        <y>26.6665</y>
-      </point>
       <lineMarking>solid</lineMarking>
       <trafficLightRef ref="43920"/>
     </stopLine>
@@ -369,8 +362,8 @@
     </rightBound>
     <predecessor ref="43208"/>
     <successor ref="43630"/>
-    <adjacentLeft ref="43590" drivingDir="same"/>
-    <adjacentRight ref="43594" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43590"/>
+    <adjacentRight drivingDir="same" ref="43594"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43845"/>
   </lanelet>
@@ -429,8 +422,8 @@
     </rightBound>
     <predecessor ref="43592"/>
     <successor ref="43830"/>
-    <adjacentLeft ref="43634" drivingDir="opposite"/>
-    <adjacentRight ref="43632" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43634"/>
+    <adjacentRight drivingDir="same" ref="43632"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43846"/>
   </lanelet>
@@ -466,8 +459,8 @@
     <predecessor ref="43630"/>
     <predecessor ref="43654"/>
     <successor ref="43380"/>
-    <adjacentLeft ref="43834" drivingDir="opposite"/>
-    <adjacentRight ref="43832" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43834"/>
+    <adjacentRight drivingDir="same" ref="43832"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43847"/>
   </lanelet>
@@ -504,8 +497,8 @@
     </rightBound>
     <predecessor ref="43830"/>
     <successor ref="43384"/>
-    <adjacentLeft ref="43402" drivingDir="opposite"/>
-    <adjacentRight ref="43382" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43402"/>
+    <adjacentRight drivingDir="same" ref="43382"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43848"/>
   </lanelet>
@@ -542,8 +535,8 @@
     </rightBound>
     <predecessor ref="43380"/>
     <successor ref="43388"/>
-    <adjacentLeft ref="43396" drivingDir="opposite"/>
-    <adjacentRight ref="43386" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43396"/>
+    <adjacentRight drivingDir="same" ref="43386"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43849"/>
   </lanelet>
@@ -562,8 +555,8 @@
         <y>-60.7414</y>
       </point>
       <point>
-        <x>-2.8445</x>
-        <y>-70.7353</y>
+        <x>-2.8445785</x>
+        <y>-70.7353437</y>
       </point>
       <lineMarking>broad_solid</lineMarking>
     </leftBound>
@@ -581,22 +574,22 @@
         <y>-60.6166</y>
       </point>
       <point>
-        <x>-6.0525</x>
-        <y>-70.6165</y>
+        <x>-6.0525948</x>
+        <y>-70.6165875</y>
       </point>
       <lineMarking>dashed</lineMarking>
     </rightBound>
     <predecessor ref="43384"/>
-    <adjacentLeft ref="43392" drivingDir="opposite"/>
-    <adjacentRight ref="43390" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43392"/>
+    <adjacentRight drivingDir="same" ref="43390"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43850"/>
   </lanelet>
   <lanelet id="43343">
     <leftBound>
       <point>
-        <x>-0.3859</x>
-        <y>81.6776</y>
+        <x>-0.385993</x>
+        <y>81.677646</y>
       </point>
       <point>
         <x>-0.9524</x>
@@ -618,8 +611,8 @@
     </leftBound>
     <rightBound>
       <point>
-        <x>-3.2472</x>
-        <y>81.8459</y>
+        <x>-3.247287</x>
+        <y>81.845962</y>
       </point>
       <point>
         <x>-3.8342</x>
@@ -640,16 +633,8 @@
     </rightBound>
     <successor ref="43594"/>
     <successor ref="43640"/>
-    <adjacentLeft ref="43208" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43208"/>
     <stopLine>
-      <point>
-        <x>-3.5067</x>
-        <y>26.6665</y>
-      </point>
-      <point>
-        <x>-6.4863</x>
-        <y>26.7554</y>
-      </point>
       <lineMarking>solid</lineMarking>
       <trafficLightRef ref="43920"/>
     </stopLine>
@@ -688,7 +673,7 @@
     </rightBound>
     <predecessor ref="43343"/>
     <successor ref="43632"/>
-    <adjacentLeft ref="43592" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43592"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43852"/>
   </lanelet>
@@ -747,7 +732,7 @@
     </rightBound>
     <predecessor ref="43594"/>
     <successor ref="43832"/>
-    <adjacentLeft ref="43630" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43630"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43853"/>
   </lanelet>
@@ -782,7 +767,7 @@
     </rightBound>
     <predecessor ref="43632"/>
     <successor ref="43382"/>
-    <adjacentLeft ref="43830" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43830"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43854"/>
   </lanelet>
@@ -820,7 +805,7 @@
     <predecessor ref="43644"/>
     <predecessor ref="43832"/>
     <successor ref="43386"/>
-    <adjacentLeft ref="43380" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43380"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43855"/>
   </lanelet>
@@ -857,7 +842,7 @@
     </rightBound>
     <predecessor ref="43382"/>
     <successor ref="43390"/>
-    <adjacentLeft ref="43384" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43384"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43856"/>
   </lanelet>
@@ -876,8 +861,8 @@
         <y>-60.6166</y>
       </point>
       <point>
-        <x>-6.0525</x>
-        <y>-70.6165</y>
+        <x>-6.052595</x>
+        <y>-70.616588</y>
       </point>
       <lineMarking>dashed</lineMarking>
     </leftBound>
@@ -895,13 +880,13 @@
         <y>-60.533</y>
       </point>
       <point>
-        <x>-8.2362</x>
-        <y>-70.5315</y>
+        <x>-8.236222</x>
+        <y>-70.53155</y>
       </point>
       <lineMarking>solid</lineMarking>
     </rightBound>
     <predecessor ref="43386"/>
-    <adjacentLeft ref="43388" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43388"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43857"/>
   </lanelet>
@@ -1020,7 +1005,7 @@
     <predecessor ref="43618"/>
     <predecessor ref="43640"/>
     <successor ref="43480"/>
-    <adjacentLeft ref="43474" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43474"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43859"/>
   </lanelet>
@@ -1072,7 +1057,7 @@
     </rightBound>
     <predecessor ref="43476"/>
     <successor ref="43484"/>
-    <adjacentLeft ref="43478" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43478"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43860"/>
   </lanelet>
@@ -1091,8 +1076,8 @@
         <y>1.7041</y>
       </point>
       <point>
-        <x>-78.0485</x>
-        <y>-1.8831</y>
+        <x>-78.04852491</x>
+        <y>-1.88317077</y>
       </point>
       <lineMarking>dashed</lineMarking>
     </leftBound>
@@ -1110,20 +1095,20 @@
         <y>4.5931</y>
       </point>
       <point>
-        <x>-79.3464</x>
-        <y>0.8928</y>
+        <x>-79.3464131</x>
+        <y>0.89283778</y>
       </point>
     </rightBound>
     <predecessor ref="43480"/>
-    <adjacentLeft ref="43482" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43482"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43861"/>
   </lanelet>
   <lanelet id="43392">
     <leftBound>
       <point>
-        <x>-2.8445</x>
-        <y>-70.7353</y>
+        <x>-2.8445785</x>
+        <y>-70.7353437</y>
       </point>
       <point>
         <x>-2.4966</x>
@@ -1141,8 +1126,8 @@
     </leftBound>
     <rightBound>
       <point>
-        <x>0.1346</x>
-        <y>-70.8383</y>
+        <x>0.1346548</x>
+        <y>-70.8383164</y>
       </point>
       <point>
         <x>0.6945</x>
@@ -1160,8 +1145,8 @@
     </rightBound>
     <successor ref="43396"/>
     <successor ref="43398"/>
-    <adjacentLeft ref="43388" drivingDir="opposite"/>
-    <adjacentRight ref="43394" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43388"/>
+    <adjacentRight drivingDir="same" ref="43394"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43862"/>
   </lanelet>
@@ -1197,8 +1182,8 @@
     </rightBound>
     <predecessor ref="43392"/>
     <successor ref="43402"/>
-    <adjacentLeft ref="43384" drivingDir="opposite"/>
-    <adjacentRight ref="43398" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43384"/>
+    <adjacentRight drivingDir="same" ref="43398"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43863"/>
   </lanelet>
@@ -1235,17 +1220,9 @@
     </rightBound>
     <predecessor ref="43396"/>
     <successor ref="43834"/>
-    <adjacentLeft ref="43380" drivingDir="opposite"/>
-    <adjacentRight ref="43404" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43380"/>
+    <adjacentRight drivingDir="same" ref="43404"/>
     <stopLine>
-      <point>
-        <x>-2.2262</x>
-        <y>-8.8887</y>
-      </point>
-      <point>
-        <x>0.7159</x>
-        <y>-9.0584</y>
-      </point>
       <lineMarking>solid</lineMarking>
       <trafficLightRef ref="43918"/>
     </stopLine>
@@ -1285,8 +1262,8 @@
     <predecessor ref="43402"/>
     <successor ref="43634"/>
     <successor ref="43648"/>
-    <adjacentLeft ref="43830" drivingDir="opposite"/>
-    <adjacentRight ref="43836" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43830"/>
+    <adjacentRight drivingDir="same" ref="43836"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43865"/>
   </lanelet>
@@ -1317,8 +1294,8 @@
         <y>15.5826</y>
       </point>
       <point>
-        <x>-0.6894</x>
-        <y>25.5726</y>
+        <x>-0.6894946</x>
+        <y>25.5726802</y>
       </point>
     </leftBound>
     <rightBound>
@@ -1347,13 +1324,13 @@
         <y>15.5307</y>
       </point>
       <point>
-        <x>2.4152</x>
-        <y>25.5186</y>
+        <x>2.4152093</x>
+        <y>25.5186431</y>
       </point>
     </rightBound>
     <predecessor ref="43834"/>
-    <adjacentLeft ref="43630" drivingDir="opposite"/>
-    <adjacentRight ref="43636" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43630"/>
+    <adjacentRight drivingDir="same" ref="43636"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43866"/>
   </lanelet>
@@ -1471,8 +1448,8 @@
     <predecessor ref="43626"/>
     <predecessor ref="43648"/>
     <successor ref="43474"/>
-    <adjacentLeft ref="43610" drivingDir="opposite"/>
-    <adjacentRight ref="43618" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43610"/>
+    <adjacentRight drivingDir="same" ref="43618"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43868"/>
   </lanelet>
@@ -1509,8 +1486,8 @@
     </rightBound>
     <predecessor ref="43616"/>
     <successor ref="43478"/>
-    <adjacentLeft ref="43466" drivingDir="opposite"/>
-    <adjacentRight ref="43476" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43466"/>
+    <adjacentRight drivingDir="same" ref="43476"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43869"/>
   </lanelet>
@@ -1563,8 +1540,8 @@
     </rightBound>
     <predecessor ref="43474"/>
     <successor ref="43482"/>
-    <adjacentLeft ref="43458" drivingDir="opposite"/>
-    <adjacentRight ref="43480" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43458"/>
+    <adjacentRight drivingDir="same" ref="43480"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43870"/>
   </lanelet>
@@ -1583,8 +1560,8 @@
         <y>-1.2866</y>
       </point>
       <point>
-        <x>-76.6766</x>
-        <y>-4.8283</y>
+        <x>-76.67668343</x>
+        <y>-4.82837168</y>
       </point>
       <lineMarking>broad_solid</lineMarking>
     </leftBound>
@@ -1602,14 +1579,14 @@
         <y>1.7041</y>
       </point>
       <point>
-        <x>-78.0485</x>
-        <y>-1.8831</y>
+        <x>-78.04852491</x>
+        <y>-1.88317077</y>
       </point>
       <lineMarking>dashed</lineMarking>
     </rightBound>
     <predecessor ref="43478"/>
-    <adjacentLeft ref="43452" drivingDir="opposite"/>
-    <adjacentRight ref="43484" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43452"/>
+    <adjacentRight drivingDir="same" ref="43484"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43871"/>
   </lanelet>
@@ -1645,8 +1622,8 @@
     </rightBound>
     <predecessor ref="43392"/>
     <successor ref="43404"/>
-    <adjacentLeft ref="43396" drivingDir="same"/>
-    <adjacentRight ref="43400" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43396"/>
+    <adjacentRight drivingDir="same" ref="43400"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43872"/>
   </lanelet>
@@ -1683,17 +1660,9 @@
     </rightBound>
     <predecessor ref="43398"/>
     <successor ref="43836"/>
-    <adjacentLeft ref="43402" drivingDir="same"/>
-    <adjacentRight ref="43406" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43402"/>
+    <adjacentRight drivingDir="same" ref="43406"/>
     <stopLine>
-      <point>
-        <x>0.7159</x>
-        <y>-9.0584</y>
-      </point>
-      <point>
-        <x>3.439</x>
-        <y>-9.2154</y>
-      </point>
       <lineMarking>solid</lineMarking>
       <trafficLightRef ref="43918"/>
     </stopLine>
@@ -1732,8 +1701,8 @@
     </rightBound>
     <predecessor ref="43404"/>
     <successor ref="43636"/>
-    <adjacentLeft ref="43834" drivingDir="same"/>
-    <adjacentRight ref="43838" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43834"/>
+    <adjacentRight drivingDir="same" ref="43838"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43874"/>
   </lanelet>
@@ -1792,8 +1761,8 @@
     </rightBound>
     <predecessor ref="43836"/>
     <successor ref="43596"/>
-    <adjacentLeft ref="43634" drivingDir="same"/>
-    <adjacentRight ref="43638" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43634"/>
+    <adjacentRight drivingDir="same" ref="43638"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43875"/>
   </lanelet>
@@ -1829,8 +1798,8 @@
     <predecessor ref="43636"/>
     <predecessor ref="43650"/>
     <successor ref="43341"/>
-    <adjacentLeft ref="43590" drivingDir="opposite"/>
-    <adjacentRight ref="43598" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43590"/>
+    <adjacentRight drivingDir="same" ref="43598"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43876"/>
   </lanelet>
@@ -1853,8 +1822,8 @@
         <y>71.3581</y>
       </point>
       <point>
-        <x>5.2931</x>
-        <y>81.3436</y>
+        <x>5.293104</x>
+        <y>81.34366</y>
       </point>
       <lineMarking>broad_solid</lineMarking>
     </leftBound>
@@ -1876,22 +1845,22 @@
         <y>71.1642</y>
       </point>
       <point>
-        <x>8.6471</x>
-        <y>81.1465</y>
+        <x>8.647143</x>
+        <y>81.146594</y>
       </point>
       <lineMarking>dashed</lineMarking>
     </rightBound>
     <predecessor ref="43596"/>
-    <adjacentLeft ref="43349" drivingDir="opposite"/>
-    <adjacentRight ref="43205" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43349"/>
+    <adjacentRight drivingDir="same" ref="43205"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43877"/>
   </lanelet>
   <lanelet id="43394">
     <leftBound>
       <point>
-        <x>0.1346</x>
-        <y>-70.8383</y>
+        <x>0.134655</x>
+        <y>-70.838316</y>
       </point>
       <point>
         <x>0.6945</x>
@@ -1909,8 +1878,8 @@
     </leftBound>
     <rightBound>
       <point>
-        <x>3.2452</x>
-        <y>-70.9496</y>
+        <x>3.245226</x>
+        <y>-70.949667</y>
       </point>
       <point>
         <x>3.6997</x>
@@ -1926,7 +1895,7 @@
       </point>
     </rightBound>
     <successor ref="43400"/>
-    <adjacentLeft ref="43392" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43392"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43878"/>
   </lanelet>
@@ -1962,7 +1931,7 @@
     </rightBound>
     <predecessor ref="43394"/>
     <successor ref="43406"/>
-    <adjacentLeft ref="43398" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43398"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43879"/>
   </lanelet>
@@ -1999,16 +1968,8 @@
     <predecessor ref="43400"/>
     <successor ref="43646"/>
     <successor ref="43838"/>
-    <adjacentLeft ref="43404" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43404"/>
     <stopLine>
-      <point>
-        <x>3.439</x>
-        <y>-9.2154</y>
-      </point>
-      <point>
-        <x>6.1179</x>
-        <y>-9.3698</y>
-      </point>
       <lineMarking>solid</lineMarking>
       <trafficLightRef ref="43918"/>
     </stopLine>
@@ -2113,8 +2074,8 @@
         <y>5.3859</y>
       </point>
       <point>
-        <x>63.5186</x>
-        <y>6.0369</y>
+        <x>63.5186829</x>
+        <y>6.036969</y>
       </point>
       <lineMarking>dashed</lineMarking>
     </leftBound>
@@ -2132,14 +2093,14 @@
         <y>1.9317</y>
       </point>
       <point>
-        <x>63.7452</x>
-        <y>2.5827</y>
+        <x>63.7452826</x>
+        <y>2.5827742</y>
       </point>
       <lineMarking>solid</lineMarking>
     </rightBound>
     <predecessor ref="43602"/>
     <predecessor ref="43646"/>
-    <adjacentLeft ref="43486" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43486"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43882"/>
   </lanelet>
@@ -2174,7 +2135,7 @@
     </rightBound>
     <predecessor ref="43406"/>
     <successor ref="43638"/>
-    <adjacentLeft ref="43836" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43836"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43883"/>
   </lanelet>
@@ -2233,7 +2194,7 @@
     </rightBound>
     <predecessor ref="43838"/>
     <successor ref="43598"/>
-    <adjacentLeft ref="43636" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43636"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43884"/>
   </lanelet>
@@ -2268,7 +2229,7 @@
     </rightBound>
     <predecessor ref="43638"/>
     <successor ref="43205"/>
-    <adjacentLeft ref="43596" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43596"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43885"/>
   </lanelet>
@@ -2291,8 +2252,8 @@
         <y>71.1642</y>
       </point>
       <point>
-        <x>8.6471</x>
-        <y>81.1465</y>
+        <x>8.647143</x>
+        <y>81.146594</y>
       </point>
       <lineMarking>dashed</lineMarking>
     </leftBound>
@@ -2314,21 +2275,21 @@
         <y>71.011</y>
       </point>
       <point>
-        <x>11.2537</x>
-        <y>80.9933</y>
+        <x>11.25376</x>
+        <y>80.993393</y>
       </point>
     </rightBound>
     <predecessor ref="43598"/>
     <predecessor ref="43642"/>
-    <adjacentLeft ref="43341" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43341"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43886"/>
   </lanelet>
   <lanelet id="43452">
     <leftBound>
       <point>
-        <x>-76.6766</x>
-        <y>-4.8283</y>
+        <x>-76.67668343</x>
+        <y>-4.82837168</y>
       </point>
       <point>
         <x>-67.3249</x>
@@ -2346,8 +2307,8 @@
     </leftBound>
     <rightBound>
       <point>
-        <x>-75.2811</x>
-        <y>-7.8467</y>
+        <x>-75.28111575</x>
+        <y>-7.84671351</y>
       </point>
       <point>
         <x>-65.9607</x>
@@ -2364,8 +2325,8 @@
       <lineMarking>solid</lineMarking>
     </rightBound>
     <successor ref="43458"/>
-    <adjacentLeft ref="43482" drivingDir="opposite"/>
-    <adjacentRight ref="43454" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43482"/>
+    <adjacentRight drivingDir="same" ref="43454"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43887"/>
   </lanelet>
@@ -2418,8 +2379,8 @@
     </rightBound>
     <predecessor ref="43452"/>
     <successor ref="43466"/>
-    <adjacentLeft ref="43478" drivingDir="opposite"/>
-    <adjacentRight ref="43460" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43478"/>
+    <adjacentRight drivingDir="same" ref="43460"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43888"/>
   </lanelet>
@@ -2456,17 +2417,9 @@
     </rightBound>
     <predecessor ref="43458"/>
     <successor ref="43610"/>
-    <adjacentLeft ref="43474" drivingDir="opposite"/>
-    <adjacentRight ref="43468" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43474"/>
+    <adjacentRight drivingDir="same" ref="43468"/>
     <stopLine>
-      <point>
-        <x>-15.0305</x>
-        <y>9.1526</y>
-      </point>
-      <point>
-        <x>-14.9463</x>
-        <y>6.141</y>
-      </point>
       <lineMarking>solid</lineMarking>
       <trafficLightRef ref="43919"/>
     </stopLine>
@@ -2506,8 +2459,8 @@
     <predecessor ref="43466"/>
     <successor ref="43620"/>
     <successor ref="43650"/>
-    <adjacentLeft ref="43616" drivingDir="opposite"/>
-    <adjacentRight ref="43612" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43616"/>
+    <adjacentRight drivingDir="same" ref="43612"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43890"/>
   </lanelet>
@@ -2538,8 +2491,8 @@
         <y>9.2255</y>
       </point>
       <point>
-        <x>17.1010</x>
-        <y>9.2583</y>
+        <x>17.101046</x>
+        <y>9.258326</y>
       </point>
     </leftBound>
     <rightBound>
@@ -2568,13 +2521,13 @@
         <y>6.2006</y>
       </point>
       <point>
-        <x>16.9411</x>
-        <y>6.2277</y>
+        <x>16.941163</x>
+        <y>6.227704</y>
       </point>
     </rightBound>
     <predecessor ref="43610"/>
-    <adjacentLeft ref="43626" drivingDir="opposite"/>
-    <adjacentRight ref="43622" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43626"/>
+    <adjacentRight drivingDir="same" ref="43622"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43891"/>
   </lanelet>
@@ -2663,8 +2616,8 @@
   <lanelet id="43454">
     <leftBound>
       <point>
-        <x>-75.2811</x>
-        <y>-7.8467</y>
+        <x>-75.28111575</x>
+        <y>-7.84671351</y>
       </point>
       <point>
         <x>-65.9607</x>
@@ -2682,8 +2635,8 @@
     </leftBound>
     <rightBound>
       <point>
-        <x>-73.6256</x>
-        <y>-11.4193</y>
+        <x>-73.6256658</x>
+        <y>-11.41934315</y>
       </point>
       <point>
         <x>-64.3279</x>
@@ -2700,8 +2653,8 @@
       <lineMarking>dashed</lineMarking>
     </rightBound>
     <successor ref="43460"/>
-    <adjacentLeft ref="43452" drivingDir="same"/>
-    <adjacentRight ref="43456" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43452"/>
+    <adjacentRight drivingDir="same" ref="43456"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43893"/>
   </lanelet>
@@ -2754,8 +2707,8 @@
     </rightBound>
     <predecessor ref="43454"/>
     <successor ref="43468"/>
-    <adjacentLeft ref="43458" drivingDir="same"/>
-    <adjacentRight ref="43462" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43458"/>
+    <adjacentRight drivingDir="same" ref="43462"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43894"/>
   </lanelet>
@@ -2792,17 +2745,9 @@
     </rightBound>
     <predecessor ref="43460"/>
     <successor ref="43612"/>
-    <adjacentLeft ref="43466" drivingDir="same"/>
-    <adjacentRight ref="43470" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43466"/>
+    <adjacentRight drivingDir="same" ref="43470"/>
     <stopLine>
-      <point>
-        <x>-14.9463</x>
-        <y>6.141</y>
-      </point>
-      <point>
-        <x>-14.8529</x>
-        <y>2.8002</y>
-      </point>
       <lineMarking>solid</lineMarking>
       <trafficLightRef ref="43919"/>
     </stopLine>
@@ -2842,8 +2787,8 @@
     </rightBound>
     <predecessor ref="43468"/>
     <successor ref="43622"/>
-    <adjacentLeft ref="43610" drivingDir="same"/>
-    <adjacentRight ref="43614" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43610"/>
+    <adjacentRight drivingDir="same" ref="43614"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43896"/>
   </lanelet>
@@ -2903,16 +2848,16 @@
     </rightBound>
     <predecessor ref="43612"/>
     <successor ref="43600"/>
-    <adjacentLeft ref="43620" drivingDir="same"/>
-    <adjacentRight ref="43624" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43620"/>
+    <adjacentRight drivingDir="same" ref="43624"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43897"/>
   </lanelet>
   <lanelet id="43456">
     <leftBound>
       <point>
-        <x>-73.6256</x>
-        <y>-11.4193</y>
+        <x>-73.6256658</x>
+        <y>-11.41934315</y>
       </point>
       <point>
         <x>-64.3279</x>
@@ -2930,8 +2875,8 @@
     </leftBound>
     <rightBound>
       <point>
-        <x>-72.2902</x>
-        <y>-14.2791</y>
+        <x>-72.29023761</x>
+        <y>-14.27915811</y>
       </point>
       <point>
         <x>-62.956</x>
@@ -2948,7 +2893,7 @@
     </rightBound>
     <successor ref="43462"/>
     <successor ref="43464"/>
-    <adjacentLeft ref="43454" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43454"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43898"/>
   </lanelet>
@@ -3000,8 +2945,8 @@
     </rightBound>
     <predecessor ref="43456"/>
     <successor ref="43470"/>
-    <adjacentLeft ref="43460" drivingDir="same"/>
-    <adjacentRight ref="43464" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43460"/>
+    <adjacentRight drivingDir="same" ref="43464"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43899"/>
   </lanelet>
@@ -3037,17 +2982,9 @@
     </rightBound>
     <predecessor ref="43462"/>
     <successor ref="43614"/>
-    <adjacentLeft ref="43468" drivingDir="same"/>
-    <adjacentRight ref="43472" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43468"/>
+    <adjacentRight drivingDir="same" ref="43472"/>
     <stopLine>
-      <point>
-        <x>-14.8529</x>
-        <y>2.8002</y>
-      </point>
-      <point>
-        <x>-14.7524</x>
-        <y>-0.7911</y>
-      </point>
       <lineMarking>solid</lineMarking>
       <trafficLightRef ref="43919"/>
     </stopLine>
@@ -3087,7 +3024,7 @@
     </rightBound>
     <predecessor ref="43470"/>
     <successor ref="43624"/>
-    <adjacentLeft ref="43612" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43612"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43901"/>
   </lanelet>
@@ -3147,7 +3084,7 @@
     </rightBound>
     <predecessor ref="43614"/>
     <successor ref="43602"/>
-    <adjacentLeft ref="43622" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43622"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43902"/>
   </lanelet>
@@ -3183,7 +3120,7 @@
     </rightBound>
     <predecessor ref="43624"/>
     <successor ref="43488"/>
-    <adjacentLeft ref="43600" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43600"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43903"/>
   </lanelet>
@@ -3234,7 +3171,7 @@
     </rightBound>
     <predecessor ref="43456"/>
     <successor ref="43472"/>
-    <adjacentLeft ref="43462" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43462"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43904"/>
   </lanelet>
@@ -3270,16 +3207,8 @@
     </rightBound>
     <predecessor ref="43464"/>
     <successor ref="43644"/>
-    <adjacentLeft ref="43470" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43470"/>
     <stopLine>
-      <point>
-        <x>-14.7524</x>
-        <y>-0.7911</y>
-      </point>
-      <point>
-        <x>-14.6553</x>
-        <y>-4.2652</y>
-      </point>
       <lineMarking>solid</lineMarking>
       <trafficLightRef ref="43919"/>
     </stopLine>
@@ -3372,8 +3301,8 @@
   <lanelet id="43490">
     <leftBound>
       <point>
-        <x>63.3041</x>
-        <y>9.3057</y>
+        <x>63.3041811</x>
+        <y>9.3057974</y>
       </point>
       <point>
         <x>53.3254</x>
@@ -3391,8 +3320,8 @@
     </leftBound>
     <rightBound>
       <point>
-        <x>63.1053</x>
-        <y>12.3348</y>
+        <x>63.1053819</x>
+        <y>12.3348852</y>
       </point>
       <point>
         <x>53.1266</x>
@@ -3409,17 +3338,9 @@
       <lineMarking>solid</lineMarking>
     </rightBound>
     <successor ref="43604"/>
-    <adjacentLeft ref="43486" drivingDir="opposite"/>
-    <adjacentRight ref="43492" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43486"/>
+    <adjacentRight drivingDir="same" ref="43492"/>
     <stopLine>
-      <point>
-        <x>16.0867</x>
-        <y>6.2251</y>
-      </point>
-      <point>
-        <x>15.888</x>
-        <y>9.2542</y>
-      </point>
       <lineMarking>solid</lineMarking>
       <trafficLightRef ref="43921"/>
     </stopLine>
@@ -3458,8 +3379,8 @@
     </rightBound>
     <predecessor ref="43490"/>
     <successor ref="43654"/>
-    <adjacentLeft ref="43600" drivingDir="opposite"/>
-    <adjacentRight ref="43606" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43600"/>
+    <adjacentRight drivingDir="same" ref="43606"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43908"/>
   </lanelet>
@@ -3548,8 +3469,8 @@
   <lanelet id="43492">
     <leftBound>
       <point>
-        <x>63.1053</x>
-        <y>12.3348</y>
+        <x>63.1053819</x>
+        <y>12.3348852</y>
       </point>
       <point>
         <x>53.1266</x>
@@ -3567,8 +3488,8 @@
     </leftBound>
     <rightBound>
       <point>
-        <x>62.9065</x>
-        <y>15.3642</y>
+        <x>62.9065862</x>
+        <y>15.3642194</y>
       </point>
       <point>
         <x>52.9278</x>
@@ -3585,17 +3506,9 @@
       <lineMarking>dashed</lineMarking>
     </rightBound>
     <successor ref="43606"/>
-    <adjacentLeft ref="43490" drivingDir="same"/>
-    <adjacentRight ref="43494" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43490"/>
+    <adjacentRight drivingDir="same" ref="43494"/>
     <stopLine>
-      <point>
-        <x>15.888</x>
-        <y>9.2542</y>
-      </point>
-      <point>
-        <x>15.6892</x>
-        <y>12.2836</y>
-      </point>
       <lineMarking>solid</lineMarking>
       <trafficLightRef ref="43921"/>
     </stopLine>
@@ -3634,8 +3547,8 @@
     </rightBound>
     <predecessor ref="43492"/>
     <successor ref="43626"/>
-    <adjacentLeft ref="43604" drivingDir="same"/>
-    <adjacentRight ref="43608" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43604"/>
+    <adjacentRight drivingDir="same" ref="43608"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43911"/>
   </lanelet>
@@ -3694,16 +3607,16 @@
     </rightBound>
     <predecessor ref="43606"/>
     <successor ref="43616"/>
-    <adjacentLeft ref="43620" drivingDir="opposite"/>
-    <adjacentRight ref="43628" drivingDir="same"/>
+    <adjacentLeft drivingDir="opposite" ref="43620"/>
+    <adjacentRight drivingDir="same" ref="43628"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43912"/>
   </lanelet>
   <lanelet id="43494">
     <leftBound>
       <point>
-        <x>62.9065</x>
-        <y>15.3642</y>
+        <x>62.9065862</x>
+        <y>15.3642194</y>
       </point>
       <point>
         <x>52.9278</x>
@@ -3721,8 +3634,8 @@
     </leftBound>
     <rightBound>
       <point>
-        <x>62.7086</x>
-        <y>18.3811</y>
+        <x>62.708684</x>
+        <y>18.3811537</y>
       </point>
       <point>
         <x>52.7299</x>
@@ -3740,16 +3653,8 @@
     </rightBound>
     <successor ref="43608"/>
     <successor ref="43642"/>
-    <adjacentLeft ref="43492" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43492"/>
     <stopLine>
-      <point>
-        <x>15.6892</x>
-        <y>12.2836</y>
-      </point>
-      <point>
-        <x>15.4913</x>
-        <y>15.3005</y>
-      </point>
       <lineMarking>solid</lineMarking>
       <trafficLightRef ref="43921"/>
     </stopLine>
@@ -3788,7 +3693,7 @@
     </rightBound>
     <predecessor ref="43494"/>
     <successor ref="43628"/>
-    <adjacentLeft ref="43606" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43606"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43914"/>
   </lanelet>
@@ -3847,7 +3752,7 @@
     </rightBound>
     <predecessor ref="43608"/>
     <successor ref="43618"/>
-    <adjacentLeft ref="43626" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43626"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43915"/>
   </lanelet>
@@ -3882,7 +3787,7 @@
     </rightBound>
     <predecessor ref="43628"/>
     <successor ref="43476"/>
-    <adjacentLeft ref="43616" drivingDir="same"/>
+    <adjacentLeft drivingDir="same" ref="43616"/>
     <laneletType>urban</laneletType>
     <trafficSignRef ref="43916"/>
   </lanelet>
@@ -3973,1027 +3878,553 @@
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-3.2472</x>
-        <y>81.8459</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43840">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-6.4863</x>
-        <y>26.7554</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43841">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-1.1348</x>
-        <y>15.5826</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43842">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>6.5821</x>
-        <y>-0.5908</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43843">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>16.5279</x>
-        <y>-0.4979</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43844">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-3.2472</x>
-        <y>81.8459</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43845">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-6.4863</x>
-        <y>26.7554</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43846">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-7.1407</x>
-        <y>15.6845</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43847">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-8.1109</x>
-        <y>-0.728</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43848">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-8.5134</x>
-        <y>-8.5262</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43849">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-9.1443</x>
-        <y>-33.5084</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43850">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-8.5316</x>
-        <y>-53.1822</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43851">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-3.2472</x>
-        <y>81.8459</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43852">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-6.4863</x>
-        <y>26.7554</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43853">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-7.1407</x>
-        <y>15.6845</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43854">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-8.1109</x>
-        <y>-0.728</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43855">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-8.5134</x>
-        <y>-8.5262</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43856">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-9.1443</x>
-        <y>-33.5084</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43857">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-8.5316</x>
-        <y>-53.1822</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43858">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-6.4863</x>
-        <y>26.7554</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43859">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-15.217</x>
-        <y>15.8216</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43860">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-28.1274</x>
-        <y>15.1843</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43861">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-56.9514</x>
-        <y>9.8128</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43862">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>3.2452</x>
-        <y>-70.9496</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43863">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>4.0318</x>
-        <y>-53.6581</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43864">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>4.9596</x>
-        <y>-33.8881</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43865">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>6.1179</x>
-        <y>-9.3698</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43866">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>6.5821</x>
-        <y>-0.5908</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43867">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>1.1296</x>
-        <y>-0.6417</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43868">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-7.1407</x>
-        <y>15.6845</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43869">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-15.217</x>
-        <y>15.8216</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43870">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-28.1274</x>
-        <y>15.1843</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43871">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-56.9514</x>
-        <y>9.8128</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43872">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>4.0318</x>
-        <y>-53.6581</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43873">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>4.9596</x>
-        <y>-33.8881</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43874">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>6.1179</x>
-        <y>-9.3698</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43875">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>6.5821</x>
-        <y>-0.5908</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43876">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>7.4295</x>
-        <y>15.4373</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43877">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>8.0051</x>
-        <y>26.3228</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43878">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>3.2452</x>
-        <y>-70.9496</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43879">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>4.0318</x>
-        <y>-53.6581</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43880">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>4.9596</x>
-        <y>-33.8881</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43881">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>6.1179</x>
-        <y>-9.3698</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43882">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>16.5279</x>
-        <y>-0.4979</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43883">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>6.1179</x>
-        <y>-9.3698</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43884">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>6.5821</x>
-        <y>-0.5908</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43885">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>7.4295</x>
-        <y>15.4373</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43886">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>15.6464</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>8.0051</x>
-        <y>26.3228</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43887">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-72.2902</x>
-        <y>-14.2791</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43888">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-50.893</x>
-        <y>-6.0549</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43889">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-26.4098</x>
-        <y>-4.7216</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43890">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-14.7524</x>
-        <y>-0.7911</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43891">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-8.1109</x>
-        <y>-0.728</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43892">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-7.7037</x>
-        <y>6.1613</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43893">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-72.2902</x>
-        <y>-14.2791</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43894">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-50.893</x>
-        <y>-6.0549</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43895">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-26.4098</x>
-        <y>-4.7216</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43896">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-14.7524</x>
-        <y>-0.7911</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43897">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-8.1109</x>
-        <y>-0.728</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43898">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-72.2902</x>
-        <y>-14.2791</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43899">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-50.893</x>
-        <y>-6.0549</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43900">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-26.4098</x>
-        <y>-4.7216</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43901">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-14.7524</x>
-        <y>-0.7911</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43902">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-8.1109</x>
-        <y>-0.728</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43903">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>6.5821</x>
-        <y>-0.5908</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43904">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-50.893</x>
-        <y>-6.0549</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43905">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-26.4098</x>
-        <y>-4.7216</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43906">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-14.6553</x>
-        <y>-4.2652</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43907">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>62.7086</x>
-        <y>18.3811</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43908">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>15.4913</x>
-        <y>15.3005</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43909">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>7.1011</x>
-        <y>9.2255</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43910">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>62.7086</x>
-        <y>18.3811</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43911">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>15.4913</x>
-        <y>15.3005</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43912">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>7.4295</x>
-        <y>15.4373</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43913">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>62.7086</x>
-        <y>18.3811</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43914">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>15.4913</x>
-        <y>15.3005</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43915">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>7.4295</x>
-        <y>15.4373</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43916">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>-7.1407</x>
-        <y>15.6845</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficSign id="43917">
     <trafficSignElement>
       <trafficSignID>R2-1</trafficSignID>
       <additionalValue>11.176</additionalValue>
     </trafficSignElement>
-    <position>
-      <point>
-        <x>15.4913</x>
-        <y>15.3005</y>
-      </point>
-    </position>
-    <virtual>false</virtual>
+    <virtual>true</virtual>
   </trafficSign>
   <trafficLight id="43918">
     <cycle>
@@ -5013,10 +4444,11 @@
     </cycle>
     <position>
       <point>
-        <x>13.6178</x>
-        <y>-13.3697</y>
+        <x>13.617899999999999</x>
+        <y>-13.369799999999998</y>
       </point>
     </position>
+    <direction>all</direction>
     <active>true</active>
   </trafficLight>
   <trafficLight id="43919">
@@ -5038,9 +4470,10 @@
     <position>
       <point>
         <x>-16.3821</x>
-        <y>-13.3697</y>
+        <y>-13.369799999999998</y>
       </point>
     </position>
+    <direction>all</direction>
     <active>true</active>
   </trafficLight>
   <trafficLight id="43920">
@@ -5061,10 +4494,11 @@
     </cycle>
     <position>
       <point>
-        <x>-11.3821</x>
-        <y>26.6302</y>
+        <x>-11.382100000000001</x>
+        <y>26.630200000000002</y>
       </point>
     </position>
+    <direction>all</direction>
     <active>true</active>
   </trafficLight>
   <trafficLight id="43921">
@@ -5085,10 +4519,11 @@
     </cycle>
     <position>
       <point>
-        <x>14.6178</x>
-        <y>16.6302</y>
+        <x>14.617899999999999</x>
+        <y>16.630200000000002</y>
       </point>
     </position>
+    <direction>all</direction>
     <active>true</active>
   </trafficLight>
   <intersection id="43922">
@@ -5096,48 +4531,44 @@
       <incomingLanelet ref="43402"/>
       <incomingLanelet ref="43404"/>
       <incomingLanelet ref="43406"/>
-      <outgoingsRight ref="43646"/>
-      <outgoingsStraight ref="43836"/>
-      <outgoingsStraight ref="43838"/>
-      <outgoingsLeft ref="43834"/>
-      <isLeftOf ref="43924"/>
+      <successorsRight ref="43646"/>
+      <successorsStraight ref="43836"/>
+      <successorsStraight ref="43838"/>
+      <successorsLeft ref="43834"/>
+      <isLeftOf ref="43926"/>
     </incoming>
     <incoming id="43924">
       <incomingLanelet ref="43472"/>
       <incomingLanelet ref="43466"/>
       <incomingLanelet ref="43468"/>
       <incomingLanelet ref="43470"/>
-      <outgoingsRight ref="43644"/>
-      <outgoingsStraight ref="43612"/>
-      <outgoingsStraight ref="43614"/>
-      <outgoingsLeft ref="43610"/>
-      <isLeftOf ref="43925"/>
+      <successorsRight ref="43644"/>
+      <successorsStraight ref="43612"/>
+      <successorsStraight ref="43614"/>
+      <successorsLeft ref="43610"/>
+      <isLeftOf ref="43923"/>
     </incoming>
     <incoming id="43925">
       <incomingLanelet ref="43208"/>
       <incomingLanelet ref="43349"/>
       <incomingLanelet ref="43343"/>
-      <outgoingsRight ref="43640"/>
-      <outgoingsStraight ref="43592"/>
-      <outgoingsStraight ref="43594"/>
-      <outgoingsLeft ref="43590"/>
-      <isLeftOf ref="43926"/>
+      <successorsRight ref="43640"/>
+      <successorsStraight ref="43592"/>
+      <successorsStraight ref="43594"/>
+      <successorsLeft ref="43590"/>
+      <isLeftOf ref="43924"/>
     </incoming>
     <incoming id="43926">
       <incomingLanelet ref="43490"/>
       <incomingLanelet ref="43492"/>
       <incomingLanelet ref="43494"/>
-      <outgoingsRight ref="43642"/>
-      <outgoingsStraight ref="43608"/>
-      <outgoingsStraight ref="43606"/>
-      <outgoingsLeft ref="43604"/>
-      <isLeftOf ref="43923"/>
+      <successorsRight ref="43642"/>
+      <successorsStraight ref="43608"/>
+      <successorsStraight ref="43606"/>
+      <successorsLeft ref="43604"/>
+      <isLeftOf ref="43925"/>
     </incoming>
   </intersection>
-  <scenarioTags>
-    <critical/>
-    <interstate/>
-  </scenarioTags>
   <dynamicObstacle id="507">
     <type>car</type>
     <shape>
@@ -5275,7 +4706,7 @@
           <exact>11.5397</exact>
         </velocity>
         <acceleration>
-          <exact>0.9022</exact>
+          <exact>0.90221</exact>
         </acceleration>
       </state>
       <state>
@@ -5466,7 +4897,7 @@
           <exact>9.1897</exact>
         </velocity>
         <acceleration>
-          <exact>-0.6370</exact>
+          <exact>-0.63703</exact>
         </acceleration>
       </state>
       <state>
@@ -5486,7 +4917,7 @@
           <exact>9.1166</exact>
         </velocity>
         <acceleration>
-          <exact>0.8930</exact>
+          <exact>0.89306</exact>
         </acceleration>
       </state>
       <state>
@@ -5506,7 +4937,7 @@
           <exact>9.1714</exact>
         </velocity>
         <acceleration>
-          <exact>0.8991</exact>
+          <exact>0.89916</exact>
         </acceleration>
       </state>
       <state>
@@ -5626,7 +5057,7 @@
           <exact>11.1008</exact>
         </velocity>
         <acceleration>
-          <exact>0.5913</exact>
+          <exact>0.59131</exact>
         </acceleration>
       </state>
       <state>
@@ -5646,7 +5077,7 @@
           <exact>11.1587</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0609</exact>
+          <exact>-0.06096</exact>
         </acceleration>
       </state>
       <state>
@@ -5666,7 +5097,7 @@
           <exact>11.1496</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0853</exact>
+          <exact>-0.085344</exact>
         </acceleration>
       </state>
       <state>
@@ -5766,7 +5197,7 @@
           <exact>11.1404</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0853</exact>
+          <exact>-0.085344</exact>
         </acceleration>
       </state>
       <state>
@@ -5786,7 +5217,7 @@
           <exact>11.1343</exact>
         </velocity>
         <acceleration>
-          <exact>-0.1158</exact>
+          <exact>-0.11582</exact>
         </acceleration>
       </state>
       <state>
@@ -5806,7 +5237,7 @@
           <exact>11.1465</exact>
         </velocity>
         <acceleration>
-          <exact>0.4450</exact>
+          <exact>0.44501</exact>
         </acceleration>
       </state>
       <state>
@@ -5926,7 +5357,7 @@
           <exact>11.1404</exact>
         </velocity>
         <acceleration>
-          <exact>0.9540</exact>
+          <exact>0.95402</exact>
         </acceleration>
       </state>
       <state>
@@ -6036,7 +5467,7 @@
         <exact>6.919</exact>
       </velocity>
       <acceleration>
-        <exact>-0.2804</exact>
+        <exact>-0.28042</exact>
       </acceleration>
     </initialState>
     <trajectory>
@@ -6594,7 +6025,7 @@
           <exact>28</exact>
         </time>
         <velocity>
-          <exact>0.4236</exact>
+          <exact>0.42367</exact>
         </velocity>
         <acceleration>
           <exact>-3.0541</exact>
@@ -6614,10 +6045,10 @@
           <exact>29</exact>
         </time>
         <velocity>
-          <exact>0.5151</exact>
+          <exact>0.51511</exact>
         </velocity>
         <acceleration>
-          <exact>-0.4114</exact>
+          <exact>-0.41148</exact>
         </acceleration>
       </state>
       <state>
@@ -6634,7 +6065,7 @@
           <exact>30</exact>
         </time>
         <velocity>
-          <exact>0.5364</exact>
+          <exact>0.53645</exact>
         </velocity>
         <acceleration>
           <exact>3.3284</exact>
@@ -6697,7 +6128,7 @@
           <exact>1.8776</exact>
         </velocity>
         <acceleration>
-          <exact>-0.6309</exact>
+          <exact>-0.63094</exact>
         </acceleration>
       </state>
       <state>
@@ -6754,7 +6185,7 @@
           <exact>36</exact>
         </time>
         <velocity>
-          <exact>0.9265</exact>
+          <exact>0.92659</exact>
         </velocity>
         <acceleration>
           <exact>-2.097</exact>
@@ -6774,10 +6205,10 @@
           <exact>37</exact>
         </time>
         <velocity>
-          <exact>0.7863</exact>
+          <exact>0.78638</exact>
         </velocity>
         <acceleration>
-          <exact>-0.4846</exact>
+          <exact>-0.48463</exact>
         </acceleration>
       </state>
       <state>
@@ -6797,7 +6228,7 @@
           <exact>0.7559</exact>
         </velocity>
         <acceleration>
-          <exact>0.1005</exact>
+          <exact>0.10058</exact>
         </acceleration>
       </state>
       <state>
@@ -6814,10 +6245,10 @@
           <exact>39</exact>
         </time>
         <velocity>
-          <exact>0.7345</exact>
+          <exact>0.73457</exact>
         </velocity>
         <acceleration>
-          <exact>-0.3992</exact>
+          <exact>-0.39929</exact>
         </acceleration>
       </state>
       <state>
@@ -6834,10 +6265,10 @@
           <exact>40</exact>
         </time>
         <velocity>
-          <exact>0.6736</exact>
+          <exact>0.67361</exact>
         </velocity>
         <acceleration>
-          <exact>-0.8808</exact>
+          <exact>-0.88087</exact>
         </acceleration>
       </state>
       <state>
@@ -6854,10 +6285,10 @@
           <exact>41</exact>
         </time>
         <velocity>
-          <exact>0.5974</exact>
+          <exact>0.59741</exact>
         </velocity>
         <acceleration>
-          <exact>-0.8808</exact>
+          <exact>-0.88087</exact>
         </acceleration>
       </state>
       <state>
@@ -6894,7 +6325,7 @@
           <exact>43</exact>
         </time>
         <velocity>
-          <exact>0.5029</exact>
+          <exact>0.50292</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -6914,7 +6345,7 @@
           <exact>44</exact>
         </time>
         <velocity>
-          <exact>0.5120</exact>
+          <exact>0.51206</exact>
         </velocity>
         <acceleration>
           <exact>0.1463</exact>
@@ -6934,10 +6365,10 @@
           <exact>45</exact>
         </time>
         <velocity>
-          <exact>0.5181</exact>
+          <exact>0.51816</exact>
         </velocity>
         <acceleration>
-          <exact>0.0701</exact>
+          <exact>0.070104</exact>
         </acceleration>
       </state>
       <state>
@@ -6954,7 +6385,7 @@
           <exact>46</exact>
         </time>
         <velocity>
-          <exact>0.4937</exact>
+          <exact>0.49378</exact>
         </velocity>
         <acceleration>
           <exact>-0.4633</exact>
@@ -6974,7 +6405,7 @@
           <exact>47</exact>
         </time>
         <velocity>
-          <exact>0.4053</exact>
+          <exact>0.40538</exact>
         </velocity>
         <acceleration>
           <exact>-1.271</exact>
@@ -6994,7 +6425,7 @@
           <exact>48</exact>
         </time>
         <velocity>
-          <exact>0.2651</exact>
+          <exact>0.26518</exact>
         </velocity>
         <acceleration>
           <exact>-1.6825</exact>
@@ -7014,7 +6445,7 @@
           <exact>49</exact>
         </time>
         <velocity>
-          <exact>0.0914</exact>
+          <exact>0.09144</exact>
         </velocity>
         <acceleration>
           <exact>-1.8136</exact>
@@ -7034,7 +6465,7 @@
           <exact>50</exact>
         </time>
         <velocity>
-          <exact>0.0975</exact>
+          <exact>0.097536</exact>
         </velocity>
         <acceleration>
           <exact>1.8898</exact>
@@ -7054,7 +6485,7 @@
           <exact>51</exact>
         </time>
         <velocity>
-          <exact>0.2773</exact>
+          <exact>0.27737</exact>
         </velocity>
         <acceleration>
           <exact>1.7953</exact>
@@ -7074,10 +6505,10 @@
           <exact>52</exact>
         </time>
         <velocity>
-          <exact>0.3901</exact>
+          <exact>0.39014</exact>
         </velocity>
         <acceleration>
-          <exact>0.7955</exact>
+          <exact>0.79553</exact>
         </acceleration>
       </state>
       <state>
@@ -7094,7 +6525,7 @@
           <exact>53</exact>
         </time>
         <velocity>
-          <exact>0.3535</exact>
+          <exact>0.35357</exact>
         </velocity>
         <acceleration>
           <exact>-1.4265</exact>
@@ -7114,7 +6545,7 @@
           <exact>54</exact>
         </time>
         <velocity>
-          <exact>0.1371</exact>
+          <exact>0.13716</exact>
         </velocity>
         <acceleration>
           <exact>-3.1303</exact>
@@ -7134,7 +6565,7 @@
           <exact>55</exact>
         </time>
         <velocity>
-          <exact>0.1219</exact>
+          <exact>0.12192</exact>
         </velocity>
         <acceleration>
           <exact>2.6731</exact>
@@ -7154,10 +6585,10 @@
           <exact>56</exact>
         </time>
         <velocity>
-          <exact>0.2682</exact>
+          <exact>0.26822</exact>
         </velocity>
         <acceleration>
-          <exact>0.3992</exact>
+          <exact>0.39929</exact>
         </acceleration>
       </state>
       <state>
@@ -7174,7 +6605,7 @@
           <exact>57</exact>
         </time>
         <velocity>
-          <exact>0.2103</exact>
+          <exact>0.21031</exact>
         </velocity>
         <acceleration>
           <exact>-1.8318</exact>
@@ -7194,7 +6625,7 @@
           <exact>58</exact>
         </time>
         <velocity>
-          <exact>0.0487</exact>
+          <exact>0.048768</exact>
         </velocity>
         <acceleration>
           <exact>-1.8654</exact>
@@ -7214,10 +6645,10 @@
           <exact>59</exact>
         </time>
         <velocity>
-          <exact>0.0335</exact>
+          <exact>0.033528</exact>
         </velocity>
         <acceleration>
-          <exact>0.0731</exact>
+          <exact>0.073152</exact>
         </acceleration>
       </state>
       <state>
@@ -7234,7 +6665,7 @@
           <exact>60</exact>
         </time>
         <velocity>
-          <exact>0.0152</exact>
+          <exact>0.01524</exact>
         </velocity>
         <acceleration>
           <exact>1.4326</exact>
@@ -7328,7 +6759,7 @@
           <exact>14.158</exact>
         </velocity>
         <acceleration>
-          <exact>-0.1219</exact>
+          <exact>-0.12192</exact>
         </acceleration>
       </state>
       <state>
@@ -7648,7 +7079,7 @@
           <exact>6.6142</exact>
         </velocity>
         <acceleration>
-          <exact>0.0579</exact>
+          <exact>0.057912</exact>
         </acceleration>
       </state>
       <state>
@@ -7908,7 +7339,7 @@
           <exact>6.6233</exact>
         </velocity>
         <acceleration>
-          <exact>0.1097</exact>
+          <exact>0.10973</exact>
         </acceleration>
       </state>
       <state>
@@ -7928,7 +7359,7 @@
           <exact>6.5776</exact>
         </velocity>
         <acceleration>
-          <exact>-0.8107</exact>
+          <exact>-0.81077</exact>
         </acceleration>
       </state>
       <state>
@@ -8065,7 +7496,7 @@
           <exact>40</exact>
         </time>
         <velocity>
-          <exact>0.4846</exact>
+          <exact>0.48463</exact>
         </velocity>
         <acceleration>
           <exact>-3.4199</exact>
@@ -8085,7 +7516,7 @@
           <exact>41</exact>
         </time>
         <velocity>
-          <exact>0.2133</exact>
+          <exact>0.21336</exact>
         </velocity>
         <acceleration>
           <exact>-0.8321</exact>
@@ -8105,10 +7536,10 @@
           <exact>42</exact>
         </time>
         <velocity>
-          <exact>0.1615</exact>
+          <exact>0.16154</exact>
         </velocity>
         <acceleration>
-          <exact>0.1219</exact>
+          <exact>0.12192</exact>
         </acceleration>
       </state>
       <state>
@@ -8125,7 +7556,7 @@
           <exact>43</exact>
         </time>
         <velocity>
-          <exact>0.1706</exact>
+          <exact>0.17069</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -8145,7 +7576,7 @@
           <exact>44</exact>
         </time>
         <velocity>
-          <exact>0.1706</exact>
+          <exact>0.17069</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -8165,7 +7596,7 @@
           <exact>45</exact>
         </time>
         <velocity>
-          <exact>0.1706</exact>
+          <exact>0.17069</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -8185,7 +7616,7 @@
           <exact>46</exact>
         </time>
         <velocity>
-          <exact>0.1706</exact>
+          <exact>0.17069</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -8205,7 +7636,7 @@
           <exact>47</exact>
         </time>
         <velocity>
-          <exact>0.1706</exact>
+          <exact>0.17069</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -8225,7 +7656,7 @@
           <exact>48</exact>
         </time>
         <velocity>
-          <exact>0.3840</exact>
+          <exact>0.38405</exact>
         </velocity>
         <acceleration>
           <exact>3.4107</exact>
@@ -8245,7 +7676,7 @@
           <exact>49</exact>
         </time>
         <velocity>
-          <exact>0.8869</exact>
+          <exact>0.88697</exact>
         </velocity>
         <acceleration>
           <exact>3.4016</exact>
@@ -8305,7 +7736,7 @@
           <exact>52</exact>
         </time>
         <velocity>
-          <exact>0.8839</exact>
+          <exact>0.88392</exact>
         </velocity>
         <acceleration>
           <exact>-3.3985</exact>
@@ -8345,7 +7776,7 @@
           <exact>54</exact>
         </time>
         <velocity>
-          <exact>0.1706</exact>
+          <exact>0.17069</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -8365,7 +7796,7 @@
           <exact>55</exact>
         </time>
         <velocity>
-          <exact>0.1706</exact>
+          <exact>0.17069</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -8385,7 +7816,7 @@
           <exact>56</exact>
         </time>
         <velocity>
-          <exact>0.1706</exact>
+          <exact>0.17069</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -8405,7 +7836,7 @@
           <exact>57</exact>
         </time>
         <velocity>
-          <exact>0.1706</exact>
+          <exact>0.17069</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -8425,7 +7856,7 @@
           <exact>58</exact>
         </time>
         <velocity>
-          <exact>0.1706</exact>
+          <exact>0.17069</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -8445,7 +7876,7 @@
           <exact>59</exact>
         </time>
         <velocity>
-          <exact>0.1706</exact>
+          <exact>0.17069</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -8465,7 +7896,7 @@
           <exact>60</exact>
         </time>
         <velocity>
-          <exact>0.1706</exact>
+          <exact>0.17069</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -8498,7 +7929,7 @@
         <exact>14.6975</exact>
       </velocity>
       <acceleration>
-        <exact>0.1371</exact>
+        <exact>0.13716</exact>
       </acceleration>
     </initialState>
     <trajectory>
@@ -8519,7 +7950,7 @@
           <exact>14.6578</exact>
         </velocity>
         <acceleration>
-          <exact>-0.7132</exact>
+          <exact>-0.71323</exact>
         </acceleration>
       </state>
       <state>
@@ -9079,7 +8510,7 @@
           <exact>6.5806</exact>
         </velocity>
         <acceleration>
-          <exact>-0.2956</exact>
+          <exact>-0.29566</exact>
         </acceleration>
       </state>
       <state>
@@ -9099,7 +8530,7 @@
           <exact>6.5684</exact>
         </velocity>
         <acceleration>
-          <exact>0.1920</exact>
+          <exact>0.19202</exact>
         </acceleration>
       </state>
       <state>
@@ -9199,7 +8630,7 @@
           <exact>6.5684</exact>
         </velocity>
         <acceleration>
-          <exact>-0.1798</exact>
+          <exact>-0.17983</exact>
         </acceleration>
       </state>
       <state>
@@ -9219,7 +8650,7 @@
           <exact>6.5959</exact>
         </velocity>
         <acceleration>
-          <exact>0.4907</exact>
+          <exact>0.49073</exact>
         </acceleration>
       </state>
       <state>
@@ -9239,7 +8670,7 @@
           <exact>6.6477</exact>
         </velocity>
         <acceleration>
-          <exact>0.8199</exact>
+          <exact>0.81991</exact>
         </acceleration>
       </state>
       <state>
@@ -9499,7 +8930,7 @@
           <exact>1.8105</exact>
         </velocity>
         <acceleration>
-          <exact>-0.2133</exact>
+          <exact>-0.21336</exact>
         </acceleration>
       </state>
       <state>
@@ -9556,7 +8987,7 @@
           <exact>53</exact>
         </time>
         <velocity>
-          <exact>0.7985</exact>
+          <exact>0.79858</exact>
         </velocity>
         <acceleration>
           <exact>-3.4016</exact>
@@ -9576,7 +9007,7 @@
           <exact>54</exact>
         </time>
         <velocity>
-          <exact>0.4968</exact>
+          <exact>0.49682</exact>
         </velocity>
         <acceleration>
           <exact>-1.9568</exact>
@@ -9596,10 +9027,10 @@
           <exact>55</exact>
         </time>
         <velocity>
-          <exact>0.3688</exact>
+          <exact>0.36881</exact>
         </velocity>
         <acceleration>
-          <exact>-0.2651</exact>
+          <exact>-0.26518</exact>
         </acceleration>
       </state>
       <state>
@@ -9616,10 +9047,10 @@
           <exact>56</exact>
         </time>
         <velocity>
-          <exact>0.3566</exact>
+          <exact>0.35662</exact>
         </velocity>
         <acceleration>
-          <exact>0.1798</exact>
+          <exact>0.17983</exact>
         </acceleration>
       </state>
       <state>
@@ -9636,7 +9067,7 @@
           <exact>57</exact>
         </time>
         <velocity>
-          <exact>0.3688</exact>
+          <exact>0.36881</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -9656,7 +9087,7 @@
           <exact>58</exact>
         </time>
         <velocity>
-          <exact>0.3688</exact>
+          <exact>0.36881</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -9676,7 +9107,7 @@
           <exact>59</exact>
         </time>
         <velocity>
-          <exact>0.3688</exact>
+          <exact>0.36881</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -9696,7 +9127,7 @@
           <exact>60</exact>
         </time>
         <velocity>
-          <exact>0.3688</exact>
+          <exact>0.36881</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -9810,7 +9241,7 @@
           <exact>12.2469</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0243</exact>
+          <exact>-0.024384</exact>
         </acceleration>
       </state>
       <state>
@@ -9830,7 +9261,7 @@
           <exact>12.2377</exact>
         </velocity>
         <acceleration>
-          <exact>-0.1341</exact>
+          <exact>-0.13411</exact>
         </acceleration>
       </state>
       <state>
@@ -9850,7 +9281,7 @@
           <exact>12.2773</exact>
         </velocity>
         <acceleration>
-          <exact>0.6888</exact>
+          <exact>0.68885</exact>
         </acceleration>
       </state>
       <state>
@@ -10090,7 +9521,7 @@
           <exact>7.6932</exact>
         </velocity>
         <acceleration>
-          <exact>0.8808</exact>
+          <exact>0.88087</exact>
         </acceleration>
       </state>
       <state>
@@ -10190,7 +9621,7 @@
           <exact>9.5037</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0944</exact>
+          <exact>-0.094488</exact>
         </acceleration>
       </state>
       <state>
@@ -10210,7 +9641,7 @@
           <exact>9.5037</exact>
         </velocity>
         <acceleration>
-          <exact>0.3718</exact>
+          <exact>0.37186</exact>
         </acceleration>
       </state>
       <state>
@@ -10530,7 +9961,7 @@
           <exact>6.3703</exact>
         </velocity>
         <acceleration>
-          <exact>0.2011</exact>
+          <exact>0.20117</exact>
         </acceleration>
       </state>
       <state>
@@ -10550,7 +9981,7 @@
           <exact>6.3368</exact>
         </velocity>
         <acceleration>
-          <exact>-0.7589</exact>
+          <exact>-0.75895</exact>
         </acceleration>
       </state>
       <state>
@@ -10687,7 +10118,7 @@
           <exact>48</exact>
         </time>
         <velocity>
-          <exact>0.9570</exact>
+          <exact>0.95707</exact>
         </velocity>
         <acceleration>
           <exact>-3.4168</exact>
@@ -10707,10 +10138,10 @@
           <exact>49</exact>
         </time>
         <velocity>
-          <exact>0.7193</exact>
+          <exact>0.71933</exact>
         </velocity>
         <acceleration>
-          <exact>-0.6461</exact>
+          <exact>-0.64618</exact>
         </acceleration>
       </state>
       <state>
@@ -10730,7 +10161,7 @@
           <exact>0.6858</exact>
         </velocity>
         <acceleration>
-          <exact>0.1432</exact>
+          <exact>0.14326</exact>
         </acceleration>
       </state>
       <state>
@@ -10750,7 +10181,7 @@
           <exact>0.6919</exact>
         </velocity>
         <acceleration>
-          <exact>0.0091</exact>
+          <exact>0.009144</exact>
         </acceleration>
       </state>
       <state>
@@ -10787,7 +10218,7 @@
           <exact>53</exact>
         </time>
         <velocity>
-          <exact>0.6949</exact>
+          <exact>0.69494</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -10807,10 +10238,10 @@
           <exact>54</exact>
         </time>
         <velocity>
-          <exact>0.6949</exact>
+          <exact>0.69494</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0091</exact>
+          <exact>-0.009144</exact>
         </acceleration>
       </state>
       <state>
@@ -10927,10 +10358,10 @@
           <exact>60</exact>
         </time>
         <velocity>
-          <exact>0.6949</exact>
+          <exact>0.69494</exact>
         </velocity>
         <acceleration>
-          <exact>0.0335</exact>
+          <exact>0.033528</exact>
         </acceleration>
       </state>
     </trajectory>
@@ -10960,7 +10391,7 @@
         <exact>14.6182</exact>
       </velocity>
       <acceleration>
-        <exact>-0.0640</exact>
+        <exact>-0.064008</exact>
       </acceleration>
     </initialState>
     <trajectory>
@@ -10981,7 +10412,7 @@
           <exact>14.6609</exact>
         </velocity>
         <acceleration>
-          <exact>0.7193</exact>
+          <exact>0.71933</exact>
         </acceleration>
       </state>
       <state>
@@ -11101,7 +10532,7 @@
           <exact>15.6362</exact>
         </velocity>
         <acceleration>
-          <exact>0.7284</exact>
+          <exact>0.72847</exact>
         </acceleration>
       </state>
       <state>
@@ -11121,7 +10552,7 @@
           <exact>15.6362</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0701</exact>
+          <exact>-0.070104</exact>
         </acceleration>
       </state>
       <state>
@@ -11141,7 +10572,7 @@
           <exact>15.6362</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0975</exact>
+          <exact>-0.097536</exact>
         </acceleration>
       </state>
       <state>
@@ -11261,7 +10692,7 @@
           <exact>15.6362</exact>
         </velocity>
         <acceleration>
-          <exact>0.0243</exact>
+          <exact>0.024384</exact>
         </acceleration>
       </state>
       <state>
@@ -11281,7 +10712,7 @@
           <exact>15.6362</exact>
         </velocity>
         <acceleration>
-          <exact>0.0579</exact>
+          <exact>0.057912</exact>
         </acceleration>
       </state>
       <state>
@@ -11321,7 +10752,7 @@
           <exact>15.6362</exact>
         </velocity>
         <acceleration>
-          <exact>0.0609</exact>
+          <exact>0.06096</exact>
         </acceleration>
       </state>
       <state>
@@ -11341,7 +10772,7 @@
           <exact>15.6362</exact>
         </velocity>
         <acceleration>
-          <exact>0.0274</exact>
+          <exact>0.027432</exact>
         </acceleration>
       </state>
       <state>
@@ -11388,10 +10819,10 @@
         <exact>0</exact>
       </time>
       <velocity>
-        <exact>0.0213</exact>
+        <exact>0.021336</exact>
       </velocity>
       <acceleration>
-        <exact>-0.5181</exact>
+        <exact>-0.51816</exact>
       </acceleration>
     </initialState>
     <trajectory>
@@ -11412,7 +10843,7 @@
           <exact>0.0</exact>
         </velocity>
         <acceleration>
-          <exact>0.1219</exact>
+          <exact>0.12192</exact>
         </acceleration>
       </state>
       <state>
@@ -11532,7 +10963,7 @@
           <exact>0.0</exact>
         </velocity>
         <acceleration>
-          <exact>-0.1127</exact>
+          <exact>-0.11278</exact>
         </acceleration>
       </state>
       <state>
@@ -11549,7 +10980,7 @@
           <exact>8</exact>
         </time>
         <velocity>
-          <exact>0.0091</exact>
+          <exact>0.009144</exact>
         </velocity>
         <acceleration>
           <exact>0.0</exact>
@@ -11569,7 +11000,7 @@
           <exact>9</exact>
         </time>
         <velocity>
-          <exact>0.0579</exact>
+          <exact>0.057912</exact>
         </velocity>
         <acceleration>
           <exact>1.1095</exact>
@@ -11589,7 +11020,7 @@
           <exact>10</exact>
         </time>
         <velocity>
-          <exact>0.2712</exact>
+          <exact>0.27127</exact>
         </velocity>
         <acceleration>
           <exact>3.0023</exact>
@@ -11609,7 +11040,7 @@
           <exact>11</exact>
         </time>
         <velocity>
-          <exact>0.6492</exact>
+          <exact>0.64922</exact>
         </velocity>
         <acceleration>
           <exact>3.5723</exact>
@@ -11712,7 +11143,7 @@
           <exact>2.3104</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0121</exact>
+          <exact>-0.012192</exact>
         </acceleration>
       </state>
       <state>
@@ -11732,7 +11163,7 @@
           <exact>2.3073</exact>
         </velocity>
         <acceleration>
-          <exact>-0.1310</exact>
+          <exact>-0.13106</exact>
         </acceleration>
       </state>
       <state>
@@ -11752,7 +11183,7 @@
           <exact>2.2982</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0121</exact>
+          <exact>-0.012192</exact>
         </acceleration>
       </state>
       <state>
@@ -11772,7 +11203,7 @@
           <exact>2.2982</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0091</exact>
+          <exact>-0.009144</exact>
         </acceleration>
       </state>
       <state>
@@ -11792,7 +11223,7 @@
           <exact>2.2951</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0121</exact>
+          <exact>-0.012192</exact>
         </acceleration>
       </state>
       <state>
@@ -11812,7 +11243,7 @@
           <exact>2.2951</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0152</exact>
+          <exact>-0.01524</exact>
         </acceleration>
       </state>
       <state>
@@ -11832,7 +11263,7 @@
           <exact>2.2951</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0152</exact>
+          <exact>-0.01524</exact>
         </acceleration>
       </state>
       <state>
@@ -11852,7 +11283,7 @@
           <exact>2.2921</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0152</exact>
+          <exact>-0.01524</exact>
         </acceleration>
       </state>
       <state>
@@ -11872,7 +11303,7 @@
           <exact>2.2921</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0152</exact>
+          <exact>-0.01524</exact>
         </acceleration>
       </state>
       <state>
@@ -11892,7 +11323,7 @@
           <exact>2.289</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0152</exact>
+          <exact>-0.01524</exact>
         </acceleration>
       </state>
       <state>
@@ -11912,7 +11343,7 @@
           <exact>2.286</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0152</exact>
+          <exact>-0.01524</exact>
         </acceleration>
       </state>
       <state>
@@ -11932,7 +11363,7 @@
           <exact>2.286</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0152</exact>
+          <exact>-0.01524</exact>
         </acceleration>
       </state>
       <state>
@@ -11952,7 +11383,7 @@
           <exact>2.283</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0152</exact>
+          <exact>-0.01524</exact>
         </acceleration>
       </state>
       <state>
@@ -11972,7 +11403,7 @@
           <exact>2.283</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0152</exact>
+          <exact>-0.01524</exact>
         </acceleration>
       </state>
       <state>
@@ -11992,7 +11423,7 @@
           <exact>2.283</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0121</exact>
+          <exact>-0.012192</exact>
         </acceleration>
       </state>
       <state>
@@ -12012,7 +11443,7 @@
           <exact>2.2799</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0091</exact>
+          <exact>-0.009144</exact>
         </acceleration>
       </state>
       <state>
@@ -12032,7 +11463,7 @@
           <exact>2.2799</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0091</exact>
+          <exact>-0.009144</exact>
         </acceleration>
       </state>
       <state>
@@ -12052,7 +11483,7 @@
           <exact>2.2769</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0121</exact>
+          <exact>-0.012192</exact>
         </acceleration>
       </state>
       <state>
@@ -12072,7 +11503,7 @@
           <exact>2.2769</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0182</exact>
+          <exact>-0.018288</exact>
         </acceleration>
       </state>
       <state>
@@ -12092,7 +11523,7 @@
           <exact>2.2738</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0213</exact>
+          <exact>-0.021336</exact>
         </acceleration>
       </state>
       <state>
@@ -12112,7 +11543,7 @@
           <exact>2.2738</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0152</exact>
+          <exact>-0.01524</exact>
         </acceleration>
       </state>
       <state>
@@ -12172,7 +11603,7 @@
           <exact>2.2677</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0152</exact>
+          <exact>-0.01524</exact>
         </acceleration>
       </state>
       <state>
@@ -12192,7 +11623,7 @@
           <exact>2.2647</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0213</exact>
+          <exact>-0.021336</exact>
         </acceleration>
       </state>
       <state>
@@ -12212,7 +11643,7 @@
           <exact>2.2647</exact>
         </velocity>
         <acceleration>
-          <exact>-0.0121</exact>
+          <exact>-0.012192</exact>
         </acceleration>
       </state>
       <state>
@@ -12232,7 +11663,7 @@
           <exact>2.2708</exact>
         </velocity>
         <acceleration>
-          <exact>0.0274</exact>
+          <exact>0.027432</exact>
         </acceleration>
       </state>
       <state>
@@ -12252,7 +11683,7 @@
           <exact>2.2769</exact>
         </velocity>
         <acceleration>
-          <exact>0.5547</exact>
+          <exact>0.55474</exact>
         </acceleration>
       </state>
       <state>
@@ -12272,7 +11703,7 @@
           <exact>2.2494</exact>
         </velocity>
         <acceleration>
-          <exact>0.9570</exact>
+          <exact>0.95707</exact>
         </acceleration>
       </state>
       <state>
@@ -12572,7 +12003,7 @@
           <exact>4.3129</exact>
         </velocity>
         <acceleration>
-          <exact>0.5699</exact>
+          <exact>0.56998</exact>
         </acceleration>
       </state>
       <state>
@@ -12592,7 +12023,7 @@
           <exact>4.3129</exact>
         </velocity>
         <acceleration>
-          <exact>-0.6827</exact>
+          <exact>-0.68275</exact>
         </acceleration>
       </state>
     </trajectory>
@@ -12612,7 +12043,7 @@
         <exact>0</exact>
       </time>
       <velocity>
-        <exact>0.0121</exact>
+        <exact>0.012192</exact>
       </velocity>
       <yawRate>
         <exact>0.0</exact>
