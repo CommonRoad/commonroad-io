@@ -1,7 +1,7 @@
 __author__ = "Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["CAR@TUM"]
-__version__ = "2021.4"
+__version__ = "2022.1"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Release"
