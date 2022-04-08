@@ -5,9 +5,7 @@ import unittest
 from commonroad import SCENARIO_VERSION
 from commonroad.common.file_writer import CommonRoadFileWriter, OverwriteExistingFile, float_to_str, Point, \
     RectangleXMLNode, CircleXMLNode, precision
-from commonroad.geometry.shape import Rectangle, Circle
 from commonroad.common.file_reader import CommonRoadFileReader
-from commonroad.geometry.shape import *
 from lxml import etree
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
 from commonroad.prediction.prediction import *
@@ -20,7 +18,7 @@ from commonroad.scenario.trajectory import *
 class TestFileWriter(unittest.TestCase):
     def setUp(self):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
-        #self.xsd_path_2020a = self.cwd_path + "/../../doc/format/xml_definition_files/XML_commonRoad_XSD.xsd"
+        # self.xsd_path_2020a = self.cwd_path + "/../../doc/format/xml_definition_files/XML_commonRoad_XSD.xsd"
         self.xsd_path_obs = self.cwd_path + "/../../doc/format/xml_definition_files/CommonRoadDynamic_schema.xsd"
         self.xsd_path_road = self.cwd_path + "/../../doc/format/xml_definition_files/CommonRoadStatic_schema.xsd"
         self.out_path = self.cwd_path + "/../.pytest_cache"
@@ -56,7 +54,7 @@ class TestFileWriter(unittest.TestCase):
                              scenario_2.tags,
                              scenario_2.location).write_to_file(filename=filename,
                                                                 overwrite_existing_file=OverwriteExistingFile.ALWAYS)
-        
+
         assert self.validate_with_xsd(self.xsd_path_obs, self.out_path + '/test_reading_all.xml')
         assert self.validate_with_xsd(self.xsd_path_road, self.out_path + '/test_reading_all_road.xml')
 
@@ -73,7 +71,7 @@ class TestFileWriter(unittest.TestCase):
     def test_separate_obsPlan_and_road(self):
         scenario_1, planning_problem_set_1 = CommonRoadFileReader(self.filename_separate_1).open()
         filename = self.out_path + '/USA_Peach-4_8_T-1.xml'
-        
+
         # generate scenario only with obstacles and planning problem
         CommonRoadFileWriter(scenario_1, planning_problem_set_1, scenario_1.author, scenario_1.affiliation, 'test',
                              scenario_1.tags,
@@ -89,7 +87,7 @@ class TestFileWriter(unittest.TestCase):
                                                                 overwrite_existing_file=OverwriteExistingFile.ALWAYS,
                                                                 key="road")
         assert self.validate_with_xsd(self.xsd_path_road, self.out_path + '/USA_Peach-4.xml')
-        
+
         # separate obstacles + planning problem and lanelets
         CommonRoadFileWriter(scenario_1, planning_problem_set_1, scenario_1.author, scenario_1.affiliation, 'test',
                              scenario_1.tags,
@@ -98,7 +96,6 @@ class TestFileWriter(unittest.TestCase):
         assert self.validate_with_xsd(self.xsd_path_obs, self.out_path + '/USA_Peach-4_8_T-1.xml')
         assert self.validate_with_xsd(self.xsd_path_road, self.out_path + '/USA_Peach-4.xml')
 
-                
         scenario_2, planning_problem_set_2 = CommonRoadFileReader(self.filename_separate_2).open()
         filename = self.out_path + '/USA_US101-3_3_T-1.xml'
         CommonRoadFileWriter(scenario_2, planning_problem_set_2, scenario_2.author, scenario_2.affiliation, 'test',
@@ -107,7 +104,7 @@ class TestFileWriter(unittest.TestCase):
                                                                 overwrite_existing_file=OverwriteExistingFile.ALWAYS,
                                                                 key="obs")
         assert self.validate_with_xsd(self.xsd_path_obs, self.out_path + '/USA_US101-3_3_T-1.xml')
-        
+
         CommonRoadFileWriter(scenario_2, planning_problem_set_2, scenario_2.author, scenario_2.affiliation, 'test',
                              scenario_2.tags,
                              scenario_2.location).write_to_file(filename=filename,

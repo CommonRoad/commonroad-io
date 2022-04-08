@@ -2,7 +2,7 @@ import enum
 import warnings
 import numpy as np
 from typing import Union, Set, List, Optional, Tuple
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector, is_real_number
 from commonroad.geometry.shape import Shape, \
@@ -17,7 +17,7 @@ __author__ = "Stefanie Manzinger, Christian Pek, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles, "
                "BMW Group, KO-HAF"]
-__version__ = "2021.4"
+__version__ = "2022.1"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -109,7 +109,7 @@ class Obstacle(IDrawable):
         :param initial_signal_state: initial signal state of obstacle
         :param signal_series: list of signal states over time
         """
-        self._initial_occupancy_shape: Shape = None
+        self._initial_occupancy_shape: Union[None, Shape] = None
         self.obstacle_id: int = obstacle_id
         self.obstacle_role: ObstacleRole = obstacle_role
         self.obstacle_type: ObstacleType = obstacle_type
@@ -165,12 +165,12 @@ class Obstacle(IDrawable):
             warnings.warn('<Obstacle/obstacle_type>: Obstacle type is immutable.')
 
     @property
-    def obstacle_shape(self) -> Shape:
+    def obstacle_shape(self) -> Union[Shape, Rectangle, Circle, Polygon]:
         """ Obstacle shape as defined in CommonRoad."""
         return self._obstacle_shape
 
     @obstacle_shape.setter
-    def obstacle_shape(self, shape: Shape):
+    def obstacle_shape(self, shape: Union[Shape, Rectangle, Circle, Polygon]):
         assert isinstance(shape,
                           (type(None), Shape)), '<Obstacle/obstacle_shape>: argument shape of wrong type. Expected ' \
                                                 'type %s. Got type %s.' % (Shape, type(shape))
@@ -469,9 +469,10 @@ class PhantomObstacle(IDrawable):
     def __init__(self, obstacle_id: int,
                  prediction: SetBasedPrediction = None):
         """
-            :param obstacle_id: unique ID of the obstacle
-            :param prediction: set-based prediction of phantom obstacle
-            :param initial_shape_lanelet_ids: initial IDs of lanelets the obstacle shape is on
+        Constructor of PhantomObstacle object.
+
+        :param obstacle_id: unique ID of the obstacle
+        :param prediction: set-based prediction of phantom obstacle
         """
         self.obstacle_id = obstacle_id
         self.prediction: SetBasedPrediction = prediction
@@ -524,7 +525,6 @@ class PhantomObstacle(IDrawable):
         """
         Returns the predicted state of the obstacle at a specific time step.
 
-        :param time_step: discrete time step
         :return: predicted state of the obstacle at time step
         """
         warnings.warn("<PhantomObstacle/state_at_time>: Set-based prediction is used. State cannot be returned!")

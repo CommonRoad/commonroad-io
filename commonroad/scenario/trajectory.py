@@ -18,7 +18,7 @@ from commonroad.common.util import make_valid_orientation
 __author__ = "Stefanie Manzinger, Christian Pek"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2021.4"
+__version__ = "2022.1"
 __maintainer__ = "Stefanie Manzinger, Christian Pek"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -99,11 +99,11 @@ class State:
             obstacles to provide additional information, e.g., for motion prediction, even though acceleration is often
             used as an input for vehicle models. Exact values are given as real number, uncertain values are given as
             :class:`commonroad.common.util.Interval`
-        :ivar acceleration_y: velocity :math:`a_y`.
+        :ivar acceleration_y: acceleration :math:`a_y`.
             We optionally include acceleration as a state variable for obstacles to provide additional information,
             e.g., for motion prediction, even though acceleration is often used as an input for vehicle models. Exact
             values are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar jerk: acceleration :math:`j`. We optionally include jerk as a state variable for
+        :ivar jerk: jerk :math:`j`. We optionally include jerk as a state variable for
             obstacles to provide additional information, e.g., for motion prediction, even though jerk is often
             used as an input for vehicle models. Exact values are given as real number, uncertain values are given as
             :class:`commonroad.common.util.Interval`

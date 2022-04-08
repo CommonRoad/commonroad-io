@@ -1,7 +1,7 @@
 __author__ = "Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["CAR@TUM"]
-__version__ = "2021.4"
+__version__ = "2022.1"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Release"
@@ -720,9 +720,17 @@ class TrafficSignElement:
     def traffic_sign_element_id(self) -> enum:
         return self._traffic_sign_element_id
 
+    @traffic_sign_element_id.setter
+    def traffic_sign_element_id(self, traffic_sign_element_id: enum):
+        self._traffic_sign_element_id = traffic_sign_element_id
+
     @property
     def additional_values(self) -> List[str]:
         return self._additional_values
+
+    @additional_values.setter
+    def additional_values(self, additional_values: List[str]):
+        self._additional_values = additional_values
 
 
 class TrafficSign(IDrawable):
@@ -795,21 +803,41 @@ class TrafficSign(IDrawable):
     def traffic_sign_id(self) -> int:
         return self._traffic_sign_id
 
+    @traffic_sign_id.setter
+    def traffic_sign_id(self, traffic_sign_id: int):
+        self._traffic_sign_id = traffic_sign_id
+
     @property
     def position(self) -> Union[None, np.ndarray]:
         return self._position
+
+    @position.setter
+    def position(self, position: Union[None, np.ndarray]):
+        self._position = position
 
     @property
     def traffic_sign_elements(self) -> List[TrafficSignElement]:
         return self._traffic_sign_elements
 
+    @traffic_sign_elements.setter
+    def traffic_sign_elements(self, traffic_sign_elements: List[TrafficSignElement]):
+        self._traffic_sign_elements = traffic_sign_elements
+
     @property
     def virtual(self) -> bool:
         return self._virtual
 
+    @virtual.setter
+    def virtual(self, virtual: bool):
+        self._virtual = virtual
+
     @property
     def first_occurrence(self) -> Set[int]:
         return self._first_occurrence
+
+    @first_occurrence.setter
+    def first_occurrence(self, first_occurrence: Set[int]):
+        self._first_occurrence = first_occurrence
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """
@@ -872,9 +900,17 @@ class TrafficLightCycleElement:
     def state(self) -> TrafficLightState:
         return self._state
 
+    @state.setter
+    def state(self, state: TrafficLightState):
+        self._state = state
+
     @property
     def duration(self) -> int:
         return self._duration
+
+    @duration.setter
+    def duration(self, duration: int):
+        self._duration = duration
 
 
 class TrafficLight(IDrawable):
@@ -938,9 +974,17 @@ class TrafficLight(IDrawable):
     def traffic_light_id(self) -> int:
         return self._traffic_light_id
 
+    @traffic_light_id.setter
+    def traffic_light_id(self, traffic_light_id: int):
+        self._traffic_light_id = traffic_light_id
+
     @property
     def cycle(self) -> List[TrafficLightCycleElement]:
         return self._cycle
+
+    @cycle.setter
+    def cycle(self, cycle: List[TrafficLightCycleElement]):
+        self._cycle = cycle
 
     def get_state_at_time_step(self, time_step: int) -> TrafficLightState:
         time_step_mod = ((time_step - self.time_offset) % (
@@ -960,9 +1004,17 @@ class TrafficLight(IDrawable):
     def time_offset(self) -> int:
         return self._time_offset
 
+    @time_offset.setter
+    def time_offset(self, time_offset: int):
+        self._time_offset = time_offset
+
     @property
     def position(self) -> np.ndarray:
         return self._position
+
+    @position.setter
+    def position(self, position: np.ndarray):
+        self._position = position
 
     @property
     def direction(self) -> TrafficLightDirection:
@@ -975,6 +1027,10 @@ class TrafficLight(IDrawable):
     @property
     def active(self) -> bool:
         return self._active
+
+    @active.setter
+    def active(self, active: bool):
+        self._active = active
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """

@@ -29,7 +29,7 @@ from commonroad.scenario.trajectory import Trajectory, State
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2021.4"
+__version__ = "2022.1"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -185,7 +185,7 @@ class CommonRoadFileWriter:
         warnings.warn(
             '<CommonRoadFileWriter/root_node> root_node of CommonRoadFileWriter is immutable'
         )
-    
+
     @root_node_obs.setter
     def root_node_obs(self, root_node):
         warnings.warn(
@@ -261,14 +261,14 @@ class CommonRoadFileWriter:
         self._root_node_obs.set('author', self.author)
         self._root_node_obs.set('affiliation', self.affiliation)
         self._root_node_obs.set('source', self.source)
-        
+
         try:
             if self.scenario.scenario_id:
                 if 'test' in str(self.scenario.scenario_id):
                     self._root_node_obs.set('benchmarkID', str(self.scenario.scenario_id) + '_1_T-1')
                 else:
                     self._root_node_obs.set('benchmarkID', str(self.scenario.scenario_id))
-        except:
+        except Exception:
             self._root_node_obs.set('benchmarkID', '-1')
             print('Warning: No scenario_id set.')
 
@@ -285,8 +285,8 @@ class CommonRoadFileWriter:
             self._root_node_road.append(LocationXMLNode.create_node(self.location))
         else:
             self._root_node_road.append(LocationXMLNode.create_node(Location()))
-        for l in self.scenario.lanelet_network.lanelets:
-            self._root_node_road.append(LaneletXMLNode.create_node(l))
+        for let in self.scenario.lanelet_network.lanelets:
+            self._root_node_road.append(LaneletXMLNode.create_node(let))
         for sign in self.scenario.lanelet_network.traffic_signs:
             self._root_node_road.append(TrafficSignXMLNode.create_node(sign))
         for light in self.scenario.lanelet_network.traffic_lights:
@@ -306,7 +306,7 @@ class CommonRoadFileWriter:
         )
         rough_string = rough_string
         return rough_string
-    
+
     def _dump_road(self):
         rough_string = etree.tostring(
             self._root_node_road, pretty_print=True, encoding='UTF-8'
@@ -336,7 +336,7 @@ class CommonRoadFileWriter:
             filename = str(self.scenario.scenario_id) + ".xml"
 
         filename_obs = filename
-        
+
         filename_road = ''
         ids = re.split('/', filename)
         if '-' in ids[-1]:
@@ -410,27 +410,22 @@ class CommonRoadFileWriter:
                 tree_road = etree.ElementTree(self._root_node_road)
                 tree_road.write(filename_road, pretty_print=True, xml_declaration=True, encoding="utf-8")
 
-    @staticmethod #road/obstacle as flag
+    @staticmethod
     def check_validity_of_commonroad_file(commonroad_str: str, key: str):
-        """Check the validity of a generated xml_string in terms of
-        commonroad with an existing XSD schema.
+        """Check the validity of a generated xml_string in terms of CommonRoad with an existing XSD schema.
         Throw an error if it is not valid.
 
-        Args:
-          commonroad_str: XML formatted string which should be checked.
+        @param commonroad_str: XML formatted string which should be checked.
+        @param key: Specifier for road or obstacle representation.
         """
 
         if key == 'road':
-            with open(
-                os.path.dirname(os.path.abspath(__file__)) + '/../../doc/format/xml_definition_files/CommonRoadStatic_schema.xsd',
-                'rb',
-            ) as schema_file:
+            with open(os.path.dirname(os.path.abspath(__file__))
+                      + '/../../doc/format/xml_definition_files/CommonRoadStatic_schema.xsd', 'rb',) as schema_file:
                 schema = etree.XMLSchema(etree.parse(schema_file))
         elif key == 'obs':
-            with open(
-                os.path.dirname(os.path.abspath(__file__)) + '/../../doc/format/xml_definition_files/CommonRoadDynamic_schema.xsd',
-                'rb',
-            ) as schema_file:
+            with open(os.path.dirname(os.path.abspath(__file__))
+                      + '/../../doc/format/xml_definition_files/CommonRoadDynamic_schema.xsd', 'rb', ) as schema_file:
                 schema = etree.XMLSchema(etree.parse(schema_file))
 
         parser = objectify.makeparser(schema=schema, encoding='utf-8')
@@ -1067,7 +1062,7 @@ class StateXMLNode:
         if len(goal_lanelet_ids) > 0:
             for la_id in goal_lanelet_ids:
                 lanelet = etree.Element('lanelet')
-                lanelet.set('laneletRef', str(la_id)) # for version 3.0
+                lanelet.set('laneletRef', str(la_id))  # for version 3.0
                 node.append(lanelet)
         elif isinstance(position, int):
             lanelet = etree.Element('lanelet')
