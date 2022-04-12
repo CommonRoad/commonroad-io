@@ -562,7 +562,7 @@ class MPRenderer(IRenderer):
                 self._draw_signal_state(sig, veh_occ, draw_params, call_stack)
 
         # draw occupancies
-        if draw_occupancies or type(obj.prediction) == commonroad.prediction.prediction.SetBasedPrediction:
+        if draw_occupancies and type(obj.prediction) == commonroad.prediction.prediction.SetBasedPrediction:
             if draw_shape:
                 # occupancy already plotted
                 time_begin_occ = time_begin + 1
