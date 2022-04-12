@@ -505,7 +505,6 @@ class Lanelet:
 
     @adj_left.setter
     def adj_left(self, l_id: int):
-        assert is_natural_number(l_id), '<Lanelet/adj_left>: provided id is not valid! id={}'.format(l_id)
         self._adj_left = l_id
 
     @property
@@ -524,7 +523,6 @@ class Lanelet:
 
     @adj_right.setter
     def adj_right(self, l_id: int):
-        assert is_natural_number(l_id), '<Lanelet/adj_right>: provided id is not valid! id={}'.format(l_id)
         self._adj_right = l_id
 
     @property
