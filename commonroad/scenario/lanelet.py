@@ -108,8 +108,14 @@ class StopLine:
         return False
 
     def __hash__(self):
-        start_string = np.array2string(np.around(self._start.astype(float), 10), precision=10)
-        end_string = np.array2string(np.around(self._end.astype(float), 10), precision=10)
+        if self._start is None:
+            start_string = None
+        else:
+            start_string = np.array2string(np.around(self._start.astype(float), 10), precision=10)
+        if self._end is None:
+            end_string = None
+        else:
+            end_string = np.array2string(np.around(self._end.astype(float), 10), precision=10)
         sign_ref = None if self._traffic_sign_ref is None else frozenset(self._traffic_sign_ref)
         light_ref = None if self._traffic_light_ref is None else frozenset(self._traffic_light_ref)
         return hash((start_string, end_string, self._line_marking, sign_ref,
