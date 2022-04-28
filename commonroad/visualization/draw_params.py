@@ -98,3 +98,6 @@ if __name__ == '__main__':
     dictionary = dataclasses.asdict(p)
     # Or param objects from dictionaries (backward compatibility)
     p2 = dict_to_params({"antialiased": False, "dynamic_obstacle": {"draw_shape": False}})
+
+    # Currently not so nice: Instantiation with custom parameters
+    p = MPDrawParams(dynamic_obstacle=DynamicObstacleParams(shapes=ShapesParams(circle=ShapeParams(edgecolor="blue"))))
