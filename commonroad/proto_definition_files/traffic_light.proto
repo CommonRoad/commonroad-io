@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package commonroad;
+
+import "general.proto";
+
+enum TrafficLightState {
+    RED = 0;
+    RED_YELLOW = 1;
+    GREEN = 2;
+    YELLOW = 3;
+    INACTIVE = 4;
+}
+
+enum TrafficLightDirection {
+    RIGHT = 0;
+    STRAIGHT = 1;
+    LEFT = 2;
+    LEFT_STRAIGHT = 3;
+    STRAIGHT_RIGHT = 4;
+    LEFT_RIGHT = 5;
+    ALL = 6;
+}
+
+message CycleElement {
+    uint32 duration = 1;
+    TrafficLightDirection color = 2;
+}
+
+message Cycle {
+    repeated CycleElement cycle_elements = 1;
+    optional uint32 time_offset = 2;
+}
+
+message TrafficLight {
+    uint32 traffic_light_id = 1;
+    Cycle cycle = 2;
+    optional Point position = 3;
+    optional TrafficLightDirection direction = 4;
+    optional bool active = 5;
+}
