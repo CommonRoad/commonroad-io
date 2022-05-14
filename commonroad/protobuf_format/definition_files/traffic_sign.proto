@@ -1,16 +1,14 @@
-syntax = "proto3";
+syntax = "proto2";
 
 package commonroad;
 
-import "commonroad.proto";
-
 message TrafficSignElement {
-    uint32 traffic_sign_id = 1;
+    required uint32 traffic_sign_id = 1;
     repeated string additional_values = 2;
 }
 
 message TrafficSign {
-    uint32  traffic_sign_id = 1;
+    required uint32  traffic_sign_id = 1;
     repeated TrafficSignElement traffic_sign_elements = 2;
     optional uint32 position = 3;
     optional bool virtual = 4;

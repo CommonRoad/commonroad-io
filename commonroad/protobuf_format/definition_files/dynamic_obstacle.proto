@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "proto2";
 
 package commonroad;
 
@@ -6,8 +6,8 @@ import "obstacle.proto";
 import "util.proto";
 
 message Occupancy {
-    IntegerExactOrInterval time_step = 1;
-    Shape shape = 2;
+    required IntegerExactOrInterval time_step = 1;
+    required Shape shape = 2;
 }
 
 message Trajectory {
@@ -19,10 +19,10 @@ message OccupancySet {
 }
 
 message DynamicObstacle {
-    uint32 dynamic_obstacle_id = 1;
-    ObstacleType obstacle_type = 2;
-    Shape shape = 3;
-    State initial_state = 4;
+    required uint32 dynamic_obstacle_id = 1;
+    required ObstacleTypeEnum.ObstacleType obstacle_type = 2;
+    required Shape shape = 3;
+    required State initial_state = 4;
     oneof prediction {
         Trajectory trajectory = 5;
         OccupancySet occupancy_set = 6;

@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "proto2";
 
 package commonroad;
 
@@ -15,19 +15,19 @@ import "environment_obstacle.proto";
 import "planning_problem.proto";
 
 message ScenarioInformation {
-    string common_road_version = 1;
-    string benchmark_id = 2;
-    google.protobuf.Timestamp date = 3;
-    string author = 4;
-    string affiliation = 5;
-    string source = 6;
-    float time_step_size = 7;
+    required string common_road_version = 1;
+    required string benchmark_id = 2;
+    required google.protobuf.Timestamp date = 3;
+    required string author = 4;
+    required string affiliation = 5;
+    required string source = 6;
+    required float time_step_size = 7;
 }
 
 message CommonRoad {
-    ScenarioInformation information = 1;
-    ScenarioTags scenario_tags = 2;
-    Location location = 3;
+    required ScenarioInformation information = 1;
+    required ScenarioTags scenario_tags = 2;
+    required Location location = 3;
     repeated Lanelet lanelets = 4;
     repeated TrafficSign traffic_signs = 5;
     repeated TrafficLight traffic_lights = 6;

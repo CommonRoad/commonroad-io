@@ -1,37 +1,39 @@
-syntax = "proto3";
+syntax = "proto2";
 
 package commonroad;
 
 import "util.proto";
 
-enum ObstacleType {
-    UNKNOWN = 0;
-    CAR = 1;
-    TRUCK = 2;
-    BUS = 3;
-    BICYCLE = 4;
-    PEDESTRIAN = 5;
-    PRIORITY_VEHICLE = 6;
-    PARKED_VEHICLE = 7;
-    CONSTRUCTION_ZONE = 8;
-    TRAIN = 9;
-    ROAD_BOUNDARY = 10;
-    MOTORCYCLE = 11;
-    TAXI = 12;
-    BUILDING = 13;
-    PILLAR = 14;
-    MEDIAN_STRIP = 15;
+message ObstacleTypeEnum {
+    enum ObstacleType {
+        UNKNOWN = 0;
+        CAR = 1;
+        TRUCK = 2;
+        BUS = 3;
+        BICYCLE = 4;
+        PEDESTRIAN = 5;
+        PRIORITY_VEHICLE = 6;
+        PARKED_VEHICLE = 7;
+        CONSTRUCTION_ZONE = 8;
+        TRAIN = 9;
+        ROAD_BOUNDARY = 10;
+        MOTORCYCLE = 11;
+        TAXI = 12;
+        BUILDING = 13;
+        PILLAR = 14;
+        MEDIAN_STRIP = 15;
+    }
 }
 
 message Rectangle {
-    float length = 1;
-    float width = 2;
+    required float length = 1;
+    required float width = 2;
     optional Point center = 3;
     optional float orientation = 4;
 }
 
 message Circle {
-    float radius = 1;
+    required float radius = 1;
     optional Point center = 2;
 }
 
@@ -57,7 +59,7 @@ message State {
         Point point = 1;
         Shape shape = 2;
     }
-    FloatExactOrInterval orientation = 3;
+    required FloatExactOrInterval orientation = 3;
     optional FloatExactOrInterval velocity = 4;
     optional FloatExactOrInterval steering_angle = 5;
     optional FloatExactOrInterval steering_angle_speed = 6;
@@ -93,7 +95,7 @@ message State {
 }
 
 message SignalState {
-    IntegerExactOrInterval time_step = 1;
+    required IntegerExactOrInterval time_step = 1;
     optional bool horn = 2;
     optional bool indicator_left = 3;
     optional bool indicator_right = 4;
