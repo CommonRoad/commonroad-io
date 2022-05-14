@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package commonroad;
 
-import "general.proto";
+import "commonroad.proto";
 
 message Incoming {
     repeated uint32 incoming_lanelets = 1;

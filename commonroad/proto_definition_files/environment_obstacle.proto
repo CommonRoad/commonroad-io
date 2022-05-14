@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package commonroad;
+
+import "obstacle.proto";
+
+message EnvironmentObstacle {
+    uint32 environment_obstacle_id = 1;
+    ObstacleType obstacle_type = 2;
+    Shape obstacle_shape = 3;
+}

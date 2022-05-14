@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package commonroad;
+
+import "obstacle.proto";
+import "util.proto";
+
+message GoalState {
+    IntegerInterval time = 1;
+    repeated uint32 goal_position_lanelets = 2;
+}
+
+message PlanningProblem {
+    uint32 planning_problem_id = 1;
+    State initial_state = 2;
+    repeated GoalState goal_states = 3;
+}

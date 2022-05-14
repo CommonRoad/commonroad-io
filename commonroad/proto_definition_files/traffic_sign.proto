@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package commonroad;
 
-import "general.proto";
+import "commonroad.proto";
 
 message TrafficSignElement {
     uint32 traffic_sign_id = 1;

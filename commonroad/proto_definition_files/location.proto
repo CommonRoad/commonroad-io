@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package commonroad;
+
+import "google/protobuf/timestamp.proto";
+import "commonroad.proto";
+
+enum TimeOfDay {
+    NIGHT = 0;
+    DAY = 1;
+    TIME_OF_DAY_UNKNOWN = 2;
+}
+
+enum Weather {
+    SUNNY = 0;
+    LIGHT_RAIN = 1;
+    HEAVY_AIN = 2;
+    FOG = 3;
+    WEATHER_SNOW = 4;
+    HAIL = 5;
+    WEATHER_UNKNOWN = 6;
+}
+
+enum Underground {
+    WET = 0;
+    CLEAN = 1;
+    DIRTY = 2;
+    DAMAGED = 3;
+    UNDERGROUND_SNOW = 4;
+    ICE = 5;
+    UNDERGROUND_UNKNOWN = 6;
+}
+
+message GeoTransformation {
+    optional string geoReference = 1;
+    optional float x_translation = 2;
+    optional float y_translation = 3;
+    optional float z_rotation = 4;
+    optional float scaling = 5;
+}
+
+message Environment {
+    optional google.protobuf.Timestamp time = 1;
+    optional TimeOfDay time_of_day = 2;
+    optional Weather weather = 3;
+    optional Underground underground = 4;
+}
+
+message Location {
+    int32 geo_name_id = 1;
+    float gps_latitude = 2;
+    float gps_longitude = 3;
+    optional GeoTransformation geo_transformation = 4;
+    optional Environment environment = 5;
+}

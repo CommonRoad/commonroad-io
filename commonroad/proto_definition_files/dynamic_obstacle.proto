@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package commonroad;
+
+import "obstacle.proto";
+import "util.proto";
+
+message Occupancy {
+    IntegerExactOrInterval time_step = 1;
+    Shape shape = 2;
+}
+
+message Trajectory {
+    repeated State states = 1;
+}
+
+message OccupancySet {
+    repeated Occupancy occupancies = 1;
+}
+
+message DynamicObstacle {
+    uint32 dynamic_obstacle_id = 1;
+    ObstacleType obstacle_type = 2;
+    Shape shape = 3;
+    State initial_state = 4;
+    oneof prediction {
+        Trajectory trajectory = 5;
+        OccupancySet occupancy_set = 6;
+    }
+    repeated uint32 initial_center_lanelet_ids = 7;
+    repeated uint32 initial_shape_lanelet_ids = 8;
+    optional SignalState initial_signal_state = 9;
+    repeated SignalState signal_series = 10;
+}

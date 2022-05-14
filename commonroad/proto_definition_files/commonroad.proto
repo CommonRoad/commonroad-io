@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package commonroad;
+
+import "google/protobuf/timestamp.proto";
+import "scenario_tags.proto";
+import "location.proto";
+import "lanelet.proto";
+import "traffic_sign.proto";
+import "traffic_light.proto";
+import "intersection.proto";
+import "static_obstacle.proto";
+import "dynamic_obstacle.proto";
+import "environment_obstacle.proto";
+import "planning_problem.proto";
+
+message ScenarioInformation {
+    string common_road_version = 1;
+    string benchmark_id = 2;
+    google.protobuf.Timestamp date = 3;
+    string author = 4;
+    string affiliation = 5;
+    string source = 6;
+    float time_step_size = 7;
+}
+
+message CommonRoad {
+    ScenarioInformation information = 1;
+    ScenarioTags scenario_tags = 2;
+    Location location = 3;
+    repeated Lanelet lanelets = 4;
+    repeated TrafficSign traffic_signs = 5;
+    repeated TrafficLight traffic_lights = 6;
+    repeated Intersection intersections = 7;
+    repeated StaticObstacle static_obstacles = 8;
+    repeated DynamicObstacle dynamic_obstacles = 9;
+    repeated EnvironmentObstacle environment_obstacles = 10;
+    repeated PlanningProblem planning_problems = 11;
+}
