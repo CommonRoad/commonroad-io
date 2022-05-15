@@ -15,7 +15,7 @@ message LineMarkingEnum {
     }
 }
 
-message DrivingDir {
+message DrivingDirEnum {
     enum DrivingDir {
         SAME = 0;
         OPPOSITE = 1;
@@ -78,8 +78,8 @@ message Lanelet {
     repeated uint32 successors = 5;
     optional uint32 adjacent_left = 6;
     optional uint32 adjacent_right = 7;
-    optional DrivingDir adjacent_left_dir = 8;
-    optional DrivingDir adjacent_right_dir = 9;
+    optional DrivingDirEnum.DrivingDir adjacent_left_dir = 8;
+    optional DrivingDirEnum.DrivingDir adjacent_right_dir = 9;
     optional StopLine stop_line = 10;
     repeated LaneletTypeEnum.LaneletType lanelet_types = 11;
     repeated RoadUserEnum.RoadUser user_one_ways = 12;

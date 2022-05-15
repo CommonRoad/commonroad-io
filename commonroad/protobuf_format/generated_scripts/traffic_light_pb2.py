@@ -12,7 +12,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import util_pb2 as util__pb2
+from commonroad.protobuf_format.generated_scripts import util_pb2 as util__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(

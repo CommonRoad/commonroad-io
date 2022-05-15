@@ -4,7 +4,7 @@ package commonroad;
 
 import "util.proto";
 
-message TrafficLightEnum {
+message TrafficLightStateEnum {
     enum TrafficLightState {
         RED = 0;
         RED_YELLOW = 1;
@@ -14,7 +14,7 @@ message TrafficLightEnum {
     }
 }
 
-message TrafficLightDirection {
+message TrafficLightDirectionEnum {
     enum TrafficLightDirection {
         RIGHT = 0;
         STRAIGHT = 1;
@@ -28,7 +28,7 @@ message TrafficLightDirection {
 
 message CycleElement {
     required uint32 duration = 1;
-    required TrafficLightDirection color = 2;
+    required TrafficLightStateEnum.TrafficLightState color = 2;
 }
 
 message Cycle {
@@ -40,6 +40,6 @@ message TrafficLight {
     required uint32 traffic_light_id = 1;
     required Cycle cycle = 2;
     optional Point position = 3;
-    optional TrafficLightDirection direction = 4;
+    optional TrafficLightDirectionEnum.TrafficLightDirection direction = 4;
     optional bool active = 5;
 }
