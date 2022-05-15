@@ -3,8 +3,9 @@ import os
 import unittest
 
 from commonroad import SCENARIO_VERSION
-from commonroad.common.file_writer import CommonRoadFileWriter, OverwriteExistingFile, float_to_str, Point, \
-    RectangleXMLNode, CircleXMLNode, precision
+from commonroad.common.file_writer import CommonRoadFileWriter
+from commonroad.common.writer.file_writer import precision, OverwriteExistingFile
+from commonroad.common.writer.file_writer_xml import float_to_str, Point, RectangleXMLNode, CircleXMLNode
 from commonroad.geometry.shape import Rectangle, Circle
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.geometry.shape import *
