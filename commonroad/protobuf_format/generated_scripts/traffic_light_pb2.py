@@ -12,7 +12,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from commonroad.protobuf_format.generated_scripts import util_pb2 as util__pb2
+import commonroad.protobuf_format.generated_scripts.util_pb2 as util__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,15 +20,15 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='commonroad',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x13traffic_light.proto\x12\ncommonroad\x1a\nutil.proto\"e\n\x10TrafficLightEnum\"Q\n\x11TrafficLightState\x12\x07\n\x03RED\x10\x00\x12\x0e\n\nRED_YELLOW\x10\x01\x12\t\n\x05GREEN\x10\x02\x12\n\n\x06YELLOW\x10\x03\x12\x0c\n\x08INACTIVE\x10\x04\"\x93\x01\n\x15TrafficLightDirection\"z\n\x15TrafficLightDirection\x12\t\n\x05RIGHT\x10\x00\x12\x0c\n\x08STRAIGHT\x10\x01\x12\x08\n\x04LEFT\x10\x02\x12\x11\n\rLEFT_STRAIGHT\x10\x03\x12\x12\n\x0eSTRAIGHT_RIGHT\x10\x04\x12\x0e\n\nLEFT_RIGHT\x10\x05\x12\x07\n\x03\x41LL\x10\x06\"R\n\x0c\x43ycleElement\x12\x10\n\x08\x64uration\x18\x01 \x02(\r\x12\x30\n\x05\x63olor\x18\x02 \x02(\x0b\x32!.commonroad.TrafficLightDirection\"N\n\x05\x43ycle\x12\x30\n\x0e\x63ycle_elements\x18\x01 \x03(\x0b\x32\x18.commonroad.CycleElement\x12\x13\n\x0btime_offset\x18\x02 \x01(\r\"\xb5\x01\n\x0cTrafficLight\x12\x18\n\x10traffic_light_id\x18\x01 \x02(\r\x12 \n\x05\x63ycle\x18\x02 \x02(\x0b\x32\x11.commonroad.Cycle\x12#\n\x08position\x18\x03 \x01(\x0b\x32\x11.commonroad.Point\x12\x34\n\tdirection\x18\x04 \x01(\x0b\x32!.commonroad.TrafficLightDirection\x12\x0e\n\x06\x61\x63tive\x18\x05 \x01(\x08')
+  serialized_pb=_b('\n\x13traffic_light.proto\x12\ncommonroad\x1a\nutil.proto\"j\n\x15TrafficLightStateEnum\"Q\n\x11TrafficLightState\x12\x07\n\x03RED\x10\x00\x12\x0e\n\nRED_YELLOW\x10\x01\x12\t\n\x05GREEN\x10\x02\x12\n\n\x06YELLOW\x10\x03\x12\x0c\n\x08INACTIVE\x10\x04\"\x97\x01\n\x19TrafficLightDirectionEnum\"z\n\x15TrafficLightDirection\x12\t\n\x05RIGHT\x10\x00\x12\x0c\n\x08STRAIGHT\x10\x01\x12\x08\n\x04LEFT\x10\x02\x12\x11\n\rLEFT_STRAIGHT\x10\x03\x12\x12\n\x0eSTRAIGHT_RIGHT\x10\x04\x12\x0e\n\nLEFT_RIGHT\x10\x05\x12\x07\n\x03\x41LL\x10\x06\"d\n\x0c\x43ycleElement\x12\x10\n\x08\x64uration\x18\x01 \x02(\r\x12\x42\n\x05\x63olor\x18\x02 \x02(\x0e\x32\x33.commonroad.TrafficLightStateEnum.TrafficLightState\"N\n\x05\x43ycle\x12\x30\n\x0e\x63ycle_elements\x18\x01 \x03(\x0b\x32\x18.commonroad.CycleElement\x12\x13\n\x0btime_offset\x18\x02 \x01(\r\"\xcf\x01\n\x0cTrafficLight\x12\x18\n\x10traffic_light_id\x18\x01 \x02(\r\x12 \n\x05\x63ycle\x18\x02 \x02(\x0b\x32\x11.commonroad.Cycle\x12#\n\x08position\x18\x03 \x01(\x0b\x32\x11.commonroad.Point\x12N\n\tdirection\x18\x04 \x01(\x0e\x32;.commonroad.TrafficLightDirectionEnum.TrafficLightDirection\x12\x0e\n\x06\x61\x63tive\x18\x05 \x01(\x08')
   ,
   dependencies=[util__pb2.DESCRIPTOR,])
 
 
 
-_TRAFFICLIGHTENUM_TRAFFICLIGHTSTATE = _descriptor.EnumDescriptor(
+_TRAFFICLIGHTSTATEENUM_TRAFFICLIGHTSTATE = _descriptor.EnumDescriptor(
   name='TrafficLightState',
-  full_name='commonroad.TrafficLightEnum.TrafficLightState',
+  full_name='commonroad.TrafficLightStateEnum.TrafficLightState',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -55,14 +55,14 @@ _TRAFFICLIGHTENUM_TRAFFICLIGHTSTATE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=67,
-  serialized_end=148,
+  serialized_start=72,
+  serialized_end=153,
 )
-_sym_db.RegisterEnumDescriptor(_TRAFFICLIGHTENUM_TRAFFICLIGHTSTATE)
+_sym_db.RegisterEnumDescriptor(_TRAFFICLIGHTSTATEENUM_TRAFFICLIGHTSTATE)
 
-_TRAFFICLIGHTDIRECTION_TRAFFICLIGHTDIRECTION = _descriptor.EnumDescriptor(
+_TRAFFICLIGHTDIRECTIONENUM_TRAFFICLIGHTDIRECTION = _descriptor.EnumDescriptor(
   name='TrafficLightDirection',
-  full_name='commonroad.TrafficLightDirection.TrafficLightDirection',
+  full_name='commonroad.TrafficLightDirectionEnum.TrafficLightDirection',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -97,15 +97,15 @@ _TRAFFICLIGHTDIRECTION_TRAFFICLIGHTDIRECTION = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=176,
-  serialized_end=298,
+  serialized_start=185,
+  serialized_end=307,
 )
-_sym_db.RegisterEnumDescriptor(_TRAFFICLIGHTDIRECTION_TRAFFICLIGHTDIRECTION)
+_sym_db.RegisterEnumDescriptor(_TRAFFICLIGHTDIRECTIONENUM_TRAFFICLIGHTDIRECTION)
 
 
-_TRAFFICLIGHTENUM = _descriptor.Descriptor(
-  name='TrafficLightEnum',
-  full_name='commonroad.TrafficLightEnum',
+_TRAFFICLIGHTSTATEENUM = _descriptor.Descriptor(
+  name='TrafficLightStateEnum',
+  full_name='commonroad.TrafficLightStateEnum',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -115,7 +115,7 @@ _TRAFFICLIGHTENUM = _descriptor.Descriptor(
   ],
   nested_types=[],
   enum_types=[
-    _TRAFFICLIGHTENUM_TRAFFICLIGHTSTATE,
+    _TRAFFICLIGHTSTATEENUM_TRAFFICLIGHTSTATE,
   ],
   serialized_options=None,
   is_extendable=False,
@@ -124,13 +124,13 @@ _TRAFFICLIGHTENUM = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=47,
-  serialized_end=148,
+  serialized_end=153,
 )
 
 
-_TRAFFICLIGHTDIRECTION = _descriptor.Descriptor(
-  name='TrafficLightDirection',
-  full_name='commonroad.TrafficLightDirection',
+_TRAFFICLIGHTDIRECTIONENUM = _descriptor.Descriptor(
+  name='TrafficLightDirectionEnum',
+  full_name='commonroad.TrafficLightDirectionEnum',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -140,7 +140,7 @@ _TRAFFICLIGHTDIRECTION = _descriptor.Descriptor(
   ],
   nested_types=[],
   enum_types=[
-    _TRAFFICLIGHTDIRECTION_TRAFFICLIGHTDIRECTION,
+    _TRAFFICLIGHTDIRECTIONENUM_TRAFFICLIGHTDIRECTION,
   ],
   serialized_options=None,
   is_extendable=False,
@@ -148,8 +148,8 @@ _TRAFFICLIGHTDIRECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=151,
-  serialized_end=298,
+  serialized_start=156,
+  serialized_end=307,
 )
 
 
@@ -169,8 +169,8 @@ _CYCLEELEMENT = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='color', full_name='commonroad.CycleElement.color', index=1,
-      number=2, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
+      number=2, type=14, cpp_type=8, label=2,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -186,8 +186,8 @@ _CYCLEELEMENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=300,
-  serialized_end=382,
+  serialized_start=309,
+  serialized_end=409,
 )
 
 
@@ -224,8 +224,8 @@ _CYCLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=384,
-  serialized_end=462,
+  serialized_start=411,
+  serialized_end=489,
 )
 
 
@@ -259,8 +259,8 @@ _TRAFFICLIGHT = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='direction', full_name='commonroad.TrafficLight.direction', index=3,
-      number=4, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      number=4, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -283,37 +283,37 @@ _TRAFFICLIGHT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=465,
-  serialized_end=646,
+  serialized_start=492,
+  serialized_end=699,
 )
 
-_TRAFFICLIGHTENUM_TRAFFICLIGHTSTATE.containing_type = _TRAFFICLIGHTENUM
-_TRAFFICLIGHTDIRECTION_TRAFFICLIGHTDIRECTION.containing_type = _TRAFFICLIGHTDIRECTION
-_CYCLEELEMENT.fields_by_name['color'].message_type = _TRAFFICLIGHTDIRECTION
+_TRAFFICLIGHTSTATEENUM_TRAFFICLIGHTSTATE.containing_type = _TRAFFICLIGHTSTATEENUM
+_TRAFFICLIGHTDIRECTIONENUM_TRAFFICLIGHTDIRECTION.containing_type = _TRAFFICLIGHTDIRECTIONENUM
+_CYCLEELEMENT.fields_by_name['color'].enum_type = _TRAFFICLIGHTSTATEENUM_TRAFFICLIGHTSTATE
 _CYCLE.fields_by_name['cycle_elements'].message_type = _CYCLEELEMENT
 _TRAFFICLIGHT.fields_by_name['cycle'].message_type = _CYCLE
 _TRAFFICLIGHT.fields_by_name['position'].message_type = util__pb2._POINT
-_TRAFFICLIGHT.fields_by_name['direction'].message_type = _TRAFFICLIGHTDIRECTION
-DESCRIPTOR.message_types_by_name['TrafficLightEnum'] = _TRAFFICLIGHTENUM
-DESCRIPTOR.message_types_by_name['TrafficLightDirection'] = _TRAFFICLIGHTDIRECTION
+_TRAFFICLIGHT.fields_by_name['direction'].enum_type = _TRAFFICLIGHTDIRECTIONENUM_TRAFFICLIGHTDIRECTION
+DESCRIPTOR.message_types_by_name['TrafficLightStateEnum'] = _TRAFFICLIGHTSTATEENUM
+DESCRIPTOR.message_types_by_name['TrafficLightDirectionEnum'] = _TRAFFICLIGHTDIRECTIONENUM
 DESCRIPTOR.message_types_by_name['CycleElement'] = _CYCLEELEMENT
 DESCRIPTOR.message_types_by_name['Cycle'] = _CYCLE
 DESCRIPTOR.message_types_by_name['TrafficLight'] = _TRAFFICLIGHT
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-TrafficLightEnum = _reflection.GeneratedProtocolMessageType('TrafficLightEnum', (_message.Message,), dict(
-  DESCRIPTOR = _TRAFFICLIGHTENUM,
+TrafficLightStateEnum = _reflection.GeneratedProtocolMessageType('TrafficLightStateEnum', (_message.Message,), dict(
+  DESCRIPTOR = _TRAFFICLIGHTSTATEENUM,
   __module__ = 'traffic_light_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad.TrafficLightEnum)
+  # @@protoc_insertion_point(class_scope:commonroad.TrafficLightStateEnum)
   ))
-_sym_db.RegisterMessage(TrafficLightEnum)
+_sym_db.RegisterMessage(TrafficLightStateEnum)
 
-TrafficLightDirection = _reflection.GeneratedProtocolMessageType('TrafficLightDirection', (_message.Message,), dict(
-  DESCRIPTOR = _TRAFFICLIGHTDIRECTION,
+TrafficLightDirectionEnum = _reflection.GeneratedProtocolMessageType('TrafficLightDirectionEnum', (_message.Message,), dict(
+  DESCRIPTOR = _TRAFFICLIGHTDIRECTIONENUM,
   __module__ = 'traffic_light_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad.TrafficLightDirection)
+  # @@protoc_insertion_point(class_scope:commonroad.TrafficLightDirectionEnum)
   ))
-_sym_db.RegisterMessage(TrafficLightDirection)
+_sym_db.RegisterMessage(TrafficLightDirectionEnum)
 
 CycleElement = _reflection.GeneratedProtocolMessageType('CycleElement', (_message.Message,), dict(
   DESCRIPTOR = _CYCLEELEMENT,

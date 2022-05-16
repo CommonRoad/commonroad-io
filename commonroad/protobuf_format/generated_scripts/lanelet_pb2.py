@@ -12,7 +12,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from commonroad.protobuf_format.generated_scripts import util_pb2 as util__pb2
+import commonroad.protobuf_format.generated_scripts.util_pb2 as util__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='commonroad',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\rlanelet.proto\x12\ncommonroad\x1a\nutil.proto\"w\n\x0fLineMarkingEnum\"d\n\x0bLineMarking\x12\n\n\x06\x44\x41SHED\x10\x00\x12\t\n\x05SOLID\x10\x01\x12\x10\n\x0c\x42ROAD_DASHED\x10\x02\x12\x0f\n\x0b\x42ROAD_SOLID\x10\x03\x12\x0b\n\x07UNKNOWN\x10\x04\x12\x0e\n\nNO_MARKING\x10\x05\"2\n\nDrivingDir\"$\n\nDrivingDir\x12\x08\n\x04SAME\x10\x00\x12\x0c\n\x08OPPOSITE\x10\x01\"\x93\x02\n\x0fLaneletTypeEnum\"\xff\x01\n\x0bLaneletType\x12\t\n\x05URBAN\x10\x00\x12\x0b\n\x07\x43OUNTRY\x10\x01\x12\x0b\n\x07HIGHWAY\x10\x02\x12\x0c\n\x08\x44RIVEWAY\x10\x03\x12\x15\n\x11MAIN_CARRIAGE_WAY\x10\x04\x12\x0f\n\x0b\x41\x43\x43\x45SS_RAMP\x10\x05\x12\r\n\tEXIT_RAMP\x10\x06\x12\x0c\n\x08SHOULDER\x10\x07\x12\x0c\n\x08\x42US_LANE\x10\x08\x12\x0c\n\x08\x42US_STOP\x10\t\x12\x10\n\x0c\x42ICYCLE_LANE\x10\n\x12\x0c\n\x08SIDEWALK\x10\x0b\x12\r\n\tCROSSWALK\x10\x0c\x12\x0e\n\nINTERSTATE\x10\r\x12\x10\n\x0cINTERSECTION\x10\x0e\x12\x0b\n\x07UNKNOWN\x10\x0f\"\x9d\x01\n\x0cRoadUserEnum\"\x8c\x01\n\x08RoadUser\x12\x0b\n\x07VEHICLE\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x14\n\x10PRIORITY_VEHICLE\x10\x04\x12\x0e\n\nMOTORCYCLE\x10\x05\x12\x0b\n\x07\x42ICYCLE\x10\x06\x12\x0e\n\nPEDESTRIAN\x10\x07\x12\t\n\x05TRAIN\x10\x08\x12\x08\n\x04TAXI\x10\t\"i\n\x05\x42ound\x12!\n\x06points\x18\x01 \x03(\x0b\x32\x11.commonroad.Point\x12=\n\x0cline_marking\x18\x02 \x01(\x0e\x32\'.commonroad.LineMarkingEnum.LineMarking\"\xa3\x01\n\x08StopLine\x12!\n\x06points\x18\x01 \x03(\x0b\x32\x11.commonroad.Point\x12=\n\x0cline_marking\x18\x02 \x02(\x0e\x32\'.commonroad.LineMarkingEnum.LineMarking\x12\x19\n\x11traffic_sign_refs\x18\x03 \x03(\r\x12\x1a\n\x12traffic_light_refs\x18\x04 \x03(\r\"\xc6\x04\n\x07Lanelet\x12\x12\n\nlanelet_id\x18\x01 \x02(\r\x12%\n\nleft_bound\x18\x02 \x02(\x0b\x32\x11.commonroad.Bound\x12&\n\x0bright_bound\x18\x03 \x02(\x0b\x32\x11.commonroad.Bound\x12\x14\n\x0cpredecessors\x18\x04 \x03(\r\x12\x12\n\nsuccessors\x18\x05 \x03(\r\x12\x15\n\radjacent_left\x18\x06 \x01(\r\x12\x16\n\x0e\x61\x64jacent_right\x18\x07 \x01(\r\x12\x31\n\x11\x61\x64jacent_left_dir\x18\x08 \x01(\x0b\x32\x16.commonroad.DrivingDir\x12\x32\n\x12\x61\x64jacent_right_dir\x18\t \x01(\x0b\x32\x16.commonroad.DrivingDir\x12\'\n\tstop_line\x18\n \x01(\x0b\x32\x14.commonroad.StopLine\x12>\n\rlanelet_types\x18\x0b \x03(\x0e\x32\'.commonroad.LaneletTypeEnum.LaneletType\x12\x38\n\ruser_one_ways\x18\x0c \x03(\x0e\x32!.commonroad.RoadUserEnum.RoadUser\x12>\n\x13user_bidirectionals\x18\r \x03(\x0e\x32!.commonroad.RoadUserEnum.RoadUser\x12\x19\n\x11traffic_sign_refs\x18\x0e \x03(\r\x12\x1a\n\x12traffic_light_refs\x18\x0f \x03(\r')
+  serialized_pb=_b('\n\rlanelet.proto\x12\ncommonroad\x1a\nutil.proto\"w\n\x0fLineMarkingEnum\"d\n\x0bLineMarking\x12\n\n\x06\x44\x41SHED\x10\x00\x12\t\n\x05SOLID\x10\x01\x12\x10\n\x0c\x42ROAD_DASHED\x10\x02\x12\x0f\n\x0b\x42ROAD_SOLID\x10\x03\x12\x0b\n\x07UNKNOWN\x10\x04\x12\x0e\n\nNO_MARKING\x10\x05\"6\n\x0e\x44rivingDirEnum\"$\n\nDrivingDir\x12\x08\n\x04SAME\x10\x00\x12\x0c\n\x08OPPOSITE\x10\x01\"\x93\x02\n\x0fLaneletTypeEnum\"\xff\x01\n\x0bLaneletType\x12\t\n\x05URBAN\x10\x00\x12\x0b\n\x07\x43OUNTRY\x10\x01\x12\x0b\n\x07HIGHWAY\x10\x02\x12\x0c\n\x08\x44RIVEWAY\x10\x03\x12\x15\n\x11MAIN_CARRIAGE_WAY\x10\x04\x12\x0f\n\x0b\x41\x43\x43\x45SS_RAMP\x10\x05\x12\r\n\tEXIT_RAMP\x10\x06\x12\x0c\n\x08SHOULDER\x10\x07\x12\x0c\n\x08\x42US_LANE\x10\x08\x12\x0c\n\x08\x42US_STOP\x10\t\x12\x10\n\x0c\x42ICYCLE_LANE\x10\n\x12\x0c\n\x08SIDEWALK\x10\x0b\x12\r\n\tCROSSWALK\x10\x0c\x12\x0e\n\nINTERSTATE\x10\r\x12\x10\n\x0cINTERSECTION\x10\x0e\x12\x0b\n\x07UNKNOWN\x10\x0f\"\x9d\x01\n\x0cRoadUserEnum\"\x8c\x01\n\x08RoadUser\x12\x0b\n\x07VEHICLE\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x14\n\x10PRIORITY_VEHICLE\x10\x04\x12\x0e\n\nMOTORCYCLE\x10\x05\x12\x0b\n\x07\x42ICYCLE\x10\x06\x12\x0e\n\nPEDESTRIAN\x10\x07\x12\t\n\x05TRAIN\x10\x08\x12\x08\n\x04TAXI\x10\t\"i\n\x05\x42ound\x12!\n\x06points\x18\x01 \x03(\x0b\x32\x11.commonroad.Point\x12=\n\x0cline_marking\x18\x02 \x01(\x0e\x32\'.commonroad.LineMarkingEnum.LineMarking\"\xa3\x01\n\x08StopLine\x12!\n\x06points\x18\x01 \x03(\x0b\x32\x11.commonroad.Point\x12=\n\x0cline_marking\x18\x02 \x02(\x0e\x32\'.commonroad.LineMarkingEnum.LineMarking\x12\x19\n\x11traffic_sign_refs\x18\x03 \x03(\r\x12\x1a\n\x12traffic_light_refs\x18\x04 \x03(\r\"\xe4\x04\n\x07Lanelet\x12\x12\n\nlanelet_id\x18\x01 \x02(\r\x12%\n\nleft_bound\x18\x02 \x02(\x0b\x32\x11.commonroad.Bound\x12&\n\x0bright_bound\x18\x03 \x02(\x0b\x32\x11.commonroad.Bound\x12\x14\n\x0cpredecessors\x18\x04 \x03(\r\x12\x12\n\nsuccessors\x18\x05 \x03(\r\x12\x15\n\radjacent_left\x18\x06 \x01(\r\x12\x16\n\x0e\x61\x64jacent_right\x18\x07 \x01(\r\x12@\n\x11\x61\x64jacent_left_dir\x18\x08 \x01(\x0e\x32%.commonroad.DrivingDirEnum.DrivingDir\x12\x41\n\x12\x61\x64jacent_right_dir\x18\t \x01(\x0e\x32%.commonroad.DrivingDirEnum.DrivingDir\x12\'\n\tstop_line\x18\n \x01(\x0b\x32\x14.commonroad.StopLine\x12>\n\rlanelet_types\x18\x0b \x03(\x0e\x32\'.commonroad.LaneletTypeEnum.LaneletType\x12\x38\n\ruser_one_ways\x18\x0c \x03(\x0e\x32!.commonroad.RoadUserEnum.RoadUser\x12>\n\x13user_bidirectionals\x18\r \x03(\x0e\x32!.commonroad.RoadUserEnum.RoadUser\x12\x19\n\x11traffic_sign_refs\x18\x0e \x03(\r\x12\x1a\n\x12traffic_light_refs\x18\x0f \x03(\r')
   ,
   dependencies=[util__pb2.DESCRIPTOR,])
 
@@ -64,9 +64,9 @@ _LINEMARKINGENUM_LINEMARKING = _descriptor.EnumDescriptor(
 )
 _sym_db.RegisterEnumDescriptor(_LINEMARKINGENUM_LINEMARKING)
 
-_DRIVINGDIR_DRIVINGDIR = _descriptor.EnumDescriptor(
+_DRIVINGDIRENUM_DRIVINGDIR = _descriptor.EnumDescriptor(
   name='DrivingDir',
-  full_name='commonroad.DrivingDir.DrivingDir',
+  full_name='commonroad.DrivingDirEnum.DrivingDir',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -81,10 +81,10 @@ _DRIVINGDIR_DRIVINGDIR = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=176,
-  serialized_end=212,
+  serialized_start=180,
+  serialized_end=216,
 )
-_sym_db.RegisterEnumDescriptor(_DRIVINGDIR_DRIVINGDIR)
+_sym_db.RegisterEnumDescriptor(_DRIVINGDIRENUM_DRIVINGDIR)
 
 _LANELETTYPEENUM_LANELETTYPE = _descriptor.EnumDescriptor(
   name='LaneletType',
@@ -159,8 +159,8 @@ _LANELETTYPEENUM_LANELETTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=235,
-  serialized_end=490,
+  serialized_start=239,
+  serialized_end=494,
 )
 _sym_db.RegisterEnumDescriptor(_LANELETTYPEENUM_LANELETTYPE)
 
@@ -213,8 +213,8 @@ _ROADUSERENUM_ROADUSER = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=510,
-  serialized_end=650,
+  serialized_start=514,
+  serialized_end=654,
 )
 _sym_db.RegisterEnumDescriptor(_ROADUSERENUM_ROADUSER)
 
@@ -244,9 +244,9 @@ _LINEMARKINGENUM = _descriptor.Descriptor(
 )
 
 
-_DRIVINGDIR = _descriptor.Descriptor(
-  name='DrivingDir',
-  full_name='commonroad.DrivingDir',
+_DRIVINGDIRENUM = _descriptor.Descriptor(
+  name='DrivingDirEnum',
+  full_name='commonroad.DrivingDirEnum',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -256,7 +256,7 @@ _DRIVINGDIR = _descriptor.Descriptor(
   ],
   nested_types=[],
   enum_types=[
-    _DRIVINGDIR_DRIVINGDIR,
+    _DRIVINGDIRENUM_DRIVINGDIR,
   ],
   serialized_options=None,
   is_extendable=False,
@@ -265,7 +265,7 @@ _DRIVINGDIR = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=162,
-  serialized_end=212,
+  serialized_end=216,
 )
 
 
@@ -289,8 +289,8 @@ _LANELETTYPEENUM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=215,
-  serialized_end=490,
+  serialized_start=219,
+  serialized_end=494,
 )
 
 
@@ -314,8 +314,8 @@ _ROADUSERENUM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=493,
-  serialized_end=650,
+  serialized_start=497,
+  serialized_end=654,
 )
 
 
@@ -352,8 +352,8 @@ _BOUND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=652,
-  serialized_end=757,
+  serialized_start=656,
+  serialized_end=761,
 )
 
 
@@ -404,8 +404,8 @@ _STOPLINE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=760,
-  serialized_end=923,
+  serialized_start=764,
+  serialized_end=927,
 )
 
 
@@ -467,15 +467,15 @@ _LANELET = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='adjacent_left_dir', full_name='commonroad.Lanelet.adjacent_left_dir', index=7,
-      number=8, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      number=8, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='adjacent_right_dir', full_name='commonroad.Lanelet.adjacent_right_dir', index=8,
-      number=9, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      number=9, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -533,12 +533,12 @@ _LANELET = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=926,
-  serialized_end=1508,
+  serialized_start=930,
+  serialized_end=1542,
 )
 
 _LINEMARKINGENUM_LINEMARKING.containing_type = _LINEMARKINGENUM
-_DRIVINGDIR_DRIVINGDIR.containing_type = _DRIVINGDIR
+_DRIVINGDIRENUM_DRIVINGDIR.containing_type = _DRIVINGDIRENUM
 _LANELETTYPEENUM_LANELETTYPE.containing_type = _LANELETTYPEENUM
 _ROADUSERENUM_ROADUSER.containing_type = _ROADUSERENUM
 _BOUND.fields_by_name['points'].message_type = util__pb2._POINT
@@ -547,14 +547,14 @@ _STOPLINE.fields_by_name['points'].message_type = util__pb2._POINT
 _STOPLINE.fields_by_name['line_marking'].enum_type = _LINEMARKINGENUM_LINEMARKING
 _LANELET.fields_by_name['left_bound'].message_type = _BOUND
 _LANELET.fields_by_name['right_bound'].message_type = _BOUND
-_LANELET.fields_by_name['adjacent_left_dir'].message_type = _DRIVINGDIR
-_LANELET.fields_by_name['adjacent_right_dir'].message_type = _DRIVINGDIR
+_LANELET.fields_by_name['adjacent_left_dir'].enum_type = _DRIVINGDIRENUM_DRIVINGDIR
+_LANELET.fields_by_name['adjacent_right_dir'].enum_type = _DRIVINGDIRENUM_DRIVINGDIR
 _LANELET.fields_by_name['stop_line'].message_type = _STOPLINE
 _LANELET.fields_by_name['lanelet_types'].enum_type = _LANELETTYPEENUM_LANELETTYPE
 _LANELET.fields_by_name['user_one_ways'].enum_type = _ROADUSERENUM_ROADUSER
 _LANELET.fields_by_name['user_bidirectionals'].enum_type = _ROADUSERENUM_ROADUSER
 DESCRIPTOR.message_types_by_name['LineMarkingEnum'] = _LINEMARKINGENUM
-DESCRIPTOR.message_types_by_name['DrivingDir'] = _DRIVINGDIR
+DESCRIPTOR.message_types_by_name['DrivingDirEnum'] = _DRIVINGDIRENUM
 DESCRIPTOR.message_types_by_name['LaneletTypeEnum'] = _LANELETTYPEENUM
 DESCRIPTOR.message_types_by_name['RoadUserEnum'] = _ROADUSERENUM
 DESCRIPTOR.message_types_by_name['Bound'] = _BOUND
@@ -569,12 +569,12 @@ LineMarkingEnum = _reflection.GeneratedProtocolMessageType('LineMarkingEnum', (_
   ))
 _sym_db.RegisterMessage(LineMarkingEnum)
 
-DrivingDir = _reflection.GeneratedProtocolMessageType('DrivingDir', (_message.Message,), dict(
-  DESCRIPTOR = _DRIVINGDIR,
+DrivingDirEnum = _reflection.GeneratedProtocolMessageType('DrivingDirEnum', (_message.Message,), dict(
+  DESCRIPTOR = _DRIVINGDIRENUM,
   __module__ = 'lanelet_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad.DrivingDir)
+  # @@protoc_insertion_point(class_scope:commonroad.DrivingDirEnum)
   ))
-_sym_db.RegisterMessage(DrivingDir)
+_sym_db.RegisterMessage(DrivingDirEnum)
 
 LaneletTypeEnum = _reflection.GeneratedProtocolMessageType('LaneletTypeEnum', (_message.Message,), dict(
   DESCRIPTOR = _LANELETTYPEENUM,

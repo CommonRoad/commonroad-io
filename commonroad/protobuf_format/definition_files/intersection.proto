@@ -3,11 +3,12 @@ syntax = "proto2";
 package commonroad;
 
 message Incoming {
-    repeated uint32 incoming_lanelets = 1;
-    repeated uint32 right_outgoings = 2;
-    repeated uint32 straight_outgoings = 3;
-    repeated uint32 left_outgoings = 4;
-    optional uint32 is_left_of = 5;
+    required uint32 incoming_id = 1;
+    repeated uint32 incoming_lanelets = 2;
+    repeated uint32 right_outgoings = 3;
+    repeated uint32 straight_outgoings = 4;
+    repeated uint32 left_outgoings = 5;
+    optional uint32 is_left_of = 6;
 }
 
 message Intersection {

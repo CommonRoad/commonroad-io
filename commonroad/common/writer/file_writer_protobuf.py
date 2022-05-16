@@ -1,19 +1,19 @@
-import datetime
 from typing import Set, Union, List
 
 import numpy as np
 
 from commonroad import SCENARIO_VERSION
+from commonroad.common.util import Interval
 from commonroad.common.writer.file_writer import FileWriter, OverwriteExistingFile
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.protobuf_format.generated_scripts import commonroad_pb2, scenario_tags_pb2, location_pb2, lanelet_pb2, \
     traffic_sign_pb2, traffic_light_pb2, intersection_pb2, static_obstacle_pb2, dynamic_obstacle_pb2, \
     environment_obstacle_pb2, planning_problem_pb2, util_pb2
-from commonroad.scenario.intersection import Intersection
+from commonroad.protobuf_format.generated_scripts.intersection_pb2 import Incoming
+from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine
-from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle
+from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, SignalState
 from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment
-from google.protobuf import timestamp_pb2
 
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -23,7 +23,8 @@ __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficSignElement
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficSignElement, TrafficLightCycleElement
+from commonroad.scenario.trajectory import State
 
 
 class ProtobufFileWriter(FileWriter):
@@ -55,6 +56,14 @@ class ProtobufFileWriter(FileWriter):
         for traffic_sign in self.scenario.lanelet_network.traffic_signs:
             traffic_sign_msg = TrafficSignMessage.create_message(traffic_sign)
             self._commonroad_msg.traffic_signs.append(traffic_sign_msg)
+
+        for traffic_light in self.scenario.lanelet_network.traffic_lights:
+            traffic_light_msg = TrafficLightMessage.create_message(traffic_light)
+            self._commonroad_msg.traffic_lights.append(traffic_light_msg)
+
+        for intersection in self.scenario.lanelet_network.intersections:
+            intersection_msg = IntersectionMessage.create_message(intersection)
+            self._commonroad_msg.intersections.append(intersection_msg)
 
     def _add_all_planning_problems_from_planning_problem_set(self):
         pass
@@ -183,7 +192,18 @@ class LaneletMessage:
         if lanelet.adj_right is not None:
             lanelet_msg.adjacent_right = lanelet.adj_right
 
-        # left and right driving dirs TODO
+        if lanelet.adj_left_same_direction is not None:
+            if lanelet.adj_left_same_direction:
+                lanelet_msg.adjacent_left_dir = lanelet_pb2.DrivingDirEnum.DrivingDir.Value('SAME')
+            else:
+                lanelet_msg.adjacent_left_dir = lanelet_pb2.DrivingDirEnum.DrivingDir.Value('OPPOSITE')
+
+        if lanelet.adj_right_same_direction is not None:
+            if lanelet.adj_right_same_direction:
+                lanelet_msg.adjacent_right_dir = lanelet_pb2.DrivingDirEnum.DrivingDir.Value('SAME')
+            else:
+                lanelet_msg.adjacent_right_dir = lanelet_pb2.DrivingDirEnum.DrivingDir.Value('OPPOSITE')
+
         if lanelet.stop_line is not None:
             stop_line_msg = StopLineMessage.create_message(lanelet.stop_line)
             lanelet_msg.stop_line.CopyFrom(stop_line_msg)
@@ -238,13 +258,15 @@ class StopLineMessage:
 
         stop_line_msg.line_marking = lanelet_pb2.LineMarkingEnum.LineMarking.Value(stop_line.line_marking.name)
 
-        for ts_ref in stop_line.traffic_sign_ref:
-            stop_line_msg.traffic_sign_refs.append(ts_ref)
+        if stop_line.traffic_sign_ref is not None:
+            for ts_ref in stop_line.traffic_sign_ref:
+                stop_line_msg.traffic_sign_refs.append(ts_ref)
 
-        for tl_ref in stop_line.traffic_light_ref:
-            stop_line_msg.traffic_light_refs.append(tl_ref)
+        if stop_line.traffic_light_ref is not None:
+            for tl_ref in stop_line.traffic_light_ref:
+                stop_line_msg.traffic_light_refs.append(tl_ref)
 
-        return stop_line
+        return stop_line_msg
 
 
 class TrafficSignMessage:
@@ -259,7 +281,10 @@ class TrafficSignMessage:
             traffic_sign_element_msg = TrafficSignElementMessage.create_message(traffic_sign_element)
             traffic_sign_msg.traffic_sign_elements.append(traffic_sign_element_msg)
 
-        # position TODO
+        if traffic_sign.position is not None:
+            point_msg = PointMessage.create_message(traffic_sign.position)
+            traffic_sign_msg.position.CopyFrom(point_msg)
+
         if traffic_sign.virtual is not None:
             traffic_sign_msg.virtual = traffic_sign.virtual
 
@@ -283,20 +308,117 @@ class TrafficLightMessage:
 
     @classmethod
     def create_message(cls, traffic_light: TrafficLight) -> traffic_light_pb2.TrafficLight:
-        pass
+        traffic_light_msg = traffic_light_pb2.TrafficLight()
+
+        traffic_light_msg.traffic_light_id = traffic_light.traffic_light_id
+
+        cycle_msg = CycleMessage.create_message(traffic_light.cycle, traffic_light.time_offset)
+        traffic_light_msg.cycle.CopyFrom(cycle_msg)
+
+        if traffic_light.position is not None:
+            point_msg = PointMessage.create_message(traffic_light.position)
+            traffic_light_msg.position.CopyFrom(point_msg)
+
+        if traffic_light.direction is not None:
+            traffic_light_msg.direction = traffic_light_pb2.TrafficLightDirectionEnum.TrafficLightDirection \
+                .Value(traffic_light.direction.name)
+
+        if traffic_light.active is not None:
+            traffic_light_msg.active = traffic_light.active
+
+        return traffic_light_msg
+
+
+class CycleMessage:
+
+    @classmethod
+    def create_message(cls, cycle_elements: List[TrafficLightCycleElement], time_offset: int) -> traffic_light_pb2.Cycle:
+        cycle_msg = traffic_light_pb2.Cycle()
+
+        for cycle_element in cycle_elements:
+            cycle_element_msg = CycleElementMessage.create_message(cycle_element)
+            cycle_msg.cycle_elements.append(cycle_element_msg)
+
+        if time_offset is not None:
+            cycle_msg.time_offset = time_offset
+
+        return cycle_msg
+
+
+class CycleElementMessage:
+
+    @classmethod
+    def create_message(cls, cycle_element: TrafficLightCycleElement) -> traffic_light_pb2.CycleElement:
+        cycle_element_msg = traffic_light_pb2.CycleElement()
+
+        cycle_element_msg.duration = cycle_element.duration
+        cycle_element_msg.color = traffic_light_pb2.TrafficLightStateEnum.TrafficLightState \
+            .Value(cycle_element.state.name)
+
+        return cycle_element_msg
 
 
 class IntersectionMessage:
 
     @classmethod
     def create_message(cls, intersection: Intersection) -> intersection_pb2.Intersection:
-        pass
+        intersection_msg = intersection_pb2.Intersection()
+
+        intersection_msg.intersection_id = intersection.intersection_id
+
+        for incoming in intersection.incomings:
+            incoming_msg = IncomingMessage.create_message(incoming)
+            intersection_msg.incomings.append(incoming_msg)
+
+        for crossing in intersection.crossings:
+            intersection_msg.crossing_lanelets.append(crossing)
+
+        return intersection_msg
+
+
+class IncomingMessage:
+
+    @classmethod
+    def create_message(cls, incoming: IntersectionIncomingElement) -> intersection_pb2.Incoming:
+        incoming_msg = intersection_pb2.Incoming()
+
+        # incoming_id TODO
+        for incoming_lanelet in incoming.incoming_lanelets:
+            incoming_msg.incoming_lanelets.append(incoming_lanelet)
+
+        for right_outgoing in incoming.successors_right:
+            incoming_msg.right_outgoings.append(right_outgoing)
+
+        for straight_outgoing in incoming.successors_straight:
+            incoming_msg.straight_outgoings.append(straight_outgoing)
+
+        for left_outgoing in incoming.successors_left:
+            incoming_msg.left_outgoings.append(left_outgoing)
+
+        if incoming.left_of is not None:
+            incoming_msg.is_left_of = incoming.left_of
+
+        return incoming_msg
 
 
 class StaticObstacleMessage:
 
     @classmethod
     def create_message(cls, static_obstacle: StaticObstacle) -> static_obstacle_pb2.StaticObstacle:
+        pass
+
+
+class StateMessage:
+
+    @classmethod
+    def create_message(cls, state: State):
+        pass
+
+
+class SignalStateMessage:
+
+    @classmethod
+    def create_message(cls, signal_state: SignalState):
         pass
 
 
@@ -331,3 +453,57 @@ class PointMessage:
         point_msg.y = point[1]
 
         return point_msg
+
+
+class IntegerIntervalMessage:
+
+    @classmethod
+    def create_message(cls, interval: Interval) -> util_pb2.IntegerInterval:
+        integer_interval_msg = util_pb2.IntegerInterval
+
+        integer_interval_msg.start = interval.start
+        integer_interval_msg.end = interval.end
+
+        return integer_interval_msg
+
+
+class FloatIntervalMessage:
+
+    @classmethod
+    def create_message(cls, interval: Interval) -> util_pb2.FloatInterval:
+        float_interval_msg = util_pb2.FloatInterval
+
+        float_interval_msg.start = interval.start
+        float_interval_msg.end = interval.end
+
+        return float_interval_msg
+
+
+class IntegerExactOrIntervalMessage:
+
+    @classmethod
+    def create_message(cls, value: Union[int, Interval]) -> util_pb2.IntegerExactOrInterval:
+        integer_exact_or_interval_msg = util_pb2.IntegerExactOrInterval()
+
+        if isinstance(value, int):
+            integer_exact_or_interval_msg.exact = value
+        else:
+            integer_interval_msg = IntegerIntervalMessage.create_message(value)
+            integer_exact_or_interval_msg.interval.CopyFrom(integer_interval_msg)
+
+        return integer_exact_or_interval_msg
+
+
+class FloatExactOrIntervalMessage:
+
+    @classmethod
+    def create_message(cls, value: Union[int, Interval]) -> util_pb2.FloatExactOrInterval:
+        float_exact_or_interval_msg = util_pb2.FloatExactOrInterval()
+
+        if isinstance(value, float):
+            float_exact_or_interval_msg.exact = value
+        else:
+            float_interval_msg = FloatIntervalMessage.create_message(value)
+            float_exact_or_interval_msg.interval.CopyFrom(float_interval_msg)
+
+        return float_exact_or_interval_msg

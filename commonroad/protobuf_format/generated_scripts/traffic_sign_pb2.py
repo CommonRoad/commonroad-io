@@ -12,6 +12,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+import commonroad.protobuf_format.generated_scripts.util_pb2 as util__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -19,8 +20,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='commonroad',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x12traffic_sign.proto\x12\ncommonroad\"H\n\x12TrafficSignElement\x12\x17\n\x0ftraffic_sign_id\x18\x01 \x02(\r\x12\x19\n\x11\x61\x64\x64itional_values\x18\x02 \x03(\t\"\x88\x01\n\x0bTrafficSign\x12\x17\n\x0ftraffic_sign_id\x18\x01 \x02(\r\x12=\n\x15traffic_sign_elements\x18\x02 \x03(\x0b\x32\x1e.commonroad.TrafficSignElement\x12\x10\n\x08position\x18\x03 \x01(\r\x12\x0f\n\x07virtual\x18\x04 \x01(\x08')
-)
+  serialized_pb=_b('\n\x12traffic_sign.proto\x12\ncommonroad\x1a\nutil.proto\"P\n\x12TrafficSignElement\x12\x1f\n\x17traffic_sign_element_id\x18\x01 \x02(\r\x12\x19\n\x11\x61\x64\x64itional_values\x18\x02 \x03(\t\"\x9b\x01\n\x0bTrafficSign\x12\x17\n\x0ftraffic_sign_id\x18\x01 \x02(\r\x12=\n\x15traffic_sign_elements\x18\x02 \x03(\x0b\x32\x1e.commonroad.TrafficSignElement\x12#\n\x08position\x18\x03 \x01(\x0b\x32\x11.commonroad.Point\x12\x0f\n\x07virtual\x18\x04 \x01(\x08')
+  ,
+  dependencies=[util__pb2.DESCRIPTOR,])
 
 
 
@@ -33,7 +35,7 @@ _TRAFFICSIGNELEMENT = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='traffic_sign_id', full_name='commonroad.TrafficSignElement.traffic_sign_id', index=0,
+      name='traffic_sign_element_id', full_name='commonroad.TrafficSignElement.traffic_sign_element_id', index=0,
       number=1, type=13, cpp_type=3, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -58,8 +60,8 @@ _TRAFFICSIGNELEMENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=34,
-  serialized_end=106,
+  serialized_start=46,
+  serialized_end=126,
 )
 
 
@@ -86,8 +88,8 @@ _TRAFFICSIGN = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='position', full_name='commonroad.TrafficSign.position', index=2,
-      number=3, type=13, cpp_type=3, label=1,
-      has_default_value=False, default_value=0,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -110,11 +112,12 @@ _TRAFFICSIGN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=109,
-  serialized_end=245,
+  serialized_start=129,
+  serialized_end=284,
 )
 
 _TRAFFICSIGN.fields_by_name['traffic_sign_elements'].message_type = _TRAFFICSIGNELEMENT
+_TRAFFICSIGN.fields_by_name['position'].message_type = util__pb2._POINT
 DESCRIPTOR.message_types_by_name['TrafficSignElement'] = _TRAFFICSIGNELEMENT
 DESCRIPTOR.message_types_by_name['TrafficSign'] = _TRAFFICSIGN
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
