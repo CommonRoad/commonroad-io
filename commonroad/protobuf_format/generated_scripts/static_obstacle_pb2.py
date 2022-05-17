@@ -13,6 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 import commonroad.protobuf_format.generated_scripts.obstacle_pb2 as obstacle__pb2
+import commonroad.protobuf_format.generated_scripts.util_pb2 as util__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,9 +21,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='commonroad',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x15static_obstacle.proto\x12\ncommonroad\x1a\x0eobstacle.proto\"\xe8\x02\n\x0eStaticObstacle\x12\x1a\n\x12static_obstacle_id\x18\x01 \x02(\r\x12@\n\robstacle_type\x18\x02 \x02(\x0e\x32).commonroad.ObstacleTypeEnum.ObstacleType\x12 \n\x05shape\x18\x03 \x02(\x0b\x32\x11.commonroad.Shape\x12(\n\rinitial_state\x18\x04 \x02(\x0b\x32\x11.commonroad.State\x12\"\n\x1ainitial_center_lanelet_ids\x18\x05 \x03(\r\x12!\n\x19initial_shape_lanelet_ids\x18\x06 \x03(\r\x12\x35\n\x14initial_signal_state\x18\x07 \x01(\x0b\x32\x17.commonroad.SignalState\x12.\n\rsignal_series\x18\x08 \x03(\x0b\x32\x17.commonroad.SignalState')
+  serialized_pb=_b('\n\x15static_obstacle.proto\x12\ncommonroad\x1a\x0eobstacle.proto\x1a\nutil.proto\"\xe8\x02\n\x0eStaticObstacle\x12\x1a\n\x12static_obstacle_id\x18\x01 \x02(\r\x12@\n\robstacle_type\x18\x02 \x02(\x0e\x32).commonroad.ObstacleTypeEnum.ObstacleType\x12 \n\x05shape\x18\x03 \x02(\x0b\x32\x11.commonroad.Shape\x12(\n\rinitial_state\x18\x04 \x02(\x0b\x32\x11.commonroad.State\x12\"\n\x1ainitial_center_lanelet_ids\x18\x05 \x03(\r\x12!\n\x19initial_shape_lanelet_ids\x18\x06 \x03(\r\x12\x35\n\x14initial_signal_state\x18\x07 \x01(\x0b\x32\x17.commonroad.SignalState\x12.\n\rsignal_series\x18\x08 \x03(\x0b\x32\x17.commonroad.SignalState')
   ,
-  dependencies=[obstacle__pb2.DESCRIPTOR,])
+  dependencies=[obstacle__pb2.DESCRIPTOR,util__pb2.DESCRIPTOR,])
 
 
 
@@ -102,12 +103,12 @@ _STATICOBSTACLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=54,
-  serialized_end=414,
+  serialized_start=66,
+  serialized_end=426,
 )
 
 _STATICOBSTACLE.fields_by_name['obstacle_type'].enum_type = obstacle__pb2._OBSTACLETYPEENUM_OBSTACLETYPE
-_STATICOBSTACLE.fields_by_name['shape'].message_type = obstacle__pb2._SHAPE
+_STATICOBSTACLE.fields_by_name['shape'].message_type = util__pb2._SHAPE
 _STATICOBSTACLE.fields_by_name['initial_state'].message_type = obstacle__pb2._STATE
 _STATICOBSTACLE.fields_by_name['initial_signal_state'].message_type = obstacle__pb2._SIGNALSTATE
 _STATICOBSTACLE.fields_by_name['signal_series'].message_type = obstacle__pb2._SIGNALSTATE

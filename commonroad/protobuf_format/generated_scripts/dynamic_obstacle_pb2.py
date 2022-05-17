@@ -225,11 +225,11 @@ _DYNAMICOBSTACLE = _descriptor.Descriptor(
 )
 
 _OCCUPANCY.fields_by_name['time_step'].message_type = util__pb2._INTEGEREXACTORINTERVAL
-_OCCUPANCY.fields_by_name['shape'].message_type = obstacle__pb2._SHAPE
+_OCCUPANCY.fields_by_name['shape'].message_type = util__pb2._SHAPE
 _TRAJECTORY.fields_by_name['states'].message_type = obstacle__pb2._STATE
 _OCCUPANCYSET.fields_by_name['occupancies'].message_type = _OCCUPANCY
 _DYNAMICOBSTACLE.fields_by_name['obstacle_type'].enum_type = obstacle__pb2._OBSTACLETYPEENUM_OBSTACLETYPE
-_DYNAMICOBSTACLE.fields_by_name['shape'].message_type = obstacle__pb2._SHAPE
+_DYNAMICOBSTACLE.fields_by_name['shape'].message_type = util__pb2._SHAPE
 _DYNAMICOBSTACLE.fields_by_name['initial_state'].message_type = obstacle__pb2._STATE
 _DYNAMICOBSTACLE.fields_by_name['trajectory'].message_type = _TRAJECTORY
 _DYNAMICOBSTACLE.fields_by_name['occupancy_set'].message_type = _OCCUPANCYSET

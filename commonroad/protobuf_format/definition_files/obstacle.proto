@@ -25,35 +25,6 @@ message ObstacleTypeEnum {
     }
 }
 
-message Rectangle {
-    required float length = 1;
-    required float width = 2;
-    optional Point center = 3;
-    optional float orientation = 4;
-}
-
-message Circle {
-    required float radius = 1;
-    optional Point center = 2;
-}
-
-message Polygon {
-    repeated Point vertices = 1;
-}
-
-message ShapeGroup {
-    repeated Shape shapes = 1;
-}
-
-message Shape {
-    oneof shape {
-        Rectangle rectangle = 1;
-        Circle circle = 2;
-        Polygon polygon = 3;
-        ShapeGroup shape_group = 4;
-    }
-}
-
 message State {
     oneof position {
         Point point = 1;

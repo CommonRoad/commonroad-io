@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='commonroad',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x0eobstacle.proto\x12\ncommonroad\x1a\nutil.proto\"\x8f\x02\n\x10ObstacleTypeEnum\"\xfa\x01\n\x0cObstacleType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x0b\n\x07\x42ICYCLE\x10\x04\x12\x0e\n\nPEDESTRIAN\x10\x05\x12\x14\n\x10PRIORITY_VEHICLE\x10\x06\x12\x12\n\x0ePARKED_VEHICLE\x10\x07\x12\x15\n\x11\x43ONSTRUCTION_ZONE\x10\x08\x12\t\n\x05TRAIN\x10\t\x12\x11\n\rROAD_BOUNDARY\x10\n\x12\x0e\n\nMOTORCYCLE\x10\x0b\x12\x08\n\x04TAXI\x10\x0c\x12\x0c\n\x08\x42UILDING\x10\r\x12\n\n\x06PILLAR\x10\x0e\x12\x10\n\x0cMEDIAN_STRIP\x10\x0f\"b\n\tRectangle\x12\x0e\n\x06length\x18\x01 \x02(\x02\x12\r\n\x05width\x18\x02 \x02(\x02\x12!\n\x06\x63\x65nter\x18\x03 \x01(\x0b\x32\x11.commonroad.Point\x12\x13\n\x0borientation\x18\x04 \x01(\x02\";\n\x06\x43ircle\x12\x0e\n\x06radius\x18\x01 \x02(\x02\x12!\n\x06\x63\x65nter\x18\x02 \x01(\x0b\x32\x11.commonroad.Point\".\n\x07Polygon\x12#\n\x08vertices\x18\x01 \x03(\x0b\x32\x11.commonroad.Point\"/\n\nShapeGroup\x12!\n\x06shapes\x18\x01 \x03(\x0b\x32\x11.commonroad.Shape\"\xb9\x01\n\x05Shape\x12*\n\trectangle\x18\x01 \x01(\x0b\x32\x15.commonroad.RectangleH\x00\x12$\n\x06\x63ircle\x18\x02 \x01(\x0b\x32\x12.commonroad.CircleH\x00\x12&\n\x07polygon\x18\x03 \x01(\x0b\x32\x13.commonroad.PolygonH\x00\x12-\n\x0bshape_group\x18\x04 \x01(\x0b\x32\x16.commonroad.ShapeGroupH\x00\x42\x07\n\x05shape\"\xe0\x0f\n\x05State\x12\"\n\x05point\x18\x01 \x01(\x0b\x32\x11.commonroad.PointH\x00\x12\"\n\x05shape\x18\x02 \x01(\x0b\x32\x11.commonroad.ShapeH\x00\x12\x35\n\x0borientation\x18\x03 \x02(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x32\n\x08velocity\x18\x04 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0esteering_angle\x18\x05 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12>\n\x14steering_angle_speed\x18\x06 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x32\n\x08yaw_rate\x18\x07 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nslip_angle\x18\x08 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nroll_angle\x18\t \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\troll_rate\x18\n \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x35\n\x0bpitch_angle\x18\x0b \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\npitch_rate\x18\x0c \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nvelocity_y\x18\r \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nposition_z\x18\x0e \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nvelocity_z\x18\x0f \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10roll_angle_front\x18\x10 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0froll_rate_front\x18\x11 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10velocity_y_front\x18\x12 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10position_z_front\x18\x13 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10velocity_z_front\x18\x14 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0froll_angle_rear\x18\x15 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0eroll_rate_rear\x18\x16 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fvelocity_y_rear\x18\x17 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fposition_z_rear\x18\x18 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fvelocity_z_rear\x18\x19 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12H\n\x1eleft_front_wheel_angular_speed\x18\x1a \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12I\n\x1fright_front_wheel_angular_speed\x18\x1b \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12G\n\x1dleft_rear_wheel_angular_speed\x18\x1c \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12H\n\x1eright_rear_wheel_angular_speed\x18\x1d \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\tdelta_y_f\x18\x1e \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\tdelta_y_r\x18\x1f \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x36\n\x0c\x61\x63\x63\x65leration\x18  \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0e\x61\x63\x63\x65leration_y\x18! \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12.\n\x04jerk\x18\" \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x35\n\ttime_step\x18# \x01(\x0b\x32\".commonroad.IntegerExactOrIntervalB\n\n\x08position\"\xd8\x01\n\x0bSignalState\x12\x35\n\ttime_step\x18\x01 \x02(\x0b\x32\".commonroad.IntegerExactOrInterval\x12\x0c\n\x04horn\x18\x02 \x01(\x08\x12\x16\n\x0eindicator_left\x18\x03 \x01(\x08\x12\x17\n\x0findicator_right\x18\x04 \x01(\x08\x12\x16\n\x0e\x62raking_lights\x18\x05 \x01(\x08\x12\x1d\n\x15hazard_warning_lights\x18\x06 \x01(\x08\x12\x1c\n\x14\x66lashing_blue_lights\x18\x07 \x01(\x08')
+  serialized_pb=_b('\n\x0eobstacle.proto\x12\ncommonroad\x1a\nutil.proto\"\x8f\x02\n\x10ObstacleTypeEnum\"\xfa\x01\n\x0cObstacleType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x0b\n\x07\x42ICYCLE\x10\x04\x12\x0e\n\nPEDESTRIAN\x10\x05\x12\x14\n\x10PRIORITY_VEHICLE\x10\x06\x12\x12\n\x0ePARKED_VEHICLE\x10\x07\x12\x15\n\x11\x43ONSTRUCTION_ZONE\x10\x08\x12\t\n\x05TRAIN\x10\t\x12\x11\n\rROAD_BOUNDARY\x10\n\x12\x0e\n\nMOTORCYCLE\x10\x0b\x12\x08\n\x04TAXI\x10\x0c\x12\x0c\n\x08\x42UILDING\x10\r\x12\n\n\x06PILLAR\x10\x0e\x12\x10\n\x0cMEDIAN_STRIP\x10\x0f\"\xe0\x0f\n\x05State\x12\"\n\x05point\x18\x01 \x01(\x0b\x32\x11.commonroad.PointH\x00\x12\"\n\x05shape\x18\x02 \x01(\x0b\x32\x11.commonroad.ShapeH\x00\x12\x35\n\x0borientation\x18\x03 \x02(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x32\n\x08velocity\x18\x04 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0esteering_angle\x18\x05 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12>\n\x14steering_angle_speed\x18\x06 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x32\n\x08yaw_rate\x18\x07 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nslip_angle\x18\x08 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nroll_angle\x18\t \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\troll_rate\x18\n \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x35\n\x0bpitch_angle\x18\x0b \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\npitch_rate\x18\x0c \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nvelocity_y\x18\r \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nposition_z\x18\x0e \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nvelocity_z\x18\x0f \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10roll_angle_front\x18\x10 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0froll_rate_front\x18\x11 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10velocity_y_front\x18\x12 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10position_z_front\x18\x13 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10velocity_z_front\x18\x14 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0froll_angle_rear\x18\x15 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0eroll_rate_rear\x18\x16 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fvelocity_y_rear\x18\x17 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fposition_z_rear\x18\x18 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fvelocity_z_rear\x18\x19 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12H\n\x1eleft_front_wheel_angular_speed\x18\x1a \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12I\n\x1fright_front_wheel_angular_speed\x18\x1b \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12G\n\x1dleft_rear_wheel_angular_speed\x18\x1c \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12H\n\x1eright_rear_wheel_angular_speed\x18\x1d \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\tdelta_y_f\x18\x1e \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\tdelta_y_r\x18\x1f \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x36\n\x0c\x61\x63\x63\x65leration\x18  \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0e\x61\x63\x63\x65leration_y\x18! \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12.\n\x04jerk\x18\" \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x35\n\ttime_step\x18# \x01(\x0b\x32\".commonroad.IntegerExactOrIntervalB\n\n\x08position\"\xd8\x01\n\x0bSignalState\x12\x35\n\ttime_step\x18\x01 \x02(\x0b\x32\".commonroad.IntegerExactOrInterval\x12\x0c\n\x04horn\x18\x02 \x01(\x08\x12\x16\n\x0eindicator_left\x18\x03 \x01(\x08\x12\x17\n\x0findicator_right\x18\x04 \x01(\x08\x12\x16\n\x0e\x62raking_lights\x18\x05 \x01(\x08\x12\x1d\n\x15hazard_warning_lights\x18\x06 \x01(\x08\x12\x1c\n\x14\x66lashing_blue_lights\x18\x07 \x01(\x08')
   ,
   dependencies=[util__pb2.DESCRIPTOR,])
 
@@ -127,213 +127,6 @@ _OBSTACLETYPEENUM = _descriptor.Descriptor(
   ],
   serialized_start=43,
   serialized_end=314,
-)
-
-
-_RECTANGLE = _descriptor.Descriptor(
-  name='Rectangle',
-  full_name='commonroad.Rectangle',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='length', full_name='commonroad.Rectangle.length', index=0,
-      number=1, type=2, cpp_type=6, label=2,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='width', full_name='commonroad.Rectangle.width', index=1,
-      number=2, type=2, cpp_type=6, label=2,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='center', full_name='commonroad.Rectangle.center', index=2,
-      number=3, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='orientation', full_name='commonroad.Rectangle.orientation', index=3,
-      number=4, type=2, cpp_type=6, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=316,
-  serialized_end=414,
-)
-
-
-_CIRCLE = _descriptor.Descriptor(
-  name='Circle',
-  full_name='commonroad.Circle',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='radius', full_name='commonroad.Circle.radius', index=0,
-      number=1, type=2, cpp_type=6, label=2,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='center', full_name='commonroad.Circle.center', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=416,
-  serialized_end=475,
-)
-
-
-_POLYGON = _descriptor.Descriptor(
-  name='Polygon',
-  full_name='commonroad.Polygon',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='vertices', full_name='commonroad.Polygon.vertices', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=477,
-  serialized_end=523,
-)
-
-
-_SHAPEGROUP = _descriptor.Descriptor(
-  name='ShapeGroup',
-  full_name='commonroad.ShapeGroup',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='shapes', full_name='commonroad.ShapeGroup.shapes', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=525,
-  serialized_end=572,
-)
-
-
-_SHAPE = _descriptor.Descriptor(
-  name='Shape',
-  full_name='commonroad.Shape',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='rectangle', full_name='commonroad.Shape.rectangle', index=0,
-      number=1, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='circle', full_name='commonroad.Shape.circle', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='polygon', full_name='commonroad.Shape.polygon', index=2,
-      number=3, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='shape_group', full_name='commonroad.Shape.shape_group', index=3,
-      number=4, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-    _descriptor.OneofDescriptor(
-      name='shape', full_name='commonroad.Shape.shape',
-      index=0, containing_type=None, fields=[]),
-  ],
-  serialized_start=575,
-  serialized_end=760,
 )
 
 
@@ -604,8 +397,8 @@ _STATE = _descriptor.Descriptor(
       name='position', full_name='commonroad.State.position',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=763,
-  serialized_end=2779,
+  serialized_start=317,
+  serialized_end=2333,
 )
 
 
@@ -677,33 +470,13 @@ _SIGNALSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2782,
-  serialized_end=2998,
+  serialized_start=2336,
+  serialized_end=2552,
 )
 
 _OBSTACLETYPEENUM_OBSTACLETYPE.containing_type = _OBSTACLETYPEENUM
-_RECTANGLE.fields_by_name['center'].message_type = util__pb2._POINT
-_CIRCLE.fields_by_name['center'].message_type = util__pb2._POINT
-_POLYGON.fields_by_name['vertices'].message_type = util__pb2._POINT
-_SHAPEGROUP.fields_by_name['shapes'].message_type = _SHAPE
-_SHAPE.fields_by_name['rectangle'].message_type = _RECTANGLE
-_SHAPE.fields_by_name['circle'].message_type = _CIRCLE
-_SHAPE.fields_by_name['polygon'].message_type = _POLYGON
-_SHAPE.fields_by_name['shape_group'].message_type = _SHAPEGROUP
-_SHAPE.oneofs_by_name['shape'].fields.append(
-  _SHAPE.fields_by_name['rectangle'])
-_SHAPE.fields_by_name['rectangle'].containing_oneof = _SHAPE.oneofs_by_name['shape']
-_SHAPE.oneofs_by_name['shape'].fields.append(
-  _SHAPE.fields_by_name['circle'])
-_SHAPE.fields_by_name['circle'].containing_oneof = _SHAPE.oneofs_by_name['shape']
-_SHAPE.oneofs_by_name['shape'].fields.append(
-  _SHAPE.fields_by_name['polygon'])
-_SHAPE.fields_by_name['polygon'].containing_oneof = _SHAPE.oneofs_by_name['shape']
-_SHAPE.oneofs_by_name['shape'].fields.append(
-  _SHAPE.fields_by_name['shape_group'])
-_SHAPE.fields_by_name['shape_group'].containing_oneof = _SHAPE.oneofs_by_name['shape']
 _STATE.fields_by_name['point'].message_type = util__pb2._POINT
-_STATE.fields_by_name['shape'].message_type = _SHAPE
+_STATE.fields_by_name['shape'].message_type = util__pb2._SHAPE
 _STATE.fields_by_name['orientation'].message_type = util__pb2._FLOATEXACTORINTERVAL
 _STATE.fields_by_name['velocity'].message_type = util__pb2._FLOATEXACTORINTERVAL
 _STATE.fields_by_name['steering_angle'].message_type = util__pb2._FLOATEXACTORINTERVAL
@@ -745,11 +518,6 @@ _STATE.oneofs_by_name['position'].fields.append(
 _STATE.fields_by_name['shape'].containing_oneof = _STATE.oneofs_by_name['position']
 _SIGNALSTATE.fields_by_name['time_step'].message_type = util__pb2._INTEGEREXACTORINTERVAL
 DESCRIPTOR.message_types_by_name['ObstacleTypeEnum'] = _OBSTACLETYPEENUM
-DESCRIPTOR.message_types_by_name['Rectangle'] = _RECTANGLE
-DESCRIPTOR.message_types_by_name['Circle'] = _CIRCLE
-DESCRIPTOR.message_types_by_name['Polygon'] = _POLYGON
-DESCRIPTOR.message_types_by_name['ShapeGroup'] = _SHAPEGROUP
-DESCRIPTOR.message_types_by_name['Shape'] = _SHAPE
 DESCRIPTOR.message_types_by_name['State'] = _STATE
 DESCRIPTOR.message_types_by_name['SignalState'] = _SIGNALSTATE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -760,41 +528,6 @@ ObstacleTypeEnum = _reflection.GeneratedProtocolMessageType('ObstacleTypeEnum', 
   # @@protoc_insertion_point(class_scope:commonroad.ObstacleTypeEnum)
   ))
 _sym_db.RegisterMessage(ObstacleTypeEnum)
-
-Rectangle = _reflection.GeneratedProtocolMessageType('Rectangle', (_message.Message,), dict(
-  DESCRIPTOR = _RECTANGLE,
-  __module__ = 'obstacle_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad.Rectangle)
-  ))
-_sym_db.RegisterMessage(Rectangle)
-
-Circle = _reflection.GeneratedProtocolMessageType('Circle', (_message.Message,), dict(
-  DESCRIPTOR = _CIRCLE,
-  __module__ = 'obstacle_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad.Circle)
-  ))
-_sym_db.RegisterMessage(Circle)
-
-Polygon = _reflection.GeneratedProtocolMessageType('Polygon', (_message.Message,), dict(
-  DESCRIPTOR = _POLYGON,
-  __module__ = 'obstacle_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad.Polygon)
-  ))
-_sym_db.RegisterMessage(Polygon)
-
-ShapeGroup = _reflection.GeneratedProtocolMessageType('ShapeGroup', (_message.Message,), dict(
-  DESCRIPTOR = _SHAPEGROUP,
-  __module__ = 'obstacle_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad.ShapeGroup)
-  ))
-_sym_db.RegisterMessage(ShapeGroup)
-
-Shape = _reflection.GeneratedProtocolMessageType('Shape', (_message.Message,), dict(
-  DESCRIPTOR = _SHAPE,
-  __module__ = 'obstacle_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad.Shape)
-  ))
-_sym_db.RegisterMessage(Shape)
 
 State = _reflection.GeneratedProtocolMessageType('State', (_message.Message,), dict(
   DESCRIPTOR = _STATE,

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='commonroad',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\nutil.proto\x12\ncommonroad\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x02(\x02\x12\t\n\x01y\x18\x02 \x02(\x02\"-\n\x0fIntegerInterval\x12\r\n\x05start\x18\x01 \x01(\x05\x12\x0b\n\x03\x65nd\x18\x02 \x01(\x05\"+\n\rFloatInterval\x12\r\n\x05start\x18\x01 \x01(\x02\x12\x0b\n\x03\x65nd\x18\x02 \x01(\x02\"o\n\x16IntegerExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x05H\x00\x12/\n\x08interval\x18\x02 \x01(\x0b\x32\x1b.commonroad.IntegerIntervalH\x00\x42\x13\n\x11\x65xact_or_interval\"k\n\x14\x46loatExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x02H\x00\x12-\n\x08interval\x18\x02 \x01(\x0b\x32\x19.commonroad.FloatIntervalH\x00\x42\x13\n\x11\x65xact_or_interval')
+  serialized_pb=_b('\n\nutil.proto\x12\ncommonroad\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x02(\x02\x12\t\n\x01y\x18\x02 \x02(\x02\"b\n\tRectangle\x12\x0e\n\x06length\x18\x01 \x02(\x02\x12\r\n\x05width\x18\x02 \x02(\x02\x12!\n\x06\x63\x65nter\x18\x03 \x01(\x0b\x32\x11.commonroad.Point\x12\x13\n\x0borientation\x18\x04 \x01(\x02\";\n\x06\x43ircle\x12\x0e\n\x06radius\x18\x01 \x02(\x02\x12!\n\x06\x63\x65nter\x18\x02 \x01(\x0b\x32\x11.commonroad.Point\".\n\x07Polygon\x12#\n\x08vertices\x18\x01 \x03(\x0b\x32\x11.commonroad.Point\"/\n\nShapeGroup\x12!\n\x06shapes\x18\x01 \x03(\x0b\x32\x11.commonroad.Shape\"\xb9\x01\n\x05Shape\x12*\n\trectangle\x18\x01 \x01(\x0b\x32\x15.commonroad.RectangleH\x00\x12$\n\x06\x63ircle\x18\x02 \x01(\x0b\x32\x12.commonroad.CircleH\x00\x12&\n\x07polygon\x18\x03 \x01(\x0b\x32\x13.commonroad.PolygonH\x00\x12-\n\x0bshape_group\x18\x04 \x01(\x0b\x32\x16.commonroad.ShapeGroupH\x00\x42\x07\n\x05shape\"-\n\x0fIntegerInterval\x12\r\n\x05start\x18\x01 \x01(\x05\x12\x0b\n\x03\x65nd\x18\x02 \x01(\x05\"+\n\rFloatInterval\x12\r\n\x05start\x18\x01 \x01(\x02\x12\x0b\n\x03\x65nd\x18\x02 \x01(\x02\"o\n\x16IntegerExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x05H\x00\x12/\n\x08interval\x18\x02 \x01(\x0b\x32\x1b.commonroad.IntegerIntervalH\x00\x42\x13\n\x11\x65xact_or_interval\"k\n\x14\x46loatExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x02H\x00\x12-\n\x08interval\x18\x02 \x01(\x0b\x32\x19.commonroad.FloatIntervalH\x00\x42\x13\n\x11\x65xact_or_interval')
 )
 
 
@@ -63,6 +63,213 @@ _POINT = _descriptor.Descriptor(
 )
 
 
+_RECTANGLE = _descriptor.Descriptor(
+  name='Rectangle',
+  full_name='commonroad.Rectangle',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='length', full_name='commonroad.Rectangle.length', index=0,
+      number=1, type=2, cpp_type=6, label=2,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='width', full_name='commonroad.Rectangle.width', index=1,
+      number=2, type=2, cpp_type=6, label=2,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='center', full_name='commonroad.Rectangle.center', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='orientation', full_name='commonroad.Rectangle.orientation', index=3,
+      number=4, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=57,
+  serialized_end=155,
+)
+
+
+_CIRCLE = _descriptor.Descriptor(
+  name='Circle',
+  full_name='commonroad.Circle',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='radius', full_name='commonroad.Circle.radius', index=0,
+      number=1, type=2, cpp_type=6, label=2,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='center', full_name='commonroad.Circle.center', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=157,
+  serialized_end=216,
+)
+
+
+_POLYGON = _descriptor.Descriptor(
+  name='Polygon',
+  full_name='commonroad.Polygon',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='vertices', full_name='commonroad.Polygon.vertices', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=218,
+  serialized_end=264,
+)
+
+
+_SHAPEGROUP = _descriptor.Descriptor(
+  name='ShapeGroup',
+  full_name='commonroad.ShapeGroup',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='shapes', full_name='commonroad.ShapeGroup.shapes', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=266,
+  serialized_end=313,
+)
+
+
+_SHAPE = _descriptor.Descriptor(
+  name='Shape',
+  full_name='commonroad.Shape',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='rectangle', full_name='commonroad.Shape.rectangle', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='circle', full_name='commonroad.Shape.circle', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='polygon', full_name='commonroad.Shape.polygon', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='shape_group', full_name='commonroad.Shape.shape_group', index=3,
+      number=4, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+    _descriptor.OneofDescriptor(
+      name='shape', full_name='commonroad.Shape.shape',
+      index=0, containing_type=None, fields=[]),
+  ],
+  serialized_start=316,
+  serialized_end=501,
+)
+
+
 _INTEGERINTERVAL = _descriptor.Descriptor(
   name='IntegerInterval',
   full_name='commonroad.IntegerInterval',
@@ -96,8 +303,8 @@ _INTEGERINTERVAL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=57,
-  serialized_end=102,
+  serialized_start=503,
+  serialized_end=548,
 )
 
 
@@ -134,8 +341,8 @@ _FLOATINTERVAL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=104,
-  serialized_end=147,
+  serialized_start=550,
+  serialized_end=593,
 )
 
 
@@ -175,8 +382,8 @@ _INTEGEREXACTORINTERVAL = _descriptor.Descriptor(
       name='exact_or_interval', full_name='commonroad.IntegerExactOrInterval.exact_or_interval',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=149,
-  serialized_end=260,
+  serialized_start=595,
+  serialized_end=706,
 )
 
 
@@ -216,10 +423,30 @@ _FLOATEXACTORINTERVAL = _descriptor.Descriptor(
       name='exact_or_interval', full_name='commonroad.FloatExactOrInterval.exact_or_interval',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=262,
-  serialized_end=369,
+  serialized_start=708,
+  serialized_end=815,
 )
 
+_RECTANGLE.fields_by_name['center'].message_type = _POINT
+_CIRCLE.fields_by_name['center'].message_type = _POINT
+_POLYGON.fields_by_name['vertices'].message_type = _POINT
+_SHAPEGROUP.fields_by_name['shapes'].message_type = _SHAPE
+_SHAPE.fields_by_name['rectangle'].message_type = _RECTANGLE
+_SHAPE.fields_by_name['circle'].message_type = _CIRCLE
+_SHAPE.fields_by_name['polygon'].message_type = _POLYGON
+_SHAPE.fields_by_name['shape_group'].message_type = _SHAPEGROUP
+_SHAPE.oneofs_by_name['shape'].fields.append(
+  _SHAPE.fields_by_name['rectangle'])
+_SHAPE.fields_by_name['rectangle'].containing_oneof = _SHAPE.oneofs_by_name['shape']
+_SHAPE.oneofs_by_name['shape'].fields.append(
+  _SHAPE.fields_by_name['circle'])
+_SHAPE.fields_by_name['circle'].containing_oneof = _SHAPE.oneofs_by_name['shape']
+_SHAPE.oneofs_by_name['shape'].fields.append(
+  _SHAPE.fields_by_name['polygon'])
+_SHAPE.fields_by_name['polygon'].containing_oneof = _SHAPE.oneofs_by_name['shape']
+_SHAPE.oneofs_by_name['shape'].fields.append(
+  _SHAPE.fields_by_name['shape_group'])
+_SHAPE.fields_by_name['shape_group'].containing_oneof = _SHAPE.oneofs_by_name['shape']
 _INTEGEREXACTORINTERVAL.fields_by_name['interval'].message_type = _INTEGERINTERVAL
 _INTEGEREXACTORINTERVAL.oneofs_by_name['exact_or_interval'].fields.append(
   _INTEGEREXACTORINTERVAL.fields_by_name['exact'])
@@ -235,6 +462,11 @@ _FLOATEXACTORINTERVAL.oneofs_by_name['exact_or_interval'].fields.append(
   _FLOATEXACTORINTERVAL.fields_by_name['interval'])
 _FLOATEXACTORINTERVAL.fields_by_name['interval'].containing_oneof = _FLOATEXACTORINTERVAL.oneofs_by_name['exact_or_interval']
 DESCRIPTOR.message_types_by_name['Point'] = _POINT
+DESCRIPTOR.message_types_by_name['Rectangle'] = _RECTANGLE
+DESCRIPTOR.message_types_by_name['Circle'] = _CIRCLE
+DESCRIPTOR.message_types_by_name['Polygon'] = _POLYGON
+DESCRIPTOR.message_types_by_name['ShapeGroup'] = _SHAPEGROUP
+DESCRIPTOR.message_types_by_name['Shape'] = _SHAPE
 DESCRIPTOR.message_types_by_name['IntegerInterval'] = _INTEGERINTERVAL
 DESCRIPTOR.message_types_by_name['FloatInterval'] = _FLOATINTERVAL
 DESCRIPTOR.message_types_by_name['IntegerExactOrInterval'] = _INTEGEREXACTORINTERVAL
@@ -247,6 +479,41 @@ Point = _reflection.GeneratedProtocolMessageType('Point', (_message.Message,), d
   # @@protoc_insertion_point(class_scope:commonroad.Point)
   ))
 _sym_db.RegisterMessage(Point)
+
+Rectangle = _reflection.GeneratedProtocolMessageType('Rectangle', (_message.Message,), dict(
+  DESCRIPTOR = _RECTANGLE,
+  __module__ = 'util_pb2'
+  # @@protoc_insertion_point(class_scope:commonroad.Rectangle)
+  ))
+_sym_db.RegisterMessage(Rectangle)
+
+Circle = _reflection.GeneratedProtocolMessageType('Circle', (_message.Message,), dict(
+  DESCRIPTOR = _CIRCLE,
+  __module__ = 'util_pb2'
+  # @@protoc_insertion_point(class_scope:commonroad.Circle)
+  ))
+_sym_db.RegisterMessage(Circle)
+
+Polygon = _reflection.GeneratedProtocolMessageType('Polygon', (_message.Message,), dict(
+  DESCRIPTOR = _POLYGON,
+  __module__ = 'util_pb2'
+  # @@protoc_insertion_point(class_scope:commonroad.Polygon)
+  ))
+_sym_db.RegisterMessage(Polygon)
+
+ShapeGroup = _reflection.GeneratedProtocolMessageType('ShapeGroup', (_message.Message,), dict(
+  DESCRIPTOR = _SHAPEGROUP,
+  __module__ = 'util_pb2'
+  # @@protoc_insertion_point(class_scope:commonroad.ShapeGroup)
+  ))
+_sym_db.RegisterMessage(ShapeGroup)
+
+Shape = _reflection.GeneratedProtocolMessageType('Shape', (_message.Message,), dict(
+  DESCRIPTOR = _SHAPE,
+  __module__ = 'util_pb2'
+  # @@protoc_insertion_point(class_scope:commonroad.Shape)
+  ))
+_sym_db.RegisterMessage(Shape)
 
 IntegerInterval = _reflection.GeneratedProtocolMessageType('IntegerInterval', (_message.Message,), dict(
   DESCRIPTOR = _INTEGERINTERVAL,

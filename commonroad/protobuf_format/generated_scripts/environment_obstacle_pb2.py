@@ -13,6 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 import commonroad.protobuf_format.generated_scripts.obstacle_pb2 as obstacle__pb2
+import commonroad.protobuf_format.generated_scripts.util_pb2 as util__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,9 +21,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='commonroad',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x1a\x65nvironment_obstacle.proto\x12\ncommonroad\x1a\x0eobstacle.proto\"\xa3\x01\n\x13\x45nvironmentObstacle\x12\x1f\n\x17\x65nvironment_obstacle_id\x18\x01 \x02(\r\x12@\n\robstacle_type\x18\x02 \x02(\x0e\x32).commonroad.ObstacleTypeEnum.ObstacleType\x12)\n\x0eobstacle_shape\x18\x03 \x02(\x0b\x32\x11.commonroad.Shape')
+  serialized_pb=_b('\n\x1a\x65nvironment_obstacle.proto\x12\ncommonroad\x1a\x0eobstacle.proto\x1a\nutil.proto\"\xa3\x01\n\x13\x45nvironmentObstacle\x12\x1f\n\x17\x65nvironment_obstacle_id\x18\x01 \x02(\r\x12@\n\robstacle_type\x18\x02 \x02(\x0e\x32).commonroad.ObstacleTypeEnum.ObstacleType\x12)\n\x0eobstacle_shape\x18\x03 \x02(\x0b\x32\x11.commonroad.Shape')
   ,
-  dependencies=[obstacle__pb2.DESCRIPTOR,])
+  dependencies=[obstacle__pb2.DESCRIPTOR,util__pb2.DESCRIPTOR,])
 
 
 
@@ -67,12 +68,12 @@ _ENVIRONMENTOBSTACLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=59,
-  serialized_end=222,
+  serialized_start=71,
+  serialized_end=234,
 )
 
 _ENVIRONMENTOBSTACLE.fields_by_name['obstacle_type'].enum_type = obstacle__pb2._OBSTACLETYPEENUM_OBSTACLETYPE
-_ENVIRONMENTOBSTACLE.fields_by_name['obstacle_shape'].message_type = obstacle__pb2._SHAPE
+_ENVIRONMENTOBSTACLE.fields_by_name['obstacle_shape'].message_type = util__pb2._SHAPE
 DESCRIPTOR.message_types_by_name['EnvironmentObstacle'] = _ENVIRONMENTOBSTACLE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 

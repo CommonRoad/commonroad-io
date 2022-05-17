@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='commonroad',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x12intersection.proto\x12\ncommonroad\"\x86\x01\n\x08Incoming\x12\x19\n\x11incoming_lanelets\x18\x01 \x03(\r\x12\x17\n\x0fright_outgoings\x18\x02 \x03(\r\x12\x1a\n\x12straight_outgoings\x18\x03 \x03(\r\x12\x16\n\x0eleft_outgoings\x18\x04 \x03(\r\x12\x12\n\nis_left_of\x18\x05 \x01(\r\"k\n\x0cIntersection\x12\x17\n\x0fintersection_id\x18\x01 \x02(\r\x12\'\n\tincomings\x18\x02 \x03(\x0b\x32\x14.commonroad.Incoming\x12\x19\n\x11\x63rossing_lanelets\x18\x03 \x03(\r')
+  serialized_pb=_b('\n\x12intersection.proto\x12\ncommonroad\"\x9b\x01\n\x08Incoming\x12\x13\n\x0bincoming_id\x18\x01 \x02(\r\x12\x19\n\x11incoming_lanelets\x18\x02 \x03(\r\x12\x17\n\x0fright_outgoings\x18\x03 \x03(\r\x12\x1a\n\x12straight_outgoings\x18\x04 \x03(\r\x12\x16\n\x0eleft_outgoings\x18\x05 \x03(\r\x12\x12\n\nis_left_of\x18\x06 \x01(\r\"k\n\x0cIntersection\x12\x17\n\x0fintersection_id\x18\x01 \x02(\r\x12\'\n\tincomings\x18\x02 \x03(\x0b\x32\x14.commonroad.Incoming\x12\x19\n\x11\x63rossing_lanelets\x18\x03 \x03(\r')
 )
 
 
@@ -33,36 +33,43 @@ _INCOMING = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='incoming_lanelets', full_name='commonroad.Incoming.incoming_lanelets', index=0,
-      number=1, type=13, cpp_type=3, label=3,
-      has_default_value=False, default_value=[],
+      name='incoming_id', full_name='commonroad.Incoming.incoming_id', index=0,
+      number=1, type=13, cpp_type=3, label=2,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='right_outgoings', full_name='commonroad.Incoming.right_outgoings', index=1,
+      name='incoming_lanelets', full_name='commonroad.Incoming.incoming_lanelets', index=1,
       number=2, type=13, cpp_type=3, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='straight_outgoings', full_name='commonroad.Incoming.straight_outgoings', index=2,
+      name='right_outgoings', full_name='commonroad.Incoming.right_outgoings', index=2,
       number=3, type=13, cpp_type=3, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='left_outgoings', full_name='commonroad.Incoming.left_outgoings', index=3,
+      name='straight_outgoings', full_name='commonroad.Incoming.straight_outgoings', index=3,
       number=4, type=13, cpp_type=3, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='is_left_of', full_name='commonroad.Incoming.is_left_of', index=4,
-      number=5, type=13, cpp_type=3, label=1,
+      name='left_outgoings', full_name='commonroad.Incoming.left_outgoings', index=4,
+      number=5, type=13, cpp_type=3, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='is_left_of', full_name='commonroad.Incoming.is_left_of', index=5,
+      number=6, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -80,7 +87,7 @@ _INCOMING = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=35,
-  serialized_end=169,
+  serialized_end=190,
 )
 
 
@@ -124,8 +131,8 @@ _INTERSECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=171,
-  serialized_end=278,
+  serialized_start=192,
+  serialized_end=299,
 )
 
 _INTERSECTION.fields_by_name['incomings'].message_type = _INCOMING

@@ -3,6 +3,7 @@ syntax = "proto2";
 package commonroad;
 
 import "obstacle.proto";
+import "util.proto";
 
 message EnvironmentObstacle {
     required uint32 environment_obstacle_id = 1;

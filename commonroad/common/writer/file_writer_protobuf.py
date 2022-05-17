@@ -5,10 +5,11 @@ import numpy as np
 from commonroad import SCENARIO_VERSION
 from commonroad.common.util import Interval
 from commonroad.common.writer.file_writer import FileWriter, OverwriteExistingFile
+from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.protobuf_format.generated_scripts import commonroad_pb2, scenario_tags_pb2, location_pb2, lanelet_pb2, \
     traffic_sign_pb2, traffic_light_pb2, intersection_pb2, static_obstacle_pb2, dynamic_obstacle_pb2, \
-    environment_obstacle_pb2, planning_problem_pb2, util_pb2
+    environment_obstacle_pb2, planning_problem_pb2, util_pb2, obstacle_pb2
 from commonroad.protobuf_format.generated_scripts.intersection_pb2 import Incoming
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine
@@ -64,6 +65,10 @@ class ProtobufFileWriter(FileWriter):
         for intersection in self.scenario.lanelet_network.intersections:
             intersection_msg = IntersectionMessage.create_message(intersection)
             self._commonroad_msg.intersections.append(intersection_msg)
+
+        for static_obstacle in self.scenario.static_obstacles:
+            static_obstacle_msg = StaticObstacleMessage.create_message(static_obstacle)
+            self._commonroad_msg.static_obstacles.append(static_obstacle_msg)
 
     def _add_all_planning_problems_from_planning_problem_set(self):
         pass
@@ -332,7 +337,8 @@ class TrafficLightMessage:
 class CycleMessage:
 
     @classmethod
-    def create_message(cls, cycle_elements: List[TrafficLightCycleElement], time_offset: int) -> traffic_light_pb2.Cycle:
+    def create_message(cls, cycle_elements: List[TrafficLightCycleElement], time_offset: int) \
+            -> traffic_light_pb2.Cycle:
         cycle_msg = traffic_light_pb2.Cycle()
 
         for cycle_element in cycle_elements:
@@ -405,21 +411,54 @@ class StaticObstacleMessage:
 
     @classmethod
     def create_message(cls, static_obstacle: StaticObstacle) -> static_obstacle_pb2.StaticObstacle:
-        pass
+        static_obstacle_msg = static_obstacle_pb2.StaticObstacle()
+
+        static_obstacle_msg.static_obstacle_id = static_obstacle.obstacle_id
+
+        static_obstacle_msg.obstacle_type = obstacle_pb2.ObstacleTypeEnum.ObstacleType \
+            .Value(static_obstacle.obstacle_type.name)
+
+        shape_msg = ShapeMessage.create_message(static_obstacle.obstacle_shape)
+        static_obstacle_msg.shape.CopyFrom(shape_msg)
+
+        state_msg = StateMessage.create_message(static_obstacle.initial_state)
+        static_obstacle_msg.initial_state.CopyFrom(state_msg)
+
+        if static_obstacle.initial_center_lanelet_ids is not None:
+            for initial_center_lanelet_id in static_obstacle.initial_center_lanelet_ids:
+                static_obstacle_msg.initial_center_lanelet_ids.append(initial_center_lanelet_id)
+
+        if static_obstacle.initial_shape_lanelet_ids is not None:
+            for initial_shape_lanelet_id in static_obstacle.initial_shape_lanelet_ids:
+                static_obstacle_msg.initial_shape_lanelet_ids.append(initial_shape_lanelet_id)
+
+        # initial_signal_state TODO
+        # signal_series TODO
+
+        return static_obstacle_msg
 
 
 class StateMessage:
 
     @classmethod
-    def create_message(cls, state: State):
-        pass
+    def create_message(cls, state: State) -> obstacle_pb2.State:
+        state_msg = obstacle_pb2.State()
+
+        # TODO
+        # print(hasattr(state, 'yaw_rate'))
+
+        return state_msg
 
 
 class SignalStateMessage:
 
     @classmethod
     def create_message(cls, signal_state: SignalState):
-        pass
+        signal_state_msg = obstacle_pb2.SignalState()
+
+        # TODO
+
+        return signal_state_msg
 
 
 class DynamicObstacleMessage:
@@ -453,6 +492,84 @@ class PointMessage:
         point_msg.y = point[1]
 
         return point_msg
+
+
+class ShapeMessage:
+
+    @classmethod
+    def create_message(cls, shape: Shape) -> util_pb2.Shape:
+        shape_msg = util_pb2.Shape()
+
+        if isinstance(shape, Rectangle):
+            shape_msg.rectangle.CopyFrom(RectangleMessage.create_message(shape))
+        elif isinstance(shape, Circle):
+            shape_msg.circle.CopyFrom(CircleMessage.create_message(shape))
+        elif isinstance(shape, Polygon):
+            shape_msg.polygon.CopyFrom(PolygonMessage.create_message(shape))
+        elif isinstance(shape, ShapeGroup):
+            shape_msg.shape_group.CopyFrom(ShapeGroupMessage.create_message(shape))
+
+        return shape_msg
+
+
+class RectangleMessage:
+
+    @classmethod
+    def create_message(cls, rectangle: Rectangle) -> util_pb2.Rectangle:
+        rectangle_msg = util_pb2.Rectangle()
+
+        rectangle_msg.length = rectangle.length
+        rectangle_msg.width = rectangle.width
+
+        if rectangle.center is not None:
+            point_msg = PointMessage.create_message(rectangle.center)
+            rectangle_msg.center.CopyFrom(point_msg)
+
+        if rectangle.orientation is not None:
+            rectangle_msg.orientation = rectangle.orientation
+
+        return rectangle_msg
+
+
+class CircleMessage:
+
+    @classmethod
+    def create_message(cls, circle: Circle) -> util_pb2.Circle:
+        circle_msg = util_pb2.Circle()
+
+        circle_msg.radius = circle.radius
+
+        if circle.center is not None:
+            point_msg = PointMessage.create_message(circle.center)
+            circle_msg.center.CopyFrom(point_msg)
+
+        return circle_msg
+
+
+class PolygonMessage:
+
+    @classmethod
+    def create_message(cls, polygon: Polygon) -> util_pb2.Polygon:
+        polygon_msg = util_pb2.Polygon()
+
+        for vertex in polygon.vertices:
+            point_msg = PointMessage.create_message(vertex)
+            polygon_msg.vertices.append(point_msg)
+
+        return polygon_msg
+
+
+class ShapeGroupMessage:
+
+    @classmethod
+    def create_message(cls, shape_group: ShapeGroup) -> util_pb2.ShapeGroup:
+        shape_group_msg = util_pb2.ShapeGroup()
+
+        for shape in shape_group.shapes:
+            shape_msg = ShapeMessage.create_message(shape)
+            shape_group_msg.shapes.append(shape_msg)
+
+        return shape_group_msg
 
 
 class IntegerIntervalMessage:
