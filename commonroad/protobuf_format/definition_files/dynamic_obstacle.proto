@@ -11,7 +11,8 @@ message Occupancy {
 }
 
 message Trajectory {
-    repeated State states = 1;
+    required uint32 initial_time_step = 1;
+    repeated State states = 2;
 }
 
 message OccupancySet {

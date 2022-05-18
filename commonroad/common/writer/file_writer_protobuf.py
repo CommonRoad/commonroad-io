@@ -7,10 +7,10 @@ from commonroad.common.util import Interval
 from commonroad.common.writer.file_writer import FileWriter, OverwriteExistingFile
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
+from commonroad.prediction.prediction import Occupancy
 from commonroad.protobuf_format.generated_scripts import commonroad_pb2, scenario_tags_pb2, location_pb2, lanelet_pb2, \
     traffic_sign_pb2, traffic_light_pb2, intersection_pb2, static_obstacle_pb2, dynamic_obstacle_pb2, \
     environment_obstacle_pb2, planning_problem_pb2, util_pb2, obstacle_pb2
-from commonroad.protobuf_format.generated_scripts.intersection_pb2 import Incoming
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, SignalState
@@ -25,7 +25,7 @@ __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficSignElement, TrafficLightCycleElement
-from commonroad.scenario.trajectory import State
+from commonroad.scenario.trajectory import State, Trajectory
 
 
 class ProtobufFileWriter(FileWriter):
@@ -69,6 +69,10 @@ class ProtobufFileWriter(FileWriter):
         for static_obstacle in self.scenario.static_obstacles:
             static_obstacle_msg = StaticObstacleMessage.create_message(static_obstacle)
             self._commonroad_msg.static_obstacles.append(static_obstacle_msg)
+
+        for dynamic_obstacle in self.scenario.dynamic_obstacles:
+            dynamic_obstacle_msg = DynamicObstacleMessage.create_message(dynamic_obstacle)
+            self._commonroad_msg.dynamic_obstacles.append(dynamic_obstacle_msg)
 
     def _add_all_planning_problems_from_planning_problem_set(self):
         pass
@@ -432,8 +436,12 @@ class StaticObstacleMessage:
             for initial_shape_lanelet_id in static_obstacle.initial_shape_lanelet_ids:
                 static_obstacle_msg.initial_shape_lanelet_ids.append(initial_shape_lanelet_id)
 
-        # initial_signal_state TODO
-        # signal_series TODO
+        signal_state_msg = SignalStateMessage.create_message(static_obstacle.initial_signal_state)
+        static_obstacle_msg.initial_signal_state.CopyFrom(signal_state_msg)
+
+        for signal_state in static_obstacle.signal_series:
+            signal_state_msg = SignalStateMessage.create_message(signal_state)
+            static_obstacle_msg.signal_series.append(signal_state_msg)
 
         return static_obstacle_msg
 
@@ -444,8 +452,22 @@ class StateMessage:
     def create_message(cls, state: State) -> obstacle_pb2.State:
         state_msg = obstacle_pb2.State()
 
-        # TODO
-        # print(hasattr(state, 'yaw_rate'))
+        for attr in State.__slots__:
+            if hasattr(state, attr):
+                if getattr(state, attr) is None:
+                    continue
+
+                if attr == 'position':
+                    if isinstance(state.position, np.ndarray):
+                        state_msg.point.CopyFrom(PointMessage.create_message(state.position))
+                    else:
+                        state_msg.shape.CopyFrom(ShapeMessage.create_message(state.position))
+                elif attr == 'time_step':
+                    integer_exact_or_interval_msg = IntegerExactOrIntervalMessage.create_message(state.time_step)
+                    state_msg.time_step.CopyFrom(integer_exact_or_interval_msg)
+                else:
+                    float_exact_or_interval_msg = FloatExactOrIntervalMessage.create_message(getattr(state, attr))
+                    getattr(state_msg, attr).CopyFrom(float_exact_or_interval_msg)
 
         return state_msg
 
@@ -456,7 +478,16 @@ class SignalStateMessage:
     def create_message(cls, signal_state: SignalState):
         signal_state_msg = obstacle_pb2.SignalState()
 
-        # TODO
+        for attr in State.__slots__:
+            if hasattr(signal_state, attr):
+                if getattr(signal_state, attr) is None:
+                    continue
+
+                if attr == 'time_step':
+                    integer_exact_or_interval_msg = IntegerExactOrIntervalMessage.create_message(signal_state.time_step)
+                    signal_state_msg.time_step.CopyFrom(integer_exact_or_interval_msg)
+                else:
+                    setattr(signal_state_msg, attr, getattr(signal_state, attr))
 
         return signal_state_msg
 
@@ -465,7 +496,78 @@ class DynamicObstacleMessage:
 
     @classmethod
     def create_message(cls, dynamic_obstacle: DynamicObstacle) -> dynamic_obstacle_pb2.DynamicObstacle:
-        pass
+        dynamic_obstacle_msg = dynamic_obstacle_pb2.DynamicObstacle()
+
+        dynamic_obstacle_msg.dynamic_obstacle_id = dynamic_obstacle.obstacle_id
+        dynamic_obstacle_msg.obstacle_type = obstacle_pb2.ObstacleTypeEnum.ObstacleType \
+            .Value(dynamic_obstacle.obstacle_type.name)
+
+        shape_msg = ShapeMessage.create_message(dynamic_obstacle.obstacle_shape)
+        dynamic_obstacle_msg.shape.CopyFrom(shape_msg)
+
+        state_msg = StateMessage.create_message(dynamic_obstacle.initial_state)
+        dynamic_obstacle_msg.initial_state.CopyFrom(state_msg)
+
+        # prediction TODO
+        if dynamic_obstacle.initial_center_lanelet_ids is not None:
+            for initial_center_lanelet_id in dynamic_obstacle.initial_center_lanelet_ids:
+                dynamic_obstacle_msg.initial_center_lanelet_ids.append(initial_center_lanelet_id)
+
+        if dynamic_obstacle.initial_center_lanelet_ids is not None:
+            for initial_shape_lanelet_id in dynamic_obstacle.initial_shape_lanelet_ids:
+                dynamic_obstacle_msg.initial_shape_lanelet_ids.append(initial_shape_lanelet_id)
+
+        if dynamic_obstacle.initial_signal_state is not None:
+            signal_state_msg = SignalStateMessage.create_message(dynamic_obstacle.initial_signal_state)
+            dynamic_obstacle_msg.initial_signal_state.CopyFrom(signal_state_msg)
+
+        for signal_state in dynamic_obstacle.signal_series:
+            signal_state_msg = SignalStateMessage.create_message(signal_state)
+            dynamic_obstacle_msg.signal_series.append(signal_state_msg)
+
+        return dynamic_obstacle_msg
+
+
+class TrajectoryMessage:
+
+    @classmethod
+    def create_message(cls, trajectory: Trajectory) -> dynamic_obstacle_pb2.Trajectory:
+        trajectory_msg = dynamic_obstacle_pb2.Trajectory()
+
+        # initial_time_step TODO
+        for state in trajectory.state_list:
+            state_msg = StateMessage.create_message(state)
+            trajectory_msg.states.append(state_msg)
+
+        return trajectory_msg
+
+
+class OccupancySetMessage:
+
+    @classmethod
+    def create_message(cls, occupancy_set: List[Occupancy]) -> dynamic_obstacle_pb2.OccupancySet:
+        occupancy_set_msg = dynamic_obstacle_pb2.OccupancySet()
+
+        for occupancy in occupancy_set:
+            occupancy_msg = OccupancyMessage.create_message(occupancy)
+            occupancy_set_msg.occupancies.append(occupancy_msg)
+
+        return occupancy_set_msg
+
+
+class OccupancyMessage:
+
+    @classmethod
+    def create_message(cls, occupancy: Occupancy) -> dynamic_obstacle_pb2.Occupancy:
+        occupancy_msg = dynamic_obstacle_pb2.Occupancy()
+
+        integer_exact_or_interval_msg = IntegerExactOrIntervalMessage.create_message(occupancy.time_step)
+        occupancy_msg.time_step.CopyFrom(integer_exact_or_interval_msg)
+
+        shape_msg = ShapeMessage.create_message(occupancy.shape)
+        occupancy_msg.shape.CopyFrom(shape_msg)
+
+        return occupancy_msg
 
 
 class EnvironmentObstacleMessage:

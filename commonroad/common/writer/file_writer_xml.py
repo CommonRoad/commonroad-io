@@ -16,8 +16,8 @@ from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletType, StopLine
 from commonroad.scenario.obstacle import Obstacle, DynamicObstacle, StaticObstacle, EnvironmentObstacle, \
     PhantomObstacle, ObstacleRole, ObstacleType, SignalState
-from commonroad.scenario.scenario import Location, GeoTransformation, Environment, TimeOfDay, Weather, Underground, Tag, \
-    Scenario
+from commonroad.scenario.scenario import Location, GeoTransformation, Environment, TimeOfDay, Weather, Underground, \
+    Tag, Scenario
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficLightCycleElement, TrafficLightDirection
 from commonroad.scenario.trajectory import Trajectory, State
 
