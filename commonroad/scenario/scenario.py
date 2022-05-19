@@ -336,8 +336,9 @@ class ScenarioID:
         self.scenario_version: str = scenario_version
         self.cooperative: bool = cooperative
         self._country_id = None
+        self._map_name = None
         self.country_id: str = country_id
-        self.map_name: str = map_name
+        self.map_name = map_name
         self.map_id: int = map_id
         self.configuration_id: Union[None, int] = configuration_id
         self.obstacle_behavior: Union[None, str] = obstacle_behavior
@@ -346,26 +347,30 @@ class ScenarioID:
         self.prediction_id: Union[None, int, List[int]] = prediction_id
 
     def __str__(self):
-        scenario_id = ""
-        if self.cooperative is True:
-            scenario_id += "C-"
-        if self.country_id is not None:
-            scenario_id += self.country_id + "_"
-        if self.map_name is not None:
-            scenario_id += self.map_name
-            if self.map_id is not None:
-                scenario_id += "-" + str(self.map_id)
-        if self.configuration_id is not None:
-            scenario_id += "_" + str(self.configuration_id)
         if self.obstacle_behavior is not None:
-            scenario_id += "_" + self.obstacle_behavior
-        if self.prediction_id is not None:
-            scenario_id += "-"
             prediction_id = self.prediction_id
             if not isinstance(self.prediction_id, list):
                 prediction_id = [prediction_id]
-            scenario_id += "-".join([str(i) for i in prediction_id])
+            prediction = "-".join([self.obstacle_behavior] + [str(s) for s in prediction_id])
+        else:
+            prediction = None
+        map_ = self.map_name if self.map_id is None else f"{self.map_name}-{self.map_id}"
+        parts = [self.country_id, map_, self.configuration_id, prediction]
+        scenario_id = "_".join([str(p) for p in parts if p is not None])
+        if self.cooperative is True:
+            scenario_id = "C-" + scenario_id
+
         return scenario_id
+
+    @property
+    def map_name(self):
+        return self._map_name
+
+    @map_name.setter
+    def map_name(self, map_name: str):
+        pattern = "[^a-zA-Z0-9]"
+        cleaned_map_name = re.sub(pattern, "", map_name)
+        self._map_name = cleaned_map_name
 
     @property
     def country_id(self):
@@ -403,7 +408,7 @@ class ScenarioID:
         match = ScenarioID.benchmark_id_pattern.fullmatch(benchmark_id)
         if match is None:
             warnings.warn('Not a valid scenario ID: ' + benchmark_id)
-            return ScenarioID(None, None, benchmark_id, 0, None, None, None)
+            return ScenarioID(None, None, benchmark_id, 1, None, None, None)
 
         # extract sub IDs from string
         cooperative = match["cooperative"] is not None
