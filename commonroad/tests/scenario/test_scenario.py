@@ -686,6 +686,22 @@ class TestScenarioID(unittest.TestCase):
         self.assertEqual(s_id.prediction_id, None)
         self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
 
+        with self.assertWarns(Warning):
+            no_pattern = "asdf"
+            ScenarioID.from_benchmark_id(no_pattern, SCENARIO_VERSION)
+
+        with self.assertWarns(Warning):
+            zero_indexed = "USA_US101-0"
+            ScenarioID.from_benchmark_id(zero_indexed, SCENARIO_VERSION)
+
+        with self.assertWarns(Warning):
+            leading_zero = "USA_US101_1_T-01"
+            ScenarioID.from_benchmark_id(leading_zero, SCENARIO_VERSION)
+
+        with self.assertWarns(Warning):
+            illegal_character_in_map = "USA_US-101_1_T-01"
+            ScenarioID.from_benchmark_id(illegal_character_in_map, SCENARIO_VERSION)
+
     def test_to_string(self):
         ids = [ScenarioID(), ScenarioID(obstacle_behavior="T")]
         for scenario_id in ids:

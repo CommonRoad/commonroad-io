@@ -311,8 +311,8 @@ class Location:
 
 class ScenarioID:
     benchmark_id_pattern = re.compile(r"(?P<cooperative>C-)?(?P<country_id>[A-Z]{3})_(?P<map_name>[a-zA-Z0-9]+)-("
-                                      r"?P<map_id>0|[1-9][0-9]*)(_(?P<configuration_id>0|[1-9][0-9]*))?(_("
-                                      r"?P<prediction_type>[STPI])(?P<prediction_ids>(-(0|[1-9][0-9]*))+))?")
+                                      r"?P<map_id>[1-9][0-9]*)(_(?P<configuration_id>[1-9][0-9]*))?(_("
+                                      r"?P<prediction_type>[STPI])(?P<prediction_ids>(-([1-9][0-9]*))+))?")
 
     def __init__(self, cooperative: bool = False, country_id: str = "ZAM", map_name: str = "Test", map_id: int = 1,
                  configuration_id: Union[None, int] = None, obstacle_behavior: Union[None, str] = None,
