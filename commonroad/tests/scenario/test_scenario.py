@@ -686,6 +686,13 @@ class TestScenarioID(unittest.TestCase):
         self.assertEqual(s_id.prediction_id, None)
         self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
 
+    def test_to_string(self):
+        ids = [ScenarioID(), ScenarioID(obstacle_behavior="T")]
+        for scenario_id in ids:
+            benchmark_id = str(scenario_id)
+            scenario_id_parsed = ScenarioID.from_benchmark_id(benchmark_id, "2020a")
+            self.assertEqual(scenario_id, scenario_id_parsed, f"{scenario_id} != {scenario_id_parsed}")
+
     def test_country_name(self):
         id_zam = "ZAM_US101-33_2"
         s_id = ScenarioID.from_benchmark_id(id_zam, SCENARIO_VERSION)
@@ -693,12 +700,7 @@ class TestScenarioID(unittest.TestCase):
 
         id_us = "USA_US101-33_2"
         s_id = ScenarioID.from_benchmark_id(id_us, SCENARIO_VERSION)
-        self.assertEqual(s_id.country_name,
-                         "United States of America")  # def test_read_all_files(self):  #     folder =  #
-        # 'commonroad-scenarios/scenarios'  #     from pathlib import Path  #     files = list(Path(folder).rglob(  #
-        # '*.xml'))  #     for file in files:  #         # if not "C-USA_Lanker-1_2_T-1" in str(file):  #         #
-        # continue  #         sc, _ = CommonRoadFileReader(file).open()  #         self.assertEqual(sc.orig_bid,
-        # str(sc.scenario_id))  #         print(file)
+        self.assertEqual(s_id.country_name, "United States of America")
 
 
 class TestLocation(unittest.TestCase):
