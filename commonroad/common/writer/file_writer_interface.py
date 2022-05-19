@@ -1,4 +1,5 @@
 import enum
+import pathlib
 from abc import ABC, abstractmethod
 from typing import Set, Union
 
@@ -124,7 +125,23 @@ class FileWriter(ABC):
                                overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT):
         pass
 
-    @staticmethod
-    def check_validity_of_commonroad_file(commonroad_str: str):
-        pass
+    def _handle_file_path(self, filename: Union[str, None], overwrite_existing_file: OverwriteExistingFile) -> str:
+        if filename is None:
+            filename = str(self.scenario.scenario_id) + ".xml"
+
+        if pathlib.Path(filename).is_file():
+            if overwrite_existing_file is OverwriteExistingFile.ASK_USER_INPUT:
+                overwrite = input('File {} already exists, replace old file (or else skip)? (y/n)'.format(filename))
+            elif overwrite_existing_file is OverwriteExistingFile.SKIP:
+                overwrite = 'n'
+            else:
+                overwrite = 'y'
+
+            if overwrite == 'n':
+                print('Writing of file {} skipped'.format(filename))
+                return ""
+            else:
+                print('Replace file {}'.format(filename))
+
+        return filename
 

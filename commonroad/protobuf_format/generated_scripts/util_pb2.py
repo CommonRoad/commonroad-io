@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='commonroad',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\nutil.proto\x12\ncommonroad\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x02(\x02\x12\t\n\x01y\x18\x02 \x02(\x02\"b\n\tRectangle\x12\x0e\n\x06length\x18\x01 \x02(\x02\x12\r\n\x05width\x18\x02 \x02(\x02\x12!\n\x06\x63\x65nter\x18\x03 \x01(\x0b\x32\x11.commonroad.Point\x12\x13\n\x0borientation\x18\x04 \x01(\x02\";\n\x06\x43ircle\x12\x0e\n\x06radius\x18\x01 \x02(\x02\x12!\n\x06\x63\x65nter\x18\x02 \x01(\x0b\x32\x11.commonroad.Point\".\n\x07Polygon\x12#\n\x08vertices\x18\x01 \x03(\x0b\x32\x11.commonroad.Point\"/\n\nShapeGroup\x12!\n\x06shapes\x18\x01 \x03(\x0b\x32\x11.commonroad.Shape\"\xb9\x01\n\x05Shape\x12*\n\trectangle\x18\x01 \x01(\x0b\x32\x15.commonroad.RectangleH\x00\x12$\n\x06\x63ircle\x18\x02 \x01(\x0b\x32\x12.commonroad.CircleH\x00\x12&\n\x07polygon\x18\x03 \x01(\x0b\x32\x13.commonroad.PolygonH\x00\x12-\n\x0bshape_group\x18\x04 \x01(\x0b\x32\x16.commonroad.ShapeGroupH\x00\x42\x07\n\x05shape\"-\n\x0fIntegerInterval\x12\r\n\x05start\x18\x01 \x01(\x05\x12\x0b\n\x03\x65nd\x18\x02 \x01(\x05\"+\n\rFloatInterval\x12\r\n\x05start\x18\x01 \x01(\x02\x12\x0b\n\x03\x65nd\x18\x02 \x01(\x02\"o\n\x16IntegerExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x05H\x00\x12/\n\x08interval\x18\x02 \x01(\x0b\x32\x1b.commonroad.IntegerIntervalH\x00\x42\x13\n\x11\x65xact_or_interval\"k\n\x14\x46loatExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x02H\x00\x12-\n\x08interval\x18\x02 \x01(\x0b\x32\x19.commonroad.FloatIntervalH\x00\x42\x13\n\x11\x65xact_or_interval')
+  serialized_pb=_b('\n\nutil.proto\x12\ncommonroad\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x02(\x02\x12\t\n\x01y\x18\x02 \x02(\x02\"b\n\tRectangle\x12\x0e\n\x06length\x18\x01 \x02(\x02\x12\r\n\x05width\x18\x02 \x02(\x02\x12!\n\x06\x63\x65nter\x18\x03 \x01(\x0b\x32\x11.commonroad.Point\x12\x13\n\x0borientation\x18\x04 \x01(\x02\";\n\x06\x43ircle\x12\x0e\n\x06radius\x18\x01 \x02(\x02\x12!\n\x06\x63\x65nter\x18\x02 \x01(\x0b\x32\x11.commonroad.Point\".\n\x07Polygon\x12#\n\x08vertices\x18\x01 \x03(\x0b\x32\x11.commonroad.Point\"/\n\nShapeGroup\x12!\n\x06shapes\x18\x01 \x03(\x0b\x32\x11.commonroad.Shape\"\xb9\x01\n\x05Shape\x12*\n\trectangle\x18\x01 \x01(\x0b\x32\x15.commonroad.RectangleH\x00\x12$\n\x06\x63ircle\x18\x02 \x01(\x0b\x32\x12.commonroad.CircleH\x00\x12&\n\x07polygon\x18\x03 \x01(\x0b\x32\x13.commonroad.PolygonH\x00\x12-\n\x0bshape_group\x18\x04 \x01(\x0b\x32\x16.commonroad.ShapeGroupH\x00\x42\x07\n\x05shape\"-\n\x0fIntegerInterval\x12\r\n\x05start\x18\x01 \x01(\x05\x12\x0b\n\x03\x65nd\x18\x02 \x01(\x05\"+\n\rFloatInterval\x12\r\n\x05start\x18\x01 \x01(\x02\x12\x0b\n\x03\x65nd\x18\x02 \x01(\x02\"o\n\x16IntegerExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x05H\x00\x12/\n\x08interval\x18\x02 \x01(\x0b\x32\x1b.commonroad.IntegerIntervalH\x00\x42\x13\n\x11\x65xact_or_interval\"k\n\x14\x46loatExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x02H\x00\x12-\n\x08interval\x18\x02 \x01(\x0b\x32\x19.commonroad.FloatIntervalH\x00\x42\x13\n\x11\x65xact_or_interval\"\x1d\n\x0bIntegerList\x12\x0e\n\x06values\x18\x01 \x03(\x05\"\x1b\n\tFloatList\x12\x0e\n\x06values\x18\x01 \x03(\x05')
 )
 
 
@@ -427,6 +427,68 @@ _FLOATEXACTORINTERVAL = _descriptor.Descriptor(
   serialized_end=815,
 )
 
+
+_INTEGERLIST = _descriptor.Descriptor(
+  name='IntegerList',
+  full_name='commonroad.IntegerList',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='values', full_name='commonroad.IntegerList.values', index=0,
+      number=1, type=5, cpp_type=1, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=817,
+  serialized_end=846,
+)
+
+
+_FLOATLIST = _descriptor.Descriptor(
+  name='FloatList',
+  full_name='commonroad.FloatList',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='values', full_name='commonroad.FloatList.values', index=0,
+      number=1, type=5, cpp_type=1, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=848,
+  serialized_end=875,
+)
+
 _RECTANGLE.fields_by_name['center'].message_type = _POINT
 _CIRCLE.fields_by_name['center'].message_type = _POINT
 _POLYGON.fields_by_name['vertices'].message_type = _POINT
@@ -471,6 +533,8 @@ DESCRIPTOR.message_types_by_name['IntegerInterval'] = _INTEGERINTERVAL
 DESCRIPTOR.message_types_by_name['FloatInterval'] = _FLOATINTERVAL
 DESCRIPTOR.message_types_by_name['IntegerExactOrInterval'] = _INTEGEREXACTORINTERVAL
 DESCRIPTOR.message_types_by_name['FloatExactOrInterval'] = _FLOATEXACTORINTERVAL
+DESCRIPTOR.message_types_by_name['IntegerList'] = _INTEGERLIST
+DESCRIPTOR.message_types_by_name['FloatList'] = _FLOATLIST
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Point = _reflection.GeneratedProtocolMessageType('Point', (_message.Message,), dict(
@@ -542,6 +606,20 @@ FloatExactOrInterval = _reflection.GeneratedProtocolMessageType('FloatExactOrInt
   # @@protoc_insertion_point(class_scope:commonroad.FloatExactOrInterval)
   ))
 _sym_db.RegisterMessage(FloatExactOrInterval)
+
+IntegerList = _reflection.GeneratedProtocolMessageType('IntegerList', (_message.Message,), dict(
+  DESCRIPTOR = _INTEGERLIST,
+  __module__ = 'util_pb2'
+  # @@protoc_insertion_point(class_scope:commonroad.IntegerList)
+  ))
+_sym_db.RegisterMessage(IntegerList)
+
+FloatList = _reflection.GeneratedProtocolMessageType('FloatList', (_message.Message,), dict(
+  DESCRIPTOR = _FLOATLIST,
+  __module__ = 'util_pb2'
+  # @@protoc_insertion_point(class_scope:commonroad.FloatList)
+  ))
+_sym_db.RegisterMessage(FloatList)
 
 
 # @@protoc_insertion_point(module_scope)

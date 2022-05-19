@@ -59,3 +59,11 @@ message FloatExactOrInterval {
         FloatInterval interval = 2;
     }
 }
+
+message IntegerList {
+    repeated int32 values = 1;
+}
+
+message FloatList {
+    repeated int32 values = 1;
+}

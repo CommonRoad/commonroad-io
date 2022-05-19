@@ -21,7 +21,7 @@ from commonroad.scenario.scenario import Location, GeoTransformation, Environmen
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficLightCycleElement, TrafficLightDirection
 from commonroad.scenario.trajectory import Trajectory, State
 
-from commonroad.common.writer.file_writer import FileWriter, precision, OverwriteExistingFile
+from commonroad.common.writer.file_writer_interface import FileWriter, precision, OverwriteExistingFile
 
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -178,26 +178,9 @@ class XMLFileWriter(FileWriter):
         :param check_validity: check xml file against .xsd definition
         :return:
         """
-        if filename is None:
-            filename = str(self.scenario.scenario_id) + ".xml"
-
-        if pathlib.Path(filename).is_file():
-            if overwrite_existing_file is OverwriteExistingFile.ASK_USER_INPUT:
-                overwrite = input(
-                    'File {} already exists, replace old file (or else skip)? (y/n)'.format(
-                        filename
-                    )
-                )
-            elif overwrite_existing_file is OverwriteExistingFile.SKIP:
-                overwrite = 'n'
-            else:
-                overwrite = 'y'
-
-            if overwrite == 'n':
-                print('Writing of file {} skipped'.format(filename))
-                return
-            else:
-                print('Replace file {}'.format(filename))
+        filename = self._handle_file_path(filename, overwrite_existing_file)
+        if not filename:
+            return
 
         self._write_header()
         self._add_all_objects_from_scenario()

@@ -12,12 +12,13 @@ import "intersection.proto";
 import "static_obstacle.proto";
 import "dynamic_obstacle.proto";
 import "environment_obstacle.proto";
+import "phantom_obstacle.proto";
 import "planning_problem.proto";
 
 message ScenarioInformation {
     required string common_road_version = 1;
     required string benchmark_id = 2;
-    required google.protobuf.Timestamp date = 3;
+    optional google.protobuf.Timestamp date = 3;
     required string author = 4;
     required string affiliation = 5;
     required string source = 6;
@@ -35,5 +36,6 @@ message CommonRoad {
     repeated StaticObstacle static_obstacles = 8;
     repeated DynamicObstacle dynamic_obstacles = 9;
     repeated EnvironmentObstacle environment_obstacles = 10;
-    repeated PlanningProblem planning_problems = 11;
+    repeated PhantomObstacle phantom_obstacles = 11;
+    repeated PlanningProblem planning_problems = 12;
 }

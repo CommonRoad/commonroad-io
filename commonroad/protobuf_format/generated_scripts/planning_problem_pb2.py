@@ -13,7 +13,6 @@ _sym_db = _symbol_database.Default()
 
 
 import commonroad.protobuf_format.generated_scripts.obstacle_pb2 as obstacle__pb2
-import commonroad.protobuf_format.generated_scripts.util_pb2 as util__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -21,9 +20,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='commonroad',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x16planning_problem.proto\x12\ncommonroad\x1a\x0eobstacle.proto\x1a\nutil.proto\"V\n\tGoalState\x12)\n\x04time\x18\x01 \x02(\x0b\x32\x1b.commonroad.IntegerInterval\x12\x1e\n\x16goal_position_lanelets\x18\x02 \x03(\r\"\x84\x01\n\x0fPlanningProblem\x12\x1b\n\x13planning_problem_id\x18\x01 \x02(\r\x12(\n\rinitial_state\x18\x02 \x02(\x0b\x32\x11.commonroad.State\x12*\n\x0bgoal_states\x18\x03 \x03(\x0b\x32\x15.commonroad.GoalState')
+  serialized_pb=_b('\n\x16planning_problem.proto\x12\ncommonroad\x1a\x0eobstacle.proto\"M\n\tGoalState\x12 \n\x05state\x18\x01 \x02(\x0b\x32\x11.commonroad.State\x12\x1e\n\x16goal_position_lanelets\x18\x02 \x03(\r\"\x84\x01\n\x0fPlanningProblem\x12\x1b\n\x13planning_problem_id\x18\x01 \x02(\r\x12(\n\rinitial_state\x18\x02 \x02(\x0b\x32\x11.commonroad.State\x12*\n\x0bgoal_states\x18\x03 \x03(\x0b\x32\x15.commonroad.GoalState')
   ,
-  dependencies=[obstacle__pb2.DESCRIPTOR,util__pb2.DESCRIPTOR,])
+  dependencies=[obstacle__pb2.DESCRIPTOR,])
 
 
 
@@ -36,7 +35,7 @@ _GOALSTATE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='time', full_name='commonroad.GoalState.time', index=0,
+      name='state', full_name='commonroad.GoalState.state', index=0,
       number=1, type=11, cpp_type=10, label=2,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -61,8 +60,8 @@ _GOALSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=66,
-  serialized_end=152,
+  serialized_start=54,
+  serialized_end=131,
 )
 
 
@@ -106,11 +105,11 @@ _PLANNINGPROBLEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=155,
-  serialized_end=287,
+  serialized_start=134,
+  serialized_end=266,
 )
 
-_GOALSTATE.fields_by_name['time'].message_type = util__pb2._INTEGERINTERVAL
+_GOALSTATE.fields_by_name['state'].message_type = obstacle__pb2._STATE
 _PLANNINGPROBLEM.fields_by_name['initial_state'].message_type = obstacle__pb2._STATE
 _PLANNINGPROBLEM.fields_by_name['goal_states'].message_type = _GOALSTATE
 DESCRIPTOR.message_types_by_name['GoalState'] = _GOALSTATE

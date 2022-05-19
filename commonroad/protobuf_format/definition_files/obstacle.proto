@@ -30,7 +30,7 @@ message State {
         Point point = 1;
         Shape shape = 2;
     }
-    required FloatExactOrInterval orientation = 3;
+    optional FloatExactOrInterval orientation = 3;
     optional FloatExactOrInterval velocity = 4;
     optional FloatExactOrInterval steering_angle = 5;
     optional FloatExactOrInterval steering_angle_speed = 6;
@@ -66,11 +66,37 @@ message State {
 }
 
 message SignalState {
-    required IntegerExactOrInterval time_step = 1;
+    optional IntegerExactOrInterval time_step = 1;
     optional bool horn = 2;
     optional bool indicator_left = 3;
     optional bool indicator_right = 4;
     optional bool braking_lights = 5;
     optional bool hazard_warning_lights = 6;
     optional bool flashing_blue_lights = 7;
+}
+
+message Occupancy {
+    required IntegerExactOrInterval time_step = 1;
+    required Shape shape = 2;
+}
+
+message OccupancySet {
+    repeated Occupancy occupancies = 1;
+}
+
+message Trajectory {
+    required uint32 initial_time_step = 1;
+    repeated State states = 2;
+}
+
+message TrajectoryPrediction {
+    required Trajectory trajectory = 1;
+    required Shape shape = 2;
+    map<int32, IntegerList> center_lanelet_assignments = 3;
+    map<int32, FloatList> shape_lanelet_assignments = 4;
+}
+
+message SetBasedPrediction {
+    required uint32 initial_time_step = 1;
+    required OccupancySet occupancy_set = 2;
 }

@@ -1,19 +1,21 @@
 from typing import Set, Union, List
 
 import numpy as np
+from google.protobuf.message import EncodeError
 
 from commonroad import SCENARIO_VERSION
 from commonroad.common.util import Interval
-from commonroad.common.writer.file_writer import FileWriter, OverwriteExistingFile
+from commonroad.common.writer.file_writer_interface import FileWriter, OverwriteExistingFile
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
-from commonroad.prediction.prediction import Occupancy
+from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction, SetBasedPrediction
 from commonroad.protobuf_format.generated_scripts import commonroad_pb2, scenario_tags_pb2, location_pb2, lanelet_pb2, \
     traffic_sign_pb2, traffic_light_pb2, intersection_pb2, static_obstacle_pb2, dynamic_obstacle_pb2, \
-    environment_obstacle_pb2, planning_problem_pb2, util_pb2, obstacle_pb2
+    environment_obstacle_pb2, planning_problem_pb2, util_pb2, obstacle_pb2, phantom_obstacle_pb2
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine
-from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, SignalState
+from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, SignalState, \
+    PhantomObstacle
 from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment
 
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
@@ -24,7 +26,10 @@ __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficSignElement, TrafficLightCycleElement
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficSignElement, TrafficLightCycleElement, \
+    TrafficSignIDGermany, TrafficSignIDFrance, TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSignIDChina, \
+    TrafficSignIDSpain, TrafficSignIDRussia, TrafficSignIDArgentina, TrafficSignIDBelgium, TrafficSignIDGreece, \
+    TrafficSignIDCroatia, TrafficSignIDItaly
 from commonroad.scenario.trajectory import State, Trajectory
 
 
@@ -74,23 +79,59 @@ class ProtobufFileWriter(FileWriter):
             dynamic_obstacle_msg = DynamicObstacleMessage.create_message(dynamic_obstacle)
             self._commonroad_msg.dynamic_obstacles.append(dynamic_obstacle_msg)
 
+        for environment_obstacle in self.scenario.environment_obstacle:
+            environment_obstacle_msg = EnvironmentObstacleMessage.create_message(environment_obstacle)
+            self._commonroad_msg.environment_obstacles.append(environment_obstacle_msg)
+
+        for phantom_obstacle in self.scenario.phantom_obstacle:
+            phantom_obstacle_msg = PhantomObstacleMessage.create_message(phantom_obstacle)
+            self._commonroad_msg.phantom_obstacles.append(phantom_obstacle_msg)
+
     def _add_all_planning_problems_from_planning_problem_set(self):
-        pass
+        for planning_problem in self.planning_problem_set.planning_problem_dict.values():
+            planning_problem_msg = PlanningProblemMessage.create_message(planning_problem)
+            self._commonroad_msg.planning_problems.append(planning_problem_msg)
+
+    def _serialize_write_msg(self, filename: str):
+        f = open(filename, "wb")
+        f.write(self._commonroad_msg.SerializeToString())
+        f.close()
 
     def write_to_file(self, filename: Union[str, None] = None,
                       overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
                       check_validity: bool = False):
+        filename = self._handle_file_path(filename, overwrite_existing_file)
+        if not filename:
+            return
+
+        self._commonroad_msg = commonroad_pb2.CommonRoad()
+
         self._write_header()
         self._add_all_objects_from_scenario()
         self._add_all_planning_problems_from_planning_problem_set()
 
+        self._serialize_write_msg(filename)
+
     def write_scenario_to_file(self, filename: Union[str, None] = None,
                                overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT):
-        pass
+        filename = self._handle_file_path(filename, overwrite_existing_file)
+        if not filename:
+            return
+
+        self._commonroad_msg = commonroad_pb2.CommonRoad()
+
+        self._write_header()
+        self._add_all_objects_from_scenario()
+
+        self._serialize_write_msg(filename)
 
     @staticmethod
-    def check_validity_of_commonroad_file(commonroad_str: str):
-        pass
+    def check_validity_of_commonroad_msg(commonroad_msg: commonroad_pb2.CommonRoad) -> bool:
+        try:
+            commonroad_msg.SerializeToString()
+            return True
+        except EncodeError:
+            return False
 
 
 class ScenarioInformationMessage:
@@ -306,7 +347,47 @@ class TrafficSignElementMessage:
     def create_message(cls, traffic_sign_element: TrafficSignElement) -> traffic_sign_pb2.TrafficSignElement:
         traffic_sign_element_msg = traffic_sign_pb2.TrafficSignElement()
 
-        # traffic_sign_element_id TODO
+        element_id = traffic_sign_element.traffic_sign_element_id
+        if isinstance(element_id, TrafficSignIDGermany):
+            traffic_sign_element_msg.germany_element_id = traffic_sign_pb2.TrafficSignIDGermanyEnum \
+                .TrafficSignIDGermany.Value(element_id.name)
+        elif isinstance(element_id, TrafficSignIDZamunda):
+            traffic_sign_element_msg.zamunda_element_id = traffic_sign_pb2.TrafficSignIDZamundaEnum \
+                .TrafficSignIDZamunda.Value(element_id.name)
+        elif isinstance(element_id, TrafficSignIDUsa):
+            traffic_sign_element_msg.usa_element_id = traffic_sign_pb2.TrafficSignIDUsaEnum \
+                .TrafficSignIDUsa.Value(element_id.name)
+        elif isinstance(element_id, TrafficSignIDChina):
+            traffic_sign_element_msg.china_element_id = traffic_sign_pb2.TrafficSignIDChinaEnum \
+                .TrafficSignIDChina.Value(element_id.name)
+        elif isinstance(element_id, TrafficSignIDSpain):
+            traffic_sign_element_msg.spain_element_id = traffic_sign_pb2.TrafficSignIDSpainEnum \
+                .TrafficSignIDSpain.Value(element_id.name)
+        elif isinstance(element_id, TrafficSignIDRussia):
+            traffic_sign_element_msg.russia_element_id = traffic_sign_pb2.TrafficSignIDRussiaEnum \
+                .TrafficSignIDRussia.Value(element_id.name)
+        elif isinstance(element_id, TrafficSignIDArgentina):
+            traffic_sign_element_msg.argentina_element_id = traffic_sign_pb2.TrafficSignIDArgentinaEnum \
+                .TrafficSignIDArgentina.Value(element_id.name)
+        elif isinstance(element_id, TrafficSignIDBelgium):
+            traffic_sign_element_msg.belgium_element_id = traffic_sign_pb2.TrafficSignIDBelgiumEnum \
+                .TrafficSignIDBelgium.Value(element_id.name)
+        elif isinstance(element_id, TrafficSignIDFrance):
+            traffic_sign_element_msg.france_element_id = traffic_sign_pb2.TrafficSignIDFranceEnum \
+                .TrafficSignIDFrance.Value(element_id.name)
+        elif isinstance(element_id, TrafficSignIDGreece):
+            traffic_sign_element_msg.greece_element_id = traffic_sign_pb2.TrafficSignIDGreeceEnum \
+                .TrafficSignIDGreece.Value(element_id.name)
+        elif isinstance(element_id, TrafficSignIDCroatia):
+            traffic_sign_element_msg.croatia_element_id = traffic_sign_pb2.TrafficSignIDCroatiaEnum \
+                .TrafficSignIDCroatia.Value(element_id.name)
+        elif isinstance(element_id, TrafficSignIDItaly):
+            traffic_sign_element_msg.italy_element_id = traffic_sign_pb2.TrafficSignIDItalyEnum \
+                .TrafficSignIDItaly.Value(element_id.name)
+        else:
+            traffic_sign_element_msg.puerto_rico_element_id = traffic_sign_pb2.TrafficSignIDPuertoRicoEnum \
+                .TrafficSignIDPuertoRico.Value(element_id.name)
+
         for additional_value in traffic_sign_element.additional_values:
             traffic_sign_element_msg.additional_values.append(additional_value)
 
@@ -392,7 +473,7 @@ class IncomingMessage:
     def create_message(cls, incoming: IntersectionIncomingElement) -> intersection_pb2.Incoming:
         incoming_msg = intersection_pb2.Incoming()
 
-        # incoming_id TODO
+        incoming_msg.incoming_id = incoming.incoming_id
         for incoming_lanelet in incoming.incoming_lanelets:
             incoming_msg.incoming_lanelets.append(incoming_lanelet)
 
@@ -508,7 +589,13 @@ class DynamicObstacleMessage:
         state_msg = StateMessage.create_message(dynamic_obstacle.initial_state)
         dynamic_obstacle_msg.initial_state.CopyFrom(state_msg)
 
-        # prediction TODO
+        if isinstance(dynamic_obstacle.prediction, TrajectoryPrediction):
+            trajectory_prediction_msg = TrajectoryPredictionMessage.create_message(dynamic_obstacle.prediction)
+            dynamic_obstacle_msg.trajectory_prediction.CopyFrom(trajectory_prediction_msg)
+        else:
+            set_based_prediction_msg = SetBasedPredictionMessage.create_message(dynamic_obstacle.prediction)
+            dynamic_obstacle_msg.set_based_prediction.CopyFrom(set_based_prediction_msg)
+
         if dynamic_obstacle.initial_center_lanelet_ids is not None:
             for initial_center_lanelet_id in dynamic_obstacle.initial_center_lanelet_ids:
                 dynamic_obstacle_msg.initial_center_lanelet_ids.append(initial_center_lanelet_id)
@@ -531,10 +618,11 @@ class DynamicObstacleMessage:
 class TrajectoryMessage:
 
     @classmethod
-    def create_message(cls, trajectory: Trajectory) -> dynamic_obstacle_pb2.Trajectory:
-        trajectory_msg = dynamic_obstacle_pb2.Trajectory()
+    def create_message(cls, trajectory: Trajectory) -> obstacle_pb2.Trajectory:
+        trajectory_msg = obstacle_pb2.Trajectory()
 
-        # initial_time_step TODO
+        trajectory_msg.initial_time_step = trajectory.initial_time_step
+
         for state in trajectory.state_list:
             state_msg = StateMessage.create_message(state)
             trajectory_msg.states.append(state_msg)
@@ -545,8 +633,8 @@ class TrajectoryMessage:
 class OccupancySetMessage:
 
     @classmethod
-    def create_message(cls, occupancy_set: List[Occupancy]) -> dynamic_obstacle_pb2.OccupancySet:
-        occupancy_set_msg = dynamic_obstacle_pb2.OccupancySet()
+    def create_message(cls, occupancy_set: List[Occupancy]) -> obstacle_pb2.OccupancySet:
+        occupancy_set_msg = obstacle_pb2.OccupancySet()
 
         for occupancy in occupancy_set:
             occupancy_msg = OccupancyMessage.create_message(occupancy)
@@ -558,8 +646,8 @@ class OccupancySetMessage:
 class OccupancyMessage:
 
     @classmethod
-    def create_message(cls, occupancy: Occupancy) -> dynamic_obstacle_pb2.Occupancy:
-        occupancy_msg = dynamic_obstacle_pb2.Occupancy()
+    def create_message(cls, occupancy: Occupancy) -> obstacle_pb2.Occupancy:
+        occupancy_msg = obstacle_pb2.Occupancy()
 
         integer_exact_or_interval_msg = IntegerExactOrIntervalMessage.create_message(occupancy.time_step)
         occupancy_msg.time_step.CopyFrom(integer_exact_or_interval_msg)
@@ -570,18 +658,110 @@ class OccupancyMessage:
         return occupancy_msg
 
 
+class TrajectoryPredictionMessage:
+
+    @classmethod
+    def create_message(cls, trajectory_prediction: TrajectoryPrediction) -> obstacle_pb2.TrajectoryPrediction:
+        trajectory_prediction_msg = obstacle_pb2.TrajectoryPrediction()
+
+        trajectory_msg = TrajectoryMessage.create_message(trajectory_prediction.trajectory)
+        trajectory_prediction_msg.trajectory.CopyFrom(trajectory_msg)
+
+        shape_msg = ShapeMessage.create_message(trajectory_prediction.shape)
+        trajectory_prediction_msg.shape.CopyFrom(shape_msg)
+
+        if trajectory_prediction.center_lanelet_assignment is not None:
+            for key, values in trajectory_prediction.center_lanelet_assignment:
+                integer_list_msg = IntegerList.create_message(values)
+                trajectory_prediction_msg.center_lanelet_assignments[key] = integer_list_msg
+
+        if trajectory_prediction.shape_lanelet_assignment is not None:
+            for key, values in trajectory_prediction.shape_lanelet_assignment:
+                integer_list_msg = IntegerList.create_message(values)
+                trajectory_prediction_msg.shape_lanelet_assignments[key] = integer_list_msg
+
+        return trajectory_prediction_msg
+
+
+class SetBasedPredictionMessage:
+
+    @classmethod
+    def create_message(cls, set_based_prediction: SetBasedPrediction) -> obstacle_pb2.SetBasedPrediction:
+        set_based_prediction_msg = obstacle_pb2.SetBasedPrediction()
+
+        set_based_prediction_msg.initial_time_step = set_based_prediction.initial_time_step
+
+        occupancy_set_msg = OccupancySetMessage.create_message(set_based_prediction.occupancy_set)
+        set_based_prediction_msg.occupancy_set.CopyFrom(occupancy_set_msg)
+
+        return set_based_prediction_msg
+
+
 class EnvironmentObstacleMessage:
 
     @classmethod
     def create_message(cls, environment_obstacle: EnvironmentObstacle) -> environment_obstacle_pb2.EnvironmentObstacle:
-        pass
+        environment_obstacle_msg = environment_obstacle_pb2.EnvironmentObstacle()
+
+        environment_obstacle_msg.environment_obstacle_id = environment_obstacle.obstacle_id
+        environment_obstacle_msg.obstacle_type = obstacle_pb2.ObstacleTypeEnum.ObstacleType \
+            .Value(environment_obstacle.obstacle_type.name)
+
+        shape_msg = ShapeMessage.create_message(environment_obstacle.obstacle_shape)
+        environment_obstacle_msg.obstacle_shape.CopyFrom(shape_msg)
+
+        return environment_obstacle_msg
+
+
+class PhantomObstacleMessage:
+
+    @classmethod
+    def create_message(cls, phantom_obstacle: PhantomObstacle) -> phantom_obstacle_pb2.PhantomObstacle:
+        phantom_obstacle_msg = phantom_obstacle_pb2.PhantomObstacle()
+
+        phantom_obstacle_msg.obstacle_id = phantom_obstacle.obstacle_id
+
+        if phantom_obstacle.prediction is not None:
+            phantom_obstacle_msg.prediction.CopyFrom(phantom_obstacle.prediction)
+
+        return phantom_obstacle_msg
 
 
 class PlanningProblemMessage:
 
     @classmethod
     def create_message(cls, planning_problem: PlanningProblem) -> planning_problem_pb2.PlanningProblem:
-        pass
+        planning_problem_msg = planning_problem_pb2.PlanningProblem()
+
+        planning_problem_msg.planning_problem_id = planning_problem.planning_problem_id
+
+        state_msg = StateMessage.create_message(planning_problem.initial_state)
+        planning_problem_msg.initial_state.CopyFrom(state_msg)
+
+        for i, state in enumerate(planning_problem.goal.state_list):
+            if planning_problem.goal.lanelets_of_goal_position is None:
+                goal_state_msg = GoalStateMessage.create_message(state, list())
+            else:
+                goal_state_msg = GoalStateMessage \
+                    .create_message(state, planning_problem.goal.lanelets_of_goal_position[i])
+            planning_problem_msg.goal_states.append(goal_state_msg)
+
+        return planning_problem_msg
+
+
+class GoalStateMessage:
+
+    @classmethod
+    def create_message(cls, state: State, lanelets_of_goal_position: List[int]) -> planning_problem_pb2.GoalState:
+        goal_state_msg = planning_problem_pb2.GoalState()
+
+        state_msg = StateMessage.create_message(state)
+        goal_state_msg.state.CopyFrom(state_msg)
+
+        for lanelet_id in lanelets_of_goal_position:
+            goal_state_msg.goal_position_lanelets.append(lanelet_id)
+
+        return goal_state_msg
 
 
 class PointMessage:
@@ -678,7 +858,7 @@ class IntegerIntervalMessage:
 
     @classmethod
     def create_message(cls, interval: Interval) -> util_pb2.IntegerInterval:
-        integer_interval_msg = util_pb2.IntegerInterval
+        integer_interval_msg = util_pb2.IntegerInterval()
 
         integer_interval_msg.start = interval.start
         integer_interval_msg.end = interval.end
@@ -690,7 +870,7 @@ class FloatIntervalMessage:
 
     @classmethod
     def create_message(cls, interval: Interval) -> util_pb2.FloatInterval:
-        float_interval_msg = util_pb2.FloatInterval
+        float_interval_msg = util_pb2.FloatInterval()
 
         float_interval_msg.start = interval.start
         float_interval_msg.end = interval.end
@@ -726,3 +906,27 @@ class FloatExactOrIntervalMessage:
             float_exact_or_interval_msg.interval.CopyFrom(float_interval_msg)
 
         return float_exact_or_interval_msg
+
+
+class IntegerList:
+
+    @classmethod
+    def create_message(cls, values: List[int]) -> util_pb2.IntegerList:
+        integer_list_msg = util_pb2.IntegerList()
+
+        for value in values:
+            integer_list_msg.values.append(value)
+
+        return integer_list_msg
+
+
+class FloatList:
+
+    @classmethod
+    def create_message(cls, values: List[float]) -> util_pb2.FloatList:
+        float_list_msg = util_pb2.FloatList()
+
+        for value in values:
+            float_list_msg.values.append(value)
+
+        return float_list_msg

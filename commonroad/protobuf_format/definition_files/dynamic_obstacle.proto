@@ -5,28 +5,14 @@ package commonroad;
 import "obstacle.proto";
 import "util.proto";
 
-message Occupancy {
-    required IntegerExactOrInterval time_step = 1;
-    required Shape shape = 2;
-}
-
-message Trajectory {
-    required uint32 initial_time_step = 1;
-    repeated State states = 2;
-}
-
-message OccupancySet {
-    repeated Occupancy occupancies = 1;
-}
-
 message DynamicObstacle {
     required uint32 dynamic_obstacle_id = 1;
     required ObstacleTypeEnum.ObstacleType obstacle_type = 2;
     required Shape shape = 3;
     required State initial_state = 4;
     oneof prediction {
-        Trajectory trajectory = 5;
-        OccupancySet occupancy_set = 6;
+        TrajectoryPrediction trajectory_prediction = 5;
+        SetBasedPrediction set_based_prediction = 6;
     }
     repeated uint32 initial_center_lanelet_ids = 7;
     repeated uint32 initial_shape_lanelet_ids = 8;

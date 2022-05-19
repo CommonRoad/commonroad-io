@@ -22,6 +22,7 @@ import commonroad.protobuf_format.generated_scripts.intersection_pb2 as intersec
 import commonroad.protobuf_format.generated_scripts.static_obstacle_pb2 as static__obstacle__pb2
 import commonroad.protobuf_format.generated_scripts.dynamic_obstacle_pb2 as dynamic__obstacle__pb2
 import commonroad.protobuf_format.generated_scripts.environment_obstacle_pb2 as environment__obstacle__pb2
+import commonroad.protobuf_format.generated_scripts.phantom_obstacle_pb2 as phantom__obstacle__pb2
 import commonroad.protobuf_format.generated_scripts.planning_problem_pb2 as planning__problem__pb2
 
 
@@ -30,9 +31,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='commonroad',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x10\x63ommonroad.proto\x12\ncommonroad\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x13scenario_tags.proto\x1a\x0elocation.proto\x1a\rlanelet.proto\x1a\x12traffic_sign.proto\x1a\x13traffic_light.proto\x1a\x12intersection.proto\x1a\x15static_obstacle.proto\x1a\x16\x64ynamic_obstacle.proto\x1a\x1a\x65nvironment_obstacle.proto\x1a\x16planning_problem.proto\"\xbf\x01\n\x13ScenarioInformation\x12\x1b\n\x13\x63ommon_road_version\x18\x01 \x02(\t\x12\x14\n\x0c\x62\x65nchmark_id\x18\x02 \x02(\t\x12(\n\x04\x64\x61te\x18\x03 \x02(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0e\n\x06\x61uthor\x18\x04 \x02(\t\x12\x13\n\x0b\x61\x66\x66iliation\x18\x05 \x02(\t\x12\x0e\n\x06source\x18\x06 \x02(\t\x12\x16\n\x0etime_step_size\x18\x07 \x02(\x02\"\xbb\x04\n\nCommonRoad\x12\x34\n\x0binformation\x18\x01 \x02(\x0b\x32\x1f.commonroad.ScenarioInformation\x12/\n\rscenario_tags\x18\x02 \x02(\x0b\x32\x18.commonroad.ScenarioTags\x12&\n\x08location\x18\x03 \x02(\x0b\x32\x14.commonroad.Location\x12%\n\x08lanelets\x18\x04 \x03(\x0b\x32\x13.commonroad.Lanelet\x12.\n\rtraffic_signs\x18\x05 \x03(\x0b\x32\x17.commonroad.TrafficSign\x12\x30\n\x0etraffic_lights\x18\x06 \x03(\x0b\x32\x18.commonroad.TrafficLight\x12/\n\rintersections\x18\x07 \x03(\x0b\x32\x18.commonroad.Intersection\x12\x34\n\x10static_obstacles\x18\x08 \x03(\x0b\x32\x1a.commonroad.StaticObstacle\x12\x36\n\x11\x64ynamic_obstacles\x18\t \x03(\x0b\x32\x1b.commonroad.DynamicObstacle\x12>\n\x15\x65nvironment_obstacles\x18\n \x03(\x0b\x32\x1f.commonroad.EnvironmentObstacle\x12\x36\n\x11planning_problems\x18\x0b \x03(\x0b\x32\x1b.commonroad.PlanningProblem')
+  serialized_pb=_b('\n\x10\x63ommonroad.proto\x12\ncommonroad\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x13scenario_tags.proto\x1a\x0elocation.proto\x1a\rlanelet.proto\x1a\x12traffic_sign.proto\x1a\x13traffic_light.proto\x1a\x12intersection.proto\x1a\x15static_obstacle.proto\x1a\x16\x64ynamic_obstacle.proto\x1a\x1a\x65nvironment_obstacle.proto\x1a\x16phantom_obstacle.proto\x1a\x16planning_problem.proto\"\xbf\x01\n\x13ScenarioInformation\x12\x1b\n\x13\x63ommon_road_version\x18\x01 \x02(\t\x12\x14\n\x0c\x62\x65nchmark_id\x18\x02 \x02(\t\x12(\n\x04\x64\x61te\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0e\n\x06\x61uthor\x18\x04 \x02(\t\x12\x13\n\x0b\x61\x66\x66iliation\x18\x05 \x02(\t\x12\x0e\n\x06source\x18\x06 \x02(\t\x12\x16\n\x0etime_step_size\x18\x07 \x02(\x02\"\xf3\x04\n\nCommonRoad\x12\x34\n\x0binformation\x18\x01 \x02(\x0b\x32\x1f.commonroad.ScenarioInformation\x12/\n\rscenario_tags\x18\x02 \x02(\x0b\x32\x18.commonroad.ScenarioTags\x12&\n\x08location\x18\x03 \x02(\x0b\x32\x14.commonroad.Location\x12%\n\x08lanelets\x18\x04 \x03(\x0b\x32\x13.commonroad.Lanelet\x12.\n\rtraffic_signs\x18\x05 \x03(\x0b\x32\x17.commonroad.TrafficSign\x12\x30\n\x0etraffic_lights\x18\x06 \x03(\x0b\x32\x18.commonroad.TrafficLight\x12/\n\rintersections\x18\x07 \x03(\x0b\x32\x18.commonroad.Intersection\x12\x34\n\x10static_obstacles\x18\x08 \x03(\x0b\x32\x1a.commonroad.StaticObstacle\x12\x36\n\x11\x64ynamic_obstacles\x18\t \x03(\x0b\x32\x1b.commonroad.DynamicObstacle\x12>\n\x15\x65nvironment_obstacles\x18\n \x03(\x0b\x32\x1f.commonroad.EnvironmentObstacle\x12\x36\n\x11phantom_obstacles\x18\x0b \x03(\x0b\x32\x1b.commonroad.PhantomObstacle\x12\x36\n\x11planning_problems\x18\x0c \x03(\x0b\x32\x1b.commonroad.PlanningProblem')
   ,
-  dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,scenario__tags__pb2.DESCRIPTOR,location__pb2.DESCRIPTOR,lanelet__pb2.DESCRIPTOR,traffic__sign__pb2.DESCRIPTOR,traffic__light__pb2.DESCRIPTOR,intersection__pb2.DESCRIPTOR,static__obstacle__pb2.DESCRIPTOR,dynamic__obstacle__pb2.DESCRIPTOR,environment__obstacle__pb2.DESCRIPTOR,planning__problem__pb2.DESCRIPTOR,])
+  dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,scenario__tags__pb2.DESCRIPTOR,location__pb2.DESCRIPTOR,lanelet__pb2.DESCRIPTOR,traffic__sign__pb2.DESCRIPTOR,traffic__light__pb2.DESCRIPTOR,intersection__pb2.DESCRIPTOR,static__obstacle__pb2.DESCRIPTOR,dynamic__obstacle__pb2.DESCRIPTOR,environment__obstacle__pb2.DESCRIPTOR,phantom__obstacle__pb2.DESCRIPTOR,planning__problem__pb2.DESCRIPTOR,])
 
 
 
@@ -60,7 +61,7 @@ _SCENARIOINFORMATION = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='date', full_name='commonroad.ScenarioInformation.date', index=2,
-      number=3, type=11, cpp_type=10, label=2,
+      number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -105,8 +106,8 @@ _SCENARIOINFORMATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=278,
-  serialized_end=469,
+  serialized_start=302,
+  serialized_end=493,
 )
 
 
@@ -188,8 +189,15 @@ _COMMONROAD = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='planning_problems', full_name='commonroad.CommonRoad.planning_problems', index=10,
+      name='phantom_obstacles', full_name='commonroad.CommonRoad.phantom_obstacles', index=10,
       number=11, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='planning_problems', full_name='commonroad.CommonRoad.planning_problems', index=11,
+      number=12, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -206,8 +214,8 @@ _COMMONROAD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=472,
-  serialized_end=1043,
+  serialized_start=496,
+  serialized_end=1123,
 )
 
 _SCENARIOINFORMATION.fields_by_name['date'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
@@ -221,6 +229,7 @@ _COMMONROAD.fields_by_name['intersections'].message_type = intersection__pb2._IN
 _COMMONROAD.fields_by_name['static_obstacles'].message_type = static__obstacle__pb2._STATICOBSTACLE
 _COMMONROAD.fields_by_name['dynamic_obstacles'].message_type = dynamic__obstacle__pb2._DYNAMICOBSTACLE
 _COMMONROAD.fields_by_name['environment_obstacles'].message_type = environment__obstacle__pb2._ENVIRONMENTOBSTACLE
+_COMMONROAD.fields_by_name['phantom_obstacles'].message_type = phantom__obstacle__pb2._PHANTOMOBSTACLE
 _COMMONROAD.fields_by_name['planning_problems'].message_type = planning__problem__pb2._PLANNINGPROBLEM
 DESCRIPTOR.message_types_by_name['ScenarioInformation'] = _SCENARIOINFORMATION
 DESCRIPTOR.message_types_by_name['CommonRoad'] = _COMMONROAD

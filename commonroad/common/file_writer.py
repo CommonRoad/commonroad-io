@@ -1,6 +1,6 @@
 from typing import Union, Set
 
-from commonroad.common.writer.file_writer import OverwriteExistingFile, FileFormat
+from commonroad.common.writer.file_writer_interface import OverwriteExistingFile, FileFormat
 from commonroad.common.writer.file_writer_protobuf import ProtobufFileWriter
 from commonroad.common.writer.file_writer_xml import XMLFileWriter
 from commonroad.planning.planning_problem import PlanningProblemSet
