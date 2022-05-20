@@ -37,13 +37,13 @@ message Shape {
 }
 
 message IntegerInterval {
-    optional int32 start = 1;
-    optional int32 end = 2;
+    required int32 start = 1;
+    required int32 end = 2;
 }
 
 message FloatInterval {
-    optional float start = 1;
-    optional float end = 2;
+    required float start = 1;
+    required float end = 2;
 }
 
 message IntegerExactOrInterval {

@@ -633,6 +633,7 @@ message TrafficSignElement {
 message TrafficSign {
     required uint32  traffic_sign_id = 1;
     repeated TrafficSignElement traffic_sign_elements = 2;
-    optional Point position = 3;
-    optional bool virtual = 4;
+    repeated uint32 first_occurrences = 3;
+    optional Point position = 4;
+    optional bool virtual = 5;
 }

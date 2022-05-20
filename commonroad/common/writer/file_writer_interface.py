@@ -32,15 +32,6 @@ class OverwriteExistingFile(enum.Enum):
     SKIP = 2
 
 
-class FileFormat(enum.Enum):
-    """
-    Specifies the format of file.
-    """
-
-    XML = 0
-    PROTOBUF = 1
-
-
 class FileWriter(ABC):
 
     def __init__(self, scenario: Scenario, planning_problem_set: PlanningProblemSet, author: str = None,
@@ -123,6 +114,10 @@ class FileWriter(ABC):
     @abstractmethod
     def write_scenario_to_file(self, filename: Union[str, None] = None,
                                overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT):
+        pass
+
+    @staticmethod
+    def check_validity_of_commonroad_file(commonroad_str) -> bool:
         pass
 
     def _handle_file_path(self, filename: Union[str, None], overwrite_existing_file: OverwriteExistingFile) -> str:

@@ -233,7 +233,7 @@ class XMLFileWriter(FileWriter):
         tree.write(filename, pretty_print=True, xml_declaration=True, encoding="utf-8")
 
     @staticmethod
-    def check_validity_of_commonroad_file(commonroad_str: str):
+    def check_validity_of_commonroad_file(commonroad_str: str) -> bool:
         """Check the validity of a generated xml_string in terms of
         commonroad with an existing XSD schema.
         Throw an error if it is not valid.
@@ -252,10 +252,9 @@ class XMLFileWriter(FileWriter):
 
         try:
             etree.fromstring(commonroad_str, parser)
-        except etree.XMLSyntaxError as error:
-            raise Exception(
-                'Could not produce valid CommonRoad file! Error: {}'.format(error.msg)
-            )
+            return True
+        except etree.XMLSyntaxError:
+            return False
 
 
 class LocationXMLNode:

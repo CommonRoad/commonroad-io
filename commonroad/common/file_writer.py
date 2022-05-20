@@ -1,6 +1,8 @@
+import enum
+import os.path
 from typing import Union, Set
 
-from commonroad.common.writer.file_writer_interface import OverwriteExistingFile, FileFormat
+from commonroad.common.writer.file_writer_interface import OverwriteExistingFile
 from commonroad.common.writer.file_writer_protobuf import ProtobufFileWriter
 from commonroad.common.writer.file_writer_xml import XMLFileWriter
 from commonroad.planning.planning_problem import PlanningProblemSet
@@ -15,13 +17,22 @@ __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
 
+class FileFormat(enum.Enum):
+    """
+    Specifies the format of file.
+    """
+
+    XML = 0
+    PROTOBUF = 1
+
+
 class CommonRoadFileWriter:
 
     def __init__(self, scenario: Scenario, planning_problem_set: PlanningProblemSet, author: str = None,
                  affiliation: str = None, source: str = None, tags: Set[Tag] = None, location: Location = None,
                  decimal_precision: int = 4, file_format: FileFormat = FileFormat.XML):
         """
-        Initialize the FileWriter with a scenario and tags for the xml-header
+        Initialize the FileWriter with a scenario and tags.
 
         :param scenario: scenario that should be written later
         :param planning_problem_set: corresponding planning problem to the scenario
@@ -50,7 +61,7 @@ class CommonRoadFileWriter:
                                overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT):
         self._file_writer.write_scenario_to_file(filename, overwrite_existing_file)
 
-    def check_validity_of_commonroad_file(self, commonroad_str: str):
-        self._file_writer.check_validity_of_commonroad_file(commonroad_str)
+    def check_validity_of_commonroad_file(self, commonroad_str: str) -> bool:
+        assert commonroad_str, 'Empty commonroad file!'
 
-
+        return self._file_writer.check_validity_of_commonroad_file(commonroad_str)

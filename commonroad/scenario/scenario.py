@@ -241,17 +241,33 @@ class Environment:
     def time(self) -> Time:
         return self._time
 
+    @time.setter
+    def time(self, time: Time):
+        self._time = time
+
     @property
     def time_of_day(self) -> TimeOfDay:
         return self._time_of_day
+
+    @time_of_day.setter
+    def time_of_day(self, time_of_day: TimeOfDay):
+        self._time_of_day = time_of_day
 
     @property
     def weather(self) -> Weather:
         return self._weather
 
+    @weather.setter
+    def weather(self, weather: Weather):
+        self._weather = weather
+
     @property
     def underground(self) -> Underground:
         return self._underground
+
+    @underground.setter
+    def underground(self, underground: Underground):
+        self._underground = underground
 
 
 class Location:
@@ -292,21 +308,41 @@ class Location:
     def geo_name_id(self) -> int:
         return self._geo_name_id
 
+    @geo_name_id.setter
+    def geo_name_id(self, geo_name_id: int):
+        self._geo_name_id = geo_name_id
+
     @property
     def gps_latitude(self) -> float:
         return self._gps_latitude
+
+    @gps_latitude.setter
+    def gps_latitude(self, gps_latitude: float):
+        self._gps_latitude = gps_latitude
 
     @property
     def gps_longitude(self) -> float:
         return self._gps_longitude
 
+    @gps_longitude.setter
+    def gps_longitude(self, gps_longitude: float):
+        self._gps_longitude = gps_longitude
+
     @property
     def geo_transformation(self) -> GeoTransformation:
         return self._geo_transformation
 
+    @geo_transformation.setter
+    def geo_transformation(self, geo_transformation: GeoTransformation):
+        self._geo_transformation = geo_transformation
+
     @property
     def environment(self) -> Environment:
         return self._environment
+
+    @environment.setter
+    def environment(self, environment: Environment):
+        self._environment = environment
 
 
 class ScenarioID:

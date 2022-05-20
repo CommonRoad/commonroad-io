@@ -37,7 +37,7 @@ message UndergroundEnum {
 }
 
 message GeoTransformation {
-    optional string geoReference = 1;
+    optional string geo_reference = 1;
     optional float x_translation = 2;
     optional float y_translation = 3;
     optional float z_rotation = 4;

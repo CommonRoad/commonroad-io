@@ -126,9 +126,10 @@ class ProtobufFileWriter(FileWriter):
         self._serialize_write_msg(filename)
 
     @staticmethod
-    def check_validity_of_commonroad_msg(commonroad_msg: commonroad_pb2.CommonRoad) -> bool:
+    def check_validity_of_commonroad_file(commonroad_str: str) -> bool:
         try:
-            commonroad_msg.SerializeToString()
+            commonroad_msg = commonroad_pb2.CommonRoad()
+            commonroad_msg.ParseFromString(commonroad_str)
             return True
         except EncodeError:
             return False
@@ -330,6 +331,8 @@ class TrafficSignMessage:
         for traffic_sign_element in traffic_sign.traffic_sign_elements:
             traffic_sign_element_msg = TrafficSignElementMessage.create_message(traffic_sign_element)
             traffic_sign_msg.traffic_sign_elements.append(traffic_sign_element_msg)
+
+        # first_occurrences TODO
 
         if traffic_sign.position is not None:
             point_msg = PointMessage.create_message(traffic_sign.position)
