@@ -115,12 +115,9 @@ class Rectangle(Shape):
 
     @center.setter
     def center(self, center: np.ndarray):
-        if not hasattr(self, '_center'):
-            assert is_real_number_vector(center, 2), '<Rectangle/center>: argument "center" is not a vector ' \
-                                                     'of real numbers of length 2. center = {}'.format(center)
-            self._center = center
-        else:
-            warnings.warn('<Rectangle/center>: center of rectangle is immutable.')
+        assert is_real_number_vector(center, 2), '<Rectangle/center>: argument "center" is not a vector ' \
+                                                 'of real numbers of length 2. center = {}'.format(center)
+        self._center = center
 
     @property
     def orientation(self) -> float:
@@ -130,12 +127,9 @@ class Rectangle(Shape):
 
     @orientation.setter
     def orientation(self, orientation: float):
-        if not hasattr(self, '_orientation'):
-            assert is_valid_orientation(orientation), '<Rectangle/orientation>: argument "orientation" is not valid. ' \
-                                                      'orientation = {}'.format(orientation)
-            self._orientation = orientation
-        else:
-            warnings.warn('<Rectangle/orientation>: orientation of rectangle is immutable.')
+        assert is_valid_orientation(orientation), '<Rectangle/orientation>: argument "orientation" is not valid. ' \
+                                                  'orientation = {}'.format(orientation)
+        self._orientation = orientation
 
     @property
     def vertices(self) -> np.ndarray:

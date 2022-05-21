@@ -31,15 +31,11 @@ message CycleElement {
     required TrafficLightStateEnum.TrafficLightState color = 2;
 }
 
-message Cycle {
-    repeated CycleElement cycle_elements = 1;
-    optional uint32 time_offset = 2;
-}
-
 message TrafficLight {
     required uint32 traffic_light_id = 1;
-    required Cycle cycle = 2;
+    repeated CycleElement cycle_elements = 2;
     optional Point position = 3;
-    optional TrafficLightDirectionEnum.TrafficLightDirection direction = 4;
-    optional bool active = 5;
+    optional uint32 time_offset = 4;
+    optional TrafficLightDirectionEnum.TrafficLightDirection direction = 5;
+    optional bool active = 6;
 }

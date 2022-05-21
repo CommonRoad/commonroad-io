@@ -237,10 +237,7 @@ class Obstacle(IDrawable):
                                                               'argument initial_signal_state of wrong ' \
                                                               'type. Expected types: %s, %s. Got type: %s.' \
                                                               % (SignalState, type(None), type(initial_signal_state))
-        if not hasattr(self, '_initial_signal_state'):
-            self._initial_signal_state = initial_signal_state
-        else:
-            warnings.warn('<Obstacle/initial_signal_state>: Initial obstacle signal state is immutable.')
+        self._initial_signal_state = initial_signal_state
 
     @property
     def signal_series(self) -> List[SignalState]:
@@ -253,10 +250,7 @@ class Obstacle(IDrawable):
                                                               'argument initial_signal_state of wrong ' \
                                                               'type. Expected types: %s, %s. Got type: %s.' \
                                                               % (list, type(None), type(signal_series))
-        if not hasattr(self, '_signal_series'):
-            self._signal_series = signal_series
-        else:
-            warnings.warn('<Obstacle/signal_series>: Obstacle signal series is immutable.')
+        self._signal_series = signal_series
 
     @abstractmethod
     def occupancy_at_time(self, time_step: int) -> Union[None, Occupancy]:

@@ -33,6 +33,9 @@ class OverwriteExistingFile(enum.Enum):
 
 
 class FileWriter(ABC):
+    """
+    Interface for writing CommonRoad files in a specific format.
+    """
 
     def __init__(self, scenario: Scenario, planning_problem_set: PlanningProblemSet, author: str = None,
                  affiliation: str = None, source: str = None, tags: Set[Tag] = None, location: Location = None,

@@ -15,6 +15,9 @@ __status__ = "Released"
 
 
 class FileReader(ABC):
+    """
+    Interface for reading CommonRoad files in a specific format.
+    """
 
     def __init__(self, filename: str):
         self._filename = filename

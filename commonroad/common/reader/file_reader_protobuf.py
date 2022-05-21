@@ -3,14 +3,20 @@ from typing import Tuple, List, Set, Union
 import numpy as np
 
 from commonroad.common.reader.file_reader_interface import FileReader
-from commonroad.common.util import Interval
+from commonroad.common.util import Interval, AngleInterval
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, Shape, ShapeGroup
-from commonroad.planning.planning_problem import PlanningProblemSet
+from commonroad.planning.goal import GoalRegion
+from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
+from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction, SetBasedPrediction
 from commonroad.protobuf_format.generated_scripts import commonroad_pb2, scenario_tags_pb2, location_pb2, lanelet_pb2, \
-    util_pb2, traffic_sign_pb2, traffic_light_pb2
+    util_pb2, traffic_sign_pb2, traffic_light_pb2, intersection_pb2, static_obstacle_pb2, dynamic_obstacle_pb2, \
+    environment_obstacle_pb2, phantom_obstacle_pb2, obstacle_pb2, planning_problem_pb2
+from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, StopLine, LineMarking, LaneletType, RoadUser
-from commonroad.scenario.scenario import Scenario, ScenarioID, Tag, GeoTransformation, Location, Environment, TimeOfDay, \
-    Weather, Underground
+from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, PhantomObstacle, \
+    SignalState, ObstacleType
+from commonroad.scenario.scenario import Scenario, ScenarioID, Tag, GeoTransformation, Location, Environment, \
+    TimeOfDay, Weather, Underground
 
 __author__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -23,15 +29,25 @@ __status__ = "Released"
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSignIDGermany, TrafficSignIDZamunda, \
     TrafficSignIDUsa, TrafficSignIDChina, TrafficSignIDSpain, TrafficSignIDRussia, TrafficSignIDArgentina, \
     TrafficSignIDBelgium, TrafficSignIDFrance, TrafficSignIDGreece, TrafficSignIDCroatia, TrafficSignIDItaly, \
-    TrafficSignIDPuertoRico, TrafficSign, TrafficLight, TrafficLightCycleElement
+    TrafficSignIDPuertoRico, TrafficSign, TrafficLight, TrafficLightCycleElement, TrafficLightDirection
+from commonroad.scenario.trajectory import State, Trajectory
 
 
 class ProtobufFileReader(FileReader):
+    """
+    Reader for CommonRoad file stored in protobuf format.
+    """
 
     def __init__(self, filename: str):
         super().__init__(filename)
 
     def open(self, lanelet_assignment: bool = False) -> Tuple[Scenario, PlanningProblemSet]:
+        """
+        Reads a CommonRoad file in protobuf format.
+
+        :param lanelet_assignment: Activates calculation of lanelets occupied by obstacles
+        :return: Scenario and planning problems
+        """
         file = open(self._filename, "rb")
         commonroad_msg = commonroad_pb2.CommonRoad()
         commonroad_msg.ParseFromString(file.read())
@@ -39,6 +55,11 @@ class ProtobufFileReader(FileReader):
         return CommonRoadFactory.create_from_message(commonroad_msg)
 
     def open_lanelet_network(self) -> LaneletNetwork:
+        """
+        Reads a CommonRoad file in protobuf format.
+
+        :return: Lanelet network
+        """
         file = open(self._filename, "rb")
         commonroad_msg = commonroad_pb2.CommonRoad()
         commonroad_msg.ParseFromString(file.read())
@@ -76,7 +97,34 @@ class CommonRoadFactory:
             traffic_sign = TrafficSignFactory.create_from_message(traffic_sign_msg)
             scenario.lanelet_network.traffic_signs.append(traffic_sign)
 
+        for traffic_light_msg in commonroad_msg.traffic_lights:
+            traffic_light = TrafficLightFactory.create_from_message(traffic_light_msg)
+            scenario.lanelet_network.traffic_lights.append(traffic_light)
+
+        for intersection_msg in commonroad_msg.intersections:
+            intersection = IntersectionFactory.create_from_message(intersection_msg)
+            scenario.lanelet_network.intersections.append(intersection)
+
+        for static_obstacle_msg in commonroad_msg.static_obstacles:
+            static_obstacle = StaticObstacleFactory.create_from_message(static_obstacle_msg)
+            scenario.static_obstacles.append(static_obstacle)
+
+        for dynamic_obstacle_msg in commonroad_msg.dynamic_obstacles:
+            dynamic_obstacle = DynamicObstacleFactory.create_from_message(dynamic_obstacle_msg)
+            scenario.dynamic_obstacles.append(dynamic_obstacle)
+            
+        for environment_obstacle_msg in commonroad_msg.environment_obstacles:
+            environment_obstacle = EnvironmentObstacleFactory.create_from_message(environment_obstacle_msg)
+            scenario.environment_obstacle.append(environment_obstacle)
+
+        for phantom_obstacle_msg in commonroad_msg.phantom_obstacles:
+            phantom_obstacle = PhantomObstacleFactory.create_from_message(phantom_obstacle_msg)
+            scenario.phantom_obstacle.append(phantom_obstacle)
+
         planning_problem_set = PlanningProblemSet()
+        for planning_problem_msg in commonroad_msg.planning_problems:
+            planning_problem = PlanningProblemFactory.create_from_message(planning_problem_msg)
+            planning_problem_set.add_planning_problem(planning_problem)
 
         return scenario, planning_problem_set
 
@@ -188,10 +236,10 @@ class LaneletFactory:
 
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
 
-        predecessor = [p for p in lanelet_msg.predecessors]
+        predecessor = list(lanelet_msg.predecessors)
         lanelet.predecessor = predecessor
 
-        successor = [s for s in lanelet_msg.successors]
+        successor = list(lanelet_msg.successors)
         lanelet.successor = successor
 
         if lanelet_msg.HasField('adjacent_left'):
@@ -258,7 +306,7 @@ class StopLineFactory:
             point = PointFactory.create_from_message(point_msg)
             points.append(point)
 
-        line_marking = lanelet_pb2.LineMarkingEnum.LineMarking.Name(stop_line_msg.line_making)
+        line_marking = lanelet_pb2.LineMarkingEnum.LineMarking.Name(stop_line_msg.line_marking)
 
         stop_line = StopLine(points[0], points[1], line_marking)
 
@@ -340,7 +388,7 @@ class TrafficSignElementFactory:
 
         traffic_sign_element = TrafficSignElement(element_id)
 
-        traffic_sign_element.additional_values = [a for a in traffic_sign_element_msg.additional_values]
+        traffic_sign_element.additional_values = list(traffic_sign_element_msg.additional_values)
 
         return traffic_sign_element
 
@@ -349,15 +397,30 @@ class TrafficLightFactory:
 
     @classmethod
     def create_from_message(cls, traffic_light_msg: traffic_light_pb2.TrafficLight) -> TrafficLight:
-        pass
+        traffic_light_id = traffic_light_msg.traffic_light_id
 
+        cycle_elements = list()
+        for cycle_element_msg in traffic_light_msg.cycle_elements:
+            cycle_element = CycleElementFactory.create_from_message(cycle_element_msg)
+            cycle_elements.append(cycle_element)
 
-class CycleFactory:
+        traffic_light = TrafficLight(traffic_light_id, cycle_elements)
 
-    @classmethod
-    def create_from_message(cls, cycle_msg: traffic_light_pb2.Cycle) \
-            -> Tuple[List[TrafficLightCycleElement], Union[int, None]]:
-        pass
+        if traffic_light_msg.HasField('position'):
+            point = PointFactory.create_from_message(traffic_light_msg.position)
+            traffic_light.position = point
+
+        if traffic_light_msg.HasField('time_offset'):
+            traffic_light.time_offset = traffic_light_msg.time_offset
+
+        if traffic_light_msg.HasField('direction'):
+            traffic_light.direction = TrafficLightDirection[
+                traffic_light_pb2.TrafficLightDirectionEnum.TrafficLightDirection.Name(traffic_light_msg.direction)]
+
+        if traffic_light_msg.HasField('active'):
+            traffic_light.active = traffic_light_msg.active
+
+        return traffic_light
 
 
 class CycleElementFactory:
@@ -365,6 +428,281 @@ class CycleElementFactory:
     @classmethod
     def create_from_message(cls, cycle_element_msg: traffic_light_pb2.CycleElement) -> TrafficLightCycleElement:
         return TrafficLightCycleElement(cycle_element_msg.duration, cycle_element_msg.color)
+
+
+class IntersectionFactory:
+
+    @classmethod
+    def create_from_message(cls, intersection_msg: intersection_pb2.Intersection) -> Intersection:
+        intersection_id = intersection_msg.intersection_id
+
+        incomings = list()
+        for incoming_msg in intersection_msg.incomings:
+            incoming = IncomingFactory.create_from_message(incoming_msg)
+            incomings.append(incoming)
+
+        intersection = Intersection(intersection_id, incomings)
+
+        intersection.crossings = set(intersection_msg.crossing_lanelets)
+
+        return intersection
+
+
+class IncomingFactory:
+
+    @classmethod
+    def create_from_message(cls, incoming_msg: intersection_pb2.Incoming) -> IntersectionIncomingElement:
+        incoming = IntersectionIncomingElement(incoming_msg.incoming_id)
+
+        incoming.incoming_lanelets = set(incoming_msg.incoming_lanelets)
+        incoming.successors_right = set(incoming_msg.right_outgoings)
+        incoming.successors_straight = set(incoming_msg.straight_outgoings)
+        incoming.successors_left = set(incoming_msg.left_outgoings)
+
+        if incoming_msg.HasField('is_left_of'):
+            incoming.left_of = incoming_msg.is_left_of
+
+        return incoming
+
+
+class StaticObstacleFactory:
+
+    @classmethod
+    def create_from_message(cls, static_obstacle_msg: static_obstacle_pb2.StaticObstacle) -> StaticObstacle:
+        static_obstacle_id = static_obstacle_msg.static_obstacle_id
+
+        obstacle_type = ObstacleType[obstacle_pb2.ObstacleTypeEnum.ObstacleType.Name(static_obstacle_msg.obstacle_type)]
+
+        shape = ShapeFactory.create_from_message(static_obstacle_msg.shape)
+
+        initial_state = StateFactory.create_from_message(static_obstacle_msg.initial_state)
+
+        static_obstacle = StaticObstacle(static_obstacle_id, obstacle_type, shape, initial_state)
+
+        static_obstacle.initial_center_lanelet_ids = set(static_obstacle_msg.initial_center_lanelet_ids)
+
+        static_obstacle.initial_shape_lanelet_ids = set(static_obstacle_msg.initial_shape_lanelet_ids)
+
+        if static_obstacle_msg.HasField('initial_signal_state'):
+            initial_signal_state = SignalStateFactory.create_from_message(static_obstacle_msg.initial_signal_state)
+            static_obstacle.initial_signal_state = initial_signal_state
+
+        signal_states = list()
+        for signal_state_msg in static_obstacle_msg.signal_series:
+            signal_state = SignalStateFactory.create_from_message(signal_state_msg)
+            signal_states.append(signal_state)
+        static_obstacle.signal_series = signal_states
+
+        return static_obstacle
+
+
+class DynamicObstacleFactory:
+
+    @classmethod
+    def create_from_message(cls, dynamic_obstacle_msg: dynamic_obstacle_pb2.DynamicObstacle) -> DynamicObstacle:
+        dynamic_obstacle_id = dynamic_obstacle_msg.dynamic_obstacle_id
+
+        obstacle_type = ObstacleType[
+            obstacle_pb2.ObstacleTypeEnum.ObstacleType.Name(dynamic_obstacle_msg.obstacle_type)]
+
+        shape = ShapeFactory.create_from_message(dynamic_obstacle_msg.shape)
+
+        initial_state = StateFactory.create_from_message(dynamic_obstacle_msg.initial_state)
+
+        if dynamic_obstacle_msg.HasField('trajectory_prediction'):
+            prediction = TrajectoryPredictionFactory.create_from_message(dynamic_obstacle_msg.trajectory_prediction)
+        else:
+            prediction = SetBasedPredictionFactory.create_from_message(dynamic_obstacle_msg.set_based_prediction)
+
+        dynamic_obstacle = DynamicObstacle(dynamic_obstacle_id, obstacle_type, shape, initial_state, prediction)
+
+        dynamic_obstacle.initial_center_lanelet_ids = set(dynamic_obstacle_msg.initial_center_lanelet_ids)
+
+        dynamic_obstacle.initial_shape_lanelet_ids = set(dynamic_obstacle_msg.initial_shape_lanelet_ids)
+
+        if dynamic_obstacle_msg.HasField('initial_signal_state'):
+            dynamic_obstacle.initial_signal_state = StateFactory \
+                .create_from_message(dynamic_obstacle_msg.initial_signal_state)
+
+        signal_states = list()
+        for signal_state_msg in dynamic_obstacle_msg.signal_series:
+            signal_state = SignalStateFactory.create_from_message(signal_state_msg)
+            signal_states.append(signal_state)
+        dynamic_obstacle.signal_series = signal_states
+
+        return dynamic_obstacle
+
+
+class EnvironmentObstacleFactory:
+
+    @classmethod
+    def create_from_message(cls, environment_obstacle_msg: environment_obstacle_pb2.EnvironmentObstacle) \
+            -> EnvironmentObstacle:
+        environment_obstacle_id = environment_obstacle_msg.environment_obstacle_id
+
+        obstacle_type = ObstacleType[
+            obstacle_pb2.ObstacleTypeEnum.ObstacleType.Name(environment_obstacle_msg.obstacle_type)]
+        
+        shape = ShapeFactory.create_from_message(environment_obstacle_msg.shape)
+        
+        return EnvironmentObstacle(environment_obstacle_id, obstacle_type, shape)
+
+
+class PhantomObstacleFactory:
+
+    @classmethod
+    def create_from_message(cls, phantom_obstacle_msg: phantom_obstacle_pb2.PhantomObstacle) -> PhantomObstacle:
+        obstacle_id = phantom_obstacle_msg.obstacle_id
+
+        phantom_obstacle = PhantomObstacle(obstacle_id)
+
+        if phantom_obstacle_msg.HasField('prediction'):
+            set_based_prediction = SetBasedPredictionFactory.create_from_message(phantom_obstacle_msg.prediction)
+            phantom_obstacle.prediction = set_based_prediction
+
+        return phantom_obstacle
+
+
+class StateFactory:
+
+    @classmethod
+    def create_from_message(cls, state_msg: obstacle_pb2.State) -> State:
+        kwargs = dict()
+
+        for attr in State.__slots__:
+            if state_msg.HasField(attr):
+                if attr == 'time_step':
+                    value = IntegerExactOrIntervalFactory.create_from_message(state_msg.time_step)
+                elif attr == 'position':
+                    if state_msg.HasField('point'):
+                        value = PointFactory.create_from_message(state_msg.point)
+                    else:
+                        value = ShapeFactory.create_from_message(state_msg.shape)
+                elif attr == 'orientation':
+                    value = FloatExactOrIntervalFactory.create_from_message(state_msg.orientation, is_angle=True)
+                else:
+                    value = FloatExactOrIntervalFactory.create_from_message(getattr(state_msg, attr))
+                kwargs.update({attr: value})
+
+        return State(**kwargs)
+
+
+class SignalStateFactory:
+
+    @classmethod
+    def create_from_message(cls, signal_state_msg: obstacle_pb2.SignalState) -> SignalState:
+        kwargs = dict()
+
+        for attr in SignalState.__slots__:
+            if signal_state_msg.HasField(attr):
+                if attr == 'time_step':
+                    value = IntegerExactOrIntervalFactory.create_from_message(signal_state_msg.time_step)
+                else:
+                    value = getattr(signal_state_msg, attr)
+                kwargs.update({attr: value})
+
+        return SignalState(**kwargs)
+
+
+class OccupancyFactory:
+
+    @classmethod
+    def create_from_message(cls, occupancy_msg: obstacle_pb2.Occupancy) -> Occupancy:
+        return Occupancy(occupancy_msg.time_step, occupancy_msg.shape)
+
+
+class OccupancySetFactory:
+
+    @classmethod
+    def create_from_message(cls, occupancy_set_msg: obstacle_pb2.OccupancySet) -> List[Occupancy]:
+        occupancies = list()
+        for occupancy_msg in occupancy_set_msg:
+            occupancy = OccupancyFactory.create_from_message(occupancy_msg)
+            occupancies.append(occupancy)
+
+        return occupancies
+
+
+class TrajectoryFactory:
+
+    @classmethod
+    def create_from_message(cls, trajectory_msg: obstacle_pb2.Trajectory) -> Trajectory:
+        initial_time_step = trajectory_msg.initial_time_step
+
+        states = list()
+        for state_msg in trajectory_msg.states:
+            state = StateFactory.create_from_message(state_msg)
+            states.append(state)
+
+        return Trajectory(initial_time_step, states)
+
+
+class TrajectoryPredictionFactory:
+
+    @classmethod
+    def create_from_message(cls, trajectory_prediction_msg: obstacle_pb2.TrajectoryPrediction) -> TrajectoryPrediction:
+        trajectory = TrajectoryFactory.create_from_message(trajectory_prediction_msg.trajectory)
+
+        shape = ShapeFactory.create_from_message(trajectory_prediction_msg.shape)
+
+        trajectory_prediction = TrajectoryPrediction(trajectory, shape)
+
+        center_lanelet_assignments = dict()
+        for key in trajectory_prediction_msg.center_lanelet_assignments:
+            value = IntegerListFactory.create_from_message(trajectory_prediction_msg.center_lanelet_assignments[key])
+            center_lanelet_assignments.update({key: value})
+
+        shape_lanelet_assignments = dict()
+        for key in trajectory_prediction_msg.shape_lanelet_assignments:
+            value = FloatListFactory.create_from_message(trajectory_prediction_msg.shape_lanelet_assignments[key])
+            shape_lanelet_assignments.update({key: value})
+
+        trajectory_prediction.center_lanelet_assignment = center_lanelet_assignments
+        trajectory_prediction.shape_lanelet_assignment = shape_lanelet_assignments
+
+        return trajectory_prediction
+
+
+class SetBasedPredictionFactory:
+
+    @classmethod
+    def create_from_message(cls, set_based_prediction_msg: obstacle_pb2.SetBasedPrediction) -> SetBasedPrediction:
+        initial_time_step = set_based_prediction_msg.initial_time_step
+
+        occupancy_set = OccupancySetFactory.create_from_message(set_based_prediction_msg.occupancy_set)
+
+        return SetBasedPrediction(initial_time_step, occupancy_set)
+
+
+class PlanningProblemFactory:
+
+    @classmethod
+    def create_from_message(cls, planning_problem_msg: planning_problem_pb2.PlanningProblem) -> PlanningProblem:
+        planning_problem_id = planning_problem_msg.planning_problem_id
+
+        initial_state = StateFactory.create_from_message(planning_problem_msg.initial_state)
+
+        state_list = list()
+        lanelets_of_goal_position = dict()
+        for goal_state_msg in planning_problem_msg.goal_states:
+            state, lg_position = GoalStateFactory.create_from_message(goal_state_msg)
+            state_list.append(state)
+            lanelets_of_goal_position.update({len(state_list) - 1: lg_position})
+
+        goal_region = GoalRegion(state_list, lanelets_of_goal_position)
+
+        return PlanningProblem(planning_problem_id, initial_state, goal_region)
+
+
+class GoalStateFactory:
+
+    @classmethod
+    def create_from_message(cls, goal_state_msg: planning_problem_pb2.GoalState) -> Tuple[State, List[int]]:
+        state = StateFactory.create_from_message(goal_state_msg.state)
+
+        goal_position_lanelets = list(goal_state_msg.goal_position_lanelets)
+
+        return state, goal_position_lanelets
 
 
 class PointFactory:
@@ -455,8 +793,12 @@ class IntegerIntervalFactory:
 class FloatIntervalFactory:
 
     @classmethod
-    def create_from_message(cls, float_interval_msg: util_pb2.FloatInterval) -> Interval:
-        return Interval(float_interval_msg.start, float_interval_msg.end)
+    def create_from_message(cls, float_interval_msg: util_pb2.FloatInterval, is_angle: bool = False) -> Interval:
+        if is_angle:
+            interval = AngleInterval(float_interval_msg.start, float_interval_msg.end)
+        else:
+            interval = Interval(float_interval_msg.start, float_interval_msg.end)
+        return interval
 
 
 class IntegerExactOrIntervalFactory:
@@ -474,24 +816,24 @@ class IntegerExactOrIntervalFactory:
 class FloatExactOrIntervalFactory:
 
     @classmethod
-    def create_from_message(cls, float_exact_or_interval_msg: util_pb2.FloatExactOrInterval) \
+    def create_from_message(cls, float_exact_or_interval_msg: util_pb2.FloatExactOrInterval, is_angle: bool = False) \
             -> Union[float, Interval]:
         if float_exact_or_interval_msg.HasField('exact'):
             return float_exact_or_interval_msg.exact
 
         if float_exact_or_interval_msg.HasField('interval'):
-            return FloatIntervalFactory.create_from_message(float_exact_or_interval_msg.interval)
+            return FloatIntervalFactory.create_from_message(float_exact_or_interval_msg.interval, is_angle)
 
 
 class IntegerListFactory:
 
     @classmethod
     def create_from_message(cls, integer_list_msg: util_pb2.IntegerList) -> List[int]:
-        return [i for i in integer_list_msg]
+        return list(integer_list_msg)
 
 
 class FloatListFactory:
 
     @classmethod
     def create_from_message(cls, float_list_msg: util_pb2.FloatList) -> List[float]:
-        return [f for f in float_list_msg]
+        return list(float_list_msg)

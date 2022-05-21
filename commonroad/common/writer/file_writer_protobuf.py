@@ -34,6 +34,9 @@ from commonroad.scenario.trajectory import State, Trajectory
 
 
 class ProtobufFileWriter(FileWriter):
+    """
+    Writes CommonRoad files in protobuf format.
+    """
 
     def __init__(self, scenario: Scenario, planning_problem_set: PlanningProblemSet, author: str = None,
                  affiliation: str = None, source: str = None, tags: Set[Tag] = None, location: Location = None,
@@ -43,12 +46,22 @@ class ProtobufFileWriter(FileWriter):
         self._commonroad_msg = commonroad_pb2.CommonRoad()
 
     def _write_header(self):
+        """
+        Stores all information about scenario and planning problems as protobuf message.
+
+        :return:
+        """
         information_msg = ScenarioInformationMessage.create_message(str(self.scenario.scenario_id), self._author,
                                                                     self._affiliation, self._source, self.scenario.dt)
 
         self._commonroad_msg.information.CopyFrom(information_msg)
 
     def _add_all_objects_from_scenario(self):
+        """
+        Stores all scenario objects as protobuf message.
+
+        :return:
+        """
         scenario_tags = ScenarioTagsMessage.create_message(list(self.scenario.tags))
         self._commonroad_msg.scenario_tags.CopyFrom(scenario_tags)
 
@@ -88,11 +101,22 @@ class ProtobufFileWriter(FileWriter):
             self._commonroad_msg.phantom_obstacles.append(phantom_obstacle_msg)
 
     def _add_all_planning_problems_from_planning_problem_set(self):
+        """
+        Stores all planning problems as protobuf message.
+
+        :return:
+        """
         for planning_problem in self.planning_problem_set.planning_problem_dict.values():
             planning_problem_msg = PlanningProblemMessage.create_message(planning_problem)
             self._commonroad_msg.planning_problems.append(planning_problem_msg)
 
     def _serialize_write_msg(self, filename: str):
+        """
+        Serializes the message of type commonroad and writes into file.
+
+        :param filename: Name of file
+        :return:
+        """
         f = open(filename, "wb")
         f.write(self._commonroad_msg.SerializeToString())
         f.close()
@@ -100,6 +124,14 @@ class ProtobufFileWriter(FileWriter):
     def write_to_file(self, filename: Union[str, None] = None,
                       overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
                       check_validity: bool = False):
+        """
+        Writes message of type commonroad into file.
+
+        :param filename: Name of file
+        :param overwrite_existing_file: Mode of writing
+        :param check_validity: Validity checking before writing
+        :return:
+        """
         filename = self._handle_file_path(filename, overwrite_existing_file)
         if not filename:
             return
@@ -110,10 +142,20 @@ class ProtobufFileWriter(FileWriter):
         self._add_all_objects_from_scenario()
         self._add_all_planning_problems_from_planning_problem_set()
 
+        if check_validity:
+            pass
+
         self._serialize_write_msg(filename)
 
     def write_scenario_to_file(self, filename: Union[str, None] = None,
                                overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT):
+        """
+        Writes scenario as protobuf message into file.
+
+        :param filename: Name of file
+        :param overwrite_existing_file: Mode of writing
+        :return:
+        """
         filename = self._handle_file_path(filename, overwrite_existing_file)
         if not filename:
             return
@@ -127,6 +169,12 @@ class ProtobufFileWriter(FileWriter):
 
     @staticmethod
     def check_validity_of_commonroad_file(commonroad_str: str) -> bool:
+        """
+        Checks validity of CommonRoad message/file.
+
+        :param commonroad_str:
+        :return: Valid or not
+        """
         try:
             commonroad_msg = commonroad_pb2.CommonRoad()
             commonroad_msg.ParseFromString(commonroad_str)
@@ -300,11 +348,11 @@ class StopLineMessage:
         stop_line_msg = lanelet_pb2.StopLine()
 
         if stop_line.start is not None:
-            point_msg = util_pb2.Point()
+            point_msg = PointMessage.create_message(stop_line.start)
             stop_line_msg.points.append(point_msg)
 
         if stop_line.end is not None:
-            point_msg = util_pb2.Point()
+            point_msg = PointMessage.create_message(stop_line.end)
             stop_line_msg.points.append(point_msg)
 
         stop_line_msg.line_marking = lanelet_pb2.LineMarkingEnum.LineMarking.Value(stop_line.line_marking.name)
@@ -405,12 +453,16 @@ class TrafficLightMessage:
 
         traffic_light_msg.traffic_light_id = traffic_light.traffic_light_id
 
-        cycle_msg = CycleMessage.create_message(traffic_light.cycle, traffic_light.time_offset)
-        traffic_light_msg.cycle.CopyFrom(cycle_msg)
+        for cycle_element in traffic_light.cycle:
+            cycle_element_msg = CycleElementMessage.create_message(cycle_element)
+            traffic_light_msg.cycle_elements.append(cycle_element_msg)
 
         if traffic_light.position is not None:
             point_msg = PointMessage.create_message(traffic_light.position)
             traffic_light_msg.position.CopyFrom(point_msg)
+
+        if traffic_light.time_offset is not None:
+            traffic_light_msg.time_offset = traffic_light.time_offset
 
         if traffic_light.direction is not None:
             traffic_light_msg.direction = traffic_light_pb2.TrafficLightDirectionEnum.TrafficLightDirection \
@@ -420,23 +472,6 @@ class TrafficLightMessage:
             traffic_light_msg.active = traffic_light.active
 
         return traffic_light_msg
-
-
-class CycleMessage:
-
-    @classmethod
-    def create_message(cls, cycle_elements: List[TrafficLightCycleElement], time_offset: int) \
-            -> traffic_light_pb2.Cycle:
-        cycle_msg = traffic_light_pb2.Cycle()
-
-        for cycle_element in cycle_elements:
-            cycle_element_msg = CycleElementMessage.create_message(cycle_element)
-            cycle_msg.cycle_elements.append(cycle_element_msg)
-
-        if time_offset is not None:
-            cycle_msg.time_offset = time_offset
-
-        return cycle_msg
 
 
 class CycleElementMessage:
