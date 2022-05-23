@@ -311,8 +311,8 @@ class Location:
 
 class ScenarioID:
     benchmark_id_pattern = re.compile(r"(?P<cooperative>C-)?(?P<country_id>[A-Z]{3})_(?P<map_name>[a-zA-Z0-9]+)-("
-                                      r"?P<map_id>[1-9][0-9]*)(_(?P<configuration_id>[1-9][0-9]*))?(_("
-                                      r"?P<prediction_type>[STPI])(?P<prediction_ids>(-([1-9][0-9]*))+))?")
+                                      r"?P<map_id>[1-9][0-9]*)(_(?P<configuration_id>[1-9][0-9]*)(_("
+                                      r"?P<prediction_type>[STPI])(?P<prediction_ids>(-([1-9][0-9]*))+))?)?")
 
     def __init__(self, cooperative: bool = False, country_id: str = "ZAM", map_name: str = "Test", map_id: int = 1,
                  configuration_id: Union[None, int] = None, obstacle_behavior: Union[None, str] = None,
@@ -340,11 +340,29 @@ class ScenarioID:
         self.country_id: str = country_id
         self.map_name = map_name
         self.map_id: int = map_id
-        self.configuration_id: Union[None, int] = configuration_id
+        is_map = configuration_id is None and obstacle_behavior is None and prediction_id is None
+        has_prediction = obstacle_behavior is not None or prediction_id is not None
+
+        # Obstacle behavior has to be defined if a prediction id is given. We can't recover from this!
+        # prediction id is not None => obstacle_behavior is not None
+        assert prediction_id is None or obstacle_behavior is not None, "Prediction id was given, but obstacle " \
+                                                                       "behavior undefined!"
+        if not is_map:
+            if has_prediction:
+                prediction_id = prediction_id or 1
+            configuration_id = configuration_id or 1
         self.obstacle_behavior: Union[None, str] = obstacle_behavior
-        if obstacle_behavior is not None and prediction_id is None:
-            prediction_id = 1
+        self.configuration_id: Union[None, int] = configuration_id
         self.prediction_id: Union[None, int, List[int]] = prediction_id
+
+        # Validate object
+        assert self.obstacle_behavior in [None, "S", "T", "P",
+                                          "I"], f"Unsupported prediction type '{obstacle_behavior}'! " \
+                                                f"Available prediction types: S, T, P, I"
+        assert self.map_id > 0, f"Map id {configuration_id} <= 0!"
+        assert is_map or self.configuration_id > 0, f"Configuration id {configuration_id} <= 0!"
+        prediction_id = prediction_id if isinstance(prediction_id, list) else [prediction_id]
+        assert not has_prediction or all(p > 0 for p in prediction_id), f"Prediction id {configuration_id} <= 0!"
 
     def __str__(self):
         if self.obstacle_behavior is not None:

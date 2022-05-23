@@ -703,9 +703,23 @@ class TestScenarioID(unittest.TestCase):
             ScenarioID.from_benchmark_id(illegal_character_in_map, SCENARIO_VERSION)
 
         with self.assertWarns(Warning):
-            # ToDo: Is this valid? (Having no configuration ID)
             no_configuration_id = "USA_US101-1_T-1"
             ScenarioID.from_benchmark_id(no_configuration_id, SCENARIO_VERSION)
+
+        with self.assertRaises(AssertionError):
+            ScenarioID(prediction_id=1)
+
+        with self.assertRaises(AssertionError):
+            ScenarioID(obstacle_behavior="K")
+
+        with self.assertRaises(AssertionError):
+            ScenarioID(prediction_id=0)
+
+        with self.assertRaises(AssertionError):
+            ScenarioID(configuration_id=-1)
+
+        with self.assertRaises(AssertionError):
+            ScenarioID(map_id=-1)
 
     def test_to_string(self):
         ids = [ScenarioID(), ScenarioID(obstacle_behavior="T"), ScenarioID(map_name="Illegal-Character_")]
