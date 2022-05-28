@@ -87,7 +87,7 @@ class SignalState:
             setattr(self, field, value)
 
     def __eq__(self, other):
-        if not isinstance(other, State):
+        if not isinstance(other, SignalState):
             warnings.warn(f"Inequality between SignalState {repr(self)} and different type {type(other)}")
             return False
 
@@ -104,6 +104,7 @@ class SignalState:
                 value_other = getattr(other, attr)
 
             if has_attr != has_attr_other or value != value_other:
+                print('FAIL')
                 return False
 
         return True

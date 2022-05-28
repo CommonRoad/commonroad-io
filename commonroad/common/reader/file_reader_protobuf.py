@@ -790,7 +790,7 @@ class ShapeGroupFactory:
     @classmethod
     def create_from_message(cls, shape_group_msg: util_pb2.ShapeGroup) -> ShapeGroup:
         shapes = list()
-        for shape_msg in shape_group_msg:
+        for shape_msg in shape_group_msg.shapes:
             shape = ShapeFactory.create_from_message(shape_msg)
             shapes.append(shape)
         shape_group = ShapeGroup(shapes)

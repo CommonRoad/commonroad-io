@@ -355,12 +355,18 @@ class Polygon(Shape):
 
     def __eq__(self, other):
         if not isinstance(other, Polygon):
+            warnings.warn(f"Inequality between Polygon {repr(self)} and different type {type(other)}")
             return False
 
-        thresh = 1e-10
+        vertices_string = np.array2string(np.around(self._vertices.astype(float), 10), precision=10)
+        vertices_string_other = np.array2string(np.around(other._vertices.astype(float), 10), precision=10)
 
-        return np.allclose(self._vertices, other.vertices, rtol=thresh, atol=thresh) \
-            and self._shapely_polygon == other.shapely_object
+        return vertices_string == vertices_string_other
+
+    def __hash__(self):
+        vertices_string = np.array2string(np.around(self._vertices.astype(float), 10), precision=10)
+
+        return hash(vertices_string)
 
     @property
     def vertices(self) -> np.ndarray:
