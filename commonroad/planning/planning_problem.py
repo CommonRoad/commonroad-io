@@ -26,6 +26,17 @@ class PlanningProblem(IDrawable):
         self.initial_state = initial_state
         self.goal = goal_region
 
+    def __eq__(self, other):
+        if not isinstance(other, PlanningProblem):
+            warnings.warn(f"Inequality between PlanningProblem {repr(self)} and different type {type(other)}")
+            return False
+
+        return self.planning_problem_id == other.planning_problem_id and self.initial_state == other.initial_state and \
+            self.goal == other.goal
+
+    def __hash__(self):
+        return hash((self.planning_problem_id, self.initial_state, self.goal))
+
     @property
     def planning_problem_id(self) -> int:
         """Id of the planning problem"""
@@ -106,8 +117,17 @@ class PlanningProblemSet(IDrawable):
 
         self._planning_problem_dict = {
                 planning_problem.planning_problem_id: planning_problem for
-                planning_problem in
-                                       planning_problem_list}
+                planning_problem in planning_problem_list}
+
+    def __eq__(self, other):
+        if not isinstance(other, PlanningProblemSet):
+            warnings.warn(f"Inequality between PlanningProblemSet {repr(self)} and different type {type(other)}")
+            return False
+
+        return self.planning_problem_dict.items() == other.planning_problem_dict.items()
+
+    def __hash__(self):
+        return hash(self.planning_problem_dict.items())
 
     @property
     def planning_problem_dict(self) -> Dict[int, PlanningProblem]:

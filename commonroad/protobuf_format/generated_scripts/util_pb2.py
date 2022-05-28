@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='commonroad',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\nutil.proto\x12\ncommonroad\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x02(\x02\x12\t\n\x01y\x18\x02 \x02(\x02\"b\n\tRectangle\x12\x0e\n\x06length\x18\x01 \x02(\x02\x12\r\n\x05width\x18\x02 \x02(\x02\x12!\n\x06\x63\x65nter\x18\x03 \x01(\x0b\x32\x11.commonroad.Point\x12\x13\n\x0borientation\x18\x04 \x01(\x02\";\n\x06\x43ircle\x12\x0e\n\x06radius\x18\x01 \x02(\x02\x12!\n\x06\x63\x65nter\x18\x02 \x01(\x0b\x32\x11.commonroad.Point\".\n\x07Polygon\x12#\n\x08vertices\x18\x01 \x03(\x0b\x32\x11.commonroad.Point\"/\n\nShapeGroup\x12!\n\x06shapes\x18\x01 \x03(\x0b\x32\x11.commonroad.Shape\"\xb9\x01\n\x05Shape\x12*\n\trectangle\x18\x01 \x01(\x0b\x32\x15.commonroad.RectangleH\x00\x12$\n\x06\x63ircle\x18\x02 \x01(\x0b\x32\x12.commonroad.CircleH\x00\x12&\n\x07polygon\x18\x03 \x01(\x0b\x32\x13.commonroad.PolygonH\x00\x12-\n\x0bshape_group\x18\x04 \x01(\x0b\x32\x16.commonroad.ShapeGroupH\x00\x42\x07\n\x05shape\"-\n\x0fIntegerInterval\x12\r\n\x05start\x18\x01 \x01(\x05\x12\x0b\n\x03\x65nd\x18\x02 \x01(\x05\"+\n\rFloatInterval\x12\r\n\x05start\x18\x01 \x01(\x02\x12\x0b\n\x03\x65nd\x18\x02 \x01(\x02\"o\n\x16IntegerExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x05H\x00\x12/\n\x08interval\x18\x02 \x01(\x0b\x32\x1b.commonroad.IntegerIntervalH\x00\x42\x13\n\x11\x65xact_or_interval\"k\n\x14\x46loatExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x02H\x00\x12-\n\x08interval\x18\x02 \x01(\x0b\x32\x19.commonroad.FloatIntervalH\x00\x42\x13\n\x11\x65xact_or_interval\"\x1d\n\x0bIntegerList\x12\x0e\n\x06values\x18\x01 \x03(\x05\"\x1b\n\tFloatList\x12\x0e\n\x06values\x18\x01 \x03(\x05')
+  serialized_pb=_b('\n\nutil.proto\x12\ncommonroad\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x02(\x01\x12\t\n\x01y\x18\x02 \x02(\x01\"b\n\tRectangle\x12\x0e\n\x06length\x18\x01 \x02(\x01\x12\r\n\x05width\x18\x02 \x02(\x01\x12!\n\x06\x63\x65nter\x18\x03 \x01(\x0b\x32\x11.commonroad.Point\x12\x13\n\x0borientation\x18\x04 \x01(\x01\";\n\x06\x43ircle\x12\x0e\n\x06radius\x18\x01 \x02(\x01\x12!\n\x06\x63\x65nter\x18\x02 \x01(\x0b\x32\x11.commonroad.Point\".\n\x07Polygon\x12#\n\x08vertices\x18\x01 \x03(\x0b\x32\x11.commonroad.Point\"/\n\nShapeGroup\x12!\n\x06shapes\x18\x01 \x03(\x0b\x32\x11.commonroad.Shape\"\xb9\x01\n\x05Shape\x12*\n\trectangle\x18\x01 \x01(\x0b\x32\x15.commonroad.RectangleH\x00\x12$\n\x06\x63ircle\x18\x02 \x01(\x0b\x32\x12.commonroad.CircleH\x00\x12&\n\x07polygon\x18\x03 \x01(\x0b\x32\x13.commonroad.PolygonH\x00\x12-\n\x0bshape_group\x18\x04 \x01(\x0b\x32\x16.commonroad.ShapeGroupH\x00\x42\x07\n\x05shape\"-\n\x0fIntegerInterval\x12\r\n\x05start\x18\x01 \x02(\x05\x12\x0b\n\x03\x65nd\x18\x02 \x02(\x05\"+\n\rFloatInterval\x12\r\n\x05start\x18\x01 \x02(\x01\x12\x0b\n\x03\x65nd\x18\x02 \x02(\x01\"o\n\x16IntegerExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x05H\x00\x12/\n\x08interval\x18\x02 \x01(\x0b\x32\x1b.commonroad.IntegerIntervalH\x00\x42\x13\n\x11\x65xact_or_interval\"k\n\x14\x46loatExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x01H\x00\x12-\n\x08interval\x18\x02 \x01(\x0b\x32\x19.commonroad.FloatIntervalH\x00\x42\x13\n\x11\x65xact_or_interval\"\x1d\n\x0bIntegerList\x12\x0e\n\x06values\x18\x01 \x03(\x05\"\x1b\n\tFloatList\x12\x0e\n\x06values\x18\x01 \x03(\x05\"S\n\tTimeStamp\x12\x0c\n\x04year\x18\x01 \x01(\r\x12\r\n\x05month\x18\x02 \x01(\r\x12\x0b\n\x03\x64\x61y\x18\x03 \x01(\r\x12\x0c\n\x04hour\x18\x04 \x01(\r\x12\x0e\n\x06minute\x18\x05 \x01(\r')
 )
 
 
@@ -34,14 +34,14 @@ _POINT = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='x', full_name='commonroad.Point.x', index=0,
-      number=1, type=2, cpp_type=6, label=2,
+      number=1, type=1, cpp_type=5, label=2,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='y', full_name='commonroad.Point.y', index=1,
-      number=2, type=2, cpp_type=6, label=2,
+      number=2, type=1, cpp_type=5, label=2,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -72,14 +72,14 @@ _RECTANGLE = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='length', full_name='commonroad.Rectangle.length', index=0,
-      number=1, type=2, cpp_type=6, label=2,
+      number=1, type=1, cpp_type=5, label=2,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='width', full_name='commonroad.Rectangle.width', index=1,
-      number=2, type=2, cpp_type=6, label=2,
+      number=2, type=1, cpp_type=5, label=2,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -93,7 +93,7 @@ _RECTANGLE = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='orientation', full_name='commonroad.Rectangle.orientation', index=3,
-      number=4, type=2, cpp_type=6, label=1,
+      number=4, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -124,7 +124,7 @@ _CIRCLE = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='radius', full_name='commonroad.Circle.radius', index=0,
-      number=1, type=2, cpp_type=6, label=2,
+      number=1, type=1, cpp_type=5, label=2,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -279,14 +279,14 @@ _INTEGERINTERVAL = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='start', full_name='commonroad.IntegerInterval.start', index=0,
-      number=1, type=5, cpp_type=1, label=1,
+      number=1, type=5, cpp_type=1, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='end', full_name='commonroad.IntegerInterval.end', index=1,
-      number=2, type=5, cpp_type=1, label=1,
+      number=2, type=5, cpp_type=1, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -317,14 +317,14 @@ _FLOATINTERVAL = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='start', full_name='commonroad.FloatInterval.start', index=0,
-      number=1, type=2, cpp_type=6, label=1,
+      number=1, type=1, cpp_type=5, label=2,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='end', full_name='commonroad.FloatInterval.end', index=1,
-      number=2, type=2, cpp_type=6, label=1,
+      number=2, type=1, cpp_type=5, label=2,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -396,7 +396,7 @@ _FLOATEXACTORINTERVAL = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='exact', full_name='commonroad.FloatExactOrInterval.exact', index=0,
-      number=1, type=2, cpp_type=6, label=1,
+      number=1, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -489,6 +489,65 @@ _FLOATLIST = _descriptor.Descriptor(
   serialized_end=875,
 )
 
+
+_TIMESTAMP = _descriptor.Descriptor(
+  name='TimeStamp',
+  full_name='commonroad.TimeStamp',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='year', full_name='commonroad.TimeStamp.year', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='month', full_name='commonroad.TimeStamp.month', index=1,
+      number=2, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='day', full_name='commonroad.TimeStamp.day', index=2,
+      number=3, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='hour', full_name='commonroad.TimeStamp.hour', index=3,
+      number=4, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='minute', full_name='commonroad.TimeStamp.minute', index=4,
+      number=5, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=877,
+  serialized_end=960,
+)
+
 _RECTANGLE.fields_by_name['center'].message_type = _POINT
 _CIRCLE.fields_by_name['center'].message_type = _POINT
 _POLYGON.fields_by_name['vertices'].message_type = _POINT
@@ -535,6 +594,7 @@ DESCRIPTOR.message_types_by_name['IntegerExactOrInterval'] = _INTEGEREXACTORINTE
 DESCRIPTOR.message_types_by_name['FloatExactOrInterval'] = _FLOATEXACTORINTERVAL
 DESCRIPTOR.message_types_by_name['IntegerList'] = _INTEGERLIST
 DESCRIPTOR.message_types_by_name['FloatList'] = _FLOATLIST
+DESCRIPTOR.message_types_by_name['TimeStamp'] = _TIMESTAMP
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Point = _reflection.GeneratedProtocolMessageType('Point', (_message.Message,), dict(
@@ -620,6 +680,13 @@ FloatList = _reflection.GeneratedProtocolMessageType('FloatList', (_message.Mess
   # @@protoc_insertion_point(class_scope:commonroad.FloatList)
   ))
 _sym_db.RegisterMessage(FloatList)
+
+TimeStamp = _reflection.GeneratedProtocolMessageType('TimeStamp', (_message.Message,), dict(
+  DESCRIPTOR = _TIMESTAMP,
+  __module__ = 'util_pb2'
+  # @@protoc_insertion_point(class_scope:commonroad.TimeStamp)
+  ))
+_sym_db.RegisterMessage(TimeStamp)
 
 
 # @@protoc_insertion_point(module_scope)

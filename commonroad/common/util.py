@@ -80,6 +80,16 @@ class Interval:
         self.start = start
         self.end = end
 
+    def __eq__(self, other):
+        if not isinstance(other, Interval):
+            warnings.warn(f"Inequality between Interval {repr(self)} and different type {type(other)}")
+            return False
+
+        return self._start == other.start and self._end == other.end
+
+    def __hash__(self):
+        return hash((self._start, self._end))
+
     def __iter__(self):
         yield self._start
         yield self._end

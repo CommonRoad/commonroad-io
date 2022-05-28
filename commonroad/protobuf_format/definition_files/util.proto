@@ -3,19 +3,19 @@ syntax = "proto2";
 package commonroad;
 
 message Point {
-    required float x = 1;
-    required float y = 2;
+    required double x = 1;
+    required double y = 2;
 }
 
 message Rectangle {
-    required float length = 1;
-    required float width = 2;
+    required double length = 1;
+    required double width = 2;
     optional Point center = 3;
-    optional float orientation = 4;
+    optional double orientation = 4;
 }
 
 message Circle {
-    required float radius = 1;
+    required double radius = 1;
     optional Point center = 2;
 }
 
@@ -42,8 +42,8 @@ message IntegerInterval {
 }
 
 message FloatInterval {
-    required float start = 1;
-    required float end = 2;
+    required double start = 1;
+    required double end = 2;
 }
 
 message IntegerExactOrInterval {
@@ -55,7 +55,7 @@ message IntegerExactOrInterval {
 
 message FloatExactOrInterval {
     oneof exact_or_interval {
-        float exact = 1;
+        double exact = 1;
         FloatInterval interval = 2;
     }
 }
@@ -66,4 +66,12 @@ message IntegerList {
 
 message FloatList {
     repeated int32 values = 1;
+}
+
+message TimeStamp {
+    optional uint32 year = 1;
+    optional uint32 month = 2;
+    optional uint32 day = 3;
+    optional uint32 hour = 4;
+    optional uint32 minute = 5;
 }

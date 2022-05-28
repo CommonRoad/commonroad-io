@@ -252,7 +252,7 @@ message TrafficSignIDGermanyEnum {
 
 message TrafficSignIDZamundaEnum {
     enum TrafficSignIDZamunda {
-                WARNING_DANGER_SPOT = 0;
+        WARNING_DANGER_SPOT = 0;
         WARNING_RIGHT_BEFORE_LEFT = 1;
         WARNING_LEFT_CURVE = 2;
         WARNING_RIGHT_CURVE = 3;
@@ -334,7 +334,7 @@ message TrafficSignIDZamundaEnum {
         TRAFFIC_CALMED_AREA_START = 79;
         TRAFFIC_CALMED_AREA_END = 80;
         TUNNEL = 81;
-        EMERYGECNY_STOP = 82;
+        EMERGENCY_STOP = 82;
         INTERSTATE_START = 83;
         INTERSTATE_END = 84;
         HIGHWAY_START = 85;

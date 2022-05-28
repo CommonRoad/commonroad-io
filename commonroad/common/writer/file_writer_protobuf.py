@@ -1,3 +1,4 @@
+import datetime
 from typing import Set, Union, List
 
 import numpy as np
@@ -16,7 +17,7 @@ from commonroad.scenario.intersection import Intersection, IntersectionIncomingE
 from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, SignalState, \
     PhantomObstacle
-from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment
+from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment, Time
 
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -191,7 +192,8 @@ class ScenarioInformationMessage:
         scenario_information_msg = commonroad_pb2.ScenarioInformation()
         scenario_information_msg.common_road_version = SCENARIO_VERSION
         scenario_information_msg.benchmark_id = benchmark_id
-        # scenario_information_msg.date = timestamp_pb2.TimeStamp(datetime.datetime.today()) TODO
+        time_stamp_msg = TimeStampMessage.create_message(datetime.datetime.today())
+        scenario_information_msg.date.CopyFrom(time_stamp_msg)
         scenario_information_msg.author = author
         scenario_information_msg.affiliation = affiliation
         scenario_information_msg.source = source
@@ -207,8 +209,7 @@ class ScenarioTagsMessage:
         scenario_tags_msg = scenario_tags_pb2.ScenarioTags()
 
         for tag in tags:
-            scenario_tags_msg.tags.append(scenario_tags_pb2.TagEnum.URBAN)
-            scenario_tags_pb2.TagEnum.Tag.Value(tag.name)
+            scenario_tags_msg.tags.append(scenario_tags_pb2.TagEnum.Tag.Value(tag.name))
 
         return scenario_tags_msg
 
@@ -254,7 +255,9 @@ class EnvironmentMessage:
     def create_message(cls, environment: Environment) -> location_pb2.Environment:
         environment_msg = location_pb2.Environment()
 
-        # environment_msg.time TODO
+        if environment.time is not None:
+            time_stamp_msg = TimeStampMessage.create_message(environment.time)
+            environment_msg.time.CopyFrom(time_stamp_msg)
         if environment.time_of_day is not None:
             environment_msg.time_of_day = location_pb2.TimeOfDayEnum.TimeOfDay.Value(environment.time_of_day.name)
         if environment.weather is not None:
@@ -380,7 +383,8 @@ class TrafficSignMessage:
             traffic_sign_element_msg = TrafficSignElementMessage.create_message(traffic_sign_element)
             traffic_sign_msg.traffic_sign_elements.append(traffic_sign_element_msg)
 
-        # first_occurrences TODO
+        for first_occurrence in traffic_sign.first_occurrence:
+            traffic_sign_msg.first_occurrences.append(first_occurrence)
 
         if traffic_sign.position is not None:
             point_msg = PointMessage.create_message(traffic_sign.position)
@@ -710,12 +714,12 @@ class TrajectoryPredictionMessage:
 
         if trajectory_prediction.center_lanelet_assignment is not None:
             for key, values in trajectory_prediction.center_lanelet_assignment:
-                integer_list_msg = IntegerList.create_message(values)
+                integer_list_msg = IntegerListMessage.create_message(values)
                 trajectory_prediction_msg.center_lanelet_assignments[key] = integer_list_msg
 
         if trajectory_prediction.shape_lanelet_assignment is not None:
             for key, values in trajectory_prediction.shape_lanelet_assignment:
-                integer_list_msg = IntegerList.create_message(values)
+                integer_list_msg = IntegerListMessage.create_message(values)
                 trajectory_prediction_msg.shape_lanelet_assignments[key] = integer_list_msg
 
         return trajectory_prediction_msg
@@ -777,11 +781,11 @@ class PlanningProblemMessage:
         planning_problem_msg.initial_state.CopyFrom(state_msg)
 
         for i, state in enumerate(planning_problem.goal.state_list):
-            if planning_problem.goal.lanelets_of_goal_position is None:
-                goal_state_msg = GoalStateMessage.create_message(state, list())
-            else:
+            if planning_problem.goal.lanelets_of_goal_position is not None:
                 goal_state_msg = GoalStateMessage \
                     .create_message(state, planning_problem.goal.lanelets_of_goal_position[i])
+            else:
+                goal_state_msg = GoalStateMessage.create_message(state, list())
             planning_problem_msg.goal_states.append(goal_state_msg)
 
         return planning_problem_msg
@@ -946,7 +950,7 @@ class FloatExactOrIntervalMessage:
         return float_exact_or_interval_msg
 
 
-class IntegerList:
+class IntegerListMessage:
 
     @classmethod
     def create_message(cls, values: List[int]) -> util_pb2.IntegerList:
@@ -958,7 +962,7 @@ class IntegerList:
         return integer_list_msg
 
 
-class FloatList:
+class FloatListMessage:
 
     @classmethod
     def create_message(cls, values: List[float]) -> util_pb2.FloatList:
@@ -968,3 +972,22 @@ class FloatList:
             float_list_msg.values.append(value)
 
         return float_list_msg
+
+
+class TimeStampMessage:
+
+    @classmethod
+    def create_message(cls, time_stamp: Union[datetime.datetime, Time]):
+        time_stamp_msg = util_pb2.TimeStamp()
+
+        if isinstance(time_stamp, datetime.datetime):
+            time_stamp_msg.year = time_stamp.year
+            time_stamp_msg.month = time_stamp.month
+            time_stamp_msg.day = time_stamp.day
+            time_stamp_msg.hour = time_stamp.hour
+            time_stamp_msg.minute = time_stamp.minute
+        else:
+            time_stamp_msg.hour = time_stamp.hours
+            time_stamp_msg.minute = time_stamp.minutes
+
+        return time_stamp_msg

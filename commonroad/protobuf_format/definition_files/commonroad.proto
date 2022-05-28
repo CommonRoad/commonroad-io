@@ -2,7 +2,7 @@ syntax = "proto2";
 
 package commonroad;
 
-import "google/protobuf/timestamp.proto";
+import "util.proto";
 import "scenario_tags.proto";
 import "location.proto";
 import "lanelet.proto";
@@ -18,11 +18,11 @@ import "planning_problem.proto";
 message ScenarioInformation {
     required string common_road_version = 1;
     required string benchmark_id = 2;
-    optional google.protobuf.Timestamp date = 3;
+    required TimeStamp date = 3;
     required string author = 4;
     required string affiliation = 5;
     required string source = 6;
-    required float time_step_size = 7;
+    required double time_step_size = 7;
 }
 
 message CommonRoad {

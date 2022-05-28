@@ -1432,7 +1432,7 @@ class LaneletNetwork(IDrawable):
 
     def add_intersection(self, intersection: Intersection):
         """
-        Adds a intersection to the LaneletNetwork
+        Adds an intersection to the LaneletNetwork
 
         :param intersection: The intersection to add
         :return: True if the traffic light has successfully been added to the network, false otherwise

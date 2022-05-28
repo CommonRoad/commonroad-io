@@ -69,6 +69,24 @@ class Rectangle(Shape):
         self._vertices: np.ndarray = None
         self.__shapely_polygon: shapely.geometry.Polygon = None
 
+    def __eq__(self, other):
+        if not isinstance(other, Rectangle):
+            warnings.warn(f"Inequality between Rectangle {repr(self)} and different type {type(other)}")
+            return False
+
+        center_string = np.array2string(np.around(self._center.astype(float), 10), precision=10)
+        center_other_string = np.array2string(np.around(other.center.astype(float), 10), precision=10)
+
+        return self._length == other.length and self._width == other.width and \
+            center_string == center_other_string and self._orientation == other.orientation
+
+    def __hash__(self):
+        center_string = None
+        if self._center is not None:
+            center_string = np.array2string(np.around(self._center.astype(float), 10), precision=10)
+
+        return hash((self._length, self._width, center_string, self._orientation))
+
     @property
     def _shapely_polygon(self) -> shapely.geometry.Polygon:
         if self.__shapely_polygon is None:
@@ -220,6 +238,23 @@ class Circle(Shape):
         self.center: np.ndarray = center if center is not None else np.array([0.0, 0.0])
         self._shapely_circle: shapely.geometry = \
             shapely.geometry.Point(self.center[0], self.center[1]).buffer(radius / 2)
+
+    def __eq__(self, other):
+        if not isinstance(other, Circle):
+            warnings.warn(f"Inequality between Circle {repr(self)} and different type {type(other)}")
+            return False
+
+        center_string = np.array2string(np.around(self._center.astype(float), 10), precision=10)
+        center_other_string = np.array2string(np.around(other.center.astype(float), 10), precision=10)
+
+        return self._radius == other.radius and center_string == center_other_string
+
+    def __hash__(self):
+        center_string = None
+        if self._center is not None:
+            center_string = np.array2string(np.around(self._center.astype(float), 10), precision=10)
+
+        return hash((self._radius, center_string))
 
     @property
     def radius(self) -> float:
@@ -424,6 +459,16 @@ class ShapeGroup(Shape):
         :param shapes: list of shapes
         """
         self.shapes = shapes
+
+    def __eq__(self, other):
+        if not isinstance(other, ShapeGroup):
+            warnings.warn(f"Inequality between ShapeGroup {repr(self)} and different type {type(other)}")
+            return False
+
+        return self._shapes == other.shapes
+
+    def __hash__(self):
+        return hash(frozenset(self._shapes))
 
     @property
     def shapes(self) -> List[Shape]:

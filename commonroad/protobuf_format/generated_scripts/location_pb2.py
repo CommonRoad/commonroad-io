@@ -12,7 +12,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
+import commonroad.protobuf_format.generated_scripts.util_pb2 as util__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,9 +20,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='commonroad',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x0elocation.proto\x12\ncommonroad\x1a\x1fgoogle/protobuf/timestamp.proto\"=\n\rTimeOfDayEnum\",\n\tTimeOfDay\x12\t\n\x05NIGHT\x10\x00\x12\x07\n\x03\x44\x41Y\x10\x01\x12\x0b\n\x07UNKNOWN\x10\x02\"l\n\x0bWeatherEnum\"]\n\x07Weather\x12\t\n\x05SUNNY\x10\x00\x12\x0e\n\nLIGHT_RAIN\x10\x01\x12\r\n\tHEAVY_AIN\x10\x02\x12\x07\n\x03\x46OG\x10\x03\x12\x08\n\x04SNOW\x10\x04\x12\x08\n\x04HAIL\x10\x05\x12\x0b\n\x07UNKNOWN\x10\x06\"l\n\x0fUndergroundEnum\"Y\n\x0bUnderground\x12\x07\n\x03WET\x10\x00\x12\t\n\x05\x43LEAN\x10\x01\x12\t\n\x05\x44IRTY\x10\x02\x12\x0b\n\x07\x44\x41MAGED\x10\x03\x12\x08\n\x04SNOW\x10\x04\x12\x07\n\x03ICE\x10\x05\x12\x0b\n\x07UNKNOWN\x10\x06\"|\n\x11GeoTransformation\x12\x14\n\x0cgeoReference\x18\x01 \x01(\t\x12\x15\n\rx_translation\x18\x02 \x01(\x02\x12\x15\n\ry_translation\x18\x03 \x01(\x02\x12\x12\n\nz_rotation\x18\x04 \x01(\x02\x12\x0f\n\x07scaling\x18\x05 \x01(\x02\"\xe1\x01\n\x0b\x45nvironment\x12(\n\x04time\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x38\n\x0btime_of_day\x18\x02 \x01(\x0e\x32#.commonroad.TimeOfDayEnum.TimeOfDay\x12\x30\n\x07weather\x18\x03 \x01(\x0e\x32\x1f.commonroad.WeatherEnum.Weather\x12<\n\x0bunderground\x18\x04 \x01(\x0e\x32\'.commonroad.UndergroundEnum.Underground\"\xb5\x01\n\x08Location\x12\x13\n\x0bgeo_name_id\x18\x01 \x02(\x05\x12\x14\n\x0cgps_latitude\x18\x02 \x02(\x02\x12\x15\n\rgps_longitude\x18\x03 \x02(\x02\x12\x39\n\x12geo_transformation\x18\x04 \x01(\x0b\x32\x1d.commonroad.GeoTransformation\x12,\n\x0b\x65nvironment\x18\x05 \x01(\x0b\x32\x17.commonroad.Environment')
+  serialized_pb=_b('\n\x0elocation.proto\x12\ncommonroad\x1a\nutil.proto\"=\n\rTimeOfDayEnum\",\n\tTimeOfDay\x12\t\n\x05NIGHT\x10\x00\x12\x07\n\x03\x44\x41Y\x10\x01\x12\x0b\n\x07UNKNOWN\x10\x02\"l\n\x0bWeatherEnum\"]\n\x07Weather\x12\t\n\x05SUNNY\x10\x00\x12\x0e\n\nLIGHT_RAIN\x10\x01\x12\r\n\tHEAVY_AIN\x10\x02\x12\x07\n\x03\x46OG\x10\x03\x12\x08\n\x04SNOW\x10\x04\x12\x08\n\x04HAIL\x10\x05\x12\x0b\n\x07UNKNOWN\x10\x06\"l\n\x0fUndergroundEnum\"Y\n\x0bUnderground\x12\x07\n\x03WET\x10\x00\x12\t\n\x05\x43LEAN\x10\x01\x12\t\n\x05\x44IRTY\x10\x02\x12\x0b\n\x07\x44\x41MAGED\x10\x03\x12\x08\n\x04SNOW\x10\x04\x12\x07\n\x03ICE\x10\x05\x12\x0b\n\x07UNKNOWN\x10\x06\"}\n\x11GeoTransformation\x12\x15\n\rgeo_reference\x18\x01 \x01(\t\x12\x15\n\rx_translation\x18\x02 \x01(\x01\x12\x15\n\ry_translation\x18\x03 \x01(\x01\x12\x12\n\nz_rotation\x18\x04 \x01(\x01\x12\x0f\n\x07scaling\x18\x05 \x01(\x01\"\xdc\x01\n\x0b\x45nvironment\x12#\n\x04time\x18\x01 \x01(\x0b\x32\x15.commonroad.TimeStamp\x12\x38\n\x0btime_of_day\x18\x02 \x01(\x0e\x32#.commonroad.TimeOfDayEnum.TimeOfDay\x12\x30\n\x07weather\x18\x03 \x01(\x0e\x32\x1f.commonroad.WeatherEnum.Weather\x12<\n\x0bunderground\x18\x04 \x01(\x0e\x32\'.commonroad.UndergroundEnum.Underground\"\xb5\x01\n\x08Location\x12\x13\n\x0bgeo_name_id\x18\x01 \x02(\x05\x12\x14\n\x0cgps_latitude\x18\x02 \x02(\x01\x12\x15\n\rgps_longitude\x18\x03 \x02(\x01\x12\x39\n\x12geo_transformation\x18\x04 \x01(\x0b\x32\x1d.commonroad.GeoTransformation\x12,\n\x0b\x65nvironment\x18\x05 \x01(\x0b\x32\x17.commonroad.Environment')
   ,
-  dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,])
+  dependencies=[util__pb2.DESCRIPTOR,])
 
 
 
@@ -47,8 +47,8 @@ _TIMEOFDAYENUM_TIMEOFDAY = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=80,
-  serialized_end=124,
+  serialized_start=59,
+  serialized_end=103,
 )
 _sym_db.RegisterEnumDescriptor(_TIMEOFDAYENUM_TIMEOFDAY)
 
@@ -89,8 +89,8 @@ _WEATHERENUM_WEATHER = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=141,
-  serialized_end=234,
+  serialized_start=120,
+  serialized_end=213,
 )
 _sym_db.RegisterEnumDescriptor(_WEATHERENUM_WEATHER)
 
@@ -131,8 +131,8 @@ _UNDERGROUNDENUM_UNDERGROUND = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=255,
-  serialized_end=344,
+  serialized_start=234,
+  serialized_end=323,
 )
 _sym_db.RegisterEnumDescriptor(_UNDERGROUNDENUM_UNDERGROUND)
 
@@ -157,8 +157,8 @@ _TIMEOFDAYENUM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=63,
-  serialized_end=124,
+  serialized_start=42,
+  serialized_end=103,
 )
 
 
@@ -182,8 +182,8 @@ _WEATHERENUM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=126,
-  serialized_end=234,
+  serialized_start=105,
+  serialized_end=213,
 )
 
 
@@ -207,8 +207,8 @@ _UNDERGROUNDENUM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=236,
-  serialized_end=344,
+  serialized_start=215,
+  serialized_end=323,
 )
 
 
@@ -220,7 +220,7 @@ _GEOTRANSFORMATION = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='geoReference', full_name='commonroad.GeoTransformation.geoReference', index=0,
+      name='geo_reference', full_name='commonroad.GeoTransformation.geo_reference', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -228,28 +228,28 @@ _GEOTRANSFORMATION = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='x_translation', full_name='commonroad.GeoTransformation.x_translation', index=1,
-      number=2, type=2, cpp_type=6, label=1,
+      number=2, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='y_translation', full_name='commonroad.GeoTransformation.y_translation', index=2,
-      number=3, type=2, cpp_type=6, label=1,
+      number=3, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='z_rotation', full_name='commonroad.GeoTransformation.z_rotation', index=3,
-      number=4, type=2, cpp_type=6, label=1,
+      number=4, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='scaling', full_name='commonroad.GeoTransformation.scaling', index=4,
-      number=5, type=2, cpp_type=6, label=1,
+      number=5, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -266,8 +266,8 @@ _GEOTRANSFORMATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=346,
-  serialized_end=470,
+  serialized_start=325,
+  serialized_end=450,
 )
 
 
@@ -318,8 +318,8 @@ _ENVIRONMENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=473,
-  serialized_end=698,
+  serialized_start=453,
+  serialized_end=673,
 )
 
 
@@ -339,14 +339,14 @@ _LOCATION = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='gps_latitude', full_name='commonroad.Location.gps_latitude', index=1,
-      number=2, type=2, cpp_type=6, label=2,
+      number=2, type=1, cpp_type=5, label=2,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='gps_longitude', full_name='commonroad.Location.gps_longitude', index=2,
-      number=3, type=2, cpp_type=6, label=2,
+      number=3, type=1, cpp_type=5, label=2,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -377,14 +377,14 @@ _LOCATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=701,
-  serialized_end=882,
+  serialized_start=676,
+  serialized_end=857,
 )
 
 _TIMEOFDAYENUM_TIMEOFDAY.containing_type = _TIMEOFDAYENUM
 _WEATHERENUM_WEATHER.containing_type = _WEATHERENUM
 _UNDERGROUNDENUM_UNDERGROUND.containing_type = _UNDERGROUNDENUM
-_ENVIRONMENT.fields_by_name['time'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
+_ENVIRONMENT.fields_by_name['time'].message_type = util__pb2._TIMESTAMP
 _ENVIRONMENT.fields_by_name['time_of_day'].enum_type = _TIMEOFDAYENUM_TIMEOFDAY
 _ENVIRONMENT.fields_by_name['weather'].enum_type = _WEATHERENUM_WEATHER
 _ENVIRONMENT.fields_by_name['underground'].enum_type = _UNDERGROUNDENUM_UNDERGROUND

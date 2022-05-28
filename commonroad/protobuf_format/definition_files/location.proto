@@ -2,7 +2,7 @@ syntax = "proto2";
 
 package commonroad;
 
-import "google/protobuf/timestamp.proto";
+import "util.proto";
 
 message TimeOfDayEnum {
     enum TimeOfDay {
@@ -38,14 +38,14 @@ message UndergroundEnum {
 
 message GeoTransformation {
     optional string geo_reference = 1;
-    optional float x_translation = 2;
-    optional float y_translation = 3;
-    optional float z_rotation = 4;
-    optional float scaling = 5;
+    optional double x_translation = 2;
+    optional double y_translation = 3;
+    optional double z_rotation = 4;
+    optional double scaling = 5;
 }
 
 message Environment {
-    optional google.protobuf.Timestamp time = 1;
+    optional TimeStamp time = 1;
     optional TimeOfDayEnum.TimeOfDay time_of_day = 2;
     optional WeatherEnum.Weather weather = 3;
     optional UndergroundEnum.Underground underground = 4;
@@ -53,8 +53,8 @@ message Environment {
 
 message Location {
     required int32 geo_name_id = 1;
-    required float gps_latitude = 2;
-    required float gps_longitude = 3;
+    required double gps_latitude = 2;
+    required double gps_longitude = 3;
     optional GeoTransformation geo_transformation = 4;
     optional Environment environment = 5;
 }

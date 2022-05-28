@@ -127,9 +127,17 @@ class Time:
     def hours(self) -> int:
         return self._hours
 
+    @hours.setter
+    def hours(self, hours: int):
+        self._hours = hours
+
     @property
     def minutes(self) -> int:
         return self._minutes
+
+    @minutes.setter
+    def minutes(self, minutes: int):
+        self._minutes = minutes
 
 
 class GeoTransformation:
@@ -375,6 +383,22 @@ class ScenarioID:
         self.obstacle_behavior: Union[None, str] = obstacle_behavior
         self.prediction_id: Union[None, int, List[int]] = prediction_id
 
+    def __eq__(self, other):
+        if not isinstance(other, ScenarioID):
+            warnings.warn(f"Inequality between ScenarioID {repr(self)} and different type {type(other)}")
+            return False
+
+        id_eq = self.cooperative == other.cooperative and self.country_id == other.country_id and \
+            self.map_name == other.map_name and self.map_id == other.map_id and \
+            self.configuration_id == other.configuration_id and self.obstacle_behavior == other.obstacle_behavior and \
+            self.prediction_id == other.prediction_id and self.scenario_version == other.scenario_version
+
+        return id_eq
+
+    def __hash__(self):
+        return hash((self.cooperative, self.country_id, self.map_name, self.map_id, self.configuration_id,
+                     self.obstacle_behavior, self.prediction_id, self.scenario_version))
+
     def __str__(self):
         scenario_id = ""
         if self.cooperative is True:
@@ -459,9 +483,6 @@ class ScenarioID:
         return ScenarioID(cooperative, country_id, map_name, map_id, configuration_id, prediction_type, prediction_id,
                           scenario_version)
 
-    def __eq__(self, other: 'ScenarioID'):
-        return str(self) == str(other) and self.scenario_version == other.scenario_version
-
 
 class Scenario(IDrawable):
     """ Class which describes a Scenario entity according to the CommonRoad specification. Each scenario is described by
@@ -501,6 +522,26 @@ class Scenario(IDrawable):
         self.affiliation = affiliation
         self.source = source
         self.location = location
+
+    def __eq__(self, other):
+        if not isinstance(other, Scenario):
+            warnings.warn(f"Inequality between Scenario {repr(self)} and different type {type(other)}")
+            return False
+
+        scenario_eq = self.dt == other.dt and self.scenario_id == other.scenario_id and \
+            self.lanelet_network == other.lanelet_network and self.static_obstacles == other.static_obstacles and \
+            self.dynamic_obstacles == other.dynamic_obstacles and \
+            self.environment_obstacle == other.environment_obstacle and \
+            self.phantom_obstacle == other.phantom_obstacle and self.author == other.author and \
+            self.tags == other.tags and self.affiliation == other.affiliation and self.source == other.source and \
+            self.location == other.location
+
+        return scenario_eq
+
+    def __hash__(self):
+        return hash((self.dt, self.scenario_id, self.lanelet_network, self.static_obstacles, self.dynamic_obstacles,
+                     self.environment_obstacle, self.phantom_obstacle, self.author, self.tags, self.affiliation,
+                     self.source, self.location))
 
     @property
     def dt(self) -> float:
