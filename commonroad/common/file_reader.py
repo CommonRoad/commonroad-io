@@ -16,11 +16,18 @@ __status__ = "Released"
 
 
 class CommonRoadFileReader:
-    """ Class which reads CommonRoad XML-files. The XML-files are composed of
-    (1) a formal representation of the road network,
-    (2) static and dynamic obstacles,
-    (3) the planning problem of the ego vehicle(s). """
+    """
+    Reads CommonRoad files in XML or protobuf format. The corresponding stored scenario and planning problem set
+    are created by the reader.
+    """
     def __init__(self, filename: str, file_format: FileFormat = FileFormat.XML):
+        """
+        Initializes the FileReader for CommonRoad files.
+
+        :param filename: Name of file
+        :param file_format: Format of file
+        :return:
+        """
         self._file_reader = None
         if file_format == FileFormat.XML:
             self._file_reader = XMLFileReader(filename)
@@ -28,7 +35,18 @@ class CommonRoadFileReader:
             self._file_reader = ProtobufFileReader(filename)
 
     def open(self, lanelet_assignment: bool = False) -> Tuple[Scenario, PlanningProblemSet]:
+        """
+        Opens and loads CommonRoad scenario and planning problems from file.
+
+        :param lanelet_assignment:
+        :return: Scenario and planning problems
+        """
         return self._file_reader.open(lanelet_assignment)
 
     def open_lanelet_network(self) -> LaneletNetwork:
+        """
+        Opens and loads CommonRoad lanelet network from file.
+
+        :return:
+        """
         return self._file_reader.open_lanelet_network()

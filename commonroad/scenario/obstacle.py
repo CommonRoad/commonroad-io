@@ -156,14 +156,14 @@ class Obstacle(IDrawable):
             warnings.warn(f"Inequality between Obstacle {repr(self)} and different type {type(other)}")
             return False
 
-        initial_center_lanelet_ids = None if self._initial_center_lanelet_ids is None \
+        initial_center_lanelet_ids = list() if self._initial_center_lanelet_ids is None \
             else list(self._initial_center_lanelet_ids)
-        initial_center_lanelet_ids_other = None if other.initial_center_lanelet_ids is None \
+        initial_center_lanelet_ids_other = list() if other.initial_center_lanelet_ids is None \
             else list(other.initial_center_lanelet_ids)
 
-        initial_shape_lanelet_ids = None if self._initial_shape_lanelet_ids is None \
+        initial_shape_lanelet_ids = list() if self._initial_shape_lanelet_ids is None \
             else list(self._initial_shape_lanelet_ids)
-        initial_shape_lanelet_ids_other = None if other.initial_shape_lanelet_ids is None \
+        initial_shape_lanelet_ids_other = list() if other.initial_shape_lanelet_ids is None \
             else list(other.initial_shape_lanelet_ids)
 
         obstacle_eq = self._obstacle_id == other.obstacle_id and self._obstacle_role == other.obstacle_role and \

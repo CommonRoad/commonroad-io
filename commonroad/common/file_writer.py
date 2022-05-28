@@ -27,22 +27,26 @@ class FileFormat(enum.Enum):
 
 
 class CommonRoadFileWriter:
+    """
+    Writes CommonRoad files in XML or protobuf format. The corresponding scenario and planning problem set
+    are stored by the writer.
+    """
 
     def __init__(self, scenario: Scenario, planning_problem_set: PlanningProblemSet, author: str = None,
                  affiliation: str = None, source: str = None, tags: Set[Tag] = None, location: Location = None,
                  decimal_precision: int = 4, file_format: FileFormat = FileFormat.XML):
         """
-        Initialize the FileWriter with a scenario and tags.
+        Initializes the FileWriter for CommonRoad files.
 
-        :param scenario: scenario that should be written later
-        :param planning_problem_set: corresponding planning problem to the scenario
-        :param author: author's name
-        :param affiliation: affiliation of the author
-        :param source: source of dataset (d.h. database, handcrafted, etc.)
-        :param tags: list of keywords describing the scenario (e.g. road type(one-lane road, multilane),
-                required maneuver etc., see commonroad.in.tum.de for full list))
-        :param decimal_precision: number of decimal places used when writing float values
+        :param scenario: Scenario
+        :param planning_problem_set: Planning problems
+        :param author: Name of author
+        :param affiliation: Affiliation of author
+        :param source: Source of dataset, e.g., database, handcrafted, etc.
+        :param tags: Keywords describing the scenario
+        :param decimal_precision: Number of decimal places used when writing float values
         :param file_format: Format of file
+        :return:
         """
         self._file_writer = None
         if file_format == FileFormat.XML:
@@ -55,13 +59,42 @@ class CommonRoadFileWriter:
     def write_to_file(self, filename: Union[str, None] = None,
                       overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
                       check_validity: bool = False):
+        """
+        Writes CommonRoad scenario and planning problems to file.
+
+        :param filename: Name of file
+        :param overwrite_existing_file: Overwriting mode
+        :param check_validity: Validity check or not
+        :return: Scenario and planning problems
+        """
         self._file_writer.write_to_file(filename, overwrite_existing_file, check_validity)
 
     def write_scenario_to_file(self, filename: Union[str, None] = None,
                                overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT):
+        """
+        Writes CommonRoad scenario to file.
+
+        :param filename: Name of file
+        :param overwrite_existing_file: Overwriting mode
+        :return: Scenario
+        """
         self._file_writer.write_scenario_to_file(filename, overwrite_existing_file)
 
-    def check_validity_of_commonroad_file(self, commonroad_str: str) -> bool:
+    @staticmethod
+    def check_validity_of_commonroad_file(commonroad_str: Union[str, bytes], file_format: FileFormat = FileFormat.XML) \
+            -> bool:
+        """
+        Checks validity of CommonRoad scenario and planning problem stored in XML or protobuf format.
+
+        :param commonroad_str: Commonroad instance stored as string
+        :param file_format: Format of file
+        :return: Valid or not
+        """
         assert commonroad_str, 'Empty commonroad file!'
 
-        return self._file_writer.check_validity_of_commonroad_file(commonroad_str)
+        if file_format == FileFormat.XML:
+            is_valid = XMLFileWriter.check_validity_of_commonroad_file(commonroad_str)
+        else:
+            is_valid = ProtobufFileWriter.check_validity_of_commonroad_file(commonroad_str)
+
+        return is_valid

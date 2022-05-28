@@ -109,6 +109,9 @@ def create_interval_node_int(interval: Interval) -> List[etree.Element]:
 
 
 class XMLFileWriter(FileWriter):
+    """
+    Writes CommonRoad files in XML format.
+    """
 
     def __init__(self, scenario: Scenario, planning_problem_set: PlanningProblemSet, author: str = None,
                  affiliation: str = None, source: str = None, tags: Set[Tag] = None, location: Location = None,
@@ -233,7 +236,7 @@ class XMLFileWriter(FileWriter):
         tree.write(filename, pretty_print=True, xml_declaration=True, encoding="utf-8")
 
     @staticmethod
-    def check_validity_of_commonroad_file(commonroad_str: str) -> bool:
+    def check_validity_of_commonroad_file(commonroad_str: Union[str, bytes]) -> bool:
         """Check the validity of a generated xml_string in terms of
         commonroad with an existing XSD schema.
         Throw an error if it is not valid.

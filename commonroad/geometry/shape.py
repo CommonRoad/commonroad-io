@@ -105,12 +105,7 @@ class Rectangle(Shape):
 
     @length.setter
     def length(self, length: float):
-        if not hasattr(self, '_length'):
-            assert is_real_number(length), '<Rectangle/length>: argument "length" is not valid. length = {}'.format(
-                    length)
-            self._length = length
-        else:
-            warnings.warn('<Rectangle/length>: length of rectangle is immutable.')
+        self._length = length
 
     @property
     def width(self) -> float:
@@ -119,11 +114,7 @@ class Rectangle(Shape):
 
     @width.setter
     def width(self, width: float):
-        if not hasattr(self, '_width'):
-            assert is_real_number(width), '<Rectangle/width>: argument "width" is not valid. width = {}'.format(width)
-            self._width = width
-        else:
-            warnings.warn('<Rectangle/width>: width of rectangle is immutable.')
+        self._width = width
 
     @property
     def center(self) -> np.ndarray:
@@ -263,12 +254,7 @@ class Circle(Shape):
 
     @radius.setter
     def radius(self, radius: float):
-        if not hasattr(self, '_radius'):
-            assert is_real_number(radius), '<Rectangle/radius>: argument "radius" is not a real number. ' \
-                                           'radius = {}'.format(radius)
             self._radius = radius
-        else:
-            warnings.warn('<Rectangle/radius>: radius of circle is immutable.')
 
     @property
     def center(self) -> np.ndarray:
@@ -278,12 +264,7 @@ class Circle(Shape):
 
     @center.setter
     def center(self, center: np.ndarray):
-        if not hasattr(self, '_center'):
-            assert is_real_number_vector(center, 2), '<Circle/center>: argument "center" is not a vector ' \
-                                                     'of real numbers of length 2. center = {}'.format(center)
-            self._center = center
-        else:
-            warnings.warn('<Circle/center>: center of circle is immutable.')
+        self._center = center
 
     @property
     def shapely_object(self) -> shapely.geometry.Polygon:
@@ -377,14 +358,9 @@ class Polygon(Shape):
 
     @vertices.setter
     def vertices(self, vertices: np.ndarray):
-        if not hasattr(self, '_vertices'):
-            assert is_valid_polyline(vertices), '<Polygon/vertices>: argument "vertices" is not valid. vertices = ' \
-                                                '{}'.format(vertices)
-            self._vertices = vertices
-            self._min = np.min(vertices, axis=0)
-            self._max = np.max(vertices, axis=0)
-        else:
-            warnings.warn('<Polygon/vertices>: vertices of polygon are immutable.')
+        self._vertices = vertices
+        self._min = np.min(vertices, axis=0)
+        self._max = np.max(vertices, axis=0)
 
     @property
     def center(self) -> np.ndarray:

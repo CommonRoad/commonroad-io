@@ -119,7 +119,7 @@ class Prediction:
         return prediction_eq
 
     def __hash__(self):
-        return hash((self._initial_time_step, self._occupancy_set))
+        return hash((self._initial_time_step, frozenset(self._occupancy_set)))
 
     @property
     def initial_time_step(self) -> int:

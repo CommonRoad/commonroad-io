@@ -2,7 +2,7 @@ import datetime
 from typing import Set, Union, List
 
 import numpy as np
-from google.protobuf.message import EncodeError
+from google.protobuf.message import EncodeError, DecodeError
 
 from commonroad import SCENARIO_VERSION
 from commonroad.common.util import Interval
@@ -169,18 +169,18 @@ class ProtobufFileWriter(FileWriter):
         self._serialize_write_msg(filename)
 
     @staticmethod
-    def check_validity_of_commonroad_file(commonroad_str: str) -> bool:
+    def check_validity_of_commonroad_file(commonroad_str: Union[str, bytes]) -> bool:
         """
         Checks validity of CommonRoad message/file.
 
-        :param commonroad_str:
+        :param commonroad_str: Commonroad instance in form of binary string
         :return: Valid or not
         """
         try:
             commonroad_msg = commonroad_pb2.CommonRoad()
             commonroad_msg.ParseFromString(commonroad_str)
             return True
-        except EncodeError:
+        except DecodeError:
             return False
 
 
@@ -263,7 +263,7 @@ class EnvironmentMessage:
         if environment.weather is not None:
             environment_msg.weather = location_pb2.WeatherEnum.Weather.Value(environment.weather.name)
         if environment.underground is not None:
-            environment_msg.underground = location_pb2.UndergroundEnum.Underground.Value(environment.weather.name)
+            environment_msg.underground = location_pb2.UndergroundEnum.Underground.Value(environment.underground.name)
 
         return environment_msg
 
@@ -764,7 +764,8 @@ class PhantomObstacleMessage:
         phantom_obstacle_msg.obstacle_id = phantom_obstacle.obstacle_id
 
         if phantom_obstacle.prediction is not None:
-            phantom_obstacle_msg.prediction.CopyFrom(phantom_obstacle.prediction)
+            set_based_prediction_msg = SetBasedPredictionMessage.create_message(phantom_obstacle.prediction)
+            phantom_obstacle_msg.prediction.CopyFrom(set_based_prediction_msg)
 
         return phantom_obstacle_msg
 

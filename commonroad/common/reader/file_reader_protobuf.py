@@ -30,7 +30,8 @@ __status__ = "Released"
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSignIDGermany, TrafficSignIDZamunda, \
     TrafficSignIDUsa, TrafficSignIDChina, TrafficSignIDSpain, TrafficSignIDRussia, TrafficSignIDArgentina, \
     TrafficSignIDBelgium, TrafficSignIDFrance, TrafficSignIDGreece, TrafficSignIDCroatia, TrafficSignIDItaly, \
-    TrafficSignIDPuertoRico, TrafficSign, TrafficLight, TrafficLightCycleElement, TrafficLightDirection
+    TrafficSignIDPuertoRico, TrafficSign, TrafficLight, TrafficLightCycleElement, TrafficLightDirection, \
+    TrafficLightState
 from commonroad.scenario.trajectory import State, Trajectory
 
 
@@ -313,12 +314,19 @@ class StopLineFactory:
             point = PointFactory.create_from_message(point_msg)
             points.append(point)
 
-        line_marking = lanelet_pb2.LineMarkingEnum.LineMarking.Name(stop_line_msg.line_marking)
+        line_marking = LineMarking[lanelet_pb2.LineMarkingEnum.LineMarking.Name(stop_line_msg.line_marking)]
 
         stop_line = StopLine(points[0], points[1], line_marking)
 
-        stop_line.traffic_sign_ref = {ref for ref in stop_line_msg.traffic_sign_refs}
-        stop_line.traffic_light_ref = {ref for ref in stop_line_msg.traffic_light_refs}
+        traffic_sign_ref = None
+        if stop_line_msg.traffic_sign_refs:
+            traffic_sign_ref = {ref for ref in stop_line_msg.traffic_sign_refs}
+        stop_line.traffic_sign_ref = traffic_sign_ref
+
+        traffic_light_ref = None
+        if stop_line_msg.traffic_light_refs:
+            traffic_light_ref = {ref for ref in stop_line_msg.traffic_light_refs}
+        stop_line.traffic_light_ref = traffic_light_ref
 
         return stop_line
 
@@ -436,7 +444,10 @@ class CycleElementFactory:
 
     @classmethod
     def create_from_message(cls, cycle_element_msg: traffic_light_pb2.CycleElement) -> TrafficLightCycleElement:
-        return TrafficLightCycleElement(cycle_element_msg.duration, cycle_element_msg.color)
+        color = TrafficLightState[traffic_light_pb2.TrafficLightStateEnum.TrafficLightState.Name(
+                cycle_element_msg.color)]
+        duration = cycle_element_msg.duration
+        return TrafficLightCycleElement(color, duration)
 
 
 class IntersectionFactory:
@@ -542,7 +553,7 @@ class DynamicObstacleFactory:
             dynamic_obstacle.initial_shape_lanelet_ids = None
 
         if dynamic_obstacle_msg.HasField('initial_signal_state'):
-            dynamic_obstacle.initial_signal_state = StateFactory \
+            dynamic_obstacle.initial_signal_state = SignalStateFactory \
                 .create_from_message(dynamic_obstacle_msg.initial_signal_state)
 
         signal_states = list()
@@ -563,8 +574,8 @@ class EnvironmentObstacleFactory:
 
         obstacle_type = ObstacleType[
             obstacle_pb2.ObstacleTypeEnum.ObstacleType.Name(environment_obstacle_msg.obstacle_type)]
-        
-        shape = ShapeFactory.create_from_message(environment_obstacle_msg.shape)
+
+        shape = ShapeFactory.create_from_message(environment_obstacle_msg.obstacle_shape)
         
         return EnvironmentObstacle(environment_obstacle_id, obstacle_type, shape)
 
@@ -629,7 +640,10 @@ class OccupancyFactory:
 
     @classmethod
     def create_from_message(cls, occupancy_msg: obstacle_pb2.Occupancy) -> Occupancy:
-        return Occupancy(occupancy_msg.time_step, occupancy_msg.shape)
+        time_step = IntegerExactOrIntervalFactory.create_from_message(occupancy_msg.time_step)
+        shape = ShapeFactory.create_from_message(occupancy_msg.shape)
+
+        return Occupancy(time_step, shape)
 
 
 class OccupancySetFactory:
@@ -637,7 +651,7 @@ class OccupancySetFactory:
     @classmethod
     def create_from_message(cls, occupancy_set_msg: obstacle_pb2.OccupancySet) -> List[Occupancy]:
         occupancies = list()
-        for occupancy_msg in occupancy_set_msg:
+        for occupancy_msg in occupancy_set_msg.occupancies:
             occupancy = OccupancyFactory.create_from_message(occupancy_msg)
             occupancies.append(occupancy)
 
@@ -874,7 +888,9 @@ class TimeStampFactory:
 
     @classmethod
     def create_from_message(cls, time_stamp_msg: util_pb2.TimeStamp, cr_time: bool) -> Union[datetime.datetime, Time]:
-        year = month = day = minute = hour = 0
+        year = 2022
+        month = day = 1
+        minute = hour = 0
 
         if time_stamp_msg.HasField('year'):
             year = time_stamp_msg.year
@@ -887,6 +903,6 @@ class TimeStampFactory:
         if time_stamp_msg.HasField('minute'):
             minute = time_stamp_msg.minute
 
-        return Time(0, 0) if cr_time else datetime.datetime(year, month, day, hour, minute)
+        return Time(hour, minute) if cr_time else datetime.datetime(year, month, day, hour, minute)
 
 

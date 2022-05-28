@@ -120,7 +120,7 @@ class FileWriter(ABC):
         pass
 
     @staticmethod
-    def check_validity_of_commonroad_file(commonroad_str) -> bool:
+    def check_validity_of_commonroad_file(commonroad_str: Union[str, bytes]) -> bool:
         pass
 
     def _handle_file_path(self, filename: Union[str, None], overwrite_existing_file: OverwriteExistingFile) -> str:
