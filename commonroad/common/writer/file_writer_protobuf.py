@@ -2,7 +2,7 @@ import datetime
 from typing import Set, Union, List
 
 import numpy as np
-from google.protobuf.message import EncodeError, DecodeError
+from google.protobuf.message import DecodeError
 
 from commonroad import SCENARIO_VERSION
 from commonroad.common.util import Interval

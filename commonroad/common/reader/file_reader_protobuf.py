@@ -16,8 +16,8 @@ from commonroad.scenario.intersection import Intersection, IntersectionIncomingE
 from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, StopLine, LineMarking, LaneletType, RoadUser
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, PhantomObstacle, \
     SignalState, ObstacleType
-from commonroad.scenario.scenario import Scenario, ScenarioID, Tag, GeoTransformation, Location, Environment, TimeOfDay, \
-    Weather, Underground, Time
+from commonroad.scenario.scenario import Scenario, ScenarioID, Tag, GeoTransformation, Location, Environment, \
+    TimeOfDay, Weather, Underground, Time
 
 __author__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -904,5 +904,3 @@ class TimeStampFactory:
             minute = time_stamp_msg.minute
 
         return Time(hour, minute) if cr_time else datetime.datetime(year, month, day, hour, minute)
-
-

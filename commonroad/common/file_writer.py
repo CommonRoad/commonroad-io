@@ -1,5 +1,4 @@
 import enum
-import os.path
 from typing import Union, Set
 
 from commonroad.common.writer.file_writer_interface import OverwriteExistingFile
