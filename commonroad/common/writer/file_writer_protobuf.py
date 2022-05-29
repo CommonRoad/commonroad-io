@@ -626,7 +626,7 @@ class DynamicObstacleMessage:
         if isinstance(dynamic_obstacle.prediction, TrajectoryPrediction):
             trajectory_prediction_msg = TrajectoryPredictionMessage.create_message(dynamic_obstacle.prediction)
             dynamic_obstacle_msg.trajectory_prediction.CopyFrom(trajectory_prediction_msg)
-        else:
+        elif isinstance(dynamic_obstacle.prediction, SetBasedPrediction):
             set_based_prediction_msg = SetBasedPredictionMessage.create_message(dynamic_obstacle.prediction)
             dynamic_obstacle_msg.set_based_prediction.CopyFrom(set_based_prediction_msg)
 
