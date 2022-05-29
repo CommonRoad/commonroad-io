@@ -105,7 +105,7 @@ _LANELETTYPEENUM_LANELETTYPE = _descriptor.EnumDescriptor(
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='DRIVEWAY', index=3, number=3,
+      name='DRIVE_WAY', index=3, number=3,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(

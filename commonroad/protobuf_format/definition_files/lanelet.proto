@@ -27,7 +27,7 @@ message LaneletTypeEnum {
         URBAN = 0;
         COUNTRY = 1;
         HIGHWAY = 2;
-        DRIVEWAY = 3;
+        DRIVE_WAY = 3;
         MAIN_CARRIAGE_WAY = 4;
         ACCESS_RAMP = 5;
         EXIT_RAMP = 6;
