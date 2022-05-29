@@ -188,7 +188,7 @@ class GeoTransformationFactory:
     def create_from_message(cls, geo_transformation_msg: location_pb2.GeoTransformation) -> GeoTransformation:
         geo_transformation = GeoTransformation()
 
-        if geo_transformation_msg.HasField('geoReference'):
+        if geo_transformation_msg.HasField('geo_reference'):
             geo_transformation.geo_reference = geo_transformation_msg.geo_reference
 
         if geo_transformation_msg.HasField('x_translation'):
