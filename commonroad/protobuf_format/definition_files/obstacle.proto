@@ -92,8 +92,6 @@ message Trajectory {
 message TrajectoryPrediction {
     required Trajectory trajectory = 1;
     required Shape shape = 2;
-    map<int32, IntegerList> center_lanelet_assignments = 3;
-    map<int32, FloatList> shape_lanelet_assignments = 4;
 }
 
 message SetBasedPrediction {

@@ -1,5 +1,5 @@
 import datetime
-from typing import Tuple, List, Set, Union
+from typing import Tuple, List, Set, Union, Dict
 
 import numpy as np
 
@@ -54,7 +54,7 @@ class ProtobufFileReader(FileReader):
         commonroad_msg = commonroad_pb2.CommonRoad()
         commonroad_msg.ParseFromString(file.read())
 
-        return CommonRoadFactory.create_from_message(commonroad_msg)
+        return CommonRoadFactory.create_from_message(commonroad_msg, lanelet_assignment)
 
     def open_lanelet_network(self) -> LaneletNetwork:
         """
@@ -66,7 +66,7 @@ class ProtobufFileReader(FileReader):
         commonroad_msg = commonroad_pb2.CommonRoad()
         commonroad_msg.ParseFromString(file.read())
 
-        scenario, _ = CommonRoadFactory.create_from_message(commonroad_msg)
+        scenario, _ = CommonRoadFactory.create_from_message(commonroad_msg, False)
 
         return scenario.lanelet_network
 
@@ -74,7 +74,8 @@ class ProtobufFileReader(FileReader):
 class CommonRoadFactory:
 
     @classmethod
-    def create_from_message(cls, commonroad_msg: commonroad_pb2.CommonRoad) -> Tuple[Scenario, PlanningProblemSet]:
+    def create_from_message(cls, commonroad_msg: commonroad_pb2.CommonRoad, lanelet_assignment: bool) \
+            -> Tuple[Scenario, PlanningProblemSet]:
         scenario_information_msg = commonroad_msg.information
         common_road_version, benchmark_id, _, author, affiliation, source, time_step_size = \
             ScenarioInformationFactory.create_from_message(scenario_information_msg)
@@ -108,11 +109,13 @@ class CommonRoadFactory:
             scenario.lanelet_network.add_intersection(intersection)
 
         for static_obstacle_msg in commonroad_msg.static_obstacles:
-            static_obstacle = StaticObstacleFactory.create_from_message(static_obstacle_msg)
+            static_obstacle = StaticObstacleFactory \
+                .create_from_message(static_obstacle_msg, scenario.lanelet_network, lanelet_assignment)
             scenario.add_objects(static_obstacle)
 
         for dynamic_obstacle_msg in commonroad_msg.dynamic_obstacles:
-            dynamic_obstacle = DynamicObstacleFactory.create_from_message(dynamic_obstacle_msg)
+            dynamic_obstacle = DynamicObstacleFactory \
+                .create_from_message(dynamic_obstacle_msg, scenario.lanelet_network, lanelet_assignment)
             scenario.add_objects(dynamic_obstacle)
             
         for environment_obstacle_msg in commonroad_msg.environment_obstacles:
@@ -488,7 +491,8 @@ class IncomingFactory:
 class StaticObstacleFactory:
 
     @classmethod
-    def create_from_message(cls, static_obstacle_msg: static_obstacle_pb2.StaticObstacle) -> StaticObstacle:
+    def create_from_message(cls, static_obstacle_msg: static_obstacle_pb2.StaticObstacle,
+                            lanelet_network: LaneletNetwork, lanelet_assignment: bool) -> StaticObstacle:
         static_obstacle_id = static_obstacle_msg.static_obstacle_id
 
         obstacle_type = ObstacleType[obstacle_pb2.ObstacleTypeEnum.ObstacleType.Name(static_obstacle_msg.obstacle_type)]
@@ -499,15 +503,17 @@ class StaticObstacleFactory:
 
         static_obstacle = StaticObstacle(static_obstacle_id, obstacle_type, shape, initial_state)
 
-        if static_obstacle_msg.initial_center_lanelet_ids:
-            static_obstacle.initial_center_lanelet_ids = set(static_obstacle_msg.initial_center_lanelet_ids)
+        if lanelet_assignment is True:
+            rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
+            initial_shape_lanelet_ids = set(lanelet_network.find_lanelet_by_shape(rotated_shape))
+            initial_center_lanelet_ids = set(lanelet_network.find_lanelet_by_position([initial_state.position])[0])
+            for l_id in initial_shape_lanelet_ids:
+                lanelet_network.find_lanelet_by_id(l_id).add_static_obstacle_to_lanelet(obstacle_id=static_obstacle_id)
         else:
-            static_obstacle.initial_center_lanelet_ids = None
-
-        if static_obstacle_msg.initial_shape_lanelet_ids:
-            static_obstacle.initial_shape_lanelet_ids = set(static_obstacle_msg.initial_shape_lanelet_ids)
-        else:
-            static_obstacle.initial_shape_lanelet_ids = None
+            initial_center_lanelet_ids = None
+            initial_shape_lanelet_ids = None
+        static_obstacle.initial_center_lanelet_ids = initial_center_lanelet_ids
+        static_obstacle.initial_shape_lanelet_ids = initial_shape_lanelet_ids
 
         if static_obstacle_msg.HasField('initial_signal_state'):
             initial_signal_state = SignalStateFactory.create_from_message(static_obstacle_msg.initial_signal_state)
@@ -525,7 +531,8 @@ class StaticObstacleFactory:
 class DynamicObstacleFactory:
 
     @classmethod
-    def create_from_message(cls, dynamic_obstacle_msg: dynamic_obstacle_pb2.DynamicObstacle) -> DynamicObstacle:
+    def create_from_message(cls, dynamic_obstacle_msg: dynamic_obstacle_pb2.DynamicObstacle,
+                            lanelet_network: LaneletNetwork, lanelet_assignment: bool) -> DynamicObstacle:
         dynamic_obstacle_id = dynamic_obstacle_msg.dynamic_obstacle_id
 
         obstacle_type = ObstacleType[
@@ -535,22 +542,32 @@ class DynamicObstacleFactory:
 
         initial_state = StateFactory.create_from_message(dynamic_obstacle_msg.initial_state)
 
+        initial_center_lanelet_ids = set()
+        initial_shape_lanelet_ids = set()
+
         if dynamic_obstacle_msg.HasField('trajectory_prediction'):
-            prediction = TrajectoryPredictionFactory.create_from_message(dynamic_obstacle_msg.trajectory_prediction)
+            if lanelet_assignment is True:
+                rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
+                initial_shape_lanelet_ids = set(lanelet_network.find_lanelet_by_shape(rotated_shape))
+                initial_center_lanelet_ids = set(lanelet_network.find_lanelet_by_position([initial_state.position])[0])
+                for l_id in initial_shape_lanelet_ids:
+                    lanelet_network.find_lanelet_by_id(l_id) \
+                        .add_dynamic_obstacle_to_lanelet(obstacle_id=dynamic_obstacle_id,
+                                                         time_step=initial_state.time_step)
+            else:
+                initial_shape_lanelet_ids = None
+                initial_center_lanelet_ids = None
+
+            prediction = TrajectoryPredictionFactory \
+                .create_from_message(dynamic_obstacle_msg.trajectory_prediction, initial_state, lanelet_network,
+                                     dynamic_obstacle_id, lanelet_assignment)
         else:
             prediction = SetBasedPredictionFactory.create_from_message(dynamic_obstacle_msg.set_based_prediction)
 
         dynamic_obstacle = DynamicObstacle(dynamic_obstacle_id, obstacle_type, shape, initial_state, prediction)
 
-        if dynamic_obstacle_msg.initial_center_lanelet_ids:
-            dynamic_obstacle.initial_center_lanelet_ids = set(dynamic_obstacle_msg.initial_center_lanelet_ids)
-        else:
-            dynamic_obstacle.initial_center_lanelet_ids = None
-
-        if dynamic_obstacle_msg.initial_shape_lanelet_ids:
-            dynamic_obstacle.initial_shape_lanelet_ids = set(dynamic_obstacle_msg.initial_shape_lanelet_ids)
-        else:
-            dynamic_obstacle.initial_shape_lanelet_ids = None
+        dynamic_obstacle.initial_center_lanelet_ids = initial_center_lanelet_ids
+        dynamic_obstacle.initial_shape_lanelet_ids = initial_shape_lanelet_ids
 
         if dynamic_obstacle_msg.HasField('initial_signal_state'):
             dynamic_obstacle.initial_signal_state = SignalStateFactory \
@@ -675,32 +692,57 @@ class TrajectoryFactory:
 class TrajectoryPredictionFactory:
 
     @classmethod
-    def create_from_message(cls, trajectory_prediction_msg: obstacle_pb2.TrajectoryPrediction) -> TrajectoryPrediction:
+    def create_from_message(cls, trajectory_prediction_msg: obstacle_pb2.TrajectoryPrediction, initial_state: State,
+                            lanelet_network: LaneletNetwork, obstacle_id: int, lanelet_assignment: bool) \
+            -> TrajectoryPrediction:
         trajectory = TrajectoryFactory.create_from_message(trajectory_prediction_msg.trajectory)
 
         shape = ShapeFactory.create_from_message(trajectory_prediction_msg.shape)
 
         trajectory_prediction = TrajectoryPrediction(trajectory, shape)
 
-        center_lanelet_assignments = None
-        if trajectory_prediction_msg.center_lanelet_assignments:
-            center_lanelet_assignments = dict()
-            for key in trajectory_prediction_msg.center_lanelet_assignments:
-                value = IntegerListFactory.create_from_message(
-                        trajectory_prediction_msg.center_lanelet_assignments[key])
-                center_lanelet_assignments.update({key: value})
+        if lanelet_assignment is True:
+            shape_lanelet_assignment = cls.find_obstacle_shape_lanelets(initial_state, trajectory.state_list,
+                                                                        lanelet_network, obstacle_id, shape)
+            center_lanelet_assignment = cls.find_obstacle_center_lanelets(initial_state, trajectory.state_list,
+                                                                          lanelet_network)
+        else:
+            shape_lanelet_assignment = None
+            center_lanelet_assignment = None
 
-        shape_lanelet_assignments = None
-        if trajectory_prediction_msg.shape_lanelet_assignments:
-            shape_lanelet_assignments = dict()
-            for key in trajectory_prediction_msg.shape_lanelet_assignments:
-                value = FloatListFactory.create_from_message(trajectory_prediction_msg.shape_lanelet_assignments[key])
-                shape_lanelet_assignments.update({key: value})
-
-        trajectory_prediction.center_lanelet_assignment = center_lanelet_assignments
-        trajectory_prediction.shape_lanelet_assignment = shape_lanelet_assignments
+        trajectory_prediction.center_lanelet_assignment = center_lanelet_assignment
+        trajectory_prediction.shape_lanelet_assignment = shape_lanelet_assignment
 
         return trajectory_prediction
+
+    @staticmethod
+    def find_obstacle_shape_lanelets(initial_state: State, state_list: List[State], lanelet_network: LaneletNetwork,
+                                     obstacle_id: int, shape: Shape) -> Dict[int, Set[int]]:
+
+        compl_state_list = [initial_state] + state_list
+        lanelet_ids_per_state = {}
+
+        for state in compl_state_list:
+            rotated_shape = shape.rotate_translate_local(state.position, state.orientation)
+            lanelet_ids = lanelet_network.find_lanelet_by_shape(rotated_shape)
+            for l_id in lanelet_ids:
+                lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet(obstacle_id=obstacle_id,
+                                                                                         time_step=state.time_step)
+            lanelet_ids_per_state[state.time_step] = set(lanelet_ids)
+
+        return lanelet_ids_per_state
+
+    @staticmethod
+    def find_obstacle_center_lanelets(initial_state: State, state_list: List[State],
+                                      lanelet_network: LaneletNetwork) -> Dict[int, Set[int]]:
+        compl_state_list = [initial_state] + state_list
+        lanelet_ids_per_state = {}
+
+        for state in compl_state_list:
+            lanelet_ids = lanelet_network.find_lanelet_by_position([state.position])[0]
+            lanelet_ids_per_state[state.time_step] = set(lanelet_ids)
+
+        return lanelet_ids_per_state
 
 
 class SetBasedPredictionFactory:

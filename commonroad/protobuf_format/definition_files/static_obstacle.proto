@@ -10,8 +10,6 @@ message StaticObstacle {
     required ObstacleTypeEnum.ObstacleType obstacle_type = 2;
     required Shape shape = 3;
     required State initial_state = 4;
-    repeated uint32 initial_center_lanelet_ids = 5;
-    repeated uint32 initial_shape_lanelet_ids = 6;
-    optional SignalState initial_signal_state = 7;
-    repeated SignalState signal_series = 8;
+    optional SignalState initial_signal_state = 5;
+    repeated SignalState signal_series = 6;
 }

@@ -240,7 +240,7 @@ class GeoTransformationMessage:
     def create_message(cls, geo_transformation: GeoTransformation) -> location_pb2.GeoTransformation:
         geo_transformation_msg = location_pb2.GeoTransformation()
 
-        geo_transformation_msg.geoReference = geo_transformation.geo_reference
+        geo_transformation_msg.geo_reference = geo_transformation.geo_reference
         geo_transformation_msg.x_translation = geo_transformation.x_translation
         geo_transformation_msg.y_translation = geo_transformation.y_translation
         geo_transformation_msg.z_rotation = geo_transformation.z_rotation
@@ -551,14 +551,6 @@ class StaticObstacleMessage:
         state_msg = StateMessage.create_message(static_obstacle.initial_state)
         static_obstacle_msg.initial_state.CopyFrom(state_msg)
 
-        if static_obstacle.initial_center_lanelet_ids is not None:
-            for initial_center_lanelet_id in static_obstacle.initial_center_lanelet_ids:
-                static_obstacle_msg.initial_center_lanelet_ids.append(initial_center_lanelet_id)
-
-        if static_obstacle.initial_shape_lanelet_ids is not None:
-            for initial_shape_lanelet_id in static_obstacle.initial_shape_lanelet_ids:
-                static_obstacle_msg.initial_shape_lanelet_ids.append(initial_shape_lanelet_id)
-
         signal_state_msg = SignalStateMessage.create_message(static_obstacle.initial_signal_state)
         static_obstacle_msg.initial_signal_state.CopyFrom(signal_state_msg)
 
@@ -638,14 +630,6 @@ class DynamicObstacleMessage:
             set_based_prediction_msg = SetBasedPredictionMessage.create_message(dynamic_obstacle.prediction)
             dynamic_obstacle_msg.set_based_prediction.CopyFrom(set_based_prediction_msg)
 
-        if dynamic_obstacle.initial_center_lanelet_ids is not None:
-            for initial_center_lanelet_id in dynamic_obstacle.initial_center_lanelet_ids:
-                dynamic_obstacle_msg.initial_center_lanelet_ids.append(initial_center_lanelet_id)
-
-        if dynamic_obstacle.initial_center_lanelet_ids is not None:
-            for initial_shape_lanelet_id in dynamic_obstacle.initial_shape_lanelet_ids:
-                dynamic_obstacle_msg.initial_shape_lanelet_ids.append(initial_shape_lanelet_id)
-
         if dynamic_obstacle.initial_signal_state is not None:
             signal_state_msg = SignalStateMessage.create_message(dynamic_obstacle.initial_signal_state)
             dynamic_obstacle_msg.initial_signal_state.CopyFrom(signal_state_msg)
@@ -711,16 +695,6 @@ class TrajectoryPredictionMessage:
 
         shape_msg = ShapeMessage.create_message(trajectory_prediction.shape)
         trajectory_prediction_msg.shape.CopyFrom(shape_msg)
-
-        if trajectory_prediction.center_lanelet_assignment is not None:
-            for key, values in trajectory_prediction.center_lanelet_assignment:
-                integer_list_msg = IntegerListMessage.create_message(values)
-                trajectory_prediction_msg.center_lanelet_assignments[key] = integer_list_msg
-
-        if trajectory_prediction.shape_lanelet_assignment is not None:
-            for key, values in trajectory_prediction.shape_lanelet_assignment:
-                integer_list_msg = IntegerListMessage.create_message(values)
-                trajectory_prediction_msg.shape_lanelet_assignments[key] = integer_list_msg
 
         return trajectory_prediction_msg
 

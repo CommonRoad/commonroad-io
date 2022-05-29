@@ -861,7 +861,16 @@ def read_compare(xml_file_path: str, pb_file_path: str) -> bool:
     scenario_xml, planning_problem_set_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()
     scenario_pb, planning_problem_set_pb = CommonRoadFileReader(pb_file_path, FileFormat.PROTOBUF).open()
 
-    return scenario_xml == scenario_pb and planning_problem_set_xml == planning_problem_set_pb
+    no_lanelet_assignment_cmp = scenario_xml == scenario_pb and planning_problem_set_xml == planning_problem_set_pb
+
+    scenario_xml, planning_problem_set_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML) \
+        .open(lanelet_assignment=True)
+    scenario_pb, planning_problem_set_pb = CommonRoadFileReader(pb_file_path, FileFormat.PROTOBUF) \
+        .open(lanelet_assignment=True)
+
+    with_lanelet_assignment_cmp = scenario_xml == scenario_pb and planning_problem_set_xml == planning_problem_set_pb
+
+    return no_lanelet_assignment_cmp and with_lanelet_assignment_cmp
 
 
 if __name__ == '__main__':

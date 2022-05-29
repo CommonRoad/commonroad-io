@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='commonroad',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x16\x64ynamic_obstacle.proto\x12\ncommonroad\x1a\x0eobstacle.proto\x1a\nutil.proto\"\xfb\x03\n\x0f\x44ynamicObstacle\x12\x1b\n\x13\x64ynamic_obstacle_id\x18\x01 \x02(\r\x12@\n\robstacle_type\x18\x02 \x02(\x0e\x32).commonroad.ObstacleTypeEnum.ObstacleType\x12 \n\x05shape\x18\x03 \x02(\x0b\x32\x11.commonroad.Shape\x12(\n\rinitial_state\x18\x04 \x02(\x0b\x32\x11.commonroad.State\x12\x41\n\x15trajectory_prediction\x18\x05 \x01(\x0b\x32 .commonroad.TrajectoryPredictionH\x00\x12>\n\x14set_based_prediction\x18\x06 \x01(\x0b\x32\x1e.commonroad.SetBasedPredictionH\x00\x12\"\n\x1ainitial_center_lanelet_ids\x18\x07 \x03(\r\x12!\n\x19initial_shape_lanelet_ids\x18\x08 \x03(\r\x12\x35\n\x14initial_signal_state\x18\t \x01(\x0b\x32\x17.commonroad.SignalState\x12.\n\rsignal_series\x18\n \x03(\x0b\x32\x17.commonroad.SignalStateB\x0c\n\nprediction')
+  serialized_pb=_b('\n\x16\x64ynamic_obstacle.proto\x12\ncommonroad\x1a\x0eobstacle.proto\x1a\nutil.proto\"\xb4\x03\n\x0f\x44ynamicObstacle\x12\x1b\n\x13\x64ynamic_obstacle_id\x18\x01 \x02(\r\x12@\n\robstacle_type\x18\x02 \x02(\x0e\x32).commonroad.ObstacleTypeEnum.ObstacleType\x12 \n\x05shape\x18\x03 \x02(\x0b\x32\x11.commonroad.Shape\x12(\n\rinitial_state\x18\x04 \x02(\x0b\x32\x11.commonroad.State\x12\x41\n\x15trajectory_prediction\x18\x05 \x01(\x0b\x32 .commonroad.TrajectoryPredictionH\x00\x12>\n\x14set_based_prediction\x18\x06 \x01(\x0b\x32\x1e.commonroad.SetBasedPredictionH\x00\x12\x35\n\x14initial_signal_state\x18\x07 \x01(\x0b\x32\x17.commonroad.SignalState\x12.\n\rsignal_series\x18\x08 \x03(\x0b\x32\x17.commonroad.SignalStateB\x0c\n\nprediction')
   ,
   dependencies=[obstacle__pb2.DESCRIPTOR,util__pb2.DESCRIPTOR,])
 
@@ -78,29 +78,15 @@ _DYNAMICOBSTACLE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='initial_center_lanelet_ids', full_name='commonroad.DynamicObstacle.initial_center_lanelet_ids', index=6,
-      number=7, type=13, cpp_type=3, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='initial_shape_lanelet_ids', full_name='commonroad.DynamicObstacle.initial_shape_lanelet_ids', index=7,
-      number=8, type=13, cpp_type=3, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='initial_signal_state', full_name='commonroad.DynamicObstacle.initial_signal_state', index=8,
-      number=9, type=11, cpp_type=10, label=1,
+      name='initial_signal_state', full_name='commonroad.DynamicObstacle.initial_signal_state', index=6,
+      number=7, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='signal_series', full_name='commonroad.DynamicObstacle.signal_series', index=9,
-      number=10, type=11, cpp_type=10, label=3,
+      name='signal_series', full_name='commonroad.DynamicObstacle.signal_series', index=7,
+      number=8, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -121,7 +107,7 @@ _DYNAMICOBSTACLE = _descriptor.Descriptor(
       index=0, containing_type=None, fields=[]),
   ],
   serialized_start=67,
-  serialized_end=574,
+  serialized_end=503,
 )
 
 _DYNAMICOBSTACLE.fields_by_name['obstacle_type'].enum_type = obstacle__pb2._OBSTACLETYPEENUM_OBSTACLETYPE

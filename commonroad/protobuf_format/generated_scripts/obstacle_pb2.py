@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='commonroad',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x0eobstacle.proto\x12\ncommonroad\x1a\nutil.proto\"\x8f\x02\n\x10ObstacleTypeEnum\"\xfa\x01\n\x0cObstacleType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x0b\n\x07\x42ICYCLE\x10\x04\x12\x0e\n\nPEDESTRIAN\x10\x05\x12\x14\n\x10PRIORITY_VEHICLE\x10\x06\x12\x12\n\x0ePARKED_VEHICLE\x10\x07\x12\x15\n\x11\x43ONSTRUCTION_ZONE\x10\x08\x12\t\n\x05TRAIN\x10\t\x12\x11\n\rROAD_BOUNDARY\x10\n\x12\x0e\n\nMOTORCYCLE\x10\x0b\x12\x08\n\x04TAXI\x10\x0c\x12\x0c\n\x08\x42UILDING\x10\r\x12\n\n\x06PILLAR\x10\x0e\x12\x10\n\x0cMEDIAN_STRIP\x10\x0f\"\xe0\x0f\n\x05State\x12\"\n\x05point\x18\x01 \x01(\x0b\x32\x11.commonroad.PointH\x00\x12\"\n\x05shape\x18\x02 \x01(\x0b\x32\x11.commonroad.ShapeH\x00\x12\x35\n\x0borientation\x18\x03 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x32\n\x08velocity\x18\x04 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0esteering_angle\x18\x05 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12>\n\x14steering_angle_speed\x18\x06 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x32\n\x08yaw_rate\x18\x07 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nslip_angle\x18\x08 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nroll_angle\x18\t \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\troll_rate\x18\n \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x35\n\x0bpitch_angle\x18\x0b \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\npitch_rate\x18\x0c \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nvelocity_y\x18\r \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nposition_z\x18\x0e \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nvelocity_z\x18\x0f \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10roll_angle_front\x18\x10 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0froll_rate_front\x18\x11 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10velocity_y_front\x18\x12 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10position_z_front\x18\x13 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10velocity_z_front\x18\x14 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0froll_angle_rear\x18\x15 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0eroll_rate_rear\x18\x16 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fvelocity_y_rear\x18\x17 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fposition_z_rear\x18\x18 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fvelocity_z_rear\x18\x19 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12H\n\x1eleft_front_wheel_angular_speed\x18\x1a \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12I\n\x1fright_front_wheel_angular_speed\x18\x1b \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12G\n\x1dleft_rear_wheel_angular_speed\x18\x1c \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12H\n\x1eright_rear_wheel_angular_speed\x18\x1d \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\tdelta_y_f\x18\x1e \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\tdelta_y_r\x18\x1f \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x36\n\x0c\x61\x63\x63\x65leration\x18  \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0e\x61\x63\x63\x65leration_y\x18! \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12.\n\x04jerk\x18\" \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x35\n\ttime_step\x18# \x01(\x0b\x32\".commonroad.IntegerExactOrIntervalB\n\n\x08position\"\xd8\x01\n\x0bSignalState\x12\x35\n\ttime_step\x18\x01 \x01(\x0b\x32\".commonroad.IntegerExactOrInterval\x12\x0c\n\x04horn\x18\x02 \x01(\x08\x12\x16\n\x0eindicator_left\x18\x03 \x01(\x08\x12\x17\n\x0findicator_right\x18\x04 \x01(\x08\x12\x16\n\x0e\x62raking_lights\x18\x05 \x01(\x08\x12\x1d\n\x15hazard_warning_lights\x18\x06 \x01(\x08\x12\x1c\n\x14\x66lashing_blue_lights\x18\x07 \x01(\x08\"d\n\tOccupancy\x12\x35\n\ttime_step\x18\x01 \x02(\x0b\x32\".commonroad.IntegerExactOrInterval\x12 \n\x05shape\x18\x02 \x02(\x0b\x32\x11.commonroad.Shape\":\n\x0cOccupancySet\x12*\n\x0boccupancies\x18\x01 \x03(\x0b\x32\x15.commonroad.Occupancy\"J\n\nTrajectory\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12!\n\x06states\x18\x02 \x03(\x0b\x32\x11.commonroad.State\"\xdb\x03\n\x14TrajectoryPrediction\x12*\n\ntrajectory\x18\x01 \x02(\x0b\x32\x16.commonroad.Trajectory\x12 \n\x05shape\x18\x02 \x02(\x0b\x32\x11.commonroad.Shape\x12\x62\n\x1a\x63\x65nter_lanelet_assignments\x18\x03 \x03(\x0b\x32>.commonroad.TrajectoryPrediction.CenterLaneletAssignmentsEntry\x12`\n\x19shape_lanelet_assignments\x18\x04 \x03(\x0b\x32=.commonroad.TrajectoryPrediction.ShapeLaneletAssignmentsEntry\x1aX\n\x1d\x43\x65nterLaneletAssignmentsEntry\x12\x0b\n\x03key\x18\x01 \x01(\x05\x12&\n\x05value\x18\x02 \x01(\x0b\x32\x17.commonroad.IntegerList:\x02\x38\x01\x1aU\n\x1cShapeLaneletAssignmentsEntry\x12\x0b\n\x03key\x18\x01 \x01(\x05\x12$\n\x05value\x18\x02 \x01(\x0b\x32\x15.commonroad.FloatList:\x02\x38\x01\"`\n\x12SetBasedPrediction\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12/\n\roccupancy_set\x18\x02 \x02(\x0b\x32\x18.commonroad.OccupancySet')
+  serialized_pb=_b('\n\x0eobstacle.proto\x12\ncommonroad\x1a\nutil.proto\"\x8f\x02\n\x10ObstacleTypeEnum\"\xfa\x01\n\x0cObstacleType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x0b\n\x07\x42ICYCLE\x10\x04\x12\x0e\n\nPEDESTRIAN\x10\x05\x12\x14\n\x10PRIORITY_VEHICLE\x10\x06\x12\x12\n\x0ePARKED_VEHICLE\x10\x07\x12\x15\n\x11\x43ONSTRUCTION_ZONE\x10\x08\x12\t\n\x05TRAIN\x10\t\x12\x11\n\rROAD_BOUNDARY\x10\n\x12\x0e\n\nMOTORCYCLE\x10\x0b\x12\x08\n\x04TAXI\x10\x0c\x12\x0c\n\x08\x42UILDING\x10\r\x12\n\n\x06PILLAR\x10\x0e\x12\x10\n\x0cMEDIAN_STRIP\x10\x0f\"\xe0\x0f\n\x05State\x12\"\n\x05point\x18\x01 \x01(\x0b\x32\x11.commonroad.PointH\x00\x12\"\n\x05shape\x18\x02 \x01(\x0b\x32\x11.commonroad.ShapeH\x00\x12\x35\n\x0borientation\x18\x03 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x32\n\x08velocity\x18\x04 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0esteering_angle\x18\x05 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12>\n\x14steering_angle_speed\x18\x06 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x32\n\x08yaw_rate\x18\x07 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nslip_angle\x18\x08 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nroll_angle\x18\t \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\troll_rate\x18\n \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x35\n\x0bpitch_angle\x18\x0b \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\npitch_rate\x18\x0c \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nvelocity_y\x18\r \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nposition_z\x18\x0e \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nvelocity_z\x18\x0f \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10roll_angle_front\x18\x10 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0froll_rate_front\x18\x11 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10velocity_y_front\x18\x12 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10position_z_front\x18\x13 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10velocity_z_front\x18\x14 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0froll_angle_rear\x18\x15 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0eroll_rate_rear\x18\x16 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fvelocity_y_rear\x18\x17 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fposition_z_rear\x18\x18 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fvelocity_z_rear\x18\x19 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12H\n\x1eleft_front_wheel_angular_speed\x18\x1a \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12I\n\x1fright_front_wheel_angular_speed\x18\x1b \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12G\n\x1dleft_rear_wheel_angular_speed\x18\x1c \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12H\n\x1eright_rear_wheel_angular_speed\x18\x1d \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\tdelta_y_f\x18\x1e \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\tdelta_y_r\x18\x1f \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x36\n\x0c\x61\x63\x63\x65leration\x18  \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0e\x61\x63\x63\x65leration_y\x18! \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12.\n\x04jerk\x18\" \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x35\n\ttime_step\x18# \x01(\x0b\x32\".commonroad.IntegerExactOrIntervalB\n\n\x08position\"\xd8\x01\n\x0bSignalState\x12\x35\n\ttime_step\x18\x01 \x01(\x0b\x32\".commonroad.IntegerExactOrInterval\x12\x0c\n\x04horn\x18\x02 \x01(\x08\x12\x16\n\x0eindicator_left\x18\x03 \x01(\x08\x12\x17\n\x0findicator_right\x18\x04 \x01(\x08\x12\x16\n\x0e\x62raking_lights\x18\x05 \x01(\x08\x12\x1d\n\x15hazard_warning_lights\x18\x06 \x01(\x08\x12\x1c\n\x14\x66lashing_blue_lights\x18\x07 \x01(\x08\"d\n\tOccupancy\x12\x35\n\ttime_step\x18\x01 \x02(\x0b\x32\".commonroad.IntegerExactOrInterval\x12 \n\x05shape\x18\x02 \x02(\x0b\x32\x11.commonroad.Shape\":\n\x0cOccupancySet\x12*\n\x0boccupancies\x18\x01 \x03(\x0b\x32\x15.commonroad.Occupancy\"J\n\nTrajectory\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12!\n\x06states\x18\x02 \x03(\x0b\x32\x11.commonroad.State\"d\n\x14TrajectoryPrediction\x12*\n\ntrajectory\x18\x01 \x02(\x0b\x32\x16.commonroad.Trajectory\x12 \n\x05shape\x18\x02 \x02(\x0b\x32\x11.commonroad.Shape\"`\n\x12SetBasedPrediction\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12/\n\roccupancy_set\x18\x02 \x02(\x0b\x32\x18.commonroad.OccupancySet')
   ,
   dependencies=[util__pb2.DESCRIPTOR,])
 
@@ -582,80 +582,6 @@ _TRAJECTORY = _descriptor.Descriptor(
 )
 
 
-_TRAJECTORYPREDICTION_CENTERLANELETASSIGNMENTSENTRY = _descriptor.Descriptor(
-  name='CenterLaneletAssignmentsEntry',
-  full_name='commonroad.TrajectoryPrediction.CenterLaneletAssignmentsEntry',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='key', full_name='commonroad.TrajectoryPrediction.CenterLaneletAssignmentsEntry.key', index=0,
-      number=1, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='value', full_name='commonroad.TrajectoryPrediction.CenterLaneletAssignmentsEntry.value', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=_b('8\001'),
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=3093,
-  serialized_end=3181,
-)
-
-_TRAJECTORYPREDICTION_SHAPELANELETASSIGNMENTSENTRY = _descriptor.Descriptor(
-  name='ShapeLaneletAssignmentsEntry',
-  full_name='commonroad.TrajectoryPrediction.ShapeLaneletAssignmentsEntry',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='key', full_name='commonroad.TrajectoryPrediction.ShapeLaneletAssignmentsEntry.key', index=0,
-      number=1, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='value', full_name='commonroad.TrajectoryPrediction.ShapeLaneletAssignmentsEntry.value', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=_b('8\001'),
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=3183,
-  serialized_end=3268,
-)
-
 _TRAJECTORYPREDICTION = _descriptor.Descriptor(
   name='TrajectoryPrediction',
   full_name='commonroad.TrajectoryPrediction',
@@ -677,24 +603,10 @@ _TRAJECTORYPREDICTION = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='center_lanelet_assignments', full_name='commonroad.TrajectoryPrediction.center_lanelet_assignments', index=2,
-      number=3, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='shape_lanelet_assignments', full_name='commonroad.TrajectoryPrediction.shape_lanelet_assignments', index=3,
-      number=4, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
-  nested_types=[_TRAJECTORYPREDICTION_CENTERLANELETASSIGNMENTSENTRY, _TRAJECTORYPREDICTION_SHAPELANELETASSIGNMENTSENTRY, ],
+  nested_types=[],
   enum_types=[
   ],
   serialized_options=None,
@@ -703,8 +615,8 @@ _TRAJECTORYPREDICTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2793,
-  serialized_end=3268,
+  serialized_start=2792,
+  serialized_end=2892,
 )
 
 
@@ -741,8 +653,8 @@ _SETBASEDPREDICTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3270,
-  serialized_end=3366,
+  serialized_start=2894,
+  serialized_end=2990,
 )
 
 _OBSTACLETYPEENUM_OBSTACLETYPE.containing_type = _OBSTACLETYPEENUM
@@ -792,14 +704,8 @@ _OCCUPANCY.fields_by_name['time_step'].message_type = util__pb2._INTEGEREXACTORI
 _OCCUPANCY.fields_by_name['shape'].message_type = util__pb2._SHAPE
 _OCCUPANCYSET.fields_by_name['occupancies'].message_type = _OCCUPANCY
 _TRAJECTORY.fields_by_name['states'].message_type = _STATE
-_TRAJECTORYPREDICTION_CENTERLANELETASSIGNMENTSENTRY.fields_by_name['value'].message_type = util__pb2._INTEGERLIST
-_TRAJECTORYPREDICTION_CENTERLANELETASSIGNMENTSENTRY.containing_type = _TRAJECTORYPREDICTION
-_TRAJECTORYPREDICTION_SHAPELANELETASSIGNMENTSENTRY.fields_by_name['value'].message_type = util__pb2._FLOATLIST
-_TRAJECTORYPREDICTION_SHAPELANELETASSIGNMENTSENTRY.containing_type = _TRAJECTORYPREDICTION
 _TRAJECTORYPREDICTION.fields_by_name['trajectory'].message_type = _TRAJECTORY
 _TRAJECTORYPREDICTION.fields_by_name['shape'].message_type = util__pb2._SHAPE
-_TRAJECTORYPREDICTION.fields_by_name['center_lanelet_assignments'].message_type = _TRAJECTORYPREDICTION_CENTERLANELETASSIGNMENTSENTRY
-_TRAJECTORYPREDICTION.fields_by_name['shape_lanelet_assignments'].message_type = _TRAJECTORYPREDICTION_SHAPELANELETASSIGNMENTSENTRY
 _SETBASEDPREDICTION.fields_by_name['occupancy_set'].message_type = _OCCUPANCYSET
 DESCRIPTOR.message_types_by_name['ObstacleTypeEnum'] = _OBSTACLETYPEENUM
 DESCRIPTOR.message_types_by_name['State'] = _STATE
@@ -854,27 +760,11 @@ Trajectory = _reflection.GeneratedProtocolMessageType('Trajectory', (_message.Me
 _sym_db.RegisterMessage(Trajectory)
 
 TrajectoryPrediction = _reflection.GeneratedProtocolMessageType('TrajectoryPrediction', (_message.Message,), dict(
-
-  CenterLaneletAssignmentsEntry = _reflection.GeneratedProtocolMessageType('CenterLaneletAssignmentsEntry', (_message.Message,), dict(
-    DESCRIPTOR = _TRAJECTORYPREDICTION_CENTERLANELETASSIGNMENTSENTRY,
-    __module__ = 'obstacle_pb2'
-    # @@protoc_insertion_point(class_scope:commonroad.TrajectoryPrediction.CenterLaneletAssignmentsEntry)
-    ))
-  ,
-
-  ShapeLaneletAssignmentsEntry = _reflection.GeneratedProtocolMessageType('ShapeLaneletAssignmentsEntry', (_message.Message,), dict(
-    DESCRIPTOR = _TRAJECTORYPREDICTION_SHAPELANELETASSIGNMENTSENTRY,
-    __module__ = 'obstacle_pb2'
-    # @@protoc_insertion_point(class_scope:commonroad.TrajectoryPrediction.ShapeLaneletAssignmentsEntry)
-    ))
-  ,
   DESCRIPTOR = _TRAJECTORYPREDICTION,
   __module__ = 'obstacle_pb2'
   # @@protoc_insertion_point(class_scope:commonroad.TrajectoryPrediction)
   ))
 _sym_db.RegisterMessage(TrajectoryPrediction)
-_sym_db.RegisterMessage(TrajectoryPrediction.CenterLaneletAssignmentsEntry)
-_sym_db.RegisterMessage(TrajectoryPrediction.ShapeLaneletAssignmentsEntry)
 
 SetBasedPrediction = _reflection.GeneratedProtocolMessageType('SetBasedPrediction', (_message.Message,), dict(
   DESCRIPTOR = _SETBASEDPREDICTION,
@@ -884,6 +774,4 @@ SetBasedPrediction = _reflection.GeneratedProtocolMessageType('SetBasedPredictio
 _sym_db.RegisterMessage(SetBasedPrediction)
 
 
-_TRAJECTORYPREDICTION_CENTERLANELETASSIGNMENTSENTRY._options = None
-_TRAJECTORYPREDICTION_SHAPELANELETASSIGNMENTSENTRY._options = None
 # @@protoc_insertion_point(module_scope)
