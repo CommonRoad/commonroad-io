@@ -38,7 +38,7 @@ class CommonRoadFileReader:
         """
         Opens and loads CommonRoad scenario and planning problems from file.
 
-        :param lanelet_assignment:
+        :param lanelet_assignment: Activates calculation of lanelets occupied by obstacles
         :return: Scenario and planning problems
         """
         return self._file_reader.open(lanelet_assignment)
