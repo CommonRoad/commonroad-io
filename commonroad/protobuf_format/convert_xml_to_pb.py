@@ -22,7 +22,8 @@ def convert_xml_to_pb(src_file_path: str, dest_file_path: str, invalid_conversio
         'The path to invalid conversion directory is not existent!'
 
     try:
-        scenario_xml, planning_problem_set_xml = CommonRoadFileReader(src_file_path, FileFormat.XML).open()
+        scenario_xml, planning_problem_set_xml = CommonRoadFileReader(src_file_path, FileFormat.XML) \
+            .open(lanelet_assignment=True)
     except AssertionError:
         return
 
@@ -30,7 +31,8 @@ def convert_xml_to_pb(src_file_path: str, dest_file_path: str, invalid_conversio
         .write_to_file(dest_file_path, OverwriteExistingFile.ALWAYS)
 
     if invalid_conversion_path is not None:
-        scenario_pb, planning_problem_set_pb = CommonRoadFileReader(dest_file_path, FileFormat.PROTOBUF).open()
+        scenario_pb, planning_problem_set_pb = CommonRoadFileReader(dest_file_path, FileFormat.PROTOBUF) \
+            .open(lanelet_assignment=True)
 
         if not (scenario_xml == scenario_pb and planning_problem_set_xml == planning_problem_set_pb):
             path_splits = src_file_path.split('/')
