@@ -6,7 +6,6 @@ from commonroad import SCENARIO_VERSION
 from commonroad.common.file_writer import CommonRoadFileWriter, FileFormat
 from commonroad.common.writer.file_writer_interface import precision, OverwriteExistingFile
 from commonroad.common.writer.file_writer_xml import float_to_str, Point, RectangleXMLNode, CircleXMLNode
-from commonroad.geometry.shape import Rectangle, Circle
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.geometry.shape import *
 from lxml import etree
@@ -156,7 +155,6 @@ class TestXMLFileWriter(unittest.TestCase):
         self.assertEqual(str4, "0.000")
         str5 = float_to_str(f5)
         self.assertEqual(str5, "0")
-
 
         # check whether new precision is registered
         f = 123456789.123456
