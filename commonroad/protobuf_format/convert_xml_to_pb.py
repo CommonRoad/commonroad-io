@@ -24,7 +24,7 @@ def convert_xml_to_pb(src_file_path: str, dest_file_path: str, invalid_conversio
     try:
         scenario_xml, planning_problem_set_xml = CommonRoadFileReader(src_file_path, FileFormat.XML) \
             .open(lanelet_assignment=True)
-    except AssertionError:
+    except Exception:
         return
 
     CommonRoadFileWriter(scenario_xml, planning_problem_set_xml, file_format=FileFormat.PROTOBUF) \

@@ -545,6 +545,7 @@ class DynamicObstacleFactory:
         initial_center_lanelet_ids = set()
         initial_shape_lanelet_ids = set()
 
+        prediction = None
         if dynamic_obstacle_msg.HasField('trajectory_prediction'):
             if lanelet_assignment is True:
                 rotated_shape = shape.rotate_translate_local(initial_state.position, initial_state.orientation)
@@ -561,7 +562,7 @@ class DynamicObstacleFactory:
             prediction = TrajectoryPredictionFactory \
                 .create_from_message(dynamic_obstacle_msg.trajectory_prediction, initial_state, lanelet_network,
                                      dynamic_obstacle_id, lanelet_assignment)
-        else:
+        elif dynamic_obstacle_msg.HasField('set_based_prediction'):
             prediction = SetBasedPredictionFactory.create_from_message(dynamic_obstacle_msg.set_based_prediction)
 
         dynamic_obstacle = DynamicObstacle(dynamic_obstacle_id, obstacle_type, shape, initial_state, prediction)
