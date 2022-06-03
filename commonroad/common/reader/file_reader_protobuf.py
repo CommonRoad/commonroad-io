@@ -375,7 +375,7 @@ class TrafficSignElementFactory:
             element_id = TrafficSignIDUsa[traffic_sign_pb2.TrafficSignIDUsaEnum.TrafficSignIDUsa.Name(
                     traffic_sign_element_msg.usa_element_id)]
         elif traffic_sign_element_msg.HasField('china_element_id'):
-            element_id = TrafficSignIDChina[traffic_sign_pb2.TrafficSignIDChinaEnum.TrafficSignChina.Name(
+            element_id = TrafficSignIDChina[traffic_sign_pb2.TrafficSignIDChinaEnum.TrafficSignIDChina.Name(
                     traffic_sign_element_msg.china_element_id)]
         elif traffic_sign_element_msg.HasField('spain_element_id'):
             element_id = TrafficSignIDSpain[traffic_sign_pb2.TrafficSignIDSpainEnum.TrafficSignIDSpain.Name(
