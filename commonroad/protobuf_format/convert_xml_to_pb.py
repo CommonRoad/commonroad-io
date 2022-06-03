@@ -67,6 +67,10 @@ def convert_xml_to_pb_in_dirs(src_dir_path: str, dest_dir_path: str, invalid_con
     file_names = list()
     dir_names = list()
     for name in os.listdir(src_dir_path):
+        for ending in ['.add.xml', '.net.xml', '.rou.xml']:
+            if name.endswith(ending):
+                continue
+
         if isfile(join(src_dir_path, name)) and name.endswith('.xml'):
             file_names.append(name)
         elif isdir(join(src_dir_path, name)):
