@@ -22,7 +22,6 @@ scenario, planning_problem_set = CommonRoadFileReader(file_path).open()
 v=visual(scenario)
 v.show()
 
-print(planning_problem_set.planning_problem_dict[1].initial_state.__getattribute__("position"))
 
 """
 
