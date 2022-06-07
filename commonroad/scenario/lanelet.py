@@ -989,6 +989,41 @@ class Lanelet:
         else:
             return set()
 
+    def orientation_by_position(self, position: np.ndarray) -> float:
+        """
+        Returns lanelet orientation closest to a given position
+        :param position: position of interest
+        :return: orientation in interval [-pi,pi]
+        """
+        def check_angle(point, point1, point2):
+            vector_1 = point-point1
+            vector_2 = point2-point1
+            def unit_vector(vector):
+                norm = np.linalg.norm(vector)
+                if np.isclose(norm, 0.):
+                    return vector
+                else:
+                    return vector / norm
+            dot_product = np.dot(unit_vector(vector_1), unit_vector(vector_2))
+            a = np.rad2deg(np.arccos(dot_product))
+            return a
+
+        assert check_angle(position, self.center_vertices[-1], self.center_vertices[-2]) <= 90 \
+               and check_angle(position, self.center_vertices[0], self.center_vertices[1]) <= 90
+        position_diff_square = np.sum((self.center_vertices - position) ** 2, axis=1)
+
+        closest_vertex_index = np.argmin(position_diff_square)
+
+        if closest_vertex_index == len(self.center_vertices) - 1:
+            vertex1 = self.center_vertices[closest_vertex_index-1, :]
+            vertex2 = self.center_vertices[closest_vertex_index, :]
+        else:
+            vertex1 = self.center_vertices[closest_vertex_index, :]
+            vertex2 = self.center_vertices[closest_vertex_index + 1, :]
+
+        direction_vector = vertex2 - vertex1
+
+        return np.arctan2(direction_vector[1], direction_vector[0])
 
 class LaneletNetwork(IDrawable):
     """
