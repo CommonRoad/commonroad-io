@@ -836,12 +836,12 @@ class Lanelet:
         assert isinstance(lanelet1, Lanelet), '<Lanelet/merge_lanelets>: lanelet1 is not a valid lanelet object!'
         assert isinstance(lanelet2, Lanelet), '<Lanelet/merge_lanelets>: lanelet1 is not a valid lanelet object!'
         # check connection via successor / predecessor
-        assert lanelet1.lanelet_id in lanelet2.successor or lanelet2.lanelet_id in lanelet1.successor or \
-               lanelet1.lanelet_id in lanelet2.predecessor or lanelet2.lanelet_id in lanelet1.predecessor, \
-            '<Lanelet/merge_lanelets>: cannot merge two not ' \
-                                                                                                                                                                                                     'connected lanelets! successors of l1 = {}, successors ' \
-                                                                                                                                                                                                     'of l2 = {}'.format(
-            lanelet1.successor, lanelet2.successor)
+        assert lanelet1.lanelet_id in lanelet2.successor or \
+               lanelet2.lanelet_id in lanelet1.successor or \
+               lanelet1.lanelet_id in lanelet2.predecessor or \
+               lanelet2.lanelet_id in lanelet1.predecessor, '<Lanelet/merge_lanelets>: cannot merge two not ' \
+                                                            'connected lanelets! successors of l1 = {}, successors ' \
+                                                            'of l2 = {}'.format(lanelet1.successor, lanelet2.successor)
 
         # check pred and successor
         if lanelet1.lanelet_id in lanelet2.predecessor or lanelet2.lanelet_id in lanelet1.successor:
@@ -877,9 +877,9 @@ class Lanelet:
         return new_lanelet
 
     @classmethod
-    def all_lanelets_by_merging_successors_from_lanelet(cls, lanelet: 'Lanelet', network: 'LaneletNetwork',
-                                                        max_length: float = 150.0) -> Tuple[
-        List['Lanelet'], List[List[int]]]:
+    def all_lanelets_by_merging_successors_from_lanelet(cls, lanelet: 'Lanelet',
+                                                        network: 'LaneletNetwork', max_length: float = 150.0) \
+            -> Tuple[List['Lanelet'], List[List[int]]]:
         """
         Computes all reachable lanelets starting from a provided lanelet
         and merges them to a single lanelet for each route.
@@ -1021,11 +1021,8 @@ class Lanelet:
             dot_product = np.dot(unit_vector(vector_1), unit_vector(vector_2))
             return np.rad2deg(np.arccos(dot_product))
 
-        assert check_angle(position, self.center_vertices[-1], self.center_vertices[-2]) <= 90 and check_angle(position,
-                                                                                                               self.center_vertices[
-                                                                                                                   0],
-                                                                                                               self.center_vertices[
-                                                                                                                   1]) <= 90
+        assert check_angle(position, self.center_vertices[-1], self.center_vertices[-2]) <= 90 \
+               and check_angle(position, self.center_vertices[0], self.center_vertices[1]) <= 90
         position_diff_square = np.sum((self.center_vertices - position) ** 2, axis=1)
 
         closest_vertex_index = np.argmin(position_diff_square)
@@ -1290,11 +1287,12 @@ class LaneletNetwork(IDrawable):
             la._successor = list(set(la.successor).intersection(existing_ids))
             la._adj_left = None if la.adj_left is None or la.adj_left not in existing_ids else la.adj_left
 
-            la._adj_left_same_direction = None if la.adj_left_same_direction is None or la.adj_left not in \
-                                                  existing_ids else la.adj_left_same_direction
+            la._adj_left_same_direction = None \
+                if la.adj_left_same_direction is None or la.adj_left not in existing_ids else la.adj_left_same_direction
             la._adj_right = None if la.adj_right is None or la.adj_right not in existing_ids else la.adj_right
-            la._adj_right_same_direction = None if la.adj_right_same_direction is None or la.adj_right not in \
-                                                   existing_ids else la.adj_right_same_direction
+            la._adj_right_same_direction = None \
+                if la.adj_right_same_direction is None or la.adj_right not in existing_ids else \
+                la.adj_right_same_direction
 
         for inter in self.intersections:
             for inc in inter.incomings:
