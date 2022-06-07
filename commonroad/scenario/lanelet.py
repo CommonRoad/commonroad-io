@@ -9,11 +9,13 @@ from shapely.geometry import Polygon as ShapelyPolygon
 from shapely.strtree import STRtree
 
 import commonroad.geometry.transform
+from commonroad.common.util import subtract_orientations
 from commonroad.common.validity import *
 from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.obstacle import Obstacle
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
+from commonroad.scenario.trajectory import State
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
@@ -1005,8 +1007,7 @@ class Lanelet:
                 else:
                     return vector / norm
             dot_product = np.dot(unit_vector(vector_1), unit_vector(vector_2))
-            a = np.rad2deg(np.arccos(dot_product))
-            return a
+            return np.rad2deg(np.arccos(dot_product))
 
         assert check_angle(position, self.center_vertices[-1], self.center_vertices[-2]) <= 90 \
                and check_angle(position, self.center_vertices[0], self.center_vertices[1]) <= 90
@@ -1024,6 +1025,7 @@ class Lanelet:
         direction_vector = vertex2 - vertex1
 
         return np.arctan2(direction_vector[1], direction_vector[0])
+
 
 class LaneletNetwork(IDrawable):
     """
@@ -1552,6 +1554,39 @@ class LaneletNetwork(IDrawable):
 
         return [self._get_lanelet_id_by_shapely_polygon(lanelet_shapely_polygon) for lanelet_shapely_polygon in
                 self._strtee.query(shape.shapely_object) if lanelet_shapely_polygon.intersects(shape.shapely_object)]
+
+    def _sorted_lanelet_ids(self, lanelet_ids, state):
+        if len(lanelet_ids) < 2:
+            return lanelet_ids
+        else:
+            lanelet_id_list = np.array(lanelet_ids).astype(int)
+
+            def compute_lanelet_relative_orientation(lanelet_id):
+                lanelet = self.find_lanelet_by_id(lanelet_id)
+                lanelet_orientation = lanelet.orientation_by_position(state.position)
+                return np.abs(subtract_orientations(lanelet_orientation, state.orientation))
+
+            orientation_differences = np.array(list(map(compute_lanelet_relative_orientation, lanelet_id_list)))
+            sorted_indices = np.argsort(orientation_differences)
+
+            return list(lanelet_id_list[sorted_indices])
+
+    def find_most_likely_lanelet_by_state(self, state_list: List[State]) -> List[int]:
+        """
+        Finds the lanelet id of the position of a given state; in case of multiple overlapping lanelets, return the most
+        likely lanelet according to the orientation difference between lanelets and given state
+
+        :param state_list: The list of states to check
+        :return: A list of lanelet ids. If the position could not be matched to a lanelet, an empty list is returned
+        """
+        assert isinstance(state_list, ValidTypes.LISTS), '<Lanelet/find_most_likely_lanelet_by_state>: ' \
+                                                         'provided list of points is not a list! type = {}'.format(
+                type(state_list))
+        assert np.all([hasattr(state, "orientation") for state in state_list]), \
+            '<Lanelet/find_most_likely_lanelet_by_state>: provided state must have orientation!'
+
+        return [self._sorted_lanelet_ids(self.find_lanelet_by_position([state.position])[0], state)[0]
+                for state in state_list]
 
     def filter_obstacles_in_network(self, obstacles: List[Obstacle]) -> List[Obstacle]:
         """
