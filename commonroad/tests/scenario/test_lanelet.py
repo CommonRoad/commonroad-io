@@ -1,3 +1,4 @@
+import copy
 import unittest
 import numpy as np
 
@@ -448,6 +449,37 @@ class TestLanelet(unittest.TestCase):
         right_vertices = np.array([[0, 0], [1, 0.0000000001], [8, 0]])
         lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
         self.assertNotEqual(hash(lanelet_1), hash(lanelet_2))
+
+    def test_orientation_by_position(self):
+        left_vertices = np.array([[0, 1], [1, 1], [8, 1]])
+        center_vertices = np.array([[0, .5], [1, .5], [8, .5]])
+        right_vertices = np.array([[0, 0], [1, 0], [8, 0]])
+        lanelet_id = 1
+
+        lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
+
+        self.assertAlmostEqual(lanelet.orientation_by_position(np.array([5., 0.5])), 0.)
+
+        for rotation in np.deg2rad([45, -45, 90, -90]):
+            lanelet_2 = copy.deepcopy(lanelet)
+            lanelet_2.translate_rotate(translation=np.array([0., 0.]), angle=rotation)
+
+            self.assertAlmostEqual(lanelet_2.orientation_by_position(lanelet_2.center_vertices[2]), rotation)
+
+    def test_orientation_by_position_invalid(self):
+        left_vertices = np.array([[0, 1], [1, 1], [8, 1]])
+        center_vertices = np.array([[0, .5], [1, .5], [8, .5]])
+        right_vertices = np.array([[0, 0], [1, 0], [8, 0]])
+        lanelet_id = 1
+
+        lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
+
+        # values bigger than the distance should not be accepted
+        with self.assertRaises(AssertionError):
+            lanelet.orientation_by_position([-1., 3.])
+        # negative values should not be accepted
+        with self.assertRaises(AssertionError):
+            lanelet.interpolate_position([9., -3.])
 
 
 class TestStopLine(unittest.TestCase):
