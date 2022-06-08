@@ -15,7 +15,7 @@ before_script:
     - pip install tox coverage
     - pip install -r ./requirements.txt
     - pip install -e .[tests]
-    - coverage run commonroad/tests/run_tests.py
+    - coverage run tests/run_tests.py
     - coverage report -m || true
 
 style_checks:
