@@ -194,7 +194,7 @@ TSWLatexianTemp*
 *~[0-9]*
 
 # build files doc
-commonroad/doc/build/*
+doc/build/*
 
 # windows folder shortcuts
 *.lnk
@@ -217,5 +217,5 @@ commonroad/doc/build/*
 
 #spot
 *spot_prediction.py
-/commonroad/tests/test_params.json
-/commonroad/tutorials/solution_PM2:JB1:USA_Lanker-1_1_T-1:2018b.xml
+/tests/test_params.json
+/tutorials/solution_PM2:JB1:USA_Lanker-1_1_T-1:2018b.xml

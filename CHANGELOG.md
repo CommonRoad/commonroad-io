@@ -1,5 +1,11 @@
 # Changelog
 
+## [2022.1] - 2022-XX-XX
+
+### Changed
+
+- Move tests, tutorial, and documentation folder to root directory
+
 ## [2022.1] - 2022-04-05
 
 ### Added
