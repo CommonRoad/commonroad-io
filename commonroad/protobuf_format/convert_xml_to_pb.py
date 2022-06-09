@@ -1,4 +1,5 @@
 import os
+import shutil
 from os.path import isfile, join, isdir
 
 from commonroad.common.file_reader import CommonRoadFileReader
@@ -52,7 +53,7 @@ def convert_xml_to_pb(src_file_path: str, dest_file_path: str, invalid_conversio
 def convert_xml_to_pb_in_dirs(src_dir_path: str, dest_dir_path: str, invalid_conversion_path: str = None):
     """
     Converts all CommonRoad files in directory and its subdirectories from XML to protobuf format.
-    The hierarchical file structure is copied to the destination directory.
+    The hierarchical file structure is copied to the destination directory. Non CommonRoad file are only copied.
 
     :param src_dir_path: Source directory
     :param dest_dir_path: Destination directory
@@ -64,23 +65,40 @@ def convert_xml_to_pb_in_dirs(src_dir_path: str, dest_dir_path: str, invalid_con
     assert invalid_conversion_path is None or os.path.exists(invalid_conversion_path), \
         'The path to invalid conversion directory is not existent!'
 
-    file_names = list()
+    valid_xml_file_names = list()
+    invalid_xml_file_names = list()
     dir_names = list()
     for name in os.listdir(src_dir_path):
-        for ending in ['.add.xml', '.net.xml', '.rou.xml']:
-            if name.endswith(ending):
-                continue
 
-        if isfile(join(src_dir_path, name)) and name.endswith('.xml'):
-            file_names.append(name)
+        if isfile(join(src_dir_path, name)):
+            is_invalid_xml_file = False
+            for ending in ['.add.xml', '.net.xml', '.rou.xml']:
+                if name.endswith(ending) or not name.endswith('.xml'):
+                    is_invalid_xml_file = True
+
+            # if not is_invalid_xml_file:
+            #     content = open(join(src_dir_path, name), 'rb').read()
+            #     if not CommonRoadFileWriter.check_validity_of_commonroad_file(content, FileFormat.XML):
+            #         is_invalid_xml_file = True
+
+            if is_invalid_xml_file:
+                invalid_xml_file_names.append(name)
+            else:
+                valid_xml_file_names.append(name)
         elif isdir(join(src_dir_path, name)):
             dir_names.append(name)
 
-    for name in file_names:
+    for name in valid_xml_file_names:
         src_file_path = join(src_dir_path, name)
         dest_file_path = join(dest_dir_path, name.replace('.xml', '.pb'))
 
         convert_xml_to_pb(src_file_path, dest_file_path, invalid_conversion_path)
+
+    for name in invalid_xml_file_names:
+        src_file_path = join(src_dir_path, name)
+        dest_file_path = join(dest_dir_path, name)
+
+        shutil.copy(src_file_path, dest_file_path)
 
     for name in dir_names:
         src_sub_dir_path = join(src_dir_path, name)

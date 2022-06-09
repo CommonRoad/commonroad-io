@@ -89,8 +89,6 @@ class CommonRoadFileWriter:
         :param file_format: Format of file
         :return: Valid or not
         """
-        assert commonroad_str, 'Empty commonroad file!'
-
         if file_format == FileFormat.XML:
             is_valid = XMLFileWriter.check_validity_of_commonroad_file(commonroad_str)
         else:
