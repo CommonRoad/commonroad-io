@@ -76,10 +76,10 @@ def convert_xml_to_pb_in_dirs(src_dir_path: str, dest_dir_path: str, invalid_con
                 if name.endswith(ending) or not name.endswith('.xml'):
                     is_invalid_xml_file = True
 
-            # if not is_invalid_xml_file:
-            #     content = open(join(src_dir_path, name), 'rb').read()
-            #     if not CommonRoadFileWriter.check_validity_of_commonroad_file(content, FileFormat.XML):
-            #         is_invalid_xml_file = True
+            if not is_invalid_xml_file:
+                content = open(join(src_dir_path, name), 'rb').read()
+                if not CommonRoadFileWriter.check_validity_of_commonroad_file(content, FileFormat.XML):
+                    is_invalid_xml_file = True
 
             if is_invalid_xml_file:
                 invalid_xml_file_names.append(name)
