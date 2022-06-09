@@ -528,7 +528,7 @@ class Scenario(IDrawable):
             warnings.warn(f"Inequality between Scenario {repr(self)} and different type {type(other)}")
             return False
 
-        scenario_eq = self.dt == other.dt and self.scenario_id == other.scenario_id and \
+        scenario_eq = str(self.dt) == str(other.dt) and self.scenario_id == other.scenario_id and \
             self.lanelet_network == other.lanelet_network and self.static_obstacles == other.static_obstacles and \
             self.dynamic_obstacles == other.dynamic_obstacles and \
             self.environment_obstacle == other.environment_obstacle and \
@@ -539,7 +539,7 @@ class Scenario(IDrawable):
         return scenario_eq
 
     def __hash__(self):
-        return hash((self.dt, self.scenario_id, self.lanelet_network, self.static_obstacles, self.dynamic_obstacles,
+        return hash((str(self.dt), self.scenario_id, self.lanelet_network, self.static_obstacles, self.dynamic_obstacles,
                      self.environment_obstacle, self.phantom_obstacle, self.author, self.tags, self.affiliation,
                      self.source, self.location))
 

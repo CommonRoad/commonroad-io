@@ -52,7 +52,8 @@ class ProtobufFileWriter(FileWriter):
 
         :return:
         """
-        information_msg = ScenarioInformationMessage.create_message(str(self.scenario.scenario_id), self._author,
+        information_msg = ScenarioInformationMessage.create_message(self.scenario.scenario_id.scenario_version,
+                                                                    str(self.scenario.scenario_id), self._author,
                                                                     self._affiliation, self._source, self.scenario.dt)
 
         self._commonroad_msg.information.CopyFrom(information_msg)
@@ -187,10 +188,10 @@ class ProtobufFileWriter(FileWriter):
 class ScenarioInformationMessage:
 
     @classmethod
-    def create_message(cls, benchmark_id: str, author: str, affiliation: str, source: str, time_step_size: float) \
-            -> commonroad_pb2.ScenarioInformation:
+    def create_message(cls, commonroad_version: str, benchmark_id: str, author: str, affiliation: str, source: str,
+                       time_step_size: float) -> commonroad_pb2.ScenarioInformation:
         scenario_information_msg = commonroad_pb2.ScenarioInformation()
-        scenario_information_msg.common_road_version = SCENARIO_VERSION
+        scenario_information_msg.common_road_version = commonroad_version
         scenario_information_msg.benchmark_id = benchmark_id
         time_stamp_msg = TimeStampMessage.create_message(datetime.datetime.today())
         scenario_information_msg.date.CopyFrom(time_stamp_msg)
