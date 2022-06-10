@@ -1,5 +1,16 @@
 # Changelog
 
+## [2022.1] - 2022-XX-XX
+
+### Added
+- Function for getting lanelet orientation closest to a given position
+- Function for getting most likely lanelet given a obstacle state
+
+
+### Changed
+
+- Move tests, tutorial, and documentation folder to root directory
+
 ## [2022.1] - 2022-04-05
 
 ### Added
