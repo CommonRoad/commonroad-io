@@ -771,7 +771,7 @@ class TestCommonRoadSolutionWriter(unittest.TestCase):
 
     def test_write_to_file_invalid_output_path(self):
         with self.assertRaises(NotADirectoryError):
-            CommonRoadSolutionWriter(self.solution_single).write_to_file(output_path='./tests/')
+            CommonRoadSolutionWriter(self.solution_single).write_to_file(output_path='./commonroad/tests/')
 
     def test_write_version(self):
         self.solution_single.scenario_id.scenario_version = '2018b'
