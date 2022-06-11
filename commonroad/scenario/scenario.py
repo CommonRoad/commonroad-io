@@ -701,7 +701,7 @@ class Scenario(IDrawable):
         Removes all elements from lanelet network.
         """
         for lanelet in self.lanelet_network.lanelets:
-            self.remove_lanelet(lanelet) # also removes referenced objects
+            self.remove_lanelet(lanelet)  # also removes referenced objects
         for traffic_sign in self.lanelet_network.traffic_signs:
             self.remove_traffic_sign(traffic_sign)
         for traffic_light in self.lanelet_network.traffic_lights:
