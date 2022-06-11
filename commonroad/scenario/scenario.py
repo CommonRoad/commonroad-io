@@ -426,7 +426,7 @@ class ScenarioID:
         match = ScenarioID.benchmark_id_pattern.fullmatch(benchmark_id)
         if match is None:
             warnings.warn('Not a valid scenario ID: ' + benchmark_id)
-            return ScenarioID(False, None, benchmark_id, 1, None, None, None)
+            return ScenarioID(cooperative=False, map_name=benchmark_id, map_id=1)
 
         # extract sub IDs from string
         cooperative = match["cooperative"] is not None
