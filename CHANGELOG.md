@@ -6,7 +6,7 @@
 
 - Function for getting lanelet orientation closest to a given position
 - Function for getting most likely lanelet given an obstacle state
-- Function for removing lanelet network from scenario
+- Function for erasing lanelet network from scenario
 - Function for replacing lanelet network of a scenario with new one
 
 ### Changed

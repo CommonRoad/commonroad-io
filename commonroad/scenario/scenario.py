@@ -696,19 +696,19 @@ class Scenario(IDrawable):
             warnings.warn('<Scenario/remove_obstacle> Cannot remove obstacle with ID %s, '
                           'since it is not contained in the scenario.' % obstacle.obstacle_id)
 
-    def remove_lanelet_network(self):
+    def erase_lanelet_network(self):
         """
-        Removes lanelet network with all its elements from the scenario.
+        Removes all elements from lanelet network.
         """
         for lanelet in self.lanelet_network.lanelets:
-            self.remove_lanelet(lanelet)
+            self.remove_lanelet(lanelet) # also removes referenced objects
         for traffic_sign in self.lanelet_network.traffic_signs:
             self.remove_traffic_sign(traffic_sign)
         for traffic_light in self.lanelet_network.traffic_lights:
             self.remove_traffic_light(traffic_light)
         for intersection in self.lanelet_network.intersections:
             self.remove_intersection(intersection)
-        self._lanelet_network = None
+        self._lanelet_network = LaneletNetwork()
 
     def replace_lanelet_network(self, lanelet_network: LaneletNetwork):
         """
@@ -716,7 +716,7 @@ class Scenario(IDrawable):
 
         :param lanelet_network: new lanelet network
         """
-        self.remove_lanelet_network()
+        self.erase_lanelet_network()
         self.add_objects(lanelet_network)
 
     def remove_hanging_lanelet_members(self, remove_lanelet: Union[List[Lanelet], Lanelet]):
