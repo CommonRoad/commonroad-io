@@ -5,7 +5,7 @@
 ### Added
 
 - Function for getting lanelet orientation closest to a given position
-- Function for getting most likely lanelet given a obstacle state
+- Function for getting most likely lanelet given an obstacle state
 
 ### Changed
 
