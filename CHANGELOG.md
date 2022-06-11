@@ -1,15 +1,21 @@
 # Changelog
 
-## [2022.1] - 2022-XX-XX
+## [2022.2] - 2022-06-XX
 
 ### Added
+
 - Function for getting lanelet orientation closest to a given position
 - Function for getting most likely lanelet given a obstacle state
-
 
 ### Changed
 
 - Move tests, tutorial, and documentation folder to root directory
+
+### Fixed
+
+- Default constructor for ScenarioID produces invalid Benchmark ID
+- Various small bug fixes
+
 
 ## [2022.1] - 2022-04-05
 
