@@ -686,6 +686,48 @@ class TestScenarioID(unittest.TestCase):
         self.assertEqual(s_id.prediction_id, None)
         self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
 
+        with self.assertWarns(Warning):
+            no_pattern = "asdf"
+            ScenarioID.from_benchmark_id(no_pattern, SCENARIO_VERSION)
+
+        with self.assertWarns(Warning):
+            zero_indexed = "USA_US101-0"
+            ScenarioID.from_benchmark_id(zero_indexed, SCENARIO_VERSION)
+
+        with self.assertWarns(Warning):
+            leading_zero = "USA_US101_1_T-01"
+            ScenarioID.from_benchmark_id(leading_zero, SCENARIO_VERSION)
+
+        with self.assertWarns(Warning):
+            illegal_character_in_map = "USA_US-101_1_T-01"
+            ScenarioID.from_benchmark_id(illegal_character_in_map, SCENARIO_VERSION)
+
+        with self.assertWarns(Warning):
+            no_configuration_id = "USA_US101-1_T-1"
+            ScenarioID.from_benchmark_id(no_configuration_id, SCENARIO_VERSION)
+
+        with self.assertRaises(AssertionError):
+            ScenarioID(prediction_id=1)
+
+        with self.assertRaises(AssertionError):
+            ScenarioID(obstacle_behavior="K")
+
+        with self.assertRaises(AssertionError):
+            ScenarioID(prediction_id=0)
+
+        with self.assertRaises(AssertionError):
+            ScenarioID(configuration_id=-1)
+
+        with self.assertRaises(AssertionError):
+            ScenarioID(map_id=-1)
+
+    def test_to_string(self):
+        ids = [ScenarioID(), ScenarioID(obstacle_behavior="T"), ScenarioID(map_name="Illegal-Character_")]
+        for scenario_id in ids:
+            benchmark_id = str(scenario_id)
+            scenario_id_parsed = ScenarioID.from_benchmark_id(benchmark_id, "2020a")
+            self.assertEqual(scenario_id, scenario_id_parsed, f"{scenario_id} != {scenario_id_parsed}")
+
     def test_country_name(self):
         id_zam = "ZAM_US101-33_2"
         s_id = ScenarioID.from_benchmark_id(id_zam, SCENARIO_VERSION)
@@ -693,12 +735,7 @@ class TestScenarioID(unittest.TestCase):
 
         id_us = "USA_US101-33_2"
         s_id = ScenarioID.from_benchmark_id(id_us, SCENARIO_VERSION)
-        self.assertEqual(s_id.country_name,
-                         "United States of America")  # def test_read_all_files(self):  #     folder =  #
-        # 'commonroad-scenarios/scenarios'  #     from pathlib import Path  #     files = list(Path(folder).rglob(  #
-        # '*.xml'))  #     for file in files:  #         # if not "C-USA_Lanker-1_2_T-1" in str(file):  #         #
-        # continue  #         sc, _ = CommonRoadFileReader(file).open()  #         self.assertEqual(sc.orig_bid,
-        # str(sc.scenario_id))  #         print(file)
+        self.assertEqual(s_id.country_name, "United States of America")
 
 
 class TestLocation(unittest.TestCase):
