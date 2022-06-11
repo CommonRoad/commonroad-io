@@ -310,6 +310,10 @@ class Location:
 
 
 class ScenarioID:
+    benchmark_id_pattern = re.compile(r"(?P<cooperative>C-)?(?P<country_id>[A-Z]{3})_(?P<map_name>[a-zA-Z0-9]+)-("
+                                      r"?P<map_id>[1-9][0-9]*)(_(?P<configuration_id>[1-9][0-9]*)(_("
+                                      r"?P<prediction_type>[STPI])(?P<prediction_ids>(-([1-9][0-9]*))+))?)?")
+
     def __init__(self, cooperative: bool = False, country_id: str = "ZAM", map_name: str = "Test", map_id: int = 1,
                  configuration_id: Union[None, int] = None, obstacle_behavior: Union[None, str] = None,
                  prediction_id: Union[None, int, List[int]] = None, scenario_version: str = SCENARIO_VERSION):
@@ -328,37 +332,63 @@ class ScenarioID:
         :param scenario_version: scenario version identifier (e.g. 2020a)
         """
         assert scenario_version in SUPPORTED_COMMONROAD_VERSIONS, 'Scenario_version {} not supported.'.format(
-            scenario_version)
+                scenario_version)
         self.scenario_version: str = scenario_version
         self.cooperative: bool = cooperative
         self._country_id = None
+        self._map_name = None
         self.country_id: str = country_id
-        self.map_name: str = map_name
+        self.map_name = map_name
         self.map_id: int = map_id
-        self.configuration_id: Union[None, int] = configuration_id
+        is_map = configuration_id is None and obstacle_behavior is None and prediction_id is None
+        has_prediction = obstacle_behavior is not None or prediction_id is not None
+
+        # Obstacle behavior has to be defined if a prediction id is given. We can't recover from this!
+        # prediction id is not None => obstacle_behavior is not None
+        assert prediction_id is None or obstacle_behavior is not None, "Prediction id was given, but obstacle " \
+                                                                       "behavior undefined!"
+        if not is_map:
+            if has_prediction:
+                prediction_id = prediction_id or 1
+            configuration_id = configuration_id or 1
         self.obstacle_behavior: Union[None, str] = obstacle_behavior
+        self.configuration_id: Union[None, int] = configuration_id
         self.prediction_id: Union[None, int, List[int]] = prediction_id
 
+        # Validate object
+        assert self.obstacle_behavior in [None, "S", "T", "P",
+                                          "I"], f"Unsupported prediction type '{obstacle_behavior}'! " \
+                                                f"Available prediction types: S, T, P, I"
+        assert self.map_id > 0, f"Map id {configuration_id} <= 0!"
+        assert is_map or self.configuration_id > 0, f"Configuration id {configuration_id} <= 0!"
+        prediction_id = prediction_id if isinstance(prediction_id, list) else [prediction_id]
+        assert not has_prediction or all(p > 0 for p in prediction_id), f"Prediction id {configuration_id} <= 0!"
+
     def __str__(self):
-        scenario_id = ""
-        if self.cooperative is True:
-            scenario_id += "C-"
-        if self.country_id is not None:
-            scenario_id += self.country_id + "_"
-        if self.map_name is not None:
-            scenario_id += self.map_name + "-"
-        if self.map_id is not None:
-            scenario_id += str(self.map_id)
-        if self.configuration_id is not None:
-            scenario_id += "_" + str(self.configuration_id)
         if self.obstacle_behavior is not None:
-            scenario_id += "_" + self.obstacle_behavior + "-"
-        if self.prediction_id is not None:
-            if type(self.prediction_id) == list:
-                scenario_id += "-".join([str(i) for i in self.prediction_id])
-            else:
-                scenario_id += str(self.prediction_id)
+            prediction_id = self.prediction_id
+            if not isinstance(self.prediction_id, list):
+                prediction_id = [prediction_id]
+            prediction = "-".join([self.obstacle_behavior] + [str(s) for s in prediction_id])
+        else:
+            prediction = None
+        map_ = self.map_name if self.map_id is None else f"{self.map_name}-{self.map_id}"
+        parts = [self.country_id, map_, self.configuration_id, prediction]
+        scenario_id = "_".join([str(p) for p in parts if p is not None])
+        if self.cooperative is True:
+            scenario_id = "C-" + scenario_id
+
         return scenario_id
+
+    @property
+    def map_name(self):
+        return self._map_name
+
+    @map_name.setter
+    def map_name(self, map_name: str):
+        pattern = "[^a-zA-Z0-9]"
+        cleaned_map_name = re.sub(pattern, "", map_name)
+        self._map_name = cleaned_map_name
 
     @property
     def country_id(self):
@@ -393,32 +423,25 @@ class ScenarioID:
         :param scenario_version: scenario format version (e.g. 2020a)
         :return:
         """
-        if not (benchmark_id.count('_') in (1, 2, 3) and benchmark_id.count('-') in (1, 2, 3, 4)):
+        match = ScenarioID.benchmark_id_pattern.fullmatch(benchmark_id)
+        if match is None:
             warnings.warn('Not a valid scenario ID: ' + benchmark_id)
-            return ScenarioID(None, None, benchmark_id, 0, None, None, None)
+            return ScenarioID(None, None, benchmark_id, 1, None, None, None)
 
         # extract sub IDs from string
-        if benchmark_id[0:2] == 'C-':
-            cooperative = True
-            benchmark_id = benchmark_id[2:]
-        else:
-            cooperative = False
+        cooperative = match["cooperative"] is not None
 
-        sub_ids = re.split('_|-', benchmark_id)
-        country_id, map_name, map_id = sub_ids[:3]
-        map_id = int(map_id)
+        country_id = match["country_id"]
+        map_name = match["map_name"]
+        map_id = int(match["map_id"])
 
-        configuration_id = prediction_type = prediction_id = None
-        if len(sub_ids) > 3:
-            configuration_id = int(sub_ids[3])
-        if len(sub_ids) > 4:
-            assert sub_ids[4] in ('S', 'T', 'I'), "prediction type must be one of (S, T, I) but is {}".format(
-                    sub_ids[4])
-            prediction_type = sub_ids[4]
-            if len(sub_ids) == 6:
-                prediction_id = int(sub_ids[5])
-            else:
-                prediction_id = [int(s) for s in sub_ids[5:]]
+        configuration_id = int(match["configuration_id"]) if match["configuration_id"] is not None else None
+        prediction_type = match["prediction_type"]
+        prediction_id = match["prediction_ids"]
+        if prediction_id is not None:
+            prediction_id = [int(pid) for pid in prediction_id.split("-")[1:]]
+            if len(prediction_id) == 1:
+                prediction_id = prediction_id[0]
 
         return ScenarioID(cooperative, country_id, map_name, map_id, configuration_id, prediction_type, prediction_id,
                           scenario_version)
