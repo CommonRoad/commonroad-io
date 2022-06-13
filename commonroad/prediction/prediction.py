@@ -5,7 +5,7 @@ import numpy as np
 
 from commonroad.common.util import Interval
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector
-from commonroad.geometry.shape import Shape, \
+from commonroad.geometry.shape import Shape, Rectangle, Circle, ShapeGroup, Polygon,\
     occupancy_shape_from_state
 from commonroad.scenario.trajectory import Trajectory
 
@@ -38,12 +38,12 @@ class Occupancy(IDrawable):
         self.shape: Shape = shape
 
     @property
-    def shape(self) -> Shape:
+    def shape(self) -> Union[Shape, Rectangle, Circle, Polygon, ShapeGroup]:
         """ Shape representing an occupied area in the position domain."""
         return self._shape
 
     @shape.setter
-    def shape(self, shape: Shape):
+    def shape(self, shape: Union[Shape, Rectangle, Circle, Polygon, ShapeGroup]):
         assert isinstance(shape, Shape), '<Occupancy/shape>: argument "shape" of wrong type. Expected type: %s. ' \
                                          'Got type: %s.' % (Shape, type(shape))
         self._shape = shape

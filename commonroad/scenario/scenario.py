@@ -426,7 +426,7 @@ class ScenarioID:
         match = ScenarioID.benchmark_id_pattern.fullmatch(benchmark_id)
         if match is None:
             warnings.warn('Not a valid scenario ID: ' + benchmark_id)
-            return ScenarioID(None, None, benchmark_id, 1, None, None, None)
+            return ScenarioID(cooperative=False, map_name=benchmark_id, map_id=1)
 
         # extract sub IDs from string
         cooperative = match["cooperative"] is not None
@@ -471,7 +471,7 @@ class Scenario(IDrawable):
         self.dt: float = dt
         assert isinstance(scenario_id, ScenarioID)
         self.scenario_id = scenario_id
-        self.lanelet_network: LaneletNetwork = LaneletNetwork()
+        self._lanelet_network: LaneletNetwork = LaneletNetwork()
 
         self._static_obstacles: Dict[int, StaticObstacle] = defaultdict()
         self._dynamic_obstacles: Dict[int, DynamicObstacle] = defaultdict()
@@ -504,13 +504,6 @@ class Scenario(IDrawable):
     def lanelet_network(self) -> LaneletNetwork:
         """ Road network composed of lanelets."""
         return self._lanelet_network
-
-    @lanelet_network.setter
-    def lanelet_network(self, lanelet_network: LaneletNetwork):
-        assert isinstance(lanelet_network, LaneletNetwork), '<Scenario/lanelet_network> argument "lanelet_network"' \
-                                                            ' of wrong type. Expected type: %s. Got type: %s.' % (
-                                                            LaneletNetwork, type(lanelet_network))
-        self._lanelet_network = lanelet_network
 
     @property
     def dynamic_obstacles(self) -> List[DynamicObstacle]:
@@ -570,7 +563,7 @@ class Scenario(IDrawable):
                 self._mark_object_id_as_used(traffic_light.traffic_light_id)
             for intersection in scenario_object.intersections:
                 self._mark_object_id_as_used(intersection.intersection_id)
-            self.lanelet_network: LaneletNetwork = scenario_object
+            self._lanelet_network: LaneletNetwork = scenario_object
         elif isinstance(scenario_object, Lanelet):
             self._mark_object_id_as_used(scenario_object.lanelet_id)
             self._lanelet_network.add_lanelet(scenario_object)
@@ -703,6 +696,29 @@ class Scenario(IDrawable):
             warnings.warn('<Scenario/remove_obstacle> Cannot remove obstacle with ID %s, '
                           'since it is not contained in the scenario.' % obstacle.obstacle_id)
 
+    def erase_lanelet_network(self):
+        """
+        Removes all elements from lanelet network.
+        """
+        for lanelet in self.lanelet_network.lanelets:
+            self.remove_lanelet(lanelet)  # also removes referenced objects
+        for traffic_sign in self.lanelet_network.traffic_signs:
+            self.remove_traffic_sign(traffic_sign)
+        for traffic_light in self.lanelet_network.traffic_lights:
+            self.remove_traffic_light(traffic_light)
+        for intersection in self.lanelet_network.intersections:
+            self.remove_intersection(intersection)
+        self._lanelet_network = LaneletNetwork()
+
+    def replace_lanelet_network(self, lanelet_network: LaneletNetwork):
+        """
+        Removes lanelet network with all its elements from the scenario and replaces it with new lanelet network.
+
+        :param lanelet_network: new lanelet network
+        """
+        self.erase_lanelet_network()
+        self.add_objects(lanelet_network)
+
     def remove_hanging_lanelet_members(self, remove_lanelet: Union[List[Lanelet], Lanelet]):
         """
         After removing lanelet(s) from remove_lanelet, this function removes all traffic lights and signs that are
@@ -738,6 +754,7 @@ class Scenario(IDrawable):
         Removes a lanelet or a list of lanelets from a scenario.
 
         :param lanelet: Lanelet which should be removed from scenario.
+        :param referenced_elements: Boolean indicating whether references of lanelet should also be removed.
         """
         assert isinstance(lanelet, (list, Lanelet)), '<Scenario/remove_lanelet> argument "lanelet" of wrong type. ' \
                                                      'Expected type: %s. Got type: %s.' % (Lanelet, type(lanelet))
@@ -1055,9 +1072,8 @@ class Scenario(IDrawable):
             :param angle: rotation angle in radian (counter-clockwise)
         """
         assert is_real_number_vector(translation, 2), '<Scenario/translate_rotate>: argument "translation" is ' \
-                                                      'not a vector of real numbers of length 2. translation = {' \
-                                                      '}.'.format(
-            translation)
+                                                      'not a vector of real numbers of length 2. ' \
+                                                      'translation = {}.'.format(translation)
         assert is_valid_orientation(angle), '<Scenario/translate_rotate>: argument "orientation" is not valid. ' \
                                             'angle = {}.'.format(angle)
 

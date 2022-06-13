@@ -149,6 +149,49 @@ class TestScenario(unittest.TestCase):
             self.scenario.remove_obstacle(self.lanelet1)
             self.scenario.remove_obstacle(self.static_obs)
 
+    def test_remove_lanelet_network(self):
+        self.scenario.add_objects([self.lanelet1, self.lanelet2])
+        self.scenario.add_objects([self.traffic_sign1, self.traffic_sign2, self.traffic_sign3, self.traffic_sign4])
+        self.scenario.add_objects(
+                [self.traffic_light100, self.traffic_light101, self.traffic_light102, self.traffic_light103])
+        self.scenario.add_objects(self.intersection, set())
+        self.assertGreater(len(self.scenario.lanelet_network.lanelets), 0)
+        self.assertGreater(len(self.scenario.lanelet_network.traffic_signs), 0)
+        self.assertGreater(len(self.scenario.lanelet_network.traffic_lights), 0)
+        self.assertGreater(len(self.scenario.lanelet_network.intersections), 0)
+        self.scenario.erase_lanelet_network()
+        self.assertEqual(len(self.scenario.lanelet_network.lanelets), 0)
+        self.assertEqual(len(self.scenario.lanelet_network.traffic_signs), 0)
+        self.assertEqual(len(self.scenario.lanelet_network.traffic_lights), 0)
+        self.assertEqual(len(self.scenario.lanelet_network.intersections), 0)
+
+        self.scenario.add_objects([self.traffic_sign1, self.traffic_sign2, self.traffic_sign3, self.traffic_sign4])
+        self.scenario.add_objects(
+                [self.traffic_light100, self.traffic_light101, self.traffic_light102, self.traffic_light103])
+        self.assertGreater(len(self.scenario.lanelet_network.traffic_signs), 0)
+        self.assertGreater(len(self.scenario.lanelet_network.traffic_lights), 0)
+        self.scenario.erase_lanelet_network()
+        self.assertEqual(len(self.scenario.lanelet_network.traffic_signs), 0)
+        self.assertEqual(len(self.scenario.lanelet_network.traffic_lights), 0)
+
+    def test_replace_lanelet_network(self):
+        self.scenario.add_objects(self.lanelet1)
+        self.scenario.add_objects(self.traffic_sign1)
+        self.scenario.add_objects(self.traffic_light100)
+        self.assertEqual(self.scenario.lanelet_network.lanelets[0].lanelet_id, 100)
+        self.assertEqual(self.scenario.lanelet_network.traffic_signs[0].traffic_sign_id, 300)
+        self.assertEqual(self.scenario.lanelet_network.traffic_lights[0].traffic_light_id, 200)
+
+        lanelet_network_new = LaneletNetwork()
+        lanelet_network_new.add_lanelet(self.lanelet2)
+        lanelet_network_new.add_traffic_sign(self.traffic_sign2, {self.lanelet2.lanelet_id})
+        lanelet_network_new.add_traffic_light(self.traffic_light101, {self.lanelet2.lanelet_id})
+
+        self.scenario.replace_lanelet_network(lanelet_network_new)
+        self.assertEqual(self.scenario.lanelet_network.lanelets[0].lanelet_id, 101)
+        self.assertEqual(self.scenario.lanelet_network.traffic_signs[0].traffic_sign_id, 301)
+        self.assertEqual(self.scenario.lanelet_network.traffic_lights[0].traffic_light_id, 201)
+
     def test_remove_hanging_lanelet_members(self):
         self.scenario.add_objects([self.lanelet1, self.lanelet2])
         self.scenario.add_objects([self.traffic_sign1, self.traffic_sign2, self.traffic_sign3, self.traffic_sign4])
