@@ -9,9 +9,12 @@ from commonroad.geometry.shape import Rectangle, Circle, Polygon, Shape, ShapeGr
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction, SetBasedPrediction
-from commonroad.protobuf_format.generated_scripts import commonroad_pb2, scenario_tags_pb2, location_pb2, lanelet_pb2, \
-    util_pb2, traffic_sign_pb2, traffic_light_pb2, intersection_pb2, static_obstacle_pb2, dynamic_obstacle_pb2, \
-    environment_obstacle_pb2, phantom_obstacle_pb2, obstacle_pb2, planning_problem_pb2
+from commonroad.scenario_definition.protobuf_format.generated_scripts import commonroad_pb2, util_pb2, \
+    phantom_obstacle_pb2
+from commonroad.scenario_definition.protobuf_format.generated_scripts import lanelet_pb2, planning_problem_pb2, \
+    traffic_sign_pb2, scenario_tags_pb2, environment_obstacle_pb2, obstacle_pb2, intersection_pb2, \
+    dynamic_obstacle_pb2, \
+    static_obstacle_pb2, traffic_light_pb2, location_pb2
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, StopLine, LineMarking, LaneletType, RoadUser
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, PhantomObstacle, \
