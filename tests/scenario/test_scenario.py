@@ -149,6 +149,49 @@ class TestScenario(unittest.TestCase):
             self.scenario.remove_obstacle(self.lanelet1)
             self.scenario.remove_obstacle(self.static_obs)
 
+    def test_remove_lanelet_network(self):
+        self.scenario.add_objects([self.lanelet1, self.lanelet2])
+        self.scenario.add_objects([self.traffic_sign1, self.traffic_sign2, self.traffic_sign3, self.traffic_sign4])
+        self.scenario.add_objects(
+                [self.traffic_light100, self.traffic_light101, self.traffic_light102, self.traffic_light103])
+        self.scenario.add_objects(self.intersection, set())
+        self.assertGreater(len(self.scenario.lanelet_network.lanelets), 0)
+        self.assertGreater(len(self.scenario.lanelet_network.traffic_signs), 0)
+        self.assertGreater(len(self.scenario.lanelet_network.traffic_lights), 0)
+        self.assertGreater(len(self.scenario.lanelet_network.intersections), 0)
+        self.scenario.erase_lanelet_network()
+        self.assertEqual(len(self.scenario.lanelet_network.lanelets), 0)
+        self.assertEqual(len(self.scenario.lanelet_network.traffic_signs), 0)
+        self.assertEqual(len(self.scenario.lanelet_network.traffic_lights), 0)
+        self.assertEqual(len(self.scenario.lanelet_network.intersections), 0)
+
+        self.scenario.add_objects([self.traffic_sign1, self.traffic_sign2, self.traffic_sign3, self.traffic_sign4])
+        self.scenario.add_objects(
+                [self.traffic_light100, self.traffic_light101, self.traffic_light102, self.traffic_light103])
+        self.assertGreater(len(self.scenario.lanelet_network.traffic_signs), 0)
+        self.assertGreater(len(self.scenario.lanelet_network.traffic_lights), 0)
+        self.scenario.erase_lanelet_network()
+        self.assertEqual(len(self.scenario.lanelet_network.traffic_signs), 0)
+        self.assertEqual(len(self.scenario.lanelet_network.traffic_lights), 0)
+
+    def test_replace_lanelet_network(self):
+        self.scenario.add_objects(self.lanelet1)
+        self.scenario.add_objects(self.traffic_sign1)
+        self.scenario.add_objects(self.traffic_light100)
+        self.assertEqual(self.scenario.lanelet_network.lanelets[0].lanelet_id, 100)
+        self.assertEqual(self.scenario.lanelet_network.traffic_signs[0].traffic_sign_id, 300)
+        self.assertEqual(self.scenario.lanelet_network.traffic_lights[0].traffic_light_id, 200)
+
+        lanelet_network_new = LaneletNetwork()
+        lanelet_network_new.add_lanelet(self.lanelet2)
+        lanelet_network_new.add_traffic_sign(self.traffic_sign2, {self.lanelet2.lanelet_id})
+        lanelet_network_new.add_traffic_light(self.traffic_light101, {self.lanelet2.lanelet_id})
+
+        self.scenario.replace_lanelet_network(lanelet_network_new)
+        self.assertEqual(self.scenario.lanelet_network.lanelets[0].lanelet_id, 101)
+        self.assertEqual(self.scenario.lanelet_network.traffic_signs[0].traffic_sign_id, 301)
+        self.assertEqual(self.scenario.lanelet_network.traffic_lights[0].traffic_light_id, 201)
+
     def test_remove_hanging_lanelet_members(self):
         self.scenario.add_objects([self.lanelet1, self.lanelet2])
         self.scenario.add_objects([self.traffic_sign1, self.traffic_sign2, self.traffic_sign3, self.traffic_sign4])
@@ -686,6 +729,48 @@ class TestScenarioID(unittest.TestCase):
         self.assertEqual(s_id.prediction_id, None)
         self.assertEqual(s_id.scenario_version, SCENARIO_VERSION)
 
+        with self.assertWarns(Warning):
+            no_pattern = "asdf"
+            ScenarioID.from_benchmark_id(no_pattern, SCENARIO_VERSION)
+
+        with self.assertWarns(Warning):
+            zero_indexed = "USA_US101-0"
+            ScenarioID.from_benchmark_id(zero_indexed, SCENARIO_VERSION)
+
+        with self.assertWarns(Warning):
+            leading_zero = "USA_US101_1_T-01"
+            ScenarioID.from_benchmark_id(leading_zero, SCENARIO_VERSION)
+
+        with self.assertWarns(Warning):
+            illegal_character_in_map = "USA_US-101_1_T-01"
+            ScenarioID.from_benchmark_id(illegal_character_in_map, SCENARIO_VERSION)
+
+        with self.assertWarns(Warning):
+            no_configuration_id = "USA_US101-1_T-1"
+            ScenarioID.from_benchmark_id(no_configuration_id, SCENARIO_VERSION)
+
+        with self.assertRaises(AssertionError):
+            ScenarioID(prediction_id=1)
+
+        with self.assertRaises(AssertionError):
+            ScenarioID(obstacle_behavior="K")
+
+        with self.assertRaises(AssertionError):
+            ScenarioID(prediction_id=0)
+
+        with self.assertRaises(AssertionError):
+            ScenarioID(configuration_id=-1)
+
+        with self.assertRaises(AssertionError):
+            ScenarioID(map_id=-1)
+
+    def test_to_string(self):
+        ids = [ScenarioID(), ScenarioID(obstacle_behavior="T"), ScenarioID(map_name="Illegal-Character_")]
+        for scenario_id in ids:
+            benchmark_id = str(scenario_id)
+            scenario_id_parsed = ScenarioID.from_benchmark_id(benchmark_id, "2020a")
+            self.assertEqual(scenario_id, scenario_id_parsed, f"{scenario_id} != {scenario_id_parsed}")
+
     def test_country_name(self):
         id_zam = "ZAM_US101-33_2"
         s_id = ScenarioID.from_benchmark_id(id_zam, SCENARIO_VERSION)
@@ -693,12 +778,7 @@ class TestScenarioID(unittest.TestCase):
 
         id_us = "USA_US101-33_2"
         s_id = ScenarioID.from_benchmark_id(id_us, SCENARIO_VERSION)
-        self.assertEqual(s_id.country_name,
-                         "United States of America")  # def test_read_all_files(self):  #     folder =  #
-        # 'commonroad-scenarios/scenarios'  #     from pathlib import Path  #     files = list(Path(folder).rglob(  #
-        # '*.xml'))  #     for file in files:  #         # if not "C-USA_Lanker-1_2_T-1" in str(file):  #         #
-        # continue  #         sc, _ = CommonRoadFileReader(file).open()  #         self.assertEqual(sc.orig_bid,
-        # str(sc.scenario_id))  #         print(file)
+        self.assertEqual(s_id.country_name, "United States of America")
 
 
 class TestLocation(unittest.TestCase):

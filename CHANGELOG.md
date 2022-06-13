@@ -1,5 +1,27 @@
 # Changelog
 
+## [2022.2] - 2022-06-XX
+
+### Added
+
+- Function for getting lanelet orientation closest to a given position
+- Function for getting most likely lanelet given an obstacle state
+- Function for erasing lanelet network from scenario
+- Function for replacing lanelet network of a scenario with new one
+
+### Changed
+
+- Move tests, tutorial, and documentation folder to root directory
+
+### Removed
+- setter method for lanelet network in scenario class
+
+### Fixed
+
+- Default constructor for ScenarioID produces invalid Benchmark ID
+- Various small bug fixes
+
+
 ## [2022.1] - 2022-04-05
 
 ### Added
