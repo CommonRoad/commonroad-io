@@ -22,7 +22,7 @@ style_checks:
   stage: style_check
   script:
     - pip install pycodestyle
-    - git  diff ${CI_COMMIT_BEFORE_SHA}...${CI_COMMIT_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff --exclude=
+    - git  diff ${CI_COMMIT_BEFORE_SHA}...${CI_COMMIT_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff --exclude=*/scenario_definition/*
   except:
   - merge_requests
   allow_failure: true
