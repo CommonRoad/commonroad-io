@@ -14,73 +14,68 @@ import sys
 
 class drone3d():
 
-    def __init__(self):
+    def __init__(self,ax,fig,obstacle):
 
-        self.fig = plt.figure(figsize=plt.figaspect(1), constrained_layout=False)
-        self.ax = self.fig.gca(projection='3d')
+        self.fig = fig
+        self.ax = ax
         self.orientation = 0
-        self.position = [0, 0, 0]
+        self.speed=1
+        self.position = [5, 5, 10]
         self.length = 1
-        self.list_obstacle = []
+        self.list_obstacle = obstacle
         self.width = 1
         self.r = 0.33
         self.list_patchcollection = []
         self.follow = 0
-        self.get_tree(5, 5, 5)
-        plt.axis('off')
-        self.show()
+
+
+
         self.flag_detect = 0
 
-    def run(self):
+    def new_drone(self):
+        if self.follow % 2:
+            self.ax.view_init(elev=10, azim=180 + self.orientation * 180 / 3.1415)
+            self.ax.set_xlim([self.position[0] - 5, self.position[0] + 5])
+            self.ax.set_ylim([self.position[1] - 5, self.position[1] + 5])
+            self.ax.set_zlim([self.position[2] - 5, self.position[2] + 5])
+        self.construction()
+        self.detect()
+        #plt.pause(0.01)
+        for patch in self.list_patchcollection:
+            patch.remove()
+        for patch in range(len(self.list_patchcollection)):
+            self.list_patchcollection.remove(self.list_patchcollection[0])
 
-        while True:
-            input = select.select([sys.stdin], [], [], 0.01)[0]
-            if input:
-                value = sys.stdin.readline().rstrip()
+    def rotate_plus(self):
+        self.orientation += 0.33
 
-                if (value == "h"):
-                    self.orientation += 0.5
-                elif (value == "n"):
-                    self.orientation -= 0.5
-                elif (value == "z"):
-                    self.position[0] += 0.5 * np.cos(self.orientation)
-                    self.position[1] += 0.5 * np.sin(self.orientation)
-                elif (value == "s"):
-                    self.position[0] += -0.5 * np.cos(self.orientation)
-                    self.position[1] += -0.5 * np.sin(self.orientation)
-                elif (value == "q"):
-                    self.position[0] += -0.5 * np.sin(self.orientation)
-                    self.position[1] += +0.5 * np.cos(self.orientation)
-                elif (value == "d"):
-                    self.position[0] += +0.5 * np.sin(self.orientation)
-                    self.position[1] += -0.5 * np.cos(self.orientation)
-                elif (value == "p"):
-                    self.position[2] += 0.5
-                elif (value == "m"):
-                    self.position[2] -= 0.5
-                elif (value == "f"):
-                    self.follow += 1
+    def rotate_minus(self):
+        self.orientation -= 0.33
 
-            if self.follow % 2:
-                self.ax.view_init(elev=20, azim=180 + self.orientation * 180 / 3.1415)
-                self.ax.set_xlim([self.position[0] - 5, self.position[0] + 5])
-                self.ax.set_ylim([self.position[1] - 5, self.position[1] + 5])
+    def go(self):
+        self.position[0] += self.speed * np.cos(self.orientation)
+        self.position[1] += self.speed * np.sin(self.orientation)
 
-            self.construction()
-            self.detect()
-            plt.pause(0.01)
-            for patch in self.list_patchcollection:
-                patch.remove()
-            for patch in range(len(self.list_patchcollection)):
-                self.list_patchcollection.remove(self.list_patchcollection[0])
+    def returne(self):
+        self.position[0] += -self.speed * np.cos(self.orientation)
+        self.position[1] += -self.speed * np.sin(self.orientation)
 
-    def show(self):
+    def right(self):
+        self.position[0] += +self.speed * np.sin(self.orientation)
+        self.position[1] += -self.speed * np.cos(self.orientation)
 
-        self.ax.set_xlim([-10, 10])
-        self.ax.set_ylim([-10, 10])
-        self.ax.set_zlim([-10, 10])
-        plt.ion()
-        plt.show()
+    def left(self):
+        self.position[0] += -self.speed * np.sin(self.orientation)
+        self.position[1] += +self.speed * np.cos(self.orientation)
+
+    def up(self):
+        self.position[2] += 0.5
+
+    def down(self):
+        self.position[2] -= 0.5
+
+
+
 
     def construction(self):
         biglist = []
@@ -142,40 +137,7 @@ class drone3d():
 
         plt.pause(0.01)
 
-    def get_tree(self, x: int, y: int, z: int):
 
-        r = 2
-        wr = 0.5
-
-        accurate = 30
-        pi = 3.1415
-        list = []
-        list2 = []
-        patches = []
-        patches2 = []
-        for i in range(accurate):
-            for j in range(accurate):
-                phi = -pi / 2 + pi * i / accurate
-                theta = -pi + 2 * pi * j / accurate
-
-                list.append((r * np.sin(theta) * np.cos(phi) + x, r * np.sin(theta) * np.sin(phi) + y,
-                             r * 1.6 * np.cos(theta) + z))
-                self.list_obstacle.append((r * np.sin(theta) * np.cos(phi) + x, r * np.sin(theta) * np.sin(phi) + y,
-                                           r * 1.6 * np.cos(theta) + z))
-
-                list2.append((wr * np.cos(theta) + x, wr * np.sin(theta) + y, i * z / accurate))
-                self.list_obstacle.append((wr * np.cos(theta) + x, wr * np.sin(theta) + y, i * z / accurate))
-
-        patches.append(list)
-        patches2.append(list2)
-
-        colors = ["tab:green" for patch in patches]
-        patchcollection = Poly3DCollection(patches, edgecolor="g", facecolor=colors, rasterized=True)
-        self.ax.add_collection3d(patchcollection)
-
-        colors = ["tab:green" for patch in patches2]
-        patchcollection = Poly3DCollection(patches2, edgecolor="g", facecolor=colors, rasterized=True)
-        self.ax.add_collection3d(patchcollection)
 
     def detect(self):
         r = 0.6
@@ -189,7 +151,6 @@ class drone3d():
                     if abs(obstacle[1] - self.position[1]) < 1.3:
                         if abs(obstacle[0] - self.position[0]) < 1.3:
                             print("BOOM")
-
                             for i in range(accurate):
                                 for j in range(accurate):
                                     phi = -pi / 2 + pi * i / accurate

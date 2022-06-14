@@ -15,32 +15,33 @@ import time
 import os
 import sys
 import select
+
 # generate path of the file to be opened
-file_path = "USA_Lanker-1_1_T-1.xml"
-#file_path = "ZAM_Tutorial-1_1_T-1.xml"
-#file_path="ZAM_Tutorial-1_2_T-1.xml"
-#file_path="BEL_Beringen-3_5_I-1-1.cr.xml"
+# file_path = "USA_Lanker-1_1_T-1.xml"
+# file_path = "ZAM_Tutorial-1_1_T-1.xml"
+file_path = "ZAM_Tutorial-1_2_T-1.xml"
+# file_path="BEL_Beringen-3_5_I-1-1.cr.xml"
 
 
 # read in the scenario and planning problem set
 scenario, planning_problem_set = CommonRoadFileReader(file_path).open()
 
-
-
-v=visual(scenario,planning_problem_set)
+v = visual(scenario, planning_problem_set)
 v.init_show()
+# v.show()
+
 
 i = 0
 
 while True:
-    input = select.select([sys.stdin], [], [], 1)[0]
+    input = select.select([sys.stdin], [], [], 0.1)[0]
     if input:
         value = sys.stdin.readline().rstrip()
 
         if (value == "f"):
             i += 1
         elif (value == "p"):
-            if i!=0:
+            if i != 0:
                 i -= 1
         elif (value == "l"):
             v.switch_ligth()
@@ -48,10 +49,32 @@ while True:
             v.zoom_in()
         elif (value == "o"):
             v.zoom_out()
+        elif (value == "z"):
+            v.drone.go()
+        elif (value == "s"):
+            v.drone.returne()
+        elif (value == "q"):
+            v.drone.left()
+        elif (value == "d"):
+            v.drone.right()
+        elif (value == "+"):
+            v.drone.rotate_plus()
+        elif (value == "-"):
+            v.drone.rotate_minus()
+        elif (value == "t"):
+            v.drone.follow += 1
+        elif (value == "*"):
+            v.drone.up()
+        elif (value == "/"):
+            v.drone.down()
     else:
+        v.auto_set_lim()
         v.show_at_time(i)
+        v.drone.new_drone()
 
 """
+
+
 # plot the planning problem and the scenario for the fifth time step
 plt.figure(figsize=(25, 10))
 rnd = MPRenderer()
