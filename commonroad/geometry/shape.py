@@ -254,7 +254,7 @@ class Circle(Shape):
 
     @radius.setter
     def radius(self, radius: float):
-            self._radius = radius
+        self._radius = radius
 
     @property
     def center(self) -> np.ndarray:

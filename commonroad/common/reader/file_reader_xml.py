@@ -241,7 +241,6 @@ class ScenarioFactory:
         """
         Reads all obstacles specified in a CommonRoad XML-file.
         :param xml_node: XML element
-        :param dt: time step size of the scenario
         :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
         :return: list of static and dynamic obstacles specified in the CommonRoad XML-file
         """
@@ -261,7 +260,6 @@ class ScenarioFactory:
         """
         Reads all obstacles specified in a CommonRoad XML-file.
         :param xml_node: XML element
-        :param dt: time step size of the scenario
         :param lanelet_assignment: activates calculation of lanelets occupied by obstacles
         :return: list of static and dynamic obstacles specified in the CommonRoad XML-file
         """
@@ -388,11 +386,11 @@ class LaneletNetworkFactory:
             lanelets.append(LaneletFactory.create_from_xml_node(lanelet_node))
         lanelet_network = LaneletNetwork.create_from_lanelet_list(lanelets)
 
-        country = cls._find_country( xml_node)
-        first_traffic_sign_occurence = cls._find_first_traffic_sign_occurence(lanelet_network)
+        country = cls._find_country(xml_node)
+        first_traffic_sign_occurrence = cls._find_first_traffic_sign_occurence(lanelet_network)
         for traffic_sign_node in xml_node.findall('trafficSign'):
             lanelet_network.add_traffic_sign(TrafficSignFactory.create_from_xml_node(traffic_sign_node, country,
-                                                                                     first_traffic_sign_occurence,
+                                                                                     first_traffic_sign_occurrence,
                                                                                      lanelet_network), [])
 
         for traffic_light_node in xml_node.findall('trafficLight'):
@@ -537,8 +535,8 @@ class LaneletFactory:
         :return: list of IDs of all predecessor lanelets
         """
         predecessors = list()
-        for l in xml_node.findall('predecessor'):
-            predecessors.append(int(l.get('ref')))
+        for pre in xml_node.findall('predecessor'):
+            predecessors.append(int(pre.get('ref')))
         return predecessors
 
     @classmethod
@@ -549,8 +547,8 @@ class LaneletFactory:
         :return: list of IDs of all successor lanelets
         """
         successors = list()
-        for l in xml_node.findall('successor'):
-            successors.append(int(l.get('ref')))
+        for suc in xml_node.findall('successor'):
+            successors.append(int(suc.get('ref')))
         return successors
 
     @classmethod
@@ -1064,7 +1062,7 @@ class StaticObstacleFactory(ObstacleFactory):
             initial_shape_lanelet_ids = set(lanelet_network.find_lanelet_by_shape(rotated_shape))
             initial_center_lanelet_ids = set(lanelet_network.find_lanelet_by_position([initial_state.position])[0])
             for l_id in initial_shape_lanelet_ids:
-                 lanelet_network.find_lanelet_by_id(l_id).add_static_obstacle_to_lanelet(obstacle_id=obstacle_id)
+                lanelet_network.find_lanelet_by_id(l_id).add_static_obstacle_to_lanelet(obstacle_id=obstacle_id)
         else:
             initial_center_lanelet_ids = None
             initial_shape_lanelet_ids = None
@@ -1306,8 +1304,8 @@ class GoalRegionFactory:
             state_list.append(StateFactory.create_from_xml_node(goal_state_node, lanelet_network))
             if goal_state_node.find('position') is not None\
                     and goal_state_node.find('position').find('lanelet') is not None:
-                for l in goal_state_node.find('position').findall('lanelet'):
-                    lanelets_of_goal_position[idx].append(int(l.get('ref')))
+                for let in goal_state_node.find('position').findall('lanelet'):
+                    lanelets_of_goal_position[idx].append(int(let.get('ref')))
         if not lanelets_of_goal_position:
             lanelets_of_goal_position = None
         return GoalRegion(state_list, lanelets_of_goal_position)
@@ -1352,10 +1350,9 @@ class StateFactory:
             position = ShapeFactory.create_from_xml_node(xml_node)
         elif lanelet_network is not None and xml_node.find('lanelet') is not None:
             position_list = list()
-            for l in xml_node.findall('lanelet'):
-                lanelet = lanelet_network.find_lanelet_by_id(int(l.get('ref')))
-                polygon = lanelet.convert_to_polygon()
-                position_list.append(polygon)
+            for let in xml_node.findall('lanelet'):
+                lanelet = lanelet_network.find_lanelet_by_id(int(let.get('ref')))
+                position_list.append(lanelet.polygon)
             position = ShapeGroup(position_list)
         else:
             raise Exception()

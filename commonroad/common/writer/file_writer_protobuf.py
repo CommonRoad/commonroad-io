@@ -12,13 +12,18 @@ from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction, Se
 from commonroad.scenario_definition.protobuf_format.generated_scripts import commonroad_pb2, util_pb2, \
     phantom_obstacle_pb2
 from commonroad.scenario_definition.protobuf_format.generated_scripts import lanelet_pb2, planning_problem_pb2, \
-    traffic_sign_pb2, scenario_tags_pb2, environment_obstacle_pb2, obstacle_pb2, intersection_pb2, dynamic_obstacle_pb2, \
-    static_obstacle_pb2, traffic_light_pb2, location_pb2
+    traffic_sign_pb2, scenario_tags_pb2, environment_obstacle_pb2, obstacle_pb2, intersection_pb2, \
+    dynamic_obstacle_pb2, static_obstacle_pb2, traffic_light_pb2, location_pb2
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, SignalState, \
     PhantomObstacle
 from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment, Time
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficSignElement, TrafficLightCycleElement, \
+    TrafficSignIDGermany, TrafficSignIDFrance, TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSignIDChina, \
+    TrafficSignIDSpain, TrafficSignIDRussia, TrafficSignIDArgentina, TrafficSignIDBelgium, TrafficSignIDGreece, \
+    TrafficSignIDCroatia, TrafficSignIDItaly
+from commonroad.scenario.trajectory import State, Trajectory
 
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -27,12 +32,6 @@ __version__ = "2022.1"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
-
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficSignElement, TrafficLightCycleElement, \
-    TrafficSignIDGermany, TrafficSignIDFrance, TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSignIDChina, \
-    TrafficSignIDSpain, TrafficSignIDRussia, TrafficSignIDArgentina, TrafficSignIDBelgium, TrafficSignIDGreece, \
-    TrafficSignIDCroatia, TrafficSignIDItaly
-from commonroad.scenario.trajectory import State, Trajectory
 
 
 class ProtobufFileWriter(FileWriter):

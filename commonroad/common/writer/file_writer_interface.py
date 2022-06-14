@@ -142,4 +142,3 @@ class FileWriter(ABC):
                 print('Replace file {}'.format(filename))
 
         return filename
-

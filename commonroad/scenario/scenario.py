@@ -562,9 +562,9 @@ class Scenario(IDrawable):
         return scenario_eq
 
     def __hash__(self):
-        return hash((str(self.dt), self.scenario_id, self.lanelet_network, self.static_obstacles, self.dynamic_obstacles,
-                     self.environment_obstacle, self.phantom_obstacle, self.author, self.tags, self.affiliation,
-                     self.source, self.location))
+        return hash((str(self.dt), self.scenario_id, self.lanelet_network, self.static_obstacles,
+                     self.dynamic_obstacles, self.environment_obstacle, self.phantom_obstacle, self.author, self.tags,
+                     self.affiliation, self.source, self.location))
 
     @property
     def dt(self) -> float:

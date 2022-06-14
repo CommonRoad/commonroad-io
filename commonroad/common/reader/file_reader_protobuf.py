@@ -21,6 +21,12 @@ from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Enviro
     SignalState, ObstacleType
 from commonroad.scenario.scenario import Scenario, ScenarioID, Tag, GeoTransformation, Location, Environment, \
     TimeOfDay, Weather, Underground, Time
+from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSignIDGermany, TrafficSignIDZamunda, \
+    TrafficSignIDUsa, TrafficSignIDChina, TrafficSignIDSpain, TrafficSignIDRussia, TrafficSignIDArgentina, \
+    TrafficSignIDBelgium, TrafficSignIDFrance, TrafficSignIDGreece, TrafficSignIDCroatia, TrafficSignIDItaly, \
+    TrafficSignIDPuertoRico, TrafficSign, TrafficLight, TrafficLightCycleElement, TrafficLightDirection, \
+    TrafficLightState
+from commonroad.scenario.trajectory import State, Trajectory
 
 __author__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -29,13 +35,6 @@ __version__ = "2022.1"
 __maintainer__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
-
-from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSignIDGermany, TrafficSignIDZamunda, \
-    TrafficSignIDUsa, TrafficSignIDChina, TrafficSignIDSpain, TrafficSignIDRussia, TrafficSignIDArgentina, \
-    TrafficSignIDBelgium, TrafficSignIDFrance, TrafficSignIDGreece, TrafficSignIDCroatia, TrafficSignIDItaly, \
-    TrafficSignIDPuertoRico, TrafficSign, TrafficLight, TrafficLightCycleElement, TrafficLightDirection, \
-    TrafficLightState
-from commonroad.scenario.trajectory import State, Trajectory
 
 
 class ProtobufFileReader(FileReader):
@@ -120,7 +119,7 @@ class CommonRoadFactory:
             dynamic_obstacle = DynamicObstacleFactory \
                 .create_from_message(dynamic_obstacle_msg, scenario.lanelet_network, lanelet_assignment)
             scenario.add_objects(dynamic_obstacle)
-            
+
         for environment_obstacle_msg in commonroad_msg.environment_obstacles:
             environment_obstacle = EnvironmentObstacleFactory.create_from_message(environment_obstacle_msg)
             scenario.add_objects(environment_obstacle)
@@ -597,7 +596,7 @@ class EnvironmentObstacleFactory:
             obstacle_pb2.ObstacleTypeEnum.ObstacleType.Name(environment_obstacle_msg.obstacle_type)]
 
         shape = ShapeFactory.create_from_message(environment_obstacle_msg.obstacle_shape)
-        
+
         return EnvironmentObstacle(environment_obstacle_id, obstacle_type, shape)
 
 

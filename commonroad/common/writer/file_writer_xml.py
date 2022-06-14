@@ -138,7 +138,7 @@ class XMLFileWriter(FileWriter):
         try:
             if self.scenario.scenario_id:
                 self._root_node.set('benchmarkID', str(self.scenario.scenario_id))
-        except:
+        except Exception:
             self._root_node.set('benchmarkID', '-1')
             print('Warning: No scenario_id set.')
 
@@ -150,8 +150,8 @@ class XMLFileWriter(FileWriter):
         else:
             self._root_node.append(LocationXMLNode.create_node(Location()))
         self._root_node.append(TagXMLNode.create_node(self.tags))
-        for l in self.scenario.lanelet_network.lanelets:
-            self._root_node.append(LaneletXMLNode.create_node(l))
+        for let in self.scenario.lanelet_network.lanelets:
+            self._root_node.append(LaneletXMLNode.create_node(let))
         for sign in self.scenario.lanelet_network.traffic_signs:
             self._root_node.append(TrafficSignXMLNode.create_node(sign))
         for light in self.scenario.lanelet_network.traffic_lights:
@@ -245,10 +245,8 @@ class XMLFileWriter(FileWriter):
           commonroad_str: XML formatted string which should be checked.
 
         """
-        with open(
-            os.path.dirname(os.path.abspath(__file__)) + '/../../scenario_definition/xml_definition_files/XML_commonRoad_XSD.xsd',
-            'rb',
-        ) as schema_file:
+        with open(os.path.dirname(os.path.abspath(__file__)) +
+                  '/../../scenario_definition/xml_definition_files/XML_commonRoad_XSD.xsd', 'rb',) as schema_file:
             schema = etree.XMLSchema(etree.parse(schema_file))
 
         parser = objectify.makeparser(schema=schema, encoding='utf-8')
@@ -1275,7 +1273,7 @@ class LaneletStopLineXMLNode:
 class SignalStateXMLNode:
     @classmethod
     def create_signal_state_node(cls, signal_state: SignalState, signal_state_node: etree.Element,
-                          time_step: int) -> etree.Element:
+                                 time_step: int) -> etree.Element:
         """
         Create XML-Node for a state
         :param signal_state: value of the signal state
