@@ -502,7 +502,7 @@ class LaneletXMLNode:
         lanelet_node.set('id', str(lanelet.lanelet_id))
 
         # layer
-        if hasattr(lanelet, 'layer') and lanelet.layer is not None and lanelet.layer !=0:
+        if hasattr(lanelet, 'layer') and lanelet.layer is not None and lanelet.layer != 0:
             lanelet_layer = etree.Element('laneletLayer')
             lanelet_layer.text = str(lanelet.layer)
             lanelet_node.append(lanelet_layer)

@@ -511,7 +511,7 @@ class LaneletFactory:
 
         return Lanelet(
             left_vertices=left_vertices, center_vertices=center_vertices, right_vertices=right_vertices,
-            lanelet_id=lanelet_id, layer = lanelet_layer,
+            lanelet_id=lanelet_id, layer=lanelet_layer,
             predecessor=predecessors, successor=successors,
             adjacent_left=adjacent_left, adjacent_left_same_direction=adjacent_left_same_direction,
             adjacent_right=adjacent_right, adjacent_right_same_direction=adjacent_right_same_direction,
