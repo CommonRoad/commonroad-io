@@ -501,6 +501,12 @@ class LaneletXMLNode:
         lanelet_node = etree.Element('lanelet')
         lanelet_node.set('id', str(lanelet.lanelet_id))
 
+        # layer
+        if hasattr(lanelet, 'layer') and lanelet.layer is not None and lanelet.layer !=0:
+            lanelet_layer = etree.Element('laneletLayer')
+            lanelet_layer.text = str(lanelet.layer)
+            lanelet_node.append(lanelet_layer)
+
         # left boundary
         left_boundary = etree.Element('leftBound')
         Pointlist.create_from_numpy_array(lanelet.left_vertices).add_points_to_node(

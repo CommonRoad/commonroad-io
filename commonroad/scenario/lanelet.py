@@ -203,7 +203,7 @@ class Lanelet:
                  adjacent_left_same_direction=None, adjacent_right=None, adjacent_right_same_direction=None,
                  line_marking_left_vertices=LineMarking.NO_MARKING, line_marking_right_vertices=LineMarking.NO_MARKING,
                  stop_line=None, lanelet_type=None, user_one_way=None, user_bidirectional=None, traffic_signs=None,
-                 traffic_lights=None, ):
+                 traffic_lights=None, layer=0):
         """
         Constructor of a Lanelet object
         :param left_vertices: The vertices of the left boundary of the Lanelet described as a
@@ -241,6 +241,8 @@ class Lanelet:
         self.left_vertices = left_vertices
         self.right_vertices = right_vertices
         self.center_vertices = center_vertices
+        self.layer = layer
+
         # check if length of each polyline is the same
         assert len(left_vertices[0]) == len(center_vertices[0]) == len(
                 right_vertices[0]), '<Lanelet/init>: Provided polylines do not share the same length! {}/{}/{}'.format(

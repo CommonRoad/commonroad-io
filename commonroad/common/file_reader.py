@@ -478,6 +478,7 @@ class LaneletFactory:
         :return: object of class Lanelet according to the CommonRoad specification.
         """
         lanelet_id = int(xml_node.get('id'))
+        lanelet_layer = int(xml_node.find('laneletLayer').text if xml_node.find('laneletLayer') is not None else "0")
 
         left_vertices = cls._vertices(xml_node.find('leftBound'))
         right_vertices = cls._vertices(xml_node.find('rightBound'))
@@ -510,7 +511,7 @@ class LaneletFactory:
 
         return Lanelet(
             left_vertices=left_vertices, center_vertices=center_vertices, right_vertices=right_vertices,
-            lanelet_id=lanelet_id,
+            lanelet_id=lanelet_id, layer = lanelet_layer,
             predecessor=predecessors, successor=successors,
             adjacent_left=adjacent_left, adjacent_left_same_direction=adjacent_left_same_direction,
             adjacent_right=adjacent_right, adjacent_right_same_direction=adjacent_right_same_direction,
