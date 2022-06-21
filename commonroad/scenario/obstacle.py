@@ -86,6 +86,37 @@ class SignalState:
         for (field, value) in kwargs.items():
             setattr(self, field, value)
 
+    def __eq__(self, other):
+        if not isinstance(other, SignalState):
+            warnings.warn(f"Inequality between SignalState {repr(self)} and different type {type(other)}")
+            return False
+
+        for attr in State.__slots__:
+            value = None
+            value_other = None
+
+            has_attr = hasattr(self, attr)
+            if has_attr:
+                value = getattr(self, attr)
+
+            has_attr_other = hasattr(other, attr)
+            if has_attr_other:
+                value_other = getattr(other, attr)
+
+            if has_attr != has_attr_other or value != value_other:
+                print('FAIL')
+                return False
+
+        return True
+
+    def __hash__(self):
+        values = set()
+        for attr in State.__slots__:
+            if hasattr(self, attr):
+                values.add(getattr(self, attr))
+
+        return hash(frozenset(values))
+
 
 class Obstacle(IDrawable):
     """ Superclass for dynamic and static obstacles holding common properties
@@ -119,6 +150,41 @@ class Obstacle(IDrawable):
         self.initial_shape_lanelet_ids: Union[None, Set[int]] = initial_shape_lanelet_ids
         self.initial_signal_state: Union[None, SignalState] = initial_signal_state
         self.signal_series: List[SignalState] = signal_series
+
+    def __eq__(self, other):
+        if not isinstance(other, Obstacle):
+            warnings.warn(f"Inequality between Obstacle {repr(self)} and different type {type(other)}")
+            return False
+
+        initial_center_lanelet_ids = list() if self._initial_center_lanelet_ids is None \
+            else list(self._initial_center_lanelet_ids)
+        initial_center_lanelet_ids_other = list() if other.initial_center_lanelet_ids is None \
+            else list(other.initial_center_lanelet_ids)
+
+        initial_shape_lanelet_ids = list() if self._initial_shape_lanelet_ids is None \
+            else list(self._initial_shape_lanelet_ids)
+        initial_shape_lanelet_ids_other = list() if other.initial_shape_lanelet_ids is None \
+            else list(other.initial_shape_lanelet_ids)
+
+        obstacle_eq = self._obstacle_id == other.obstacle_id and self._obstacle_role == other.obstacle_role and \
+            self._obstacle_type == other.obstacle_type and self._obstacle_shape == other.obstacle_shape and \
+            self._initial_state == other.initial_state and \
+            initial_center_lanelet_ids == initial_center_lanelet_ids_other and \
+            initial_shape_lanelet_ids == initial_shape_lanelet_ids_other and \
+            self._initial_signal_state == other.initial_signal_state and self._signal_series == other.signal_series
+
+        return obstacle_eq
+
+    def __hash__(self):
+        initial_center_lanelet_ids = None if self._initial_center_lanelet_ids is None \
+            else self._initial_center_lanelet_ids
+        initial_shape_lanelet_ids = None if self._initial_shape_lanelet_ids is None \
+            else self._initial_shape_lanelet_ids
+        signal_series = None if self._signal_series is None else self.signal_series
+
+        return hash((self._obstacle_id, self._obstacle_role, self._obstacle_type, self._obstacle_shape,
+                     self._initial_state, initial_center_lanelet_ids, initial_shape_lanelet_ids,
+                     self._initial_signal_state, signal_series))
 
     @property
     def obstacle_id(self) -> int:
@@ -237,10 +303,7 @@ class Obstacle(IDrawable):
                                                               'argument initial_signal_state of wrong ' \
                                                               'type. Expected types: %s, %s. Got type: %s.' \
                                                               % (SignalState, type(None), type(initial_signal_state))
-        if not hasattr(self, '_initial_signal_state'):
-            self._initial_signal_state = initial_signal_state
-        else:
-            warnings.warn('<Obstacle/initial_signal_state>: Initial obstacle signal state is immutable.')
+        self._initial_signal_state = initial_signal_state
 
     @property
     def signal_series(self) -> List[SignalState]:
@@ -253,10 +316,7 @@ class Obstacle(IDrawable):
                                                               'argument initial_signal_state of wrong ' \
                                                               'type. Expected types: %s, %s. Got type: %s.' \
                                                               % (list, type(None), type(signal_series))
-        if not hasattr(self, '_signal_series'):
-            self._signal_series = signal_series
-        else:
-            warnings.warn('<Obstacle/signal_series>: Obstacle signal series is immutable.')
+        self._signal_series = signal_series
 
     @abstractmethod
     def occupancy_at_time(self, time_step: int) -> Union[None, Occupancy]:
@@ -311,6 +371,16 @@ class StaticObstacle(Obstacle):
                           initial_center_lanelet_ids=initial_center_lanelet_ids,
                           initial_shape_lanelet_ids=initial_shape_lanelet_ids,
                           initial_signal_state=initial_signal_state, signal_series=signal_series)
+
+    def __eq__(self, other):
+        if not isinstance(other, StaticObstacle):
+            warnings.warn(f"Inequality between StaticObstacle {repr(self)} and different type {type(other)}")
+            return False
+
+        return Obstacle.__eq__(self, other)
+
+    def __hash__(self):
+        return Obstacle.__hash__(self)
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ First translates the static obstacle, then rotates the static obstacle around the origin.
@@ -385,6 +455,16 @@ class DynamicObstacle(Obstacle):
                           initial_shape_lanelet_ids=initial_shape_lanelet_ids,
                           initial_signal_state=initial_signal_state, signal_series=signal_series)
         self.prediction: Prediction = prediction
+
+    def __eq__(self, other):
+        if not isinstance(other, DynamicObstacle):
+            warnings.warn(f"Inequality between DynamicObstacle {repr(self)} and different type {type(other)}")
+            return False
+
+        return self._prediction == other.prediction and Obstacle.__eq__(self, other)
+
+    def __hash__(self):
+        return hash((self._prediction, Obstacle.__hash__(self)))
 
     @property
     def prediction(self) -> Union[Prediction, TrajectoryPrediction, SetBasedPrediction, None]:
@@ -478,6 +558,18 @@ class PhantomObstacle(IDrawable):
         self.prediction: SetBasedPrediction = prediction
         self.obstacle_role: ObstacleRole = ObstacleRole.Phantom
 
+    def __eq__(self, other):
+        if not isinstance(other, PhantomObstacle):
+            warnings.warn(f"Inequality between PhantomObstacle {repr(self)} and different type {type(other)}")
+            return False
+
+        obstacle_eq = self.obstacle_id == other.obstacle_id and self.prediction == other.prediction
+
+        return obstacle_eq
+
+    def __hash__(self):
+        return hash((self.obstacle_id, self._prediction))
+
     @property
     def prediction(self) -> Union[SetBasedPrediction, None]:
         """ Prediction describing the movement of the dynamic obstacle over time."""
@@ -570,6 +662,19 @@ class EnvironmentObstacle(IDrawable):
         self.obstacle_role: ObstacleRole = ObstacleRole.ENVIRONMENT
         self.obstacle_type: ObstacleType = obstacle_type
         self.obstacle_shape: Shape = obstacle_shape
+
+    def __eq__(self, other):
+        if not isinstance(other, EnvironmentObstacle):
+            warnings.warn(f"Inequality between EnvironmentObstacle {repr(self)} and different type {type(other)}")
+            return False
+
+        obstacle_eq = self._obstacle_id == other.obstacle_id and self._obstacle_role == other.obstacle_role and \
+            self._obstacle_type == other.obstacle_type and self._obstacle_shape == other.obstacle_shape
+
+        return obstacle_eq
+
+    def __hash__(self):
+        return hash((self._obstacle_id, self._obstacle_role, self._obstacle_type, self._obstacle_shape))
 
     @property
     def obstacle_id(self) -> int:

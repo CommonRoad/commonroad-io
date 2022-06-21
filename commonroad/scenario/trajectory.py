@@ -1,4 +1,5 @@
 import copy
+import warnings
 from typing import List, Union, Tuple, Optional
 import numpy as np
 
@@ -162,6 +163,42 @@ class State:
         for (field, value) in kwargs.items():
             setattr(self, field, value)
 
+    def __eq__(self, other):
+        if not isinstance(other, State):
+            warnings.warn(f"Inequality between State {repr(self)} and different type {type(other)}")
+            return False
+
+        for attr in State.__slots__:
+            value = None
+            value_other = None
+
+            has_attr = hasattr(self, attr)
+            if has_attr:
+                value = getattr(self, attr)
+
+            has_attr_other = hasattr(other, attr)
+            if has_attr_other:
+                value_other = getattr(other, attr)
+
+            if isinstance(value, np.ndarray):
+                value = np.array2string(np.around(value.astype(float), 10), precision=10)
+
+            if isinstance(value_other, np.ndarray):
+                value_other = np.array2string(np.around(value_other.astype(float), 10), precision=10)
+
+            if has_attr != has_attr_other or value != value_other:
+                return False
+
+        return True
+
+    def __hash__(self):
+        values = set()
+        for attr in State.__slots__:
+            if hasattr(self, attr):
+                values.add(getattr(self, attr))
+
+        return hash(frozenset(values))
+
     def translate_rotate(self, translation: np.ndarray, angle: float) -> 'State':
         """ First translates the state, and then rotates the state around the origin.
 
@@ -272,6 +309,16 @@ class Trajectory(IDrawable):
         """
         self.initial_time_step: int = initial_time_step
         self.state_list: List[State] = state_list
+
+    def __eq__(self, other):
+        if not isinstance(other, Trajectory):
+            warnings.warn(f"Inequality between Trajectory {repr(self)} and different type {type(other)}")
+            return False
+
+        return self._initial_time_step == other.initial_time_step and self._state_list == other.state_list
+
+    def __hash__(self):
+        return hash((self._initial_time_step, self._state_list))
 
     @property
     def initial_time_step(self) -> int:

@@ -3,7 +3,6 @@ import enum
 from typing import *
 
 import numpy as np
-from shapely.geometry import MultiPolygon as ShapelyMultiPolygon
 from shapely.geometry import Point as ShapelyPoint
 from shapely.geometry import Polygon as ShapelyPolygon
 from shapely.strtree import STRtree
@@ -493,9 +492,8 @@ class Lanelet:
     @predecessor.setter
     def predecessor(self, predecessor: list):
         assert (is_list_of_natural_numbers(predecessor) and len(
-            predecessor) >= 0), '<Lanelet/predecessor>: Provided list of predecessors is not valid! predecessors = {' \
-                                '}'.format(
-            predecessor)
+            predecessor) >= 0), \
+            '<Lanelet/predecessor>: Provided list of predecessors is not valid! predecessors = {}'.format(predecessor)
         self._predecessor = predecessor
 
     @property
@@ -607,10 +605,8 @@ class Lanelet:
     @user_bidirectional.setter
     def user_bidirectional(self, user_bidirectional: Set[RoadUser]):
         assert isinstance(user_bidirectional, set) and all(isinstance(elem, RoadUser) for elem in
-                                                           user_bidirectional), '<Lanelet/user_bidirectional>: ' \
-                                                                                'Provided type is not valid! type = {' \
-                                                                                '}'.format(
-            type(user_bidirectional))
+                                                           user_bidirectional), \
+            '<Lanelet/user_bidirectional>: Provided type is not valid! type = {}'.format(type(user_bidirectional))
         self._user_bidirectional = user_bidirectional
 
     @property
@@ -1406,7 +1402,6 @@ class LaneletNetwork(IDrawable):
         Adds a lanelet to the LaneletNetwork
 
         :param lanelet: The lanelet to add
-        :param eps: The size increase of the buffered polygons
         :param rtree: Boolean indicating whether rtree should be initialized
         :return: True if the lanelet has successfully been added to the network, false otherwise
         """
@@ -1481,7 +1476,7 @@ class LaneletNetwork(IDrawable):
 
     def add_intersection(self, intersection: Intersection):
         """
-        Adds a intersection to the LaneletNetwork
+        Adds an intersection to the LaneletNetwork
 
         :param intersection: The intersection to add
         :return: True if the traffic light has successfully been added to the network, false otherwise

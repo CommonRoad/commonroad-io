@@ -1,5 +1,6 @@
 import abc
 import math
+import warnings
 from typing import Union, List, Dict, Set, Optional, Tuple
 import numpy as np
 
@@ -36,6 +37,16 @@ class Occupancy(IDrawable):
         """
         self.time_step: Union[int, Interval] = time_step
         self.shape: Shape = shape
+
+    def __eq__(self, other):
+        if not isinstance(other, Occupancy):
+            warnings.warn(f"Inequality between Occupancy {repr(self)} and different type {type(other)}")
+            return False
+
+        return self._time_step == other.time_step and self._shape == other.shape
+
+    def __hash__(self):
+        return hash((self._time_step, self._shape))
 
     @property
     def shape(self) -> Union[Shape, Rectangle, Circle, Polygon, ShapeGroup]:
@@ -96,6 +107,19 @@ class Prediction:
         """
         self.initial_time_step: int = initial_time_step
         self.occupancy_set: List[Occupancy] = occupancy_set
+
+    def __eq__(self, other):
+        if not isinstance(other, Prediction):
+            warnings.warn(f"Inequality between Prediction {repr(self)} and different type {type(other)}")
+            return False
+
+        prediction_eq = self._initial_time_step == other.initial_time_step and \
+            self._occupancy_set == other.occupancy_set
+
+        return prediction_eq
+
+    def __hash__(self):
+        return hash((self._initial_time_step, frozenset(self._occupancy_set)))
 
     @property
     def initial_time_step(self) -> int:
@@ -171,6 +195,16 @@ class SetBasedPrediction(Prediction):
         """
         Prediction.__init__(self, initial_time_step, occupancy_set)
 
+    def __eq__(self, other):
+        if not isinstance(other, SetBasedPrediction):
+            warnings.warn(f"Inequality between SetBasedPrediction {repr(self)} and different type {type(other)}")
+            return False
+
+        return Prediction.__hash__(self)
+
+    def __hash__(self):
+        return Prediction.__hash__(self)
+
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ Translates and rotates the occupancy set.
 
@@ -200,6 +234,36 @@ class TrajectoryPrediction(Prediction):
         self.shape_lanelet_assignment: Dict[int, Set[int]] = shape_lanelet_assignment
         self.center_lanelet_assignment: Dict[int, Set[int]] = center_lanelet_assignment
         Prediction.__init__(self, self._trajectory.initial_time_step, self._create_occupancy_set())
+
+    def __eq__(self, other):
+        if not isinstance(other, TrajectoryPrediction):
+            warnings.warn(f"Inequality between TrajectoryPrediction {repr(self)} and different type {type(other)}")
+            return False
+
+        center_lanelet_assignment = None if self._center_lanelet_assignment is None \
+            else dict((key, list(value)) for key, value in self._center_lanelet_assignment.items()).items()
+        center_lanelet_assignment_other = None if other._center_lanelet_assignment is None \
+            else dict((key, list(value)) for key, value in other._center_lanelet_assignment.items()).items()
+
+        shape_lanelet_assignment = None if self._shape_lanelet_assignment is None \
+            else dict((key, list(value)) for key, value in self._shape_lanelet_assignment.items()).items()
+        shape_lanelet_assignment_other = None if other._shape_lanelet_assignment is None \
+            else dict((key, list(value)) for key, value in other._shape_lanelet_assignment.items()).items()
+
+        prediction_eq = self._trajectory == other.trajectory and self._shape == other.shape and \
+            center_lanelet_assignment == center_lanelet_assignment_other and \
+            shape_lanelet_assignment == shape_lanelet_assignment_other and Prediction.__eq__(self, other)
+
+        return prediction_eq
+
+    def __hash__(self):
+        center_lanelet_assignment = None if self._center_lanelet_assignment is None \
+            else dict((key, list(value)) for key, value in self._center_lanelet_assignment.items()).items()
+        shape_lanelet_assignment = None if self._shape_lanelet_assignment is None \
+            else dict((key, list(value)) for key, value in self._shape_lanelet_assignment.items()).items()
+
+        return hash((self._trajectory, self._shape, center_lanelet_assignment, shape_lanelet_assignment,
+                     Prediction.__hash__(self)))
 
     @property
     def shape(self) -> Shape:

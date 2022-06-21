@@ -8,6 +8,7 @@
 - Function for getting most likely lanelet given an obstacle state
 - Function for erasing lanelet network from scenario
 - Function for replacing lanelet network of a scenario with new one
+- Support for Protobuf format
 
 ### Changed
 

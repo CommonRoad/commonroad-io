@@ -43,6 +43,22 @@ class GoalRegion(IDrawable):
         self.state_list = state_list
         self.lanelets_of_goal_position = lanelets_of_goal_position
 
+    def __eq__(self, other):
+        if not isinstance(other, GoalRegion):
+            warnings.warn(f"Inequality between GoalRegion {repr(self)} and different type {type(other)}")
+            return False
+
+        lanelets_of_goal_position = None if self.lanelets_of_goal_position is None \
+            else self.lanelets_of_goal_position.items()
+        lanelets_of_goal_position_other = None if other.lanelets_of_goal_position is None \
+            else other.lanelets_of_goal_position.items()
+        return self.state_list == other.state_list and lanelets_of_goal_position == lanelets_of_goal_position_other
+
+    def __hash__(self):
+        lanelets_of_goal_position = None if self.lanelets_of_goal_position is None \
+            else self.lanelets_of_goal_position.items()
+        return hash((self.state_list, lanelets_of_goal_position))
+
     @property
     def state_list(self) -> List[State]:
         """List that contains all goal states"""

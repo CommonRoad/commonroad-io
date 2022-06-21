@@ -3,6 +3,7 @@ import unittest
 
 from commonroad import SCENARIO_VERSION
 from commonroad.common.file_reader import CommonRoadFileReader
+from commonroad.common.file_writer import FileFormat
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
 from commonroad.prediction.prediction import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
@@ -15,7 +16,7 @@ from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, Tr
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 
 
-class TestFileReader(unittest.TestCase):
+class TestXMLFileReader(unittest.TestCase):
     def setUp(self):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
         self.filename_all = self.cwd_path + '/../test_scenarios/test_reading_all.xml'
@@ -824,6 +825,52 @@ class TestFileReader(unittest.TestCase):
     #     for scenario in os.listdir(hand_crafted_2018b):
     #         full_path = hand_crafted_2018b + "/" + scenario
     #         CommonRoadFileReader(full_path).open(lanelet_assignment=True)
+
+
+class TestProtobufFileReader(unittest.TestCase):
+
+    def setUp(self):
+        self.cwd_path = os.path.dirname(os.path.abspath(__file__))
+        self.out_path = self.cwd_path + "/../.pytest_cache"
+        self.filename_all_xml = self.cwd_path + "/../test_scenarios/test_reading_all.xml"
+        self.filename_carcarana_xml = self.cwd_path + "/../test_scenarios/ARG_Carcarana-4_5_T-1.xml"
+        self.filename_starnberg_xml = self.cwd_path + "/../test_scenarios/DEU_Starnberg-1_1_T-1.xml"
+        self.filename_anglet_xml = self.cwd_path + "/../test_scenarios/FRA_Anglet-1_1_T-1.xml"
+        self.filename_all_pb = self.cwd_path + "/../test_scenarios/test_reading_all.pb"
+        self.filename_carcarana_pb = self.cwd_path + "/../test_scenarios/ARG_Carcarana-4_5_T-1.pb"
+        self.filename_starnberg_pb = self.cwd_path + "/../test_scenarios/DEU_Starnberg-1_1_T-1.pb"
+        self.filename_anglet_pb = self.cwd_path + "/../test_scenarios/FRA_Anglet-1_1_T-1.pb"
+
+    def test_open(self):
+        self.assertTrue(read_compare(self.filename_all_xml, self.filename_all_pb))
+
+        self.assertTrue(read_compare(self.filename_carcarana_xml, self.filename_carcarana_pb))
+
+        self.assertTrue(read_compare(self.filename_starnberg_xml, self.filename_starnberg_pb))
+
+        self.assertTrue(read_compare(self.filename_anglet_xml, self.filename_anglet_pb))
+
+    def test_open_lanelet_network(self):
+        lanelet_network_xml = CommonRoadFileReader(self.filename_all_xml, FileFormat.XML).open_lanelet_network()
+        lanelet_network_pb = CommonRoadFileReader(self.filename_all_pb, FileFormat.PROTOBUF).open_lanelet_network()
+
+        self.assertEqual(lanelet_network_xml, lanelet_network_pb)
+
+
+def read_compare(xml_file_path: str, pb_file_path: str) -> bool:
+    scenario_xml, planning_problem_set_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()
+    scenario_pb, planning_problem_set_pb = CommonRoadFileReader(pb_file_path, FileFormat.PROTOBUF).open()
+
+    no_lanelet_assignment_cmp = scenario_xml == scenario_pb and planning_problem_set_xml == planning_problem_set_pb
+
+    scenario_xml, planning_problem_set_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML) \
+        .open(lanelet_assignment=True)
+    scenario_pb, planning_problem_set_pb = CommonRoadFileReader(pb_file_path, FileFormat.PROTOBUF) \
+        .open(lanelet_assignment=True)
+
+    with_lanelet_assignment_cmp = scenario_xml == scenario_pb and planning_problem_set_xml == planning_problem_set_pb
+
+    return no_lanelet_assignment_cmp and with_lanelet_assignment_cmp
 
 
 if __name__ == '__main__':

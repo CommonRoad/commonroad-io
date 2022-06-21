@@ -22,7 +22,7 @@ style_checks:
   stage: style_check
   script:
     - pip install pycodestyle
-    - git  diff ${CI_COMMIT_BEFORE_SHA}...${CI_COMMIT_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff
+    - git  diff ${CI_COMMIT_BEFORE_SHA}...${CI_COMMIT_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff --exclude=./commonroad/scenario_definition/*
   except:
   - merge_requests
   allow_failure: true
@@ -31,7 +31,7 @@ style_check_merge_result:
   stage: style_check
   script:
     - pip install pycodestyle
-    - git  diff ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA}...${CI_MERGE_REQUEST_SOURCE_BRANCH_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff
+    - git  diff ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA}...${CI_MERGE_REQUEST_SOURCE_BRANCH_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff --exclude=./commonroad/scenario_definition/*
   only:
   - merge_requests
 
