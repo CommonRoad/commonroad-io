@@ -17,21 +17,24 @@ import sys
 import select
 
 # generate path of the file to be opened
-# file_path = "USA_Lanker-1_1_T-1.xml"
+#file_path = "USA_Lanker-1_1_T-1.xml"
 # file_path = "ZAM_Tutorial-1_1_T-1.xml"
 file_path = "ZAM_Tutorial-1_2_T-1.xml"
-# file_path="BEL_Beringen-3_5_I-1-1.cr.xml"
-
+#file_path="BEL_Beringen-3_5_I-1-1.cr.xml"
+#file_path="DEU_Gar-2_1_T-1.xml"
 
 # read in the scenario and planning problem set
 scenario, planning_problem_set = CommonRoadFileReader(file_path).open()
 
 v = visual(scenario, planning_problem_set)
 v.init_show()
-# v.show()
+#v.show()
+
+
 
 
 i = 0
+
 
 while True:
     input = select.select([sys.stdin], [], [], 0.1)[0]
@@ -67,13 +70,32 @@ while True:
             v.drone.up()
         elif (value == "/"):
             v.drone.down()
+        elif (value == "w"):
+            v.drone.go_powerline()
+            for j in range(len(v.drone.path)):
+                for i in range(len(v.drone.position)):
+                    v.drone.position[i] = v.drone.path[-j][i]
+                v.auto_set_lim()
+                v.show_at_time(j)
+                v.drone.new_drone()
     else:
         v.auto_set_lim()
         v.show_at_time(i)
         v.drone.new_drone()
 
-"""
 
+
+"""
+j=0
+while True:
+
+    j+=1
+    if j<len(v.drone.path):
+        
+
+
+"""
+"""
 
 # plot the planning problem and the scenario for the fifth time step
 plt.figure(figsize=(25, 10))
@@ -82,5 +104,5 @@ scenario.draw(rnd, draw_params={'time_begin': 9})
 planning_problem_set.draw(rnd)
 rnd.render()
 plt.show()
-
 """
+

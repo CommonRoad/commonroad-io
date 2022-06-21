@@ -7,6 +7,8 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from commonroad.scenario.scenario import Scenario
 import numpy as np
 from drone import drone3d
+from powerline import poweline
+import math
 
 
 class visual():
@@ -34,7 +36,9 @@ class visual():
         self.zoom_factor = 5
         self.midx = (self.xmin + self.xmax) / 2
         self.midy = (self.ymin + self.ymax) / 2
-        self.bridge_flag = 1
+        self.bridge_flag =1
+        self.tree_flag = 1
+        self.powerline_flag=1
 
         if self.bridge_flag:
             self.bridge = []
@@ -50,9 +54,16 @@ class visual():
             self.get_staic(i)
 
         self.auto_set_lim()
-        self.get_tree(15, 15, 12)
+        if self.tree_flag:
+            self.get_tree(24, -8, 8)
+            self.get_tree(27, -10, 8)
+            self.get_tree(24, -14, 8)
+        if self.powerline_flag:
+            self.list_powerline = []
+            self.get_powerline()
 
-        self.drone = drone3d(self.ax, self.fig, self.list_obstacle)
+
+        self.drone = drone3d(self.ax, self.fig, self.list_obstacle,self.list_powerline)
 
         plt.ion()
         plt.show()
@@ -563,6 +574,52 @@ class visual():
         return list_list_patches
 
 
+    def get_powerline(self):
+        nb_towers=10
+        acurate=10
+        alpha=30
+        biglist=[]
+        for i in range(nb_towers):
+            poweline(self.ax,fctx(i),fcty(i),fctx(i+1),fcty(i+1),self.list_obstacle)
+
+        for i in range(nb_towers):
+            distance= math.pow(abs(fctx(i)-fctx(i+1))**2+abs(fcty(i)-fcty(i+1))**2,0.5)
+            list=[]
+            o=3.1415
+            if fctx(i)-fctx(i+1):
+                o=math.atan((fcty(i)-fcty(i+1))/(fctx(i)-fctx(i+1)))+3.1415/2
+            for y in range(acurate+1):
+                x=-distance/2+y*distance/acurate
+
+
+                list.append((0.5, x , alpha*math.cosh(x/alpha)-alpha*math.cosh(distance/2/alpha)+6))#6 = top powerline
+            for y in range(acurate+1):
+                x=distance/2-y*distance/acurate
+
+
+                list.append((-0.5, x , alpha*math.cosh(x/alpha)-alpha*math.cosh(distance/2/alpha)+6))#6 = top powerline
+
+
+            list = rotation_z(o, list)
+            list = add_center((fctx(i)+fctx(i+1))/2, (fcty(i)+fcty(i+1))/2, list)
+            biglist.append(list)
+            colors = ["tab:blue" for patch in list]
+        for list in biglist:
+            for shape in list:
+                for tuple in shape:
+                    self.list_powerline.append(tuple)
+            patchcollection = Poly3DCollection(list, linewidth=0.3, edgecolor="k", facecolor=colors, rasterized=True,
+                                                   zorder=10,alpha=0)
+            self.ax.add_collection3d(patchcollection)
+
+
+
+def fctx(i):
+    return 30
+def fcty(i):
+    return -87+20*i
+
+
 def rotation_z(o, liste: list):
     list_tempo = []
     for i in range(len(liste)):
@@ -590,7 +647,7 @@ def rotation_y(o, liste: list):
 def add_center(x: float, y: float, list: list):
     list_tempo = []
     list_ret = []
-    for i in range(4):
+    for i in range(len(list)):
         list_tempo.append((list[i][0] + x, list[i][1] + y, list[i][2]))
         list_ret.append(list_tempo)
     return list_ret
