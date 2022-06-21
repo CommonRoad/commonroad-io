@@ -5,9 +5,9 @@ package commonroad;
 message Incoming {
     required uint32 incoming_id = 1;
     repeated uint32 incoming_lanelets = 2;
-    repeated uint32 right_outgoings = 3;
-    repeated uint32 straight_outgoings = 4;
-    repeated uint32 left_outgoings = 5;
+    repeated uint32 successors_right = 3;
+    repeated uint32 successors_straight = 4;
+    repeated uint32 successors_left = 5;
     optional uint32 is_left_of = 6;
 }
 

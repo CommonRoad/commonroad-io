@@ -315,10 +315,10 @@ class LaneletMessage:
             lanelet_msg.lanelet_types.append(lanelet_pb2.LaneletTypeEnum.LaneletType.Value(lanelet_type.name))
 
         for user_one_way in lanelet.user_one_way:
-            lanelet_msg.user_one_ways.append(lanelet_pb2.RoadUserEnum.RoadUser.Value(user_one_way.name))
+            lanelet_msg.user_one_way.append(lanelet_pb2.RoadUserEnum.RoadUser.Value(user_one_way.name))
 
         for user_bidirectional in lanelet.user_bidirectional:
-            lanelet_msg.user_bidirectionals.append(lanelet_pb2.RoadUserEnum.RoadUser.Value(user_bidirectional.name))
+            lanelet_msg.user_bidirectional.append(lanelet_pb2.RoadUserEnum.RoadUser.Value(user_bidirectional.name))
 
         for ts_ref in lanelet.traffic_signs:
             lanelet_msg.traffic_sign_refs.append(ts_ref)
@@ -520,14 +520,14 @@ class IncomingMessage:
         for incoming_lanelet in incoming.incoming_lanelets:
             incoming_msg.incoming_lanelets.append(incoming_lanelet)
 
-        for right_outgoing in incoming.successors_right:
-            incoming_msg.right_outgoings.append(right_outgoing)
+        for successor_right in incoming.successors_right:
+            incoming_msg.successors_right.append(successor_right)
 
-        for straight_outgoing in incoming.successors_straight:
-            incoming_msg.straight_outgoings.append(straight_outgoing)
+        for successor_straight in incoming.successors_straight:
+            incoming_msg.successors_straight.append(successor_straight)
 
-        for left_outgoing in incoming.successors_left:
-            incoming_msg.left_outgoings.append(left_outgoing)
+        for successor_left in incoming.successors_left:
+            incoming_msg.successors_left.append(successor_left)
 
         if incoming.left_of is not None:
             incoming_msg.is_left_of = incoming.left_of

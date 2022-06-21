@@ -279,12 +279,12 @@ class LaneletFactory:
         lanelet.lanelet_type = lanelet_types
 
         user_one_ways = set()
-        for user_one_way in lanelet_msg.user_one_ways:
+        for user_one_way in lanelet_msg.user_one_way:
             user_one_ways.add(RoadUser[lanelet_pb2.RoadUserEnum.RoadUser.Name(user_one_way)])
         lanelet.user_one_way = user_one_ways
 
         user_bidirectionals = set()
-        for user_bidirectional in lanelet_msg.user_bidirectionals:
+        for user_bidirectional in lanelet_msg.user_bidirectional:
             user_bidirectionals.add(RoadUser[lanelet_pb2.RoadUserEnum.RoadUser.Name(user_bidirectional)])
         lanelet.user_bidirectional = user_bidirectionals
 
@@ -480,9 +480,9 @@ class IncomingFactory:
         incoming = IntersectionIncomingElement(incoming_msg.incoming_id)
 
         incoming.incoming_lanelets = set(incoming_msg.incoming_lanelets)
-        incoming.successors_right = set(incoming_msg.right_outgoings)
-        incoming.successors_straight = set(incoming_msg.straight_outgoings)
-        incoming.successors_left = set(incoming_msg.left_outgoings)
+        incoming.successors_right = set(incoming_msg.successors_right)
+        incoming.successors_straight = set(incoming_msg.successors_straight)
+        incoming.successors_left = set(incoming_msg.successors_left)
 
         if incoming_msg.HasField('is_left_of'):
             incoming.left_of = incoming_msg.is_left_of
