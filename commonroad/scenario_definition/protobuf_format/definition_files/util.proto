@@ -1,0 +1,77 @@
+syntax = "proto2";
+
+package commonroad;
+
+message Point {
+    required double x = 1;
+    required double y = 2;
+}
+
+message Rectangle {
+    required double length = 1;
+    required double width = 2;
+    optional Point center = 3;
+    optional double orientation = 4;
+}
+
+message Circle {
+    required double radius = 1;
+    optional Point center = 2;
+}
+
+message Polygon {
+    repeated Point vertices = 1;
+}
+
+message ShapeGroup {
+    repeated Shape shapes = 1;
+}
+
+message Shape {
+    oneof shape {
+        Rectangle rectangle = 1;
+        Circle circle = 2;
+        Polygon polygon = 3;
+        ShapeGroup shape_group = 4;
+    }
+}
+
+message IntegerInterval {
+    required int32 start = 1;
+    required int32 end = 2;
+}
+
+message FloatInterval {
+    required double start = 1;
+    required double end = 2;
+}
+
+message IntegerExactOrInterval {
+    oneof exact_or_interval {
+        int32 exact = 1;
+        IntegerInterval interval = 2;
+    }
+}
+
+message FloatExactOrInterval {
+    oneof exact_or_interval {
+        double exact = 1;
+        FloatInterval interval = 2;
+    }
+}
+
+message IntegerList {
+    repeated int32 values = 1;
+}
+
+message FloatList {
+    repeated int32 values = 1;
+}
+
+message TimeStamp {
+    optional uint32 year = 1;
+    optional uint32 month = 2;
+    optional uint32 day = 3;
+    optional uint32 hour = 4;
+    optional uint32 minute = 5;
+}
