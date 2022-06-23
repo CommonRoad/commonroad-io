@@ -7,7 +7,7 @@ this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, 'README.rst'), encoding='utf-8') as f:
     readme = f.read()
 
-setup(name='commonroad-io', version='2021.4',
+setup(name='commonroad-io', version='2022.1',
       description='Python tool to read, write, and visualize CommonRoad scenarios and solutions for automated '
                   'vehicles.',
       keywords='autonomous automated vehicles driving motion planning', url='https://commonroad.in.tum.de/',
@@ -34,8 +34,14 @@ setup(name='commonroad-io', version='2021.4',
       },
       long_description_content_type='text/x-rst',
       long_description=readme,
-      classifiers=["Programming Language :: Python :: 3.6", "License :: OSI Approved :: BSD License",
-                   "Operating System :: POSIX :: Linux", "Operating System :: MacOS", ],
+      classifiers=["Programming Language :: Python :: 3.7",
+                   "Programming Language :: Python :: 3.8",
+                   "Programming Language :: Python :: 3.9",
+                   "Programming Language :: Python :: 3.10",
+                   "License :: OSI Approved :: BSD License",
+                   "Operating System :: POSIX :: Linux",
+                   "Operating System :: MacOS",
+                   "Operating System :: Microsoft :: Windows"],
       data_files=[('.', ['LICENSE.txt'])],
       include_package_data=True,
       )
