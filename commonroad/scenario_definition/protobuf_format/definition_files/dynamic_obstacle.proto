@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package commonroad;
+
+import "obstacle.proto";
+import "util.proto";
+
+message DynamicObstacle {
+    required uint32 dynamic_obstacle_id = 1;
+    required ObstacleTypeEnum.ObstacleType obstacle_type = 2;
+    required Shape shape = 3;
+    required State initial_state = 4;
+    oneof prediction {
+        TrajectoryPrediction trajectory_prediction = 5;
+        SetBasedPrediction set_based_prediction = 6;
+    }
+    optional SignalState initial_signal_state = 7;
+    repeated SignalState signal_series = 8;
+}

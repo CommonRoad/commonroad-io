@@ -69,6 +69,24 @@ class Rectangle(Shape):
         self._vertices: np.ndarray = None
         self.__shapely_polygon: shapely.geometry.Polygon = None
 
+    def __eq__(self, other):
+        if not isinstance(other, Rectangle):
+            warnings.warn(f"Inequality between Rectangle {repr(self)} and different type {type(other)}")
+            return False
+
+        center_string = np.array2string(np.around(self._center.astype(float), 10), precision=10)
+        center_other_string = np.array2string(np.around(other.center.astype(float), 10), precision=10)
+
+        return self._length == other.length and self._width == other.width and \
+            center_string == center_other_string and self._orientation == other.orientation
+
+    def __hash__(self):
+        center_string = None
+        if self._center is not None:
+            center_string = np.array2string(np.around(self._center.astype(float), 10), precision=10)
+
+        return hash((self._length, self._width, center_string, self._orientation))
+
     @property
     def _shapely_polygon(self) -> shapely.geometry.Polygon:
         if self.__shapely_polygon is None:
@@ -87,12 +105,7 @@ class Rectangle(Shape):
 
     @length.setter
     def length(self, length: float):
-        if not hasattr(self, '_length'):
-            assert is_real_number(length), '<Rectangle/length>: argument "length" is not valid. length = {}'.format(
-                    length)
-            self._length = length
-        else:
-            warnings.warn('<Rectangle/length>: length of rectangle is immutable.')
+        self._length = length
 
     @property
     def width(self) -> float:
@@ -101,11 +114,7 @@ class Rectangle(Shape):
 
     @width.setter
     def width(self, width: float):
-        if not hasattr(self, '_width'):
-            assert is_real_number(width), '<Rectangle/width>: argument "width" is not valid. width = {}'.format(width)
-            self._width = width
-        else:
-            warnings.warn('<Rectangle/width>: width of rectangle is immutable.')
+        self._width = width
 
     @property
     def center(self) -> np.ndarray:
@@ -115,12 +124,9 @@ class Rectangle(Shape):
 
     @center.setter
     def center(self, center: np.ndarray):
-        if not hasattr(self, '_center'):
-            assert is_real_number_vector(center, 2), '<Rectangle/center>: argument "center" is not a vector ' \
-                                                     'of real numbers of length 2. center = {}'.format(center)
-            self._center = center
-        else:
-            warnings.warn('<Rectangle/center>: center of rectangle is immutable.')
+        assert is_real_number_vector(center, 2), '<Rectangle/center>: argument "center" is not a vector ' \
+                                                 'of real numbers of length 2. center = {}'.format(center)
+        self._center = center
 
     @property
     def orientation(self) -> float:
@@ -130,12 +136,9 @@ class Rectangle(Shape):
 
     @orientation.setter
     def orientation(self, orientation: float):
-        if not hasattr(self, '_orientation'):
-            assert is_valid_orientation(orientation), '<Rectangle/orientation>: argument "orientation" is not valid. ' \
-                                                      'orientation = {}'.format(orientation)
-            self._orientation = orientation
-        else:
-            warnings.warn('<Rectangle/orientation>: orientation of rectangle is immutable.')
+        assert is_valid_orientation(orientation), '<Rectangle/orientation>: argument "orientation" is not valid. ' \
+                                                  'orientation = {}'.format(orientation)
+        self._orientation = orientation
 
     @property
     def vertices(self) -> np.ndarray:
@@ -227,6 +230,23 @@ class Circle(Shape):
         self._shapely_circle: shapely.geometry = \
             shapely.geometry.Point(self.center[0], self.center[1]).buffer(radius / 2)
 
+    def __eq__(self, other):
+        if not isinstance(other, Circle):
+            warnings.warn(f"Inequality between Circle {repr(self)} and different type {type(other)}")
+            return False
+
+        center_string = np.array2string(np.around(self._center.astype(float), 10), precision=10)
+        center_other_string = np.array2string(np.around(other.center.astype(float), 10), precision=10)
+
+        return self._radius == other.radius and center_string == center_other_string
+
+    def __hash__(self):
+        center_string = None
+        if self._center is not None:
+            center_string = np.array2string(np.around(self._center.astype(float), 10), precision=10)
+
+        return hash((self._radius, center_string))
+
     @property
     def radius(self) -> float:
         """ The radius of the circle."""
@@ -234,12 +254,7 @@ class Circle(Shape):
 
     @radius.setter
     def radius(self, radius: float):
-        if not hasattr(self, '_radius'):
-            assert is_real_number(radius), '<Rectangle/radius>: argument "radius" is not a real number. ' \
-                                           'radius = {}'.format(radius)
-            self._radius = radius
-        else:
-            warnings.warn('<Rectangle/radius>: radius of circle is immutable.')
+        self._radius = radius
 
     @property
     def center(self) -> np.ndarray:
@@ -249,12 +264,7 @@ class Circle(Shape):
 
     @center.setter
     def center(self, center: np.ndarray):
-        if not hasattr(self, '_center'):
-            assert is_real_number_vector(center, 2), '<Circle/center>: argument "center" is not a vector ' \
-                                                     'of real numbers of length 2. center = {}'.format(center)
-            self._center = center
-        else:
-            warnings.warn('<Circle/center>: center of circle is immutable.')
+        self._center = center
 
     @property
     def shapely_object(self) -> shapely.geometry.Polygon:
@@ -326,12 +336,18 @@ class Polygon(Shape):
 
     def __eq__(self, other):
         if not isinstance(other, Polygon):
+            warnings.warn(f"Inequality between Polygon {repr(self)} and different type {type(other)}")
             return False
 
-        thresh = 1e-10
+        vertices_string = np.array2string(np.around(self._vertices.astype(float), 10), precision=10)
+        vertices_string_other = np.array2string(np.around(other._vertices.astype(float), 10), precision=10)
 
-        return np.allclose(self._vertices, other.vertices, rtol=thresh, atol=thresh) \
-            and self._shapely_polygon == other.shapely_object
+        return vertices_string == vertices_string_other
+
+    def __hash__(self):
+        vertices_string = np.array2string(np.around(self._vertices.astype(float), 10), precision=10)
+
+        return hash(vertices_string)
 
     @property
     def vertices(self) -> np.ndarray:
@@ -342,14 +358,9 @@ class Polygon(Shape):
 
     @vertices.setter
     def vertices(self, vertices: np.ndarray):
-        if not hasattr(self, '_vertices'):
-            assert is_valid_polyline(vertices), '<Polygon/vertices>: argument "vertices" is not valid. vertices = ' \
-                                                '{}'.format(vertices)
-            self._vertices = vertices
-            self._min = np.min(vertices, axis=0)
-            self._max = np.max(vertices, axis=0)
-        else:
-            warnings.warn('<Polygon/vertices>: vertices of polygon are immutable.')
+        self._vertices = vertices
+        self._min = np.min(vertices, axis=0)
+        self._max = np.max(vertices, axis=0)
 
     @property
     def center(self) -> np.ndarray:
@@ -430,6 +441,16 @@ class ShapeGroup(Shape):
         :param shapes: list of shapes
         """
         self.shapes = shapes
+
+    def __eq__(self, other):
+        if not isinstance(other, ShapeGroup):
+            warnings.warn(f"Inequality between ShapeGroup {repr(self)} and different type {type(other)}")
+            return False
+
+        return self._shapes == other.shapes
+
+    def __hash__(self):
+        return hash(frozenset(self._shapes))
 
     @property
     def shapes(self) -> List[Shape]:

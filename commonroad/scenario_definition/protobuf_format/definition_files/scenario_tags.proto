@@ -1,0 +1,40 @@
+syntax = "proto2";
+
+package commonroad;
+
+message TagEnum {
+    enum Tag {
+        INTERSTATE = 0;
+        URBAN = 1;
+        HIGHWAY = 2;
+        COMFORT = 3;
+        CRITICAL = 4;
+        EVASIVE = 5;
+        CUT_IN = 6;
+        ILLEGAL_CUTIN = 7;
+        INTERSECTION = 8;
+        LANE_CHANGE = 9;
+        LANE_FOLLOWING = 10;
+        MERGING_LANES = 11;
+        MULTI_LANE = 12;
+        ONCOMING_TRAFFIC = 13;
+        NO_ONCOMING_TRAFFIC = 14;
+        PARALLEL_LANES = 15;
+        RACE_TRACK = 16;
+        ROUNDABOUT = 17;
+        RURAL = 18;
+        SIMULATED = 19;
+        SINGLE_LANE = 20;
+        SLIP_ROAD = 21;
+        SPEED_LIMIT = 22;
+        TRAFFIC_JAM = 23;
+        TURN_LEFT = 24;
+        TURN_RIGHT = 25;
+        TWO_LANE = 26;
+        EMERGENCY_BRAKING = 27;
+    }
+}
+
+message ScenarioTags {
+    repeated TagEnum.Tag tags = 1;
+}
