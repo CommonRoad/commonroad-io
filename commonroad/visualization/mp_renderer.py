@@ -39,7 +39,7 @@ from commonroad.visualization.util import LineDataUnits, collect_center_line_col
 __author__ = "Luis Gressenbuch"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = [""]
-__version__ = "2022.1"
+__version__ = "2022.2"
 __maintainer__ = "Luis Gressenbuch"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"

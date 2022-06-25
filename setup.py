@@ -7,7 +7,7 @@ this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, 'README.rst'), encoding='utf-8') as f:
     readme = f.read()
 
-setup(name='commonroad-io', version='2022.1',
+setup(name='commonroad-io', version='2022.2',
       description='Python tool to read, write, and visualize CommonRoad scenarios and solutions for automated '
                   'vehicles.',
       keywords='autonomous automated vehicles driving motion planning', url='https://commonroad.in.tum.de/',
