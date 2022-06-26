@@ -156,7 +156,6 @@ class State:
         'acceleration_y',
         'jerk',
         'time_step',
-        'hitch',
     ]
 
     def __init__(self, **kwargs):
