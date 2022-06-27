@@ -9,6 +9,7 @@ import numpy as np
 from drone import drone3d
 from powerline import poweline
 import math
+from commonroad.scenario.obstacle import ObstacleType
 
 
 class visual():
@@ -36,8 +37,8 @@ class visual():
         self.zoom_factor = 5
         self.midx = (self.xmin + self.xmax) / 2
         self.midy = (self.ymin + self.ymax) / 2
-        self.bridge_flag =1
-        self.tree_flag = 1
+        self.bridge_flag =0
+        self.tree_flag = 0
         self.powerline_flag=1
 
         if self.bridge_flag:
@@ -72,7 +73,7 @@ class visual():
 
         for j in range(self.nb_car):
             for i in range(self.scenario.dynamic_obstacles[j].prediction.final_time_step):
-                for y in range(len(self.list_car[0][i][:])):
+                for y in range(len(self.list_car[j][i][:])):
                     self.list_car[j][i][y].set_alpha(0)
                     self.list_car[j][i][y].set_linewidth(0)
                     if self.bridge_flag:
@@ -81,7 +82,13 @@ class visual():
 
     def show(self):
         i = 0
-        self.ax.view_init(elev=20, azim=-20)
+
+        if self.drone.follow==1:
+
+            self.drone.ax.set_xlim([self.drone.position[0] - 5, self.drone.position[0] + 5])
+            self.drone.ax.set_ylim([self.drone.position[1] - 5, self.drone.position[1] + 5])
+            self.drone.ax.set_zlim([self.drone.position[2] - 5, self.drone.position[2] + 5])
+            self.drone.ax.view_init(elev=self.drone.elev, azim=180 + self.drone.orientation * 180 / 3.1415)
         while True:
             i += 1
             self.init_show()
@@ -272,16 +279,43 @@ class visual():
     def construction(self, scenario: Scenario, i: int) -> list:
 
         list_list_patches = []
+        flag_truck=False
+        flag_bus=False
+        if scenario.dynamic_obstacles[i].obstacle_type == ObstacleType.TRUCK:
+            flag_truck=True
+        if scenario.dynamic_obstacles[i].obstacle_type == ObstacleType.BUS:
+            flag_bus=True
+        beta = 0
+
+
         for t in range(self.scenario.dynamic_obstacles[i].prediction.final_time_step):
 
             shape = scenario.dynamic_obstacles[i].occupancy_at_time(t).shape
             roof = self.top * 2
             top = self.top
+            if flag_bus:
+                top=top*2
             bottom = self.bottom
             length = shape.length
             width = shape.width
             biglist = []
             o = shape.orientation
+            if flag_truck:
+                alpha=0
+                length = shape.length
+                width = shape.width
+                l1=shape.length*3/25
+                m1=shape.length/25
+                l2=shape.length*4/5
+                v=1
+                if t<self.scenario.dynamic_obstacles[i].prediction.final_time_step-1:
+                    alpha=(shape.orientation-scenario.dynamic_obstacles[i].occupancy_at_time(t+1).shape.orientation)*1.5
+                beta_point = v * ((np.tan(alpha) / l1) - (np.sin(beta) / l2) + ((m1 * np.cos(beta) * np.tan(alpha)) / (l1 * l2)))
+                xabso = - length/5/2
+                yabso = 0
+                beta = beta_point+beta
+                length=length/5
+
             ########################################################################################################################
 
             list = [  # underneath
@@ -404,7 +438,26 @@ class visual():
             ########################################################################################################################
             """
 
+            ########################################################################################################################
+            if flag_truck:
+                length=length*4
+                list = [  # underneath
+                    (- length * 1, - width * 0.5, bottom), (- length * 1, + width * 0.5, bottom),
+                    (+ length * 0, + width * 0.5, bottom), (+ length * 0, - width * 0.5, bottom)]
+
+
+                x= xabso * np.cos(beta+o) - yabso * np.sin(beta+o)
+                y= xabso * np.sin(beta+o) + yabso * np.cos(beta+o)
+
+                list = rotation_z(beta+o, list)
+                list = add_center(x+shape.center[0], y+shape.center[1], list)
+                biglist.append(list)
+
             colors = ["tab:blue" for patch in list]
+            if flag_truck:
+                colors = ["tab:orange" for patch in list]
+            if flag_bus:
+                colors = ["tab:red" for patch in list]
             list_patchcollection = []
             for list in biglist:
                 patchcollection = Poly3DCollection(list, linewidth=0, edgecolor="k", facecolor=colors, rasterized=True,
@@ -572,6 +625,8 @@ class visual():
             list_list_patches.append(list_patchcollection)
 
         return list_list_patches
+
+
 
 
     def get_powerline(self):

@@ -19,17 +19,19 @@ class drone3d():
 
         self.fig = fig
         self.ax = ax
-        self.orientation = 0
-        self.speed = 0.5
-        self.position = [18, -11, 8]
+        self.orientation =0
+        self.speed = 2
+        self.position = [-110, 470, 250]
         self.length = 1
         self.list_obstacle = obstacle
         self.width = 1
         self.r = 0.33
+        self.elev=90
         self.list_patchcollection = []
-        self.follow = 0
+        self.follow = 1
         self.list_poweline = list_poweline
         self.state_know=[]
+
 
         self.flag_detect = 0
 
@@ -39,10 +41,11 @@ class drone3d():
 
     def new_drone(self):
         if self.follow % 2:
-            self.ax.view_init(elev=10, azim=180 + self.orientation * 180 / 3.1415)
             self.ax.set_xlim([self.position[0] - 5, self.position[0] + 5])
             self.ax.set_ylim([self.position[1] - 5, self.position[1] + 5])
             self.ax.set_zlim([self.position[2] - 5, self.position[2] + 5])
+            self.ax.view_init(elev=self.elev, azim=180 + self.orientation * 180 / 3.1415)
+
         self.construction()
         self.detect()
         plt.pause(0.01)

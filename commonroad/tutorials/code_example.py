@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.visualization.mp_renderer import MPRenderer
 from visual3d import *
+from commonroad.scenario.obstacle import ObstacleType
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -18,24 +19,21 @@ import select
 
 # generate path of the file to be opened
 #file_path = "USA_Lanker-1_1_T-1.xml"
-# file_path = "ZAM_Tutorial-1_1_T-1.xml"
-file_path = "ZAM_Tutorial-1_2_T-1.xml"
+#file_path="ARG_Carcarana-10_4_T-1.xml"
+#file_path = "ZAM_Tutorial-1_1_T-1.xml"
+#file_path = "ZAM_Tutorial-1_2_T-1.xml"
 #file_path="BEL_Beringen-3_5_I-1-1.cr.xml"
 #file_path="DEU_Gar-2_1_T-1.xml"
-
+file_path="ARG_Carcarana-10_2_T-1.xml"
 # read in the scenario and planning problem set
 scenario, planning_problem_set = CommonRoadFileReader(file_path).open()
 
+
+
 v = visual(scenario, planning_problem_set)
 v.init_show()
-#v.show()
-
-
-
 
 i = 0
-
-
 while True:
     input = select.select([sys.stdin], [], [], 0.1)[0]
     if input:
@@ -48,6 +46,8 @@ while True:
                 i -= 1
         elif (value == "l"):
             v.switch_ligth()
+        elif (value == "a"):
+            v.show()
         elif (value == "i"):
             v.zoom_in()
         elif (value == "o"):
@@ -70,6 +70,10 @@ while True:
             v.drone.up()
         elif (value == "/"):
             v.drone.down()
+        elif (value == "1"):
+            v.drone.elev+=10
+        elif (value == "0"):
+            v.drone.elev-=10
         elif (value == "w"):
             v.drone.go_powerline()
             for j in range(len(v.drone.path)):
@@ -85,16 +89,8 @@ while True:
 
 
 
-"""
-j=0
-while True:
-
-    j+=1
-    if j<len(v.drone.path):
-        
 
 
-"""
 """
 
 # plot the planning problem and the scenario for the fifth time step
@@ -104,5 +100,6 @@ scenario.draw(rnd, draw_params={'time_begin': 9})
 planning_problem_set.draw(rnd)
 rnd.render()
 plt.show()
+
 """
 
