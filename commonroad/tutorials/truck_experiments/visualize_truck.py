@@ -19,8 +19,10 @@ from commonroad_dc.collision.trajectory_queries.trajectory_queries import trajec
     trajectories_collision_dynamic_obstacles
 
 # generate path of the file to be opened
-file_path = "input/ZAM_Loading_Bay-1_1_T-1.xml"
-file_path_without_truck = "input/ZAM_Loading_Bay-1_1_T-no-truck.xml"
+file_path = r"input/ZAM_Loading_Bay-1_1_T-1.xml"
+file_path_without_truck = r"input/ZAM_Loading_Bay-1_1_T-no-truck.xml"
+file_path = os.path.join(os.getcwd(), file_path)
+file_path_without_truck = os.path.join(os.getcwd(), file_path_without_truck)
 
 # TODO: check why feasibility checker fails
 #       -> because the y coordinate difference is way too big already for the first step

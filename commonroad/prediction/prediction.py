@@ -352,7 +352,7 @@ class TrajectoryPrediction(Prediction):
                 list_of_shapes.append(shapes[0].rotate_translate_local(state.position, state.orientation))
 
                 for i in range(1, nr_of_shapes):
-                    new_orient = orient + state.hitch[i - 1]
+                    new_orient = orient + state.hitch
                     pos = pos - 0.5 * self.wheelbase_lengths[i - 1] * np.array([math.cos(orient), math.sin(orient)]) - \
                         (self.wheelbase_lengths[i] / 2) * np.array([math.cos(new_orient), math.sin(new_orient)])
                     orient = new_orient

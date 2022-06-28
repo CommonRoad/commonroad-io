@@ -63,6 +63,7 @@ message State {
     optional FloatExactOrInterval acceleration_y = 33;
     optional FloatExactOrInterval jerk = 34;
     optional IntegerExactOrInterval time_step = 35;
+    optional FloatExactOrInterval hitch = 36;
 }
 
 message SignalState {
