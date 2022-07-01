@@ -46,7 +46,7 @@ dynamic_obstacle_trajectory = Trajectory(1, state_list)
 
 # create the prediction using the trajectory and the shape of the obstacle
 dynamic_obstacle_shape = ShapeGroup([Rectangle(5.1, 2.55), Rectangle(13.6, 2.55)])
-dynamic_obstacle_prediction = TrajectoryPrediction(dynamic_obstacle_trajectory, dynamic_obstacle_shape, wheelbase_lengths = [3.6, 8.1])
+dynamic_obstacle_prediction = TrajectoryPrediction(dynamic_obstacle_trajectory, dynamic_obstacle_shape, wheelbase_lengths=[3.6, 8.1])
 
 # generate the dynamic obstacle according to the specification
 dynamic_obstacle_id = scenario.generate_object_id()
@@ -63,12 +63,12 @@ scenario.add_objects(dynamic_obstacle)
 for i in range(5):
     plt.figure(figsize=(25, 10))
     rnd = MPRenderer()
-    scenario.draw(rnd, draw_params={'time_begin': i*10})
+    scenario.draw(rnd, draw_params={'time_begin': i})
     planning_problem_set.draw(rnd)
     rnd.render()
     plt.show()
 
-# fig = plt.figure(figsize=(25, 10))
+fig = plt.figure(figsize=(25, 10))
 
 # def animation_frame(i):
 #     # zoom in the animation (plot_limits can be removed if not needed)
