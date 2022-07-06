@@ -225,7 +225,7 @@ class TrajectoryPrediction(Prediction):
     def __init__(self, trajectory: Trajectory, shape: Shape,
                  center_lanelet_assignment: Union[None, Dict[int, Set[int]]] = None,
                  shape_lanelet_assignment: Union[None, Dict[int, Set[int]]] = None,
-                 wheelbase_lengths: List[float] = None):
+                 **kwargs):
         """
         :param trajectory: predicted trajectory of the obstacle
         :param shape: shape of the obstacle
@@ -234,7 +234,10 @@ class TrajectoryPrediction(Prediction):
         self.trajectory: Trajectory = trajectory
         self.shape_lanelet_assignment: Dict[int, Set[int]] = shape_lanelet_assignment
         self.center_lanelet_assignment: Dict[int, Set[int]] = center_lanelet_assignment
-        self.wheelbase_lengths: List[float] = wheelbase_lengths
+        try :
+            self.wheelbase_lengths: List[float] = kwargs['wheelbase_lengths']
+        except Exception as e :
+            self.wheelbase_lengths = None
         Prediction.__init__(self, self._trajectory.initial_time_step, self._create_occupancy_set())
 
     def __eq__(self, other):
@@ -344,6 +347,9 @@ class TrajectoryPrediction(Prediction):
                 occupied_region = occupancy_shape_from_state(self._shape, state)
                 occupancy_set.append(Occupancy(state.time_step, occupied_region))
             else:
+                if self.wheelbase_lengths is None:
+                    raise ValueError('<TrajectoryPrediction/_create_occupancy_set>: wheelbase lengths are not '
+                                     'specified. Please specify them using the "wheelbase_lengths" property.')
                 shapes = self._shape.shapes
                 list_of_shapes = []
                 orient = state.orientation

@@ -440,7 +440,7 @@ class DynamicObstacle(Obstacle):
                  initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
                  initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None,
-                 wheelbase: List[float] = None):
+                 **kwargs):
         """
             :param obstacle_id: unique ID of the obstacle
             :param obstacle_type: type of obstacle (e.g. PARKED_VEHICLE)
@@ -453,7 +453,10 @@ class DynamicObstacle(Obstacle):
             :param signal_series: list of signal states over time
             :param wheelbase: list of wheelbase lengths
         """
-        self.wheelbase_lengths: List[float] = wheelbase
+        try :
+            self.wheelbase_lengths: List[float] = kwargs['wheelbase_lengths']
+        except Exception as e :
+            self.wheelbase_lengths = None
         Obstacle.__init__(self, obstacle_id=obstacle_id, obstacle_role=ObstacleRole.DYNAMIC,
                           obstacle_type=obstacle_type, obstacle_shape=obstacle_shape, initial_state=initial_state,
                           initial_center_lanelet_ids=initial_center_lanelet_ids,
