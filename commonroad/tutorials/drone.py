@@ -21,12 +21,12 @@ class drone3d():
         self.ax = ax
         self.orientation =0
         self.speed = 2
-        self.position = [-110, 470, 250]
+        self.position = [10, 10, 5]
         self.length = 1
         self.list_obstacle = obstacle
         self.width = 1
-        self.r = 0.33
-        self.elev=90
+        self.r = -0.33
+        self.elev=20
         self.list_patchcollection = []
         self.follow = 1
         self.list_poweline = list_poweline
@@ -44,7 +44,7 @@ class drone3d():
             self.ax.set_xlim([self.position[0] - 5, self.position[0] + 5])
             self.ax.set_ylim([self.position[1] - 5, self.position[1] + 5])
             self.ax.set_zlim([self.position[2] - 5, self.position[2] + 5])
-            self.ax.view_init(elev=self.elev, azim=180 + self.orientation * 180 / 3.1415)
+            #self.ax.view_init(elev=self.elev, azim=180 + self.orientation * 180 / 3.1415)
 
         self.construction()
         self.detect()
@@ -144,6 +144,34 @@ class drone3d():
         patchcollection = Poly3DCollection([list], linewidth=0, edgecolor="k", rasterized=True)
         self.list_patchcollection.append(patchcollection)
         self.ax.add_collection3d(patchcollection)
+
+        for k in range (3):
+            r = 1+k
+
+
+            accurate = 15
+            pi = 3.1415
+
+            list = []
+
+            patches = []
+
+            list=[]
+            for i in range(accurate):
+                for j in range(accurate):
+                    theta = -pi / 2 + pi * i / accurate
+                    phi = -pi + 2 * pi * j / accurate
+
+                    list.append((r * np.sin(phi) * np.cos(theta)+self.position[0] , r * np.sin(phi) * np.sin(theta)+self.position[1]  ,
+                                 r * np.cos(phi) +self.position[2] ))
+
+                    patchcollection = Poly3DCollection([list], linewidth=0, rasterized=True,alpha=0.5-k*0.1)
+            self.list_patchcollection.append(patchcollection)
+            self.ax.add_collection3d(patchcollection)
+
+
+            patches.append(list)
+
 
         plt.pause(0.01)
 

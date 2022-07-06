@@ -4,6 +4,8 @@ from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.visualization.mp_renderer import MPRenderer
 from visual3d import *
 from commonroad.scenario.obstacle import ObstacleType
+from commonroad.scenario import scenario
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -16,17 +18,26 @@ import time
 import os
 import sys
 import select
+from traffic_lights import trafic_light
 
 # generate path of the file to be opened
-#file_path = "USA_Lanker-1_1_T-1.xml"
+#file_path = "USA_Lanker-1_1_T-1.xml"#big
 #file_path="ARG_Carcarana-10_4_T-1.xml"
 #file_path = "ZAM_Tutorial-1_1_T-1.xml"
-#file_path = "ZAM_Tutorial-1_2_T-1.xml"
+file_path = "ZAM_Tutorial-1_2_T-1.xml"#tuto
 #file_path="BEL_Beringen-3_5_I-1-1.cr.xml"
 #file_path="DEU_Gar-2_1_T-1.xml"
-file_path="ARG_Carcarana-10_2_T-1.xml"
+#file_path="ARG_Carcarana-10_2_T-1.xml"
+#file_path="/home/thomas/Downloads/RUS_Bicycle-5_1_T-1.xml"#bike
+file_path="/home/thomas/Downloads/USA_Lanker-1_3_T-1.xml"#trafic light
+
+
 # read in the scenario and planning problem set
 scenario, planning_problem_set = CommonRoadFileReader(file_path).open()
+
+
+
+
 
 
 
@@ -85,8 +96,8 @@ while True:
     else:
         v.auto_set_lim()
         v.show_at_time(i)
+        
         v.drone.new_drone()
-
 
 
 
@@ -101,5 +112,5 @@ planning_problem_set.draw(rnd)
 rnd.render()
 plt.show()
 
-"""
 
+"""
