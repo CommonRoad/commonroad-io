@@ -453,9 +453,9 @@ class DynamicObstacle(Obstacle):
             :param signal_series: list of signal states over time
             :param wheelbase: list of wheelbase lengths
         """
-        try :
+        try:
             self.wheelbase_lengths: List[float] = kwargs['wheelbase_lengths']
-        except Exception as e :
+        except Exception as e:
             self.wheelbase_lengths = None
         Obstacle.__init__(self, obstacle_id=obstacle_id, obstacle_role=ObstacleRole.DYNAMIC,
                           obstacle_type=obstacle_type, obstacle_shape=obstacle_shape, initial_state=initial_state,

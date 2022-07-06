@@ -234,9 +234,9 @@ class TrajectoryPrediction(Prediction):
         self.trajectory: Trajectory = trajectory
         self.shape_lanelet_assignment: Dict[int, Set[int]] = shape_lanelet_assignment
         self.center_lanelet_assignment: Dict[int, Set[int]] = center_lanelet_assignment
-        try :
+        try:
             self.wheelbase_lengths: List[float] = kwargs['wheelbase_lengths']
-        except Exception as e :
+        except Exception as e:
             self.wheelbase_lengths = None
         Prediction.__init__(self, self._trajectory.initial_time_step, self._create_occupancy_set())
 

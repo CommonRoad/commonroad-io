@@ -1164,7 +1164,8 @@ class DynamicObstacleFactory(ObstacleFactory):
             else:
                 shape_lanelet_assignment = None
                 center_lanelet_assignment = None
-            prediction = TrajectoryPrediction(trajectory, shape, center_lanelet_assignment, shape_lanelet_assignment, wheelbase=wheelbase)
+            prediction = TrajectoryPrediction(trajectory, shape, center_lanelet_assignment, 
+                                                    shape_lanelet_assignment, wheelbase=wheelbase)
         elif xml_node.find('occupancySet') is not None:
             prediction = SetBasedPredictionFactory.create_from_xml_node(xml_node.find('occupancySet'))
         else:
