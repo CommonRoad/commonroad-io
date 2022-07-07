@@ -14,3 +14,4 @@ protoc --proto_path=./commonroad-io/commonroad/scenario_definition/protobuf_form
 ```
 
 Maybe some import paths have to be adjusted.
+We recommend to use libprotoc 3.6.1 for generating the Python files (you can check the version via ```protoc --version```)
