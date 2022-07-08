@@ -4,21 +4,23 @@ import platform
 import re
 import subprocess
 from xml.dom import minidom
-import numpy as np
 import xml.etree.ElementTree as et
 from enum import Enum, unique
-from typing import List, Tuple, Union, Dict
+from typing import Dict, List, Union, Tuple
 from datetime import datetime
+
+import numpy as np
 import vehiclemodels.parameters_vehicle1 as p1
 import vehiclemodels.parameters_vehicle2 as p2
 import vehiclemodels.parameters_vehicle3 as p3
 
-from commonroad.common.validity import is_real_number, is_positive
+from commonroad.common.validity import is_positive, is_real_number
 from commonroad.geometry.shape import Rectangle
 from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad.scenario.obstacle import DynamicObstacle, ObstacleType
 from commonroad.scenario.scenario import ScenarioID
-from commonroad.scenario.trajectory import State, Trajectory
+from commonroad.scenario.state import TraceState, PMState, MBState, KSState, STState, PMInputState, InputState
+from commonroad.scenario.trajectory import Trajectory
 
 __author__ = "Murat Üste, Christina Miller, Moritz Klischat"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -167,7 +169,7 @@ class StateType(Enum):
         return XMLStateFields[self.name].value
 
     @classmethod
-    def get_state_type(cls, state: State, desired_vehicle_model: VehicleModel = None) -> 'StateType':
+    def get_state_type(cls, state: TraceState, desired_vehicle_model: VehicleModel = None) -> 'StateType':
         """
         Returns the corresponding StateType for the given State object by matching State object's attributes
         to the state fields.
@@ -329,7 +331,7 @@ class PlanningProblemSolution:
         """
         if self._vehicle_model == VehicleModel.PM and self._trajectory_type == TrajectoryType.PM:
             for state in self._trajectory.state_list:
-                if not hasattr(state, 'orientation'):
+                if isinstance(state, PMState) and not hasattr(state, 'orientation'):
                     state.orientation = math.atan2(state.velocity_y, state.velocity)
 
         if not trajectory_type.valid_vehicle_model(vehicle_model):
@@ -672,10 +674,13 @@ class CommonRoadSolutionReader:
         return value
 
     @classmethod
-    def _parse_state(cls, state_type: StateType, state_node: et.Element) -> State:
+    def _parse_state(cls, state_type: StateType, state_node: et.Element) -> TraceState:
         """ Parses State from the given XML node. """
         if not state_node.tag == state_type.value:
             raise SolutionReaderException("Given xml node is not a '%s' node!" % state_type.value)
+
+        state_types = {StateType.MB: MBState, StateType.KS: KSState, StateType.PM: PMState, StateType.ST: STState,
+                       StateType.Input: InputState, StateType.PMInput: PMInputState}
 
         state_vals = {}
         for mapping in list(zip(state_type.xml_fields, state_type.fields)):
@@ -686,7 +691,7 @@ class CommonRoadSolutionReader:
             else:
                 state_vals[field_name] = cls._parse_sub_element(state_node, xml_name, as_float=(not xml_name == 'time'))
 
-        return State(**state_vals)
+        return state_types[state_type](**state_vals)
 
     @staticmethod
     def _parse_benchmark_id(benchmark_id: str) -> (List[str], List[str], str):
@@ -801,7 +806,7 @@ class CommonRoadSolutionWriter:
         return element
 
     @classmethod
-    def _create_state_node(cls, state_type: StateType, state: State) -> et.Element:
+    def _create_state_node(cls, state_type: StateType, state: TraceState) -> et.Element:
         """ Creates XML nodes for the States of the Trajectory. """
         state_node = et.Element(state_type.value)
         for mapping in list(zip(state_type.xml_fields, state_type.fields)):

@@ -200,7 +200,7 @@ class SetBasedPrediction(Prediction):
             warnings.warn(f"Inequality between SetBasedPrediction {repr(self)} and different type {type(other)}")
             return False
 
-        return Prediction.__hash__(self)
+        return Prediction.__eq__(self, other)
 
     def __hash__(self):
         return Prediction.__hash__(self)
@@ -336,7 +336,7 @@ class TrajectoryPrediction(Prediction):
         occupancy_set = list()
         for k, state in enumerate(self._trajectory.state_list):
             if not hasattr(state, "orientation"):
-                state.orientation = math.atan2(state.velocity_y, state.velocity)
+                state.orientation = math.atan2(getattr(state, "velocity_y"), state.velocity)
             occupied_region = occupancy_shape_from_state(self._shape, state)
             occupancy_set.append(Occupancy(state.time_step, occupied_region))
         return occupancy_set

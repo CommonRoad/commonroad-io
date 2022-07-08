@@ -4,9 +4,9 @@ import numpy as np
 from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork, StopLine, LaneletType
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.geometry.shape import Rectangle
+from commonroad.scenario.state import InitialState
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany, TrafficLight, \
     TrafficLightCycleElement, TrafficLightState
-from commonroad.scenario.trajectory import State
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 
 __author__ = "Moritz Untersperger, Sebastian Maierhofer"
@@ -334,14 +334,14 @@ class TestLaneletNetwork(unittest.TestCase):
         # lanelet_network.draw(cr_render, draw_params={"lanelet": {"show_label": True}})
         # cr_render.render(show=True)
 
-        state = State(position=np.array([0., 0.]), orientation=0.)
+        state = InitialState(position=np.array([0., 0.]), orientation=0.)
         self.assertEqual(lanelet_network.find_most_likely_lanelet_by_state([state]), [1])
 
-        state = State(position=np.array([0., 0.]), orientation=np.deg2rad(45))
+        state = InitialState(position=np.array([0., 0.]), orientation=np.deg2rad(45))
         self.assertEqual(lanelet_network.find_most_likely_lanelet_by_state([state]), [2])
 
     def test_filter_obstacles_in_network_positive_map_obstacles_to_lanelet_postive(self):
-        initial_state = State(**{'position': np.array([0, 0]), 'orientation': 0.0})
+        initial_state = InitialState(**{'position': np.array([0, 0]), 'orientation': 0.0})
         rect_shape = Rectangle(2, 2)
         expected_obstacle = StaticObstacle(obstacle_id=1, obstacle_type=ObstacleType.CAR, obstacle_shape=rect_shape,
                                            initial_state=initial_state)
@@ -354,7 +354,7 @@ class TestLaneletNetwork(unittest.TestCase):
         self.assertEqual(actual_obstacles[0].obstacle_type, ObstacleType.CAR)
 
     def test_filter_obstacles_in_network_positive_map_obstacles_to_lanelet_negative(self):
-        initial_state = State(**{'position': np.array([-50, -50]), 'orientation': 0.0})
+        initial_state = InitialState(**{'position': np.array([-50, -50]), 'orientation': 0.0})
         rect_shape = Rectangle(2, 2)
         expected_obstacle = StaticObstacle(obstacle_id=1, obstacle_type=ObstacleType.CAR, obstacle_shape=rect_shape,
                                            initial_state=initial_state)

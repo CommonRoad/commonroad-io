@@ -18,9 +18,9 @@ from commonroad.planning.planning_problem import PlanningProblemSet
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType, PhantomObstacle, EnvironmentObstacle
 from commonroad.scenario.scenario import Scenario
+from commonroad.scenario.state import InitialState
 from commonroad.scenario.traffic_sign import TRAFFIC_SIGN_WITH_ADDITIONAL_VALUE, TrafficSignIDGermany, \
     TrafficSignIDSpain, TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSign, TrafficSignElement
-from commonroad.scenario.trajectory import State
 from commonroad.visualization.mp_renderer import MPRenderer
 from commonroad.visualization.param_server import ParamServer, write_default_params
 from commonroad.visualization.traffic_sign import text_prop_dict, draw_traffic_light_signs
@@ -68,7 +68,7 @@ class TestVisualizationV2(unittest.TestCase):
             # visualization
             circ = Circle(2.0, np.array([10.0, 0.0]))
             obs = StaticObstacle(1000, ObstacleType.CAR, circ,
-                                 initial_state=State(position=np.array([0, 0]), orientation=0.4))
+                                 initial_state=InitialState(position=np.array([0, 0]), orientation=0.4))
             scenario.add_objects(obs)
             for obs in scenario.static_obstacles:
                 obs.draw(rnd)

@@ -9,7 +9,8 @@ import numpy as np
 from commonroad.common.solution import StateFields, XMLStateFields, StateType, TrajectoryType, PlanningProblemSolution,\
     Solution, CommonRoadSolutionWriter, CommonRoadSolutionReader, VehicleModel, VehicleType, CostFunction
 from commonroad.scenario.scenario import ScenarioID
-from commonroad.scenario.trajectory import State, Trajectory
+from commonroad.scenario.trajectory import Trajectory
+from commonroad.scenario.state import PMState, KSState, STState, MBState, PMInputState, InputState, TraceState
 
 
 class DummyDataGenerator:
@@ -24,7 +25,7 @@ class DummyDataGenerator:
 
     @classmethod
     def create_random_pm_state(cls, time_step=0):
-        return State(
+        return PMState(
             position=np.array([cls.create_random_float(-100, 100),
                                cls.create_random_float(-100, 100)]),
             velocity=cls.create_random_float(-5, 5),
@@ -34,7 +35,7 @@ class DummyDataGenerator:
 
     @classmethod
     def create_random_ks_state(cls, time_step=0):
-        return State(
+        return KSState(
             position=np.array([cls.create_random_float(-100, 100),
                                cls.create_random_float(-100, 100)]),
             steering_angle=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
@@ -45,7 +46,7 @@ class DummyDataGenerator:
 
     @classmethod
     def create_random_st_state(cls, time_step=0):
-        return State(
+        return STState(
             position=np.array([cls.create_random_float(-100, 100),
                                cls.create_random_float(-100, 100)]),
             steering_angle=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
@@ -58,7 +59,7 @@ class DummyDataGenerator:
 
     @classmethod
     def create_random_mb_state(cls, time_step=0):
-        return State(
+        return MBState(
             position=np.array([cls.create_random_float(-100, 100),
                                cls.create_random_float(-100, 100)]),
             steering_angle=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
@@ -93,15 +94,14 @@ class DummyDataGenerator:
 
     @classmethod
     def create_random_input(cls, time_step=0):
-        return State(
-            acceleration=cls.create_random_float(-5, 5),
-            steering_angle_speed=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
-            time_step=time_step
-        )
+        state = InputState(acceleration=cls.create_random_float(-5, 5),
+                           steering_angle_speed=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+                           time_step=time_step)
+        return state
 
     @classmethod
     def create_random_pm_input(cls, time_step=0):
-        return State(
+        return PMInputState(
             acceleration=cls.create_random_float(-5, 5),
             acceleration_y=cls.create_random_float(-5, 5),
             time_step=time_step
@@ -132,7 +132,7 @@ class DummyDataGenerator:
         return Trajectory(initial_time_step=0, state_list=[cls.create_random_pm_input(ts) for ts in range(input_count)])
 
     @classmethod
-    def create_pm_state_xml(cls, state: State):
+    def create_pm_state_xml(cls, state: PMState):
         return '''
         <pmState>
             <x>%s</x>
@@ -150,7 +150,7 @@ class DummyDataGenerator:
         )
 
     @classmethod
-    def create_ks_state_xml(cls, state: State):
+    def create_ks_state_xml(cls, state: KSState):
         return '''
         <ksState>
             <x>%s</x>
@@ -170,7 +170,7 @@ class DummyDataGenerator:
         )
 
     @classmethod
-    def create_st_state_xml(cls, state: State):
+    def create_st_state_xml(cls, state: STState):
         return '''
         <stState>
             <x>%s</x>
@@ -194,7 +194,7 @@ class DummyDataGenerator:
         )
 
     @classmethod
-    def create_mb_state_xml(cls, state: State):
+    def create_mb_state_xml(cls, state: MBState):
         return '''
         <mbState>
             <x>%s</x>
@@ -262,7 +262,7 @@ class DummyDataGenerator:
         )
 
     @classmethod
-    def create_input_xml(cls, state: State):
+    def create_input_xml(cls, state: InputState):
         return '''
         <input>
             <steeringAngleSpeed>%s</steeringAngleSpeed>
@@ -276,7 +276,7 @@ class DummyDataGenerator:
         )
 
     @classmethod
-    def create_pm_input_xml(cls, state: State):
+    def create_pm_input_xml(cls, state: PMInputState):
         return '''
         <pmInput>
             <xAcceleration>%s</xAcceleration>
@@ -292,12 +292,18 @@ class DummyDataGenerator:
     @classmethod
     def create_trajectory_xml(cls, trajectory_type: str, planning_problem_id: int, trajectory: Trajectory):
         state_serializer = None
-        if trajectory_type == 'pmTrajectory': state_serializer = cls.create_pm_state_xml
-        if trajectory_type == 'stTrajectory': state_serializer = cls.create_st_state_xml
-        if trajectory_type == 'ksTrajectory': state_serializer = cls.create_ks_state_xml
-        if trajectory_type == 'mbTrajectory': state_serializer = cls.create_mb_state_xml
-        if trajectory_type == 'inputVector': state_serializer = cls.create_input_xml
-        if trajectory_type == 'pmInputVector': state_serializer = cls.create_pm_input_xml
+        if trajectory_type == 'pmTrajectory':
+            state_serializer = cls.create_pm_state_xml
+        if trajectory_type == 'stTrajectory':
+            state_serializer = cls.create_st_state_xml
+        if trajectory_type == 'ksTrajectory':
+            state_serializer = cls.create_ks_state_xml
+        if trajectory_type == 'mbTrajectory':
+            state_serializer = cls.create_mb_state_xml
+        if trajectory_type == 'inputVector':
+            state_serializer = cls.create_input_xml
+        if trajectory_type == 'pmInputVector':
+            state_serializer = cls.create_pm_input_xml
         return '''
         <%s planningProblem="%s">
             %s
@@ -425,9 +431,9 @@ class TestXMLStateFields(unittest.TestCase):
 class TestStateType(unittest.TestCase):
 
     @staticmethod
-    def create_dummy_state(state_fields: StateFields) -> State:
+    def create_dummy_state(state_fields: StateFields) -> TraceState:
         values = {field: 0 for field in state_fields.value}
-        return State(**values)
+        return TraceState(**values)
 
     def test_pm_state_type(self):
         assert StateType.PM.value == 'pmState'
@@ -721,10 +727,9 @@ class TestCommonRoadSolutionWriter(unittest.TestCase):
         self.scenario_id = ScenarioID.from_benchmark_id('USA_US101-33_2_T-1', "2020a")
 
         self.solution_single: Solution = Solution(scenario_id=self.scenario_id,
-                                        planning_problem_solutions=[self.pp_solution1])
+                                                  planning_problem_solutions=[self.pp_solution1])
         self.solution_collab: Solution = Solution(scenario_id=self.scenario_id,
-                                        planning_problem_solutions=[self.pp_solution1,
-                                                                    self.pp_solution2])
+                                                  planning_problem_solutions=[self.pp_solution1, self.pp_solution2])
 
     def tearDown(self):
         for file in glob('./solution_*.xml'):

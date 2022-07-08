@@ -13,8 +13,8 @@ from commonroad.common.validity import *
 from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.obstacle import Obstacle
+from commonroad.scenario.state import TraceState
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
-from commonroad.scenario.trajectory import State
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
@@ -1577,7 +1577,7 @@ class LaneletNetwork(IDrawable):
 
             return list(lanelet_id_list[sorted_indices])
 
-    def find_most_likely_lanelet_by_state(self, state_list: List[State]) -> List[int]:
+    def find_most_likely_lanelet_by_state(self, state_list: List[TraceState]) -> List[int]:
         """
         Finds the lanelet id of the position of a given state; in case of multiple overlapping lanelets, return the most
         likely lanelet according to the orientation difference between lanelets and given state

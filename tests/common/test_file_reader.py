@@ -10,7 +10,8 @@ from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, La
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Underground, Weather, TimeOfDay, \
     ScenarioID
-from commonroad.scenario.trajectory import *
+from commonroad.scenario.state import STState, InitialState
+from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLightDirection, TrafficLight, \
     TrafficLightCycleElement, TrafficLightState, TrafficSignIDGermany
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
@@ -40,9 +41,9 @@ class TestXMLFileReader(unittest.TestCase):
         set_pred = SetBasedPrediction(0, occupancy_list)
 
         states = []
-        states.append(State(time_step=1, orientation=0, position=np.array([0, 1])))
+        states.append(STState(time_step=1, orientation=0, position=np.array([0, 1])))
         trajectory = Trajectory(1, states)
-        init_state = State(time_step=0, orientation=0, position=np.array([0, 0]))
+        init_state = InitialState(time_step=0, orientation=0, position=np.array([0, 0]))
         traj_pred = TrajectoryPrediction(trajectory, rectangle)
 
         initial_signal_state = SignalState(time_step=0, horn=True, hazard_warning_lights=True, braking_lights=False)
@@ -130,11 +131,12 @@ class TestXMLFileReader(unittest.TestCase):
         self.scenario.add_objects([static_obs, dyn_set_obs, dyn_traj_obs, self.lanelet_network,
                                    self._environment_obstacle, self._phantom_obstacle])
 
-        goal_region = GoalRegion([State(time_step=Interval(0, 1), velocity=Interval(0.0, 1), position=rectangle),
-                                  State(time_step=Interval(1, 2), velocity=Interval(0.0, 1), position=circ)],
+        goal_region = GoalRegion([STState(time_step=Interval(0, 1), velocity=Interval(0.0, 1), position=rectangle),
+                                  STState(time_step=Interval(1, 2), velocity=Interval(0.0, 1), position=circ)],
                                  {0: [101, 102], 1: list([102])})
-        planning_problem = PlanningProblem(1000, State(velocity=0.1, position=np.array([[0], [0]]), orientation=0,
-                                                       yaw_rate=0, slip_angle=0, time_step=0), goal_region)
+        planning_problem = PlanningProblem(1000, InitialState(velocity=0.1, position=np.array([[0], [0]]),
+                                                              orientation=0, yaw_rate=0, slip_angle=0, time_step=0),
+                                           goal_region)
         self.planning_problem_set = PlanningProblemSet(list([planning_problem]))
 
         # setup for reading intersection scenario with traffic signs, traffic lights, stop signs (without obstacles)

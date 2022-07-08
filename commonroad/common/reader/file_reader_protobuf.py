@@ -1,4 +1,5 @@
 import datetime
+import warnings
 from typing import Tuple, List, Set, Union, Dict
 
 import numpy as np
@@ -26,7 +27,9 @@ from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSignIDGe
     TrafficSignIDBelgium, TrafficSignIDFrance, TrafficSignIDGreece, TrafficSignIDCroatia, TrafficSignIDItaly, \
     TrafficSignIDPuertoRico, TrafficSign, TrafficLight, TrafficLightCycleElement, TrafficLightDirection, \
     TrafficLightState
-from commonroad.scenario.trajectory import State, Trajectory
+from commonroad.scenario.trajectory import Trajectory
+from commonroad.scenario.state import InitialState, PMState, KSState, KSTState, STState, STDState, MBState, TraceState, \
+    InputState, PMInputState
 
 __author__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -618,25 +621,42 @@ class PhantomObstacleFactory:
 class StateFactory:
 
     @classmethod
-    def create_from_message(cls, state_msg: obstacle_pb2.State) -> State:
-        kwargs = dict()
+    def create_from_message(cls, state_msg: obstacle_pb2.State) -> TraceState:
+        states = [InitialState(), PMState(), KSState(), KSTState(), STState(), STDState(), MBState(), InputState(),
+                  PMInputState()]
 
-        for attr in State.__slots__:
-            if state_msg.HasField(attr):
-                if attr == 'time_step':
-                    value = IntegerExactOrIntervalFactory.create_from_message(state_msg.time_step)
-                elif attr == 'position':
-                    if state_msg.HasField('point'):
-                        value = PointFactory.create_from_message(state_msg.point)
+        largest_matched_state = None
+        for state in states:
+            all_given = True
+            for attr in state.attributes:
+                if (hasattr(state_msg, attr) and state_msg.HasField(attr)) or attr == 'position':
+                    if attr == 'time_step':
+                        setattr(state, attr, IntegerExactOrIntervalFactory.create_from_message(state_msg.time_step))
+                    elif attr == 'position':
+                        if state_msg.HasField('point'):
+                            setattr(state, attr, PointFactory.create_from_message(state_msg.point))
+                        elif state_msg.HasField('shape'):
+                            setattr(state, attr, ShapeFactory.create_from_message(state_msg.shape))
+                    elif attr == 'orientation':
+                        setattr(state, attr,
+                                FloatExactOrIntervalFactory.create_from_message(state_msg.orientation, is_angle=True))
                     else:
-                        value = ShapeFactory.create_from_message(state_msg.shape)
-                elif attr == 'orientation':
-                    value = FloatExactOrIntervalFactory.create_from_message(state_msg.orientation, is_angle=True)
+                        setattr(state, attr, FloatExactOrIntervalFactory.create_from_message(getattr(state_msg, attr)))
                 else:
-                    value = FloatExactOrIntervalFactory.create_from_message(getattr(state_msg, attr))
-                kwargs.update({attr: value})
+                    all_given = False
 
-        return State(**kwargs) if kwargs else None
+            if all_given:
+                if largest_matched_state is None:
+                    largest_matched_state = state
+                else:
+                    if len(largest_matched_state.attributes) < len(state.attributes):
+                        largest_matched_state = state
+
+        if largest_matched_state is None:
+            largest_matched_state = states[0]
+            warnings.warn("State at time step {} cannot be matched!".format(getattr(state_msg, 'time_step')))
+
+        return largest_matched_state
 
 
 class SignalStateFactory:
@@ -695,9 +715,9 @@ class TrajectoryFactory:
 class TrajectoryPredictionFactory:
 
     @classmethod
-    def create_from_message(cls, trajectory_prediction_msg: obstacle_pb2.TrajectoryPrediction, initial_state: State,
-                            lanelet_network: LaneletNetwork, obstacle_id: int, lanelet_assignment: bool) \
-            -> TrajectoryPrediction:
+    def create_from_message(cls, trajectory_prediction_msg: obstacle_pb2.TrajectoryPrediction,
+                            initial_state: InitialState, lanelet_network: LaneletNetwork, obstacle_id: int,
+                            lanelet_assignment: bool) -> TrajectoryPrediction:
         trajectory = TrajectoryFactory.create_from_message(trajectory_prediction_msg.trajectory)
 
         shape = ShapeFactory.create_from_message(trajectory_prediction_msg.shape)
@@ -719,7 +739,8 @@ class TrajectoryPredictionFactory:
         return trajectory_prediction
 
     @staticmethod
-    def find_obstacle_shape_lanelets(initial_state: State, state_list: List[State], lanelet_network: LaneletNetwork,
+    def find_obstacle_shape_lanelets(initial_state: InitialState, state_list: List[TraceState],
+                                     lanelet_network: LaneletNetwork,
                                      obstacle_id: int, shape: Shape) -> Dict[int, Set[int]]:
 
         compl_state_list = [initial_state] + state_list
@@ -736,7 +757,7 @@ class TrajectoryPredictionFactory:
         return lanelet_ids_per_state
 
     @staticmethod
-    def find_obstacle_center_lanelets(initial_state: State, state_list: List[State],
+    def find_obstacle_center_lanelets(initial_state: InitialState, state_list: List[TraceState],
                                       lanelet_network: LaneletNetwork) -> Dict[int, Set[int]]:
         compl_state_list = [initial_state] + state_list
         lanelet_ids_per_state = {}
@@ -785,7 +806,7 @@ class PlanningProblemFactory:
 class GoalStateFactory:
 
     @classmethod
-    def create_from_message(cls, goal_state_msg: planning_problem_pb2.GoalState) -> Tuple[State, List[int]]:
+    def create_from_message(cls, goal_state_msg: planning_problem_pb2.GoalState) -> Tuple[TraceState, List[int]]:
         state = StateFactory.create_from_message(goal_state_msg.state)
 
         goal_position_lanelets = None

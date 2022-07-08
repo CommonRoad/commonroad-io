@@ -9,7 +9,8 @@ from commonroad.geometry.shape import Rectangle
 from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad.scenario.obstacle import ObstacleType, DynamicObstacle
 from commonroad.scenario.scenario import Scenario, ScenarioID
-from commonroad.scenario.trajectory import State, Trajectory
+from commonroad.scenario.state import KSState
+from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.lanelet import Lanelet
 from commonroad.visualization import icons
 from commonroad.visualization.mp_renderer import MPRenderer
@@ -64,7 +65,7 @@ class TestIcons(unittest.TestCase):
         scn = Scenario(0.1, ScenarioID())
         scn.lanelet_network.add_lanelet(lanelets[0])
         shape = Rectangle(5, 2)
-        state = State(time_step=0, position=np.array((0, 2)), orientation=0.0)
+        state = KSState(time_step=0, position=np.array((0, 2)), orientation=0.0)
         for i, veh_type in enumerate(icons.supported_icons()):
             init_state = copy.deepcopy(state)
             init_state.position[0] = (i + 1) * 10

@@ -1,3 +1,4 @@
+import re
 from collections import defaultdict
 from typing import Dict
 from xml.etree import ElementTree
@@ -15,7 +16,8 @@ from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicOb
     SignalState, PhantomObstacle
 from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, \
     TimeOfDay, Weather, Underground, ScenarioID
-from commonroad.scenario.trajectory import State, Trajectory
+from commonroad.scenario.state import InitialState, PMState, KSState, KSTState, STState, STDState, MBState, TraceState
+from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.traffic_sign import *
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 
@@ -1031,7 +1033,7 @@ class ObstacleFactory(ABC):
         return obstacle_id
 
     @classmethod
-    def read_initial_state(cls, xml_node: ElementTree.Element) -> State:
+    def read_initial_state(cls, xml_node: ElementTree.Element) -> TraceState:
         initial_state = StateFactory.create_from_xml_node(xml_node)
         return initial_state
 
@@ -1077,8 +1079,9 @@ class StaticObstacleFactory(ObstacleFactory):
 
 class DynamicObstacleFactory(ObstacleFactory):
     @staticmethod
-    def find_obstacle_shape_lanelets(initial_state: State, state_list: List[State], lanelet_network: LaneletNetwork,
-                                     obstacle_id: int, shape: Shape) -> Dict[int, Set[int]]:
+    def find_obstacle_shape_lanelets(initial_state: InitialState, state_list: List[TraceState],
+                                     lanelet_network: LaneletNetwork, obstacle_id: int, shape: Shape) \
+            -> Dict[int, Set[int]]:
         """
         Extracts for each shape the corresponding lanelets it is on
 
@@ -1103,7 +1106,7 @@ class DynamicObstacleFactory(ObstacleFactory):
         return lanelet_ids_per_state
 
     @staticmethod
-    def find_obstacle_center_lanelets(initial_state: State, state_list: List[State],
+    def find_obstacle_center_lanelets(initial_state: InitialState, state_list: List[TraceState],
                                       lanelet_network: LaneletNetwork) -> Dict[int, Set[int]]:
         """
         Extracts for each shape the corresponding lanelets it is on
@@ -1288,8 +1291,7 @@ class PlanningProblemFactory:
         return PlanningProblem(planning_problem_id, initial_state, goal_region)
 
     @classmethod
-    def _add_initial_state(cls, xml_node: ElementTree.Element) \
-            -> State:
+    def _add_initial_state(cls, xml_node: ElementTree.Element) -> TraceState:
         initial_state = StateFactory.create_from_xml_node(xml_node.find('initialState'))
         return initial_state
 
@@ -1313,30 +1315,41 @@ class GoalRegionFactory:
 
 class StateFactory:
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: Union[LaneletNetwork, None] = None)\
-            -> State:
-        state_args = dict()
-        if xml_node.find('position') is not None:
-            position = cls._read_position(xml_node.find('position'), lanelet_network)
-            state_args['position'] = position
-        if xml_node.find('time') is not None:
-            state_args['time_step'] = read_time(xml_node.find('time'))
-        if xml_node.find('orientation') is not None:
-            orientation = cls._read_orientation(xml_node.find('orientation'))
-            state_args['orientation'] = orientation
-        if xml_node.find('velocity') is not None:
-            speed = read_value_exact_or_interval(xml_node.find('velocity'))
-            state_args['velocity'] = speed
-        if xml_node.find('acceleration') is not None:
-            acceleration = read_value_exact_or_interval(xml_node.find('acceleration'))
-            state_args['acceleration'] = acceleration
-        if xml_node.find('yawRate') is not None:
-            yaw_rate = read_value_exact_or_interval(xml_node.find('yawRate'))
-            state_args['yaw_rate'] = yaw_rate
-        if xml_node.find('slipAngle') is not None:
-            slip_angle = read_value_exact_or_interval(xml_node.find('slipAngle'))
-            state_args['slip_angle'] = slip_angle
-        return State(**state_args)
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: Union[LaneletNetwork, None] = None) \
+            -> TraceState:
+        states = [InitialState(), PMState(), KSState(), KSTState(), STState(), STDState(), MBState()]
+
+        largest_matched_state = None
+        for state in states:
+            all_given = True
+            for attr in state.attributes:
+                attr_xml = re.sub(r'_(\w)', lambda m: m.group(1).upper(), attr)
+                if attr == 'position' and xml_node.find('position') is not None:
+                    position = cls._read_position(xml_node.find('position'), lanelet_network)
+                    setattr(state, 'position', position)
+                elif attr == 'time_step' and xml_node.find('time') is not None:
+                    setattr(state, 'time_step', read_time(xml_node.find('time')))
+                elif attr == 'orientation' and xml_node.find('orientation') is not None:
+                    orientation = cls._read_orientation(xml_node.find('orientation'))
+                    setattr(state, 'orientation', orientation)
+                elif xml_node.find(attr_xml) is not None:
+                    value = read_value_exact_or_interval(xml_node.find(attr_xml))
+                    setattr(state, attr, value)
+                else:
+                    all_given = False
+
+            if all_given:
+                if largest_matched_state is None:
+                    largest_matched_state = state
+                else:
+                    if len(largest_matched_state.attributes) < len(state.attributes):
+                        largest_matched_state = state
+
+        if largest_matched_state is None:
+            warnings.warn("State at time step {} cannot be matched!".format(read_time(xml_node.find('time'))))
+            largest_matched_state = states[0]
+
+        return largest_matched_state
 
     @classmethod
     def _read_position(cls, xml_node: ElementTree.Element,

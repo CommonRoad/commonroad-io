@@ -2,7 +2,6 @@ from __future__ import annotations
 import abc
 import copy
 import dataclasses
-import enum
 from dataclasses import dataclass
 from typing import Union, List, Tuple, Optional
 
@@ -15,19 +14,10 @@ from commonroad.geometry.shape import Shape
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
 
+IntExactOrInterval = Union[int, Interval]
 FloatExactOrInterval = Union[float, Interval]
 AngleExactOrInterval = Union[float, AngleInterval]
 ExactOrShape = Union[np.ndarray, Shape]
-
-
-class StateType(enum.Enum):
-    INITIAL = 1
-    PM = 2
-    KS = 3
-    KST = 4
-    ST = 5
-    STD = 6
-    MB = 7
 
 
 @dataclass
@@ -36,16 +26,28 @@ class State(abc.ABC):
     This is a class representing the base state (Base State).
 
     Args:
-        time_step: Discrete time step :math:`t_i`
-        position: Position :math:`s_x` and :math:`s_y` in a global coordinate system
-        velocity: Velocity :math:`v_x` in longitudinal direction
-        acceleration: Acceleration :math:`a_x` in longitudinal direction
+        :param time_step: Discrete time step :math:`t_i`
 
     """
-    time_step: int = 0
-    position: ExactOrShape = np.array([0., 0.])
-    velocity: FloatExactOrInterval = 0.
-    acceleration: FloatExactOrInterval = 0.
+    time_step: FloatExactOrInterval = None
+
+    def __eq__(self, other: State):
+        for attr in self.attributes:
+            if attr == 'position' and self.position is not None and other.position is not None:
+                if isinstance(self.position, np.ndarray) and isinstance(other.position, np.ndarray):
+                    pos_self = np.array2string(np.around(self.position.astype(float), 10), precision=10)
+                    pos_other = np.array2string(np.around(self.position.astype(float), 10), precision=10)
+                    if pos_self != pos_other:
+                        return False
+                else:
+                    if isinstance(self.position, np.ndarray) or isinstance(other.position, np.ndarray) \
+                            or self.position != other.position:
+                        return False
+            else:
+                if getattr(self, attr) != getattr(other, attr):
+                    return False
+
+        return True
 
     @property
     def attributes(self) -> List[str]:
@@ -57,6 +59,20 @@ class State(abc.ABC):
         fields = dataclasses.fields(type(self))
 
         return [field.name for field in fields]
+
+    @property
+    def used_attributes(self) -> List[str]:
+        """
+        Returns all initialized attributed in state space.
+
+        :return: Initialized attributes
+        """
+        used_fields = list()
+        for field_name in self.attributes:
+            if getattr(self, field_name) is not None:
+                used_fields.append(field_name)
+
+        return used_fields
 
     @property
     def is_uncertain_position(self) -> bool:
@@ -80,7 +96,15 @@ class State(abc.ABC):
             return isinstance(getattr(self, "orientation"), AngleInterval)
         return False
 
-    def translate_rotate(self, translation: np.ndarray, angle: float) -> State:
+    def has_value(self, attr: str) -> bool:
+        """
+        Checks whether an attribute is given and is initialized with a value.
+
+        :param attr: Name of attribute
+        """
+        return hasattr(self, attr) and getattr(self, attr) is not None
+
+    def translate_rotate(self, translation: np.ndarray, angle: float) -> TraceState:
         """
         First translates the state and then rotates the state around the origin.
 
@@ -95,7 +119,7 @@ class State(abc.ABC):
         assert is_valid_orientation(angle), ('<State/translate_rotate>: argument angle must be within the '
                                              'interval [-2pi,2pi]. angle = %s.' % angle)
         transformed_state = copy.copy(self)
-        if hasattr(self, 'position'):
+        if hasattr(self, "position") and getattr(self, "position") is not None:
             if isinstance(self.position, ValidTypes.ARRAY):
                 transformed_state.position = commonroad.geometry.transform.translate_rotate(np.array([self.position]),
                                                                                             translation, angle)[0]
@@ -105,7 +129,7 @@ class State(abc.ABC):
                 raise TypeError('<State/translate_rotate> Expected instance of %s or %s. Got %s instead.'
                                 % (ValidTypes.ARRAY, Shape, self.position.__class__))
 
-        if hasattr(self, 'orientation'):
+        if hasattr(self, "orientation") and getattr(self, "orientation") is not None:
             if isinstance(self.orientation, ValidTypes.NUMBERS):
                 transformed_state.orientation = make_valid_orientation(self.orientation + angle)
             elif isinstance(self.orientation, AngleInterval):
@@ -116,7 +140,7 @@ class State(abc.ABC):
 
         return transformed_state
 
-    def convertStateToState(self, state: State):
+    def convert_state_to_state(self, state: State) -> TraceState:
         """
         Converts state to state from different state types.
 
@@ -149,10 +173,23 @@ class InitialState(State):
     This is a class representing the initial state (Initial State).
 
     Args:
-        orientation: Yaw angle :math:`\\Psi`
+        :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
+        :param orientation: Yaw angle :math:`\\Psi`
+        :param velocity: Velocity :math:`v_x` in longitudinal direction
+        :param acceleration: Acceleration :math:`a_x`
+        :param yaw_rate: Yaw rate :math:`\\dot{\\Psi}`
+        :param slip_angle: Slip angle :math:`\\beta`
 
     """
-    orientation: AngleExactOrInterval = 0.
+    position: ExactOrShape = None
+    orientation: AngleExactOrInterval = None
+    velocity: FloatExactOrInterval = None
+    acceleration: FloatExactOrInterval = None
+    yaw_rate: FloatExactOrInterval = None
+    slip_angle: FloatExactOrInterval = None
+
+    def __eq__(self, other):
+        return State.__eq__(self, other)
 
 
 @dataclass
@@ -161,12 +198,17 @@ class PMState(State):
     This is a class representing Point Mass Model (PM State).
 
     Args:
-        velocity_y: Velocity :math:`v_x` in lateral direction
-        acceleration_y: Acceleration :math:`a_x` in lateral direction
+        :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
+        :param velocity: Velocity :math:`v_x` in longitudinal direction
+        :param velocity_y: Velocity :math:`v_x` in lateral direction
 
     """
-    velocity_y: FloatExactOrInterval = 0.
-    acceleration_y: FloatExactOrInterval = 0.
+    position: ExactOrShape = None
+    velocity: FloatExactOrInterval = None
+    velocity_y: FloatExactOrInterval = None
+
+    def __eq__(self, other):
+        return State.__eq__(self, other)
 
 
 @dataclass
@@ -175,12 +217,19 @@ class KSState(State):
     This is a class representing Kinematic Single Track Model (KS State).
 
     Args:
-        orientation: Yaw angle :math:`\\Psi`
-        steering_angle: Steering angle :math:`\\delta`
+        :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
+        :param steering_angle: Steering angle :math:`\\delta`
+        :param velocity: Velocity :math:`v_x` in longitudinal direction
+        :param orientation: Yaw angle :math:`\\Psi`
 
     """
-    orientation: AngleExactOrInterval = 0.
-    steering_angle: FloatExactOrInterval = 0.
+    position: ExactOrShape = None
+    steering_angle: FloatExactOrInterval = None
+    velocity: FloatExactOrInterval = None
+    orientation: AngleExactOrInterval = None
+
+    def __eq__(self, other):
+        return State.__eq__(self, other)
 
 
 @dataclass
@@ -189,10 +238,13 @@ class KSTState(KSState):
     This is a class representing Kinematic Single-Track Model (KST State).
 
     Args:
-        hitch_angle: Hitch angle :math:`\\alpha`
+        :param hitch_angle: Hitch angle :math:`\\alpha`
 
     """
-    hitch_angle: AngleExactOrInterval = 0.
+    hitch_angle: AngleExactOrInterval = None
+
+    def __eq__(self, other):
+        return State.__eq__(self, other)
 
 
 @dataclass
@@ -201,26 +253,32 @@ class STState(KSState):
     This is a class representing Single-Track Model (ST State).
 
     Args:
-        slip_angle: Slip angle :math:`\\beta`
-        yaw_rate: Yaw rate :math:`\\dot{\\Psi}`
+        :param slip_angle: Slip angle :math:`\\beta`
+        :param yaw_rate: Yaw rate :math:`\\dot{\\Psi}`
 
     """
-    slip_angle: FloatExactOrInterval = 0.
-    yaw_rate: FloatExactOrInterval = 0.
+    slip_angle: FloatExactOrInterval = None
+    yaw_rate: FloatExactOrInterval = None
+
+    def __eq__(self, other):
+        return State.__eq__(self, other)
 
 
 @dataclass
 class STDState(STState):
     """
-    This is a class representing Single-Track Drift Model (STD State)
+    This is a class representing Single-Track Drift Model (STD State).
 
     Args:
-        front_wheel_angular_speed: Front wheel angular speed :math:`\\omega_{f}`
-        rear_wheel_angular_speed: Rear wheel angular speed :math:`\\omega_{r}`
+        :param front_wheel_angular_speed: Front wheel angular speed :math:`\\omega_{f}`
+        :param rear_wheel_angular_speed: Rear wheel angular speed :math:`\\omega_{r}`
 
     """
-    front_wheel_angular_speed: FloatExactOrInterval = 0.
-    rear_wheel_angular_speed: FloatExactOrInterval = 0.
+    front_wheel_angular_speed: FloatExactOrInterval = None
+    rear_wheel_angular_speed: FloatExactOrInterval = None
+
+    def __eq__(self, other):
+        return State.__eq__(self, other)
 
 
 @dataclass
@@ -229,58 +287,120 @@ class MBState(State):
     This is a class representing Multi-Body Model (MB State).
 
     Args:
-        steering_angle: Steering angle :math:`\\delta`
-        orientation: Yaw angle :math:`\\Psi`
-        yaw_rate: Yaw rate :math:`\\dot{\\Psi}`
-        roll_angle: Roll angle :math:`\\Phi_S`
-        roll_rate: Roll rate :math:`\\dot{\\Phi}_S`
-        pitch_angle: Pitch angle :math:`\\Theta_S`
-        pitch_rate: Pitch rate :math:`\\dot{\\Theta}_S`
-        velocity_y: Velocity :math:`v_y` in lateral direction
-        position_z: Position :math:`s_z` (height) from ground
-        velocity_z: Velocity :math:`v_z` in vertical direction perpendicular to road plane
-        roll_angle_front: Roll angle front :math:`\\Phi_{UF}`
-        roll_rate_front: Roll rate front :math:`\\dot{\\Phi}_{UF}`
-        velocity_y_front: Velocity :math:`v_{y,UF}` in y-direction front
-        position_z_front: Position :math:`s_{z,UF}` in z-direction front
-        velocity_z_front: Velocity :math:`v_{z,UF}` in z-direction front
-        roll_angle_rear: Roll angle rear :math:`\\Phi_{UR}`
-        roll_rate_rear: Roll rate rear :math:`\\dot{\\Phi}_{UR}`
-        velocity_y_rear: Velocity :math:`v_{y,UR}` in y-direction rear
-        position_z_rear: Position :math:`s_{z,UR}` in z-direction rear
-        velocity_z_rear: Velocity :math:`v_{z,UR}` in z-direction rear
-        left_front_wheel_angular_speed: Left front wheel angular speed :math:`\\omega_{LF}`
-        right_front_wheel_angular_speed: Right front wheel angular speed :math:`\\omega_{RF}`
-        left_rear_wheel_angular_speed: Left rear wheel angular speed :math:`\\omega_{LR}`
-        right_rear_wheel_angular_speed: Right rear wheel angular speed :math:`\\omega_{RR}`
-        delta_y_f: Front lateral displacement :math:`\\delta_{y,f}` of sprung mass due to roll
-        delta_y_r: Rear lateral displacement :math:`\\delta_{y,r}` of sprung mass due to roll
+        :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
+        :param steering_angle: Steering angle :math:`\\delta`
+        :param velocity: Velocity :math:`v_x` in longitudinal direction
+        :param orientation: Yaw angle :math:`\\Psi`
+        :param yaw_rate: Yaw rate :math:`\\dot{\\Psi}`
+        :param roll_angle: Roll angle :math:`\\Phi_S`
+        :param roll_rate: Roll rate :math:`\\dot{\\Phi}_S`
+        :param pitch_angle: Pitch angle :math:`\\Theta_S`
+        :param pitch_rate: Pitch rate :math:`\\dot{\\Theta}_S`
+        :param velocity_y: Velocity :math:`v_y` in lateral direction
+        :param position_z: Position :math:`s_z` (height) from ground
+        :param velocity_z: Velocity :math:`v_z` in vertical direction perpendicular to road plane
+        :param roll_angle_front: Roll angle front :math:`\\Phi_{UF}`
+        :param roll_rate_front: Roll rate front :math:`\\dot{\\Phi}_{UF}`
+        :param velocity_y_front: Velocity :math:`v_{y,UF}` in y-direction front
+        :param position_z_front: Position :math:`s_{z,UF}` in z-direction front
+        :param velocity_z_front: Velocity :math:`v_{z,UF}` in z-direction front
+        :param roll_angle_rear: Roll angle rear :math:`\\Phi_{UR}`
+        :param roll_rate_rear: Roll rate rear :math:`\\dot{\\Phi}_{UR}`
+        :param velocity_y_rear: Velocity :math:`v_{y,UR}` in y-direction rear
+        :param position_z_rear: Position :math:`s_{z,UR}` in z-direction rear
+        :param velocity_z_rear: Velocity :math:`v_{z,UR}` in z-direction rear
+        :param left_front_wheel_angular_speed: Left front wheel angular speed :math:`\\omega_{LF}`
+        :param right_front_wheel_angular_speed: Right front wheel angular speed :math:`\\omega_{RF}`
+        :param left_rear_wheel_angular_speed: Left rear wheel angular speed :math:`\\omega_{LR}`
+        :param right_rear_wheel_angular_speed: Right rear wheel angular speed :math:`\\omega_{RR}`
+        :param delta_y_f: Front lateral displacement :math:`\\delta_{y,f}` of sprung mass due to roll
+        :param delta_y_r: Rear lateral displacement :math:`\\delta_{y,r}` of sprung mass due to roll
 
     """
-    steering_angle: FloatExactOrInterval = 0.
-    orientation: AngleExactOrInterval = 0.
-    yaw_rate: FloatExactOrInterval = 0.
-    roll_angle: FloatExactOrInterval = 0.
-    roll_rate: FloatExactOrInterval = 0.
-    pitch_angle: FloatExactOrInterval = 0.
-    pitch_rate: FloatExactOrInterval = 0.
-    velocity_y = FloatExactOrInterval = 0.
-    acceleration_y: FloatExactOrInterval = 0.
-    position_z: FloatExactOrInterval = 0.
-    velocity_z: FloatExactOrInterval = 0.
-    roll_angle_front: FloatExactOrInterval = 0.
-    roll_rate_front: FloatExactOrInterval = 0.
-    velocity_y_front: FloatExactOrInterval = 0.
-    position_z_front: FloatExactOrInterval = 0.
-    velocity_z_front: FloatExactOrInterval = 0.
-    roll_angle_rear: FloatExactOrInterval = 0.
-    roll_rate_rear: FloatExactOrInterval = 0.
-    velocity_y_rear: FloatExactOrInterval = 0.
-    position_z_rear: FloatExactOrInterval = 0.
-    velocity_z_rear: FloatExactOrInterval = 0.
-    left_front_wheel_angular_speed: FloatExactOrInterval = 0.
-    right_front_wheel_angular_speed: FloatExactOrInterval = 0.
-    left_rear_wheel_angular_speed: FloatExactOrInterval = 0.
-    right_rear_wheel_angular_speed: FloatExactOrInterval = 0.
-    delta_y_f: FloatExactOrInterval = 0.
-    delta_y_r: FloatExactOrInterval = 0.
+    position: ExactOrShape = None
+    steering_angle: FloatExactOrInterval = None
+    velocity: FloatExactOrInterval = None
+    orientation: AngleExactOrInterval = None
+    yaw_rate: FloatExactOrInterval = None
+    roll_angle: FloatExactOrInterval = None
+    roll_rate: FloatExactOrInterval = None
+    pitch_angle: FloatExactOrInterval = None
+    pitch_rate: FloatExactOrInterval = None
+    velocity_y: FloatExactOrInterval = None
+    position_z: FloatExactOrInterval = None
+    velocity_z: FloatExactOrInterval = None
+    roll_angle_front: FloatExactOrInterval = None
+    roll_rate_front: FloatExactOrInterval = None
+    velocity_y_front: FloatExactOrInterval = None
+    position_z_front: FloatExactOrInterval = None
+    velocity_z_front: FloatExactOrInterval = None
+    roll_angle_rear: FloatExactOrInterval = None
+    roll_rate_rear: FloatExactOrInterval = None
+    velocity_y_rear: FloatExactOrInterval = None
+    position_z_rear: FloatExactOrInterval = None
+    velocity_z_rear: FloatExactOrInterval = None
+    left_front_wheel_angular_speed: FloatExactOrInterval = None
+    right_front_wheel_angular_speed: FloatExactOrInterval = None
+    left_rear_wheel_angular_speed: FloatExactOrInterval = None
+    right_rear_wheel_angular_speed: FloatExactOrInterval = None
+    delta_y_f: FloatExactOrInterval = None
+    delta_y_r: FloatExactOrInterval = None
+
+    def __eq__(self, other):
+        return State.__eq__(self, other)
+
+
+@dataclass
+class InputState(State):
+    """
+    This is a class representing the input for most supported models.
+
+    Args:
+        :param steering_angle_speed: Steering angle speed :math:`\\dot{\\delta}` of front wheels
+        :param acceleration: Acceleration :math:`a_x`
+
+    """
+    steering_angle_speed: FloatExactOrInterval = None
+    acceleration: FloatExactOrInterval = None
+
+    def __eq__(self, other):
+        return State.__eq__(self, other)
+
+
+@dataclass
+class PMInputState(State):
+    """
+    This is a class representing the input for PM model (PM Input).
+
+    Args:
+        :param acceleration: Acceleration :math:`a_x`
+        :param acceleration_y: Acceleration :math:`a_y`
+
+    """
+    acceleration: FloatExactOrInterval = None
+    acceleration_y: FloatExactOrInterval = None
+
+    def __eq__(self, other):
+        return State.__eq__(self, other)
+
+
+@dataclass
+class CustomState(State):
+    """
+    This is a class representing the custom state. State variables can be added at runtime.
+
+    """
+
+    def __eq__(self, other):
+        return State.__eq__(self, other)
+
+    def add_attribute(self, new_attr: str):
+        """
+        Adds a new attribute to custom state.
+
+        :param new_attr: Attribute name
+        """
+        setattr(self, new_attr, None)
+
+
+TraceState = Union[State, InitialState, PMState, KSState, KSTState, STState, STDState, MBState, InputState, PMInputState]
