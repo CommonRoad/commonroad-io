@@ -453,10 +453,8 @@ class DynamicObstacle(Obstacle):
             :param signal_series: list of signal states over time
             :param wheelbase: list of wheelbase lengths
         """
-        try:
-            self.wheelbase_lengths: List[float] = kwargs['wheelbase_lengths']
-        except Exception as e:
-            self.wheelbase_lengths = None
+        for (field, value) in kwargs.items():
+            setattr(self, field, value)
         Obstacle.__init__(self, obstacle_id=obstacle_id, obstacle_role=ObstacleRole.DYNAMIC,
                           obstacle_type=obstacle_type, obstacle_shape=obstacle_shape, initial_state=initial_state,
                           initial_center_lanelet_ids=initial_center_lanelet_ids,
@@ -485,7 +483,7 @@ class DynamicObstacle(Obstacle):
                                                  'Expected types: %s. Got type: %s.' % (State, type(initial_state))
         self._initial_state = initial_state
         self._initial_occupancy_shape = occupancy_shape_from_state(self._obstacle_shape, initial_state)
-        if not self.wheelbase_lengths:
+        if not hasattr(self, 'wheelbase_lengths'):
             return
         shapes = self.obstacle_shape.shapes
         list_of_shapes = []

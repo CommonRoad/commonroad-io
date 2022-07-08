@@ -234,12 +234,9 @@ class TrajectoryPrediction(Prediction):
         self.trajectory: Trajectory = trajectory
         self.shape_lanelet_assignment: Dict[int, Set[int]] = shape_lanelet_assignment
         self.center_lanelet_assignment: Dict[int, Set[int]] = center_lanelet_assignment
-        try:
-            self.wheelbase_lengths: List[float] = kwargs['wheelbase_lengths']
-        except Exception as e:
-            self.wheelbase_lengths = None
+        for (field, value) in kwargs.items():
+            setattr(self, field, value)
         Prediction.__init__(self, self._trajectory.initial_time_step, self._create_occupancy_set())
-
     def __eq__(self, other):
         if not isinstance(other, TrajectoryPrediction):
             warnings.warn(f"Inequality between TrajectoryPrediction {repr(self)} and different type {type(other)}")
@@ -343,13 +340,14 @@ class TrajectoryPrediction(Prediction):
         for k, state in enumerate(self._trajectory.state_list):
             if not hasattr(state, "orientation"):
                 state.orientation = math.atan2(state.velocity_y, state.velocity)
-            if not hasattr(self._shape, "shapes"):
+            if not type(self._shape)==ShapeGroup:
                 occupied_region = occupancy_shape_from_state(self._shape, state)
                 occupancy_set.append(Occupancy(state.time_step, occupied_region))
             else:
-                if self.wheelbase_lengths is None:
-                    raise ValueError('<TrajectoryPrediction/_create_occupancy_set>: wheelbase lengths are not '
-                                     'specified. Please specify them using the "wheelbase_lengths" property.')
+                if not hasattr(self, "wheelbase_lengths"):
+                    raise ValueError('<TrajectoryPrediction/_create_occupancy_set>: wheelbase lengths[list of wheelbases'
+                                     ' for the truck/trailers] are not specified. Please specify them using '
+                                     'the "wheelbase_lengths" attribute.')
                 shapes = self._shape.shapes
                 list_of_shapes = []
                 orient = state.orientation
