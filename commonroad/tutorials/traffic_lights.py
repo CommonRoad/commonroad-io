@@ -11,7 +11,7 @@ import select
 import time
 import os
 import sys
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight,TrafficLightState,TrafficLightState
 
 
 class trafic_light():
@@ -45,21 +45,28 @@ class trafic_light():
         traffic_light = self.traffic_light
         time = self.scenario.dt * self.time * 100 + self.traffic_light.time_offset  # same time unit
 
-        full_cycle = self.traffic_light.cycle[0].duration + self.traffic_light.cycle[1].duration + \
-                     self.traffic_light.cycle[2].duration
-        if 0 <= time % full_cycle < self.traffic_light.cycle[0].duration:
-            return self.traffic_light.cycle[0].state
-        if self.traffic_light.cycle[0].duration <= time % full_cycle < self.traffic_light.cycle[0].duration+self.traffic_light.cycle[1].duration:
-            return self.traffic_light.cycle[1].state
-        return self.traffic_light.cycle[2].state
+        full_cycle =0
+        for i in range(len(self.traffic_light.cycle)):
+            full_cycle+=self.traffic_light.cycle[i].duration
+
+        cycle=0
+
+        for i in range(len(self.traffic_light.cycle)):
+            if cycle <= time % full_cycle < cycle+self.traffic_light.cycle[i].duration:
+                state=self.traffic_light.cycle[i].state
+                return color(state)
+            cycle+=self.traffic_light.cycle[i].duration
+
+
 
     def new_light(self):
 
-        self.construction()
+
         for patch in self.list_patchcollection:
             patch.remove()
         for patch in range(len(self.list_patchcollection)):
             self.list_patchcollection.remove(self.list_patchcollection[0])
+        self.construction()
 
     def construction(self):
         length = self.size
@@ -123,65 +130,11 @@ class trafic_light():
         patchcollection = Poly3DCollection([list], linewidth=0, facecolor="tab:grey", edgecolor="k", rasterized=True)
         self.list_patchcollection.append(patchcollection)
         self.ax.add_collection3d(patchcollection)
-        list = []
-        ###############################################################################################################
-        """
-        list = []#green
-        accurate = 10
-        pi=3.1415
-        r=self.r
-        for i in range(accurate):
-            for j in range(accurate):
-                phi = -pi / 2 + pi * i / accurate
-                theta = -pi + 2 * pi * j / accurate
 
-                list.append((r * np.sin(theta) * np.cos(phi) , r * np.sin(theta) * np.sin(phi) ,
-                             r *np.cos(theta) ))
-
-
-        list = add_coor(self.position[0], self.position[1]+0.2, self.hight + self.long / 6,
-                        rotation_z(self.orientation, list))
-        color="tab:blue"
-        patchcollection = Poly3DCollection([list], linewidth=0, facecolor="tab:blue", edgecolor="k", rasterized=True)
-        self.list_patchcollection.append(patchcollection)
-        self.ax.add_collection3d(patchcollection)
-
-        list = []  # orange
-        accurate = 10
-        pi = 3.1415
-        for i in range(accurate):
-            for j in range(accurate):
-                phi = -pi / 2 + pi * i / accurate
-                theta = -pi + 2 * pi * j / accurate
-
-                list.append((r * np.sin(theta) * np.cos(phi), r * np.sin(theta) * np.sin(phi), r *np.cos(theta)))
-
-        list = add_coor(self.position[0], self.position[1]+0.2, self.hight + self.long / 2,
-                        rotation_z(self.orientation, list))
-        patchcollection = Poly3DCollection([list], linewidth=0, facecolor="tab:blue", edgecolor="k", rasterized=True)
-        self.list_patchcollection.append(patchcollection)
-        self.ax.add_collection3d(patchcollection)
-
-        list = []  # red
-        accurate = 10
-        pi = 3.1415
-        for i in range(accurate):
-            for j in range(accurate):
-                phi = -pi / 2 + pi * i / accurate
-                theta = -pi + 2 * pi * j / accurate
-
-                list.append((r * np.sin(theta) * np.cos(phi), r * np.sin(theta) * np.sin(phi), r * np.cos(theta)))
-
-        list = add_coor(self.position[0], self.position[1]+0.2, self.hight + self.long*5 / 6,
-                        rotation_z(self.orientation, list))
-        patchcollection = Poly3DCollection([list], linewidth=0, facecolor="tab:blue", edgecolor="k", rasterized=True)
-        self.list_patchcollection.append(patchcollection)
-        self.ax.add_collection3d(patchcollection)
-        """
 
         ###############################################################################################################
         color = "tab:grey"
-        if self.find_color()==self.traffic_light.cycle[0].state:
+        if self.find_color()=="tab:green":
             color = "tab:green"
         list = [  # green
             (+ length * 0.5, - width * 0.5, top / 3), (+ length * 0.5, + width * 0.5, top / 3),
@@ -192,9 +145,9 @@ class trafic_light():
                                            rasterized=True)
         self.list_patchcollection.append(patchcollection)
         self.ax.add_collection3d(patchcollection)
-        list = []
+
         color = "tab:grey"
-        if self.find_color()==self.traffic_light.cycle[1].state:
+        if self.find_color()=="tab:orange":
             color = "tab:orange"
         list = [  # orange
             (+ length * 0.5, - width * 0.5, top * 2 / 3), (+ length * 0.5, + width * 0.5, top * 2 / 3),
@@ -204,9 +157,9 @@ class trafic_light():
         patchcollection = Poly3DCollection([list], linewidth=0, facecolor=color, edgecolor="k", rasterized=True)
         self.list_patchcollection.append(patchcollection)
         self.ax.add_collection3d(patchcollection)
-        list = []
+
         color="tab:grey"
-        if self.find_color()==self.traffic_light.cycle[2].state:
+        if self.find_color()=="tab:red":
             color = "tab:red"
         list = [  # red
             (+ length * 0.5, - width * 0.5, top), (+ length * 0.5, + width * 0.5, top),
@@ -216,8 +169,48 @@ class trafic_light():
         patchcollection = Poly3DCollection([list], linewidth=0, facecolor=color, edgecolor="k", rasterized=True)
         self.list_patchcollection.append(patchcollection)
         self.ax.add_collection3d(patchcollection)
-        list = []
-        plt.pause(0.01)
+        ################################################################################################################
+
+
+        color = self.find_color()
+
+
+
+        for l in range(len(self.scenario.lanelet_network.lanelets)):
+            if self.traffic_light.traffic_light_id in self.scenario.lanelet_network.lanelets[l].traffic_lights:
+                lanelet = self.scenario.lanelet_network.lanelets[l].polygon.vertices
+                for i in range(int(len(lanelet) / 2)):
+                    for j in range(1):
+                        a = (lanelet[i][0], lanelet[i][1],0.1*j )
+                        b = (lanelet[-(i + 1)][0], lanelet[-(i + 1)][1],0.1*j )
+                        c = (lanelet[i + 1][0], lanelet[i + 1][1],0.1*j )
+                        d = (lanelet[-i][0], lanelet[-i][1], 0.1*j)
+                        list = [b, c, a, d]
+
+                        patchcollection = Poly3DCollection([list], linewidth=0, facecolor=color, edgecolor="k",
+                                                           rasterized=True)
+                        self.list_patchcollection.append(patchcollection)
+                        self.ax.add_collection3d(patchcollection)
+
+
+
+
+
+def color (state:TrafficLightState):
+    if state==TrafficLightState.INACTIVE:
+        return "tab:grey"
+    if state==TrafficLightState.RED:
+        return "tab:red"
+    if state==TrafficLightState.GREEN:
+        return "tab:green"
+    if state==TrafficLightState.YELLOW:
+        return "tab:orange"
+    if state==TrafficLightState.RED_YELLOW:
+        return "tab:orange"
+
+
+
+
 
 
 

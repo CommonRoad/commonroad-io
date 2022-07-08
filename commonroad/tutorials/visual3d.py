@@ -42,6 +42,8 @@ class visual():
         self.bridge_flag =0
         self.tree_flag = 0
         self.powerline_flag=0
+        self.list_traffic_signs=[]
+
 
         for i in range(len(self.scenario.lanelet_network.traffic_lights)):
             self.list_traffic_lights.append(trafic_light(self.ax, self.fig,self.scenario, self.scenario.lanelet_network.traffic_lights[i]))
@@ -49,26 +51,29 @@ class visual():
         for traffic in self.list_traffic_lights:
             traffic.new_light()
 
-
         if self.bridge_flag:
             self.bridge = []
 
             self.get_bridge()
         self.get_lanelet()
-        """
+
+
+
         
-        for i in range(self.scenario.dynamic_obstacles.__len__()):
+        """for i in range(self.scenario.dynamic_obstacles.__len__()):
             self.list_car.append(self.construction(self.scenario, i))
             if self.bridge_flag:
                 self.list_carb.append(self.constructionb(self.scenario, i))
-            self.nb_car += 1
+            self.nb_car += 1"""
 
         for i in range(self.scenario.static_obstacles.__len__()):
             self.get_staic(i)
-        """
+
 
 
         self.auto_set_lim()
+
+
         if self.tree_flag:
             self.get_tree(24, -8, 8)
             self.get_tree(27, -10, 8)
@@ -107,15 +112,16 @@ class visual():
         while True:
             i += 1
             self.init_show()
+            for traffic in self.list_traffic_lights:
+                traffic.time = i
+                traffic.new_light()
             for k in range(self.nb_car):
                 for j in range(self.scenario.dynamic_obstacles[k].prediction.final_time_step):
                     if i == j:
                         for y in range(len(self.list_car[k][i][:])):
                             self.list_car[k][i][y].set_alpha(1)
                             self.list_car[k][i][y].set_linewidth(0.1)
-                            for traffic in self.list_traffic_lights:
-                                traffic.time=i
-                                traffic.new_light()
+
                             if self.bridge_flag:
                                 self.list_carb[k][i][y].set_alpha(1)
                                 self.list_carb[k][i][y].set_linewidth(0.1)
@@ -131,10 +137,10 @@ class visual():
                 if i == j:
                     for y in range(len(self.list_car[k][i][:])):
                         self.list_car[k][i][y].set_alpha(1)
-                        self.list_car[k][i][y].set_linewidth(0.1)
+                        self.list_car[k][i][y].set_linewidth(0)
                         if self.bridge_flag:
                             self.list_carb[k][i][y].set_alpha(1)
-                            self.list_carb[k][i][y].set_linewidth(0.1)
+                            self.list_carb[k][i][y].set_linewidth(0)
 
         # plt.pause(0.01)
 
@@ -202,28 +208,30 @@ class visual():
         ################################################################################################################
 
         colors = ["tab:green" for patch in list]
-        list_patchcollection = []
+
         for list in biglist:
             patchcollection = Poly3DCollection(list, linewidth=0.1, edgecolor="k", facecolor=colors, rasterized=True)
             self.ax.add_collection3d(patchcollection)
 
     def get_lanelet(self):
         for l in range(len(self.scenario.lanelet_network.lanelets)):
-            lanelet = self.scenario.lanelet_network.lanelets[l].polygon.vertices
-            colors = ["tab:grey"]
-            for i in range(int(len(lanelet) / 2)):
-                a = (lanelet[i][0], lanelet[i][1], 0)
-                b = (lanelet[-(i + 1)][0], lanelet[-(i + 1)][1], 0)
-                c = (lanelet[i + 1][0], lanelet[i + 1][1], 0)
-                d = (lanelet[-i][0], lanelet[-i][1], 0)
-                lan = [[b, c, a, d]]
-                if self.bridge_flag:
-                    self.bridge.append(lan[0])
 
-                lancolect = Poly3DCollection(lan, linewidth=0, edgecolor="k", facecolor=colors, rasterized=False,
-                                             alpha=1, zorder=1)
+            if self.scenario.lanelet_network.lanelets[l].traffic_lights==set():
+                lanelet = self.scenario.lanelet_network.lanelets[l].polygon.vertices
+                colors = ["tab:grey"]
+                for i in range(int(len(lanelet) / 2)):
+                    a = (lanelet[i][0], lanelet[i][1], 0)
+                    b = (lanelet[-(i + 1)][0], lanelet[-(i + 1)][1], 0)
+                    c = (lanelet[i + 1][0], lanelet[i + 1][1], 0)
+                    d = (lanelet[-i][0], lanelet[-i][1], 0)
+                    lan = [[b, c, a, d]]
+                    if self.bridge_flag:
+                        self.bridge.append(lan[0])
 
-                self.ax.add_collection3d(lancolect)
+                    lancolect = Poly3DCollection(lan, linewidth=0, edgecolor="k", facecolor=colors, rasterized=False,
+                                                 alpha=1, zorder=1)
+
+                    self.ax.add_collection3d(lancolect)
 
     def auto_set_lim(self):
 
@@ -308,6 +316,8 @@ class visual():
             flag_bus=True
         if scenario.dynamic_obstacles[i].obstacle_type == ObstacleType.BICYCLE:
             return self.construct_bike(i)
+        if scenario.dynamic_obstacles[i].obstacle_type == ObstacleType.PEDESTRIAN:
+            return self.construct_pedestrian(i)
 
         beta = 0
 
@@ -321,11 +331,14 @@ class visual():
             top = self.top
             if flag_bus:
                 top=top*2
+
             bottom = self.bottom
             length = shape.length
             width = shape.width
             biglist = []
             o = shape.orientation
+
+
 
 
 
@@ -489,8 +502,7 @@ class visual():
                 colors = ["tab:red" for patch in list]
             list_patchcollection = []
             for list in biglist:
-                patchcollection = Poly3DCollection(list, linewidth=0, edgecolor="k", facecolor=colors, rasterized=True,
-                                                   zorder=10)
+                patchcollection = Poly3DCollection(list, linewidth=0, edgecolor="k", facecolor=colors, rasterized=True)
                 self.ax.add_collection3d(patchcollection)
                 list_patchcollection.append(patchcollection)
             list_list_patches.append(list_patchcollection)
@@ -727,7 +739,7 @@ class visual():
             list = []
             for j in range(accurate):
                 theta = -pi + 2 * pi * j / accurate
-                list.append(( r * np.sin(theta),0, top/2+r * np.cos(theta)))
+                list.append(( r * np.sin(theta), top/2+r * np.cos(theta),0))
 
             list = rotation_z(o, list)
             list = add_center(last[0], last[1], list)
@@ -756,6 +768,56 @@ class visual():
             list_list_patches.append(list_patchcollection)
 
         return list_list_patches
+
+    def construct_pedestrian(self,i):
+        list_list_patches = []
+        r=0.5
+        #r=1#american
+        pi=3.1415
+        accurate=10
+        for t in range(self.scenario.dynamic_obstacles[i].prediction.final_time_step):
+
+            shape = self.scenario.dynamic_obstacles[i].occupancy_at_time(t).shape
+
+            top = self.top
+            center=shape.center
+
+
+
+            biglist = []
+            o = 0
+            oy=0
+            list = []
+            for j in range(accurate):
+                theta = -pi + 2 * pi * j / accurate
+                thetap1=-pi + 2 * pi * (j+1) / accurate
+                a=( r * np.sin(theta),top/2+r * np.cos(theta),top )
+                b=( r * np.sin(thetap1),top/2+r * np.cos(thetap1),0.4 )
+                c=( r * np.sin(thetap1),top/2+r * np.cos(thetap1),top )
+                d=( r * np.sin(theta),top/2+r * np.cos(theta),0.4 )
+
+                list = [b, c,a,d]
+
+                list = rotation_x(oy, rotation_z(o, list))
+                list = add_center(shape.center[0], shape.center[1] , list)
+
+                biglist.append(list)
+
+
+
+            colors = ["tab:blue" for patch in list]
+            list_patchcollection = []
+            for list in biglist:
+                patchcollection = Poly3DCollection(list, linewidth=0, edgecolor="k", facecolor=colors, rasterized=True,
+                                                   zorder=10)
+                self.ax.add_collection3d(patchcollection)
+                list_patchcollection.append(patchcollection)
+            list_list_patches.append(list_patchcollection)
+
+        return list_list_patches
+
+
+
 
 
 

@@ -30,12 +30,11 @@ file_path = "ZAM_Tutorial-1_2_T-1.xml"#tuto
 #file_path="ARG_Carcarana-10_2_T-1.xml"
 #file_path="/home/thomas/Downloads/RUS_Bicycle-5_1_T-1.xml"#bike
 file_path="/home/thomas/Downloads/USA_Lanker-1_3_T-1.xml"#trafic light
+#file_path="/home/thomas/Downloads/ZAM_Urban-4_1_S-1.xml"#PEDESTRIAN
 
 
 # read in the scenario and planning problem set
 scenario, planning_problem_set = CommonRoadFileReader(file_path).open()
-
-
 
 
 
@@ -96,21 +95,35 @@ while True:
     else:
         v.auto_set_lim()
         v.show_at_time(i)
+        for traffic in v.list_traffic_lights:
+            traffic.new_light()
+
         
         v.drone.new_drone()
 
 
-
-
 """
+
+
+
 
 # plot the planning problem and the scenario for the fifth time step
+
 plt.figure(figsize=(25, 10))
 rnd = MPRenderer()
-scenario.draw(rnd, draw_params={'time_begin': 9})
+scenario.draw(rnd, draw_params={'time_begin': 0})
 planning_problem_set.draw(rnd)
 rnd.render()
+plt.ion()
 plt.show()
 
+for i in range (500):
+
+    rnd = MPRenderer()
+    scenario.draw(rnd, draw_params={'time_begin': i})
+    planning_problem_set.draw(rnd)
+    rnd.render()
+    plt.pause(1)
 
 """
+
