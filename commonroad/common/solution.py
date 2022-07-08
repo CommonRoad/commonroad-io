@@ -283,7 +283,7 @@ class SupportedCostFunctions(Enum):
     ST = [cost_function for cost_function in CostFunction]  # Supports all cost functions
     KS = [cost_function for cost_function in CostFunction]  # Supports all cost functions
     MB = [cost_function for cost_function in CostFunction]  # Supports all cost functions
-    KST = [cost_function for cost_function in CostFunction] # Supports all cost functions
+    KST = [cost_function for cost_function in CostFunction]  # Supports all cost functions
 
 
 class PlanningProblemSolution:
