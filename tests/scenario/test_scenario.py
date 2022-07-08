@@ -79,7 +79,10 @@ class TestScenario(unittest.TestCase):
 
         self.incoming_1 = IntersectionIncomingElement(22, {10, 11}, {12, 13}, {14, 15}, {16, 17}, 18)
         self.incoming_2 = IntersectionIncomingElement(23, {20, 21}, {22, 23}, {24, 25}, {26, 27}, 28)
+        self.incoming_3 = IntersectionIncomingElement(122, {100})
         self.intersection = Intersection(21, [self.incoming_1, self.incoming_2], {30, 31})
+        self.intersection2 = Intersection(736, [self.incoming_3], {30, 31})
+        self.lanelet_network.add_intersection(self.intersection)
 
         self.environment = Environment(Time(12, 15), TimeOfDay.NIGHT, Weather.SNOW, Underground.ICE)
         self.location = Location(geo_name_id=123, gps_latitude=456, gps_longitude=789, environment=self.environment)
@@ -97,32 +100,34 @@ class TestScenario(unittest.TestCase):
         expected_id_intersection = self.intersection.intersection_id
         expected_id_intersection_incoming1 = self.incoming_1.incoming_id
         expected_id_intersection_incoming2 = self.incoming_2.incoming_id
+        expected_id_intersection_incoming3 = self.incoming_3.incoming_id
 
         self.scenario.add_objects(self.lanelet_network)
-        self.scenario.add_objects(self.static_obs)
-        self.scenario.add_objects(self.dyn_set_obs)
-        self.scenario.add_objects(self.dyn_traj_obs)
-        self.scenario.add_objects(self.traffic_light)
-        self.scenario.add_objects(self.traffic_sign)
-        self.scenario.add_objects(self.intersection)
-
-        self.assertEqual(expected_id_static_obs, self.scenario.obstacles[0].obstacle_id)
-        self.assertEqual(expected_id_dyn_set_obs, self.scenario.obstacles[1].obstacle_id)
-        self.assertEqual(expected_id_dyn_traj, self.scenario.obstacles[2].obstacle_id)
         self.assertEqual(expected_id_lanelet1, self.scenario.lanelet_network.lanelets[0].lanelet_id)
         self.assertEqual(expected_id_lanelet2, self.scenario.lanelet_network.lanelets[1].lanelet_id)
-        self.assertEqual(expected_id_traffic_sign, self.scenario.lanelet_network.traffic_signs[0].traffic_sign_id)
-        self.assertEqual(expected_id_traffic_light, self.scenario.lanelet_network.traffic_lights[0].traffic_light_id)
         self.assertEqual(expected_id_intersection, self.scenario.lanelet_network.intersections[0].intersection_id)
-        self.assertEqual(expected_id_intersection_incoming1,
-                         self.scenario.lanelet_network.intersections[0].incomings[0].incoming_id)
-        self.assertEqual(expected_id_intersection_incoming2,
-                         self.scenario.lanelet_network.intersections[0].incomings[1].incoming_id)
+        self.assertTrue(self.scenario._is_object_id_used(expected_id_intersection_incoming1))
+        self.assertTrue(self.scenario._is_object_id_used(expected_id_intersection_incoming2))
 
-        self.assertTrue(self.scenario._is_object_id_used(
-                self.scenario.lanelet_network.intersections[0].incomings[0].incoming_id))
-        self.assertTrue(self.scenario._is_object_id_used(
-                self.scenario.lanelet_network.intersections[0].incomings[1].incoming_id))
+        self.scenario.add_objects(self.static_obs)
+        self.assertEqual(expected_id_static_obs, self.scenario.obstacles[0].obstacle_id)
+
+        self.scenario.add_objects(self.dyn_set_obs)
+        self.assertEqual(expected_id_dyn_set_obs, self.scenario.obstacles[1].obstacle_id)
+
+        self.scenario.add_objects(self.dyn_traj_obs)
+        self.assertEqual(expected_id_dyn_traj, self.scenario.obstacles[2].obstacle_id)
+
+        self.scenario.add_objects(self.traffic_light)
+        self.assertEqual(expected_id_traffic_light, self.scenario.lanelet_network.traffic_lights[0].traffic_light_id)
+
+        self.scenario.add_objects(self.traffic_sign)
+        self.assertEqual(expected_id_traffic_sign, self.scenario.lanelet_network.traffic_signs[0].traffic_sign_id)
+
+        self.scenario.add_objects(self.intersection2)
+        self.assertTrue(self.intersection2.incomings[0].incoming_id in self.scenario._id_set)
+        self.assertEqual(expected_id_intersection_incoming3,
+                         self.scenario.lanelet_network.intersections[1].incomings[0].incoming_id)
 
         with self.assertRaises(ValueError):
             self.scenario.add_objects(self.rectangle)

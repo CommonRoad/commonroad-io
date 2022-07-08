@@ -11,7 +11,7 @@ from commonroad.scenario.trajectory import State
 __author__ = "Christina Miller and Stefanie Manzinger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2022.1"
+__version__ = "2022.2"
 __maintainer__ = "Christina Miller"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
