@@ -7,7 +7,7 @@ import numpy as np
 from commonroad.common.util import Interval
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector
 from commonroad.geometry.shape import Shape, Rectangle, Circle, ShapeGroup, Polygon,\
-    occupancy_shape_from_state
+    occupancy_shape_from_state, build_shape_group_from_state
 from commonroad.scenario.trajectory import Trajectory, State
 
 __author__ = "Stefanie Manzinger"
@@ -350,20 +350,6 @@ class TrajectoryPrediction(Prediction):
                                      'wheelbases for the truck/trailers] are not specified. Please specify them '
                                      'using the "wheelbase_lengths" attribute.')
                 shapes = self._shape.shapes
-                list_of_shapes = []
-                orient = state.orientation
-                nr_of_shapes = len(shapes)
-                pos = state.position
-                list_of_shapes.append(shapes[0].rotate_translate_local(state.position, state.orientation))
-
-                for i in range(1, nr_of_shapes):
-                    new_orient = orient + state.hitch
-                    pos = pos - 0.5 * self.wheelbase_lengths[i - 1] * np.array([math.cos(orient), math.sin(orient)]) - \
-                        (self.wheelbase_lengths[i] / 2) * np.array([math.cos(new_orient), math.sin(new_orient)])
-                    orient = new_orient
-                    shape = shapes[i].rotate_translate_local(pos, orient)
-                    list_of_shapes.append(shape)
-
-                occupied_region = ShapeGroup(list_of_shapes)
+                occupied_region = build_shape_group_from_state(shapes, state, self.wheelbase_lengths)
                 occupancy_set.append(Occupancy(state.time_step, occupied_region))
         return occupancy_set
