@@ -208,6 +208,7 @@ doc/build/*
 *pytest_cache/
 *.egg-info
 *.ipynb_checkpoints/
+build/
 
 # pycharm
 *.idea

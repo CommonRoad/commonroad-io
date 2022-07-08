@@ -29,7 +29,7 @@ from commonroad.visualization.renderer import IRenderer
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2022.1"
+__version__ = "2022.2"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
@@ -641,6 +641,8 @@ class Scenario(IDrawable):
                 self._mark_object_id_as_used(traffic_light.traffic_light_id)
             for intersection in scenario_object.intersections:
                 self._mark_object_id_as_used(intersection.intersection_id)
+                for inc in intersection.incomings:
+                    self._mark_object_id_as_used(inc.incoming_id)
             self._lanelet_network: LaneletNetwork = scenario_object
         elif isinstance(scenario_object, Lanelet):
             self._mark_object_id_as_used(scenario_object.lanelet_id)
