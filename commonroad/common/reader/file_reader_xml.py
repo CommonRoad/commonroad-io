@@ -1047,12 +1047,10 @@ class ObstacleFactory(ABC):
 
     @classmethod
     def read_wheelbase(cls, xml_node: ElementTree.Element) -> List:
-        if not xml_node.find('wheelbase'):
+        wheelbase_xml_node = xml_node.find('wheelbase')
+        if not wheelbase_xml_node:
             return None
-        wheelbase_list = list()
-        for w in list(xml_node.find('wheelbase')):
-            value = float(w.text)
-            wheelbase_list.append(value)
+        wheelbase = [float(w.text) for w in list(wheelbase_xml_node)]
         return wheelbase_list
 
 class StaticObstacleFactory(ObstacleFactory):
