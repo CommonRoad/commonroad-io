@@ -237,6 +237,7 @@ class TrajectoryPrediction(Prediction):
         for (field, value) in kwargs.items():
             setattr(self, field, value)
         Prediction.__init__(self, self._trajectory.initial_time_step, self._create_occupancy_set())
+    
     def __eq__(self, other):
         if not isinstance(other, TrajectoryPrediction):
             warnings.warn(f"Inequality between TrajectoryPrediction {repr(self)} and different type {type(other)}")
@@ -340,14 +341,14 @@ class TrajectoryPrediction(Prediction):
         for k, state in enumerate(self._trajectory.state_list):
             if not hasattr(state, "orientation"):
                 state.orientation = math.atan2(state.velocity_y, state.velocity)
-            if not type(self._shape)==ShapeGroup:
+            if not type(self._shape) == ShapeGroup:
                 occupied_region = occupancy_shape_from_state(self._shape, state)
                 occupancy_set.append(Occupancy(state.time_step, occupied_region))
             else:
                 if not hasattr(self, "wheelbase_lengths"):
-                    raise ValueError('<TrajectoryPrediction/_create_occupancy_set>: wheelbase lengths[list of wheelbases'
-                                     ' for the truck/trailers] are not specified. Please specify them using '
-                                     'the "wheelbase_lengths" attribute.')
+                    raise ValueError('<TrajectoryPrediction/_create_occupancy_set>: wheelbase lengths[list of '
+                                     'wheelbases for the truck/trailers] are not specified. Please specify them '
+                                     'using the "wheelbase_lengths" attribute.')
                 shapes = self._shape.shapes
                 list_of_shapes = []
                 orient = state.orientation

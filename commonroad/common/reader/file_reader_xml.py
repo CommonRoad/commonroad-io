@@ -1053,6 +1053,7 @@ class ObstacleFactory(ABC):
         wheelbase = [float(w.text) for w in list(wheelbase_xml_node)]
         return wheelbase_list
 
+
 class StaticObstacleFactory(ObstacleFactory):
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: LaneletNetwork,
