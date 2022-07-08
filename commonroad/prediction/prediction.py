@@ -237,7 +237,7 @@ class TrajectoryPrediction(Prediction):
         for (field, value) in kwargs.items():
             setattr(self, field, value)
         Prediction.__init__(self, self._trajectory.initial_time_step, self._create_occupancy_set())
-    
+
     def __eq__(self, other):
         if not isinstance(other, TrajectoryPrediction):
             warnings.warn(f"Inequality between TrajectoryPrediction {repr(self)} and different type {type(other)}")
