@@ -125,6 +125,18 @@ class TestTrajectory(unittest.TestCase):
             self.assertEqual(x.position[1], x_t[i])
             self.assertEqual(x.orientation, 10 + x_t[i])
 
+    def test_check_state_list(self):
+        self.assertRaises(AssertionError, Trajectory, 0, 1)
+        self.assertRaises(AssertionError, Trajectory, 0, [])
+        self.assertRaises(AssertionError, Trajectory, 0, [0, 1])
+        self.assertRaises(AssertionError, Trajectory, 0,
+                          [State(**{'time_step': "a", 'position': np.array([0, 0]), 'velocity': 0, 'orientation': 10})])
+        self.assertRaises(AssertionError, Trajectory, 0,
+                          [State(**{'time_step': 0, 'position': np.array([0, 0]), 'velocity': 0, 'orientation': 10}),
+                           State(**{'time_step': 1, 'position': np.array([0, 0])})])
+        self.assertRaises(AssertionError, Trajectory, 2,
+                          [State(**{'time_step': 0, 'position': np.array([0, 0]), 'velocity': 0, 'orientation': 10}),
+                           State(**{'time_step': 1, 'position': np.array([0, 0])})])
 
 
 if __name__ == '__main__':
