@@ -15,7 +15,7 @@ from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad.scenario.obstacle import DynamicObstacle, \
     ObstacleType, \
     StaticObstacle
-from commonroad.scenario.state import KSState
+from commonroad.scenario.state import KSState, InitialState
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.visualization.mp_renderer import MPRenderer
 from commonroad.visualization.param_server import ParamServer
@@ -102,21 +102,21 @@ class TestUncertainStates(unittest.TestCase):
             Polygon(np.array([[0.0, 0.0], [0.5, 1.0], [1.0, 0.0]])))
 
     def _test_static_obstacle(self, shape):
-        state = KSState(position=Circle(2), orientation=0.25 * math.pi)
+        state = InitialState(position=Circle(2), orientation=0.25 * math.pi)
         stat_obs = StaticObstacle(0, ObstacleType.CAR, shape, state)
         stat_obs.draw(self.rnd)
         self.rnd.render(show=True)
         self.rnd.clear()
 
-        state = KSState(position= Polygon(np.array([[0.0, 0.0], [0.5, 1.0], [1.0, 0.0]])),
-                        orientation=AngleInterval((0.25 - 0.125) * math.pi, (0.25 + 0.125) * math.pi))
+        state = InitialState(position=Polygon(np.array([[0.0, 0.0], [0.5, 1.0], [1.0, 0.0]])),
+                             orientation=AngleInterval((0.25 - 0.125) * math.pi, (0.25 + 0.125) * math.pi))
         stat_obs = StaticObstacle(0, ObstacleType.CAR, shape, state)
         stat_obs.draw(self.rnd)
         self.rnd.render(show=True)
         self.rnd.clear()
 
-        state = KSState(position=np.array([1, 1]),
-                        orientation=AngleInterval((0.25 - 0.125) * math.pi, (0.25 + 0.125) * math.pi))
+        state = InitialState(position=np.array([1, 1]),
+                             orientation=AngleInterval((0.25 - 0.125) * math.pi, (0.25 + 0.125) * math.pi))
         stat_obs = StaticObstacle(0, ObstacleType.CAR, shape, state)
         stat_obs.draw(self.rnd)
         self.rnd.render(show=True)

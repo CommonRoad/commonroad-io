@@ -23,7 +23,7 @@ ExactOrShape = Union[np.ndarray, Shape]
 @dataclass
 class State(abc.ABC):
     """
-    This is a class representing the base state (Base State).
+    This is a class representing the Base State.
 
     Args:
         :param time_step: Discrete time step :math:`t_i`
@@ -118,6 +118,7 @@ class State(abc.ABC):
                                        'angle = %s' % angle)
         assert is_valid_orientation(angle), ('<State/translate_rotate>: argument angle must be within the '
                                              'interval [-2pi,2pi]. angle = %s.' % angle)
+
         transformed_state = copy.copy(self)
         if hasattr(self, "position") and getattr(self, "position") is not None:
             if isinstance(self.position, ValidTypes.ARRAY):
@@ -140,7 +141,7 @@ class State(abc.ABC):
 
         return transformed_state
 
-    def convert_state_to_state(self, state: State) -> TraceState:
+    def convert_state_to_state(self, state: TraceState) -> TraceState:
         """
         Converts state to state from different state types.
 
@@ -170,7 +171,7 @@ class State(abc.ABC):
 @dataclass
 class InitialState(State):
     """
-    This is a class representing the initial state (Initial State).
+    This is a class representing the Initial State.
 
     Args:
         :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
@@ -195,7 +196,7 @@ class InitialState(State):
 @dataclass
 class PMState(State):
     """
-    This is a class representing Point Mass Model (PM State).
+    This is a class representing Point Mass State (PM State).
 
     Args:
         :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
@@ -214,7 +215,7 @@ class PMState(State):
 @dataclass
 class KSState(State):
     """
-    This is a class representing Kinematic Single Track Model (KS State).
+    This is a class representing Kinematic Single Track State (KS State).
 
     Args:
         :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
@@ -235,7 +236,7 @@ class KSState(State):
 @dataclass
 class KSTState(KSState):
     """
-    This is a class representing Kinematic Single-Track Model (KST State).
+    This is a class representing Kinematic Single Track State (KST State).
 
     Args:
         :param hitch_angle: Hitch angle :math:`\\alpha`
@@ -250,7 +251,7 @@ class KSTState(KSState):
 @dataclass
 class STState(KSState):
     """
-    This is a class representing Single-Track Model (ST State).
+    This is a class representing Single Track State (ST State).
 
     Args:
         :param slip_angle: Slip angle :math:`\\beta`
@@ -267,7 +268,7 @@ class STState(KSState):
 @dataclass
 class STDState(STState):
     """
-    This is a class representing Single-Track Drift Model (STD State).
+    This is a class representing Single Track Drift State (STD State).
 
     Args:
         :param front_wheel_angular_speed: Front wheel angular speed :math:`\\omega_{f}`
@@ -284,7 +285,7 @@ class STDState(STState):
 @dataclass
 class MBState(State):
     """
-    This is a class representing Multi-Body Model (MB State).
+    This is a class representing Multi Body State (MB State).
 
     Args:
         :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
@@ -403,4 +404,5 @@ class CustomState(State):
         setattr(self, new_attr, None)
 
 
-TraceState = Union[State, InitialState, PMState, KSState, KSTState, STState, STDState, MBState, InputState, PMInputState]
+TraceState = Union[State, InitialState, PMState, KSState, KSTState, STState, STDState, MBState,
+                   InputState, PMInputState]

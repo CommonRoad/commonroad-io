@@ -22,7 +22,8 @@ class TestTranslateRotate(unittest.TestCase):
         translation = np.array((10.0, 1.0))
         angle = 0.0
         pos = np.array((1.0, 1.0))
-        initial_state = InitialState(position=pos, velocity=10.0, orientation=0.0, yaw_rate=0, slip_angle=0, time_step=1)
+        initial_state = InitialState(position=pos, velocity=10.0, orientation=0.0, yaw_rate=0,
+                                     slip_angle=0, time_step=1)
 
         shape1 = Rectangle(2.0, 4.0, np.array((2.0, 2.0)))
         shape2 = Circle(2.5, np.array((-1.0, 1.0)))
@@ -51,7 +52,8 @@ class TestTranslateRotate(unittest.TestCase):
         translation = np.array((0.0, 0.0))
         angle = np.pi/4
         pos = np.array((1.0, 1.0))
-        initial_state = InitialState(position=pos, velocity=10.0, orientation=np.pi/2, yaw_rate=0, slip_angle=0, time_step=2)
+        initial_state = InitialState(position=pos, velocity=10.0, orientation=np.pi/2, yaw_rate=0,
+                                     slip_angle=0, time_step=2)
 
         shape1 = Rectangle(2.0, 4.0, np.array((2.0, 2.0)))
         shape2 = Circle(2.5, np.array((-1.0, 1.0)))
@@ -72,7 +74,8 @@ class TestTranslateRotate(unittest.TestCase):
 
     def test_goal_reached(self):
         pos = np.array((0.0, -3.0))
-        initial_state = InitialState(position=pos, velocity=10.0, orientation=0.0, yaw_rate=0, slip_angle=0, time_step=1)
+        initial_state = InitialState(position=pos, velocity=10.0, orientation=0.0, yaw_rate=0,
+                                     slip_angle=0, time_step=1)
 
         shape1 = Rectangle(2.0, 4.0, np.array((2.0, 2.0)))
         shape2 = Circle(2.5, np.array((-1.0, 1.0)))
@@ -82,7 +85,7 @@ class TestTranslateRotate(unittest.TestCase):
         goal_region = GoalRegion([goal_state_1, goal_state_2])
         planning_problem = PlanningProblem(1, initial_state, goal_region)
 
-        state_reached = STState(position=np.array([2, 2]), velocity=10, orientation=0.0, yaw_rate =0, slip_angle=0,
+        state_reached = STState(position=np.array([2, 2]), velocity=10, orientation=0.0, yaw_rate=0, slip_angle=0,
                                 time_step=1)
         state_not_reached = STState(position=np.array([0, -6]), velocity=10, orientation=(3/2)*np.pi, yaw_rate=0,
                                     slip_angle=0, time_step=1)
