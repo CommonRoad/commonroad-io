@@ -434,7 +434,12 @@ class MPRenderer(IRenderer):
         focus_obstacle_id = draw_params.by_callstack(call_stack, ('focus_obstacle_id',))
         if focus_obstacle_id is False and type(self.plot_limits) == list:
             time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
-            # dynamic obstacles
+            obs = []
+            for o in obj.obstacles:
+                occ = o.occupancy_at_time(time_begin)
+                vert = occ.shape.vertices
+                if np.any((self.plot_limits[::2] <= vert) & (vert <= self.plot_limits[1::2])):
+                    obs.append(o)
             obs = obj.obstacles_by_position_intervals([Interval(self.plot_limits[0], self.plot_limits[1]),
                                                        Interval(self.plot_limits[2], self.plot_limits[3])],
                                                       tuple(ObstacleRole), time_begin)
