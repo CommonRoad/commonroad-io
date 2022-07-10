@@ -12,7 +12,7 @@ from commonroad.geometry.shape import Shape, \
     Polygon, \
     ShapeGroup, \
     occupancy_shape_from_state, \
-    build_shape_group_from_state
+    shape_group_occupancy_shape_from_state
 from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.trajectory import State
 
@@ -487,7 +487,8 @@ class DynamicObstacle(Obstacle):
         if not hasattr(self, 'wheelbase_lengths'):
             return
         shapes = self.obstacle_shape.shapes
-        self._initial_occupancy_shape = build_shape_group_from_state(shapes, initial_state, self.wheelbase_lengths)
+        self._initial_occupancy_shape = shape_group_occupancy_shape_from_state(shapes, initial_state,
+                                                                               self.wheelbase_lengths)
 
     @property
     def prediction(self) -> Union[Prediction, TrajectoryPrediction, SetBasedPrediction, None]:
