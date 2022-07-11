@@ -583,7 +583,12 @@ def occupancy_shape_from_state(shape, state):
     return occupied_region
 
 
-def build_shape_group_from_state(shapes, state, wheelbase_lengths):
+def shape_group_occupancy_shape_from_state(shapes, state, wheelbase_lengths):
+    """ Computes the occupancy of a ShapeGroup for a given state; used for trailer-truck model
+    :param shapes: list of shapes in the Shape group
+    :param state: state to compute occupancy
+    :param wheelbase_lengths: list of wheelbase lengths corresponding to the Shapes in "shapes"
+    """
     list_of_shapes = []
     orient = state.orientation
     nr_of_shapes = len(shapes)

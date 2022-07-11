@@ -7,7 +7,7 @@ import numpy as np
 from commonroad.common.util import Interval
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector
 from commonroad.geometry.shape import Shape, Rectangle, Circle, ShapeGroup, Polygon,\
-    occupancy_shape_from_state, build_shape_group_from_state
+    occupancy_shape_from_state, shape_group_occupancy_shape_from_state
 from commonroad.scenario.trajectory import Trajectory, State
 
 __author__ = "Stefanie Manzinger"
@@ -341,15 +341,16 @@ class TrajectoryPrediction(Prediction):
         for k, state in enumerate(self._trajectory.state_list):
             if not hasattr(state, "orientation"):
                 state.orientation = math.atan2(state.velocity_y, state.velocity)
-            if not type(self._shape) == ShapeGroup:
-                occupied_region = occupancy_shape_from_state(self._shape, state)
+            if not type(self.shape) == ShapeGroup:
+                occupied_region = occupancy_shape_from_state(self.shape, state)
                 occupancy_set.append(Occupancy(state.time_step, occupied_region))
             else:
                 if not hasattr(self, "wheelbase_lengths"):
                     raise ValueError('<TrajectoryPrediction/_create_occupancy_set>: wheelbase lengths[list of '
                                      'wheelbases for the truck/trailers] are not specified. Please specify them '
                                      'using the "wheelbase_lengths" attribute.')
-                shapes = self._shape.shapes
-                occupied_region = build_shape_group_from_state(shapes, state, self.wheelbase_lengths)
-                occupancy_set.append(Occupancy(state.time_step, occupied_region))
+                else:
+                    shapes = self.shape.shapes
+                    occupied_region = shape_group_occupancy_shape_from_state(shapes, state, self.wheelbase_lengths)
+                    occupancy_set.append(Occupancy(state.time_step, occupied_region))
         return occupancy_set

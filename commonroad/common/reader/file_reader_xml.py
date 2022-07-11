@@ -1050,7 +1050,7 @@ class ObstacleFactory(ABC):
         wheelbase_xml_node = xml_node.find('wheelbase')
         if not wheelbase_xml_node:
             return None
-        wheelbase = [float(w.text) for w in list(wheelbase_xml_node)]
+        wheelbase_list = [float(w.text) for w in list(wheelbase_xml_node)]
         return wheelbase_list
 
 
