@@ -1,6 +1,6 @@
 # Changelog
 
-## [2022.2] - 2022-06-XX
+## [2022.2] - 2022-07-XX
 
 ### Added
 
@@ -9,10 +9,12 @@
 - Function for erasing lanelet network from scenario
 - Function for replacing lanelet network of a scenario with new one
 - Support for Protobuf format
+- Predefined classes for specific states, point-mass model, kinematic single-track model, etc.
 
 ### Changed
 
 - Move tests, tutorial, and documentation folder to root directory
+- State classes in separate Python file
 
 ### Removed
 - setter method for lanelet network in scenario class
