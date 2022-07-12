@@ -1,5 +1,26 @@
 # Changelog
 
+## [2022.3] - 2022-07-XX
+
+### Added
+
+- Function for getting shape group occupancy shape from state
+- Tutorial for the Truck Scenario
+
+### Changed
+
+- Modified the `read_wheelbase`.
+
+### Removed
+
+- Vehicle parameters `parameters_vehicle_MAN`
+
+### Fixed
+
+- Attribute Error in protobuf reader
+- Various small bug fixes
+
+
 ## [2022.2] - 2022-06-XX
 
 ### Added
