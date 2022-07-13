@@ -10,7 +10,7 @@ from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, La
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Underground, Weather, TimeOfDay, \
     ScenarioID
-from commonroad.scenario.state import STState, InitialState
+from commonroad.scenario.state import STState, InitialState, CustomState
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLightDirection, TrafficLight, \
     TrafficLightCycleElement, TrafficLightState, TrafficSignIDGermany
@@ -41,7 +41,11 @@ class TestXMLFileReader(unittest.TestCase):
         set_pred = SetBasedPrediction(0, occupancy_list)
 
         states = []
-        states.append(STState(time_step=1, orientation=0, position=np.array([0, 1])))
+        state = CustomState()
+        for attr, value in {'time_step': 1, 'orientation': 0, 'position': np.array([0, 1])}.items():
+            state.add_attribute(attr)
+            state.set_value(attr, value)
+        states.append(state)
         trajectory = Trajectory(1, states)
         init_state = InitialState(time_step=0, orientation=0, position=np.array([0, 0]))
         traj_pred = TrajectoryPrediction(trajectory, rectangle)

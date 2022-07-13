@@ -3,7 +3,7 @@ import abc
 import copy
 import dataclasses
 from dataclasses import dataclass
-from typing import Union, List, Tuple, Optional
+from typing import Union, List, Tuple, Optional, Any
 
 import numpy as np
 
@@ -370,6 +370,47 @@ class MBState(State):
 
 
 @dataclass
+class LongitudinalState(State):
+    """
+    This is a class representing the Longitudinal Motion State (Longitudinal State).
+
+    Args:
+        :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
+        :param velocity: Velocity :math:`v_x` in longitudinal direction
+        :param acceleration: Acceleration :math:`a_x` in longitudinal direction
+        :param jerk: Jerk :math:`j`
+
+    """
+    position: ExactOrShape = None
+    velocity: FloatExactOrInterval = None
+    acceleration: FloatExactOrInterval = None
+    jerk: FloatExactOrInterval = None
+
+    def __eq__(self, other):
+        return State.__eq__(self, other)
+
+
+@dataclass
+class LateralState(State):
+    """
+    This is a class representing the Lateral Motion State (Lateral State).
+
+    Args:
+        :param distance: Distance :math:`d` to reference path
+        :param orientation: Yaw angle :math:`\\Psi`
+        :param curvature: Curvature math:`\\kappa`
+        :param curvature_rate: Change of curvature math:`\\dot{\\kappa}`
+    """
+    distance: FloatExactOrInterval = None
+    orientation: AngleExactOrInterval = None
+    curvature: FloatExactOrInterval = None
+    curvature_rate: FloatExactOrInterval = None
+
+    def __eq__(self, other):
+        return State.__eq__(self, other)
+
+
+@dataclass
 class InputState(State):
     """
     This is a class representing the input for most supported models.
@@ -421,6 +462,20 @@ class CustomState(State):
         """
         setattr(self, new_attr, None)
 
+    def set_value(self, attr: str, value: Any):
+        """
+        Sets value to attribute.
 
-TraceState = Union[State, InitialState, PMState, KSState, KSTState, STState, STDState, MBState,
-                   InputState, PMInputState, CustomState]
+        :param attr: Attribute name
+        :param value: Value
+        """
+        assert attr in self.attributes, "{} is not an attribute of this custom state!".format(attr)
+
+        setattr(self, attr, value)
+
+
+TraceState = Union[State, InitialState, PMState, KSState, KSTState, STState, STDState, MBState, InputState,
+                   PMInputState, LateralState, LongitudinalState, CustomState]
+
+SpecificStateClasses = [InitialState, PMState, KSState, KSTState, STState, STDState, MBState, InputState,
+                        PMInputState, LateralState, LongitudinalState]

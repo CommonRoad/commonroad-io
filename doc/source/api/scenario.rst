@@ -288,7 +288,7 @@ States
    :members:
 
 ``InitialState`` class
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: InitialState
    :members:
    :show-inheritance:
@@ -329,6 +329,18 @@ States
    :members:
    :show-inheritance:
 
+``LongitudinalState`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: LongitudinalState
+   :members:
+   :show-inheritance:
+
+``LateralState`` class
+^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: LateralState
+   :members:
+   :show-inheritance:
+
 ``InputState`` class
 ^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: InputState
@@ -336,13 +348,13 @@ States
    :show-inheritance:
 
 ``PMInputState`` class
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: PMInputState
    :members:
    :show-inheritance:
 
 ``CustomState`` class
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: CustomState
    :members:
    :show-inheritance:

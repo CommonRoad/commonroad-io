@@ -29,7 +29,7 @@ from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSignIDGe
     TrafficLightState
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import InitialState, PMState, KSState, KSTState, STState, STDState, MBState, TraceState, \
-    InputState, PMInputState, CustomState
+    InputState, PMInputState, CustomState, SpecificStateClasses
 
 __author__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -622,15 +622,13 @@ class StateFactory:
 
     @classmethod
     def create_from_message(cls, state_msg: obstacle_pb2.State, is_initial_state: bool = False) -> TraceState:
-        states = [InitialState(), PMState(), KSState(), KSTState(), STState(), STDState(), MBState(), InputState(),
-                  PMInputState()]
+        states = [state_class() for state_class in SpecificStateClasses]
 
         largest_matched_state = None
         for state in states:
             filled = StateFactory._fill_state(state, state_msg, state.attributes)
 
             if isinstance(state, InitialState) and is_initial_state:
-                print("PB-Initial")
                 state.fill_with_defaults()
                 return state
 

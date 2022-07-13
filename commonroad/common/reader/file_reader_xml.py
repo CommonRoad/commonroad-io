@@ -17,7 +17,7 @@ from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicOb
 from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, \
     TimeOfDay, Weather, Underground, ScenarioID
 from commonroad.scenario.state import InitialState, PMState, KSState, KSTState, STState, STDState, MBState, TraceState, \
-    CustomState
+    CustomState, SpecificStateClasses
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.traffic_sign import *
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
@@ -1318,14 +1318,13 @@ class StateFactory:
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: Union[LaneletNetwork, None] = None,
                              is_initial_state: bool = False) -> TraceState:
-        states = [InitialState(), PMState(), KSState(), KSTState(), STState(), STDState(), MBState()]
+        states = [state_class() for state_class in SpecificStateClasses]
 
         largest_matched_state = None
         for state in states:
             filled = StateFactory._fill_state(state, xml_node, state.attributes, lanelet_network)
 
             if isinstance(state, InitialState) and is_initial_state:
-                print("XML-Initial")
                 state.fill_with_defaults()
                 return state
 
