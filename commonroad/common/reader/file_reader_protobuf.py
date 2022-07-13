@@ -28,8 +28,7 @@ from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSignIDGe
     TrafficSignIDPuertoRico, TrafficSign, TrafficLight, TrafficLightCycleElement, TrafficLightDirection, \
     TrafficLightState
 from commonroad.scenario.trajectory import Trajectory
-from commonroad.scenario.state import InitialState, PMState, KSState, KSTState, STState, STDState, MBState, TraceState, \
-    InputState, PMInputState, CustomState, SpecificStateClasses
+from commonroad.scenario.state import InitialState, TraceState, CustomState, SpecificStateClasses
 
 __author__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"

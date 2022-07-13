@@ -16,8 +16,7 @@ from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicOb
     SignalState, PhantomObstacle
 from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, \
     TimeOfDay, Weather, Underground, ScenarioID
-from commonroad.scenario.state import InitialState, PMState, KSState, KSTState, STState, STDState, MBState, TraceState, \
-    CustomState, SpecificStateClasses
+from commonroad.scenario.state import InitialState, TraceState, CustomState, SpecificStateClasses
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.traffic_sign import *
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
