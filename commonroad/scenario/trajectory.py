@@ -342,7 +342,7 @@ class Trajectory(IDrawable):
             warnings.warn(f"Inequality between Trajectory {repr(self)} and different type {type(other)}")
             return False
 
-        return self._initial_time_step == other.initial_time_step and self._state_list == other.state_list
+        return self._initial_time_step == other.initial_time_step and list(self._state_list) == list(other.state_list)
 
     def __hash__(self):
         return hash((self._initial_time_step, self._state_list))
@@ -417,10 +417,10 @@ class Trajectory(IDrawable):
             '<Trajectory/translate_rotate>: argument angle must be within the '
             'interval [-2pi,2pi]. angle = %s' % angle
         )
-        new_state_list = ()
+        new_state_list = []
         for i in range(len(self._state_list)):
-            new_state_list = self._state_list[i].translate_rotate(translation, angle)
-        self._state_list = new_state_list
+            new_state_list.append(self._state_list[i].translate_rotate(translation, angle))
+        self._state_list = tuple(new_state_list)
 
     @classmethod
     def resample_continuous_time_state_list(cls, states: List[State],
