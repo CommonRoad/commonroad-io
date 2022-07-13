@@ -4,21 +4,8 @@
 
 ### Added
 
-- Function for getting shape group occupancy shape from state
-- Tutorial for the Truck Scenario
-
-### Changed
-
-- Modified the `read_wheelbase`.
-
-### Removed
-
-- Vehicle parameters `parameters_vehicle_MAN`
-
-### Fixed
-
-- Attribute Error in protobuf reader
-- Various small bug fixes
+- Function for getting shape group occupancy from state
+- Support for Kinematic Single-Track Model with One On-axle Trailer
 
 
 ## [2022.2] - 2022-06-XX
