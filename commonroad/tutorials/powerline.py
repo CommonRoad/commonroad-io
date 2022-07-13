@@ -43,7 +43,7 @@ class poweline():
         o = math.pi
 
         for i in range(self.nb_towers):
-            self.tower( fctx(i), fcty(i), fctx(i + 1), fcty(i + 1), self.list_obstacle)
+            self.tower( fctx(i), fcty(i), fctx(i + 1), fcty(i + 1))
 
         for i in range(self.nb_towers):
             distance = math.pow(abs(fctx(i) - fctx(i + 1)) ** 2 + abs(fcty(i) - fcty(i + 1)) ** 2, 0.5)
@@ -76,7 +76,7 @@ class poweline():
 
 
 
-    def tower(self,x,y,xp1,yp1,obstable):
+    def tower(self,x,y,xp1,yp1):
 
 
         """
@@ -108,7 +108,7 @@ class poweline():
             (+ base * 0.5, + base * 0.5, bottom), (+ base * 0.5, - base * 0.5, bottom)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
 
         biglist.append(list)
 
@@ -118,7 +118,7 @@ class poweline():
             (- base * 0.5, + base * 0.5, bottom), (+ base * 0.5, - base * 0.5, bottom)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
 
         
@@ -128,7 +128,7 @@ class poweline():
             (+ midbase * 0.5, + midbase * 0.5, top), (+ midbase * 0.5, - midbase * 0.5, top)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
         ################################################################################################################
         list = [
@@ -136,7 +136,7 @@ class poweline():
             (+ base * 0.5, + base * 0.5, bottom), (+ base * 0.5, - base * 0.5, bottom)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
         ################################################################################################################
         list = [
@@ -144,7 +144,7 @@ class poweline():
             (- base * 0.5, + base * 0.5, bottom), (- base * 0.5, - base * 0.5, bottom)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
         ################################################################################################################
         list = [
@@ -152,7 +152,7 @@ class poweline():
             (+ midbase * 0.5, + midbase * 0.5, top), (+ base * 0.5, + base * 0.5, bottom)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
         ################################################################################################################
         list = [
@@ -160,7 +160,7 @@ class poweline():
             (+ midbase * 0.5, - midbase * 0.5, top), (+ base * 0.5, - base * 0.5, bottom)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
         ################################################################################################################
         list = [
@@ -168,7 +168,7 @@ class poweline():
             (+ midbase * 0.5, + midbase * 0.5, roof), (+ midbase * 0.5, - midbase * 0.5, roof)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
         ################################################################################################################
         list = [
@@ -176,7 +176,7 @@ class poweline():
             (+ midbase * 0.5, + midbase * 0.5, top), (+ midbase * 0.5, - midbase * 0.5, top)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
         ################################################################################################################
         list = [
@@ -184,7 +184,7 @@ class poweline():
             (- midbase * 0.5, + midbase * 0.5, top), (- midbase * 0.5, - midbase * 0.5, top)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
         ################################################################################################################
         list = [
@@ -192,7 +192,7 @@ class poweline():
             (+ midbase * 0.5, + midbase * 0.5, roof), (+ midbase * 0.5, + midbase * 0.5, top)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
         ################################################################################################################
         list = [
@@ -200,7 +200,7 @@ class poweline():
             (+ midbase * 0.5, - midbase * 0.5, roof), (+ midbase * 0.5, - midbase * 0.5, top)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
         ################################################################################################################
 
@@ -213,7 +213,7 @@ class poweline():
             (+ midbase * 0.5, + midbase * 0.5, roof), (+ midbase * 0.5, - midbase * 0.5, roof)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
 
         biglist.append(list)
         ################################################################################################################
@@ -222,7 +222,7 @@ class poweline():
             (+ midbase * 0.5, + midbase * 0.5, top), (+ midbase * 0.5, - midbase * 0.5, top)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
 
         biglist.append(list)
         ################################################################################################################
@@ -231,7 +231,7 @@ class poweline():
             (- midbase * 0.5, + midbase * 0.5, top), (- midbase * 0.5, - midbase * 0.5, top)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
         ################################################################################################################
         list = [
@@ -239,7 +239,7 @@ class poweline():
             (+ midbase * 0.5, + midbase * 0.5, roof), (+ midbase * 0.5, + midbase * 0.5, top)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
         ################################################################################################################
         list = [
@@ -247,7 +247,7 @@ class poweline():
             (+ midbase * 0.5, - midbase * 0.5, roof), (+ midbase * 0.5, - midbase * 0.5, top)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
         ################################################################################################################
 
@@ -261,7 +261,7 @@ class poweline():
             (+ midbase * 0.0, + midbase * 0.0, roof), (+ midbase * 0.0, - midbase * 0.0, roof)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
         ################################################################################################################
         list = [
@@ -269,7 +269,7 @@ class poweline():
             (+ midbase * 0.5, + midbase * 0.5, top), (+ midbase * 0.5, - midbase * 0.5, top)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
 
         biglist.append(list)
         ################################################################################################################
@@ -278,7 +278,7 @@ class poweline():
             (- midbase * 0.5, + midbase * 0.5, top), (- midbase * 0.5, - midbase * 0.5, top)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
         ################################################################################################################
         list = [
@@ -286,7 +286,7 @@ class poweline():
             (+ midbase * 0.0, + midbase * 0.0, roof), (+ midbase * 0.5, + midbase * 0.5, top)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
         ################################################################################################################
         list = [
@@ -294,7 +294,7 @@ class poweline():
             (+ midbase * 0.0, - midbase * 0.0, roof), (+ midbase * 0.5, - midbase * 0.5, top)]
         list = rotation_z(o, list)
         list = add_center(x, y, list)
-        obstable.append(list[0])
+        self.list_obstacle.append(list[0])
         biglist.append(list)
         ################################################################################################################
 
