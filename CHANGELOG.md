@@ -4,7 +4,7 @@
 
 ### Added
 
-- Function for getting shape group occupancy from state
+- Function for computing shape group occupancy from state
 - Support for Kinematic Single-Track Model with One On-axle Trailer
 
 
