@@ -114,8 +114,10 @@ class TestPlanningProblemSet(unittest.TestCase):
         shape1 = Rectangle(2.0, 4.0, np.array((2.0, 2.0)))
         shape2 = Circle(2.5, np.array((-1.0, 1.0)))
 
-        goal_state_1 = STState(position=shape1, time_step=Interval(0, 5), orientation=AngleInterval(np.pi / 8, 3 * np.pi / 8))
-        goal_state_2 = STState(position=shape2, time_step=Interval(0, 2), orientation=AngleInterval(3 * np.pi / 4, np.pi))
+        goal_state_1 = STState(position=shape1, time_step=Interval(0, 5),
+                               orientation=AngleInterval(np.pi / 8, 3 * np.pi / 8))
+        goal_state_2 = STState(position=shape2, time_step=Interval(0, 2),
+                               orientation=AngleInterval(3 * np.pi / 4, np.pi))
         goal_region = GoalRegion([goal_state_1, goal_state_2])
         planning_problem = PlanningProblem(1, initial_state, goal_region)
 
@@ -124,10 +126,14 @@ class TestPlanningProblemSet(unittest.TestCase):
 
         self.assertAlmostEqual(problem_set.planning_problem_dict[1].initial_state.orientation, np.pi / 2 + angle)
 
-        self.assertAlmostEqual(problem_set.planning_problem_dict[1].goal.state_list[0].orientation.start, angle + np.pi / 8)
-        self.assertAlmostEqual(problem_set.planning_problem_dict[1].goal.state_list[0].orientation.end, angle + 3 * np.pi / 8)
-        self.assertAlmostEqual(problem_set.planning_problem_dict[1].goal.state_list[1].orientation.start, angle + 3 * np.pi / 4)
-        self.assertAlmostEqual(problem_set.planning_problem_dict[1].goal.state_list[1].orientation.end, angle + np.pi)
+        self.assertAlmostEqual(
+                problem_set.planning_problem_dict[1].goal.state_list[0].orientation.start, angle + np.pi / 8)
+        self.assertAlmostEqual(
+                problem_set.planning_problem_dict[1].goal.state_list[0].orientation.end, angle + 3 * np.pi / 8)
+        self.assertAlmostEqual(
+                problem_set.planning_problem_dict[1].goal.state_list[1].orientation.start, angle + 3 * np.pi / 4)
+        self.assertAlmostEqual(
+                problem_set.planning_problem_dict[1].goal.state_list[1].orientation.end, angle + np.pi)
 
 
 if __name__ == '__main__':
