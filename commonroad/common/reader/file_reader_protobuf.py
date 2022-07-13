@@ -29,7 +29,7 @@ from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSignIDGe
     TrafficLightState
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import InitialState, PMState, KSState, KSTState, STState, STDState, MBState, TraceState, \
-    InputState, PMInputState
+    InputState, PMInputState, CustomState
 
 __author__ = "Stefanie Manzinger, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -504,7 +504,7 @@ class StaticObstacleFactory:
 
         shape = ShapeFactory.create_from_message(static_obstacle_msg.shape)
 
-        initial_state = StateFactory.create_from_message(static_obstacle_msg.initial_state)
+        initial_state = StateFactory.create_from_message(static_obstacle_msg.initial_state, is_initial_state=True)
 
         static_obstacle = StaticObstacle(static_obstacle_id, obstacle_type, shape, initial_state)
 
@@ -545,7 +545,7 @@ class DynamicObstacleFactory:
 
         shape = ShapeFactory.create_from_message(dynamic_obstacle_msg.shape)
 
-        initial_state = StateFactory.create_from_message(dynamic_obstacle_msg.initial_state)
+        initial_state = StateFactory.create_from_message(dynamic_obstacle_msg.initial_state, is_initial_state=True)
 
         initial_center_lanelet_ids = set()
         initial_shape_lanelet_ids = set()
@@ -621,31 +621,20 @@ class PhantomObstacleFactory:
 class StateFactory:
 
     @classmethod
-    def create_from_message(cls, state_msg: obstacle_pb2.State) -> TraceState:
+    def create_from_message(cls, state_msg: obstacle_pb2.State, is_initial_state: bool = False) -> TraceState:
         states = [InitialState(), PMState(), KSState(), KSTState(), STState(), STDState(), MBState(), InputState(),
                   PMInputState()]
 
         largest_matched_state = None
         for state in states:
-            all_given = True
-            for attr in state.attributes:
-                if (hasattr(state_msg, attr) and state_msg.HasField(attr)) or attr == 'position':
-                    if attr == 'time_step':
-                        setattr(state, attr, IntegerExactOrIntervalFactory.create_from_message(state_msg.time_step))
-                    elif attr == 'position':
-                        if state_msg.HasField('point'):
-                            setattr(state, attr, PointFactory.create_from_message(state_msg.point))
-                        elif state_msg.HasField('shape'):
-                            setattr(state, attr, ShapeFactory.create_from_message(state_msg.shape))
-                    elif attr == 'orientation':
-                        setattr(state, attr,
-                                FloatExactOrIntervalFactory.create_from_message(state_msg.orientation, is_angle=True))
-                    else:
-                        setattr(state, attr, FloatExactOrIntervalFactory.create_from_message(getattr(state_msg, attr)))
-                else:
-                    all_given = False
+            filled = StateFactory._fill_state(state, state_msg, state.attributes)
 
-            if all_given:
+            if isinstance(state, InitialState) and is_initial_state:
+                print("PB-Initial")
+                state.fill_with_defaults()
+                return state
+
+            if filled:
                 if largest_matched_state is None:
                     largest_matched_state = state
                 else:
@@ -653,10 +642,39 @@ class StateFactory:
                         largest_matched_state = state
 
         if largest_matched_state is None:
-            largest_matched_state = states[0]
+            used_fields = list()
+            for field in [field.name for field in state_msg.DESCRIPTOR.fields]:
+                if state_msg.HasField(field):
+                    if field == 'point' or field == 'shape':
+                        used_fields.append('position')
+                    else:
+                        used_fields.append(field)
+            largest_matched_state = CustomState()
+            StateFactory._fill_state(largest_matched_state, state_msg, used_fields)
             warnings.warn("State at time step {} cannot be matched!".format(getattr(state_msg, 'time_step')))
 
         return largest_matched_state
+
+    @classmethod
+    def _fill_state(cls, state: TraceState, state_msg: obstacle_pb2.State, attrs: List[str]) -> bool:
+        for attr in attrs:
+            if (hasattr(state_msg, attr) and state_msg.HasField(attr)) or attr == 'position':
+                if attr == 'time_step':
+                    setattr(state, attr, IntegerExactOrIntervalFactory.create_from_message(state_msg.time_step))
+                elif attr == 'position':
+                    if state_msg.HasField('point'):
+                        setattr(state, attr, PointFactory.create_from_message(state_msg.point))
+                    elif state_msg.HasField('shape'):
+                        setattr(state, attr, ShapeFactory.create_from_message(state_msg.shape))
+                elif attr == 'orientation':
+                    setattr(state, attr,
+                            FloatExactOrIntervalFactory.create_from_message(state_msg.orientation, is_angle=True))
+                else:
+                    setattr(state, attr, FloatExactOrIntervalFactory.create_from_message(getattr(state_msg, attr)))
+            else:
+                return False
+
+        return True
 
 
 class SignalStateFactory:
@@ -786,7 +804,7 @@ class PlanningProblemFactory:
     def create_from_message(cls, planning_problem_msg: planning_problem_pb2.PlanningProblem) -> PlanningProblem:
         planning_problem_id = planning_problem_msg.planning_problem_id
 
-        initial_state = StateFactory.create_from_message(planning_problem_msg.initial_state)
+        initial_state = StateFactory.create_from_message(planning_problem_msg.initial_state, is_initial_state=True)
 
         state_list = list()
         lanelets_of_goal_position = None

@@ -1,6 +1,8 @@
 import unittest
 import math
 
+import numpy as np
+
 from commonroad.scenario.state import *
 from commonroad.geometry.shape import Rectangle
 from commonroad.common.util import Interval, AngleInterval
@@ -105,6 +107,16 @@ class TestState(unittest.TestCase):
         self.assertEqual(initial_state.position, pm_state.position)
         self.assertEqual(initial_state.velocity, pm_state.velocity)
         self.assertEqual(pm_state.velocity_y, None)
+
+    def test_fill_with_defaults(self):
+        initial_state = InitialState()
+        initial_state.fill_with_defaults()
+        for field in initial_state.attributes:
+            value = getattr(initial_state, field)
+            if field == 'position':
+                self.assertEqual(np.array([0., 0.]).tolist(), value.tolist())
+            else:
+                self.assertEqual(0., value)
 
     def test_equals(self):
         ks_state_1 = STState(time_step=0, position=np.array([0., 0.]), steering_angle=0.1,

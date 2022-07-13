@@ -16,7 +16,8 @@ from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicOb
     SignalState, PhantomObstacle
 from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, \
     TimeOfDay, Weather, Underground, ScenarioID
-from commonroad.scenario.state import InitialState, PMState, KSState, KSTState, STState, STDState, MBState, TraceState
+from commonroad.scenario.state import InitialState, PMState, KSState, KSTState, STState, STDState, MBState, TraceState, \
+    CustomState
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.traffic_sign import *
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
@@ -344,7 +345,7 @@ class GeoTransformationFactory:
 
 
 class EnvironmentFactory:
-    """ Class to create a environment object of an XML element according to the CommonRoad specification."""
+    """ Class to create an environment object of an XML element according to the CommonRoad specification."""
 
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Environment:
@@ -1034,7 +1035,7 @@ class ObstacleFactory(ABC):
 
     @classmethod
     def read_initial_state(cls, xml_node: ElementTree.Element) -> TraceState:
-        initial_state = StateFactory.create_from_xml_node(xml_node)
+        initial_state = StateFactory.create_from_xml_node(xml_node, is_initial_state=True)
         return initial_state
 
     @classmethod
@@ -1292,7 +1293,7 @@ class PlanningProblemFactory:
 
     @classmethod
     def _add_initial_state(cls, xml_node: ElementTree.Element) -> TraceState:
-        initial_state = StateFactory.create_from_xml_node(xml_node.find('initialState'))
+        initial_state = StateFactory.create_from_xml_node(xml_node.find('initialState'), is_initial_state=True)
         return initial_state
 
 
@@ -1315,30 +1316,20 @@ class GoalRegionFactory:
 
 class StateFactory:
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: Union[LaneletNetwork, None] = None) \
-            -> TraceState:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element, lanelet_network: Union[LaneletNetwork, None] = None,
+                             is_initial_state: bool = False) -> TraceState:
         states = [InitialState(), PMState(), KSState(), KSTState(), STState(), STDState(), MBState()]
 
         largest_matched_state = None
         for state in states:
-            all_given = True
-            for attr in state.attributes:
-                attr_xml = re.sub(r'_(\w)', lambda m: m.group(1).upper(), attr)
-                if attr == 'position' and xml_node.find('position') is not None:
-                    position = cls._read_position(xml_node.find('position'), lanelet_network)
-                    setattr(state, 'position', position)
-                elif attr == 'time_step' and xml_node.find('time') is not None:
-                    setattr(state, 'time_step', read_time(xml_node.find('time')))
-                elif attr == 'orientation' and xml_node.find('orientation') is not None:
-                    orientation = cls._read_orientation(xml_node.find('orientation'))
-                    setattr(state, 'orientation', orientation)
-                elif xml_node.find(attr_xml) is not None:
-                    value = read_value_exact_or_interval(xml_node.find(attr_xml))
-                    setattr(state, attr, value)
-                else:
-                    all_given = False
+            filled = StateFactory._fill_state(state, xml_node, state.attributes, lanelet_network)
 
-            if all_given:
+            if isinstance(state, InitialState) and is_initial_state:
+                print("XML-Initial")
+                state.fill_with_defaults()
+                return state
+
+            if filled:
                 if largest_matched_state is None:
                     largest_matched_state = state
                 else:
@@ -1346,10 +1337,38 @@ class StateFactory:
                         largest_matched_state = state
 
         if largest_matched_state is None:
+            used_fields = list()
+            for field in [element.tag for element in list(xml_node)]:
+                if field == 'time':
+                    used_fields.append('time_step')
+                else:
+                    used_fields.append(field)
+            largest_matched_state = CustomState()
+            StateFactory._fill_state(largest_matched_state, xml_node, used_fields, lanelet_network)
             warnings.warn("State at time step {} cannot be matched!".format(read_time(xml_node.find('time'))))
-            largest_matched_state = states[0]
 
         return largest_matched_state
+
+    @classmethod
+    def _fill_state(cls, state: TraceState, xml_node: ElementTree.Element, attrs: List[str],
+                    lanelet_network: Union[LaneletNetwork, None]):
+        for attr in attrs:
+            attr_xml = re.sub(r'_(\w)', lambda m: m.group(1).upper(), attr)
+            if attr == 'position' and xml_node.find('position') is not None:
+                position = cls._read_position(xml_node.find('position'), lanelet_network)
+                setattr(state, 'position', position)
+            elif attr == 'time_step' and xml_node.find('time') is not None:
+                setattr(state, 'time_step', read_time(xml_node.find('time')))
+            elif attr == 'orientation' and xml_node.find('orientation') is not None:
+                orientation = cls._read_orientation(xml_node.find('orientation'))
+                setattr(state, 'orientation', orientation)
+            elif xml_node.find(attr_xml) is not None:
+                value = read_value_exact_or_interval(xml_node.find(attr_xml))
+                setattr(state, attr, value)
+            else:
+                return False
+
+        return True
 
     @classmethod
     def _read_position(cls, xml_node: ElementTree.Element,

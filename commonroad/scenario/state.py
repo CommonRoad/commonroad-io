@@ -14,7 +14,6 @@ from commonroad.geometry.shape import Shape
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
 
-IntExactOrInterval = Union[int, Interval]
 FloatExactOrInterval = Union[float, Interval]
 AngleExactOrInterval = Union[float, AngleInterval]
 ExactOrShape = Union[np.ndarray, Shape]
@@ -32,6 +31,11 @@ class State(abc.ABC):
     time_step: FloatExactOrInterval = None
 
     def __eq__(self, other: State):
+        if set(self.attributes) != set(other.attributes):
+            print(self.attributes)
+            print(other.attributes)
+            return False
+
         for attr in self.attributes:
             if attr == 'position' and self.position is not None and other.position is not None:
                 if isinstance(self.position, np.ndarray) and isinstance(other.position, np.ndarray):
@@ -56,9 +60,9 @@ class State(abc.ABC):
 
         :return: Attributes
         """
-        fields = dataclasses.fields(type(self))
+        fields = self.__dict__
 
-        return [field.name for field in fields]
+        return [field_name for field_name in fields]
 
     @property
     def used_attributes(self) -> List[str]:
@@ -155,6 +159,20 @@ class State(abc.ABC):
                     setattr(state, to_field.name, getattr(self, from_field.name))
 
         return state
+
+    def fill_with_defaults(self):
+        """
+        Fills all state fields with default values.
+
+        """
+        for field in self.attributes:
+            if getattr(self, field) is not None:
+                continue
+
+            if field == 'position':
+                setattr(self, field, np.array([0., 0.]))
+            else:
+                setattr(self, field, 0.)
 
     def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
              call_stack: Optional[Tuple[str, ...]] = tuple()):
@@ -405,4 +423,4 @@ class CustomState(State):
 
 
 TraceState = Union[State, InitialState, PMState, KSState, KSTState, STState, STDState, MBState,
-                   InputState, PMInputState]
+                   InputState, PMInputState, CustomState]
