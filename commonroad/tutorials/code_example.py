@@ -29,7 +29,7 @@ file_path = "ZAM_Tutorial-1_2_T-1.xml"#tuto
 #file_path="DEU_Gar-2_1_T-1.xml"
 #file_path="ARG_Carcarana-10_2_T-1.xml"
 #file_path="/home/thomas/Downloads/RUS_Bicycle-5_1_T-1.xml"#bike
-file_path="/home/thomas/Downloads/USA_Lanker-1_3_T-1.xml"#trafic light
+#file_path="/home/thomas/Downloads/USA_Lanker-1_3_T-1.xml"#trafic light
 #file_path="/home/thomas/Downloads/ZAM_Urban-4_1_S-1.xml"#PEDESTRIAN
 
 
@@ -40,7 +40,7 @@ scenario, planning_problem_set = CommonRoadFileReader(file_path).open()
 
 
 
-v = visual(scenario, planning_problem_set)
+v = visual(scenario)
 v.init_show()
 
 i = 0
@@ -102,9 +102,9 @@ while True:
         v.drone.new_drone()
 
 
+
+
 """
-
-
 
 
 # plot the planning problem and the scenario for the fifth time step

@@ -1,35 +1,37 @@
 import matplotlib.pyplot as plt
 import click
-from commonroad.scenario.scenario import Scenario
-import matplotlib.pyplot as plt
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from commonroad.scenario.scenario import Scenario
 import numpy as np
-from drone import drone3d
-from powerline import poweline
 import math
 from commonroad.scenario.obstacle import ObstacleType
+
 from traffic_lights import trafic_light
+from bike import bike
+from bridge import bridge, car_bridge
+from powerline import poweline
+from drone import drone3d
+from car import car
+from tree import Tree
 
 
 class visual():
 
-    def __init__(self, scenario: Scenario, Planning_Problem_Set: PlanningProblemSet):
+    def __init__(self, scenario: Scenario):
         self.scenario = scenario
         self.list_car = []
         self.list_carb = []
         self.list_obstacle = []
-        self.list_traffic_lights=[]
+        self.list_powerline = []
+        self.list_traffic_lights = []
         self.fig = plt.figure(figsize=plt.figaspect(1), constrained_layout=False)
         self.ax = self.fig.gca(projection='3d')
-        self.list_list_patchcollection = []
+        self.nb_tower=10
         self.top = 1.7
         self.bottom = 0.6
         self.nb_car = 0
-        self.planing = Planning_Problem_Set
-        self.previous_time = -1
-        self.switch = 1
+        self.switch = False
         self.xmin = 0
         self.xmax = 0
         self.ymin = 0
@@ -39,57 +41,52 @@ class visual():
         self.zoom_factor = 5
         self.midx = (self.xmin + self.xmax) / 2
         self.midy = (self.ymin + self.ymax) / 2
-        self.bridge_flag =0
-        self.tree_flag = 0
-        self.powerline_flag=0
-        self.list_traffic_signs=[]
-
+        self.bridge_flag = True
+        self.tree_flag = Tree
+        self.powerline_flag = True
+        self.list_traffic_signs = []
 
         for i in range(len(self.scenario.lanelet_network.traffic_lights)):
-            self.list_traffic_lights.append(trafic_light(self.ax, self.fig,self.scenario, self.scenario.lanelet_network.traffic_lights[i]))
+            self.list_traffic_lights.append(
+                trafic_light(self.ax, self.scenario, self.scenario.lanelet_network.traffic_lights[i]))
+            self.list_traffic_lights[-1].new_light()
 
-        for traffic in self.list_traffic_lights:
-            traffic.new_light()
 
+        if self.powerline_flag:
+            poweline(self.scenario,self.ax,self.nb_tower,self.list_obstacle,self.list_powerline,30)
         if self.bridge_flag:
-            self.bridge = []
+            b=bridge(self.scenario,self.list_obstacle,self.ax)
+            for i in range(self.scenario.dynamic_obstacles.__len__()):
+                self.list_carb.append(car_bridge(self.scenario,i,self.ax,b.bridge).list_return)
 
-            self.get_bridge()
+
         self.get_lanelet()
 
-
-
-        
-        """for i in range(self.scenario.dynamic_obstacles.__len__()):
-            self.list_car.append(self.construction(self.scenario, i))
-            if self.bridge_flag:
-                self.list_carb.append(self.constructionb(self.scenario, i))
-            self.nb_car += 1"""
+        for i in range(self.scenario.dynamic_obstacles.__len__()):
+            self.list_car.append(self.construction( i))
+            self.nb_car += 1
 
         for i in range(self.scenario.static_obstacles.__len__()):
             self.get_staic(i)
 
-
-
         self.auto_set_lim()
 
-
         if self.tree_flag:
-            self.get_tree(24, -8, 8)
-            self.get_tree(27, -10, 8)
-            self.get_tree(24, -14, 8)
-        self.list_powerline = []
-        if self.powerline_flag:
-
-            self.get_powerline()
+            Tree(self.ax, 24, -8, 8, 2, 0.5, self.list_obstacle)
 
 
-        self.drone = drone3d(self.ax, self.fig, self.list_obstacle,self.list_powerline)
 
-        plt.ion()
+
+
+        self.drone = drone3d(self.ax, self.list_obstacle, self.list_powerline)
+        self.init_show()
+        plt.ion()#interactive on
         plt.show()
 
     def init_show(self):
+        """
+        to make all object's oppacity at any moment null
+        """
 
         for j in range(self.nb_car):
             for i in range(self.scenario.dynamic_obstacles[j].prediction.final_time_step):
@@ -101,14 +98,16 @@ class visual():
                         self.list_carb[j][i][y].set_linewidth(0)
 
     def show(self):
+        """
+        shows at every moment
+        """
         i = 0
-
-        if self.drone.follow==1:
-
+        if self.drone.follow == 1:
             self.drone.ax.set_xlim([self.drone.position[0] - 5, self.drone.position[0] + 5])
             self.drone.ax.set_ylim([self.drone.position[1] - 5, self.drone.position[1] + 5])
-            self.drone.ax.set_zlim([self.drone.position[2] - 5, self.drone.position[2] + 5])
-            #self.drone.ax.view_init(elev=self.drone.elev, azim=180 + self.drone.orientation * 180 / 3.1415)
+            self.drone.ax.set_zlim([self.drone.position[2] - 5, self.drone.position[
+                2] + 5])  # self.drone.ax.view_init(elev=self.drone.elev, azim=180 + self.drone.orientation * 180 /
+            # 3.1415)
         while True:
             i += 1
             self.init_show()
@@ -127,11 +126,13 @@ class visual():
                                 self.list_carb[k][i][y].set_linewidth(0.1)
             plt.pause(0.01)
 
-
-
     def show_at_time(self, i: int):
-        self.init_show()
+        """
+        shows the visualization at the moment of setting the parameters
 
+        :param: i time at which the display will be changed
+        """
+        self.init_show()
         for k in range(self.nb_car):
             for j in range(self.scenario.dynamic_obstacles[k].prediction.final_time_step):
                 if i == j:
@@ -142,9 +143,13 @@ class visual():
                             self.list_carb[k][i][y].set_alpha(1)
                             self.list_carb[k][i][y].set_linewidth(0)
 
-        # plt.pause(0.01)
+
 
     def get_staic(self, i: int):
+
+        """
+
+        """
         shape = self.scenario.static_obstacles[i].occupancy_at_time(0).shape
         top = self.top
         bottom = self.bottom
@@ -216,7 +221,7 @@ class visual():
     def get_lanelet(self):
         for l in range(len(self.scenario.lanelet_network.lanelets)):
 
-            if self.scenario.lanelet_network.lanelets[l].traffic_lights==set():
+            if self.scenario.lanelet_network.lanelets[l].traffic_lights == set():
                 lanelet = self.scenario.lanelet_network.lanelets[l].polygon.vertices
                 colors = ["tab:grey"]
                 for i in range(int(len(lanelet) / 2)):
@@ -225,8 +230,7 @@ class visual():
                     c = (lanelet[i + 1][0], lanelet[i + 1][1], 0)
                     d = (lanelet[-i][0], lanelet[-i][1], 0)
                     lan = [[b, c, a, d]]
-                    if self.bridge_flag:
-                        self.bridge.append(lan[0])
+
 
                     lancolect = Poly3DCollection(lan, linewidth=0, edgecolor="k", facecolor=colors, rasterized=False,
                                                  alpha=1, zorder=1)
@@ -234,7 +238,9 @@ class visual():
                     self.ax.add_collection3d(lancolect)
 
     def auto_set_lim(self):
-
+        """
+        find the best view
+        """
         xmin = 1000
         ymin = 1000
         for i in range(self.scenario.dynamic_obstacles.__len__()):
@@ -252,10 +258,11 @@ class visual():
         self.midx = (self.xmin + self.xmax) / 2
         self.midy = (self.ymin + self.ymax) / 2
         self.set_lim(self.xmin, self.xmax, self.ymin, self.ymax, -50, 50)
-        #self.ax.view_init(elev=20, azim=-30)
+
         plt.axis('off')
 
     def zoom_out(self):
+
         self.zoom_factor += 1
         self.set_view()
 
@@ -264,7 +271,7 @@ class visual():
         self.set_view()
 
     def go_up(self):
-        self.midy += 5
+        self.midy += 3
         self.set_view()
 
     def go_down(self):
@@ -280,6 +287,9 @@ class visual():
         self.set_view()
 
     def set_view(self):
+        """
+        refreshes the view
+        """
         self.xmin = self.midx - self.zoom_factor * 10
         self.xmax = self.midx + self.zoom_factor * 10
         self.ymin = self.midy - self.zoom_factor * 10
@@ -289,13 +299,18 @@ class visual():
         self.ax.set_ylim([self.ymin, self.ymax])
 
     def set_lim(self, xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: int):
+
         self.ax.set_xlim([xmin, xmax])
         self.ax.set_ylim([ymin, ymax])
         self.ax.set_zlim([zmin, zmax])
 
     def switch_ligth(self):
-        self.switch += 1
-        if self.switch % 2 == 0:
+
+        """
+        turn the front of the car yellow
+        """
+        self.switch = not self.switch
+        if self.switch :
             for k in range(self.nb_car):
                 for j in range(self.scenario.dynamic_obstacles[k].prediction.final_time_step):
                     self.list_car[k][j][2].set_color("tab:orange")
@@ -304,521 +319,72 @@ class visual():
                 for j in range(self.scenario.dynamic_obstacles[k].prediction.final_time_step):
                     self.list_car[k][j][2].set_color("tab:blue")
 
-    def construction(self, scenario: Scenario, i: int) -> list:
+    def construction(self, i: int) -> list:
+
+        """
+        construit la forme des obstacle selon leur type
+
+        :param: i index pour retrouver l'obstacle dinamique
+        :return: list shape
+
+        """
 
         list_list_patches = []
-        flag_truck=False
-        flag_bus=False
+        flag_truck = False
+        flag_bus = False
+        scenario = self.scenario
 
         if scenario.dynamic_obstacles[i].obstacle_type == ObstacleType.TRUCK:
-            flag_truck=True
+            flag_truck = True
         if scenario.dynamic_obstacles[i].obstacle_type == ObstacleType.BUS:
-            flag_bus=True
-        if scenario.dynamic_obstacles[i].obstacle_type == ObstacleType.BICYCLE:
-            return self.construct_bike(i)
+            flag_bus = True
+        if scenario.dynamic_obstacles[i].obstacle_type == ObstacleType.BICYCLE or scenario.dynamic_obstacles[i].obstacle_type == ObstacleType.MOTORCYCLE:
+            return bike(self.scenario,i,self.ax).list_return
         if scenario.dynamic_obstacles[i].obstacle_type == ObstacleType.PEDESTRIAN:
-            return self.construct_pedestrian(i)
+            return pedestrian(self.scenario,i,self.ax).list_return
+        return car(self.scenario,i,self.ax,flag_bus,flag_truck).list_return
 
-        beta = 0
 
-        #TODO switch case
 
+    @property
+    def x(self) -> float:
+        return self.x
 
-        for t in range(self.scenario.dynamic_obstacles[i].prediction.final_time_step):
+    @x.setter
+    def orientation(self, x):
+        print("parametre protege")
 
-            shape = scenario.dynamic_obstacles[i].occupancy_at_time(t).shape
-            roof = self.top * 2
-            top = self.top
-            if flag_bus:
-                top=top*2
+    @property
+    def y(self) -> float:
+        return self.y
 
-            bottom = self.bottom
-            length = shape.length
-            width = shape.width
-            biglist = []
-            o = shape.orientation
+    @y.setter
+    def orientation(self, y):
+        print("parametre protege")
 
+    @property
+    def z(self) -> float:
+        return self.z
 
+    @z.setter
+    def orientation(self, z):
+        print("parametre protege")
 
+    @property
+    def r(self) -> float:
+        return self.r
 
+    @r.setter
+    def orientation(self, r):
+        print("parametre protege")
 
-            if flag_truck:
-                alpha=0
-                length = shape.length
-                width = shape.width
-                l1=shape.length*3/25
-                m1=shape.length/25
-                l2=shape.length*4/5
-                v=1
-                if t<self.scenario.dynamic_obstacles[i].prediction.final_time_step-1:
-                    alpha=(shape.orientation-scenario.dynamic_obstacles[i].occupancy_at_time(t+1).shape.orientation)*1.5
-                beta_point = v * ((np.tan(alpha) / l1) - (np.sin(beta) / l2) + ((m1 * np.cos(beta) * np.tan(alpha)) / (l1 * l2)))
-                xabso = - length/5/2
-                yabso = 0
-                beta = beta_point+beta
-                length=length/5
+    @property
+    def wr(self) -> float:
+        return self.wr
 
-            ########################################################################################################################
-
-            list = [  # underneath
-                (- length * 0.5, - width * 0.5, bottom), (- length * 0.5, + width * 0.5, bottom),
-                (+ length * 0.5, + width * 0.5, bottom), (+ length * 0.5, - width * 0.5, bottom)]
-
-            list = rotation_z(o, list)
-            list = add_center(shape.center[0], shape.center[1], list)
-
-            biglist.append(list)
-
-            ########################################################################################################################
-
-            list = [  # top
-                (- length * 0.5, - width * 0.5, top), (- length * 0.5, + width * 0.5, top),
-                (+ length * 0.5, + width * 0.5, top), (+ length * 0.5, - width * 0.5, top)]
-
-            list = rotation_z(o, list)
-            list = add_center(shape.center[0], shape.center[1], list)
-
-            biglist.append(list)
-
-            ########################################################################################################################
-
-            list = [  # front
-                (+ length * 0.5, - width * 0.5, top), (+ length * 0.5, + width * 0.5, top),
-                (+ length * 0.5, + width * 0.5, bottom), (+ length * 0.5, - width * 0.5, bottom)]
-
-            list = rotation_z(o, list)
-            list = add_center(shape.center[0], shape.center[1], list)
-
-            biglist.append(list)
-            ########################################################################################################################
-
-            list = [  # bottom
-                (- length * 0.5, - width * 0.5, top), (- length * 0.5, + width * 0.5, top),
-                (- length * 0.5, + width * 0.5, bottom), (- length * 0.5, - width * 0.5, bottom)]
-            list = rotation_z(o, list)
-            list = add_center(shape.center[0], shape.center[1], list)
-
-            biglist.append(list)
-
-            ########################################################################################################################
-
-            list = [  # right
-                (- length * 0.5, + width * 0.5, bottom), (- length * 0.5, + width * 0.5, top),
-                (+ length * 0.5, + width * 0.5, top), (+ length * 0.5, + width * 0.5, bottom)]
-
-            list = rotation_z(o, list)
-            list = add_center(shape.center[0], shape.center[1], list)
-
-            biglist.append(list)
-
-            ########################################################################################################################
-
-            list = [  # left
-                (- length * 0.5, - width * 0.5, bottom), (- length * 0.5, - width * 0.5, top),
-                (+ length * 0.5, - width * 0.5, top), (+ length * 0.5, - width * 0.5, bottom)]
-
-            list = rotation_z(o, list)
-            list = add_center(shape.center[0], shape.center[1], list)
-
-            biglist.append(list)
-
-            ########################################################################################################################
-            """
-            ########################################################################################################################
-
-            list = [  # top
-                (- length * 0.5, - width * 0.5, roof), (- length * 0.5, + width * 0.5, roof),
-                (+ length * 0.0, + width * 0.5, roof), (+ length * 0.0, - width * 0.5, roof)]
-
-            list = rotation_z(o, list)
-            list = add_center(shape.center[0], shape.center[1], list)
-
-            biglist.append(list)
-
-            ########################################################################################################################
-
-            list = [  # front
-                (+ length * 0.0, - width * 0.5, roof), (+ length * 0.0, + width * 0.5, roof),
-                (+ length * 0.0, + width * 0.0, top), (+ length * 0.0, - width * 0.5, top)]
-
-            list = rotation_z(o, list)
-            list = add_center(shape.center[0], shape.center[1], list)
-
-            biglist.append(list)
-            ########################################################################################################################
-
-            list = [  # bottom
-                (- length * 0.5, - width * 0.5, roof), (- length * 0.5, + width * 0.5, roof),
-                (- length * 0.5, + width * 0.5, top), (- length * 0.5, - width * 0.5, top)]
-            list = rotation_z(o, list)
-            list = add_center(shape.center[0], shape.center[1], list)
-
-            biglist.append(list)
-
-            ########################################################################################################################
-
-            list = [  # right
-                (- length * 0.5, + width * 0.5, top), (- length * 0.5, + width * 0.5, roof),
-                (+ length * 0.0, + width * 0.5, roof), (+ length * 0.0, + width * 0.5, top)]
-
-            list = rotation_z(o, list)
-            list = add_center(shape.center[0], shape.center[1], list)
-
-            biglist.append(list)
-
-            ########################################################################################################################
-
-            list = [  # left
-                (- length * 0.5, - width * 0.5, top), (- length * 0.5, - width * 0.5, roof),
-                (+ length * 0.0, - width * 0.5, roof), (+ length * 0.0, - width * 0.5, top)]
-
-            list = rotation_z(o, list)
-            list = add_center(shape.center[0], shape.center[1], list)
-
-            biglist.append(list)
-
-            ########################################################################################################################
-            """
-
-            ########################################################################################################################
-            if flag_truck:
-                length=length*4
-                list = [  # underneath
-                    (- length * 1, - width * 0.5, bottom), (- length * 1, + width * 0.5, bottom),
-                    (+ length * 0, + width * 0.5, bottom), (+ length * 0, - width * 0.5, bottom)]
-
-
-                x= xabso * np.cos(beta+o) - yabso * np.sin(beta+o)
-                y= xabso * np.sin(beta+o) + yabso * np.cos(beta+o)
-
-                list = rotation_z(beta+o, list)
-                list = add_center(x+shape.center[0], y+shape.center[1], list)
-                biglist.append(list)
-
-            colors = ["tab:blue" for patch in list]
-            if flag_truck:
-                colors = ["tab:orange" for patch in list]
-            if flag_bus:
-                colors = ["tab:red" for patch in list]
-            list_patchcollection = []
-            for list in biglist:
-                patchcollection = Poly3DCollection(list, linewidth=0, edgecolor="k", facecolor=colors, rasterized=True)
-                self.ax.add_collection3d(patchcollection)
-                list_patchcollection.append(patchcollection)
-            list_list_patches.append(list_patchcollection)
-
-        return list_list_patches
-
-    def get_bridge(self):
-
-        for l in range(len(self.scenario.lanelet_network.lanelets)):
-            lanelet = self.scenario.lanelet_network.lanelets[l].polygon.vertices
-            bridge = []
-            colors = ["tab:grey"]
-            for i in range(int(len(lanelet) / 2)):
-                a = (lanelet[i][0], lanelet[i][1], 20 * 2 ** ((-(i - 100) ** 2) / 600))
-                b = (lanelet[-(i + 1)][0], lanelet[-(i + 1)][1], 20 * 2 ** ((-((i + 1) - 100) ** 2) / 600))
-                c = (lanelet[i + 1][0], lanelet[i + 1][1], 20 * 2 ** ((-((i + 1) - 100) ** 2) / 600))
-                d = (lanelet[-i][0], lanelet[-i][1], 20 * 2 ** ((-(i - 100) ** 2) / 600))
-                lan = [b, c, a, d]
-                lan = rotation_z(3.1415 / 2, lan)
-                bridge = add_center(+100, -100, lan)
-                for point in bridge[0]:
-                    self.list_obstacle.append(point)
-                self.bridge.append(bridge[0])
-                lancolect = Poly3DCollection(bridge, linewidth=0, edgecolor="k", facecolor=colors, rasterized=False,
-                                             alpha=1, zorder=1)
-
-                self.ax.add_collection3d(lancolect)
-
-    def get_tree(self, x: int, y: int, z: int):
-
-        r = 2
-        wr = 0.5
-
-        accurate = 50
-        pi = 3.1415
-
-        list = []
-        list2 = []
-        patches = []
-        patches2 = []
-
-        for i in range(accurate):
-            for j in range(accurate):
-                phi = -pi / 2 + pi * i / accurate
-                theta = -pi + 2 * pi * j / accurate
-
-                list.append((r * np.sin(theta) * np.cos(phi) + x, r * np.sin(theta) * np.sin(phi) + y,
-                             r * 1.6 * np.cos(theta) + z))
-                self.list_obstacle.append((r * np.sin(theta) * np.cos(phi) + x, r * np.sin(theta) * np.sin(phi) + y,
-                                           r * 1.6 * np.cos(theta) + z))
-                list2.append((wr * np.cos(theta) + x, wr * np.sin(theta) + y, i * z / accurate))
-                self.list_obstacle.append((wr * np.cos(theta) + x, wr * np.sin(theta) + y, i * z / accurate))
-
-        patches.append(list)
-        patches2.append(list2)
-
-        colors = ["tab:green" for patch in patches]
-        patchcollection = Poly3DCollection(patches, edgecolor="g", facecolor=colors, rasterized=True)
-        self.ax.add_collection3d(patchcollection)
-
-        colors = ["tab:green" for patch in patches2]
-        patchcollection = Poly3DCollection(patches2, edgecolor="g", facecolor=colors, rasterized=True)
-        self.ax.add_collection3d(patchcollection)
-
-    def constructionb(self, scenario: Scenario, i: int) -> list:
-        pi = 3.1415
-        list_list_patches = []
-        for t in range(self.scenario.dynamic_obstacles[i].prediction.final_time_step):
-
-            shape = scenario.dynamic_obstacles[i].occupancy_at_time(t).shape
-
-            bottom = 0
-            for lan in self.bridge:
-
-                while abs(shape.center[0] - lan[0][1] - 100) < 2 and abs(
-                        shape.center[1] - lan[0][0] + 100) < 2 and bottom - 0.5 < lan[3][2]:
-                    bottom += 0.1
-                    oy = lan[0][2] - lan[3][2]
-
-            length = shape.length
-
-            top = bottom + 2
-            width = shape.width
-            biglist = []
-
-            o = shape.orientation + pi / 2
-            #############################################################################################################
-
-            list = [  # underneath
-                (- length * 0.5, - width * 0.5, 0), (- length * 0.5, + width * 0.5, 0),
-                (+ length * 0.5, + width * 0.5, 0), (+ length * 0.5, - width * 0.5, 0)]
-            z = [bottom, bottom, bottom, bottom]
-            list = rotation_x(oy, rotation_z(o, list))
-
-            list = add_centerb(shape.center[0] - 100, shape.center[1] + 100, z, list)
-
-            biglist.append(list)
-
-            ########################################################################################################################
-
-            list = [  # top
-                (- length * 0.5, - width * 0.5, 0), (- length * 0.5, + width * 0.5, 0),
-                (+ length * 0.5, + width * 0.5, 0), (+ length * 0.5, - width * 0.5, 0)]
-            z = [top, top, top, top]
-            list = rotation_x(oy, rotation_z(o, list))
-            list = add_centerb(shape.center[0] - 100, shape.center[1] + 100, z, list)
-
-            biglist.append(list)
-
-            ########################################################################################################################
-
-            list = [  # front
-                (+ length * 0.5, - width * 0.5, 0), (+ length * 0.5, + width * 0.5, 0),
-                (+ length * 0.5, + width * 0.5, 0), (+ length * 0.5, - width * 0.5, 0)]
-            z = [top, top, bottom, bottom]
-            list = rotation_x(oy, rotation_z(o, list))
-            list = add_centerb(shape.center[0] - 100, shape.center[1] + 100, z, list)
-
-            biglist.append(list)
-            ########################################################################################################################
-
-            list = [  # bottom
-                (- length * 0.5, - width * 0.5, 0), (- length * 0.5, + width * 0.5, 0),
-                (- length * 0.5, + width * 0.5, 0), (- length * 0.5, - width * 0.5, 0)]
-            z = [top, top, bottom, bottom]
-            list = rotation_x(oy, rotation_z(o, list))
-            list = add_centerb(shape.center[0] - 100, shape.center[1] + 100, z, list)
-
-            biglist.append(list)
-
-            ########################################################################################################################
-
-            list = [  # right
-                (- length * 0.5, + width * 0.5, 0), (- length * 0.5, + width * 0.5, 0),
-                (+ length * 0.5, + width * 0.5, 0), (+ length * 0.5, + width * 0.5, 0)]
-            z = [bottom, top, top, bottom]
-
-            list = rotation_x(oy, rotation_z(o, list))
-            list = add_centerb(shape.center[0] - 100, shape.center[1] + 100, z, list)
-
-            biglist.append(list)
-
-            ########################################################################################################################
-
-            list = [  # left
-                (- length * 0.5, - width * 0.5, 0), (- length * 0.5, - width * 0.5, 0),
-                (+ length * 0.5, - width * 0.5, 0), (+ length * 0.5, - width * 0.5, 0)]
-            z = [bottom, top, top, bottom]
-            list = rotation_x(oy, rotation_z(o, list))
-            list = add_centerb(shape.center[0] - 100, shape.center[1] + 100, z, list)
-
-            biglist.append(list)
-
-            colors = ["tab:blue" for patch in list]
-            list_patchcollection = []
-            for list in biglist:
-                patchcollection = Poly3DCollection(list, linewidth=0, edgecolor="k", facecolor=colors, rasterized=True,
-                                                   zorder=10)
-                self.ax.add_collection3d(patchcollection)
-                list_patchcollection.append(patchcollection)
-            list_list_patches.append(list_patchcollection)
-
-        return list_list_patches
-
-
-
-
-    def get_powerline(self):
-        nb_towers=10
-        acurate=10
-        alpha=30
-        biglist=[]
-        for i in range(nb_towers):
-            poweline(self.ax,fctx(i),fcty(i),fctx(i+1),fcty(i+1),self.list_obstacle)
-
-        for i in range(nb_towers):
-            distance= math.pow(abs(fctx(i)-fctx(i+1))**2+abs(fcty(i)-fcty(i+1))**2,0.5)
-            list=[]
-            o=3.1415
-            if fctx(i)-fctx(i+1):
-                o=math.atan((fcty(i)-fcty(i+1))/(fctx(i)-fctx(i+1)))+3.1415/2
-            for y in range(acurate+1):
-                x=-distance/2+y*distance/acurate
-
-
-                list.append((0.5, x , alpha*math.cosh(x/alpha)-alpha*math.cosh(distance/2/alpha)+6))#6 = top powerline
-            for y in range(acurate+1):
-                x=distance/2-y*distance/acurate
-
-
-                list.append((-0.5, x , alpha*math.cosh(x/alpha)-alpha*math.cosh(distance/2/alpha)+6))#6 = top powerline
-
-
-            list = rotation_z(o, list)
-            list = add_center((fctx(i)+fctx(i+1))/2, (fcty(i)+fcty(i+1))/2, list)
-            biglist.append(list)
-            colors = ["tab:blue" for patch in list]
-        for list in biglist:
-            for shape in list:
-                for tuple in shape:
-                    self.list_powerline.append(tuple)
-            patchcollection = Poly3DCollection(list, linewidth=0.3, edgecolor="k", facecolor=colors, rasterized=True,
-                                                   zorder=10,alpha=0)
-            self.ax.add_collection3d(patchcollection)
-
-    def construct_bike(self,i):
-        list_list_patches = []
-        r=0.5
-        pi=3.1415
-        accurate=10
-        for t in range(self.scenario.dynamic_obstacles[i].prediction.final_time_step):
-
-            shape = self.scenario.dynamic_obstacles[i].occupancy_at_time(t).shape
-            roof = self.top * 2
-            top = self.top
-
-            bottom = self.bottom
-            length = shape.length
-            width = shape.width
-            biglist = []
-            o = shape.orientation
-
-            list = [  # underneath
-                (- length * 0.5, 0, top), (+ length * 0.5, 0, top)
-                , (0, 0, top/2)]
-
-            list = rotation_z(o, list)
-            list = add_center(shape.center[0], shape.center[1], list)
-
-            biglist.append(list)
-            first=list[0][0]
-            last=list[0][1]
-
-            list = []
-            for j in range(accurate):
-                theta = -pi + 2 * pi * j / accurate
-                list.append(( r * np.sin(theta), top/2+r * np.cos(theta),0))
-
-            list = rotation_z(o, list)
-            list = add_center(last[0], last[1], list)
-
-            biglist.append(list)
-
-            list = []
-
-
-            for j in range(accurate):
-                theta = -pi + 2 * pi * j / accurate
-                list.append(( r * np.sin(theta),0, top/2+r * np.cos(theta)))
-
-            list = rotation_z(o, list)
-            list = add_center(first[0], first[1], list)
-            biglist.append(list)
-
-            list_patchcollection = []
-
-            for list in biglist:
-                colors = ["tab:blue" for patch in list]
-                patchcollection = Poly3DCollection(list, linewidth=0, edgecolor="k", facecolor=colors, rasterized=True,
-                                                   zorder=10)
-                self.ax.add_collection3d(patchcollection)
-                list_patchcollection.append(patchcollection)
-            list_list_patches.append(list_patchcollection)
-
-        return list_list_patches
-
-    def construct_pedestrian(self,i):
-        list_list_patches = []
-        r=0.5
-        #r=1#american
-        pi=3.1415
-        accurate=10
-        for t in range(self.scenario.dynamic_obstacles[i].prediction.final_time_step):
-
-            shape = self.scenario.dynamic_obstacles[i].occupancy_at_time(t).shape
-
-            top = self.top
-            center=shape.center
-
-
-
-            biglist = []
-            o = 0
-            oy=0
-            list = []
-            for j in range(accurate):
-                theta = -pi + 2 * pi * j / accurate
-                thetap1=-pi + 2 * pi * (j+1) / accurate
-                a=( r * np.sin(theta),top/2+r * np.cos(theta),top )
-                b=( r * np.sin(thetap1),top/2+r * np.cos(thetap1),0.4 )
-                c=( r * np.sin(thetap1),top/2+r * np.cos(thetap1),top )
-                d=( r * np.sin(theta),top/2+r * np.cos(theta),0.4 )
-
-                list = [b, c,a,d]
-
-                list = rotation_x(oy, rotation_z(o, list))
-                list = add_center(shape.center[0], shape.center[1] , list)
-
-                biglist.append(list)
-
-
-
-            colors = ["tab:blue" for patch in list]
-            list_patchcollection = []
-            for list in biglist:
-                patchcollection = Poly3DCollection(list, linewidth=0, edgecolor="k", facecolor=colors, rasterized=True,
-                                                   zorder=10)
-                self.ax.add_collection3d(patchcollection)
-                list_patchcollection.append(patchcollection)
-            list_list_patches.append(list_patchcollection)
-
-        return list_list_patches
-
-
-
-
+    @r.setter
+    def orientation(self, wr):
+        print("parametre protege")
 
 
 
@@ -827,8 +393,10 @@ class visual():
 
 def fctx(i):
     return 30
+
+
 def fcty(i):
-    return -87+20*i
+    return -87 + 20 * i
 
 
 def rotation_z(o, liste: list):

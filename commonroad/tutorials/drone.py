@@ -7,6 +7,7 @@ from commonroad.planning.planning_problem import PlanningProblemSet, PlanningPro
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from commonroad.scenario.scenario import Scenario
 import numpy as np
+import math
 import select
 import time
 import os
@@ -14,32 +15,44 @@ import sys
 
 
 class drone3d():
+    """
+    decription
+    """
 
-    def __init__(self, ax, fig, obstacle, list_poweline):
+    def __init__(self, ax, obstacle, list_poweline):
+        """
+                Constructor of a drone object
 
-        self.fig = fig
+        :param ax: the figure where the drone should be constructed
+        :param orientation: orientation of the drone
+        :param length: length of the rectangle
+        :param width: width of the drone
+        :param position: position of the drone
+        :param list_poweline: list of electric wires where the drone can go
+        :param list_obstacle: list of obstacles that the drone can meet
+        """
+
+
         self.ax = ax
-        self.orientation =0
+        self.orientation = 0
         self.speed = 2
-        self.position = [0, 0, 500]
+        self.position = [0, 0, 5]
         self.length = 1
         self.list_obstacle = obstacle
         self.width = 1
         self.r = 0.33
-        self.elev=90
+        self.elev = 20
         self.list_patchcollection = []
         self.follow = 1
         self.list_poweline = list_poweline
-        self.state_know=[]
-
-
+        self.state_know = []
         self.flag_detect = 0
 
-
-
-
-
+  
     def new_drone(self):
+        """
+        supprime l'image de l'ancien drone pour en construire un nouveau et adapte la vu
+        """
         if self.follow % 2:
             self.ax.set_xlim([self.position[0] - 5, self.position[0] + 5])
             self.ax.set_ylim([self.position[1] - 5, self.position[1] + 5])
@@ -55,10 +68,10 @@ class drone3d():
             self.list_patchcollection.remove(self.list_patchcollection[0])
 
     def rotate_plus(self):
-        self.orientation += 0.33
+        self.orientation += 0.2
 
     def rotate_minus(self):
-        self.orientation -= 0.33
+        self.orientation -= 0.2
 
     def go(self):
         self.position[0] += self.speed * np.cos(self.orientation)
@@ -83,13 +96,15 @@ class drone3d():
         self.position[2] -= self.speed
 
     def go_powerline(self):
-        self.state_know=[]#init
+        self.state_know = []  # init
         self.path = self.Astar()
 
-
     def construction(self):
-        biglist = []
-        patches = []
+        """
+        constructs the image of the drone which is made up of a central square
+        and four circles symbolizing the pallets
+        """
+
         accurate = 10
         pi = 3.1415
 
@@ -145,37 +160,38 @@ class drone3d():
         self.list_patchcollection.append(patchcollection)
         self.ax.add_collection3d(patchcollection)
 
-        for k in range (3):
-            r = 1+k
-
+        for k in range(3):
+            r = 1 + k
 
             accurate = 15
-            pi = 3.1415
+            pi = math.pi
 
             list = []
 
             patches = []
 
-            list=[]
+            list = []
             for i in range(accurate):
                 for j in range(accurate):
                     theta = -pi / 2 + pi * i / accurate
                     phi = -pi + 2 * pi * j / accurate
 
-                    list.append((r * np.sin(phi) * np.cos(theta)+self.position[0] , r * np.sin(phi) * np.sin(theta)+self.position[1]  ,
-                                 r * np.cos(phi) +self.position[2] ))
+                    list.append((r * np.sin(phi) * np.cos(theta) + self.position[0],
+                                 r * np.sin(phi) * np.sin(theta) + self.position[1],
+                                 r * np.cos(phi) + self.position[2]))
 
-                    patchcollection = Poly3DCollection([list], linewidth=0, rasterized=True,alpha=0.5-k*0.1)
+                    patchcollection = Poly3DCollection([list], linewidth=0, rasterized=True, alpha=0.5 - k * 0.1)
             self.list_patchcollection.append(patchcollection)
             self.ax.add_collection3d(patchcollection)
 
-
             patches.append(list)
-
 
         plt.pause(0.01)
 
     def detect(self):
+        """
+        detect a colition and display a detection message and a visual element
+        """
         r = 0.6
         accurate = 10
         pi = 3.1415
@@ -183,9 +199,10 @@ class drone3d():
         patches = []
         for obstacle in self.list_obstacle:
             if self.flag_detect != 1:
-                if abs(obstacle[2] - self.position[2]) < 0.5:
-                    if abs(obstacle[1] - self.position[1]) < 1.3:
-                        if abs(obstacle[0] - self.position[0]) < 1.3:
+
+                if abs(obstacle[0][2] - self.position[2]) < 0.5:
+                    if abs(obstacle[0][1] - self.position[1]) < 1.3:
+                        if abs(obstacle[0][0] - self.position[0]) < 1.3:
                             print("BOOM")
                             for i in range(accurate):
                                 for j in range(accurate):
@@ -202,9 +219,13 @@ class drone3d():
                             self.ax.add_collection3d(patchcollection)
                             self.flag_detect = 1
 
-
-
     def on_powerline(self, position):
+        """
+        calcul pour savoir si le drone touche les ligne electrique
+
+        :param position: la position a tester
+        :return: le resultat du test
+        """
         for obstacle in self.list_poweline:
             if abs(obstacle[2] - position[2]) < self.speed:
                 if abs(obstacle[1] - position[1]) < self.speed:
@@ -212,9 +233,13 @@ class drone3d():
                         return True
         return False
 
-
-
     def position_ok(self, x, y, z):
+        """
+        calculation to know if the drone touches an obstacle
+
+        :param position: the position to test
+        :return: the result of the test
+        """
         for obstacle in self.list_obstacle:
             if abs(obstacle[2] - z) < 0.5:
                 if abs(obstacle[1] - y) < 1.3:
@@ -222,43 +247,40 @@ class drone3d():
                         return False
         return True
 
-
-
-
     def construct_path(self, final, camefrom):
 
         total_path = []
-        deja=[]
         total_path.append(final)
 
-        current=final
-
+        current = final
 
         while current[0] != self.position[0] or current[1] != self.position[1] or current[2] != self.position[2]:
-
-
-            current=self.state_know[self.state_know.index(camefrom[self.state_know.index(current)])]
+            current = self.state_know[self.state_know.index(camefrom[self.state_know.index(current)])]
             total_path.append(current)
 
         return total_path
 
     def Astar(self):
+        """
+        moves the drone to the nearest power line
+        avoiding obstacles thanks to an A star algorithm
+        """
 
+        if self.list_poweline == []:
+            print("path not found")
+            return self.position
         open = []
         directions = [-self.speed, 0, self.speed]
-        curent = self.position
         camefrom = []
         self.state_know = []
         open.append(self.position)
 
-
-        if self.orientation<0:
-            while self.orientation!=0:
+        if self.orientation < 0:
+            while self.orientation != 0:
                 self.rotate_plus()
-        if self.orientation>0:
-            while self.orientation!=0:
+        if self.orientation > 0:
+            while self.orientation != 0:
                 self.rotate_minus()
-
 
         while True:
             curent = self.choose_curent(open)
@@ -266,46 +288,42 @@ class drone3d():
             print(curent)
 
             if self.on_powerline(curent):
-                print ("path find")
-                return self.construct_path(curent,camefrom)
+                print("path find")
+                return self.construct_path(curent, camefrom)
             open.remove(curent)
 
             for direction_x in directions:
-                if direction_x :
-                    if self.position_ok(curent[0] + direction_x, curent[1] ,
-                                        curent[2] ):
-                        if not [curent[0] + direction_x, curent[1] ,
-                                        curent[2]] in open:
+                if direction_x:
+                    if self.position_ok(curent[0] + direction_x, curent[1], curent[2]):
+                        if not [curent[0] + direction_x, curent[1], curent[2]] in open:
                             if not [curent[0] + direction_x, curent[1], curent[2]] in self.state_know:
                                 camefrom.append(curent)
-                                self.state_know.append([curent[0] + direction_x, curent[1] , curent[2] ])
-                                open.append(
-                                                [curent[0] + direction_x, curent[1] , curent[2] ])
+                                self.state_know.append([curent[0] + direction_x, curent[1], curent[2]])
+                                open.append([curent[0] + direction_x, curent[1], curent[2]])
             for direction_y in directions:
-                if direction_y :
-                    if self.position_ok(curent[0] , curent[1] + direction_y,
-                                        curent[2] ):
-                        if not [curent[0] , curent[1] + direction_y,
-                                        curent[2] ] in open:
+                if direction_y:
+                    if self.position_ok(curent[0], curent[1] + direction_y, curent[2]):
+                        if not [curent[0], curent[1] + direction_y, curent[2]] in open:
                             if not [curent[0], curent[1] + direction_y, curent[2]] in self.state_know:
-                                self.state_know.append([curent[0] , curent[1] + direction_y, curent[2] ])
+                                self.state_know.append([curent[0], curent[1] + direction_y, curent[2]])
                                 camefrom.append(curent)
-                                open.append(
-                                                [curent[0] , curent[1] + direction_y, curent[2] ])
+                                open.append([curent[0], curent[1] + direction_y, curent[2]])
             for direction_z in directions:
-                if direction_z :
-                    if self.position_ok(curent[0] , curent[1] ,
-                                        curent[2] + direction_z):
-                        if not [curent[0] , curent[1] ,
-                                        curent[2] + direction_z] in open:
+                if direction_z:
+                    if self.position_ok(curent[0], curent[1], curent[2] + direction_z):
+                        if not [curent[0], curent[1], curent[2] + direction_z] in open:
                             if not [curent[0], curent[1], curent[2] + direction_z] in self.state_know:
                                 camefrom.append(curent)
-                                self.state_know.append([curent[0], curent[1]  , curent[2]+direction_z])
+                                self.state_know.append([curent[0], curent[1], curent[2] + direction_z])
 
-                                open.append(
-                                                [curent[0] , curent[1] , curent[2] + direction_z])
+                                open.append([curent[0], curent[1], curent[2] + direction_z])
 
     def heuristic(self, position):
+        """
+        the chosen heuristic is the manathan distance
+
+        :retun: the heuristic for a chosen position
+        """
         min = 100000000000
         for obstacle in self.list_poweline:
             if abs(obstacle[2] - position[2]) < 0.5:
@@ -318,6 +336,12 @@ class drone3d():
         return min
 
     def choose_curent(self, open):
+        """
+        choose the positionn with the smallest euristic
+
+        :param: open list of positions to test
+        :return: the most optimal position
+        """
 
         curent = open[0]
 

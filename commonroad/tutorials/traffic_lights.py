@@ -16,9 +16,9 @@ from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight,TrafficLi
 
 class trafic_light():
 
-    def __init__(self, ax, fig,scenario, traffic_light):
+    def __init__(self, ax,scenario, traffic_light):
 
-        self.fig = fig
+
         self.ax = ax
         self.scenario=scenario
         self.traffic_light = traffic_light
@@ -29,20 +29,26 @@ class trafic_light():
         self.hight = 3
         self.long = 1.5
         self.orientation = 0
-        self.r = 0.25
 
-    """
-            help to find param
-                    :param traffic_light_id: ID of traffic light
-                    :param cycle: list of traffic light cycle elements
-                    :param time_offset: offset of traffic light cycle
-                    :param position: position of traffic light
-                    :param direction: driving directions for which the traffic light is valid
-                    :param active: boolean indicating if traffic light is currently active
-                    """
+        """
+                Constructor of a traffic light and traffics signs object
+
+        :param ax: the figure where the traffic must be constructed
+        :param time: the figure or the drone must be built
+        :param length: the figure or the drone must be built
+        :param width: the figure or the drone must be built
+        :param size: the figure or the drone must be built
+        :param orientation: the figure or the drone must be built
+        :param position: the figure or the drone must be built
+        :param scenario: the figure where the drone must be built
+        """
 
     def find_color(self):
-        traffic_light = self.traffic_light
+        """
+         calculate the time in relation to the cycle
+
+        :return: the color used by the figure
+        """
         time = self.scenario.dt * self.time * 100 + self.traffic_light.time_offset  # same time unit
 
         full_cycle =0
@@ -60,6 +66,9 @@ class trafic_light():
 
 
     def new_light(self):
+        """
+        acctualization of the traffics
+        """
 
 
         for patch in self.list_patchcollection:
@@ -69,6 +78,9 @@ class trafic_light():
         self.construction()
 
     def construction(self):
+        """
+        build the new traffic lights
+        """
         length = self.size
         width = self.size
         bottom = 0
@@ -82,7 +94,6 @@ class trafic_light():
         patchcollection = Poly3DCollection([list], linewidth=0, facecolor="tab:grey", edgecolor="k", rasterized=True)
         self.list_patchcollection.append(patchcollection)
         self.ax.add_collection3d(patchcollection)
-        list = []
 
         ###############################################################################################################
 
@@ -94,8 +105,6 @@ class trafic_light():
         patchcollection = Poly3DCollection([list], linewidth=0, facecolor="tab:grey", edgecolor="k", rasterized=True)
         self.list_patchcollection.append(patchcollection)
         self.ax.add_collection3d(patchcollection)
-        list = []
-
 
 
         ###############################################################################################################
@@ -107,7 +116,6 @@ class trafic_light():
         patchcollection = Poly3DCollection([list], linewidth=0, facecolor="tab:grey", edgecolor="k", rasterized=True)
         self.list_patchcollection.append(patchcollection)
         self.ax.add_collection3d(patchcollection)
-        list = []
 
         ###############################################################################################################
 
@@ -119,7 +127,6 @@ class trafic_light():
         patchcollection = Poly3DCollection([list], linewidth=0, facecolor="tab:grey", edgecolor="k", rasterized=True)
         self.list_patchcollection.append(patchcollection)
         self.ax.add_collection3d(patchcollection)
-        list = []
 
         ###############################################################################################################
         list = [  # left
@@ -197,6 +204,9 @@ class trafic_light():
 
 
 def color (state:TrafficLightState):
+    """
+    :return: the correspondence between the states and the colors to display
+    """
     if state==TrafficLightState.INACTIVE:
         return "tab:grey"
     if state==TrafficLightState.RED:
@@ -226,9 +236,6 @@ def rotation_z(o, liste: list):
 
 
 def add_coor(x, y, z, liste: list):
-    # rotation vector
-    # x'= xcos(o)-ysin(o)
-    # y'= xsin(o)+ycos(o)
     list_tempo = []
     for i in range(len(liste)):
         list_tempo.append((liste[i][0] + x, liste[i][1] + y, liste[i][2] + z))
