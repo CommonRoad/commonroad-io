@@ -7,39 +7,38 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from commonroad.scenario.scenario import Scenario
 import numpy as np
 from drone import drone3d
-
+from fonction import *
 import math
-
-
 
 
 class Tree():
     """
-    classe arcre pour ajouter de la diversiter et des obstacles a l'environement
+    tree class to add diversity and barriers to the environment
     """
 
     def __init__(self, ax, x: int, y: int, z: int, r: float, wr: float, list_obstacle: list):
         pi = math.pi
         """
 
-          Constructor of a tree object
+        Constructor of a tree object
+    
+        :param x: x position of the tree 
+        :param y: y position of the tree 
+        :param z: height of the arch
+        :param r: radius of the leaves
+        :param wr: radius of the trunk
+        :param accurate: degree of accuracy
+        :param ax: the figure where the drone should be constructed
+        :param list_obstacle: storage list of obstacles
+    
+        """
 
-          :param x: position x de l'arbre 
-          :param y: position y de l'arbre 
-          :param z: hauteur de l'arcle
-          :param r: rayon des feuilles
-          :param wr: rayon du tronc
-          :param accurate: degree de precision
-          :param list_obstacle: liste des point que le drone ne dois pas rencontre
-
-          """
-
-        self.x = x
-        self.y = y
-        self.z = z
-        self.r = r
-        self.wr = wr
-        self.ax=ax
+        self._x = x
+        self._y = y
+        self._z = z
+        self._r = r
+        self._wr = wr
+        self._ax = ax
         self.list_obstacle = list_obstacle
         accurate = 50
 
@@ -56,7 +55,7 @@ class Tree():
                 self.list.append((r * np.sin(theta) * np.cos(phi) + x, r * np.sin(theta) * np.sin(phi) + y,
                                   r * np.cos(theta) + z))
                 self.list_obstacle.append([(r * np.sin(theta) * np.cos(phi) + x, r * np.sin(theta) * np.sin(phi) + y,
-                                           r * np.cos(theta) + z)])
+                                            r * np.cos(theta) + z)])
                 self.list2.append((wr * np.cos(theta) + x, wr * np.sin(theta) + y, i * z / accurate))
                 self.list_obstacle.append([(wr * np.cos(theta) + x, wr * np.sin(theta) + y, i * z / accurate)])
 
@@ -65,64 +64,64 @@ class Tree():
 
         colors = "tab:green"
         patchcollection = Poly3DCollection(self.patches, edgecolor="g", facecolor=colors, rasterized=True)
-        self.ax.add_collection3d(patchcollection)
+        self._ax.add_collection3d(patchcollection)
 
         patchcollection = Poly3DCollection(self.patches2, edgecolor="g", facecolor=colors, rasterized=True)
-        self.ax.add_collection3d(patchcollection)
+        self._ax.add_collection3d(patchcollection)
+
+    def __str__(self):
+        traffic_str = "\n"
+        traffic_str += "Tree:\n"
+        traffic_str += "- x position of the tree : {}\n".format(self._x)
+        traffic_str += "- y position of the tree : {}\n".format(self._y)
+        traffic_str += "- index: {}\n".format(self.i)
+        traffic_str += "- radius: {}\n".format(self._radius)
+        return traffic_str
+
+    def __eq__(self, other):
+        if  self._r == other.r and self._x == other.x and self._y == other.y and self._z == other.z and self._wr == other.wr :
+            return True
+        return False
 
 
+    @property
+    def ax(self) :
+        return self._ax
 
-def fctx(i):
-    return 30
+    @ax.setter
+    def ax(self, ax):
+        self._ax = ax
 
+    @property
+    def x(self) :
+        return self._x
 
-def fcty(i):
-    return -87 + 20 * i
+    @x.setter
+    def x(self, x):
+        self._x = x
 
+    @property
+    def y(self) :
+        return self._y
 
-def rotation_z(o, liste: list):
-    list_tempo = []
-    for i in range(len(liste)):
-        list_tempo.append((liste[i][0] * np.cos(o) - liste[i][1] * np.sin(o),
-                           liste[i][0] * np.sin(o) + liste[i][1] * np.cos(o), liste[i][2]))
-    return list_tempo
+    @y.setter
+    def y(self, y):
+        self._y = y
 
+    @property
+    def z(self) :
+        return self._z
 
-def rotation_x(o, liste: list):
-    list_tempo = []
-    for i in range(len(liste)):
-        list_tempo.append((liste[i][0], liste[i][1] * np.cos(o) + liste[i][2] * np.sin(o),
-                           liste[i][1] * np.sin(o) + liste[i][2] * np.cos(o)))
-    return list_tempo
+    @z.setter
+    def z(self, z):
+        self._z = z
 
+    @property
+    def wr(self) :
+        return self._wr
 
-def rotation_y(o, liste: list):
-    list_tempo = []
-    for i in range(len(liste)):
-        list_tempo.append((liste[i][0] * np.cos(o) - liste[i][2] * np.sin(o), liste[i][1],
-                           -liste[i][0] * np.sin(o) + liste[i][2] * np.cos(o)))
-    return list_tempo
-
-
-def add_center(x: float, y: float, list: list):
-    list_tempo = []
-    list_ret = []
-    for i in range(len(list)):
-        list_tempo.append((list[i][0] + x, list[i][1] + y, list[i][2]))
-        list_ret.append(list_tempo)
-    return list_ret
-
-
-def add_centerb(x: float, y: float, z: list, list: list):
-    list_tempo = []
-    list_ret = []
-    for i in range(4):
-        list_tempo.append((list[i][0] + y, list[i][1] + x, list[i][2] + z[i]))
-        list_ret.append(list_tempo)
-    return list_ret
+    @wr.setter
+    def wr(self, wr):
+        self._wr = wr
 
 
-def sign(i: int):
-    if i < 0:
-        return -1
-    return 1

@@ -17,7 +17,15 @@ from bike import bike
 
 class car():
 
-    def __init__(self ,scenario :Scenario, i :int ,ax,flag_bus,flag_truck):
+    def __init__(self ,scenario :Scenario, i : int ,ax,flag_bus,flag_truck):
+        """
+        :param scenario: scenario in which the information is stored
+        :param ax: the figure where the drone should be constructed
+        :param flag_bus: boolean indicating the class of the vehicle
+        :param flag_truck: boolean indicating the class of the vehicle
+        :param: i index to find the dinamic obstacle
+
+        """
 
         beta = 0
         self.list_return=[]

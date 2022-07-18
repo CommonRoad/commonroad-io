@@ -12,29 +12,36 @@ import math
 from commonroad.scenario.obstacle import ObstacleType
 from traffic_lights import trafic_light
 from bike import bike
-
+from fonction import *
 
 
 class pedestrian():
     def __init__(self ,scenario :Scenario, i :int ,ax):
         """
-        class to build the pedestrian
 
+        class to build the pedestrian
+        :param scenario: scenario in which the information is stored
+        :param: i index to find the dinamic obstacle
         :param: list_return stoke forms
+        :param ax: the figure where the drone should be constructed
         :param: accurate precision of the shape of the pedestrian
         :param: r radius of the person
+
         """
 
         r = 0.5
         # r=1#american
         pi = math.pi
         self.accurate = 10
-        self.scenari o =scenario
+        self._scenario =scenario
         self.list_retur n =[]
+        self.radius=r
+        self.i=i
 
-        for t in range(self.scenario.dynamic_obstacles[i].prediction.final_time_step):
 
-            shape = self.scenario.dynamic_obstacles[i].occupancy_at_time(t).shape
+        for t in range(self._scenario.dynamic_obstacles[i].prediction.final_time_step):
+
+            shape = self._scenario.dynamic_obstacles[i].occupancy_at_time(t).shape
             top = 2
 
             biglist = []
@@ -44,10 +51,10 @@ class pedestrian():
             for j in range(self.accurate):
                 theta = -pi + 2 * pi * j / self.accurate
                 thetap1 = -pi + 2 * pi * (j + 1) / self.accurate
-                a = (r * np.sin(theta), top / 2 + r * np.cos(theta), top)
-                b = (r * np.sin(thetap1), top / 2 + r * np.cos(thetap1), 0.4)
-                c = (r * np.sin(thetap1), top / 2 + r * np.cos(thetap1), top)
-                d = (r * np.sin(theta), top / 2 + r * np.cos(theta), 0.4)
+                a = (self.radius * np.sin(theta), top / 2 + r * np.cos(theta), top)
+                b = (self.radius * np.sin(thetap1), top / 2 + r * np.cos(thetap1), 0.4)
+                c = (self.radius * np.sin(thetap1), top / 2 + r * np.cos(thetap1), top)
+                d = (self.radius * np.sin(theta), top / 2 + r * np.cos(theta), 0.4)
 
                 list = [b, c, a, d]
 
@@ -65,63 +72,35 @@ class pedestrian():
                 list_patchcollection.append(patchcollection)
             self.list_return.append(list_patchcollection)
 
+    def __str__(self):
+        traffic_str = "\n"
+        traffic_str += "pedestrian:\n"
+        traffic_str += "- scenario: {}\n".format(self._scenario.__str__())
+        traffic_str += "- index: {}\n".format(self.i)
+        traffic_str += "- radius: {}\n".format(self.radius)
+        return traffic_str
+    
+    
+
+    def __eq__(self, other):
+        if  self._scenario == other.scenario and self.radius == other.radius and self.accurate == other.accurate :
+            return True
+        return False
 
 
 
+    @property
+    def ax(self) :
+        return self._ax
 
-def fctx(i):
-    return 30
+    @ax.setter
+    def ax(self, ax):
+        self._ax = ax
 
+    @property
+    def scenario(self) :
+        return self._scenario
 
-def fcty(i):
-    return -87 + 20 * i
-
-
-def rotation_z(o, liste: list):
-    list_tempo = []
-    for i in range(len(liste)):
-        list_tempo.append((liste[i][0] * np.cos(o) - liste[i][1] * np.sin(o),
-                           liste[i][0] * np.sin(o) + liste[i][1] * np.cos(o), liste[i][2]))
-    return list_tempo
-
-
-def rotation_x(o, liste: list):
-    list_tempo = []
-    for i in range(len(liste)):
-        list_tempo.append((liste[i][0], liste[i][1] * np.cos(o) + liste[i][2] * np.sin(o),
-                           liste[i][1] * np.sin(o) + liste[i][2] * np.cos(o)))
-    return list_tempo
-
-
-def rotation_y(o, liste: list):
-    list_tempo = []
-    for i in range(len(liste)):
-        list_tempo.append((liste[i][0] * np.cos(o) - liste[i][2] * np.sin(o), liste[i][1],
-                           -liste[i][0] * np.sin(o) + liste[i][2] * np.cos(o)))
-    return list_tempo
-
-
-def add_center(x: float, y: float, list: list):
-    list_tempo = []
-    list_ret = []
-    for i in range(len(list)):
-        list_tempo.append((list[i][0] + x, list[i][1] + y, list[i][2]))
-        list_ret.append(list_tempo)
-    return list_ret
-
-
-def add_centerb(x: float, y: float, z: list, list: list):
-    list_tempo = []
-    list_ret = []
-    for i in range(4):
-        list_tempo.append((list[i][0] + y, list[i][1] + x, list[i][2] + z[i]))
-        list_ret.append(list_tempo)
-    return list_ret
-
-
-def sign(i: int):
-    if i < 0:
-        return -1
-    return 1
-
-
+    @scenario.setter
+    def scenario(self, scenario):
+        self._scenario = scenario

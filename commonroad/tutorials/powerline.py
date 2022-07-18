@@ -11,26 +11,29 @@ import time
 import os
 import sys
 import math
-
+from fonction import *
 class poweline():
 
 
 
-    def __init__(self ,scenario :Scenario ,ax,nb_towers,obstable,list_powerline,tention):
+    def __init__(self ,scenario :Scenario ,ax,nb_towers,list_obstacle,list_powerline,tention):
 
         """
         class to build a bike
 
         :param: list_powerline
+        :param ax: the figure where the drone should be constructed
+        :param scenario: scenario in which the information is stored
         :param: accurate precision of the shape of the bike
         :param: nb_tower number of pilones
         :param: tention tention of the son
+        :param list_obstacle: storage list of obstacles
 
         """
 
-        self.scenario=scenario
-        self.ax=ax
-        self.list_obstacle=obstable
+        self._scenario=scenario
+        self._ax=ax
+        self.list_obstacle=list_obstacle
         self.list_return = []
         self.list_powerline=list_powerline
 
@@ -38,7 +41,7 @@ class poweline():
         acurate = 10
         self.first = 6
         self.second = 8
-        alpha = tention
+        self.tention = tention
         biglist = []
         o = math.pi
 
@@ -54,13 +57,13 @@ class poweline():
             for y in range(acurate + 1):
                 x = -distance / 2 + y * distance / acurate
 
-                list.append((0.5, x, alpha * math.cosh(x / alpha) - alpha * math.cosh(
-                    distance / 2 / alpha) + self.first ))
+                list.append((0.5, x, self.tention * math.cosh(x / self.tention) - self.tention * math.cosh(
+                    distance / 2 / self.tention) + self.first ))
             for y in range(acurate + 1):
                 x = distance / 2 - y * distance / acurate
 
-                list.append((-0.5, x, alpha * math.cosh(x / alpha) - alpha * math.cosh(
-                    distance / 2 / alpha) + self.first ))
+                list.append((-0.5, x, self.tention * math.cosh(x / self.tention) - self.tention * math.cosh(
+                    distance / 2 / self.tention) + self.first ))
 
             list = rotation_z(o, list)
             list = add_center((fctx(i) + fctx(i + 1)) / 2, (fcty(i) + fcty(i + 1)) / 2, list)
@@ -72,9 +75,37 @@ class poweline():
                     self.list_powerline.append(tuple)
             patchcollection = Poly3DCollection(list, linewidth=0.3, edgecolor="k", facecolor=colors, rasterized=True,
                                                zorder=10, alpha=0)
-            self.ax.add_collection3d(patchcollection)
+            self._ax.add_collection3d(patchcollection)
 
 
+
+    def __str__(self):
+        traffic_str = "\n"
+        traffic_str += "powerline:\n"
+        traffic_str += "- tention of the son: {}\n".format(self.tention)
+        traffic_str += "- number of pilones: {}\n".format(self.nb_towers)
+        return traffic_str
+
+    def __eq__(self, other):
+        if  self.list_return == other.list_return and self.list_powerline == other.list_powerline :
+            return True
+        return False
+
+    @property
+    def ax(self) :
+        return self._ax
+
+    @ax.setter
+    def ax(self, ax):
+        self._ax = ax
+
+    @property
+    def scenario(self):
+        return self._scenario
+
+    @scenario.setter
+    def scenario(self, scenario):
+        self._scenario = scenario
 
     def tower(self,x,y,xp1,yp1):
 
@@ -303,71 +334,7 @@ class poweline():
         for list in biglist:
             patchcollection = Poly3DCollection(list, linewidth=0.1, edgecolor="k", facecolor=colors, rasterized=True,
                                                alpha=0)
-            self.ax.add_collection3d(patchcollection)
+            self._ax.add_collection3d(patchcollection)
             list_patchcollection.append(patchcollection)
         self.list_return.append(list_patchcollection)
 
-
-
-
-
-
-
-
-
-
-
-def fctx(i):
-    return 30
-
-
-def fcty(i):
-    return -87 + 20 * i
-
-
-def rotation_z(o, liste: list):
-    list_tempo = []
-    for i in range(len(liste)):
-        list_tempo.append((liste[i][0] * np.cos(o) - liste[i][1] * np.sin(o),
-                           liste[i][0] * np.sin(o) + liste[i][1] * np.cos(o), liste[i][2]))
-    return list_tempo
-
-
-def rotation_x(o, liste: list):
-    list_tempo = []
-    for i in range(len(liste)):
-        list_tempo.append((liste[i][0], liste[i][1] * np.cos(o) + liste[i][2] * np.sin(o),
-                           liste[i][1] * np.sin(o) + liste[i][2] * np.cos(o)))
-    return list_tempo
-
-
-def rotation_y(o, liste: list):
-    list_tempo = []
-    for i in range(len(liste)):
-        list_tempo.append((liste[i][0] * np.cos(o) - liste[i][2] * np.sin(o), liste[i][1],
-                           -liste[i][0] * np.sin(o) + liste[i][2] * np.cos(o)))
-    return list_tempo
-
-
-def add_center(x: float, y: float, list: list):
-    list_tempo = []
-    list_ret = []
-    for i in range(len(list)):
-        list_tempo.append((list[i][0] + x, list[i][1] + y, list[i][2]))
-        list_ret.append(list_tempo)
-    return list_ret
-
-
-def add_centerb(x: float, y: float, z: list, list: list):
-    list_tempo = []
-    list_ret = []
-    for i in range(4):
-        list_tempo.append((list[i][0] + y, list[i][1] + x, list[i][2] + z[i]))
-        list_ret.append(list_tempo)
-    return list_ret
-
-
-def sign(i: int):
-    if i < 0:
-        return -1
-    return 1

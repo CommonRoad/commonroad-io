@@ -11,22 +11,25 @@ from powerline import poweline
 import math
 from commonroad.scenario.obstacle import ObstacleType
 from traffic_lights import trafic_light
+from fonction import *
 
 
 
 class bridge():
 
-    """
 
-
-    """
 
     def __init__(self,scenario:Scenario,list_obstacle,ax):
-
-        self.scenario=scenario
-        self.ax=ax
+        """
+        :param scenario: scenario in which the information is stored
+        :param list_obstacle: storage list of obstacles
+        :param ax: the figure where the drone should be constructed
+        """
+        self._scenario=scenario
+        self._ax=ax
         self.bridge=[]
         self.list_return=[]
+
 
 
         for l in range(len(self.scenario.lanelet_network.lanelets)):
@@ -47,25 +50,56 @@ class bridge():
                                              alpha=1, zorder=1)
                 ax.add_collection3d(lancolect)
 
+    def __str__(self):
+        traffic_str = "\n"
+        traffic_str += "Bridge:\n"
+        traffic_str += "- scenario: {}\n".format(self._scenario.__str__())
+        traffic_str += "- equation: 20 * 2 ** ((-(i - 100) ** 2) / 600)"
+
+        return traffic_str
+
+    def __eq__(self, other):
+        if self._scenario == other.scenario and self.list_return == other.list_return and self.bridge == other.bridge :
+            return True
+        return False
+
+
+
+    @property
+    def ax(self) :
+        return self._ax
+
+    @ax.setter
+    def ax(self, ax):
+        self._ax = ax
+
+    @property
+    def scenario(self) :
+        return self._scenario
+
+    @scenario.setter
+    def scenario(self, scenario):
+        self._scenario = scenario
+
 
 class car_bridge():
 
     def __init__(self ,scenario :Scenario, i :int ,ax,bridge):
         pi = math.pi
         self.list_return = []
-        self.scenario = scenario
-        self.ax=ax
+        self._scenario = scenario
+        self._ax=ax
         self.bridge=bridge
 
 
 
-        for t in range(self.scenario.dynamic_obstacles[i].prediction.final_time_step):
+        for t in range(self._scenario.dynamic_obstacles[i].prediction.final_time_step):
 
-            shape = self.scenario.dynamic_obstacles[i].occupancy_at_time(t).shape
+            shape = self._scenario.dynamic_obstacles[i].occupancy_at_time(t).shape
 
             bottom = 0
+            oy=0
             for lan in self.bridge:
-
                 while abs(shape.center[0] - lan[0][1] - 100) < 2 and abs(
                         shape.center[1] - lan[0][0] + 100) < 2 and bottom - 0.5 < lan[3][2]:
                     bottom += 0.1
@@ -150,64 +184,9 @@ class car_bridge():
             for list in biglist:
                 patchcollection = Poly3DCollection(list, linewidth=0, edgecolor="k", facecolor=colors, rasterized=True,
                                                    zorder=10)
-                self.ax.add_collection3d(patchcollection)
+                self._ax.add_collection3d(patchcollection)
                 list_patchcollection.append(patchcollection)
             self.list_return.append(list_patchcollection)
 
 
 
-
-def fctx(i):
-    return 30
-
-
-def fcty(i):
-    return -87 + 20 * i
-
-
-def rotation_z(o, liste: list):
-    list_tempo = []
-    for i in range(len(liste)):
-        list_tempo.append((liste[i][0] * np.cos(o) - liste[i][1] * np.sin(o),
-                           liste[i][0] * np.sin(o) + liste[i][1] * np.cos(o), liste[i][2]))
-    return list_tempo
-
-
-def rotation_x(o, liste: list):
-    list_tempo = []
-    for i in range(len(liste)):
-        list_tempo.append((liste[i][0], liste[i][1] * np.cos(o) + liste[i][2] * np.sin(o),
-                           liste[i][1] * np.sin(o) + liste[i][2] * np.cos(o)))
-    return list_tempo
-
-
-def rotation_y(o, liste: list):
-    list_tempo = []
-    for i in range(len(liste)):
-        list_tempo.append((liste[i][0] * np.cos(o) - liste[i][2] * np.sin(o), liste[i][1],
-                           -liste[i][0] * np.sin(o) + liste[i][2] * np.cos(o)))
-    return list_tempo
-
-
-def add_center(x: float, y: float, list: list):
-    list_tempo = []
-    list_ret = []
-    for i in range(len(list)):
-        list_tempo.append((list[i][0] + x, list[i][1] + y, list[i][2]))
-        list_ret.append(list_tempo)
-    return list_ret
-
-
-def add_centerb(x: float, y: float, z: list, list: list):
-    list_tempo = []
-    list_ret = []
-    for i in range(4):
-        list_tempo.append((list[i][0] + y, list[i][1] + x, list[i][2] + z[i]))
-        list_ret.append(list_tempo)
-    return list_ret
-
-
-def sign(i: int):
-    if i < 0:
-        return -1
-    return 1

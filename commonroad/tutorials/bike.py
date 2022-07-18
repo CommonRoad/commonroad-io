@@ -8,30 +8,32 @@ from drone import drone3d
 from powerline import poweline
 import math
 from commonroad.scenario.obstacle import ObstacleType
-
-
-
-
+from fonction import *
 
 
 class bike():
 
     def __init__(self,scenario:Scenario,i:int,ax):
         """
+
         class to build a bike
 
-        :param: list_return stoke forms
-        :param: accurate precision of the shape of the bike
+        :param scenario: scenario in which the information is stored
+        :param: i index to find the dinamic obstacle
+        :param ax: the figure where the drone should be constructed
         :param: r radius of the wheel
+        :param: accurate precision of the shape of the bike
+        :param: list_return stoke forms
         """
-        self.scenario=scenario
+        self._scenario=scenario
         self.list_return = []
         self.r = 0.5
+        self.i=i
         pi = math.pi
         self.accurate = 10
-        for t in range(self.scenario.dynamic_obstacles[i].prediction.final_time_step):
+        for t in range(self._scenario.dynamic_obstacles[i].prediction.final_time_step):
 
-            shape = self.scenario.dynamic_obstacles[i].occupancy_at_time(t).shape
+            shape = self._scenario.dynamic_obstacles[i].occupancy_at_time(t).shape
 
             top = 1.5
 
@@ -82,49 +84,31 @@ class bike():
             self.list_return.append(list_patchcollection)
 
 
-def rotation_z(o, liste: list):
-    list_tempo = []
-    for i in range(len(liste)):
-        list_tempo.append((liste[i][0] * np.cos(o) - liste[i][1] * np.sin(o),
-                           liste[i][0] * np.sin(o) + liste[i][1] * np.cos(o), liste[i][2]))
-    return list_tempo
+    def __str__(self):
+        traffic_str = "\n"
+        traffic_str += "Bike:\n"
+        traffic_str += "- scenario: {}\n".format(self._scenario.__str__())
+        traffic_str += "- index: {}\n".format(self.i)
 
+        return traffic_str
 
-def rotation_x(o, liste: list):
-    list_tempo = []
-    for i in range(len(liste)):
-        list_tempo.append((liste[i][0], liste[i][1] * np.cos(o) + liste[i][2] * np.sin(o),
-                           liste[i][1] * np.sin(o) + liste[i][2] * np.cos(o)))
-    return list_tempo
+    def __eq__(self, other):
+        if self._scenario == other.scenario and self.list_return == other.list_return  :
+            return True
+        return False
 
+    @property
+    def ax(self) :
+        return self._ax
 
-def rotation_y(o, liste: list):
-    list_tempo = []
-    for i in range(len(liste)):
-        list_tempo.append((liste[i][0] * np.cos(o) - liste[i][2] * np.sin(o), liste[i][1],
-                           -liste[i][0] * np.sin(o) + liste[i][2] * np.cos(o)))
-    return list_tempo
+    @ax.setter
+    def ax(self, ax):
+        self._ax = ax
 
+    @property
+    def scenario(self) :
+        return self._scenario
 
-def add_center(x: float, y: float, list: list):
-    list_tempo = []
-    list_ret = []
-    for i in range(len(list)):
-        list_tempo.append((list[i][0] + x, list[i][1] + y, list[i][2]))
-        list_ret.append(list_tempo)
-    return list_ret
-
-
-def add_centerb(x: float, y: float, z: list, list: list):
-    list_tempo = []
-    list_ret = []
-    for i in range(4):
-        list_tempo.append((list[i][0] + y, list[i][1] + x, list[i][2] + z[i]))
-        list_ret.append(list_tempo)
-    return list_ret
-
-
-def sign(i: int):
-    if i < 0:
-        return -1
-    return 1
+    @scenario.setter
+    def scenario(self, scenario):
+        self._scenario = scenario
