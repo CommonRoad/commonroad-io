@@ -308,14 +308,41 @@ class Trajectory(IDrawable):
         discretization of the scenario.
         """
         self.initial_time_step: int = initial_time_step
-        self.state_list: List[State] = state_list
+        self._state_list: Tuple[State] = tuple(self.check_state_list(state_list))
+
+    def check_state_list(self, state_list: List[State]) -> List[State]:
+        """
+        Checks whether state list is valid.
+
+        :param state_list: state list which should be evaluated
+        :return: evaluated state list
+        """
+        assert isinstance(state_list, list), ('<Trajectory/state_list>: argument state_list of wrong type. '
+                                              'Expected type: %s. Got type: %s.' % (list, type(state_list)))
+        assert len(state_list) >= 1, ('<Trajectory/state_list>: argument state_list must contain at least one state.'
+                                      ' length of state_list: %s.' % len(state_list))
+        assert all(isinstance(state, State) for state in state_list), ('<Trajectory/state_list>: element of '
+                                                                       'state_list is of wrong type. Expected type: '
+                                                                       '%s.' % List[State])
+        assert all(is_natural_number(state.time_step) for state in state_list if hasattr(state,
+                                                                                         'time_step')), \
+            '<Trajectory/state_list>: Element time_step of each state must be an integer.'
+        assert all(state_list[0].attributes == state.attributes for state in state_list), (
+                '<Trajectory/state_list>: all states must have the same attributes. Attributes of first state: %s.' %
+                state_list[0].attributes)
+
+        assert state_list[0].time_step == self.initial_time_step, \
+            f"state_list[0].time_step={state_list[0].time_step} != " \
+            f"self.initial_time_step={self.initial_time_step}"
+
+        return state_list
 
     def __eq__(self, other):
         if not isinstance(other, Trajectory):
             warnings.warn(f"Inequality between Trajectory {repr(self)} and different type {type(other)}")
             return False
 
-        return self._initial_time_step == other.initial_time_step and self._state_list == other.state_list
+        return self._initial_time_step == other.initial_time_step and list(self._state_list) == list(other.state_list)
 
     def __hash__(self):
         return hash((self._initial_time_step, self._state_list))
@@ -337,38 +364,7 @@ class Trajectory(IDrawable):
     @property
     def state_list(self) -> List[State]:
         """ List of states of the trajectory over time."""
-        return self._state_list
-
-    @state_list.setter
-    def state_list(self, state_list):
-        assert isinstance(state_list, list), (
-            '<Trajectory/state_list>: argument state_list of wrong type. '
-            'Expected type: %s. Got type: %s.' % (list, type(state_list))
-        )
-        assert len(state_list) >= 1, (
-            '<Trajectory/state_list>: argument state_list must contain at least one state.'
-            ' length of state_list: %s.' % len(state_list)
-        )
-        assert all(isinstance(state, State) for state in state_list), (
-            '<Trajectory/state_list>: element of '
-            'state_list is of wrong type. Expected type: '
-            '%s.' % List[State]
-        )
-        assert all(
-            is_natural_number(state.time_step)
-            for state in state_list
-            if hasattr(state, 'time_step')
-        ), '<Trajectory/state_list>: Element time_step of each state must be an integer.'
-        assert all(
-            state_list[0].attributes == state.attributes for state in state_list
-        ), (
-            '<Trajectory/state_list>: all states must have the same attributes. Attributes of first state: %s.'
-            % state_list[0].attributes
-        )
-        self._state_list = state_list
-        assert self.state_list[0].time_step == self.initial_time_step, \
-            f"state_list[0].time_step={self.state_list[0].time_step} != " \
-            f"self.initial_time_step={self.initial_time_step}"
+        return list(self._state_list)
 
     @property
     def final_state(self) -> State:
@@ -421,10 +417,10 @@ class Trajectory(IDrawable):
             '<Trajectory/translate_rotate>: argument angle must be within the '
             'interval [-2pi,2pi]. angle = %s' % angle
         )
-
+        new_state_list = []
         for i in range(len(self._state_list)):
-            self._state_list[i] = self._state_list[i].translate_rotate(
-                    translation, angle)
+            new_state_list.append(self._state_list[i].translate_rotate(translation, angle))
+        self._state_list = tuple(new_state_list)
 
     @classmethod
     def resample_continuous_time_state_list(cls, states: List[State],
