@@ -1,6 +1,6 @@
 # Changelog
 
-## [2022.2] - 2022-06-XX
+## [2022.2] - 2022-07-XX
 
 ### Added
 
@@ -20,6 +20,7 @@
 ### Fixed
 
 - Default constructor for ScenarioID produces invalid Benchmark ID
+- Changeable state list leads to inconsistent final time step of trajectory
 - Various small bug fixes
 
 
