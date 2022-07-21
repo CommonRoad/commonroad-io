@@ -24,7 +24,7 @@ from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction
 from commonroad.scenario.lanelet import LaneletNetwork, LineMarking
-from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, ObstacleRole, SignalState, PhantomObstacle, \
+from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, SignalState, PhantomObstacle, \
     EnvironmentObstacle, Obstacle
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.traffic_sign import TrafficLightState, TrafficLight, TrafficSign
@@ -430,18 +430,7 @@ class MPRenderer(IRenderer):
         call_stack = tuple(list(call_stack) + ['scenario'])
         obj.lanelet_network.draw(self, draw_params, call_stack)
 
-        # draw only obstacles inside plot limits
-        focus_obstacle_id = draw_params.by_callstack(call_stack, ('focus_obstacle_id',))
-        if focus_obstacle_id is False and type(self.plot_limits) == list:
-            time_begin = draw_params.by_callstack(call_stack, ('time_begin',))
-            # dynamic obstacles
-            obs = obj.obstacles_by_position_intervals([Interval(self.plot_limits[0], self.plot_limits[1]),
-                                                       Interval(self.plot_limits[2], self.plot_limits[3])],
-                                                      tuple(ObstacleRole), time_begin)
-        else:
-            obs = obj.obstacles
-        # Draw all objects
-        for o in obs:
+        for o in obj.obstacles:
             o.draw(self, draw_params, call_stack)
 
     def draw_static_obstacle(self, obj: StaticObstacle, draw_params: Union[ParamServer, dict, None],
