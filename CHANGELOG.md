@@ -1,5 +1,13 @@
 # Changelog
 
+## [2022.3] - 2022-07-XX
+
+### Added
+
+- Function for computing shape group occupancy from state
+- Support for Kinematic Single-Track Model with One On-axle Trailer
+
+
 ## [2022.2] - 2022-06-XX
 
 ### Added
