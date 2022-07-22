@@ -34,36 +34,41 @@ class State(abc.ABC):
         if set(self.attributes) != set(other.attributes):
             return False
 
+        dec = 10
         for attr in self.attributes:
-            if attr == 'position':
-                if isinstance(self.position, np.ndarray) and isinstance(other.position, np.ndarray):
-                    pos_self = np.array2string(np.around(self.position.astype(float), 10), precision=10)
-                    pos_other = np.array2string(np.around(self.position.astype(float), 10), precision=10)
-                else:
-                    if isinstance(self.position, np.ndarray) or isinstance(other.position, np.ndarray):
-                        return False
-                    pos_self = self.position
-                    pos_other = other.position
+            val_self = getattr(self, attr)
+            val_other = getattr(other, attr)
 
-                if pos_self != pos_other:
+            if attr == 'position' and (isinstance(val_self, np.ndarray) or isinstance(val_other, np.ndarray)):
+                if isinstance(val_self, np.ndarray) and isinstance(val_other, np.ndarray):
+                    val_self = tuple(np.around(self.position.astype(float), dec))
+                    val_other = tuple(np.around(self.position.astype(float), dec))
+                else:
                     return False
-            else:
-                if getattr(self, attr) != getattr(other, attr):
-                    return False
+
+            if isinstance(val_self, float):
+                val_self = round(val_self, dec)
+            if isinstance(val_other, float):
+                val_other = round(val_other, dec)
+
+            if val_self != val_other:
+                return False
 
         return True
 
     def __hash__(self):
         values = list()
+
+        dec = 10
         for attr in self.attributes:
-            if attr == 'position':
-                if isinstance(self.position, np.ndarray):
-                    pos = np.array2string(np.around(self.position.astype(float), 10), precision=10)
-                else:
-                    pos = self.position
-                values.append(pos)
-            else:
-                values.append(getattr(self, attr))
+            val = getattr(self, attr)
+
+            if attr == 'position' and isinstance(self.position, np.ndarray):
+                val = tuple(np.around(self.position.astype(float), dec))
+
+            if isinstance(val, float):
+                val = round(val, dec)
+            values.append(val)
         return hash(tuple(values))
 
     @property
