@@ -135,6 +135,25 @@ class TestState(unittest.TestCase):
         pm_state_2.velocity = Interval(5., 20.)
         self.assertNotEqual(pm_state_1, pm_state_2)
 
+    def test_hash(self):
+        ks_state_1 = STState(time_step=0, position=np.array([0., 0.]), steering_angle=0.1,
+                             velocity=10., orientation=AngleInterval(0., 0.2))
+        ks_state_2 = STState(time_step=0, position=np.array([0., 0.]), steering_angle=0.1,
+                             velocity=10., orientation=AngleInterval(0., 0.2))
+        self.assertEqual(hash(ks_state_1), hash(ks_state_2))
+
+        states_1 = set()
+        states_2 = set()
+        for i in range(10):
+            pm_state = PMState(time_step=i, position=np.array([i, i]), velocity=i * 0.01, velocity_y=i * 0.02)
+            states_1.add(pm_state)
+            states_2.add(copy.copy(pm_state))
+        self.assertEqual(states_1, states_2)
+
+        for state in states_2:
+            state.velocity_y = 0.01
+        self.assertNotEqual(states_1, states_2)
+
 
 if __name__ == '__main__':
     unittest.main()

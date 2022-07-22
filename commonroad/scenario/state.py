@@ -32,26 +32,39 @@ class State(abc.ABC):
 
     def __eq__(self, other: State):
         if set(self.attributes) != set(other.attributes):
-            print(self.attributes)
-            print(other.attributes)
             return False
 
         for attr in self.attributes:
-            if attr == 'position' and self.position is not None and other.position is not None:
+            if attr == 'position':
                 if isinstance(self.position, np.ndarray) and isinstance(other.position, np.ndarray):
                     pos_self = np.array2string(np.around(self.position.astype(float), 10), precision=10)
                     pos_other = np.array2string(np.around(self.position.astype(float), 10), precision=10)
-                    if pos_self != pos_other:
-                        return False
                 else:
-                    if isinstance(self.position, np.ndarray) or isinstance(other.position, np.ndarray) \
-                            or self.position != other.position:
+                    if isinstance(self.position, np.ndarray) or isinstance(other.position, np.ndarray):
                         return False
+                    pos_self = self.position
+                    pos_other = other.position
+
+                if pos_self != pos_other:
+                    return False
             else:
                 if getattr(self, attr) != getattr(other, attr):
                     return False
 
         return True
+
+    def __hash__(self):
+        values = list()
+        for attr in self.attributes:
+            if attr == 'position':
+                if isinstance(self.position, np.ndarray):
+                    pos = np.array2string(np.around(self.position.astype(float), 10), precision=10)
+                else:
+                    pos = self.position
+                values.append(pos)
+            else:
+                values.append(getattr(self, attr))
+        return hash(tuple(values))
 
     @property
     def attributes(self) -> List[str]:
@@ -210,6 +223,9 @@ class InitialState(State):
     def __eq__(self, other):
         return State.__eq__(self, other)
 
+    def __hash__(self):
+        return State.__hash__(self)
+
 
 @dataclass
 class PMState(State):
@@ -228,6 +244,9 @@ class PMState(State):
 
     def __eq__(self, other):
         return State.__eq__(self, other)
+
+    def __hash__(self):
+        return State.__hash__(self)
 
 
 @dataclass
@@ -250,6 +269,9 @@ class KSState(State):
     def __eq__(self, other):
         return State.__eq__(self, other)
 
+    def __hash__(self):
+        return State.__hash__(self)
+
 
 @dataclass
 class KSTState(KSState):
@@ -264,6 +286,9 @@ class KSTState(KSState):
 
     def __eq__(self, other):
         return State.__eq__(self, other)
+
+    def __hash__(self):
+        return State.__hash__(self)
 
 
 @dataclass
@@ -282,6 +307,9 @@ class STState(KSState):
     def __eq__(self, other):
         return State.__eq__(self, other)
 
+    def __hash__(self):
+        return State.__hash__(self)
+
 
 @dataclass
 class STDState(STState):
@@ -298,6 +326,9 @@ class STDState(STState):
 
     def __eq__(self, other):
         return State.__eq__(self, other)
+
+    def __hash__(self):
+        return State.__hash__(self)
 
 
 @dataclass
@@ -368,6 +399,9 @@ class MBState(State):
     def __eq__(self, other):
         return State.__eq__(self, other)
 
+    def __hash__(self):
+        return State.__hash__(self)
+
 
 @dataclass
 class LongitudinalState(State):
@@ -389,6 +423,9 @@ class LongitudinalState(State):
     def __eq__(self, other):
         return State.__eq__(self, other)
 
+    def __hash__(self):
+        return State.__hash__(self)
+
 
 @dataclass
 class LateralState(State):
@@ -409,6 +446,9 @@ class LateralState(State):
     def __eq__(self, other):
         return State.__eq__(self, other)
 
+    def __hash__(self):
+        return State.__hash__(self)
+
 
 @dataclass
 class InputState(State):
@@ -425,6 +465,9 @@ class InputState(State):
 
     def __eq__(self, other):
         return State.__eq__(self, other)
+
+    def __hash__(self):
+        return State.__hash__(self)
 
 
 @dataclass
@@ -443,6 +486,9 @@ class PMInputState(State):
     def __eq__(self, other):
         return State.__eq__(self, other)
 
+    def __hash__(self):
+        return State.__hash__(self)
+
 
 @dataclass
 class CustomState(State):
@@ -453,6 +499,9 @@ class CustomState(State):
 
     def __eq__(self, other):
         return State.__eq__(self, other)
+
+    def __hash__(self):
+        return State.__hash__(self)
 
     def add_attribute(self, new_attr: str):
         """
