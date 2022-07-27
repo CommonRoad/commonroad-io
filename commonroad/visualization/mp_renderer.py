@@ -841,9 +841,10 @@ class MPRenderer(IRenderer):
             sin = math.sin(state.orientation)
             x = state.position[0]
             y = state.position[1]
-            self.obstacle_patches.append(mpl.patches.FancyArrow(x=x, y=y, dx=state.velocity * cos * scale_factor,
-                                                                dy=state.velocity * sin * scale_factor,
-                                                                zorder=zorder, **arrow_args))
+            arrow_length = max(state.velocity, 3. / scale_factor)
+            self.obstacle_patches.append(mpl.patches.FancyArrow(x=x, y=y, dx=arrow_length * cos * scale_factor,
+                                                                dy=arrow_length * sin * scale_factor, zorder=zorder,
+                                                                **arrow_args))
 
     def draw_lanelet_network(self, obj: LaneletNetwork, draw_params: Union[ParamServer, dict, None],
                              call_stack: Tuple[str, ...]) -> None:
