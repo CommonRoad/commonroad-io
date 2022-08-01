@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import click
 from commonroad.scenario.scenario import Scenario
 import matplotlib.pyplot as plt
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem

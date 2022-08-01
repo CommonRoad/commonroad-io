@@ -12,7 +12,6 @@ from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import numpy as np
 import random
-import sys
 from threading import Thread
 import time
 import os

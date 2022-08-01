@@ -6,7 +6,6 @@ from commonroad.scenario.scenario import Scenario
 import numpy as np
 import math
 from commonroad.scenario.obstacle import ObstacleType
-
 from traffic_lights import trafic_light
 from bike import bike
 from bridge import bridge, car_bridge
@@ -48,7 +47,7 @@ class visual():
         self.bridge_flag = False
         self.tree_flag = False
         self.powerline_flag = False
-        self.list_traffic_signs = []
+
 
         self.xmin = 0
         self.xmax = 0

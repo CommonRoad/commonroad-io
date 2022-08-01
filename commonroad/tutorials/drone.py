@@ -1,7 +1,5 @@
 from typing import Any
-
 import matplotlib.pyplot as plt
-import click
 from commonroad.scenario.scenario import Scenario
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection

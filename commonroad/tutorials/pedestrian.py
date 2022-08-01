@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import click
 from commonroad.scenario.scenario import Scenario
 import matplotlib.pyplot as plt
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
@@ -30,11 +29,11 @@ class pedestrian():
         """
 
         r = 0.5
-        # r=1#american
+
         pi = math.pi
         self.accurate = 10
         self._scenario =scenario
-        self.list_retur n =[]
+        self.list_return =[]
         self.radius=r
         self.i=i
 
