@@ -15,6 +15,7 @@ from drone import drone3d
 from car import car
 from tree import Tree
 from fonction import *
+from pedestrian import pedestrian
 
 
 class visual():
@@ -44,9 +45,9 @@ class visual():
         self.bottom = 0.6
         self.nb_car = 0
         self.switch = False
-        self.bridge_flag = True
-        self.tree_flag = True
-        self.powerline_flag = True
+        self.bridge_flag = False
+        self.tree_flag = False
+        self.powerline_flag = False
         self.list_traffic_signs = []
 
         self.xmin = 0
@@ -227,11 +228,11 @@ class visual():
                     if i == j:
                         for y in range(len(self.list_car[k][i][:])):
                             self.list_car[k][i][y].set_alpha(1)
-                            self.list_car[k][i][y].set_linewidth(0.1)
+                            self.list_car[k][i][y].set_linewidth(0)
 
                             if self.bridge_flag:
                                 self.list_carb[k][i][y].set_alpha(1)
-                                self.list_carb[k][i][y].set_linewidth(0.1)
+                                self.list_carb[k][i][y].set_linewidth(0)
             plt.pause(0.01)
 
     def show_at_time(self, i: int):

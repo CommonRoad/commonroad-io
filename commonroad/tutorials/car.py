@@ -146,7 +146,7 @@ class car():
                 colors = ["tab:red" for patch in list]
             list_patchcollection = []
             for list in biglist:
-                patchcollection = Poly3DCollection(list, linewidth=0, edgecolor="k", facecolor=colors, rasterized=True)
+                patchcollection = Poly3DCollection(list, linewidth=0.1, edgecolor="k", facecolor=colors, rasterized=True)
                 ax.add_collection3d(patchcollection)
                 list_patchcollection.append(patchcollection)
             self.list_return.append(list_patchcollection)

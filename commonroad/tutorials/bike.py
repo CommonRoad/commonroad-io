@@ -56,7 +56,7 @@ class bike():
             list = []
             for j in range(self.accurate):
                 theta = -pi + 2 * pi * j / self.accurate
-                list.append((self.r * np.sin(theta), top / 2 + self.r * np.cos(theta), 0))
+                list.append((self.r * np.sin(theta),0, top / 2 + self.r * np.cos(theta)))
 
             list = rotation_z(o, list)
             list = add_center(last[0], last[1], list)

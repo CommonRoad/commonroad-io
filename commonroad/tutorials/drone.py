@@ -35,7 +35,7 @@ class drone3d():
         self._ax = ax
         self._orientation = 0
         self._speed = 2
-        self._position = [0, 0, 5]
+        self._position = [0, 0, 20]
         self.length = 1
         self.list_obstacle = list_obstacle
         self.width = 1
@@ -409,7 +409,7 @@ class drone3d():
         return curent
 
 
-def rotation_z(o, liste: list):
+def rotation_z(o:float, liste: list):
     # rotation vector
     # x'= xcos(o)-ysin(o)
     # y'= xsin(o)+ycos(o)
