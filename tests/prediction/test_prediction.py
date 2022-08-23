@@ -4,7 +4,8 @@ import numpy as np
 from commonroad.prediction.prediction import TrajectoryPrediction, SetBasedPrediction, Occupancy
 from commonroad.geometry.shape import Rectangle, Circle, ShapeGroup
 from commonroad.common.util import Interval
-from commonroad.scenario.trajectory import Trajectory, State
+from commonroad.scenario.state import KSState
+from commonroad.scenario.trajectory import Trajectory
 
 
 class TestOccupancy(unittest.TestCase):
@@ -49,9 +50,9 @@ class TestTrajectoryPrediction(unittest.TestCase):
     """
     def setUp(self):
         """create sample trajectory"""
-        state1 = State(time_step=2, position=np.array([0.0, 0.0]), orientation=0.0)
-        state2 = State(time_step=3, position=np.array([1.0, 0.0]), orientation=np.pi/4)
-        state3 = State(time_step=4, position=np.array([2.0, 1.0]), orientation=np.pi/2)
+        state1 = KSState(time_step=2, position=np.array([0.0, 0.0]), orientation=0.0)
+        state2 = KSState(time_step=3, position=np.array([1.0, 0.0]), orientation=np.pi/4)
+        state3 = KSState(time_step=4, position=np.array([2.0, 1.0]), orientation=np.pi/2)
         self.trajectory = Trajectory(2, [state1, state2, state3])
 
     def test_initialization(self):

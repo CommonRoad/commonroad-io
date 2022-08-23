@@ -7,14 +7,14 @@ from commonroad.common.file_writer import CommonRoadFileWriter, FileFormat
 from commonroad.common.writer.file_writer_interface import precision, OverwriteExistingFile
 from commonroad.common.writer.file_writer_xml import float_to_str, Point, RectangleXMLNode, CircleXMLNode
 from commonroad.common.file_reader import CommonRoadFileReader
-from commonroad.geometry.shape import *
 from lxml import etree
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
 from commonroad.prediction.prediction import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario, Tag, Location, ScenarioID
-from commonroad.scenario.trajectory import *
+from commonroad.scenario.trajectory import Trajectory
+from commonroad.scenario.state import KSState, InitialState
 
 
 class TestXMLFileWriter(unittest.TestCase):
@@ -34,17 +34,17 @@ class TestXMLFileWriter(unittest.TestCase):
         scenario_1, planning_problem_set_1 = CommonRoadFileReader(self.filename_read_1).open()
         filename = self.out_path + '/test_reading_intersection_traffic_sign.xml'
         CommonRoadFileWriter(scenario_1, planning_problem_set_1, scenario_1.author, scenario_1.affiliation, 'test',
-                             scenario_1.tags, scenario_1.location).write_to_file(filename=filename,
-                                                                                 overwrite_existing_file=OverwriteExistingFile.ALWAYS,
-                                                                                 check_validity=False)
+                             scenario_1.tags, scenario_1.location) \
+            .write_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS,
+                           check_validity=False)
         assert self.validate_with_xsd(self.out_path + '/test_reading_intersection_traffic_sign.xml')
 
         scenario_2, planning_problem_set_2 = CommonRoadFileReader(self.filename_read_2).open()
         filename = self.out_path + '/test_reading_all.xml'
         CommonRoadFileWriter(scenario_2, planning_problem_set_2, scenario_2.author, scenario_2.affiliation, 'test',
-                             scenario_2.tags, scenario_2.location).write_to_file(filename=filename,
-                                                                                 overwrite_existing_file=OverwriteExistingFile.ALWAYS,
-                                                                                 check_validity=False)
+                             scenario_2.tags, scenario_2.location) \
+            .write_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS,
+                           check_validity=False)
         assert self.validate_with_xsd(self.out_path + '/test_reading_all.xml')
 
     def test_read_write_2018b_file(self):
@@ -71,11 +71,11 @@ class TestXMLFileWriter(unittest.TestCase):
         set_pred = SetBasedPrediction(0, occupancy_list)
 
         states = list()
-        states.append(State(time_step=0, orientation=0, position=np.array([0, 0])))
-        states.append(State(time_step=1, orientation=0, position=np.array([0, 1])))
+        states.append(KSState(time_step=0, orientation=0, position=np.array([0, 0])))
+        states.append(KSState(time_step=1, orientation=0, position=np.array([0, 1])))
         trajectory = Trajectory(0, states)
 
-        init_state = State(time_step=0, orientation=0, position=np.array([0, 0]))
+        init_state = KSState(time_step=0, orientation=0, position=np.array([0, 0]))
 
         traj_pred = TrajectoryPrediction(trajectory, rectangle)
 
@@ -97,12 +97,12 @@ class TestXMLFileWriter(unittest.TestCase):
         scenario = Scenario(0.1, ScenarioID.from_benchmark_id('ZAM_test_0-1', scenario_version=SCENARIO_VERSION))
         scenario.add_objects([static_obs, lanelet_network])
 
-        goal_region = GoalRegion([State(time_step=Interval(0, 1), velocity=Interval(0.0, 1), position=rectangle),
-                                  State(time_step=Interval(1, 2), velocity=Interval(0.0, 1), position=circ)],
+        goal_region = GoalRegion([KSState(time_step=Interval(0, 1), velocity=Interval(0.0, 1), position=rectangle),
+                                  KSState(time_step=Interval(1, 2), velocity=Interval(0.0, 1), position=circ)],
                                  {0: [100, 101], 1: [101]})
-        planning_problem = PlanningProblem(1000,
-                                           State(velocity=0.1, position=np.array([[0], [0]]), orientation=0, yaw_rate=0,
-                                                 slip_angle=0, time_step=0), goal_region)
+        planning_problem = PlanningProblem(1000, InitialState(velocity=0.1, position=np.array([[0], [0]]),
+                                                              orientation=0, yaw_rate=0, slip_angle=0, time_step=0),
+                                           goal_region)
         planning_problem_set = PlanningProblemSet(list([planning_problem]))
 
         filename = self.out_path + '/test_writing_shapes.xml'

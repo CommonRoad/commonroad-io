@@ -1,20 +1,6 @@
-import copy
 import warnings
-from typing import List, Union, Tuple, Optional
-import numpy as np
 
-import commonroad.geometry.transform
-from commonroad.common.util import AngleInterval
-from commonroad.common.validity import (
-    is_valid_orientation,
-    is_real_number_vector,
-    is_real_number,
-    ValidTypes,
-    is_natural_number,
-    is_positive,
-)
-from commonroad.geometry.shape import Shape
-from commonroad.common.util import make_valid_orientation
+from commonroad.common.validity import (is_natural_number, is_positive)
 
 __author__ = "Stefanie Manzinger, Christian Pek"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -24,273 +10,11 @@ __maintainer__ = "Stefanie Manzinger, Christian Pek"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
+from commonroad.scenario.state import *
+
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
-
-
-class State:
-    """ A state can be either exact or uncertain. Uncertain state elements can be either of type
-        :class:`commonroad.common.util.Interval` or of type :class:`commonroad.geometry.shape.Shape`. As tate is
-        composed of several elements which are determined during runtime. The possible state elements are defined
-        as slots, which comprise the necessary state elements to describe the states of all CommonRoad vehicle models:
-
-        :ivar position: :math:`s_x`- and :math:`s_y`-position in a global coordinate system. Exact positions
-            are given as numpy array [x, y], uncertain positions are given as :class:`commonroad.geometry.shape.Shape`
-        :ivar orientation: yaw angle :math:`\\Psi`. Exact values are given as real number, uncertain values are given as
-            :class:`commonroad.common.util.AngleInterval`
-        :ivar velocity: velocity :math:`v_x` in longitudinal direction in the vehicle-fixed coordinate system. Exact
-            values are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar steering_angle: steering angle :math:`\\delta` of front wheels. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar steering_angle_speed: steering angle speed :math:`\\dot{\\delta}` of front wheels.
-            Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar yaw_rate: yaw rate :math:`\\dot{\\Psi}`. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar slip_angle: slip angle :math:`\\beta`. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar roll_angle: roll angle :math:`\\Phi_S`. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar roll_rate: roll rate :math:`\\dot{\\Phi}_S`. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar pitch_angle: pitch angle :math:`\\Theta_S`. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar pitch_rate: pitch rate :math:`\\dot{\\Theta}_S`. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar velocity_y: velocity :math:`v_y` in lateral direction in the vehicle-fixed coordinate system. Exact
-            values are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar position_z: position :math:`s_z` (height) from ground. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar velocity_z: velocity :math:`v_z` in vertical direction perpendicular to road plane. Exact values are
-            given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar roll_angle_front: roll angle front :math:`\\Phi_{UF}`. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar roll_rate_front: roll rate front :math:`\\dot{\\Phi}_{UF}`. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar velocity_y_front: velocity :math:`v_{y,UF}` in y-direction front. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar position_z_front: position :math:`s_{z,UF}` in z-direction front. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar velocity_z_front: velocity :math:`v_{z,UF}` in z-direction front. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar roll_angle_rear: roll angle rear :math:`\\Phi_{UR}`. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar roll_rate_rear: roll rate rear :math:`\\dot{\\Phi}_{UR}`. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar velocity_y_rear: velocity :math:`v_{y,UR}` in y-direction rear. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar position_z_rear: position :math:`s_{z,UR}` in z-direction rear. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar velocity_z_rear: velocity :math:`v_{z,UR}` in z-direction rear. Exact values are given as real number,
-            uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar left_front_wheel_angular_speed: left front wheel angular speed :math:`\\omega_{LF}`. Exact values
-            are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar right_front_wheel_angular_speed: right front wheel angular speed :math:`\\omega_{RF}`. Exact values
-            are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar left_rear_wheel_angular_speed: left rear wheel angular speed :math:`\\omega_{LR}`. Exact values
-            are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar right_rear_wheel_angular_speed: right rear wheel angular speed :math:`\\omega_{RR}`. Exact values
-            are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar delta_y_f: front lateral displacement :math:`\\delta_{y,f}` of sprung mass due to roll. Exact values
-            are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar delta_y_r: rear lateral displacement :math:`\\delta_{y,r}` of sprung mass due to roll. Exact values
-            are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar acceleration: acceleration :math:`a_x`. We optionally include acceleration as a state variable for
-            obstacles to provide additional information, e.g., for motion prediction, even though acceleration is often
-            used as an input for vehicle models. Exact values are given as real number, uncertain values are given as
-            :class:`commonroad.common.util.Interval`
-        :ivar acceleration_y: acceleration :math:`a_y`.
-            We optionally include acceleration as a state variable for obstacles to provide additional information,
-            e.g., for motion prediction, even though acceleration is often used as an input for vehicle models. Exact
-            values are given as real number, uncertain values are given as :class:`commonroad.common.util.Interval`
-        :ivar jerk: jerk :math:`j`. We optionally include jerk as a state variable for
-            obstacles to provide additional information, e.g., for motion prediction, even though jerk is often
-            used as an input for vehicle models. Exact values are given as real number, uncertain values are given as
-            :class:`commonroad.common.util.Interval`
-        :ivar time_step: the discrete time step. Exact values are given as integers, uncertain values are given as
-            :class:`commonroad.common.util.Interval`
-
-        :Example:
-
-        >>> import numpy as npy
-        >>> from commonroad.scenario.trajectory import State
-        >>> from commonroad.common.util import Interval
-        >>> # a state with position [2.0, 3.0] m and uncertain velocity from 5.4 to 7.0 m/s
-        >>> # can be created as follows:
-        >>> state = State(position=npy.array([2.0, 3.0]), velocity=Interval(5.4, 7.0))
-    """
-
-    __slots__ = [
-        'position',
-        'orientation',
-        'velocity',
-        'steering_angle',
-        'steering_angle_speed',
-        'yaw_rate',
-        'slip_angle',
-        'roll_angle',
-        'roll_rate',
-        'pitch_angle',
-        'pitch_rate',
-        'velocity_y',
-        'position_z',
-        'velocity_z',
-        'roll_angle_front',
-        'roll_rate_front',
-        'velocity_y_front',
-        'position_z_front',
-        'velocity_z_front',
-        'roll_angle_rear',
-        'roll_rate_rear',
-        'velocity_y_rear',
-        'position_z_rear',
-        'velocity_z_rear',
-        'left_front_wheel_angular_speed',
-        'right_front_wheel_angular_speed',
-        'left_rear_wheel_angular_speed',
-        'right_rear_wheel_angular_speed',
-        'delta_y_f',
-        'delta_y_r',
-        'acceleration',
-        'acceleration_y',
-        'jerk',
-        'time_step',
-    ]
-
-    def __init__(self, **kwargs):
-        """ Elements of state vector are determined during runtime."""
-        for (field, value) in kwargs.items():
-            setattr(self, field, value)
-
-    def __eq__(self, other):
-        if not isinstance(other, State):
-            warnings.warn(f"Inequality between State {repr(self)} and different type {type(other)}")
-            return False
-
-        for attr in State.__slots__:
-            value = None
-            value_other = None
-
-            has_attr = hasattr(self, attr)
-            if has_attr:
-                value = getattr(self, attr)
-
-            has_attr_other = hasattr(other, attr)
-            if has_attr_other:
-                value_other = getattr(other, attr)
-
-            if isinstance(value, np.ndarray):
-                value = np.array2string(np.around(value.astype(float), 10), precision=10)
-
-            if isinstance(value_other, np.ndarray):
-                value_other = np.array2string(np.around(value_other.astype(float), 10), precision=10)
-
-            if has_attr != has_attr_other or value != value_other:
-                return False
-
-        return True
-
-    def __hash__(self):
-        values = set()
-        for attr in State.__slots__:
-            if hasattr(self, attr):
-                values.add(getattr(self, attr))
-
-        return hash(frozenset(values))
-
-    def translate_rotate(self, translation: np.ndarray, angle: float) -> 'State':
-        """ First translates the state, and then rotates the state around the origin.
-
-            :param translation: translation vector [x_off, y_off] in x- and y-direction
-            :param angle: rotation angle in radian (counter-clockwise)
-            :return: transformed state
-        """
-        assert is_real_number_vector(translation, 2), (
-            '<State/translate_rotate>: argument translation is not '
-            'a vector of real numbers of length 2.'
-        )
-        assert is_real_number(angle), (
-            '<State/translate_rotate>: argument angle must be a scalar. '
-            'angle = %s' % angle
-        )
-        assert is_valid_orientation(angle), (
-            '<State/translate_rotate>: argument angle must be within the '
-            'interval [-2pi,2pi]. angle = %s.' % angle
-        )
-        transformed_state = copy.copy(self)
-        if hasattr(self, 'position'):
-            # exact position:
-            if isinstance(self.position, ValidTypes.ARRAY):
-                transformed_state.position = commonroad.geometry.transform.translate_rotate(
-                    np.array([self.position]), translation, angle
-                )[
-                    0
-                ]
-            # uncertain position:
-            elif isinstance(self.position, Shape):
-                transformed_state.position = self.position.translate_rotate(
-                    translation, angle
-                )
-            else:
-                raise TypeError(
-                    '<State/translate_rotate> Expected instance of %s or %s. Got %s instead.'
-                    % (ValidTypes.ARRAY, Shape, self.position.__class__)
-                )
-        if hasattr(self, 'orientation'):
-            # orientation can be either an interval or an exact value
-            if isinstance(self.orientation, ValidTypes.NUMBERS):
-                transformed_state.orientation = make_valid_orientation(
-                    self.orientation + angle
-                )
-            elif isinstance(self.orientation, AngleInterval):
-                transformed_state.orientation = transformed_state.orientation + angle
-            else:
-                raise TypeError(
-                    '<State/translate_rotate> Expected instance of %s or %s. Got %s instead.'
-                    % (ValidTypes.NUMBERS, AngleInterval, self.orientation.__class__)
-                )
-        return transformed_state
-
-    @property
-    def attributes(self) -> List[str]:
-        """ Returns all dynamically set attributes of an instance of State.
-
-        :Example:
-
-        >>> import numpy as npy
-        >>> from commonroad.scenario.trajectory import State
-        >>> state = State(position=npy.array([0.0, 0.0]), orientation=0.1, velocity=3.4)
-        >>> print(state.attributes)
-        ['position', 'orientation', 'velocity']
-
-        :return: subset of slots which are dynamically assigned to the object.
-        """
-        attributes = list()
-        for slot in self.__slots__:
-            if hasattr(self, slot):
-                attributes.append(slot)
-        return attributes
-
-    @property
-    def is_uncertain_position(self):
-        return isinstance(self.position, Shape)
-
-    @property
-    def is_uncertain_orientation(self):
-        return isinstance(self.orientation, AngleInterval)
-
-    def __str__(self):
-        traffic_str = '\n'
-        for attr in self.attributes:
-            traffic_str += attr
-            traffic_str += '= {}\n'.format(self.__getattribute__(attr))
-        return traffic_str
-
-    def draw(self, renderer: IRenderer,
-             draw_params: Union[ParamServer, dict, None] = None,
-             call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_state(self, draw_params, call_stack)
 
 
 class Trajectory(IDrawable):
@@ -299,7 +23,7 @@ class Trajectory(IDrawable):
     uncertain (see :class:`commonroad.scenario.trajectory.State`); however,
     only exact time_step are allowed. """
 
-    def __init__(self, initial_time_step: int, state_list: List[State]):
+    def __init__(self, initial_time_step: int, state_list: List[TraceState]):
         """
         :param initial_time_step: initial time step of the trajectory
         :param state_list: ordered sequence of states over time representing
@@ -308,9 +32,10 @@ class Trajectory(IDrawable):
         discretization of the scenario.
         """
         self.initial_time_step: int = initial_time_step
-        self._state_list: Tuple[State] = tuple(self.check_state_list(state_list))
 
-    def check_state_list(self, state_list: List[State]) -> List[State]:
+        self._state_list: Tuple[TraceState] = tuple(self.check_state_list(state_list))
+
+    def check_state_list(self, state_list: List[TraceState]) -> List[TraceState]:
         """
         Checks whether state list is valid.
 
@@ -327,7 +52,7 @@ class Trajectory(IDrawable):
         assert all(is_natural_number(state.time_step) for state in state_list if hasattr(state,
                                                                                          'time_step')), \
             '<Trajectory/state_list>: Element time_step of each state must be an integer.'
-        assert all(state_list[0].attributes == state.attributes for state in state_list), (
+        assert all(state_list[0].used_attributes == state.used_attributes for state in state_list), (
                 '<Trajectory/state_list>: all states must have the same attributes. Attributes of first state: %s.' %
                 state_list[0].attributes)
 
@@ -362,16 +87,16 @@ class Trajectory(IDrawable):
         self._initial_time_step = initial_time_step
 
     @property
-    def state_list(self) -> List[State]:
+    def state_list(self) -> List[TraceState]:
         """ List of states of the trajectory over time."""
         return list(self._state_list)
 
     @property
-    def final_state(self) -> State:
+    def final_state(self) -> TraceState:
         """ Final state of the trajectory."""
         return self._state_list[-1]
 
-    def state_at_time_step(self, time_step: int) -> Union[State, None]:
+    def state_at_time_step(self, time_step: int) -> Union[TraceState, None]:
         """
         Function to get the state of a trajectory at a specific time instance.
 
@@ -387,7 +112,7 @@ class Trajectory(IDrawable):
             state = self._state_list[time_step - self._initial_time_step]
         return state
 
-    def states_in_time_interval(self, time_begin: int, time_end: int) -> List[Union[State, None]]:
+    def states_in_time_interval(self, time_begin: int, time_end: int) -> List[Union[TraceState, None]]:
         """
         Function to get the states of a trajectory at a specific time interval.
 
@@ -423,7 +148,7 @@ class Trajectory(IDrawable):
         self._state_list = tuple(new_state_list)
 
     @classmethod
-    def resample_continuous_time_state_list(cls, states: List[State],
+    def resample_continuous_time_state_list(cls, states: List[TraceState],
                                             time_stamps_cont: np.ndarray,
                                             resampled_dt: float,
                                             num_resampled_states: int,
@@ -473,9 +198,9 @@ class Trajectory(IDrawable):
         # prepare interpolation by determining all slots with values
         slots = list()
         values = list()
-        for s in State.__slots__:
+        for s in states[0].attributes:
             # check if state has attribute s
-            if hasattr(states[0], s):
+            if getattr(states[0], s) is not None:
                 slots.append(s)
                 values.append([])
 
@@ -490,7 +215,7 @@ class Trajectory(IDrawable):
             multiple = False
             # go through all states
             for x in states:
-                if hasattr(x, s):
+                if getattr(x, s) is not None:
                     val = getattr(x, s)
                     assert is_real_number(val) or is_real_number_vector(
                             val), '<Trajectory/interpolate_state_list>: Currently, this method only ' \
@@ -523,6 +248,9 @@ class Trajectory(IDrawable):
             else:
                 values_i.append(np.interp(t_i, time_stamps_cont, values))
 
+        state_type = states[0].__class__.__name__
+        print(state_type)
+
         # create new trajectory
         states_new = list()
         for i in range(len(t_i)):
@@ -530,7 +258,8 @@ class Trajectory(IDrawable):
             for j, s in enumerate(slots):
                 variables[s] = values_i[j][i]
             variables['time_step'] = i
-            states_new.append(State(**variables))
+
+            states_new.append(globals()[state_type](**variables))
 
         return cls(states_new[0].time_step, states_new)
 

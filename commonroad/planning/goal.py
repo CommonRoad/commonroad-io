@@ -6,7 +6,6 @@ import warnings
 
 from commonroad.common.util import Interval, AngleInterval
 from commonroad.geometry.shape import Shape
-from commonroad.scenario.trajectory import State
 
 __author__ = "Christina Miller and Stefanie Manzinger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -16,13 +15,15 @@ __maintainer__ = "Christina Miller"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
 
+from commonroad.scenario.state import TraceState
+
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
 
 
 class GoalRegion(IDrawable):
-    def __init__(self, state_list: List[State],
+    def __init__(self, state_list: List[TraceState],
                  lanelets_of_goal_position: Union[
                      None, Dict[int, List[int]]] = None):
         """
@@ -60,12 +61,12 @@ class GoalRegion(IDrawable):
         return hash((self.state_list, lanelets_of_goal_position))
 
     @property
-    def state_list(self) -> List[State]:
+    def state_list(self) -> List[TraceState]:
         """List that contains all goal states"""
         return self._state_list
 
     @state_list.setter
-    def state_list(self, state_list: List[State]):
+    def state_list(self, state_list: List[TraceState]):
         for state in state_list:
             self._validate_goal_state(state)
         self._state_list = state_list
@@ -88,7 +89,7 @@ class GoalRegion(IDrawable):
         else:
             warnings.warn('<GoalRegion/lanelets_of_goal_position> lanelets_of_goal_position are immutable')
 
-    def is_reached(self, state: State) -> bool:
+    def is_reached(self, state: TraceState) -> bool:
         """
         Checks if a given state is inside the goal region.
 
@@ -99,22 +100,22 @@ class GoalRegion(IDrawable):
         is_reached_list = list()
         for goal_state in self.state_list:
             goal_state_tmp = copy.deepcopy(goal_state)
-            goal_state_fields = set([slot for slot in goal_state.__slots__ if hasattr(goal_state, slot)])
-            state_fields = set([slot for slot in goal_state.__slots__ if hasattr(state, slot)])
-            state_new, state_fields, goal_state_tmp, goal_state_fields =\
+            goal_state_fields = set(goal_state.used_attributes)
+            state_fields = set(state.used_attributes)
+            state_new, state_fields, goal_state_tmp, goal_state_fields = \
                 self._harmonize_state_types(state, goal_state_tmp, state_fields, goal_state_fields)
 
             if not goal_state_fields.issubset(state_fields):
                 raise ValueError('The goal states {} are not a subset of the provided states {}!'
                                  .format(goal_state_fields, state_fields))
             is_reached = True
-            if hasattr(goal_state, 'time_step'):
+            if goal_state.time_step is not None:
                 is_reached = is_reached and self._check_value_in_interval(state_new.time_step, goal_state.time_step)
-            if hasattr(goal_state, 'position'):
+            if goal_state.has_value("position") and state_new.has_value("position"):
                 is_reached = is_reached and goal_state.position.contains_point(state_new.position)
-            if hasattr(goal_state, 'orientation'):
+            if goal_state.has_value("orientation") and state_new.has_value("orientation"):
                 is_reached = is_reached and self._check_value_in_interval(state_new.orientation, goal_state.orientation)
-            if hasattr(goal_state, 'velocity'):
+            if goal_state.has_value("velocity") and state_new.has_value("velocity"):
                 is_reached = is_reached and self._check_value_in_interval(state_new.velocity, goal_state.velocity)
             is_reached_list.append(is_reached)
         return np.any(is_reached_list)
@@ -149,21 +150,21 @@ class GoalRegion(IDrawable):
         return is_reached
 
     @classmethod
-    def _validate_goal_state(cls, state: State):
+    def _validate_goal_state(cls, state: TraceState):
         """
         Checks if state fulfills the requirements for a goal state and raises Error if not.
 
         :param state: state to check
         """
         # mandatory fields:
-        if not hasattr(state, 'time_step'):
+        if getattr(state, 'time_step') is None:
             raise ValueError('<GoalRegion/_goal_state_is_valid> field time_step is mandatory. '
                              'No time_step attribute found.')
 
         # optional fields
         valid_fields = ['time_step', 'position', 'velocity', 'orientation']
 
-        for attr in [attr for attr in state.__slots__ if hasattr(state, attr)]:
+        for attr in state.used_attributes:
             if attr not in valid_fields:
                 raise ValueError('<GoalRegion/_goal_state_is_valid> field error: allowed fields are '
                                  '[time_step, position, velocity, orientation]; "%s" detected' % attr)
@@ -183,7 +184,7 @@ class GoalRegion(IDrawable):
                                      'attribute "%s"' % (Interval, getattr(state, attr).__class__, attr))
 
     @staticmethod
-    def _harmonize_state_types(state: State, goal_state: State,  state_fields: Set[str],
+    def _harmonize_state_types(state: TraceState, goal_state: TraceState,  state_fields: Set[str],
                                goal_state_fields: Set[str]):
         """
         Transforms states from value_x, value_y to orientation, value representation if required.
@@ -197,12 +198,11 @@ class GoalRegion(IDrawable):
                 and not {'velocity', 'velocity_y'}.issubset(goal_state_fields):
 
             if 'orientation' not in state_fields:
-                state_new.orientation = math.atan2(state_new.velocity_y,
-                                                   state_new.velocity)
+                state_new.orientation = math.atan2(getattr(state_new, "velocity_y"), state_new.velocity)
                 state_fields.add('orientation')
 
             state_new.velocity = np.linalg.norm(
-                    np.array([state_new.velocity, state_new.velocity_y]))
+                    np.array([state_new.velocity, getattr(state_new, "velocity_y")]))
             state_fields.remove('velocity_y')
 
         return state_new, state_fields, goal_state, goal_state_fields

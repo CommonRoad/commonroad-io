@@ -5,7 +5,8 @@ import numpy as np
 from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork, StopLine
 from commonroad.geometry.shape import Polygon, Rectangle
 from commonroad.prediction.prediction import Trajectory, TrajectoryPrediction
-from commonroad.scenario.obstacle import State, DynamicObstacle, ObstacleType
+from commonroad.scenario.obstacle import DynamicObstacle, ObstacleType
+from commonroad.scenario.state import STState
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany
 
 
@@ -128,16 +129,16 @@ class TestLanelet(unittest.TestCase):
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, 1)
 
         rect = Rectangle(5, 3)
-        state_list = [State(position=np.array([0.0, 2]), orientation=0.0, time_step=1),
-                      State(position=np.array([10.0, 5]), orientation=0.0, time_step=2),
-                      State(position=np.array([20.0, 6]), orientation=0.0, time_step=3),
-                      State(position=np.array([20.0, 6]), orientation=3.14 / 2., time_step=4)]
+        state_list = [STState(position=np.array([0.0, 2]), orientation=0.0, time_step=1),
+                      STState(position=np.array([10.0, 5]), orientation=0.0, time_step=2),
+                      STState(position=np.array([20.0, 6]), orientation=0.0, time_step=3),
+                      STState(position=np.array([20.0, 6]), orientation=3.14 / 2., time_step=4)]
         trajectory = Trajectory(1, state_list)
         prediction = TrajectoryPrediction(trajectory, rect)
 
-        # without inital_state
+        # without initial_state
         dynamic_obs = DynamicObstacle(obstacle_id=30, obstacle_type=ObstacleType.PARKED_VEHICLE, prediction=prediction,
-                                      initial_state=State(
+                                      initial_state=STState(
                                               **{'position': np.array([0, 2]), 'orientation': 0, 'time_step': 0}),
                                       obstacle_shape=rect)
 

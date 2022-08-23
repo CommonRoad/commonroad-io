@@ -1,4 +1,5 @@
 import datetime
+import re
 from typing import Set, Union, List
 
 import numpy as np
@@ -23,7 +24,8 @@ from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficS
     TrafficSignIDGermany, TrafficSignIDFrance, TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSignIDChina, \
     TrafficSignIDSpain, TrafficSignIDRussia, TrafficSignIDArgentina, TrafficSignIDBelgium, TrafficSignIDGreece, \
     TrafficSignIDCroatia, TrafficSignIDItaly
-from commonroad.scenario.trajectory import State, Trajectory
+from commonroad.scenario.trajectory import Trajectory
+from commonroad.scenario.state import State
 
 __author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -568,33 +570,36 @@ class StateMessage:
     def create_message(cls, state: State) -> obstacle_pb2.State:
         state_msg = obstacle_pb2.State()
 
-        for attr in State.__slots__:
-            if hasattr(state, attr):
-                if getattr(state, attr) is None:
-                    continue
+        for attr in state.used_attributes:
+            if getattr(state, attr) is None:
+                continue
 
-                if attr == 'position':
-                    if isinstance(state.position, np.ndarray):
-                        state_msg.point.CopyFrom(PointMessage.create_message(state.position))
-                    else:
-                        state_msg.shape.CopyFrom(ShapeMessage.create_message(state.position))
-                elif attr == 'time_step':
-                    integer_exact_or_interval_msg = IntegerExactOrIntervalMessage.create_message(state.time_step)
-                    state_msg.time_step.CopyFrom(integer_exact_or_interval_msg)
+            if attr == 'position':
+                if isinstance(state.position, np.ndarray):
+                    state_msg.point.CopyFrom(PointMessage.create_message(state.position))
                 else:
-                    float_exact_or_interval_msg = FloatExactOrIntervalMessage.create_message(getattr(state, attr))
-                    getattr(state_msg, attr).CopyFrom(float_exact_or_interval_msg)
+                    state_msg.shape.CopyFrom(ShapeMessage.create_message(state.position))
+            elif attr == 'time_step':
+                integer_exact_or_interval_msg = IntegerExactOrIntervalMessage.create_message(state.time_step)
+                state_msg.time_step.CopyFrom(integer_exact_or_interval_msg)
+            else:
+                float_exact_or_interval_msg = FloatExactOrIntervalMessage.create_message(getattr(state, attr))
+                getattr(state_msg, StateMessage._map_to_pb_prop(attr)).CopyFrom(float_exact_or_interval_msg)
 
         return state_msg
+
+    @staticmethod
+    def _map_to_pb_prop(prop: str) -> str:
+        return re.sub('(?<!^)(?=[A-Z])', '_', prop).lower()
 
 
 class SignalStateMessage:
 
     @classmethod
-    def create_message(cls, signal_state: SignalState):
+    def create_message(cls, signal_state: SignalState) -> obstacle_pb2.SignalState:
         signal_state_msg = obstacle_pb2.SignalState()
 
-        for attr in State.__slots__:
+        for attr in SignalState.__slots__:
             if hasattr(signal_state, attr):
                 if getattr(signal_state, attr) is None:
                     continue

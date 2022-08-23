@@ -11,7 +11,6 @@ from commonroad.geometry.shape import Shape, \
     Polygon, \
     occupancy_shape_from_state
 from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
-from commonroad.scenario.trajectory import State
 
 __author__ = "Stefanie Manzinger, Christian Pek, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -21,6 +20,8 @@ __version__ = "2022.2"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "Released"
+
+from commonroad.scenario.state import TraceState, InitialState, State
 
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.param_server import ParamServer
@@ -91,7 +92,7 @@ class SignalState:
             warnings.warn(f"Inequality between SignalState {repr(self)} and different type {type(other)}")
             return False
 
-        for attr in State.__slots__:
+        for attr in SignalState.__slots__:
             value = None
             value_other = None
 
@@ -104,14 +105,13 @@ class SignalState:
                 value_other = getattr(other, attr)
 
             if has_attr != has_attr_other or value != value_other:
-                print('FAIL')
                 return False
 
         return True
 
     def __hash__(self):
         values = set()
-        for attr in State.__slots__:
+        for attr in SignalState.__slots__:
             if hasattr(self, attr):
                 values.add(getattr(self, attr))
 
@@ -124,7 +124,7 @@ class Obstacle(IDrawable):
 
     def __init__(self, obstacle_id: int, obstacle_role: ObstacleRole,
                  obstacle_type: ObstacleType, obstacle_shape: Shape,
-                 initial_state: State = None,
+                 initial_state: InitialState = None,
                  initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
                  initial_signal_state: Union[None, SignalState] = None,
@@ -145,7 +145,7 @@ class Obstacle(IDrawable):
         self.obstacle_role: ObstacleRole = obstacle_role
         self.obstacle_type: ObstacleType = obstacle_type
         self.obstacle_shape: Shape = obstacle_shape
-        self.initial_state: State = initial_state
+        self.initial_state: InitialState = initial_state
         self.initial_center_lanelet_ids: Union[None, Set[int]] = initial_center_lanelet_ids
         self.initial_shape_lanelet_ids: Union[None, Set[int]] = initial_shape_lanelet_ids
         self.initial_signal_state: Union[None, SignalState] = initial_signal_state
@@ -247,14 +247,15 @@ class Obstacle(IDrawable):
             warnings.warn('<Obstacle/obstacle_shape>: Obstacle shape is immutable.')
 
     @property
-    def initial_state(self) -> State:
+    def initial_state(self) -> InitialState:
         """ Initial state of the obstacle, e.g., obtained through sensor measurements."""
         return self._initial_state
 
     @initial_state.setter
-    def initial_state(self, initial_state: State):
-        assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of wrong type. ' \
-                                                 'Expected types: %s. Got type: %s.' % (State, type(initial_state))
+    def initial_state(self, initial_state: InitialState):
+        assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of ' \
+                                                      'wrong type. Expected types: %s. Got type: %s.' \
+                                                      % (State, type(initial_state))
         self._initial_state = initial_state
         self._initial_occupancy_shape = occupancy_shape_from_state(self._obstacle_shape, initial_state)
 
@@ -323,7 +324,7 @@ class Obstacle(IDrawable):
         pass
 
     @abstractmethod
-    def state_at_time(self, time_step: int) -> Union[None, State]:
+    def state_at_time(self, time_step: int) -> Union[None, TraceState]:
         pass
 
     @abstractmethod
@@ -353,7 +354,8 @@ class StaticObstacle(Obstacle):
     """ Class representing static obstacles as defined in CommonRoad."""
 
     def __init__(self, obstacle_id: int, obstacle_type: ObstacleType,
-                 obstacle_shape: Shape, initial_state: State, initial_center_lanelet_ids: Union[None, Set[int]] = None,
+                 obstacle_shape: Shape, initial_state: InitialState,
+                 initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
                  initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None):
         """
@@ -405,7 +407,7 @@ class StaticObstacle(Obstacle):
         """
         return Occupancy(time_step=time_step, shape=self._initial_occupancy_shape)
 
-    def state_at_time(self, time_step: int) -> State:
+    def state_at_time(self, time_step: int) -> TraceState:
         """
         Returns the state the obstacle at a specific time step.
 
@@ -433,7 +435,7 @@ class DynamicObstacle(Obstacle):
     """
 
     def __init__(self, obstacle_id: int, obstacle_type: ObstacleType,
-                 obstacle_shape: Shape, initial_state: State,
+                 obstacle_shape: Shape, initial_state: TraceState,
                  prediction: Union[None, Prediction, TrajectoryPrediction, SetBasedPrediction] = None,
                  initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
@@ -493,7 +495,7 @@ class DynamicObstacle(Obstacle):
             occupancy = self._prediction.occupancy_at_time_step(time_step)
         return occupancy
 
-    def state_at_time(self, time_step: int) -> Union[None, State]:
+    def state_at_time(self, time_step: int) -> Union[None, TraceState]:
         """
         Returns the predicted state of the obstacle at a specific time step.
 
@@ -613,7 +615,7 @@ class PhantomObstacle(IDrawable):
         return occupancy
 
     @staticmethod
-    def state_at_time() -> Union[None, State]:
+    def state_at_time() -> Union[None, TraceState]:
         """
         Returns the predicted state of the obstacle at a specific time step.
 

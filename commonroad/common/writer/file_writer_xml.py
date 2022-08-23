@@ -1,6 +1,7 @@
 import datetime
 import os
 import pathlib
+import re
 import warnings
 from typing import Set, Union, List
 
@@ -19,7 +20,8 @@ from commonroad.scenario.obstacle import Obstacle, DynamicObstacle, StaticObstac
 from commonroad.scenario.scenario import Location, GeoTransformation, Environment, TimeOfDay, Weather, Underground, \
     Tag, Scenario
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficLightCycleElement, TrafficLightDirection
-from commonroad.scenario.trajectory import Trajectory, State
+from commonroad.scenario.trajectory import Trajectory
+from commonroad.scenario.state import State
 
 from commonroad.common.writer.file_writer_interface import FileWriter, precision, OverwriteExistingFile
 
@@ -832,41 +834,20 @@ class StateXMLNode:
         :return: node
         """
         state_node = etree.Element('goalState')
-        if hasattr(state, 'position') or len(goal_lanelet_ids) > 0:
-            position = etree.Element('position')
-            position = cls._write_goal_position(position, state.position, goal_lanelet_ids)
-            state_node.append(position)
+        for attr in state.used_attributes:
+            if attr == "position":
+                position = etree.Element('position')
+                position = cls._write_goal_position(position, state.position, goal_lanelet_ids)
+                state_node.append(position)
+            elif attr == "time_step":
+                time = etree.Element("time")
+                time = cls._write_goal_time_exact_or_interval(time, state.time_step)
+                state_node.append(time)
+            elif getattr(state, attr) is not None:
+                element = etree.Element(re.sub(r'_(\w)', lambda m: m.group(1).upper(), attr))
+                element = cls._write_value_exact_or_interval(element, getattr(state, attr))
+                state_node.append(element)
 
-        if hasattr(state, 'orientation'):
-            orientation = etree.Element('orientation')
-            orientation = cls._write_value_exact_or_interval(
-                orientation, state.orientation
-            )
-            state_node.append(orientation)
-        if hasattr(state, 'time_step'):
-            time = etree.Element('time')
-            time = cls._write_goal_time_exact_or_interval(time, state.time_step)
-            state_node.append(time)
-        if hasattr(state, 'velocity'):
-            velocity = etree.Element('velocity')
-            velocity = cls._write_value_exact_or_interval(velocity, state.velocity)
-            state_node.append(velocity)
-        if hasattr(state, 'acceleration'):
-            acceleration = etree.Element('acceleration')
-            acceleration = cls._write_value_exact_or_interval(
-                acceleration, state.acceleration
-            )
-            state_node.append(acceleration)
-        if hasattr(state, 'yaw_rate'):
-            yaw_rate = etree.Element('yawRate')
-            yaw_rate = cls._write_value_exact_or_interval(yaw_rate, state.yaw_rate)
-            state_node.append(yaw_rate)
-        if hasattr(state, 'slip_angle'):
-            slip_angle = etree.Element('slipAngle')
-            slip_angle = cls._write_value_exact_or_interval(
-                slip_angle, state.slip_angle
-            )
-            state_node.append(slip_angle)
         return state_node
 
     @classmethod
@@ -948,52 +929,39 @@ class StateXMLNode:
         :param time_step: time step for which state should be created
         :return: node
         """
+        for attr in state.used_attributes:
+            if attr == "position":
+                position = etree.Element("position")
+                if type(state.position) in [np.ndarray, list]:
+                    position.append(Point.create_from_numpy_array(state.position).create_node())
+                    state_node.append(position)
+                elif isinstance(state.position, Shape):
+                    position.extend(ShapeXMLNode.create_node(state.position))
+                    state_node.append(position)
+            elif attr == "time_step":
+                time_node = etree.Element("time")
+                time_node.append(create_exact_node_int(time_step))
+                state_node.append(time_node)
+            elif getattr(state, attr) is not None:
+                element = etree.Element(StateXMLNode._map_to_xml_prop(attr))
+                element = cls._write_value_exact_or_interval(element, getattr(state, attr))
+                state_node.append(element)
 
-        if hasattr(state, 'position'):
-            position = etree.Element('position')
-            if type(state.position) in [np.ndarray, list]:
-                position.append(
-                    Point.create_from_numpy_array(state.position).create_node()
-                )
-                state_node.append(position)
-            elif isinstance(state.position, Shape):
-                position.extend(ShapeXMLNode.create_node(state.position))
-                state_node.append(position)
-            else:
-                raise Exception()
-        if hasattr(state, 'orientation'):
-            orientation = etree.Element('orientation')
-            orientation = cls._write_value_exact_or_interval(
-                orientation, state.orientation
-            )
-            state_node.append(orientation)
-
-        time_node = etree.Element('time')
-        time_node.append(create_exact_node_int(time_step))
-        state_node.append(time_node)
-
-        if hasattr(state, 'velocity'):
-            velocity = etree.Element('velocity')
-            velocity = cls._write_value_exact_or_interval(velocity, state.velocity)
-            state_node.append(velocity)
-
-        if hasattr(state, 'acceleration'):
-            acceleration = etree.Element('acceleration')
-            acceleration = cls._write_value_exact_or_interval(
-                acceleration, state.acceleration
-            )
-            state_node.append(acceleration)
-        if hasattr(state, 'yaw_rate'):
-            yaw_rate = etree.Element('yawRate')
-            yaw_rate = cls._write_value_exact_or_interval(yaw_rate, state.yaw_rate)
-            state_node.append(yaw_rate)
-        if hasattr(state, 'slip_angle'):
-            slip_angle = etree.Element('slipAngle')
-            slip_angle = cls._write_value_exact_or_interval(
-                slip_angle, state.slip_angle
-            )
-            state_node.append(slip_angle)
         return state_node
+
+    @staticmethod
+    def _map_to_xml_prop(prop: str) -> str:
+        if "time_step" == prop:
+            xml_prop = "time"
+        elif "delta_y_f" == prop:
+            xml_prop = "deltaYFront"
+        elif "delta_y_r" == prop:
+            xml_prop = "deltaYRear"
+        elif "curvature_rate" == prop:
+            xml_prop = "curvatureChange"
+        else:
+            xml_prop = re.sub(r'_(\w)', lambda m: m.group(1).upper(), prop)
+        return xml_prop
 
 
 class PlanningProblemXMLNode:

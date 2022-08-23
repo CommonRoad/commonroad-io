@@ -1,7 +1,7 @@
 import unittest
 from commonroad.scenario.obstacle import *
-from commonroad.geometry.shape import *
 from commonroad.prediction.prediction import *
+from commonroad.scenario.state import InitialState, KSState
 
 
 class TestObstacle(unittest.TestCase):
@@ -13,7 +13,8 @@ class TestObstacle(unittest.TestCase):
 
         static_obstacle = StaticObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type,
                                          obstacle_shape=shape,
-                                         initial_state=State(**{'position': np.array([0, 0]), 'orientation':  0}))
+                                         initial_state=InitialState(**{'position': np.array([0, 0]),
+                                                                       'orientation':  0}))
 
         np.testing.assert_equal(static_obstacle.obstacle_id, obstacle_id)
         self.assertEqual(obstacle_type, static_obstacle.obstacle_type)
@@ -22,16 +23,16 @@ class TestObstacle(unittest.TestCase):
 
     def test_initialize_dynamic_obstacle(self):
         initial_shape_lanelet_ids = {1, 2}
-        initial_center_lanelet_ids  = {3, 4}
+        initial_center_lanelet_ids = {3, 4}
         initial_signal_state = SignalState(braking_lights=True, time_step=0)
         signal_series = [SignalState(braking_lights=True, time_step=1), SignalState(indicator_right=True, time_step=2)]
         obstacle_id = 100
         obstacle_type = ObstacleType.CAR
         obstacle_role = ObstacleRole.DYNAMIC
 
-        state_list = [State(position=np.array([0.0, 0.0]), orientation=0.3, time_step=0),
-                      State(position=np.array([1.0, 1.0]), orientation=0.3, time_step=1),
-                      State(position=np.array([2.0, 1.0]), orientation=0.3, time_step=2)]
+        state_list = [InitialState(position=np.array([0.0, 0.0]), orientation=0.3, time_step=0),
+                      KSState(position=np.array([1.0, 1.0]), orientation=0.3, time_step=1),
+                      KSState(position=np.array([2.0, 1.0]), orientation=0.3, time_step=2)]
         trajectory = Trajectory(1, state_list[1::])
         shape = Rectangle(5.1, 2.6, np.array([0, 0]), 0)
         prediction = TrajectoryPrediction(trajectory, shape)
@@ -60,18 +61,18 @@ class TestObstacle(unittest.TestCase):
         obstacle_id = 100
         obstacle_type = ObstacleType.CAR
 
-        state_list = [State(position=np.array([1.0, 1.0]), orientation=0.3, time_step=1)]
+        state_list = [KSState(position=np.array([1.0, 1.0]), orientation=0.3, time_step=1)]
         trajectory = Trajectory(1, state_list)
         shape = Rectangle(5.1, 2.6, np.array([0, 0]), 0)
         prediction = TrajectoryPrediction(trajectory, shape)
-        initial_state = State(position=np.array([0.0, 0.0]), orientation=0.3, time_step=0)
+        initial_state = InitialState(position=np.array([0.0, 0.0]), orientation=0.3, time_step=0)
         shape = Rectangle(5.1, 2.6, np.array([0, 0]), 0)
 
         dynamic_obstacle1 = DynamicObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type, prediction=prediction,
-                                           initial_state=initial_state, obstacle_shape=shape,
-                                           initial_signal_state=initial_signal_state, signal_series=signal_series)
+                                            initial_state=initial_state, obstacle_shape=shape,
+                                            initial_signal_state=initial_signal_state, signal_series=signal_series)
         dynamic_obstacle2 = DynamicObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type, prediction=prediction,
-                                           initial_state=initial_state, obstacle_shape=shape)
+                                            initial_state=initial_state, obstacle_shape=shape)
         self.assertEqual(dynamic_obstacle1.signal_state_at_time_step(1), signal_series[0])
         self.assertEqual(dynamic_obstacle2.signal_state_at_time_step(1), None)
 
@@ -81,7 +82,8 @@ class TestObstacle(unittest.TestCase):
         angle = -0.3
         desired_rectangle: Rectangle = rectangle.translate_rotate(shift, angle)
         obstacle = StaticObstacle(obstacle_id=1, obstacle_type=ObstacleType.BICYCLE, obstacle_shape=Rectangle(4.3, 8.9),
-                                  initial_state=State(**{'position': np.array((2.5, - 1.8)), 'orientation': 1.7}))
+                                  initial_state=InitialState(**{'position': np.array((2.5, - 1.8)),
+                                                                'orientation': 1.7}))
         obstacle.translate_rotate(shift, angle)
         output_rectangle: Rectangle = obstacle.occupancy_at_time(0).shape
         self.assertAlmostEqual(desired_rectangle.length, obstacle.obstacle_shape.length)
@@ -92,17 +94,17 @@ class TestObstacle(unittest.TestCase):
 
     def test_transform_dynamic_obstacle(self):
         rect = Rectangle(5.1, 2.6)
-        state_list = [State(position=np.array([0.0, 0.0]),orientation=0.3, time_step=1),
-                      State(position=np.array([1.0, 1.0]),orientation=0.3, time_step=2),
-                      State(position=np.array([2.0, 1.0]),orientation=0.3, time_step=3)]
+        state_list = [KSState(position=np.array([0.0, 0.0]), orientation=0.3, time_step=1),
+                      KSState(position=np.array([1.0, 1.0]), orientation=0.3, time_step=2),
+                      KSState(position=np.array([2.0, 1.0]), orientation=0.3, time_step=3)]
         trajectory = Trajectory(1, state_list)
-        prediction = TrajectoryPrediction(trajectory,rect)
+        prediction = TrajectoryPrediction(trajectory, rect)
 
-        # without inital_state
+        # without initial_state
         dynamic_obs = DynamicObstacle(obstacle_id=30, obstacle_type=ObstacleType.PARKED_VEHICLE,
                                       prediction=prediction,
-                                      initial_state=State(**{'position': np.array([0, 0]), 'orientation':  0,
-                                                             'time_step': 0}),
+                                      initial_state=InitialState(**{'position': np.array([0, 0]), 'orientation':  0,
+                                                                    'time_step': 0}),
                                       obstacle_shape=rect)
 
         # translation
@@ -112,7 +114,7 @@ class TestObstacle(unittest.TestCase):
 
         # check transformation of statelist
         target_statelist = [[10, 0], [10, 0], [11, 1], [12, 1]]
-        for i,target_state in enumerate(target_statelist):
+        for i, target_state in enumerate(target_statelist):
             state = dynamic_obs.state_at_time(i)
             np.testing.assert_array_almost_equal(state.position, target_state)
 
@@ -127,7 +129,7 @@ class TestObstacle(unittest.TestCase):
         self.assertAlmostEqual(dynamic_obs.prediction.trajectory.state_list[2].orientation, 0.0)
 
     def test_get_occupancy_static_obstacle(self):
-        initial_state = State(**{'position': np.array([10.1, 5.1]), 'orientation': 0.33})
+        initial_state = InitialState(**{'position': np.array([10.1, 5.1]), 'orientation': 0.33})
         rect = Rectangle(5.1, 2.6)
         static_obs = StaticObstacle(obstacle_id=30, obstacle_type=ObstacleType.PARKED_VEHICLE,
                                     obstacle_shape=rect, initial_state=initial_state)
@@ -139,15 +141,15 @@ class TestObstacle(unittest.TestCase):
 
     def test_get_occupanciy_dynamic_obstacle(self):
         rect = Rectangle(5.1, 2.6)
-        state_list = [State(position=np.array([0.0, 0.0]), orientation=0.3, time_step=0),
-                      State(position=np.array([0.0, 1.0]), orientation=0.3, time_step=1),
-                      State(position=np.array([1.0, 1.0]), orientation=0.3, time_step=2),
-                      State(position=np.array([2.0, 1.0]), orientation=0.3, time_step=3)]
+        state_list = [KSState(position=np.array([0.0, 0.0]), orientation=0.3, time_step=0),
+                      KSState(position=np.array([0.0, 1.0]), orientation=0.3, time_step=1),
+                      KSState(position=np.array([1.0, 1.0]), orientation=0.3, time_step=2),
+                      KSState(position=np.array([2.0, 1.0]), orientation=0.3, time_step=3)]
         trajectory = Trajectory(1, state_list[1:])
         prediction = TrajectoryPrediction(trajectory, rect)
 
         dynamic_obs = DynamicObstacle(
-            obstacle_id=30, obstacle_type=ObstacleType.PARKED_VEHICLE, initial_state=State(**{'position': np.array(
+            obstacle_id=30, obstacle_type=ObstacleType.PARKED_VEHICLE, initial_state=KSState(**{'position': np.array(
                 [0, 0]), 'orientation': 0.0, 'time_step': 0}), obstacle_shape=rect, prediction=prediction)
 
         for i in range(5):
@@ -158,11 +160,11 @@ class TestObstacle(unittest.TestCase):
 
     def test_state_at_time(self):
         rect = Rectangle(5.1, 2.6)
-        state_list = [State(position=np.array([0.0, 0.0]), orientation=0.3, time_step=0),
-                      State(position=np.array([0.0, 1.0]), orientation=0.3, time_step=1),
-                      State(position=np.array([1.0, 1.0]), orientation=0.3, time_step=2),
-                      State(position=np.array([2.0, 1.0]), orientation=0.3, time_step=3)]
-        initial_state = State(**{'position': np.array([0, 0]), 'orientation': 0.0, 'time_step': 0})
+        state_list = [KSState(position=np.array([0.0, 0.0]), orientation=0.3, time_step=0),
+                      KSState(position=np.array([0.0, 1.0]), orientation=0.3, time_step=1),
+                      KSState(position=np.array([1.0, 1.0]), orientation=0.3, time_step=2),
+                      KSState(position=np.array([2.0, 1.0]), orientation=0.3, time_step=3)]
+        initial_state = InitialState(**{'position': np.array([0, 0]), 'orientation': 0.0, 'time_step': 0})
         trajectory = Trajectory(1, state_list[1:])
         prediction = TrajectoryPrediction(trajectory, rect)
 
@@ -174,9 +176,9 @@ class TestObstacle(unittest.TestCase):
             if i == 0:
                 np.testing.assert_array_equal(dynamic_obs.state_at_time(i).position, initial_state.position)
                 self.assertEqual(dynamic_obs.state_at_time(i).orientation, initial_state.orientation)
-            elif 1<= i <= 3:
-               np.testing.assert_array_equal(dynamic_obs.state_at_time(i).position, state_list[i].position)
-               self.assertEqual(dynamic_obs.state_at_time(i).orientation, state_list[i].orientation)
+            elif 1 <= i <= 3:
+                np.testing.assert_array_equal(dynamic_obs.state_at_time(i).position, state_list[i].position)
+                self.assertEqual(dynamic_obs.state_at_time(i).orientation, state_list[i].orientation)
             else:
                 assert dynamic_obs.state_at_time(i) is None
 

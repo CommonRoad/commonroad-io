@@ -1,4 +1,5 @@
 import unittest
+from copy import deepcopy
 
 from commonroad import SCENARIO_VERSION
 from commonroad.common.util import Interval
@@ -8,9 +9,10 @@ from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario, Environment, TimeOfDay, Time, Underground, Weather, Location, \
     ScenarioID, GeoTransformation
+from commonroad.scenario.state import KSState, InitialState
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany, TrafficLight, \
     TrafficLightCycleElement, TrafficLightState
-from commonroad.scenario.trajectory import *
+from commonroad.scenario.trajectory import Trajectory
 
 
 class TestScenario(unittest.TestCase):
@@ -57,11 +59,11 @@ class TestScenario(unittest.TestCase):
         self.set_pred = SetBasedPrediction(0, occupancy_list)
 
         states = list()
-        states.append(State(time_step=0, orientation=0, position=np.array([0, 0]), velocity=5))
-        states.append(State(time_step=1, orientation=0, position=np.array([0, 1]), velocity=10))
+        states.append(KSState(time_step=0, orientation=0, position=np.array([0, 0]), velocity=5))
+        states.append(KSState(time_step=1, orientation=0, position=np.array([0, 1]), velocity=10))
         trajectory = Trajectory(0, states)
 
-        self.init_state = State(time_step=0, orientation=0, position=np.array([0, 0]), velocity=15)
+        self.init_state = InitialState(time_step=0, orientation=0, position=np.array([0, 0]), velocity=15)
 
         self.traj_pred = TrajectoryPrediction(trajectory, self.rectangle, {0: {100, 101}, 1: {100, 101}})
 
@@ -426,10 +428,10 @@ class TestScenario(unittest.TestCase):
         self.assertEqual(expected_obstacle_num_obstacle_typ_one, len(output_five))
 
     def test_obstacles_by_position_intervals(self):
-        init_state1 = State(time_step=0, orientation=0, position=np.array([0, 0]))
-        init_state2 = State(time_step=0, orientation=0, position=np.array([10, 10]))
-        init_state3 = State(time_step=0, orientation=0, position=np.array([13, 13]))
-        init_state4 = State(time_step=0, orientation=0, position=np.array([-13, -13]))
+        init_state1 = InitialState(time_step=0, orientation=0, position=np.array([0, 0]))
+        init_state2 = InitialState(time_step=0, orientation=0, position=np.array([10, 10]))
+        init_state3 = InitialState(time_step=0, orientation=0, position=np.array([13, 13]))
+        init_state4 = InitialState(time_step=0, orientation=0, position=np.array([-13, -13]))
         static_obs1 = StaticObstacle(1, ObstacleType("unknown"), obstacle_shape=self.circ, initial_state=init_state1)
         static_obs2 = StaticObstacle(2, ObstacleType("unknown"), obstacle_shape=self.circ, initial_state=init_state2)
         static_obs3 = StaticObstacle(3, ObstacleType("car"), obstacle_shape=self.circ, initial_state=init_state3)
@@ -587,11 +589,11 @@ class TestScenario(unittest.TestCase):
 
     def test_assign_vehicles(self):
         states = list()
-        states.append(State(time_step=0, orientation=0, position=np.array([1, .5]), velocity=5))
-        states.append(State(time_step=1, orientation=0, position=np.array([1, .5]), velocity=10))
+        states.append(KSState(time_step=0, orientation=0, position=np.array([1, .5]), velocity=5))
+        states.append(KSState(time_step=1, orientation=0, position=np.array([1, .5]), velocity=10))
         trajectory = Trajectory(0, states)
 
-        self.init_state = State(time_step=0, orientation=0, position=np.array([0, 0]), velocity=15)
+        self.init_state = InitialState(time_step=0, orientation=0, position=np.array([0, 0]), velocity=15)
 
         traj_pred = TrajectoryPrediction(trajectory, self.rectangle)
         dyn_traj_obs = DynamicObstacle(2, ObstacleType("unknown"),
