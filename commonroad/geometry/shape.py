@@ -1,6 +1,5 @@
 import warnings
 import abc
-from copy import deepcopy
 
 import numpy as np
 from typing import List, Union, Optional, Tuple
@@ -9,7 +8,7 @@ import shapely.geometry
 import shapely.affinity
 
 from commonroad.geometry.transform import translate_rotate, rotate_translate
-from commonroad.common.validity import is_valid_polyline, is_real_number, is_real_number_vector, is_valid_orientation
+from commonroad.common.validity import is_real_number_vector, is_valid_orientation
 from commonroad.common.util import make_valid_orientation
 
 __author__ = "Stefanie Manzinger"

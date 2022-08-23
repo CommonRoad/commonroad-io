@@ -1,69 +1,44 @@
 import unittest
 import math
+
 import numpy as np
 
-from commonroad.scenario.trajectory import State
+from commonroad.scenario.state import *
 from commonroad.geometry.shape import Rectangle
 from commonroad.common.util import Interval, AngleInterval
 
 
 class TestState(unittest.TestCase):
-    def test_constructor(self):
 
-        def check_components():
-            for element in all_state_elements:
-                if element in state_elements.keys():
-                    if isinstance(state_elements[element], np.ndarray):
-                        np.testing.assert_array_equal(state.__getattribute__(element), state_elements[element])
-                    else:
-                        self.assertEqual(state.__getattribute__(element), state_elements[element])
-                    self.assertTrue(hasattr(state, element))
-                else:
-                    self.assertFalse(hasattr(state, element))
+    def test_attributes(self):
+        attrs = ['time_step', 'position', 'velocity', 'velocity_y']
+        state = PMState()
+        self.assertEqual(state.attributes, attrs)
 
-        all_state_elements = [
-            'position',
-            'orientation',
-            'velocity',
-            'steering_angle',
-            'yaw_rate',
-            'slip_angle',
-            'roll_angle',
-            'roll_rate',
-            'pitch_angle',
-            'pitch_rate',
-            'velocity_y',
-            'position_z',
-            'velocity_z',
-            'roll_angle_front',
-            'roll_rate_front',
-            'velocity_y_front',
-            'position_z_front',
-            'velocity_z_front',
-            'roll_angle_rear',
-            'roll_rate_rear',
-            'velocity_y_rear',
-            'position_z_rear',
-            'velocity_z_rear',
-            'left_front_wheel_angular_speed',
-            'right_front_wheel_angular_speed',
-            'left_rear_wheel_angular_speed',
-            'right_rear_wheel_angular_speed',
-            'delta_y_f',
-            'delta_y_r',
-            'acceleration',
-            'time_step']
+    def test_used_attributes(self):
+        used_attrs = ['position', 'velocity_y']
+        state = PMState(position=np.array([0., 0.]), velocity_y=10.)
+        self.assertEqual(state.used_attributes, used_attrs)
 
-        state_elements = {'position': np.array([1.0, -3.456]), 'orientation': 0.87, 'time_step': 0}
-        state = State(**state_elements)
-        check_components()
+    def test_is_uncertain_position(self):
+        state = PMState(position=Rectangle(10., 10.))
+        self.assertTrue(state.is_uncertain_position)
 
-        state_elements = {'yaw_rate': 0.08, 'velocity': 15.6, 'time_step': 5, 'pitch_rate': 0.001, 'position_z': 1.3}
-        state = State(**state_elements)
-        check_components()
+        state = PMState(position=np.array([5., 5.]))
+        self.assertFalse(state.is_uncertain_position)
 
-        state_elements = {'pitchAngle': 0.1}
-        self.assertRaises(AttributeError, State, **state_elements)
+    def test_is_uncertain_orientation(self):
+        state = STState(orientation=AngleInterval(0., 0.9))
+        self.assertTrue(state.is_uncertain_orientation)
+
+        state = STState(orientation=0.3)
+        self.assertFalse(state.is_uncertain_orientation)
+
+    def test_has_value(self):
+        state = PMState(velocity=30.)
+        self.assertTrue(state.has_value("velocity"))
+        self.assertFalse(state.has_value("velocity_y"))
+        self.assertFalse(state.has_value("steering_angle"))
 
     def test_translate_rotate(self):
 
@@ -74,24 +49,23 @@ class TestState(unittest.TestCase):
 
         # test assertions
         state_elements = {'position': Interval(-3.456, 1.0), 'orientation': 0.87, 'time_step': 0}
-        state = State(**state_elements)
+        state = InitialState(**state_elements)
         self.assertRaises(TypeError, state.translate_rotate, np.array([-1.0, -1.0]), 0.0)
 
         state_elements = {'position': np.array([1.35, -2.4]), 'orientation': 0.87, 'time_step': 0}
-        state = State(**state_elements)
+        state = InitialState(**state_elements)
         self.assertRaises(AssertionError, state.translate_rotate, np.array([-.2, 1.4, 3.3]), 0.0)
         self.assertRaises(AssertionError, state.translate_rotate, np.array([-.2, 1.4]), [0.0, -.7])
         self.assertRaises(AssertionError, state.translate_rotate, np.array([0.0, 0.0]), -7.10)
 
         # exact position and orientation
         state_elements = {'position': np.array([1.35, -2.4]), 'orientation': 0.87, 'time_step': 0}
-        state = State(**state_elements)
+        state = InitialState(**state_elements)
         translation = np.array([-1.3, 0.87])
         angle = 0.13
         transformed_state = translate_rotate(state_elements['position'])
         state_prime = state.translate_rotate(translation, angle)
-        self.assertEqual(len(state_prime.position),
-                         len(transformed_state))
+        self.assertEqual(len(state_prime.position), len(transformed_state))
         for ii in range(0, len(transformed_state)):
             self.assertAlmostEqual(transformed_state[ii], state_prime.position[ii])
         self.assertAlmostEqual(state_prime.orientation, state_elements['orientation'] + angle)
@@ -99,7 +73,7 @@ class TestState(unittest.TestCase):
         # uncertain orientation
         state_elements = {'orientation': AngleInterval(-0.45, 0.334)}
         angle = 0.87
-        state = State(**state_elements)
+        state = InitialState(**state_elements)
         state_prime = state.translate_rotate(translation, angle)
         self.assertAlmostEqual(state_prime.orientation.start, 0.42)
         self.assertAlmostEqual(state_prime.orientation.end, 1.204)
@@ -107,24 +81,78 @@ class TestState(unittest.TestCase):
         # uncertain orientation large rotation
         state_elements = {'orientation': AngleInterval(-0.02, 3.01)}
         angle = 1.77 * np.pi
-        state = State(**state_elements)
+        state = InitialState(**state_elements)
         state_prime = state.translate_rotate(translation, angle)
         self.assertAlmostEqual(state_prime.orientation.end - state_prime.orientation.start, 3.01+0.02)
 
         # uncertain position
         state_elements = {'position': Rectangle(length=4.0, width=2.0, center=np.array([1.5, 3.6]), orientation=0.13)}
         angle = 0.87
-        state = State(**state_elements)
+        state = InitialState(**state_elements)
         state_prime = state.translate_rotate(translation, angle)
 
         new_center = translate_rotate(state_elements['position'].center)
-        self.assertEqual(len(state_prime.position.center),
-                         len(new_center))
+        self.assertEqual(len(state_prime.position.center), len(new_center))
         for ii in range(0, len(new_center)):
             self.assertAlmostEqual(new_center[ii], state_prime.position.center[ii])
         self.assertAlmostEqual(state_prime.position.orientation, 1.0)
         self.assertAlmostEqual(state_prime.position.length, 4.0)
         self.assertAlmostEqual(state_prime.position.width, 2.0)
+
+    def test_convert_state_to_state(self):
+        initial_state = InitialState(position=Rectangle(20., 5.), orientation=0.1, velocity=10.,
+                                     acceleration=5., yaw_rate=4., slip_angle=6.)
+        pm_state = initial_state.convert_state_to_state(PMState())
+        self.assertEqual(initial_state.time_step, pm_state.time_step)
+        self.assertEqual(initial_state.position, pm_state.position)
+        self.assertEqual(initial_state.velocity, pm_state.velocity)
+        self.assertEqual(pm_state.velocity_y, None)
+
+    def test_fill_with_defaults(self):
+        initial_state = InitialState()
+        initial_state.fill_with_defaults()
+        for field in initial_state.attributes:
+            value = getattr(initial_state, field)
+            if field == 'position':
+                self.assertEqual(np.array([0., 0.]).tolist(), value.tolist())
+            else:
+                self.assertEqual(0., value)
+
+    def test_equals(self):
+        ks_state_1 = STState(time_step=0, position=np.array([0., 0.]), steering_angle=0.1,
+                             velocity=10., orientation=AngleInterval(0., 0.2))
+        ks_state_2 = STState(time_step=0, position=np.array([0., 0.]), steering_angle=0.1,
+                             velocity=10., orientation=AngleInterval(0., 0.2))
+        self.assertEqual(ks_state_1, ks_state_2)
+
+        ks_state_2.position = Rectangle(10., 4.)
+        self.assertNotEqual(ks_state_1, ks_state_2)
+
+        pm_state_1 = PMState(time_step=1)
+        pm_state_2 = PMState(time_step=1)
+        self.assertEqual(pm_state_1, pm_state_2)
+
+        pm_state_2.velocity = Interval(5., 20.)
+        self.assertNotEqual(pm_state_1, pm_state_2)
+
+    def test_hash(self):
+        ks_state_1 = STState(time_step=0, position=np.array([0., 0.]), steering_angle=0.1,
+                             velocity=10., orientation=AngleInterval(0., 0.2))
+        ks_state_2 = STState(time_step=0, position=np.array([0., 0.]), steering_angle=0.1,
+                             velocity=10., orientation=AngleInterval(0., 0.2))
+        self.assertEqual(hash(ks_state_1), hash(ks_state_2))
+
+        states_1 = set()
+        states_2 = set()
+        for i in range(10):
+            pm_state = PMState(time_step=i, position=np.array([i, i]), velocity=i * 0.01, velocity_y=i * 0.02)
+            states_1.add(pm_state)
+            states_2.add(copy.copy(pm_state))
+        self.assertEqual(states_1, states_2)
+
+        for state in states_2:
+            state.velocity_y = 0.01
+        self.assertNotEqual(states_1, states_2)
 
 
 if __name__ == '__main__':

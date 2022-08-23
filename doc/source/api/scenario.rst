@@ -266,18 +266,95 @@ Different kinds of traffic participants are modeled as obstacles within the scen
    :inherited-members:
 
 
-States and Trajectories
+Trajectories
 -----------------------
 
 .. automodule:: commonroad.scenario.trajectory
-
-``State`` class
-^^^^^^^^^^^^^^^
-.. autoclass:: State
-   :members:
-   :member-order: bysource
 
 ``Trajectory`` class
 ^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: Trajectory
    :members:
+
+
+States
+-----------------------
+
+.. automodule:: commonroad.scenario.state
+
+``State`` class
+^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: State
+   :members:
+
+``InitialState`` class
+^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: InitialState
+   :members:
+   :show-inheritance:
+
+``PMState`` class
+^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: PMState
+   :members:
+   :show-inheritance:
+
+``KSState`` class
+^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: KSState
+   :members:
+   :show-inheritance:
+
+``KSTState`` class
+^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: KSTState
+   :members:
+   :show-inheritance:
+
+``STState`` class
+^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: STState
+   :members:
+   :show-inheritance:
+
+``STDState`` class
+^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: STDState
+   :members:
+   :show-inheritance:
+
+``MBState`` class
+^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: MBState
+   :members:
+   :show-inheritance:
+
+``LongitudinalState`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: LongitudinalState
+   :members:
+   :show-inheritance:
+
+``LateralState`` class
+^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: LateralState
+   :members:
+   :show-inheritance:
+
+``InputState`` class
+^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: InputState
+   :members:
+   :show-inheritance:
+
+``PMInputState`` class
+^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: PMInputState
+   :members:
+   :show-inheritance:
+
+``CustomState`` class
+^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: CustomState
+   :members:
+   :show-inheritance:

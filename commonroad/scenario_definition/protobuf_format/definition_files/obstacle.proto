@@ -53,16 +53,20 @@ message State {
     optional FloatExactOrInterval velocity_y_rear = 23;
     optional FloatExactOrInterval position_z_rear = 24;
     optional FloatExactOrInterval velocity_z_rear = 25;
-    optional FloatExactOrInterval left_front_wheel_angular_speed = 26;
-    optional FloatExactOrInterval right_front_wheel_angular_speed = 27;
-    optional FloatExactOrInterval left_rear_wheel_angular_speed = 28;
-    optional FloatExactOrInterval right_rear_wheel_angular_speed = 29;
-    optional FloatExactOrInterval delta_y_f = 30;
-    optional FloatExactOrInterval delta_y_r = 31;
-    optional FloatExactOrInterval acceleration = 32;
-    optional FloatExactOrInterval acceleration_y = 33;
-    optional FloatExactOrInterval jerk = 34;
-    optional IntegerExactOrInterval time_step = 35;
+    optional FloatExactOrInterval front_wheel_angular_speed = 26;
+    optional FloatExactOrInterval rear_wheel_angular_speed = 27;
+    optional FloatExactOrInterval left_front_wheel_angular_speed = 28;
+    optional FloatExactOrInterval right_front_wheel_angular_speed = 29;
+    optional FloatExactOrInterval left_rear_wheel_angular_speed = 30;
+    optional FloatExactOrInterval right_rear_wheel_angular_speed = 31;
+    optional FloatExactOrInterval delta_y_f = 32;
+    optional FloatExactOrInterval delta_y_r = 33;
+    optional FloatExactOrInterval acceleration = 34;
+    optional FloatExactOrInterval acceleration_y = 35;
+    optional FloatExactOrInterval jerk = 36;
+    optional FloatExactOrInterval curvature = 37;
+    optional FloatExactOrInterval curvature_rate = 38;
+    optional IntegerExactOrInterval time_step = 39;
 }
 
 message SignalState {

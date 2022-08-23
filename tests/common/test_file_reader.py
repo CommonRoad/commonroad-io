@@ -10,7 +10,9 @@ from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, La
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Underground, Weather, TimeOfDay, \
     ScenarioID
-from commonroad.scenario.trajectory import *
+from commonroad.scenario.state import STState, InitialState, CustomState, PMState, KSState, LateralState, STDState, \
+    LongitudinalState
+from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLightDirection, TrafficLight, \
     TrafficLightCycleElement, TrafficLightState, TrafficSignIDGermany
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
@@ -40,9 +42,13 @@ class TestXMLFileReader(unittest.TestCase):
         set_pred = SetBasedPrediction(0, occupancy_list)
 
         states = []
-        states.append(State(time_step=1, orientation=0, position=np.array([0, 1])))
+        state = CustomState()
+        for attr, value in {'time_step': 1, 'orientation': 0, 'position': np.array([0, 1])}.items():
+            state.add_attribute(attr)
+            state.set_value(attr, value)
+        states.append(state)
         trajectory = Trajectory(1, states)
-        init_state = State(time_step=0, orientation=0, position=np.array([0, 0]))
+        init_state = InitialState(time_step=0, orientation=0, position=np.array([0, 0]))
         traj_pred = TrajectoryPrediction(trajectory, rectangle)
 
         initial_signal_state = SignalState(time_step=0, horn=True, hazard_warning_lights=True, braking_lights=False)
@@ -130,11 +136,12 @@ class TestXMLFileReader(unittest.TestCase):
         self.scenario.add_objects([static_obs, dyn_set_obs, dyn_traj_obs, self.lanelet_network,
                                    self._environment_obstacle, self._phantom_obstacle])
 
-        goal_region = GoalRegion([State(time_step=Interval(0, 1), velocity=Interval(0.0, 1), position=rectangle),
-                                  State(time_step=Interval(1, 2), velocity=Interval(0.0, 1), position=circ)],
+        goal_region = GoalRegion([STState(time_step=Interval(0, 1), velocity=Interval(0.0, 1), position=rectangle),
+                                  STState(time_step=Interval(1, 2), velocity=Interval(0.0, 1), position=circ)],
                                  {0: [101, 102], 1: list([102])})
-        planning_problem = PlanningProblem(1000, State(velocity=0.1, position=np.array([[0], [0]]), orientation=0,
-                                                       yaw_rate=0, slip_angle=0, time_step=0), goal_region)
+        planning_problem = PlanningProblem(1000, InitialState(velocity=0.1, position=np.array([[0], [0]]),
+                                                              orientation=0, yaw_rate=0, slip_angle=0, time_step=0),
+                                           goal_region)
         self.planning_problem_set = PlanningProblemSet(list([planning_problem]))
 
         # setup for reading intersection scenario with traffic signs, traffic lights, stop signs (without obstacles)
@@ -841,6 +848,20 @@ class TestProtobufFileReader(unittest.TestCase):
         self.filename_starnberg_pb = self.cwd_path + "/../test_scenarios/DEU_Starnberg-1_1_T-1.pb"
         self.filename_anglet_pb = self.cwd_path + "/../test_scenarios/FRA_Anglet-1_1_T-1.pb"
 
+        self.filename_pm_state_xml = self.cwd_path + "/../test_scenarios/test_reading_pm_state.xml"
+        self.filename_pm_state_pb = self.cwd_path + "/../test_scenarios/test_reading_pm_state.pb"
+        self.filename_ks_state_xml = self.cwd_path + "/../test_scenarios/test_reading_ks_state.xml"
+        self.filename_ks_state_pb = self.cwd_path + "/../test_scenarios/test_reading_ks_state.pb"
+        self.filename_st_state_xml = self.cwd_path + "/../test_scenarios/test_reading_st_state.xml"
+        self.filename_st_state_pb = self.cwd_path + "/../test_scenarios/test_reading_st_state.pb"
+        self.filename_std_state_xml = self.cwd_path + "/../test_scenarios/test_reading_std_state.xml"
+        self.filename_std_state_pb = self.cwd_path + "/../test_scenarios/test_reading_std_state.pb"
+        self.filename_custom_state_xml = self.cwd_path + "/../test_scenarios/test_reading_custom_state.xml"
+        self.filename_custom_state_pb = self.cwd_path + "/../test_scenarios/test_reading_custom_state.pb"
+
+        self.filename_longitudinal_state_xml = self.cwd_path + "/../test_scenarios/test_reading_longitudinal_state.xml"
+        self.filename_lateral_state_xml = self.cwd_path + "/../test_scenarios/test_reading_lateral_state.xml"
+
     def test_open(self):
         self.assertTrue(read_compare(self.filename_all_xml, self.filename_all_pb))
 
@@ -855,6 +876,33 @@ class TestProtobufFileReader(unittest.TestCase):
         lanelet_network_pb = CommonRoadFileReader(self.filename_all_pb, FileFormat.PROTOBUF).open_lanelet_network()
 
         self.assertEqual(lanelet_network_xml, lanelet_network_pb)
+
+    def test_read_correct_matched_state(self):
+        self._check_correct_matched_state(self.filename_pm_state_xml, FileFormat.XML, PMState)
+        self._check_correct_matched_state(self.filename_pm_state_pb, FileFormat.PROTOBUF, PMState)
+        self._check_correct_matched_state(self.filename_ks_state_xml, FileFormat.XML, KSState)
+        self._check_correct_matched_state(self.filename_ks_state_pb, FileFormat.PROTOBUF, KSState)
+        self._check_correct_matched_state(self.filename_st_state_xml, FileFormat.XML, STState)
+        self._check_correct_matched_state(self.filename_st_state_pb, FileFormat.PROTOBUF, STState)
+        self._check_correct_matched_state(self.filename_std_state_xml, FileFormat.XML, STDState)
+        self._check_correct_matched_state(self.filename_std_state_pb, FileFormat.PROTOBUF, STDState)
+        self._check_correct_matched_state(self.filename_custom_state_xml, FileFormat.XML, CustomState)
+        self._check_correct_matched_state(self.filename_custom_state_pb, FileFormat.PROTOBUF, CustomState)
+
+        # Attributes orientation and velocity in y direction are not included by longitudinal state
+        with self.assertRaises(Exception):
+            self._check_correct_matched_state(self.filename_longitudinal_state_xml, FileFormat.XML, LongitudinalState)
+
+        # Attribute position is not included by lateral state
+        with self.assertRaises(Exception):
+            self._check_correct_matched_state(self.filename_lateral_state_xml, FileFormat.XML, LateralState)
+
+    def _check_correct_matched_state(self, file_name: str, file_format: FileFormat, state_type: type):
+        scenario, _ = CommonRoadFileReader(file_name, file_format).open()
+        obstacle = scenario.obstacles[0]
+        self.assertIsInstance(obstacle.initial_state, InitialState)
+        for state in obstacle.prediction.trajectory.state_list:
+            self.assertIsInstance(state, state_type)
 
 
 def read_compare(xml_file_path: str, pb_file_path: str) -> bool:

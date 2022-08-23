@@ -18,8 +18,9 @@ from commonroad.scenario.lanelet import Lanelet
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.obstacle import ObstacleRole
 from commonroad.scenario.obstacle import ObstacleType
-from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, Obstacle, State, \
+from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, Obstacle, \
     PhantomObstacle
+from commonroad.scenario.state import TraceState
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.param_server import ParamServer
@@ -1040,7 +1041,7 @@ class Scenario(IDrawable):
 
         return obstacle_list
 
-    def obstacle_states_at_time_step(self, time_step: int) -> Dict[int, State]:
+    def obstacle_states_at_time_step(self, time_step: int) -> Dict[int, TraceState]:
         """
         Returns all obstacle states which exist at a provided time step.
 

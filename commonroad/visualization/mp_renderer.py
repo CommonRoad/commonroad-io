@@ -27,8 +27,9 @@ from commonroad.scenario.lanelet import LaneletNetwork, LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, SignalState, PhantomObstacle, \
     EnvironmentObstacle, Obstacle
 from commonroad.scenario.scenario import Scenario
+from commonroad.scenario.state import TraceState
 from commonroad.scenario.traffic_sign import TrafficLightState, TrafficLight, TrafficSign
-from commonroad.scenario.trajectory import Trajectory, State
+from commonroad.scenario.trajectory import Trajectory
 from commonroad.visualization.icons import supported_icons, get_obstacle_icon_patch
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.traffic_sign import draw_traffic_light_signs
@@ -449,7 +450,7 @@ class MPRenderer(IRenderer):
         occ = obj.occupancy_at_time(time_begin)
         self._draw_occupancy(occ, obj.initial_state, draw_params, call_stack)
 
-    def _draw_occupancy(self, occ: Occupancy, state: State, draw_params: Union[ParamServer, dict, None],
+    def _draw_occupancy(self, occ: Occupancy, state: TraceState, draw_params: Union[ParamServer, dict, None],
                         call_stack: Tuple[str, ...]) -> None:
         if occ is not None:
             occ.draw(self, draw_params, call_stack)
@@ -811,7 +812,7 @@ class MPRenderer(IRenderer):
                 mpl.patches.Ellipse(center, 2 * radius_x, 2 * radius_y, facecolor=facecolor, edgecolor=edgecolor,
                                     zorder=zorder, linewidth=linewidth, alpha=opacity))
 
-    def draw_state(self, state: State, draw_params: Union[ParamServer, dict, None],
+    def draw_state(self, state: TraceState, draw_params: Union[ParamServer, dict, None],
                    call_stack: Tuple[str, ...] = None) -> None:
         """
         Draws a state as an arrow of its velocity vector
@@ -1297,7 +1298,7 @@ class MPRenderer(IRenderer):
         self.draw_initital_state(obj.initial_state, draw_params, call_stack)
         self.draw_goal_region(obj.goal, draw_params, call_stack)
 
-    def draw_initital_state(self, obj: State, draw_params: Union[ParamServer, dict, None],
+    def draw_initital_state(self, obj: TraceState, draw_params: Union[ParamServer, dict, None],
                             call_stack: Tuple[str, ...]) -> None:
         """
         Draw initial state with label
@@ -1337,7 +1338,7 @@ class MPRenderer(IRenderer):
         for goal_state in obj.state_list:
             self.draw_goal_state(goal_state, draw_params, call_stack)
 
-    def draw_goal_state(self, obj: State, draw_params: Union[ParamServer, dict, None],
+    def draw_goal_state(self, obj: TraceState, draw_params: Union[ParamServer, dict, None],
                         call_stack: Tuple[str, ...]) -> None:
         """
         Draw goal states

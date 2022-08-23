@@ -15,7 +15,8 @@ from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad.scenario.obstacle import DynamicObstacle, \
     ObstacleType, \
     StaticObstacle
-from commonroad.scenario.trajectory import State, Trajectory
+from commonroad.scenario.state import KSState, InitialState
+from commonroad.scenario.trajectory import Trajectory
 from commonroad.visualization.mp_renderer import MPRenderer
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.util import approximate_bounding_box_dyn_obstacles
@@ -44,8 +45,7 @@ class TestUncertainStates(unittest.TestCase):
     def test_max_rotation(self):
         rect_size = np.array([5, 3])
         shape = Rectangle(*rect_size)
-        state = State(position=np.array([0, 0]),
-                      orientation=AngleInterval(-0.5 * math.pi, 0.5 * math.pi))
+        state = KSState(position=np.array([0, 0]), orientation=AngleInterval(-0.5 * math.pi, 0.5 * math.pi))
         occ = occupancy_shape_from_state(shape, state)
         self.assertAlmostEqual(occ.width, np.linalg.norm(rect_size))
         self.assertAlmostEqual(occ.length, np.linalg.norm(rect_size))
@@ -56,7 +56,7 @@ class TestUncertainStates(unittest.TestCase):
             Rectangle(2 + i, 2 + i, np.array([1 + i * 4, 1 + i * 4])) for i in
             range(5)]
         uncertain_states = [
-            State(time_step=i, position=p, orientation=0.25 * math.pi) for i, p
+            KSState(time_step=i, position=p, orientation=0.25 * math.pi) for i, p
             in enumerate(uncertain_positions)]
         prediction = TrajectoryPrediction(Trajectory(1, uncertain_states[1:]),
                                           shape)
@@ -70,7 +70,7 @@ class TestUncertainStates(unittest.TestCase):
         uncertain_orientations = [AngleInterval((0.25 - i * 0.125) * math.pi,
                                                 (0.25 + i * 0.125) * math.pi)
                                   for i in range(5)]
-        uncertain_states = [State(time_step=i, position=p, orientation=o) for
+        uncertain_states = [KSState(time_step=i, position=p, orientation=o) for
                             i, (p, o) in enumerate(
                 zip(uncertain_positions, uncertain_orientations))]
         prediction = TrajectoryPrediction(Trajectory(1, uncertain_states[1:]),
@@ -84,7 +84,7 @@ class TestUncertainStates(unittest.TestCase):
         self.rnd.clear()
         uncertain_positions = [np.array([1 + i * 4, 1 + i * 4]) for i in
                                range(5)]
-        uncertain_states = [State(time_step=i, position=p, orientation=o) for
+        uncertain_states = [KSState(time_step=i, position=p, orientation=o) for
                             i, (p, o) in enumerate(
                 zip(uncertain_positions, uncertain_orientations))]
         prediction = TrajectoryPrediction(Trajectory(1, uncertain_states[1:]),
@@ -102,23 +102,21 @@ class TestUncertainStates(unittest.TestCase):
             Polygon(np.array([[0.0, 0.0], [0.5, 1.0], [1.0, 0.0]])))
 
     def _test_static_obstacle(self, shape):
-        state = State(position=Circle(2), orientation=0.25 * math.pi)
+        state = InitialState(position=Circle(2), orientation=0.25 * math.pi)
         stat_obs = StaticObstacle(0, ObstacleType.CAR, shape, state)
         stat_obs.draw(self.rnd)
         self.rnd.render(show=True)
         self.rnd.clear()
 
-        state = State(position= Polygon(np.array([[0.0, 0.0], [0.5, 1.0], [1.0, 0.0]])),
-                      orientation=AngleInterval((0.25 - 0.125) * math.pi,
-                                                (0.25 + 0.125) * math.pi))
+        state = InitialState(position=Polygon(np.array([[0.0, 0.0], [0.5, 1.0], [1.0, 0.0]])),
+                             orientation=AngleInterval((0.25 - 0.125) * math.pi, (0.25 + 0.125) * math.pi))
         stat_obs = StaticObstacle(0, ObstacleType.CAR, shape, state)
         stat_obs.draw(self.rnd)
         self.rnd.render(show=True)
         self.rnd.clear()
 
-        state = State(position=np.array([1, 1]),
-                      orientation=AngleInterval((0.25 - 0.125) * math.pi,
-                                                (0.25 + 0.125) * math.pi))
+        state = InitialState(position=np.array([1, 1]),
+                             orientation=AngleInterval((0.25 - 0.125) * math.pi, (0.25 + 0.125) * math.pi))
         stat_obs = StaticObstacle(0, ObstacleType.CAR, shape, state)
         stat_obs.draw(self.rnd)
         self.rnd.render(show=True)
@@ -129,6 +127,7 @@ class TestUncertainStates(unittest.TestCase):
         self._test_static_obstacle(Circle(3))
         self._test_static_obstacle(
                 Polygon(np.array([[0.0, 0.0], [0.5, 1.0], [1.0, 0.0]])))
+
 
 if __name__ == "__main__":
     unittest.main()

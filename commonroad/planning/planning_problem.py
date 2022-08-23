@@ -2,7 +2,8 @@ from typing import Union, List, Tuple, Dict, Optional
 import numpy as np
 import warnings
 
-from commonroad.scenario.trajectory import State, Trajectory
+from commonroad.scenario.trajectory import Trajectory
+from commonroad.scenario.state import InitialState
 from commonroad.planning.goal import GoalRegion
 from commonroad.common.validity import is_natural_number
 
@@ -20,7 +21,7 @@ from commonroad.visualization.renderer import IRenderer
 
 
 class PlanningProblem(IDrawable):
-    def __init__(self, planning_problem_id: int, initial_state: State,
+    def __init__(self, planning_problem_id: int, initial_state: InitialState,
                  goal_region: GoalRegion):
         self.planning_problem_id = planning_problem_id
         self.initial_state = initial_state
@@ -53,15 +54,15 @@ class PlanningProblem(IDrawable):
             warnings.warn('<PlanningProblem/planning_problem_id> planning_problem_id is immutable')
 
     @property
-    def initial_state(self) -> State:
+    def initial_state(self) -> InitialState:
         """Initial state of the ego vehicle"""
         return self._initial_state
 
     @initial_state.setter
-    def initial_state(self, state: State):
+    def initial_state(self, state: InitialState):
         mandatory_fields = ['position', 'velocity', 'orientation', 'yaw_rate', 'slip_angle', 'time_step']
         for field in mandatory_fields:
-            if not hasattr(state, field):
+            if getattr(state, field) is None:
                 raise ValueError('<PlanningProblem/initial_state> fields [{}] are mandatory. '
                                  'No {} attribute found.'.format(', '.join(mandatory_fields), field))
         self._initial_state = state
