@@ -47,6 +47,7 @@ class LaneletType(enum.Enum):
     URBAN = 'urban'
     COUNTRY = 'country'
     HIGHWAY = 'highway'
+    HIGHWAY_SERVICE = 'highwayService'
     DRIVE_WAY = 'driveWay'
     MAIN_CARRIAGE_WAY = 'mainCarriageWay'
     ACCESS_RAMP = 'accessRamp'
