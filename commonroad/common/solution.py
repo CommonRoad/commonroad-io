@@ -13,6 +13,7 @@ import numpy as np
 import vehiclemodels.parameters_vehicle1 as p1
 import vehiclemodels.parameters_vehicle2 as p2
 import vehiclemodels.parameters_vehicle3 as p3
+import vehiclemodels.parameters_vehicle4 as p4
 
 from commonroad.common.validity import is_positive, is_real_number
 from commonroad.geometry.shape import Rectangle
@@ -57,11 +58,13 @@ class VehicleType(Enum):
     FORD_ESCORT = 1
     BMW_320i = 2
     VW_VANAGON = 3
+    TRUCK = 4
 
 
 vehicle_parameters = {VehicleType.FORD_ESCORT: p1.parameters_vehicle1(),
                       VehicleType.BMW_320i: p2.parameters_vehicle2(),
-                      VehicleType.VW_VANAGON: p3.parameters_vehicle3()}
+                      VehicleType.VW_VANAGON: p3.parameters_vehicle3(),
+                      VehicleType.TRUCK: p4.parameters_vehicle4()}
 
 
 @unique
@@ -70,6 +73,7 @@ class VehicleModel(Enum):
     ST = 1
     KS = 2
     MB = 3
+    KST = 4
 
 
 @unique
@@ -89,9 +93,9 @@ class StateFields(Enum):
     """
     State Fields enum class for defining the state fields for vehicle models for different trajectory types.
 
-    PM | ST | KS | MB -> Corresponding state fields for trajectory states
-    Input             -> Input fields for ST, KS, and MB vehicle models
-    PMInput           -> Input fields for PM vehicle model.
+    PM | ST | KS | KST | MB -> Corresponding state fields for trajectory states
+    Input                   -> Input fields for ST, KS, and MB vehicle models
+    PMInput                 -> Input fields for PM vehicle model.
 
     Note: If you change the order of field names, don't forget to change the order on the XMLStateFields enum as well,
     because the indexes have to match.
@@ -99,6 +103,7 @@ class StateFields(Enum):
     PM = ['position', 'velocity', 'velocity_y', 'time_step']
     ST = ['position', 'steering_angle', 'velocity', 'orientation', 'yaw_rate', 'slip_angle', 'time_step']
     KS = ['position', 'steering_angle', 'velocity', 'orientation', 'time_step']
+    KST = ['position', 'steering_angle', 'velocity', 'orientation', 'hitch', 'time_step']
     MB = ['position', 'steering_angle', 'velocity', 'orientation', 'yaw_rate', 'roll_angle', 'roll_rate', 'pitch_angle',
           'pitch_rate', 'velocity_y', 'position_z', 'velocity_z', 'roll_angle_front', 'roll_rate_front',
           'velocity_y_front', 'position_z_front', 'velocity_z_front', 'roll_angle_rear', 'roll_rate_rear',
@@ -114,9 +119,9 @@ class XMLStateFields(Enum):
     """
     XML names of the state fields for vehicle models for different trajectory types.
 
-    PM | ST | KS | MB -> Corresponding xml names of the state fields for trajectory states
-    Input             -> XML names of the input fields for ST, KS, and MB vehicle models
-    PMInput           -> XML names of the input fields for PM vehicle model.
+    PM | ST | KS | KST | MB -> Corresponding xml names of the state fields for trajectory states
+    Input                   -> XML names of the input fields for ST, KS, and MB vehicle models
+    PMInput                 -> XML names of the input fields for PM vehicle model.
 
     Note: If you change the order of xml names, don't forget to change the order on the StateFields enum as well,
     because the indexes have to match.
@@ -124,6 +129,7 @@ class XMLStateFields(Enum):
     PM = [('x', 'y'), 'xVelocity', 'yVelocity', 'time']
     ST = [('x', 'y'), 'steeringAngle', 'velocity', 'orientation', 'yawRate', 'slipAngle', 'time']
     KS = [('x', 'y'), 'steeringAngle', 'velocity', 'orientation', 'time']
+    KST = [('x', 'y'), 'steeringAngle', 'velocity', 'orientation', 'hitch', 'time']
     MB = [('x', 'y'), 'steeringAngle', 'velocity', 'orientation', 'yawRate', 'rollAngle', 'rollRate', 'pitchAngle',
           'pitchRate', 'yVelocity', 'zPosition', 'zVelocity', 'rollAngleFront', 'rollRateFront',
           'yVelocityFront', 'zPositionFront', 'zVelocityFront', 'rollAngleRear', 'rollRateRear',
@@ -139,13 +145,14 @@ class StateType(Enum):
     """
     State Type enum class.
 
-    PM | ST | KS | MB -> Corresponding state type for trajectory states
-    Input             -> Input type for ST, KS, and MB vehicle models
-    PMInput           -> Input type for PM vehicle model.
+    PM | ST | KS | KST | MB -> Corresponding state type for trajectory states
+    Input                   -> Input type for ST, KS, and MB vehicle models
+    PMInput                 -> Input type for PM vehicle model.
     """
     MB = 'mbState'
     ST = 'stState'
     KS = 'ksState'
+    KST = 'kstState'
     PM = 'pmState'
     Input = 'input'
     PMInput = 'pmInput'
@@ -222,13 +229,14 @@ class TrajectoryType(Enum):
     """
     Trajectory Type enum class.
 
-    PM | ST | KS | MB -> Corresponding trajectory type for the vehicle models
-    Input             -> InputVector type for ST, KS, and MB vehicle models
-    PMInput           -> InputVector type for PM vehicle model.
+    PM | ST | KS | KST | MB -> Corresponding trajectory type for the vehicle models
+    Input                   -> InputVector type for ST, KS, and MB vehicle models
+    PMInput                 -> InputVector type for PM vehicle model.
     """
     MB = 'mbTrajectory'
     ST = 'stTrajectory'
     KS = 'ksTrajectory'
+    KST = 'kstTrajectory'
     PM = 'pmTrajectory'
     Input = 'inputVector'
     PMInput = 'pmInputVector'
@@ -277,6 +285,7 @@ class SupportedCostFunctions(Enum):
     ST = [cost_function for cost_function in CostFunction]  # Supports all cost functions
     KS = [cost_function for cost_function in CostFunction]  # Supports all cost functions
     MB = [cost_function for cost_function in CostFunction]  # Supports all cost functions
+    KST = [cost_function for cost_function in CostFunction]  # Supports all cost functions
 
 
 class PlanningProblemSolution:
@@ -710,16 +719,16 @@ class CommonRoadSolutionReader:
     @staticmethod
     def _parse_vehicle_id(vehicle_id: str) -> Tuple[VehicleModel, VehicleType]:
         """ Parses the given vehicle id string. """
-        if not len(vehicle_id) == 3:
+        if not len(vehicle_id) == 3 and not len(vehicle_id) == 4:
             raise SolutionReaderException("Invalid Vehicle ID: " + vehicle_id)
 
-        if not vehicle_id[:2] in [vmodel.name for vmodel in VehicleModel]:
+        if not vehicle_id[:-1] in [vmodel.name for vmodel in VehicleModel]:
             raise SolutionReaderException("Invalid Vehicle ID: " + vehicle_id)
 
-        if not int(vehicle_id[2]) in [vtype.value for vtype in VehicleType]:
+        if not int(vehicle_id[-1]) in [vtype.value for vtype in VehicleType]:
             raise SolutionReaderException("Invalid Vehicle ID: " + vehicle_id)
 
-        return VehicleModel[vehicle_id[:2]], VehicleType(int(vehicle_id[2]))
+        return VehicleModel[vehicle_id[:-1]], VehicleType(int(vehicle_id[-1]))
 
 
 class CommonRoadSolutionWriter:

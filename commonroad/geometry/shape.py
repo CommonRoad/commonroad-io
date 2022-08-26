@@ -2,6 +2,7 @@ import warnings
 import abc
 
 import numpy as np
+import math
 from typing import List, Union, Optional, Tuple
 
 import shapely.geometry
@@ -579,3 +580,26 @@ def occupancy_shape_from_state(shape, state):
     else:
         occupied_region = shape.rotate_translate_local(state.position, state.orientation)
     return occupied_region
+
+
+def shape_group_occupancy_shape_from_state(shapes, state, wheelbase_lengths):
+    """ Computes the occupancy of a ShapeGroup for a given state; used for trailer-truck model
+    :param shapes: list of shapes in the Shape group
+    :param state: state to compute occupancy
+    :param wheelbase_lengths: list of wheelbase lengths corresponding to the Shapes in "shapes"
+    """
+    list_of_shapes = []
+    orient = state.orientation
+    nr_of_shapes = len(shapes)
+    pos = state.position
+    list_of_shapes.append(shapes[0].rotate_translate_local(state.position, state.orientation))
+
+    for i in range(1, nr_of_shapes):
+        new_orient = orient + state.hitch
+        pos = pos - 0.5 * wheelbase_lengths[i - 1] * np.array([math.cos(orient), math.sin(orient)]) - (
+                wheelbase_lengths[i] / 2) * np.array([math.cos(new_orient), math.sin(new_orient)])
+        orient = new_orient
+        shape = shapes[i].rotate_translate_local(pos, orient)
+        list_of_shapes.append(shape)
+
+    return ShapeGroup(list_of_shapes)

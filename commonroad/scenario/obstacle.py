@@ -1,5 +1,6 @@
 import enum
 import warnings
+import math
 import numpy as np
 from typing import Union, Set, List, Optional, Tuple
 from abc import abstractmethod
@@ -9,7 +10,9 @@ from commonroad.geometry.shape import Shape, \
     Rectangle, \
     Circle, \
     Polygon, \
-    occupancy_shape_from_state
+    ShapeGroup, \
+    occupancy_shape_from_state, \
+    shape_group_occupancy_shape_from_state
 from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
 
 __author__ = "Stefanie Manzinger, Christian Pek, Sebastian Maierhofer"
@@ -439,7 +442,8 @@ class DynamicObstacle(Obstacle):
                  prediction: Union[None, Prediction, TrajectoryPrediction, SetBasedPrediction] = None,
                  initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
-                 initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None):
+                 initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None,
+                 **kwargs):
         """
             :param obstacle_id: unique ID of the obstacle
             :param obstacle_type: type of obstacle (e.g. PARKED_VEHICLE)
@@ -450,7 +454,10 @@ class DynamicObstacle(Obstacle):
             :param initial_shape_lanelet_ids: initial IDs of lanelets the obstacle shape is on
             :param initial_signal_state: initial signal state of static obstacle
             :param signal_series: list of signal states over time
+            :param wheelbase: list of wheelbase lengths
         """
+        for (field, value) in kwargs.items():
+            setattr(self, field, value)
         Obstacle.__init__(self, obstacle_id=obstacle_id, obstacle_role=ObstacleRole.DYNAMIC,
                           obstacle_type=obstacle_type, obstacle_shape=obstacle_shape, initial_state=initial_state,
                           initial_center_lanelet_ids=initial_center_lanelet_ids,
@@ -467,6 +474,23 @@ class DynamicObstacle(Obstacle):
 
     def __hash__(self):
         return hash((self._prediction, Obstacle.__hash__(self)))
+
+    @property
+    def initial_state(self) -> State:
+        """ Initial state of the obstacle, e.g., obtained through sensor measurements."""
+        return self._initial_state
+
+    @initial_state.setter
+    def initial_state(self, initial_state: State):
+        assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of wrong type. ' \
+                                                 'Expected types: %s. Got type: %s.' % (State, type(initial_state))
+        self._initial_state = initial_state
+        self._initial_occupancy_shape = occupancy_shape_from_state(self._obstacle_shape, initial_state)
+        if not hasattr(self, 'wheelbase_lengths'):
+            return
+        shapes = self.obstacle_shape.shapes
+        self._initial_occupancy_shape = shape_group_occupancy_shape_from_state(shapes, initial_state,
+                                                                               self.wheelbase_lengths)
 
     @property
     def prediction(self) -> Union[Prediction, TrajectoryPrediction, SetBasedPrediction, None]:

@@ -7,8 +7,8 @@ import numpy as np
 from commonroad.common.util import Interval
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector
 from commonroad.geometry.shape import Shape, Rectangle, Circle, ShapeGroup, Polygon,\
-    occupancy_shape_from_state
-from commonroad.scenario.trajectory import Trajectory
+    occupancy_shape_from_state, shape_group_occupancy_shape_from_state
+from commonroad.scenario.trajectory import Trajectory, State
 
 __author__ = "Stefanie Manzinger"
 __copyright__ = "TUM Cyber-Physical Systems Group"
@@ -224,7 +224,8 @@ class TrajectoryPrediction(Prediction):
     state sequence over time. The occupancy of an obstacle along a trajectory is uniquely defined given its shape."""
     def __init__(self, trajectory: Trajectory, shape: Shape,
                  center_lanelet_assignment: Union[None, Dict[int, Set[int]]] = None,
-                 shape_lanelet_assignment: Union[None, Dict[int, Set[int]]] = None):
+                 shape_lanelet_assignment: Union[None, Dict[int, Set[int]]] = None,
+                 **kwargs):
         """
         :param trajectory: predicted trajectory of the obstacle
         :param shape: shape of the obstacle
@@ -233,6 +234,8 @@ class TrajectoryPrediction(Prediction):
         self.trajectory: Trajectory = trajectory
         self.shape_lanelet_assignment: Dict[int, Set[int]] = shape_lanelet_assignment
         self.center_lanelet_assignment: Dict[int, Set[int]] = center_lanelet_assignment
+        for (field, value) in kwargs.items():
+            setattr(self, field, value)
         Prediction.__init__(self, self._trajectory.initial_time_step, self._create_occupancy_set())
 
     def __eq__(self, other):
@@ -334,6 +337,7 @@ class TrajectoryPrediction(Prediction):
     def _create_occupancy_set(self):
         """ Computes the occupancy set over time given the predicted trajectory and shape of the object."""
         occupancy_set = list()
+
         for k, state in enumerate(self._trajectory.state_list):
             if not hasattr(state, "orientation"):
                 state.orientation = math.atan2(getattr(state, "velocity_y"), state.velocity)
