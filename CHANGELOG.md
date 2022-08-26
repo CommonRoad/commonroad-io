@@ -10,6 +10,8 @@
 - Function for replacing lanelet network of a scenario with new one
 - Support for Protobuf format
 - Predefined classes for specific states, point-mass model, kinematic single-track model, etc.
+- Function for computing shape group occupancy from state
+- Support for Kinematic Single-Track Model with One On-axle Trailer
 
 ### Changed
 
