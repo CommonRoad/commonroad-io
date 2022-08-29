@@ -41,7 +41,8 @@ message LaneletTypeEnum {
         INTERSECTION = 14;
         BORDER = 15;
         PARKING = 16;
-        UNKNOWN = 17;
+        RESTRICTED = 17;
+        UNKNOWN = 18;
     }
 }
 

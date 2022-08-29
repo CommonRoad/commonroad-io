@@ -61,6 +61,7 @@ class LaneletType(enum.Enum):
     INTERSECTION = 'intersection'
     BORDER = 'border'
     PARKING = 'parking'
+    RESTRICTED = 'restricted' # cars not allowed, e.g., special lanes for busses
     UNKNOWN = 'unknown'
 
 
