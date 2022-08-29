@@ -445,7 +445,8 @@ class CustomState(State):
 
         :param attributes: Variable number of attributes each consisting of name and value.
         """
-        super().__init__(attributes["time_step"])
+        if len(attributes) > 0:  # if one wants to use the attribute adding methods manually
+            super().__init__(attributes["time_step"])
         for name, value in attributes.items():
             if name == "time_step":
                 continue
