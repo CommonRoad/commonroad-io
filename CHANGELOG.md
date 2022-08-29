@@ -12,7 +12,7 @@
 - Predefined classes for specific states, point-mass model, kinematic single-track model, etc.
 - Function for computing shape group occupancy from state
 - Support for kinematic single-track model with one on-axle trailer
-- Two new lanelet types: parking and border
+- Three new lanelet types: parking, border, and restricted
 
 ### Changed
 
