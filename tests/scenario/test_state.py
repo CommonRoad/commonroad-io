@@ -154,6 +154,20 @@ class TestState(unittest.TestCase):
             state.velocity_y = 0.01
         self.assertNotEqual(states_1, states_2)
 
+    def test_custom_state(self):
+        custom_state_1 = CustomState(time_step=Interval(0, 1))
+        setattr(custom_state_1, "velocity", Interval(0.0, 1))
+        self.assertEqual(custom_state_1.velocity.start, 0)
+        self.assertEqual(custom_state_1.velocity.end, 1)
+        self.assertEqual(custom_state_1.time_step.start, 0)
+        self.assertEqual(custom_state_1.time_step.end, 1)
+
+        custom_state_2 = CustomState(time_step=Interval(0, 1), velocity=Interval(0.0, 1))
+        self.assertEqual(custom_state_2.velocity.start, 0)
+        self.assertEqual(custom_state_2.velocity.end, 1)
+        self.assertEqual(custom_state_2.time_step.start, 0)
+        self.assertEqual(custom_state_2.time_step.end, 1)
+
 
 if __name__ == '__main__':
     unittest.main()

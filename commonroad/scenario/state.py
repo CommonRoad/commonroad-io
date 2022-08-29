@@ -433,13 +433,24 @@ class PMInputState(State):
     acceleration_y: FloatExactOrInterval = None
 
 
-@dataclass(eq=False)
 class CustomState(State):
     """
     This is a class representing the custom state. State variables can be added at runtime. The attributes position
     and orientation/velocity_y are necessary for successful file reading.
-
     """
+
+    def __init__(self, **attributes):
+        """
+        Additional constructor for CustomState class.
+
+        :param attributes: Variable number of attributes each consisting of name and value.
+        """
+        super().__init__(attributes["time_step"])
+        for name, value in attributes.items():
+            if name == "time_step":
+                continue
+            self.add_attribute(name)
+            self.set_value(name, value)
 
     def add_attribute(self, new_attr: str):
         """
