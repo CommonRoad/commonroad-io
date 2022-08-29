@@ -11,7 +11,8 @@
 - Support for Protobuf format
 - Predefined classes for specific states, point-mass model, kinematic single-track model, etc.
 - Function for computing shape group occupancy from state
-- Support for Kinematic Single-Track Model with One On-axle Trailer
+- Support for kinematic single-track model with one on-axle trailer
+- Two new lanelet types: parking and border
 
 ### Changed
 
