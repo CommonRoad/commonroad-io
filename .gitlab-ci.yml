@@ -64,6 +64,8 @@ validate_tutorials:
   stage: test
   script:
     - pip install -r ./requirements.txt
+    - pip install -e .[tests]
+    - pip install cvxpy
     - pip install jupyter
     - pip install pytest
     - pip install nbval
