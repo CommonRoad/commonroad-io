@@ -39,7 +39,9 @@ message LaneletTypeEnum {
         CROSSWALK = 12;
         INTERSTATE = 13;
         INTERSECTION = 14;
-        UNKNOWN = 15;
+        BORDER = 15;
+        PARKING = 16;
+        UNKNOWN = 17;
     }
 }
 
