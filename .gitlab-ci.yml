@@ -63,6 +63,7 @@ validate_tutorials:
   image: python:3.10
   stage: test
   script:
+    - pip install -r ./requirements.txt
     - pip install jupyter
     - pip install pytest
     - pip install nbval
