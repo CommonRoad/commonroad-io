@@ -65,6 +65,10 @@ build_doc:
   script:
     - pip install -r ./doc/requirements_doc.txt
     - cd doc && make html
+  artifacts :
+    paths :
+      - ./doc/build/
+    expose_as : 'Documentation'
 
 validate_tutorials:
   image: python:3.10
