@@ -2,13 +2,6 @@ import numpy as npy
 import warnings
 from typing import Union
 
-__author__ = "Christian Pek"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["BMW Group CAR@TUM"]
-__version__ = "2022.2"
-__maintainer__ = "Christian Pek"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Released"
 
 from commonroad import TWO_PI
 

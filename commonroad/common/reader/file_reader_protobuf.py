@@ -31,14 +31,6 @@ from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSignIDGe
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import InitialState, TraceState, CustomState, SpecificStateClasses
 
-__author__ = "Stefanie Manzinger, Sebastian Maierhofer"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles", "CAR@TUM"]
-__version__ = "2022.2"
-__maintainer__ = "Stefanie Manzinger, Sebastian Maierhofer"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Released"
-
 
 class ProtobufFileReader(FileReader):
     """

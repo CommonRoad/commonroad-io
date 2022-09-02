@@ -59,6 +59,13 @@ build_and_test_python_3_10:
   script:
     - *install-and-run
 
+build_doc:
+  image: python:3.10
+  stage: test
+  script:
+    - pip install -r ./doc/requirements_doc.txt
+    - cd doc && make html
+
 validate_tutorials:
   image: python:3.10
   stage: test
@@ -82,4 +89,18 @@ push_to_internal_pipy_registry:
     - pip install twine
     - python setup.py sdist bdist_wheel
     - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --skip-existing --repository-url https://gitlab.lrz.de/api/v4/projects/${CI_PROJECT_ID}/packages/pypi dist/*
+
+#push_to_external_test_pipy_registry:
+#  stage: deploy
+#  when: manual
+#  only:
+#    - master
+#  variables :
+#    TWINE_REPOSITORY_URL : "https://test.pypi.org/legacy/"
+#    TWINE_USERNAME : __token__
+#  script:
+#    - pip install twine
+#    - python setup.py sdist bdist_wheel
+#    - twine check dist/*
+#    - twine upload -p $TWINE_PASSWORD_TEST $CI_PROJECT_DIR/dist/*
 

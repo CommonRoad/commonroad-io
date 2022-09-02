@@ -23,14 +23,6 @@ from commonroad.scenario.scenario import ScenarioID
 from commonroad.scenario.state import TraceState, PMState, MBState, KSState, STState, PMInputState, InputState
 from commonroad.scenario.trajectory import Trajectory
 
-__author__ = "Murat Üste, Christina Miller, Moritz Klischat"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["BMW CAR@TUM"]
-__version__ = "2022.2"
-__maintainer__ = "Moritz Klischat"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Released"
-
 
 class SolutionException(Exception):
     """

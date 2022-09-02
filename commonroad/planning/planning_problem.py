@@ -6,15 +6,6 @@ from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import InitialState
 from commonroad.planning.goal import GoalRegion
 from commonroad.common.validity import is_natural_number
-
-__author__ = "Christina Miller"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2022.2"
-__maintainer__ = "Christina Miller"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Released"
-
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer

@@ -37,13 +37,6 @@ from commonroad.visualization.util import LineDataUnits, collect_center_line_col
     line_marking_to_linestyle, traffic_light_color_dict, get_tangent_angle, approximate_bounding_box_dyn_obstacles, \
     get_vehicle_direction_triangle
 
-__author__ = "Luis Gressenbuch"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = [""]
-__version__ = "2022.2"
-__maintainer__ = "Luis Gressenbuch"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Released"
 
 traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
 

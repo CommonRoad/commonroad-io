@@ -21,14 +21,6 @@ from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.traffic_sign import *
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 
-__author__ = "Stefanie Manzinger, Sebastian Maierhofer"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles", "CAR@TUM"]
-__version__ = "2022.2"
-__maintainer__ = "Stefanie Manzinger, Sebastian Maierhofer"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Released"
-
 
 def read_value_exact_or_interval(xml_node: ElementTree.Element)\
         -> Union[float, Interval]:

@@ -1,13 +1,4 @@
-__author__ = "Sebastian Maierhofer"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["CAR@TUM"]
-__version__ = "2022.2"
-__maintainer__ = "Sebastian Maierhofer"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Release"
-
 from typing import List, Set, Dict
-
 from commonroad.common.validity import *
 
 

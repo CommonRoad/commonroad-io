@@ -15,12 +15,6 @@ from commonroad.scenario.lanelet import Lanelet
 from commonroad.visualization import icons
 from commonroad.visualization.mp_renderer import MPRenderer
 
-__author__ = "Simon Sagmeister"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__version__ = "2022.2"
-__email__ = "simon.sagmeister@tum.de"
-__status__ = "Released"
-
 
 def parallel_lanelets(num_lanes, lanelet_width=4.0, lanelet_length=90.0) -> List[Lanelet]:
     """

@@ -4,17 +4,15 @@
    contain the root `toctree` directive.
 
 
-CommonRoad_io
+CommonRoad-io
 =============
 
-The CommonRoad_io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tools of the CommonRoad Framework.
-With CommonRoad_io, those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`__.
+The commonroad-io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tools of the CommonRoad Framework.
+With commonroad-io, those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`__.
 
-CommonRoad_io 2022.1 is compatible with CommonRoad scenarios of version 2020a and supports reading 2018b scenarios.
+commonroad-io 2022.1 is compatible with CommonRoad scenarios of version 2020a and supports reading 2018b scenarios.
 
-The software is written in Python and tested on Linux for the Python 3.7, 3.8, 3.9, and 3.10. The usage of the Anaconda_ Python distribution is strongly recommended.
-
-.. _Anaconda: http://www.anaconda.com/download/#download
+The software is written in Python and tested on Linux for the Python 3.7, 3.8, 3.9, and 3.10.
 
 Documentation
 =============
@@ -25,7 +23,7 @@ For getting started, we recommend our `tutorials <https://commonroad.in.tum.de/c
 
 Additional Tools
 ================
-Based on CommonRoad_io, we have developed a list of tools for implementing motion-planning algorithms:
+Based on commonroad-io, we have developed a list of tools for implementing motion-planning algorithms:
 
 .. seealso::
 
@@ -40,7 +38,7 @@ Based on CommonRoad_io, we have developed a list of tools for implementing motio
 Requirements
 ============
 
-The required dependencies for running CommonRoad_io are:
+The required dependencies for running commonroad-io are:
 
 - numpy>=1.13
 - scipy>=1.5.2
@@ -51,12 +49,12 @@ The required dependencies for running CommonRoad_io are:
 - Pillow>=7.0.0
 - iso3166>=1.0.1
 - rtree>=0.8.3
-
+- protobuf==3.20.1
 
 Installation
 ============
 
-CommonRoad_io can be installed with::
+commonroad-io can be installed with::
 
 	pip install commonroad-io
 
@@ -64,15 +62,42 @@ Alternatively, clone from our gitlab repository::
 
 	git clone https://gitlab.lrz.de/tum-cps/commonroad_io.git
 
-and add the folder commonroad_io to your Python environment.
+and add the folder commonroad-io to your Python environment.
 
 Changelog
 ============
-Compared to version 2021.4, the following features have been added or changed:
+Compared to version 2022.1, the following features have been added or changed:
 
-- Video creation with custom draw parameters
-- Obstacle icon with custom color
-- Remove support for Python 3.6
+Added
+-----
+
+- Function for getting lanelet orientation closest to a given position
+- Function for getting most likely lanelet given an obstacle state
+- Function for erasing lanelet network from scenario
+- Function for replacing lanelet network of a scenario with new one
+- Support for Protobuf format
+- Predefined classes for specific states, point-mass model, kinematic single-track model, etc.
+- Function for computing shape group occupancy from state
+- Support for kinematic single-track model with one on-axle trailer
+- Three new lanelet types: parking, border, and restricted
+- Function for matching string to lanelet type
+
+Changed
+-------
+
+- Move tests, tutorial, and documentation folder to root directory
+- State classes in separate Python file
+
+Removed
+-------
+- setter method for lanelet network in scenario class
+
+Fixed
+-----
+
+- Default constructor for ScenarioID produces invalid Benchmark ID
+- Changeable state list leads to inconsistent final time step of trajectory
+- Various small bug fixes
 
 A detailed overview about the changes in each version is provided in the `Changelog <https://gitlab.lrz.de/tum-cps/commonroad_io/-/blob/master/CHANGELOG.md>`__.
 

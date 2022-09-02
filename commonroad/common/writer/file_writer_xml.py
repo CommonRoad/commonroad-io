@@ -25,14 +25,6 @@ from commonroad.scenario.state import State
 
 from commonroad.common.writer.file_writer_interface import FileWriter, precision, OverwriteExistingFile
 
-__author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2022.2"
-__maintainer__ = "Sebastian Maierhofer"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Released"
-
 
 def float_to_str(f):
     """

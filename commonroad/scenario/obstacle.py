@@ -14,18 +14,7 @@ from commonroad.geometry.shape import Shape, \
     occupancy_shape_from_state, \
     shape_group_occupancy_shape_from_state
 from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
-
-__author__ = "Stefanie Manzinger, Christian Pek, Sebastian Maierhofer"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles, "
-               "BMW Group, KO-HAF"]
-__version__ = "2022.2"
-__maintainer__ = "Sebastian Maierhofer"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Released"
-
 from commonroad.scenario.state import TraceState, InitialState, State
-
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer

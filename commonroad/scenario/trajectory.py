@@ -1,17 +1,7 @@
 import warnings
 
 from commonroad.common.validity import (is_natural_number, is_positive)
-
-__author__ = "Stefanie Manzinger, Christian Pek"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2022.2"
-__maintainer__ = "Stefanie Manzinger, Christian Pek"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Released"
-
 from commonroad.scenario.state import *
-
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer

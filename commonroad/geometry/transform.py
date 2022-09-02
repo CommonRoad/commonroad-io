@@ -2,14 +2,6 @@ import numpy as np
 import math
 from typing import List, Union
 
-__author__ = "Christina Miller"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["BMW CAR@TUM"]
-__version__ = "2022.2"
-__maintainer__ = "Moritz Klischat"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Released"
-
 
 def translate_rotate(vertices: np.ndarray, translation: Union[np.array, List[float]], angle: Union[float, int])\
         -> np.ndarray:

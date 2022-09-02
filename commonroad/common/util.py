@@ -6,14 +6,6 @@ from typing import Tuple
 from commonroad.common import validity
 from commonroad.common.validity import *
 
-__author__ = "Stefanie Manzinger, Moritz Klischat, Xiao Wang"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2022.2"
-__maintainer__ = "Moritz Klischat"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Released"
-
 
 def interpolate_angle(x: Union[float, np.array], xp: np.array, fp: np.array, degrees=False):
     """

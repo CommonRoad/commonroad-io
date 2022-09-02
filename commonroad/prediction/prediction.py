@@ -9,16 +9,6 @@ from commonroad.common.validity import is_valid_orientation, is_real_number_vect
 from commonroad.geometry.shape import Shape, Rectangle, Circle, ShapeGroup, Polygon,\
     occupancy_shape_from_state, shape_group_occupancy_shape_from_state
 from commonroad.scenario.trajectory import Trajectory, State
-
-__author__ = "Stefanie Manzinger"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles",
-               "CAR@TUM"]
-__version__ = "2022.2"
-__maintainer__ = "Stefanie Manzinger"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Released"
-
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
