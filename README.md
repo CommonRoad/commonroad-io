@@ -106,8 +106,8 @@ A detailed overview about the changes in each version is provided in the Changel
 
 ## Authors
 Contribution (in alphabetic order by last name): Yannick Ballnath, Behtarin Ferdousi, Luis Gressenbuch, Moritz Klischat, 
-Markus Koschi, Sebastian Maierhofer, Stefanie Manzinger, Christina Miller, Christian Pek, Simon Sagmeister, 
-Moritz Untersperger, Murat Üste, Xiao Wang
+Markus Koschi, Sebastian Maierhofer, Stefanie Manzinger, Christina Miller, Christian Pek, Anna-Katharina Rettinger, 
+Simon Sagmeister, Moritz Untersperger, Murat Üste, Xiao Wang
 
 ## Credits
 We gratefully acknowledge partial financial support by

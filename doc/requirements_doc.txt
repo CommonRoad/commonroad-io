@@ -12,3 +12,4 @@ commonroad-vehicle-models>=2.0.0
 ipython>7.16.0
 sphinx>=2.2.1
 sphinx-autodoc-typehints>=1.11.0
+sphinx-rtd-theme>=1.0.0
