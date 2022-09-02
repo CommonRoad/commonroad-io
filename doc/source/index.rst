@@ -80,7 +80,6 @@ Added
 - Function for computing shape group occupancy from state
 - Support for kinematic single-track model with one on-axle trailer
 - Three new lanelet types: parking, border, and restricted
-- Function for matching string to lanelet type
 
 Changed
 -------
