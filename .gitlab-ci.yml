@@ -2,7 +2,6 @@ image: python
 
 stages:
 - style_check
-- style_check_merge_result
 - test
 - deploy
 
@@ -14,7 +13,7 @@ before_script:
 .install-and-run: &install-and-run
     - pip install tox coverage
     - pip install -r ./requirements.txt
-    - pip install -e .[tests]
+    - python setup.py install
     - coverage run tests/run_tests.py
     - coverage report -m || true
 
@@ -94,17 +93,13 @@ push_to_internal_pipy_registry:
     - python setup.py sdist bdist_wheel
     - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --skip-existing --repository-url https://gitlab.lrz.de/api/v4/projects/${CI_PROJECT_ID}/packages/pypi dist/*
 
-#push_to_external_test_pipy_registry:
+#push_to_external_pipy_test_registry:
 #  stage: deploy
 #  when: manual
 #  only:
 #    - master
-#  variables :
-#    TWINE_REPOSITORY_URL : "https://test.pypi.org/legacy/"
-#    TWINE_USERNAME : __token__
 #  script:
 #    - pip install twine
 #    - python setup.py sdist bdist_wheel
-#    - twine check dist/*
-#    - twine upload -p $TWINE_PASSWORD_TEST $CI_PROJECT_DIR/dist/*
-
+#    - twine upload -u $CR_PYPI_TEST_USERNAME -p $CR_PYPI_TEST_PASSWORD $CI_PROJECT_DIR/dist/*
+#
