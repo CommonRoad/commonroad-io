@@ -219,3 +219,5 @@ build/
 *spot_prediction.py
 /tests/test_params.json
 /tutorials/solution_PM2:JB1:USA_Lanker-1_1_T-1:2018b.xml
+
+/dist/

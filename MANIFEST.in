@@ -1,6 +1,5 @@
-include commonroad/xml_definition_files/XML_commonRoad_XSD.xsd
+include commonroad/scenario_definition/xml_definition_files/*.xsd
 include commonroad/visualization/traffic_signs/**/*.png
 include commonroad/visualization/traffic_signs/**/.png
-include commonroad/xml_definition_files/CommonRoadSolution_schema.xsd
 include commonroad/visualization/traffic_signs/*.png
 include commonroad/visualization/default_draw_params.json
