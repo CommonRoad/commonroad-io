@@ -103,3 +103,13 @@ push_to_external_pipy_test_registry:
     - python3 setup.py sdist bdist_wheel
     - twine upload -u $CR_PYPI_TEST_USERNAME -p $CR_PYPI_TEST_PASSWORD --repository-url https://test.pypi.org/legacy/ dist/*
 
+push_to_external_pipy_release_registry:
+  stage: deploy
+  when: manual
+  only:
+    - master
+  script:
+    - pip install twine
+    - python3 setup.py sdist bdist_wheel
+    - twine upload -u $CR_PYPI_RELEASE_USERNAME -p $CR_PYPI_RELEASE_PASSWORD dist/*
+
