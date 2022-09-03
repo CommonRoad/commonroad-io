@@ -59,8 +59,10 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'CommonRoad_io'
-copyright = '2022, Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Luis Gressenbuch, Anna-Katharina Rettinger'
-author = 'Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Luis Gressenbuch, Anna-Katharina Rettinger'
+copyright = '2022, Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Luis Gressenbuch, ' \
+            'Anna-Katharina Rettinger'
+author = 'Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Luis Gressenbuch, ' \
+         'Anna-Katharina Rettinger'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -168,7 +170,8 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'commonroad_io.tex', 'commonroad_io Documentation',
-     'Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Luis Gressenbuch, Anna-Katharina Rettinger', 'manual'),
+     'Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Luis Gressenbuch, '
+     'Anna-Katharina Rettinger', 'manual'),
 ]
 
 
