@@ -1,5 +1,34 @@
 # Changelog
 
+## [2022.2] - 2022-09-03
+
+### Added
+
+- Function for getting lanelet orientation closest to a given position
+- Function for getting most likely lanelet given an obstacle state
+- Function for erasing lanelet network from scenario
+- Function for replacing lanelet network of a scenario with new one
+- Support for Protobuf format
+- Predefined classes for specific states, point-mass model, kinematic single-track model, etc.
+- Function for computing shape group occupancy from state
+- Support for kinematic single-track model with one on-axle trailer
+- Three new lanelet types: parking, border, and restricted
+
+### Changed
+
+- Move tests, tutorial, and documentation folder to root directory
+- State classes in separate Python file
+
+### Removed
+- setter method for lanelet network in scenario class
+
+### Fixed
+
+- Default constructor for ScenarioID produces invalid Benchmark ID
+- Changeable state list leads to inconsistent final time step of trajectory
+- Various small bug fixes
+
+
 ## [2022.1] - 2022-04-05
 
 ### Added
@@ -15,7 +44,7 @@
 
 - Side-effect circle and rectangle init functions
 - Parsing solution files with old time format
-- Invalid lanelet occupancy compuation using buffered polygons
+- Invalid lanelet occupancy computation using buffered polygons
 - Various small bug fixes
 
 ## [2021.4] - 2021-12-21

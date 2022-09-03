@@ -2,7 +2,6 @@ image: python
 
 stages:
 - style_check
-- style_check_merge_result
 - test
 - deploy
 
@@ -14,15 +13,15 @@ before_script:
 .install-and-run: &install-and-run
     - pip install tox coverage
     - pip install -r ./requirements.txt
-    - pip install -e .[tests]
-    - coverage run commonroad/tests/run_tests.py
+    - python setup.py install
+    - coverage run tests/run_tests.py
     - coverage report -m || true
 
 style_checks:
   stage: style_check
   script:
     - pip install pycodestyle
-    - git  diff ${CI_COMMIT_BEFORE_SHA}...${CI_COMMIT_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff
+    - git  diff ${CI_COMMIT_BEFORE_SHA}...${CI_COMMIT_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff --exclude=./commonroad/scenario_definition/*
   except:
   - merge_requests
   allow_failure: true
@@ -31,7 +30,7 @@ style_check_merge_result:
   stage: style_check
   script:
     - pip install pycodestyle
-    - git  diff ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA}...${CI_MERGE_REQUEST_SOURCE_BRANCH_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff
+    - git  diff ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA}...${CI_MERGE_REQUEST_SOURCE_BRANCH_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff --exclude=./commonroad/scenario_definition/*
   only:
   - merge_requests
 
@@ -59,6 +58,29 @@ build_and_test_python_3_10:
   script:
     - *install-and-run
 
+build_doc:
+  image: python:3.10
+  stage: test
+  script:
+    - pip install -r ./doc/requirements_doc.txt
+    - cd doc && make html
+  artifacts :
+    paths :
+      - ./doc/build/
+    expose_as : 'Documentation'
+
+validate_tutorials:
+  image: python:3.10
+  stage: test
+  script:
+    - pip install -r ./requirements.txt
+    - pip install -e .[tests]
+    - pip install cvxpy
+    - pip install jupyter
+    - pip install pytest
+    - pip install nbval
+    - pytest --nbval-lax ./tutorials/
+
 push_to_internal_pipy_registry:
   # push the development version to the internal pipy registry https://gitlab.lrz.de/cps/commonroad-io/-/packages
   # before manually triggering the job, delete the previous package in case the version number didn't change
@@ -70,4 +92,14 @@ push_to_internal_pipy_registry:
     - pip install twine
     - python setup.py sdist bdist_wheel
     - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --skip-existing --repository-url https://gitlab.lrz.de/api/v4/projects/${CI_PROJECT_ID}/packages/pypi dist/*
+
+push_to_external_pipy_test_registry:
+  stage: deploy
+  when: manual
+  only:
+    - master
+  script:
+    - pip install twine
+    - python3 setup.py sdist bdist_wheel
+    - twine upload -u $CR_PYPI_TEST_USERNAME -p $CR_PYPI_TEST_PASSWORD --repository-url https://test.pypi.org/legacy/ dist/*
 

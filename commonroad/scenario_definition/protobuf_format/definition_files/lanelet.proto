@@ -1,0 +1,94 @@
+syntax = "proto2";
+
+package commonroad;
+
+import "util.proto";
+
+message LineMarkingEnum {
+    enum LineMarking {
+        DASHED = 0;
+        SOLID = 1;
+        BROAD_DASHED = 2;
+        BROAD_SOLID = 3;
+        UNKNOWN = 4;
+        NO_MARKING = 5;
+    }
+}
+
+message DrivingDirEnum {
+    enum DrivingDir {
+        SAME = 0;
+        OPPOSITE = 1;
+    }
+}
+
+message LaneletTypeEnum {
+    enum LaneletType {
+        URBAN = 0;
+        COUNTRY = 1;
+        HIGHWAY = 2;
+        DRIVE_WAY = 3;
+        MAIN_CARRIAGE_WAY = 4;
+        ACCESS_RAMP = 5;
+        EXIT_RAMP = 6;
+        SHOULDER = 7;
+        BUS_LANE = 8;
+        BUS_STOP = 9;
+        BICYCLE_LANE = 10;
+        SIDEWALK = 11;
+        CROSSWALK = 12;
+        INTERSTATE = 13;
+        INTERSECTION = 14;
+        BORDER = 15;
+        PARKING = 16;
+        RESTRICTED = 17;
+        UNKNOWN = 18;
+    }
+}
+
+message RoadUserEnum {
+    enum RoadUser {
+        VEHICLE = 0;
+        CAR = 1;
+        TRUCK = 2;
+        BUS = 3;
+        PRIORITY_VEHICLE = 4;
+        MOTORCYCLE = 5;
+        BICYCLE = 6;
+        PEDESTRIAN = 7;
+        TRAIN = 8;
+        TAXI = 9;
+    }
+}
+
+message Bound {
+    repeated Point points = 1;
+    optional LineMarkingEnum.LineMarking line_marking = 2;
+}
+
+message StopLine {
+    repeated Point points = 1;
+    required LineMarkingEnum.LineMarking line_marking = 2;
+    repeated uint32 traffic_sign_refs = 3;
+    repeated uint32 traffic_light_refs = 4;
+}
+
+message Lanelet {
+    required uint32 lanelet_id = 1;
+    required Bound left_bound = 2;
+    required Bound right_bound = 3;
+    repeated uint32 predecessors = 4;
+    repeated uint32 successors = 5;
+    optional uint32 adjacent_left = 6;
+    optional uint32 adjacent_right = 7;
+    optional DrivingDirEnum.DrivingDir adjacent_left_dir = 8;
+    optional DrivingDirEnum.DrivingDir adjacent_right_dir = 9;
+    optional StopLine stop_line = 10;
+    repeated LaneletTypeEnum.LaneletType lanelet_types = 11;
+    repeated RoadUserEnum.RoadUser user_one_way = 12;
+    repeated RoadUserEnum.RoadUser user_bidirectional = 13;
+    repeated uint32 traffic_sign_refs = 14;
+    repeated uint32 traffic_light_refs = 15;
+}
+
+

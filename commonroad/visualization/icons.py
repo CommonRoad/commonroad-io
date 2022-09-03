@@ -8,13 +8,6 @@ import math
 from commonroad.geometry.transform import rotate_translate
 from commonroad.scenario.obstacle import ObstacleType
 
-__author__ = "Simon Sagmeister"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__version__ = "2022.1"
-__maintainer__ = "Luis Gressenbuch"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Released"
-
 
 def _obstacle_icon_assignment():
     """Assign obstacle type to icon."""

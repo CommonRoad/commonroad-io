@@ -1,5 +1,6 @@
 import enum
 import warnings
+import math
 import numpy as np
 from typing import Union, Set, List, Optional, Tuple
 from abc import abstractmethod
@@ -9,19 +10,11 @@ from commonroad.geometry.shape import Shape, \
     Rectangle, \
     Circle, \
     Polygon, \
-    occupancy_shape_from_state
+    ShapeGroup, \
+    occupancy_shape_from_state, \
+    shape_group_occupancy_shape_from_state
 from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
-from commonroad.scenario.trajectory import State
-
-__author__ = "Stefanie Manzinger, Christian Pek, Sebastian Maierhofer"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles, "
-               "BMW Group, KO-HAF"]
-__version__ = "2022.1"
-__maintainer__ = "Sebastian Maierhofer"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Released"
-
+from commonroad.scenario.state import TraceState, InitialState, State
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
@@ -86,6 +79,36 @@ class SignalState:
         for (field, value) in kwargs.items():
             setattr(self, field, value)
 
+    def __eq__(self, other):
+        if not isinstance(other, SignalState):
+            warnings.warn(f"Inequality between SignalState {repr(self)} and different type {type(other)}")
+            return False
+
+        for attr in SignalState.__slots__:
+            value = None
+            value_other = None
+
+            has_attr = hasattr(self, attr)
+            if has_attr:
+                value = getattr(self, attr)
+
+            has_attr_other = hasattr(other, attr)
+            if has_attr_other:
+                value_other = getattr(other, attr)
+
+            if has_attr != has_attr_other or value != value_other:
+                return False
+
+        return True
+
+    def __hash__(self):
+        values = set()
+        for attr in SignalState.__slots__:
+            if hasattr(self, attr):
+                values.add(getattr(self, attr))
+
+        return hash(frozenset(values))
+
 
 class Obstacle(IDrawable):
     """ Superclass for dynamic and static obstacles holding common properties
@@ -93,7 +116,7 @@ class Obstacle(IDrawable):
 
     def __init__(self, obstacle_id: int, obstacle_role: ObstacleRole,
                  obstacle_type: ObstacleType, obstacle_shape: Shape,
-                 initial_state: State = None,
+                 initial_state: InitialState = None,
                  initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
                  initial_signal_state: Union[None, SignalState] = None,
@@ -114,11 +137,46 @@ class Obstacle(IDrawable):
         self.obstacle_role: ObstacleRole = obstacle_role
         self.obstacle_type: ObstacleType = obstacle_type
         self.obstacle_shape: Shape = obstacle_shape
-        self.initial_state: State = initial_state
+        self.initial_state: InitialState = initial_state
         self.initial_center_lanelet_ids: Union[None, Set[int]] = initial_center_lanelet_ids
         self.initial_shape_lanelet_ids: Union[None, Set[int]] = initial_shape_lanelet_ids
         self.initial_signal_state: Union[None, SignalState] = initial_signal_state
         self.signal_series: List[SignalState] = signal_series
+
+    def __eq__(self, other):
+        if not isinstance(other, Obstacle):
+            warnings.warn(f"Inequality between Obstacle {repr(self)} and different type {type(other)}")
+            return False
+
+        initial_center_lanelet_ids = list() if self._initial_center_lanelet_ids is None \
+            else list(self._initial_center_lanelet_ids)
+        initial_center_lanelet_ids_other = list() if other.initial_center_lanelet_ids is None \
+            else list(other.initial_center_lanelet_ids)
+
+        initial_shape_lanelet_ids = list() if self._initial_shape_lanelet_ids is None \
+            else list(self._initial_shape_lanelet_ids)
+        initial_shape_lanelet_ids_other = list() if other.initial_shape_lanelet_ids is None \
+            else list(other.initial_shape_lanelet_ids)
+
+        obstacle_eq = self._obstacle_id == other.obstacle_id and self._obstacle_role == other.obstacle_role and \
+            self._obstacle_type == other.obstacle_type and self._obstacle_shape == other.obstacle_shape and \
+            self._initial_state == other.initial_state and \
+            initial_center_lanelet_ids == initial_center_lanelet_ids_other and \
+            initial_shape_lanelet_ids == initial_shape_lanelet_ids_other and \
+            self._initial_signal_state == other.initial_signal_state and self._signal_series == other.signal_series
+
+        return obstacle_eq
+
+    def __hash__(self):
+        initial_center_lanelet_ids = None if self._initial_center_lanelet_ids is None \
+            else self._initial_center_lanelet_ids
+        initial_shape_lanelet_ids = None if self._initial_shape_lanelet_ids is None \
+            else self._initial_shape_lanelet_ids
+        signal_series = None if self._signal_series is None else self.signal_series
+
+        return hash((self._obstacle_id, self._obstacle_role, self._obstacle_type, self._obstacle_shape,
+                     self._initial_state, initial_center_lanelet_ids, initial_shape_lanelet_ids,
+                     self._initial_signal_state, signal_series))
 
     @property
     def obstacle_id(self) -> int:
@@ -181,14 +239,15 @@ class Obstacle(IDrawable):
             warnings.warn('<Obstacle/obstacle_shape>: Obstacle shape is immutable.')
 
     @property
-    def initial_state(self) -> State:
+    def initial_state(self) -> InitialState:
         """ Initial state of the obstacle, e.g., obtained through sensor measurements."""
         return self._initial_state
 
     @initial_state.setter
-    def initial_state(self, initial_state: State):
-        assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of wrong type. ' \
-                                                 'Expected types: %s. Got type: %s.' % (State, type(initial_state))
+    def initial_state(self, initial_state: InitialState):
+        assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of ' \
+                                                      'wrong type. Expected types: %s. Got type: %s.' \
+                                                      % (State, type(initial_state))
         self._initial_state = initial_state
         self._initial_occupancy_shape = occupancy_shape_from_state(self._obstacle_shape, initial_state)
 
@@ -237,10 +296,7 @@ class Obstacle(IDrawable):
                                                               'argument initial_signal_state of wrong ' \
                                                               'type. Expected types: %s, %s. Got type: %s.' \
                                                               % (SignalState, type(None), type(initial_signal_state))
-        if not hasattr(self, '_initial_signal_state'):
-            self._initial_signal_state = initial_signal_state
-        else:
-            warnings.warn('<Obstacle/initial_signal_state>: Initial obstacle signal state is immutable.')
+        self._initial_signal_state = initial_signal_state
 
     @property
     def signal_series(self) -> List[SignalState]:
@@ -253,17 +309,14 @@ class Obstacle(IDrawable):
                                                               'argument initial_signal_state of wrong ' \
                                                               'type. Expected types: %s, %s. Got type: %s.' \
                                                               % (list, type(None), type(signal_series))
-        if not hasattr(self, '_signal_series'):
-            self._signal_series = signal_series
-        else:
-            warnings.warn('<Obstacle/signal_series>: Obstacle signal series is immutable.')
+        self._signal_series = signal_series
 
     @abstractmethod
     def occupancy_at_time(self, time_step: int) -> Union[None, Occupancy]:
         pass
 
     @abstractmethod
-    def state_at_time(self, time_step: int) -> Union[None, State]:
+    def state_at_time(self, time_step: int) -> Union[None, TraceState]:
         pass
 
     @abstractmethod
@@ -293,7 +346,8 @@ class StaticObstacle(Obstacle):
     """ Class representing static obstacles as defined in CommonRoad."""
 
     def __init__(self, obstacle_id: int, obstacle_type: ObstacleType,
-                 obstacle_shape: Shape, initial_state: State, initial_center_lanelet_ids: Union[None, Set[int]] = None,
+                 obstacle_shape: Shape, initial_state: InitialState,
+                 initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
                  initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None):
         """
@@ -311,6 +365,16 @@ class StaticObstacle(Obstacle):
                           initial_center_lanelet_ids=initial_center_lanelet_ids,
                           initial_shape_lanelet_ids=initial_shape_lanelet_ids,
                           initial_signal_state=initial_signal_state, signal_series=signal_series)
+
+    def __eq__(self, other):
+        if not isinstance(other, StaticObstacle):
+            warnings.warn(f"Inequality between StaticObstacle {repr(self)} and different type {type(other)}")
+            return False
+
+        return Obstacle.__eq__(self, other)
+
+    def __hash__(self):
+        return Obstacle.__hash__(self)
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """ First translates the static obstacle, then rotates the static obstacle around the origin.
@@ -335,7 +399,7 @@ class StaticObstacle(Obstacle):
         """
         return Occupancy(time_step=time_step, shape=self._initial_occupancy_shape)
 
-    def state_at_time(self, time_step: int) -> State:
+    def state_at_time(self, time_step: int) -> TraceState:
         """
         Returns the state the obstacle at a specific time step.
 
@@ -363,11 +427,12 @@ class DynamicObstacle(Obstacle):
     """
 
     def __init__(self, obstacle_id: int, obstacle_type: ObstacleType,
-                 obstacle_shape: Shape, initial_state: State,
+                 obstacle_shape: Shape, initial_state: TraceState,
                  prediction: Union[None, Prediction, TrajectoryPrediction, SetBasedPrediction] = None,
                  initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
-                 initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None):
+                 initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None,
+                 **kwargs):
         """
             :param obstacle_id: unique ID of the obstacle
             :param obstacle_type: type of obstacle (e.g. PARKED_VEHICLE)
@@ -378,13 +443,43 @@ class DynamicObstacle(Obstacle):
             :param initial_shape_lanelet_ids: initial IDs of lanelets the obstacle shape is on
             :param initial_signal_state: initial signal state of static obstacle
             :param signal_series: list of signal states over time
+            :param wheelbase: list of wheelbase lengths
         """
+        for (field, value) in kwargs.items():
+            setattr(self, field, value)
         Obstacle.__init__(self, obstacle_id=obstacle_id, obstacle_role=ObstacleRole.DYNAMIC,
                           obstacle_type=obstacle_type, obstacle_shape=obstacle_shape, initial_state=initial_state,
                           initial_center_lanelet_ids=initial_center_lanelet_ids,
                           initial_shape_lanelet_ids=initial_shape_lanelet_ids,
                           initial_signal_state=initial_signal_state, signal_series=signal_series)
         self.prediction: Prediction = prediction
+
+    def __eq__(self, other):
+        if not isinstance(other, DynamicObstacle):
+            warnings.warn(f"Inequality between DynamicObstacle {repr(self)} and different type {type(other)}")
+            return False
+
+        return self._prediction == other.prediction and Obstacle.__eq__(self, other)
+
+    def __hash__(self):
+        return hash((self._prediction, Obstacle.__hash__(self)))
+
+    @property
+    def initial_state(self) -> State:
+        """ Initial state of the obstacle, e.g., obtained through sensor measurements."""
+        return self._initial_state
+
+    @initial_state.setter
+    def initial_state(self, initial_state: State):
+        assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of wrong type. ' \
+                                                 'Expected types: %s. Got type: %s.' % (State, type(initial_state))
+        self._initial_state = initial_state
+        self._initial_occupancy_shape = occupancy_shape_from_state(self._obstacle_shape, initial_state)
+        if not hasattr(self, 'wheelbase_lengths'):
+            return
+        shapes = self.obstacle_shape.shapes
+        self._initial_occupancy_shape = shape_group_occupancy_shape_from_state(shapes, initial_state,
+                                                                               self.wheelbase_lengths)
 
     @property
     def prediction(self) -> Union[Prediction, TrajectoryPrediction, SetBasedPrediction, None]:
@@ -413,7 +508,7 @@ class DynamicObstacle(Obstacle):
             occupancy = self._prediction.occupancy_at_time_step(time_step)
         return occupancy
 
-    def state_at_time(self, time_step: int) -> Union[None, State]:
+    def state_at_time(self, time_step: int) -> Union[None, TraceState]:
         """
         Returns the predicted state of the obstacle at a specific time step.
 
@@ -478,6 +573,18 @@ class PhantomObstacle(IDrawable):
         self.prediction: SetBasedPrediction = prediction
         self.obstacle_role: ObstacleRole = ObstacleRole.Phantom
 
+    def __eq__(self, other):
+        if not isinstance(other, PhantomObstacle):
+            warnings.warn(f"Inequality between PhantomObstacle {repr(self)} and different type {type(other)}")
+            return False
+
+        obstacle_eq = self.obstacle_id == other.obstacle_id and self.prediction == other.prediction
+
+        return obstacle_eq
+
+    def __hash__(self):
+        return hash((self.obstacle_id, self._prediction))
+
     @property
     def prediction(self) -> Union[SetBasedPrediction, None]:
         """ Prediction describing the movement of the dynamic obstacle over time."""
@@ -521,7 +628,7 @@ class PhantomObstacle(IDrawable):
         return occupancy
 
     @staticmethod
-    def state_at_time() -> Union[None, State]:
+    def state_at_time() -> Union[None, TraceState]:
         """
         Returns the predicted state of the obstacle at a specific time step.
 
@@ -570,6 +677,19 @@ class EnvironmentObstacle(IDrawable):
         self.obstacle_role: ObstacleRole = ObstacleRole.ENVIRONMENT
         self.obstacle_type: ObstacleType = obstacle_type
         self.obstacle_shape: Shape = obstacle_shape
+
+    def __eq__(self, other):
+        if not isinstance(other, EnvironmentObstacle):
+            warnings.warn(f"Inequality between EnvironmentObstacle {repr(self)} and different type {type(other)}")
+            return False
+
+        obstacle_eq = self._obstacle_id == other.obstacle_id and self._obstacle_role == other.obstacle_role and \
+            self._obstacle_type == other.obstacle_type and self._obstacle_shape == other.obstacle_shape
+
+        return obstacle_eq
+
+    def __hash__(self):
+        return hash((self._obstacle_id, self._obstacle_role, self._obstacle_type, self._obstacle_shape))
 
     @property
     def obstacle_id(self) -> int:

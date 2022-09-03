@@ -18,20 +18,13 @@ from commonroad.scenario.lanelet import Lanelet
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.obstacle import ObstacleRole
 from commonroad.scenario.obstacle import ObstacleType
-from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, Obstacle, State, \
+from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, Obstacle, \
     PhantomObstacle
+from commonroad.scenario.state import TraceState
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
-
-__author__ = "Stefanie Manzinger, Moritz Klischat, Sebastian Maierhofer"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2022.1"
-__maintainer__ = "Sebastian Maierhofer"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Released"
 
 
 @enum.unique
@@ -127,9 +120,17 @@ class Time:
     def hours(self) -> int:
         return self._hours
 
+    @hours.setter
+    def hours(self, hours: int):
+        self._hours = hours
+
     @property
     def minutes(self) -> int:
         return self._minutes
+
+    @minutes.setter
+    def minutes(self, minutes: int):
+        self._minutes = minutes
 
 
 class GeoTransformation:
@@ -241,17 +242,33 @@ class Environment:
     def time(self) -> Time:
         return self._time
 
+    @time.setter
+    def time(self, time: Time):
+        self._time = time
+
     @property
     def time_of_day(self) -> TimeOfDay:
         return self._time_of_day
+
+    @time_of_day.setter
+    def time_of_day(self, time_of_day: TimeOfDay):
+        self._time_of_day = time_of_day
 
     @property
     def weather(self) -> Weather:
         return self._weather
 
+    @weather.setter
+    def weather(self, weather: Weather):
+        self._weather = weather
+
     @property
     def underground(self) -> Underground:
         return self._underground
+
+    @underground.setter
+    def underground(self, underground: Underground):
+        self._underground = underground
 
 
 class Location:
@@ -292,24 +309,48 @@ class Location:
     def geo_name_id(self) -> int:
         return self._geo_name_id
 
+    @geo_name_id.setter
+    def geo_name_id(self, geo_name_id: int):
+        self._geo_name_id = geo_name_id
+
     @property
     def gps_latitude(self) -> float:
         return self._gps_latitude
+
+    @gps_latitude.setter
+    def gps_latitude(self, gps_latitude: float):
+        self._gps_latitude = gps_latitude
 
     @property
     def gps_longitude(self) -> float:
         return self._gps_longitude
 
+    @gps_longitude.setter
+    def gps_longitude(self, gps_longitude: float):
+        self._gps_longitude = gps_longitude
+
     @property
     def geo_transformation(self) -> GeoTransformation:
         return self._geo_transformation
+
+    @geo_transformation.setter
+    def geo_transformation(self, geo_transformation: GeoTransformation):
+        self._geo_transformation = geo_transformation
 
     @property
     def environment(self) -> Environment:
         return self._environment
 
+    @environment.setter
+    def environment(self, environment: Environment):
+        self._environment = environment
+
 
 class ScenarioID:
+    benchmark_id_pattern = re.compile(r"(?P<cooperative>C-)?(?P<country_id>[A-Z]{3})_(?P<map_name>[a-zA-Z0-9]+)-("
+                                      r"?P<map_id>[1-9][0-9]*)(_(?P<configuration_id>[1-9][0-9]*)(_("
+                                      r"?P<prediction_type>[STPI])(?P<prediction_ids>(-([1-9][0-9]*))+))?)?")
+
     def __init__(self, cooperative: bool = False, country_id: str = "ZAM", map_name: str = "Test", map_id: int = 1,
                  configuration_id: Union[None, int] = None, obstacle_behavior: Union[None, str] = None,
                  prediction_id: Union[None, int, List[int]] = None, scenario_version: str = SCENARIO_VERSION):
@@ -328,37 +369,79 @@ class ScenarioID:
         :param scenario_version: scenario version identifier (e.g. 2020a)
         """
         assert scenario_version in SUPPORTED_COMMONROAD_VERSIONS, 'Scenario_version {} not supported.'.format(
-            scenario_version)
+                scenario_version)
         self.scenario_version: str = scenario_version
         self.cooperative: bool = cooperative
         self._country_id = None
+        self._map_name = None
         self.country_id: str = country_id
-        self.map_name: str = map_name
+        self.map_name = map_name
         self.map_id: int = map_id
-        self.configuration_id: Union[None, int] = configuration_id
+        is_map = configuration_id is None and obstacle_behavior is None and prediction_id is None
+        has_prediction = obstacle_behavior is not None or prediction_id is not None
+
+        # Obstacle behavior has to be defined if a prediction id is given. We can't recover from this!
+        # prediction id is not None => obstacle_behavior is not None
+        assert prediction_id is None or obstacle_behavior is not None, "Prediction id was given, but obstacle " \
+                                                                       "behavior undefined!"
+        if not is_map:
+            if has_prediction:
+                prediction_id = prediction_id or 1
+            configuration_id = configuration_id or 1
         self.obstacle_behavior: Union[None, str] = obstacle_behavior
+        self.configuration_id: Union[None, int] = configuration_id
         self.prediction_id: Union[None, int, List[int]] = prediction_id
 
+        # Validate object
+        assert self.obstacle_behavior in [None, "S", "T", "P",
+                                          "I"], f"Unsupported prediction type '{obstacle_behavior}'! " \
+                                                f"Available prediction types: S, T, P, I"
+        assert self.map_id > 0, f"Map id {configuration_id} <= 0!"
+        assert is_map or self.configuration_id > 0, f"Configuration id {configuration_id} <= 0!"
+        prediction_id = prediction_id if isinstance(prediction_id, list) else [prediction_id]
+        assert not has_prediction or all(p > 0 for p in prediction_id), f"Prediction id {configuration_id} <= 0!"
+
+    def __eq__(self, other):
+        if not isinstance(other, ScenarioID):
+            warnings.warn(f"Inequality between ScenarioID {repr(self)} and different type {type(other)}")
+            return False
+
+        id_eq = self.cooperative == other.cooperative and self.country_id == other.country_id and \
+            self.map_name == other.map_name and self.map_id == other.map_id and \
+            self.configuration_id == other.configuration_id and self.obstacle_behavior == other.obstacle_behavior and \
+            self.prediction_id == other.prediction_id and self.scenario_version == other.scenario_version
+
+        return id_eq
+
+    def __hash__(self):
+        return hash((self.cooperative, self.country_id, self.map_name, self.map_id, self.configuration_id,
+                     self.obstacle_behavior, self.prediction_id, self.scenario_version))
+
     def __str__(self):
-        scenario_id = ""
-        if self.cooperative is True:
-            scenario_id += "C-"
-        if self.country_id is not None:
-            scenario_id += self.country_id + "_"
-        if self.map_name is not None:
-            scenario_id += self.map_name + "-"
-        if self.map_id is not None:
-            scenario_id += str(self.map_id)
-        if self.configuration_id is not None:
-            scenario_id += "_" + str(self.configuration_id)
         if self.obstacle_behavior is not None:
-            scenario_id += "_" + self.obstacle_behavior + "-"
-        if self.prediction_id is not None:
-            if type(self.prediction_id) == list:
-                scenario_id += "-".join([str(i) for i in self.prediction_id])
-            else:
-                scenario_id += str(self.prediction_id)
+            prediction_id = self.prediction_id
+            if not isinstance(self.prediction_id, list):
+                prediction_id = [prediction_id]
+            prediction = "-".join([self.obstacle_behavior] + [str(s) for s in prediction_id])
+        else:
+            prediction = None
+        map_ = self.map_name if self.map_id is None else f"{self.map_name}-{self.map_id}"
+        parts = [self.country_id, map_, self.configuration_id, prediction]
+        scenario_id = "_".join([str(p) for p in parts if p is not None])
+        if self.cooperative is True:
+            scenario_id = "C-" + scenario_id
+
         return scenario_id
+
+    @property
+    def map_name(self):
+        return self._map_name
+
+    @map_name.setter
+    def map_name(self, map_name: str):
+        pattern = "[^a-zA-Z0-9]"
+        cleaned_map_name = re.sub(pattern, "", map_name)
+        self._map_name = cleaned_map_name
 
     @property
     def country_id(self):
@@ -393,38 +476,28 @@ class ScenarioID:
         :param scenario_version: scenario format version (e.g. 2020a)
         :return:
         """
-        if not (benchmark_id.count('_') in (1, 2, 3) and benchmark_id.count('-') in (1, 2, 3, 4)):
+        match = ScenarioID.benchmark_id_pattern.fullmatch(benchmark_id)
+        if match is None:
             warnings.warn('Not a valid scenario ID: ' + benchmark_id)
-            return ScenarioID(None, None, benchmark_id, 0, None, None, None)
+            return ScenarioID(cooperative=False, map_name=benchmark_id, map_id=1)
 
         # extract sub IDs from string
-        if benchmark_id[0:2] == 'C-':
-            cooperative = True
-            benchmark_id = benchmark_id[2:]
-        else:
-            cooperative = False
+        cooperative = match["cooperative"] is not None
 
-        sub_ids = re.split('_|-', benchmark_id)
-        country_id, map_name, map_id = sub_ids[:3]
-        map_id = int(map_id)
+        country_id = match["country_id"]
+        map_name = match["map_name"]
+        map_id = int(match["map_id"])
 
-        configuration_id = prediction_type = prediction_id = None
-        if len(sub_ids) > 3:
-            configuration_id = int(sub_ids[3])
-        if len(sub_ids) > 4:
-            assert sub_ids[4] in ('S', 'T', 'I'), "prediction type must be one of (S, T, I) but is {}".format(
-                    sub_ids[4])
-            prediction_type = sub_ids[4]
-            if len(sub_ids) == 6:
-                prediction_id = int(sub_ids[5])
-            else:
-                prediction_id = [int(s) for s in sub_ids[5:]]
+        configuration_id = int(match["configuration_id"]) if match["configuration_id"] is not None else None
+        prediction_type = match["prediction_type"]
+        prediction_id = match["prediction_ids"]
+        if prediction_id is not None:
+            prediction_id = [int(pid) for pid in prediction_id.split("-")[1:]]
+            if len(prediction_id) == 1:
+                prediction_id = prediction_id[0]
 
         return ScenarioID(cooperative, country_id, map_name, map_id, configuration_id, prediction_type, prediction_id,
                           scenario_version)
-
-    def __eq__(self, other: 'ScenarioID'):
-        return str(self) == str(other) and self.scenario_version == other.scenario_version
 
 
 class Scenario(IDrawable):
@@ -448,7 +521,7 @@ class Scenario(IDrawable):
         self.dt: float = dt
         assert isinstance(scenario_id, ScenarioID)
         self.scenario_id = scenario_id
-        self.lanelet_network: LaneletNetwork = LaneletNetwork()
+        self._lanelet_network: LaneletNetwork = LaneletNetwork()
 
         self._static_obstacles: Dict[int, StaticObstacle] = defaultdict()
         self._dynamic_obstacles: Dict[int, DynamicObstacle] = defaultdict()
@@ -466,6 +539,26 @@ class Scenario(IDrawable):
         self.source = source
         self.location = location
 
+    def __eq__(self, other):
+        if not isinstance(other, Scenario):
+            warnings.warn(f"Inequality between Scenario {repr(self)} and different type {type(other)}")
+            return False
+
+        scenario_eq = str(self.dt) == str(other.dt) and self.scenario_id == other.scenario_id and \
+            self.lanelet_network == other.lanelet_network and self.static_obstacles == other.static_obstacles and \
+            self.dynamic_obstacles == other.dynamic_obstacles and \
+            self.environment_obstacle == other.environment_obstacle and \
+            self.phantom_obstacle == other.phantom_obstacle and self.author == other.author and \
+            self.tags == other.tags and self.affiliation == other.affiliation and self.source == other.source and \
+            self.location == other.location
+
+        return scenario_eq
+
+    def __hash__(self):
+        return hash((str(self.dt), self.scenario_id, self.lanelet_network, self.static_obstacles,
+                     self.dynamic_obstacles, self.environment_obstacle, self.phantom_obstacle, self.author, self.tags,
+                     self.affiliation, self.source, self.location))
+
     @property
     def dt(self) -> float:
         """ Global time step size of the time-discrete scenario."""
@@ -481,13 +574,6 @@ class Scenario(IDrawable):
     def lanelet_network(self) -> LaneletNetwork:
         """ Road network composed of lanelets."""
         return self._lanelet_network
-
-    @lanelet_network.setter
-    def lanelet_network(self, lanelet_network: LaneletNetwork):
-        assert isinstance(lanelet_network, LaneletNetwork), '<Scenario/lanelet_network> argument "lanelet_network"' \
-                                                            ' of wrong type. Expected type: %s. Got type: %s.' % (
-                                                            LaneletNetwork, type(lanelet_network))
-        self._lanelet_network = lanelet_network
 
     @property
     def dynamic_obstacles(self) -> List[DynamicObstacle]:
@@ -547,7 +633,9 @@ class Scenario(IDrawable):
                 self._mark_object_id_as_used(traffic_light.traffic_light_id)
             for intersection in scenario_object.intersections:
                 self._mark_object_id_as_used(intersection.intersection_id)
-            self.lanelet_network: LaneletNetwork = scenario_object
+                for inc in intersection.incomings:
+                    self._mark_object_id_as_used(inc.incoming_id)
+            self._lanelet_network: LaneletNetwork = scenario_object
         elif isinstance(scenario_object, Lanelet):
             self._mark_object_id_as_used(scenario_object.lanelet_id)
             self._lanelet_network.add_lanelet(scenario_object)
@@ -680,6 +768,29 @@ class Scenario(IDrawable):
             warnings.warn('<Scenario/remove_obstacle> Cannot remove obstacle with ID %s, '
                           'since it is not contained in the scenario.' % obstacle.obstacle_id)
 
+    def erase_lanelet_network(self):
+        """
+        Removes all elements from lanelet network.
+        """
+        for lanelet in self.lanelet_network.lanelets:
+            self.remove_lanelet(lanelet)  # also removes referenced objects
+        for traffic_sign in self.lanelet_network.traffic_signs:
+            self.remove_traffic_sign(traffic_sign)
+        for traffic_light in self.lanelet_network.traffic_lights:
+            self.remove_traffic_light(traffic_light)
+        for intersection in self.lanelet_network.intersections:
+            self.remove_intersection(intersection)
+        self._lanelet_network = LaneletNetwork()
+
+    def replace_lanelet_network(self, lanelet_network: LaneletNetwork):
+        """
+        Removes lanelet network with all its elements from the scenario and replaces it with new lanelet network.
+
+        :param lanelet_network: new lanelet network
+        """
+        self.erase_lanelet_network()
+        self.add_objects(lanelet_network)
+
     def remove_hanging_lanelet_members(self, remove_lanelet: Union[List[Lanelet], Lanelet]):
         """
         After removing lanelet(s) from remove_lanelet, this function removes all traffic lights and signs that are
@@ -715,6 +826,7 @@ class Scenario(IDrawable):
         Removes a lanelet or a list of lanelets from a scenario.
 
         :param lanelet: Lanelet which should be removed from scenario.
+        :param referenced_elements: Boolean indicating whether references of lanelet should also be removed.
         """
         assert isinstance(lanelet, (list, Lanelet)), '<Scenario/remove_lanelet> argument "lanelet" of wrong type. ' \
                                                      'Expected type: %s. Got type: %s.' % (Lanelet, type(lanelet))
@@ -921,7 +1033,7 @@ class Scenario(IDrawable):
 
         return obstacle_list
 
-    def obstacle_states_at_time_step(self, time_step: int) -> Dict[int, State]:
+    def obstacle_states_at_time_step(self, time_step: int) -> Dict[int, TraceState]:
         """
         Returns all obstacle states which exist at a provided time step.
 
@@ -1032,9 +1144,8 @@ class Scenario(IDrawable):
             :param angle: rotation angle in radian (counter-clockwise)
         """
         assert is_real_number_vector(translation, 2), '<Scenario/translate_rotate>: argument "translation" is ' \
-                                                      'not a vector of real numbers of length 2. translation = {' \
-                                                      '}.'.format(
-            translation)
+                                                      'not a vector of real numbers of length 2. ' \
+                                                      'translation = {}.'.format(translation)
         assert is_valid_orientation(angle), '<Scenario/translate_rotate>: argument "orientation" is not valid. ' \
                                             'angle = {}.'.format(angle)
 

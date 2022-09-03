@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package commonroad;
+
+message Incoming {
+    required uint32 incoming_id = 1;
+    repeated uint32 incoming_lanelets = 2;
+    repeated uint32 successors_right = 3;
+    repeated uint32 successors_straight = 4;
+    repeated uint32 successors_left = 5;
+    optional uint32 is_left_of = 6;
+}
+
+message Intersection {
+    required uint32 intersection_id = 1;
+    repeated Incoming incomings = 2;
+    repeated uint32 crossing_lanelets = 3;
+}

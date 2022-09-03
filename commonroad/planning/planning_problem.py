@@ -2,29 +2,32 @@ from typing import Union, List, Tuple, Dict, Optional
 import numpy as np
 import warnings
 
-from commonroad.scenario.trajectory import State, Trajectory
+from commonroad.scenario.trajectory import Trajectory
+from commonroad.scenario.state import InitialState
 from commonroad.planning.goal import GoalRegion
 from commonroad.common.validity import is_natural_number
-
-__author__ = "Christina Miller"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2022.1"
-__maintainer__ = "Christina Miller"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Released"
-
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
 
 
 class PlanningProblem(IDrawable):
-    def __init__(self, planning_problem_id: int, initial_state: State,
+    def __init__(self, planning_problem_id: int, initial_state: InitialState,
                  goal_region: GoalRegion):
         self.planning_problem_id = planning_problem_id
         self.initial_state = initial_state
         self.goal = goal_region
+
+    def __eq__(self, other):
+        if not isinstance(other, PlanningProblem):
+            warnings.warn(f"Inequality between PlanningProblem {repr(self)} and different type {type(other)}")
+            return False
+
+        return self.planning_problem_id == other.planning_problem_id and self.initial_state == other.initial_state and \
+            self.goal == other.goal
+
+    def __hash__(self):
+        return hash((self.planning_problem_id, self.initial_state, self.goal))
 
     @property
     def planning_problem_id(self) -> int:
@@ -42,15 +45,15 @@ class PlanningProblem(IDrawable):
             warnings.warn('<PlanningProblem/planning_problem_id> planning_problem_id is immutable')
 
     @property
-    def initial_state(self) -> State:
+    def initial_state(self) -> InitialState:
         """Initial state of the ego vehicle"""
         return self._initial_state
 
     @initial_state.setter
-    def initial_state(self, state: State):
+    def initial_state(self, state: InitialState):
         mandatory_fields = ['position', 'velocity', 'orientation', 'yaw_rate', 'slip_angle', 'time_step']
         for field in mandatory_fields:
-            if not hasattr(state, field):
+            if getattr(state, field) is None:
                 raise ValueError('<PlanningProblem/initial_state> fields [{}] are mandatory. '
                                  'No {} attribute found.'.format(', '.join(mandatory_fields), field))
         self._initial_state = state
@@ -106,8 +109,17 @@ class PlanningProblemSet(IDrawable):
 
         self._planning_problem_dict = {
                 planning_problem.planning_problem_id: planning_problem for
-                planning_problem in
-                                       planning_problem_list}
+                planning_problem in planning_problem_list}
+
+    def __eq__(self, other):
+        if not isinstance(other, PlanningProblemSet):
+            warnings.warn(f"Inequality between PlanningProblemSet {repr(self)} and different type {type(other)}")
+            return False
+
+        return self.planning_problem_dict.items() == other.planning_problem_dict.items()
+
+    def __hash__(self):
+        return hash(self.planning_problem_dict.items())
 
     @property
     def planning_problem_dict(self) -> Dict[int, PlanningProblem]:

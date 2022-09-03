@@ -1,0 +1,10 @@
+syntax = "proto2";
+
+package commonroad;
+
+import "obstacle.proto";
+
+message PhantomObstacle {
+    required uint32 obstacle_id = 1;
+    optional SetBasedPrediction prediction = 2;
+}
