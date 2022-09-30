@@ -691,7 +691,7 @@ class MPRenderer(IRenderer):
         draw_continuous = draw_params.by_callstack(call_stack, 'draw_continuous')
         z_order = draw_params.by_callstack(call_stack, 'z_order')
 
-        if time_begin == time_end:
+        if time_begin >= time_end:
             return
 
         traj_states = [obj.state_at_time_step(t) for t in range(time_begin, time_end) if
