@@ -1,4 +1,13 @@
 # CommonRoad
+[![Linux](https://svgshare.com/i/Zhy.svg)](https://svgshare.com/i/Zhy.svg)
+[![macOS](https://svgshare.com/i/ZjP.svg)](https://svgshare.com/i/ZjP.svg)
+[![Windows](https://svgshare.com/i/ZhY.svg)](https://svgshare.com/i/ZhY.svg)  
+[![PyPI pyversions](https://img.shields.io/pypi/pyversions/commonroad-io.svg)](https://pypi.python.org/pypi/commonroad-io/)  
+[![PyPI version fury.io](https://badge.fury.io/py/commonroad-io.svg)](https://pypi.python.org/pypi/commonroad-io/)
+[![PyPI download month](https://img.shields.io/pypi/dm/commonroad-io.svg?label=PyPI%20downloads)](https://pypi.python.org/pypi/commonroad-io/) 
+[![PyPI download week](https://img.shields.io/pypi/dw/commonroad-io.svg?label=PyPI%20downloads)](https://pypi.python.org/pypi/commonroad-io/)   
+[![PyPI license](https://img.shields.io/pypi/l/commonroad-io.svg)](https://pypi.python.org/pypi/commonroad-io/)
+[![Documentation Status](https://readthedocs.org/projects/commonroad-io/badge/?version=latest)](http://commonroad-io.readthedocs.io/?badge=latest) 
 
 
 Numerical experiments for motion planning of road vehicles require numerous ingredients: vehicle dynamics, 
