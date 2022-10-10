@@ -77,9 +77,9 @@ build_doc:
     expose_as : 'Documentation'
 
 validate_tutorials:
-  image: python:3.10
-  stage: test
-  script:
+  image : python:3.10
+  stage : test
+  script :
     - pip install -r ./requirements.txt
     - pip install -e .[tests]
     - pip install cvxpy
@@ -88,14 +88,30 @@ validate_tutorials:
     - pip install nbval
     - pytest --nbval-lax ./tutorials/
 
-push_to_internal_pipy_registry:
+pages :
+  # Push the latest documentation of the development branch to the GitLab Pages
+  # at https://cps.pages.gitlab.lrz.de/commonroad-io/
+  stage : deploy
+  script :
+    - pip install -r ./doc/requirements_doc.txt
+    - cd doc/source && sphinx-build -b html . ../../public
+  artifacts :
+    paths :
+      - public
+  environment :
+    name : Gitlab Pages
+    url : https://cps.pages.gitlab.lrz.de/commonroad-io/
+  only :
+    - develop
+
+push_to_internal_pipy_registry :
   # push the development version to the internal pipy registry https://gitlab.lrz.de/cps/commonroad-io/-/packages
   # before manually triggering the job, delete the previous package in case the version number didn't change
-  stage: deploy
-  when: manual
-  only:
+  stage : deploy
+  when : manual
+  only :
     - develop
-  script:
+  script :
     - pip install twine
     - python setup.py sdist bdist_wheel
     - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --skip-existing --repository-url https://gitlab.lrz.de/api/v4/projects/${CI_PROJECT_ID}/packages/pypi dist/*
