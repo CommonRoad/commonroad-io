@@ -69,8 +69,9 @@ build_doc:
   image: python:3.10
   stage: test
   script:
+    - apt install -y graphviz
     - pip install -r ./doc/requirements_doc.txt
-    - cd doc && make html
+    - cd doc && make html SPHINXOPTS="-W"
   artifacts :
     paths :
       - ./doc/build/
@@ -93,6 +94,7 @@ pages :
   # at https://cps.pages.gitlab.lrz.de/commonroad-io/
   stage : deploy
   script :
+    - apt install -y graphviz
     - pip install -r ./doc/requirements_doc.txt
     - cd doc/source && sphinx-build -b html . ../../public
   artifacts :
