@@ -11,7 +11,7 @@ import commonroad.geometry.transform
 from commonroad.common.util import Interval, AngleInterval, make_valid_orientation
 from commonroad.common.validity import is_real_number_vector, is_real_number, is_valid_orientation, ValidTypes
 from commonroad.geometry.shape import Shape
-from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.draw_params import OptionalSpecificOrAllDrawParams, StateParams
 from commonroad.visualization.renderer import IRenderer
 
 FloatExactOrInterval = Union[float, Interval]
@@ -190,8 +190,7 @@ class State(abc.ABC):
             else:
                 setattr(self, field, 0.)
 
-    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
-             call_stack: Optional[Tuple[str, ...]] = tuple()):
+    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[StateParams] = None):
         """
         Draws state.
 
@@ -199,7 +198,7 @@ class State(abc.ABC):
         :param draw_params: Params
         :param call_stack: Call stack
         """
-        renderer.draw_state(self, draw_params, call_stack)
+        renderer.draw_state(self, draw_params)
 
 
 @dataclass(eq=False)

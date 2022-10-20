@@ -1,6 +1,6 @@
 import re
 from collections import defaultdict
-from typing import Dict
+from typing import Dict, Tuple
 from xml.etree import ElementTree
 from abc import ABC
 

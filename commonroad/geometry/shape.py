@@ -1,5 +1,6 @@
-import warnings
 import abc
+import warnings
+from typing import List
 
 import numpy as np
 import math
@@ -7,15 +8,16 @@ from typing import List, Union, Optional, Tuple
 
 import shapely.geometry
 import shapely.affinity
+import shapely.geometry
 
 from commonroad.geometry.transform import translate_rotate, rotate_translate
 from commonroad.common.validity import is_real_number_vector, is_valid_orientation
 from commonroad.common.util import make_valid_orientation
-
-
+from commonroad.common.validity import is_valid_polyline, is_real_number, is_real_number_vector, is_valid_orientation
+from commonroad.geometry.transform import translate_rotate, rotate_translate
 from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
+from commonroad.visualization.draw_params import OptionalSpecificOrAllDrawParams, ShapeParams
 
 
 class Shape(IDrawable, metaclass=abc.ABCMeta):
@@ -202,9 +204,8 @@ class Rectangle(Shape):
         output += '\t orientation: {} \n'.format(self._orientation)
         return output
 
-    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
-             call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_rectangle(self.vertices, draw_params, call_stack)
+    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None):
+        renderer.draw_rectangle(self.vertices, draw_params)
 
 
 class Circle(Shape):
@@ -307,9 +308,8 @@ class Circle(Shape):
         output += '\t center: {} \n'.format(self._center)
         return output
 
-    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
-             call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_ellipse(self.center, self.radius, self.radius, draw_params, call_stack)
+    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None):
+        renderer.draw_ellipse(self.center, self.radius, self.radius, draw_params)
 
 
 class Polygon(Shape):
@@ -420,9 +420,8 @@ class Polygon(Shape):
         output += '\t center: {} \n'.format(self.center)
         return output
 
-    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
-             call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_polygon(self.vertices, draw_params, call_stack)
+    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None):
+        renderer.draw_polygon(self.vertices, draw_params)
 
 
 class ShapeGroup(Shape):
@@ -514,10 +513,9 @@ class ShapeGroup(Shape):
         output += '\t number of shapes: {} \n'.format(len(self._shapes))
         return output
 
-    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
-             call_stack: Optional[Tuple[str, ...]] = tuple()):
+    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None):
         for s in self._shapes:
-            s.draw(renderer, draw_params, call_stack)
+            s.draw(renderer, draw_params)
 
 
 def occupancy_shape_from_state(shape, state):

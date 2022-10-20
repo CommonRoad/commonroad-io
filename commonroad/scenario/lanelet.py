@@ -16,8 +16,17 @@ from commonroad.scenario.obstacle import Obstacle
 from commonroad.scenario.state import TraceState
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
 from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
+from commonroad.visualization.draw_params import OptionalSpecificOrAllDrawParams, LaneletNetworkParams
+
+
+__author__ = "Christian Pek, Sebastian Maierhofer"
+__copyright__ = "TUM Cyber-Physical Systems Group"
+__credits__ = ["BMW CAR@TUM"]
+__version__ = "2022.1"
+__maintainer__ = "Sebastian Maierhofer"
+__email__ = "commonroad@lists.lrz.de"
+__status__ = "released"
 
 
 class LineMarking(enum.Enum):
@@ -1697,6 +1706,5 @@ class LaneletNetwork(IDrawable):
         # return sorted list
         return [lanelets[i] for i in indices]
 
-    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
-             call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_lanelet_network(self, draw_params, call_stack)
+    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[LaneletNetworkParams] = None):
+        renderer.draw_lanelet_network(self, draw_params)
