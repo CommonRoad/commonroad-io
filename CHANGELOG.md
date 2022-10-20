@@ -1,5 +1,16 @@
 # Changelog
 
+## [202x] - tbd
+
+### Added
+
+- Drawing parameters as dataclasses (support for context help)
+- Documentation for drawing parameters
+
+### Removed
+
+- ParamServer and dictionary specification of drawing parameters
+
 ## [2022.2] - 2022-09-03
 
 ### Added

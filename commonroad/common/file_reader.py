@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from commonroad.common.file_writer import FileFormat
 from commonroad.common.reader.file_reader_protobuf import ProtobufFileReader
 from commonroad.common.reader.file_reader_xml import XMLFileReader

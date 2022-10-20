@@ -1,18 +1,20 @@
 import copy
 import unittest
 from typing import List
+
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import patches
 
 from commonroad.geometry.shape import Rectangle
 from commonroad.prediction.prediction import TrajectoryPrediction
+from commonroad.scenario.lanelet import Lanelet
 from commonroad.scenario.obstacle import ObstacleType, DynamicObstacle
 from commonroad.scenario.scenario import Scenario, ScenarioID
 from commonroad.scenario.state import KSState
 from commonroad.scenario.trajectory import Trajectory
-from commonroad.scenario.lanelet import Lanelet
 from commonroad.visualization import icons
+from commonroad.visualization.draw_params import MPDrawParams
 from commonroad.visualization.mp_renderer import MPRenderer
 
 
@@ -70,8 +72,11 @@ class TestIcons(unittest.TestCase):
             obs = DynamicObstacle(i, veh_type, shape, init_state, prediction)
             scn.add_objects(obs)
         rnd = MPRenderer()
-        scn.draw(rnd, {"time_begin": 1, "dynamic_obstacle": {"draw_icon": True}})
-        rnd.render()
+        draw_params = MPDrawParams()
+        draw_params.time_begin = 1
+        draw_params.dynamic_obstacle.draw_icon = True
+        scn.draw(rnd, draw_params)
+        rnd.render(show=True)
 
     def test_icons_for_execution(self):
         """Test if the icons return patches without raising an exception."""

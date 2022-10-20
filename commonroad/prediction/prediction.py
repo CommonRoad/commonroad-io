@@ -1,7 +1,7 @@
 import abc
 import math
 import warnings
-from typing import Union, List, Dict, Set, Optional, Tuple
+from typing import Union, List, Dict, Set, Optional
 import numpy as np
 
 from commonroad.common.util import Interval
@@ -10,8 +10,8 @@ from commonroad.geometry.shape import Shape, Rectangle, Circle, ShapeGroup, Poly
     occupancy_shape_from_state, shape_group_occupancy_shape_from_state
 from commonroad.scenario.trajectory import Trajectory, State
 from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
+from commonroad.visualization.draw_params import OccupancyParams
 
 
 class Occupancy(IDrawable):
@@ -72,18 +72,14 @@ class Occupancy(IDrawable):
                                          'argument "translation" is ' \
                                          'not a vector of real numbers of ' \
                                          'length 2.'
-        assert is_valid_orientation(
-                angle), '<Occupancy/translate_rotate>: argument "orientation" ' \
-                        'is ' \
-                        'not valid.'
+        assert is_valid_orientation(angle), '<Occupancy/translate_rotate>: argument "orientation" ' \
+                                            'is ' \
+                                            'not valid.'
 
         self._shape = self._shape.translate_rotate(translation, angle)
 
-    def draw(self, renderer: IRenderer,
-             draw_params: Union[ParamServer, dict, None] = None,
-             call_stack: Optional[Tuple[str, ...]] = tuple()):
-        call_stack = tuple(list(call_stack) + ['occupancy'])
-        self.shape.draw(renderer, draw_params, call_stack)
+    def draw(self, renderer: IRenderer, draw_params: Optional[OccupancyParams] = None):
+        self.shape.draw(renderer, draw_params.shape if draw_params is not None else None)
 
 
 class Prediction:

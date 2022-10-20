@@ -23,17 +23,16 @@ The :class:`.CommonRoadFileReader` reads the :class:`.Scenario` and the :class:`
 	import matplotlib.pyplot as plt
 
 	from commonroad.common.file_reader import CommonRoadFileReader
-	from commonroad.visualization.draw_dispatch_cr import draw_object
+	from commonroad.visualization.mp_renderer import MPRenderer
 
 	file_path = os.path.join(os.getcwd(), 'scenarios/NGSIM/Lankershim/USA_Lanker-1_1_T-1.xml')
 
 	scenario, planning_problem_set = CommonRoadFileReader(file_path).open()
 
-	plt.figure(figsize=(25, 10))
-	draw_object(scenario)
-	draw_object(planning_problem_set)
-	plt.gca().set_aspect('equal')
-	plt.show()
+	rnd = MPRenderer()
+	scenario.draw(rnd)
+    planning_problem_set.draw(rnd)
+    rnd.render(show=True)
 
 .. figure:: ../figures/USA_Lanker-1_1_T-1.png
    :align: center
@@ -45,13 +44,11 @@ To plot the scenario at another time index, draw parameters can be defined:
 
 .. code-block:: python
 
-	draw_parameters = {'time_begin': 10}
-
-	plt.figure(figsize=(25, 10))
-	draw_object(scenario, draw_params=draw_parameters)
-	draw_object(planning_problem_set)
-	plt.gca().set_aspect('equal')
-	plt.show()
+	rnd = MPRenderer()
+	rnd.draw_params.time_begin = 10
+	scenario.draw(rnd)
+    planning_problem_set.draw(rnd)
+    rnd.render(show=True)
 
 For more details on plotting options see :ref:`Visualization Manual <visualization-manual>`.
 

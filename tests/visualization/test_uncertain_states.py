@@ -7,27 +7,22 @@ import numpy as np
 
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.common.util import AngleInterval
-from commonroad.geometry.shape import Rectangle, \
-    occupancy_shape_from_state, \
-    Circle, \
-    Polygon
+from commonroad.geometry.shape import Rectangle, occupancy_shape_from_state, Circle, Polygon
 from commonroad.prediction.prediction import TrajectoryPrediction
-from commonroad.scenario.obstacle import DynamicObstacle, \
-    ObstacleType, \
-    StaticObstacle
+from commonroad.scenario.obstacle import DynamicObstacle, ObstacleType, StaticObstacle
 from commonroad.scenario.state import KSState, InitialState
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.visualization.mp_renderer import MPRenderer
-from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.util import approximate_bounding_box_dyn_obstacles
+from commonroad.visualization.draw_params import MPDrawParams
 
 
 class TestUncertainStates(unittest.TestCase):
 
     def setUp(self) -> None:
         super().setUp()
-        self.params = ParamServer()
-        self.params["occupancy"]["draw_occupancies"] = 1
+        self.params = MPDrawParams()
+        self.params["occupancy"]["draw_occupancies"] = True
         self.rnd = MPRenderer(self.params)
 
     def test_draw(self):
@@ -39,7 +34,7 @@ class TestUncertainStates(unittest.TestCase):
         f, ax = plt.subplots(1, 1, figsize=(20, 40))
         self.rnd.plot_limits = plot_limits
         self.rnd.ax = ax
-        scenario.draw(self.rnd)
+        scenario.draw(self.rnd, )
         self.rnd.render(show=True)
 
     def test_max_rotation(self):
@@ -77,7 +72,7 @@ class TestUncertainStates(unittest.TestCase):
                                           shape)
         dyn_obs = DynamicObstacle(0, ObstacleType.CAR, shape,
                                   uncertain_states[0], prediction)
-        dyn_obs.draw(self.rnd)
+        dyn_obs.draw(self.rnd, )
         self.rnd.render(show=True)
 
         # Certain position, uncertain orientation
@@ -91,7 +86,7 @@ class TestUncertainStates(unittest.TestCase):
                                           shape)
         dyn_obs = DynamicObstacle(0, ObstacleType.CAR, shape,
                                   uncertain_states[0], prediction)
-        dyn_obs.draw(self.rnd)
+        dyn_obs.draw(self.rnd, )
         self.rnd.render(show=True)
         self.rnd.clear()
 
@@ -104,7 +99,7 @@ class TestUncertainStates(unittest.TestCase):
     def _test_static_obstacle(self, shape):
         state = InitialState(position=Circle(2), orientation=0.25 * math.pi)
         stat_obs = StaticObstacle(0, ObstacleType.CAR, shape, state)
-        stat_obs.draw(self.rnd)
+        stat_obs.draw(self.rnd, )
         self.rnd.render(show=True)
         self.rnd.clear()
 
