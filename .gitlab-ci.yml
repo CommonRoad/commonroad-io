@@ -57,6 +57,12 @@ build_and_test_python_3_10:
   stage: test
   script:
     - *install-and-run
+
+build_and_test_python_3_11:
+  image: python:3.11
+  stage: test
+  script:
+    - *install-and-run
     - coverage xml
   coverage : '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts :
@@ -66,7 +72,7 @@ build_and_test_python_3_10:
         path : coverage.xml
 
 build_doc:
-  image: python:3.10
+  image: python:3.11
   stage: test
   script:
     - apt install -y graphviz
