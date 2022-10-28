@@ -33,7 +33,7 @@ With commonroad-io, those solutions can be written to xml-files for uploading th
 
 commonroad-io 2022.2 is compatible with CommonRoad scenarios in version 2020a and supports reading 2018b scenarios.
 
-The software is written in Python and tested on Linux for the Python 3.7, 3.8, 3.9, and 3.10.
+The software is written in Python and tested on Linux for the Python 3.7, 3.8, 3.9, 3.10, and 3.11.
 
 
 ## Documentation
