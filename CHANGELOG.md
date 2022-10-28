@@ -7,6 +7,10 @@
 - Drawing parameters as dataclasses (support for context help)
 - Documentation for drawing parameters
 
+### Changed
+
+- Name of position in lateral and longitudinal state
+
 ### Removed
 
 - ParamServer and dictionary specification of drawing parameters

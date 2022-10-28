@@ -3,7 +3,7 @@ import abc
 import copy
 import dataclasses
 from dataclasses import dataclass
-from typing import Union, List, Tuple, Optional, Any
+from typing import Union, List, Any
 
 import numpy as np
 
@@ -196,7 +196,6 @@ class State(abc.ABC):
 
         :param renderer: Renderer
         :param draw_params: Params
-        :param call_stack: Call stack
         """
         renderer.draw_state(self, draw_params)
 
@@ -353,15 +352,14 @@ class MBState(State):
 class LongitudinalState(State):
     """
     This is a class representing the Longitudinal Motion State (Longitudinal State). The state cannot be read by
-    the file reader because neither orientation nor velocity in y direction are specified. Internal usage is the
-    main purpose.
+    the file reader because neither orientation nor velocity in y direction are specified.
 
-    :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
+    :param longitudinal_position: Longitudinal position :math:`s` along reference path
     :param velocity: Velocity :math:`v_x` in longitudinal direction
     :param acceleration: Acceleration :math:`a_x` in longitudinal direction
     :param jerk: Jerk :math:`j`
     """
-    position: ExactOrShape = None
+    longitudinal_position: FloatExactOrInterval = None
     velocity: FloatExactOrInterval = None
     acceleration: FloatExactOrInterval = None
     jerk: FloatExactOrInterval = None
@@ -371,14 +369,14 @@ class LongitudinalState(State):
 class LateralState(State):
     """
     This is a class representing the Lateral Motion State (Lateral State). The state cannot be read by the file reader
-    because position is not specified. Internal usage is the main purpose.
+    because position is not specified.
 
-    :param distance: Distance :math:`d` to reference path
+    :param lateral_position: Lateral distance :math:`d` to reference path
     :param orientation: Yaw angle :math:`\\Psi`
     :param curvature: Curvature math:`\\kappa`
     :param curvature_rate: Change of curvature math:`\\dot{\\kappa}`
     """
-    distance: FloatExactOrInterval = None
+    lateral_position: FloatExactOrInterval = None
     orientation: AngleExactOrInterval = None
     curvature: FloatExactOrInterval = None
     curvature_rate: FloatExactOrInterval = None
