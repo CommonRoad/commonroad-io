@@ -26,7 +26,7 @@ class State(abc.ABC):
 
     :param time_step: Discrete time step :math:`t_i`
     """
-    time_step: int = None
+    time_step: Union[int, Interval] = None
 
     def __eq__(self, other: State):
         if set(self.attributes) != set(other.attributes):
