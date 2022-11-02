@@ -656,7 +656,7 @@ class MPRenderer(IRenderer):
                                                       np.ones([traj_points.shape[0], 1]) * draw_params.line_width,
                                                       np.zeros([traj_points.shape[0], 1]), offsets=traj_points,
                                                       units='xy', linewidths=0, zorder=draw_params.zorder,
-                                                      transOffset=self.ax.transData, facecolor=draw_params.facecolor))
+                                                      facecolor=draw_params.facecolor))
 
         # Draw uncertain states
         for pset in position_sets:
@@ -1127,16 +1127,16 @@ class MPRenderer(IRenderer):
 
         # fill lanelets with facecolor
         self.static_collections.append(
-                collections.PolyCollection(vertices_fill, transOffset=self.ax.transData, zorder=ZOrders.LANELET_POLY,
+                collections.PolyCollection(vertices_fill, zorder=ZOrders.LANELET_POLY,
                                            facecolor=facecolor, edgecolor='none', antialiased=antialiased))
         if incoming_vertices_fill:
             self.static_collections.append(
-                    collections.PolyCollection(incoming_vertices_fill, transOffset=self.ax.transData,
+                    collections.PolyCollection(incoming_vertices_fill,
                                                facecolor=incoming_lanelets_color, edgecolor='none',
                                                zorder=ZOrders.INCOMING_POLY, antialiased=antialiased))
         if crossing_vertices_fill:
             self.static_collections.append(
-                    collections.PolyCollection(crossing_vertices_fill, transOffset=self.ax.transData,
+                    collections.PolyCollection(crossing_vertices_fill,
                                                facecolor=crossings_color, edgecolor='none',
                                                zorder=ZOrders.CROSSING_POLY, antialiased=antialiased))
 
@@ -1148,7 +1148,7 @@ class MPRenderer(IRenderer):
                                                   np.ones([coordinates_left_border_vertices.shape[0], 1]) * 1.5,
                                                   np.zeros([coordinates_left_border_vertices.shape[0], 1]),
                                                   offsets=coordinates_left_border_vertices, color=left_bound_color,
-                                                  transOffset=self.ax.transData, zorder=ZOrders.LEFT_BOUND + 0.1, ))
+                                                  zorder=ZOrders.LEFT_BOUND + 0.1, ))
 
             # right_vertices
             self.static_collections.append(
@@ -1156,7 +1156,7 @@ class MPRenderer(IRenderer):
                                                   np.ones([coordinates_right_border_vertices.shape[0], 1]) * 1.5,
                                                   np.zeros([coordinates_right_border_vertices.shape[0], 1]),
                                                   offsets=coordinates_right_border_vertices, color=right_bound_color,
-                                                  transOffset=self.ax.transData, zorder=ZOrders.LEFT_BOUND + 0.1, ))
+                                                  zorder=ZOrders.LEFT_BOUND + 0.1, ))
 
         if draw_traffic_signs:
             # draw actual traffic sign
