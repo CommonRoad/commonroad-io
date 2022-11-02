@@ -69,6 +69,24 @@ class State(abc.ABC):
             values.append(val)
         return hash(tuple(values))
 
+    def __array__(self: Union[TraceState]) -> np.ndarray:
+        """
+        Converts the State into a 1D-numpy array by iterating over all fields of the dataclass. The order of the fields
+        as defined in the dataclass is preserved.
+        Note: Time step is not included, as the numpy array only contains the state vector.
+        """
+        values = list()
+        for field in dataclasses.fields(self):
+            if field.name == "time_step":
+                # time step not included in state array
+                continue
+            elif field.name == "position":
+                values.append(getattr(self, field.name)[0])  # x-position
+                values.append(getattr(self, field.name)[1])  # y-position
+            else:
+                values.append(getattr(self, field.name))
+        return np.array(values)
+
     @property
     def attributes(self) -> List[str]:
         """
@@ -404,6 +422,18 @@ class PMInputState(State):
     """
     acceleration: FloatExactOrInterval = None
     acceleration_y: FloatExactOrInterval = None
+
+
+@dataclass(eq=False)
+class LKSInputState(State):
+    """
+    This is a class representing the input for the linearized kinematic single track (LKS) model (LKS Input).
+
+    :param longitudinal snap: change of longitudinal jerk (i.e., jerk_dot): math:`\\dot{j}`
+    :param curvature rate rate: change of curvature rate (i.e., kappa_dot_dot)  :math:`\\ddot{\\kappa}`
+    """
+    jerk_dot: FloatExactOrInterval = None
+    kappa_dot_dot: FloatExactOrInterval = None
 
 
 class CustomState(State):
