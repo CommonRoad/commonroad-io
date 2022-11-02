@@ -81,6 +81,10 @@ class ShapeParams(BaseParam):
     edgecolor: Color = "#00478f"
     linewidth: float = 0.5
     zorder: float = 20
+    # draw mesh of Polygon
+    # NOTE: This parameter is currently only valid for Collision Polygons created by the CommonRoad-Drivability-Checker
+    # and has no effect for the Polygon class defined in commonroad-io.geometry.shape
+    draw_mesh: bool = False
 
 
 @dataclass
