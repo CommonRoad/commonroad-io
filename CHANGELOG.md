@@ -1,11 +1,13 @@
 # Changelog
 
-## [202x] - tbd
+## [2022.3] - 2022-10-X
 
 ### Added
 
 - Drawing parameters as dataclasses (support for context help)
 - Documentation for drawing parameters
+- Support for Python 3.11
+- Function to convert a state into a 1D-numpy array
 
 ### Changed
 
