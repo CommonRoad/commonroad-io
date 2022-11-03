@@ -1,4 +1,5 @@
 # doc related
+matplotlib>=2.2.2
 ipython>7.16.0
 sphinx>=2.2.1
 sphinx-autodoc-typehints>=1.11.0
