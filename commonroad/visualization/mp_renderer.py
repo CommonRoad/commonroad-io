@@ -648,8 +648,8 @@ class MPRenderer(IRenderer):
             if draw_params.draw_continuous:
                 path = mpl.path.Path(traj_points, closed=False)
                 self.obstacle_patches.append(
-                        mpl.patches.PathPatch(path, color=draw_params.line_color, lw=draw_params.line_width,
-                                              zorder=draw_params.z_order, fill=False))
+                        mpl.patches.PathPatch(path, color=draw_params.facecolor, lw=draw_params.line_width,
+                                              zorder=draw_params.zorder, fill=False))
             else:
                 self.dynamic_collections.append(
                         collections.EllipseCollection(np.ones([traj_points.shape[0], 1]) * draw_params.line_width,
