@@ -1,17 +1,20 @@
 import os
 from collections import defaultdict
 from copy import deepcopy
-from typing import Set
+from typing import Set, Callable
 
 import matplotlib as mpl
 import matplotlib.artist as artists
+import matplotlib.axes
 import matplotlib.collections as collections
+import matplotlib.figure
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import matplotlib.text as text
 from matplotlib.animation import FuncAnimation
 from matplotlib.colors import hsv_to_rgb, rgb_to_hsv, to_rgb, to_hex
 from matplotlib.path import Path
+from tqdm import tqdm
 
 import commonroad.geometry.shape
 import commonroad.prediction.prediction
@@ -27,8 +30,8 @@ from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, Signal
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.state import TraceState
 from commonroad.scenario.traffic_sign import TrafficLightState, TrafficLight, TrafficSign
-from commonroad.visualization.draw_params import *
 from commonroad.scenario.trajectory import Trajectory
+from commonroad.visualization.draw_params import *
 from commonroad.visualization.icons import supported_icons, get_obstacle_icon_patch
 from commonroad.visualization.traffic_sign import draw_traffic_light_signs
 from commonroad.visualization.util import LineDataUnits, collect_center_line_colors, get_arrow_path_at, colormap_idx, \
@@ -187,7 +190,8 @@ class MPRenderer(IRenderer):
         :return: None
         """
         for art in self.dynamic_artists:
-            art.remove()
+            if hasattr(art, "axes") and art.axes is not None:
+                art.remove()
 
         # text artists cannot be removed -> set invisble
         for t in self.dynamic_labels:
@@ -279,9 +283,11 @@ class MPRenderer(IRenderer):
 
         self.ax_updated = False
 
-    def create_video(self, obj_lists: List[IDrawable], file_path: str, delta_time_steps: int = 1, plotting_horizon=0,
-                     draw_params: Union[List[Optional[BaseParam]], BaseParam, None] = None,
-                     fig_size: Union[list, None] = None, dt=100, dpi=120) -> None:
+    def create_video(self, obj_lists: List[IDrawable], file_path: str, delta_time_steps: int = 1,
+                     plotting_horizon: int = 0, draw_params: Union[List[Optional[BaseParam]], BaseParam, None] = None,
+                     fig_size: Union[list, None] = None, dt: int = 100, dpi: int = 120, progress: bool = True,
+                     callback: Optional[
+                         Callable[[matplotlib.figure.Figure, matplotlib.axes.Axes, int], None]] = None) -> None:
         """
         Creates a video of one or multiple CommonRoad objects in mp4, gif,
         or avi format.
@@ -294,6 +300,9 @@ class MPRenderer(IRenderer):
         :param fig_size: size of the video
         :param dt: time step between frames in ms
         :param dpi: resolution of the video
+        :param progress: Show a progress bar.
+        :param callback: Callback called after drawing each frame. Parameters passed to the callback are
+            the matplotlib figure and axes object, and the frame number.
         :return: None
         """
         if not isinstance(draw_params, list):
@@ -314,29 +323,8 @@ class MPRenderer(IRenderer):
         self.ax.set_aspect('equal')
 
         def init_frame():
-            for params in draw_params:
-                params.time_begin = time_begin
-                params.time_end = time_begin + delta_time_steps
             self.draw_list(obj_lists, draw_params=draw_params)
             self.render_static()
-            artists = self.render_dynamic()
-            if self.plot_limits is None:
-                self.ax.autoscale()
-            elif self.plot_limits == 'auto':
-                limits = approximate_bounding_box_dyn_obstacles(obj_lists, time_begin)
-                if limits is not None:
-                    self.ax.xlim(limits[0][0] - 10, limits[0][1] + 10)
-                    self.ax.ylim(limits[1][0] - 10, limits[1][1] + 10)
-                else:
-                    self.ax.autoscale()
-            else:
-                self.ax.set_xlim(self.plot_limits_focused[0], self.plot_limits_focused[1])
-                self.ax.set_ylim(self.plot_limits_focused[2], self.plot_limits_focused[3])
-
-            if not self.draw_params.axis_visible:
-                self.ax.axes.xaxis.set_visible(False)
-                self.ax.axes.yaxis.set_visible(False)
-            return artists
 
         def update(frame=0):
             for params in draw_params:
@@ -346,6 +334,8 @@ class MPRenderer(IRenderer):
             self.clear()
             self.draw_list(obj_lists, draw_params=draw_params)
             artists = self.render_dynamic()
+            if callback is not None:
+                callback(self.f, self.ax, frame)
             if self.plot_limits is None:
                 self.ax.autoscale()
             elif self.plot_limits == 'auto':
@@ -369,10 +359,10 @@ class MPRenderer(IRenderer):
 
         if not any([file_path.endswith('.mp4'), file_path.endswith('.gif'), file_path.endswith('.avi')]):
             file_path += '.mp4'
-        fps = int(math.ceil(1000.0 / dt))
         interval_seconds = dt / 1000.0
-        anim.save(file_path, dpi=dpi, writer='ffmpeg', fps=fps,
-                  extra_args=["-g", "1", "-keyint_min", str(interval_seconds)])
+        with tqdm(total=frame_count, unit="frame", disable=not progress) as t:
+            anim.save(file_path, dpi=dpi, writer='ffmpeg', extra_args=["-g", "1", "-keyint_min", str(interval_seconds)],
+                      progress_callback=lambda *_: t.update(1))
         self.clear()
         self.ax.clear()
 
@@ -656,7 +646,7 @@ class MPRenderer(IRenderer):
                                                       np.ones([traj_points.shape[0], 1]) * draw_params.line_width,
                                                       np.zeros([traj_points.shape[0], 1]), offsets=traj_points,
                                                       units='xy', linewidths=0, zorder=draw_params.zorder,
-                                                      transOffset=self.ax.transData, facecolor=draw_params.facecolor))
+                                                      facecolor=draw_params.facecolor))
 
         # Draw uncertain states
         for pset in position_sets:
@@ -1127,16 +1117,16 @@ class MPRenderer(IRenderer):
 
         # fill lanelets with facecolor
         self.static_collections.append(
-                collections.PolyCollection(vertices_fill, transOffset=self.ax.transData, zorder=ZOrders.LANELET_POLY,
+                collections.PolyCollection(vertices_fill, zorder=ZOrders.LANELET_POLY,
                                            facecolor=facecolor, edgecolor='none', antialiased=antialiased))
         if incoming_vertices_fill:
             self.static_collections.append(
-                    collections.PolyCollection(incoming_vertices_fill, transOffset=self.ax.transData,
+                    collections.PolyCollection(incoming_vertices_fill,
                                                facecolor=incoming_lanelets_color, edgecolor='none',
                                                zorder=ZOrders.INCOMING_POLY, antialiased=antialiased))
         if crossing_vertices_fill:
             self.static_collections.append(
-                    collections.PolyCollection(crossing_vertices_fill, transOffset=self.ax.transData,
+                    collections.PolyCollection(crossing_vertices_fill,
                                                facecolor=crossings_color, edgecolor='none',
                                                zorder=ZOrders.CROSSING_POLY, antialiased=antialiased))
 
@@ -1148,7 +1138,7 @@ class MPRenderer(IRenderer):
                                                   np.ones([coordinates_left_border_vertices.shape[0], 1]) * 1.5,
                                                   np.zeros([coordinates_left_border_vertices.shape[0], 1]),
                                                   offsets=coordinates_left_border_vertices, color=left_bound_color,
-                                                  transOffset=self.ax.transData, zorder=ZOrders.LEFT_BOUND + 0.1, ))
+                                                  zorder=ZOrders.LEFT_BOUND + 0.1, ))
 
             # right_vertices
             self.static_collections.append(
@@ -1156,7 +1146,7 @@ class MPRenderer(IRenderer):
                                                   np.ones([coordinates_right_border_vertices.shape[0], 1]) * 1.5,
                                                   np.zeros([coordinates_right_border_vertices.shape[0], 1]),
                                                   offsets=coordinates_right_border_vertices, color=right_bound_color,
-                                                  transOffset=self.ax.transData, zorder=ZOrders.LEFT_BOUND + 0.1, ))
+                                                  zorder=ZOrders.LEFT_BOUND + 0.1, ))
 
         if draw_traffic_signs:
             # draw actual traffic sign
