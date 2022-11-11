@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package commonroad;
+
+import "obstacle.proto";
+import "util.proto";
+
+message StaticObstacle {
+    required uint32 static_obstacle_id = 1;
+    required ObstacleTypeEnum.ObstacleType obstacle_type = 2;
+    required Shape shape = 3;
+    required State initial_state = 4;
+    optional SignalState initial_signal_state = 5;
+    repeated SignalState signal_series = 6;
+}

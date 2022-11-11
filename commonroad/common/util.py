@@ -6,14 +6,6 @@ from typing import Tuple
 from commonroad.common import validity
 from commonroad.common.validity import *
 
-__author__ = "Stefanie Manzinger, Moritz Klischat, Xiao Wang"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["Priority Program SPP 1835 Cooperative Interacting Automobiles"]
-__version__ = "2022.1"
-__maintainer__ = "Moritz Klischat"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "Released"
-
 
 def interpolate_angle(x: Union[float, np.array], xp: np.array, fp: np.array, degrees=False):
     """
@@ -79,6 +71,16 @@ class Interval:
         self._end = None
         self.start = start
         self.end = end
+
+    def __eq__(self, other):
+        if not isinstance(other, Interval):
+            warnings.warn(f"Inequality between Interval {repr(self)} and different type {type(other)}")
+            return False
+
+        return self._start == other.start and self._end == other.end
+
+    def __hash__(self):
+        return hash((self._start, self._end))
 
     def __iter__(self):
         yield self._start

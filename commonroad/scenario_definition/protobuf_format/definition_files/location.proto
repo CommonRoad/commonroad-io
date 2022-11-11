@@ -1,0 +1,60 @@
+syntax = "proto2";
+
+package commonroad;
+
+import "util.proto";
+
+message TimeOfDayEnum {
+    enum TimeOfDay {
+        NIGHT = 0;
+        DAY = 1;
+        UNKNOWN = 2;
+    }
+}
+
+message WeatherEnum {
+    enum Weather {
+        SUNNY = 0;
+        LIGHT_RAIN = 1;
+        HEAVY_AIN = 2;
+        FOG = 3;
+        SNOW = 4;
+        HAIL = 5;
+        UNKNOWN = 6;
+    }
+}
+
+message UndergroundEnum {
+    enum Underground {
+        WET = 0;
+        CLEAN = 1;
+        DIRTY = 2;
+        DAMAGED = 3;
+        SNOW = 4;
+        ICE = 5;
+        UNKNOWN = 6;
+    }
+}
+
+message GeoTransformation {
+    optional string geo_reference = 1;
+    optional double x_translation = 2;
+    optional double y_translation = 3;
+    optional double z_rotation = 4;
+    optional double scaling = 5;
+}
+
+message Environment {
+    optional TimeStamp time = 1;
+    optional TimeOfDayEnum.TimeOfDay time_of_day = 2;
+    optional WeatherEnum.Weather weather = 3;
+    optional UndergroundEnum.Underground underground = 4;
+}
+
+message Location {
+    required int32 geo_name_id = 1;
+    required double gps_latitude = 2;
+    required double gps_longitude = 3;
+    optional GeoTransformation geo_transformation = 4;
+    optional Environment environment = 5;
+}
