@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Union, Tuple, Optional
+from typing import Optional
 
-from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
+from commonroad.visualization.draw_params import BaseParam
 
 
 class IDrawable(ABC):
@@ -11,16 +11,12 @@ class IDrawable(ABC):
     """
 
     @abstractmethod
-    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None],
-             call_stack: Optional[Tuple[str, ...]]) -> None:
+    def draw(self, renderer: IRenderer, draw_params: Optional[BaseParam]) -> None:
         """
         Draw the object
 
         :param renderer: Renderer to use for drawing
-        :param draw_params: Optional parameters ovrriding the defaults for plotting given by a nested dict that
-            recreates the structure of an object or a ParamServer object
-        :param call_stack: Optional tuple of string containing the call stack, which allows for differentiation of
-            plotting styles depending on the call stack
+        :param draw_params: optional parameters for plotting, overriding the parameters of the renderer
         :return: None
         """
         pass

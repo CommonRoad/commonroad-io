@@ -1,14 +1,16 @@
-from typing import Union, List, Tuple, Dict, Optional
-import numpy as np
 import warnings
+from typing import Union, List, Tuple, Dict
+
+import numpy as np
 
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import InitialState
 from commonroad.planning.goal import GoalRegion
 from commonroad.common.validity import is_natural_number
 from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
+from commonroad.visualization.draw_params import PlanningProblemParams, OptionalSpecificOrAllDrawParams, \
+    PlanningProblemSetParams
 
 
 class PlanningProblem(IDrawable):
@@ -90,14 +92,11 @@ class PlanningProblem(IDrawable):
         :param translation: translation vector [x_off, y_off] in x- and y-direction
         :param angle: rotation angle in radian (counter-clockwise)
         """
-        self.initial_state = self.initial_state.translate_rotate(translation,
-                                                                 angle)
+        self.initial_state = self.initial_state.translate_rotate(translation, angle)
         self.goal.translate_rotate(translation, angle)
 
-    def draw(self, renderer: IRenderer,
-             draw_params: Union[ParamServer, dict, None] = None,
-             call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_planning_problem(self, draw_params, call_stack)
+    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[PlanningProblemParams] = None):
+        renderer.draw_planning_problem(self, draw_params)
 
 
 class PlanningProblemSet(IDrawable):
@@ -181,7 +180,5 @@ class PlanningProblemSet(IDrawable):
         for planning_problem in self._planning_problem_dict.values():
             planning_problem.translate_rotate(translation, angle)
 
-    def draw(self, renderer: IRenderer,
-             draw_params: Union[ParamServer, dict, None] = None,
-             call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_planning_problem_set(self, draw_params, call_stack)
+    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[PlanningProblemSetParams] = None):
+        renderer.draw_planning_problem_set(self, draw_params)

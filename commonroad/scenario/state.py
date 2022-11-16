@@ -3,7 +3,7 @@ import abc
 import copy
 import dataclasses
 from dataclasses import dataclass
-from typing import Union, List, Tuple, Optional, Any
+from typing import Union, List, Any
 
 import numpy as np
 
@@ -11,7 +11,7 @@ import commonroad.geometry.transform
 from commonroad.common.util import Interval, AngleInterval, make_valid_orientation
 from commonroad.common.validity import is_real_number_vector, is_real_number, is_valid_orientation, ValidTypes
 from commonroad.geometry.shape import Shape
-from commonroad.visualization.param_server import ParamServer
+from commonroad.visualization.draw_params import OptionalSpecificOrAllDrawParams, StateParams
 from commonroad.visualization.renderer import IRenderer
 
 FloatExactOrInterval = Union[float, Interval]
@@ -24,11 +24,9 @@ class State(abc.ABC):
     """
     This is a class representing the Base State.
 
-    Args:
-        :param time_step: Discrete time step :math:`t_i`
-
+    :param time_step: Discrete time step :math:`t_i`
     """
-    time_step: FloatExactOrInterval = None
+    time_step: Union[int, Interval] = None
 
     def __eq__(self, other: State):
         if set(self.attributes) != set(other.attributes):
@@ -70,6 +68,24 @@ class State(abc.ABC):
                 val = round(val, dec)
             values.append(val)
         return hash(tuple(values))
+
+    def __array__(self: Union[TraceState]) -> np.ndarray:
+        """
+        Converts the State into a 1D-numpy array by iterating over all fields of the dataclass. The order of the fields
+        as defined in the dataclass is preserved.
+        Note: Time step is not included, as the numpy array only contains the state vector.
+        """
+        values = list()
+        for field in dataclasses.fields(self):
+            if field.name == "time_step":
+                # time step not included in state array
+                continue
+            elif field.name == "position":
+                values.append(getattr(self, field.name)[0])  # x-position
+                values.append(getattr(self, field.name)[1])  # y-position
+            else:
+                values.append(getattr(self, field.name))
+        return np.array(values)
 
     @property
     def attributes(self) -> List[str]:
@@ -192,16 +208,14 @@ class State(abc.ABC):
             else:
                 setattr(self, field, 0.)
 
-    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
-             call_stack: Optional[Tuple[str, ...]] = tuple()):
+    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[StateParams] = None):
         """
         Draws state.
 
         :param renderer: Renderer
         :param draw_params: Params
-        :param call_stack: Call stack
         """
-        renderer.draw_state(self, draw_params, call_stack)
+        renderer.draw_state(self, draw_params)
 
 
 @dataclass(eq=False)
@@ -209,14 +223,12 @@ class InitialState(State):
     """
     This is a class representing the Initial State.
 
-    Args:
-        :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
-        :param orientation: Yaw angle :math:`\\Psi`
-        :param velocity: Velocity :math:`v_x` in longitudinal direction
-        :param acceleration: Acceleration :math:`a_x`
-        :param yaw_rate: Yaw rate :math:`\\dot{\\Psi}`
-        :param slip_angle: Slip angle :math:`\\beta`
-
+    :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
+    :param orientation: Yaw angle :math:`\\Psi`
+    :param velocity: Velocity :math:`v_x` in longitudinal direction
+    :param acceleration: Acceleration :math:`a_x`
+    :param yaw_rate: Yaw rate :math:`\\dot{\\Psi}`
+    :param slip_angle: Slip angle :math:`\\beta`
     """
     position: ExactOrShape = None
     orientation: AngleExactOrInterval = None
@@ -231,11 +243,9 @@ class PMState(State):
     """
     This is a class representing Point Mass State (PM State).
 
-    Args:
-        :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
-        :param velocity: Velocity :math:`v_x` in longitudinal direction
-        :param velocity_y: Velocity :math:`v_x` in lateral direction
-
+    :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
+    :param velocity: Velocity :math:`v_x` in longitudinal direction
+    :param velocity_y: Velocity :math:`v_x` in lateral direction
     """
     position: ExactOrShape = None
     velocity: FloatExactOrInterval = None
@@ -247,12 +257,10 @@ class KSState(State):
     """
     This is a class representing Kinematic Single Track State (KS State).
 
-    Args:
-        :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
-        :param steering_angle: Steering angle :math:`\\delta`
-        :param velocity: Velocity :math:`v_x` in longitudinal direction
-        :param orientation: Yaw angle :math:`\\Psi`
-
+    :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
+    :param steering_angle: Steering angle :math:`\\delta`
+    :param velocity: Velocity :math:`v_x` in longitudinal direction
+    :param orientation: Yaw angle :math:`\\Psi`
     """
     position: ExactOrShape = None
     steering_angle: FloatExactOrInterval = None
@@ -265,9 +273,7 @@ class KSTState(KSState):
     """
     This is a class representing Kinematic Single Track State (KST State).
 
-    Args:
-        :param hitch_angle: Hitch angle :math:`\\alpha`
-
+    :param hitch_angle: Hitch angle :math:`\\alpha`
     """
     hitch_angle: AngleExactOrInterval = None
 
@@ -277,10 +283,8 @@ class STState(KSState):
     """
     This is a class representing Single Track State (ST State).
 
-    Args:
-        :param slip_angle: Slip angle :math:`\\beta`
-        :param yaw_rate: Yaw rate :math:`\\dot{\\Psi}`
-
+    :param slip_angle: Slip angle :math:`\\beta`
+    :param yaw_rate: Yaw rate :math:`\\dot{\\Psi}`
     """
     slip_angle: FloatExactOrInterval = None
     yaw_rate: FloatExactOrInterval = None
@@ -291,10 +295,8 @@ class STDState(STState):
     """
     This is a class representing Single Track Drift State (STD State).
 
-    Args:
-        :param front_wheel_angular_speed: Front wheel angular speed :math:`\\omega_{f}`
-        :param rear_wheel_angular_speed: Rear wheel angular speed :math:`\\omega_{r}`
-
+    :param front_wheel_angular_speed: Front wheel angular speed :math:`\\omega_{f}`
+    :param rear_wheel_angular_speed: Rear wheel angular speed :math:`\\omega_{r}`
     """
     front_wheel_angular_speed: FloatExactOrInterval = None
     rear_wheel_angular_speed: FloatExactOrInterval = None
@@ -305,36 +307,34 @@ class MBState(State):
     """
     This is a class representing Multi Body State (MB State).
 
-    Args:
-        :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
-        :param steering_angle: Steering angle :math:`\\delta`
-        :param velocity: Velocity :math:`v_x` in longitudinal direction
-        :param orientation: Yaw angle :math:`\\Psi`
-        :param yaw_rate: Yaw rate :math:`\\dot{\\Psi}`
-        :param roll_angle: Roll angle :math:`\\Phi_S`
-        :param roll_rate: Roll rate :math:`\\dot{\\Phi}_S`
-        :param pitch_angle: Pitch angle :math:`\\Theta_S`
-        :param pitch_rate: Pitch rate :math:`\\dot{\\Theta}_S`
-        :param velocity_y: Velocity :math:`v_y` in lateral direction
-        :param position_z: Position :math:`s_z` (height) from ground
-        :param velocity_z: Velocity :math:`v_z` in vertical direction perpendicular to road plane
-        :param roll_angle_front: Roll angle front :math:`\\Phi_{UF}`
-        :param roll_rate_front: Roll rate front :math:`\\dot{\\Phi}_{UF}`
-        :param velocity_y_front: Velocity :math:`v_{y,UF}` in y-direction front
-        :param position_z_front: Position :math:`s_{z,UF}` in z-direction front
-        :param velocity_z_front: Velocity :math:`v_{z,UF}` in z-direction front
-        :param roll_angle_rear: Roll angle rear :math:`\\Phi_{UR}`
-        :param roll_rate_rear: Roll rate rear :math:`\\dot{\\Phi}_{UR}`
-        :param velocity_y_rear: Velocity :math:`v_{y,UR}` in y-direction rear
-        :param position_z_rear: Position :math:`s_{z,UR}` in z-direction rear
-        :param velocity_z_rear: Velocity :math:`v_{z,UR}` in z-direction rear
-        :param left_front_wheel_angular_speed: Left front wheel angular speed :math:`\\omega_{LF}`
-        :param right_front_wheel_angular_speed: Right front wheel angular speed :math:`\\omega_{RF}`
-        :param left_rear_wheel_angular_speed: Left rear wheel angular speed :math:`\\omega_{LR}`
-        :param right_rear_wheel_angular_speed: Right rear wheel angular speed :math:`\\omega_{RR}`
-        :param delta_y_f: Front lateral displacement :math:`\\delta_{y,f}` of sprung mass due to roll
-        :param delta_y_r: Rear lateral displacement :math:`\\delta_{y,r}` of sprung mass due to roll
-
+    :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
+    :param steering_angle: Steering angle :math:`\\delta`
+    :param velocity: Velocity :math:`v_x` in longitudinal direction
+    :param orientation: Yaw angle :math:`\\Psi`
+    :param yaw_rate: Yaw rate :math:`\\dot{\\Psi}`
+    :param roll_angle: Roll angle :math:`\\Phi_S`
+    :param roll_rate: Roll rate :math:`\\dot{\\Phi}_S`
+    :param pitch_angle: Pitch angle :math:`\\Theta_S`
+    :param pitch_rate: Pitch rate :math:`\\dot{\\Theta}_S`
+    :param velocity_y: Velocity :math:`v_y` in lateral direction
+    :param position_z: Position :math:`s_z` (height) from ground
+    :param velocity_z: Velocity :math:`v_z` in vertical direction perpendicular to road plane
+    :param roll_angle_front: Roll angle front :math:`\\Phi_{UF}`
+    :param roll_rate_front: Roll rate front :math:`\\dot{\\Phi}_{UF}`
+    :param velocity_y_front: Velocity :math:`v_{y,UF}` in y-direction front
+    :param position_z_front: Position :math:`s_{z,UF}` in z-direction front
+    :param velocity_z_front: Velocity :math:`v_{z,UF}` in z-direction front
+    :param roll_angle_rear: Roll angle rear :math:`\\Phi_{UR}`
+    :param roll_rate_rear: Roll rate rear :math:`\\dot{\\Phi}_{UR}`
+    :param velocity_y_rear: Velocity :math:`v_{y,UR}` in y-direction rear
+    :param position_z_rear: Position :math:`s_{z,UR}` in z-direction rear
+    :param velocity_z_rear: Velocity :math:`v_{z,UR}` in z-direction rear
+    :param left_front_wheel_angular_speed: Left front wheel angular speed :math:`\\omega_{LF}`
+    :param right_front_wheel_angular_speed: Right front wheel angular speed :math:`\\omega_{RF}`
+    :param left_rear_wheel_angular_speed: Left rear wheel angular speed :math:`\\omega_{LR}`
+    :param right_rear_wheel_angular_speed: Right rear wheel angular speed :math:`\\omega_{RR}`
+    :param delta_y_f: Front lateral displacement :math:`\\delta_{y,f}` of sprung mass due to roll
+    :param delta_y_r: Rear lateral displacement :math:`\\delta_{y,r}` of sprung mass due to roll
     """
     position: ExactOrShape = None
     steering_angle: FloatExactOrInterval = None
@@ -370,17 +370,14 @@ class MBState(State):
 class LongitudinalState(State):
     """
     This is a class representing the Longitudinal Motion State (Longitudinal State). The state cannot be read by
-    the file reader because neither orientation nor velocity in y direction are specified. Internal usage is the
-    main purpose.
+    the file reader because neither orientation nor velocity in y direction are specified.
 
-    Args:
-        :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
-        :param velocity: Velocity :math:`v_x` in longitudinal direction
-        :param acceleration: Acceleration :math:`a_x` in longitudinal direction
-        :param jerk: Jerk :math:`j`
-
+    :param longitudinal_position: Longitudinal position :math:`s` along reference path
+    :param velocity: Velocity :math:`v_x` in longitudinal direction
+    :param acceleration: Acceleration :math:`a_x` in longitudinal direction
+    :param jerk: Jerk :math:`j`
     """
-    position: ExactOrShape = None
+    longitudinal_position: FloatExactOrInterval = None
     velocity: FloatExactOrInterval = None
     acceleration: FloatExactOrInterval = None
     jerk: FloatExactOrInterval = None
@@ -390,16 +387,14 @@ class LongitudinalState(State):
 class LateralState(State):
     """
     This is a class representing the Lateral Motion State (Lateral State). The state cannot be read by the file reader
-    because position is not specified. Internal usage is the main purpose.
+    because position is not specified.
 
-    Args:
-        :param distance: Distance :math:`d` to reference path
-        :param orientation: Yaw angle :math:`\\Psi`
-        :param curvature: Curvature math:`\\kappa`
-        :param curvature_rate: Change of curvature math:`\\dot{\\kappa}`
-
+    :param lateral_position: Lateral distance :math:`d` to reference path
+    :param orientation: Yaw angle :math:`\\Psi`
+    :param curvature: Curvature math:`\\kappa`
+    :param curvature_rate: Change of curvature math:`\\dot{\\kappa}`
     """
-    distance: FloatExactOrInterval = None
+    lateral_position: FloatExactOrInterval = None
     orientation: AngleExactOrInterval = None
     curvature: FloatExactOrInterval = None
     curvature_rate: FloatExactOrInterval = None
@@ -410,10 +405,8 @@ class InputState(State):
     """
     This is a class representing the input for most supported models.
 
-    Args:
-        :param steering_angle_speed: Steering angle speed :math:`\\dot{\\delta}` of front wheels
-        :param acceleration: Acceleration :math:`a_x`
-
+    :param steering_angle_speed: Steering angle speed :math:`\\dot{\\delta}` of front wheels
+    :param acceleration: Acceleration :math:`a_x`
     """
     steering_angle_speed: FloatExactOrInterval = None
     acceleration: FloatExactOrInterval = None
@@ -424,13 +417,23 @@ class PMInputState(State):
     """
     This is a class representing the input for PM model (PM Input).
 
-    Args:
-        :param acceleration: Acceleration :math:`a_x`
-        :param acceleration_y: Acceleration :math:`a_y`
-
+    :param acceleration: Acceleration :math:`a_x`
+    :param acceleration_y: Acceleration :math:`a_y`
     """
     acceleration: FloatExactOrInterval = None
     acceleration_y: FloatExactOrInterval = None
+
+
+@dataclass(eq=False)
+class LKSInputState(State):
+    """
+    This is a class representing the input for the linearized kinematic single track (LKS) model (LKS Input).
+
+    :param longitudinal snap: change of longitudinal jerk (i.e., jerk_dot): math:`\\dot{j}`
+    :param curvature rate rate: change of curvature rate (i.e., kappa_dot_dot)  :math:`\\ddot{\\kappa}`
+    """
+    jerk_dot: FloatExactOrInterval = None
+    kappa_dot_dot: FloatExactOrInterval = None
 
 
 class CustomState(State):
