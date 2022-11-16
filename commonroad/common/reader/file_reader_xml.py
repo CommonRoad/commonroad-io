@@ -1,8 +1,9 @@
+import logging
 import re
+from abc import ABC
 from collections import defaultdict
 from typing import Dict, Tuple
 from xml.etree import ElementTree
-from abc import ABC
 
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.reader.file_reader_interface import FileReader
@@ -11,15 +12,17 @@ from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Sh
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
+from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
 from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, EnvironmentObstacle, \
     SignalState, PhantomObstacle
-from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, \
-    TimeOfDay, Weather, Underground, ScenarioID
+from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, TimeOfDay, \
+    Weather, Underground, ScenarioID
 from commonroad.scenario.state import InitialState, TraceState, CustomState, SpecificStateClasses
-from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.traffic_sign import *
-from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
+from commonroad.scenario.trajectory import Trajectory
+
+logger = logging.getLogger(__name__)
 
 
 def read_value_exact_or_interval(xml_node: ElementTree.Element)\
@@ -1341,7 +1344,8 @@ class StateFactory:
         if matched_state is None:
             matched_state = CustomState()
             StateFactory._fill_state(matched_state, xml_node, used_fields, lanelet_network)
-            warnings.warn("State at time step {} cannot be matched!".format(read_time(xml_node.find('time'))))
+            logger.debug("State type at time step %s cannot be matched! Creating custom state!",
+                         read_time(xml_node.find('time')))
 
         return matched_state
 

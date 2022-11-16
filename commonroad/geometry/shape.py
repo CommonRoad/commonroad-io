@@ -358,7 +358,7 @@ class Polygon(Shape):
     @property
     def center(self) -> np.ndarray:
         """ Computes the geometric center of the polygon."""
-        return np.array(self._shapely_polygon.centroid)
+        return np.array(self._shapely_polygon.centroid.coords).ravel()
 
     @property
     def shapely_object(self) -> shapely.geometry.Polygon:
