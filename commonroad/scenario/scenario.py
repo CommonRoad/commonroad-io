@@ -3,7 +3,7 @@ import itertools
 import re
 import warnings
 from collections import defaultdict
-from typing import Union, List, Set, Dict, Tuple, Optional
+from typing import Union, List, Set, Dict, Tuple
 
 import iso3166
 import numpy as np
@@ -23,8 +23,8 @@ from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Enviro
 from commonroad.scenario.state import TraceState
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
 from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
+from commonroad.visualization.draw_params import OptionalSpecificOrAllDrawParams, MPDrawParams
 
 
 @enum.unique
@@ -1184,6 +1184,5 @@ class Scenario(IDrawable):
         traffic_str += str(self._lanelet_network)
         return traffic_str
 
-    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
-             call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_scenario(self, draw_params, call_stack)
+    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[MPDrawParams] = None):
+        renderer.draw_scenario(self, draw_params)

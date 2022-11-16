@@ -1,5 +1,29 @@
 # Changelog
 
+## [2022.3] - 2022-11-16
+
+### Added
+
+- Drawing parameters as dataclasses (support for context help)
+- Documentation for drawing parameters
+- Support for Python 3.11
+- Function to convert a state into a 1D-numpy array
+- Progress bar for video creation
+- Callback for modifying axes during plotting a video
+
+### Changed
+
+- Name of position in lateral and longitudinal state
+
+### Removed
+
+- ParamServer and dictionary specification of drawing parameters
+
+### Fixed
+
+- Failing visualization of a trajectory at it's initial time step
+- Broken lanelet visualization with matplotlib >3.5
+
 ## [2022.2] - 2022-09-03
 
 ### Added

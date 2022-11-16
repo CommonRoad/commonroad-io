@@ -1,6 +1,6 @@
 import datetime
+import logging
 import re
-import warnings
 from typing import Tuple, List, Set, Union, Dict
 
 import numpy as np
@@ -11,25 +11,28 @@ from commonroad.geometry.shape import Rectangle, Circle, Polygon, Shape, ShapeGr
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction, SetBasedPrediction
-from commonroad.scenario_definition.protobuf_format.generated_scripts import commonroad_pb2, util_pb2, \
-    phantom_obstacle_pb2
-from commonroad.scenario_definition.protobuf_format.generated_scripts import lanelet_pb2, planning_problem_pb2, \
-    traffic_sign_pb2, scenario_tags_pb2, environment_obstacle_pb2, obstacle_pb2, intersection_pb2, \
-    dynamic_obstacle_pb2, \
-    static_obstacle_pb2, traffic_light_pb2, location_pb2
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, StopLine, LineMarking, LaneletType, RoadUser
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, PhantomObstacle, \
     SignalState, ObstacleType
 from commonroad.scenario.scenario import Scenario, ScenarioID, Tag, GeoTransformation, Location, Environment, \
-    TimeOfDay, Weather, Underground, Time
+    TimeOfDay, \
+    Weather, Underground, Time
+from commonroad.scenario.state import InitialState, TraceState, CustomState, SpecificStateClasses
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSignIDGermany, TrafficSignIDZamunda, \
     TrafficSignIDUsa, TrafficSignIDChina, TrafficSignIDSpain, TrafficSignIDRussia, TrafficSignIDArgentina, \
     TrafficSignIDBelgium, TrafficSignIDFrance, TrafficSignIDGreece, TrafficSignIDCroatia, TrafficSignIDItaly, \
     TrafficSignIDPuertoRico, TrafficSign, TrafficLight, TrafficLightCycleElement, TrafficLightDirection, \
     TrafficLightState
 from commonroad.scenario.trajectory import Trajectory
-from commonroad.scenario.state import InitialState, TraceState, CustomState, SpecificStateClasses
+from commonroad.scenario_definition.protobuf_format.generated_scripts import commonroad_pb2, util_pb2, \
+    phantom_obstacle_pb2
+from commonroad.scenario_definition.protobuf_format.generated_scripts import lanelet_pb2, planning_problem_pb2, \
+    traffic_sign_pb2, scenario_tags_pb2, environment_obstacle_pb2, obstacle_pb2, intersection_pb2, \
+    dynamic_obstacle_pb2, \
+    static_obstacle_pb2, traffic_light_pb2, location_pb2
+
+logger = logging.getLogger(__name__)
 
 
 class ProtobufFileReader(FileReader):
@@ -643,7 +646,8 @@ class StateFactory:
         if matched_state is None:
             matched_state = CustomState()
             StateFactory._fill_state(matched_state, state_msg, used_fields)
-            warnings.warn("State at time step {} cannot be matched!".format(getattr(state_msg, 'time_step')))
+            logger.debug("State type at time step %s cannot be matched! Creating custom state!",
+                         getattr(state_msg, 'time_step'))
 
         return matched_state
 

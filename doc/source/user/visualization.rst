@@ -19,7 +19,7 @@ The drawing function is used in combination with matplotlib_. Therefore, the vis
     filename = 'path/to/scenario/USA_US101-2_1_T-1.xml'
     scenario, planning_problem_set = CommonRoadFileReader(filename).open()
 
-    rnd = MPRenderer(plot_limits=[-30, 120, -140, 20], figsize=(8,4.5))
+    rnd = MPRenderer(figsize=(8,4.5))
     scenario.draw(rnd)
     planning_problem_set.draw(rnd)
     rnd.render()
@@ -27,15 +27,13 @@ The drawing function is used in combination with matplotlib_. Therefore, the vis
 .. plot::
    :align: center
 
-
     import os
     import matplotlib.pyplot as plt
     from commonroad.common.file_reader import CommonRoadFileReader
     from commonroad.visualization.mp_renderer import MPRenderer
     filename = os.getcwd() + '/../../../tests/test_scenarios/USA_US101-4_1_T-1.xml'
     scenario, planning_problem_set = CommonRoadFileReader(filename).open()
-
-    rnd = MPRenderer(plot_limits=[-30, 120, -140, 20], figsize=(8,4.5))
+    rnd = MPRenderer(figsize=(8,4.5))
     scenario.draw(rnd)
     planning_problem_set.draw(rnd)
     rnd.render()
@@ -45,41 +43,47 @@ The drawing function is used in combination with matplotlib_. Therefore, the vis
 Styling options
 ---------------
 
+The visualization of CommonRoad scenario objects can be customized by adjusting the drawing parameters in :class:`~.MPDrawParams`.
+
 The plotting style of the visualization module can be adjusted via two mechanisms:
 
     1. Setting a set of default parameters in the constructor of :class:`~commonroad.visualization.mp_renderer.MPRenderer`, and
-    2. Overriding the default parameters by setting parameters on a per-object basis, when calling individual :meth:`~commonroad.visualization.drawable.IDrawable.draw` functions.
-
-The full set of available parameters can be written to a file in JSON format by calling :meth:`~commonroad.visualization.param_server.write_default_params`. Parameters can be passed as nested dictionary, where the levels correspond to the hierarchy of elements in a compound object. The resolution of plotting properties starts at the most specific (deepest) level. If the property is not found, the topmost level is removed and resolution is restarted. For example, the default vehicle shape's color is specified on the path ``draw_params["dynamic_obstacle"]["vehicle_shape"]["occupancy"]["shape"]["rectangle"]["facecolor"]``. When a dynamic obstacle is drawn as part of a scenario, the resolution process is started at ``draw_params["scenario"]["dynamic_obstacle"]["vehicle_shape"]...["facecolor"]``. As the key is not found in the default parameter set, resolution is retried with ``draw_params["dynamic_obstacle"]["vehicle_shape"]...["facecolor"]`` and is successful.
+    2. Providing the parameters by setting parameters on a per-object basis, when calling individual :meth:`~commonroad.visualization.drawable.IDrawable.draw` functions.
 
 Example
 """""""
 .. _`matplotlib colors`: https://matplotlib.org/stable/tutorials/colors/colors.html
 
-We want to draw dynamic obstacles with a rectangular shape in a scenario with a green and individual dynamic obstacles with a rectangular shape in yellow. This can be achieved by passing the following drawing parameters: ::
+We want to draw dynamic obstacles in a scenario with a green and individual dynamic obstacles in yellow. This can be achieved by modifying the following drawing parameters: ::
 
-    {
-        "dynamic_obstacle": {
-            "occupancy": {
-                "shape": {
-                    "rectangle": {
-                        "facecolor": "yellow",
-                    },
-                }
-            }
-        },
-        "scenario": {
-            "dynamic_obstacle": {
-                "occupancy": {
-                    "shape": {
-                        "rectangle": {
-                            "facecolor": "green",
-                        },
-                    }
-                }
-            }
-        }
-    }
+    scenario, planning_problem_set = CommonRoadFileReader(filename).open()
+    rnd = MPRenderer(figsize=(8,4.5))
+    rnd.draw_params.dynamic_obstacle.vehicle_shape.occupancy.shape.facecolor = "yellow"
+    draw_params = DynamicObstacleParams()
+    draw_params.vehicle_shape.occupancy.shape.facecolor = "green"
+    scenario.draw(rnd)
+    scenario.dynamic_obstacles[0].draw(rnd, draw_params)
+    planning_problem_set.draw(rnd)
+    rnd.render()
+
+.. plot::
+   :align: center
+
+    import os
+    import matplotlib.pyplot as plt
+    from commonroad.common.file_reader import CommonRoadFileReader
+    from commonroad.visualization.mp_renderer import MPRenderer
+    from commonroad.visualization.draw_params import DynamicObstacleParams
+    filename = os.getcwd() + '/../../../tests/test_scenarios/USA_US101-4_1_T-1.xml'
+    scenario, planning_problem_set = CommonRoadFileReader(filename).open()
+    rnd = MPRenderer(figsize=(8,4.5))
+    rnd.draw_params.dynamic_obstacle.vehicle_shape.occupancy.shape.facecolor = "yellow"
+    draw_params = DynamicObstacleParams()
+    draw_params.vehicle_shape.occupancy.shape.facecolor = "green"
+    scenario.draw(rnd)
+    scenario.dynamic_obstacles[0].draw(rnd, draw_params)
+    planning_problem_set.draw(rnd)
+    rnd.render()
 
 Note, that colors are specified as `matplotlib colors`_.
 

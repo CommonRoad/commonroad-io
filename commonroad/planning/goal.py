@@ -1,15 +1,16 @@
 import copy
 import math
-from typing import Union, List, Dict, Set, Tuple, Optional
-import numpy as np
 import warnings
+from typing import Union, List, Dict, Set
+
+import numpy as np
 
 from commonroad.common.util import Interval, AngleInterval
 from commonroad.geometry.shape import Shape
 from commonroad.scenario.state import TraceState
 from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
+from commonroad.visualization.draw_params import OccupancyParams, OptionalSpecificOrAllDrawParams
 
 
 class GoalRegion(IDrawable):
@@ -188,16 +189,13 @@ class GoalRegion(IDrawable):
                 and not {'velocity', 'velocity_y'}.issubset(goal_state_fields):
 
             if 'orientation' not in state_fields:
-                state_new.orientation = math.atan2(getattr(state_new, "velocity_y"), state_new.velocity)
+                state_new.orientation = math.atan2(state_new.velocity_y, state_new.velocity)
                 state_fields.add('orientation')
 
-            state_new.velocity = np.linalg.norm(
-                    np.array([state_new.velocity, getattr(state_new, "velocity_y")]))
+            state_new.velocity = np.linalg.norm(np.array([state_new.velocity, state_new.velocity_y]))
             state_fields.remove('velocity_y')
 
         return state_new, state_fields, goal_state, goal_state_fields
 
-    def draw(self, renderer: IRenderer,
-             draw_params: Union[ParamServer, dict, None] = None,
-             call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_goal_region(self, draw_params, call_stack)
+    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[OccupancyParams] = None):
+        renderer.draw_goal_region(self, draw_params)
