@@ -1,5 +1,11 @@
 # Changelog
 
+## [202X.X] - 202X-XX-XX
+
+### Fixed
+
+- Writing scenarios without location to protobuf
+
 ## [2022.3] - 2022-11-16
 
 ### Added
