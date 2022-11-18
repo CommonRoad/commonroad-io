@@ -65,7 +65,6 @@ class ProtobufFileWriter(FileWriter):
             location_msg = LocationMessage.create_message(self.location)
         else:
             location_msg = LocationMessage.create_message(Location())
-
         self._commonroad_msg.location.CopyFrom(location_msg)
 
         for lanelet in self.scenario.lanelet_network.lanelets:
