@@ -1,6 +1,7 @@
 import datetime
 import re
 from typing import Set, Union, List
+import logging
 
 import numpy as np
 from google.protobuf.message import DecodeError
@@ -26,6 +27,8 @@ from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficS
     TrafficSignIDCroatia, TrafficSignIDItaly
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import State
+
+logger = logging.getLogger(__name__)
 
 
 class ProtobufFileWriter(FileWriter):
@@ -65,6 +68,7 @@ class ProtobufFileWriter(FileWriter):
             location_msg = LocationMessage.create_message(self.location)
         else:
             location_msg = LocationMessage.create_message(Location())
+            logger.warning("Default location will be written to protobuf!")
         self._commonroad_msg.location.CopyFrom(location_msg)
 
         for lanelet in self.scenario.lanelet_network.lanelets:

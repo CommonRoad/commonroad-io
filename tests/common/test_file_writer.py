@@ -394,6 +394,17 @@ class TestProtobufFileWriter(unittest.TestCase):
 
         self.assertTrue(os.path.exists(pb_file_path))
 
+    def test_write_scenario_without_location(self):
+        scenario_xml = Scenario(dt=0.1, author="Test", tags={Tag.URBAN}, affiliation="TUM", source="Test")
+        scenario_xml.location = None
+
+        pb_file_path = self.out_path + '/' + str(scenario_xml.scenario_id) + '.pb'
+
+        CommonRoadFileWriter(scenario_xml, PlanningProblemSet(), file_format=FileFormat.PROTOBUF) \
+            .write_scenario_to_file(pb_file_path, OverwriteExistingFile.ALWAYS)
+
+        self.assertTrue(os.path.exists(pb_file_path))
+
     def test_check_validity_of_commonroad_file(self):
         commonroad_str = open(self.filename_carcarana_pb, mode='rb').read()
 

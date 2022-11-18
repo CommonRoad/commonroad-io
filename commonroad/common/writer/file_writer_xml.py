@@ -4,9 +4,9 @@ import pathlib
 import re
 import warnings
 from typing import Set, Union, List
-
 import numpy as np
 from lxml import etree, objectify
+import logging
 
 from commonroad import SCENARIO_VERSION
 from commonroad.common.util import Interval
@@ -22,8 +22,9 @@ from commonroad.scenario.scenario import Location, GeoTransformation, Environmen
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficLightCycleElement, TrafficLightDirection
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import State
-
 from commonroad.common.writer.file_writer_interface import FileWriter, precision, OverwriteExistingFile
+
+logger = logging.getLogger(__name__)
 
 
 def float_to_str(f):
@@ -143,6 +144,7 @@ class XMLFileWriter(FileWriter):
             self._root_node.append(LocationXMLNode.create_node(self.location))
         else:
             self._root_node.append(LocationXMLNode.create_node(Location()))
+            logger.warning("Default location will be written to xml!")
         self._root_node.append(TagXMLNode.create_node(self.tags))
         for let in self.scenario.lanelet_network.lanelets:
             self._root_node.append(LaneletXMLNode.create_node(let))
