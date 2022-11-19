@@ -174,7 +174,7 @@ class XMLFileReader(FileReader):
             try:
                 tags.add(Tag(tag))
             except ValueError:
-                warnings.warn('Scenario tag \'{}\' not valid.'.format(tag), stacklevel=2)
+                logger.warning('Scenario tag \'{}\' not valid.'.format(tag), stacklevel=2)
 
         return tags
 
@@ -221,7 +221,7 @@ class ScenarioFactory:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
                     else:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
-                        warnings.warn("Unknown country: Default traffic sign IDs are used.")
+                        logger.warning("Unknown country: Default traffic sign IDs are used.")
                     traffic_sign = TrafficSign(scenario.generate_object_id() + large_num, [traffic_sign_element],
                                                {lanelet},
                                                scenario.lanelet_network.find_lanelet_by_id(lanelet).right_vertices[0])
@@ -461,7 +461,7 @@ class LaneletNetworkFactory:
         elif SupportedTrafficSignCountry.ZAMUNDA.value == country:
             return SupportedTrafficSignCountry.ZAMUNDA
         else:
-            warnings.warn("Unknown country: Default traffic sign IDs are used. Specified country: " + country)
+            logger.warning("Unknown country: Default traffic sign IDs are used. Specified country: " + country)
             return SupportedTrafficSignCountry.ZAMUNDA
 
 
@@ -848,10 +848,11 @@ class TrafficSignElementFactory:
             elif country is SupportedTrafficSignCountry.BELGIUM:
                 traffic_sign_element_id = TrafficSignIDBelgium(xml_node.find('trafficSignID').text)
             else:
-                warnings.warn("Unknown country: Default traffic sign ID is used. Specified country: " + country.value)
+                logger.warning("Unknown country: Default traffic sign ID is used. Specified country: " + country.value)
                 traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find('trafficSignID').text)
         except ValueError:
-            warnings.warn("<FileReader>: Unknown TrafficElementID! Default traffic sign ID is used. Specified country: "
+            logger.warning("<FileReader>: Unknown TrafficElementID! "
+                           "Default traffic sign ID is used. Specified country: "
                           + country.value + " / Specified traffic sign ID: " + xml_node.find('trafficSignID').text)
             traffic_sign_element_id = TrafficSignIDZamunda.UNKNOWN
 

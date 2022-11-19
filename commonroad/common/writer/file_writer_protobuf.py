@@ -639,9 +639,10 @@ class DynamicObstacleMessage:
             signal_state_msg = SignalStateMessage.create_message(dynamic_obstacle.initial_signal_state)
             dynamic_obstacle_msg.initial_signal_state.CopyFrom(signal_state_msg)
 
-        for signal_state in dynamic_obstacle.signal_series:
-            signal_state_msg = SignalStateMessage.create_message(signal_state)
-            dynamic_obstacle_msg.signal_series.append(signal_state_msg)
+        if dynamic_obstacle.signal_series is not None:
+            for signal_state in dynamic_obstacle.signal_series:
+                signal_state_msg = SignalStateMessage.create_message(signal_state)
+                dynamic_obstacle_msg.signal_series.append(signal_state_msg)
 
         return dynamic_obstacle_msg
 
@@ -921,7 +922,7 @@ class FloatExactOrIntervalMessage:
     def create_message(cls, value: Union[int, Interval]) -> util_pb2.FloatExactOrInterval:
         float_exact_or_interval_msg = util_pb2.FloatExactOrInterval()
 
-        if isinstance(value, float):
+        if isinstance(value, float) or isinstance(value, int):
             float_exact_or_interval_msg.exact = value
         else:
             float_interval_msg = FloatIntervalMessage.create_message(value)
