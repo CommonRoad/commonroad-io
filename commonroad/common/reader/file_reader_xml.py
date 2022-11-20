@@ -848,12 +848,13 @@ class TrafficSignElementFactory:
             elif country is SupportedTrafficSignCountry.BELGIUM:
                 traffic_sign_element_id = TrafficSignIDBelgium(xml_node.find('trafficSignID').text)
             else:
-                logger.warning("Unknown country: Default traffic sign ID is used. Specified country: " + country.value)
+                logger.warning(
+                        "Unknown country: Default traffic sign ID is used. Specified country: {}".format(country.value))
                 traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find('trafficSignID').text)
         except ValueError:
-            logger.warning("<FileReader>: Unknown TrafficElementID! "
-                           "Default traffic sign ID is used. Specified country: "
-                          + country.value + " / Specified traffic sign ID: " + xml_node.find('trafficSignID').text)
+            logger.warning(
+                    "<FileReader>: Unknown TrafficElementID! Default traffic sign ID is used. Specified country: "
+                    "{} / Specified traffic sign ID: {}".format(country.value, xml_node.find('trafficSignID').text))
             traffic_sign_element_id = TrafficSignIDZamunda.UNKNOWN
 
         additional_values = []
