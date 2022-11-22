@@ -66,7 +66,7 @@ message State {
     optional FloatExactOrInterval jerk = 36;
     optional FloatExactOrInterval curvature = 37;
     optional FloatExactOrInterval curvature_rate = 38;
-    optional IntegerExactOrInterval time_step = 39;
+    required IntegerExactOrInterval time_step = 39;
 }
 
 message SignalState {
