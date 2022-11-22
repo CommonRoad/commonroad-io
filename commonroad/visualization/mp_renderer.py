@@ -11,6 +11,7 @@ import matplotlib.figure
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import matplotlib.text as text
+import shapely.geometry
 from matplotlib.animation import FuncAnimation
 from matplotlib.colors import hsv_to_rgb, rgb_to_hsv, to_rgb, to_hex
 from matplotlib.path import Path
@@ -36,7 +37,7 @@ from commonroad.visualization.icons import supported_icons, get_obstacle_icon_pa
 from commonroad.visualization.traffic_sign import draw_traffic_light_signs
 from commonroad.visualization.util import LineDataUnits, collect_center_line_colors, get_arrow_path_at, colormap_idx, \
     line_marking_to_linestyle, traffic_light_color_dict, get_tangent_angle, approximate_bounding_box_dyn_obstacles, \
-    get_vehicle_direction_triangle
+    get_vehicle_direction_triangle, LineCollectionDataUnits
 
 traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
 
@@ -77,7 +78,8 @@ class MPRenderer(IRenderer):
         Creates an renderer for matplotlib
 
         :param draw_params: Default drawing params, if not supplied, default values are used.
-        :param plot_limits: plotting limits. If not supplied, using `ax.autoscale()`.
+        :param plot_limits: plotting limits. If not supplied, using `ax.autoscale()`. If focus obstacle is supplied,
+            plot limits are relative to the obstacle position.
         :param ax: Axis to use. If not supplied, `pyplot.gca()` is used.
         :param figsize: size of the figure
         :param focus_obstacle: if provided, the plot_limits are centered around center of obstacle at time_begin
@@ -88,7 +90,7 @@ class MPRenderer(IRenderer):
             self.draw_params = MPDrawParams()
         else:
             self.draw_params = draw_params
-        self.plot_limits = plot_limits
+
         if ax is None:
             self.ax = plt.gca()
         else:
@@ -116,10 +118,15 @@ class MPRenderer(IRenderer):
         self.plot_center = None
         self.callbacks = defaultdict(list)
         self.focus_obstacle_id = focus_obstacle.obstacle_id if focus_obstacle is not None else None
+        self.plot_limits = plot_limits
 
     @property
     def plot_limits(self):
-        return self._plot_limits
+        if self.focus_obstacle_id is not None and self._plot_limits is None:
+            # Make sure plot limits are not None if focus obstacle is activated. Otherwise, focus obstacle doesn't work.
+            return [-20.0, 20.0, -20.0, 20.0]
+        else:
+            return self._plot_limits
 
     @plot_limits.setter
     def plot_limits(self, val: List[Union[float, int, List[Union[float, int]]]]):
@@ -135,8 +142,8 @@ class MPRenderer(IRenderer):
         """
         :returns: plot limits centered around focus_obstacle_id defined in draw_params
         """
-        if self._plot_limits is not None and (self._plot_limits == "auto" or self.plot_center is None):
-            return self._plot_limits
+        if self.plot_limits is not None and (self.plot_limits == "auto" or self.plot_center is None):
+            return self.plot_limits
         elif self.plot_center is not None:
             plot_limits_f = np.array(self.plot_limits, dtype=int)
             plot_limits_f[:2] += int(self.plot_center[0])
@@ -285,9 +292,9 @@ class MPRenderer(IRenderer):
 
     def create_video(self, obj_lists: List[IDrawable], file_path: str, delta_time_steps: int = 1,
                      plotting_horizon: int = 0, draw_params: Union[List[Optional[BaseParam]], BaseParam, None] = None,
-                     fig_size: Union[list, None] = None, dt: int = 100, dpi: int = 120, progress: bool = True,
-                     callback: Optional[
-                         Callable[[matplotlib.figure.Figure, matplotlib.axes.Axes, int], None]] = None) -> None:
+                     fig_size: Union[list, None] = None, dt: Optional[int] = None, dpi: int = 120,
+                     progress: bool = True, callback: Optional[
+                Callable[[matplotlib.figure.Figure, matplotlib.axes.Axes, int], None]] = None) -> None:
         """
         Creates a video of one or multiple CommonRoad objects in mp4, gif,
         or avi format.
@@ -348,9 +355,22 @@ class MPRenderer(IRenderer):
             else:
                 self.ax.set_xlim(self.plot_limits_focused[0], self.plot_limits_focused[1])
                 self.ax.set_ylim(self.plot_limits_focused[2], self.plot_limits_focused[3])
+
+            if not self.draw_params.axis_visible:
+                self.ax.axes.xaxis.set_visible(False)
+                self.ax.axes.yaxis.set_visible(False)
+                self.ax.axis("off")
             return artists
 
         # Min frame rate is 1 fps
+        if dt is None:
+            # Try to infer from a scenario
+            for obj in obj_lists:
+                if isinstance(obj, Scenario):
+                    dt = obj.dt * 1000.0
+                    break
+            else:
+                dt = 100.0
         dt = min(1000.0, dt)
         frame_count = (time_end - time_begin) // delta_time_steps
         plt.ioff()
@@ -470,12 +490,15 @@ class MPRenderer(IRenderer):
                 else:
                     inital_state = obj.prediction.trajectory.state_at_time_step(time_begin)
                 if inital_state is not None:
-                    self.obstacle_patches.extend(
-                        get_obstacle_icon_patch(obj.obstacle_type, inital_state.position[0], inital_state.position[1],
-                                                inital_state.orientation, vehicle_length=length, vehicle_width=width,
-                                                vehicle_color=draw_params.vehicle_shape.occupancy.shape.facecolor,
-                                                edgecolor=draw_params.vehicle_shape.occupancy.shape.edgecolor,
-                                                zorder=ZOrders.CAR_PATCH))
+                    vehicle_color = draw_params.vehicle_shape.occupancy.shape.facecolor
+                    vehicle_edge_color = draw_params.vehicle_shape.occupancy.shape.edgecolor
+                    self.obstacle_patches.extend(get_obstacle_icon_patch(obj.obstacle_type, inital_state.position[0],
+                                                                         inital_state.position[1],
+                                                                         inital_state.orientation,
+                                                                         vehicle_length=length, vehicle_width=width,
+                                                                         vehicle_color=vehicle_color,
+                                                                         edgecolor=vehicle_edge_color,
+                                                                         zorder=ZOrders.CAR_PATCH))
         elif draw_icon is True:
             draw_shape = True
 
@@ -678,10 +701,10 @@ class MPRenderer(IRenderer):
             draw_params = self.draw_params.shape
         elif isinstance(draw_params, MPDrawParams):
             draw_params = draw_params.shape
-        self.obstacle_patches.append(mpl.patches.Polygon(vertices, closed=True, facecolor=draw_params.facecolor,
-                                                         edgecolor=draw_params.edgecolor, zorder=draw_params.zorder,
-                                                         alpha=draw_params.opacity, linewidth=draw_params.linewidth,
-                                                         antialiased=draw_params.antialiased))
+        self.obstacle_patches.append(
+            mpl.patches.Polygon(vertices, closed=True, facecolor=draw_params.facecolor, edgecolor=draw_params.edgecolor,
+                                zorder=draw_params.zorder, alpha=draw_params.opacity, linewidth=draw_params.linewidth,
+                                antialiased=draw_params.antialiased))
 
     def draw_rectangle(self, vertices: np.ndarray,
                        draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None) -> None:
@@ -731,8 +754,8 @@ class MPRenderer(IRenderer):
         zorder = draw_params.zorder
         if zorder is None:
             zorder = ZOrders.STATE
-        self.obstacle_patches.append(mpl.patches.Circle(state.position, radius=draw_params.radius, zorder=zorder,
-                                                        color=draw_params.facecolor))
+        self.obstacle_patches.append(
+            mpl.patches.Circle(state.position, radius=draw_params.radius, zorder=zorder, color=draw_params.facecolor))
 
         if draw_params.draw_arrow:
             cos = math.cos(state.orientation)
@@ -867,8 +890,8 @@ class MPRenderer(IRenderer):
         succ_right_paths = list()
 
         vertices_fill = list()
-        coordinates_left_border_vertices = np.empty((0, 2))
-        coordinates_right_border_vertices = np.empty((0, 2))
+        coordinates_left_border_vertices = []
+        coordinates_right_border_vertices = []
         direction_list = list()
         center_paths = list()
         left_paths = list()
@@ -884,49 +907,51 @@ class MPRenderer(IRenderer):
             if isinstance(draw_lanlet_ids, list) and lanelet.lanelet_id not in draw_lanlet_ids:
                 continue
 
-            # left bound
-            if draw_border_vertices or draw_left_bound:
+            def _draw_bound(vertices, line_marking, paths, coordinate_border_vertices):
                 if draw_border_vertices:
-                    coordinates_left_border_vertices = np.vstack(
-                            (coordinates_left_border_vertices, lanelet.left_vertices))
+                    coordinate_border_vertices.append(vertices)
 
-                if draw_line_markings and lanelet.line_marking_left_vertices is not LineMarking.UNKNOWN and \
-                        lanelet.line_marking_left_vertices is not LineMarking.NO_MARKING:
-                    linestyle, dashes, linewidth_metres = line_marking_to_linestyle(lanelet.line_marking_left_vertices)
+                if draw_line_markings and line_marking is not LineMarking.UNKNOWN and line_marking is not \
+                        LineMarking.NO_MARKING:
+                    linestyle, dashes, linewidth_metres = line_marking_to_linestyle(line_marking)
                     if lanelet.distance[-1] <= linewidth_metres:
-                        left_paths.append(Path(lanelet.left_vertices, closed=False))
+                        paths.append(Path(lanelet.right_vertices, closed=False))
                     else:
-                        tmp_left = lanelet.left_vertices.copy()
-                        tmp_left[0, :] = lanelet.interpolate_position(linewidth_metres / 2)[2]
-                        tmp_left[-1, :] = lanelet.interpolate_position(lanelet.distance[-1] - linewidth_metres / 2)[2]
-                        line = LineDataUnits(tmp_left[:, 0], tmp_left[:, 1], zorder=ZOrders.LEFT_BOUND,
-                                             linewidth=linewidth_metres, alpha=1.0, color=left_bound_color,
-                                             linestyle=linestyle, dashes=dashes)
-                        self.static_artists.append(line)
+                        tmp_right = vertices.copy()
+                        tmp_right[0, :] = lanelet.interpolate_position(linewidth_metres / 2)[1]
+                        tmp_right[-1, :] = lanelet.interpolate_position(lanelet.distance[-1] - linewidth_metres / 2)[1]
+
+                        if line_marking in (LineMarking.DASHED, LineMarking.BROAD_DASHED):
+                            line_string = shapely.geometry.LineString(tmp_right)
+                            max_dist = line_string.project(shapely.geometry.Point(*vertices[-1]))
+                            distances_start = np.arange(0., max_dist, 12. + 6.)
+                            distances_end = distances_start + 6.0
+                            distances_end[-1] = min(distances_end[-1], max_dist)
+                            p_start = [line_string.interpolate(s).coords for s in distances_start]
+                            p_end = [line_string.interpolate(s).coords for s in distances_end]
+                            pts = np.squeeze(np.stack((p_start, p_end), axis=1), axis=2)
+                            collection = LineCollectionDataUnits(pts, zorder=ZOrders.RIGHT_BOUND,
+                                                                 linewidth=linewidth_metres, alpha=1.0,
+                                                                 color=right_bound_color)
+                            self.static_collections.append(collection)
+                        else:
+                            self.static_artists.append(
+                                    LineDataUnits(tmp_right[:, 0], tmp_right[:, 1], zorder=ZOrders.RIGHT_BOUND,
+                                                  linewidth=linewidth_metres, alpha=1.0, color=right_bound_color,
+                                                  linestyle=linestyle, dashes=dashes))
                 else:
-                    left_paths.append(Path(lanelet.left_vertices, closed=False))
+                    paths.append(Path(vertices, closed=False))
+
+            # left bound
+            if (draw_border_vertices or draw_left_bound) and (
+                    lanelet.adj_left is None or not lanelet.adj_left_same_direction):
+                _draw_bound(lanelet.left_vertices, lanelet.line_marking_left_vertices, left_paths,
+                            coordinates_left_border_vertices)
 
             # right bound
             if draw_border_vertices or draw_right_bound:
-                if draw_border_vertices:
-                    coordinates_right_border_vertices = np.vstack(
-                            (coordinates_right_border_vertices, lanelet.right_vertices))
-
-                if draw_line_markings and lanelet.line_marking_right_vertices is not LineMarking.UNKNOWN and \
-                        lanelet.line_marking_right_vertices is not LineMarking.NO_MARKING:
-                    linestyle, dashes, linewidth_metres = line_marking_to_linestyle(lanelet.line_marking_right_vertices)
-                    if lanelet.distance[-1] <= linewidth_metres:
-                        right_paths.append(Path(lanelet.right_vertices, closed=False))
-                    else:
-                        tmp_right = lanelet.right_vertices.copy()
-                        tmp_right[0, :] = lanelet.interpolate_position(linewidth_metres / 2)[1]
-                        tmp_right[-1, :] = lanelet.interpolate_position(lanelet.distance[-1] - linewidth_metres / 2)[1]
-                        line = LineDataUnits(tmp_right[:, 0], tmp_right[:, 1], zorder=ZOrders.RIGHT_BOUND,
-                                             linewidth=linewidth_metres, alpha=1.0, color=right_bound_color,
-                                             linestyle=linestyle, dashes=dashes)
-                        self.static_artists.append(line)
-                else:
-                    right_paths.append(Path(lanelet.right_vertices, closed=False))
+                _draw_bound(lanelet.right_vertices, lanelet.line_marking_right_vertices, right_paths,
+                            coordinates_right_border_vertices)
 
             # stop line
             if draw_stop_line and lanelet.stop_line:
@@ -953,9 +978,9 @@ class MPRenderer(IRenderer):
                 tan_vec = np.array(lanelet.right_vertices[0]) - np.array(lanelet.left_vertices[0])
                 path = get_arrow_path_at(center[0], center[1], math.atan2(tan_vec[1], tan_vec[0]) + 0.5 * np.pi)
                 if unique_colors:
-                    direction_list.append(
-                        mpl.patches.PathPatch(path, color=center_bound_color, lw=0.5, zorder=ZOrders.DIRECTION_ARROW,
-                                              antialiased=antialiased))
+                    direction_list.append(mpl.patches.PathPatch(path, color=center_bound_color, lw=0.5,
+                                                                zorder=ZOrders.DIRECTION_ARROW,
+                                                                antialiased=antialiased))
                 else:
                     direction_list.append(path)
 
@@ -996,10 +1021,10 @@ class MPRenderer(IRenderer):
 
             elif draw_center_bound:
                 if unique_colors:
-                    center_paths.append(
-                        mpl.patches.PathPatch(Path(lanelet.center_vertices, closed=False), edgecolor=center_bound_color,
-                                              facecolor='none', lw=draw_linewidth, zorder=ZOrders.CENTER_BOUND,
-                                              antialiased=antialiased))
+                    center_paths.append(mpl.patches.PathPatch(Path(lanelet.center_vertices, closed=False),
+                                                              edgecolor=center_bound_color, facecolor='none',
+                                                              lw=draw_linewidth, zorder=ZOrders.CENTER_BOUND,
+                                                              antialiased=antialiased))
                 elif colormap_tangent:
                     relative_angle = draw_params.relative_angle
                     points = lanelet.center_vertices.reshape(-1, 1, 2)
@@ -1084,9 +1109,9 @@ class MPRenderer(IRenderer):
                             collections.PatchCollection(center_paths, match_original=True, zorder=ZOrders.CENTER_BOUND,
                                                         antialiased=antialiased))
                 if draw_start_and_direction:
-                    self.static_collections.append(
-                        collections.PatchCollection(direction_list, match_original=True, zorder=ZOrders.DIRECTION_ARROW,
-                                                    antialiased=antialiased))
+                    self.static_collections.append(collections.PatchCollection(direction_list, match_original=True,
+                                                                               zorder=ZOrders.DIRECTION_ARROW,
+                                                                               antialiased=antialiased))
 
         elif not colormap_tangent:
             if draw_center_bound:
@@ -1117,21 +1142,20 @@ class MPRenderer(IRenderer):
 
         # fill lanelets with facecolor
         self.static_collections.append(
-                collections.PolyCollection(vertices_fill, zorder=ZOrders.LANELET_POLY,
-                                           facecolor=facecolor, edgecolor='none', antialiased=antialiased))
+                collections.PolyCollection(vertices_fill, zorder=ZOrders.LANELET_POLY, facecolor=facecolor,
+                                           edgecolor='none', antialiased=antialiased))
         if incoming_vertices_fill:
             self.static_collections.append(
-                    collections.PolyCollection(incoming_vertices_fill,
-                                               facecolor=incoming_lanelets_color, edgecolor='none',
-                                               zorder=ZOrders.INCOMING_POLY, antialiased=antialiased))
+                    collections.PolyCollection(incoming_vertices_fill, facecolor=incoming_lanelets_color,
+                                               edgecolor='none', zorder=ZOrders.INCOMING_POLY, antialiased=antialiased))
         if crossing_vertices_fill:
             self.static_collections.append(
-                    collections.PolyCollection(crossing_vertices_fill,
-                                               facecolor=crossings_color, edgecolor='none',
+                    collections.PolyCollection(crossing_vertices_fill, facecolor=crossings_color, edgecolor='none',
                                                zorder=ZOrders.CROSSING_POLY, antialiased=antialiased))
 
         # draw_border_vertices
         if draw_border_vertices:
+            coordinates_left_border_vertices = np.concatenate(coordinates_left_border_vertices, axis=0)
             # left vertices
             self.static_collections.append(
                     collections.EllipseCollection(np.ones([coordinates_left_border_vertices.shape[0], 1]) * 1.5,
@@ -1140,6 +1164,7 @@ class MPRenderer(IRenderer):
                                                   offsets=coordinates_left_border_vertices, color=left_bound_color,
                                                   zorder=ZOrders.LEFT_BOUND + 0.1, ))
 
+            coordinates_right_border_vertices = np.concatenate(coordinates_right_border_vertices, axis=0)
             # right_vertices
             self.static_collections.append(
                     collections.EllipseCollection(np.ones([coordinates_right_border_vertices.shape[0], 1]) * 1.5,
