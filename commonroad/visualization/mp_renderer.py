@@ -917,15 +917,15 @@ class MPRenderer(IRenderer):
                     if lanelet.distance[-1] <= linewidth_metres:
                         paths.append(Path(lanelet.right_vertices, closed=False))
                     else:
-                        tmp_right = vertices.copy()
-                        tmp_right[0, :] = lanelet.interpolate_position(linewidth_metres / 2)[1]
-                        tmp_right[-1, :] = lanelet.interpolate_position(lanelet.distance[-1] - linewidth_metres / 2)[1]
+                        tmp_vertices = vertices.copy()
+                        line_string = shapely.geometry.LineString(tmp_vertices)
+                        max_dist = line_string.project(shapely.geometry.Point(*vertices[-1])) - linewidth_metres / 2
 
                         if line_marking in (LineMarking.DASHED, LineMarking.BROAD_DASHED):
-                            line_string = shapely.geometry.LineString(tmp_right)
-                            max_dist = line_string.project(shapely.geometry.Point(*vertices[-1]))
-                            distances_start = np.arange(0., max_dist, 12. + 6.)
+                            # In Germany, dashed lines are 6m long and 12m apart.
+                            distances_start = np.arange(linewidth_metres / 2, max_dist, 12. + 6.)
                             distances_end = distances_start + 6.0
+                            # Cut off the last dash if it is too long.
                             distances_end[-1] = min(distances_end[-1], max_dist)
                             p_start = [line_string.interpolate(s).coords for s in distances_start]
                             p_end = [line_string.interpolate(s).coords for s in distances_end]
@@ -935,8 +935,11 @@ class MPRenderer(IRenderer):
                                                                  color=right_bound_color)
                             self.static_collections.append(collection)
                         else:
+                            # Offset, start and end of the line marking, to make them aligned with the lanelet.
+                            tmp_vertices[0, :] = line_string.interpolate(linewidth_metres / 2).coords
+                            tmp_vertices[-1, :] = line_string.interpolate(max_dist).coords
                             self.static_artists.append(
-                                    LineDataUnits(tmp_right[:, 0], tmp_right[:, 1], zorder=ZOrders.RIGHT_BOUND,
+                                    LineDataUnits(tmp_vertices[:, 0], tmp_vertices[:, 1], zorder=ZOrders.RIGHT_BOUND,
                                                   linewidth=linewidth_metres, alpha=1.0, color=right_bound_color,
                                                   linestyle=linestyle, dashes=dashes))
                 else:
