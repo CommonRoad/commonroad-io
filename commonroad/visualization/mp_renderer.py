@@ -334,8 +334,9 @@ class MPRenderer(IRenderer):
             self.render_static()
 
         def update(frame=0):
+            current_time_step = time_begin + delta_time_steps * frame
             for params in draw_params:
-                params.time_begin = time_begin + delta_time_steps * frame
+                params.time_begin = current_time_step
                 params.time_end = time_begin + min(frame_count, delta_time_steps * frame + plotting_horizon)
             self.remove_dynamic()
             self.clear()
@@ -346,10 +347,10 @@ class MPRenderer(IRenderer):
             if self.plot_limits is None:
                 self.ax.autoscale()
             elif self.plot_limits == 'auto':
-                limits = approximate_bounding_box_dyn_obstacles(obj_lists, time_begin)
+                limits = approximate_bounding_box_dyn_obstacles(obj_lists, current_time_step)
                 if limits is not None:
-                    self.ax.xlim(limits[0][0] - 10, limits[0][1] + 10)
-                    self.ax.ylim(limits[1][0] - 10, limits[1][1] + 10)
+                    self.ax.set_xlim(limits[0][0] - 10, limits[0][1] + 10)
+                    self.ax.set_ylim(limits[1][0] - 10, limits[1][1] + 10)
                 else:
                     self.ax.autoscale()
             else:
