@@ -29,6 +29,8 @@ class State(abc.ABC):
     time_step: Union[int, Interval] = None
 
     def __eq__(self, other: State):
+        if not isinstance(other, State):
+            return False
         if set(self.attributes) != set(other.attributes):
             return False
 
