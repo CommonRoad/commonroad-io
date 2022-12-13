@@ -1,8 +1,9 @@
+import logging
 import re
+from abc import ABC
 from collections import defaultdict
 from typing import Dict, Tuple
 from xml.etree import ElementTree
-from abc import ABC
 
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.reader.file_reader_interface import FileReader
@@ -11,15 +12,17 @@ from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Sh
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
+from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
 from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, EnvironmentObstacle, \
     SignalState, PhantomObstacle
-from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, \
-    TimeOfDay, Weather, Underground, ScenarioID
+from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, TimeOfDay, \
+    Weather, Underground, ScenarioID
 from commonroad.scenario.state import InitialState, TraceState, CustomState, SpecificStateClasses
-from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.traffic_sign import *
-from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
+from commonroad.scenario.trajectory import Trajectory
+
+logger = logging.getLogger(__name__)
 
 
 def read_value_exact_or_interval(xml_node: ElementTree.Element)\
@@ -171,7 +174,7 @@ class XMLFileReader(FileReader):
             try:
                 tags.add(Tag(tag))
             except ValueError:
-                warnings.warn('Scenario tag \'{}\' not valid.'.format(tag), stacklevel=2)
+                logger.warning('Scenario tag \'{}\' not valid.'.format(tag), stacklevel=2)
 
         return tags
 
@@ -218,7 +221,7 @@ class ScenarioFactory:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
                     else:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
-                        warnings.warn("Unknown country: Default traffic sign IDs are used.")
+                        logger.warning("Unknown country: Default traffic sign IDs are used.")
                     traffic_sign = TrafficSign(scenario.generate_object_id() + large_num, [traffic_sign_element],
                                                {lanelet},
                                                scenario.lanelet_network.find_lanelet_by_id(lanelet).right_vertices[0])
@@ -458,7 +461,7 @@ class LaneletNetworkFactory:
         elif SupportedTrafficSignCountry.ZAMUNDA.value == country:
             return SupportedTrafficSignCountry.ZAMUNDA
         else:
-            warnings.warn("Unknown country: Default traffic sign IDs are used. Specified country: " + country)
+            logger.warning("Unknown country: Default traffic sign IDs are used. Specified country: " + country)
             return SupportedTrafficSignCountry.ZAMUNDA
 
 
@@ -845,11 +848,13 @@ class TrafficSignElementFactory:
             elif country is SupportedTrafficSignCountry.BELGIUM:
                 traffic_sign_element_id = TrafficSignIDBelgium(xml_node.find('trafficSignID').text)
             else:
-                warnings.warn("Unknown country: Default traffic sign ID is used. Specified country: " + country.value)
+                logger.warning(
+                        "Unknown country: Default traffic sign ID is used. Specified country: {}".format(country.value))
                 traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find('trafficSignID').text)
         except ValueError:
-            warnings.warn("<FileReader>: Unknown TrafficElementID! Default traffic sign ID is used. Specified country: "
-                          + country.value + " / Specified traffic sign ID: " + xml_node.find('trafficSignID').text)
+            logger.warning(
+                    "<FileReader>: Unknown TrafficElementID! Default traffic sign ID is used. Specified country: "
+                    "{} / Specified traffic sign ID: {}".format(country.value, xml_node.find('trafficSignID').text))
             traffic_sign_element_id = TrafficSignIDZamunda.UNKNOWN
 
         additional_values = []
@@ -1341,7 +1346,8 @@ class StateFactory:
         if matched_state is None:
             matched_state = CustomState()
             StateFactory._fill_state(matched_state, xml_node, used_fields, lanelet_network)
-            warnings.warn("State at time step {} cannot be matched!".format(read_time(xml_node.find('time'))))
+            logger.debug("State type at time step %s cannot be matched! Creating custom state!",
+                         read_time(xml_node.find('time')))
 
         return matched_state
 

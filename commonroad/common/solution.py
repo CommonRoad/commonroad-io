@@ -95,7 +95,7 @@ class StateFields(Enum):
     PM = ['position', 'velocity', 'velocity_y', 'time_step']
     ST = ['position', 'steering_angle', 'velocity', 'orientation', 'yaw_rate', 'slip_angle', 'time_step']
     KS = ['position', 'steering_angle', 'velocity', 'orientation', 'time_step']
-    KST = ['position', 'steering_angle', 'velocity', 'orientation', 'hitch', 'time_step']
+    KST = ['position', 'steering_angle', 'velocity', 'orientation', 'hitch_angle', 'time_step']
     MB = ['position', 'steering_angle', 'velocity', 'orientation', 'yaw_rate', 'roll_angle', 'roll_rate', 'pitch_angle',
           'pitch_rate', 'velocity_y', 'position_z', 'velocity_z', 'roll_angle_front', 'roll_rate_front',
           'velocity_y_front', 'position_z_front', 'velocity_z_front', 'roll_angle_rear', 'roll_rate_rear',
@@ -121,7 +121,7 @@ class XMLStateFields(Enum):
     PM = [('x', 'y'), 'xVelocity', 'yVelocity', 'time']
     ST = [('x', 'y'), 'steeringAngle', 'velocity', 'orientation', 'yawRate', 'slipAngle', 'time']
     KS = [('x', 'y'), 'steeringAngle', 'velocity', 'orientation', 'time']
-    KST = [('x', 'y'), 'steeringAngle', 'velocity', 'orientation', 'hitch', 'time']
+    KST = [('x', 'y'), 'steeringAngle', 'velocity', 'orientation', 'hitch_angle', 'time']
     MB = [('x', 'y'), 'steeringAngle', 'velocity', 'orientation', 'yawRate', 'rollAngle', 'rollRate', 'pitchAngle',
           'pitchRate', 'yVelocity', 'zPosition', 'zVelocity', 'rollAngleFront', 'rollRateFront',
           'yVelocityFront', 'zPositionFront', 'zVelocityFront', 'rollAngleRear', 'rollRateRear',

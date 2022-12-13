@@ -35,6 +35,13 @@ class BaseParam:
 
     def __post_init__(self):
         self.__initialized = True
+        # Make sure that the base parameters are propagated to all sub-parameters
+        # This cannot be done in the init method, because the sub-parameters are not yet initialized.
+        # This is not a noop, as it calls the __setattr__ method.
+        # Do not remove!
+        self.time_begin = self.time_begin
+        self.time_end = self.time_end
+        self.antialiased = self.antialiased
 
     def __setattr__(self, name: str, value: Any) -> None:
         if name in {f.name for f in dataclasses.fields(self)}:

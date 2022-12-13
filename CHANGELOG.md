@@ -1,6 +1,16 @@
 # Changelog
 
-## [2022.3] - 2022-11-X
+## [202X.X] - 202X-XX-XX
+
+### Fixed
+
+- Writing scenarios without location to protobuf
+- Dashed lanelet boundaries with fixed dash position
+- Default plot limits for focused obstacle
+- Use dt from scenario as default for video creation
+- Apply axis visible-option also for video creation
+
+## [2022.3] - 2022-11-16
 
 ### Added
 

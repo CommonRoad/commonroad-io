@@ -31,7 +31,7 @@ Learn more about the scenario specification [here](https://gitlab.lrz.de/tum-cps
 The commonroad-io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tools of the CommonRoad Framework.
 With commonroad-io, those solutions can be written to xml-files for uploading them on [commonroad.in.tum.de](https://commonroad.in.tum.de/).
 
-commonroad-io 2022.2 is compatible with CommonRoad scenarios in version 2020a and supports reading 2018b scenarios.
+commonroad-io 2022.3 is compatible with CommonRoad scenarios in version 2020a and supports reading 2018b scenarios.
 
 The software is written in Python and tested on Linux for the Python 3.7, 3.8, 3.9, 3.10, and 3.11.
 

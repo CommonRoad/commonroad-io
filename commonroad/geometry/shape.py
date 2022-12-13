@@ -358,7 +358,7 @@ class Polygon(Shape):
     @property
     def center(self) -> np.ndarray:
         """ Computes the geometric center of the polygon."""
-        return np.array(self._shapely_polygon.centroid)
+        return np.array(self._shapely_polygon.centroid.coords).ravel()
 
     @property
     def shapely_object(self) -> shapely.geometry.Polygon:
@@ -586,7 +586,7 @@ def shape_group_occupancy_shape_from_state(shapes, state, wheelbase_lengths):
     list_of_shapes.append(shapes[0].rotate_translate_local(state.position, state.orientation))
 
     for i in range(1, nr_of_shapes):
-        new_orient = orient + state.hitch
+        new_orient = orient + state.hitch_angle
         pos = pos - 0.5 * wheelbase_lengths[i - 1] * np.array([math.cos(orient), math.sin(orient)]) - (
                 wheelbase_lengths[i] / 2) * np.array([math.cos(new_orient), math.sin(new_orient)])
         orient = new_orient
