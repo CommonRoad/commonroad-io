@@ -3,7 +3,7 @@ import abc
 import copy
 import dataclasses
 from dataclasses import dataclass
-from typing import Union, List, Any
+from typing import Union, List, Any, Tuple
 
 import numpy as np
 
