@@ -3,7 +3,7 @@ import abc
 import copy
 import dataclasses
 from dataclasses import dataclass
-from typing import Union, List, Set, Any
+from typing import Union, List, Any, Tuple
 
 import numpy as np
 
@@ -90,7 +90,7 @@ class State(abc.ABC):
         return np.array(values)
 
     @property
-    def attributes(self) -> Set[str]:
+    def attributes(self) -> List[str]:
         """
         Returns all attributes used in state space.
 
@@ -98,10 +98,10 @@ class State(abc.ABC):
         """
         fields = self.__dict__
 
-        return set([field_name for field_name in fields])
+        return [field_name for field_name in fields]
 
     @property
-    def used_attributes(self) -> Set[str]:
+    def used_attributes(self) -> List[str]:
         """
         Returns all initialized attributed in state space.
 
@@ -112,7 +112,7 @@ class State(abc.ABC):
             if getattr(self, field_name) is not None:
                 used_fields.append(field_name)
 
-        return set(used_fields)
+        return used_fields
 
     @property
     def is_uncertain_position(self) -> bool:

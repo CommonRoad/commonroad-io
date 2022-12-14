@@ -11,12 +11,12 @@ from commonroad.common.util import Interval, AngleInterval
 class TestState(unittest.TestCase):
 
     def test_attributes(self):
-        attrs = {'time_step', 'position', 'velocity', 'velocity_y'}
+        attrs = ['time_step', 'position', 'velocity', 'velocity_y']
         state = PMState()
         self.assertEqual(state.attributes, attrs)
 
     def test_used_attributes(self):
-        used_attrs = {'position', 'velocity_y'}
+        used_attrs = ['position', 'velocity_y']
         state = PMState(position=np.array([0., 0.]), velocity_y=10.)
         self.assertEqual(state.used_attributes, used_attrs)
 

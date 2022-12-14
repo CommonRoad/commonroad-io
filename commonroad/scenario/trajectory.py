@@ -42,7 +42,7 @@ class Trajectory(IDrawable):
         assert all(is_natural_number(state.time_step) for state in state_list if hasattr(state,
                                                                                          'time_step')), \
             '<Trajectory/state_list>: Element time_step of each state must be an integer.'
-        assert all(state_list[0].used_attributes == state.used_attributes for state in state_list), (
+        assert all(set(state_list[0].used_attributes) == set(state.used_attributes) for state in state_list), (
                 '<Trajectory/state_list>: all states must have the same attributes. Attributes of first state: %s.' %
                 state_list[0].attributes)
 
