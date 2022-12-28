@@ -1,6 +1,6 @@
 # Changelog
 
-## [202X.X] - 202X-XX-XX
+## [2023.1] - 2023-XX-XX
 
 ### Fixed
 
@@ -9,6 +9,10 @@
 - Default plot limits for focused obstacle
 - Use dt from scenario as default for video creation
 - Apply axis visible-option also for video creation
+
+### Changed
+
+- Name of SIDEWALK and BUSLANE traffic signs to PEDESTRIAN_SIDEWALK and BUS_LANE
 
 ## [2022.3] - 2022-11-16
 
