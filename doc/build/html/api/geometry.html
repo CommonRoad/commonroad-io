@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module Geometry &mdash; CommonRoad_io 2022.3 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Module Common" href="common.html" />
+    <link rel="prev" title="Module Planning" href="planning.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> CommonRoad_io
+            <img src="../_static/commonroad_white150.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2022.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user/getting_started.html">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user/getting_started.html#reading-files">Reading Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user/getting_started.html#scenario">Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user/getting_started.html#lanelet-network">Lanelet Network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user/getting_started.html#obstacles">Obstacles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../user/getting_started.html#dynamic-obstacle-prediction">Dynamic Obstacle Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user/getting_started.html#trajectory-prediction">Trajectory Prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user/getting_started.html#set-based-prediction">Set Based Prediction</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../user/getting_started.html#planning-problems">Planning Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user/getting_started.html#writing-files">Writing Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user/getting_started.html#solution-writer">Solution Writer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user/visualization.html">Visualization Manual</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user/visualization.html#creating-plots-in-commonroad">Creating plots in CommonRoad</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user/visualization.html#styling-options">Styling options</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user/visualization.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../user/visualization.html#plot-limits"><code class="docutils literal notranslate"><span class="pre">plot_limits</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">CommonRoad_io API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="scenario.html">Module Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="scenario.html#module-commonroad.scenario.scenario">Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenario.html#module-commonroad.scenario.lanelet">Road network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenario.html#module-commonroad.scenario.traffic_sign">Traffic Sign</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenario.html#traffic-light">Traffic Light</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenario.html#module-commonroad.scenario.traffic_sign_interpreter">Traffic Sign Interpreter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenario.html#intersection">Intersection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenario.html#obstacles">Obstacles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenario.html#module-commonroad.scenario.trajectory">Trajectories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenario.html#module-commonroad.scenario.state">States</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="prediction.html">Module Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="prediction.html#prediction-class"><code class="docutils literal notranslate"><span class="pre">Prediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prediction.html#trajectoryprediction-class"><code class="docutils literal notranslate"><span class="pre">TrajectoryPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prediction.html#setbasedprediction-class"><code class="docutils literal notranslate"><span class="pre">SetBasedPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="prediction.html#occupancy-class"><code class="docutils literal notranslate"><span class="pre">Occupancy</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="planning.html">Module Planning</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="planning.html#module-commonroad.planning.planning_problem">Planning Problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="planning.html#module-commonroad.planning.goal">Goal Region</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Module Geometry</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-commonroad.geometry.shape">Shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geometry.transform">Transform</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geometry.polyline_util">Polyline Utility Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="common.html">Module Common</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="common.html#module-commonroad.common.file_reader">File Reader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="common.html#module-commonroad.common.file_writer">File Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="common.html#solution-reader-and-writer">Solution Reader and Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="common.html#module-commonroad.common.util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="visualization.html">Module Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="visualization.html#module-commonroad.visualization.drawable">Drawing interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="visualization.html#module-commonroad.visualization.draw_params">Drawing parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CommonRoad_io</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">CommonRoad_io API</a></li>
+      <li class="breadcrumb-item active">Module Geometry</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/geometry.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-geometry">
+<h1>Module Geometry<a class="headerlink" href="#module-geometry" title="Permalink to this heading"></a></h1>
+<section id="module-commonroad.geometry.shape">
+<span id="shape"></span><h2>Shape<a class="headerlink" href="#module-commonroad.geometry.shape" title="Permalink to this heading"></a></h2>
+<div class="graphviz"><img src="../_images/inheritance-b9bea42606d3f61cf8c93a649e855569c4390956.png" alt="Inheritance diagram of Shape, Rectangle, Circle, Polygon, ShapeGroup" usemap="#inheritance63b2655cb4" class="inheritance graphviz" /></div>
+<map id="inheritance63b2655cb4" name="inheritance63b2655cb4">
+<area shape="rect" id="node4" href="visualization.html#commonroad.visualization.drawable.IDrawable" target="_top" title="Interface for drawable types" alt="" coords="125,80,207,105"/>
+<area shape="rect" id="node2" href="#commonroad.geometry.shape.Circle" target="_top" title="The class Circle can be used to model occupied regions or circular obstacles, e.g., a pedestrian." alt="" coords="386,5,458,31"/>
+<area shape="rect" id="node3" href="#commonroad.geometry.shape.Shape" target="_top" title="Abstract class for CommonRoad shapes." alt="" coords="255,80,327,105"/>
+<area shape="rect" id="node5" href="#commonroad.geometry.shape.Polygon" target="_top" title="The class Polygon can be used to model occupied regions or obstacles. A polygon is defined by an array of" alt="" coords="386,55,458,80"/>
+<area shape="rect" id="node6" href="#commonroad.geometry.shape.Rectangle" target="_top" title="The class Rectangle can be used to model occupied regions or rectangular obstacles, e.g., a vehicle. The" alt="" coords="381,104,463,129"/>
+<area shape="rect" id="node7" href="#commonroad.geometry.shape.ShapeGroup" target="_top" title="The class ShapeGroup represents a collection of primitive shapes, e.g., rectangles and polygons," alt="" coords="375,153,469,179"/>
+</map><section id="shape-class">
+<h3><code class="docutils literal notranslate"><span class="pre">Shape</span></code> class<a class="headerlink" href="#shape-class" title="Permalink to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Shape">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commonroad.geometry.shape.</span></span><span class="sig-name descname"><span class="pre">Shape</span></span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Shape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Shape" title="Permalink to this definition"></a></dt>
+<dd><p>Abstract class for CommonRoad shapes.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Shape.contains_point">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">contains_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Shape.contains_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Shape.contains_point" title="Permalink to this definition"></a></dt>
+<dd><p>Checks whether point is contained in shape.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Shape.rotate_translate_local">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rotate_translate_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Shape.rotate_translate_local"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Shape.rotate_translate_local" title="Permalink to this definition"></a></dt>
+<dd><p>First rotates a shape around the center and the translates it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#commonroad.geometry.shape.Shape" title="commonroad.geometry.shape.Shape"><code class="xref py py-class docutils literal notranslate"><span class="pre">Shape</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Shape.translate_rotate">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">translate_rotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Shape.translate_rotate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Shape.translate_rotate" title="Permalink to this definition"></a></dt>
+<dd><p>First translates and then rotates a shape around the origin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#commonroad.geometry.shape.Shape" title="commonroad.geometry.shape.Shape"><code class="xref py py-class docutils literal notranslate"><span class="pre">Shape</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="rectangle-class">
+<h3><code class="docutils literal notranslate"><span class="pre">Rectangle</span></code> class<a class="headerlink" href="#rectangle-class" title="Permalink to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Rectangle">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commonroad.geometry.shape.</span></span><span class="sig-name descname"><span class="pre">Rectangle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Rectangle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Rectangle" title="Permalink to this definition"></a></dt>
+<dd><p>The class Rectangle can be used to model occupied regions or rectangular obstacles, e.g., a vehicle. The
+rectangle is specified by the length in longitudinal direction, the width in lateral direction, the orientation,
+and its geometric center. If we model the shape of an obstacle, the orientation and geometric center can be
+omitted; therefore, we set the orientation, and the x- and y-coordinate of the geometric center to zero.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Rectangle.center">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">center</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#commonroad.geometry.shape.Rectangle.center" title="Permalink to this definition"></a></dt>
+<dd><p>Geometric center of the rectangle [x, y]. If the rectangle is used to describe the shape of an obstacle,
+we set the center to the coordinates [0.0, 0.0].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Rectangle.contains_point">
+<span class="sig-name descname"><span class="pre">contains_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Rectangle.contains_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Rectangle.contains_point" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if a point is contained in a rectangle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>point</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – 2D point as array [x, y]</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>true if the rectangle’s interior or boundary intersects with the given point, otherwise false</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Rectangle.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">renderer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Rectangle.draw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Rectangle.draw" title="Permalink to this definition"></a></dt>
+<dd><p>Draw the object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>renderer</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">IRenderer</span></code>) – Renderer to use for drawing</p></li>
+<li><p><strong>draw_params</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="visualization.html#commonroad.visualization.draw_params.ShapeParams" title="commonroad.visualization.draw_params.ShapeParams"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShapeParams</span></code></a>, <a class="reference internal" href="visualization.html#commonroad.visualization.draw_params.MPDrawParams" title="commonroad.visualization.draw_params.MPDrawParams"><code class="xref py py-class docutils literal notranslate"><span class="pre">MPDrawParams</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]) – optional parameters for plotting, overriding the parameters of the renderer</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Rectangle.length">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">length</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#commonroad.geometry.shape.Rectangle.length" title="Permalink to this definition"></a></dt>
+<dd><p>Length of the rectangle in longitudinal direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Rectangle.orientation">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orientation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#commonroad.geometry.shape.Rectangle.orientation" title="Permalink to this definition"></a></dt>
+<dd><p>Orientation of the rectangle. If the rectangle is used to describe the shape of an obstacle,
+we set the orientation to 0.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Rectangle.rotate_translate_local">
+<span class="sig-name descname"><span class="pre">rotate_translate_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Rectangle.rotate_translate_local"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Rectangle.rotate_translate_local" title="Permalink to this definition"></a></dt>
+<dd><p>A new rectangle is created by first rotating the rectangle around its center and then translating it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</p></li>
+<li><p><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#commonroad.geometry.shape.Rectangle" title="commonroad.geometry.shape.Rectangle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rectangle</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>transformed rectangle</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Rectangle.translate_rotate">
+<span class="sig-name descname"><span class="pre">translate_rotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Rectangle.translate_rotate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Rectangle.translate_rotate" title="Permalink to this definition"></a></dt>
+<dd><p>A new rectangle is created by first translating and then rotating the rectangle around the origin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</p></li>
+<li><p><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#commonroad.geometry.shape.Rectangle" title="commonroad.geometry.shape.Rectangle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rectangle</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>transformed rectangle</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Rectangle.vertices">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vertices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#commonroad.geometry.shape.Rectangle.vertices" title="Permalink to this definition"></a></dt>
+<dd><p>Vertices of the rectangle: [[x_0, y_0], [x_1, y_1], …]. The vertices are sorted clockwise and the
+first and last point are the same.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Rectangle.width">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">width</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#commonroad.geometry.shape.Rectangle.width" title="Permalink to this definition"></a></dt>
+<dd><p>Width of the rectangle in lateral direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="circle-class">
+<h3><code class="docutils literal notranslate"><span class="pre">Circle</span></code> class<a class="headerlink" href="#circle-class" title="Permalink to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Circle">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commonroad.geometry.shape.</span></span><span class="sig-name descname"><span class="pre">Circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Circle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Circle" title="Permalink to this definition"></a></dt>
+<dd><p>The class Circle can be used to model occupied regions or circular obstacles, e.g., a pedestrian.
+A circle is defined by its radius and its geometric center. If we model the shape of an obstacle,
+the geometric center can be omitted and is set to [0.0, 0.0].</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Circle.center">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">center</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#commonroad.geometry.shape.Circle.center" title="Permalink to this definition"></a></dt>
+<dd><p>Geometric center [x, y] of the circle. If the circle is used to describe the shape of an obstacle,
+we set the center to the coordinates [0.0, 0.0].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Circle.contains_point">
+<span class="sig-name descname"><span class="pre">contains_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Circle.contains_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Circle.contains_point" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if a point is contained in a circle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>point</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – 2D point [x, y]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>true if the circles’s interior or boundary intersects with the given point, otherwise false</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Circle.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">renderer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Circle.draw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Circle.draw" title="Permalink to this definition"></a></dt>
+<dd><p>Draw the object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>renderer</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">IRenderer</span></code>) – Renderer to use for drawing</p></li>
+<li><p><strong>draw_params</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="visualization.html#commonroad.visualization.draw_params.ShapeParams" title="commonroad.visualization.draw_params.ShapeParams"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShapeParams</span></code></a>, <a class="reference internal" href="visualization.html#commonroad.visualization.draw_params.MPDrawParams" title="commonroad.visualization.draw_params.MPDrawParams"><code class="xref py py-class docutils literal notranslate"><span class="pre">MPDrawParams</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]) – optional parameters for plotting, overriding the parameters of the renderer</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Circle.radius">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">radius</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#commonroad.geometry.shape.Circle.radius" title="Permalink to this definition"></a></dt>
+<dd><p>The radius of the circle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Circle.rotate_translate_local">
+<span class="sig-name descname"><span class="pre">rotate_translate_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Circle.rotate_translate_local"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Circle.rotate_translate_local" title="Permalink to this definition"></a></dt>
+<dd><p>A new circle is created by translating the center.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</p></li>
+<li><p><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#commonroad.geometry.shape.Circle" title="commonroad.geometry.shape.Circle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Circle</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>transformed circle</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Circle.translate_rotate">
+<span class="sig-name descname"><span class="pre">translate_rotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Circle.translate_rotate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Circle.translate_rotate" title="Permalink to this definition"></a></dt>
+<dd><p>A new circle is created by first translating and then rotating the current circle around the origin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</p></li>
+<li><p><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#commonroad.geometry.shape.Circle" title="commonroad.geometry.shape.Circle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Circle</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>transformed circle</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="polygon-class">
+<h3><code class="docutils literal notranslate"><span class="pre">Polygon</span></code> class<a class="headerlink" href="#polygon-class" title="Permalink to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Polygon">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commonroad.geometry.shape.</span></span><span class="sig-name descname"><span class="pre">Polygon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Polygon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Polygon" title="Permalink to this definition"></a></dt>
+<dd><p>The class Polygon can be used to model occupied regions or obstacles. A polygon is defined by an array of
+ordered points (clockwise or counterclockwise).</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Polygon.center">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">center</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#commonroad.geometry.shape.Polygon.center" title="Permalink to this definition"></a></dt>
+<dd><p>Computes the geometric center of the polygon.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Polygon.contains_point">
+<span class="sig-name descname"><span class="pre">contains_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Polygon.contains_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Polygon.contains_point" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if a point is contained in the polygon.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>point</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – 2D point</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>true if the polygons’s interior or boundary intersects with the given point, otherwise false</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Polygon.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">renderer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Polygon.draw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Polygon.draw" title="Permalink to this definition"></a></dt>
+<dd><p>Draw the object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>renderer</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">IRenderer</span></code>) – Renderer to use for drawing</p></li>
+<li><p><strong>draw_params</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="visualization.html#commonroad.visualization.draw_params.ShapeParams" title="commonroad.visualization.draw_params.ShapeParams"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShapeParams</span></code></a>, <a class="reference internal" href="visualization.html#commonroad.visualization.draw_params.MPDrawParams" title="commonroad.visualization.draw_params.MPDrawParams"><code class="xref py py-class docutils literal notranslate"><span class="pre">MPDrawParams</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]) – optional parameters for plotting, overriding the parameters of the renderer</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Polygon.rotate_translate_local">
+<span class="sig-name descname"><span class="pre">rotate_translate_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Polygon.rotate_translate_local"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Polygon.rotate_translate_local" title="Permalink to this definition"></a></dt>
+<dd><p>A new polygon is created by first rotating the polygon around its center and then translating it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</p></li>
+<li><p><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#commonroad.geometry.shape.Polygon" title="commonroad.geometry.shape.Polygon"><code class="xref py py-class docutils literal notranslate"><span class="pre">Polygon</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>transformed polygon</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Polygon.translate_rotate">
+<span class="sig-name descname"><span class="pre">translate_rotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#Polygon.translate_rotate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.Polygon.translate_rotate" title="Permalink to this definition"></a></dt>
+<dd><p>A new polygon is created by first translating and then rotating the current polygon.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</p></li>
+<li><p><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#commonroad.geometry.shape.Polygon" title="commonroad.geometry.shape.Polygon"><code class="xref py py-class docutils literal notranslate"><span class="pre">Polygon</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>transformed polygon</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.Polygon.vertices">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vertices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#commonroad.geometry.shape.Polygon.vertices" title="Permalink to this definition"></a></dt>
+<dd><p>Vertices of the polygon [[x_0, y_0], [x_1, y_1], …]. The vertices are sorted clockwise and the
+first and last point are the same.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="shapegroup-class">
+<h3><code class="docutils literal notranslate"><span class="pre">ShapeGroup</span></code> class<a class="headerlink" href="#shapegroup-class" title="Permalink to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.ShapeGroup">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commonroad.geometry.shape.</span></span><span class="sig-name descname"><span class="pre">ShapeGroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shapes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#ShapeGroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.ShapeGroup" title="Permalink to this definition"></a></dt>
+<dd><p>The class ShapeGroup represents a collection of primitive shapes, e.g., rectangles and polygons,
+which can be used to model occupied regions.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.ShapeGroup.contains_point">
+<span class="sig-name descname"><span class="pre">contains_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#ShapeGroup.contains_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.ShapeGroup.contains_point" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if a point is contained in any shape of the shape group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>point</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – 2D point [x, y]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>true if the interior or boundary of any shape intersects with the given point, otherwise false</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.ShapeGroup.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">renderer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#ShapeGroup.draw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.ShapeGroup.draw" title="Permalink to this definition"></a></dt>
+<dd><p>Draw the object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>renderer</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">IRenderer</span></code>) – Renderer to use for drawing</p></li>
+<li><p><strong>draw_params</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="visualization.html#commonroad.visualization.draw_params.ShapeParams" title="commonroad.visualization.draw_params.ShapeParams"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShapeParams</span></code></a>, <a class="reference internal" href="visualization.html#commonroad.visualization.draw_params.MPDrawParams" title="commonroad.visualization.draw_params.MPDrawParams"><code class="xref py py-class docutils literal notranslate"><span class="pre">MPDrawParams</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]) – optional parameters for plotting, overriding the parameters of the renderer</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.ShapeGroup.rotate_translate_local">
+<span class="sig-name descname"><span class="pre">rotate_translate_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#ShapeGroup.rotate_translate_local"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.ShapeGroup.rotate_translate_local" title="Permalink to this definition"></a></dt>
+<dd><p>A new shape group is created by first rotating each shape around its center and then translating it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</p></li>
+<li><p><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#commonroad.geometry.shape.ShapeGroup" title="commonroad.geometry.shape.ShapeGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShapeGroup</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>transformed shape group</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.ShapeGroup.shapes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shapes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#commonroad.geometry.shape.Shape" title="commonroad.geometry.shape.Shape"><span class="pre">Shape</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#commonroad.geometry.shape.ShapeGroup.shapes" title="Permalink to this definition"></a></dt>
+<dd><p>Collection of shapes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#commonroad.geometry.shape.Shape" title="commonroad.geometry.shape.Shape"><code class="xref py py-class docutils literal notranslate"><span class="pre">Shape</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commonroad.geometry.shape.ShapeGroup.translate_rotate">
+<span class="sig-name descname"><span class="pre">translate_rotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/commonroad/geometry/shape.html#ShapeGroup.translate_rotate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#commonroad.geometry.shape.ShapeGroup.translate_rotate" title="Permalink to this definition"></a></dt>
+<dd><p>A new shape group is created by first translating and then rotating all shapes around the origin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>translation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – translation vector [x_off, y_off] in x- and y-direction</p></li>
+<li><p><strong>angle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – rotation angle in radian (counter-clockwise)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#commonroad.geometry.shape.ShapeGroup" title="commonroad.geometry.shape.ShapeGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShapeGroup</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>transformed shape group</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="module-geometry.transform">
+<span id="transform"></span><h2>Transform<a class="headerlink" href="#module-geometry.transform" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.transform.translate_rotate">
+<span class="sig-prename descclassname"><span class="pre">geometry.transform.</span></span><span class="sig-name descname"><span class="pre">translate_rotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">translation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/transform.html#translate_rotate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.transform.translate_rotate" title="Permalink to this definition"></a></dt>
+<dd><p>First translates the list of vertices, then rotates the list of vertices around the origin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vertices</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – array of 2D vertices [[x_0, y_0], [x_1, y_1], …]</p></li>
+<li><p><strong>translation</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]) – translation vector [x_off, y_off] in x- and y-direction</p></li>
+<li><p><strong>angle</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – rotation angle in radian (counter-clockwise)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>array of transformed vertices [[x’_0, y’_0], [x’_1, y’_1], …]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.transform.rotate_translate">
+<span class="sig-prename descclassname"><span class="pre">geometry.transform.</span></span><span class="sig-name descname"><span class="pre">rotate_translate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">translation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/transform.html#rotate_translate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.transform.rotate_translate" title="Permalink to this definition"></a></dt>
+<dd><p>First rotates the list of vertices around the origin and then translates the list of vertices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vertices</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – array of 2D vertices [[x_0, y_0], [x_1, y_1], …]</p></li>
+<li><p><strong>translation</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]) – translation vector [x_off, y_off] in x- and y-direction</p></li>
+<li><p><strong>angle</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – rotation angle in radian (counter-clockwise)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>array of transformed vertices [[x’_0, y’_0], [x’_1, y’_1], …]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.transform.rotation_translation_matrix">
+<span class="sig-prename descclassname"><span class="pre">geometry.transform.</span></span><span class="sig-name descname"><span class="pre">rotation_translation_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/transform.html#rotation_translation_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.transform.rotation_translation_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a matrix that first rotates a vector around the origin and then translates it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>translation</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]) – offset in (x, y) for translating the vector</p></li>
+<li><p><strong>angle</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – angle in rad [-2pi, +2pi]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.transform.translation_rotation_matrix">
+<span class="sig-prename descclassname"><span class="pre">geometry.transform.</span></span><span class="sig-name descname"><span class="pre">translation_rotation_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/transform.html#translation_rotation_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.transform.translation_rotation_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a matrix that first translates a homogeneous point, and then rotates it around the origin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>translation</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]) – offset in (x, y) for translating the vector</p></li>
+<li><p><strong>angle</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – angle in rad [-2pi, +2pi]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.transform.to_homogeneous_coordinates">
+<span class="sig-prename descclassname"><span class="pre">geometry.transform.</span></span><span class="sig-name descname"><span class="pre">to_homogeneous_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/transform.html#to_homogeneous_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.transform.to_homogeneous_coordinates" title="Permalink to this definition"></a></dt>
+<dd><p>Converts an array of vertices to homogeneous coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>points</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – array of points</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>homogeneous points</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.transform.from_homogeneous_coordinates">
+<span class="sig-prename descclassname"><span class="pre">geometry.transform.</span></span><span class="sig-name descname"><span class="pre">from_homogeneous_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/transform.html#from_homogeneous_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.transform.from_homogeneous_coordinates" title="Permalink to this definition"></a></dt>
+<dd><p>Converts an array of homogeneous vertices back to 2D.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>points</strong> – array of points</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>array of 2D points</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-geometry.polyline_util">
+<span id="polyline-utility-functions"></span><h2>Polyline Utility Functions<a class="headerlink" href="#module-geometry.polyline_util" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.polyline_util.compute_polyline_lengths">
+<span class="sig-prename descclassname"><span class="pre">geometry.polyline_util.</span></span><span class="sig-name descname"><span class="pre">compute_polyline_lengths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polyline</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/polyline_util.html#compute_polyline_lengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.polyline_util.compute_polyline_lengths" title="Permalink to this definition"></a></dt>
+<dd><p>Computes the path lengths of a given polyline in steps travelled
+from initial to final coordinate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>polyline</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Polyline with 2D points [[x_0, y_0], [x_1, y_1], …]</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Path lengths of the polyline for each coordinate in m</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.polyline_util.compute_total_polyline_length">
+<span class="sig-prename descclassname"><span class="pre">geometry.polyline_util.</span></span><span class="sig-name descname"><span class="pre">compute_total_polyline_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polyline</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/polyline_util.html#compute_total_polyline_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.polyline_util.compute_total_polyline_length" title="Permalink to this definition"></a></dt>
+<dd><p>Computes the complete path length of a given polyline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>polyline</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Polyline with 2D points [[x_0, y_0], [x_1, y_1], …]</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Path length of the polyline [m]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.polyline_util.compute_polyline_curvatures">
+<span class="sig-prename descclassname"><span class="pre">geometry.polyline_util.</span></span><span class="sig-name descname"><span class="pre">compute_polyline_curvatures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polyline</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/polyline_util.html#compute_polyline_curvatures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.polyline_util.compute_polyline_curvatures" title="Permalink to this definition"></a></dt>
+<dd><p>Computes the curvatures along a given polyline travelled from initial
+to final coordinate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>polyline</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Polyline with 2D points [[x_0, y_0], [x_1, y_1], …]</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Curvatures of the polyline for each coordinate [1/rad]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.polyline_util.compute_polyline_orientations">
+<span class="sig-prename descclassname"><span class="pre">geometry.polyline_util.</span></span><span class="sig-name descname"><span class="pre">compute_polyline_orientations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polyline</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/polyline_util.html#compute_polyline_orientations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.polyline_util.compute_polyline_orientations" title="Permalink to this definition"></a></dt>
+<dd><p>Computes the orientation of a given polyline travelled from initial
+to final coordinate. The orientation of the last coordinate is always
+assigned with the computed orientation of the penultimate one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>polyline</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Polyline with 2D points [[x_0, y_0], [x_1, y_1], …]</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Orientations of the polyline for each coordinate [rad]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.polyline_util.compute_polyline_initial_orientation">
+<span class="sig-prename descclassname"><span class="pre">geometry.polyline_util.</span></span><span class="sig-name descname"><span class="pre">compute_polyline_initial_orientation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polyline</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/polyline_util.html#compute_polyline_initial_orientation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.polyline_util.compute_polyline_initial_orientation" title="Permalink to this definition"></a></dt>
+<dd><p>Computes the orientation of the initial coordinate with respect to the succeeding
+coordinate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>polyline</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Polyline with 2D points [[x_0, y_0], [x_1, y_1], …]</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Orientation of the initial coordinate [rad]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.polyline_util.is_point_on_polyline">
+<span class="sig-prename descclassname"><span class="pre">geometry.polyline_util.</span></span><span class="sig-name descname"><span class="pre">is_point_on_polyline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polyline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/polyline_util.html#is_point_on_polyline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.polyline_util.is_point_on_polyline" title="Permalink to this definition"></a></dt>
+<dd><p>Computes whether a given point lies on a polyline. That means, the point is between the starting
+and ending point of the polyline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>polyline</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Polyline with 2D points [[x_0, y_0], [x_1, y_1], …]</p></li>
+<li><p><strong>point</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – 2D point [x, y]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Boolean indicating whether point lies on polyline or not</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.polyline_util.compute_polyline_intersections">
+<span class="sig-prename descclassname"><span class="pre">geometry.polyline_util.</span></span><span class="sig-name descname"><span class="pre">compute_polyline_intersections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polyline_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polyline_2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/polyline_util.html#compute_polyline_intersections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.polyline_util.compute_polyline_intersections" title="Permalink to this definition"></a></dt>
+<dd><p>Computes the intersection points of two polylines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>polyline_1</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – First polyline with 2D points [[x_0, y_0], [x_1, y_1], …]</p></li>
+<li><p><strong>polyline_2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Second polyline with 2D points [[x_0, y_0], [x_1, y_1], …]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Intersection points</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.polyline_util.is_polyline_self_intersection">
+<span class="sig-prename descclassname"><span class="pre">geometry.polyline_util.</span></span><span class="sig-name descname"><span class="pre">is_polyline_self_intersection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polyline</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/polyline_util.html#is_polyline_self_intersection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.polyline_util.is_polyline_self_intersection" title="Permalink to this definition"></a></dt>
+<dd><p>Computes whether the given polyline contains self-intersection. Intersection
+at boundary points are considered as self-intersection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>polyline</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Polyline with 2D points [[x_0, y_0], [x_1, y_1], …]</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Self-intersection or not</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.polyline_util.compare_polylines_equality">
+<span class="sig-prename descclassname"><span class="pre">geometry.polyline_util.</span></span><span class="sig-name descname"><span class="pre">compare_polylines_equality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polyline_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polyline_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/polyline_util.html#compare_polylines_equality"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.polyline_util.compare_polylines_equality" title="Permalink to this definition"></a></dt>
+<dd><p>Compares two polylines for equality. For equality of the values a threshold can be given.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>polyline_1</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – First polyline with 2D points [[x_0, y_0], [x_1, y_1], …]</p></li>
+<li><p><strong>polyline_2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Second polyline with 2D points [[x_0, y_0], [x_1, y_1], …]</p></li>
+<li><p><strong>threshold</strong> – Threshold for equality of values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Equality of both polylines or not</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.polyline_util.resample_polyline_with_number">
+<span class="sig-prename descclassname"><span class="pre">geometry.polyline_util.</span></span><span class="sig-name descname"><span class="pre">resample_polyline_with_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polyline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/polyline_util.html#resample_polyline_with_number"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.polyline_util.resample_polyline_with_number" title="Permalink to this definition"></a></dt>
+<dd><p>Resamples the given polyline with a fixed number of points. The number
+of coordinates can be resampled down or up.
+There exists also an efficient C++ implementation with Python interface in the CommonRoad Drivability Checker.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>polyline</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Polyline with 2D points [[x_0, y_0], [x_1, y_1], …]</p></li>
+<li><p><strong>number</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Fixed number of 2D points</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Resampled polyline</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.polyline_util.resample_polyline_with_distance">
+<span class="sig-prename descclassname"><span class="pre">geometry.polyline_util.</span></span><span class="sig-name descname"><span class="pre">resample_polyline_with_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polyline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/polyline_util.html#resample_polyline_with_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.polyline_util.resample_polyline_with_distance" title="Permalink to this definition"></a></dt>
+<dd><p>Resamples the given polyline with a specific distance. For a higher distance than the length
+of the given polyline the polyline is not resampled.
+There exists also an efficient C++ implementation with Python interface in the CommonRoad Drivability Checker.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>polyline</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Polyline with 2D points [[x_0, y_0], [x_1, y_1], …]</p></li>
+<li><p><strong>distance</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Specific distance [m]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Resampled polyline</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.polyline_util.equalize_polyline_length">
+<span class="sig-prename descclassname"><span class="pre">geometry.polyline_util.</span></span><span class="sig-name descname"><span class="pre">equalize_polyline_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">long_polyline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">short_polyline</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/polyline_util.html#equalize_polyline_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.polyline_util.equalize_polyline_length" title="Permalink to this definition"></a></dt>
+<dd><p>Inserts vertices into a polyline to be of the same length than other polyline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>long_polyline</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Polyline with higher number of vertices</p></li>
+<li><p><strong>short_polyline</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Polyline with lower number of vertices</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Short polyline with equal length as long polyline</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.polyline_util.create_indices_mapping">
+<span class="sig-prename descclassname"><span class="pre">geometry.polyline_util.</span></span><span class="sig-name descname"><span class="pre">create_indices_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_length_percentage_long</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_length_percentage_short</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/polyline_util.html#create_indices_mapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.polyline_util.create_indices_mapping" title="Permalink to this definition"></a></dt>
+<dd><p>Extracts places (indices) where new vertices have to be added in shorter polyline.
+Helper function for insert_vertices</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_length_percentage_long</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Proportional path length along longer polyline</p></li>
+<li><p><strong>path_length_percentage_short</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Proportional path length along shorter polyline</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Mapping of existing indices of shorter polyline to longer polyline</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geometry.polyline_util.concatenate_polylines">
+<span class="sig-prename descclassname"><span class="pre">geometry.polyline_util.</span></span><span class="sig-name descname"><span class="pre">concatenate_polylines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry/polyline_util.html#concatenate_polylines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geometry.polyline_util.concatenate_polylines" title="Permalink to this definition"></a></dt>
+<dd><p>Concatenates two polylines. The head represents the first part of the new polyline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>head</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – First part of new polyline</p></li>
+<li><p><strong>tail</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Second part of new polyline</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="planning.html" class="btn btn-neutral float-left" title="Module Planning" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="common.html" class="btn btn-neutral float-right" title="Module Common" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Luis Gressenbuch, Anna-Katharina Rettinger.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

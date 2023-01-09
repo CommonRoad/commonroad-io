@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>commonroad.common.file_writer &mdash; CommonRoad_io 2022.3 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> CommonRoad_io
+            <img src="../../../_static/commonroad_white150.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2022.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/index.html">User Manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/getting_started.html">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#reading-files">Reading Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#scenario">Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#lanelet-network">Lanelet Network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#obstacles">Obstacles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#dynamic-obstacle-prediction">Dynamic Obstacle Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#trajectory-prediction">Trajectory Prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#set-based-prediction">Set Based Prediction</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#planning-problems">Planning Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#writing-files">Writing Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#solution-writer">Solution Writer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/visualization.html">Visualization Manual</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#creating-plots-in-commonroad">Creating plots in CommonRoad</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#styling-options">Styling options</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/visualization.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#plot-limits"><code class="docutils literal notranslate"><span class="pre">plot_limits</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">CommonRoad_io API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#modules">Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/scenario.html">Module Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.scenario">Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.lanelet">Road network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.traffic_sign">Traffic Sign</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#traffic-light">Traffic Light</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.traffic_sign_interpreter">Traffic Sign Interpreter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#intersection">Intersection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#obstacles">Obstacles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.trajectory">Trajectories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.state">States</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/prediction.html">Module Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#prediction-class"><code class="docutils literal notranslate"><span class="pre">Prediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#trajectoryprediction-class"><code class="docutils literal notranslate"><span class="pre">TrajectoryPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#setbasedprediction-class"><code class="docutils literal notranslate"><span class="pre">SetBasedPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#occupancy-class"><code class="docutils literal notranslate"><span class="pre">Occupancy</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/planning.html">Module Planning</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/planning.html#module-commonroad.planning.planning_problem">Planning Problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/planning.html#module-commonroad.planning.goal">Goal Region</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/geometry.html">Module Geometry</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-commonroad.geometry.shape">Shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-geometry.transform">Transform</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-geometry.polyline_util">Polyline Utility Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/common.html">Module Common</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.file_reader">File Reader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.file_writer">File Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#solution-reader-and-writer">Solution Reader and Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/visualization.html">Module Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/visualization.html#module-commonroad.visualization.drawable">Drawing interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/visualization.html#module-commonroad.visualization.draw_params">Drawing parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CommonRoad_io</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">commonroad.common.file_writer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for commonroad.common.file_writer</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Set</span>
+
+<span class="kn">from</span> <span class="nn">commonroad.common.writer.file_writer_interface</span> <span class="kn">import</span> <span class="n">OverwriteExistingFile</span>
+<span class="kn">from</span> <span class="nn">commonroad.common.writer.file_writer_protobuf</span> <span class="kn">import</span> <span class="n">ProtobufFileWriter</span>
+<span class="kn">from</span> <span class="nn">commonroad.common.writer.file_writer_xml</span> <span class="kn">import</span> <span class="n">XMLFileWriter</span>
+<span class="kn">from</span> <span class="nn">commonroad.planning.planning_problem</span> <span class="kn">import</span> <span class="n">PlanningProblemSet</span>
+<span class="kn">from</span> <span class="nn">commonroad.scenario.scenario</span> <span class="kn">import</span> <span class="n">Scenario</span><span class="p">,</span> <span class="n">Tag</span><span class="p">,</span> <span class="n">Location</span>
+
+
+<span class="k">class</span> <span class="nc">FileFormat</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Specifies the format of file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">XML</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">PROTOBUF</span> <span class="o">=</span> <span class="mi">1</span>
+
+
+<div class="viewcode-block" id="CommonRoadFileWriter"><a class="viewcode-back" href="../../../api/common.html#commonroad.common.file_writer.CommonRoadFileWriter">[docs]</a><span class="k">class</span> <span class="nc">CommonRoadFileWriter</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Writes CommonRoad files in XML or protobuf format. The corresponding scenario and planning problem set</span>
+<span class="sd">    are stored by the writer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scenario</span><span class="p">:</span> <span class="n">Scenario</span><span class="p">,</span> <span class="n">planning_problem_set</span><span class="p">:</span> <span class="n">PlanningProblemSet</span><span class="p">,</span> <span class="n">author</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">affiliation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Tag</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="n">Location</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">decimal_precision</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">file_format</span><span class="p">:</span> <span class="n">FileFormat</span> <span class="o">=</span> <span class="n">FileFormat</span><span class="o">.</span><span class="n">XML</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the FileWriter for CommonRoad files.</span>
+
+<span class="sd">        :param scenario: Scenario</span>
+<span class="sd">        :param planning_problem_set: Planning problems</span>
+<span class="sd">        :param author: Name of author</span>
+<span class="sd">        :param affiliation: Affiliation of author</span>
+<span class="sd">        :param source: Source of dataset, e.g., database, handcrafted, etc.</span>
+<span class="sd">        :param tags: Keywords describing the scenario</span>
+<span class="sd">        :param decimal_precision: Number of decimal places used when writing float values</span>
+<span class="sd">        :param file_format: Format of file</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_writer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">file_format</span> <span class="o">==</span> <span class="n">FileFormat</span><span class="o">.</span><span class="n">XML</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_file_writer</span> <span class="o">=</span> <span class="n">XMLFileWriter</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">planning_problem_set</span><span class="p">,</span> <span class="n">author</span><span class="p">,</span> <span class="n">affiliation</span><span class="p">,</span>
+                                              <span class="n">source</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">decimal_precision</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">file_format</span> <span class="o">==</span> <span class="n">FileFormat</span><span class="o">.</span><span class="n">PROTOBUF</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_file_writer</span> <span class="o">=</span> <span class="n">ProtobufFileWriter</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">planning_problem_set</span><span class="p">,</span> <span class="n">author</span><span class="p">,</span> <span class="n">affiliation</span><span class="p">,</span>
+                                                   <span class="n">source</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">decimal_precision</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CommonRoadFileWriter.write_to_file"><a class="viewcode-back" href="../../../api/common.html#commonroad.common.file_writer.CommonRoadFileWriter.write_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                      <span class="n">overwrite_existing_file</span><span class="p">:</span> <span class="n">OverwriteExistingFile</span> <span class="o">=</span> <span class="n">OverwriteExistingFile</span><span class="o">.</span><span class="n">ASK_USER_INPUT</span><span class="p">,</span>
+                      <span class="n">check_validity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes CommonRoad scenario and planning problems to file.</span>
+
+<span class="sd">        :param filename: Name of file</span>
+<span class="sd">        :param overwrite_existing_file: Overwriting mode</span>
+<span class="sd">        :param check_validity: Validity check or not</span>
+<span class="sd">        :return: Scenario and planning problems</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_writer</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">overwrite_existing_file</span><span class="p">,</span> <span class="n">check_validity</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CommonRoadFileWriter.write_scenario_to_file"><a class="viewcode-back" href="../../../api/common.html#commonroad.common.file_writer.CommonRoadFileWriter.write_scenario_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_scenario_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                               <span class="n">overwrite_existing_file</span><span class="p">:</span> <span class="n">OverwriteExistingFile</span> <span class="o">=</span> <span class="n">OverwriteExistingFile</span><span class="o">.</span><span class="n">ASK_USER_INPUT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes CommonRoad scenario to file.</span>
+
+<span class="sd">        :param filename: Name of file</span>
+<span class="sd">        :param overwrite_existing_file: Overwriting mode</span>
+<span class="sd">        :return: Scenario</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_writer</span><span class="o">.</span><span class="n">write_scenario_to_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">overwrite_existing_file</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CommonRoadFileWriter.check_validity_of_commonroad_file"><a class="viewcode-back" href="../../../api/common.html#commonroad.common.file_writer.CommonRoadFileWriter.check_validity_of_commonroad_file">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">check_validity_of_commonroad_file</span><span class="p">(</span><span class="n">commonroad_str</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">],</span> <span class="n">file_format</span><span class="p">:</span> <span class="n">FileFormat</span> <span class="o">=</span> <span class="n">FileFormat</span><span class="o">.</span><span class="n">XML</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks validity of CommonRoad scenario and planning problem stored in XML or protobuf format.</span>
+
+<span class="sd">        :param commonroad_str: Commonroad instance stored as string</span>
+<span class="sd">        :param file_format: Format of file</span>
+<span class="sd">        :return: Valid or not</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">file_format</span> <span class="o">==</span> <span class="n">FileFormat</span><span class="o">.</span><span class="n">XML</span><span class="p">:</span>
+            <span class="n">is_valid</span> <span class="o">=</span> <span class="n">XMLFileWriter</span><span class="o">.</span><span class="n">check_validity_of_commonroad_file</span><span class="p">(</span><span class="n">commonroad_str</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">is_valid</span> <span class="o">=</span> <span class="n">ProtobufFileWriter</span><span class="o">.</span><span class="n">check_validity_of_commonroad_file</span><span class="p">(</span><span class="n">commonroad_str</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">is_valid</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Luis Gressenbuch, Anna-Katharina Rettinger.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

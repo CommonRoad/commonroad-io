@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>commonroad.scenario.state &mdash; CommonRoad_io 2022.3 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> CommonRoad_io
+            <img src="../../../_static/commonroad_white150.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2022.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/index.html">User Manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/getting_started.html">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#reading-files">Reading Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#scenario">Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#lanelet-network">Lanelet Network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#obstacles">Obstacles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#dynamic-obstacle-prediction">Dynamic Obstacle Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#trajectory-prediction">Trajectory Prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#set-based-prediction">Set Based Prediction</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#planning-problems">Planning Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#writing-files">Writing Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#solution-writer">Solution Writer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/visualization.html">Visualization Manual</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#creating-plots-in-commonroad">Creating plots in CommonRoad</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#styling-options">Styling options</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/visualization.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#plot-limits"><code class="docutils literal notranslate"><span class="pre">plot_limits</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">CommonRoad_io API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#modules">Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/scenario.html">Module Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.scenario">Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.lanelet">Road network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.traffic_sign">Traffic Sign</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#traffic-light">Traffic Light</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.traffic_sign_interpreter">Traffic Sign Interpreter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#intersection">Intersection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#obstacles">Obstacles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.trajectory">Trajectories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.state">States</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/prediction.html">Module Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#prediction-class"><code class="docutils literal notranslate"><span class="pre">Prediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#trajectoryprediction-class"><code class="docutils literal notranslate"><span class="pre">TrajectoryPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#setbasedprediction-class"><code class="docutils literal notranslate"><span class="pre">SetBasedPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#occupancy-class"><code class="docutils literal notranslate"><span class="pre">Occupancy</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/planning.html">Module Planning</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/planning.html#module-commonroad.planning.planning_problem">Planning Problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/planning.html#module-commonroad.planning.goal">Goal Region</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/geometry.html">Module Geometry</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-commonroad.geometry.shape">Shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-geometry.transform">Transform</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-geometry.polyline_util">Polyline Utility Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/common.html">Module Common</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.file_reader">File Reader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.file_writer">File Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#solution-reader-and-writer">Solution Reader and Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/visualization.html">Module Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/visualization.html#module-commonroad.visualization.drawable">Drawing interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/visualization.html#module-commonroad.visualization.draw_params">Drawing parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CommonRoad_io</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">commonroad.scenario.state</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for commonroad.scenario.state</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span> <span class="nn">abc</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">dataclasses</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">commonroad.geometry.transform</span>
+<span class="kn">from</span> <span class="nn">commonroad.common.util</span> <span class="kn">import</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">AngleInterval</span><span class="p">,</span> <span class="n">make_valid_orientation</span>
+<span class="kn">from</span> <span class="nn">commonroad.common.validity</span> <span class="kn">import</span> <span class="n">is_real_number_vector</span><span class="p">,</span> <span class="n">is_real_number</span><span class="p">,</span> <span class="n">is_valid_orientation</span><span class="p">,</span> <span class="n">ValidTypes</span>
+<span class="kn">from</span> <span class="nn">commonroad.geometry.shape</span> <span class="kn">import</span> <span class="n">Shape</span>
+<span class="kn">from</span> <span class="nn">commonroad.visualization.draw_params</span> <span class="kn">import</span> <span class="n">OptionalSpecificOrAllDrawParams</span><span class="p">,</span> <span class="n">StateParams</span>
+<span class="kn">from</span> <span class="nn">commonroad.visualization.renderer</span> <span class="kn">import</span> <span class="n">IRenderer</span>
+
+<span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Interval</span><span class="p">]</span>
+<span class="n">AngleExactOrInterval</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">AngleInterval</span><span class="p">]</span>
+<span class="n">ExactOrShape</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Shape</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="State"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.State">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">State</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a class representing the Base State.</span>
+
+<span class="sd">    :param time_step: Discrete time step :math:`t_i`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">time_step</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Interval</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">attributes</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">dec</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
+            <span class="n">val_self</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+            <span class="n">val_other</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s1">&#39;position&#39;</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">val_self</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val_other</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val_self</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val_other</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                    <span class="n">val_self</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="n">dec</span><span class="p">))</span>
+                    <span class="n">val_other</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="n">dec</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val_self</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="n">val_self</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">val_self</span><span class="p">,</span> <span class="n">dec</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val_other</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="n">val_other</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">val_other</span><span class="p">,</span> <span class="n">dec</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">val_self</span> <span class="o">!=</span> <span class="n">val_other</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="n">dec</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s1">&#39;position&#39;</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="n">dec</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">dec</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__array__</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TraceState</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts the State into a 1D-numpy array by iterating over all fields of the dataclass. The order of the fields</span>
+<span class="sd">        as defined in the dataclass is preserved.</span>
+<span class="sd">        Note: Time step is not included, as the numpy array only contains the state vector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;time_step&quot;</span><span class="p">:</span>
+                <span class="c1"># time step not included in state array</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;position&quot;</span><span class="p">:</span>
+                <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># x-position</span>
+                <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># y-position</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns all attributes used in state space.</span>
+
+<span class="sd">        :return: Attributes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">field_name</span> <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">used_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns all initialized attributed in state space.</span>
+
+<span class="sd">        :return: Initialized attributes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">used_fields</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">used_fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">used_fields</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_uncertain_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks whether the position is uncertain.</span>
+
+<span class="sd">        :return: Uncertain or not</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;position&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;position&quot;</span><span class="p">),</span> <span class="n">Shape</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_uncertain_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks whether the orientation is uncertain.</span>
+
+<span class="sd">        :return: Uncertain or not</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;orientation&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;orientation&quot;</span><span class="p">),</span> <span class="n">AngleInterval</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="State.has_value"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.State.has_value">[docs]</a>    <span class="k">def</span> <span class="nf">has_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks whether an attribute is given and is initialized with a value.</span>
+
+<span class="sd">        :param attr: Name of attribute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="State.translate_rotate"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.State.translate_rotate">[docs]</a>    <span class="k">def</span> <span class="nf">translate_rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">translation</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TraceState</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        First translates the state and then rotates the state around the origin.</span>
+
+<span class="sd">        :param translation: Translation vector [x_off, y_off] in x- and y-direction</span>
+<span class="sd">        :param angle: Rotation angle in radian (counter-clockwise)</span>
+<span class="sd">        :return: Transformed state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">is_real_number_vector</span><span class="p">(</span><span class="n">translation</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;&lt;State/translate_rotate&gt;: argument translation is not &#39;</span>
+                                                       <span class="s1">&#39;a vector of real numbers of length 2.&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">is_real_number</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;&lt;State/translate_rotate&gt;: argument angle must be a scalar. &#39;</span>
+                                       <span class="s1">&#39;angle = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">angle</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">is_valid_orientation</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;&lt;State/translate_rotate&gt;: argument angle must be within the &#39;</span>
+                                             <span class="s1">&#39;interval [-2pi,2pi]. angle = </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="n">angle</span><span class="p">)</span>
+
+        <span class="n">transformed_state</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;position&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;position&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">ValidTypes</span><span class="o">.</span><span class="n">ARRAY</span><span class="p">):</span>
+                <span class="n">transformed_state</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">commonroad</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">translate_rotate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">]),</span>
+                                                                                            <span class="n">translation</span><span class="p">,</span> <span class="n">angle</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">Shape</span><span class="p">):</span>
+                <span class="n">transformed_state</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">translate_rotate</span><span class="p">(</span><span class="n">translation</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&lt;State/translate_rotate&gt; Expected instance of </span><span class="si">%s</span><span class="s1"> or </span><span class="si">%s</span><span class="s1">. Got </span><span class="si">%s</span><span class="s1"> instead.&#39;</span>
+                                <span class="o">%</span> <span class="p">(</span><span class="n">ValidTypes</span><span class="o">.</span><span class="n">ARRAY</span><span class="p">,</span> <span class="n">Shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="vm">__class__</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;orientation&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;orientation&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orientation</span><span class="p">,</span> <span class="n">ValidTypes</span><span class="o">.</span><span class="n">NUMBERS</span><span class="p">):</span>
+                <span class="n">transformed_state</span><span class="o">.</span><span class="n">orientation</span> <span class="o">=</span> <span class="n">make_valid_orientation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orientation</span> <span class="o">+</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orientation</span><span class="p">,</span> <span class="n">AngleInterval</span><span class="p">):</span>
+                <span class="n">transformed_state</span><span class="o">.</span><span class="n">orientation</span> <span class="o">=</span> <span class="n">transformed_state</span><span class="o">.</span><span class="n">orientation</span> <span class="o">+</span> <span class="n">angle</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&lt;State/translate_rotate&gt; Expected instance of </span><span class="si">%s</span><span class="s1"> or </span><span class="si">%s</span><span class="s1">. Got </span><span class="si">%s</span><span class="s1"> instead.&#39;</span>
+                                <span class="o">%</span> <span class="p">(</span><span class="n">ValidTypes</span><span class="o">.</span><span class="n">NUMBERS</span><span class="p">,</span> <span class="n">AngleInterval</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="vm">__class__</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">transformed_state</span></div>
+
+<div class="viewcode-block" id="State.convert_state_to_state"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.State.convert_state_to_state">[docs]</a>    <span class="k">def</span> <span class="nf">convert_state_to_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">TraceState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TraceState</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts state to state from different state types.</span>
+
+<span class="sd">        :param state: State for converting</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">from_fields</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">fields</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="n">to_fields</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">fields</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">from_field</span> <span class="ow">in</span> <span class="n">from_fields</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">to_field</span> <span class="ow">in</span> <span class="n">to_fields</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">from_field</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">to_field</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">to_field</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_field</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">state</span></div>
+
+<div class="viewcode-block" id="State.fill_with_defaults"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.State.fill_with_defaults">[docs]</a>    <span class="k">def</span> <span class="nf">fill_with_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fills all state fields with default values.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s1">&#39;position&#39;</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="State.draw"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.State.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">renderer</span><span class="p">:</span> <span class="n">IRenderer</span><span class="p">,</span> <span class="n">draw_params</span><span class="p">:</span> <span class="n">OptionalSpecificOrAllDrawParams</span><span class="p">[</span><span class="n">StateParams</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Draws state.</span>
+
+<span class="sd">        :param renderer: Renderer</span>
+<span class="sd">        :param draw_params: Params</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">renderer</span><span class="o">.</span><span class="n">draw_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">draw_params</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="InitialState"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.InitialState">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">InitialState</span><span class="p">(</span><span class="n">State</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a class representing the Initial State.</span>
+
+<span class="sd">    :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system</span>
+<span class="sd">    :param orientation: Yaw angle :math:`\\Psi`</span>
+<span class="sd">    :param velocity: Velocity :math:`v_x` in longitudinal direction</span>
+<span class="sd">    :param acceleration: Acceleration :math:`a_x`</span>
+<span class="sd">    :param yaw_rate: Yaw rate :math:`\\dot{\\Psi}`</span>
+<span class="sd">    :param slip_angle: Slip angle :math:`\\beta`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">position</span><span class="p">:</span> <span class="n">ExactOrShape</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">orientation</span><span class="p">:</span> <span class="n">AngleExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">velocity</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">acceleration</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">yaw_rate</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">slip_angle</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="PMState"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.PMState">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">PMState</span><span class="p">(</span><span class="n">State</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a class representing Point Mass State (PM State).</span>
+
+<span class="sd">    :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system</span>
+<span class="sd">    :param velocity: Velocity :math:`v_x` in longitudinal direction</span>
+<span class="sd">    :param velocity_y: Velocity :math:`v_x` in lateral direction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">position</span><span class="p">:</span> <span class="n">ExactOrShape</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">velocity</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">velocity_y</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="KSState"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.KSState">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">KSState</span><span class="p">(</span><span class="n">State</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a class representing Kinematic Single Track State (KS State).</span>
+
+<span class="sd">    :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system</span>
+<span class="sd">    :param steering_angle: Steering angle :math:`\\delta`</span>
+<span class="sd">    :param velocity: Velocity :math:`v_x` in longitudinal direction</span>
+<span class="sd">    :param orientation: Yaw angle :math:`\\Psi`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">position</span><span class="p">:</span> <span class="n">ExactOrShape</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">steering_angle</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">velocity</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">orientation</span><span class="p">:</span> <span class="n">AngleExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="KSTState"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.KSTState">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">KSTState</span><span class="p">(</span><span class="n">KSState</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a class representing Kinematic Single Track State (KST State).</span>
+
+<span class="sd">    :param hitch_angle: Hitch angle :math:`\\alpha`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hitch_angle</span><span class="p">:</span> <span class="n">AngleExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="STState"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.STState">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">STState</span><span class="p">(</span><span class="n">KSState</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a class representing Single Track State (ST State).</span>
+
+<span class="sd">    :param slip_angle: Slip angle :math:`\\beta`</span>
+<span class="sd">    :param yaw_rate: Yaw rate :math:`\\dot{\\Psi}`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">slip_angle</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">yaw_rate</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="STDState"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.STDState">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">STDState</span><span class="p">(</span><span class="n">STState</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a class representing Single Track Drift State (STD State).</span>
+
+<span class="sd">    :param front_wheel_angular_speed: Front wheel angular speed :math:`\\omega_{f}`</span>
+<span class="sd">    :param rear_wheel_angular_speed: Rear wheel angular speed :math:`\\omega_{r}`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">front_wheel_angular_speed</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">rear_wheel_angular_speed</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="MBState"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.MBState">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">MBState</span><span class="p">(</span><span class="n">State</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a class representing Multi Body State (MB State).</span>
+
+<span class="sd">    :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system</span>
+<span class="sd">    :param steering_angle: Steering angle :math:`\\delta`</span>
+<span class="sd">    :param velocity: Velocity :math:`v_x` in longitudinal direction</span>
+<span class="sd">    :param orientation: Yaw angle :math:`\\Psi`</span>
+<span class="sd">    :param yaw_rate: Yaw rate :math:`\\dot{\\Psi}`</span>
+<span class="sd">    :param roll_angle: Roll angle :math:`\\Phi_S`</span>
+<span class="sd">    :param roll_rate: Roll rate :math:`\\dot{\\Phi}_S`</span>
+<span class="sd">    :param pitch_angle: Pitch angle :math:`\\Theta_S`</span>
+<span class="sd">    :param pitch_rate: Pitch rate :math:`\\dot{\\Theta}_S`</span>
+<span class="sd">    :param velocity_y: Velocity :math:`v_y` in lateral direction</span>
+<span class="sd">    :param position_z: Position :math:`s_z` (height) from ground</span>
+<span class="sd">    :param velocity_z: Velocity :math:`v_z` in vertical direction perpendicular to road plane</span>
+<span class="sd">    :param roll_angle_front: Roll angle front :math:`\\Phi_{UF}`</span>
+<span class="sd">    :param roll_rate_front: Roll rate front :math:`\\dot{\\Phi}_{UF}`</span>
+<span class="sd">    :param velocity_y_front: Velocity :math:`v_{y,UF}` in y-direction front</span>
+<span class="sd">    :param position_z_front: Position :math:`s_{z,UF}` in z-direction front</span>
+<span class="sd">    :param velocity_z_front: Velocity :math:`v_{z,UF}` in z-direction front</span>
+<span class="sd">    :param roll_angle_rear: Roll angle rear :math:`\\Phi_{UR}`</span>
+<span class="sd">    :param roll_rate_rear: Roll rate rear :math:`\\dot{\\Phi}_{UR}`</span>
+<span class="sd">    :param velocity_y_rear: Velocity :math:`v_{y,UR}` in y-direction rear</span>
+<span class="sd">    :param position_z_rear: Position :math:`s_{z,UR}` in z-direction rear</span>
+<span class="sd">    :param velocity_z_rear: Velocity :math:`v_{z,UR}` in z-direction rear</span>
+<span class="sd">    :param left_front_wheel_angular_speed: Left front wheel angular speed :math:`\\omega_{LF}`</span>
+<span class="sd">    :param right_front_wheel_angular_speed: Right front wheel angular speed :math:`\\omega_{RF}`</span>
+<span class="sd">    :param left_rear_wheel_angular_speed: Left rear wheel angular speed :math:`\\omega_{LR}`</span>
+<span class="sd">    :param right_rear_wheel_angular_speed: Right rear wheel angular speed :math:`\\omega_{RR}`</span>
+<span class="sd">    :param delta_y_f: Front lateral displacement :math:`\\delta_{y,f}` of sprung mass due to roll</span>
+<span class="sd">    :param delta_y_r: Rear lateral displacement :math:`\\delta_{y,r}` of sprung mass due to roll</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">position</span><span class="p">:</span> <span class="n">ExactOrShape</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">steering_angle</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">velocity</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">orientation</span><span class="p">:</span> <span class="n">AngleExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">yaw_rate</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">roll_angle</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">roll_rate</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">pitch_angle</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">pitch_rate</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">velocity_y</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">position_z</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">velocity_z</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">roll_angle_front</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">roll_rate_front</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">velocity_y_front</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">position_z_front</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">velocity_z_front</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">roll_angle_rear</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">roll_rate_rear</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">velocity_y_rear</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">position_z_rear</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">velocity_z_rear</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">left_front_wheel_angular_speed</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">right_front_wheel_angular_speed</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">left_rear_wheel_angular_speed</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">right_rear_wheel_angular_speed</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">delta_y_f</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">delta_y_r</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="LongitudinalState"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.LongitudinalState">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">LongitudinalState</span><span class="p">(</span><span class="n">State</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a class representing the Longitudinal Motion State (Longitudinal State). The state cannot be read by</span>
+<span class="sd">    the file reader because neither orientation nor velocity in y direction are specified.</span>
+
+<span class="sd">    :param longitudinal_position: Longitudinal position :math:`s` along reference path</span>
+<span class="sd">    :param velocity: Velocity :math:`v_x` in longitudinal direction</span>
+<span class="sd">    :param acceleration: Acceleration :math:`a_x` in longitudinal direction</span>
+<span class="sd">    :param jerk: Jerk :math:`j`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">longitudinal_position</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">velocity</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">acceleration</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">jerk</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="LateralState"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.LateralState">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">LateralState</span><span class="p">(</span><span class="n">State</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a class representing the Lateral Motion State (Lateral State). The state cannot be read by the file reader</span>
+<span class="sd">    because position is not specified.</span>
+
+<span class="sd">    :param lateral_position: Lateral distance :math:`d` to reference path</span>
+<span class="sd">    :param orientation: Yaw angle :math:`\\Psi`</span>
+<span class="sd">    :param curvature: Curvature math:`\\kappa`</span>
+<span class="sd">    :param curvature_rate: Change of curvature math:`\\dot{\\kappa}`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lateral_position</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">orientation</span><span class="p">:</span> <span class="n">AngleExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">curvature</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">curvature_rate</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="InputState"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.InputState">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">InputState</span><span class="p">(</span><span class="n">State</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a class representing the input for most supported models.</span>
+
+<span class="sd">    :param steering_angle_speed: Steering angle speed :math:`\\dot{\\delta}` of front wheels</span>
+<span class="sd">    :param acceleration: Acceleration :math:`a_x`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">steering_angle_speed</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">acceleration</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="PMInputState"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.PMInputState">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">PMInputState</span><span class="p">(</span><span class="n">State</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a class representing the input for PM model (PM Input).</span>
+
+<span class="sd">    :param acceleration: Acceleration :math:`a_x`</span>
+<span class="sd">    :param acceleration_y: Acceleration :math:`a_y`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">acceleration</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">acceleration_y</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">LKSInputState</span><span class="p">(</span><span class="n">State</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a class representing the input for the linearized kinematic single track (LKS) model (LKS Input).</span>
+
+<span class="sd">    :param longitudinal snap: change of longitudinal jerk (i.e., jerk_dot): math:`\\dot{j}`</span>
+<span class="sd">    :param curvature rate rate: change of curvature rate (i.e., kappa_dot_dot)  :math:`\\ddot{\\kappa}`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">jerk_dot</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">kappa_dot_dot</span><span class="p">:</span> <span class="n">FloatExactOrInterval</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="CustomState"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.CustomState">[docs]</a><span class="k">class</span> <span class="nc">CustomState</span><span class="p">(</span><span class="n">State</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a class representing the custom state. State variables can be added at runtime. The attributes position</span>
+<span class="sd">    and orientation/velocity_y are necessary for successful file reading.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Additional constructor for CustomState class.</span>
+
+<span class="sd">        :param attributes: Variable number of attributes each consisting of name and value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># if one wants to use the attribute adding methods manually</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;time_step&quot;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;time_step&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CustomState.add_attribute"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.CustomState.add_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">add_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a new attribute to custom state.</span>
+
+<span class="sd">        :param new_attr: Attribute name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CustomState.set_value"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.state.CustomState.set_value">[docs]</a>    <span class="k">def</span> <span class="nf">set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets value to attribute.</span>
+
+<span class="sd">        :param attr: Attribute name</span>
+<span class="sd">        :param value: Value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not an attribute of this custom state!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div></div>
+
+
+<span class="n">TraceState</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">State</span><span class="p">,</span> <span class="n">InitialState</span><span class="p">,</span> <span class="n">PMState</span><span class="p">,</span> <span class="n">KSState</span><span class="p">,</span> <span class="n">KSTState</span><span class="p">,</span> <span class="n">STState</span><span class="p">,</span> <span class="n">STDState</span><span class="p">,</span> <span class="n">MBState</span><span class="p">,</span> <span class="n">InputState</span><span class="p">,</span>
+                   <span class="n">PMInputState</span><span class="p">,</span> <span class="n">LateralState</span><span class="p">,</span> <span class="n">LongitudinalState</span><span class="p">,</span> <span class="n">CustomState</span><span class="p">]</span>
+
+<span class="n">SpecificStateClasses</span> <span class="o">=</span> <span class="p">[</span><span class="n">InitialState</span><span class="p">,</span> <span class="n">PMState</span><span class="p">,</span> <span class="n">KSState</span><span class="p">,</span> <span class="n">KSTState</span><span class="p">,</span> <span class="n">STState</span><span class="p">,</span> <span class="n">STDState</span><span class="p">,</span> <span class="n">MBState</span><span class="p">,</span> <span class="n">InputState</span><span class="p">,</span>
+                        <span class="n">PMInputState</span><span class="p">,</span> <span class="n">LateralState</span><span class="p">,</span> <span class="n">LongitudinalState</span><span class="p">]</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Luis Gressenbuch, Anna-Katharina Rettinger.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

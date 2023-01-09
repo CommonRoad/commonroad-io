@@ -3,8 +3,8 @@ import warnings
 from commonroad.common.validity import (is_natural_number, is_positive)
 from commonroad.scenario.state import *
 from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
+from commonroad.visualization.draw_params import TrajectoryParams, OptionalSpecificOrAllDrawParams, StateParams
 
 
 class Trajectory(IDrawable):
@@ -257,11 +257,8 @@ class Trajectory(IDrawable):
         traffic_str = '\n'
         traffic_str += 'Initial time step: {} \n'.format(self.initial_time_step)
         traffic_str += 'Number of states: {}\n'.format(len(self.state_list))
-        traffic_str += 'State elements: {}'.format(
-                self.state_list[0].attributes)
+        traffic_str += 'State elements: {}'.format(self.state_list[0].attributes)
         return traffic_str
 
-    def draw(self, renderer: IRenderer,
-             draw_params: Union[ParamServer, dict, None] = None,
-             call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_trajectory(self, draw_params, call_stack)
+    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[TrajectoryParams] = None):
+        renderer.draw_trajectory(self, draw_params)

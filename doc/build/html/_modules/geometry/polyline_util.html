@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>geometry.polyline_util &mdash; CommonRoad_io 2022.3 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> CommonRoad_io
+            <img src="../../_static/commonroad_white150.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2022.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user/getting_started.html">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../user/getting_started.html#reading-files">Reading Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../user/getting_started.html#scenario">Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../user/getting_started.html#lanelet-network">Lanelet Network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../user/getting_started.html#obstacles">Obstacles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../user/getting_started.html#dynamic-obstacle-prediction">Dynamic Obstacle Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../user/getting_started.html#trajectory-prediction">Trajectory Prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../user/getting_started.html#set-based-prediction">Set Based Prediction</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../user/getting_started.html#planning-problems">Planning Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../user/getting_started.html#writing-files">Writing Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../user/getting_started.html#solution-writer">Solution Writer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../user/visualization.html">Visualization Manual</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../user/visualization.html#creating-plots-in-commonroad">Creating plots in CommonRoad</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../user/visualization.html#styling-options">Styling options</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../user/visualization.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../user/visualization.html#plot-limits"><code class="docutils literal notranslate"><span class="pre">plot_limits</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">CommonRoad_io API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/index.html#modules">Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/scenario.html">Module Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../api/scenario.html#module-commonroad.scenario.scenario">Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/scenario.html#module-commonroad.scenario.lanelet">Road network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/scenario.html#module-commonroad.scenario.traffic_sign">Traffic Sign</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/scenario.html#traffic-light">Traffic Light</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/scenario.html#module-commonroad.scenario.traffic_sign_interpreter">Traffic Sign Interpreter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/scenario.html#intersection">Intersection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/scenario.html#obstacles">Obstacles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/scenario.html#module-commonroad.scenario.trajectory">Trajectories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/scenario.html#module-commonroad.scenario.state">States</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/prediction.html">Module Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../api/prediction.html#prediction-class"><code class="docutils literal notranslate"><span class="pre">Prediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/prediction.html#trajectoryprediction-class"><code class="docutils literal notranslate"><span class="pre">TrajectoryPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/prediction.html#setbasedprediction-class"><code class="docutils literal notranslate"><span class="pre">SetBasedPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/prediction.html#occupancy-class"><code class="docutils literal notranslate"><span class="pre">Occupancy</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/planning.html">Module Planning</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../api/planning.html#module-commonroad.planning.planning_problem">Planning Problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/planning.html#module-commonroad.planning.goal">Goal Region</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/geometry.html">Module Geometry</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../api/geometry.html#module-commonroad.geometry.shape">Shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/geometry.html#module-geometry.transform">Transform</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/geometry.html#module-geometry.polyline_util">Polyline Utility Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/common.html">Module Common</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../api/common.html#module-commonroad.common.file_reader">File Reader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/common.html#module-commonroad.common.file_writer">File Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/common.html#solution-reader-and-writer">Solution Reader and Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/common.html#module-commonroad.common.util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/visualization.html">Module Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../api/visualization.html#module-commonroad.visualization.drawable">Drawing interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/visualization.html#module-commonroad.visualization.draw_params">Drawing parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CommonRoad_io</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">geometry.polyline_util</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for geometry.polyline_util</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="kn">import</span> <span class="n">LineString</span>
+
+<span class="kn">from</span> <span class="nn">commonroad.common.validity</span> <span class="kn">import</span> <span class="n">is_valid_polyline</span>
+
+
+<div class="viewcode-block" id="compute_polyline_lengths"><a class="viewcode-back" href="../../api/geometry.html#geometry.polyline_util.compute_polyline_lengths">[docs]</a><span class="k">def</span> <span class="nf">compute_polyline_lengths</span><span class="p">(</span><span class="n">polyline</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the path lengths of a given polyline in steps travelled</span>
+<span class="sd">    from initial to final coordinate.</span>
+
+<span class="sd">    :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]</span>
+<span class="sd">    :return: Path lengths of the polyline for each coordinate in m</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">is_valid_polyline</span><span class="p">(</span><span class="n">polyline</span><span class="p">),</span> <span class="s2">&quot;Polyline p=</span><span class="si">{}</span><span class="s2"> is malformed!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">polyline</span><span class="p">)</span>
+
+    <span class="n">distance</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">polyline</span><span class="p">)):</span>
+        <span class="n">distance</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">distance</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">polyline</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">polyline</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="compute_total_polyline_length"><a class="viewcode-back" href="../../api/geometry.html#geometry.polyline_util.compute_total_polyline_length">[docs]</a><span class="k">def</span> <span class="nf">compute_total_polyline_length</span><span class="p">(</span><span class="n">polyline</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the complete path length of a given polyline.</span>
+
+<span class="sd">    :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]</span>
+<span class="sd">    :return: Path length of the polyline [m]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lengths</span> <span class="o">=</span> <span class="n">compute_polyline_lengths</span><span class="p">(</span><span class="n">polyline</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">lengths</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="compute_polyline_curvatures"><a class="viewcode-back" href="../../api/geometry.html#geometry.polyline_util.compute_polyline_curvatures">[docs]</a><span class="k">def</span> <span class="nf">compute_polyline_curvatures</span><span class="p">(</span><span class="n">polyline</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the curvatures along a given polyline travelled from initial</span>
+<span class="sd">    to final coordinate.</span>
+
+<span class="sd">    :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]</span>
+<span class="sd">    :return: Curvatures of the polyline for each coordinate [1/rad]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">is_valid_polyline</span><span class="p">(</span><span class="n">polyline</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">polyline</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Polyline p=</span><span class="si">{}</span><span class="s2"> is malformed!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">polyline</span><span class="p">)</span>
+
+    <span class="n">x_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">polyline</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">x_dd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">x_d</span><span class="p">)</span>
+    <span class="n">y_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">polyline</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">y_dd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">y_d</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">x_d</span> <span class="o">*</span> <span class="n">y_dd</span> <span class="o">-</span> <span class="n">x_dd</span> <span class="o">*</span> <span class="n">y_d</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">x_d</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y_d</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mf">3.</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="compute_polyline_orientations"><a class="viewcode-back" href="../../api/geometry.html#geometry.polyline_util.compute_polyline_orientations">[docs]</a><span class="k">def</span> <span class="nf">compute_polyline_orientations</span><span class="p">(</span><span class="n">polyline</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the orientation of a given polyline travelled from initial</span>
+<span class="sd">    to final coordinate. The orientation of the last coordinate is always</span>
+<span class="sd">    assigned with the computed orientation of the penultimate one.</span>
+
+<span class="sd">    :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]</span>
+<span class="sd">    :return: Orientations of the polyline for each coordinate [rad]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">is_valid_polyline</span><span class="p">(</span><span class="n">polyline</span><span class="p">),</span> <span class="s2">&quot;Polyline p=</span><span class="si">{}</span><span class="s2"> is malformed!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">polyline</span><span class="p">)</span>
+
+    <span class="n">orientation</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">polyline</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">pt_1</span> <span class="o">=</span> <span class="n">polyline</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">pt_2</span> <span class="o">=</span> <span class="n">polyline</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">pt_2</span> <span class="o">-</span> <span class="n">pt_1</span>
+        <span class="n">orient</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">orientation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">orient</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">polyline</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">orientation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">orient</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">orientation</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="compute_polyline_initial_orientation"><a class="viewcode-back" href="../../api/geometry.html#geometry.polyline_util.compute_polyline_initial_orientation">[docs]</a><span class="k">def</span> <span class="nf">compute_polyline_initial_orientation</span><span class="p">(</span><span class="n">polyline</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the orientation of the initial coordinate with respect to the succeeding</span>
+<span class="sd">    coordinate.</span>
+
+<span class="sd">    :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]</span>
+<span class="sd">    :return: Orientation of the initial coordinate [rad]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">orientations</span> <span class="o">=</span> <span class="n">compute_polyline_orientations</span><span class="p">(</span><span class="n">polyline</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">orientations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="is_point_on_polyline"><a class="viewcode-back" href="../../api/geometry.html#geometry.polyline_util.is_point_on_polyline">[docs]</a><span class="k">def</span> <span class="nf">is_point_on_polyline</span><span class="p">(</span><span class="n">polyline</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">point</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes whether a given point lies on a polyline. That means, the point is between the starting</span>
+<span class="sd">    and ending point of the polyline.</span>
+
+<span class="sd">    :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]</span>
+<span class="sd">    :param point: 2D point [x, y]</span>
+<span class="sd">    :return: Boolean indicating whether point lies on polyline or not</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">is_valid_polyline</span><span class="p">(</span><span class="n">polyline</span><span class="p">),</span> <span class="s2">&quot;Polyline p=</span><span class="si">{}</span><span class="s2"> is malformed!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">polyline</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">polyline</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">l_x_1</span> <span class="o">=</span> <span class="n">polyline</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">l_y_1</span> <span class="o">=</span> <span class="n">polyline</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">l_x_2</span> <span class="o">=</span> <span class="n">polyline</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">l_y_2</span> <span class="o">=</span> <span class="n">polyline</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">cross_product</span> <span class="o">=</span> <span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">l_y_1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">l_x_2</span> <span class="o">-</span> <span class="n">l_x_1</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">l_x_1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">l_y_2</span> <span class="o">-</span> <span class="n">l_y_1</span><span class="p">)</span>
+
+        <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1e-12</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cross_product</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">epsilon</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">dot_product</span> <span class="o">=</span> <span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">l_x_1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">l_x_2</span> <span class="o">-</span> <span class="n">l_x_1</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">l_y_1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">l_y_2</span> <span class="o">-</span> <span class="n">l_y_1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dot_product</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">squared_length</span> <span class="o">=</span> <span class="p">(</span><span class="n">l_x_2</span> <span class="o">-</span> <span class="n">l_x_1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">l_x_2</span> <span class="o">-</span> <span class="n">l_x_1</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">l_y_2</span> <span class="o">-</span> <span class="n">l_y_1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">l_y_2</span> <span class="o">-</span> <span class="n">l_y_1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dot_product</span> <span class="o">&gt;</span> <span class="n">squared_length</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="compute_polyline_intersections"><a class="viewcode-back" href="../../api/geometry.html#geometry.polyline_util.compute_polyline_intersections">[docs]</a><span class="k">def</span> <span class="nf">compute_polyline_intersections</span><span class="p">(</span><span class="n">polyline_1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">polyline_2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the intersection points of two polylines.</span>
+
+<span class="sd">    :param polyline_1: First polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]</span>
+<span class="sd">    :param polyline_2: Second polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]</span>
+<span class="sd">    :return: Intersection points</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">is_valid_polyline</span><span class="p">(</span><span class="n">polyline_1</span><span class="p">),</span> <span class="s2">&quot;First polyline p=</span><span class="si">{}</span><span class="s2"> is malformed!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">polyline_1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">is_valid_polyline</span><span class="p">(</span><span class="n">polyline_2</span><span class="p">),</span> <span class="s2">&quot;Second polyline p=</span><span class="si">{}</span><span class="s2"> is malformed!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">polyline_2</span><span class="p">)</span>
+
+    <span class="n">intersection_points</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">polyline_1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">polyline_2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+
+            <span class="n">x_diff</span> <span class="o">=</span> <span class="p">[</span><span class="n">polyline_1</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">polyline_1</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">polyline_2</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">polyline_2</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="n">y_diff</span> <span class="o">=</span> <span class="p">[</span><span class="n">polyline_1</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">polyline_1</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">polyline_2</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">polyline_2</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span>
+
+            <span class="n">div</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_diff</span><span class="p">,</span> <span class="n">y_diff</span><span class="p">]))</span>
+            <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">div</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="n">d_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">polyline_1</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">polyline_1</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">polyline_1</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">polyline_1</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]]]))</span>
+            <span class="n">d_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">polyline_2</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">polyline_2</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">polyline_2</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">polyline_2</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]]]))</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="p">[</span><span class="n">d_1</span><span class="p">,</span> <span class="n">d_2</span><span class="p">]</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">,</span> <span class="n">x_diff</span><span class="p">]))</span> <span class="o">/</span> <span class="n">div</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">,</span> <span class="n">y_diff</span><span class="p">]))</span> <span class="o">/</span> <span class="n">div</span>
+
+            <span class="n">point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+            <span class="n">between_polyline_1</span> <span class="o">=</span> <span class="n">is_point_on_polyline</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">polyline_1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">polyline_1</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]),</span> <span class="n">point</span><span class="p">)</span>
+            <span class="n">between_polyline_2</span> <span class="o">=</span> <span class="n">is_point_on_polyline</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">polyline_2</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">polyline_2</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]),</span> <span class="n">point</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">intersection_points</span> <span class="ow">and</span> <span class="n">between_polyline_1</span> <span class="ow">and</span> <span class="n">between_polyline_2</span><span class="p">:</span>
+                <span class="n">intersection_points</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">intersection_points</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_polyline_self_intersection"><a class="viewcode-back" href="../../api/geometry.html#geometry.polyline_util.is_polyline_self_intersection">[docs]</a><span class="k">def</span> <span class="nf">is_polyline_self_intersection</span><span class="p">(</span><span class="n">polyline</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes whether the given polyline contains self-intersection. Intersection</span>
+<span class="sd">    at boundary points are considered as self-intersection.</span>
+
+<span class="sd">    :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]</span>
+<span class="sd">    :return: Self-intersection or not</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">is_valid_polyline</span><span class="p">(</span><span class="n">polyline</span><span class="p">),</span> <span class="s2">&quot;Polyline p=</span><span class="si">{}</span><span class="s2"> is malformed!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">polyline</span><span class="p">)</span>
+
+    <span class="n">line</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">polyline</span><span class="p">]</span>
+    <span class="n">line_string</span> <span class="o">=</span> <span class="n">LineString</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">line_string</span><span class="o">.</span><span class="n">is_simple</span></div>
+
+
+<div class="viewcode-block" id="compare_polylines_equality"><a class="viewcode-back" href="../../api/geometry.html#geometry.polyline_util.compare_polylines_equality">[docs]</a><span class="k">def</span> <span class="nf">compare_polylines_equality</span><span class="p">(</span><span class="n">polyline_1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">polyline_2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compares two polylines for equality. For equality of the values a threshold can be given.</span>
+
+<span class="sd">    :param polyline_1: First polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]</span>
+<span class="sd">    :param polyline_2: Second polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]</span>
+<span class="sd">    :param threshold: Threshold for equality of values</span>
+<span class="sd">    :return: Equality of both polylines or not</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">is_valid_polyline</span><span class="p">(</span><span class="n">polyline_1</span><span class="p">),</span> <span class="s2">&quot;First polyline p=</span><span class="si">{}</span><span class="s2"> is malformed!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">polyline_1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">is_valid_polyline</span><span class="p">(</span><span class="n">polyline_2</span><span class="p">),</span> <span class="s2">&quot;Second polyline p=</span><span class="si">{}</span><span class="s2"> is malformed!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">polyline_2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">polyline_1</span><span class="p">,</span> <span class="n">polyline_2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="resample_polyline_with_number"><a class="viewcode-back" href="../../api/geometry.html#geometry.polyline_util.resample_polyline_with_number">[docs]</a><span class="k">def</span> <span class="nf">resample_polyline_with_number</span><span class="p">(</span><span class="n">polyline</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">number</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resamples the given polyline with a fixed number of points. The number</span>
+<span class="sd">    of coordinates can be resampled down or up.</span>
+<span class="sd">    There exists also an efficient C++ implementation with Python interface in the CommonRoad Drivability Checker.</span>
+
+<span class="sd">    :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]</span>
+<span class="sd">    :param number: Fixed number of 2D points</span>
+<span class="sd">    :return: Resampled polyline</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">is_valid_polyline</span><span class="p">(</span><span class="n">polyline</span><span class="p">),</span> <span class="s2">&quot;Polyline p=</span><span class="si">{}</span><span class="s2"> is malformed!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">polyline</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">number</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Number n=</span><span class="si">{}</span><span class="s1"> has to be at least two&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+
+    <span class="n">line</span> <span class="o">=</span> <span class="n">LineString</span><span class="p">(</span><span class="n">polyline</span><span class="p">)</span>
+    <span class="n">dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="n">number</span><span class="p">)</span>
+    <span class="n">polyline_resampled</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dists</span><span class="p">:</span>
+        <span class="n">point</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="n">polyline_resampled</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">point</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">point</span><span class="o">.</span><span class="n">y</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">polyline_resampled</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="resample_polyline_with_distance"><a class="viewcode-back" href="../../api/geometry.html#geometry.polyline_util.resample_polyline_with_distance">[docs]</a><span class="k">def</span> <span class="nf">resample_polyline_with_distance</span><span class="p">(</span><span class="n">polyline</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resamples the given polyline with a specific distance. For a higher distance than the length</span>
+<span class="sd">    of the given polyline the polyline is not resampled.</span>
+<span class="sd">    There exists also an efficient C++ implementation with Python interface in the CommonRoad Drivability Checker.</span>
+
+<span class="sd">    :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]</span>
+<span class="sd">    :param distance: Specific distance [m]</span>
+<span class="sd">    :return: Resampled polyline</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">is_valid_polyline</span><span class="p">(</span><span class="n">polyline</span><span class="p">),</span> <span class="s2">&quot;Polyline p=</span><span class="si">{}</span><span class="s2"> is malformed!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">polyline</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">distance</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Distance d=</span><span class="si">{}</span><span class="s1"> has to be greater than 0&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span>
+
+    <span class="n">line</span> <span class="o">=</span> <span class="n">LineString</span><span class="p">(</span><span class="n">polyline</span><span class="p">)</span>
+    <span class="n">dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="n">distance</span><span class="p">)</span>
+    <span class="n">polyline_resampled</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dists</span><span class="p">:</span>
+        <span class="n">point</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="n">polyline_resampled</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">point</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">point</span><span class="o">.</span><span class="n">y</span><span class="p">])</span>
+
+    <span class="n">last_point</span> <span class="o">=</span> <span class="n">polyline</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">polyline_resampled</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">last_point</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">polyline_resampled</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="equalize_polyline_length"><a class="viewcode-back" href="../../api/geometry.html#geometry.polyline_util.equalize_polyline_length">[docs]</a><span class="k">def</span> <span class="nf">equalize_polyline_length</span><span class="p">(</span><span class="n">long_polyline</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">short_polyline</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inserts vertices into a polyline to be of the same length than other polyline.</span>
+
+<span class="sd">    :param long_polyline: Polyline with higher number of vertices</span>
+<span class="sd">    :param short_polyline: Polyline with lower number of vertices</span>
+<span class="sd">    :return: Short polyline with equal length as long polyline</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">is_valid_polyline</span><span class="p">(</span><span class="n">long_polyline</span><span class="p">),</span> <span class="s2">&quot;Long polyline p=</span><span class="si">{}</span><span class="s2"> is malformed!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">long_polyline</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">is_valid_polyline</span><span class="p">(</span><span class="n">short_polyline</span><span class="p">),</span> <span class="s2">&quot;Short polyline p=</span><span class="si">{}</span><span class="s2"> is malformed!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">short_polyline</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">long_polyline</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">short_polyline</span><span class="p">),</span> <span class="s2">&quot;The number of vertices of long polyline p=</span><span class="si">{}</span><span class="s2"> must be greater &quot;</span> \
+                                                     <span class="s2">&quot;compared to short polyline p=</span><span class="si">{}</span><span class="s2">!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">long_polyline</span><span class="p">,</span>
+                                                                                               <span class="n">short_polyline</span><span class="p">)</span>
+
+    <span class="n">path_length_long</span> <span class="o">=</span> <span class="n">compute_polyline_lengths</span><span class="p">(</span><span class="n">long_polyline</span><span class="p">)</span>
+    <span class="n">path_length_percentage_long</span> <span class="o">=</span> <span class="n">path_length_long</span> <span class="o">/</span> <span class="n">path_length_long</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">short_polyline</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">path_length_short</span> <span class="o">=</span> <span class="n">compute_polyline_lengths</span><span class="p">(</span><span class="n">short_polyline</span><span class="p">)</span>
+        <span class="n">path_length_percentage_short</span> <span class="o">=</span> <span class="n">path_length_short</span> <span class="o">/</span> <span class="n">path_length_short</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">path_length_percentage_short</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">index_mapping</span> <span class="o">=</span> <span class="n">create_indices_mapping</span><span class="p">(</span><span class="n">path_length_percentage_long</span><span class="p">,</span> <span class="n">path_length_percentage_short</span><span class="p">)</span>
+
+    <span class="n">org_polyline</span> <span class="o">=</span> <span class="n">short_polyline</span>
+    <span class="n">last_key</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">index_mapping</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">counter</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">ub</span> <span class="o">=</span> <span class="n">org_polyline</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
+            <span class="n">lb</span> <span class="o">=</span> <span class="n">short_polyline</span><span class="p">[</span><span class="n">last_key</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">insertion_factor</span> <span class="o">=</span> \
+                    <span class="p">(</span><span class="n">path_length_percentage_long</span><span class="p">[</span><span class="n">last_key</span> <span class="o">+</span> <span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">path_length_percentage_long</span><span class="p">[</span><span class="n">last_key</span><span class="p">])</span> <span class="o">/</span> \
+                    <span class="p">(</span><span class="n">path_length_percentage_long</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">-</span> <span class="n">path_length_percentage_long</span><span class="p">[</span><span class="n">last_key</span><span class="p">])</span>
+                <span class="n">new_vertex</span> <span class="o">=</span> <span class="n">insertion_factor</span> <span class="o">*</span> <span class="p">(</span><span class="n">ub</span> <span class="o">-</span> <span class="n">lb</span><span class="p">)</span> <span class="o">+</span> <span class="n">lb</span>
+                <span class="n">short_polyline_updated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">short_polyline</span><span class="p">,</span> <span class="n">last_key</span> <span class="o">+</span> <span class="n">idx</span><span class="p">,</span> <span class="n">new_vertex</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">short_polyline</span> <span class="o">=</span> <span class="n">short_polyline_updated</span>
+            <span class="n">last_key</span> <span class="o">=</span> <span class="n">key</span>
+            <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">last_key</span> <span class="o">=</span> <span class="n">key</span>
+    <span class="k">return</span> <span class="n">short_polyline</span></div>
+
+
+<div class="viewcode-block" id="create_indices_mapping"><a class="viewcode-back" href="../../api/geometry.html#geometry.polyline_util.create_indices_mapping">[docs]</a><span class="k">def</span> <span class="nf">create_indices_mapping</span><span class="p">(</span><span class="n">path_length_percentage_long</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                           <span class="n">path_length_percentage_short</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts places (indices) where new vertices have to be added in shorter polyline.</span>
+<span class="sd">    Helper function for insert_vertices</span>
+
+<span class="sd">    :param path_length_percentage_long: Proportional path length along longer polyline</span>
+<span class="sd">    :param path_length_percentage_short: Proportional path length along shorter polyline</span>
+<span class="sd">    :return: Mapping of existing indices of shorter polyline to longer polyline</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path_length_percentages</span> <span class="o">=</span> <span class="p">[</span><span class="n">path_length_percentage_long</span><span class="p">,</span> <span class="n">path_length_percentage_short</span><span class="p">]</span>
+    <span class="n">path_length_percentage_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Long path length percentage&#39;</span><span class="p">,</span> <span class="s1">&#39;Short path length percentage&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_length_percentages</span><span class="p">)):</span>
+        <span class="n">path_length_percentage</span> <span class="o">=</span> <span class="n">path_length_percentages</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">path_length_percentage_name</span> <span class="o">=</span> <span class="n">path_length_percentage_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">valid_path_percentage</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">percentage</span> <span class="ow">in</span> <span class="n">path_length_percentage</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="n">percentage</span><span class="p">:</span>
+                <span class="n">valid_path_percentage</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">break</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">percentage</span>
+        <span class="k">assert</span> <span class="n">valid_path_percentage</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_length_percentage</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">,</span> \
+            <span class="nb">str</span><span class="p">(</span><span class="n">path_length_percentage_name</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; p=</span><span class="si">{}</span><span class="s2"> is malformed!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path_length_percentage</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_length_percentage_long</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_length_percentage_short</span><span class="p">),</span> \
+        <span class="s2">&quot;The number of long path length percentage p=</span><span class="si">{}</span><span class="s2"> must be greater compared to the number of short path length &quot;</span> \
+        <span class="s2">&quot;percentage p=</span><span class="si">{}</span><span class="s2">!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path_length_percentage_long</span><span class="p">,</span> <span class="n">path_length_percentage_short</span><span class="p">)</span>
+
+    <span class="n">index_mapping</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_length_percentage_long</span><span class="p">)</span>
+    <span class="n">index_mapping</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">index_mapping</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_length_percentage_short</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="n">finished</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">last_idx_long</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_length_percentage_short</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">path_length_percentage_short</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="k">while</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">index_mapping</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">finished</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idx_long</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">last_idx_long</span><span class="p">,</span>
+                                  <span class="nb">len</span><span class="p">(</span><span class="n">path_length_percentage_long</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">path_length_percentage_short</span><span class="p">)</span> <span class="o">-</span> <span class="n">key</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">path_length_percentage_long</span><span class="p">[</span><span class="n">idx_long</span><span class="p">]</span> <span class="o">-</span> <span class="n">value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">threshold</span> <span class="ow">and</span> <span class="n">index_mapping</span><span class="p">[</span><span class="n">idx_long</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">index_mapping</span><span class="p">[</span><span class="n">idx_long</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+                    <span class="n">last_idx_long</span> <span class="o">=</span> <span class="n">idx_long</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_length_percentage_short</span><span class="p">)</span> <span class="o">-</span> <span class="n">key</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">index_mapping</span><span class="p">)</span> <span class="o">-</span> <span class="n">idx_long</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">idx_long</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">index_mapping</span><span class="p">)):</span>
+                            <span class="n">index_mapping</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span> <span class="o">+</span> <span class="mi">1</span>
+                            <span class="n">key</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">finished</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+            <span class="n">threshold</span> <span class="o">*=</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">finished</span><span class="p">:</span>
+            <span class="k">break</span>
+
+    <span class="k">return</span> <span class="n">index_mapping</span></div>
+
+
+<div class="viewcode-block" id="concatenate_polylines"><a class="viewcode-back" href="../../api/geometry.html#geometry.polyline_util.concatenate_polylines">[docs]</a><span class="k">def</span> <span class="nf">concatenate_polylines</span><span class="p">(</span><span class="n">head</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tail</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Concatenates two polylines. The head represents the first part of the new polyline.</span>
+
+<span class="sd">    :param head: First part of new polyline</span>
+<span class="sd">    :param tail: Second part of new polyline</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">is_valid_polyline</span><span class="p">(</span><span class="n">head</span><span class="p">),</span> <span class="s2">&quot;Left polyline p=</span><span class="si">{}</span><span class="s2"> is malformed!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">head</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">is_valid_polyline</span><span class="p">(</span><span class="n">tail</span><span class="p">),</span> <span class="s2">&quot;Right polyline p=</span><span class="si">{}</span><span class="s2"> is malformed!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tail</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">head</span><span class="p">,</span> <span class="n">tail</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Luis Gressenbuch, Anna-Katharina Rettinger.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,12 +1,12 @@
 import enum
-from typing import List, Optional, Set, Tuple
+from typing import List, Set
 import numpy as np
 
 import commonroad.geometry.transform
 from commonroad.common.validity import *
 from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.param_server import ParamServer
 from commonroad.visualization.renderer import IRenderer
+from commonroad.visualization.draw_params import TrafficLightParams, TrafficSignParams, OptionalSpecificOrAllDrawParams
 
 TRAFFIC_SIGN_VALIDITY_START = {'WARNING_DANGER_SPOT', 'WARNING_RIGHT_BEFORE_LEFT', 'WARNING_STEEP_HILL_DOWNWARDS',
                                'WARNING_SLIPPERY_ROAD', 'WARNING_CONSTRUCTION_SITE', 'WARNING_CROSSING_CYCLIST',
@@ -851,9 +851,8 @@ class TrafficSign(IDrawable):
         self._position = commonroad.geometry.transform.translate_rotate(np.array([self._position]), translation, angle)[
             0]
 
-    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
-             call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_traffic_light_sign(self, draw_params, call_stack)
+    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[TrafficSignParams] = None):
+        renderer.draw_traffic_light_sign(self, draw_params)
 
 
 class TrafficLightCycleElement:
@@ -1046,9 +1045,8 @@ class TrafficLight(IDrawable):
         self._position = commonroad.geometry.transform.translate_rotate(np.array([self._position]), translation, angle)[
             0]
 
-    def draw(self, renderer: IRenderer, draw_params: Union[ParamServer, dict, None] = None,
-             call_stack: Optional[Tuple[str, ...]] = tuple()):
-        renderer.draw_traffic_light_sign(self, draw_params, call_stack)
+    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[TrafficLightParams] = None):
+        renderer.draw_traffic_light_sign(self, draw_params)
 
 
 def get_default_cycle():

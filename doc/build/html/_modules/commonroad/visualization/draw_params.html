@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>commonroad.visualization.draw_params &mdash; CommonRoad_io 2022.3 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> CommonRoad_io
+            <img src="../../../_static/commonroad_white150.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2022.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/index.html">User Manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/getting_started.html">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#reading-files">Reading Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#scenario">Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#lanelet-network">Lanelet Network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#obstacles">Obstacles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#dynamic-obstacle-prediction">Dynamic Obstacle Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#trajectory-prediction">Trajectory Prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#set-based-prediction">Set Based Prediction</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#planning-problems">Planning Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#writing-files">Writing Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#solution-writer">Solution Writer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/visualization.html">Visualization Manual</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#creating-plots-in-commonroad">Creating plots in CommonRoad</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#styling-options">Styling options</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/visualization.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#plot-limits"><code class="docutils literal notranslate"><span class="pre">plot_limits</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">CommonRoad_io API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#modules">Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/scenario.html">Module Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.scenario">Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.lanelet">Road network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.traffic_sign">Traffic Sign</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#traffic-light">Traffic Light</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.traffic_sign_interpreter">Traffic Sign Interpreter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#intersection">Intersection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#obstacles">Obstacles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.trajectory">Trajectories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.state">States</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/prediction.html">Module Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#prediction-class"><code class="docutils literal notranslate"><span class="pre">Prediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#trajectoryprediction-class"><code class="docutils literal notranslate"><span class="pre">TrajectoryPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#setbasedprediction-class"><code class="docutils literal notranslate"><span class="pre">SetBasedPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#occupancy-class"><code class="docutils literal notranslate"><span class="pre">Occupancy</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/planning.html">Module Planning</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/planning.html#module-commonroad.planning.planning_problem">Planning Problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/planning.html#module-commonroad.planning.goal">Goal Region</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/geometry.html">Module Geometry</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-commonroad.geometry.shape">Shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-geometry.transform">Transform</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-geometry.polyline_util">Polyline Utility Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/common.html">Module Common</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.file_reader">File Reader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.file_writer">File Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#solution-reader-and-writer">Solution Reader and Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/visualization.html">Module Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/visualization.html#module-commonroad.visualization.drawable">Drawing interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/visualization.html#module-commonroad.visualization.draw_params">Drawing parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CommonRoad_io</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">commonroad.visualization.draw_params</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for commonroad.visualization.draw_params</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">dataclasses</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">OmegaConf</span>
+
+<span class="n">Color</span> <span class="o">=</span> <span class="nb">str</span>
+
+
+<span class="k">def</span> <span class="nf">_dict_to_params</span><span class="p">(</span><span class="n">dict_params</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">fields</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+    <span class="n">cls_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">}</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">cls_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dict_params</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">BaseParam</span><span class="p">):</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">_dict_to_params</span><span class="p">(</span><span class="n">dict_params</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">cls_map</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict_params</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="BaseParam"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.BaseParam">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">BaseParam</span><span class="p">:</span>
+    <span class="c1">#: First time step of the visualized time interval.</span>
+    <span class="n">time_begin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1">#: Last time step of the visualized time interval.</span>
+    <span class="n">time_end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span>
+    <span class="c1">#: Use anti-aliasing.</span>
+    <span class="n">antialiased</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">__initialized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__initialized</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">{</span><span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">)}:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__initialized</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">BaseParam</span><span class="p">):</span>
+                    <span class="n">v</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2"> is not a parameter of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> is not a parameter of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BaseParam.load"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.BaseParam.load">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">validate_types</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">file_path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;File type </span><span class="si">{</span><span class="n">file_path</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2"> is unsupported! Please use .yaml!&quot;</span>
+        <span class="n">loaded_yaml</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">validate_types</span><span class="p">:</span>
+            <span class="n">OmegaConf</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">OmegaConf</span><span class="o">.</span><span class="n">structured</span><span class="p">(</span><span class="n">MPDrawParams</span><span class="p">),</span> <span class="n">loaded_yaml</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">_dict_to_params</span><span class="p">(</span><span class="n">OmegaConf</span><span class="o">.</span><span class="n">to_object</span><span class="p">(</span><span class="n">loaded_yaml</span><span class="p">),</span> <span class="bp">cls</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">params</span></div>
+
+<div class="viewcode-block" id="BaseParam.save"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.BaseParam.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+        <span class="c1"># Avoid saving private attributes</span>
+        <span class="n">dict_cfg</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_factory</span><span class="o">=</span><span class="k">lambda</span> <span class="n">items</span><span class="p">:</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">items</span> <span class="k">if</span>
+                                                                        <span class="ow">not</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)})</span>
+        <span class="n">OmegaConf</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">OmegaConf</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">dict_cfg</span><span class="p">),</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">resolve</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ShapeParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.ShapeParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ShapeParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="n">opacity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">facecolor</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;#1d7eea&quot;</span>
+    <span class="n">edgecolor</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;#00478f&quot;</span>
+    <span class="n">linewidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">zorder</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="c1"># draw mesh of Polygon</span>
+    <span class="c1"># NOTE: This parameter is currently only valid for Collision Polygons created by the CommonRoad-Drivability-Checker</span>
+    <span class="c1"># and has no effect for the Polygon class defined in commonroad-io.geometry.shape</span>
+    <span class="n">draw_mesh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="VehicleSignalParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.VehicleSignalParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">VehicleSignalParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="n">signal_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">indicator</span><span class="p">:</span> <span class="n">ShapeParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ShapeParams</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;#ebc200&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mf">20.2</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span><span class="p">))</span>
+    <span class="n">braking</span><span class="p">:</span> <span class="n">ShapeParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ShapeParams</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mf">20.2</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span><span class="p">))</span>
+    <span class="n">horn</span><span class="p">:</span> <span class="n">ShapeParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ShapeParams</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mf">20.1</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span><span class="p">))</span>
+    <span class="n">bluelight</span><span class="p">:</span> <span class="n">ShapeParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ShapeParams</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mf">20.1</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="ArrowParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.ArrowParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ArrowParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="n">linewidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span>
+    <span class="n">edgecolor</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;black&quot;</span>
+    <span class="n">facecolor</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;black&quot;</span>
+    <span class="n">width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span></div>
+
+
+<div class="viewcode-block" id="StateParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.StateParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">StateParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="n">draw_arrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">scale_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span>
+    <span class="n">linewidth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">edgecolor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Color</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;black&quot;</span>
+    <span class="n">facecolor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Color</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;black&quot;</span>
+    <span class="n">zorder</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">25</span>
+    <span class="n">arrow</span><span class="p">:</span> <span class="n">ArrowParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">ArrowParams</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OccupancyParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.OccupancyParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">OccupancyParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="n">draw_occupancies</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">shape</span><span class="p">:</span> <span class="n">ShapeParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ShapeParams</span><span class="p">(</span><span class="n">zorder</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.2</span><span class="p">))</span>
+    <span class="n">uncertain_position</span><span class="p">:</span> <span class="n">ShapeParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+            <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ShapeParams</span><span class="p">(</span><span class="n">opacity</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="HistoryParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.HistoryParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">HistoryParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Draw the history of an object with fading colors.&quot;&quot;&quot;</span>
+    <span class="n">draw_history</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">step_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">fade_color</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">basecolor</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;#ffe119&quot;</span>
+    <span class="n">occupancy</span><span class="p">:</span> <span class="n">ShapeParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+            <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ShapeParams</span><span class="p">(</span><span class="n">opacity</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">17</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="StaticObstacleParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.StaticObstacleParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">StaticObstacleParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="n">occupancy</span><span class="p">:</span> <span class="n">OccupancyParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+            <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">OccupancyParams</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">ShapeParams</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;#d95558&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;#831d20&quot;</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="EnvironmentObstacleParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.EnvironmentObstacleParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">EnvironmentObstacleParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="n">occupancy</span><span class="p">:</span> <span class="n">OccupancyParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+            <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">OccupancyParams</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">ShapeParams</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;#0e6000&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;#831d20&quot;</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="TrafficLightParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.TrafficLightParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">TrafficLightParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="n">draw_traffic_lights</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1">#: Color of the red phase</span>
+    <span class="n">red_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>
+    <span class="c1">#: Color of the yellow phase</span>
+    <span class="n">yellow_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;#feb609&quot;</span>
+    <span class="c1">#: Color of the green phase</span>
+    <span class="n">green_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;#00aa16&quot;</span>
+    <span class="c1">#: Color of the red-yellow phase</span>
+    <span class="n">red_yellow_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;#fe4009ff&quot;</span>
+    <span class="c1">#: Show id of the traffic light</span>
+    <span class="n">show_label</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">scale_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">zorder</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">30</span></div>
+
+
+<div class="viewcode-block" id="TrafficSignParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.TrafficSignParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">TrafficSignParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="c1">#: Enable drawing of traffic signs</span>
+    <span class="n">draw_traffic_signs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1">#: Limit traffic signs to a list of IDs, or None to include all IDs.</span>
+    <span class="n">show_traffic_signs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1">#: Select mph or kmh as unit of the speed limit. Choose &quot;auto&quot; to determine based on the country.</span>
+    <span class="n">speed_limit_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span>
+    <span class="c1">#: Show id of the traffic sign</span>
+    <span class="n">show_label</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">scale_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">zorder</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">30</span></div>
+
+
+<div class="viewcode-block" id="IntersectionParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.IntersectionParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">IntersectionParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="n">draw_intersections</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">draw_incoming_lanelets</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">incoming_lanelets_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;#3ecbcf&quot;</span>
+    <span class="n">draw_crossings</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">crossings_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;#b62a55&quot;</span>
+    <span class="n">draw_successors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">successors_left_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;#ff00ff&quot;</span>
+    <span class="n">successors_straight_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span>
+    <span class="n">successors_right_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;#ccff00&quot;</span>
+    <span class="c1">#: Show the ID of the intersection</span>
+    <span class="n">show_label</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="LaneletParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.LaneletParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">LaneletParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="n">left_bound_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;#555555&quot;</span>
+    <span class="n">right_bound_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;#555555&quot;</span>
+    <span class="n">center_bound_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;#dddddd&quot;</span>
+    <span class="n">unique_colors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">draw_stop_line</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">stop_line_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;#ffffff&quot;</span>
+    <span class="n">draw_line_markings</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">draw_left_bound</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">draw_right_bound</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">draw_center_bound</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">draw_border_vertices</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1">#: Show a triangle at the beginning of the lanelet, pointing in the driving direction.</span>
+    <span class="n">draw_start_and_direction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1">#: Apply a colormap to the center line of the lanelet, according the tangent angle.</span>
+    <span class="n">colormap_tangent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1">#: Show the ID of the lanelet.</span>
+    <span class="n">show_label</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">draw_linewidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="c1">#: Fill the lanelet with a solid color.</span>
+    <span class="n">fill_lanelet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1">#: Fill color of the lanelet.</span>
+    <span class="n">facecolor</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;#c7c7c7&quot;</span></div>
+
+
+<div class="viewcode-block" id="LaneletNetworkParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.LaneletNetworkParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">LaneletNetworkParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="n">kwargs_traffic_light_signs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="c1">#: Limit lanelets to a list of IDs, or None to include all IDs.</span>
+    <span class="n">draw_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1">#: Options for lanelet drawing.</span>
+    <span class="n">lanelet</span><span class="p">:</span> <span class="n">LaneletParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">LaneletParams</span><span class="p">)</span>
+    <span class="c1">#: Options for intersection drawing.</span>
+    <span class="n">intersection</span><span class="p">:</span> <span class="n">IntersectionParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">IntersectionParams</span><span class="p">)</span>
+    <span class="c1">#: Offset angle for tangent colormap. See LaneletParams.colormap_tangent</span>
+    <span class="n">relative_angle</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="c1">#: Options for traffic sign drawing.</span>
+    <span class="n">traffic_sign</span><span class="p">:</span> <span class="n">TrafficSignParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">TrafficSignParams</span><span class="p">)</span>
+    <span class="c1">#: Options for traffic light drawing.</span>
+    <span class="n">traffic_light</span><span class="p">:</span> <span class="n">TrafficLightParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">TrafficLightParams</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TrajectoryParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.TrajectoryParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">TrajectoryParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="n">draw_trajectory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">facecolor</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span>
+    <span class="c1">#: Draw trajectories as a continuous line instead of dots.</span>
+    <span class="n">draw_continuous</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">line_width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.17</span>
+    <span class="c1">#: Use unique colors for each of the trajectories points.</span>
+    <span class="n">unique_colors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1">#: Parameters for shapes of uncertain position.</span>
+    <span class="n">shape</span><span class="p">:</span> <span class="n">ShapeParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ShapeParams</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">24</span><span class="p">))</span>
+    <span class="n">zorder</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">24</span></div>
+
+
+<div class="viewcode-block" id="InitialStateParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.InitialStateParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">InitialStateParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="n">label_zorder</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">35</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">StateParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+            <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">StateParams</span><span class="p">(</span><span class="n">draw_arrow</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">scale_factor</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+                                                <span class="n">arrow</span><span class="o">=</span><span class="n">ArrowParams</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="PlanningProblemParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.PlanningProblemParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">PlanningProblemParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="n">initial_state</span><span class="p">:</span> <span class="n">InitialStateParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">InitialStateParams</span><span class="p">)</span>
+    <span class="n">goal_region</span><span class="p">:</span> <span class="n">OccupancyParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">OccupancyParams</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">ShapeParams</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;#f1b514&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;#302404&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">15</span><span class="p">)))</span>
+    <span class="c1">#: Goal lanelet parameters</span>
+    <span class="n">lanelet</span><span class="p">:</span> <span class="n">LaneletParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">LaneletParams</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PlanningProblemSetParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.PlanningProblemSetParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">PlanningProblemSetParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="c1">#: Limit planning problems to a list of IDs, or None to include all IDs.</span>
+    <span class="n">draw_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">planning_problem</span><span class="p">:</span> <span class="n">PlanningProblemParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">PlanningProblemParams</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VehicleShapeParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.VehicleShapeParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">VehicleShapeParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="c1">#: Options for visualizing the direction indicator of the vehicle shape.</span>
+    <span class="n">direction</span><span class="p">:</span> <span class="n">ShapeParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ShapeParams</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;#00478f&quot;</span><span class="p">))</span>
+    <span class="c1">#: Options for visualizing the vehicle&#39;s occupancy in the current time step.</span>
+    <span class="n">occupancy</span><span class="p">:</span> <span class="n">OccupancyParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+            <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">OccupancyParams</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">ShapeParams</span><span class="p">(</span><span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">20</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="DynamicObstacleParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.DynamicObstacleParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DynamicObstacleParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="n">draw_shape</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1">#: Draw a type-dependent icon (if available) instead of the primitive geometric shape.</span>
+    <span class="n">draw_icon</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1">#: Draw the direction indicator of the dynamic obstacle.</span>
+    <span class="n">draw_direction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">draw_bounding_box</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1">#: Show the ID of the dynamic obstacle.</span>
+    <span class="n">show_label</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1">#: Visualize the dynamic obstacle signals like indicator or braking lights.</span>
+    <span class="n">draw_signals</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1">#: Draw the initial state of the dynamic obstacle.</span>
+    <span class="n">draw_initial_state</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1">#: Options for visualizing the vehicle in the current time step.</span>
+    <span class="n">vehicle_shape</span><span class="p">:</span> <span class="n">VehicleShapeParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">VehicleShapeParams</span><span class="p">)</span>
+    <span class="c1">#: Options for visualizing the vehicle signals.</span>
+    <span class="n">signals</span><span class="p">:</span> <span class="n">VehicleSignalParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">VehicleSignalParams</span><span class="p">)</span>
+    <span class="c1">#: Options for visualizing the vehicle states within [time_begin, time_end].</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">StateParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">StateParams</span><span class="p">)</span>
+    <span class="c1">#: Options for visualizing the vehicle occupancy history with fading colors.</span>
+    <span class="n">history</span><span class="p">:</span> <span class="n">HistoryParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">HistoryParams</span><span class="p">)</span>
+    <span class="c1">#: Options for visualizing the vehicle occupancy in future time steps.</span>
+    <span class="n">occupancy</span><span class="p">:</span> <span class="n">OccupancyParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">OccupancyParams</span><span class="p">)</span>
+    <span class="c1">#: Options for visualizing the vehicle trajectory in future time steps.</span>
+    <span class="n">trajectory</span><span class="p">:</span> <span class="n">TrajectoryParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">TrajectoryParams</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PhantomObstacleParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.PhantomObstacleParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">PhantomObstacleParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="n">draw_shape</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">draw_icon</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">draw_direction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">draw_bounding_box</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">show_label</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">zorder</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">draw_signals</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">vehicle_shape</span><span class="p">:</span> <span class="n">VehicleShapeParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">VehicleShapeParams</span><span class="p">(</span><span class="n">occupancy</span><span class="o">=</span><span class="n">OccupancyParams</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">ShapeParams</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;#e59dff&quot;</span><span class="p">))))</span>
+    <span class="n">signals</span><span class="p">:</span> <span class="n">VehicleSignalParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">VehicleSignalParams</span><span class="p">)</span>
+    <span class="n">draw_initial_state</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">StateParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">StateParams</span><span class="p">)</span>
+    <span class="n">history</span><span class="p">:</span> <span class="n">HistoryParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">HistoryParams</span><span class="p">)</span>
+    <span class="n">occupancy</span><span class="p">:</span> <span class="n">OccupancyParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">OccupancyParams</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">ShapeParams</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;#c641f6&quot;</span><span class="p">)))</span>
+    <span class="n">trajectory</span><span class="p">:</span> <span class="n">TrajectoryParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">TrajectoryParams</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MPDrawParams"><a class="viewcode-back" href="../../../api/visualization.html#commonroad.visualization.draw_params.MPDrawParams">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">MPDrawParams</span><span class="p">(</span><span class="n">BaseParam</span><span class="p">):</span>
+    <span class="c1">#: Enable axes for matplotlib.</span>
+    <span class="n">axis_visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">shape</span><span class="p">:</span> <span class="n">ShapeParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">ShapeParams</span><span class="p">)</span>
+    <span class="n">dynamic_obstacle</span><span class="p">:</span> <span class="n">DynamicObstacleParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">DynamicObstacleParams</span><span class="p">)</span>
+    <span class="n">static_obstacle</span><span class="p">:</span> <span class="n">StaticObstacleParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">StaticObstacleParams</span><span class="p">)</span>
+    <span class="n">phantom_obstacle</span><span class="p">:</span> <span class="n">PhantomObstacleParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">PhantomObstacleParams</span><span class="p">)</span>
+    <span class="n">environment_obstacle</span><span class="p">:</span> <span class="n">EnvironmentObstacleParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">EnvironmentObstacleParams</span><span class="p">)</span>
+    <span class="n">trajectory</span><span class="p">:</span> <span class="n">TrajectoryParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">TrajectoryParams</span><span class="p">)</span>
+    <span class="n">lanelet_network</span><span class="p">:</span> <span class="n">LaneletNetworkParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">LaneletNetworkParams</span><span class="p">)</span>
+    <span class="n">traffic_light</span><span class="p">:</span> <span class="n">TrafficLightParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">TrafficLightParams</span><span class="p">)</span>
+    <span class="n">traffic_sign</span><span class="p">:</span> <span class="n">TrafficSignParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">TrafficSignParams</span><span class="p">)</span>
+    <span class="n">occupancy</span><span class="p">:</span> <span class="n">OccupancyParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">OccupancyParams</span><span class="p">)</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">StateParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">StateParams</span><span class="p">)</span>
+    <span class="n">planning_problem</span><span class="p">:</span> <span class="n">PlanningProblemParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">PlanningProblemParams</span><span class="p">)</span>
+    <span class="n">planning_problem_set</span><span class="p">:</span> <span class="n">PlanningProblemSetParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">PlanningProblemSetParams</span><span class="p">)</span>
+    <span class="n">initial_state</span><span class="p">:</span> <span class="n">InitialStateParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">InitialStateParams</span><span class="p">)</span>
+    <span class="n">goal_region</span><span class="p">:</span> <span class="n">OccupancyParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">OccupancyParams</span><span class="p">)</span></div>
+
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+<span class="n">OptionalSpecificOrAllDrawParams</span> <span class="o">=</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">MPDrawParams</span><span class="p">]]</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Luis Gressenbuch, Anna-Katharina Rettinger.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

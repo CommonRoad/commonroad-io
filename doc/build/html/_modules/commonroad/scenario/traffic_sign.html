@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>commonroad.scenario.traffic_sign &mdash; CommonRoad_io 2022.3 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> CommonRoad_io
+            <img src="../../../_static/commonroad_white150.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2022.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/index.html">User Manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/getting_started.html">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#reading-files">Reading Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#scenario">Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#lanelet-network">Lanelet Network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#obstacles">Obstacles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#dynamic-obstacle-prediction">Dynamic Obstacle Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#trajectory-prediction">Trajectory Prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/getting_started.html#set-based-prediction">Set Based Prediction</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#planning-problems">Planning Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#writing-files">Writing Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/getting_started.html#solution-writer">Solution Writer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/visualization.html">Visualization Manual</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#creating-plots-in-commonroad">Creating plots in CommonRoad</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#styling-options">Styling options</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user/visualization.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../user/visualization.html#plot-limits"><code class="docutils literal notranslate"><span class="pre">plot_limits</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">CommonRoad_io API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#modules">Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/scenario.html">Module Scenario</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.scenario">Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.lanelet">Road network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.traffic_sign">Traffic Sign</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#traffic-light">Traffic Light</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.traffic_sign_interpreter">Traffic Sign Interpreter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#intersection">Intersection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#obstacles">Obstacles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.trajectory">Trajectories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/scenario.html#module-commonroad.scenario.state">States</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/prediction.html">Module Prediction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#prediction-class"><code class="docutils literal notranslate"><span class="pre">Prediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#trajectoryprediction-class"><code class="docutils literal notranslate"><span class="pre">TrajectoryPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#setbasedprediction-class"><code class="docutils literal notranslate"><span class="pre">SetBasedPrediction</span></code> class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/prediction.html#occupancy-class"><code class="docutils literal notranslate"><span class="pre">Occupancy</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/planning.html">Module Planning</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/planning.html#module-commonroad.planning.planning_problem">Planning Problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/planning.html#module-commonroad.planning.goal">Goal Region</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/geometry.html">Module Geometry</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-commonroad.geometry.shape">Shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-geometry.transform">Transform</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/geometry.html#module-geometry.polyline_util">Polyline Utility Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/common.html">Module Common</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.file_reader">File Reader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.file_writer">File Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#solution-reader-and-writer">Solution Reader and Writer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/common.html#module-commonroad.common.util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/visualization.html">Module Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/visualization.html#module-commonroad.visualization.drawable">Drawing interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/visualization.html#module-commonroad.visualization.draw_params">Drawing parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CommonRoad_io</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">commonroad.scenario.traffic_sign</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for commonroad.scenario.traffic_sign</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Set</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">commonroad.geometry.transform</span>
+<span class="kn">from</span> <span class="nn">commonroad.common.validity</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">commonroad.visualization.drawable</span> <span class="kn">import</span> <span class="n">IDrawable</span>
+<span class="kn">from</span> <span class="nn">commonroad.visualization.renderer</span> <span class="kn">import</span> <span class="n">IRenderer</span>
+<span class="kn">from</span> <span class="nn">commonroad.visualization.draw_params</span> <span class="kn">import</span> <span class="n">TrafficLightParams</span><span class="p">,</span> <span class="n">TrafficSignParams</span><span class="p">,</span> <span class="n">OptionalSpecificOrAllDrawParams</span>
+
+<span class="n">TRAFFIC_SIGN_VALIDITY_START</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;WARNING_DANGER_SPOT&#39;</span><span class="p">,</span> <span class="s1">&#39;WARNING_RIGHT_BEFORE_LEFT&#39;</span><span class="p">,</span> <span class="s1">&#39;WARNING_STEEP_HILL_DOWNWARDS&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;WARNING_SLIPPERY_ROAD&#39;</span><span class="p">,</span> <span class="s1">&#39;WARNING_CONSTRUCTION_SITE&#39;</span><span class="p">,</span> <span class="s1">&#39;WARNING_CROSSING_CYCLIST&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;WARNING_ANIMAL_CROSSING_RIGHT&#39;</span><span class="p">,</span> <span class="s1">&#39;RAILWAY&#39;</span><span class="p">,</span> <span class="s1">&#39;PRIORITY_OPPOSITE_DIRECTION&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;TURN_RIGHT_AHEAD&#39;</span><span class="p">,</span> <span class="s1">&#39;TURN_LEFT_AHEAD&#39;</span><span class="p">,</span> <span class="s1">&#39;ONEWAY_RIGHT&#39;</span><span class="p">,</span> <span class="s1">&#39;ONEWAY_LEFT&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;PRESCRIBED_PASSING_LEFT&#39;</span><span class="p">,</span> <span class="s1">&#39;PRESCRIBED_PASSING_RIGHT&#39;</span><span class="p">,</span> <span class="s1">&#39;BIKEWAY&#39;</span><span class="p">,</span> <span class="s1">&#39;SIDEWALK&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;PEDESTRIAN_ZONE_START&#39;</span><span class="p">,</span> <span class="s1">&#39;BICYCLE_ROAD_START&#39;</span><span class="p">,</span> <span class="s1">&#39;BUS_LANE&#39;</span><span class="p">,</span> <span class="s1">&#39;BAN_ALL_VEHICLES&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;BAN_CARS&#39;</span><span class="p">,</span> <span class="s1">&#39;BAN_TRUCKS&#39;</span><span class="p">,</span> <span class="s1">&#39;BAN_BICYCLE&#39;</span><span class="p">,</span> <span class="s1">&#39;BAN_MOTORCYCLE&#39;</span><span class="p">,</span> <span class="s1">&#39;BAN_BUS&#39;</span><span class="p">,</span> <span class="s1">&#39;BAN_PEDESTRIAN&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;BAN_CAR_TRUCK_BUS_MOTORCYCLE&#39;</span><span class="p">,</span> <span class="s1">&#39;BAN_VEHICLES_CARRYING_DANGEROUS_GOODS&#39;</span><span class="p">,</span> <span class="s1">&#39;NO_ENTRY&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;MAX_WEIGHT&#39;</span><span class="p">,</span> <span class="s1">&#39;MAX_WIDTH&#39;</span><span class="p">,</span> <span class="s1">&#39;MAX_HEIGHT&#39;</span><span class="p">,</span> <span class="s1">&#39;MAX_LENGTH&#39;</span><span class="p">,</span> <span class="s1">&#39;MAX_SPEED&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;MAX_SPEED_ZONE_START&#39;</span><span class="p">,</span> <span class="s1">&#39;MIN_SPEED&#39;</span><span class="p">,</span> <span class="s1">&#39;NO_OVERTAKING_START&#39;</span><span class="p">,</span> <span class="s1">&#39;NO_OVERTAKING_TRUCKS_START&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;TRAFFIC_CALMED_AREA_START&#39;</span><span class="p">,</span> <span class="s1">&#39;PRIORITY_OVER_ONCOMING&#39;</span><span class="p">,</span> <span class="s1">&#39;TOWN_SIGN&#39;</span><span class="p">,</span> <span class="s1">&#39;TUNNEL&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;INTERSTATE_START&#39;</span><span class="p">,</span> <span class="s1">&#39;HIGHWAY_START&#39;</span><span class="p">,</span> <span class="s1">&#39;PEDESTRIANS_CROSSING&#39;</span><span class="p">}</span>
+
+<span class="n">TRAFFIC_SIGN_WITH_ADDITIONAL_VALUE</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;MAX_WEIGHT&#39;</span><span class="p">,</span> <span class="s1">&#39;MAX_WIDTH&#39;</span><span class="p">,</span> <span class="s1">&#39;MAX_HEIGHT&#39;</span><span class="p">,</span> <span class="s1">&#39;MAX_LENGTH&#39;</span><span class="p">,</span> <span class="s1">&#39;MAX_SPEED&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;MAX_SPEED_ZONE_START&#39;</span><span class="p">,</span> <span class="s1">&#39;MIN_SPEED&#39;</span><span class="p">,</span> <span class="s1">&#39;ADDITION_VALID_FOR_X_METERS&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;ADDITION_VALID_IN_X_KILOMETERS&#39;</span><span class="p">,</span> <span class="s1">&#39;ADDITION_TIME_PERIOD_PERMITTED&#39;</span><span class="p">}</span>
+
+<span class="n">LEFT_HAND_TRAFFIC</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;AUS&#39;</span><span class="p">,</span> <span class="s1">&#39;JPN&#39;</span><span class="p">,</span> <span class="s1">&#39;HKG&#39;</span><span class="p">,</span> <span class="s1">&#39;IND&#39;</span><span class="p">,</span> <span class="s1">&#39;JEY&#39;</span><span class="p">,</span> <span class="s1">&#39;IMN&#39;</span><span class="p">,</span> <span class="s1">&#39;IRL&#39;</span><span class="p">,</span> <span class="s1">&#39;JAM&#39;</span><span class="p">,</span> <span class="s1">&#39;KEN&#39;</span><span class="p">,</span> <span class="s1">&#39;MLT&#39;</span><span class="p">,</span> <span class="s1">&#39;MYS&#39;</span><span class="p">,</span> <span class="s1">&#39;NPL&#39;</span><span class="p">,</span> <span class="s1">&#39;NZL&#39;</span><span class="p">,</span> <span class="s1">&#39;ZAF&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;SGP&#39;</span><span class="p">,</span> <span class="s1">&#39;THA&#39;</span><span class="p">,</span> <span class="s1">&#39;GBR&#39;</span><span class="p">,</span> <span class="s1">&#39;IDN&#39;</span><span class="p">,</span> <span class="s1">&#39;MAC&#39;</span><span class="p">,</span> <span class="s1">&#39;PAK&#39;</span><span class="p">,</span> <span class="s1">&#39;CYP&#39;</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="SupportedTrafficSignCountry"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.SupportedTrafficSignCountry">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">SupportedTrafficSignCountry</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">GERMANY</span> <span class="o">=</span> <span class="s1">&#39;DEU&#39;</span>
+    <span class="n">USA</span> <span class="o">=</span> <span class="s2">&quot;USA&quot;</span>
+    <span class="n">CHINA</span> <span class="o">=</span> <span class="s2">&quot;CHN&quot;</span>
+    <span class="n">SPAIN</span> <span class="o">=</span> <span class="s2">&quot;ESP&quot;</span>
+    <span class="n">RUSSIA</span> <span class="o">=</span> <span class="s2">&quot;RUS&quot;</span>
+    <span class="n">ARGENTINA</span> <span class="o">=</span> <span class="s2">&quot;ARG&quot;</span>
+    <span class="n">BELGIUM</span> <span class="o">=</span> <span class="s2">&quot;BEL&quot;</span>
+    <span class="n">FRANCE</span> <span class="o">=</span> <span class="s2">&quot;FRA&quot;</span>
+    <span class="n">GREECE</span> <span class="o">=</span> <span class="s2">&quot;GRC&quot;</span>
+    <span class="n">CROATIA</span> <span class="o">=</span> <span class="s2">&quot;HRV&quot;</span>
+    <span class="n">ITALY</span> <span class="o">=</span> <span class="s2">&quot;ITA&quot;</span>
+    <span class="n">PUERTO_RICO</span> <span class="o">=</span> <span class="s2">&quot;PRI&quot;</span>
+    <span class="n">ZAMUNDA</span> <span class="o">=</span> <span class="s2">&quot;ZAM&quot;</span>  <span class="c1"># default</span></div>
+
+
+<div class="viewcode-block" id="TrafficSignIDGermany"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDGermany">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDGermany</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="c1"># default traffic sign IDs (similar to German IDs)</span>
+    <span class="n">WARNING_DANGER_SPOT</span> <span class="o">=</span> <span class="s1">&#39;101&#39;</span>
+    <span class="n">WARNING_RIGHT_BEFORE_LEFT</span> <span class="o">=</span> <span class="s1">&#39;102&#39;</span>
+    <span class="n">WARNING_LEFT_CURVE</span> <span class="o">=</span> <span class="s1">&#39;103-10&#39;</span>
+    <span class="n">WARNING_RIGHT_CURVE</span> <span class="o">=</span> <span class="s1">&#39;103-20&#39;</span>
+    <span class="n">WARNING_STEEP_HILL_DOWNWARDS</span> <span class="o">=</span> <span class="s1">&#39;108&#39;</span>
+    <span class="n">WARNING_SLIPPERY_ROAD</span> <span class="o">=</span> <span class="s1">&#39;114&#39;</span>
+    <span class="n">WARNING_CONSTRUCTION_SITE</span> <span class="o">=</span> <span class="s1">&#39;123&#39;</span>
+    <span class="n">WARNING_TRAFFIC_QUEUES_LIKELY</span> <span class="o">=</span> <span class="s1">&#39;124&#39;</span>
+    <span class="n">WARNING_ONCOMING_TRAFFIC</span> <span class="o">=</span> <span class="s1">&#39;125&#39;</span>
+    <span class="n">WARNING_TRAFFIC_LIGHTS_AHEAD</span> <span class="o">=</span> <span class="s1">&#39;131&#39;</span>
+    <span class="n">WARNING_PEDESTRIANS_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;133-10&#39;</span>
+    <span class="n">WARNING_PEDESTRIANS_LEFT</span> <span class="o">=</span> <span class="s1">&#39;133-20&#39;</span>
+    <span class="n">WARNING_CROSSING_CYCLIST</span> <span class="o">=</span> <span class="s1">&#39;138&#39;</span>
+    <span class="n">WARNING_ANIMAL_CROSSING_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;142-10&#39;</span>
+    <span class="n">WARNING_LOOSE_GRAVEL</span> <span class="o">=</span> <span class="s1">&#39;145-50&#39;</span>
+    <span class="n">RAILWAY</span> <span class="o">=</span> <span class="s1">&#39;201&#39;</span>
+    <span class="n">YIELD</span> <span class="o">=</span> <span class="s1">&#39;205&#39;</span>
+    <span class="n">STOP</span> <span class="o">=</span> <span class="s1">&#39;206&#39;</span>
+    <span class="n">PRIORITY_OPPOSITE_DIRECTION</span> <span class="o">=</span> <span class="s1">&#39;208&#39;</span>
+    <span class="n">TURN_RIGHT_AHEAD</span> <span class="o">=</span> <span class="s1">&#39;209-10&#39;</span>
+    <span class="n">TURN_LEFT_AHEAD</span> <span class="o">=</span> <span class="s1">&#39;209-20&#39;</span>
+    <span class="n">KEEP_STRAIGHT_AHEAD</span> <span class="o">=</span> <span class="s1">&#39;209-30&#39;</span>
+    <span class="n">PRESCRIBED_DIRECTION_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;211-20&#39;</span>
+    <span class="n">ROUNDABOUT</span> <span class="o">=</span> <span class="s1">&#39;215&#39;</span>
+    <span class="n">ONEWAY_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;220-10&#39;</span>
+    <span class="n">ONEWAY_LEFT</span> <span class="o">=</span> <span class="s1">&#39;220-20&#39;</span>
+    <span class="n">PRESCRIBED_PASSING_LEFT</span> <span class="o">=</span> <span class="s1">&#39;222-10&#39;</span>
+    <span class="n">PRESCRIBED_PASSING_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;222-20&#39;</span>
+    <span class="n">DO_NOT_DRIVE_ON_SHOULDER_LANE</span> <span class="o">=</span> <span class="s1">&#39;223.2&#39;</span>
+    <span class="n">DO_NOT_DRIVE_ON_SHOULDER_LANE_2_LANE</span> <span class="o">=</span> <span class="s1">&#39;223.2-50&#39;</span>
+    <span class="n">DO_NOT_DRIVE_ON_SHOULDER_LANE_3_LANE</span> <span class="o">=</span> <span class="s1">&#39;223.2-51&#39;</span>
+    <span class="n">BUS_STOP</span> <span class="o">=</span> <span class="s1">&#39;224-50&#39;</span>
+    <span class="n">BIKEWAY</span> <span class="o">=</span> <span class="s1">&#39;237&#39;</span>
+    <span class="n">SIDEWALK</span> <span class="o">=</span> <span class="s1">&#39;239&#39;</span>
+    <span class="n">PEDESTRIAN_AND_BICYCLE_ROAD</span> <span class="o">=</span> <span class="s1">&#39;240&#39;</span>
+    <span class="n">PEDESTRIAN_ZONE_START</span> <span class="o">=</span> <span class="s1">&#39;242.1&#39;</span>
+    <span class="n">PEDESTRIAN_ZONE_END</span> <span class="o">=</span> <span class="s1">&#39;242.2&#39;</span>
+    <span class="n">BICYCLE_ROAD_START</span> <span class="o">=</span> <span class="s1">&#39;244.1&#39;</span>
+    <span class="n">BICYCLE_ROAD_END</span> <span class="o">=</span> <span class="s1">&#39;244.2&#39;</span>
+    <span class="n">BUSLANE</span> <span class="o">=</span> <span class="s1">&#39;245&#39;</span>
+    <span class="n">BAN_ALL_VEHICLES</span> <span class="o">=</span> <span class="s1">&#39;250&#39;</span>
+    <span class="n">BAN_CARS</span> <span class="o">=</span> <span class="s1">&#39;251&#39;</span>
+    <span class="n">BAN_TRUCKS</span> <span class="o">=</span> <span class="s1">&#39;253&#39;</span>
+    <span class="n">BAN_BICYCLE</span> <span class="o">=</span> <span class="s1">&#39;254&#39;</span>
+    <span class="n">BAN_MOTORCYCLE</span> <span class="o">=</span> <span class="s1">&#39;255&#39;</span>
+    <span class="n">BAN_BUS</span> <span class="o">=</span> <span class="s1">&#39;257-54&#39;</span>
+    <span class="n">BAN_PEDESTRIAN</span> <span class="o">=</span> <span class="s1">&#39;259&#39;</span>
+    <span class="n">BAN_CAR_TRUCK_BUS_MOTORCYCLE</span> <span class="o">=</span> <span class="s1">&#39;260&#39;</span>
+    <span class="n">BAN_VEHICLES_CARRYING_DANGEROUS_GOODS</span> <span class="o">=</span> <span class="s1">&#39;261&#39;</span>
+    <span class="n">MAX_WEIGHT</span> <span class="o">=</span> <span class="s1">&#39;262&#39;</span>
+    <span class="n">MAX_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;264&#39;</span>
+    <span class="n">MAX_HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;265&#39;</span>
+    <span class="n">MAX_LENGTH</span> <span class="o">=</span> <span class="s1">&#39;266&#39;</span>
+    <span class="n">NO_ENTRY</span> <span class="o">=</span> <span class="s1">&#39;267&#39;</span>
+    <span class="n">ENVIRONMENTAL_ZONE_START</span> <span class="o">=</span> <span class="s1">&#39;270.1&#39;</span>
+    <span class="n">ENVIRONMENTAL_ZONE_END</span> <span class="o">=</span> <span class="s1">&#39;270.2&#39;</span>
+    <span class="n">U_TURN</span> <span class="o">=</span> <span class="s1">&#39;272&#39;</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;274&#39;</span>
+    <span class="n">MAX_SPEED_ZONE_START</span> <span class="o">=</span> <span class="s1">&#39;274.1&#39;</span>
+    <span class="n">MAX_SPEED_ZONE_END</span> <span class="o">=</span> <span class="s1">&#39;274.2&#39;</span>
+    <span class="n">MIN_SPEED</span> <span class="o">=</span> <span class="s1">&#39;275&#39;</span>
+    <span class="n">NO_OVERTAKING_START</span> <span class="o">=</span> <span class="s1">&#39;276&#39;</span>
+    <span class="n">NO_OVERTAKING_TRUCKS_START</span> <span class="o">=</span> <span class="s1">&#39;277&#39;</span>
+    <span class="n">MAX_SPEED_END</span> <span class="o">=</span> <span class="s1">&#39;278&#39;</span>
+    <span class="n">NO_OVERTAKING_END</span> <span class="o">=</span> <span class="s1">&#39;280&#39;</span>
+    <span class="n">NO_OVERTAKING_TRUCKS_END</span> <span class="o">=</span> <span class="s1">&#39;281&#39;</span>
+    <span class="n">ALL_MAX_SPEED_AND_OVERTAKING_END</span> <span class="o">=</span> <span class="s1">&#39;282&#39;</span>
+    <span class="n">NO_STOP_START_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;283-10&#39;</span>
+    <span class="n">NO_STOP_CENTER_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;283-30&#39;</span>
+    <span class="n">RESTRICTED_STOP_CENTER_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;286-30&#39;</span>
+    <span class="n">RIGHT_OF_WAY</span> <span class="o">=</span> <span class="s1">&#39;301&#39;</span>
+    <span class="n">PRIORITY</span> <span class="o">=</span> <span class="s1">&#39;306&#39;</span>
+    <span class="n">PRIORITY_OVER_ONCOMING</span> <span class="o">=</span> <span class="s1">&#39;308&#39;</span>
+    <span class="n">TOWN_SIGN</span> <span class="o">=</span> <span class="s1">&#39;310&#39;</span>
+    <span class="n">TOWN_SIGN_BACK</span> <span class="o">=</span> <span class="s1">&#39;311&#39;</span>
+    <span class="n">PARKING_AREA</span> <span class="o">=</span> <span class="s1">&#39;314&#39;</span>
+    <span class="n">PARKING_AREA_LEFT</span> <span class="o">=</span> <span class="s1">&#39;314-10&#39;</span>
+    <span class="n">PARKING_AREA_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;314-20&#39;</span>
+    <span class="n">PARKING_AREA_RIGHT_LEFT</span> <span class="o">=</span> <span class="s1">&#39;314-30&#39;</span>
+    <span class="n">TRAFFIC_CALMED_AREA_START</span> <span class="o">=</span> <span class="s1">&#39;325.1&#39;</span>
+    <span class="n">TRAFFIC_CALMED_AREA_END</span> <span class="o">=</span> <span class="s1">&#39;325.2&#39;</span>
+    <span class="n">TUNNEL</span> <span class="o">=</span> <span class="s1">&#39;327&#39;</span>
+    <span class="n">EMERYGECNY_STOP</span> <span class="o">=</span> <span class="s1">&#39;328&#39;</span>
+    <span class="n">INTERSTATE_START</span> <span class="o">=</span> <span class="s1">&#39;330.1&#39;</span>
+    <span class="n">INTERSTATE_END</span> <span class="o">=</span> <span class="s1">&#39;330.2&#39;</span>
+    <span class="n">HIGHWAY_START</span> <span class="o">=</span> <span class="s1">&#39;331.1&#39;</span>
+    <span class="n">HIGHWAY_END</span> <span class="o">=</span> <span class="s1">&#39;331.2&#39;</span>
+    <span class="n">HIGHWAY_EXIT_WITH_PLACE_NAME</span> <span class="o">=</span> <span class="s1">&#39;332&#39;</span>
+    <span class="n">EXIT_ROUTE</span> <span class="o">=</span> <span class="s1">&#39;332.1&#39;</span>
+    <span class="n">HIGHWAY_EXIT</span> <span class="o">=</span> <span class="s1">&#39;333&#39;</span>
+    <span class="n">EXIT_BUILT_UP</span> <span class="o">=</span> <span class="s1">&#39;333-21&#39;</span>
+    <span class="n">EXIT_GENERAL</span> <span class="o">=</span> <span class="s1">&#39;333-22&#39;</span>
+    <span class="n">PEDESTRIANS_CROSSING</span> <span class="o">=</span> <span class="s1">&#39;350&#39;</span>
+    <span class="n">WATER_PROTECTION_ZONE</span> <span class="o">=</span> <span class="s1">&#39;354&#39;</span>
+    <span class="n">TRAFFIC_ASSISTANTS</span> <span class="o">=</span> <span class="s1">&#39;356&#39;</span>
+    <span class="n">DEAD_END</span> <span class="o">=</span> <span class="s1">&#39;357&#39;</span>
+    <span class="n">POLICE</span> <span class="o">=</span> <span class="s1">&#39;363&#39;</span>
+    <span class="n">EMERGENCY_CALL_STATION</span> <span class="o">=</span> <span class="s1">&#39;365-51&#39;</span>
+    <span class="n">GAS_STATION</span> <span class="o">=</span> <span class="s1">&#39;365-52&#39;</span>
+    <span class="n">CAMP_AND_CARAVAN_SITE</span> <span class="o">=</span> <span class="s1">&#39;365-60&#39;</span>
+    <span class="n">ATTRACTION_POINT</span> <span class="o">=</span> <span class="s1">&#39;386.1&#39;</span>
+    <span class="n">TOURISTIC_ROUTE</span> <span class="o">=</span> <span class="s1">&#39;386.2&#39;</span>
+    <span class="n">NEARBY_ATTRACTION_POINT</span> <span class="o">=</span> <span class="s1">&#39;386.3&#39;</span>
+    <span class="n">HIGHWAY_INTERSECTION</span> <span class="o">=</span> <span class="s1">&#39;406-50&#39;</span>
+    <span class="n">DIRECTION_ARROW_SIGN_MULTI</span> <span class="o">=</span> <span class="s1">&#39;418-20&#39;</span>
+    <span class="n">DIRECTION_ARROW_SIGN_SINGLE</span> <span class="o">=</span> <span class="s1">&#39;419-20&#39;</span>
+    <span class="n">DIRECTION_SIGN_CONSOLIDATED</span> <span class="o">=</span> <span class="s1">&#39;434-50&#39;</span>
+    <span class="n">EXPRESSWAY_ARROW_DIRECTION</span> <span class="o">=</span> <span class="s1">&#39;430-20&#39;</span>
+    <span class="n">ARROW_SIGN_POST_POINT_OF_INTEREST_LEFT</span> <span class="o">=</span> <span class="s1">&#39;432-10&#39;</span>
+    <span class="n">STATION</span> <span class="o">=</span> <span class="s1">&#39;432-20&#39;</span>
+    <span class="n">GUIDE_SIGN_TABLE</span> <span class="o">=</span> <span class="s1">&#39;434&#39;</span>
+    <span class="n">ADVANCE_DIRECTION</span> <span class="o">=</span> <span class="s1">&#39;438&#39;</span>
+    <span class="n">DIRECTIONS_SIGN</span> <span class="o">=</span> <span class="s1">&#39;439&#39;</span>
+    <span class="n">EXPRESSWAY_ENTRANCE_DIRECTIONS</span> <span class="o">=</span> <span class="s1">&#39;440&#39;</span>
+    <span class="n">INTERSTATE_ANNOUNCEMENT</span> <span class="o">=</span> <span class="s1">&#39;448&#39;</span>
+    <span class="n">INTERSTATE_ADVANCE_DIRECTION</span> <span class="o">=</span> <span class="s1">&#39;449&#39;</span>
+    <span class="n">HIGHWAY_EXIT_AHEAD_100_METER</span> <span class="o">=</span> <span class="s1">&#39;450-50&#39;</span>
+    <span class="n">HIGHWAY_EXIT_AHEAD_200_METER</span> <span class="o">=</span> <span class="s1">&#39;450-51&#39;</span>
+    <span class="n">HIGHWAY_EXIT_AHEAD_300_METER</span> <span class="o">=</span> <span class="s1">&#39;450-52&#39;</span>
+    <span class="n">EXPRESSWAY_EXIT_100_METRES</span> <span class="o">=</span> <span class="s1">&#39;450-53&#39;</span>
+    <span class="n">EXPRESSWAY_EXIT_200_METRES</span> <span class="o">=</span> <span class="s1">&#39;450-54&#39;</span>
+    <span class="n">EXPRESSWAY_EXIT_300_METRES</span> <span class="o">=</span> <span class="s1">&#39;450-55&#39;</span>
+    <span class="n">INTERSTATE_DISTANCE</span> <span class="o">=</span> <span class="s1">&#39;453&#39;</span>
+    <span class="n">DETOUR_SKETCH</span> <span class="o">=</span> <span class="s1">&#39;458&#39;</span>
+    <span class="n">DETOUR_STRAIGHT</span> <span class="o">=</span> <span class="s1">&#39;455.1-30&#39;</span>
+    <span class="n">DETOUR_ON_DEMAND_LEFT</span> <span class="o">=</span> <span class="s1">&#39;460-10&#39;</span>
+    <span class="n">DETOUR_ON_DEMAND_GET_IN_LEFT_LANE</span> <span class="o">=</span> <span class="s1">&#39;460-12&#39;</span>
+    <span class="n">DETOUR_ON_DEMAND_ANNOUNCEMENT_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;460-20&#39;</span>
+    <span class="n">DETOUR_ON_DEMAND_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;460-21&#39;</span>
+    <span class="n">DETOUR_ON_DEMAND_GET_IN_RIGHT_LANE</span> <span class="o">=</span> <span class="s1">&#39;460-22&#39;</span>
+    <span class="n">DETOUR_ON_DEMAND_STRAIGHTFORWARD</span> <span class="o">=</span> <span class="s1">&#39;460-30&#39;</span>
+    <span class="n">TRANSITION_3_LEFT_2_TRANSITIONED</span> <span class="o">=</span> <span class="s1">&#39;501-15&#39;</span>
+    <span class="n">TRANSITION_1_LEFT_1_STRAIGHT</span> <span class="o">=</span> <span class="s1">&#39;501-16&#39;</span>
+    <span class="n">TRANSITION_3_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;511-22&#39;</span>
+    <span class="n">LANE_BOARD_NO_OPPOSITE_TWO_LANES</span> <span class="o">=</span> <span class="s1">&#39;521-30&#39;</span>
+    <span class="n">THREE_LANES_NO_ONCOMING_LANES</span> <span class="o">=</span> <span class="s1">&#39;521-31&#39;</span>
+    <span class="n">FOUR_LANES_NO_ONCOMING_LANES</span> <span class="o">=</span> <span class="s1">&#39;521-32&#39;</span>
+    <span class="n">FIVE_LANES_NO_ONCOMING_LANES</span> <span class="o">=</span> <span class="s1">&#39;521-33&#39;</span>
+    <span class="n">LANE_BOARD_3_LANES_NO_OPPOSITE_WITH_SIGNS</span> <span class="o">=</span> <span class="s1">&#39;525&#39;</span>
+    <span class="n">NARROWING_LANES_1_LANE_FROM_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;531-10&#39;</span>
+    <span class="n">NARROWING_LANES_1_LANE_FROM_LEFT</span> <span class="o">=</span> <span class="s1">&#39;531-20&#39;</span>
+    <span class="n">NARROWING_LANES_2_LANES_PLUS_1_LEFT</span> <span class="o">=</span> <span class="s1">&#39;531-21&#39;</span>
+    <span class="n">FOUR_LANES_NO_ONCOMING_TRAFFIC_TWO_RIGHT_LANES_TURN_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;533-22&#39;</span>
+    <span class="n">MERGING_LANES_1_LANE_PLUS_1_LANE_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;550-20&#39;</span>
+    <span class="n">BARRIER</span> <span class="o">=</span> <span class="s1">&#39;600-35&#39;</span>
+    <span class="n">BARRIER_GATE_100_800</span> <span class="o">=</span> <span class="s1">&#39;600-30&#39;</span>
+    <span class="n">BARRIER_GATE_100_1200</span> <span class="o">=</span> <span class="s1">&#39;600-31&#39;</span>
+    <span class="n">BARRIER_GATE_100_1600</span> <span class="o">=</span> <span class="s1">&#39;600-32&#39;</span>
+    <span class="n">BARRIER_GATE_250_1600</span> <span class="o">=</span> <span class="s1">&#39;600-34&#39;</span>
+    <span class="n">BARRIER_GATE</span> <span class="o">=</span> <span class="s1">&#39;600-38&#39;</span>
+    <span class="n">ROAD_WARNING_POST_SCRAPER_BEACON_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;605-10&#39;</span>
+    <span class="n">ROAD_WARNING_POST_ARROW_BEACON_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;605-11&#39;</span>
+    <span class="n">ROAD_WARNING_POST_SCRAPER_BEACON_LEFT</span> <span class="o">=</span> <span class="s1">&#39;605-20&#39;</span>
+    <span class="n">ROAD_WARNING_POST_SCRAPER_BEACON_ARROW_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;605-21&#39;</span>
+    <span class="n">ROAD_WARNING_POST_GUIDE_UP_THREE_ARROWS</span> <span class="o">=</span> <span class="s1">&#39;605-31&#39;</span>
+    <span class="n">DIRECTION_SIGN_LEFT_SINGLE</span> <span class="o">=</span> <span class="s1">&#39;625-10&#39;</span>
+    <span class="n">DIRECTION_SIGN_LEFT_SMALL</span> <span class="o">=</span> <span class="s1">&#39;625-11&#39;</span>
+    <span class="n">DIRECTION_SIGN_LEFT_MEDIUM</span> <span class="o">=</span> <span class="s1">&#39;625-12&#39;</span>
+    <span class="n">DIRECTION_SIGN_LEFT_LARGE</span> <span class="o">=</span> <span class="s1">&#39;625-13&#39;</span>
+    <span class="n">DIRECTION_SIGN_RIGHT_SINGLE</span> <span class="o">=</span> <span class="s1">&#39;625-20&#39;</span>
+    <span class="n">DIRECTION_SIGN_RIGHT_SMALL</span> <span class="o">=</span> <span class="s1">&#39;625-21&#39;</span>
+    <span class="n">DIRECTION_SIGN_RIGHT_MEDIUM</span> <span class="o">=</span> <span class="s1">&#39;625-22&#39;</span>
+    <span class="n">DIRECTION_SIGN_RIGHT_LARGE</span> <span class="o">=</span> <span class="s1">&#39;625-23&#39;</span>
+    <span class="n">WARNING_PANEL_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;626-10&#39;</span>
+    <span class="n">WARNING_PANEL_LEFT</span> <span class="o">=</span> <span class="s1">&#39;626-20&#39;</span>
+    <span class="n">WARNING_PANEL_STRAIGHT_BROAD</span> <span class="o">=</span> <span class="s1">&#39;626-30&#39;</span>
+    <span class="n">WARNING_PANEL_STRAIGHT_HIGH</span> <span class="o">=</span> <span class="s1">&#39;626-31&#39;</span>
+    <span class="n">GUIDE_SILL_WITH_GUIDE_BEACON_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;628-10&#39;</span>
+    <span class="n">GUIDE_RAIL_WITH_GUIDE_BEACON_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;629-10&#39;</span>
+    <span class="n">GUIDE_PANEL_WITH_GUIDE_BEACON_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;629-20&#39;</span>
+    <span class="n">GREEN_ARROW</span> <span class="o">=</span> <span class="s1">&#39;720&#39;</span>
+    <span class="n">ADDITION_LEFT_DIRECTION</span> <span class="o">=</span> <span class="s1">&#39;1000&#39;</span>
+    <span class="n">ADDITION_LEFT_DIRECTION_1</span> <span class="o">=</span> <span class="s1">&#39;1000-10&#39;</span>
+    <span class="n">ADDITION_LEFT_DIRECTION_DANGER_POINT</span> <span class="o">=</span> <span class="s1">&#39;1000-11&#39;</span>
+    <span class="n">ADDITION_RIGHT_DIRECTION_1</span> <span class="o">=</span> <span class="s1">&#39;1000-20&#39;</span>
+    <span class="n">ADDITION_RIGHT_DIRECTION_DANGER_POINT</span> <span class="o">=</span> <span class="s1">&#39;1000-21&#39;</span>
+    <span class="n">ADDITION_BOTH_DIRECTIONS_HORIZONTAL</span> <span class="o">=</span> <span class="s1">&#39;1000-30&#39;</span>
+    <span class="n">ADDITION_BOTH_DIRECTIONS_VERTICAL</span> <span class="o">=</span> <span class="s1">&#39;1000-31&#39;</span>
+    <span class="n">ADDITION_VALID_FOR_X_METERS</span> <span class="o">=</span> <span class="s1">&#39;1001-30&#39;</span>
+    <span class="n">ADDITION_VALID_FOR_X_KILOMETERS</span> <span class="o">=</span> <span class="s1">&#39;1001-31&#39;</span>
+    <span class="n">ADDITION_LEFT_TURNING_PRIORITY_WITH_OPPOSITE_RIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-10&#39;</span>
+    <span class="n">ADDITION_LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_RIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-11&#39;</span>
+    <span class="n">ADDITION_LEFT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-12&#39;</span>
+    <span class="n">ADDITION_LEFT_TURNING_PRIORITY_WITH_RIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-13&#39;</span>
+    <span class="n">ADDITION_LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-14&#39;</span>
+    <span class="n">ADDITION_RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_LEFT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-20&#39;</span>
+    <span class="n">ADDITION_RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_LEFT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-21&#39;</span>
+    <span class="n">ADDITION_RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-22&#39;</span>
+    <span class="n">ADDITION_RIGHT_TURNING_PRIORITY_WITH_LEFT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-23&#39;</span>
+    <span class="n">ADDITION_RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-24&#39;</span>
+    <span class="n">ADDITION_VALID_IN_X_METERS</span> <span class="o">=</span> <span class="s1">&#39;1004-30&#39;</span>
+    <span class="n">ADDITION_VALID_IN_X_KILOMETERS</span> <span class="o">=</span> <span class="s1">&#39;1004-31&#39;</span>
+    <span class="n">ADDITION_VALID_IN_200_KILOMETERS</span> <span class="o">=</span> <span class="s1">&#39;1004-32&#39;</span>
+    <span class="n">ADDITION_VALID_IN_400_METRES</span> <span class="o">=</span> <span class="s1">&#39;1004-33&#39;</span>
+    <span class="n">ADDITION_VALID_IN_600_METRES</span> <span class="o">=</span> <span class="s1">&#39;1004-34&#39;</span>
+    <span class="n">ADDITION_VALID_IN_2_KILOMETERS</span> <span class="o">=</span> <span class="s1">&#39;1004-35&#39;</span>
+    <span class="n">ADDITION_OIL_ON_ROAD</span> <span class="o">=</span> <span class="s1">&#39;1006-30&#39;</span>
+    <span class="n">ADDITION_SMOKE</span> <span class="o">=</span> <span class="s1">&#39;1006-31&#39;</span>
+    <span class="n">ADDITION_LOOSE_GRAVEL</span> <span class="o">=</span> <span class="s1">&#39;1006-32&#39;</span>
+    <span class="n">ADDITION_BUILDING_SITE_EXIT</span> <span class="o">=</span> <span class="s1">&#39;1006-33&#39;</span>
+    <span class="n">ADDITION_DAMAGED_ROAD</span> <span class="o">=</span> <span class="s1">&#39;1006-34&#39;</span>
+    <span class="n">ADDITION_DIRTY_ROAD</span> <span class="o">=</span> <span class="s1">&#39;1006-35&#39;</span>
+    <span class="n">ADDITION_DANGER_OF_COLLISION</span> <span class="o">=</span> <span class="s1">&#39;1006-36&#39;</span>
+    <span class="n">ADDITION_TOAD_MIGRATION</span> <span class="o">=</span> <span class="s1">&#39;1006-37&#39;</span>
+    <span class="n">ADDITION_DANGER_OF_CONGESTION</span> <span class="o">=</span> <span class="s1">&#39;1006-38&#39;</span>
+    <span class="n">ADDITION_RESTRICTED_VIEW_DUE_TO_TREES</span> <span class="o">=</span> <span class="s1">&#39;1006-39&#39;</span>
+    <span class="n">DANGER_INDICATION_SMOKE</span> <span class="o">=</span> <span class="s1">&#39;1007-31&#39;</span>
+    <span class="n">ADDITION_CHILDREN_PLAYING_ON_ROAD</span> <span class="o">=</span> <span class="s1">&#39;1010-10&#39;</span>
+    <span class="n">ADDITION_WINTER_SPORTS_ALLOWED</span> <span class="o">=</span> <span class="s1">&#39;1010-11&#39;</span>
+    <span class="n">ADDITION_TRAILERS_ALLOWED_TO_PARK_MORE_THAN_14_DAYS</span> <span class="o">=</span> <span class="s1">&#39;1010-12&#39;</span>
+    <span class="n">ADDITION_CARAVANS_ALLOWED_TO_PARK_MORE_THAN_14_DAYS</span> <span class="o">=</span> <span class="s1">&#39;1010-13&#39;</span>
+    <span class="n">ADDITION_ROLLING_HIGHWAY</span> <span class="o">=</span> <span class="s1">&#39;1010-14&#39;</span>
+    <span class="n">ADDITION_LOADING_AREA</span> <span class="o">=</span> <span class="s1">&#39;1012-30&#39;</span>
+    <span class="n">ADDITION_END</span> <span class="o">=</span> <span class="s1">&#39;1012-31&#39;</span>
+    <span class="n">ADDITION_GET_OFF_BICYCLES</span> <span class="o">=</span> <span class="s1">&#39;1012-32&#39;</span>
+    <span class="n">ADDITION_NO_MOPEDS</span> <span class="o">=</span> <span class="s1">&#39;1012-33&#39;</span>
+    <span class="n">ADDITION_GREEN_WAVE_AT_KM_H</span> <span class="o">=</span> <span class="s1">&#39;1012-34&#39;</span>
+    <span class="n">ADDITION_STOP_HERE_AT_RED</span> <span class="o">=</span> <span class="s1">&#39;1012-35&#39;</span>
+    <span class="n">ADDITION_NOISE_CONTROL</span> <span class="o">=</span> <span class="s1">&#39;1012-36&#39;</span>
+    <span class="n">ADDITION_INFLOW_REGULATION</span> <span class="o">=</span> <span class="s1">&#39;1012-37&#39;</span>
+    <span class="n">ADDITION_SECONDARY_LANE</span> <span class="o">=</span> <span class="s1">&#39;1012-38&#39;</span>
+    <span class="n">ADDITION_SCHOOL</span> <span class="o">=</span> <span class="s1">&#39;1012-50&#39;</span>
+    <span class="n">ADDITION_KINDERGARTEN</span> <span class="o">=</span> <span class="s1">&#39;1012-51&#39;</span>
+    <span class="n">ADDITION_RETIREMENT_HOME</span> <span class="o">=</span> <span class="s1">&#39;1012-52&#39;</span>
+    <span class="n">ADDITION_HOSPITAL</span> <span class="o">=</span> <span class="s1">&#39;1012-53&#39;</span>
+    <span class="n">ADDITION_RESIDENTS_PERMITTED</span> <span class="o">=</span> <span class="s1">&#39;1020-30&#39;</span>
+    <span class="n">ADDITION_BICYCLES_PERMITTED</span> <span class="o">=</span> <span class="s1">&#39;1022-10&#39;</span>
+    <span class="n">ADDITION_CARS_PERMITTED</span> <span class="o">=</span> <span class="s1">&#39;1024-10&#39;</span>
+    <span class="n">ADDITION_AGRICULTURE_PERMITTED</span> <span class="o">=</span> <span class="s1">&#39;1026-36&#39;</span>
+    <span class="n">ADDITION_FOREST_PERMITTED</span> <span class="o">=</span> <span class="s1">&#39;1026-37&#39;</span>
+    <span class="n">ADDITION_AGRICULTURE_FOREST_PERMITTED</span> <span class="o">=</span> <span class="s1">&#39;1026-38&#39;</span>
+    <span class="n">ADDITION_GREEN_STICKER_PERMITTED</span> <span class="o">=</span> <span class="s1">&#39;1031-52&#39;</span>
+    <span class="n">ADDITION_TIME_PERIOD_PERMITTED</span> <span class="o">=</span> <span class="s1">&#39;1040-30&#39;</span>
+    <span class="n">ADDITION_MOTOR_VEHICLES_ALLOWED_MASS_3_5_TONS</span> <span class="o">=</span> <span class="s1">&#39;1048-12&#39;</span>
+    <span class="n">ADDITION_MIN_MASS_3_5_TONS</span> <span class="o">=</span> <span class="s1">&#39;1049-13&#39;</span>
+    <span class="n">ADDITION_NO_WATER_POLLUTANTS_LOADED</span> <span class="o">=</span> <span class="s1">&#39;1052-31&#39;</span>
+    <span class="n">ALLOWED_MASS_7_5_TONS</span> <span class="o">=</span> <span class="s1">&#39;1053-33&#39;</span>
+    <span class="n">ADDITION_VALID_ON_SHOULDER</span> <span class="o">=</span> <span class="s1">&#39;1053-34&#39;</span>
+    <span class="n">ADDITION_VALID_WHEN_WET</span> <span class="o">=</span> <span class="s1">&#39;1053-35&#39;</span>
+    <span class="n">LINE_MARKING_MISSING</span> <span class="o">=</span> <span class="s1">&#39;2113&#39;</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="TrafficSignIDZamunda"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDZamunda">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDZamunda</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>  <span class="c1"># default traffic sign IDs (similar to German IDs)</span>
+    <span class="n">WARNING_DANGER_SPOT</span> <span class="o">=</span> <span class="s1">&#39;101&#39;</span>
+    <span class="n">WARNING_RIGHT_BEFORE_LEFT</span> <span class="o">=</span> <span class="s1">&#39;102&#39;</span>
+    <span class="n">WARNING_LEFT_CURVE</span> <span class="o">=</span> <span class="s1">&#39;103-10&#39;</span>
+    <span class="n">WARNING_RIGHT_CURVE</span> <span class="o">=</span> <span class="s1">&#39;103-20&#39;</span>
+    <span class="n">WARNING_STEEP_HILL_DOWNWARDS</span> <span class="o">=</span> <span class="s1">&#39;108&#39;</span>
+    <span class="n">WARNING_SLIPPERY_ROAD</span> <span class="o">=</span> <span class="s1">&#39;114&#39;</span>
+    <span class="n">WARNING_CONSTRUCTION_SITE</span> <span class="o">=</span> <span class="s1">&#39;123&#39;</span>
+    <span class="n">WARNING_TRAFFIC_QUEUES_LIKELY</span> <span class="o">=</span> <span class="s1">&#39;124&#39;</span>
+    <span class="n">WARNING_ONCOMING_TRAFFIC</span> <span class="o">=</span> <span class="s1">&#39;125&#39;</span>
+    <span class="n">WARNING_TRAFFIC_LIGHTS_AHEAD</span> <span class="o">=</span> <span class="s1">&#39;131&#39;</span>
+    <span class="n">WARNING_PEDESTRIANS_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;133-10&#39;</span>
+    <span class="n">WARNING_PEDESTRIANS_LEFT</span> <span class="o">=</span> <span class="s1">&#39;133-20&#39;</span>
+    <span class="n">WARNING_CROSSING_CYCLIST</span> <span class="o">=</span> <span class="s1">&#39;138&#39;</span>
+    <span class="n">WARNING_ANIMAL_CROSSING_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;142-10&#39;</span>
+    <span class="n">WARNING_LOOSE_GRAVEL</span> <span class="o">=</span> <span class="s1">&#39;145-50&#39;</span>
+    <span class="n">RAILWAY</span> <span class="o">=</span> <span class="s1">&#39;201&#39;</span>
+    <span class="n">YIELD</span> <span class="o">=</span> <span class="s1">&#39;205&#39;</span>
+    <span class="n">STOP</span> <span class="o">=</span> <span class="s1">&#39;206&#39;</span>
+    <span class="n">PRIORITY_OPPOSITE_DIRECTION</span> <span class="o">=</span> <span class="s1">&#39;208&#39;</span>
+    <span class="n">TURN_RIGHT_AHEAD</span> <span class="o">=</span> <span class="s1">&#39;209-10&#39;</span>
+    <span class="n">TURN_LEFT_AHEAD</span> <span class="o">=</span> <span class="s1">&#39;209-20&#39;</span>
+    <span class="n">KEEP_STRAIGHT_AHEAD</span> <span class="o">=</span> <span class="s1">&#39;209-30&#39;</span>
+    <span class="n">PRESCRIBED_DIRECTION_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;211-20&#39;</span>
+    <span class="n">ROUNDABOUT</span> <span class="o">=</span> <span class="s1">&#39;215&#39;</span>
+    <span class="n">ONEWAY_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;220-10&#39;</span>
+    <span class="n">ONEWAY_LEFT</span> <span class="o">=</span> <span class="s1">&#39;220-20&#39;</span>
+    <span class="n">PRESCRIBED_PASSING_LEFT</span> <span class="o">=</span> <span class="s1">&#39;222-10&#39;</span>
+    <span class="n">PRESCRIBED_PASSING_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;222-20&#39;</span>
+    <span class="n">DO_NOT_DRIVE_ON_SHOULDER_LANE</span> <span class="o">=</span> <span class="s1">&#39;223.2&#39;</span>
+    <span class="n">DO_NOT_DRIVE_ON_SHOULDER_LANE_2_LANE</span> <span class="o">=</span> <span class="s1">&#39;223.2-50&#39;</span>
+    <span class="n">DO_NOT_DRIVE_ON_SHOULDER_LANE_3_LANE</span> <span class="o">=</span> <span class="s1">&#39;223.2-51&#39;</span>
+    <span class="n">BUS_STOP</span> <span class="o">=</span> <span class="s1">&#39;224-50&#39;</span>
+    <span class="n">BIKEWAY</span> <span class="o">=</span> <span class="s1">&#39;237&#39;</span>
+    <span class="n">SIDEWALK</span> <span class="o">=</span> <span class="s1">&#39;239&#39;</span>
+    <span class="n">PEDESTRIAN_AND_BICYCLE_ROAD</span> <span class="o">=</span> <span class="s1">&#39;240&#39;</span>
+    <span class="n">PEDESTRIAN_ZONE_START</span> <span class="o">=</span> <span class="s1">&#39;242.1&#39;</span>
+    <span class="n">PEDESTRIAN_ZONE_END</span> <span class="o">=</span> <span class="s1">&#39;242.2&#39;</span>
+    <span class="n">BICYCLE_ROAD_START</span> <span class="o">=</span> <span class="s1">&#39;244.1&#39;</span>
+    <span class="n">BICYCLE_ROAD_END</span> <span class="o">=</span> <span class="s1">&#39;244.2&#39;</span>
+    <span class="n">BUSLANE</span> <span class="o">=</span> <span class="s1">&#39;245&#39;</span>
+    <span class="n">BAN_ALL_VEHICLES</span> <span class="o">=</span> <span class="s1">&#39;250&#39;</span>
+    <span class="n">BAN_CARS</span> <span class="o">=</span> <span class="s1">&#39;251&#39;</span>
+    <span class="n">BAN_TRUCKS</span> <span class="o">=</span> <span class="s1">&#39;253&#39;</span>
+    <span class="n">BAN_BICYCLE</span> <span class="o">=</span> <span class="s1">&#39;254&#39;</span>
+    <span class="n">BAN_MOTORCYCLE</span> <span class="o">=</span> <span class="s1">&#39;255&#39;</span>
+    <span class="n">BAN_BUS</span> <span class="o">=</span> <span class="s1">&#39;257-54&#39;</span>
+    <span class="n">BAN_PEDESTRIAN</span> <span class="o">=</span> <span class="s1">&#39;259&#39;</span>
+    <span class="n">BAN_CAR_TRUCK_BUS_MOTORCYCLE</span> <span class="o">=</span> <span class="s1">&#39;260&#39;</span>
+    <span class="n">BAN_VEHICLES_CARRYING_DANGEROUS_GOODS</span> <span class="o">=</span> <span class="s1">&#39;261&#39;</span>
+    <span class="n">MAX_WEIGHT</span> <span class="o">=</span> <span class="s1">&#39;262&#39;</span>
+    <span class="n">MAX_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;264&#39;</span>
+    <span class="n">MAX_HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;265&#39;</span>
+    <span class="n">MAX_LENGTH</span> <span class="o">=</span> <span class="s1">&#39;266&#39;</span>
+    <span class="n">NO_ENTRY</span> <span class="o">=</span> <span class="s1">&#39;267&#39;</span>
+    <span class="n">ENVIRONMENTAL_ZONE_START</span> <span class="o">=</span> <span class="s1">&#39;270.1&#39;</span>
+    <span class="n">ENVIRONMENTAL_ZONE_END</span> <span class="o">=</span> <span class="s1">&#39;270.2&#39;</span>
+    <span class="n">U_TURN</span> <span class="o">=</span> <span class="s1">&#39;272&#39;</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;274&#39;</span>
+    <span class="n">MAX_SPEED_ZONE_START</span> <span class="o">=</span> <span class="s1">&#39;274.1&#39;</span>
+    <span class="n">MAX_SPEED_ZONE_END</span> <span class="o">=</span> <span class="s1">&#39;274.2&#39;</span>
+    <span class="n">MIN_SPEED</span> <span class="o">=</span> <span class="s1">&#39;275&#39;</span>
+    <span class="n">NO_OVERTAKING_START</span> <span class="o">=</span> <span class="s1">&#39;276&#39;</span>
+    <span class="n">NO_OVERTAKING_TRUCKS_START</span> <span class="o">=</span> <span class="s1">&#39;277&#39;</span>
+    <span class="n">MAX_SPEED_END</span> <span class="o">=</span> <span class="s1">&#39;278&#39;</span>
+    <span class="n">NO_OVERTAKING_END</span> <span class="o">=</span> <span class="s1">&#39;280&#39;</span>
+    <span class="n">NO_OVERTAKING_TRUCKS_END</span> <span class="o">=</span> <span class="s1">&#39;281&#39;</span>
+    <span class="n">ALL_MAX_SPEED_AND_OVERTAKING_END</span> <span class="o">=</span> <span class="s1">&#39;282&#39;</span>
+    <span class="n">NO_STOP_START_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;283-10&#39;</span>
+    <span class="n">NO_STOP_CENTER_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;283-30&#39;</span>
+    <span class="n">RESTRICTED_STOP_CENTER_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;286-30&#39;</span>
+    <span class="n">RIGHT_OF_WAY</span> <span class="o">=</span> <span class="s1">&#39;301&#39;</span>
+    <span class="n">PRIORITY</span> <span class="o">=</span> <span class="s1">&#39;306&#39;</span>
+    <span class="n">PRIORITY_OVER_ONCOMING</span> <span class="o">=</span> <span class="s1">&#39;308&#39;</span>
+    <span class="n">TOWN_SIGN</span> <span class="o">=</span> <span class="s1">&#39;310&#39;</span>
+    <span class="n">TOWN_SIGN_BACK</span> <span class="o">=</span> <span class="s1">&#39;311&#39;</span>
+    <span class="n">PARKING_AREA</span> <span class="o">=</span> <span class="s1">&#39;314&#39;</span>
+    <span class="n">PARKING_AREA_LEFT</span> <span class="o">=</span> <span class="s1">&#39;314-10&#39;</span>
+    <span class="n">PARKING_AREA_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;314-20&#39;</span>
+    <span class="n">PARKING_AREA_RIGHT_LEFT</span> <span class="o">=</span> <span class="s1">&#39;314-30&#39;</span>
+    <span class="n">TRAFFIC_CALMED_AREA_START</span> <span class="o">=</span> <span class="s1">&#39;325.1&#39;</span>
+    <span class="n">TRAFFIC_CALMED_AREA_END</span> <span class="o">=</span> <span class="s1">&#39;325.2&#39;</span>
+    <span class="n">TUNNEL</span> <span class="o">=</span> <span class="s1">&#39;327&#39;</span>
+    <span class="n">EMERYGECNY_STOP</span> <span class="o">=</span> <span class="s1">&#39;328&#39;</span>
+    <span class="n">INTERSTATE_START</span> <span class="o">=</span> <span class="s1">&#39;330.1&#39;</span>
+    <span class="n">INTERSTATE_END</span> <span class="o">=</span> <span class="s1">&#39;330.2&#39;</span>
+    <span class="n">HIGHWAY_START</span> <span class="o">=</span> <span class="s1">&#39;331.1&#39;</span>
+    <span class="n">HIGHWAY_END</span> <span class="o">=</span> <span class="s1">&#39;331.2&#39;</span>
+    <span class="n">HIGHWAY_EXIT_WITH_PLACE_NAME</span> <span class="o">=</span> <span class="s1">&#39;332&#39;</span>
+    <span class="n">EXIT_ROUTE</span> <span class="o">=</span> <span class="s1">&#39;332.1&#39;</span>
+    <span class="n">HIGHWAY_EXIT</span> <span class="o">=</span> <span class="s1">&#39;333&#39;</span>
+    <span class="n">EXIT_BUILT_UP</span> <span class="o">=</span> <span class="s1">&#39;333-21&#39;</span>
+    <span class="n">EXIT_GENERAL</span> <span class="o">=</span> <span class="s1">&#39;333-22&#39;</span>
+    <span class="n">PEDESTRIANS_CROSSING</span> <span class="o">=</span> <span class="s1">&#39;350&#39;</span>
+    <span class="n">WATER_PROTECTION_ZONE</span> <span class="o">=</span> <span class="s1">&#39;354&#39;</span>
+    <span class="n">TRAFFIC_ASSISTANTS</span> <span class="o">=</span> <span class="s1">&#39;356&#39;</span>
+    <span class="n">DEAD_END</span> <span class="o">=</span> <span class="s1">&#39;357&#39;</span>
+    <span class="n">POLICE</span> <span class="o">=</span> <span class="s1">&#39;363&#39;</span>
+    <span class="n">EMERGENCY_CALL_STATION</span> <span class="o">=</span> <span class="s1">&#39;365-51&#39;</span>
+    <span class="n">GAS_STATION</span> <span class="o">=</span> <span class="s1">&#39;365-52&#39;</span>
+    <span class="n">CAMP_AND_CARAVAN_SITE</span> <span class="o">=</span> <span class="s1">&#39;365-60&#39;</span>
+    <span class="n">ATTRACTION_POINT</span> <span class="o">=</span> <span class="s1">&#39;386.1&#39;</span>
+    <span class="n">TOURISTIC_ROUTE</span> <span class="o">=</span> <span class="s1">&#39;386.2&#39;</span>
+    <span class="n">NEARBY_ATTRACTION_POINT</span> <span class="o">=</span> <span class="s1">&#39;386.3&#39;</span>
+    <span class="n">HIGHWAY_INTERSECTION</span> <span class="o">=</span> <span class="s1">&#39;406-50&#39;</span>
+    <span class="n">DIRECTION_ARROW_SIGN_MULTI</span> <span class="o">=</span> <span class="s1">&#39;418-20&#39;</span>
+    <span class="n">DIRECTION_ARROW_SIGN_SINGLE</span> <span class="o">=</span> <span class="s1">&#39;419-20&#39;</span>
+    <span class="n">DIRECTION_SIGN_CONSOLIDATED</span> <span class="o">=</span> <span class="s1">&#39;434-50&#39;</span>
+    <span class="n">EXPRESSWAY_ARROW_DIRECTION</span> <span class="o">=</span> <span class="s1">&#39;430-20&#39;</span>
+    <span class="n">ARROW_SIGN_POST_POINT_OF_INTEREST_LEFT</span> <span class="o">=</span> <span class="s1">&#39;432-10&#39;</span>
+    <span class="n">STATION</span> <span class="o">=</span> <span class="s1">&#39;432-20&#39;</span>
+    <span class="n">GUIDE_SIGN_TABLE</span> <span class="o">=</span> <span class="s1">&#39;434&#39;</span>
+    <span class="n">ADVANCE_DIRECTION</span> <span class="o">=</span> <span class="s1">&#39;438&#39;</span>
+    <span class="n">DIRECTIONS_SIGN</span> <span class="o">=</span> <span class="s1">&#39;439&#39;</span>
+    <span class="n">EXPRESSWAY_ENTRANCE_DIRECTIONS</span> <span class="o">=</span> <span class="s1">&#39;440&#39;</span>
+    <span class="n">INTERSTATE_ANNOUNCEMENT</span> <span class="o">=</span> <span class="s1">&#39;448&#39;</span>
+    <span class="n">INTERSTATE_ADVANCE_DIRECTION</span> <span class="o">=</span> <span class="s1">&#39;449&#39;</span>
+    <span class="n">HIGHWAY_EXIT_AHEAD_100_METER</span> <span class="o">=</span> <span class="s1">&#39;450-50&#39;</span>
+    <span class="n">HIGHWAY_EXIT_AHEAD_200_METER</span> <span class="o">=</span> <span class="s1">&#39;450-51&#39;</span>
+    <span class="n">HIGHWAY_EXIT_AHEAD_300_METER</span> <span class="o">=</span> <span class="s1">&#39;450-52&#39;</span>
+    <span class="n">EXPRESSWAY_EXIT_100_METRES</span> <span class="o">=</span> <span class="s1">&#39;450-53&#39;</span>
+    <span class="n">EXPRESSWAY_EXIT_200_METRES</span> <span class="o">=</span> <span class="s1">&#39;450-54&#39;</span>
+    <span class="n">EXPRESSWAY_EXIT_300_METRES</span> <span class="o">=</span> <span class="s1">&#39;450-55&#39;</span>
+    <span class="n">INTERSTATE_DISTANCE</span> <span class="o">=</span> <span class="s1">&#39;453&#39;</span>
+    <span class="n">DETOUR_SKETCH</span> <span class="o">=</span> <span class="s1">&#39;458&#39;</span>
+    <span class="n">DETOUR_STRAIGHT</span> <span class="o">=</span> <span class="s1">&#39;455.1-30&#39;</span>
+    <span class="n">DETOUR_ON_DEMAND_LEFT</span> <span class="o">=</span> <span class="s1">&#39;460-10&#39;</span>
+    <span class="n">DETOUR_ON_DEMAND_GET_IN_LEFT_LANE</span> <span class="o">=</span> <span class="s1">&#39;460-12&#39;</span>
+    <span class="n">DETOUR_ON_DEMAND_ANNOUNCEMENT_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;460-20&#39;</span>
+    <span class="n">DETOUR_ON_DEMAND_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;460-21&#39;</span>
+    <span class="n">DETOUR_ON_DEMAND_GET_IN_RIGHT_LANE</span> <span class="o">=</span> <span class="s1">&#39;460-22&#39;</span>
+    <span class="n">DETOUR_ON_DEMAND_STRAIGHTFORWARD</span> <span class="o">=</span> <span class="s1">&#39;460-30&#39;</span>
+    <span class="n">TRANSITION_3_LEFT_2_TRANSITIONED</span> <span class="o">=</span> <span class="s1">&#39;501-15&#39;</span>
+    <span class="n">TRANSITION_1_LEFT_1_STRAIGHT</span> <span class="o">=</span> <span class="s1">&#39;501-16&#39;</span>
+    <span class="n">TRANSITION_3_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;511-22&#39;</span>
+    <span class="n">LANE_BOARD_NO_OPPOSITE_TWO_LANES</span> <span class="o">=</span> <span class="s1">&#39;521-30&#39;</span>
+    <span class="n">THREE_LANES_NO_ONCOMING_LANES</span> <span class="o">=</span> <span class="s1">&#39;521-31&#39;</span>
+    <span class="n">FOUR_LANES_NO_ONCOMING_LANES</span> <span class="o">=</span> <span class="s1">&#39;521-32&#39;</span>
+    <span class="n">FIVE_LANES_NO_ONCOMING_LANES</span> <span class="o">=</span> <span class="s1">&#39;521-33&#39;</span>
+    <span class="n">LANE_BOARD_3_LANES_NO_OPPOSITE_WITH_SIGNS</span> <span class="o">=</span> <span class="s1">&#39;525&#39;</span>
+    <span class="n">NARROWING_LANES_1_LANE_FROM_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;531-10&#39;</span>
+    <span class="n">NARROWING_LANES_1_LANE_FROM_LEFT</span> <span class="o">=</span> <span class="s1">&#39;531-20&#39;</span>
+    <span class="n">NARROWING_LANES_2_LANES_PLUS_1_LEFT</span> <span class="o">=</span> <span class="s1">&#39;531-21&#39;</span>
+    <span class="n">FOUR_LANES_NO_ONCOMING_TRAFFIC_TWO_RIGHT_LANES_TURN_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;533-22&#39;</span>
+    <span class="n">MERGING_LANES_1_LANE_PLUS_1_LANE_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;550-20&#39;</span>
+    <span class="n">BARRIER</span> <span class="o">=</span> <span class="s1">&#39;600-35&#39;</span>
+    <span class="n">BARRIER_GATE_100_800</span> <span class="o">=</span> <span class="s1">&#39;600-30&#39;</span>
+    <span class="n">BARRIER_GATE_100_1200</span> <span class="o">=</span> <span class="s1">&#39;600-31&#39;</span>
+    <span class="n">BARRIER_GATE_100_1600</span> <span class="o">=</span> <span class="s1">&#39;600-32&#39;</span>
+    <span class="n">BARRIER_GATE_250_1600</span> <span class="o">=</span> <span class="s1">&#39;600-34&#39;</span>
+    <span class="n">BARRIER_GATE</span> <span class="o">=</span> <span class="s1">&#39;600-38&#39;</span>
+    <span class="n">ROAD_WARNING_POST_SCRAPER_BEACON_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;605-10&#39;</span>
+    <span class="n">ROAD_WARNING_POST_ARROW_BEACON_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;605-11&#39;</span>
+    <span class="n">ROAD_WARNING_POST_SCRAPER_BEACON_LEFT</span> <span class="o">=</span> <span class="s1">&#39;605-20&#39;</span>
+    <span class="n">ROAD_WARNING_POST_SCRAPER_BEACON_ARROW_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;605-21&#39;</span>
+    <span class="n">ROAD_WARNING_POST_GUIDE_UP_THREE_ARROWS</span> <span class="o">=</span> <span class="s1">&#39;605-31&#39;</span>
+    <span class="n">DIRECTION_SIGN_LEFT_SINGLE</span> <span class="o">=</span> <span class="s1">&#39;625-10&#39;</span>
+    <span class="n">DIRECTION_SIGN_LEFT_SMALL</span> <span class="o">=</span> <span class="s1">&#39;625-11&#39;</span>
+    <span class="n">DIRECTION_SIGN_LEFT_MEDIUM</span> <span class="o">=</span> <span class="s1">&#39;625-12&#39;</span>
+    <span class="n">DIRECTION_SIGN_LEFT_LARGE</span> <span class="o">=</span> <span class="s1">&#39;625-13&#39;</span>
+    <span class="n">DIRECTION_SIGN_RIGHT_SINGLE</span> <span class="o">=</span> <span class="s1">&#39;625-20&#39;</span>
+    <span class="n">DIRECTION_SIGN_RIGHT_SMALL</span> <span class="o">=</span> <span class="s1">&#39;625-21&#39;</span>
+    <span class="n">DIRECTION_SIGN_RIGHT_MEDIUM</span> <span class="o">=</span> <span class="s1">&#39;625-22&#39;</span>
+    <span class="n">DIRECTION_SIGN_RIGHT_LARGE</span> <span class="o">=</span> <span class="s1">&#39;625-23&#39;</span>
+    <span class="n">WARNING_PANEL_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;626-10&#39;</span>
+    <span class="n">WARNING_PANEL_LEFT</span> <span class="o">=</span> <span class="s1">&#39;626-20&#39;</span>
+    <span class="n">WARNING_PANEL_STRAIGHT_BROAD</span> <span class="o">=</span> <span class="s1">&#39;626-30&#39;</span>
+    <span class="n">WARNING_PANEL_STRAIGHT_HIGH</span> <span class="o">=</span> <span class="s1">&#39;626-31&#39;</span>
+    <span class="n">GUIDE_SILL_WITH_GUIDE_BEACON_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;628-10&#39;</span>
+    <span class="n">GUIDE_RAIL_WITH_GUIDE_BEACON_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;629-10&#39;</span>
+    <span class="n">GUIDE_PANEL_WITH_GUIDE_BEACON_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;629-20&#39;</span>
+    <span class="n">GREEN_ARROW</span> <span class="o">=</span> <span class="s1">&#39;720&#39;</span>
+    <span class="n">ADDITION_LEFT_DIRECTION</span> <span class="o">=</span> <span class="s1">&#39;1000&#39;</span>
+    <span class="n">ADDITION_LEFT_DIRECTION_1</span> <span class="o">=</span> <span class="s1">&#39;1000-10&#39;</span>
+    <span class="n">ADDITION_LEFT_DIRECTION_DANGER_POINT</span> <span class="o">=</span> <span class="s1">&#39;1000-11&#39;</span>
+    <span class="n">ADDITION_RIGHT_DIRECTION_1</span> <span class="o">=</span> <span class="s1">&#39;1000-20&#39;</span>
+    <span class="n">ADDITION_RIGHT_DIRECTION_DANGER_POINT</span> <span class="o">=</span> <span class="s1">&#39;1000-21&#39;</span>
+    <span class="n">ADDITION_BOTH_DIRECTIONS_HORIZONTAL</span> <span class="o">=</span> <span class="s1">&#39;1000-30&#39;</span>
+    <span class="n">ADDITION_BOTH_DIRECTIONS_VERTICAL</span> <span class="o">=</span> <span class="s1">&#39;1000-31&#39;</span>
+    <span class="n">ADDITION_VALID_FOR_X_METERS</span> <span class="o">=</span> <span class="s1">&#39;1001-30&#39;</span>
+    <span class="n">ADDITION_VALID_FOR_X_KILOMETERS</span> <span class="o">=</span> <span class="s1">&#39;1001-31&#39;</span>
+    <span class="n">ADDITION_LEFT_TURNING_PRIORITY_WITH_OPPOSITE_RIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-10&#39;</span>
+    <span class="n">ADDITION_LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_RIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-11&#39;</span>
+    <span class="n">ADDITION_LEFT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-12&#39;</span>
+    <span class="n">ADDITION_LEFT_TURNING_PRIORITY_WITH_RIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-13&#39;</span>
+    <span class="n">ADDITION_LEFT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-14&#39;</span>
+    <span class="n">ADDITION_RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_LEFT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-20&#39;</span>
+    <span class="n">ADDITION_RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_LEFT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-21&#39;</span>
+    <span class="n">ADDITION_RIGHT_TURNING_PRIORITY_WITH_OPPOSITE_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-22&#39;</span>
+    <span class="n">ADDITION_RIGHT_TURNING_PRIORITY_WITH_LEFT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-23&#39;</span>
+    <span class="n">ADDITION_RIGHT_TRAFFIC_PRIORITY_WITH_STRAIGHT_YIELD</span> <span class="o">=</span> <span class="s1">&#39;1002-24&#39;</span>
+    <span class="n">ADDITION_VALID_IN_X_METERS</span> <span class="o">=</span> <span class="s1">&#39;1004-30&#39;</span>
+    <span class="n">ADDITION_VALID_IN_X_KILOMETERS</span> <span class="o">=</span> <span class="s1">&#39;1004-31&#39;</span>
+    <span class="n">ADDITION_VALID_IN_200_KILOMETERS</span> <span class="o">=</span> <span class="s1">&#39;1004-32&#39;</span>
+    <span class="n">ADDITION_VALID_IN_400_METRES</span> <span class="o">=</span> <span class="s1">&#39;1004-33&#39;</span>
+    <span class="n">ADDITION_VALID_IN_600_METRES</span> <span class="o">=</span> <span class="s1">&#39;1004-34&#39;</span>
+    <span class="n">ADDITION_VALID_IN_2_KILOMETERS</span> <span class="o">=</span> <span class="s1">&#39;1004-35&#39;</span>
+    <span class="n">ADDITION_OIL_ON_ROAD</span> <span class="o">=</span> <span class="s1">&#39;1006-30&#39;</span>
+    <span class="n">ADDITION_SMOKE</span> <span class="o">=</span> <span class="s1">&#39;1006-31&#39;</span>
+    <span class="n">ADDITION_LOOSE_GRAVEL</span> <span class="o">=</span> <span class="s1">&#39;1006-32&#39;</span>
+    <span class="n">ADDITION_BUILDING_SITE_EXIT</span> <span class="o">=</span> <span class="s1">&#39;1006-33&#39;</span>
+    <span class="n">ADDITION_DAMAGED_ROAD</span> <span class="o">=</span> <span class="s1">&#39;1006-34&#39;</span>
+    <span class="n">ADDITION_DIRTY_ROAD</span> <span class="o">=</span> <span class="s1">&#39;1006-35&#39;</span>
+    <span class="n">ADDITION_DANGER_OF_COLLISION</span> <span class="o">=</span> <span class="s1">&#39;1006-36&#39;</span>
+    <span class="n">ADDITION_TOAD_MIGRATION</span> <span class="o">=</span> <span class="s1">&#39;1006-37&#39;</span>
+    <span class="n">ADDITION_DANGER_OF_CONGESTION</span> <span class="o">=</span> <span class="s1">&#39;1006-38&#39;</span>
+    <span class="n">ADDITION_RESTRICTED_VIEW_DUE_TO_TREES</span> <span class="o">=</span> <span class="s1">&#39;1006-39&#39;</span>
+    <span class="n">DANGER_INDICATION_SMOKE</span> <span class="o">=</span> <span class="s1">&#39;1007-31&#39;</span>
+    <span class="n">ADDITION_CHILDREN_PLAYING_ON_ROAD</span> <span class="o">=</span> <span class="s1">&#39;1010-10&#39;</span>
+    <span class="n">ADDITION_WINTER_SPORTS_ALLOWED</span> <span class="o">=</span> <span class="s1">&#39;1010-11&#39;</span>
+    <span class="n">ADDITION_TRAILERS_ALLOWED_TO_PARK_MORE_THAN_14_DAYS</span> <span class="o">=</span> <span class="s1">&#39;1010-12&#39;</span>
+    <span class="n">ADDITION_CARAVANS_ALLOWED_TO_PARK_MORE_THAN_14_DAYS</span> <span class="o">=</span> <span class="s1">&#39;1010-13&#39;</span>
+    <span class="n">ADDITION_ROLLING_HIGHWAY</span> <span class="o">=</span> <span class="s1">&#39;1010-14&#39;</span>
+    <span class="n">ADDITION_LOADING_AREA</span> <span class="o">=</span> <span class="s1">&#39;1012-30&#39;</span>
+    <span class="n">ADDITION_END</span> <span class="o">=</span> <span class="s1">&#39;1012-31&#39;</span>
+    <span class="n">ADDITION_GET_OFF_BICYCLES</span> <span class="o">=</span> <span class="s1">&#39;1012-32&#39;</span>
+    <span class="n">ADDITION_NO_MOPEDS</span> <span class="o">=</span> <span class="s1">&#39;1012-33&#39;</span>
+    <span class="n">ADDITION_GREEN_WAVE_AT_KM_H</span> <span class="o">=</span> <span class="s1">&#39;1012-34&#39;</span>
+    <span class="n">ADDITION_STOP_HERE_AT_RED</span> <span class="o">=</span> <span class="s1">&#39;1012-35&#39;</span>
+    <span class="n">ADDITION_NOISE_CONTROL</span> <span class="o">=</span> <span class="s1">&#39;1012-36&#39;</span>
+    <span class="n">ADDITION_INFLOW_REGULATION</span> <span class="o">=</span> <span class="s1">&#39;1012-37&#39;</span>
+    <span class="n">ADDITION_SECONDARY_LANE</span> <span class="o">=</span> <span class="s1">&#39;1012-38&#39;</span>
+    <span class="n">ADDITION_SCHOOL</span> <span class="o">=</span> <span class="s1">&#39;1012-50&#39;</span>
+    <span class="n">ADDITION_KINDERGARTEN</span> <span class="o">=</span> <span class="s1">&#39;1012-51&#39;</span>
+    <span class="n">ADDITION_RETIREMENT_HOME</span> <span class="o">=</span> <span class="s1">&#39;1012-52&#39;</span>
+    <span class="n">ADDITION_HOSPITAL</span> <span class="o">=</span> <span class="s1">&#39;1012-53&#39;</span>
+    <span class="n">ADDITION_RESIDENTS_PERMITTED</span> <span class="o">=</span> <span class="s1">&#39;1020-30&#39;</span>
+    <span class="n">ADDITION_BICYCLES_PERMITTED</span> <span class="o">=</span> <span class="s1">&#39;1022-10&#39;</span>
+    <span class="n">ADDITION_CARS_PERMITTED</span> <span class="o">=</span> <span class="s1">&#39;1024-10&#39;</span>
+    <span class="n">ADDITION_AGRICULTURE_PERMITTED</span> <span class="o">=</span> <span class="s1">&#39;1026-36&#39;</span>
+    <span class="n">ADDITION_FOREST_PERMITTED</span> <span class="o">=</span> <span class="s1">&#39;1026-37&#39;</span>
+    <span class="n">ADDITION_AGRICULTURE_FOREST_PERMITTED</span> <span class="o">=</span> <span class="s1">&#39;1026-38&#39;</span>
+    <span class="n">ADDITION_GREEN_STICKER_PERMITTED</span> <span class="o">=</span> <span class="s1">&#39;1031-52&#39;</span>
+    <span class="n">ADDITION_TIME_PERIOD_PERMITTED</span> <span class="o">=</span> <span class="s1">&#39;1040-30&#39;</span>
+    <span class="n">ADDITION_MOTOR_VEHICLES_ALLOWED_MASS_3_5_TONS</span> <span class="o">=</span> <span class="s1">&#39;1048-12&#39;</span>
+    <span class="n">ADDITION_MIN_MASS_3_5_TONS</span> <span class="o">=</span> <span class="s1">&#39;1049-13&#39;</span>
+    <span class="n">ADDITION_NO_WATER_POLLUTANTS_LOADED</span> <span class="o">=</span> <span class="s1">&#39;1052-31&#39;</span>
+    <span class="n">ALLOWED_MASS_7_5_TONS</span> <span class="o">=</span> <span class="s1">&#39;1053-33&#39;</span>
+    <span class="n">ADDITION_VALID_ON_SHOULDER</span> <span class="o">=</span> <span class="s1">&#39;1053-34&#39;</span>
+    <span class="n">ADDITION_VALID_WHEN_WET</span> <span class="o">=</span> <span class="s1">&#39;1053-35&#39;</span>
+    <span class="n">LINE_MARKING_MISSING</span> <span class="o">=</span> <span class="s1">&#39;2113&#39;</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="TrafficSignIDUsa"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDUsa">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDUsa</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;R2-1&#39;</span>
+    <span class="n">U_TURN</span> <span class="o">=</span> <span class="s1">&#39;R3-4&#39;</span>
+    <span class="n">ROAD_WORK_AHEAD</span> <span class="o">=</span> <span class="s1">&#39;CW20-1&#39;</span>
+    <span class="n">NO_PARKING_ANY_TIME</span> <span class="o">=</span> <span class="s1">&#39;R7-1&#39;</span>
+    <span class="n">NO_STANDING</span> <span class="o">=</span> <span class="s1">&#39;R7-4&#39;</span>
+    <span class="n">TOW_AWAY_ZONE</span> <span class="o">=</span> <span class="s1">&#39;R7-201a&#39;</span>
+    <span class="n">ONE_WAY_LEFT</span> <span class="o">=</span> <span class="s1">&#39;R6-1L&#39;</span>
+    <span class="n">ONE_WAY_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;R6-1R&#39;</span>
+    <span class="n">DO_NOT_ENTER</span> <span class="o">=</span> <span class="s1">&#39;R5-1&#39;</span>
+    <span class="n">NO_LEFT_TURN</span> <span class="o">=</span> <span class="s1">&#39;R3-2&#39;</span>
+    <span class="n">RIGHT_TURN_ONLY</span> <span class="o">=</span> <span class="s1">&#39;R3-5R&#39;</span>
+    <span class="n">TURN_ONLY_LANES</span> <span class="o">=</span> <span class="s1">&#39;R3-8b&#39;</span>
+    <span class="n">NO_RIGHT_TURN</span> <span class="o">=</span> <span class="s1">&#39;R3-1&#39;</span>
+    <span class="n">KEEP_RIGHT</span> <span class="o">=</span> <span class="s1">&#39;R4-7&#39;</span>
+    <span class="n">SIGNAL_AHEAD</span> <span class="o">=</span> <span class="s1">&#39;W3-3&#39;</span>
+    <span class="n">LOADING_ZONE</span> <span class="o">=</span> <span class="s1">&#39;R8-3gP&#39;</span>
+    <span class="n">NO_PARKING</span> <span class="o">=</span> <span class="s1">&#39;R8-3&#39;</span>
+    <span class="n">LEFT_TURN_ONLY</span> <span class="o">=</span> <span class="s1">&#39;R3-5L&#39;</span>
+    <span class="n">NO_STRAIGHT_THROUGH</span> <span class="o">=</span> <span class="s1">&#39;R3-27&#39;</span>
+    <span class="n">LEFT_REVERSE_TURN</span> <span class="o">=</span> <span class="s1">&#39;W1-3L&#39;</span>
+    <span class="n">PEDESTRIAN_WARNING</span> <span class="o">=</span> <span class="s1">&#39;W11-2&#39;</span>
+    <span class="n">DIAGONAL_DOWNWARD_LEFT_ARROW</span> <span class="o">=</span> <span class="s1">&#39;M6-2aL&#39;</span>
+    <span class="n">RIGHT_LANE_ENDS</span> <span class="o">=</span> <span class="s1">&#39;W4-2R&#39;</span>
+    <span class="n">RESERVED_HANDICAP_PARKING</span> <span class="o">=</span> <span class="s1">&#39;R7-8&#39;</span>
+    <span class="n">NO_PARKING_BUS_STOP</span> <span class="o">=</span> <span class="s1">&#39;R7-107&#39;</span>
+    <span class="n">ON_PAVEMENT</span> <span class="o">=</span> <span class="s1">&#39;R8-3C&#39;</span>
+    <span class="n">DO_NOT_BLOCK_INTERSECTION</span> <span class="o">=</span> <span class="s1">&#39;R10-7&#39;</span>
+    <span class="n">WARNING_ARROW_LEFT</span> <span class="o">=</span> <span class="s1">&#39;W1-6L&#39;</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="TrafficSignIDChina"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDChina">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDChina</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;274&#39;</span>  <span class="c1"># TODO: change to actual ID</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="TrafficSignIDSpain"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDSpain">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDSpain</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">YIELD</span> <span class="o">=</span> <span class="s1">&#39;r1&#39;</span>
+    <span class="n">STOP</span> <span class="o">=</span> <span class="s1">&#39;r2&#39;</span>
+    <span class="n">BAN_ALL_VEHICLES</span> <span class="o">=</span> <span class="s1">&#39;r100&#39;</span>
+    <span class="n">NO_ENTRY</span> <span class="o">=</span> <span class="s1">&#39;r101&#39;</span>
+    <span class="n">BAN_TRUCKS</span> <span class="o">=</span> <span class="s1">&#39;r106&#39;</span>
+    <span class="n">MAX_WEIGHT</span> <span class="o">=</span> <span class="s1">&#39;r107&#39;</span>
+    <span class="n">MAX_HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;r205&#39;</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;r301&#39;</span>
+    <span class="n">NO_OVERTAKING_START</span> <span class="o">=</span> <span class="s1">&#39;r305&#39;</span>
+    <span class="n">NO_STOPPING</span> <span class="o">=</span> <span class="s1">&#39;r307&#39;</span>
+    <span class="n">NO_WAITING</span> <span class="o">=</span> <span class="s1">&#39;r308&#39;</span>
+    <span class="n">PEDESTRIANS_CROSSING</span> <span class="o">=</span> <span class="s1">&#39;s13&#39;</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="TrafficSignIDRussia"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignIDRussia">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDRussia</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;274&#39;</span>  <span class="c1"># TODO: change to actual ID</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>  <span class="c1"># TODO: add actual IDs</span></div>
+
+
+<span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDArgentina</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;274&#39;</span>  <span class="c1"># TODO: change to actual ID</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>  <span class="c1"># TODO: add actual IDs</span>
+
+
+<span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDBelgium</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;274&#39;</span>  <span class="c1"># TODO: change to actual ID</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>  <span class="c1"># TODO: add actual IDs</span>
+
+
+<span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDFrance</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;274&#39;</span>  <span class="c1"># TODO: change to actual ID</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>  <span class="c1"># TODO: add actual IDs</span>
+
+
+<span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDGreece</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;274&#39;</span>  <span class="c1"># TODO: change to actual ID</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>  <span class="c1"># TODO: add actual IDs</span>
+
+
+<span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDCroatia</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;274&#39;</span>  <span class="c1"># TODO: change to actual ID</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+
+<span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDItaly</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;274&#39;</span>  <span class="c1"># TODO: change to actual ID</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+
+<span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficSignIDPuertoRico</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">MAX_SPEED</span> <span class="o">=</span> <span class="s1">&#39;274&#39;</span>  <span class="c1"># TODO: change to actual ID</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>  <span class="c1"># TODO: add actual IDs</span>
+
+
+<div class="viewcode-block" id="TrafficLightDirection"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightDirection">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficLightDirection</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enum for all the possible directions for a traffic signal</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">RIGHT</span> <span class="o">=</span> <span class="s2">&quot;right&quot;</span>
+    <span class="n">STRAIGHT</span> <span class="o">=</span> <span class="s2">&quot;straight&quot;</span>
+    <span class="n">LEFT</span> <span class="o">=</span> <span class="s2">&quot;left&quot;</span>
+    <span class="n">LEFT_STRAIGHT</span> <span class="o">=</span> <span class="s2">&quot;leftStraight&quot;</span>
+    <span class="n">STRAIGHT_RIGHT</span> <span class="o">=</span> <span class="s2">&quot;straightRight&quot;</span>
+    <span class="n">LEFT_RIGHT</span> <span class="o">=</span> <span class="s2">&quot;leftRight&quot;</span>
+    <span class="n">ALL</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span></div>
+
+
+<div class="viewcode-block" id="TrafficLightState"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightState">[docs]</a><span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">TrafficLightState</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enum for the possible types of traffic light in signals</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">RED</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>
+    <span class="n">YELLOW</span> <span class="o">=</span> <span class="s2">&quot;yellow&quot;</span>
+    <span class="n">RED_YELLOW</span> <span class="o">=</span> <span class="s2">&quot;redYellow&quot;</span>
+    <span class="n">GREEN</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span>
+    <span class="n">INACTIVE</span> <span class="o">=</span> <span class="s2">&quot;inactive&quot;</span></div>
+
+
+<div class="viewcode-block" id="TrafficSignElement"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSignElement">[docs]</a><span class="k">class</span> <span class="nc">TrafficSignElement</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Class which represents a collection of traffic signs at one position&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_sign_element_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+        <span class="n">TrafficSignIDZamunda</span><span class="p">,</span> <span class="n">TrafficSignIDUsa</span><span class="p">,</span> <span class="n">TrafficSignIDSpain</span><span class="p">,</span> <span class="n">TrafficSignIDGermany</span><span class="p">,</span> <span class="n">TrafficSignIDChina</span><span class="p">,</span>
+        <span class="n">TrafficSignIDRussia</span><span class="p">],</span>
+                 <span class="n">additional_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param traffic_sign_element_id: ID of traffic sign element (must be element of a traffic sign element enum)</span>
+<span class="sd">        :param additional_values: list of additional values of a traffic sign element, e.g. velocity, time, city name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_element_id</span> <span class="o">=</span> <span class="n">traffic_sign_element_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_additional_values</span> <span class="o">=</span> <span class="n">additional_values</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">TrafficSignElement</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Inequality between TrafficSignElement </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> and different type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">traffic_sign_element_id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">traffic_sign_element_id</span> \
+                <span class="ow">and</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">additional_values</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">additional_values</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Inequality of TrafficSignElement </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> and the other one </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_element_id</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">additional_values</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;TrafficSignElement with id </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_element_id</span><span class="si">}</span><span class="s2"> and values </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_additional_values</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;TrafficSignElement(traffic_sign_element_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_element_id</span><span class="si">}</span><span class="s2">, &quot;</span> \
+               <span class="sa">f</span><span class="s2">&quot;additional_values=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_additional_values</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">traffic_sign_element_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">enum</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_element_id</span>
+
+    <span class="nd">@traffic_sign_element_id</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">traffic_sign_element_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_sign_element_id</span><span class="p">:</span> <span class="n">enum</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_element_id</span> <span class="o">=</span> <span class="n">traffic_sign_element_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">additional_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_additional_values</span>
+
+    <span class="nd">@additional_values</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">additional_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">additional_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_additional_values</span> <span class="o">=</span> <span class="n">additional_values</span></div>
+
+
+<div class="viewcode-block" id="TrafficSign"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSign">[docs]</a><span class="k">class</span> <span class="nc">TrafficSign</span><span class="p">(</span><span class="n">IDrawable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to represent a traffic sign&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_sign_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">traffic_sign_elements</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TrafficSignElement</span><span class="p">],</span>
+                 <span class="n">first_occurrence</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">position</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">virtual</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param traffic_sign_id: ID of traffic sign</span>
+<span class="sd">        :param traffic_sign_elements: list of traffic sign elements</span>
+<span class="sd">        :param first_occurrence: lanelet ID where traffic sign first appears</span>
+<span class="sd">        :param position: position of traffic sign</span>
+<span class="sd">        :param virtual: boolean indicating if this traffic sign is also</span>
+<span class="sd">        placed there in the real environment or it</span>
+<span class="sd">        is added for other reasons (e.g., completeness of scenario)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_id</span> <span class="o">=</span> <span class="n">traffic_sign_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="o">=</span> <span class="n">position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_elements</span> <span class="o">=</span> <span class="n">traffic_sign_elements</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_virtual</span> <span class="o">=</span> <span class="n">virtual</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_first_occurrence</span> <span class="o">=</span> <span class="n">first_occurrence</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">TrafficSign</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Inequality between TrafficSign </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> and different type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">list_elements_eq</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">traffic_sign_elements</span> <span class="o">=</span> <span class="p">{</span><span class="n">traffic_sign_element</span><span class="o">.</span><span class="n">traffic_sign_element_id</span><span class="p">:</span> <span class="n">traffic_sign_element</span>
+                                 <span class="k">for</span> <span class="n">traffic_sign_element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_elements</span><span class="p">}</span>
+        <span class="n">traffic_sign_elements_other</span> <span class="o">=</span> <span class="p">{</span><span class="n">traffic_sign_element</span><span class="o">.</span><span class="n">traffic_sign_element_id</span><span class="p">:</span> <span class="n">traffic_sign_element</span>
+                                       <span class="k">for</span> <span class="n">traffic_sign_element</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">_traffic_sign_elements</span><span class="p">}</span>
+        <span class="n">traffic_sign_eq</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">traffic_sign_elements</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">traffic_sign_elements_other</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">traffic_sign_elements</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">traffic_sign_elements_other</span><span class="p">:</span>
+                <span class="n">traffic_sign_eq</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">traffic_sign_elements</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">!=</span> <span class="n">traffic_sign_elements_other</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+                <span class="n">list_elements_eq</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">position_string</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> \
+            <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_position</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="mi">10</span><span class="p">),</span> <span class="n">precision</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">position_other_string</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">_position</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> \
+            <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="mi">10</span><span class="p">),</span> <span class="n">precision</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">traffic_sign_eq</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">traffic_sign_id</span> \
+                <span class="ow">and</span> <span class="n">position_string</span> <span class="o">==</span> <span class="n">position_other_string</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_virtual</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">virtual</span> \
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_occurrence</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">first_occurrence</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">list_elements_eq</span>
+
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Inequality of TrafficSign </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> and the other one </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">position_string</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> \
+            <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_position</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="mi">10</span><span class="p">),</span> <span class="n">precision</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_id</span><span class="p">,</span> <span class="n">position_string</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_elements</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_virtual</span><span class="p">,</span>
+                     <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_occurrence</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;TrafficSign with id </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_id</span><span class="si">}</span><span class="s2"> placed at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_position</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;TrafficSign(traffic_sign_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_id</span><span class="si">}</span><span class="s2">, &quot;</span> \
+               <span class="sa">f</span><span class="s2">&quot;traffic_sign_elements=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_elements</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span> \
+               <span class="sa">f</span><span class="s2">&quot;first_occurrence=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_occurrence</span><span class="si">}</span><span class="s2">, &quot;</span> \
+               <span class="sa">f</span><span class="s2">&quot;position=</span><span class="si">{</span><span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">, virtual=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_virtual</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">traffic_sign_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_id</span>
+
+    <span class="nd">@traffic_sign_id</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">traffic_sign_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_sign_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_id</span> <span class="o">=</span> <span class="n">traffic_sign_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span>
+
+    <span class="nd">@position</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="o">=</span> <span class="n">position</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">traffic_sign_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TrafficSignElement</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_elements</span>
+
+    <span class="nd">@traffic_sign_elements</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">traffic_sign_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_sign_elements</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TrafficSignElement</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_sign_elements</span> <span class="o">=</span> <span class="n">traffic_sign_elements</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">virtual</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_virtual</span>
+
+    <span class="nd">@virtual</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">virtual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">virtual</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_virtual</span> <span class="o">=</span> <span class="n">virtual</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">first_occurrence</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_occurrence</span>
+
+    <span class="nd">@first_occurrence</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">first_occurrence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_occurrence</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_first_occurrence</span> <span class="o">=</span> <span class="n">first_occurrence</span>
+
+<div class="viewcode-block" id="TrafficSign.translate_rotate"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSign.translate_rotate">[docs]</a>    <span class="k">def</span> <span class="nf">translate_rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">translation</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method translates and rotates a traffic sign</span>
+
+<span class="sd">        :param translation: The translation given as [x_off,y_off] for the x and y translation</span>
+<span class="sd">        :param angle: The rotation angle in radian (counter-clockwise defined)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="n">is_real_number_vector</span><span class="p">(</span><span class="n">translation</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s1">&#39;&lt;TrafficSign/translate_rotate&gt;: argument translation is &#39;</span> \
+                                                      <span class="s1">&#39;not a vector of real &#39;</span> \
+                                                      <span class="s1">&#39;numbers of length 2.&#39;</span>
+        <span class="k">assert</span> <span class="n">is_real_number</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="s1">&#39;&lt;TrafficSign/translate_rotate&gt;: argument angle must be a &#39;</span> \
+                                      <span class="s1">&#39;scalar. &#39;</span> \
+                                      <span class="s1">&#39;angle = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">angle</span>
+        <span class="k">assert</span> <span class="n">is_valid_orientation</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="s1">&#39;&lt;TrafficSign/translate_rotate&gt;: argument angle must &#39;</span> \
+                                            <span class="s1">&#39;be &#39;</span> \
+                                            <span class="s1">&#39;within the &#39;</span> \
+                                            <span class="s1">&#39;interval [-2pi, 2pi]. angle = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">angle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="o">=</span> <span class="n">commonroad</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">translate_rotate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_position</span><span class="p">]),</span> <span class="n">translation</span><span class="p">,</span> <span class="n">angle</span><span class="p">)[</span>
+            <span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TrafficSign.draw"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficSign.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">renderer</span><span class="p">:</span> <span class="n">IRenderer</span><span class="p">,</span> <span class="n">draw_params</span><span class="p">:</span> <span class="n">OptionalSpecificOrAllDrawParams</span><span class="p">[</span><span class="n">TrafficSignParams</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">renderer</span><span class="o">.</span><span class="n">draw_traffic_light_sign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">draw_params</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="TrafficLightCycleElement"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficLightCycleElement">[docs]</a><span class="k">class</span> <span class="nc">TrafficLightCycleElement</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class to represent a traffic light cycle&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">TrafficLightState</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param state: state of a traffic light cycle element</span>
+<span class="sd">        :param duration: duration of traffic light cycle element</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_duration</span> <span class="o">=</span> <span class="n">duration</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">TrafficLightCycleElement</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Inequality between TrafficLightCycleElement </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> and different type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">state</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_duration</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">duration</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Inequality of TrafficLightCycleElement </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> and the other one </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_duration</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;TrafficLightCycleElement with state </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="si">}</span><span class="s2"> and duration </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_duration</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;TrafficLightCycleElement(state=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="si">}</span><span class="s2">, duration=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_duration</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrafficLightState</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">TrafficLightState</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">duration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_duration</span>
+
+    <span class="nd">@duration</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">duration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_duration</span> <span class="o">=</span> <span class="n">duration</span></div>
+
+
+<div class="viewcode-block" id="TrafficLight"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficLight">[docs]</a><span class="k">class</span> <span class="nc">TrafficLight</span><span class="p">(</span><span class="n">IDrawable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Class to represent a traffic light&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_light_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cycle</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TrafficLightCycleElement</span><span class="p">],</span> <span class="n">position</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">time_offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">direction</span><span class="p">:</span> <span class="n">TrafficLightDirection</span> <span class="o">=</span> <span class="n">TrafficLightDirection</span><span class="o">.</span><span class="n">ALL</span><span class="p">,</span>
+                 <span class="n">active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param traffic_light_id: ID of traffic light</span>
+<span class="sd">        :param cycle: list of traffic light cycle elements</span>
+<span class="sd">        :param time_offset: offset of traffic light cycle</span>
+<span class="sd">        :param position: position of traffic light</span>
+<span class="sd">        :param direction: driving directions for which the traffic light is valid</span>
+<span class="sd">        :param active: boolean indicating if traffic light is currently active</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_light_id</span> <span class="o">=</span> <span class="n">traffic_light_id</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycle</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cycle</span> <span class="o">=</span> <span class="n">get_default_cycle</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cycle</span> <span class="o">=</span> <span class="n">cycle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_offset</span> <span class="o">=</span> <span class="n">time_offset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="o">=</span> <span class="n">position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_direction</span> <span class="o">=</span> <span class="n">direction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="n">active</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">TrafficLight</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Inequality between TrafficLight </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> and different type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">position_string</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> \
+            <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_position</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="mi">10</span><span class="p">),</span> <span class="n">precision</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">position_other_string</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">_position</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> \
+            <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="mi">10</span><span class="p">),</span> <span class="n">precision</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_light_id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">traffic_light_id</span> <span class="ow">and</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cycle</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">cycle</span><span class="p">)</span> \
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_offset</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">time_offset</span> <span class="ow">and</span> <span class="n">position_string</span> <span class="o">==</span> <span class="n">position_other_string</span> \
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_direction</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">direction</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Inequality of TrafficLight </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> and the other one </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">position_string</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> \
+            <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_position</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="mi">10</span><span class="p">),</span> <span class="n">precision</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_traffic_light_id</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cycle</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_offset</span><span class="p">,</span> <span class="n">position_string</span><span class="p">,</span>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">_direction</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;TrafficLight with id </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_traffic_light_id</span><span class="si">}</span><span class="s2"> placed at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_position</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;TrafficLight(traffic_light_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_traffic_light_id</span><span class="si">}</span><span class="s2">, cycle=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cycle</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span> \
+               <span class="sa">f</span><span class="s2">&quot;time_offset=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_offset</span><span class="si">}</span><span class="s2">, &quot;</span> \
+               <span class="sa">f</span><span class="s2">&quot;position=</span><span class="si">{</span><span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">, &quot;</span> \
+               <span class="sa">f</span><span class="s2">&quot;direction=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_direction</span><span class="si">}</span><span class="s2">, active=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">traffic_light_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_light_id</span>
+
+    <span class="nd">@traffic_light_id</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">traffic_light_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_light_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traffic_light_id</span> <span class="o">=</span> <span class="n">traffic_light_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TrafficLightCycleElement</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cycle</span>
+
+    <span class="nd">@cycle</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cycle</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TrafficLightCycleElement</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cycle</span> <span class="o">=</span> <span class="n">cycle</span>
+
+<div class="viewcode-block" id="TrafficLight.get_state_at_time_step"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficLight.get_state_at_time_step">[docs]</a>    <span class="k">def</span> <span class="nf">get_state_at_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_step</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrafficLightState</span><span class="p">:</span>
+        <span class="n">time_step_mod</span> <span class="o">=</span> <span class="p">((</span><span class="n">time_step</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_offset</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cycle_init_timesteps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_offset</span><span class="p">))</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_offset</span>
+        <span class="n">i_cycle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">time_step_mod</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycle_init_timesteps</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycle</span><span class="p">[</span><span class="n">i_cycle</span><span class="p">]</span><span class="o">.</span><span class="n">state</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cycle_init_timesteps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_cycle_init_timesteps&#39;</span><span class="p">):</span>
+            <span class="n">durations</span> <span class="o">=</span> <span class="p">[</span><span class="n">cycle_el</span><span class="o">.</span><span class="n">duration</span> <span class="k">for</span> <span class="n">cycle_el</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cycle</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cycle_init_timesteps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">durations</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_offset</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cycle_init_timesteps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cycle_init_timesteps</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_offset</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cycle_init_timesteps</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">time_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_offset</span>
+
+    <span class="nd">@time_offset</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">time_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_offset</span> <span class="o">=</span> <span class="n">time_offset</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span>
+
+    <span class="nd">@position</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="o">=</span> <span class="n">position</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">direction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrafficLightDirection</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_direction</span>
+
+    <span class="nd">@direction</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">direction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">:</span> <span class="n">TrafficLightDirection</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_direction</span> <span class="o">=</span> <span class="n">direction</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">active</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active</span>
+
+    <span class="nd">@active</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">active</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">active</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="n">active</span>
+
+<div class="viewcode-block" id="TrafficLight.translate_rotate"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficLight.translate_rotate">[docs]</a>    <span class="k">def</span> <span class="nf">translate_rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">translation</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method translates and rotates a traffic light</span>
+
+<span class="sd">        :param translation: The translation given as [x_off,y_off] for the x and y translation</span>
+<span class="sd">        :param angle: The rotation angle in radian (counter-clockwise defined)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="n">is_real_number_vector</span><span class="p">(</span><span class="n">translation</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s1">&#39;&lt;TrafficLight/translate_rotate&gt;: &#39;</span> \
+                                                      <span class="s1">&#39;argument translation is &#39;</span> \
+                                                      <span class="s1">&#39;not a vector of real numbers of &#39;</span> \
+                                                      <span class="s1">&#39;length 2.&#39;</span>
+        <span class="k">assert</span> <span class="n">is_real_number</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="s1">&#39;&lt;TrafficLight/translate_rotate&gt;: argument angle must &#39;</span> \
+                                      <span class="s1">&#39;be &#39;</span> \
+                                      <span class="s1">&#39;a scalar. &#39;</span> \
+                                      <span class="s1">&#39;angle = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">angle</span>
+        <span class="k">assert</span> <span class="n">is_valid_orientation</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="s1">&#39;&lt;TrafficLight/translate_rotate&gt;: argument angle must &#39;</span> \
+                                            <span class="s1">&#39;be &#39;</span> \
+                                            <span class="s1">&#39;within the &#39;</span> \
+                                            <span class="s1">&#39;interval [-2pi, 2pi]. angle = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">angle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="o">=</span> <span class="n">commonroad</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">translate_rotate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_position</span><span class="p">]),</span> <span class="n">translation</span><span class="p">,</span> <span class="n">angle</span><span class="p">)[</span>
+            <span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TrafficLight.draw"><a class="viewcode-back" href="../../../api/scenario.html#commonroad.scenario.traffic_sign.TrafficLight.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">renderer</span><span class="p">:</span> <span class="n">IRenderer</span><span class="p">,</span> <span class="n">draw_params</span><span class="p">:</span> <span class="n">OptionalSpecificOrAllDrawParams</span><span class="p">[</span><span class="n">TrafficLightParams</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">renderer</span><span class="o">.</span><span class="n">draw_traffic_light_sign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">draw_params</span><span class="p">)</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">get_default_cycle</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Defines default traffic light cycle in case no cycle is provided</span>
+
+<span class="sd">    _:returns traffic light cycle element</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cycle</span> <span class="o">=</span> <span class="p">[(</span><span class="n">TrafficLightState</span><span class="o">.</span><span class="n">RED</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span> <span class="p">(</span><span class="n">TrafficLightState</span><span class="o">.</span><span class="n">RED_YELLOW</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="n">TrafficLightState</span><span class="o">.</span><span class="n">GREEN</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span>
+             <span class="p">(</span><span class="n">TrafficLightState</span><span class="o">.</span><span class="n">YELLOW</span><span class="p">,</span> <span class="mi">10</span><span class="p">)]</span>
+    <span class="n">cycle_element_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">TrafficLightCycleElement</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">cycle</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">cycle_element_list</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Luis Gressenbuch, Anna-Katharina Rettinger.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
