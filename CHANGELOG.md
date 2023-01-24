@@ -9,6 +9,7 @@
 - Default plot limits for focused obstacle
 - Use dt from scenario as default for video creation
 - Apply axis visible-option also for video creation
+- Protobuf FileReader marking road network related IDs as used
 
 ### Changed
 
