@@ -1,129 +1,127 @@
-image: python
+image: python:3.8
 
 stages:
-- style_check
-- test
-- deploy
+  - style_check
+  - test
+  - deploy
+
+cache:
+  paths:
+    - .venv
 
 before_script:
-- curl -O https://bootstrap.pypa.io/get-pip.py
-- python get-pip.py
-- apt-get update -qq && apt-get install -y -qq ffmpeg
+  - pip install poetry
+  - poetry config virtualenvs.in-project true
+  - poetry install --with tests
+  - source .venv/bin/activate
 
-.install-and-run: &install-and-run
-    - pip install tox coverage
-    - pip install -r ./requirements.txt
-    - python setup.py install
-    - coverage run tests/run_tests.py
-    - coverage report -m || true
+.run-test-with-coverage: &run-test-with-coverage
+  - coverage run tests/run_tests.py
+  - coverage report -m || true
 
 style_checks:
   stage: style_check
+  before_script: [ ]
   script:
     - pip install pycodestyle
     - git  diff ${CI_COMMIT_BEFORE_SHA}...${CI_COMMIT_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff --exclude=./commonroad/scenario_definition/*
   except:
-  - merge_requests
+    - merge_requests
   allow_failure: true
 
 style_check_merge_result:
   stage: style_check
+  before_script: [ ]
   script:
     - pip install pycodestyle
     - git  diff ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA}...${CI_MERGE_REQUEST_SOURCE_BRANCH_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff --exclude=./commonroad/scenario_definition/*
   only:
-  - merge_requests
+    - merge_requests
 
 build_and_test_python_3_7:
   image: python:3.7
   stage: test
   script:
-    - *install-and-run
+    - *run-test-with-coverage
 
 build_and_test_python_3_8:
   image: python:3.8
   stage: test
   script:
-    - *install-and-run
+    - *run-test-with-coverage
 
 build_and_test_python_3_9:
   image: python:3.9
   stage: test
   script:
-    - *install-and-run
+    - *run-test-with-coverage
 
 build_and_test_python_3_10:
   image: python:3.10
   stage: test
   script:
-    - *install-and-run
+    - *run-test-with-coverage
 
 build_and_test_python_3_11:
   image: python:3.11
   stage: test
   script:
-    - *install-and-run
+    - *run-test-with-coverage
     - coverage xml
-  coverage : '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
-  artifacts :
-    reports :
-      coverage_report :
-        coverage_format : cobertura
-        path : coverage.xml
+  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
 
 build_doc:
   image: python:3.11
   stage: test
   script:
     - apt install -y graphviz
-    - pip install -r ./requirements.txt
-    - pip install -r ./doc/requirements_doc.txt
+    - poetry install --with docs
     - cd doc && make html SPHINXOPTS="-W"
-  artifacts :
-    paths :
+  artifacts:
+    paths:
       - ./doc/build/
-    expose_as : 'Documentation'
+    expose_as: 'Documentation'
 
 validate_tutorials:
-  image : python:3.10
-  stage : test
-  script :
-    - pip install -r ./requirements.txt
-    - pip install -e .[tests]
-    - pip install cvxpy
-    - pip install jupyter
-    - pip install pytest
-    - pip install nbval
+  image: python:3.10
+  stage: test
+  script:
+    - poetry install --with tutorials
     - pytest --nbval-lax ./tutorials/
 
-pages :
+pages:
   # Push the latest documentation of the development branch to the GitLab Pages
   # at https://cps.pages.gitlab.lrz.de/commonroad-io/
-  stage : deploy
-  script :
+  stage: deploy
+  script:
     - apt install -y graphviz
-    - pip install -r ./doc/requirements_doc.txt
+    - poetry install --with docs
     - cd doc/source && sphinx-build -b html . ../../public
-  artifacts :
-    paths :
+  artifacts:
+    paths:
       - public
-  environment :
-    name : Gitlab Pages
-    url : https://cps.pages.gitlab.lrz.de/commonroad-io/
-  only :
+  environment:
+    name: Gitlab Pages
+    url: https://cps.pages.gitlab.lrz.de/commonroad-io/
+  only:
     - develop
 
-push_to_internal_pipy_registry :
+push_to_internal_pipy_registry:
   # push the development version to the internal pipy registry https://gitlab.lrz.de/cps/commonroad-io/-/packages
   # before manually triggering the job, delete the previous package in case the version number didn't change
-  stage : deploy
-  when : manual
-  only :
+  stage: deploy
+  when: manual
+  only:
     - develop
-  script :
-    - pip install twine
-    - python setup.py sdist bdist_wheel
-    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --skip-existing --repository-url https://gitlab.lrz.de/api/v4/projects/${CI_PROJECT_ID}/packages/pypi dist/*
+  script:
+    - poetry config repositories.gitlab ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi
+    - poetry build
+    - poetry publish --repository gitlab -u gitlab-ci-token -p ${CI_JOB_TOKEN}
 
 push_to_external_pipy_test_registry:
   stage: deploy
@@ -131,9 +129,9 @@ push_to_external_pipy_test_registry:
   only:
     - master
   script:
-    - pip install twine
-    - python3 setup.py sdist bdist_wheel
-    - twine upload -u $CR_PYPI_TEST_USERNAME -p $CR_PYPI_TEST_PASSWORD --repository-url https://test.pypi.org/legacy/ dist/*
+    - poetry config repositories.test https://test.pypi.org/legacy/
+    - poetry build
+    - poetry publish --repository test -u ${CR_PYPI_TEST_USERNAME} -p ${CR_PYPI_TEST_PASSWORD}
 
 push_to_external_pipy_release_registry:
   stage: deploy
@@ -141,7 +139,6 @@ push_to_external_pipy_release_registry:
   only:
     - master
   script:
-    - pip install twine
-    - python3 setup.py sdist bdist_wheel
-    - twine upload -u $CR_PYPI_RELEASE_USERNAME -p $CR_PYPI_RELEASE_PASSWORD dist/*
+    - poetry build
+    - poetry publish -u ${CR_PYPI_RELEASE_USERNAME} -p ${CR_PYPI_RELEASE_PASSWORD}
 
