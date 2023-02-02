@@ -1,0 +1,15 @@
+numpy>=1.13
+scipy>=1.5.2
+shapely==1.8.5
+matplotlib>=2.2.2
+lxml>=4.2.2
+networkx>=2.2
+Pillow>=7.0.0
+iso3166>=1.0.1
+commonroad-vehicle-models>=2.0.0
+rtree>=0.8.3
+setuptools>=57.0.0
+protobuf==3.20.1
+pytest>=6.2.5
+omegaconf>=2.0
+tqdm>=4.64

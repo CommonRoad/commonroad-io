@@ -1,0 +1,5 @@
+include commonroad/scenario_definition/xml_definition_files/*.xsd
+include commonroad/visualization/traffic_signs/**/*.png
+include commonroad/visualization/traffic_signs/**/.png
+include commonroad/visualization/traffic_signs/*.png
+include commonroad/visualization/default_draw_params.json
