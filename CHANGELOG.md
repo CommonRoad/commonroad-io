@@ -14,6 +14,7 @@
 ### Changed
 
 - Name of SIDEWALK and BUSLANE traffic signs to PEDESTRIAN_SIDEWALK and BUS_LANE
+- Packaging and dependency management using poetry
 
 ## [2022.3] - 2022-11-16
 
