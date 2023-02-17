@@ -2,6 +2,9 @@
 
 ## [2023.1] - 2023-XX-XX
 
+### Added
+- Support for shapely>=2.0.0
+
 ### Fixed
 
 - Writing scenarios without location to protobuf
@@ -10,6 +13,7 @@
 - Use dt from scenario as default for video creation
 - Apply axis visible-option also for video creation
 - Protobuf FileReader marking road network related IDs as used
+- State attribute comparison
 
 ### Changed
 
