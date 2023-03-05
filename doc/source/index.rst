@@ -84,7 +84,7 @@ Fixed
 - State attribute comparison
 
 Changed
------
+-------
 
 - Name of SIDEWALK and BUSLANE traffic signs to PEDESTRIAN_SIDEWALK and BUS_LANE
 - Packaging and dependency management using poetry
