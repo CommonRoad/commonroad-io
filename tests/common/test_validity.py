@@ -26,16 +26,14 @@ class TestValidity(unittest.TestCase):
         self.assertTrue(is_valid_velocity(-129.))
         self.assertTrue(is_valid_velocity(-10000.0))
 
-        self.assertTrue(is_valid_velocity(npy.float64(12)))
-        self.assertTrue(is_valid_velocity(npy.float32(12)))
-        self.assertTrue(is_valid_velocity(npy.float16(12)))
-        self.assertTrue(is_valid_velocity(npy.float(12)))
+        self.assertTrue(is_valid_velocity(np.float64(12)))
+        self.assertTrue(is_valid_velocity(np.float32(12)))
+        self.assertTrue(is_valid_velocity(np.float16(12)))
 
-        self.assertTrue(is_valid_velocity(npy.int64(12)))
-        self.assertTrue(is_valid_velocity(npy.int32(12)))
-        self.assertTrue(is_valid_velocity(npy.int16(12)))
-        self.assertTrue(is_valid_velocity(npy.int8(12)))
-        self.assertTrue(is_valid_velocity(npy.int(12)))
+        self.assertTrue(is_valid_velocity(np.int64(12)))
+        self.assertTrue(is_valid_velocity(np.int32(12)))
+        self.assertTrue(is_valid_velocity(np.int16(12)))
+        self.assertTrue(is_valid_velocity(np.int8(12)))
 
     def test_invalid_velocities(self):
         """

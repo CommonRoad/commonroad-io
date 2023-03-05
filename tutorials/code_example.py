@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.visualization.mp_renderer import MPRenderer
+from commonroad.visualization.draw_params import MPDrawParams
 
 # generate path of the file to be opened
 file_path = "ZAM_Tutorial-1_1_T-1.xml"

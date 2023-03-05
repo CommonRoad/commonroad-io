@@ -328,5 +328,10 @@ class TrajectoryPrediction(Prediction):
             if not hasattr(state, "orientation"):
                 state.orientation = math.atan2(getattr(state, "velocity_y"), state.velocity)
             occupied_region = occupancy_shape_from_state(self._shape, state)
+
+            if hasattr(self, 'wheelbase_lengths'):
+                shapes = self._shape.shapes
+                occupied_region = shape_group_occupancy_shape_from_state(shapes, state, self.wheelbase_lengths)
+
             occupancy_set.append(Occupancy(state.time_step, occupied_region))
         return occupancy_set

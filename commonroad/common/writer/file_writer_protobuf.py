@@ -1,6 +1,7 @@
 import datetime
 import re
 from typing import Set, Union, List
+import logging
 
 import numpy as np
 from google.protobuf.message import DecodeError
@@ -26,6 +27,8 @@ from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficS
     TrafficSignIDCroatia, TrafficSignIDItaly
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import State
+
+logger = logging.getLogger(__name__)
 
 
 class ProtobufFileWriter(FileWriter):
@@ -61,7 +64,11 @@ class ProtobufFileWriter(FileWriter):
         scenario_tags = ScenarioTagsMessage.create_message(list(self.scenario.tags))
         self._commonroad_msg.scenario_tags.CopyFrom(scenario_tags)
 
-        location_msg = LocationMessage.create_message(self.scenario.location)
+        if self.location is not None:
+            location_msg = LocationMessage.create_message(self.location)
+        else:
+            location_msg = LocationMessage.create_message(Location())
+            logger.warning("Default location will be written to protobuf!")
         self._commonroad_msg.location.CopyFrom(location_msg)
 
         for lanelet in self.scenario.lanelet_network.lanelets:
@@ -632,9 +639,10 @@ class DynamicObstacleMessage:
             signal_state_msg = SignalStateMessage.create_message(dynamic_obstacle.initial_signal_state)
             dynamic_obstacle_msg.initial_signal_state.CopyFrom(signal_state_msg)
 
-        for signal_state in dynamic_obstacle.signal_series:
-            signal_state_msg = SignalStateMessage.create_message(signal_state)
-            dynamic_obstacle_msg.signal_series.append(signal_state_msg)
+        if dynamic_obstacle.signal_series is not None:
+            for signal_state in dynamic_obstacle.signal_series:
+                signal_state_msg = SignalStateMessage.create_message(signal_state)
+                dynamic_obstacle_msg.signal_series.append(signal_state_msg)
 
         return dynamic_obstacle_msg
 
@@ -914,7 +922,7 @@ class FloatExactOrIntervalMessage:
     def create_message(cls, value: Union[int, Interval]) -> util_pb2.FloatExactOrInterval:
         float_exact_or_interval_msg = util_pb2.FloatExactOrInterval()
 
-        if isinstance(value, float):
+        if isinstance(value, float) or isinstance(value, int):
             float_exact_or_interval_msg.exact = value
         else:
             float_interval_msg = FloatIntervalMessage.create_message(value)

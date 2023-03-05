@@ -23,7 +23,7 @@ from commonroad.visualization.draw_params import OptionalSpecificOrAllDrawParams
 __author__ = "Christian Pek, Sebastian Maierhofer"
 __copyright__ = "TUM Cyber-Physical Systems Group"
 __credits__ = ["BMW CAR@TUM"]
-__version__ = "2022.1"
+__version__ = "2023.1"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "released"
@@ -1546,10 +1546,17 @@ class LaneletNetwork(IDrawable):
                           ValidTypes.LISTS), '<Lanelet/contains_points>: provided list of points is not a list! type ' \
                                              '= {}'.format(type(point_list))
 
-        return [[self._get_lanelet_id_by_shapely_polygon(lanelet_shapely_polygon) for lanelet_shapely_polygon in
-                 self._strtee.query(point) if
-                 lanelet_shapely_polygon.intersects(point) or lanelet_shapely_polygon.buffer(1e-15).intersects(point)]
-                for point in [ShapelyPoint(point) for point in point_list]]
+        res = []
+        for point in point_list:
+            shapely_point = ShapelyPoint(point)
+            inner_res = []
+            for idx in self._strtee.query(shapely_point):
+                lanelet_shapely_polygon = self._strtee.geometries[idx]
+                if lanelet_shapely_polygon.intersects(shapely_point) \
+                        or lanelet_shapely_polygon.buffer(1e-15).intersects(shapely_point):
+                    inner_res.append(self._get_lanelet_id_by_shapely_polygon(lanelet_shapely_polygon))
+            res.append(inner_res)
+        return res
 
     def find_lanelet_by_shape(self, shape: Shape) -> List[int]:
         """
@@ -1561,9 +1568,12 @@ class LaneletNetwork(IDrawable):
         assert isinstance(shape, (Circle, Polygon, Rectangle)), '<Lanelet/find_lanelet_by_shape>: ' \
                                                                 'provided shape is not a shape! ' \
                                                                 'type = {}'.format(type(shape))
-
-        return [self._get_lanelet_id_by_shapely_polygon(lanelet_shapely_polygon) for lanelet_shapely_polygon in
-                self._strtee.query(shape.shapely_object) if lanelet_shapely_polygon.intersects(shape.shapely_object)]
+        res = []
+        for idx in self._strtee.query(shape.shapely_object):
+            lanelet_shapely_polygon = self._strtee.geometries[idx]
+            if lanelet_shapely_polygon.intersects(shape.shapely_object):
+                res.append(self._get_lanelet_id_by_shapely_polygon(lanelet_shapely_polygon))
+        return res
 
     def _sorted_lanelet_ids(self, lanelet_ids, state):
         if len(lanelet_ids) < 2:

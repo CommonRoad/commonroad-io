@@ -3,7 +3,7 @@ import abc
 import copy
 import dataclasses
 from dataclasses import dataclass
-from typing import Union, List, Any
+from typing import Union, List, Any, Tuple
 
 import numpy as np
 
@@ -29,6 +29,8 @@ class State(abc.ABC):
     time_step: Union[int, Interval] = None
 
     def __eq__(self, other: State):
+        if not isinstance(other, State):
+            return False
         if set(self.attributes) != set(other.attributes):
             return False
 

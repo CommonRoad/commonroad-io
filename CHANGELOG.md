@@ -1,5 +1,49 @@
 # Changelog
 
+## [2023.1] - 2023-03-05
+
+### Added
+- Support for shapely>=2.0.0
+
+### Fixed
+
+- Writing scenarios without location to protobuf
+- Dashed lanelet boundaries with fixed dash position
+- Default plot limits for focused obstacle
+- Use dt from scenario as default for video creation
+- Apply axis visible-option also for video creation
+- Protobuf FileReader marking road network related IDs as used
+- State attribute comparison
+
+### Changed
+
+- Name of SIDEWALK and BUSLANE traffic signs to PEDESTRIAN_SIDEWALK and BUS_LANE
+- Packaging and dependency management using poetry
+
+## [2022.3] - 2022-11-16
+
+### Added
+
+- Drawing parameters as dataclasses (support for context help)
+- Documentation for drawing parameters
+- Support for Python 3.11
+- Function to convert a state into a 1D-numpy array
+- Progress bar for video creation
+- Callback for modifying axes during plotting a video
+
+### Changed
+
+- Name of position in lateral and longitudinal state
+
+### Removed
+
+- ParamServer and dictionary specification of drawing parameters
+
+### Fixed
+
+- Failing visualization of a trajectory at it's initial time step
+- Broken lanelet visualization with matplotlib >3.5
+
 ## [2022.2] - 2022-09-03
 
 ### Added

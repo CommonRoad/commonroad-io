@@ -47,6 +47,17 @@ class TestXMLFileWriter(unittest.TestCase):
                            check_validity=False)
         assert self.validate_with_xsd(self.out_path + '/test_reading_all.xml')
 
+    def test_write_scenario_without_location(self):
+        scenario = Scenario(dt=0.1, author="Test", tags={Tag.URBAN}, affiliation="TUM", source="Test")
+        scenario.location = None
+
+        xml_file_path = self.out_path + '/' + str(scenario.scenario_id) + '.xml'
+
+        CommonRoadFileWriter(scenario, PlanningProblemSet(), file_format=FileFormat.XML).write_scenario_to_file(
+                xml_file_path, OverwriteExistingFile.ALWAYS)
+
+        self.assertTrue(os.path.exists(xml_file_path))
+
     def test_read_write_2018b_file(self):
         scenario, planning_problem_set = CommonRoadFileReader(self.filename_2018b).open()
         filename = self.out_path + "/USA_Lanker-1_1_T-1.xml"
@@ -390,6 +401,17 @@ class TestProtobufFileWriter(unittest.TestCase):
         pb_file_path = self.out_path + '/' + str(scenario_xml.scenario_id) + '.pb'
 
         CommonRoadFileWriter(scenario_xml, planning_problems_xml, file_format=FileFormat.PROTOBUF) \
+            .write_scenario_to_file(pb_file_path, OverwriteExistingFile.ALWAYS)
+
+        self.assertTrue(os.path.exists(pb_file_path))
+
+    def test_write_scenario_without_location(self):
+        scenario = Scenario(dt=0.1, author="Test", tags={Tag.URBAN}, affiliation="TUM", source="Test")
+        scenario.location = None
+
+        pb_file_path = self.out_path + '/' + str(scenario.scenario_id) + '.pb'
+
+        CommonRoadFileWriter(scenario, PlanningProblemSet(), file_format=FileFormat.PROTOBUF) \
             .write_scenario_to_file(pb_file_path, OverwriteExistingFile.ALWAYS)
 
         self.assertTrue(os.path.exists(pb_file_path))

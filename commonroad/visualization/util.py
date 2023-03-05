@@ -19,9 +19,19 @@ from commonroad.scenario.traffic_sign import TrafficLightState, \
     TrafficLightDirection
 from matplotlib.lines import Line2D
 from matplotlib.path import Path
+from matplotlib.axes import Axes
+
+
+def _data_units_to_pt(axes: Axes, lw_meter: float) -> float:
+    """Convert data (axis) unit to line width. """
+    ppd = 72. / axes.figure.dpi
+    trans = axes.transData.transform
+    return ((trans((1, lw_meter)) - trans((0, 0))) * ppd)[1]
 
 
 class LineDataUnits(Line2D):
+    """Create line with line width specified in data (axis) units."""
+
     def __init__(self, *args, **kwargs):
         _lw_data = kwargs.pop("linewidth", 1)
         # _dashes_data = kwargs.pop("dashes", 1)
@@ -30,9 +40,7 @@ class LineDataUnits(Line2D):
 
     def _get_lw(self):
         if self.axes is not None:
-            ppd = 72. / self.axes.figure.dpi
-            trans = self.axes.transData.transform
-            return ((trans((1, self._lw_data)) - trans((0, 0))) * ppd)[1]
+            return _data_units_to_pt(self.axes, self._lw_data)
         else:
             return 1
 
@@ -40,6 +48,26 @@ class LineDataUnits(Line2D):
         self._lw_data = lw
 
     _linewidth = property(_get_lw, _set_lw)
+
+
+class LineCollectionDataUnits(collections.LineCollection):
+    """Create line collection with line width specified in data (axis) units."""
+
+    def __init__(self, *args, **kwargs):
+        _lw_data = kwargs.pop("linewidth", 1)
+        super().__init__(*args, **kwargs)
+        self._linewidths = _lw_data
+
+    def _get_lw(self) -> np.ndarray:
+        if self.axes is not None:
+            return np.repeat(_data_units_to_pt(self.axes, self._lw_data[0]), len(self.get_paths()))
+        else:
+            return np.ones(len(self.get_paths()))
+
+    def _set_lw(self, lw) -> None:
+        self._lw_data = np.atleast_1d(lw)
+
+    _linewidths = property(_get_lw, _set_lw)
 
 
 def draw_polygon_as_patch(vertices, ax, zorder=5, facecolor='#ffffff',

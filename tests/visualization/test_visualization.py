@@ -232,7 +232,25 @@ class TestVisualizationV2(unittest.TestCase):
         scenario, planning_problem_set = CommonRoadFileReader(self.ngsim_scen_2).open()
         scenario.draw(self.rnd, draw_params=params)
 
-    # Deactivated as ffmpeg not installed on CI
+    def test_setting_params_child_attribute(self):
+        """Check if setting a child attribute of a parent attribute works."""
+        params = MPDrawParams()
+        params.time_begin = 1
+        params.time_end = 2
+        # Note, faceolor is not a valid attribute of the parent attribute
+        params.facecolor = "red"
+        self.assertEqual(params.dynamic_obstacle.time_begin, 1)
+        self.assertEqual(params.dynamic_obstacle.time_end, 2)
+        self.assertEqual(params.dynamic_obstacle.occupancy.shape.facecolor, "red")
+
+    def test_setting_params_child_ctor(self):
+        """Check if setting a child attribute of a parent ctor works."""
+        params = MPDrawParams(time_begin=1, time_end=2)
+        self.assertEqual(params.time_begin, 1)
+        self.assertEqual(params.dynamic_obstacle.time_begin, 1)
+        self.assertEqual(params.dynamic_obstacle.time_end, 2)
+        self.assertEqual(params.time_end, 2)
+
     def test_video(self):
         scenario, _ = CommonRoadFileReader(self.ngsim_scen_1).open()  #
         t0 = time.time()

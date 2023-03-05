@@ -94,19 +94,19 @@ class CommonRoadFactory:
 
         for lanelet_msg in commonroad_msg.lanelets:
             lanelet = LaneletFactory.create_from_message(lanelet_msg)
-            scenario.lanelet_network.add_lanelet(lanelet)
+            scenario.add_objects(lanelet)
 
         for traffic_sign_msg in commonroad_msg.traffic_signs:
             traffic_sign = TrafficSignFactory.create_from_message(traffic_sign_msg)
-            scenario.lanelet_network.add_traffic_sign(traffic_sign, set())
+            scenario.add_objects(traffic_sign, set())
 
         for traffic_light_msg in commonroad_msg.traffic_lights:
             traffic_light = TrafficLightFactory.create_from_message(traffic_light_msg)
-            scenario.lanelet_network.add_traffic_light(traffic_light, set())
+            scenario.add_objects(traffic_light, set())
 
         for intersection_msg in commonroad_msg.intersections:
             intersection = IntersectionFactory.create_from_message(intersection_msg)
-            scenario.lanelet_network.add_intersection(intersection)
+            scenario.add_objects(intersection)
 
         for static_obstacle_msg in commonroad_msg.static_obstacles:
             static_obstacle = StaticObstacleFactory \
