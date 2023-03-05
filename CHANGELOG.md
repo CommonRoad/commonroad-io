@@ -1,6 +1,6 @@
 # Changelog
 
-## [2023.1] - 2023-XX-XX
+## [2023.1] - 2023-03-05
 
 ### Added
 - Support for shapely>=2.0.0
