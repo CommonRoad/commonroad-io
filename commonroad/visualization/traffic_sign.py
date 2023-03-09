@@ -269,7 +269,7 @@ def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], Traffi
         imageboxes = []
         for element in traffic_sign.traffic_sign_elements:
             el_id = element.traffic_sign_element_id
-            if show_traffic_signs is None or el_id.value not in show_traffic_signs:
+            if show_traffic_signs is not None and el_id.value not in show_traffic_signs:
                 continue
             show_label = show_label_default
             path = os.path.join(traffic_sign_path, el_id.__class__.__name__, el_id.value + '.png')
