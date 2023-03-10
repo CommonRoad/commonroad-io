@@ -1,0 +1,23 @@
+syntax = "proto2";
+
+package commonroad_scenario;
+
+import "util.proto";
+import "scenario_tags.proto";
+import "planning_problem.proto";
+
+message ScenarioInformation {
+    required string common_road_version = 1;
+    required string benchmark_id = 2;
+    required TimeStamp date = 3;
+    required string author = 4;
+    required string affiliation = 5;
+    required string source = 6;
+    required double time_step_size = 7;
+}
+
+message CommonRoad {
+    required ScenarioInformation information = 1;
+    required ScenarioTags scenario_tags = 2;
+    repeated PlanningProblem planning_problems = 12;
+}

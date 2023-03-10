@@ -1,0 +1,29 @@
+syntax = "proto2";
+
+package commonroad_map;
+
+import "util.proto";
+import "location.proto";
+import "lanelet.proto";
+import "traffic_sign.proto";
+import "traffic_light.proto";
+import "intersection.proto";
+
+message MapInformation {
+    required string common_road_version = 1;
+    required string map_id = 2;
+    required TimeStamp date = 3;
+    required string author = 4;
+    required string affiliation = 5;
+    required string source = 6;
+    required double time_step_size = 7;
+}
+
+message CommonRoadMap {
+    required MapInformation information = 1;
+    required Location location = 2;
+    repeated Lanelet lanelets = 3;
+    repeated TrafficSign traffic_signs = 4;
+    repeated TrafficLight traffic_lights = 5;
+    repeated Intersection intersections = 6;
+}

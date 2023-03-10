@@ -28,14 +28,9 @@ message ScenarioInformation {
 message CommonRoad {
     required ScenarioInformation information = 1;
     required ScenarioTags scenario_tags = 2;
-    required Location location = 3;
-    repeated Lanelet lanelets = 4;
-    repeated TrafficSign traffic_signs = 5;
-    repeated TrafficLight traffic_lights = 6;
-    repeated Intersection intersections = 7;
+    required Environment location = 3;
     repeated StaticObstacle static_obstacles = 8;
     repeated DynamicObstacle dynamic_obstacles = 9;
     repeated EnvironmentObstacle environment_obstacles = 10;
     repeated PhantomObstacle phantom_obstacles = 11;
-    repeated PlanningProblem planning_problems = 12;
 }

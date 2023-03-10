@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+__author__ = "Sebastian Maierhofer"
+__copyright__ = "TUM Cyber-Physical System Group"
+__credits__ = ["BMW Group CAR@TUM"]
+__version__ = "2021a"
+__maintainer__ = "Sebastian Maierhofer"
+__email__ = "commonroad@lists.lrz.de"
+__status__ = "released"
+
+""" XSD for CommonRoad benchmark scenarios """
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <!-- %%%%%%%%%%%%%%% auxiliary xsd elements %%%%%%%%%%%%%%% -->
+    <!-- distance in meter (positive decimals) -->
+    <xs:simpleType name="positiveDecimal">
+        <xs:restriction base="xs:decimal">
+            <xs:minExclusive value="0.0"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!-- decimal value: either exact or interval -->
+    <xs:complexType name="decimalExact">
+        <xs:all>
+            <xs:element name="exact" type="xs:decimal"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="decimalExactOrInterval">
+        <xs:choice>
+            <xs:element name="exact" type="xs:decimal"/>
+            <xs:sequence>
+                <xs:element name="intervalStart" type="xs:decimal"/>
+                <xs:element name="intervalEnd" type="xs:decimal"/>
+            </xs:sequence>
+        </xs:choice>
+    </xs:complexType>
+    <!-- integer value exact zero -->
+    <xs:complexType name="integerExactZero">
+        <xs:all>
+            <xs:element name="exact" type="integerZero"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:simpleType name="integerZero">
+        <xs:restriction base="xs:nonNegativeInteger">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="0"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!-- integer value greater than zero: either exact or interval -->
+    <xs:complexType name="integerExactOrIntervalGreaterZero">
+        <xs:choice>
+            <xs:element name="exact" type="xs:positiveInteger"/>
+            <xs:sequence>
+                <xs:element name="intervalStart" type="xs:nonNegativeInteger"/>
+                <xs:element name="intervalEnd" type="xs:positiveInteger"/>
+            </xs:sequence>
+        </xs:choice>
+    </xs:complexType>
+    <!-- %%%%%%%%%%%%%%% auxiliary CommonRoad elements %%%%%%%%%%%%%%% -->
+    <xs:complexType name="point">
+        <xs:sequence>
+            <xs:element name="x" type="xs:decimal"/>
+            <xs:element name="y" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="rectangle">
+        <xs:sequence>
+            <xs:element name="length" type="positiveDecimal"/>
+            <xs:element name="width" type="positiveDecimal"/>
+            <xs:element name="orientation" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="center" type="point" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="circle">
+        <xs:sequence>
+            <xs:element name="radius" type="positiveDecimal"/>
+            <xs:element name="center" type="point" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="polygon">
+        <xs:sequence>
+            <xs:element name="point" type="point" minOccurs="3" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="shape">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="rectangle" type="rectangle"/>
+            <xs:element name="circle" type="circle"/>
+            <xs:element name="polygon" type="polygon"/>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="position">
+        <xs:choice>
+            <xs:element name="point" type="point"/>
+            <xs:element name="rectangle" type="rectangle" maxOccurs="unbounded"/>
+            <xs:element name="circle" type="circle" maxOccurs="unbounded"/>
+            <xs:element name="polygon" type="polygon" maxOccurs="unbounded"/>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="positionExact">
+        <xs:all>
+            <xs:element name="point" type="point"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="state">
+        <xs:all>
+            <xs:element name="position" type="position"/>
+            <xs:element name="orientation" type="decimalExactOrInterval"/>
+            <xs:element name="time" type="integerExactOrIntervalGreaterZero"/>
+            <xs:element name="velocity" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="acceleration" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="yawRate" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="slipAngle" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="steeringAngle" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="rollAngle" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="rollRate" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="pitchAngle" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="pitchRate" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="velocityY" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="positionZ" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="velocityZ" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="rollAngleFront" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="rollRateFront" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="velocityYFront" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="positionZFront" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="velocityZFront" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="rollAngleRear" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="rollRateRear" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="velocityYRear" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="positionZRear" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="velocityZRear" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="leftFrontWheelAngularSpeed" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="rightFrontWheelAngularSpeed" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="leftRearWheelAngularSpeed" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="rightRearWheelAngularSpeed" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="deltaYFront" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="deltaYRear" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="curvature" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="curvatureChange" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="jerk" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="jounce" type="decimalExactOrInterval" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="initialState">
+        <xs:all>
+            <xs:element name="position" type="position"/>
+            <xs:element name="orientation" type="decimalExactOrInterval"/>
+            <xs:element name="time" type="integerExactZero"/>
+            <xs:element name="velocity" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="acceleration" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="yawRate" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="slipAngle" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="steeringAngle" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="rollAngle" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="rollRate" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="pitchAngle" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="pitchRate" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="velocityY" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="positionZ" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="velocityZ" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="rollAngleFront" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="rollRateFront" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="velocityYFront" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="positionZFront" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="velocityZFront" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="rollAngleRear" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="rollRateRear" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="velocityYRear" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="positionZRear" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="velocityZRear" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="leftFrontWheelAngularSpeed" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="rightFrontWheelAngularSpeed" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="leftRearWheelAngularSpeed" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="rightRearWheelAngularSpeed" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="deltaYFront" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="deltaYRear" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="curvature" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="curvatureChange" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="jerk" type="decimalExactOrInterval" minOccurs="0"/>
+            <xs:element name="jounce" type="decimalExactOrInterval" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="initialSignalState">
+        <xs:all>
+            <xs:element name="time" type="integerExactZero"/>
+            <xs:element name="horn" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="indicatorLeft" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="indicatorRight" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="brakingLights" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="hazardWarningLights" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="flashingBlueLights" type="xs:boolean" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="signalState">
+        <xs:all>
+            <xs:element name="time" type="integerExactOrIntervalGreaterZero"/>
+            <xs:element name="horn" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="indicatorLeft" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="indicatorRight" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="brakingLights" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="hazardWarningLights" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="flashingBlueLights" type="xs:boolean" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="initialStateExact">
+        <xs:all>
+            <xs:element name="position" type="positionExact"/>
+            <xs:element name="velocity" type="decimalExact"/>
+            <xs:element name="orientation" type="decimalExact"/>
+            <xs:element name="yawRate" type="decimalExact"/>
+            <xs:element name="slipAngle" type="decimalExact"/>
+            <xs:element name="time" type="integerExactZero"/>
+            <xs:element name="acceleration" type="decimalExact" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="occupancy">
+        <xs:sequence>
+            <xs:element name="shape" type="shape"/>
+            <xs:element name="time" type="integerExactOrIntervalGreaterZero"/>
+        </xs:sequence>
+    </xs:complexType>
+    <!-- %%%%%%%%%%%%%%% main CommonRoad elements %%%%%%%%%%%%%%% -->
+    <!-- obstacle -->
+    <xs:simpleType name="obstacleRole">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="static"/>
+            <xs:enumeration value="dynamic"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="obstacleTypeStatic">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="unknown"/>
+            <xs:enumeration value="parkedVehicle"/>
+            <xs:enumeration value="constructionZone"/>
+            <xs:enumeration value="roadBoundary"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="staticObstacle">
+        <xs:sequence>
+            <xs:element name="type" type="obstacleTypeStatic"/>
+            <xs:element name="shape" type="shape"/>
+            <xs:element name="initialState" type="initialState"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
+    </xs:complexType>
+    <xs:simpleType name="obstacleTypeDynamic">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="unknown"/>
+            <xs:enumeration value="car"/>
+            <xs:enumeration value="truck"/>
+            <xs:enumeration value="bus"/>
+            <xs:enumeration value="motorcycle"/>
+            <xs:enumeration value="bicycle"/>
+            <xs:enumeration value="pedestrian"/>
+            <xs:enumeration value="priorityVehicle"/>
+            <xs:enumeration value="train"/>
+            <xs:enumeration value="taxi"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="dynamicObstacle">
+        <xs:sequence>
+            <xs:element name="type" type="obstacleTypeDynamic"/>
+            <xs:element name="shape" type="shape"/>
+            <xs:element name="initialState" type="initialState"/>
+            <xs:element name="initialSignalState" type="initialSignalState" minOccurs="0"/>
+            <xs:choice>
+                <xs:element name="trajectory">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="state" type="state" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="occupancySet">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="occupancy" type="occupancy" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+            <xs:element name="signalSeries" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="signalState" type="signalState" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
+    </xs:complexType>
+    <!-- environmentObstacle -->
+    <xs:simpleType name="obstacleTypeEnvironment">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="unknown"/>
+            <xs:enumeration value="building"/>
+            <xs:enumeration value="pillar"/>
+            <xs:enumeration value="median_strip"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="environmentObstacle">
+        <xs:sequence>
+            <xs:element name="type" type="obstacleTypeEnvironment"/>
+            <xs:element name="shape" type="shape"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
+    </xs:complexType>
+    <!-- phantomObstacle -->
+    <xs:complexType name="phantomObstacle">
+        <xs:sequence>
+            <xs:element name="occupancySet">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="occupancy" type="occupancy" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
+    </xs:complexType>
+    <!-- %%%%%%%%%%%%%%% root CommonRoad element %%%%%%%%%%%%%%% -->
+    <xs:element name="commonRoad">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="staticObstacle" type="staticObstacle" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="dynamicObstacle" type="dynamicObstacle" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="phantomObstacle" type="phantomObstacle" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="environmentObstacle" type="environmentObstacle" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="commonRoadVersion" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="3.0"/> <!--3.0-->
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="benchmarkID" type="xs:string" use="required"/>
+            <xs:attribute name="date" type="xs:date" use="required"/>
+            <xs:attribute name="author" type="xs:string" use="required"/>
+            <xs:attribute name="affiliation" type="xs:string" use="required"/>
+            <xs:attribute name="source" type="xs:string" use="required"/>
+            <xs:attribute name="timeStepSize" type="xs:decimal" use="required"/>
+            <xs:attribute name="license" type="xs:string"/>
+            <xs:attribute name="sourceLink" type="xs:string"/>
+        </xs:complexType>
+        <xs:key name="id">
+            <xs:selector
+                    xpath=" ./staticObstacle | ./dynamicObstacle| ./phantomObstacle | ./environmentObstacle "/>
+            <xs:field xpath="@id"/>
+        </xs:key>
+        <xs:keyref name="idref" refer="id">
+            <xs:selector xpath=".//*"/>
+            <xs:field xpath="@ref"/>
+        </xs:keyref>
+    </xs:element>
+</xs:schema>
