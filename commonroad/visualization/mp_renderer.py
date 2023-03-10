@@ -979,8 +979,10 @@ class MPRenderer(IRenderer):
             # direction arrow
             if draw_start_and_direction:
                 center = lanelet.center_vertices[0]
-                tan_vec = np.array(lanelet.right_vertices[0]) - np.array(lanelet.left_vertices[0])
-                path = get_arrow_path_at(center[0], center[1], math.atan2(tan_vec[1], tan_vec[0]) + 0.5 * np.pi)
+                orientation = math.atan2(*(lanelet.center_vertices[1] - center)[::-1])
+                lanelet_width = np.linalg.norm(lanelet.right_vertices[0] - lanelet.left_vertices[0])
+                arrow_width = min(lanelet_width, 1.5)
+                path = get_arrow_path_at(*center, orientation, arrow_width)
                 if unique_colors:
                     direction_list.append(mpl.patches.PathPatch(path, color=center_bound_color, lw=0.5,
                                                                 zorder=ZOrders.DIRECTION_ARROW,

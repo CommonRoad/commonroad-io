@@ -1,6 +1,18 @@
 # Changelog
 
-## [2023.1] - 2023-XX-XX
+## [2023.2] - 2023-0X-XX
+
+### Added
+
+### Fixed
+
+- Visualization of all traffic signs by setting `show_traffic_signs = None` in draw parameters
+
+### Changed
+
+- Visualization of direction arrow of narrow lanelets
+
+## [2023.1] - 2023-03-05
 
 ### Added
 - Support for shapely>=2.0.0
