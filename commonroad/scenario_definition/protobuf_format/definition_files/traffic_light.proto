@@ -1,18 +1,8 @@
 syntax = "proto2";
 
-package commonroad;
+package commonroad_map;
 
 import "util.proto";
-
-message TrafficLightStateEnum {
-    enum TrafficLightState {
-        RED = 0;
-        RED_YELLOW = 1;
-        GREEN = 2;
-        YELLOW = 3;
-        INACTIVE = 4;
-    }
-}
 
 message TrafficLightDirectionEnum {
     enum TrafficLightDirection {
@@ -26,16 +16,8 @@ message TrafficLightDirectionEnum {
     }
 }
 
-message CycleElement {
-    required uint32 duration = 1;
-    required TrafficLightStateEnum.TrafficLightState color = 2;
-}
-
 message TrafficLight {
     required uint32 traffic_light_id = 1;
-    repeated CycleElement cycle_elements = 2;
     optional Point position = 3;
-    optional uint32 time_offset = 4;
     optional TrafficLightDirectionEnum.TrafficLightDirection direction = 5;
-    optional bool active = 6;
 }

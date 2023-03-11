@@ -1,0 +1,30 @@
+syntax = "proto2";
+
+package commonroad_map;
+
+import "util.proto";
+import "lanelet.proto";
+
+
+message AreaTypeEnum {
+    enum AreaType {
+        BUS_STOP = 9;
+        BORDER = 15;
+        PARKING = 16;
+        RESTRICTED = 17;
+        UNKNOWN = 18;
+    }
+}
+
+message AreaBorder {
+    required uint32 area_border_id = 1;
+    repeated Point points = 2;
+    optional uint32 adjacent = 3;
+    optional LineMarkingEnum.LineMarking line_marking = 4;
+}
+
+message Area {
+    required uint32 area_id = 1;
+    repeated AreaBorder border = 2;
+    repeated AreaTypeEnum.AreaType area_types = 3;
+}

@@ -28,9 +28,10 @@ message ScenarioInformation {
 message CommonRoad {
     required ScenarioInformation information = 1;
     required ScenarioTags scenario_tags = 2;
-    required Environment location = 3;
-    repeated StaticObstacle static_obstacles = 8;
-    repeated DynamicObstacle dynamic_obstacles = 9;
-    repeated EnvironmentObstacle environment_obstacles = 10;
-    repeated PhantomObstacle phantom_obstacles = 11;
+    required Environment environment = 3;
+    required TrafficLightCycle traffic_light_cycle = 3;
+    repeated StaticObstacle static_obstacles = 4;
+    repeated DynamicObstacle dynamic_obstacles = 5;
+    repeated EnvironmentObstacle environment_obstacles = 6;
+    repeated PhantomObstacle phantom_obstacles = 7;
 }
