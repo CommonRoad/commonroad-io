@@ -3,7 +3,7 @@ syntax = "proto2";
 package commonroad_dynamic;
 
 import "util.proto";
-import "traffic_sign.proto";
+import "traffic_sign_element.proto";
 
 message TrafficSignValue {
     required uint32  traffic_sign_id = 1;

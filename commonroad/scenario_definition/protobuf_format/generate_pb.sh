@@ -10,15 +10,13 @@ protoc \
 # generate dynamic
 protoc \
 --proto_path=./definition_files/ \
---proto_path=./definition_files/map/ \
 --proto_path=./definition_files/dynamic/ \
 --python_out=./generated_scripts/ \
 ./definition_files/dynamic/commonroad_dynamic.proto
 
-# generate scenario
+## generate scenario
 protoc \
 --proto_path=./definition_files/ \
 --proto_path=./definition_files/scenario/ \
---proto_path=./definition_files/dynamic/ \
 --python_out=./generated_scripts/ \
 ./definition_files/scenario/commonroad_scenario.proto
