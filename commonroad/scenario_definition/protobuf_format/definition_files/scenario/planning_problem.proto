@@ -1,8 +1,8 @@
 syntax = "proto2";
 
-package commonroad;
+package commonroad_scenario;
 
-import "obstacle.proto";
+import "state.proto";
 
 message GoalState {
     required State state = 1;

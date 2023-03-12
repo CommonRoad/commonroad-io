@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package commonroad_dynamic;
+
+import "util.proto";
+import "traffic_sign.proto";
+
+message TrafficSignValue {
+    required uint32  traffic_sign_id = 1;
+    repeated TrafficSignElement traffic_sign_elements = 2;
+}

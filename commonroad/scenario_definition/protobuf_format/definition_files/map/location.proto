@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-package commonroad;
+package commonroad_map;
 
 import "util.proto";
 
@@ -17,5 +17,4 @@ message Location {
     required double gps_latitude = 2;
     required double gps_longitude = 3;
     optional GeoTransformation geo_transformation = 4;
-    optional Environment environment = 5;
 }

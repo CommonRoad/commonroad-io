@@ -6,7 +6,7 @@ import "util.proto";
 import "scenario_tags.proto";
 import "planning_problem.proto";
 
-message ScenarioInformation {
+message ScenarioMetaInformation {
     required string common_road_version = 1;
     required string benchmark_id = 2;
     required TimeStamp date = 3;
@@ -17,7 +17,9 @@ message ScenarioInformation {
 }
 
 message CommonRoad {
-    required ScenarioInformation information = 1;
+    required ScenarioMetaInformation information = 1;
     required ScenarioTags scenario_tags = 2;
-    repeated PlanningProblem planning_problems = 12;
+    required string map_id = 3;
+    required string dynamic_id = 4;
+    repeated PlanningProblem planning_problems = 5;
 }

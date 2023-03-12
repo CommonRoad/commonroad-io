@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-package commonroad;
+package commonroad_dynamic;
 
 import "obstacle.proto";
 import "util.proto";
