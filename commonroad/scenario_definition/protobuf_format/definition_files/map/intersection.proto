@@ -9,10 +9,10 @@ message Incoming {
     repeated uint32 outgoing_straight = 4;
     repeated uint32 outgoing_left = 5;
     optional uint32 is_left_of = 6;
+    repeated uint32 crossing_lanelets = 7;
 }
 
 message Intersection {
     required uint32 intersection_id = 1;
     repeated Incoming incomings = 2;
-    repeated uint32 crossing_lanelets = 3;
 }
