@@ -9,11 +9,13 @@ import "planning_problem.proto";
 message ScenarioMetaInformation {
     required string common_road_version = 1;
     required string benchmark_id = 2;
-    required TimeStamp date = 3;
-    required string author = 4;
-    required string affiliation = 5;
-    required string source = 6;
-    required double time_step_size = 7;
+    required string license_name = 3;
+    optional string license_text = 4;
+    required TimeStamp date = 5;
+    required string author = 6;
+    required string affiliation = 7;
+    required string source = 8;
+    required double time_step_size = 9;
 }
 
 
