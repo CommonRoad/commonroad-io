@@ -7,20 +7,25 @@ import "util.proto";
 message TimeOfDayEnum {
     enum TimeOfDay {
         NIGHT = 0;
-        DAY = 1;
-        UNKNOWN = 2;
+        SUNSET = 1;
+        AFTERNOON = 2;
+        NOON = 3;
+        MORNING = 4;
+        UNKNOWN = 5;
     }
 }
 
 message WeatherEnum {
     enum Weather {
-        SUNNY = 0;
+        CLEAR = 0;
         LIGHT_RAIN = 1;
-        HEAVY_AIN = 2;
-        FOG = 3;
-        SNOW = 4;
-        HAIL = 5;
-        UNKNOWN = 6;
+        MID_RAIN = 2;
+        HEAVY_RAIN = 3;
+        FOG = 4;
+        SNOW = 5;
+        HAIL = 6;
+        CLOUDY = 7;
+        UNKNOWN = 8;
     }
 }
 
