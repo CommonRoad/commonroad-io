@@ -30,7 +30,7 @@ def is_integer_number(n: int) -> bool:
     """
     Checks if a provided variable is an integer number
     :param n: The number to check
-    :return: True if the provided variable is a integer number, False otherwise
+    :return: True if the provided variable is an integer number, False otherwise
     """
     return isinstance(n, ValidTypes.INT_NUMBERS)
 
@@ -111,7 +111,7 @@ def is_list_of_numbers(x: list, length=None):
     :param length: optional parameter which tests if the list is a list of specified length
     :return: True if the specified variable is a list of numbers
     """
-    return isinstance(x, list) and is_real_number_vector(npy.array(x), length)
+    return isinstance(x, ValidTypes.LISTS) and is_real_number_vector(npy.array(x), length)
 
 
 def is_list_of_integer_numbers(x: list, length=None):
@@ -210,8 +210,9 @@ def is_valid_orientation(theta: float) -> bool:
 
 def is_valid_polyline(polyline: npy.ndarray, length=None):
     """
-    Checks if a provided polyline is a valid polyline, i.e. it is a list of points (xi,yi)^T.
-    The list must have a shape of (2,n), resulting in [[x0,x1,...,xn],[y0,y1,...,yn]].
+    Checks if a provided polyline is a valid polyline, i.e. it is a list of points (xi,yi)^T or (xi,yi,zi)^T.
+    The list must have a shape of (n,2) or (n,3), resulting in [[x0, y0], [x1, y1], ...] or
+    [[x0, y0, z0], [x1, y1, z1], ...]
     By providing the optional parameter length, it is checked whether the provided has the desired length.
     :param polyline: The polyline to check
     :param length: The assumed length of the polyline
@@ -221,15 +222,17 @@ def is_valid_polyline(polyline: npy.ndarray, length=None):
         assert is_valid_length(length)
 
     return isinstance(polyline, ValidTypes.ARRAY) and len(polyline) >= 2 and all(
-            is_real_number_vector(elem, 2) for elem in polyline) and (
+            #  it is not possible (ValueError) to create a polyline (np.array) with different sized vectors,
+            #  so all the polyline points will either be 2d (without z-coordinate) or 3d (with z-coordinate)
+            is_real_number_vector(elem, 2) or is_real_number_vector(elem, 3) for elem in polyline) and (
                len(polyline) == length if length is not None else True)
 
 
-def is_valid_list_of_vertices(vertices: npy.ndarray, number_of_vertices=None):
+def is_valid_list_of_vertices(vertices: list, number_of_vertices=None):
     """
-    Checks if a provided list of vertices is a valid, i.e., it is a list of points (xi,yi). The list must
-    have a shape of (n, 2), resulting in [[x0, y0], [x1, y1], ...]. The number of vertices can be checked with the
-    provided parameter number_of_vertices.
+    Checks if a provided list of vertices is a valid, i.e., it is a list of points (xi,yi), or (xi,yi,zi). The list must
+    have a shape of (n, 2) or (n, 3), resulting in [[x0, y0], [x1, y1], ...] or [[x0, y0, z0], [x1, y1, z1], ...].
+    The number of vertices can be checked with the provided parameter number_of_vertices.
     :param vertices: list of vertices [[x0, y0], [x1, y1], ...]
     :param number_of_vertices: The assumed number of vertices
     :return: True if vertices is a valid list of vertices, False otherwise
@@ -238,15 +241,17 @@ def is_valid_list_of_vertices(vertices: npy.ndarray, number_of_vertices=None):
         assert is_valid_length(number_of_vertices)
 
     return isinstance(vertices, ValidTypes.LISTS) and len(vertices) >= 1 and all(
-            is_real_number_vector(elem, 2) for elem in vertices) and (
+            # it is possible to create a list with different sized elements, i.e. [[x1,y1],[x1,y1,z1]],
+            # there is no value error, as the lists are not np.arrays
+            is_list_of_numbers(elem, 2) or is_list_of_numbers(elem, 3) for elem in vertices) and (
                len(vertices) == number_of_vertices if number_of_vertices is not None else True)
 
 
 def is_valid_array_of_vertices(vertices: npy.ndarray, number_of_vertices=None):
     """
-    Checks if a provided array of vertices is a valid, i.e., it is a array of points (xi,yi). The array must
-    have a shape of (n, 2), resulting in [[x0, y0], [x1, y1], ...]. The number of vertices can be checked with the
-    provided parameter number_of_vertices.
+    Checks if a provided array of vertices is a valid, i.e., it is na array of points (xi,yi) or (xi,yi,zi).
+    The array must have a shape of (n, 2), resulting in [[x0, y0], [x1, y1], ...] or [[x0, y0, z0], [x1, y1, z1], ...].
+    The number of vertices can be checked with the provided parameter number_of_vertices.
     :param vertices: array of vertices [[x0, y0], [x1, y1], ...]
     :param number_of_vertices: The assumed number of vertices
     :return: True if vertices is a valid array of vertices, False otherwise
@@ -255,5 +260,7 @@ def is_valid_array_of_vertices(vertices: npy.ndarray, number_of_vertices=None):
         assert is_valid_length(number_of_vertices)
 
     return isinstance(vertices, ValidTypes.ARRAY) and len(vertices) >= 1 and all(
-            is_real_number_vector(elem, 2) for elem in vertices) and (
+            #  it is not possible (ValueError) to create am array (np.array) with different sized vectors,
+            #  so all the vectors will either be 2d (without z-coordinate) or 3d (with z-coordinate)
+            is_real_number_vector(elem, 2) or is_real_number_vector(elem, 3) for elem in vertices) and (
                len(vertices) == number_of_vertices if number_of_vertices is not None else True)
