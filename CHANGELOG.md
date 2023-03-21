@@ -7,6 +7,7 @@
 ### Fixed
 
 - Visualization of all traffic signs by setting `show_traffic_signs = None` in draw parameters
+- Validity functions to support z-axis
 
 ### Changed
 
