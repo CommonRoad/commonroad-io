@@ -2,7 +2,7 @@ syntax = "proto2";
 
 package commonroad_map;
 
-message Incoming {
+message IncomingGroup {
     required uint32 incoming_id = 1;
     repeated uint32 incoming_lanelets = 2;
     optional uint32 outgoing_id = 3;
@@ -12,13 +12,13 @@ message Incoming {
     repeated uint32 crossing_lanelets = 7;
 }
 
-message Outgoing {
+message OutgoingGroup {
     required uint32 outgoing_id = 1;
     repeated uint32 outgoing_lanelets = 2;
 }
 
 message Intersection {
     required uint32 intersection_id = 1;
-    repeated Incoming incomings = 2;
-    repeated Outgoing outgoings = 3;
+    repeated IncomingGroup incomings = 2;
+    repeated OutgoingGroup outgoings = 3;
 }
