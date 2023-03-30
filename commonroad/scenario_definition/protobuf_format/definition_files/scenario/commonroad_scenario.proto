@@ -22,7 +22,6 @@ message ScenarioMetaInformation {
 
 message CommonRoad {
     required ScenarioMetaInformation information = 1;
-    required ScenarioTags scenario_tags = 2;
     required string map_id = 3;
     required string dynamic_id = 4;
     repeated PlanningProblem planning_problems = 5;

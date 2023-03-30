@@ -14,6 +14,7 @@ message PlanningProblem {
     required State initial_state = 2;
     repeated GoalState goal_states = 3;
     optional uint32 ego_id = 4;
+    required ScenarioTags scenario_tags = 5;
 }
 
 message CooperativePlanningProblem {
