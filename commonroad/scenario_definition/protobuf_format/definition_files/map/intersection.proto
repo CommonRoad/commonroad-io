@@ -2,17 +2,23 @@ syntax = "proto2";
 
 package commonroad_map;
 
-message Incoming {
+message IncomingGroup {
     required uint32 incoming_id = 1;
     repeated uint32 incoming_lanelets = 2;
-    repeated uint32 outgoing_right = 3;
-    repeated uint32 outgoing_straight = 4;
-    repeated uint32 outgoing_left = 5;
-    optional uint32 is_left_of = 6;
+    optional uint32 outgoing_id = 3;
+    repeated uint32 outgoing_right = 4;
+    repeated uint32 outgoing_straight = 5;
+    repeated uint32 outgoing_left = 6;
     repeated uint32 crossing_lanelets = 7;
+}
+
+message OutgoingGroup {
+    required uint32 outgoing_id = 1;
+    repeated uint32 outgoing_lanelets = 2;
 }
 
 message Intersection {
     required uint32 intersection_id = 1;
-    repeated Incoming incomings = 2;
+    repeated IncomingGroup incomings = 2;
+    repeated OutgoingGroup outgoings = 3;
 }
