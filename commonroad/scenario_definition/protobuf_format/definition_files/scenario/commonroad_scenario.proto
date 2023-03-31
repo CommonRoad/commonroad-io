@@ -3,7 +3,6 @@ syntax = "proto2";
 package commonroad_scenario;
 
 import "util.proto";
-import "scenario_tags.proto";
 import "planning_problem.proto";
 
 message ScenarioMetaInformation {

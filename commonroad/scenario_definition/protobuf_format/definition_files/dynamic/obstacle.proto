@@ -25,6 +25,13 @@ message ObstacleTypeEnum {
     }
 }
 
+message MetaInformationState {
+    map<string, string> meta_data_str = 1;
+    map<string, int32> meta_data_int = 2;
+    map<string, float> meta_data_float = 3;
+    map<string, bool> meta_data_bool = 4;
+}
+
 message State {
     oneof position {
         Point point = 1;

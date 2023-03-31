@@ -3,6 +3,7 @@ syntax = "proto2";
 package commonroad_scenario;
 
 import "state.proto";
+import "scenario_tags.proto";
 
 message GoalState {
     required State state = 1;
