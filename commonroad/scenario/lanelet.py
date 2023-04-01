@@ -1266,8 +1266,8 @@ class LaneletNetwork(IDrawable):
         """
         Removes a lanelet from a lanelet network and deletes all references.
 
-        @param lanelet_id: ID of lanelet which should be removed.
-        @param rtree: Boolean indicating whether rtree should be initialized
+        :param lanelet_id: ID of lanelet which should be removed.
+        :param rtree: Boolean indicating whether rtree should be initialized
         """
         if lanelet_id in self._lanelets.keys():
             del self._lanelets[lanelet_id]
@@ -1306,7 +1306,7 @@ class LaneletNetwork(IDrawable):
         """
         Removes a traffic sign from a lanelet network and deletes all references.
 
-        @param traffic_sign_id: ID of traffic sign which should be removed.
+        :param traffic_sign_id: ID of traffic sign which should be removed.
         """
         if traffic_sign_id in self._traffic_signs.keys():
             del self._traffic_signs[traffic_sign_id]
@@ -1326,7 +1326,7 @@ class LaneletNetwork(IDrawable):
         """
         Removes a traffic light from a lanelet network and deletes all references.
 
-        @param traffic_light_id: ID of traffic sign which should be removed.
+        :param traffic_light_id: ID of traffic sign which should be removed.
         """
         if traffic_light_id in self._traffic_lights.keys():
             del self._traffic_lights[traffic_light_id]
@@ -1346,7 +1346,7 @@ class LaneletNetwork(IDrawable):
         """
         Removes a intersection from a lanelet network and deletes all references.
 
-        @param intersection_id: ID of intersection which should be removed.
+        :param intersection_id: ID of intersection which should be removed.
         """
         if intersection_id in self._intersections.keys():
             del self._intersections[intersection_id]
