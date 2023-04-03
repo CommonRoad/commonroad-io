@@ -17,7 +17,8 @@ from commonroad.scenario_definition.protobuf_format.generated_scripts import lan
     traffic_sign_pb2, scenario_tags_pb2, environment_obstacle_pb2, obstacle_pb2, intersection_pb2, \
     dynamic_obstacle_pb2, static_obstacle_pb2, traffic_light_pb2, location_pb2
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
-from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine
+from commonroad.scenario.lanelet import Lanelet
+from commonroad.common.common_lanelet import StopLine, LineMarking
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, SignalState, \
     PhantomObstacle
 from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment, Time

@@ -6,7 +6,8 @@ from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.common.file_writer import FileFormat
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
 from commonroad.prediction.prediction import *
-from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType, RoadUser, StopLine
+from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
+from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, LaneletType
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Underground, Weather, TimeOfDay, \
     ScenarioID
