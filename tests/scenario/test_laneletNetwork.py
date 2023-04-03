@@ -1,13 +1,15 @@
 import copy
 import unittest
 import numpy as np
-from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork, StopLine, LaneletType
+from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork
+from commonroad.common.common_lanelet import StopLine, LaneletType
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.geometry.shape import Rectangle
 from commonroad.scenario.state import InitialState
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany, TrafficLight, \
     TrafficLightCycleElement, TrafficLightState
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
+from commonroad.scenario.area import Area
 
 
 class TestLaneletNetwork(unittest.TestCase):
@@ -32,6 +34,7 @@ class TestLaneletNetwork(unittest.TestCase):
                  TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
                  TrafficLightCycleElement(TrafficLightState.RED, 2)]
         self.traffic_light = TrafficLight(567, cycle, position=np.array([10., 10.]))
+        self.adjacent_area = Area(1)
         self.stop_line = StopLine(self.left_vertices[-1], self.right_vertices[-1], LineMarking.SOLID,
                                   {self.traffic_sign.traffic_sign_id}, {self.traffic_light.traffic_light_id})
 
@@ -43,7 +46,8 @@ class TestLaneletNetwork(unittest.TestCase):
                                self.predecessor, self.successor, self.adjacent_left, self.adjacent_left_same_dir,
                                self.adjacent_right, self.adjacent_right_same_dir, self.line_marking_left,
                                self.line_marking_right, traffic_signs={self.traffic_sign.traffic_sign_id},
-                               traffic_lights={self.traffic_light.traffic_light_id}, stop_line=self.stop_line)
+                               traffic_lights={self.traffic_light.traffic_light_id},
+                               adjacent_areas={self.adjacent_area.area_id}, stop_line=self.stop_line)
 
         self.lanelet_2 = Lanelet(np.array([[8, 1], [9, 1]]), np.array([[8, .5], [9, .5]]), np.array([[8, 0], [9, 0]]),
                                  6, [self.lanelet.lanelet_id], [678], 910, True, 750, False, LineMarking.UNKNOWN,
@@ -54,6 +58,7 @@ class TestLaneletNetwork(unittest.TestCase):
         self.lanelet_network.add_lanelet(self.lanelet_2)
         self.lanelet_network.add_traffic_sign(self.traffic_sign, set())
         self.lanelet_network.add_traffic_light(self.traffic_light, set())
+        self.lanelet_network.add_area(self.adjacent_area, set())
         self.lanelet_network.add_intersection(self.intersection)
 
         self.diagonal_lanelet_network = LaneletNetwork()
@@ -214,6 +219,13 @@ class TestLaneletNetwork(unittest.TestCase):
 
         self.assertEqual(self.lanelet_network.traffic_lights[1].traffic_light_id, traffic_light.traffic_light_id)
         self.assertSetEqual(self.lanelet_network.lanelets[0].traffic_lights, {234, 567})
+
+    def test_add_area(self):
+        area = Area(2)
+        self.assertTrue(self.lanelet_network.add_area(area, {5}))
+
+        self.assertEqual(self.lanelet_network.areas[1].area_id, area.area_id)
+        self.assertSetEqual(self.lanelet_network.lanelets[0].adjacent_areas, {1, 2})
 
     def test_add_lanelets_from_network(self):
 

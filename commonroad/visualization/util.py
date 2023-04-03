@@ -11,7 +11,8 @@ import math
 
 from commonroad.geometry.shape import Rectangle
 from commonroad.geometry.transform import rotate_translate
-from commonroad.scenario.lanelet import LaneletNetwork, LineMarking
+from commonroad.scenario.lanelet import LaneletNetwork
+from commonroad.common.common_lanelet import LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.traffic_sign import TrafficLightState, \

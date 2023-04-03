@@ -2,12 +2,14 @@ import copy
 import unittest
 import numpy as np
 
-from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork, StopLine
+from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork
+from commonroad.common.common_lanelet import StopLine
 from commonroad.geometry.shape import Polygon, Rectangle
 from commonroad.prediction.prediction import Trajectory, TrajectoryPrediction
 from commonroad.scenario.obstacle import DynamicObstacle, ObstacleType
 from commonroad.scenario.state import STState
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany
+from commonroad.scenario.area import Area
 
 
 class TestLanelet(unittest.TestCase):
@@ -27,10 +29,11 @@ class TestLanelet(unittest.TestCase):
         stop_line = StopLine(start=np.array([0, 0]), end=np.array([0, 1]), line_marking=LineMarking.SOLID)
         traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, ["15"])
         traffic_sign = TrafficSign(1, [traffic_sign_max_speed], {5}, np.array([0.0, 0.0]))
+        area = Area(1)
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id, predecessor, successor,
                           adjacent_left, adjacent_left_same_dir, adjacent_right, adjacent_right_same_dir,
                           line_marking_left, line_marking_right, stop_line, None, None, None,
-                          {traffic_sign.traffic_sign_id})
+                          {traffic_sign.traffic_sign_id}, None, {area.area_id})
 
         s1 = np.sqrt(1.25)
         s2 = np.sqrt(2.0)
@@ -55,6 +58,7 @@ class TestLanelet(unittest.TestCase):
         self.assertEqual(lanelet.line_marking_right_vertices, line_marking_right)
         self.assertSetEqual(lanelet.traffic_signs, {traffic_sign.traffic_sign_id})
         self.assertEqual(lanelet.stop_line, stop_line)
+        self.assertEqual(lanelet.adjacent_areas, {area.area_id})
 
     def test_translate_rotate(self):
         right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])

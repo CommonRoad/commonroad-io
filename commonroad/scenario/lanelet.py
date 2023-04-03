@@ -15,9 +15,11 @@ from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.obstacle import Obstacle
 from commonroad.scenario.state import TraceState
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
+from commonroad.scenario.area import Area
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.renderer import IRenderer
 from commonroad.visualization.draw_params import OptionalSpecificOrAllDrawParams, LaneletNetworkParams
+from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, LaneletType
 
 
 __author__ = "Christian Pek, Sebastian Maierhofer"
@@ -27,171 +29,6 @@ __version__ = "2022.1"
 __maintainer__ = "Sebastian Maierhofer"
 __email__ = "commonroad@lists.lrz.de"
 __status__ = "released"
-
-
-class LineMarking(enum.Enum):
-    """
-    Enum describing different types of line markings, i.e. dashed or solid lines
-    """
-    DASHED = 'dashed'
-    SOLID = 'solid'
-    BROAD_DASHED = 'broad_dashed'
-    BROAD_SOLID = 'broad_solid'
-    UNKNOWN = 'unknown'
-    NO_MARKING = 'no_marking'
-
-
-class LaneletType(enum.Enum):
-    """
-    Enum describing different types of lanelets
-    """
-    URBAN = 'urban'
-    COUNTRY = 'country'
-    HIGHWAY = 'highway'
-    DRIVE_WAY = 'driveWay'
-    MAIN_CARRIAGE_WAY = 'mainCarriageWay'
-    ACCESS_RAMP = 'accessRamp'
-    EXIT_RAMP = 'exitRamp'
-    SHOULDER = 'shoulder'
-    BUS_LANE = 'busLane'
-    BUS_STOP = 'busStop'
-    BICYCLE_LANE = 'bicycleLane'
-    SIDEWALK = 'sidewalk'
-    CROSSWALK = 'crosswalk'
-    INTERSTATE = 'interstate'
-    INTERSECTION = 'intersection'
-    BORDER = 'border'
-    PARKING = 'parking'
-    RESTRICTED = 'restricted'  # cars not allowed, e.g., special lanes for busses
-    UNKNOWN = 'unknown'
-
-
-class RoadUser(enum.Enum):
-    """
-    Enum describing different types of road users
-    """
-    VEHICLE = 'vehicle'
-    CAR = 'car'
-    TRUCK = 'truck'
-    BUS = 'bus'
-    PRIORITY_VEHICLE = 'priorityVehicle'
-    MOTORCYCLE = 'motorcycle'
-    BICYCLE = 'bicycle'
-    PEDESTRIAN = 'pedestrian'
-    TRAIN = 'train'
-    TAXI = 'taxi'
-
-
-class StopLine:
-    """Class which describes the stop line of a lanelet"""
-
-    def __init__(self, start: np.ndarray, end: np.ndarray, line_marking: LineMarking, traffic_sign_ref: Set[int] = None,
-                 traffic_light_ref: Set[int] = None):
-        self._start = start
-        self._end = end
-        self._line_marking = line_marking
-        self._traffic_sign_ref = traffic_sign_ref
-        self._traffic_light_ref = traffic_light_ref
-
-    def __eq__(self, other):
-        if not isinstance(other, StopLine):
-            warnings.warn(f"Inequality between StopLine {repr(self)} and different type {type(other)}")
-            return False
-
-        prec = 10
-        start_string = np.array2string(np.around(self._start.astype(float), prec), precision=prec)
-        start_other_string = np.array2string(np.around(other.start.astype(float), prec), precision=prec)
-        end_string = np.array2string(np.around(self._end.astype(float), prec), precision=prec)
-        end_other_string = np.array2string(np.around(other.end.astype(float), prec), precision=prec)
-
-        if start_string == start_other_string and end_string == end_other_string and self._line_marking == \
-                other.line_marking and self._traffic_sign_ref == other.traffic_sign_ref and self._traffic_light_ref \
-                == other.traffic_light_ref:
-            return True
-
-        warnings.warn(f"Inequality of StopLine {repr(self)} and the other one {repr(other)}")
-        return False
-
-    def __hash__(self):
-        if self._start is None:
-            start_string = None
-        else:
-            start_string = np.array2string(np.around(self._start.astype(float), 10), precision=10)
-        if self._end is None:
-            end_string = None
-        else:
-            end_string = np.array2string(np.around(self._end.astype(float), 10), precision=10)
-        sign_ref = None if self._traffic_sign_ref is None else frozenset(self._traffic_sign_ref)
-        light_ref = None if self._traffic_light_ref is None else frozenset(self._traffic_light_ref)
-        return hash((start_string, end_string, self._line_marking, sign_ref, light_ref))
-
-    def __str__(self):
-        return f'StopLine from {self._start} to {self._end}'
-
-    def __repr__(self):
-        return f"StopLine(start={self._start.tolist()}, end={self._end.tolist()}, line_marking={self._line_marking}, " \
-               f"traffic_sign_ref={self._traffic_sign_ref}, traffic_light_ref={self._traffic_light_ref})"
-
-    @property
-    def start(self) -> np.ndarray:
-        return self._start
-
-    @start.setter
-    def start(self, value: np.ndarray):
-        self._start = value
-
-    @property
-    def end(self) -> np.ndarray:
-        return self._end
-
-    @end.setter
-    def end(self, value: np.ndarray):
-        self._end = value
-
-    @property
-    def line_marking(self) -> LineMarking:
-        return self._line_marking
-
-    @line_marking.setter
-    def line_marking(self, marking: LineMarking):
-        self._line_marking = marking
-
-    @property
-    def traffic_sign_ref(self) -> Set[int]:
-        return self._traffic_sign_ref
-
-    @traffic_sign_ref.setter
-    def traffic_sign_ref(self, references: Set[int]):
-        self._traffic_sign_ref = references
-
-    @property
-    def traffic_light_ref(self) -> Set[int]:
-        return self._traffic_light_ref
-
-    @traffic_light_ref.setter
-    def traffic_light_ref(self, references: Set[int]):
-        self._traffic_light_ref = references
-
-    def translate_rotate(self, translation: np.ndarray, angle: float):
-        """
-        This method translates and rotates a stop line
-
-        :param translation: The translation given as [x_off,y_off] for the x and y translation
-        :param angle: The rotation angle in radian (counter-clockwise defined)
-        """
-
-        assert is_real_number_vector(translation, 2), '<Lanelet/translate_rotate>: provided translation ' \
-                                                      'is not valid! translation = {}'.format(translation)
-        assert is_valid_orientation(
-                angle), '<Lanelet/translate_rotate>: provided angle is not valid! angle = {}'.format(angle)
-
-        # create transformation matrix
-        t_m = commonroad.geometry.transform.translation_rotation_matrix(translation, angle)
-        line_vertices = np.array([self._start, self._end])
-        # transform center vertices
-        tmp = t_m.dot(np.vstack((line_vertices.transpose(), np.ones((1, line_vertices.shape[0])))))
-        tmp = tmp[0:2, :].transpose()
-        self._start, self._end = tmp[0], tmp[1]
 
 
 class Lanelet:
@@ -206,7 +43,7 @@ class Lanelet:
                  adjacent_left_same_direction=None, adjacent_right=None, adjacent_right_same_direction=None,
                  line_marking_left_vertices=LineMarking.NO_MARKING, line_marking_right_vertices=LineMarking.NO_MARKING,
                  stop_line=None, lanelet_type=None, user_one_way=None, user_bidirectional=None, traffic_signs=None,
-                 traffic_lights=None, ):
+                 traffic_lights=None, adjacent_areas=None):
         """
         Constructor of a Lanelet object
         :param left_vertices: The vertices of the left boundary of the Lanelet described as a
@@ -232,6 +69,7 @@ class Lanelet:
         :param user_bidirectional: type of users that will use the lanelet as bidirectional way
         :param traffic_signs: Traffic signs to be applied
         :param traffic_lights: Traffic lights to follow
+        :param adjacent_areas: Areas that are adjacent to the lanelet
         """
 
         # Set required properties
@@ -320,6 +158,12 @@ class Lanelet:
         else:
             self.traffic_lights = traffic_lights
 
+        self._adjacent_areas = None
+        if adjacent_areas is None:
+            self._adjacent_areas = set()
+        else:
+            self.adjacent_areas = adjacent_areas
+
     def __eq__(self, other):
         if not isinstance(other, Lanelet):
             warnings.warn(f"Inequality between Lanelet {repr(self)} and different type {type(other)}")
@@ -346,7 +190,8 @@ class Lanelet:
                 self._adj_left_same_direction == other.adj_left_same_direction and self._adj_right_same_direction == \
                 other.adj_right_same_direction and self._lanelet_type == other.lanelet_type and self._user_one_way ==\
                 self.user_one_way and self._user_bidirectional == other.user_bidirectional and self._traffic_signs ==\
-                other.traffic_signs and self._traffic_lights == other.traffic_lights:
+                other.traffic_signs and self._traffic_lights == other.traffic_lights and self._adjacent_areas == \
+                other.adjacent_areas:
             return list_elements_eq
 
         warnings.warn(f"Inequality of Lanelet {repr(self)} and the other one {repr(other)}")
@@ -360,7 +205,7 @@ class Lanelet:
             polyline_strings.append(polyline_string)
 
         elements = [self._predecessor, self._successor, self._lanelet_type, self._user_one_way,
-                    self._user_bidirectional, self._traffic_signs, self._traffic_lights]
+                    self._user_bidirectional, self._traffic_signs, self._traffic_lights, self._adjacent_areas]
         frozen_elements = [frozenset(e) for e in elements]
 
         return hash((self._lanelet_id, tuple(polyline_strings), self._line_marking_left_vertices,
@@ -385,7 +230,8 @@ class Lanelet:
                f"stop_line={repr(self._stop_line)}, lanelet_type={self._lanelet_type}, " \
                f"user_one_way={self._user_one_way}, " \
                f"user_bidirectional={self._user_bidirectional}, traffic_signs={self._traffic_signs}, " \
-               f"traffic_lights={self._traffic_lights}"
+               f"traffic_lights={self._traffic_lights}, "\
+               f"adjacent_areas={self._adjacent_areas}"
 
     @property
     def distance(self) -> np.ndarray:
@@ -632,6 +478,16 @@ class Lanelet:
         assert isinstance(traffic_light_ids, set), '<Lanelet/traffic_lights>: provided list of ids is not a ' \
                                                    'set! type = {}'.format(type(traffic_light_ids))
         self._traffic_lights = traffic_light_ids
+
+    @property
+    def adjacent_areas(self) -> Set[int]:
+        return self._adjacent_areas
+
+    @adjacent_areas.setter
+    def adjacent_areas(self, value: Set[int]):
+        assert isinstance(value, set), '<Lanelet/adjacent_areas>: provided list of ids is not a ' \
+                                                   'set! type = {}'.format(type(value))
+        self._adjacent_areas = value
 
     @property
     def polygon(self) -> Polygon:
@@ -988,6 +844,14 @@ class Lanelet:
         """
         self.traffic_lights.add(traffic_light_id)
 
+    def add_adjacent_area_to_lanelet(self, area_id: int):
+        """
+        Adds an area ID to lanelet
+
+        :param area_id: adjacent area ID to add
+        """
+        self.adjacent_areas.add(area_id)
+
     def dynamic_obstacle_by_time_step(self, time_step) -> Set[int]:
         """
         Returns all dynamic obstacles on lanelet at specific time step
@@ -1058,6 +922,7 @@ class LaneletNetwork(IDrawable):
         self._intersections: Dict[int, Intersection] = {}
         self._traffic_signs: Dict[int, TrafficSign] = {}
         self._traffic_lights: Dict[int, TrafficLight] = {}
+        self._areas: Dict[int, Area] = {}
 
     # pickling of STRtree is not supported by shapely at the moment
     # use this workaround described in this issue:
@@ -1094,8 +959,10 @@ class LaneletNetwork(IDrawable):
 
         list_elements_eq = True
         lanelet_network_eq = True
-        elements = [self._lanelets, self._intersections, self._traffic_signs, self._traffic_lights]
-        elements_other = [other._lanelets, other._intersections, other._traffic_signs, other._traffic_lights]
+        elements = [self._lanelets, self._intersections, self._traffic_signs, self._traffic_lights,
+                    self._areas]
+        elements_other = [other._lanelets, other._intersections, other._traffic_signs, other._traffic_lights,
+                          other._areas]
         for i in range(0, len(elements)):
             e = elements[i]
             e_other = elements_other[i]
@@ -1114,16 +981,20 @@ class LaneletNetwork(IDrawable):
 
     def __hash__(self):
         return hash((frozenset(self._lanelets.items()), frozenset(self._intersections.items()),
-                     frozenset(self._traffic_signs.items()), frozenset(self._traffic_lights.items())))
+                     frozenset(self._traffic_signs.items()), frozenset(self._traffic_lights.items()),
+                     frozenset(self._areas.items())))
 
     def __str__(self):
         return f"LaneletNetwork consists of lanelets {set(self._lanelets.keys())}, " \
                f"intersections {set(self._intersections.keys())}, " \
-               f"traffic signs {set(self._traffic_signs.keys())}, and traffic lights {set(self._traffic_lights.keys())}"
+               f"traffic signs {set(self._traffic_signs.keys())}," \
+               f"traffic lights {set(self._traffic_lights.keys())}" \
+               f"and adjacent areas {set(self._areas.keys())}"
 
     def __repr__(self):
         return f"LaneletNetwork(lanelets={repr(self._lanelets)}, intersections={repr(self._intersections)}, " \
-               f"traffic_signs={repr(self._traffic_signs)}, traffic_lights={repr(self._traffic_lights)})"
+               f"traffic_signs={repr(self._traffic_signs)}, traffic_lights={repr(self._traffic_lights)})," \
+               f"areas={repr(self._areas)}"
 
     def _get_lanelet_id_by_shapely_polygon(self, polygon: ShapelyPolygon) -> int:
         return self._lanelet_id_index_by_id[id(polygon)]
@@ -1147,6 +1018,10 @@ class LaneletNetwork(IDrawable):
     @property
     def traffic_lights(self) -> List[TrafficLight]:
         return list(self._traffic_lights.values())
+
+    @property
+    def areas(self) -> List[Area]:
+        return list(self._areas.values())
 
     @property
     def map_inc_lanelets_to_intersections(self) -> Dict[int, Intersection]:
@@ -1202,6 +1077,7 @@ class LaneletNetwork(IDrawable):
         new_lanelet_network = cls()
         traffic_sign_ids = set()
         traffic_light_ids = set()
+        area_ids = set()
         lanelets = set()
 
         if shape_input is not None:
@@ -1213,6 +1089,8 @@ class LaneletNetwork(IDrawable):
                             traffic_sign_ids.add(sign_id)
                         for light_id in la.traffic_lights:
                             traffic_light_ids.add(light_id)
+                        for area_id in la.adjacent_areas:
+                            area_ids.add(area_id)
                         lanelets.add(la)
 
         else:
@@ -1223,12 +1101,17 @@ class LaneletNetwork(IDrawable):
                     traffic_sign_ids.add(sign_id)
                 for light_id in la.traffic_lights:
                     traffic_light_ids.add(light_id)
+                for area_id in la.adjacent_areas:
+                    area_ids.add(area_id)
 
         for sign_id in traffic_sign_ids:
             new_lanelet_network.add_traffic_sign(copy.deepcopy(lanelet_network.find_traffic_sign_by_id(sign_id)), set())
         for light_id in traffic_light_ids:
             new_lanelet_network.add_traffic_light(copy.deepcopy(lanelet_network.find_traffic_light_by_id(light_id)),
                                                   set())
+        for area_id in area_ids:
+            new_lanelet_network.add_area(copy.deepcopy(lanelet_network.find_area_by_id(area_id)),
+                                         set())
         for la in lanelets:
             new_lanelet_network.add_lanelet(copy.deepcopy(la), rtree=False)
         new_lanelet_network._create_strtree()
@@ -1342,9 +1225,18 @@ class LaneletNetwork(IDrawable):
             if la.stop_line is not None and la.stop_line.traffic_light_ref is not None:
                 la.stop_line._traffic_light_ref = la.stop_line.traffic_light_ref.intersection(existing_ids)
 
+    def remove_area(self, area_id: int):
+        """
+        Removes an area from a lanelet network and deletes all references.
+
+        @param area_id: ID of area which should be removed.
+        """
+        if area_id in self._areas.keys():
+            del self._areas[area_id]
+
     def remove_intersection(self, intersection_id: int):
         """
-        Removes a intersection from a lanelet network and deletes all references.
+        Removes an intersection from a lanelet network and deletes all references.
 
         :param intersection_id: ID of intersection which should be removed.
         """
@@ -1388,6 +1280,19 @@ class LaneletNetwork(IDrawable):
                                    'id = {}'.format(traffic_light_id)
 
         return self._traffic_lights[traffic_light_id] if traffic_light_id in self._traffic_lights else None
+
+    def find_area_by_id(self, area_id: int) -> Area:
+        """
+        Finds an area for a given area id
+
+        :param area_id: The id of the area to find
+        :return: The area object if the id exists and None otherwise
+        """
+        assert is_natural_number(
+                area_id), '<LaneletNetwork/find_area_by_id>: provided id is not valid! ' \
+                          'id = {}'.format(area_id)
+
+        return self._areas[area_id] if area_id in self._areas else None
 
     def find_intersection_by_id(self, intersection_id: int) -> Intersection:
         """
@@ -1476,6 +1381,33 @@ class LaneletNetwork(IDrawable):
                     lanelet.add_traffic_light_to_lanelet(traffic_light.traffic_light_id)
                 else:
                     warnings.warn('Traffic light cannot be referenced to lanelet because the lanelet does not exist.')
+            return True
+
+    def add_area(self, area: Area, lanelet_ids: Set[int]):
+        """
+        Adds an area to the LaneletNetwork
+
+        :param area: The area to add
+        :param lanelet_ids: Lanelets the area should be referenced from
+        :return: True if the area has successfully been added to the network, false otherwise
+        """
+
+        assert isinstance(area, Area), '<LaneletNetwork/add_area>: provided area ' \
+                                       'is not of type area! ' \
+                                       'type = {}'.format(type(area))
+
+        # check if adjacent area already exists in network and warn user
+        if area.area_id in self._areas.keys():
+            warnings.warn('Area already exists in network! No changes are made.')
+            return False
+        else:
+            self._areas[area.area_id] = area
+            for lanelet_id in lanelet_ids:
+                lanelet = self.find_lanelet_by_id(lanelet_id)
+                if lanelet is not None:
+                    lanelet.add_adjacent_area_to_lanelet(area.area_id)
+                else:
+                    warnings.warn('Area cannot be referenced to lanelet because the lanelet does not exist.')
             return True
 
     def add_intersection(self, intersection: Intersection):

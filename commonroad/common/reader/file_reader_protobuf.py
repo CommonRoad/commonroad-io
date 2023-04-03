@@ -12,7 +12,8 @@ from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction, SetBasedPrediction
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
-from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, StopLine, LineMarking, LaneletType, RoadUser
+from commonroad.scenario.lanelet import LaneletNetwork, Lanelet
+from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, LaneletType
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, PhantomObstacle, \
     SignalState, ObstacleType
 from commonroad.scenario.scenario import Scenario, ScenarioID, Tag, GeoTransformation, Location, Environment, \
