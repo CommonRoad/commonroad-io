@@ -4,6 +4,7 @@
 
 ### Added
 - Area for modelling drivable areas which cannot be represented by lanelets
+- New weather and time of day options
 
 ### Fixed
 
@@ -16,6 +17,7 @@
 - Traffic light cycle optional
 
 ### Removed
+
 - function get_default_cycle for traffic lights
 
 ## [2023.1] - 2023-03-05
