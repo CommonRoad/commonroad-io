@@ -735,7 +735,7 @@ class TrafficSign(IDrawable):
         :param first_occurrence: lanelet ID where traffic sign first appears
         :param position: position of traffic sign
         :param virtual: boolean indicating if this traffic sign is also
-        placed there in the real environment or it
+        placed there in the real environment, or it
         is added for other reasons (e.g., completeness of scenario)
         """
         self._traffic_sign_id = traffic_sign_id
@@ -906,7 +906,7 @@ class TrafficLightCycleElement:
 class TrafficLight(IDrawable):
     """ Class to represent a traffic light"""
 
-    def __init__(self, traffic_light_id: int, cycle: List[TrafficLightCycleElement], position: np.ndarray = None,
+    def __init__(self, traffic_light_id: int, cycle: List[TrafficLightCycleElement] = None, position: np.ndarray = None,
                  time_offset: int = 0, direction: TrafficLightDirection = TrafficLightDirection.ALL,
                  active: bool = True):
         """
@@ -918,8 +918,8 @@ class TrafficLight(IDrawable):
         :param active: boolean indicating if traffic light is currently active
         """
         self._traffic_light_id = traffic_light_id
-        if len(cycle) == 0:
-            self._cycle = get_default_cycle()
+        if cycle is None:
+            self._cycle = []
         else:
             self._cycle = cycle
         self._time_offset = time_offset
@@ -969,11 +969,11 @@ class TrafficLight(IDrawable):
         self._traffic_light_id = traffic_light_id
 
     @property
-    def cycle(self) -> List[TrafficLightCycleElement]:
+    def cycle(self) -> Union[None, List[TrafficLightCycleElement]]:
         return self._cycle
 
     @cycle.setter
-    def cycle(self, cycle: List[TrafficLightCycleElement]):
+    def cycle(self, cycle: Union[None, List[TrafficLightCycleElement]]):
         self._cycle = cycle
 
     def get_state_at_time_step(self, time_step: int) -> TrafficLightState:
@@ -1047,15 +1047,3 @@ class TrafficLight(IDrawable):
 
     def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[TrafficLightParams] = None):
         renderer.draw_traffic_light_sign(self, draw_params)
-
-
-def get_default_cycle():
-    """
-    Defines default traffic light cycle in case no cycle is provided
-
-    _:returns traffic light cycle element
-    """
-    cycle = [(TrafficLightState.RED, 60), (TrafficLightState.RED_YELLOW, 10), (TrafficLightState.GREEN, 60),
-             (TrafficLightState.YELLOW, 10)]
-    cycle_element_list = [TrafficLightCycleElement(state[0], state[1]) for state in cycle]
-    return cycle_element_list
