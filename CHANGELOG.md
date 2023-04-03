@@ -13,6 +13,10 @@
 ### Changed
 
 - Visualization of direction arrow of narrow lanelets
+- Traffic light cycle optional
+
+### Removed
+- function get_default_cycle for traffic lights
 
 ## [2023.1] - 2023-03-05
 
