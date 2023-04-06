@@ -21,6 +21,7 @@ from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Locat
     Weather, Underground, ScenarioID
 from commonroad.scenario.state import InitialState, TraceState, CustomState, SpecificStateClasses
 from commonroad.scenario.traffic_sign import *
+from commonroad.scenario.traffic_light import *
 from commonroad.scenario.trajectory import Trajectory
 
 logger = logging.getLogger(__name__)

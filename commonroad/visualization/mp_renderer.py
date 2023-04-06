@@ -31,7 +31,9 @@ from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, Signal
     EnvironmentObstacle, Obstacle
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.state import TraceState
-from commonroad.scenario.traffic_sign import TrafficLightState, TrafficLight, TrafficSign
+from commonroad.scenario.traffic_sign import TrafficSign
+from commonroad.scenario.traffic_light import TrafficLight
+from commonroad.scenario.traffic_light import TrafficLightState
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.visualization.draw_params import *
 from commonroad.visualization.icons import supported_icons, get_obstacle_icon_patch

@@ -15,6 +15,7 @@
 
 - Visualization of direction arrow of narrow lanelets
 - Traffic light cycle optional
+- Traffic light in separate python file
 
 ### Removed
 

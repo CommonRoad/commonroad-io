@@ -20,7 +20,8 @@ from commonroad.scenario.obstacle import Obstacle, DynamicObstacle, StaticObstac
     PhantomObstacle, ObstacleRole, ObstacleType, SignalState
 from commonroad.scenario.scenario import Location, GeoTransformation, Environment, TimeOfDay, Weather, Underground, \
     Tag, Scenario
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficLightCycleElement, TrafficLightDirection
+from commonroad.scenario.traffic_sign import TrafficSign
+from commonroad.scenario.traffic_light import TrafficLightDirection, TrafficLightCycleElement, TrafficLight
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import State
 from commonroad.common.writer.file_writer_interface import FileWriter, precision, OverwriteExistingFile

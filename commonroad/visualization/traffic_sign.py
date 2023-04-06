@@ -10,7 +10,8 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox, HPacker, TextArea,
 from scipy.cluster.hierarchy import linkage, fcluster
 
 from commonroad.geometry.shape import *
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficSignIDUsa
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDUsa
+from commonroad.scenario.traffic_light import TrafficLight
 from commonroad.visualization.draw_params import TrafficLightParams, TrafficSignParams
 
 # path to traffic sign .png files
