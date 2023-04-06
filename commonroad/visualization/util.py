@@ -15,9 +15,7 @@ from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.common.common_lanelet import LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle
 from commonroad.scenario.scenario import Scenario
-from commonroad.scenario.traffic_sign import TrafficLightState, \
-    TrafficLight, \
-    TrafficLightDirection
+from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightDirection, TrafficLight
 from matplotlib.lines import Line2D
 from matplotlib.path import Path
 from matplotlib.axes import Axes

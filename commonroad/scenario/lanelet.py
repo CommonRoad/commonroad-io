@@ -14,7 +14,8 @@ from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Sh
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.obstacle import Obstacle
 from commonroad.scenario.state import TraceState
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
+from commonroad.scenario.traffic_sign import TrafficSign
+from commonroad.scenario.traffic_light import TrafficLight
 from commonroad.scenario.area import Area
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.renderer import IRenderer
