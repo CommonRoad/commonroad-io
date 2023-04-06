@@ -2,10 +2,9 @@ import enum
 import warnings
 import math
 import numpy as np
-from typing import Union, Set, List, Optional, Tuple
+from typing import Union, Set, List, Dict, Optional, Tuple
 from abc import abstractmethod
 
-import numpy as np
 
 from commonroad.common.validity import is_valid_orientation, is_real_number_vector, is_real_number
 from commonroad.geometry.shape import Shape, \
@@ -51,6 +50,69 @@ class ObstacleType(enum.Enum):
     BUILDING = "building"
     PILLAR = "pillar"
     MEDIAN_STRIP = "median_strip"
+
+
+class MetaInformationState:
+    """
+    Class that keeps the meta information state of an obstacle.
+    It freely allows to set attributes on a dynamic obstacle.
+    """
+    def __init__(self, meta_data_str: Dict[str, str] = None, meta_data_int: Dict[str, int] = None,
+                 meta_data_float: Dict[str, float] = None, meta_data_bool: Dict[str, bool] = None):
+        """
+        :param meta_data_str: dictionary of a key and a string
+        :param meta_data_int: dictionary of a key and an int
+        :param meta_data_float: dictionary of a key and a float
+        :param meta_data_bool: dictionary of a key and a bool
+        """
+        self._meta_data_str = meta_data_str
+        self._meta_data_int = meta_data_int
+        self._meta_data_float = meta_data_float
+        self._meta_data_bool = meta_data_bool
+
+    @property
+    def meta_data_str(self) -> Dict[str, str]:
+        """ Dictionary of a key and a string. """
+        return self._meta_data_str
+
+    @meta_data_str.setter
+    def meta_data_str(self, meta_data_str: Dict[str, str]):
+        assert isinstance(meta_data_str, Dict), '<MetaInformationState/meta_data_str>: Provided meta_data_str ' \
+                                                'is not valid! id={}'.format(meta_data_str)
+        self._meta_data_str = meta_data_str
+
+    @property
+    def meta_data_int(self) -> Dict[str, int]:
+        """ Dictionary of a key and an int. """
+        return self._meta_data_int
+
+    @meta_data_int.setter
+    def meta_data_int(self, meta_data_int: Dict[str, int]):
+        assert isinstance(meta_data_int, Dict), '<MetaInformationState/meta_data_int>: Provided meta_data_int ' \
+                                                'is not valid! id={}'.format(meta_data_int)
+        self._meta_data_int = meta_data_int
+
+    @property
+    def meta_data_float(self) -> Dict[str, float]:
+        """ Dictionary of a key and a float. """
+        return self._meta_data_float
+
+    @meta_data_float.setter
+    def meta_data_float(self, meta_data_float: Dict[str, float]):
+        assert isinstance(meta_data_float, Dict), '<MetaInformationState/meta_data_float>: Provided meta_data_float ' \
+                                                'is not valid! id={}'.format(meta_data_float)
+        self._meta_data_float = meta_data_float
+
+    @property
+    def meta_data_bool(self) -> Dict[str, bool]:
+        """ Dictionary of a key and a bool. """
+        return self._meta_data_bool
+
+    @meta_data_bool.setter
+    def meta_data_bool(self, meta_data_bool: Dict[str, bool]):
+        assert isinstance(meta_data_bool, Dict), '<MetaInformationState/meta_data_bool>: Provided meta_data_bool ' \
+                                                'is not valid! id={}'.format(meta_data_bool)
+        self._meta_data_bool = meta_data_bool
 
 
 class SignalState:
@@ -428,11 +490,16 @@ class DynamicObstacle(Obstacle):
     """
 
     def __init__(self, obstacle_id: int, obstacle_type: ObstacleType,
-                 obstacle_shape: Shape, initial_state: TraceState,
+                 obstacle_shape: Shape,
+                 initial_state: TraceState,
                  prediction: Union[None, Prediction, TrajectoryPrediction, SetBasedPrediction] = None,
                  initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
-                 initial_signal_state: Union[None, SignalState] = None, signal_series: List[SignalState] = None,
+                 initial_signal_state: Union[None, SignalState] = None,
+                 signal_series: List[SignalState] = None,
+                 initial_meta_information_state: MetaInformationState = None,
+                 meta_information_series: List[MetaInformationState] = None,
+                 external_dataset_id: int = None,
                  **kwargs):
         """
             :param obstacle_id: unique ID of the obstacle
@@ -445,6 +512,9 @@ class DynamicObstacle(Obstacle):
             :param initial_signal_state: initial signal state of static obstacle
             :param signal_series: list of signal states over time
             :param wheelbase: list of wheelbase lengths
+            :param initial_meta_information_state: meta information of the dynamic obstacle
+            :param meta_information_series: list of meta information
+            :param external_dataset_id: ID of the external dataset
         """
         for (field, value) in kwargs.items():
             setattr(self, field, value)
@@ -454,16 +524,23 @@ class DynamicObstacle(Obstacle):
                           initial_shape_lanelet_ids=initial_shape_lanelet_ids,
                           initial_signal_state=initial_signal_state, signal_series=signal_series)
         self.prediction: Prediction = prediction
+        self.initial_meta_information_state = initial_meta_information_state
+        self.meta_information_series = meta_information_series
+        self.external_dataset_id = external_dataset_id
 
     def __eq__(self, other):
         if not isinstance(other, DynamicObstacle):
             warnings.warn(f"Inequality between DynamicObstacle {repr(self)} and different type {type(other)}")
             return False
 
-        return self._prediction == other.prediction and Obstacle.__eq__(self, other)
+        return self._prediction == other.prediction and Obstacle.__eq__(self, other) and \
+            self._initial_meta_information_state == other.initial_meta_information_state and \
+            self._meta_information_series == other.meta_information_series and \
+            self._external_dataset_id == other.external_dataset_id
 
     def __hash__(self):
-        return hash((self._prediction, Obstacle.__hash__(self)))
+        return hash((self._prediction, self._initial_meta_information_state, self._meta_information_series,
+                     self._external_dataset_id, Obstacle.__hash__(self)))
 
     @property
     def initial_state(self) -> State:
@@ -493,6 +570,46 @@ class DynamicObstacle(Obstacle):
                                                                  'of wrong type. Expected types: %s, %s. Got type: ' \
                                                                  '%s.' % (Prediction, type(None), type(prediction))
         self._prediction = prediction
+
+    @property
+    def initial_meta_information_state(self) -> Union[None, MetaInformationState]:
+        """ Meta information of the dynamic obstacle. """
+        return self._initial_meta_information_state
+
+    @initial_meta_information_state.setter
+    def initial_meta_information_state(self, initial_meta_information_state: Union[MetaInformationState, None]):
+        assert isinstance(initial_meta_information_state, (MetaInformationState, type(None))), \
+            '<DynamicObstacle/initial_meta_information_state>: argument prediction ' \
+            'of wrong type. Expected types: %s, %s. Got type: %s.' \
+            % (MetaInformationState, type(None), type(initial_meta_information_state))
+
+        self._initial_meta_information_state = initial_meta_information_state
+
+    @property
+    def meta_information_series(self) -> Union[None, List[MetaInformationState]]:
+        """ List of meta information."""
+        return self._meta_information_series
+
+    @meta_information_series.setter
+    def meta_information_series(self, meta_information_series: Union[List[MetaInformationState], None]):
+        assert isinstance(meta_information_series, (List, type(None))), \
+            '<DynamicObstacle/meta_information_series>: argument prediction ' \
+            'of wrong type. Expected types: %s, %s. Got type: %s.' \
+            % (List, type(None), type(meta_information_series))
+
+        self._meta_information_series = meta_information_series
+
+    @property
+    def external_dataset_id(self) -> Union[int, None]:
+        """ ID of the external dataset."""
+        return self._external_dataset_id
+
+    @external_dataset_id.setter
+    def external_dataset_id(self, external_dataset_id: Union[int, None]):
+        assert isinstance(external_dataset_id, (int, type(None))), \
+            '<DynamicObstacle/external_dataset_id>: argument prediction of wrong type. ' \
+            'Expected types: %s, %s. Got type: %s.' % (int, type(None), type(external_dataset_id))
+        self._external_dataset_id = external_dataset_id
 
     def occupancy_at_time(self, time_step: int) -> Union[None, Occupancy]:
         """
