@@ -2,17 +2,7 @@ syntax = "proto2";
 
 package commonroad_dynamic;
 
-import "util.proto";
-
-message TrafficLightStateEnum {
-    enum TrafficLightState {
-        RED = 0;
-        RED_YELLOW = 1;
-        GREEN = 2;
-        YELLOW = 3;
-        INACTIVE = 4;
-    }
-}
+import "traffic_light_state.proto";
 
 message CycleElement {
     required uint32 duration = 1;

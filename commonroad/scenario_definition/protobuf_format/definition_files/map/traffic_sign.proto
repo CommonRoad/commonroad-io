@@ -8,6 +8,6 @@ import "traffic_sign_element.proto";
 message TrafficSign {
     required uint32  traffic_sign_id = 1;
     repeated TrafficSignElement traffic_sign_elements = 2;
-    optional Point position = 3;
+    required Point position = 3;
     optional bool virtual = 4;
 }

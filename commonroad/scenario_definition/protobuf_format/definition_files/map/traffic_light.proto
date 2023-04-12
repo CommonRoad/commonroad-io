@@ -3,6 +3,7 @@ syntax = "proto2";
 package commonroad_map;
 
 import "util.proto";
+import "traffic_light_state.proto";
 
 message TrafficLightDirectionEnum {
     enum TrafficLightDirection {
@@ -18,6 +19,7 @@ message TrafficLightDirectionEnum {
 
 message TrafficLight {
     required uint32 traffic_light_id = 1;
-    optional Point position = 3;
-    optional TrafficLightDirectionEnum.TrafficLightDirection direction = 5;
+    required Point position = 2;
+    repeated TrafficLightStateEnum.TrafficLightState color = 3;
+    optional TrafficLightDirectionEnum.TrafficLightDirection direction = 4;
 }

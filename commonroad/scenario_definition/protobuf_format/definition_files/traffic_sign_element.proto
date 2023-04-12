@@ -1,7 +1,5 @@
 syntax = "proto2";
 
-import "util.proto";
-
 message TrafficSignIDEnum {
     enum TrafficSignID {
         WARNING_DANGER_SPOT = 0;
