@@ -63,20 +63,25 @@ class Tag(enum.Enum):
 @enum.unique
 class TimeOfDay(enum.Enum):
     """ Enum containing all possible time of days."""
-    DAY = "day"
     NIGHT = "night"
+    SUNSET = "sunset"
+    AFTERNOON = "afternoon"
+    NOON = "noon"
+    MORNING = "morning"
     UNKNOWN = "unknown"
 
 
 @enum.unique
 class Weather(enum.Enum):
     """ Enum containing all possible weathers."""
-    SUNNY = "sunny"
+    CLEAR = "clear"
     LIGHT_RAIN = "light_rain"
+    MID_RAIN = "mid_rain"
     HEAVY_RAIN = "heavy_rain"
     FOG = "fog"
     SNOW = "snow"
     HAIL = "hail"
+    CLOUDY = "cloudy"
     UNKNOWN = "unknown"
 
 
@@ -97,27 +102,35 @@ class Time:
     Class which describes the fictive time when a scenario starts.
     """
 
-    def __init__(self, hours: int, minutes: int):
+    def __init__(self, hours: int, minutes: int, day: int = None, month: int = None, year: int = None):
         """
         Constructor of a time object
 
         :param hours: hours at start of scenario (0-24)
         :param minutes: minutes at start of scenario (0-60)
+        :param day: day at start of scenario (1-31)
+        :param month: month at start of scenario (1-12)
+        :param year: year at start of scenario
         """
         self._hours = hours
         self._minutes = minutes
+        self._day = day
+        self._month = month
+        self._year = year
 
     def __eq__(self, other):
         if not isinstance(other, Time):
             return False
 
-        return self._hours == other.hours and self._minutes == other.minutes
+        return self._hours == other.hours and self._minutes == other.minutes and self._day == other.day and \
+            self._month == other.month and self._year == other.year
 
     def __hash__(self):
-        return hash((self._hours, self._minutes))
+        return hash((self._hours, self._minutes, self._day, self._month, self._year))
 
     @property
     def hours(self) -> int:
+        """ Hours at start of scenario (0-24)"""
         return self._hours
 
     @hours.setter
@@ -126,11 +139,39 @@ class Time:
 
     @property
     def minutes(self) -> int:
+        """ Minutes at start of scenario (0-60)"""
         return self._minutes
 
     @minutes.setter
     def minutes(self, minutes: int):
         self._minutes = minutes
+
+    @property
+    def day(self) -> Union[None, int]:
+        """ Day at start of scenario (1-31)"""
+        return self._day
+
+    @day.setter
+    def day(self, day: Union[None, int]):
+        self._day = day
+
+    @property
+    def month(self) -> Union[None, int]:
+        """ Month at start of scenario (1-12)"""
+        return self._month
+
+    @month.setter
+    def month(self, month: Union[None, int]):
+        self._month = month
+
+    @property
+    def year(self) -> Union[None, int]:
+        """ Year at start of scenario"""
+        return self._year
+
+    @year.setter
+    def year(self, year: Union[None, int]):
+        self._year = year
 
 
 class GeoTransformation:

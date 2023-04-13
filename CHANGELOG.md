@@ -1,16 +1,24 @@
 # Changelog
 
-## [2023.2] - 2023-0X-XX
+## [2023.2] - 2023-04-XX
 
 ### Added
+- Area for modelling drivable areas which cannot be represented by lanelets
+- New weather and time of day options
 
 ### Fixed
 
 - Visualization of all traffic signs by setting `show_traffic_signs = None` in draw parameters
+- Validity functions to support z-axis
 
 ### Changed
 
 - Visualization of direction arrow of narrow lanelets
+- Traffic light cycle optional
+
+### Removed
+
+- function get_default_cycle for traffic lights
 
 ## [2023.1] - 2023-03-05
 

@@ -10,7 +10,8 @@ from commonroad.common.file_reader import CommonRoadFileReader
 from lxml import etree
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
 from commonroad.prediction.prediction import *
-from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType
+from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
+from commonroad.common.common_lanelet import LineMarking, LaneletType
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario, Tag, Location, ScenarioID
 from commonroad.scenario.trajectory import Trajectory
