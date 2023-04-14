@@ -199,7 +199,7 @@ _TRAFFICSIGNIDGERMANYENUM_TRAFFICSIGNIDGERMANY = _descriptor.EnumDescriptor(
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='PEDESTRIAN_SIDEWALK', index=33, number=33,
+      name='SIDEWALK', index=33, number=33,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
@@ -229,7 +229,7 @@ _TRAFFICSIGNIDGERMANYENUM_TRAFFICSIGNIDGERMANY = _descriptor.EnumDescriptor(
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='BUS_LANE', index=39, number=39,
+      name='BUSLANE', index=39, number=39,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
@@ -1419,7 +1419,7 @@ _TRAFFICSIGNIDZAMUNDAENUM_TRAFFICSIGNIDZAMUNDA = _descriptor.EnumDescriptor(
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='PEDESTRIAN_SIDEWALK', index=33, number=33,
+      name='SIDEWALK', index=33, number=33,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
@@ -1449,7 +1449,7 @@ _TRAFFICSIGNIDZAMUNDAENUM_TRAFFICSIGNIDZAMUNDA = _descriptor.EnumDescriptor(
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='BUS_LANE', index=39, number=39,
+      name='BUSLANE', index=39, number=39,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
