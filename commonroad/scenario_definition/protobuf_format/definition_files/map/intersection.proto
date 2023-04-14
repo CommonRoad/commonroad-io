@@ -3,9 +3,9 @@ syntax = "proto2";
 package commonroad_map;
 
 message IncomingGroup {
-    required uint32 incoming_id = 1;
+    required uint32 incoming_group_id = 1;
     repeated uint32 incoming_lanelets = 2;
-    optional uint32 outgoing_id = 3;
+    optional uint32 outgoing_group_id = 3;
     repeated uint32 outgoing_right = 4;
     repeated uint32 outgoing_straight = 5;
     repeated uint32 outgoing_left = 6;
@@ -13,7 +13,7 @@ message IncomingGroup {
 }
 
 message OutgoingGroup {
-    required uint32 outgoing_id = 1;
+    required uint32 outgoing_group_id = 1;
     repeated uint32 outgoing_lanelets = 2;
 }
 
