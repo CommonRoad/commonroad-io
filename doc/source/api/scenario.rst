@@ -76,6 +76,20 @@ Traffic Sign
 
 .. automodule:: commonroad.scenario.traffic_sign
 
+``TrafficSign`` class
+^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: TrafficSign
+   :members:
+   :undoc-members:
+   :member-order: bysource
+
+``TrafficSignElement`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: TrafficSignElement
+   :members:
+   :undoc-members:
+   :member-order: bysource
+
 ``SupportedTrafficSignCountry`` class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: SupportedTrafficSignCountry
@@ -135,6 +149,8 @@ Traffic Sign
 Traffic Light
 -------------
 
+.. automodule:: commonroad.scenario.traffic_light
+
 ``TrafficLight`` class
 ^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: TrafficLight
@@ -149,34 +165,16 @@ Traffic Light
    :undoc-members:
    :member-order: bysource
 
+``TrafficLightCycleElement`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: TrafficLightCycleElement
+   :members:
+   :undoc-members:
+   :member-order: bysource
 
 ``TrafficLightState`` class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: TrafficLightState
-   :members:
-   :undoc-members:
-   :member-order: bysource
-
-
-``TrafficSignElement`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: TrafficSignElement
-   :members:
-   :undoc-members:
-   :member-order: bysource
-
-
-``TrafficSign`` class
-^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: TrafficSign
-   :members:
-   :undoc-members:
-   :member-order: bysource
-
-
-``TrafficLightCycleElement`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: TrafficLightCycleElement
    :members:
    :undoc-members:
    :member-order: bysource

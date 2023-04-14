@@ -23,8 +23,9 @@ from commonroad.scenario.state import InitialState, TraceState, CustomState, Spe
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSignIDGermany, TrafficSignIDZamunda, \
     TrafficSignIDUsa, TrafficSignIDChina, TrafficSignIDSpain, TrafficSignIDRussia, TrafficSignIDArgentina, \
     TrafficSignIDBelgium, TrafficSignIDFrance, TrafficSignIDGreece, TrafficSignIDCroatia, TrafficSignIDItaly, \
-    TrafficSignIDPuertoRico, TrafficSign, TrafficLight, TrafficLightCycleElement, TrafficLightDirection, \
-    TrafficLightState
+    TrafficSignIDPuertoRico, TrafficSign
+from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightDirection, \
+    TrafficLightCycleElement,  TrafficLight
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario_definition.protobuf_format.generated_scripts import commonroad_pb2, util_pb2, \
     phantom_obstacle_pb2

@@ -38,12 +38,19 @@ class TestObstacle(unittest.TestCase):
         prediction = TrajectoryPrediction(trajectory, shape)
         initial_state = state_list[0]
         shape = Rectangle(5.1, 2.6, np.array([0, 0]), 0)
+        initial_meta_information_state = MetaInformationState(meta_data_int={'1': 1, "2": 2})
+        another_meta_information_state = MetaInformationState(meta_data_bool={'1': True, "2": False})
+        meta_information_series = [initial_meta_information_state, another_meta_information_state]
+        external_dataset_id = 3
 
         dynamic_obstacle = DynamicObstacle(obstacle_id=obstacle_id, obstacle_type=obstacle_type, prediction=prediction,
                                            initial_state=initial_state, obstacle_shape=shape,
                                            initial_shape_lanelet_ids=initial_shape_lanelet_ids,
                                            initial_center_lanelet_ids=initial_center_lanelet_ids,
-                                           initial_signal_state=initial_signal_state, signal_series=signal_series)
+                                           initial_signal_state=initial_signal_state, signal_series=signal_series,
+                                           initial_meta_information_state=initial_meta_information_state,
+                                           meta_information_series=meta_information_series,
+                                           external_dataset_id=external_dataset_id)
         np.testing.assert_equal(dynamic_obstacle.obstacle_id, obstacle_id)
         self.assertEqual(obstacle_type, dynamic_obstacle.obstacle_type)
         self.assertEqual(dynamic_obstacle.obstacle_role, obstacle_role)
@@ -53,6 +60,9 @@ class TestObstacle(unittest.TestCase):
         self.assertEqual(dynamic_obstacle.initial_center_lanelet_ids, initial_center_lanelet_ids)
         self.assertEqual(dynamic_obstacle.initial_signal_state, initial_signal_state)
         self.assertEqual(dynamic_obstacle.signal_series, signal_series)
+        self.assertEqual(dynamic_obstacle.initial_meta_information_state, initial_meta_information_state)
+        self.assertEqual(dynamic_obstacle.meta_information_series, meta_information_series)
+        self.assertEqual(dynamic_obstacle.external_dataset_id, external_dataset_id)
         np.testing.assert_equal(dynamic_obstacle.obstacle_shape.vertices, shape.vertices)
 
     def test_signal_state_at_time_step(self):

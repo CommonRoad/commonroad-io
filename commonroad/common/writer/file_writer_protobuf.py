@@ -22,10 +22,11 @@ from commonroad.common.common_lanelet import StopLine, LineMarking
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, SignalState, \
     PhantomObstacle
 from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment, Time
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficSignElement, TrafficLightCycleElement, \
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, \
     TrafficSignIDGermany, TrafficSignIDFrance, TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSignIDChina, \
     TrafficSignIDSpain, TrafficSignIDRussia, TrafficSignIDArgentina, TrafficSignIDBelgium, TrafficSignIDGreece, \
     TrafficSignIDCroatia, TrafficSignIDItaly
+from commonroad.scenario.traffic_light import TrafficLightCycleElement, TrafficLight
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import State
 

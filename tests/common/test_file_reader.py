@@ -14,8 +14,9 @@ from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformat
 from commonroad.scenario.state import STState, InitialState, CustomState, PMState, KSState, LateralState, STDState, \
     LongitudinalState
 from commonroad.scenario.trajectory import Trajectory
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficLightDirection, TrafficLight, \
-    TrafficLightCycleElement, TrafficLightState, TrafficSignIDGermany
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany
+from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightDirection, TrafficLightCycleElement, \
+    TrafficLight
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 
 

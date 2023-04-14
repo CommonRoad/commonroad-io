@@ -13,8 +13,8 @@ from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario, Environment, TimeOfDay, Time, Underground, Weather, Location, \
     ScenarioID, GeoTransformation
 from commonroad.scenario.state import KSState, InitialState
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany, TrafficLight, \
-    TrafficLightCycleElement, TrafficLightState
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany
+from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightCycleElement, TrafficLight
 from commonroad.scenario.trajectory import Trajectory
 
 
