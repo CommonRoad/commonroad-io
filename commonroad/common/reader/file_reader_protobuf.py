@@ -11,7 +11,7 @@ from commonroad.geometry.shape import Rectangle, Circle, Polygon, Shape, ShapeGr
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction, SetBasedPrediction
-from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
+from commonroad.scenario.intersection import Intersection, IncomingGroup
 from commonroad.scenario.lanelet import LaneletNetwork, Lanelet
 from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, LaneletType
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, PhantomObstacle, \
@@ -468,25 +468,20 @@ class IntersectionFactory:
 
         intersection = Intersection(intersection_id, incomings)
 
-        intersection.crossings = set(intersection_msg.crossing_lanelets)
-
         return intersection
 
 
 class IncomingFactory:
 
     @classmethod
-    def create_from_message(cls, incoming_msg: intersection_pb2.Incoming) -> IntersectionIncomingElement:
-        incoming = IntersectionIncomingElement(incoming_msg.incoming_id)
+    def create_from_message(cls, incoming_msg: intersection_pb2.Incoming) -> IncomingGroup:
+        incoming = IncomingGroup(incoming_msg.incoming_id)
 
         incoming.incoming_lanelets = set(incoming_msg.incoming_lanelets)
-        incoming.successors_right = set(incoming_msg.successors_right)
-        incoming.successors_straight = set(incoming_msg.successors_straight)
-        incoming.successors_left = set(incoming_msg.successors_left)
-
-        if incoming_msg.HasField('is_left_of'):
-            incoming.left_of = incoming_msg.is_left_of
-
+        incoming.outgoing_right = set(incoming_msg.successors_right)
+        incoming.outgoing_straight = set(incoming_msg.successors_straight)
+        incoming.outgoing_left = set(incoming_msg.successors_left)
+        # add incoming crossings
         return incoming
 
 

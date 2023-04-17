@@ -38,6 +38,7 @@ class TestXMLFileWriter(unittest.TestCase):
                              scenario_1.tags, scenario_1.location) \
             .write_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS,
                            check_validity=False)
+
         assert self.validate_with_xsd(self.out_path + '/test_reading_intersection_traffic_sign.xml')
 
         scenario_2, planning_problem_set_2 = CommonRoadFileReader(self.filename_read_2).open()
