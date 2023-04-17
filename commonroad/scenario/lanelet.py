@@ -1181,10 +1181,10 @@ class LaneletNetwork(IDrawable):
         for inter in self.intersections:
             for inc in inter.incomings:
                 inc._incoming_lanelets = set(inc.incoming_lanelets).intersection(existing_ids)
-                inc._successors_straight = set(inc.successors_straight).intersection(existing_ids)
-                inc._successors_right = set(inc.successors_right).intersection(existing_ids)
-                inc._successors_left = set(inc.successors_left).intersection(existing_ids)
-            inter._crossings = set(inter.crossings).intersection(existing_ids)
+                inc._outgoing_straight = set(inc.outgoing_straight).intersection(existing_ids)
+                inc._outgoing_right = set(inc.outgoing_right).intersection(existing_ids)
+                inc._outgoing_left = set(inc.outgoing_left).intersection(existing_ids)
+                inc._crossings = set(inc.crossings).intersection(existing_ids)
 
     def remove_traffic_sign(self, traffic_sign_id: int):
         """

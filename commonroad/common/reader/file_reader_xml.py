@@ -12,7 +12,7 @@ from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Sh
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
-from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
+from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
 from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, LaneletType
 from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, EnvironmentObstacle, \
@@ -970,48 +970,95 @@ class IntersectionFactory:
         :return: object of class Intersection according to the CommonRoad specification.
         """
         intersection_id = int(xml_node.get('id'))
+
+        # In 2020a format, crossing is directly in the intersection, so we remap it to the first incoming element and
+        # generate a warning to the user
+        if xml_node.find('crossing') is not None:
+            logger.warning("After 2020a format, crossing is no longer mapped directly into intersection, "
+                           "thus it has been remapped to the first incoming element")
+            xml_node.findall('incoming')[0].append(xml_node.find('crossing'))
+
         incomings = []
         for incoming_node in xml_node.findall('incoming'):
             incomings.append(IntersectionIncomingFactory.create_from_xml_node(incoming_node))
 
-        if xml_node.find('crossing') is not None:
-            crossings = set()
-            for crossing_ref in xml_node.find('crossing').findall('crossingLanelet'):
-                crossings.add(int(crossing_ref.get("ref")))
-        else:
-            crossings = None
+        outgoings = []
+        for outgoing_node in xml_node.findall('outgoing'):
+            outgoings.append(OutgoingGroupFactory.create_from_xml_node(outgoing_node))
 
-        return Intersection(intersection_id=intersection_id, incomings=incomings, crossings=crossings)
+        return Intersection(intersection_id=intersection_id, incomings=incomings, outgoings=outgoings)
+
+
+class OutgoingGroupFactory:
+    """ Class to create an object of class OutgoingGroup from an XML element."""
+    @classmethod
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> OutgoingGroup:
+        """
+        :param xml_node: XML element
+        :return: object of class OutgoingGroupElement according to the CommonRoad specification.
+        """
+        outgoing_id = int(xml_node.get('id'))
+        outgoing_lanelets = set()
+        for outgoing_lanelet_ref in xml_node.findall('outgoingLanelet'):
+            outgoing_lanelets.add(int(outgoing_lanelet_ref.get('ref')))
+
+        return OutgoingGroup(outgoing_id=outgoing_id, outgoing_lanelets=outgoing_lanelets)
 
 
 class IntersectionIncomingFactory:
     """ Class to create an object of class IntersectionIncomingElement from an XML element."""
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> IntersectionIncomingElement:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> IncomingGroup:
         """
         :param xml_node: XML element
         :return: object of class IntersectionIncomingElement according to the CommonRoad specification.
         """
         incoming_id = int(xml_node.get('id'))
         incoming_lanelets = set()
-        successors_right = set()
-        successors_straight = set()
-        successors_left = set()
-        left_of = None
+        if xml_node.get('outgoingId') is None:
+            outgoing_id = None
+        else:
+            outgoing_id = int(xml_node.get('outgoingId'))
+        outgoing_right = set()
+        outgoing_straight = set()
+        outgoing_left = set()
+        crossings = set()
+
         for incoming_lanelet_ref in xml_node.findall('incomingLanelet'):
             incoming_lanelets.add(int(incoming_lanelet_ref.get('ref')))
-        for successor_right_ref in xml_node.findall('successorsRight'):
-            successors_right.add(int(successor_right_ref.get('ref')))
-        for successor_straight_ref in xml_node.findall('successorsStraight'):
-            successors_straight.add(int(successor_straight_ref.get('ref')))
-        for successor_left_ref in xml_node.findall('successorsLeft'):
-            successors_left.add(int(successor_left_ref.get('ref')))
-        for left_of_ref in xml_node.findall('isLeftOf'):
-            left_of = int(left_of_ref.get('ref'))
 
-        return IntersectionIncomingElement(incoming_id=incoming_id, incoming_lanelets=incoming_lanelets,
-                                           successors_right=successors_right, successors_straight=successors_straight,
-                                           successors_left=successors_left, left_of=left_of)
+        for outgoing_right_ref in xml_node.findall('outgoingRight'):
+            outgoing_right.add(int(outgoing_right_ref.get('ref')))
+        for outgoing_straight_ref in xml_node.findall('outgoingStraight'):
+            outgoing_straight.add(int(outgoing_straight_ref.get('ref')))
+        for outgoing_left_ref in xml_node.findall('outgoingLeft'):
+            outgoing_left.add(int(outgoing_left_ref.get('ref')))
+
+        # if we are reading intersections of old (2020a) format, successors are mapped as outgoings, and we issue
+        # a warning to the user
+        for successor_right_ref in xml_node.findall('successorsRight'):
+            logger.warning("successorRight " + successor_right_ref.get('ref') +
+                           " is of deprecated format, thus mapped to outgoingRight")
+            outgoing_right.add(int(successor_right_ref.get('ref')))
+        for successor_straight_ref in xml_node.findall('successorsStraight'):
+            logger.warning("successorStraight " + successor_straight_ref.get('ref') +
+                           " is of deprecated format, thus mapped to outgoingStraight")
+            outgoing_straight.add(int(successor_straight_ref.get('ref')))
+        for successor_left_ref in xml_node.findall('successorsLeft'):
+            logger.warning("successorLeft " + successor_left_ref.get('ref') +
+                           " is of deprecated format, thus mapped to outgoingLeft")
+            outgoing_left.add(int(successor_left_ref.get('ref')))
+
+        if xml_node.find('crossing') is not None:
+            for crossing_ref in xml_node.find('crossing').findall('crossingLanelet'):
+                crossings.add(int(crossing_ref.get('ref')))
+        else:
+            crossings = None
+
+        return IncomingGroup(incoming_id=incoming_id, outgoing_id=outgoing_id,
+                             incoming_lanelets=incoming_lanelets,
+                             outgoing_right=outgoing_right, outgoing_straight=outgoing_straight,
+                             outgoing_left=outgoing_left, crossings=crossings)
 
 
 class ObstacleFactory(ABC):

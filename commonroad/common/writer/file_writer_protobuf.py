@@ -16,7 +16,7 @@ from commonroad.scenario_definition.protobuf_format.generated_scripts import com
 from commonroad.scenario_definition.protobuf_format.generated_scripts import lanelet_pb2, planning_problem_pb2, \
     traffic_sign_pb2, scenario_tags_pb2, environment_obstacle_pb2, obstacle_pb2, intersection_pb2, \
     dynamic_obstacle_pb2, static_obstacle_pb2, traffic_light_pb2, location_pb2
-from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
+from commonroad.scenario.intersection import Intersection, IncomingGroup
 from commonroad.scenario.lanelet import Lanelet
 from commonroad.common.common_lanelet import StopLine, LineMarking
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, SignalState, \
@@ -507,33 +507,27 @@ class IntersectionMessage:
             incoming_msg = IncomingMessage.create_message(incoming)
             intersection_msg.incomings.append(incoming_msg)
 
-        for crossing in intersection.crossings:
-            intersection_msg.crossing_lanelets.append(crossing)
-
         return intersection_msg
 
 
 class IncomingMessage:
 
     @classmethod
-    def create_message(cls, incoming: IntersectionIncomingElement) -> intersection_pb2.Incoming:
+    def create_message(cls, incoming: IncomingGroup) -> intersection_pb2.Incoming:
         incoming_msg = intersection_pb2.Incoming()
 
         incoming_msg.incoming_id = incoming.incoming_id
         for incoming_lanelet in incoming.incoming_lanelets:
             incoming_msg.incoming_lanelets.append(incoming_lanelet)
 
-        for successor_right in incoming.successors_right:
+        for successor_right in incoming.outgoing_right:
             incoming_msg.successors_right.append(successor_right)
 
-        for successor_straight in incoming.successors_straight:
+        for successor_straight in incoming.outgoing_straight:
             incoming_msg.successors_straight.append(successor_straight)
 
-        for successor_left in incoming.successors_left:
+        for successor_left in incoming.outgoing_left:
             incoming_msg.successors_left.append(successor_left)
-
-        if incoming.left_of is not None:
-            incoming_msg.is_left_of = incoming.left_of
 
         return incoming_msg
 

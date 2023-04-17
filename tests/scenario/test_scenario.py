@@ -6,7 +6,7 @@ from copy import deepcopy
 from commonroad import SCENARIO_VERSION
 from commonroad.common.util import Interval
 from commonroad.geometry.shape import *
-from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
+from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
 from commonroad.common.common_lanelet import LineMarking
 from commonroad.scenario.obstacle import *
@@ -82,11 +82,14 @@ class TestScenario(unittest.TestCase):
                                             prediction=self.traj_pred, obstacle_shape=self.rectangle,
                                             initial_shape_lanelet_ids={100, 101})
 
-        self.incoming_1 = IntersectionIncomingElement(22, {10, 11}, {12, 13}, {14, 15}, {16, 17}, 18)
-        self.incoming_2 = IntersectionIncomingElement(23, {20, 21}, {22, 23}, {24, 25}, {26, 27}, 28)
-        self.incoming_3 = IntersectionIncomingElement(122, {100})
-        self.intersection = Intersection(21, [self.incoming_1, self.incoming_2], {30, 31})
-        self.intersection2 = Intersection(736, [self.incoming_3], {30, 31})
+        self.incoming_1 = IncomingGroup(22, {10, 11}, 1, {12, 13}, {14, 15}, {16, 17}, {1})
+        self.incoming_2 = IncomingGroup(23, {20, 21}, 2, {22, 23}, {24, 25}, {26, 27}, {1})
+        self.incoming_3 = IncomingGroup(122, {100}, 3, crossings={1})
+        self.outgoing_1 = OutgoingGroup(1, {1, 2, 3})
+        self.outgoing_2 = OutgoingGroup(2, {4, 5, 6})
+        self.outgoing_3 = OutgoingGroup(3, {7, 8, 9})
+        self.intersection = Intersection(21, [self.incoming_1, self.incoming_2], [self.outgoing_1, self.outgoing_2])
+        self.intersection2 = Intersection(736, [self.incoming_3], [self.outgoing_3])
         self.lanelet_network.add_intersection(self.intersection)
 
         self.environment = Environment(Time(12, 15), TimeOfDay.NIGHT, Weather.SNOW, Underground.ICE)

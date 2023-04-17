@@ -865,22 +865,25 @@ class MPRenderer(IRenderer):
                     for incoming in intersection.incomings:
                         incomings.append(incoming.incoming_lanelets)
                         for l_id in incoming.incoming_lanelets:
-                            incomings_left[l_id] = incoming.left_of
+                            #incomings_left[l_id] = incoming.left_of
                             incomings_id[l_id] = incoming.incoming_id
                 incoming_lanelets: Set[int] = set.union(*incomings)
 
             if draw_crossings:
-                tmp_list: List[set] = [intersection.crossings for intersection in intersections]
+                tmp_list: List[set] = []
+                for intersection in intersections:
+                    for incomingGroup in intersection.incomings:
+                        tmp_list.append(incomingGroup.crossings)
                 crossings: Set[int] = set.union(*tmp_list)
 
             if draw_successors:
-                tmp_list: List[set] = [incoming.successors_left for intersection in intersections for incoming in
+                tmp_list: List[set] = [incoming.outgoing_left for intersection in intersections for incoming in
                                        intersection.incomings]
                 successors_left: Set[int] = set.union(*tmp_list)
-                tmp_list: List[set] = [incoming.successors_straight for intersection in intersections for incoming in
+                tmp_list: List[set] = [incoming.outgoing_straight for intersection in intersections for incoming in
                                        intersection.incomings]
                 successors_straight: Set[int] = set.union(*tmp_list)
-                tmp_list: List[set] = [incoming.successors_right for intersection in intersections for incoming in
+                tmp_list: List[set] = [incoming.outgoing_right for intersection in intersections for incoming in
                                        intersection.incomings]
                 successors_right: Set[int] = set.union(*tmp_list)
                 all_successors = set.union(successors_straight, successors_right, successors_left)
@@ -1071,7 +1074,6 @@ class MPRenderer(IRenderer):
                 if is_incoming_lanelet and show_intersection_labels:
                     strings.append(f'int_id: {inc_2_intersections[lanelet.lanelet_id].intersection_id}')
                     strings.append('inc_id: ' + str(incomings_id[lanelet.lanelet_id]))
-                    strings.append('inc_left: ' + str(incomings_left[lanelet.lanelet_id]))
                 if draw_traffic_signs and show_traffic_sign_label:
                     traffic_signs_tmp = [obj._traffic_signs[id] for id in lanelet.traffic_signs]
                     if traffic_signs_tmp:

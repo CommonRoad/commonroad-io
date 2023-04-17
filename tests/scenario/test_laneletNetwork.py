@@ -8,7 +8,7 @@ from commonroad.geometry.shape import Rectangle
 from commonroad.scenario.state import InitialState
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany
 from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightCycleElement, TrafficLight
-from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
+from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup
 from commonroad.scenario.area import Area
 
 
@@ -38,9 +38,11 @@ class TestLaneletNetwork(unittest.TestCase):
         self.stop_line = StopLine(self.left_vertices[-1], self.right_vertices[-1], LineMarking.SOLID,
                                   {self.traffic_sign.traffic_sign_id}, {self.traffic_light.traffic_light_id})
 
-        incoming_1 = IntersectionIncomingElement(2, {self.lanelet_id, 11}, {12, 13}, {14, 15}, {16, 17}, 18)
-        incoming_2 = IntersectionIncomingElement(3, {20, 21}, {22, 23}, {24, 25}, {26, 27}, 28)
-        self.intersection = Intersection(1, [incoming_1, incoming_2], {30, 31})
+        incoming_1 = IncomingGroup(2, {self.lanelet_id, 11}, 1, {12, 13}, {14, 15}, {16, 17}, {1})
+        incoming_2 = IncomingGroup(3, {20, 21}, 2, {22, 23}, {24, 25}, {26, 27}, {2})
+        outgoing_1 = OutgoingGroup(1, {1, 2, 3})
+        outgoing_2 = OutgoingGroup(2, {4, 5, 6})
+        self.intersection = Intersection(1, [incoming_1, incoming_2], [outgoing_1, outgoing_2])
 
         self.lanelet = Lanelet(self.left_vertices, self.center_vertices, self.right_vertices, self.lanelet_id,
                                self.predecessor, self.successor, self.adjacent_left, self.adjacent_left_same_dir,
@@ -435,8 +437,9 @@ class TestLaneletNetwork(unittest.TestCase):
         lanelet_id = 3
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
 
-        incoming = IntersectionIncomingElement(2, {9, 11}, {12, 13}, {14, 15}, {16, 17}, 18)
-        intersection = Intersection(1, [incoming], {30, 31})
+        incoming = IncomingGroup(2, {9, 11}, 1, {12, 13}, {14, 15}, {16, 17}, {1})
+        outgoing = OutgoingGroup(1, {1, 2, 3})
+        intersection = Intersection(1, [incoming], [outgoing])
 
         traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, ["15"])
         traffic_sign = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0]))

@@ -1059,46 +1059,76 @@ class IntersectionXMLNode:
         intersection_node = etree.Element('intersection')
         intersection_node.set('id', str(intersection.intersection_id))
 
+        # In 2020a, crossing is directly in intersection, while in the new format it is a part of the incoming.
+        # As a temporary solution, crossings are collected from the incomings and mapped in to one crossing element
+        # in the intersection.
+
+        # crossing_exists variable is used to create only one crossing node which will be appended to the intersection
+        incoming_crossing_exists = False
+
         for incoming in intersection.incomings:
             incoming_node = etree.Element('incoming')
+
             incoming_node.set('id', str(incoming.incoming_id))
+
             for incoming_lanelet in incoming.incoming_lanelets:
                 incoming_lanelet_node = etree.Element('incomingLanelet')
                 incoming_lanelet_node.set('ref', str(incoming_lanelet))
                 incoming_node.append(incoming_lanelet_node)
 
-            if incoming.successors_right:
-                for successor_right in incoming.successors_right:
-                    successor_right_node = etree.Element('successorsRight')
-                    successor_right_node.set('ref', str(successor_right))
-                    incoming_node.append(successor_right_node)
+            if incoming.outgoing_id is not None:
+                outgoing_id_node = etree.Element('outgoingId')
+                outgoing_id_node.set('ref', str(incoming.outgoing_id))
+                incoming_node.append(outgoing_id_node)
 
-            if incoming.successors_straight:
-                for successor_straight in incoming.successors_straight:
-                    successor_straight_node = etree.Element('successorsStraight')
-                    successor_straight_node.set('ref', str(successor_straight))
-                    incoming_node.append(successor_straight_node)
+            if incoming.outgoing_right:
+                for outgoing_right in incoming.outgoing_right:
+                    outgoing_right_node = etree.Element('successorsRight')
+                    logger.warning("After 2020a format, 'successorsRight' is replaced by 'outgoingRight'")
+                    outgoing_right_node.set('ref', str(outgoing_right))
+                    incoming_node.append(outgoing_right_node)
 
-            if incoming.successors_left:
-                for successor_left in incoming.successors_left:
-                    successor_left_node = etree.Element('successorsLeft')
-                    successor_left_node.set('ref', str(successor_left))
-                    incoming_node.append(successor_left_node)
+            if incoming.outgoing_straight:
+                for outgoing_straight in incoming.outgoing_straight:
+                    outgoing_straight_node = etree.Element('successorsStraight')
+                    logger.warning("After 2020a format, 'successorsStraight' is replaced by 'outgoingStraight'")
+                    outgoing_straight_node.set('ref', str(outgoing_straight))
+                    incoming_node.append(outgoing_straight_node)
 
-            if incoming.left_of:
-                is_left_of_node = etree.Element('isLeftOf')
-                is_left_of_node.set('ref', str(incoming.left_of))
-                incoming_node.append(is_left_of_node)
+            if incoming.outgoing_left:
+                for outgoing_left in incoming.outgoing_left:
+                    outgoing_left_node = etree.Element('successorsLeft')
+                    logger.warning("After 2020a format, 'successorsLeft' is replaced by 'outgoingLeft'")
+                    outgoing_left_node.set('ref', str(outgoing_left))
+                    incoming_node.append(outgoing_left_node)
+
+            if incoming.crossings is not None and len(incoming.crossings) > 0:
+                if incoming_crossing_exists is False:
+                    # As a temporary solution, crossing of incomings are mapped to just one crossing
+                    # in the intersection.
+                    # Crossing node is only created once, when the first crossing of an incoming is detected.
+                    # After that, we add additional crossings of all incomings to that single node,
+                    # and append that node to the general intersection element.
+                    crossing_node = etree.Element('crossing')
+                    incoming_crossing_exists = True
+                for crossing_lanelet in incoming.crossings:
+                    crossing_lanelet_node = etree.Element('crossingLanelet')
+                    crossing_lanelet_node.set('ref', str(crossing_lanelet))
+                    crossing_node.append(crossing_lanelet_node)
+
+            for outgoing in intersection.outgoings:
+                outgoing_node = etree.Element('outgoing')
+                outgoing_node.set('id', str(outgoing.outgoing_id))
+                for outgoing_lanelet in outgoing.outgoing_lanelets:
+                    outgoing_lanelet_node = etree.Element('outgoingLanelet')
+                    outgoing_lanelet_node.set('ref', str(outgoing_lanelet))
+                    outgoing_node.append(outgoing_lanelet_node)
+                incoming_node.append(outgoing_node)
 
             intersection_node.append(incoming_node)
 
-        if intersection.crossings is not None and len(intersection.crossings) > 0:
-            crossing_node = etree.Element('crossing')
-            for crossing_lanelet in intersection.crossings:
-                crossing_lanelet_node = etree.Element('crossingLanelet')
-                crossing_lanelet_node.set('ref', str(crossing_lanelet))
-                crossing_node.append(crossing_lanelet_node)
-            intersection_node.append(crossing_node)
+            if incoming_crossing_exists is True:
+                intersection_node.append(crossing_node)
 
         return intersection_node
 
