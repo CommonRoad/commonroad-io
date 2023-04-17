@@ -19,6 +19,8 @@ message ScenarioInformation {
     required string affiliation = 5;
     required string source = 6;
     required double time_step_size = 7;
+    required string license_name = 8;
+    optional string license_text = 9;
 }
 
 message CommonRoad {

@@ -16,7 +16,8 @@ message MapInformation {
     required string author = 4;
     required string affiliation = 5;
     required string source = 6;
-    required double time_step_size = 7;
+    required string license_name = 7;
+    optional string license_text = 8;
 }
 
 message CommonRoadMap {
