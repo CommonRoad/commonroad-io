@@ -7,7 +7,7 @@ from xml.etree import ElementTree
 
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.reader.file_reader_interface import FileReader
-from commonroad.common.util import Interval, AngleInterval
+from commonroad.common.util import Interval, AngleInterval, Time
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
@@ -17,7 +17,7 @@ from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
 from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, LaneletType
 from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, EnvironmentObstacle, \
     SignalState, PhantomObstacle
-from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, Time, TimeOfDay, \
+from commonroad.scenario.scenario import Scenario, Tag, GeoTransformation, Location, Environment, TimeOfDay, \
     Weather, Underground, ScenarioID
 from commonroad.scenario.state import InitialState, TraceState, CustomState, SpecificStateClasses
 from commonroad.scenario.traffic_sign import *

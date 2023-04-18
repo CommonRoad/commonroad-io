@@ -4,13 +4,13 @@ from copy import deepcopy
 from copy import deepcopy
 
 from commonroad import SCENARIO_VERSION
-from commonroad.common.util import Interval
+from commonroad.common.util import Interval, Time
 from commonroad.geometry.shape import *
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
 from commonroad.common.common_lanelet import LineMarking
 from commonroad.scenario.obstacle import *
-from commonroad.scenario.scenario import Scenario, Environment, TimeOfDay, Time, Underground, Weather, Location, \
+from commonroad.scenario.scenario import Scenario, Environment, TimeOfDay, Underground, Weather, Location, \
     ScenarioID, GeoTransformation
 from commonroad.scenario.state import KSState, InitialState
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany

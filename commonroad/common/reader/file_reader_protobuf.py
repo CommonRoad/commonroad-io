@@ -6,7 +6,7 @@ from typing import Tuple, List, Set, Union, Dict
 import numpy as np
 
 from commonroad.common.reader.file_reader_interface import FileReader
-from commonroad.common.util import Interval, AngleInterval
+from commonroad.common.util import Interval, AngleInterval, Time
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, Shape, ShapeGroup
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
@@ -18,7 +18,7 @@ from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Enviro
     SignalState, ObstacleType
 from commonroad.scenario.scenario import Scenario, ScenarioID, Tag, GeoTransformation, Location, Environment, \
     TimeOfDay, \
-    Weather, Underground, Time
+    Weather, Underground
 from commonroad.scenario.state import InitialState, TraceState, CustomState, SpecificStateClasses
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSignIDGermany, TrafficSignIDZamunda, \
     TrafficSignIDUsa, TrafficSignIDChina, TrafficSignIDSpain, TrafficSignIDRussia, TrafficSignIDArgentina, \
