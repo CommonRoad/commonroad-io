@@ -6,7 +6,7 @@ import logging
 import numpy as np
 from google.protobuf.message import DecodeError
 
-from commonroad.common.util import Interval
+from commonroad.common.util import Interval, Time
 from commonroad.common.writer.file_writer_interface import FileWriter, OverwriteExistingFile
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
@@ -21,7 +21,7 @@ from commonroad.scenario.lanelet import Lanelet
 from commonroad.common.common_lanelet import StopLine, LineMarking
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, SignalState, \
     PhantomObstacle
-from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment, Time
+from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, \
     TrafficSignIDGermany, TrafficSignIDFrance, TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSignIDChina, \
     TrafficSignIDSpain, TrafficSignIDRussia, TrafficSignIDArgentina, TrafficSignIDBelgium, TrafficSignIDGreece, \
