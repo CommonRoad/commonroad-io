@@ -6,7 +6,7 @@ from typing import Tuple, List, Set, Union, Dict
 import numpy as np
 
 from commonroad.common.reader.file_reader_interface import FileReader
-from commonroad.common.util import Interval, AngleInterval, Time
+from commonroad.common.util import Interval, AngleInterval, Path_T, Time
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, Shape, ShapeGroup
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
@@ -42,7 +42,7 @@ class ProtobufFileReader(FileReader):
     Reader for CommonRoad file stored in protobuf format.
     """
 
-    def __init__(self, filename: str):
+    def __init__(self, filename: Path_T):
         super().__init__(filename)
 
     def open(self, lanelet_assignment: bool = False) -> Tuple[Scenario, PlanningProblemSet]:
@@ -52,9 +52,9 @@ class ProtobufFileReader(FileReader):
         :param lanelet_assignment: Activates calculation of lanelets occupied by obstacles
         :return: Scenario and planning problems
         """
-        file = open(self._filename, "rb")
-        commonroad_msg = commonroad_pb2.CommonRoad()
-        commonroad_msg.ParseFromString(file.read())
+        with open(self._filename, "rb") as file:
+            commonroad_msg = commonroad_pb2.CommonRoad()
+            commonroad_msg.ParseFromString(file.read())
 
         return CommonRoadFactory.create_from_message(commonroad_msg, lanelet_assignment)
 
@@ -64,9 +64,9 @@ class ProtobufFileReader(FileReader):
 
         :return: Lanelet network
         """
-        file = open(self._filename, "rb")
-        commonroad_msg = commonroad_pb2.CommonRoad()
-        commonroad_msg.ParseFromString(file.read())
+        with open(self._filename, "rb") as file:
+            commonroad_msg = commonroad_pb2.CommonRoad()
+            commonroad_msg.ParseFromString(file.read())
 
         scenario, _ = CommonRoadFactory.create_from_message(commonroad_msg, False)
 

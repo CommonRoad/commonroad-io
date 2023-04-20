@@ -1,3 +1,8 @@
+import enum
+
+import enum
+from pathlib import Path
+
 import numpy as np
 import math
 from scipy.spatial.transform.rotation import Rotation
@@ -5,6 +10,8 @@ from scipy.spatial.transform import Slerp
 from typing import Tuple
 from commonroad.common import validity
 from commonroad.common.validity import *
+
+Path_T = Union[str, bytes, Path]
 
 
 def interpolate_angle(x: Union[float, np.array], xp: np.array, fp: np.array, degrees=False):
@@ -223,6 +230,14 @@ class AngleInterval(Interval):
         assert interval_diff >= 0
         diff = vectorized_angle_difference(value, self.start)
         return 0 <= diff <= interval_diff
+
+
+class FileFormat(enum.Enum):
+    """
+    Specifies the format of file.
+    """
+    XML = ".xml"
+    PROTOBUF = ".pb"
 
 
 class Time:

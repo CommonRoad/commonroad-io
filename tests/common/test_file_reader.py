@@ -3,7 +3,7 @@ import unittest
 
 from commonroad import SCENARIO_VERSION
 from commonroad.common.file_reader import CommonRoadFileReader
-from commonroad.common.file_writer import FileFormat
+from commonroad.common.util import FileFormat
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
 from commonroad.prediction.prediction import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork

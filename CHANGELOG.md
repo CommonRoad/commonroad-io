@@ -5,6 +5,7 @@
 ### Added
 - Area for modelling drivable areas which cannot be represented by lanelets
 - New weather and time of day options
+- Allow file reader to determine format based on suffix 
 
 ### Fixed
 
@@ -16,6 +17,10 @@
 - Visualization of direction arrow of narrow lanelets
 - Traffic light cycle optional
 - Traffic light in separate python file
+- Allow file reader to determine format based on suffix 
+- Broaden types allowed as file names 
+- Open files safely by using a context manager 
+- Use correct suffix when inferring filename from scenario id
 
 ### Removed
 
