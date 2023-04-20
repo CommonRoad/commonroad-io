@@ -43,12 +43,14 @@ The drawing function is used in combination with matplotlib_. Therefore, the vis
 Styling options
 ---------------
 
-The visualization of CommonRoad scenario objects can be customized by adjusting the drawing parameters in :class:`~.MPDrawParams`.
+The plotting style of the visualization module is defined by a :class:`~commonroad.visualization.draw_params.MPDrawParams` object.
+For every drawable object, it contains a corresponding parameter object.
 
-The plotting style of the visualization module can be adjusted via two mechanisms:
+The :class:`~commonroad.visualization.draw_params.MPDrawParams` object can be either
 
-    1. Setting a set of default parameters in the constructor of :class:`~commonroad.visualization.mp_renderer.MPRenderer`, and
-    2. Providing the parameters by setting parameters on a per-object basis, when calling individual :meth:`~commonroad.visualization.drawable.IDrawable.draw` functions.
+-  set as the default parameters in the constructor of :class:`~commonroad.visualization.mp_renderer.MPRenderer`, or
+-  by setting parameters on a per-object basis, when calling individual :meth:`~commonroad.visualization.drawable.IDrawable.draw` functions. Note, that the ladder overrides the former.
+
 
 Example
 """""""
