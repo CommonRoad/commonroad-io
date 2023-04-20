@@ -7,7 +7,7 @@ from xml.etree import ElementTree
 
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.reader.file_reader_interface import FileReader
-from commonroad.common.util import Interval, AngleInterval, Time
+from commonroad.common.util import Interval, AngleInterval, Path_T, Time
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
@@ -59,7 +59,7 @@ class XMLFileReader(FileReader):
     (1) a formal representation of the road network,
     (2) static and dynamic obstacles,
     (3) the planning problem of the ego vehicle(s). """
-    def __init__(self, filename: str):
+    def __init__(self, filename: Path_T):
         """
         :param filename: full path + filename of the CommonRoad XML-file,
         """

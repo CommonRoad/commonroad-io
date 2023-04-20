@@ -6,7 +6,7 @@ import logging
 import numpy as np
 from google.protobuf.message import DecodeError
 
-from commonroad.common.util import Interval, Time
+from commonroad.common.util import Interval, FileFormat, Time
 from commonroad.common.writer.file_writer_interface import FileWriter, OverwriteExistingFile
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
@@ -122,9 +122,11 @@ class ProtobufFileWriter(FileWriter):
         :param filename: Name of file
         :return:
         """
-        f = open(filename, "wb")
-        f.write(self._commonroad_msg.SerializeToString())
-        f.close()
+        with open(filename, "wb") as f:
+            f.write(self._commonroad_msg.SerializeToString())
+
+    def _get_suffix(self) -> str:
+        return FileFormat.PROTOBUF.value
 
     def write_to_file(self, filename: Union[str, None] = None,
                       overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,

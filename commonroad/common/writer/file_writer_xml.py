@@ -9,7 +9,7 @@ from lxml import etree, objectify
 import logging
 
 from commonroad import SCENARIO_VERSION
-from commonroad.common.util import Interval
+from commonroad.common.util import Interval, FileFormat
 from commonroad.geometry.shape import ShapeGroup, Shape, Circle, Rectangle, Polygon
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet
 from commonroad.prediction.prediction import SetBasedPrediction, TrajectoryPrediction, Occupancy
@@ -167,6 +167,9 @@ class XMLFileWriter(FileWriter):
         rough_string = etree.tostring(self._root_node, pretty_print=True, encoding='UTF-8')
         rough_string = rough_string
         return rough_string
+
+    def _get_suffix(self) -> str:
+        return FileFormat.XML.value
 
     def write_to_file(self, filename: Union[str, None] = None,
                       overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,

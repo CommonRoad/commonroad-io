@@ -3,7 +3,8 @@ import os
 import unittest
 
 from commonroad import SCENARIO_VERSION
-from commonroad.common.file_writer import CommonRoadFileWriter, FileFormat
+from commonroad.common.file_writer import CommonRoadFileWriter
+from commonroad.common.util import FileFormat
 from commonroad.common.writer.file_writer_interface import precision, OverwriteExistingFile
 from commonroad.common.writer.file_writer_xml import float_to_str, Point, RectangleXMLNode, CircleXMLNode
 from commonroad.common.file_reader import CommonRoadFileReader
