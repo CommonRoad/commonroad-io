@@ -25,7 +25,7 @@ from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSignIDGe
     TrafficSignIDBelgium, TrafficSignIDFrance, TrafficSignIDGreece, TrafficSignIDCroatia, TrafficSignIDItaly, \
     TrafficSignIDPuertoRico, TrafficSign
 from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightDirection, \
-    TrafficLightCycleElement,  TrafficLight
+    TrafficLightCycleElement,  TrafficLight, TrafficLightCycle
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario_definition.protobuf_format.generated_scripts import commonroad_pb2, util_pb2, \
     phantom_obstacle_pb2
@@ -347,15 +347,9 @@ class TrafficSignFactory:
             traffic_sign_element = TrafficSignElementFactory.create_from_message(traffic_sign_element_msg)
             traffic_sign_elements.append(traffic_sign_element)
 
-        first_occurrences = set()
-        for first_occurrence in traffic_sign_msg.first_occurrences:
-            first_occurrences.add(first_occurrence)
+        point = PointFactory.create_from_message(traffic_sign_msg.position)
 
-        traffic_sign = TrafficSign(traffic_sign_id, traffic_sign_elements, first_occurrences)
-
-        if traffic_sign_msg.HasField('position'):
-            point = PointFactory.create_from_message(traffic_sign_msg.position)
-            traffic_sign.position = point
+        traffic_sign = TrafficSign(traffic_sign_id, traffic_sign_elements, set(), point)
 
         if traffic_sign_msg.HasField('virtual'):
             traffic_sign.virtual = traffic_sign_msg.virtual
@@ -426,14 +420,19 @@ class TrafficLightFactory:
             cycle_element = CycleElementFactory.create_from_message(cycle_element_msg)
             cycle_elements.append(cycle_element)
 
-        traffic_light = TrafficLight(traffic_light_id, cycle_elements)
+        point = PointFactory.create_from_message(traffic_light_msg.position)
 
-        if traffic_light_msg.HasField('position'):
-            point = PointFactory.create_from_message(traffic_light_msg.position)
-            traffic_light.position = point
-
+        traffic_light_cycle = TrafficLightCycle(cycle_elements)
         if traffic_light_msg.HasField('time_offset'):
-            traffic_light.time_offset = traffic_light_msg.time_offset
+            traffic_light_cycle.time_offset = traffic_light_msg.time_offset
+
+        # extracting the color list from the traffic light cycle
+        color = []
+        if len(cycle_elements) > 0:
+            for element in cycle_elements:
+                color.append(element.state)
+
+        traffic_light = TrafficLight(traffic_light_id, point, traffic_light_cycle, color)
 
         if traffic_light_msg.HasField('direction'):
             traffic_light.direction = TrafficLightDirection[

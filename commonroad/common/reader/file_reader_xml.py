@@ -808,7 +808,7 @@ class TrafficSignFactory:
             virtual = False
 
         return TrafficSign(traffic_sign_id=traffic_sign_id, position=position,
-                           first_occurrence=first_traffic_sign_occurence[traffic_sign_id],
+                           first_occurrence=set(),
                            traffic_sign_elements=traffic_sign_elements, virtual=virtual)
 
 
@@ -932,10 +932,18 @@ class TrafficLightFactory:
         else:
             direction = TrafficLightDirection.ALL
 
-        traffic_ligth_cycle, time_offset = TrafficLightCycleFactory.create_from_xml_node(xml_node.find('cycle'))
+        traffic_light_cycles, time_offset = TrafficLightCycleFactory.create_from_xml_node(xml_node.find('cycle'))
 
-        return TrafficLight(traffic_light_id=traffic_light_id, cycle=traffic_ligth_cycle, position=position,
-                            direction=direction, active=active, time_offset=time_offset)
+        traffic_light_cycle = TrafficLightCycle(traffic_light_cycles, time_offset)
+
+        # extracting the color list from the traffic light cycle
+        color = []
+        if len(traffic_light_cycles) > 0:
+            for cycle_element in traffic_light_cycles:
+                color.append(cycle_element.state)
+
+        return TrafficLight(traffic_light_id=traffic_light_id, position=position,
+                            traffic_light_cycle=traffic_light_cycle, color=color, direction=direction, active=active)
 
 
 class TrafficLightCycleFactory:
@@ -946,11 +954,11 @@ class TrafficLightCycleFactory:
         :param xml_node: XML element
         :return: list of objects of class TrafficLightCycleElement according to the CommonRoad specification.
         """
-        traffic_ligth_cycle_elements = []
+        traffic_light_cycle_elements = []
         for cycleElement in xml_node.findall('cycleElement'):
             state = cycleElement.find('color').text
             duration = int(cycleElement.find('duration').text)
-            traffic_ligth_cycle_elements.append(TrafficLightCycleElement(state=TrafficLightState(state),
+            traffic_light_cycle_elements.append(TrafficLightCycleElement(state=TrafficLightState(state),
                                                                          duration=duration))
 
         if xml_node.find('timeOffset') is not None:
@@ -958,7 +966,7 @@ class TrafficLightCycleFactory:
         else:
             time_offset = 0
 
-        return traffic_ligth_cycle_elements, time_offset
+        return traffic_light_cycle_elements, time_offset
 
 
 class IntersectionFactory:

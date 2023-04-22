@@ -10,7 +10,8 @@ from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.geometry.shape import Rectangle
 from commonroad.scenario.state import InitialState
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany
-from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightCycleElement, TrafficLight
+from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightCycleElement, TrafficLight, \
+    TrafficLightCycle
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.area import Area
 
@@ -66,10 +67,10 @@ class TestLaneletNetwork(unittest.TestCase):
         self.line_marking_left = LineMarking.DASHED
         traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED.value, ["15"])
         self.traffic_sign = TrafficSign(1, [traffic_sign_max_speed], {5}, np.array([0.0, 0.0]))
-        cycle = [TrafficLightCycleElement(TrafficLightState.GREEN, 2),
-                 TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
-                 TrafficLightCycleElement(TrafficLightState.RED, 2)]
-        self.traffic_light = TrafficLight(567, cycle, position=np.array([10., 10.]))
+        cycle = TrafficLightCycle([TrafficLightCycleElement(TrafficLightState.GREEN, 2),
+                                        TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
+                                        TrafficLightCycleElement(TrafficLightState.RED, 2)])
+        self.traffic_light = TrafficLight(567, np.array([10., 10.]), cycle)
         self.adjacent_area = Area(1)
         self.stop_line = StopLine(self.left_vertices[-1], self.right_vertices[-1], LineMarking.SOLID,
                                   {self.traffic_sign.traffic_sign_id}, {self.traffic_light.traffic_light_id})
@@ -256,10 +257,10 @@ class TestLaneletNetwork(unittest.TestCase):
         self.assertSetEqual(self.lanelet_network.lanelets[0].traffic_signs, {123, 1})
 
     def test_add_traffic_light(self):
-        cycle = [TrafficLightCycleElement(TrafficLightState.GREEN, 2),
-                 TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
-                 TrafficLightCycleElement(TrafficLightState.RED, 2)]
-        traffic_light = TrafficLight(234, cycle, time_offset=5, position=np.array([10., 10.]))
+        cycle = TrafficLightCycle([TrafficLightCycleElement(TrafficLightState.GREEN, 2),
+                                        TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
+                                        TrafficLightCycleElement(TrafficLightState.RED, 2)])
+        traffic_light = TrafficLight(234, np.array([10., 10.]), cycle)
 
         self.assertTrue(self.lanelet_network.add_traffic_light(traffic_light, {5}))
 
@@ -487,8 +488,8 @@ class TestLaneletNetwork(unittest.TestCase):
         traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, ["15"])
         traffic_sign = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0]))
 
-        cycle = [TrafficLightCycleElement(TrafficLightState.GREEN, 2)]
-        traffic_light = TrafficLight(234, cycle, np.array([10., 10.]), 5)
+        cycle = TrafficLightCycle([TrafficLightCycleElement(TrafficLightState.GREEN, 2)])
+        traffic_light = TrafficLight(234, np.array([10., 10.]), cycle)
 
         lanelet_network_1 = LaneletNetwork()
         lanelet_network_2 = LaneletNetwork()
