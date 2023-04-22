@@ -53,11 +53,11 @@ class TestScenario(unittest.TestCase):
         cycle = [TrafficLightCycleElement(TrafficLightState.GREEN, 2),
                  TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
                  TrafficLightCycleElement(TrafficLightState.RED, 2)]
-        self.traffic_light = TrafficLight(42, cycle, position=np.array([10., 10.]))
-        self.traffic_light100 = TrafficLight(200, cycle, position=np.array([10., 10.]))
-        self.traffic_light101 = TrafficLight(201, cycle, position=np.array([10., 10.]))
-        self.traffic_light102 = TrafficLight(202, cycle, position=np.array([10., 10.]))
-        self.traffic_light103 = TrafficLight(203, cycle, position=np.array([10., 10.]))
+        self.traffic_light = TrafficLight(42, np.array([10., 10.]), cycle)
+        self.traffic_light100 = TrafficLight(200, np.array([10., 10.]), cycle)
+        self.traffic_light101 = TrafficLight(201, np.array([10., 10.]), cycle)
+        self.traffic_light102 = TrafficLight(202, np.array([10., 10.]), cycle)
+        self.traffic_light103 = TrafficLight(203, np.array([10., 10.]), cycle)
 
         self.set_pred = SetBasedPrediction(0, occupancy_list)
 

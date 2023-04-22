@@ -389,9 +389,6 @@ class TrafficSignMessage:
             traffic_sign_element_msg = TrafficSignElementMessage.create_message(traffic_sign_element)
             traffic_sign_msg.traffic_sign_elements.append(traffic_sign_element_msg)
 
-        for first_occurrence in traffic_sign.first_occurrence:
-            traffic_sign_msg.first_occurrences.append(first_occurrence)
-
         if traffic_sign.position is not None:
             point_msg = PointMessage.create_message(traffic_sign.position)
             traffic_sign_msg.position.CopyFrom(point_msg)
@@ -463,7 +460,7 @@ class TrafficLightMessage:
 
         traffic_light_msg.traffic_light_id = traffic_light.traffic_light_id
 
-        for cycle_element in traffic_light.cycle:
+        for cycle_element in traffic_light.traffic_light_cycle.cycle_elements:
             cycle_element_msg = CycleElementMessage.create_message(cycle_element)
             traffic_light_msg.cycle_elements.append(cycle_element_msg)
 
@@ -471,8 +468,8 @@ class TrafficLightMessage:
             point_msg = PointMessage.create_message(traffic_light.position)
             traffic_light_msg.position.CopyFrom(point_msg)
 
-        if traffic_light.time_offset is not None:
-            traffic_light_msg.time_offset = traffic_light.time_offset
+        if traffic_light.traffic_light_cycle.time_offset is not None:
+            traffic_light_msg.time_offset = traffic_light.traffic_light_cycle.time_offset
 
         if traffic_light.direction is not None:
             traffic_light_msg.direction = traffic_light_pb2.TrafficLightDirectionEnum.TrafficLightDirection \

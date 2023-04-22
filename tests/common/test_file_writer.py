@@ -146,6 +146,7 @@ class TestXMLFileWriter(unittest.TestCase):
             xmlschema.assert_(xml_doc)
             return True
         except Exception as e:
+            print(str(e))
             logging.error('xml produced by file_writer not conformant with xsd-scheme: ' + str(e))
             return False
 
