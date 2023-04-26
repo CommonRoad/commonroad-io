@@ -3,6 +3,7 @@ syntax = "proto2";
 package commonroad_dynamic;
 
 import "obstacle.proto";
+import "state.proto";
 import "util.proto";
 
 message DynamicObstacle {
