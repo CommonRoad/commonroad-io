@@ -9,7 +9,8 @@ from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.geometry.shape import Rectangle
 from commonroad.scenario.state import InitialState
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany
-from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightCycleElement, TrafficLight
+from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightCycleElement, TrafficLight, \
+    TrafficLightCycle
 from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup
 from commonroad.scenario.area import Area
 
