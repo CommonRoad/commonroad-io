@@ -9,7 +9,7 @@ import iso3166
 import numpy as np
 
 from commonroad import SCENARIO_VERSION, SUPPORTED_COMMONROAD_VERSIONS
-from commonroad.common.util import Interval
+from commonroad.common.util import Interval, Time
 from commonroad.common.validity import is_real_number, is_real_number_vector, is_valid_orientation, is_natural_number, \
     is_integer_number
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
@@ -96,83 +96,6 @@ class Underground(enum.Enum):
     SNOW = "snow"
     ICE = "ice"
     UNKNOWN = "unknown"
-
-
-class Time:
-    """
-    Class which describes the fictive time when a scenario starts.
-    """
-
-    def __init__(self, hours: int, minutes: int, day: int = None, month: int = None, year: int = None):
-        """
-        Constructor of a time object
-
-        :param hours: hours at start of scenario (0-24)
-        :param minutes: minutes at start of scenario (0-60)
-        :param day: day at start of scenario (1-31)
-        :param month: month at start of scenario (1-12)
-        :param year: year at start of scenario
-        """
-        self._hours = hours
-        self._minutes = minutes
-        self._day = day
-        self._month = month
-        self._year = year
-
-    def __eq__(self, other):
-        if not isinstance(other, Time):
-            return False
-
-        return self._hours == other.hours and self._minutes == other.minutes and self._day == other.day and \
-            self._month == other.month and self._year == other.year
-
-    def __hash__(self):
-        return hash((self._hours, self._minutes, self._day, self._month, self._year))
-
-    @property
-    def hours(self) -> int:
-        """ Hours at start of scenario (0-24)"""
-        return self._hours
-
-    @hours.setter
-    def hours(self, hours: int):
-        self._hours = hours
-
-    @property
-    def minutes(self) -> int:
-        """ Minutes at start of scenario (0-60)"""
-        return self._minutes
-
-    @minutes.setter
-    def minutes(self, minutes: int):
-        self._minutes = minutes
-
-    @property
-    def day(self) -> Union[None, int]:
-        """ Day at start of scenario (1-31)"""
-        return self._day
-
-    @day.setter
-    def day(self, day: Union[None, int]):
-        self._day = day
-
-    @property
-    def month(self) -> Union[None, int]:
-        """ Month at start of scenario (1-12)"""
-        return self._month
-
-    @month.setter
-    def month(self, month: Union[None, int]):
-        self._month = month
-
-    @property
-    def year(self) -> Union[None, int]:
-        """ Year at start of scenario"""
-        return self._year
-
-    @year.setter
-    def year(self, year: Union[None, int]):
-        self._year = year
 
 
 class GeoTransformation:

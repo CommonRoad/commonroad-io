@@ -4,13 +4,13 @@ from copy import deepcopy
 from copy import deepcopy
 
 from commonroad import SCENARIO_VERSION
-from commonroad.common.util import Interval
+from commonroad.common.util import Interval, Time
 from commonroad.geometry.shape import *
 from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
 from commonroad.common.common_lanelet import LineMarking
 from commonroad.scenario.obstacle import *
-from commonroad.scenario.scenario import Scenario, Environment, TimeOfDay, Time, Underground, Weather, Location, \
+from commonroad.scenario.scenario import Scenario, Environment, TimeOfDay, Underground, Weather, Location, \
     ScenarioID, GeoTransformation
 from commonroad.scenario.state import KSState, InitialState
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany
@@ -53,11 +53,11 @@ class TestScenario(unittest.TestCase):
         cycle = [TrafficLightCycleElement(TrafficLightState.GREEN, 2),
                  TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
                  TrafficLightCycleElement(TrafficLightState.RED, 2)]
-        self.traffic_light = TrafficLight(42, cycle, position=np.array([10., 10.]))
-        self.traffic_light100 = TrafficLight(200, cycle, position=np.array([10., 10.]))
-        self.traffic_light101 = TrafficLight(201, cycle, position=np.array([10., 10.]))
-        self.traffic_light102 = TrafficLight(202, cycle, position=np.array([10., 10.]))
-        self.traffic_light103 = TrafficLight(203, cycle, position=np.array([10., 10.]))
+        self.traffic_light = TrafficLight(42, np.array([10., 10.]), cycle)
+        self.traffic_light100 = TrafficLight(200, np.array([10., 10.]), cycle)
+        self.traffic_light101 = TrafficLight(201, np.array([10., 10.]), cycle)
+        self.traffic_light102 = TrafficLight(202, np.array([10., 10.]), cycle)
+        self.traffic_light103 = TrafficLight(203, np.array([10., 10.]), cycle)
 
         self.set_pred = SetBasedPrediction(0, occupancy_list)
 

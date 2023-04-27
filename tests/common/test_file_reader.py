@@ -3,7 +3,7 @@ import unittest
 
 from commonroad import SCENARIO_VERSION
 from commonroad.common.file_reader import CommonRoadFileReader
-from commonroad.common.file_writer import FileFormat
+from commonroad.common.util import FileFormat
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
 from commonroad.prediction.prediction import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
@@ -16,7 +16,7 @@ from commonroad.scenario.state import STState, InitialState, CustomState, PMStat
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany
 from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightDirection, TrafficLightCycleElement, \
-    TrafficLight
+    TrafficLight, TrafficLightCycle
 from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup
 
 
@@ -171,17 +171,20 @@ class TestXMLFileReader(unittest.TestCase):
 
         self.traffic_light_201 = TrafficLight(traffic_light_id=201,
                                               position=np.array([168.6607857447963, -57.38341449560771]),
-                                              direction=TrafficLightDirection.ALL, active=True, time_offset=2,
-                                              cycle=[TrafficLightCycleElement(state=TrafficLightState.RED,
-                                                                              duration=15),
-                                                     TrafficLightCycleElement(state=TrafficLightState.INACTIVE,
-                                                                              duration=4),
-                                                     TrafficLightCycleElement(state=TrafficLightState.RED_YELLOW,
-                                                                              duration=4),
-                                                     TrafficLightCycleElement(state=TrafficLightState.GREEN,
-                                                                              duration=15),
-                                                     TrafficLightCycleElement(state=TrafficLightState.YELLOW,
-                                                                              duration=4)])
+                                              direction=TrafficLightDirection.ALL, active=True,
+                                              traffic_light_cycle=
+                                              TrafficLightCycle
+                                              ([TrafficLightCycleElement(state=TrafficLightState.RED,
+                                                                         duration=15),
+                                                TrafficLightCycleElement(state=TrafficLightState.INACTIVE,
+                                                                         duration=4),
+                                                TrafficLightCycleElement(state=TrafficLightState.RED_YELLOW,
+                                                                         duration=4),
+                                                TrafficLightCycleElement(state=TrafficLightState.GREEN,
+                                                                         duration=15),
+                                                TrafficLightCycleElement(state=TrafficLightState.YELLOW,
+                                                                         duration=4)],
+                                               time_offset=2))
         self.intersection_301 = \
             Intersection(intersection_id=301,
                          incomings=[IncomingGroup(incoming_id=302, incoming_lanelets={13},
@@ -586,15 +589,15 @@ class TestXMLFileReader(unittest.TestCase):
         exp_traffic_light_201_position = self.traffic_light_201.position
         exp_traffic_light_201_direction = self.traffic_light_201.direction
         exp_traffic_light_201_active = self.traffic_light_201.active
-        exp_traffic_light_201_time_offset = self.traffic_light_201.time_offset
-        exp_traffic_light_201_cycle_0_state = self.traffic_light_201.cycle[0].state
-        exp_traffic_light_201_cycle_0_duration = self.traffic_light_201.cycle[0].duration
-        exp_traffic_light_201_cycle_1_state = self.traffic_light_201.cycle[1].state
-        exp_traffic_light_201_cycle_1_duration = self.traffic_light_201.cycle[1].duration
-        exp_traffic_light_201_cycle_2_state = self.traffic_light_201.cycle[2].state
-        exp_traffic_light_201_cycle_2_duration = self.traffic_light_201.cycle[2].duration
-        exp_traffic_light_201_cycle_3_state = self.traffic_light_201.cycle[3].state
-        exp_traffic_light_201_cycle_3_duration = self.traffic_light_201.cycle[3].duration
+        exp_traffic_light_201_time_offset = self.traffic_light_201.traffic_light_cycle.time_offset
+        exp_traffic_light_201_cycle_0_state = self.traffic_light_201.traffic_light_cycle.cycle_elements[0].state
+        exp_traffic_light_201_cycle_0_duration = self.traffic_light_201.traffic_light_cycle.cycle_elements[0].duration
+        exp_traffic_light_201_cycle_1_state = self.traffic_light_201.traffic_light_cycle.cycle_elements[1].state
+        exp_traffic_light_201_cycle_1_duration = self.traffic_light_201.traffic_light_cycle.cycle_elements[1].duration
+        exp_traffic_light_201_cycle_2_state = self.traffic_light_201.traffic_light_cycle.cycle_elements[2].state
+        exp_traffic_light_201_cycle_2_duration = self.traffic_light_201.traffic_light_cycle.cycle_elements[2].duration
+        exp_traffic_light_201_cycle_3_state = self.traffic_light_201.traffic_light_cycle.cycle_elements[3].state
+        exp_traffic_light_201_cycle_3_duration = self.traffic_light_201.traffic_light_cycle.cycle_elements[3].duration
 
         exp_intersection_301_id = self.intersection_301.intersection_id
         exp_intersection_301_incoming_zero_id = self.intersection_301.incomings[0].incoming_id
@@ -659,23 +662,24 @@ class TestXMLFileReader(unittest.TestCase):
                                       xml_file[0].lanelet_network.traffic_lights[0].position)
         self.assertEqual(exp_traffic_light_201_direction, xml_file[0].lanelet_network.traffic_lights[0].direction)
         self.assertEqual(exp_traffic_light_201_active, xml_file[0].lanelet_network.traffic_lights[0].active)
-        self.assertEqual(exp_traffic_light_201_time_offset, xml_file[0].lanelet_network.traffic_lights[0].time_offset)
+        self.assertEqual(exp_traffic_light_201_time_offset, xml_file[0].lanelet_network.traffic_lights[0].
+                         traffic_light_cycle.time_offset)
         self.assertEqual(exp_traffic_light_201_cycle_0_state,
-                         xml_file[0].lanelet_network.traffic_lights[0].cycle[0].state)
+                         xml_file[0].lanelet_network.traffic_lights[0].traffic_light_cycle.cycle_elements[0].state)
         self.assertEqual(exp_traffic_light_201_cycle_0_duration,
-                         xml_file[0].lanelet_network.traffic_lights[0].cycle[0].duration)
+                         xml_file[0].lanelet_network.traffic_lights[0].traffic_light_cycle.cycle_elements[0].duration)
         self.assertEqual(exp_traffic_light_201_cycle_1_state,
-                         xml_file[0].lanelet_network.traffic_lights[0].cycle[1].state)
+                         xml_file[0].lanelet_network.traffic_lights[0].traffic_light_cycle.cycle_elements[1].state)
         self.assertEqual(exp_traffic_light_201_cycle_1_duration,
-                         xml_file[0].lanelet_network.traffic_lights[0].cycle[1].duration)
+                         xml_file[0].lanelet_network.traffic_lights[0].traffic_light_cycle.cycle_elements[1].duration)
         self.assertEqual(exp_traffic_light_201_cycle_2_state,
-                         xml_file[0].lanelet_network.traffic_lights[0].cycle[2].state)
+                         xml_file[0].lanelet_network.traffic_lights[0].traffic_light_cycle.cycle_elements[2].state)
         self.assertEqual(exp_traffic_light_201_cycle_2_duration,
-                         xml_file[0].lanelet_network.traffic_lights[0].cycle[2].duration)
+                         xml_file[0].lanelet_network.traffic_lights[0].traffic_light_cycle.cycle_elements[2].duration)
         self.assertEqual(exp_traffic_light_201_cycle_3_state,
-                         xml_file[0].lanelet_network.traffic_lights[0].cycle[3].state)
+                         xml_file[0].lanelet_network.traffic_lights[0].traffic_light_cycle.cycle_elements[3].state)
         self.assertEqual(exp_traffic_light_201_cycle_3_duration,
-                         xml_file[0].lanelet_network.traffic_lights[0].cycle[3].duration)
+                         xml_file[0].lanelet_network.traffic_lights[0].traffic_light_cycle.cycle_elements[3].duration)
 
         self.assertSetEqual(exp_intersection_301_incoming_zero_incoming_lanelets,
                             xml_file[0].lanelet_network.intersections[0].incomings[0].incoming_lanelets)

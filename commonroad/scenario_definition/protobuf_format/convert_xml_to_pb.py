@@ -3,7 +3,8 @@ import shutil
 from os.path import isfile, join, isdir
 
 from commonroad.common.file_reader import CommonRoadFileReader
-from commonroad.common.file_writer import FileFormat, CommonRoadFileWriter
+from commonroad.common.file_writer import CommonRoadFileWriter
+from commonroad.common.util import FileFormat
 from commonroad.common.writer.file_writer_interface import OverwriteExistingFile
 
 

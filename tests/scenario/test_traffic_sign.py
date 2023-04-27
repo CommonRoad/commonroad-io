@@ -39,12 +39,12 @@ class TestTrafficSign(unittest.TestCase):
         traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0]), True)
         self.assertFalse(traffic_sign_one == traffic_sign_two)
 
-        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, None, True)
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1., 1.]), True)
         self.assertFalse(traffic_sign_one == traffic_sign_two)
         self.assertFalse(traffic_sign_two == traffic_sign_one)
 
-        traffic_sign_one = TrafficSign(1, [traffic_sign_max_speed], {3}, None)
-        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, None)
+        traffic_sign_one = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1., 1.]))
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1., 1.]))
         self.assertTrue(traffic_sign_one == traffic_sign_two)
 
     def test_hash(self):
@@ -56,11 +56,11 @@ class TestTrafficSign(unittest.TestCase):
         traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0000000001, 7.0]))
         self.assertNotEqual(hash(traffic_sign_one), hash(traffic_sign_two))
 
-        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, None)
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1., 1.]))
         self.assertNotEqual(hash(traffic_sign_one), hash(traffic_sign_two))
 
-        traffic_sign_one = TrafficSign(1, [traffic_sign_max_speed], {3}, None)
-        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, None)
+        traffic_sign_one = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1., 1.]))
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1., 1.]))
         self.assertEqual(hash(traffic_sign_one), hash(traffic_sign_two))
 
 

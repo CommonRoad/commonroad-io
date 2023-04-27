@@ -9,7 +9,7 @@ from lxml import etree, objectify
 import logging
 
 from commonroad import SCENARIO_VERSION
-from commonroad.common.util import Interval
+from commonroad.common.util import Interval, FileFormat
 from commonroad.geometry.shape import ShapeGroup, Shape, Circle, Rectangle, Polygon
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet
 from commonroad.prediction.prediction import SetBasedPrediction, TrajectoryPrediction, Occupancy
@@ -21,7 +21,8 @@ from commonroad.scenario.obstacle import Obstacle, DynamicObstacle, StaticObstac
 from commonroad.scenario.scenario import Location, GeoTransformation, Environment, TimeOfDay, Weather, Underground, \
     Tag, Scenario
 from commonroad.scenario.traffic_sign import TrafficSign
-from commonroad.scenario.traffic_light import TrafficLightDirection, TrafficLightCycleElement, TrafficLight
+from commonroad.scenario.traffic_light import TrafficLightDirection, TrafficLightCycleElement, TrafficLight, \
+    TrafficLightCycle
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import State
 from commonroad.common.writer.file_writer_interface import FileWriter, precision, OverwriteExistingFile
@@ -167,6 +168,9 @@ class XMLFileWriter(FileWriter):
         rough_string = etree.tostring(self._root_node, pretty_print=True, encoding='UTF-8')
         rough_string = rough_string
         return rough_string
+
+    def _get_suffix(self) -> str:
+        return FileFormat.XML.value
 
     def write_to_file(self, filename: Union[str, None] = None,
                       overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
@@ -1175,15 +1179,10 @@ class TrafficLightXMLNode:
     def create_node(cls, traffic_light: TrafficLight) -> etree.Element:
         traffic_light_node = etree.Element('trafficLight')
         traffic_light_node.set('id', str(traffic_light.traffic_light_id))
-        cycle_node = etree.Element('cycle')
-        for state in traffic_light.cycle:
-            element_node = TrafficLightCycleElementXMLNode.create_node(state)
-            cycle_node.append(element_node)
-        if traffic_light.time_offset is not None and traffic_light.time_offset > 0:
-            offset_node = etree.Element('timeOffset')
-            offset_node.text = str(traffic_light.time_offset)
-            cycle_node.append(offset_node)
-        traffic_light_node.append(cycle_node)
+        if traffic_light.traffic_light_cycle is not None:
+            traffic_light_cycle_node = TrafficLightCycleXMLNode.create_node(traffic_light.traffic_light_cycle)
+
+            traffic_light_node.append(traffic_light_cycle_node)
 
         if traffic_light.position is not None:
             position_node = etree.Element('position')
@@ -1208,6 +1207,22 @@ class TrafficLightXMLNode:
         traffic_light_ref_node = etree.Element('trafficLightRef')
         traffic_light_ref_node.set('ref', str(traffic_light_ref))
         return traffic_light_ref_node
+
+
+class TrafficLightCycleXMLNode:
+    @classmethod
+    def create_node(cls, traffic_light_cycle: TrafficLightCycle) -> etree.Element:
+        traffic_light_cycle_node = etree.Element("cycle")
+        for state in traffic_light_cycle.cycle_elements:
+            element_node = TrafficLightCycleElementXMLNode.create_node(state)
+            traffic_light_cycle_node.append(element_node)
+
+        if traffic_light_cycle.time_offset is not None and traffic_light_cycle.time_offset > 0:
+            offset_node = etree.Element('timeOffset')
+            offset_node.text = str(traffic_light_cycle.time_offset)
+            traffic_light_cycle_node.append(offset_node)
+
+        return traffic_light_cycle_node
 
 
 class TrafficLightCycleElementXMLNode:

@@ -114,9 +114,9 @@ class OffsetImageAutoscale(OffsetImage):
         self.dy_pix = dy_pix
 
     def ax_update(self, ax: Axes):
-        '''
+        """
         Update image size based on axes limits and window size in pixels
-        '''
+        """
         bbox = ax.get_window_extent()
         width_px, height_px = bbox.width, bbox.height
         # Get the range for the new area
