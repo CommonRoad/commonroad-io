@@ -11,6 +11,7 @@
 
 - Visualization of all traffic signs by setting `show_traffic_signs = None` in draw parameters
 - Validity functions to support z-axis
+- Unreferenced traffic signs for lanelet networks filtered by lanelet type
 
 ### Changed
 
@@ -197,7 +198,7 @@ will be added later
 
 
 ## [2020.2] - 2020-04-14
-## Changed
+### Changed
 - Traffic signs are not visualized by default
 
 ### Added
