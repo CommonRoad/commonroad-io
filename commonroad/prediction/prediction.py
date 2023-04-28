@@ -229,19 +229,9 @@ class TrajectoryPrediction(Prediction):
             warnings.warn(f"Inequality between TrajectoryPrediction {repr(self)} and different type {type(other)}")
             return False
 
-        center_lanelet_assignment = None if self._center_lanelet_assignment is None \
-            else dict((key, list(value)) for key, value in self._center_lanelet_assignment.items()).items()
-        center_lanelet_assignment_other = None if other._center_lanelet_assignment is None \
-            else dict((key, list(value)) for key, value in other._center_lanelet_assignment.items()).items()
-
-        shape_lanelet_assignment = None if self._shape_lanelet_assignment is None \
-            else dict((key, list(value)) for key, value in self._shape_lanelet_assignment.items()).items()
-        shape_lanelet_assignment_other = None if other._shape_lanelet_assignment is None \
-            else dict((key, list(value)) for key, value in other._shape_lanelet_assignment.items()).items()
-
-        prediction_eq = self._trajectory == other.trajectory and self._shape == other.shape and \
-            center_lanelet_assignment == center_lanelet_assignment_other and \
-            shape_lanelet_assignment == shape_lanelet_assignment_other and Prediction.__eq__(self, other)
+        prediction_eq = self._shape == other.shape and self._trajectory == other.trajectory and \
+            self.center_lanelet_assignment == other.center_lanelet_assignment and \
+            self.shape_lanelet_assignment == other.shape_lanelet_assignment and Prediction.__eq__(self, other)
 
         return prediction_eq
 
