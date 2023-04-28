@@ -1251,29 +1251,20 @@ class LaneletNetwork(IDrawable):
         area_ids = set()
         lanelets = set()
 
-        if shape_input is not None:
-            for la in lanelet_network.lanelets:
-                if la.lanelet_type.intersection(exclude_lanelet_types) == set():
-                    lanelet_polygon = la.polygon.shapely_object
-                    if shape_input.shapely_object.intersects(lanelet_polygon):
-                        for sign_id in la.traffic_signs:
-                            traffic_sign_ids.add(sign_id)
-                        for light_id in la.traffic_lights:
-                            traffic_light_ids.add(light_id)
-                        for area_id in la.adjacent_areas:
-                            area_ids.add(area_id)
-                        lanelets.add(la)
+        for la in lanelet_network.lanelets:
+            if len(la.lanelet_type.intersection(
+                    exclude_lanelet_types)) > 0 or shape_input is not None and not \
+                    shape_input.shapely_object.intersects(
+                    la.polygon.shapely_object):
+                continue
 
-        else:
-            for la in lanelet_network.lanelets:
-                if la.lanelet_type.intersection(exclude_lanelet_types) == set():
-                    lanelets.add(la)
-                for sign_id in la.traffic_signs:
-                    traffic_sign_ids.add(sign_id)
-                for light_id in la.traffic_lights:
-                    traffic_light_ids.add(light_id)
-                for area_id in la.adjacent_areas:
-                    area_ids.add(area_id)
+            lanelets.add(la)
+            for sign_id in la.traffic_signs:
+                traffic_sign_ids.add(sign_id)
+            for light_id in la.traffic_lights:
+                traffic_light_ids.add(light_id)
+            for area_id in la.adjacent_areas:
+                area_ids.add(area_id)
 
         for sign_id in traffic_sign_ids:
             new_lanelet_network.add_traffic_sign(copy.deepcopy(lanelet_network.find_traffic_sign_by_id(sign_id)), set())
