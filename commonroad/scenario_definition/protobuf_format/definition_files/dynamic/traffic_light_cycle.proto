@@ -6,7 +6,7 @@ import "traffic_light_state.proto";
 
 message CycleElement {
     required uint32 duration = 1;
-    required TrafficLightStateEnum.TrafficLightState color = 2;
+    required commonroad_common.TrafficLightStateEnum.TrafficLightState color = 2;
 }
 
 message TrafficLightCycle {

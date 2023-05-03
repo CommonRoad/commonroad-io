@@ -7,5 +7,5 @@ import "traffic_sign_element.proto";
 
 message TrafficSignValue {
     required uint32  traffic_sign_id = 1;
-    repeated TrafficSignElement traffic_sign_elements = 2;
+    repeated commonroad_common.TrafficSignElement traffic_sign_elements = 2;
 }

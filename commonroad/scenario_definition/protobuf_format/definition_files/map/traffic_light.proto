@@ -19,7 +19,7 @@ message TrafficLightDirectionEnum {
 
 message TrafficLight {
     required uint32 traffic_light_id = 1;
-    required Point position = 2;
-    repeated TrafficLightStateEnum.TrafficLightState color = 3;
+    required commonroad_common.Point position = 2;
+    repeated commonroad_common.TrafficLightStateEnum.TrafficLightState color = 3;
     optional TrafficLightDirectionEnum.TrafficLightDirection direction = 4;
 }
