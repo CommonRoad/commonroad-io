@@ -6,13 +6,13 @@ import "state.proto";
 import "scenario_tags.proto";
 
 message GoalState {
-    required State state = 1;
+    required commonroad_common.State state = 1;
     repeated uint32 goal_position_lanelets = 2;
 }
 
 message PlanningProblem {
     required uint32 planning_problem_id = 1;
-    required State initial_state = 2;
+    required commonroad_common.State initial_state = 2;
     repeated GoalState goal_states = 3;
     optional uint32 ego_id = 4;
     required ScenarioTags scenario_tags = 5;

@@ -8,5 +8,5 @@ import "util.proto";
 message EnvironmentObstacle {
     required uint32 environment_obstacle_id = 1;
     required ObstacleTypeEnum.ObstacleType obstacle_type = 2;
-    required Shape obstacle_shape = 3;
+    required commonroad_common.Shape obstacle_shape = 3;
 }

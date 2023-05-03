@@ -14,7 +14,7 @@ import "phantom_obstacle.proto";
 message ScenarioInformation {
     required string common_road_version = 1;
     required string benchmark_id = 2;
-    required TimeStamp date = 3;
+    required commonroad_common.TimeStamp date = 3;
     required string author = 4;
     required string affiliation = 5;
     required string source = 6;

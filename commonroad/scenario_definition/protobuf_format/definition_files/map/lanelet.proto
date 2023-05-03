@@ -62,12 +62,12 @@ message RoadUserEnum {
 }
 
 message Bound {
-    repeated Point points = 1;
+    repeated commonroad_common.Point points = 1;
     optional LineMarkingEnum.LineMarking line_marking = 2;
 }
 
 message StopLine {
-    repeated Point points = 1;
+    repeated commonroad_common.Point points = 1;
     required LineMarkingEnum.LineMarking line_marking = 2;
     repeated uint32 traffic_sign_refs = 3;
     repeated uint32 traffic_light_refs = 4;

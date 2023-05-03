@@ -34,8 +34,8 @@ message MetaInformationState {
 }
 
 message Occupancy {
-    required IntegerExactOrInterval time_step = 1;
-    required Shape shape = 2;
+    required commonroad_common.IntegerExactOrInterval time_step = 1;
+    required commonroad_common.Shape shape = 2;
 }
 
 message OccupancySet {
@@ -44,12 +44,12 @@ message OccupancySet {
 
 message Trajectory {
     required uint32 initial_time_step = 1;
-    repeated State states = 2;
+    repeated commonroad_common.State states = 2;
 }
 
 message TrajectoryPrediction {
     required Trajectory trajectory = 1;
-    required Shape shape = 2;
+    required commonroad_common.Shape shape = 2;
 }
 
 message SetBasedPrediction {

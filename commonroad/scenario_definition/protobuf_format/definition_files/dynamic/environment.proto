@@ -42,7 +42,7 @@ message UndergroundEnum {
 }
 
 message Environment {
-    optional TimeStamp time = 1;
+    optional commonroad_common.TimeStamp time = 1;
     optional TimeOfDayEnum.TimeOfDay time_of_day = 2;
     optional WeatherEnum.Weather weather = 3;
     optional UndergroundEnum.Underground underground = 4;

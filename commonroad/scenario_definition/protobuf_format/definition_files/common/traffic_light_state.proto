@@ -1,5 +1,7 @@
 syntax = "proto2";
 
+package commonroad_common;
+
 message TrafficLightStateEnum {
     enum TrafficLightState {
         RED = 0;
