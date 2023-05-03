@@ -19,7 +19,7 @@ message ScenarioMetaInformation {
 
 
 
-message CommonRoad {
+message CommonRoadScenario {
     required ScenarioMetaInformation information = 1;
     required string map_id = 3;
     required string dynamic_id = 4;

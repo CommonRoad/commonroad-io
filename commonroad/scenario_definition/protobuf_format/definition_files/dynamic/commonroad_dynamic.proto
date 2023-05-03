@@ -23,7 +23,7 @@ message ScenarioInformation {
     optional string license_text = 9;
 }
 
-message CommonRoad {
+message CommonRoadDynamic {
     required ScenarioInformation information = 1;
     required Environment environment = 2;
     repeated TrafficLightCycle traffic_light_cycle = 3;
