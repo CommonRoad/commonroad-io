@@ -672,6 +672,7 @@ class MPRenderer(IRenderer):
                         collections.EllipseCollection(np.ones([traj_points.shape[0], 1]) * draw_params.line_width,
                                                       np.ones([traj_points.shape[0], 1]) * draw_params.line_width,
                                                       np.zeros([traj_points.shape[0], 1]), offsets=traj_points,
+                                                      offset_transform=self.ax.transData,
                                                       units='xy', linewidths=0, zorder=draw_params.zorder,
                                                       facecolor=draw_params.facecolor))
 
