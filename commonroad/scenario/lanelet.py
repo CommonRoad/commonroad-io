@@ -1,5 +1,6 @@
 import copy
 import enum
+from collections import defaultdict
 from typing import *
 
 import numpy as np
@@ -1639,17 +1640,18 @@ class LaneletNetwork(IDrawable):
         assert isinstance(point_list,
                           ValidTypes.LISTS), '<Lanelet/contains_points>: provided list of points is not a list! type ' \
                                              '= {}'.format(type(point_list))
-
-        res = []
-        for point in point_list:
-            shapely_point = ShapelyPoint(point)
-            inner_res = []
-            for idx in self._strtee.query(shapely_point):
-                lanelet_shapely_polygon = self._strtee.geometries[idx]
-                if lanelet_shapely_polygon.intersects(shapely_point) \
-                        or lanelet_shapely_polygon.buffer(1e-15).intersects(shapely_point):
-                    inner_res.append(self._get_lanelet_id_by_shapely_polygon(lanelet_shapely_polygon))
-            res.append(inner_res)
+        shapely_points = [ShapelyPoint(p) for p in point_list]
+        # Accepted tolerance
+        tolerance = 1.0e-15
+        geometry_ids = self._strtee.query(shapely_points, predicate="dwithin", distance=tolerance)
+        # Convert from [[input_index, str_geometry_id], ...] to
+        # [[lanlet_id, ...], ...]
+        lanelet_ids = defaultdict(list)
+        for input_id, geom_id in zip(*geometry_ids):
+            lanelet_shapely_polygon = self._strtee.geometries[geom_id]
+            lanelet_id = self._get_lanelet_id_by_shapely_polygon(lanelet_shapely_polygon)
+            lanelet_ids[input_id].append(lanelet_id)
+        res = [lanelet_ids[i] for i, _ in enumerate(point_list)]
         return res
 
     def find_lanelet_by_shape(self, shape: Shape) -> List[int]:
