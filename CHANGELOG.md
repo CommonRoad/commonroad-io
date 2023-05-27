@@ -194,6 +194,7 @@ The lanelet assignment can still be performed manually after loading a scenario.
 ### Fixed
 - Function *generate_object_id* works now if no element has been added before and reserves ID if object 
 will be added later
+- Runtime warning during calls to find_lanelet_by_position
 - Various small bug fixes
 
 
