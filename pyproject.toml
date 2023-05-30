@@ -8,7 +8,6 @@ readme = "README.md"
 homepage = "https://commonroad.in.tum.de"
 keywords= ["autonomous", "automated", "vehicles", "driving", "motion", "planning"]
 classifiers = [
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -26,9 +25,8 @@ Forum = "https://commonroad.in.tum.de/forum/c/commonroad-io"
 Source = "https://gitlab.lrz.de/tum-cps/commonroad_io"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 numpy = [
-    {version = ">=1.13,<1.22", python = "<3.8"},
     {version = ">=1.22", python = ">=3.8,<3.11"},
     {version = "^1.24", python = ">=3.11"}
 ]

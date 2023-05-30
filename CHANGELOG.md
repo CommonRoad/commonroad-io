@@ -26,6 +26,7 @@
 ### Removed
 
 - function get_default_cycle for traffic lights
+- support for Python 3.7
 
 ## [2023.1] - 2023-03-05
 

@@ -7,7 +7,6 @@
 [![PyPI download month](https://img.shields.io/pypi/dm/commonroad-io.svg?label=PyPI%20downloads)](https://pypi.python.org/pypi/commonroad-io/) 
 [![PyPI download week](https://img.shields.io/pypi/dw/commonroad-io.svg?label=PyPI%20downloads)](https://pypi.python.org/pypi/commonroad-io/)   
 [![PyPI license](https://img.shields.io/pypi/l/commonroad-io.svg)](https://pypi.python.org/pypi/commonroad-io/)
-[![Documentation Status](https://readthedocs.org/projects/commonroad-io/badge/?version=latest)](http://commonroad-io.readthedocs.io/?badge=latest) 
 
 
 Numerical experiments for motion planning of road vehicles require numerous ingredients: vehicle dynamics, 
@@ -33,7 +32,7 @@ With commonroad-io, those solutions can be written to xml-files for uploading th
 
 commonroad-io 2022.3 is compatible with CommonRoad scenarios in version 2020a and supports reading 2018b scenarios.
 
-The software is written in Python and tested on Linux for the Python 3.7, 3.8, 3.9, 3.10, and 3.11.
+The software is written in Python and tested on Linux for the Python 3.8, 3.9, 3.10, and 3.11.
 
 
 ## Documentation
