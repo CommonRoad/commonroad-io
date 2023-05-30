@@ -18,7 +18,7 @@ message AreaTypeEnum {
 
 message AreaBorder {
     required uint32 area_border_id = 1;
-    repeated commonroad_common.Point points = 2;
+    required uint32 boundary = 2;
     optional uint32 adjacent = 3;
     optional LineMarkingEnum.LineMarking line_marking = 4;
 }
