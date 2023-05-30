@@ -59,7 +59,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'CommonRoad_io'
-copyright = '2022, Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Luis Gressenbuch, ' \
+copyright = '2023, Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Luis Gressenbuch, ' \
             'Anna-Katharina Rettinger'
 author = 'Moritz Klischat, Sebastian Maierhofer, Stefanie Manzinger, Christian Pek, Luis Gressenbuch, ' \
          'Anna-Katharina Rettinger'
