@@ -143,7 +143,7 @@ class MPRenderer(IRenderer):
     @property
     def plot_limits_focused(self):
         """
-        :returns: plot limits centered around focus_obstacle_id defined in draw_params
+        plot limits centered around focus_obstacle_id defined in draw_params
         """
         if self.plot_limits is not None and (self.plot_limits == "auto" or self.plot_center is None):
             return self.plot_limits

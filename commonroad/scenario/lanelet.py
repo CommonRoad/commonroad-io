@@ -239,7 +239,7 @@ class Lanelet:
     @property
     def distance(self) -> np.ndarray:
         """
-        :returns cumulative distance along center vertices
+        cumulative distance along center vertices
         """
         if self._distance is None:
             self._distance = self._compute_polyline_cumsum_dist([self.center_vertices])
@@ -252,7 +252,7 @@ class Lanelet:
     @property
     def inner_distance(self) -> np.ndarray:
         """
-        :returns minimum cumulative distance along left and right vertices, i.e., along the inner curve:
+        minimum cumulative distance along left and right vertices, i.e., along the inner curve:
         """
         if self._inner_distance is None:
             self._inner_distance = self._compute_polyline_cumsum_dist([self.left_vertices, self.right_vertices])
@@ -1198,7 +1198,7 @@ class LaneletNetwork(IDrawable):
     @property
     def map_inc_lanelets_to_intersections(self) -> Dict[int, Intersection]:
         """
-        :returns: dict that maps lanelet ids to the intersection of which it is an incoming lanelet.
+        dict that maps lanelet ids to the intersection of which it is an incoming lanelet.
         """
         return {l_id: intersection for intersection in self.intersections for l_id in
                 list(intersection.map_incoming_lanelets.keys())}

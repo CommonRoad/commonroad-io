@@ -64,7 +64,7 @@ class IntersectionIncomingElement:
     @property
     def incoming_id(self) -> int:
         """
-        :returns ID of incoming
+        ID of incoming
         """
         return self._incoming_id
 
@@ -80,7 +80,7 @@ class IntersectionIncomingElement:
     @property
     def incoming_lanelets(self) -> Set[int]:
         """
-        :returns set of IDs of incoming lanelets
+        set of IDs of incoming lanelets
         """
         return self._incoming_lanelets
 
@@ -94,7 +94,7 @@ class IntersectionIncomingElement:
     @property
     def successors_right(self) -> Set[int]:
         """
-        :returns set of IDs of incoming lanelets which turn right
+        set of IDs of incoming lanelets which turn right
         """
         return self._successors_right
 
@@ -111,7 +111,7 @@ class IntersectionIncomingElement:
     @property
     def successors_straight(self) -> Set[int]:
         """
-        :returns set of IDs of incoming lanelets which go straight
+        set of IDs of incoming lanelets which go straight
         """
         return self._successors_straight
 
@@ -128,7 +128,7 @@ class IntersectionIncomingElement:
     @property
     def successors_left(self) -> Set[int]:
         """
-        :returns set of IDs of incoming lanelets which turn left
+        set of IDs of incoming lanelets which turn left
         """
         return self._successors_left
 
@@ -145,7 +145,7 @@ class IntersectionIncomingElement:
     @property
     def left_of(self) -> int:
         """
-        :returns incoming element ID of incoming element located left of this incoming element
+        incoming element ID of incoming element located left of this incoming element
         """
         return self._left_of
 
@@ -214,7 +214,7 @@ class Intersection:
     @property
     def intersection_id(self) -> int:
         """
-        :returns ID of intersection element
+        ID of intersection element
         """
         return self._intersection_id
 
@@ -230,7 +230,7 @@ class Intersection:
     @property
     def incomings(self) -> List[IntersectionIncomingElement]:
         """
-        :returns set of incoming elements in intersection
+        set of incoming elements in intersection
         """
         return self._incomings
 
@@ -244,7 +244,7 @@ class Intersection:
     @property
     def crossings(self) -> Set[int]:
         """
-        :returns set of crossing elements in intersection
+        set of crossing elements in intersection
         """
         return self._crossings
 
@@ -262,6 +262,5 @@ class Intersection:
     def map_incoming_lanelets(self) -> Dict[int, IntersectionIncomingElement]:
         """
         Maps all incoming lanelet ids to IntersectionIncomingElement
-        :returns dictionary mapping lanelet IDs to incomings
         """
         return {l_id: inc for inc in self.incomings for l_id in inc.incoming_lanelets}

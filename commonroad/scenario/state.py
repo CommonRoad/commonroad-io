@@ -94,7 +94,7 @@ class State(abc.ABC):
         """
         Returns all attributes used in state space.
 
-        :return: Attributes
+        Attributes
         """
         fields = self.__dict__
 
@@ -105,7 +105,7 @@ class State(abc.ABC):
         """
         Returns all initialized attributed in state space.
 
-        :return: Initialized attributes
+        Initialized attributes
         """
         used_fields = list()
         for field_name in self.attributes:
@@ -119,7 +119,7 @@ class State(abc.ABC):
         """
         Checks whether the position is uncertain.
 
-        :return: Uncertain or not
+        Uncertain or not
         """
         if hasattr(self, "position"):
             return isinstance(getattr(self, "position"), Shape)
@@ -130,7 +130,7 @@ class State(abc.ABC):
         """
         Checks whether the orientation is uncertain.
 
-        :return: Uncertain or not
+        Uncertain or not
         """
         if hasattr(self, "orientation"):
             return isinstance(getattr(self, "orientation"), AngleInterval)
