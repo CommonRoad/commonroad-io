@@ -143,7 +143,7 @@ class MPRenderer(IRenderer):
     @property
     def plot_limits_focused(self):
         """
-        :returns: plot limits centered around focus_obstacle_id defined in draw_params
+        plot limits centered around focus_obstacle_id defined in draw_params
         """
         if self.plot_limits is not None and (self.plot_limits == "auto" or self.plot_center is None):
             return self.plot_limits
@@ -672,6 +672,7 @@ class MPRenderer(IRenderer):
                         collections.EllipseCollection(np.ones([traj_points.shape[0], 1]) * draw_params.line_width,
                                                       np.ones([traj_points.shape[0], 1]) * draw_params.line_width,
                                                       np.zeros([traj_points.shape[0], 1]), offsets=traj_points,
+                                                      offset_transform=self.ax.transData,
                                                       units='xy', linewidths=0, zorder=draw_params.zorder,
                                                       facecolor=draw_params.facecolor))
 

@@ -71,7 +71,7 @@ class IncomingGroup:
     @property
     def incoming_id(self) -> int:
         """
-        returns ID of incoming
+        ID of incoming
         """
         return self._incoming_id
 
@@ -87,7 +87,7 @@ class IncomingGroup:
     @property
     def incoming_lanelets(self) -> Set[int]:
         """
-        returns set of IDs of incoming lanelets
+        set of IDs of incoming lanelets
         """
         return self._incoming_lanelets
 
@@ -101,7 +101,7 @@ class IncomingGroup:
     @property
     def outgoing_id(self) -> Union[None, int]:
         """
-        returns an ID of the outgoing element that contains outgoing lanelets for this intersection element
+        ID of the outgoing element that contains outgoing lanelets for this intersection element
         """
         return self._outgoing_id
 
@@ -115,7 +115,7 @@ class IncomingGroup:
     @property
     def outgoing_right(self) -> Set[int]:
         """
-        returns set of IDs of incoming lanelets which turn right
+        set of IDs of incoming lanelets which turn right
         """
         return self._outgoing_right
 
@@ -132,7 +132,7 @@ class IncomingGroup:
     @property
     def outgoing_straight(self) -> Set[int]:
         """
-        returns set of IDs of incoming lanelets which go straight
+        set of IDs of incoming lanelets which go straight
         """
         return self._outgoing_straight
 
@@ -149,7 +149,7 @@ class IncomingGroup:
     @property
     def outgoing_left(self) -> Set[int]:
         """
-        returns set of IDs of incoming lanelets which turn left
+        set of IDs of outgoing lanelets which turn left
         """
         return self._outgoing_left
 
@@ -166,7 +166,7 @@ class IncomingGroup:
     @property
     def crossings(self) -> Set[int]:
         """
-        returns set of crossing elements in intersection
+        set of crossing elements in intersection
         """
         return self._crossings
 
@@ -308,7 +308,7 @@ class Intersection:
     @property
     def intersection_id(self) -> int:
         """
-        returns ID of intersection element
+        ID of intersection element
         """
         return self._intersection_id
 
@@ -324,7 +324,7 @@ class Intersection:
     @property
     def incomings(self) -> List[IncomingGroup]:
         """
-        returns set of incoming elements in intersection
+        set of incoming elements in intersection
         """
         return self._incomings
 
@@ -338,7 +338,7 @@ class Intersection:
     @property
     def outgoings(self) -> List[OutgoingGroup]:
         """
-        returns set of outgoing elements in intersection
+        set of outgoing elements in intersection
         """
         return self._outgoings
 
@@ -350,6 +350,5 @@ class Intersection:
     def map_incoming_lanelets(self) -> Dict[int, IncomingGroup]:
         """
         Maps all incoming lanelet ids to IntersectionIncomingElement
-        :returns dictionary mapping lanelet IDs to incomings
         """
         return {l_id: inc for inc in self.incomings for l_id in inc.incoming_lanelets}

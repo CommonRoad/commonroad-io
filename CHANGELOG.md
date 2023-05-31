@@ -11,6 +11,7 @@
 
 - Visualization of all traffic signs by setting `show_traffic_signs = None` in draw parameters
 - Validity functions to support z-axis
+- Unreferenced traffic signs for lanelet networks filtered by lanelet type
 
 ### Changed
 
@@ -25,6 +26,7 @@
 ### Removed
 
 - function get_default_cycle for traffic lights
+- support for Python 3.7
 
 ## [2023.1] - 2023-03-05
 
@@ -191,13 +193,16 @@ The creation of lanelet assignments for obstacles is now optional. This decrease
 The lanelet assignment can still be performed manually after loading a scenario.
 
 ### Fixed
+- Docstrings for properties
+- Autoscaling visualization when plotting trajectories.
 - Function *generate_object_id* works now if no element has been added before and reserves ID if object 
 will be added later
+- Runtime warning during calls to find_lanelet_by_position
 - Various small bug fixes
 
 
 ## [2020.2] - 2020-04-14
-## Changed
+### Changed
 - Traffic signs are not visualized by default
 
 ### Added

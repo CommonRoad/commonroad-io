@@ -151,20 +151,12 @@ class StateType(Enum):
 
     @property
     def fields(self) -> List[str]:
-        """
-        Returns the state fields for the state type.
-
-        :return: State fields as list
-        """
+        """ Returns the state fields for the state type. """
         return StateFields[self.name].value
 
     @property
     def xml_fields(self) -> List[str]:
-        """
-        Returns the xml state fields for the state type.
-
-        :return: XML names of the state fields as list
-        """
+        """ Returns the xml state fields for the state type. """
         return XMLStateFields[self.name].value
 
     @classmethod
@@ -235,11 +227,7 @@ class TrajectoryType(Enum):
 
     @property
     def state_type(self) -> StateType:
-        """
-        Returns the StateType corresponding to the TrajectoryType
-
-        :return: StateType
-        """
+        """ Returns the StateType corresponding to the TrajectoryType. """
         return StateType[self.name]
 
     @classmethod
@@ -392,8 +380,6 @@ class PlanningProblemSolution:
             VehicleModel = PM
             VehicleType = FORD_ESCORT
             Vehicle ID = PM1
-
-        :return: Vehicle model ID
         """
         return self.vehicle_model.name + str(self.vehicle_type.value)
 
@@ -470,8 +456,6 @@ class Solution:
             Version = 2020a
 
             Benchmark ID = [PM1,PM3]:[JB1,SA1]:TEST:2020a
-
-        :return: Benchmark ID
         """
         vehicle_ids = self.vehicle_ids
         cost_ids = self.cost_ids
@@ -504,8 +488,6 @@ class Solution:
             2nd PlanningProblemSolution Cost ID = SA1
 
             Cost IDS = [JB1, SA1]
-
-        :return: List of cost function IDs
         """
         return [pp_solution.cost_id for pp_solution in self.planning_problem_solutions]
 
@@ -519,8 +501,6 @@ class Solution:
             2nd PlanningProblemSolution planning_problem_id = 1
 
             planning_problem_ids = [0, 1]
-
-        :return: List of planning problem ids
         """
         return [pp_solution.planning_problem_id for pp_solution in self.planning_problem_solutions]
 
@@ -543,8 +523,6 @@ class Solution:
     def computation_time(self) -> Union[None, float]:
         """
         Return the computation time [s] for the trajectory.
-
-        :return:
         """
         return self._computation_time
 
@@ -561,7 +539,6 @@ class Solution:
     def create_dynamic_obstacle(self) -> Dict[int, DynamicObstacle]:
         """
         Creates dynamic obstacle(s) from solution(s) for every planning problem.
-        :return:
         """
         obs = {}
         for pp_id, solution in self._planning_problem_solutions.items():

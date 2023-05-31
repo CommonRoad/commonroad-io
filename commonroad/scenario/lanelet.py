@@ -1,5 +1,6 @@
 import copy
 import enum
+from collections import defaultdict
 from typing import *
 
 import numpy as np
@@ -238,7 +239,7 @@ class Lanelet:
     @property
     def distance(self) -> np.ndarray:
         """
-        :returns cumulative distance along center vertices
+        cumulative distance along center vertices
         """
         if self._distance is None:
             self._distance = self._compute_polyline_cumsum_dist([self.center_vertices])
@@ -251,7 +252,7 @@ class Lanelet:
     @property
     def inner_distance(self) -> np.ndarray:
         """
-        :returns minimum cumulative distance along left and right vertices, i.e., along the inner curve:
+        minimum cumulative distance along left and right vertices, i.e., along the inner curve:
         """
         if self._inner_distance is None:
             self._inner_distance = self._compute_polyline_cumsum_dist([self.left_vertices, self.right_vertices])
@@ -1197,7 +1198,7 @@ class LaneletNetwork(IDrawable):
     @property
     def map_inc_lanelets_to_intersections(self) -> Dict[int, Intersection]:
         """
-        :returns: dict that maps lanelet ids to the intersection of which it is an incoming lanelet.
+        dict that maps lanelet ids to the intersection of which it is an incoming lanelet.
         """
         return {l_id: intersection for intersection in self.intersections for l_id in
                 list(intersection.map_incoming_lanelets.keys())}
@@ -1251,29 +1252,20 @@ class LaneletNetwork(IDrawable):
         area_ids = set()
         lanelets = set()
 
-        if shape_input is not None:
-            for la in lanelet_network.lanelets:
-                if la.lanelet_type.intersection(exclude_lanelet_types) == set():
-                    lanelet_polygon = la.polygon.shapely_object
-                    if shape_input.shapely_object.intersects(lanelet_polygon):
-                        for sign_id in la.traffic_signs:
-                            traffic_sign_ids.add(sign_id)
-                        for light_id in la.traffic_lights:
-                            traffic_light_ids.add(light_id)
-                        for area_id in la.adjacent_areas:
-                            area_ids.add(area_id)
-                        lanelets.add(la)
+        for la in lanelet_network.lanelets:
+            if len(la.lanelet_type.intersection(
+                    exclude_lanelet_types)) > 0 or shape_input is not None and not \
+                    shape_input.shapely_object.intersects(
+                    la.polygon.shapely_object):
+                continue
 
-        else:
-            for la in lanelet_network.lanelets:
-                if la.lanelet_type.intersection(exclude_lanelet_types) == set():
-                    lanelets.add(la)
-                for sign_id in la.traffic_signs:
-                    traffic_sign_ids.add(sign_id)
-                for light_id in la.traffic_lights:
-                    traffic_light_ids.add(light_id)
-                for area_id in la.adjacent_areas:
-                    area_ids.add(area_id)
+            lanelets.add(la)
+            for sign_id in la.traffic_signs:
+                traffic_sign_ids.add(sign_id)
+            for light_id in la.traffic_lights:
+                traffic_light_ids.add(light_id)
+            for area_id in la.adjacent_areas:
+                area_ids.add(area_id)
 
         for sign_id in traffic_sign_ids:
             new_lanelet_network.add_traffic_sign(copy.deepcopy(lanelet_network.find_traffic_sign_by_id(sign_id)), set())
@@ -1648,17 +1640,18 @@ class LaneletNetwork(IDrawable):
         assert isinstance(point_list,
                           ValidTypes.LISTS), '<Lanelet/contains_points>: provided list of points is not a list! type ' \
                                              '= {}'.format(type(point_list))
-
-        res = []
-        for point in point_list:
-            shapely_point = ShapelyPoint(point)
-            inner_res = []
-            for idx in self._strtee.query(shapely_point):
-                lanelet_shapely_polygon = self._strtee.geometries[idx]
-                if lanelet_shapely_polygon.intersects(shapely_point) \
-                        or lanelet_shapely_polygon.buffer(1e-15).intersects(shapely_point):
-                    inner_res.append(self._get_lanelet_id_by_shapely_polygon(lanelet_shapely_polygon))
-            res.append(inner_res)
+        shapely_points = [ShapelyPoint(p) for p in point_list]
+        # Accepted tolerance
+        tolerance = 1.0e-15
+        geometry_ids = self._strtee.query(shapely_points, predicate="dwithin", distance=tolerance)
+        # Convert from [[input_index, str_geometry_id], ...] to
+        # [[lanlet_id, ...], ...]
+        lanelet_ids = defaultdict(list)
+        for input_id, geom_id in zip(*geometry_ids):
+            lanelet_shapely_polygon = self._strtee.geometries[geom_id]
+            lanelet_id = self._get_lanelet_id_by_shapely_polygon(lanelet_shapely_polygon)
+            lanelet_ids[input_id].append(lanelet_id)
+        res = [lanelet_ids[i] for i, _ in enumerate(point_list)]
         return res
 
     def find_lanelet_by_shape(self, shape: Shape) -> List[int]:
