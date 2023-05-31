@@ -193,6 +193,7 @@ The creation of lanelet assignments for obstacles is now optional. This decrease
 The lanelet assignment can still be performed manually after loading a scenario.
 
 ### Fixed
+- Docstrings for properties
 - Autoscaling visualization when plotting trajectories.
 - Function *generate_object_id* works now if no element has been added before and reserves ID if object 
 will be added later
