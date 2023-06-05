@@ -1,3 +1,13 @@
+# CommonRoad Motion Planning Competition 2023 at ITSC
+
+Attention all robotics enthusiasts and autonomous vehicle experts! The [CommonRoad competition](https://commonroad.in.tum.de/competition/2023/announcement) is back and better than ever!
+Join us for an exciting challenge that will put your skills to the test. The competition is designed to advance the field of autonomous driving by providing a platform for researchers and engineers to test and compare their algorithms in a standardized and reproducible way.
+Teams from all over the world are invited to participate in this exciting competition. Participants will have the opportunity to work with the CommonRoad platform, a state-of-the-art simulation environment that provides realistic traffic scenarios and complex road networks. The goal of the competition is to develop algorithms that can safely navigate through different traffic scenarios and avoid collisions with other vehicles, pedestrians, and obstacles.
+
+In addition to the thrill of the competition, participants will also have the chance to network with other experts in the field, gain exposure for their work, and potentially win prizes and recognition for their achievements. Winners will receive a total **prize money of $3000**, sponsored by **iVEX**. The best participants will have the opportunity to present their approaches at the final workshop as part of this year's ITSC in Bilbao.
+Don't miss out on this exciting opportunity to showcase your skills and contribute to the future of autonomous driving. Register for the CommonRoad competition today!
+Do you want to contribute to the competition's organization? Become a jury member! The task of the jury is to come up with a consensus for working groups, define the motion planning problem instances, decide on the criteria for evaluation, and ensure a fair competition. Anybody participating in the competition can also become a jury member.
+
 # CommonRoad
 [![Linux](https://svgshare.com/i/Zhy.svg)](https://svgshare.com/i/Zhy.svg)
 [![macOS](https://svgshare.com/i/ZjP.svg)](https://svgshare.com/i/ZjP.svg)
