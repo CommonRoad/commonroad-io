@@ -1,20 +1,17 @@
 \section{Specification of the Format}
 
-We designed our format such that it can represent all features, is unambiguous and is easy to use. 
+We designed our format such that it can represent all features, is unambiguous, and is easy to use. 
 We put additional emphasis to augment the road description by its implications, i.e., our format does not just describe a traffic situation, but already provides the meaning for motion planning.
 As a result, our scenarios can directly be used by a motion planner and do not require much additional computations in terms of pre-processing.
-
-The \textit{CommonRoad} XML format is specified by the XML Schema Definition (XSD) available on our website.
-This XSD file can also be used to check the compliance of an XML file.
-In the following, we describe our specification.
+Subsequently, we describe our specification.
 
 All variables are given by decimal numbers based on SI units. We use a common Cartesian coordinate frame with x-, y-, and z-axis to be able to represent all road networks including bridges and tunnels. 
 If a scenario is only defined in a two-dimensional plane (which is often the case), we use the convention that all z-coordinates are zero.
 Angles are measured counter-clockwise around the positive z-axis with the zero angle along the x-axis.
 
-The overall structure of the XML definition is shown by Fig.~\ref{fig:XMLstructureStatic} and Fig.~\ref{fig:XMLstructureDynamic}. 
+The overall structure of the is shown by Fig.~\ref{fig:structureStatic} and Fig.~\ref{fig:structureDynamic}. 
 The \textit{CommonRoad} root element contains one or more elements of type \textit{lanelet}, \textit{staticObstacle}, \textit{dynamicObstacle}, \textit{trafficSign}, \textit{trafficLight}, \textit{intersection}, and \textit{planningProblem}. 
-Each has a unique\footnote{Unique within the whole XML document.} ID (of type positive integer) making it possible to reference it. 
+Each has a unique\footnote{Unique within the whole scenario.} ID (of type positive integer) making it possible to reference it. 
 Additionally, the root element contains a \textit{location} and \textit{tag} to describe a scenario.
 The numbers in square brackets denote the number of allowed elements (while \texttt{N} can be different for each element), the data in round brackets the attributes of an element, \texttt{ref to} a reference to one element, the data behind a double column the value of the element, and the symbol \# a comment. 
 If an element is omitted (number of allowed elements is $ \geq 0$), the default value is none or its default value is specified in the description of this element below.
@@ -55,8 +52,8 @@ If an element is omitted (number of allowed elements is $ \geq 0$), the default 
 		.3 [1..N] incoming.
 		.3 [0..N] crossing.
 	}
-	\caption{Structure of the XML files encoding static scenario information.}
-	\label{fig:XMLstructureStatic}
+	\caption{Structure encoding map information.}
+	\label{fig:structureMap}
 \end{figure}
 \begin{figure}[!htpb]
 	\small
@@ -64,13 +61,11 @@ If an element is omitted (number of allowed elements is $ \geq 0$), the default 
 		.1 [1] commonRoad (commonRoadVersion, ...).
 		.2 [1] tags.
 		.3 [1..N] tag: urban/interstate/.../intersection/.
-		.2 [0..N] staticObstacle (id). % \quad \# static.
-		%		.3 [1] role: static.
+		.2 [0..N] staticObstacle (id). 
 		.3 [1] type: parkedVehicle/.../unknown.
 		.3 [1] shape.
 		.3 [1] initialState.
 		.2 [0..N] dynamicObstacle (id) \quad (with either of the three future behaviors).
-		%		.3 [1] role: dynamic.
 		.3 [1] type: car/truck/.../unknown.
 		.3 [1] shape.
 		.3 [0..1] initialSignalState. 
@@ -79,18 +74,8 @@ If an element is omitted (number of allowed elements is $ \geq 0$), the default 
 		.3 [1] initialState.
 		.3 [0..1] trajectory \quad \# dynamic with known behavior.
 		.4 [1..N] state \\\hspace*{-0.5cm}OR.
-		%		.2 [0..N] obstacle (id) \quad \# dynamic with unknown behavior.
-		%		.3 [1] role: dynamic.
-		%		.3 [1] type: car/truck/.../unknown.
-		%		.3 [1] shape.
-		%		.3 [1] initialState.
 		.3 [0..1] occupancySet \quad \# dynamic with unknown behavior.
 		.4 [1..N] occupancy\\\hspace*{-0.5cm}OR.
-		%		.2 [0..N] obstacle (id) \quad \# dynamic with unknown stochastic behavior.
-		%		.3 [1] role: dynamic.
-		%		.3 [1] type: car/truck/.../unknown.
-		%		.3 [1] shape.
-		%		.3 [1] initialState.
 		.3 [0..1] probabilityDistribution \quad \# dynamic with unknown stochastic behavior.
 		.2 [0..N] phantomObstacle (id).
 		.3 [0..1] occupancySet \quad \# dynamic with unknown behavior.
@@ -102,17 +87,53 @@ If an element is omitted (number of allowed elements is $ \geq 0$), the default 
 		.3 [1] initialState.
 		.3 [1..N] goalState.
 	}
-	\caption{Structure of the XML files encoding dynamic scenario information.}
-	\label{fig:XMLstructureDynamic}
+	\caption{Structure encoding dynamic scenario information.}
+	\label{fig:structureDynamic}
+\end{figure}
+\newpage
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 [1] commonRoad (commonRoadVersion, ...).
+		.2 [1] tags.
+		.3 [1..N] tag: urban/interstate/.../intersection/.
+		.2 [0..N] staticObstacle (id). 
+		.3 [1] type: parkedVehicle/.../unknown.
+		.3 [1] shape.
+		.3 [1] initialState.
+		.2 [0..N] dynamicObstacle (id) \quad (with either of the three future behaviors).
+		.3 [1] type: car/truck/.../unknown.
+		.3 [1] shape.
+		.3 [0..1] initialSignalState. 
+		.3 [0..1] signalSeries.
+		.4 [1..N] signalState.
+		.3 [1] initialState.
+		.3 [0..1] trajectory \quad \# dynamic with known behavior.
+		.4 [1..N] state \\\hspace*{-0.5cm}OR.
+		.3 [0..1] occupancySet \quad \# dynamic with unknown behavior.
+		.4 [1..N] occupancy\\\hspace*{-0.5cm}OR.
+		.3 [0..1] probabilityDistribution \quad \# dynamic with unknown stochastic behavior.
+		.2 [0..N] phantomObstacle (id).
+		.3 [0..1] occupancySet \quad \# dynamic with unknown behavior.
+		.4 [1..N] occupancy
+		.2 [0..N] environmentObstacle (id).
+		.3 [1] type: building/median\_strip/pillar/unknown.
+		.3 [1] shape.
+		.2 [1..N] planningProblem (id).
+		.3 [1] initialState.
+		.3 [1..N] goalState.
+	}
+	\caption{Structure encoding general scenario information.}
+	\label{fig:structureScenario}
 \end{figure}
 \newpage
 
 
 \subsection{Meta Information Describing CommonRoad Scenarios}\label{subsec:meta}
 \subsubsection{CommonRoad Root Element} \label{subsubsec:root_element}
-The \textit{CommonRoad} root element has the following attributes (its elements are shown in Fig.~\ref{fig:XMLstructureStatic} and Fig.~\ref{fig:XMLstructureDynamic}), where the timeStepSize is not present in files representing static information:
+The \textit{CommonRoad} root element has the following attributes (its elements are shown in Fig.~\ref{fig:structureStatic} and Fig.~\ref{fig:structureDynamic}), where the timeStepSize is not present in files representing static information:
 \begin{itemize}
-\item \texttt{commonRoadVersion}: version of the XML specification,
+\item \texttt{commonRoadVersion}: version of the specification,
 \item \texttt{benchmarkID}: benchmark ID of the scenario (see Sec.~\ref{subsec:id}),
 \item \texttt{date}: date when scenario was generated,
 \item \texttt{author}: author(s) of the scenario in alphabetic order,
@@ -172,7 +193,7 @@ To specify the geometrical transformation which were performed while creating th
 
 \begin{enumerate}
 
-\item The optional \texttt{geoReference} element contains a \emph{proj-strings}\footnote{\href{https://proj.org/usage/quickstart.html}{proj.org}} describing a coordinate transformation from geodetic coordinates to the projected (Cartesian) coordinates used in the XML file. This projection can then be used to transform the Cartesian coordinates back to geodetic coordinates used by OSM (cf. Sec.~\ref{sec:OSM}).
+\item The optional \texttt{geoReference} element contains a \emph{proj-strings}\footnote{\href{https://proj.org/usage/quickstart.html}{proj.org}} describing a coordinate transformation from geodetic coordinates to the projected (Cartesian) coordinates. This projection can then be used to transform the Cartesian coordinates back to geodetic coordinates used by OSM (cf. Sec.~\ref{sec:OSM}).
 
 \item The \texttt{additionalTransformation} element (see Fig.~\ref{fig:additionalTransformation}) describes geometrical operations which were performed (after the geoReference) to transform the Cartesian coordinates. The execution order of the transformations is according to the order of the following list:
 \begin{itemize}
@@ -219,7 +240,7 @@ The optional element \textit{environment} contains information about the time (i
 
 \subsubsection{Tags for Scenarios} \label{subsubsec:tags}
 
-To allow users to select scenarios meeting their needs, the list of scenarios on our website can be filtered by the tags given in the element \texttt{tags} in each XML file.  %We currently support the following list of tags: $\mathtt{urban}$, $\mathtt{highway}$, $\mathtt{race\_track}$, $\mathtt{rural}$, $\mathtt{lane\_following}$, $\mathtt{lane\_change}$, $\mathtt{turn\_left}$, $\mathtt{turn\_right}$, $\mathtt{u\_turn}$, $\mathtt{comfort}$,  $\mathtt{evasive}$, $\mathtt{lane\_blocked}$, $\mathtt{traffic\_jam}$, $\mathtt{no\_oncoming\_traffic}$, $\mathtt{roundabout}$, $\mathtt{intersection}$,  $\mathtt{oncoming\_traffic}$, $\mathtt{cut\_in}$, $\mathtt{illegal\_cut\_in}$,  $\mathtt{ghost\_driving}$, \\ $\mathtt{single\_lane}$, $\mathtt{two\_lane}$, $\mathtt{multi\_lane}$, $\mathtt{parallel\_lanes}$,  $\mathtt{mergin\_lanes}$, $\mathtt{slip\_road}$. 
+To allow users to select scenarios meeting their needs, the list of scenarios on our website can be filtered by the tags given in the element \texttt{tags}.  %We currently support the following list of tags: $\mathtt{urban}$, $\mathtt{highway}$, $\mathtt{race\_track}$, $\mathtt{rural}$, $\mathtt{lane\_following}$, $\mathtt{lane\_change}$, $\mathtt{turn\_left}$, $\mathtt{turn\_right}$, $\mathtt{u\_turn}$, $\mathtt{comfort}$,  $\mathtt{evasive}$, $\mathtt{lane\_blocked}$, $\mathtt{traffic\_jam}$, $\mathtt{no\_oncoming\_traffic}$, $\mathtt{roundabout}$, $\mathtt{intersection}$,  $\mathtt{oncoming\_traffic}$, $\mathtt{cut\_in}$, $\mathtt{illegal\_cut\_in}$,  $\mathtt{ghost\_driving}$, \\ $\mathtt{single\_lane}$, $\mathtt{two\_lane}$, $\mathtt{multi\_lane}$, $\mathtt{parallel\_lanes}$,  $\mathtt{mergin\_lanes}$, $\mathtt{slip\_road}$. 
 Additionally, the filtering based on the number of static obstacles, dynamic obstacles, obstacle types, type of future behavior of obstacles, number of ego vehicles, number of goal states, and time horizon of the scenario is possible. 
 
 %\subsubsection{Type of road}
@@ -257,7 +278,7 @@ Additionally, the filtering based on the number of static obstacles, dynamic obs
 
 \subsection{Auxiliary Elements} \label{subsec:auxiliary}
 
-Within the XML file, we use the following auxiliary geometry elements:
+We use the following auxiliary geometry elements:
 
 \begin{figure}[!htpb]
 	\small
@@ -280,8 +301,8 @@ Within the XML file, we use the following auxiliary geometry elements:
 		.2 shape.
 		.3 [1..N] rectangle/circle/polygon.
 	}
-	\caption{Auxiliary elements of the XML file}
-	\label{fig:XMLauxiliary}
+	\caption{Auxiliary elements used for defining scenarios.}
+	\label{fig:auxiliary}
 \end{figure}
 
 \paragraph{Point}
@@ -353,7 +374,7 @@ Elements of type \emph{shape} specify the dimension of an object and can contain
 
 
 \paragraph{Positions}
-The position of an object is specified by the element \emph{position} which contains either a point, rectangle, circle, polygon, or lanelet (unless for a planning problem as specified later), as shown in Fig.~\ref{fig:XML_position}.
+The position of an object is specified by the element \emph{position} which contains either a point, rectangle, circle, polygon, or lanelet (unless for a planning problem as specified later), as shown in Fig.~\ref{fig:position}.
 
 \begin{figure}[!htpb]
 	\small
@@ -365,7 +386,7 @@ The position of an object is specified by the element \emph{position} which cont
 		.3 [1..N] lanelet (\textrm{ref to} lanelet).
 	}
 	\caption{Element \textit{position}.}
-	\label{fig:XML_position}
+	\label{fig:position}
 \end{figure}
 
 Note that if the position of an object is given as an area (i.e. not a single point), the area does not enclose the geometric shape of the object, but only models the interval of possible positions, e.g. the uncertainty of the position measurement.
@@ -401,7 +422,7 @@ For example, an \textit{orientation} element can be defined using \texttt{exact}
 All time elements are not given as numeric values, but as integers (i.e. non-negative whole numbers). Thus, the time element can specify the time stamp of an time-discrete object. Since the initial time is always $0$ and the constant time step size is given in the CommonRoad root element, the time in seconds can be directly calculated.
 
 \subsection{Lanelets} \label{subsec:lanelets}
-For our benchmarks we use {\it lanelets} \cite{Bender2014} as drivable road segments to represent the road network. Fig.~\ref{fig:XMLstructure} shows the specification of a \textit{lanelet} element. It is defined by its {\it left} and {\it right boundary}, where each boundary is represented by an array of points (a polyline), as shown in Fig.~\ref{lanelet1}. Optionally, line markings (solid, dashed, broad solid, broad dashed, no line marking, unknown, where unknown is the default line marking) can be included to model the boundary more precisely. We have chosen lanelets since they are as expressible as other formats, such as e.g. OpenDRIVE\footnote{\href{http://www.opendrive.org}{opendrive.org}}, yet have a lightweight and extensible representation. Our converter from OpenDRIVE to Lanelets is available on our website.
+For our benchmarks we use {\it lanelets} \cite{Bender2014} as drivable road segments to represent the road network. Fig.~\ref{fig:structure} shows the specification of a \textit{lanelet} element. It is defined by its {\it left} and {\it right boundary}, where each boundary is represented by an array of points (a polyline), as shown in Fig.~\ref{lanelet1}. Optionally, line markings (solid, dashed, broad solid, broad dashed, no line marking, unknown, where unknown is the default line marking) can be included to model the boundary more precisely. We have chosen lanelets since they are as expressible as other formats, such as e.g. OpenDRIVE\footnote{\href{http://www.opendrive.org}{opendrive.org}}, yet have a lightweight and extensible representation. Our converter from OpenDRIVE to Lanelets is available on our website.
 
 \begin{figure}[!htpb]
 \centering
@@ -421,10 +442,10 @@ For our benchmarks we use {\it lanelets} \cite{Bender2014} as drivable road segm
 \label{lanelet1}
 \end{figure}
 
-In order to represent the graph of the road network, the elements \textit{predecessor}, \textit{successor}, \textit{adjacentLeft}, and \textit{adjacentRight} are used, which are omitted if they are empty (see Fig.~\ref{fig:XMLstructure}). Since these elements only contain objects which are already present in the XML file, we refrain from copying their data but introduce references to the neighboring lanelets by an attribute referring to their unique ID.
+In order to represent the graph of the road network, the elements \textit{predecessor}, \textit{successor}, \textit{adjacentLeft}, and \textit{adjacentRight} are used, which are omitted if they are empty (see Fig.~\ref{fig:structure}). Since these elements only contain objects which are already existing, we refrain from copying their data but introduce references to the neighboring lanelets by an attribute referring to their unique ID.
 The elements \textit{predecessor} and \textit{successor} can be used multiple times to represent multiple longitudinally adjacent lanelets, e.g. for a road fork. In contrast, a lanelet can have at the most one \textit{adjacentLeft} and one \textit{adjacentRight} neighbor and thus at the most one element of this type. The additional attribute \textit{drivingDir} specifies the driving direction of the neighboring lanelet as \texttt{same} or \texttt{opposite}. The driving direction of a lanelet is implicitly defined by its left and right bound.
 
-Additionally, the element \textit{stopLine} can be used to model a stop line or give way line (see Fig.~\ref{fig:stopLine}). This element is defined by two points, representing the line. If no points are given for a stop line, we assume that its points correspond to the end points of the lanelet it belongs to. Optionally, traffic lights or traffic signs associated with this stop line can be specified to model the traffic conditions more precisely. Similarly to the neighboring lanelets, traffic signs and traffic lights are already present in the XML file. Thus, we use an attribute referring to their unique ID. By defining the line marking (solid or dashed), a stop line or give way line can be represented.
+Additionally, the element \textit{stopLine} can be used to model a stop line or give way line (see Fig.~\ref{fig:stopLine}). This element is defined by two points, representing the line. If no points are given for a stop line, we assume that its points correspond to the end points of the lanelet it belongs to. Optionally, traffic lights or traffic signs associated with this stop line can be specified to model the traffic conditions more precisely. Similarly to the neighboring lanelets, traffic signs and traffic lights are already existing. Thus, we use an attribute referring to their unique ID. By defining the line marking (solid or dashed), a stop line or give way line can be represented.
 
 \begin{figure}[!htpb]
 	\small
@@ -509,10 +530,10 @@ All \textit{CommonRoad} scenarios meet the following requirements, which assure 
   \end{figure}
 \end{itemize}
 
-\subsubsection{Connection to OpenStreetMap} \label{sec:OSM}
+%\subsubsection{Connection to OpenStreetMap} \label{sec:OSM}
 %The structure of these files is based on the popular OpenStreetMap (.osm) format\footnote{\href{http://wiki.openstreetmap.org/wiki/OSM_XML/}{wiki.openstreetmap.org/wiki/OSM\_XML}}. This choice ensures that all provided scenarios can be inspected using the Java-OpenStreetMap-Editor (JOSM)\footnote{\href{https://josm.openstreetmap.de/}{josm.openstreetmap.de}}.
 %The differences and extensions to the .osm standard are highlighted to clarify which parts can be displayed by the JOSM-Editor.
-As proposed in \cite{Bender2014}\footnote{\href{https://github.com/phbender/liblanelet}{github.com/phbender/liblanelet}}, our XML structure is inspired by the data structure of OpenSteetMap\footnote{\href{www.openstreetmap.org}{openstreetmap.org}} (OSM), which uses the elements \textit{nodes}, \textit{ways} and \textit{relations}.
+%As proposed in \cite{Bender2014}\footnote{\href{https://github.com/phbender/liblanelet}{github.com/phbender/liblanelet}}, format is inspired by the data structure of OpenSteetMap\footnote{\href{www.openstreetmap.org}{openstreetmap.org}} (OSM), which uses the elements \textit{nodes}, \textit{ways} and \textit{relations}.
 %All road networks are stored using XML and as proposed in \cite{Bender2014}, we use the same data structure as OpenSteetMap\footnote{\href{www.openstreetmap.org}{openstreetmap.org}} (OSM) on the lowest level (see Fig.~\ref{fig:XMLstructure}) by using the primitives \textit{nodes}, \textit{ways} and \textit{relations}. Each element can be further specified by tags to describe certain properties; some have prescribed attributes to specify their parameters. The \textit{CommonRoad} XML format includes only a small subset of attributes compared to the official OpenStreetMap format, which contains additional parameters to e.g. save information about the last data change. An example is shown here:
 
 %\begin{lstlisting}
@@ -553,14 +574,14 @@ As proposed in \cite{Bender2014}\footnote{\href{https://github.com/phbender/libl
 %</relation>
 %\end{lstlisting}
 
-With the XML format of OpenStreetMap, it easy to create new road networks using \textit{JavaOpenStreetMap} (JOSM)\footnote{\href{https://josm.openstreetmap.de}{josm.openstreetmap.de}} and also to edit existing road networks.
+%With the XML format of OpenStreetMap, it easy to create new road networks using \textit{JavaOpenStreetMap} (JOSM)\footnote{\href{https://josm.openstreetmap.de}{josm.openstreetmap.de}} and also to edit existing road networks.
 %The scenarios should not be modified by JOSM and saved within the editor since the editor is OpenStreetMap specific, only the basic elements nodes, ways and relations are visualized. All other additional elements cannot be visualized and will be lost when the XML script file is saved again. Also the node IDs will be changed; thus the file is not usable anymore.
 %In order to view the file using the JOSM-Editor, the IDs have to be negative numbers. That was introduced by OSM to make it possible to distinguish between the official map data on OpenStreetMap servers and some downloaded or self-developed map data\footnote{\href{https://wiki.openstreetmap.org/wiki/JOSM_file_format}{wiki.openstreetmap.org/wiki/JOSM\_file\_format}}. This leads to the restriction that the elements in the benchmark scenarios have negative IDs.
-However, the OSM format has several shortcomings when representing traffic scenarios, e.g. non-Cartesian coordinate frame and inconsistent use of attributes/references instead of elements. Thus, we have developed the \textit{CommonRoad} XML format, which uses a different XML notation and incorporates only a small subset of the OSM attributes, but offers all elements required to specify a traffic scenario.
+%However, the OSM format has several shortcomings when representing traffic scenarios, e.g. non-Cartesian coordinate frame and inconsistent use of attributes/references instead of elements. Thus, we have developed the \textit{CommonRoad} XML format, which uses a different XML notation and incorporates only a small subset of the OSM attributes, but offers all elements required to specify a traffic scenario.
 
 %Note that we use the XML format of OSM\footnote{\href{https://wiki.openstreetmap.org/wiki/JOSM_file_format}{wiki.openstreetmap.org/wiki/JOSM\_file\_format}} only to extract their road data with JOSM to create the road network for a traffic scenario. The lanelets are saved in an intermediate XML file (in OSM format), which is also available online for each \textit{CommonRoad} scenario based on real roads. When adding the obstacles and the planning problem, we convert the OSM data into the \textit{CommonRoad} XML format, which is the final XML file of each scenario.
 \subsection{Traffic Signs} \label{subsec:traffic_signs}
-The element \textit{trafficSign} is used to represent different traffic signs within the scenario (see Fig.~\ref{fig:XML_trafficSign}). Traffic signs are always valid either from the beginning of a lanelet or the end of a lanelet. For example, a priority sign at an intersection is valid from the end of the incoming lanelet. Therefore, it is not necessary to place the sign on the lanelets which go straight, left, or right. On the other hand, a speed limit sign is valid from the beginning of a lanelet so that the speed limit has to be considered for the entire lanelet. \\
+The element \textit{trafficSign} is used to represent different traffic signs within the scenario (see Fig.~\ref{fig:trafficSign}). Traffic signs are always valid either from the beginning of a lanelet or the end of a lanelet. For example, a priority sign at an intersection is valid from the end of the incoming lanelet. Therefore, it is not necessary to place the sign on the lanelets which go straight, left, or right. On the other hand, a speed limit sign is valid from the beginning of a lanelet so that the speed limit has to be considered for the entire lanelet. \\
 A \textit{trafficSign} element consists of one or multiple \textit{trafficSignElements}. This way, a combination of traffic signs can be represented. Additionally, the position of the traffic sign can be included and it can be specified whether the traffic sign is existent in the real world by the element \textit{virtual}, e.g., in the case one wants to add a speed limit which is in the real world outside of the captured road network. If \textit{virtual} is not specified or it is set to false, we assume that the traffic sign exists also in the real world at this position. A \textit{trafficSignElement} is defined by the \textit{trafficSignId} specified in national traffic laws and can be further described by one or multiple \textit{additionalValues}. For example, the \textit{trafficSignElement} for a speed limit of 16.66 m/s in Germany would be defined as:
 \begin{lstlisting}
 <trafficSignElement>
@@ -583,7 +604,7 @@ The currently by CommonRoad supported national traffic signs are listed in Tab.~
 		.2 [0..1] virtual.
 	}
 	\caption{Element \textit{trafficSign}.}
-	\label{fig:XML_trafficSign}
+	\label{fig:trafficSign}
 \end{figure} 
 
 \begin{table}[!htb]\centering
@@ -633,7 +654,7 @@ The currently by CommonRoad supported national traffic signs are listed in Tab.~
 
 
 \subsection{Traffic Lights} \label{subsec:traffic_lights}
-The element \textit{trafficLight} is used to represent traffic lights within the scenario (see Fig.~\ref{fig:XML_trafficLight}). Each phase/color of a \textit{trafficLight} and its duration is defined by the element \textit{cycleElement}. Similarly to the \textit{time} elements, the duration is not given as numeric value, but as integer. The color value inactive indicates that currently no phase is activated, e.g. a green right arrow traffic light can be activated iteratively. The order of the different phases is determined by the order of the \textit{cycleElements} in the element \textit{cycle}. By specifying the element \textit{timeOffset}, the cycle is shifted by this value. 
+The element \textit{trafficLight} is used to represent traffic lights within the scenario (see Fig.~\ref{fig:trafficLight}). Each phase/color of a \textit{trafficLight} and its duration is defined by the element \textit{cycleElement}. Similarly to the \textit{time} elements, the duration is not given as numeric value, but as integer. The color value inactive indicates that currently no phase is activated, e.g. a green right arrow traffic light can be activated iteratively. The order of the different phases is determined by the order of the \textit{cycleElements} in the element \textit{cycle}. By specifying the element \textit{timeOffset}, the cycle is shifted by this value. 
 
 In order to define for which driving direction the traffic light is valid, i.e., the direction arrow(s) in a traffic light, the direction can be included. If the direction is not specified, the traffic light is valid for all directions. Additionally, the element \textit{active} can be used to determine whether a traffic light is active or not. Optionally, the position of the traffic sign can be included. Traffic lights are always valid starting from the end of a lanelet. 
 
@@ -652,15 +673,15 @@ In order to define for which driving direction the traffic light is valid, i.e.,
 		.2 [0..1] active: true/false.
 	}
 	\caption{Element \textit{trafficLight}.}
-	\label{fig:XML_trafficLight}
+	\label{fig:trafficLight}
 \end{figure}
 
 %The length of each state of the traffic light is specified by the elements \textit{red}, \textit{redYellow}, \textit{green} and \textit{yellow}.
 \newpage
 \subsection{Intersections}  \label{subsec:intersections}
-The element \textit{intersection} is used to represent an intersection within the road network (see Fig.~\ref{fig:XML_intersection}). An \textit{intersection} element is defined by at least one \textit{incoming}, which consist of \textit{incomingLanelets}, \textit{outgoingsRight}, \textit{outgoingsStraight}, \textit{outgoingsLeft}, the element \textit{isLeftOf}, and the element \textit{crossing}. 
+The element \textit{intersection} is used to represent an intersection within the road network (see Fig.~\ref{fig:intersection}). An \textit{intersection} element is defined by at least one \textit{incoming}, which consist of \textit{incomingLanelets}, \textit{outgoingsRight}, \textit{outgoingsStraight}, \textit{outgoingsLeft}, the element \textit{isLeftOf}, and the element \textit{crossing}. 
 
-The elements \textit{outgoingsRight}/\textit{Straight}/\textit{Left} are used to infer for which lanelets the traffic light is valid for and to facilitate the calculation of priorities at intersections. The element \textit{isLeftOf} is used to infer the right-before-left-rule. The element \textit{crossing} models lanelets which cross other lanelets, e.g., crosswalks. Since all elements of a \textit{incoming} are already present in the XML file, we use an attribute referring to their unique ID. An example for an \textit{intersection} with all elements except crossings is illustrated in Fig.~\ref{fig:intersection}.
+The elements \textit{outgoingsRight}/\textit{Straight}/\textit{Left} are used to infer for which lanelets the traffic light is valid for and to facilitate the calculation of priorities at intersections. The element \textit{isLeftOf} is used to infer the right-before-left-rule. The element \textit{crossing} models lanelets which cross other lanelets, e.g., crosswalks. Since all elements of a \textit{incoming} are already existing, we use an attribute referring to their unique ID. An example for an \textit{intersection} with all elements except crossings is illustrated in Fig.~\ref{fig:intersection}.
 \begin{figure}[!htb]
 	\centering
 	\footnotesize
@@ -694,7 +715,7 @@ The elements \textit{outgoingsRight}/\textit{Straight}/\textit{Left} are used to
 	%	.3 [0..N] trafficLight.		
 	}
 	\caption{Element \textit{intersection}.}
-	\label{fig:XML_intersection}
+	\label{fig:intersection}
 \end{figure}
 
 \footnotetext{\href{https://commons.wikimedia.org}{commons.wikimedia.org}}
@@ -719,7 +740,7 @@ Environment & building, pillar, median\_strip, unknown \\
 The dimensions of an obstacle is specified by the element \textit{shape} (cf. Sec.~\ref{subsec:auxiliary}), and its initial configuration by the element \textit{initialState}. Additionally, the element \textit{initialSignalState} can be included, to account for properties which are not related to the dynamic of an obstacle, e.g., whether the indicators are turned on or off.
 
 \paragraph{Initial state of obstacles}
-The configuration of an obstacle at the initial time ($ t = 0$) is specified by the element \textit{initialState} with the following state variables: \textit{position}, \textit{orientation}, \textit{time}, \textit{velocity} (scalar),  \textit{acceleration} (scalar), \textit{yawRate}, and \textit{slipAngle}, as shown in Fig.~\ref{fig:XML_initialState}. 
+The configuration of an obstacle at the initial time ($ t = 0$) is specified by the element \textit{initialState} with the following state variables: \textit{position}, \textit{orientation}, \textit{time}, \textit{velocity} (scalar),  \textit{acceleration} (scalar), \textit{yawRate}, and \textit{slipAngle}, as shown in Fig.~\ref{fig:initialState}. 
 
 \begin{figure}[!htpb]
 	\small
@@ -739,11 +760,11 @@ The configuration of an obstacle at the initial time ($ t = 0$) is specified by 
 %		.3 [0..1] curvatureChange.
 	}
 	\caption{Element \textit{initialState} of an obstacle, where each state variable (except time) can be exact or an interval.}
-	\label{fig:XML_initialState}
+	\label{fig:initialState}
 \end{figure}
 
 \paragraph{Initial signal state of obstacles}
-The state of various signals of an obstacle at the initial time ($ t = 0$) is specified by the element \textit{initialSignalState} with the following state variables: \textit{time}, \textit{horn}, \textit{indicatorLeft}, \textit{indicatorRight},  \textit{brakingLights}, \textit{hazardWarningLights}, and \textit{flashingBlueLights}, as shown in Fig.~\ref{fig:XML_initialSignalState}. 
+The state of various signals of an obstacle at the initial time ($ t = 0$) is specified by the element \textit{initialSignalState} with the following state variables: \textit{time}, \textit{horn}, \textit{indicatorLeft}, \textit{indicatorRight},  \textit{brakingLights}, \textit{hazardWarningLights}, and \textit{flashingBlueLights}, as shown in Fig.~\ref{fig:initialSignalState}. 
 \begin{figure}[!htpb]
 	\small
 	\dirtree{%
@@ -760,11 +781,11 @@ The state of various signals of an obstacle at the initial time ($ t = 0$) is sp
 		.3 [0..1] flashingBlueLights.
 	}
 	\caption{Element \textit{initialSignalState} of an obstacle.}
-	\label{fig:XML_initialSignalState}
+	\label{fig:initialSignalState}
 \end{figure}
 
 \subsubsection{Static Obstacles}
-A static obstacle has no further information, as shown in Fig.~\ref{fig:XMLstructure}.
+A static obstacle has no further information, as shown in Fig.~\ref{fig:structure}.
 %\begin{lstlisting}
 %<obstacle id='57'>
 %	<role>static</role>
@@ -775,10 +796,10 @@ A static obstacle has no further information, as shown in Fig.~\ref{fig:XMLstruc
 %</obstacle>
 %\end{lstlisting}
 
-In addition to static obstacles, traffic scenarios can contain dynamic obstacles. Please note that only elements of either of the following three behavior models may be present: with known behavior, with unknown behavior, or with unknown stochastic behavior. We do not use these different behavior models together within one traffic scenario, as indicated in Fig.~\ref{fig:XMLstructure}.
+In addition to static obstacles, traffic scenarios can contain dynamic obstacles. Please note that only elements of either of the following three behavior models may be present: with known behavior, with unknown behavior, or with unknown stochastic behavior. We do not use these different behavior models together within one traffic scenario, as indicated in Fig.~\ref{fig:structure}.
 
 \subsubsection{Dynamic Obstacles with Known Behavior}
-A dynamic obstacle with known behavior contains a trajectory of states and a series of signals (cf. Fig.~\ref{fig:XMLstructure}). 
+A dynamic obstacle with known behavior contains a trajectory of states and a series of signals (cf. Fig.~\ref{fig:structure}). 
 The trajectory allows us to represent the states of a dynamic traffic participant along a path for $t > 0$. The trajectory is obtained from a dataset (whose measurements can be exact or with uncertainties), from a prediction (which generates a single trajectory for each obstacle), or created hand-crafted. The signal series is obtained from a simulator or created hand-crafted.
   
 %\begin{lstlisting}
@@ -799,7 +820,7 @@ The trajectory allows us to represent the states of a dynamic traffic participan
 
 
 \paragraph{States}
-The time-discrete states of a trajectory are specified by the element \textit{state} with the following state variables: \textit{position}, \textit{orientation}, and \textit{time}, \textit{velocity} (scalar),  \textit{acceleration} (scalar), \textit{yawRate}, and \textit{slipAngle}, as shown in Fig.~\ref{fig:XML_state}. 
+The time-discrete states of a trajectory are specified by the element \textit{state} with the following state variables: \textit{position}, \textit{orientation}, and \textit{time}, \textit{velocity} (scalar),  \textit{acceleration} (scalar), \textit{yawRate}, and \textit{slipAngle}, as shown in Fig.~\ref{fig:state}. 
 %Note that we optionally include acceleration as a state variable for obstacles to provide additional information, e.g. for motion prediction, even though acceleration is often used as input for vehicle models.
 
 %\begin{lstlisting}
@@ -860,11 +881,11 @@ The time-discrete states of a trajectory are specified by the element \textit{st
 %		.4 [0..1] flashingBlueLights.
 	}
 	\caption{Element \textit{state} of a trajectory, where each state variable can be exact or an interval.}
-	\label{fig:XML_state}
+	\label{fig:state}
 \end{figure}
 
 \paragraph{Signal States}
-The time-discrete states of a signal series are specified by the element \textit{signalState} with the following state variables: \textit{time}, \textit{horn}, \textit{indicatorLeft}, \textit{indicatorRight},  \textit{brakingLights}, \textit{hazardWarningLights}, and \textit{flashingBlueLights}, as shown in Fig.~\ref{fig:XML_signalState}.
+The time-discrete states of a signal series are specified by the element \textit{signalState} with the following state variables: \textit{time}, \textit{horn}, \textit{indicatorLeft}, \textit{indicatorRight},  \textit{brakingLights}, \textit{hazardWarningLights}, and \textit{flashingBlueLights}, as shown in Fig.~\ref{fig:signalState}.
 
 \begin{figure}[!htpb]
 	\small
@@ -880,7 +901,7 @@ The time-discrete states of a signal series are specified by the element \textit
 		.3 [0..1] flashingBlueLights.
 	}
 	\caption{Element \textit{signalState} of a signal series.}
-	\label{fig:XML_signalState}
+	\label{fig:signalState}
 \end{figure}
 
 
@@ -900,7 +921,7 @@ The time-discrete states of a signal series are specified by the element \textit
 %\end{lstlisting}
 
 \subsubsection{Dynamic Obstacles with Unknown Behavior}
-For motion planning, we often do not know the exact future behavior of dynamic obstacles, but we instead represent their future behavior by bounded sets. Thus, dynamic obstacles with a unknown behavior are specified by an \textit{occupancy set}, which represents the occupied area over time by bounded sets. As shown in Fig.~\ref{fig:XMLstructure}, an \textit{occupancy set} contains a list of \textit{occupancy} elements. %, which start at $t > 0$ or $t \in [0, t^*]$, $t^* > 0$.
+For motion planning, we often do not know the exact future behavior of dynamic obstacles, but we instead represent their future behavior by bounded sets. Thus, dynamic obstacles with a unknown behavior are specified by an \textit{occupancy set}, which represents the occupied area over time by bounded sets. As shown in Fig.~\ref{fig:structure}, an \textit{occupancy set} contains a list of \textit{occupancy} elements. %, which start at $t > 0$ or $t \in [0, t^*]$, $t^* > 0$.
 %\begin{lstlisting}
 %<obstacle id='59'>
 %	<role>dynamic</role>
@@ -920,7 +941,7 @@ For motion planning, we often do not know the exact future behavior of dynamic o
 %\end{lstlisting}
 
 \paragraph{Occupancies}
-The \textit{occupancy} element consists of a shape (occupied area) and a time, as shown in Fig.~\ref{fig:XML_occupancy}.
+The \textit{occupancy} element consists of a shape (occupied area) and a time, as shown in Fig.~\ref{fig:occupancy}.
 
 %\begin{lstlisting}
 %<occupancy>
@@ -945,7 +966,7 @@ The \textit{occupancy} element consists of a shape (occupied area) and a time, a
 		.4 [1] intervalEnd.		
 	}
 	\caption{Element \textit{occupancy} of an occupancy set.}
-	\label{fig:XML_occupancy}
+	\label{fig:occupancy}
 \end{figure}
 
 
@@ -1005,7 +1026,7 @@ The element \textit{environmentObstacle} is used to specify the outline of envir
 \subsection{Planning Problem} \label{subsec:egoVehicles}
 %The aim of the \textit{CommonRoad} benchmarks is to compare trajectory planners. Thus, 
 The element \textit{planningProblem} is used to specify the initial state and one or more goal state(s) for the motion planning problem.
-Note that the shape of the ego vehicle is not included in the XML scenario description, since this property depends on which vehicle parameter set is chosen (see the \textit{vehicle model documentation} on our website).
+Note that the shape of the ego vehicle is not included in the scenario description, since this property depends on which vehicle parameter set is chosen (see the \textit{vehicle model documentation} on our website).
 %\begin{lstlisting}
 %<planningProblem id='100'>
 %	<initialState>
@@ -1022,7 +1043,7 @@ Note that the shape of the ego vehicle is not included in the XML scenario descr
 
 
 \paragraph{Initial States}
-We use the element \textit{initial state} to describe the initial state of the planning problem. In contrast to the general element \textit{state}, all state variables are mandatory and must be given exact, as shown in Fig.~\ref{fig:XML_initialState_planningProblem}. 
+We use the element \textit{initial state} to describe the initial state of the planning problem. In contrast to the general element \textit{state}, all state variables are mandatory and must be given exact, as shown in Fig.~\ref{fig:initialState_planningProblem}. 
 The element \textit{initial state} of each planning problem allows the initialization of each vehicle model, as described in more detail in our \textit{vehicle model documentation}.
 
 %\begin{lstlisting}
@@ -1070,12 +1091,12 @@ The element \textit{initial state} of each planning problem allows the initializ
 		.4 [1] exact.
 }
 	\caption{Element \textit{initial state} of a planning problem}
-	\label{fig:XML_initialState_planningProblem}
+	\label{fig:initialState_planningProblem}
 \end{figure}
 
 
 \paragraph{Goal States}
-A planning problem may contain several elements \textit{goal state} (cf. Fig.~\ref{fig:XMLstructure}). In contrast to the general element \textit{state}, all state variables except time are optional and all variables can only be given as an interval, as specified in Fig.~\ref{fig:XML_goalState}.
+A planning problem may contain several elements \textit{goal state} (cf. Fig.~\ref{fig:structure}). In contrast to the general element \textit{state}, all state variables except time are optional and all variables can only be given as an interval, as specified in Fig.~\ref{fig:goalState}.
 
 \begin{figure}[!htpb]
 	\small
@@ -1096,12 +1117,12 @@ A planning problem may contain several elements \textit{goal state} (cf. Fig.~\r
 		.4 [1] intervalEnd.
 	}
 	\caption{Element \textit{goal state} of a planning problem}
-	\label{fig:XML_goalState}
+	\label{fig:goalState}
 \end{figure}
 
 
 \section{Conclusions}
 
-The \textit{CommonRoad} XML format is a platform-independent format for specifying road traffic scenarios for motion planning. Complex traffic situations can be encoded by specifying the road network, static and dynamic obstacles, and the planning problem. Details on models for the ego vehicle dynamics can be found in the \textit{vehicle model documentation}. Examples of traffic situations that are specified by this format can be found on the \textit{CommonRoad} website\footnote{\href{https://commonroad.in.tum.de}{commonroad.in.tum.de}}. Please contact us if you have any comments.
+The \textit{CommonRoad} format is a platform-independent format for specifying road traffic scenarios for motion planning. Complex traffic situations can be encoded by specifying the road network, static and dynamic obstacles, and the planning problem. Details on models for the ego vehicle dynamics can be found in the \textit{vehicle model documentation}. Examples of traffic situations that are specified by this format can be found on the \textit{CommonRoad} website\footnote{\href{https://commonroad.in.tum.de}{commonroad.in.tum.de}}. Please contact us if you have any comments.
 
 
