@@ -1,8 +1,7 @@
 import enum
 import warnings
-import math
 import numpy as np
-from typing import Union, Set, List, Dict, Optional, Tuple
+from typing import Union, Set, List, Dict
 from abc import abstractmethod
 
 
@@ -11,7 +10,6 @@ from commonroad.geometry.shape import Shape, \
     Rectangle, \
     Circle, \
     Polygon, \
-    ShapeGroup, \
     occupancy_shape_from_state, \
     shape_group_occupancy_shape_from_state
 from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
