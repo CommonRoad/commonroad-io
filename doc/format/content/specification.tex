@@ -9,7 +9,9 @@ All variables are given by decimal numbers based on SI units. We use a common Ca
 If a scenario is only defined in a two-dimensional plane (which is often the case), we use the convention that all z-coordinates are zero.
 Angles are measured counter-clockwise around the positive z-axis with the zero angle along the x-axis.
 
-The overall structure of the is shown by Fig.~\ref{fig:structureStatic} and Fig.~\ref{fig:structureDynamic}. 
+\colorbox{red}{Add figure for orientation since this often leads to questions.}
+
+The overall structure of the CommonRoad format is shown by Fig.~\ref{fig:structureMap}, Fig.~\ref{fig:structureDynamic}, and Fig.~\ref{fig:structureScenario}. 
 The \textit{CommonRoad} root element contains one or more elements of type \textit{lanelet}, \textit{staticObstacle}, \textit{dynamicObstacle}, \textit{trafficSign}, \textit{trafficLight}, \textit{intersection}, and \textit{planningProblem}. 
 Each has a unique\footnote{Unique within the whole scenario.} ID (of type positive integer) making it possible to reference it. 
 Additionally, the root element contains a \textit{location} and \textit{tag} to describe a scenario.
@@ -20,110 +22,158 @@ If an element is omitted (number of allowed elements is $ \geq 0$), the default 
 \begin{figure}[!htpb]
 	\small
 	\dirtree{%
-		.1 [1] commonRoad (commonRoadVersion, ...).
+		.1 [1] commonroad\_map.
+		.2 [1] map\_meta\_information.
 		.2 [1] location.
-		.3 [1] geoNameId.
-		.3 [1] gpsLatitude.
-		.3 [1] gpsLongitude.
-        .3 [0..1] geoTransformation.
-        .4 [0..1] geoReference.
-        .4 [0..1] additionalTransformation.
-        .3 [0..1] environment.
-		.2 [1..N] lanelet (id).
-		.3 [1] leftBound.
-		.4 [2..N] point.
-		.4 [0..1] lineMarking.
-		.3 [1] rightBound.
-		.4 [2..N] point.
-		.4 [0..1] lineMarking.
-		.3 [0..N] predecessor (\textrm{ref to} lanelet).
-		.3 [0..N] successor (\textrm{ref to} lanelet).
-		.3 [0..1] adjacentLeft (\textrm{ref to} lanelet, \textrm{drivingDir}=same/opposite).
-		.3 [0..1] adjacentRight (\textrm{ref to} lanelet, \textrm{drivingDir}=same/opposite).
-		.3 [0..1] stopLine.
-		.3 [1..N] laneletType: highway/urban/busStop/.../crosswalk.
-		.3 [0..N] userOneWay: vehicle/car/truck/bicycle/.../pedestrian.
-		.3 [0..N] userBidirectional: vehicle/car/truck/bicycle/.../pedestrian.
-		.3 [0..N] trafficSignRef (\textrm{ref to} trafficSign).
-		.3 [0..N] trafficLightRef (\textrm{ref to} trafficLight).
-		.2 [0..N] trafficSign (id).
-		.2 [0..N] trafficLight (id).
-		.2 [0..N] intersection (id).
-		.3 [1..N] incoming.
-		.3 [0..N] crossing.
+		.2 [0..N] lanelets.
+		.2 [0..N] stop\_lines.
+		.2 [0..N] boundaries.
+		.2 [0..N] areas.
+		.2 [0..N] traffic\_sign.
+		.2 [0..N] traffic\_lights.
+		.2 [0..N] intersections.
 	}
 	\caption{Structure encoding map information.}
 	\label{fig:structureMap}
 \end{figure}
+%\begin{figure}[!htpb]
+%	\small
+%	\dirtree{%
+%		.1 [1] CommonRoadMap.
+%		.2 [1] information.
+%		.2 [1] location.
+%		.3 [1] geoNameId.
+%		.3 [1] gpsLatitude.
+%		.3 [1] gpsLongitude.
+%		.3 [0..1] geoTransformation.
+%		.4 [0..1] geoReference.
+%		.4 [0..1] additionalTransformation.
+%		.3 [0..1] environment.
+%		.2 [1..N] lanelets.
+%		.3 [1] leftBound.
+%		.4 [2..N] point.
+%		.4 [0..1] lineMarking.
+%		.3 [1] rightBound.
+%		.4 [2..N] point.
+%		.4 [0..1] lineMarking.
+%		.3 [0..N] predecessor (\textrm{ref to} lanelet).
+%		.3 [0..N] successor (\textrm{ref to} lanelet).
+%		.3 [0..1] adjacentLeft (\textrm{ref to} lanelet, \textrm{drivingDir}=same/opposite).
+%		.3 [0..1] adjacentRight (\textrm{ref to} lanelet, \textrm{drivingDir}=same/opposite).
+%		.3 [0..1] stopLine.
+%		.3 [1..N] laneletType: highway/urban/busStop/.../crosswalk.
+%		.3 [0..N] userOneWay: vehicle/car/truck/bicycle/.../pedestrian.
+%		.3 [0..N] userBidirectional: vehicle/car/truck/bicycle/.../pedestrian.
+%		.3 [0..N] trafficSignRef (\textrm{ref to} trafficSign).
+%		.3 [0..N] trafficLightRef (\textrm{ref to} trafficLight).
+%		.2 [0..N] traffic\_sign.
+%		.2 [0..N] traffic\_lights.
+%		.2 [0..N] intersections.
+%		.3 [1..N] incoming.
+%		.3 [0..N] crossing.
+%	}
+%	\caption{Structure encoding map information.}
+%	\label{fig:structureMap}
+%\end{figure}
+%\begin{figure}[!htpb]
+%	\small
+%	\dirtree{%
+%		.1 [1] commonRoad (commonRoadVersion, ...).
+%		.2 [1] tags.
+%		.3 [1..N] tag: urban/interstate/.../intersection/.
+%		.2 [0..N] staticObstacle (id). 
+%		.3 [1] type: parkedVehicle/.../unknown.
+%		.3 [1] shape.
+%		.3 [1] initialState.
+%		.2 [0..N] dynamicObstacle (id) \quad (with either of the three future behaviors).
+%		.3 [1] type: car/truck/.../unknown.
+%		.3 [1] shape.
+%		.3 [0..1] initialSignalState. 
+%		.3 [0..1] signalSeries.
+%		.4 [1..N] signalState.
+%		.3 [1] initialState.
+%		.3 [0..1] trajectory \quad \# dynamic with known behavior.
+%		.4 [1..N] state \\\hspace*{-0.5cm}OR.
+%		.3 [0..1] occupancySet \quad \# dynamic with unknown behavior.
+%		.4 [1..N] occupancy\\\hspace*{-0.5cm}OR.
+%		.3 [0..1] probabilityDistribution \quad \# dynamic with unknown stochastic behavior.
+%		.2 [0..N] phantomObstacle (id).
+%		.3 [0..1] occupancySet \quad \# dynamic with unknown behavior.
+%		.4 [1..N] occupancy
+%		.2 [0..N] environmentObstacle (id).
+%		.3 [1] type: building/median\_strip/pillar/unknown.
+%		.3 [1] shape.
+%		.2 [1..N] planningProblem (id).
+%		.3 [1] initialState.
+%		.3 [1..N] goalState.
+%	}
+%	\caption{Structure encoding dynamic scenario information.}
+%	\label{fig:structureDynamic}
+%\end{figure}
 \begin{figure}[!htpb]
 	\small
 	\dirtree{%
-		.1 [1] commonRoad (commonRoadVersion, ...).
-		.2 [1] tags.
-		.3 [1..N] tag: urban/interstate/.../intersection/.
-		.2 [0..N] staticObstacle (id). 
-		.3 [1] type: parkedVehicle/.../unknown.
-		.3 [1] shape.
-		.3 [1] initialState.
-		.2 [0..N] dynamicObstacle (id) \quad (with either of the three future behaviors).
-		.3 [1] type: car/truck/.../unknown.
-		.3 [1] shape.
-		.3 [0..1] initialSignalState. 
-		.3 [0..1] signalSeries.
-		.4 [1..N] signalState.
-		.3 [1] initialState.
-		.3 [0..1] trajectory \quad \# dynamic with known behavior.
-		.4 [1..N] state \\\hspace*{-0.5cm}OR.
-		.3 [0..1] occupancySet \quad \# dynamic with unknown behavior.
-		.4 [1..N] occupancy\\\hspace*{-0.5cm}OR.
-		.3 [0..1] probabilityDistribution \quad \# dynamic with unknown stochastic behavior.
-		.2 [0..N] phantomObstacle (id).
-		.3 [0..1] occupancySet \quad \# dynamic with unknown behavior.
-		.4 [1..N] occupancy
-		.2 [0..N] environmentObstacle (id).
-		.3 [1] type: building/median\_strip/pillar/unknown.
-		.3 [1] shape.
-		.2 [1..N] planningProblem (id).
-		.3 [1] initialState.
-		.3 [1..N] goalState.
+		.1 [1] commonroad\_dynamic.
+		.2 [1] dynamic\_meta\_information.
+		.2 [1] environment.
+		.2 [0..N] traffic\_light\_cycles.
+		.2 [0..N] traffic\_sign\_values.
+		.2 [0..N] static\_obstacles. 
+		.2 [0..N] dynamic\_obstacles.
+		.2 [0..N] environment\_obstacles.
+		.2 [0..N] phantom\_obstacles.
 	}
 	\caption{Structure encoding dynamic scenario information.}
 	\label{fig:structureDynamic}
 \end{figure}
-\newpage
+%\newpage
+%\begin{figure}[!htpb]
+%	\small
+%	\dirtree{%
+%		.1 [1] commonRoad (commonRoadVersion, ...).
+%		.2 [1] tags.
+%		.3 [1..N] tag: urban/interstate/.../intersection/.
+%		.2 [0..N] staticObstacle (id). 
+%		.3 [1] type: parkedVehicle/.../unknown.
+%		.3 [1] shape.
+%		.3 [1] initialState.
+%		.2 [0..N] dynamicObstacle (id) \quad (with either of the three future behaviors).
+%		.3 [1] type: car/truck/.../unknown.
+%		.3 [1] shape.
+%		.3 [0..1] initialSignalState. 
+%		.3 [0..1] signalSeries.
+%		.4 [1..N] signalState.
+%		.3 [1] initialState.
+%		.3 [0..1] trajectory \quad \# dynamic with known behavior.
+%		.4 [1..N] state \\\hspace*{-0.5cm}OR.
+%		.3 [0..1] occupancySet \quad \# dynamic with unknown behavior.
+%		.4 [1..N] occupancy\\\hspace*{-0.5cm}OR.
+%		.3 [0..1] probabilityDistribution \quad \# dynamic with unknown stochastic behavior.
+%		.2 [0..N] phantomObstacle (id).
+%		.3 [0..1] occupancySet \quad \# dynamic with unknown behavior.
+%		.4 [1..N] occupancy
+%		.2 [0..N] environmentObstacle (id).
+%		.3 [1] type: building/median\_strip/pillar/unknown.
+%		.3 [1] shape.
+%		.2 [1..N] planningProblem (id).
+%		.3 [1] initialState.
+%		.3 [1..N] goalState.
+%	}
+%	\caption{Structure encoding general scenario information.}
+%	\label{fig:structureScenario}
+%\end{figure}
+
 \begin{figure}[!htpb]
 	\small
 	\dirtree{%
-		.1 [1] commonRoad (commonRoadVersion, ...).
-		.2 [1] tags.
-		.3 [1..N] tag: urban/interstate/.../intersection/.
-		.2 [0..N] staticObstacle (id). 
-		.3 [1] type: parkedVehicle/.../unknown.
-		.3 [1] shape.
-		.3 [1] initialState.
-		.2 [0..N] dynamicObstacle (id) \quad (with either of the three future behaviors).
-		.3 [1] type: car/truck/.../unknown.
-		.3 [1] shape.
-		.3 [0..1] initialSignalState. 
-		.3 [0..1] signalSeries.
-		.4 [1..N] signalState.
-		.3 [1] initialState.
-		.3 [0..1] trajectory \quad \# dynamic with known behavior.
-		.4 [1..N] state \\\hspace*{-0.5cm}OR.
-		.3 [0..1] occupancySet \quad \# dynamic with unknown behavior.
-		.4 [1..N] occupancy\\\hspace*{-0.5cm}OR.
-		.3 [0..1] probabilityDistribution \quad \# dynamic with unknown stochastic behavior.
-		.2 [0..N] phantomObstacle (id).
-		.3 [0..1] occupancySet \quad \# dynamic with unknown behavior.
-		.4 [1..N] occupancy
-		.2 [0..N] environmentObstacle (id).
-		.3 [1] type: building/median\_strip/pillar/unknown.
-		.3 [1] shape.
-		.2 [1..N] planningProblem (id).
-		.3 [1] initialState.
-		.3 [1..N] goalState.
+		.1 [1] commonRoa\_scenario.
+		.2 [1] scenario\_meta\_information.
+		.2 [1] map\_id. 
+		.2 [1] dynamic\_id.
+		.2 [1..N] planning\_problems.
+		.2 [1..N] coopearative\_planning\_problems.
 	}
-	\caption{Structure encoding general scenario information.}
+	\caption{Structure encoding scenario information.}
 	\label{fig:structureScenario}
 \end{figure}
 \newpage
