@@ -12,10 +12,10 @@ Angles are measured counter-clockwise around the positive z-axis with the zero a
 \colorbox{red}{Add figure for orientation since this often leads to questions.}
 
 The overall structure of the CommonRoad format is shown by Fig.~\ref{fig:structureMap}, Fig.~\ref{fig:structureDynamic}, and Fig.~\ref{fig:structureScenario}. 
-The \textit{CommonRoad} root element contains one or more elements of type \textit{lanelet}, \textit{staticObstacle}, \textit{dynamicObstacle}, \textit{trafficSign}, \textit{trafficLight}, \textit{intersection}, and \textit{planningProblem}. 
+A \textit{CommonRoad} scenario contains one or more elements of type \textit{lanelet}, \textit{staticObstacle}, \textit{dynamicObstacle}, \textit{trafficSign}, \textit{trafficLight}, \textit{intersection}, and \textit{planningProblem}. 
 Each has a unique\footnote{Unique within the whole scenario.} ID (of type positive integer) making it possible to reference it. 
-Additionally, the root element contains a \textit{location} and \textit{tag} to describe a scenario.
-The numbers in square brackets denote the number of allowed elements (while \texttt{N} can be different for each element), the data in round brackets the attributes of an element, \texttt{ref to} a reference to one element, the data behind a double column the value of the element, and the symbol \# a comment. 
+Additionally, we can model meta information about map location and environment (e.g., weather conditions).
+The numbers in square brackets denote the number of allowed elements (while \texttt{N} can be different for each element). 
 If an element is omitted (number of allowed elements is $ \geq 0$), the default value is none or its default value is specified in the description of this element below.
 %If an element is not required compulsorily, we comment it as \emph{optional} in the following XML snippets.
 
@@ -170,13 +170,32 @@ If an element is omitted (number of allowed elements is $ \geq 0$), the default 
 		.2 [1] scenario\_meta\_information.
 		.2 [1] map\_id. 
 		.2 [1] dynamic\_id.
-		.2 [1..N] planning\_problems.
-		.2 [1..N] coopearative\_planning\_problems.
+		.2 [0..N] planning\_problems.
+		.2 [0..N] coopearative\_planning\_problems.
 	}
 	\caption{Structure encoding scenario information.}
 	\label{fig:structureScenario}
 \end{figure}
 \newpage
+
+\subsection{CommonRoad Map}
+
+\subsection{Map Information}
+The \textit{CommonRoad} map information has the following attributes:
+\begin{itemize}
+	\item \texttt{commonRoadVersion}: version of the specification,
+	\item \texttt{benchmarkID}: benchmark ID of the scenario (see Sec.~\ref{subsec:id}),
+	\item \texttt{date}: date when scenario was generated,
+	\item \texttt{author}: author(s) of the scenario in alphabetic order,
+	\item \texttt{affiliation}: affiliation of the author(s), e.g., name and country of the university or company,
+	\item \texttt{source}: if applicable, description of the data source of the scenario, e.g., name of dataset or map service,
+	\item \texttt{sourceLink}: link(s) to source of the scenario,
+	\item \texttt{license}: name or link to license of scenario,
+	\item \texttt{timeStepSize}: global step size of the time-discrete scenario. %The property \textit{timeStepSize} defines the global step size since we use discrete time steps to save time-dependent information. 
+\end{itemize}
+\subsection{CommonRoad Dynamic}
+
+\subsection{CommonRoad Scenario}
 
 
 \subsection{Meta Information Describing CommonRoad Scenarios}\label{subsec:meta}
