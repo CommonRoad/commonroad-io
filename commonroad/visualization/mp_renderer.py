@@ -25,12 +25,15 @@ from commonroad.geometry.shape import *
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction
-from commonroad.scenario.lanelet import LaneletNetwork, LineMarking
+from commonroad.scenario.lanelet import LaneletNetwork
+from commonroad.common.common_lanelet import LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, SignalState, PhantomObstacle, \
     EnvironmentObstacle, Obstacle
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.state import TraceState
-from commonroad.scenario.traffic_sign import TrafficLightState, TrafficLight, TrafficSign
+from commonroad.scenario.traffic_sign import TrafficSign
+from commonroad.scenario.traffic_light import TrafficLight
+from commonroad.scenario.traffic_light import TrafficLightState
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.visualization.draw_params import *
 from commonroad.visualization.icons import supported_icons, get_obstacle_icon_patch
@@ -140,7 +143,7 @@ class MPRenderer(IRenderer):
     @property
     def plot_limits_focused(self):
         """
-        :returns: plot limits centered around focus_obstacle_id defined in draw_params
+        plot limits centered around focus_obstacle_id defined in draw_params
         """
         if self.plot_limits is not None and (self.plot_limits == "auto" or self.plot_center is None):
             return self.plot_limits
@@ -669,6 +672,7 @@ class MPRenderer(IRenderer):
                         collections.EllipseCollection(np.ones([traj_points.shape[0], 1]) * draw_params.line_width,
                                                       np.ones([traj_points.shape[0], 1]) * draw_params.line_width,
                                                       np.zeros([traj_points.shape[0], 1]), offsets=traj_points,
+                                                      offset_transform=self.ax.transData,
                                                       units='xy', linewidths=0, zorder=draw_params.zorder,
                                                       facecolor=draw_params.facecolor))
 
@@ -979,8 +983,10 @@ class MPRenderer(IRenderer):
             # direction arrow
             if draw_start_and_direction:
                 center = lanelet.center_vertices[0]
-                tan_vec = np.array(lanelet.right_vertices[0]) - np.array(lanelet.left_vertices[0])
-                path = get_arrow_path_at(center[0], center[1], math.atan2(tan_vec[1], tan_vec[0]) + 0.5 * np.pi)
+                orientation = math.atan2(*(lanelet.center_vertices[1] - center)[::-1])
+                lanelet_width = np.linalg.norm(lanelet.right_vertices[0] - lanelet.left_vertices[0])
+                arrow_width = min(lanelet_width, 1.5)
+                path = get_arrow_path_at(*center, orientation, arrow_width)
                 if unique_colors:
                     direction_list.append(mpl.patches.PathPatch(path, color=center_bound_color, lw=0.5,
                                                                 zorder=ZOrders.DIRECTION_ARROW,

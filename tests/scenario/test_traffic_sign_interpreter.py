@@ -3,7 +3,8 @@ import numpy as np
 from commonroad.scenario.traffic_sign_interpreter import TrafficSigInterpreter
 from commonroad.scenario.traffic_sign import SupportedTrafficSignCountry, TrafficSign, TrafficSignElement, \
     TrafficSignIDZamunda
-from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LaneletType, RoadUser
+from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
+from commonroad.common.common_lanelet import RoadUser, LaneletType
 
 
 class TestTrafficSigInterpreter(unittest.TestCase):

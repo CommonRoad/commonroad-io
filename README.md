@@ -7,7 +7,6 @@
 [![PyPI download month](https://img.shields.io/pypi/dm/commonroad-io.svg?label=PyPI%20downloads)](https://pypi.python.org/pypi/commonroad-io/) 
 [![PyPI download week](https://img.shields.io/pypi/dw/commonroad-io.svg?label=PyPI%20downloads)](https://pypi.python.org/pypi/commonroad-io/)   
 [![PyPI license](https://img.shields.io/pypi/l/commonroad-io.svg)](https://pypi.python.org/pypi/commonroad-io/)
-[![Documentation Status](https://readthedocs.org/projects/commonroad-io/badge/?version=latest)](http://commonroad-io.readthedocs.io/?badge=latest) 
 
 
 Numerical experiments for motion planning of road vehicles require numerous ingredients: vehicle dynamics, 
@@ -33,7 +32,7 @@ With commonroad-io, those solutions can be written to xml-files for uploading th
 
 commonroad-io 2023.1 is compatible with CommonRoad scenarios in version 2020a and supports reading 2018b scenarios.
 
-The software is written in Python and tested on Linux for the Python 3.7, 3.8, 3.9, 3.10, and 3.11.
+The software is written in Python and tested on Linux for the Python 3.8, 3.9, 3.10, and 3.11.
 
 
 ## Documentation
@@ -81,6 +80,34 @@ Alternatively, clone from our gitlab repository::
 and add the folder commonroad-io to your Python environment.
 
 ## Changelog
+Compared to version 2023.1, the following features have been added or changed:
+
+### Added
+- Area for modelling drivable areas which cannot be represented by lanelets
+- New weather and time of day options
+- Allow file reader to determine format based on suffix 
+
+### Fixed
+
+- Visualization of all traffic signs by setting `show_traffic_signs = None` in draw parameters
+- Validity functions to support z-axis
+- Unreferenced traffic signs for lanelet networks filtered by lanelet type
+
+### Changed
+
+- Visualization of direction arrow of narrow lanelets
+- Traffic light cycle optional
+- Traffic light in separate python file
+- Allow file reader to determine format based on suffix 
+- Broaden types allowed as file names 
+- Open files safely by using a context manager 
+- Use correct suffix when inferring filename from scenario id
+
+### Removed
+
+- function get_default_cycle for traffic lights
+- support for Python 3.7
+
 Compared to version 2022.3, the following features have been added or changed:
 
 ### Added
@@ -97,6 +124,7 @@ Compared to version 2022.3, the following features have been added or changed:
 - State attribute comparison
 
 ### Changed
+>>>>>>> README.md
 
 - Name of SIDEWALK and BUSLANE traffic signs to PEDESTRIAN_SIDEWALK and BUS_LANE
 - Packaging and dependency management using poetry
