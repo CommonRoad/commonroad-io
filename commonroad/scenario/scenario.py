@@ -9,7 +9,7 @@ import iso3166
 import numpy as np
 
 from commonroad import SCENARIO_VERSION, SUPPORTED_COMMONROAD_VERSIONS
-from commonroad.common.util import Interval
+from commonroad.common.util import Interval, Time
 from commonroad.common.validity import is_real_number, is_real_number_vector, is_valid_orientation, is_natural_number, \
     is_integer_number
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
@@ -21,7 +21,8 @@ from commonroad.scenario.obstacle import ObstacleType
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, Obstacle, \
     PhantomObstacle
 from commonroad.scenario.state import TraceState
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight
+from commonroad.scenario.traffic_sign import TrafficSign
+from commonroad.scenario.traffic_light import TrafficLight
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.renderer import IRenderer
 from commonroad.visualization.draw_params import OptionalSpecificOrAllDrawParams, MPDrawParams
@@ -63,20 +64,25 @@ class Tag(enum.Enum):
 @enum.unique
 class TimeOfDay(enum.Enum):
     """ Enum containing all possible time of days."""
-    DAY = "day"
     NIGHT = "night"
+    SUNSET = "sunset"
+    AFTERNOON = "afternoon"
+    NOON = "noon"
+    MORNING = "morning"
     UNKNOWN = "unknown"
 
 
 @enum.unique
 class Weather(enum.Enum):
     """ Enum containing all possible weathers."""
-    SUNNY = "sunny"
+    CLEAR = "clear"
     LIGHT_RAIN = "light_rain"
+    MID_RAIN = "mid_rain"
     HEAVY_RAIN = "heavy_rain"
     FOG = "fog"
     SNOW = "snow"
     HAIL = "hail"
+    CLOUDY = "cloudy"
     UNKNOWN = "unknown"
 
 
@@ -90,47 +96,6 @@ class Underground(enum.Enum):
     SNOW = "snow"
     ICE = "ice"
     UNKNOWN = "unknown"
-
-
-class Time:
-    """
-    Class which describes the fictive time when a scenario starts.
-    """
-
-    def __init__(self, hours: int, minutes: int):
-        """
-        Constructor of a time object
-
-        :param hours: hours at start of scenario (0-24)
-        :param minutes: minutes at start of scenario (0-60)
-        """
-        self._hours = hours
-        self._minutes = minutes
-
-    def __eq__(self, other):
-        if not isinstance(other, Time):
-            return False
-
-        return self._hours == other.hours and self._minutes == other.minutes
-
-    def __hash__(self):
-        return hash((self._hours, self._minutes))
-
-    @property
-    def hours(self) -> int:
-        return self._hours
-
-    @hours.setter
-    def hours(self, hours: int):
-        self._hours = hours
-
-    @property
-    def minutes(self) -> int:
-        return self._minutes
-
-    @minutes.setter
-    def minutes(self, minutes: int):
-        self._minutes = minutes
 
 
 class GeoTransformation:

@@ -93,6 +93,34 @@ Alternatively, clone from our gitlab repository::
 and add the folder commonroad-io to your Python environment.
 
 ## Changelog
+Compared to version 2023.1, the following features have been added or changed:
+
+### Added
+- Area for modelling drivable areas which cannot be represented by lanelets
+- New weather and time of day options
+- Allow file reader to determine format based on suffix 
+
+### Fixed
+
+- Visualization of all traffic signs by setting `show_traffic_signs = None` in draw parameters
+- Validity functions to support z-axis
+- Unreferenced traffic signs for lanelet networks filtered by lanelet type
+
+### Changed
+
+- Visualization of direction arrow of narrow lanelets
+- Traffic light cycle optional
+- Traffic light in separate python file
+- Allow file reader to determine format based on suffix 
+- Broaden types allowed as file names 
+- Open files safely by using a context manager 
+- Use correct suffix when inferring filename from scenario id
+
+### Removed
+
+- function get_default_cycle for traffic lights
+- support for Python 3.7
+
 Compared to version 2022.3, the following features have been added or changed:
 
 ### Added
