@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package commonroad_common;
+
+import "util.proto";
+
+message ScenarioMetaInformation {
+    required string common_road_version = 1;
+    required string benchmark_id = 2;
+    required string license_name = 3;
+    optional string license_text = 4;
+    required commonroad_common.TimeStamp date = 5;
+    required string author = 6;
+    required string affiliation = 7;
+    required string source = 8;
+    required double time_step_size = 9;
+}

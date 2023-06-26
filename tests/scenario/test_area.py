@@ -8,35 +8,35 @@ class TestArea(unittest.TestCase):
 
     def test_initialize_area_border(self):
         # test the initialization without 'adjacent' and 'line_marking' parameters
-        area_border = AreaBorder(1, np.array([[1, 2], [3, 4]]))
+        area_border = AreaBorder(1, 1)
         self.assertEqual(area_border.area_border_id, 1)
-        self.assertEqual(area_border.border_vertices.tolist(), np.array([[1, 2], [3, 4]]).tolist())
+        self.assertEqual(area_border.boundary, 1)
         self.assertIsNone(area_border.adjacent)
         self.assertIsNone(area_border.line_marking)
 
         # test the initialization without 'line_marking' parameter
-        area_border = AreaBorder(1, np.array([[1, 2], [3, 4]]), 1)
+        area_border = AreaBorder(1, 1, 1)
         self.assertEqual(area_border.area_border_id, 1)
-        self.assertEqual(area_border.border_vertices.all(), np.array([[1, 2], [3, 4]]).all())
+        self.assertEqual(area_border.boundary, 1)
         self.assertEqual(area_border.adjacent, 1)
         self.assertIsNone(area_border.line_marking)
 
         # test the initialization without 'adjacent' parameter
-        area_border = AreaBorder(1, np.array([[1, 2], [3, 4]]), line_marking=LineMarking.DASHED)
+        area_border = AreaBorder(1, 1, line_marking=LineMarking.DASHED)
         self.assertEqual(area_border.area_border_id, 1)
-        self.assertEqual(area_border.border_vertices.tolist(), np.array([[1, 2], [3, 4]]).tolist())
+        self.assertEqual(area_border.boundary, 1)
         self.assertEqual(area_border.line_marking, LineMarking.DASHED)
         self.assertIsNone(area_border.adjacent)
 
         # test the initialization with all parameters
-        area_border = AreaBorder(1, np.array([[1, 2], [3, 4]]), 1, LineMarking.SOLID)
+        area_border = AreaBorder(1, 1, 1, LineMarking.SOLID)
         self.assertEqual(area_border.area_border_id, 1)
-        self.assertEqual(area_border.border_vertices.tolist(), np.array([[1, 2], [3, 4]]).tolist())
+        self.assertEqual(area_border.boundary, 1)
         self.assertEqual(area_border.adjacent, 1)
         self.assertEqual(area_border.line_marking, LineMarking.SOLID)
 
     def test_basic_properties_area_border(self):
-        area_border = AreaBorder(1, np.array([[1, 2], [3, 4]]))
+        area_border = AreaBorder(1, 1)
 
         # test the properties of area_border_id
         area_border.area_border_id = 2
@@ -44,11 +44,11 @@ class TestArea(unittest.TestCase):
             area_border.area_border_id = 'a'
         self.assertEqual(area_border.area_border_id, 2)
 
-        # test the properties of border_vertices
-        area_border.border_vertices = np.array([[1, 2, 3], [4, 5, 6]])
+        # test the properties of boundary
+        area_border.boundary = 2
         with self.assertRaises(AssertionError):
-            area_border.border_vertices = np.array([[1, 2, 3, 4]])
-        self.assertEqual(area_border.border_vertices.all(), np.array([[1, 2, 3], [4, 5, 6]]).all())
+            area_border.boundary = 'test'
+        self.assertEqual(area_border.boundary, 2)
 
         # test the properties of adjacent
         area_border.adjacent = 1
@@ -72,8 +72,8 @@ class TestArea(unittest.TestCase):
         self.assertIsNone(area.area_types)
 
         # test the initialization of the area without area_types
-        area_border_1 = AreaBorder(1, np.array([[1, 2], [3, 4]]))
-        area_border_2 = AreaBorder(2, np.array([[1, 2], [3, 4]]))
+        area_border_1 = AreaBorder(1, 1)
+        area_border_2 = AreaBorder(2, 1)
         area_border_list = [area_border_1, area_border_2]
         area = Area(1, area_border_list)
         self.assertEqual(area.area_id, 1)
@@ -95,8 +95,8 @@ class TestArea(unittest.TestCase):
         self.assertEqual(area.area_types, area_type_set)
 
     def test_basic_properties_area(self):
-        area_border_1 = AreaBorder(1, np.array([[1, 2], [3, 4]]))
-        area_border_2 = AreaBorder(2, np.array([[1, 2], [3, 4]]))
+        area_border_1 = AreaBorder(1, 1)
+        area_border_2 = AreaBorder(2, 1)
         area_border_list = [area_border_1, area_border_2]
         area_type_set = {AreaType.BUS_STOP, AreaType.PARKING}
 

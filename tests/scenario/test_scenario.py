@@ -10,8 +10,8 @@ from commonroad.scenario.intersection import Intersection, IncomingGroup, Outgoi
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
 from commonroad.common.common_lanelet import LineMarking
 from commonroad.scenario.obstacle import *
-from commonroad.scenario.scenario import Scenario, Environment, TimeOfDay, Underground, Weather, Location, \
-    ScenarioID, GeoTransformation
+from commonroad.scenario.scenario import Scenario, ScenarioID
+from commonroad.common.common_scenario import TimeOfDay, Weather, Underground, Environment, GeoTransformation, Location
 from commonroad.scenario.state import KSState, InitialState
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany
 from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightCycleElement, TrafficLight
