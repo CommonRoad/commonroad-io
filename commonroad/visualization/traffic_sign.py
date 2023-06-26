@@ -10,7 +10,8 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox, HPacker, TextArea,
 from scipy.cluster.hierarchy import linkage, fcluster
 
 from commonroad.geometry.shape import *
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficSignIDUsa
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDUsa
+from commonroad.scenario.traffic_light import TrafficLight
 from commonroad.visualization.draw_params import TrafficLightParams, TrafficSignParams
 
 # path to traffic sign .png files
@@ -113,9 +114,9 @@ class OffsetImageAutoscale(OffsetImage):
         self.dy_pix = dy_pix
 
     def ax_update(self, ax: Axes):
-        '''
+        """
         Update image size based on axes limits and window size in pixels
-        '''
+        """
         bbox = ax.get_window_extent()
         width_px, height_px = bbox.width, bbox.height
         # Get the range for the new area
@@ -269,7 +270,7 @@ def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], Traffi
         imageboxes = []
         for element in traffic_sign.traffic_sign_elements:
             el_id = element.traffic_sign_element_id
-            if show_traffic_signs is None or el_id.value not in show_traffic_signs:
+            if show_traffic_signs is not None and el_id.value not in show_traffic_signs:
                 continue
             show_label = show_label_default
             path = os.path.join(traffic_sign_path, el_id.__class__.__name__, el_id.value + '.png')

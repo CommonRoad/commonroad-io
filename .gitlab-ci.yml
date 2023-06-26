@@ -7,6 +7,7 @@ stages:
 
 before_script:
   - pip install poetry
+  - poetry config installer.modern-installation false # this should be removed in the future, required because of invalid third-party wheels (https://github.com/python-poetry/poetry/issues/7686)
   - poetry config virtualenvs.in-project true
   - poetry install --with tests
   - source .venv/bin/activate
@@ -34,12 +35,7 @@ style_check_merge_result:
     - git  diff ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA}...${CI_MERGE_REQUEST_SOURCE_BRANCH_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff --exclude=./commonroad/scenario_definition/*
   only:
     - merge_requests
-
-build_and_test_python_3_7:
-  image: python:3.7
-  stage: test
-  script:
-    - *run-test-with-coverage
+  allow_failure: true
 
 build_and_test_python_3_8:
   image: python:3.8

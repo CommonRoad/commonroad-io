@@ -115,9 +115,13 @@ class FileWriter(ABC):
     def check_validity_of_commonroad_file(commonroad_str: Union[str, bytes]) -> bool:
         pass
 
+    @abstractmethod
+    def _get_suffix(self) -> str:
+        pass
+
     def _handle_file_path(self, filename: Union[str, None], overwrite_existing_file: OverwriteExistingFile) -> str:
         if filename is None:
-            filename = str(self.scenario.scenario_id) + ".xml"
+            filename = str(self.scenario.scenario_id) + self._get_suffix()
 
         if pathlib.Path(filename).is_file():
             if overwrite_existing_file is OverwriteExistingFile.ASK_USER_INPUT:

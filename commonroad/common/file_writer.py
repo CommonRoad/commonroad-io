@@ -1,20 +1,11 @@
-import enum
 from typing import Union, Set
 
+from commonroad.common.util import FileFormat
 from commonroad.common.writer.file_writer_interface import OverwriteExistingFile
 from commonroad.common.writer.file_writer_protobuf import ProtobufFileWriter
 from commonroad.common.writer.file_writer_xml import XMLFileWriter
 from commonroad.planning.planning_problem import PlanningProblemSet
 from commonroad.scenario.scenario import Scenario, Tag, Location
-
-
-class FileFormat(enum.Enum):
-    """
-    Specifies the format of file.
-    """
-
-    XML = 0
-    PROTOBUF = 1
 
 
 class CommonRoadFileWriter:
@@ -39,6 +30,7 @@ class CommonRoadFileWriter:
         :param file_format: Format of file
         :return:
         """
+        self._file_format = file_format
         self._file_writer = None
         if file_format == FileFormat.XML:
             self._file_writer = XMLFileWriter(scenario, planning_problem_set, author, affiliation,

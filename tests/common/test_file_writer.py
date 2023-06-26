@@ -3,14 +3,16 @@ import os
 import unittest
 
 from commonroad import SCENARIO_VERSION
-from commonroad.common.file_writer import CommonRoadFileWriter, FileFormat
+from commonroad.common.file_writer import CommonRoadFileWriter
+from commonroad.common.util import FileFormat
 from commonroad.common.writer.file_writer_interface import precision, OverwriteExistingFile
 from commonroad.common.writer.file_writer_xml import float_to_str, Point, RectangleXMLNode, CircleXMLNode
 from commonroad.common.file_reader import CommonRoadFileReader
 from lxml import etree
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
 from commonroad.prediction.prediction import *
-from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking, LaneletType
+from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
+from commonroad.common.common_lanelet import LineMarking, LaneletType
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario, Tag, Location, ScenarioID
 from commonroad.scenario.trajectory import Trajectory
@@ -144,6 +146,7 @@ class TestXMLFileWriter(unittest.TestCase):
             xmlschema.assert_(xml_doc)
             return True
         except Exception as e:
+            print(str(e))
             logging.error('xml produced by file_writer not conformant with xsd-scheme: ' + str(e))
             return False
 

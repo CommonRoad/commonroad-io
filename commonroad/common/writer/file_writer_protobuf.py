@@ -6,7 +6,7 @@ import logging
 import numpy as np
 from google.protobuf.message import DecodeError
 
-from commonroad.common.util import Interval
+from commonroad.common.util import Interval, FileFormat, Time
 from commonroad.common.writer.file_writer_interface import FileWriter, OverwriteExistingFile
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
@@ -17,14 +17,16 @@ from commonroad.scenario_definition.protobuf_format.generated_scripts import lan
     traffic_sign_pb2, scenario_tags_pb2, environment_obstacle_pb2, obstacle_pb2, intersection_pb2, \
     dynamic_obstacle_pb2, static_obstacle_pb2, traffic_light_pb2, location_pb2
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
-from commonroad.scenario.lanelet import Lanelet, LineMarking, StopLine
+from commonroad.scenario.lanelet import Lanelet
+from commonroad.common.common_lanelet import StopLine, LineMarking
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, SignalState, \
     PhantomObstacle
-from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment, Time
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficLight, TrafficSignElement, TrafficLightCycleElement, \
+from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, \
     TrafficSignIDGermany, TrafficSignIDFrance, TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSignIDChina, \
     TrafficSignIDSpain, TrafficSignIDRussia, TrafficSignIDArgentina, TrafficSignIDBelgium, TrafficSignIDGreece, \
     TrafficSignIDCroatia, TrafficSignIDItaly
+from commonroad.scenario.traffic_light import TrafficLightCycleElement, TrafficLight
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import State
 
@@ -120,9 +122,11 @@ class ProtobufFileWriter(FileWriter):
         :param filename: Name of file
         :return:
         """
-        f = open(filename, "wb")
-        f.write(self._commonroad_msg.SerializeToString())
-        f.close()
+        with open(filename, "wb") as f:
+            f.write(self._commonroad_msg.SerializeToString())
+
+    def _get_suffix(self) -> str:
+        return FileFormat.PROTOBUF.value
 
     def write_to_file(self, filename: Union[str, None] = None,
                       overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
@@ -385,9 +389,6 @@ class TrafficSignMessage:
             traffic_sign_element_msg = TrafficSignElementMessage.create_message(traffic_sign_element)
             traffic_sign_msg.traffic_sign_elements.append(traffic_sign_element_msg)
 
-        for first_occurrence in traffic_sign.first_occurrence:
-            traffic_sign_msg.first_occurrences.append(first_occurrence)
-
         if traffic_sign.position is not None:
             point_msg = PointMessage.create_message(traffic_sign.position)
             traffic_sign_msg.position.CopyFrom(point_msg)
@@ -459,7 +460,7 @@ class TrafficLightMessage:
 
         traffic_light_msg.traffic_light_id = traffic_light.traffic_light_id
 
-        for cycle_element in traffic_light.cycle:
+        for cycle_element in traffic_light.traffic_light_cycle.cycle_elements:
             cycle_element_msg = CycleElementMessage.create_message(cycle_element)
             traffic_light_msg.cycle_elements.append(cycle_element_msg)
 
@@ -467,8 +468,8 @@ class TrafficLightMessage:
             point_msg = PointMessage.create_message(traffic_light.position)
             traffic_light_msg.position.CopyFrom(point_msg)
 
-        if traffic_light.time_offset is not None:
-            traffic_light_msg.time_offset = traffic_light.time_offset
+        if traffic_light.traffic_light_cycle.time_offset is not None:
+            traffic_light_msg.time_offset = traffic_light.traffic_light_cycle.time_offset
 
         if traffic_light.direction is not None:
             traffic_light_msg.direction = traffic_light_pb2.TrafficLightDirectionEnum.TrafficLightDirection \

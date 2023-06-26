@@ -11,12 +11,11 @@ import math
 
 from commonroad.geometry.shape import Rectangle
 from commonroad.geometry.transform import rotate_translate
-from commonroad.scenario.lanelet import LaneletNetwork, LineMarking
+from commonroad.scenario.lanelet import LaneletNetwork
+from commonroad.common.common_lanelet import LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle
 from commonroad.scenario.scenario import Scenario
-from commonroad.scenario.traffic_sign import TrafficLightState, \
-    TrafficLight, \
-    TrafficLightDirection
+from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightDirection, TrafficLight
 from matplotlib.lines import Line2D
 from matplotlib.path import Path
 from matplotlib.axes import Axes
@@ -237,21 +236,16 @@ def approximate_bounding_box_dyn_obstacles(obj: list, time_step=0) -> Union[
         return tuple(bounds)
 
 
-def get_arrow_path_at(x, y, angle):
+def get_arrow_path_at(x: float, y: float, angle: float, scale_direction: float = 1.5) -> Path:
     """Returns path of arrow shape"""
     # direction arrow
     codes_direction = [Path.MOVETO, Path.LINETO, Path.LINETO, Path.CLOSEPOLY]
 
-    scale_direction = 1.5
-    pts = np.array([[0.0, -0.5, 1.0], [1.0, 0.0, 1.0], [0.0, 0.5, 1.0],
-                    [0.0, -0.5, 1.0]])
-    scale_m = np.array(
-            [[scale_direction, 0, 0], [0, scale_direction, 0], [0, 0, 1]])
-    transform = np.array([[math.cos(angle), -math.sin(angle), x],
-                          [math.sin(angle), math.cos(angle), y], [0, 0, 1]])
-    ptr_trans = transform.dot(scale_m.dot(pts.transpose()))
-    ptr_trans = ptr_trans[0:2, :]
-    ptr_trans = ptr_trans.transpose()
+    pts = np.array([[0.0, -0.5], [1.0, 0.0], [0.0, 0.5], [0.0, -0.5]])
+    pts *= scale_direction
+    transform = np.array([[math.cos(angle), math.sin(angle)], [-math.sin(angle), math.cos(angle)]])
+    ptr_trans = pts @ transform
+    ptr_trans += [x, y]
 
     path = Path(ptr_trans, codes_direction)
     return path
