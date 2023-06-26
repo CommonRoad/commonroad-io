@@ -11,22 +11,27 @@ from commonroad.common.writer.file_writer_interface import FileWriter, Overwrite
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction, SetBasedPrediction
-from commonroad.scenario_definition.protobuf_format.generated_scripts import commonroad_pb2, util_pb2, \
-    phantom_obstacle_pb2
-from commonroad.scenario_definition.protobuf_format.generated_scripts import lanelet_pb2, planning_problem_pb2, \
-    traffic_sign_pb2, scenario_tags_pb2, environment_obstacle_pb2, obstacle_pb2, intersection_pb2, \
-    dynamic_obstacle_pb2, static_obstacle_pb2, traffic_light_pb2, location_pb2
-from commonroad.scenario.intersection import Intersection, IncomingGroup
+from commonroad.generated_scripts.map import area_pb2, commonroad_map_pb2, \
+    intersection_pb2, lanelet_pb2, location_pb2, traffic_light_pb2, traffic_sign_pb2
+from commonroad.generated_scripts.scenario import commonroad_scenario_pb2, \
+    planning_problem_pb2, scenario_tags_pb2
+from commonroad.generated_scripts.dynamic import commonroad_dynamic_pb2, \
+    dynamic_obstacle_pb2, environment_obstacle_pb2, environment_pb2, obstacle_pb2, phantom_obstacle_pb2, \
+    static_obstacle_pb2, traffic_light_cycle_pb2, traffic_sign_value_pb2
+from commonroad.generated_scripts.common import state_pb2, \
+    traffic_light_state_pb2, traffic_sign_element_pb2, util_pb2, scenario_meta_information_pb2
+
+
+from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup
 from commonroad.scenario.lanelet import Lanelet
-from commonroad.common.common_lanelet import StopLine, LineMarking
+from commonroad.scenario.area import Area, AreaBorder
+from commonroad.common.common_lanelet import StopLine
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, SignalState, \
     PhantomObstacle
-from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, \
-    TrafficSignIDGermany, TrafficSignIDFrance, TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSignIDChina, \
-    TrafficSignIDSpain, TrafficSignIDRussia, TrafficSignIDArgentina, TrafficSignIDBelgium, TrafficSignIDGreece, \
-    TrafficSignIDCroatia, TrafficSignIDItaly
-from commonroad.scenario.traffic_light import TrafficLightCycleElement, TrafficLight
+from commonroad.scenario.scenario import Scenario, Tag
+from commonroad.common.common_scenario import Environment, GeoTransformation, Location
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignValue
+from commonroad.scenario.traffic_light import TrafficLightCycleElement, TrafficLight, TrafficLightCycle
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import State
 
@@ -37,122 +42,225 @@ class ProtobufFileWriter(FileWriter):
     """
     Writes CommonRoad files in protobuf format.
     """
+    #  abstract methods used in previous format xml
+    def _write_header(self):
+        pass
+
+    #  abstract methods used in previous format xml
+    def _add_all_objects_from_scenario(self):
+        pass
+
+    #  abstract methods used in previous format xml
+    def write_to_file(self, filename: Union[str, None] = None,
+                      overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+                      check_validity: bool = False):
+        pass
 
     def __init__(self, scenario: Scenario, planning_problem_set: PlanningProblemSet, author: str = None,
                  affiliation: str = None, source: str = None, tags: Set[Tag] = None, location: Location = None,
                  decimal_precision: int = 4):
         super().__init__(scenario, planning_problem_set, author, affiliation, source, tags, location, decimal_precision)
 
-        self._commonroad_msg = commonroad_pb2.CommonRoad()
+        self._commonroad_dynamic_msg = commonroad_dynamic_pb2.CommonRoadDynamic()
+        self._commonroad_map_msg = commonroad_map_pb2.CommonRoadMap()
+        self._commonroad_scenario_msg = commonroad_scenario_pb2.CommonRoadScenario()
 
-    def _write_header(self):
+    def _write_header_map(self):
         """
-        Stores all information about scenario and planning problems as protobuf message.
-
-        :return:
+        Stores all information about 2023 Map as protobuf message.
         """
-        information_msg = ScenarioInformationMessage.create_message(self.scenario.scenario_id.scenario_version,
-                                                                    str(self.scenario.scenario_id), self._author,
-                                                                    self._affiliation, self._source, self.scenario.dt)
+        map_info_msg = MapInformationMessage.create_message(self.scenario.lanelet_network.information.commonroad_version,
+                                                            self.scenario.lanelet_network.information.map_id,
+                                                            self.scenario.lanelet_network.information.date,
+                                                            self.scenario.lanelet_network.information.author,
+                                                            self.scenario.lanelet_network.information.affiliation,
+                                                            self.scenario.lanelet_network.information.source,
+                                                            self.scenario.lanelet_network.information.license_name,
+                                                            self.scenario.lanelet_network.information.license_text)
 
-        self._commonroad_msg.information.CopyFrom(information_msg)
+        self._commonroad_map_msg.map_meta_information.CopyFrom(map_info_msg)
 
-    def _add_all_objects_from_scenario(self):
+    def _write_header_dynamic(self):
         """
-        Stores all scenario objects as protobuf message.
-
-        :return:
+        Stores all information about 2023 Dynamic as protobuf message.
         """
-        scenario_tags = ScenarioTagsMessage.create_message(list(self.scenario.tags))
-        self._commonroad_msg.scenario_tags.CopyFrom(scenario_tags)
+        dynamic_info_msg = DynamicInformationMessage.create_message(self.scenario.scenario_id.scenario_version,
+                                                                    str(self.scenario.scenario_id),
+                                                                    self.scenario.author,
+                                                                    self.scenario.affiliation,
+                                                                    self.scenario.source,
+                                                                    self.scenario.dt,
+                                                                self.scenario.lanelet_network.information.license_name,
+                                                                self.scenario.lanelet_network.information.license_text)
 
-        if self.location is not None:
-            location_msg = LocationMessage.create_message(self.location)
-        else:
-            location_msg = LocationMessage.create_message(Location())
-            logger.warning("Default location will be written to protobuf!")
-        self._commonroad_msg.location.CopyFrom(location_msg)
+        self._commonroad_dynamic_msg.dynamic_meta_information.CopyFrom(dynamic_info_msg)
+
+    def _write_header_scenario(self):
+        """
+        Stores all information about 2023 Scenario as protobuf message.
+        """
+        scenario_info_msg = ScenarioInformationMessage.create_message(self.scenario.scenario_id.scenario_version,
+         str(self.scenario.scenario_id),
+         self.scenario.lanelet_network.information.license_name,
+         self.scenario.lanelet_network.information.license_text,
+         self._author,
+         self._affiliation,
+         self._source,
+         self.scenario.dt)
+
+        self._commonroad_scenario_msg.scenario_meta_information.CopyFrom(scenario_info_msg)
+
+    def _add_all_objects_from_scenario_to_map(self):
+        """
+        Stores all scenario objects that correspond to the map as protobuf message.
+        """
+
+        location_msg = LocationMessage.create_message(self.location)
+        self._commonroad_map_msg.location.CopyFrom(location_msg)
 
         for lanelet in self.scenario.lanelet_network.lanelets:
             lanelet_msg = LaneletMessage.create_message(lanelet)
-            self._commonroad_msg.lanelets.append(lanelet_msg)
+            left_bound_msg = BoundMessage.create_message(lanelet.left_bound, lanelet.left_vertices)
+            right_bound_msg = BoundMessage.create_message(lanelet.right_bound, lanelet.right_vertices)
+
+            if lanelet.stop_line is not None:
+                if lanelet.stop_line_id is None:
+                    # We assign the lanelet id as the stop_line_id, as there the stop_line does not contain its own
+                    # id as the attribute in the xml format
+                    lanelet.stop_line_id = lanelet.lanelet_id
+                stop_line_msg = StopLineMessage.create_message(lanelet.stop_line_id, lanelet.stop_line)
+                self._commonroad_map_msg.stop_lines.append(stop_line_msg)
+
+            self._commonroad_map_msg.lanelets.append(lanelet_msg)
+            self._commonroad_map_msg.boundaries.append(left_bound_msg)
+            self._commonroad_map_msg.boundaries.append(right_bound_msg)
 
         for traffic_sign in self.scenario.lanelet_network.traffic_signs:
             traffic_sign_msg = TrafficSignMessage.create_message(traffic_sign)
-            self._commonroad_msg.traffic_signs.append(traffic_sign_msg)
+            self._commonroad_map_msg.traffic_signs.append(traffic_sign_msg)
 
         for traffic_light in self.scenario.lanelet_network.traffic_lights:
             traffic_light_msg = TrafficLightMessage.create_message(traffic_light)
-            self._commonroad_msg.traffic_lights.append(traffic_light_msg)
+            self._commonroad_map_msg.traffic_lights.append(traffic_light_msg)
 
         for intersection in self.scenario.lanelet_network.intersections:
             intersection_msg = IntersectionMessage.create_message(intersection)
-            self._commonroad_msg.intersections.append(intersection_msg)
+            self._commonroad_map_msg.intersections.append(intersection_msg)
 
+    def _add_all_objects_from_scenario_to_dynamic(self):
+        """
+        Stores all scenario objects that correspond to the dynamic as protobuf message.
+        """
         for static_obstacle in self.scenario.static_obstacles:
             static_obstacle_msg = StaticObstacleMessage.create_message(static_obstacle)
-            self._commonroad_msg.static_obstacles.append(static_obstacle_msg)
+            self._commonroad_dynamic_msg.static_obstacles.append(static_obstacle_msg)
 
         for dynamic_obstacle in self.scenario.dynamic_obstacles:
             dynamic_obstacle_msg = DynamicObstacleMessage.create_message(dynamic_obstacle)
-            self._commonroad_msg.dynamic_obstacles.append(dynamic_obstacle_msg)
+            self._commonroad_dynamic_msg.dynamic_obstacles.append(dynamic_obstacle_msg)
 
         for environment_obstacle in self.scenario.environment_obstacle:
             environment_obstacle_msg = EnvironmentObstacleMessage.create_message(environment_obstacle)
-            self._commonroad_msg.environment_obstacles.append(environment_obstacle_msg)
+            self._commonroad_dynamic_msg.environment_obstacles.append(environment_obstacle_msg)
 
         for phantom_obstacle in self.scenario.phantom_obstacle:
             phantom_obstacle_msg = PhantomObstacleMessage.create_message(phantom_obstacle)
-            self._commonroad_msg.phantom_obstacles.append(phantom_obstacle_msg)
+            self._commonroad_dynamic_msg.phantom_obstacles.append(phantom_obstacle_msg)
+
+        for traffic_light in self.scenario.lanelet_network.traffic_lights:
+            if traffic_light.traffic_light_cycle is not None:
+                traffic_light_cycle_msg = TrafficLightCycleMessage.create_message(traffic_light.traffic_light_cycle,
+                                                                                  traffic_light.traffic_light_id)
+                self._commonroad_dynamic_msg.traffic_light_cycle.append(traffic_light_cycle_msg)
+
+        for traffic_sign in self.scenario.lanelet_network.traffic_signs:
+            if traffic_sign.traffic_sign_elements is not None:
+                traffic_sign_value = TrafficSignValue(traffic_sign.traffic_sign_id, traffic_sign.traffic_sign_elements)
+                traffic_sign_value_msg = TrafficSignValueMessage.create_message(traffic_sign_value)
+                self._commonroad_dynamic_msg.traffic_sign_value.append(traffic_sign_value_msg)
+
+        environment = Environment()
+        if self.scenario.location.environment is not None:
+            environment = self.scenario.location.environment
+
+        self._commonroad_dynamic_msg.environment.CopyFrom(EnvironmentMessage.create_message(environment))
 
     def _add_all_planning_problems_from_planning_problem_set(self):
         """
-        Stores all planning problems as protobuf message.
-
-        :return:
+        Stores all planning problems in scenario as protobuf message.
         """
         for planning_problem in self.planning_problem_set.planning_problem_dict.values():
             planning_problem_msg = PlanningProblemMessage.create_message(planning_problem)
-            self._commonroad_msg.planning_problems.append(planning_problem_msg)
+            # As mentioned in issue #45, planning problem stores scenario tags
+            scenario_tags = ScenarioTagsMessage.create_message(list(self.scenario.tags))
+            planning_problem_msg.scenario_tags.CopyFrom(scenario_tags)
 
-    def _serialize_write_msg(self, filename: str):
+            self._commonroad_scenario_msg.planning_problems.append(planning_problem_msg)
+
+    def _serialize_write_msg(self, filename_map: str = None, filename_dynamic: str = None,
+                             filename_scenario: str = None):
         """
         Serializes the message of type commonroad and writes into file.
 
-        :param filename: Name of file
-        :return:
+        :param filename_map: Name of map file
+        :param filename_dynamic: Name of dynamic file
+        :param filename_scenario: Name of scenario file
         """
-        with open(filename, "wb") as f:
-            f.write(self._commonroad_msg.SerializeToString())
+        if filename_map:
+            with open(filename_map, "wb+") as f:
+                f.write(self._commonroad_map_msg.SerializeToString())
+        if filename_dynamic:
+            with open(filename_dynamic, "wb+") as f:
+                f.write(self._commonroad_dynamic_msg.SerializeToString())
+        if filename_scenario:
+            with open(filename_scenario, "wb+") as f:
+                f.write(self._commonroad_scenario_msg.SerializeToString())
 
     def _get_suffix(self) -> str:
         return FileFormat.PROTOBUF.value
 
-    def write_to_file(self, filename: Union[str, None] = None,
-                      overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
-                      check_validity: bool = False):
+    def write_map_to_file(self, filename: Union[str, None] = None,
+                          overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+                          check_validity: bool = False):
+        """
+        Writes message of type commonroad_map into file.
+
+        :param filename: Name of file
+        :param overwrite_existing_file: Mode of writing
+        :param check_validity: Validity checking before writing
+        """
+        filename = self._handle_file_path(filename, overwrite_existing_file)
+        if not filename:
+            return
+
+        self._commonroad_map_msg = commonroad_map_pb2.CommonRoadMap()
+        self._write_header_map()
+        self._add_all_objects_from_scenario_to_map()
+        if check_validity:
+            pass
+        self._serialize_write_msg(filename)
+
+    def write_dynamic_to_file(self, filename: Union[str, None] = None,
+                              overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+                              check_validity: bool = False):
         """
         Writes message of type commonroad into file.
 
         :param filename: Name of file
         :param overwrite_existing_file: Mode of writing
         :param check_validity: Validity checking before writing
-        :return:
         """
         filename = self._handle_file_path(filename, overwrite_existing_file)
         if not filename:
             return
 
-        self._commonroad_msg = commonroad_pb2.CommonRoad()
+        self._commonroad_dynamic_msg = commonroad_dynamic_pb2.CommonRoadDynamic()
 
-        self._write_header()
-        self._add_all_objects_from_scenario()
-        self._add_all_planning_problems_from_planning_problem_set()
-
+        self._write_header_dynamic()
+        self._add_all_objects_from_scenario_to_dynamic()
         if check_validity:
             pass
-
-        self._serialize_write_msg(filename)
+        self._serialize_write_msg(None, filename)
 
     def write_scenario_to_file(self, filename: Union[str, None] = None,
                                overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT):
@@ -161,41 +269,75 @@ class ProtobufFileWriter(FileWriter):
 
         :param filename: Name of file
         :param overwrite_existing_file: Mode of writing
-        :return:
         """
         filename = self._handle_file_path(filename, overwrite_existing_file)
         if not filename:
             return
 
-        self._commonroad_msg = commonroad_pb2.CommonRoad()
+        self._commonroad_scenario_msg = commonroad_scenario_pb2.CommonRoadScenario()
 
-        self._write_header()
-        self._add_all_objects_from_scenario()
+        self._write_header_scenario()
+        self._add_all_planning_problems_from_planning_problem_set()
+        self._commonroad_scenario_msg.map_id = self.scenario.lanelet_network.information.map_id
+        self._commonroad_scenario_msg.dynamic_id = str(self.scenario.scenario_id)
 
-        self._serialize_write_msg(filename)
+        self._serialize_write_msg(None, None, filename)
 
     @staticmethod
-    def check_validity_of_commonroad_file(commonroad_str: Union[str, bytes]) -> bool:
+    def check_validity_of_commonroad_file(commonroad_map_str: Union[str, bytes] = None,
+                                          commonroad_dynamic_str: Union[str, bytes] = None,
+                                          commonroad_scenario_str: Union[str, bytes] = None) -> bool:
         """
-        Checks validity of CommonRoad message/file.
+        Checks validity of CommonRoad messages/files.
 
-        :param commonroad_str: Commonroad instance in form of binary string
+        :param commonroad_map_str: Commonroad map instance in form of binary string
+        :param commonroad_dynamic_str: Commonroad dynamic instance in form of binary string
+        :param commonroad_scenario_str: Commonroad scenario instance in form of binary string
         :return: Valid or not
         """
         try:
-            commonroad_msg = commonroad_pb2.CommonRoad()
-            commonroad_msg.ParseFromString(commonroad_str)
+            if commonroad_map_str is not None:
+                commonroad_map_msg = commonroad_map_pb2.CommonRoadMap()
+                commonroad_map_msg.ParseFromString(commonroad_map_str)
+            if commonroad_dynamic_str is not None:
+                commonroad_dynamic_msg = commonroad_dynamic_pb2.CommonRoadDynamic()
+                commonroad_dynamic_msg.ParseFromString(commonroad_dynamic_str)
+            if commonroad_scenario_str is not None:
+                commonroad_scenario_msg = commonroad_scenario_pb2.CommonRoadScenario()
+                commonroad_scenario_msg.ParseFromString(commonroad_scenario_str)
             return True
         except DecodeError:
             return False
 
 
+class MapInformationMessage:
+
+    @classmethod
+    def create_message(cls, commonroad_version: str, map_id: str, date: Time, author: str, affiliation: str,
+                       source: str, license_name: str, license_text: str) -> \
+            commonroad_map_pb2.MapInformation:
+        map_information_msg = commonroad_map_pb2.MapInformation()
+        map_information_msg.common_road_version = commonroad_version
+        map_information_msg.map_id = map_id
+        time_stamp_msg = TimeStampMessage.create_message(datetime.datetime
+                                                         (date.year, date.month, date.day, date.hours, date.minutes))
+        map_information_msg.date.CopyFrom(time_stamp_msg)
+        map_information_msg.author = author
+        map_information_msg.affiliation = affiliation
+        map_information_msg.source = source
+        map_information_msg.license_name = license_name
+        map_information_msg.license_text = license_text
+
+        return map_information_msg
+
+
 class ScenarioInformationMessage:
 
     @classmethod
-    def create_message(cls, commonroad_version: str, benchmark_id: str, author: str, affiliation: str, source: str,
-                       time_step_size: float) -> commonroad_pb2.ScenarioInformation:
-        scenario_information_msg = commonroad_pb2.ScenarioInformation()
+    def create_message(cls, commonroad_version: str, benchmark_id: str, license_name: str, license_text: str,
+                       author: str, affiliation: str, source: str, time_step_size: float) -> \
+            scenario_meta_information_pb2.ScenarioMetaInformation:
+        scenario_information_msg = scenario_meta_information_pb2.ScenarioMetaInformation()
         scenario_information_msg.common_road_version = commonroad_version
         scenario_information_msg.benchmark_id = benchmark_id
         time_stamp_msg = TimeStampMessage.create_message(datetime.datetime.today())
@@ -204,8 +346,31 @@ class ScenarioInformationMessage:
         scenario_information_msg.affiliation = affiliation
         scenario_information_msg.source = source
         scenario_information_msg.time_step_size = time_step_size
+        scenario_information_msg.license_name = license_name
+        scenario_information_msg.license_text = license_text
 
         return scenario_information_msg
+
+
+class DynamicInformationMessage:
+
+    @classmethod
+    def create_message(cls, commonroad_version: str, benchmark_id: str, author: str, affiliation: str,
+                       source: str, time_step_size: float, license_name: str, license_text: str) -> \
+            scenario_meta_information_pb2.ScenarioMetaInformation:
+        dynamic_information_msg = scenario_meta_information_pb2.ScenarioMetaInformation()
+        dynamic_information_msg.common_road_version = commonroad_version
+        dynamic_information_msg.benchmark_id = benchmark_id
+        time_stamp_msg = TimeStampMessage.create_message(datetime.datetime.today())
+        dynamic_information_msg.date.CopyFrom(time_stamp_msg)
+        dynamic_information_msg.author = author
+        dynamic_information_msg.affiliation = affiliation
+        dynamic_information_msg.source = source
+        dynamic_information_msg.time_step_size = time_step_size
+        dynamic_information_msg.license_name = license_name
+        dynamic_information_msg.license_text = license_text
+
+        return dynamic_information_msg
 
 
 class ScenarioTagsMessage:
@@ -229,13 +394,9 @@ class LocationMessage:
         location_msg.geo_name_id = location.geo_name_id
         location_msg.gps_latitude = location.gps_latitude
         location_msg.gps_longitude = location.gps_longitude
-
         if location.geo_transformation is not None:
             geo_transformation_msg = GeoTransformationMessage.create_message(location.geo_transformation)
             location_msg.geo_transformation.CopyFrom(geo_transformation_msg)
-        if location.environment is not None:
-            environment_msg = EnvironmentMessage.create_message(location.environment)
-            location_msg.environment.CopyFrom(environment_msg)
 
         return location_msg
 
@@ -258,20 +419,47 @@ class GeoTransformationMessage:
 class EnvironmentMessage:
 
     @classmethod
-    def create_message(cls, environment: Environment) -> location_pb2.Environment:
-        environment_msg = location_pb2.Environment()
+    def create_message(cls, environment: Environment) -> environment_pb2.Environment:
+        environment_msg = environment_pb2.Environment()
 
         if environment.time is not None:
             time_stamp_msg = TimeStampMessage.create_message(environment.time)
             environment_msg.time.CopyFrom(time_stamp_msg)
         if environment.time_of_day is not None:
-            environment_msg.time_of_day = location_pb2.TimeOfDayEnum.TimeOfDay.Value(environment.time_of_day.name)
+            environment_msg.time_of_day = environment_pb2.TimeOfDayEnum.TimeOfDay.Value(environment.time_of_day.name)
         if environment.weather is not None:
-            environment_msg.weather = location_pb2.WeatherEnum.Weather.Value(environment.weather.name)
+            environment_msg.weather = environment_pb2.WeatherEnum.Weather.Value(environment.weather.name)
         if environment.underground is not None:
-            environment_msg.underground = location_pb2.UndergroundEnum.Underground.Value(environment.underground.name)
+            environment_msg.underground = environment_pb2.UndergroundEnum.Underground.\
+                Value(environment.underground.name)
 
         return environment_msg
+
+
+class AreaBorderMessage:
+    @classmethod
+    def create_message(cls, area_border: AreaBorder) -> area_pb2.AreaBorder:
+        area_border_msg = area_pb2.AreaBorder()
+        area_border_msg.area_border_id = area_border.area_border_id
+        area_border_msg.boundary = area_border.boundary
+        area_border_msg.adjacent = area_border.adjacent
+        area_border_msg.line_marking = lanelet_pb2.LineMarkingEnum.LineMarking.Value(area_border.line_marking.name)
+
+        return area_border_msg
+
+
+class AreaMessage:
+    @classmethod
+    def create_message(cls, area: Area) -> area_pb2.Area:
+        area_msg = area_pb2.Area()
+        area_msg.area_id = area.area_id
+        for border in area.border:
+            border_msg = AreaBorderMessage.create_message(border)
+            area_msg.border.append(border_msg)
+        for area_type in area.area_types:
+            area_msg.area_type.append(area_pb2.AreaTypeEnum.AreaType.Value(area_type.name))
+
+        return area_msg
 
 
 class LaneletMessage:
@@ -282,11 +470,8 @@ class LaneletMessage:
 
         lanelet_msg.lanelet_id = lanelet.lanelet_id
 
-        bound_msg = BoundMessage.create_message(lanelet.left_vertices, lanelet.line_marking_left_vertices)
-        lanelet_msg.left_bound.CopyFrom(bound_msg)
-
-        bound_msg = BoundMessage.create_message(lanelet.right_vertices, lanelet.line_marking_right_vertices)
-        lanelet_msg.right_bound.CopyFrom(bound_msg)
+        lanelet_msg.left_bound = lanelet.left_bound
+        lanelet_msg.right_bound = lanelet.right_bound
 
         for pre in lanelet.predecessor:
             lanelet_msg.predecessors.append(pre)
@@ -302,19 +487,20 @@ class LaneletMessage:
 
         if lanelet.adj_left_same_direction is not None:
             if lanelet.adj_left_same_direction:
-                lanelet_msg.adjacent_left_dir = lanelet_pb2.DrivingDirEnum.DrivingDir.Value('SAME')
+                lanelet_msg.adjacent_left_opposite_dir = False
             else:
-                lanelet_msg.adjacent_left_dir = lanelet_pb2.DrivingDirEnum.DrivingDir.Value('OPPOSITE')
+                lanelet_msg.adjacent_left_opposite_dir = True
 
         if lanelet.adj_right_same_direction is not None:
             if lanelet.adj_right_same_direction:
-                lanelet_msg.adjacent_right_dir = lanelet_pb2.DrivingDirEnum.DrivingDir.Value('SAME')
+                lanelet_msg.adjacent_right_opposite_dir = False
             else:
-                lanelet_msg.adjacent_right_dir = lanelet_pb2.DrivingDirEnum.DrivingDir.Value('OPPOSITE')
+                lanelet_msg.adjacent_right_opposite_dir = True
 
         if lanelet.stop_line is not None:
-            stop_line_msg = StopLineMessage.create_message(lanelet.stop_line)
-            lanelet_msg.stop_line.CopyFrom(stop_line_msg)
+            if lanelet.stop_line_id is None:
+                lanelet.stop_line_id = lanelet.lanelet_id
+            lanelet_msg.stop_line = lanelet.stop_line_id
 
         for lanelet_type in lanelet.lanelet_type:
             lanelet_msg.lanelet_types.append(lanelet_pb2.LaneletTypeEnum.LaneletType.Value(lanelet_type.name))
@@ -331,21 +517,23 @@ class LaneletMessage:
         for tl_ref in lanelet.traffic_lights:
             lanelet_msg.traffic_light_refs.append(tl_ref)
 
+        for adj_area in lanelet.adjacent_areas:
+            lanelet_msg.adjacent_area_refs.append(adj_area)
+
         return lanelet_msg
 
 
 class BoundMessage:
 
     @classmethod
-    def create_message(cls, vertices: np.ndarray, line_marking: LineMarking) -> lanelet_pb2.Bound:
+    def create_message(cls, boundary_id: int, vertices: np.ndarray) -> lanelet_pb2.Bound:
         bound_msg = lanelet_pb2.Bound()
+
+        bound_msg.boundary_id = boundary_id
 
         for vertex in vertices:
             point_msg = PointMessage.create_message(vertex)
             bound_msg.points.append(point_msg)
-
-        if line_marking is not None:
-            bound_msg.line_marking = lanelet_pb2.LineMarkingEnum.LineMarking.Value(line_marking.name)
 
         return bound_msg
 
@@ -353,27 +541,19 @@ class BoundMessage:
 class StopLineMessage:
 
     @classmethod
-    def create_message(cls, stop_line: StopLine) -> lanelet_pb2.StopLine:
+    def create_message(cls, stop_line_id: int, stop_line: StopLine) -> lanelet_pb2.StopLine:
         stop_line_msg = lanelet_pb2.StopLine()
+
+        stop_line_msg.stop_line_id = stop_line_id
 
         if stop_line.start is not None:
             point_msg = PointMessage.create_message(stop_line.start)
-            stop_line_msg.points.append(point_msg)
-
+            stop_line_msg.start_point.CopyFrom(point_msg)
         if stop_line.end is not None:
             point_msg = PointMessage.create_message(stop_line.end)
-            stop_line_msg.points.append(point_msg)
+            stop_line_msg.end_point.CopyFrom(point_msg)
 
         stop_line_msg.line_marking = lanelet_pb2.LineMarkingEnum.LineMarking.Value(stop_line.line_marking.name)
-
-        if stop_line.traffic_sign_ref is not None:
-            for ts_ref in stop_line.traffic_sign_ref:
-                stop_line_msg.traffic_sign_refs.append(ts_ref)
-
-        if stop_line.traffic_light_ref is not None:
-            for tl_ref in stop_line.traffic_light_ref:
-                stop_line_msg.traffic_light_refs.append(tl_ref)
-
         return stop_line_msg
 
 
@@ -399,52 +579,29 @@ class TrafficSignMessage:
         return traffic_sign_msg
 
 
+class TrafficSignValueMessage:
+    @classmethod
+    def create_message(cls, traffic_sign_value: TrafficSignValue) -> traffic_sign_value_pb2.TrafficSignValue:
+        traffic_sign_value_msg = traffic_sign_value_pb2.TrafficSignValue()
+
+        traffic_sign_value_msg.traffic_sign_id = traffic_sign_value.traffic_sign_id
+        for traffic_sign_element in traffic_sign_value.traffic_sign_elements:
+            traffic_sign_element_msg = TrafficSignElementMessage.create_message(traffic_sign_element)
+            traffic_sign_value_msg.traffic_sign_elements.append(traffic_sign_element_msg)
+
+        return traffic_sign_value_msg
+
+
 class TrafficSignElementMessage:
 
     @classmethod
-    def create_message(cls, traffic_sign_element: TrafficSignElement) -> traffic_sign_pb2.TrafficSignElement:
-        traffic_sign_element_msg = traffic_sign_pb2.TrafficSignElement()
+    def create_message(cls, traffic_sign_element: TrafficSignElement) -> traffic_sign_element_pb2.TrafficSignElement:
+        traffic_sign_element_msg = traffic_sign_element_pb2.TrafficSignElement()
 
         element_id = traffic_sign_element.traffic_sign_element_id
-        if isinstance(element_id, TrafficSignIDGermany):
-            traffic_sign_element_msg.germany_element_id = traffic_sign_pb2.TrafficSignIDGermanyEnum \
-                .TrafficSignIDGermany.Value(element_id.name)
-        elif isinstance(element_id, TrafficSignIDZamunda):
-            traffic_sign_element_msg.zamunda_element_id = traffic_sign_pb2.TrafficSignIDZamundaEnum \
-                .TrafficSignIDZamunda.Value(element_id.name)
-        elif isinstance(element_id, TrafficSignIDUsa):
-            traffic_sign_element_msg.usa_element_id = traffic_sign_pb2.TrafficSignIDUsaEnum \
-                .TrafficSignIDUsa.Value(element_id.name)
-        elif isinstance(element_id, TrafficSignIDChina):
-            traffic_sign_element_msg.china_element_id = traffic_sign_pb2.TrafficSignIDChinaEnum \
-                .TrafficSignIDChina.Value(element_id.name)
-        elif isinstance(element_id, TrafficSignIDSpain):
-            traffic_sign_element_msg.spain_element_id = traffic_sign_pb2.TrafficSignIDSpainEnum \
-                .TrafficSignIDSpain.Value(element_id.name)
-        elif isinstance(element_id, TrafficSignIDRussia):
-            traffic_sign_element_msg.russia_element_id = traffic_sign_pb2.TrafficSignIDRussiaEnum \
-                .TrafficSignIDRussia.Value(element_id.name)
-        elif isinstance(element_id, TrafficSignIDArgentina):
-            traffic_sign_element_msg.argentina_element_id = traffic_sign_pb2.TrafficSignIDArgentinaEnum \
-                .TrafficSignIDArgentina.Value(element_id.name)
-        elif isinstance(element_id, TrafficSignIDBelgium):
-            traffic_sign_element_msg.belgium_element_id = traffic_sign_pb2.TrafficSignIDBelgiumEnum \
-                .TrafficSignIDBelgium.Value(element_id.name)
-        elif isinstance(element_id, TrafficSignIDFrance):
-            traffic_sign_element_msg.france_element_id = traffic_sign_pb2.TrafficSignIDFranceEnum \
-                .TrafficSignIDFrance.Value(element_id.name)
-        elif isinstance(element_id, TrafficSignIDGreece):
-            traffic_sign_element_msg.greece_element_id = traffic_sign_pb2.TrafficSignIDGreeceEnum \
-                .TrafficSignIDGreece.Value(element_id.name)
-        elif isinstance(element_id, TrafficSignIDCroatia):
-            traffic_sign_element_msg.croatia_element_id = traffic_sign_pb2.TrafficSignIDCroatiaEnum \
-                .TrafficSignIDCroatia.Value(element_id.name)
-        elif isinstance(element_id, TrafficSignIDItaly):
-            traffic_sign_element_msg.italy_element_id = traffic_sign_pb2.TrafficSignIDItalyEnum \
-                .TrafficSignIDItaly.Value(element_id.name)
-        else:
-            traffic_sign_element_msg.puerto_rico_element_id = traffic_sign_pb2.TrafficSignIDPuertoRicoEnum \
-                .TrafficSignIDPuertoRico.Value(element_id.name)
+
+        traffic_sign_element_msg.element_id = traffic_sign_element_pb2.TrafficSignIDEnum.TrafficSignID.\
+            Value(element_id.name)
 
         for additional_value in traffic_sign_element.additional_values:
             traffic_sign_element_msg.additional_values.append(additional_value)
@@ -460,35 +617,49 @@ class TrafficLightMessage:
 
         traffic_light_msg.traffic_light_id = traffic_light.traffic_light_id
 
-        for cycle_element in traffic_light.traffic_light_cycle.cycle_elements:
-            cycle_element_msg = CycleElementMessage.create_message(cycle_element)
-            traffic_light_msg.cycle_elements.append(cycle_element_msg)
-
         if traffic_light.position is not None:
             point_msg = PointMessage.create_message(traffic_light.position)
             traffic_light_msg.position.CopyFrom(point_msg)
 
-        if traffic_light.traffic_light_cycle.time_offset is not None:
-            traffic_light_msg.time_offset = traffic_light.traffic_light_cycle.time_offset
+        for color in traffic_light.color:
+            traffic_light_msg.color.append(traffic_light_state_pb2.TrafficLightStateEnum.TrafficLightState
+                                           .Value(color.name))
 
         if traffic_light.direction is not None:
             traffic_light_msg.direction = traffic_light_pb2.TrafficLightDirectionEnum.TrafficLightDirection \
                 .Value(traffic_light.direction.name)
 
-        if traffic_light.active is not None:
-            traffic_light_msg.active = traffic_light.active
-
         return traffic_light_msg
+
+
+class TrafficLightCycleMessage:
+    @classmethod
+    def create_message(cls, traffic_light_cycle: TrafficLightCycle, traffic_light_id: int) \
+            -> traffic_light_cycle_pb2.TrafficLightCycle:
+        traffic_light_cycle_msg = traffic_light_cycle_pb2.TrafficLightCycle()
+
+        traffic_light_cycle_msg.traffic_light_id = traffic_light_id
+
+        for cycle_element in traffic_light_cycle.cycle_elements:
+            cycle_element_msg = CycleElementMessage.create_message(cycle_element)
+            traffic_light_cycle_msg.cycle_elements.append(cycle_element_msg)
+
+        if traffic_light_cycle.time_offset is not None:
+            traffic_light_cycle_msg.time_offset = traffic_light_cycle.time_offset
+
+        if traffic_light_cycle.active is not None:
+            traffic_light_cycle_msg.active = traffic_light_cycle.active
+
+        return traffic_light_cycle_msg
 
 
 class CycleElementMessage:
 
     @classmethod
-    def create_message(cls, cycle_element: TrafficLightCycleElement) -> traffic_light_pb2.CycleElement:
-        cycle_element_msg = traffic_light_pb2.CycleElement()
-
+    def create_message(cls, cycle_element: TrafficLightCycleElement) -> traffic_light_cycle_pb2.CycleElement:
+        cycle_element_msg = traffic_light_cycle_pb2.CycleElement()
         cycle_element_msg.duration = cycle_element.duration
-        cycle_element_msg.color = traffic_light_pb2.TrafficLightStateEnum.TrafficLightState \
+        cycle_element_msg.color = traffic_light_state_pb2.TrafficLightStateEnum.TrafficLightState \
             .Value(cycle_element.state.name)
 
         return cycle_element_msg
@@ -503,30 +674,54 @@ class IntersectionMessage:
         intersection_msg.intersection_id = intersection.intersection_id
 
         for incoming in intersection.incomings:
-            incoming_msg = IncomingMessage.create_message(incoming)
+            incoming_msg = IncomingGroupMessage.create_message(incoming)
             intersection_msg.incomings.append(incoming_msg)
+
+        for outgoing in intersection.outgoings:
+            outgoing_msg = OutgoingGroupMessage.create_message(outgoing)
+            intersection_msg.outgoings.append(outgoing_msg)
 
         return intersection_msg
 
 
-class IncomingMessage:
+class OutgoingGroupMessage:
+    @classmethod
+    def create_message(cls, outgoing: OutgoingGroup) -> intersection_pb2.OutgoingGroup:
+        outgoing_msg = intersection_pb2.OutgoingGroup()
+
+        outgoing_msg.outgoing_group_id = outgoing.outgoing_id
+
+        for outgoing_lanelet in outgoing.outgoing_lanelets:
+            outgoing_msg.outgoing_lanelets.append(outgoing_lanelet)
+
+        return outgoing_msg
+
+
+class IncomingGroupMessage:
 
     @classmethod
-    def create_message(cls, incoming: IncomingGroup) -> intersection_pb2.Incoming:
-        incoming_msg = intersection_pb2.Incoming()
+    def create_message(cls, incoming: IncomingGroup) -> intersection_pb2.IncomingGroup:
+        incoming_msg = intersection_pb2.IncomingGroup()
 
-        incoming_msg.incoming_id = incoming.incoming_id
+        incoming_msg.incoming_group_id = incoming.incoming_id
+
         for incoming_lanelet in incoming.incoming_lanelets:
             incoming_msg.incoming_lanelets.append(incoming_lanelet)
 
-        for successor_right in incoming.outgoing_right:
-            incoming_msg.successors_right.append(successor_right)
+        if incoming.outgoing_id is not None:
+            incoming_msg.outgoing_group_id = incoming.outgoing_id
 
-        for successor_straight in incoming.outgoing_straight:
-            incoming_msg.successors_straight.append(successor_straight)
+        for outgoing_right in incoming.outgoing_right:
+            incoming_msg.outgoing_right.append(outgoing_right)
 
-        for successor_left in incoming.outgoing_left:
-            incoming_msg.successors_left.append(successor_left)
+        for outgoing_straight in incoming.outgoing_straight:
+            incoming_msg.outgoing_straight.append(outgoing_straight)
+
+        for outgoing_left in incoming.outgoing_left:
+            incoming_msg.outgoing_left.append(outgoing_left)
+
+        for crossing_lanelet in incoming.crossings:
+            incoming_msg.crossing_lanelets.append(crossing_lanelet)
 
         return incoming_msg
 
@@ -561,8 +756,8 @@ class StaticObstacleMessage:
 class StateMessage:
 
     @classmethod
-    def create_message(cls, state: State) -> obstacle_pb2.State:
-        state_msg = obstacle_pb2.State()
+    def create_message(cls, state: State) -> state_pb2.State:
+        state_msg = state_pb2.State()
 
         for attr in state.used_attributes:
             if getattr(state, attr) is None:
@@ -590,8 +785,8 @@ class StateMessage:
 class SignalStateMessage:
 
     @classmethod
-    def create_message(cls, signal_state: SignalState) -> obstacle_pb2.SignalState:
-        signal_state_msg = obstacle_pb2.SignalState()
+    def create_message(cls, signal_state: SignalState) -> state_pb2.SignalState:
+        signal_state_msg = state_pb2.SignalState()
 
         for attr in SignalState.__slots__:
             if hasattr(signal_state, attr):

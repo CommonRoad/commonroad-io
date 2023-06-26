@@ -14,7 +14,7 @@ from commonroad.common.validity import is_real_number, is_real_number_vector, is
     is_integer_number
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.intersection import Intersection
-from commonroad.scenario.lanelet import Lanelet
+from commonroad.scenario.lanelet import Lanelet, Bound
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.obstacle import ObstacleRole
 from commonroad.scenario.obstacle import ObstacleType
@@ -26,6 +26,7 @@ from commonroad.scenario.traffic_light import TrafficLight
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.renderer import IRenderer
 from commonroad.visualization.draw_params import OptionalSpecificOrAllDrawParams, MPDrawParams
+from commonroad.common.common_scenario import Location
 
 
 @enum.unique
@@ -59,256 +60,6 @@ class Tag(enum.Enum):
     TURN_RIGHT = "turn_right"
     TWO_LANE = "two_lane"
     EMERGENCY_BRAKING = "emergency_braking"
-
-
-@enum.unique
-class TimeOfDay(enum.Enum):
-    """ Enum containing all possible time of days."""
-    NIGHT = "night"
-    SUNSET = "sunset"
-    AFTERNOON = "afternoon"
-    NOON = "noon"
-    MORNING = "morning"
-    UNKNOWN = "unknown"
-
-
-@enum.unique
-class Weather(enum.Enum):
-    """ Enum containing all possible weathers."""
-    CLEAR = "clear"
-    LIGHT_RAIN = "light_rain"
-    MID_RAIN = "mid_rain"
-    HEAVY_RAIN = "heavy_rain"
-    FOG = "fog"
-    SNOW = "snow"
-    HAIL = "hail"
-    CLOUDY = "cloudy"
-    UNKNOWN = "unknown"
-
-
-@enum.unique
-class Underground(enum.Enum):
-    """ Enum containing all possible undergrounds."""
-    WET = "wet"
-    CLEAN = "clean"
-    DIRTY = "dirty"
-    DAMAGED = "damaged"
-    SNOW = "snow"
-    ICE = "ice"
-    UNKNOWN = "unknown"
-
-
-class GeoTransformation:
-    """
-    Class which describes the transformation from geodetic to projected Cartesian coordinates according to the
-    CommonRoad specification
-    """
-
-    def __init__(self, geo_reference: str = None, x_translation: float = None, y_translation: float = None,
-                 z_rotation: float = None, scaling: float = None):
-        """
-        Constructor of a location object
-
-        :param geo_reference: proj-string describing transformation from geodetic to projected Cartesian coordinates
-        :param x_translation: translation value for x-coordinates
-        :param y_translation: translation value for y-coordinates
-        :param z_rotation: rotation value around origin
-        :param scaling: multiplication value of x- and y-coordinates
-        """
-        self.geo_reference = geo_reference
-        self.x_translation = x_translation
-        self.y_translation = y_translation
-        self.z_rotation = z_rotation
-        self.scaling = scaling
-
-    def __eq__(self, other):
-        if not isinstance(other, GeoTransformation):
-            return False
-
-        return self._geo_reference == other.geo_reference and self._x_translation == other.x_translation and \
-            self._y_translation == other.y_translation and self._z_rotation == other.z_rotation and \
-            self._scaling == other.scaling
-
-    def __hash__(self):
-        return hash((self._geo_reference, self._x_translation, self._y_translation, self._z_rotation, self._scaling))
-
-    @property
-    def geo_reference(self) -> str:
-        return self._geo_reference
-
-    @property
-    def x_translation(self) -> float:
-        return self._x_translation
-
-    @property
-    def y_translation(self) -> float:
-        return self._y_translation
-
-    @property
-    def z_rotation(self) -> float:
-        return self._z_rotation
-
-    @property
-    def scaling(self) -> float:
-        return self._scaling
-
-    @geo_reference.setter
-    def geo_reference(self, geo_reference):
-        self._geo_reference = geo_reference if geo_reference is not None else 0
-
-    @x_translation.setter
-    def x_translation(self, x_translation):
-        self._x_translation = x_translation if x_translation is not None else 0
-
-    @y_translation.setter
-    def y_translation(self, y_translation):
-        self._y_translation = y_translation if y_translation is not None else 0
-
-    @z_rotation.setter
-    def z_rotation(self, z_rotation):
-        self._z_rotation = z_rotation if z_rotation is not None else 0
-
-    @scaling.setter
-    def scaling(self, scaling):
-        self._scaling = scaling if scaling is not None else 1
-
-
-class Environment:
-    """
-    Class which describes the environment where a scenario takes place as specified in the CommonRoad specification.
-    """
-
-    def __init__(self, time: Time = None, time_of_day: TimeOfDay = None, weather: Weather = None,
-                 underground: Underground = None):
-        """
-        Constructor of an environment object
-
-        :param time: time in hours
-        :param time_of_day: current time of day, i.e., day or night
-        :param weather: weather information, e.g., sunny
-        :param underground: underground information, e.g., ice
-        """
-        self._time = time
-        self._time_of_day = time_of_day
-        self._weather = weather
-        self._underground = underground
-
-    def __eq__(self, other):
-        if not isinstance(other, Environment):
-            return False
-
-        return self._time == other.time and self._time_of_day == other.time_of_day and \
-            self._weather == other.weather and self._underground == other.underground
-
-    def __hash__(self):
-        return hash((self._time, self._time_of_day, self._weather, self._underground))
-
-    @property
-    def time(self) -> Time:
-        return self._time
-
-    @time.setter
-    def time(self, time: Time):
-        self._time = time
-
-    @property
-    def time_of_day(self) -> TimeOfDay:
-        return self._time_of_day
-
-    @time_of_day.setter
-    def time_of_day(self, time_of_day: TimeOfDay):
-        self._time_of_day = time_of_day
-
-    @property
-    def weather(self) -> Weather:
-        return self._weather
-
-    @weather.setter
-    def weather(self, weather: Weather):
-        self._weather = weather
-
-    @property
-    def underground(self) -> Underground:
-        return self._underground
-
-    @underground.setter
-    def underground(self, underground: Underground):
-        self._underground = underground
-
-
-class Location:
-    """
-    Class which describes a location according to the CommonRoad specification.
-    """
-
-    def __init__(self, geo_name_id: int = -999, gps_latitude: float = 999, gps_longitude: float = 999,
-                 geo_transformation: GeoTransformation = None, environment: Environment = None):
-        """
-        Constructor of a location object
-
-        :param geo_name_id: GeoName ID
-        :param gps_latitude: GPS latitude coordinate
-        :param gps_longitude: GPS longitude coordinate
-        :param geo_transformation: description of geometric transformation during scenario generation
-        :param environment: environmental information, e.g. weather
-        """
-        self._geo_name_id = geo_name_id
-        self._gps_latitude = gps_latitude
-        self._gps_longitude = gps_longitude
-        self._geo_transformation = geo_transformation
-        self._environment = environment
-
-    def __eq__(self, other):
-        if not isinstance(other, Location):
-            return False
-
-        return self._geo_name_id == other.geo_name_id and self._gps_latitude == other.gps_latitude and \
-            self._gps_longitude == other.gps_longitude and self._geo_transformation == other.geo_transformation and \
-            self._environment == other.environment
-
-    def __hash__(self):
-        return hash((self._geo_name_id, self._gps_latitude, self._gps_longitude, self._geo_transformation,
-                     self._environment))
-
-    @property
-    def geo_name_id(self) -> int:
-        return self._geo_name_id
-
-    @geo_name_id.setter
-    def geo_name_id(self, geo_name_id: int):
-        self._geo_name_id = geo_name_id
-
-    @property
-    def gps_latitude(self) -> float:
-        return self._gps_latitude
-
-    @gps_latitude.setter
-    def gps_latitude(self, gps_latitude: float):
-        self._gps_latitude = gps_latitude
-
-    @property
-    def gps_longitude(self) -> float:
-        return self._gps_longitude
-
-    @gps_longitude.setter
-    def gps_longitude(self, gps_longitude: float):
-        self._gps_longitude = gps_longitude
-
-    @property
-    def geo_transformation(self) -> GeoTransformation:
-        return self._geo_transformation
-
-    @geo_transformation.setter
-    def geo_transformation(self, geo_transformation: GeoTransformation):
-        self._geo_transformation = geo_transformation
-
-    @property
-    def environment(self) -> Environment:
-        return self._environment
-
-    @environment.setter
-    def environment(self, environment: Environment):
-        self._environment = environment
 
 
 class ScenarioID:
@@ -745,6 +496,8 @@ class Scenario(IDrawable):
             self.remove_traffic_light(traffic_light)
         for intersection in self.lanelet_network.intersections:
             self.remove_intersection(intersection)
+        for boundary in self.lanelet_network.boundaries:
+            self.remove_boundary(boundary)
         self._lanelet_network = LaneletNetwork()
 
     def replace_lanelet_network(self, lanelet_network: LaneletNetwork):
@@ -865,6 +618,24 @@ class Scenario(IDrawable):
         self._id_set.remove(intersection.intersection_id)
         for inc in intersection.incomings:
             self._id_set.remove(inc.incoming_id)
+
+    def remove_boundary(self, boundary: Union[List[Bound], Bound]):
+        """
+        Removes a boundary or a list of boundaries from the scenario.
+
+        :param boundary: Boundary which should be removed from scenario.
+        """
+        assert isinstance(boundary, (list, Bound)), '<Scenario/remove_boundary> argument ' \
+                                                    '"Boundary" of wrong type. Expected type: %s. ' \
+                                                    'Got type: %s.' % (Bound, type(boundary))
+        if isinstance(boundary, list):
+            for bound in boundary:
+                self.lanelet_network.remove_boundary(bound.boundary_id)
+                self._id_set.remove(bound.boundary_id)
+            return
+
+        self.lanelet_network.remove_boundary(boundary.boundary_id)
+        self._id_set.remove(boundary.boundary_id)
 
     def generate_object_id(self) -> int:
         """ Generates a unique ID which is not assigned to any object in the scenario.

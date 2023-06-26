@@ -213,6 +213,9 @@ class OutgoingGroup:
     def __hash__(self):
         return hash((self.outgoing_id, frozenset(self._outgoing_lanelets)))
 
+    def __repr__(self):
+        return f"OutgoingElement(outgoing_id={self._outgoing_id}, outgoing_lanelets={repr(self._outgoing_lanelets)}"
+
     def __str__(self):
         return f"OutgoingGroupElement with id {self._outgoing_id} represents the outgoing" \
                f" lanelets {self._outgoing_lanelets}"
@@ -352,3 +355,13 @@ class Intersection:
         Maps all incoming lanelet ids to IntersectionIncomingElement
         """
         return {l_id: inc for inc in self.incomings for l_id in inc.incoming_lanelets}
+
+    def find_incoming_by_id(self, incoming_id: int) -> Union[IncomingGroup, None]:
+        """
+        Finds incoming of intersection by ID.
+        :return: Incoming of intersection.
+        """
+        for incoming in self._incomings:
+            if incoming.incoming_id == incoming_id:
+                return incoming
+        return None

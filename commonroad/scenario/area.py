@@ -22,18 +22,18 @@ class AreaBorder:
     """
     Class which describes a border of an area
     """
-    def __init__(self, area_border_id: int, border_vertices: np.ndarray, adjacent: int = None,
+    def __init__(self, area_border_id: int, boundary: int, adjacent: int = None,
                  line_marking: LineMarking = None):
         """
         Constructor of an AreaBorder object
 
         :param area_border_id: id of the area border
-        :param border_vertices: array that contains the coordinates of the border's vertices
+        :param boundary: id of the area border boundary
         :param adjacent: id of the lanelet adjacent to the border
         :param line_marking: line marking of the area border
         """
         self._area_border_id = area_border_id
-        self._border_vertices = border_vertices
+        self._boundary = boundary
         self._adjacent = adjacent
         self._line_marking = line_marking
 
@@ -48,15 +48,15 @@ class AreaBorder:
         self._area_border_id = value
 
     @property
-    def border_vertices(self) -> np.ndarray:
-        """ Array that contains the coordinates of the border's vertices."""
-        return self._border_vertices
-
-    @border_vertices.setter
-    def border_vertices(self, value: np.ndarray):
-        assert is_valid_polyline(value), '<AreaBorder/border_vertices>: The provided polyline ' \
-                                            'is not valid! id = {} polyline = {}'.format(self._area_border_id, value)
-        self._border_vertices = value
+    def boundary(self) -> int:
+        """ Id of the area border boundary"""
+        return self._boundary
+    
+    @boundary.setter
+    def boundary(self, boundary: int):
+        assert isinstance(boundary, int), '<AreaBorder/boundary>: Provided boundary id is not valid! adjacent={}'.\
+                                                                                                  format(boundary)
+        self._boundary = boundary
 
     @property
     def adjacent(self) -> int:
