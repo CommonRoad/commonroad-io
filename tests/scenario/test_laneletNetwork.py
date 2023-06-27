@@ -18,8 +18,8 @@ from commonroad.scenario.area import Area
 class TestMapInformation(unittest.TestCase):
 
     def test_initialization(self):
-        mapInformation = MapInformation("v3", "map_id", Time(12, 0, 1, 1, 2023), "author", "affiliation", "source")
-        self.assertEqual(mapInformation.commonroad_version, "v3")
+        mapInformation = MapInformation("2023a", "map_id", Time(12, 0, 1, 1, 2023), "author", "affiliation", "source")
+        self.assertEqual(mapInformation.commonroad_version, "2023a")
         self.assertEqual(mapInformation.map_id, "map_id")
         self.assertEqual(mapInformation.date, Time(12, 0, 1, 1, 2023))
         self.assertEqual(mapInformation.author, "author")
@@ -27,10 +27,10 @@ class TestMapInformation(unittest.TestCase):
         self.assertEqual(mapInformation.source, "source")
 
     def test_basic_properties(self):
-        mapInformation = MapInformation("v3", "map_id", Time(12, 0, 1, 1, 2023), "author", "affiliation", "source")
+        mapInformation = MapInformation("2023a", "map_id", Time(12, 0, 1, 1, 2023), "author", "affiliation", "source")
 
-        mapInformation.commonroad_version = "v4"
-        self.assertEqual(mapInformation.commonroad_version, "v4")
+        mapInformation.commonroad_version = "2024a"
+        self.assertEqual(mapInformation.commonroad_version, "2024a")
 
         mapInformation.map_id = "map_id2"
         self.assertEqual(mapInformation.map_id, "map_id2")
@@ -138,11 +138,11 @@ class TestLaneletNetwork(unittest.TestCase):
 
     def test_map_information_initialization(self):
         default_map_information = MapInformation("2023a", "map_id", self.lanelet_network.information.date, "author",
-                                                 "affiliation", "source", "licence_name")
+                                                 "affiliation", "source", "license_name")
         self.assertEqual(self.lanelet_network.information, default_map_information)
 
         updated_map_information = MapInformation("2024a", "map_id_new", Time(12, 0, 1, 1, 2024), "author2",
-                                                 "affiliation2", "source2", "licence_name")
+                                                 "affiliation2", "source2", "license_name")
         self.lanelet_network.information = updated_map_information
         self.assertEqual(self.lanelet_network.information, updated_map_information)
 

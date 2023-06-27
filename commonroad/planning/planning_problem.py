@@ -1,8 +1,9 @@
 import warnings
-from typing import Union, List, Tuple, Dict
+from typing import Union, List, Tuple, Dict, Set
 
 import numpy as np
 
+from commonroad.scenario.scenario import Tag
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import InitialState
 from commonroad.planning.goal import GoalRegion
@@ -15,10 +16,15 @@ from commonroad.visualization.draw_params import PlanningProblemParams, Optional
 
 class PlanningProblem(IDrawable):
     def __init__(self, planning_problem_id: int, initial_state: InitialState,
-                 goal_region: GoalRegion):
+                 goal_region: GoalRegion, scenario_tags: Set[Tag] = None, ego_id: int = None):
         self.planning_problem_id = planning_problem_id
         self.initial_state = initial_state
         self.goal = goal_region
+        if scenario_tags is None:
+            self.scenario_tags = set()
+        else:
+            self.scenario_tags = scenario_tags
+        self.ego_id = ego_id
 
     def __eq__(self, other):
         if not isinstance(other, PlanningProblem):
@@ -26,10 +32,11 @@ class PlanningProblem(IDrawable):
             return False
 
         return self.planning_problem_id == other.planning_problem_id and self.initial_state == other.initial_state and \
-            self.goal == other.goal
+            self.goal == other.goal and self.scenario_tags == other.scenario_tags and self.ego_id == other.ego_id
 
     def __hash__(self):
-        return hash((self.planning_problem_id, self.initial_state, self.goal))
+        return hash((self.planning_problem_id, self.initial_state, self.goal, frozenset(self.scenario_tags),
+                     self.ego_id))
 
     @property
     def planning_problem_id(self) -> int:
@@ -70,6 +77,24 @@ class PlanningProblem(IDrawable):
         assert(isinstance(goal_region, GoalRegion)), 'argument "goal_region" of wrong type. Expected type: %s. ' \
                                                      'Got type: %s.' % (GoalRegion, type(goal_region))
         self._goal_region = goal_region
+    
+    @property
+    def scenario_tags(self) -> Union[None, Set[Tag]]:
+        """Scenario tags stored in the planning problem"""
+        return self._scenario_tags
+    
+    @scenario_tags.setter
+    def scenario_tags(self, scenario_tags: Union[None, Set[Tag]]):
+        self._scenario_tags = scenario_tags
+
+    @property
+    def ego_id(self) -> Union[int, None]:
+        """ID of the ego"""
+        return self._ego_id
+
+    @ego_id.setter
+    def ego_id(self, ego_id: Union[int, None]):
+        self._ego_id = ego_id
 
     def goal_reached(self, trajectory: Trajectory) -> Tuple[bool, int]:
         """
@@ -182,3 +207,55 @@ class PlanningProblemSet(IDrawable):
 
     def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[PlanningProblemSetParams] = None):
         renderer.draw_planning_problem_set(self, draw_params)
+
+
+class CooperativePlanningProblem:
+    """
+    Class that represents the cooperative planning problem, a combination of "standard" planning problems.
+    """
+    def __init__(self, cooperative_planning_problem_id: int, single_planning_problem_id: Set[int] = None):
+        """
+        :param cooperative_planning_problem_id: id of the cooperative planning problem
+        :param single_planning_problem_id: set of standard planning problems
+        """
+        self._cooperative_planning_problem_id = cooperative_planning_problem_id
+        if single_planning_problem_id is None:
+            self._single_planning_problem_id = set()
+        else:
+            self._single_planning_problem_id = single_planning_problem_id
+
+    def __eq__(self, other):
+        if not isinstance(other, CooperativePlanningProblem):
+            warnings.warn(f"Inequality between CooperativePlanningProblem {repr(self)} "
+                          f"and different type {type(other)}")
+            return False
+
+        return self._cooperative_planning_problem_id == other.cooperative_planning_problem_id and \
+            self._single_planning_problem_id == other.single_planning_problem_id
+
+    def __hash__(self):
+        return hash((self._cooperative_planning_problem_id, frozenset(self._single_planning_problem_id)))
+
+    @property
+    def cooperative_planning_problem_id(self) -> int:
+        """ id of the cooperative planning problem."""
+        return self._cooperative_planning_problem_id
+
+    @cooperative_planning_problem_id.setter
+    def cooperative_planning_problem_id(self, cooperative_planning_problem_id: int):
+        assert isinstance(cooperative_planning_problem_id, int), 'argument "cooperative_planning_problem_id" ' \
+                                                                 'of wrong type. Expected type: %s. Got type: %s.' \
+                                                                  % (int, type(cooperative_planning_problem_id))
+        self._cooperative_planning_problem_id = cooperative_planning_problem_id
+
+    @property
+    def single_planning_problem_id(self) -> Union[None, Set[int]]:
+        """ set of standard planning problems."""
+        return self._single_planning_problem_id
+
+    @single_planning_problem_id.setter
+    def single_planning_problem_id(self, single_planning_problem_id: Union[None, Set[int]]):
+        if single_planning_problem_id is None:
+            self._single_planning_problem_id = set()
+        else:
+            self._single_planning_problem_id = single_planning_problem_id

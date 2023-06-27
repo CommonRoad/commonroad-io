@@ -83,6 +83,19 @@ class TestIntersection(unittest.TestCase):
         intersection_2 = Intersection(1, [incoming], [outgoing])
         self.assertNotEqual(hash(intersection_1), hash(intersection_2))
 
+    def test_find_incoming_by_id(self):
+
+        #  Testing when the function returns an IncomingGroup
+        incoming_1 = self._intersection_1.find_incoming_by_id(self._incoming_1.incoming_id)
+        self.assertEqual(incoming_1.incoming_id, self._incoming_1.incoming_id)
+
+        incoming_2 = self._intersection_1.find_incoming_by_id(self._incoming_2.incoming_id)
+        self.assertEqual(incoming_2.incoming_id, self._incoming_2.incoming_id)
+
+        #  Testing when the function returns None
+        incoming_3 = self._intersection_1.find_incoming_by_id(10)
+        self.assertIsNone(incoming_3)
+
 
 class TestOutgoingGroup(unittest.TestCase):
     def test_initialization_OutgoingGroupElement(self):

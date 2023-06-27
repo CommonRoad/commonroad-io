@@ -5,7 +5,8 @@ from commonroad.common.writer.file_writer_interface import OverwriteExistingFile
 from commonroad.common.writer.file_writer_protobuf import ProtobufFileWriter
 from commonroad.common.writer.file_writer_xml import XMLFileWriter
 from commonroad.planning.planning_problem import PlanningProblemSet
-from commonroad.scenario.scenario import Scenario, Tag, Location
+from commonroad.scenario.scenario import Scenario, Tag
+from commonroad.common.common_scenario import Location
 
 
 class CommonRoadFileWriter:
@@ -28,7 +29,6 @@ class CommonRoadFileWriter:
         :param tags: Keywords describing the scenario
         :param decimal_precision: Number of decimal places used when writing float values
         :param file_format: Format of file
-        :return:
         """
         self._file_format = file_format
         self._file_writer = None
@@ -39,6 +39,7 @@ class CommonRoadFileWriter:
             self._file_writer = ProtobufFileWriter(scenario, planning_problem_set, author, affiliation,
                                                    source, tags, location, decimal_precision)
 
+    # Old version writer
     def write_to_file(self, filename: Union[str, None] = None,
                       overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
                       check_validity: bool = False):
@@ -52,16 +53,41 @@ class CommonRoadFileWriter:
         """
         self._file_writer.write_to_file(filename, overwrite_existing_file, check_validity)
 
+    # New version writers (2023 map, scenario, dynamic)
+    def write_map_to_file(self, filename: Union[str, None] = None,
+                          overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+                          check_validity: bool = False):
+        """
+        Writes 2023 CommonRoad Map to the file.
+
+        :param filename: Name of file
+        :param overwrite_existing_file: Overwriting mode
+        :param check_validity: Validity check or not
+        :return: Map (Lanelet Network)
+        """
+        self._file_writer.write_map_to_file(filename, overwrite_existing_file, check_validity)
+
     def write_scenario_to_file(self, filename: Union[str, None] = None,
                                overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT):
         """
-        Writes CommonRoad scenario to file.
+        Writes 2023 CommonRoad Scenario to the file.
 
         :param filename: Name of file
         :param overwrite_existing_file: Overwriting mode
         :return: Scenario
         """
         self._file_writer.write_scenario_to_file(filename, overwrite_existing_file)
+
+    def write_dynamic_to_file(self, filename: Union[str, None] = None,
+                              overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT):
+        """
+        Writes 2023 CommonRoad Dynamic to file.
+
+        :param filename: Name of file
+        :param overwrite_existing_file: Overwriting mode
+        :return: Dynamic
+        """
+        self._file_writer.write_dynamic_to_file(filename, overwrite_existing_file)
 
     @staticmethod
     def check_validity_of_commonroad_file(commonroad_str: Union[str, bytes], file_format: FileFormat = FileFormat.XML) \

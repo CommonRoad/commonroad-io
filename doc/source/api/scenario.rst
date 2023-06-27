@@ -19,21 +19,6 @@ Scenario
   :members:
   :member-order: bysource
 
-``GeoTransformation`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: GeoTransformation
-  :undoc-members:
-  :members:
-  :member-order: bysource
-
-``Location`` class
-^^^^^^^^^^^^^^^^^^
-.. autoclass:: Location
-  :undoc-members:
-  :members:
-  :member-order: bysource
-
-
 Road network
 ------------
 

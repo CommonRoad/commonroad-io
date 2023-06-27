@@ -7,14 +7,16 @@ from commonroad.common.file_writer import CommonRoadFileWriter
 from commonroad.common.util import FileFormat
 from commonroad.common.writer.file_writer_interface import precision, OverwriteExistingFile
 from commonroad.common.writer.file_writer_xml import float_to_str, Point, RectangleXMLNode, CircleXMLNode
-from commonroad.common.file_reader import CommonRoadFileReader
+from commonroad.common.file_reader import CommonRoadFileReader, CommonRoadMapFileReader, CommonRoadScenarioFileReader, \
+    CommonRoadDynamicFileReader
 from lxml import etree
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
 from commonroad.prediction.prediction import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
 from commonroad.common.common_lanelet import LineMarking, LaneletType
 from commonroad.scenario.obstacle import *
-from commonroad.scenario.scenario import Scenario, Tag, Location, ScenarioID
+from commonroad.scenario.scenario import Scenario, Tag, ScenarioID
+from commonroad.common.common_scenario import Location
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import KSState, InitialState
 
@@ -24,7 +26,7 @@ class TestXMLFileWriter(unittest.TestCase):
     def setUp(self):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
         self.xsd_path = \
-            self.cwd_path + "/../../commonroad/scenario_definition/xml_definition_files/XML_commonRoad_XSD.xsd"
+            self.cwd_path + "/../../commonroad/common/xml_definition_files/XML_commonRoad_XSD.xsd"
         self.out_path = self.cwd_path + "/../.pytest_cache"
         self.filename_read_1 = self.cwd_path + "/../test_scenarios/test_reading_intersection_traffic_sign.xml"
         self.filename_read_2 = self.cwd_path + "/../test_scenarios/test_reading_all.xml"
@@ -378,56 +380,106 @@ class TestProtobufFileWriter(unittest.TestCase):
     def setUp(self):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
         self.out_path = self.cwd_path + "/../.pytest_cache"
-        self.filename_all_xml = self.cwd_path + "/../test_scenarios/test_reading_all.xml"
-        self.filename_complex_xml = self.cwd_path + "/../test_scenarios/test_reading_complex_tl.xml"
-        self.filename_intersection_xml = self.cwd_path + "/../test_scenarios/test_reading_intersection_traffic_sign.xml"
+
         self.filename_carcarana_xml = self.cwd_path + "/../test_scenarios/ARG_Carcarana-4_5_T-1.xml"
         self.filename_starnberg_xml = self.cwd_path + "/../test_scenarios/DEU_Starnberg-1_1_T-1.xml"
         self.filename_anglet_xml = self.cwd_path + "/../test_scenarios/FRA_Anglet-1_1_T-1.xml"
-        self.filename_carcarana_pb = self.cwd_path + "/../test_scenarios/ARG_Carcarana-4_5_T-1.pb"
-        self.filename_invalid_pb = self.cwd_path + "/../test_scenarios/test_invalid.pb"
+        self.filename_all_xml = self.cwd_path + "/../test_scenarios/test_reading_all.xml"
+
         handle_pytest_cache(self.out_path)
 
-    def test_write_to_file(self):
-        self.assertTrue(write_read_compare(self.filename_all_xml, self.out_path))
+    def test_write_map_to_file(self):
+        """
+        Testing the new format protobuf map file writer
+        """
+        self.assertTrue(write_read_compare_map(self.filename_carcarana_xml, self.out_path))
+        self.assertTrue(write_read_compare_map(self.filename_starnberg_xml, self.out_path))
+        self.assertTrue(write_read_compare_map(self.filename_anglet_xml, self.out_path))
+        self.assertTrue(write_read_compare_map(self.filename_all_xml, self.out_path))
 
-        self.assertTrue(write_read_compare(self.filename_complex_xml, self.out_path))
+    def test_write_scenario_to_file(self):
+        """
+        Testing the new format protobuf scenario file writer
+        """
+        self.assertTrue(write_read_compare_scenario(self.filename_carcarana_xml, self.out_path))
+        self.assertTrue(write_read_compare_scenario(self.filename_starnberg_xml, self.out_path))
+        self.assertTrue(write_read_compare_scenario(self.filename_anglet_xml, self.out_path))
+        self.assertTrue(write_read_compare_scenario(self.filename_all_xml, self.out_path))
 
-        self.assertTrue(write_read_compare(self.filename_carcarana_xml, self.out_path))
+    def test_write_dynamic_to_file(self):
+        """
+        Testing the new format protobuf dynamic file writer
+        """
+        self.assertTrue(write_read_compare_dynamic(self.filename_carcarana_xml, self.out_path))
+        self.assertTrue(write_read_compare_dynamic(self.filename_starnberg_xml, self.out_path))
+        self.assertTrue(write_read_compare_dynamic(self.filename_anglet_xml, self.out_path))
+        self.assertTrue(write_read_compare_scenario(self.filename_all_xml, self.out_path))
 
-        self.assertTrue(write_read_compare(self.filename_starnberg_xml, self.out_path))
 
-        self.assertTrue(write_read_compare(self.filename_anglet_xml, self.out_path))
+def write_read_compare_map(xml_file_path: str, out_path: str) -> bool:
+    scenario_xml, planning_problems_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()
+    pb_file_path = out_path + '/' + str(scenario_xml.scenario_id) + '.pb'
 
-    def test_write_scenario(self):
-        scenario_xml, planning_problems_xml = CommonRoadFileReader(self.filename_all_xml, FileFormat.XML).open()
+    CommonRoadFileWriter(scenario_xml, planning_problems_xml, file_format=FileFormat.PROTOBUF).write_map_to_file(
+            pb_file_path, OverwriteExistingFile.ALWAYS)
 
-        pb_file_path = self.out_path + '/' + str(scenario_xml.scenario_id) + '.pb'
+    map_pb = CommonRoadMapFileReader(pb_file_path, FileFormat.PROTOBUF).open()
+    # As the location is added to the lanelet network in the new format, we have to assign it to the old format scenario
+    scenario_xml.lanelet_network.location = map_pb.location
 
-        CommonRoadFileWriter(scenario_xml, planning_problems_xml, file_format=FileFormat.PROTOBUF) \
-            .write_scenario_to_file(pb_file_path, OverwriteExistingFile.ALWAYS)
+    #  Protobuf reader does not implement line_marking_left_vertices and line_marking_right_vertices
+    for i in range(0, len(scenario_xml.lanelet_network.lanelets)):
+        scenario_xml.lanelet_network.lanelets[i].line_marking_left_vertices = map_pb.lanelets[
+            i].line_marking_left_vertices
+        scenario_xml.lanelet_network.lanelets[i].line_marking_right_vertices = map_pb.lanelets[
+            i].line_marking_right_vertices
 
-        self.assertTrue(os.path.exists(pb_file_path))
+        # As the new protobuf format Stop Line does not contain attributes "traffic_light_ref" and "traffic_sign_ref",
+        # they are set to None in the xml format scenario
+        for ll in scenario_xml.lanelet_network.lanelets:
+            if ll.stop_line is not None:
+                ll.stop_line.traffic_light_ref = None
+                ll.stop_line.traffic_sign_ref = None
 
-    def test_write_scenario_without_location(self):
-        scenario = Scenario(dt=0.1, author="Test", tags={Tag.URBAN}, affiliation="TUM", source="Test")
-        scenario.location = None
+    # We can't check the traffic lights as the formats differ. We can only do that in the combined map/dynamic file
 
-        pb_file_path = self.out_path + '/' + str(scenario.scenario_id) + '.pb'
+    return scenario_xml.lanelet_network.lanelets == map_pb.lanelets and \
+        scenario_xml.lanelet_network.information == map_pb.information and \
+        scenario_xml.lanelet_network.traffic_signs == map_pb.traffic_signs and \
+        scenario_xml.lanelet_network.areas == map_pb.areas and \
+        scenario_xml.lanelet_network.intersections == map_pb.intersections and \
+        scenario_xml.lanelet_network.location == map_pb.location
 
-        CommonRoadFileWriter(scenario, PlanningProblemSet(), file_format=FileFormat.PROTOBUF) \
-            .write_scenario_to_file(pb_file_path, OverwriteExistingFile.ALWAYS)
 
-        self.assertTrue(os.path.exists(pb_file_path))
+def write_read_compare_scenario(xml_file_path: str, out_path: str) -> bool:
+    scenario_xml, planning_problems_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()
+    pb_file_path = out_path + '/' + str(scenario_xml.scenario_id) + '.pb'
 
-    def test_check_validity_of_commonroad_file(self):
-        commonroad_str = open(self.filename_carcarana_pb, mode='rb').read()
+    CommonRoadFileWriter(scenario_xml, planning_problems_xml, file_format=FileFormat.PROTOBUF).write_scenario_to_file(
+            pb_file_path, OverwriteExistingFile.ALWAYS)
 
-        self.assertTrue(CommonRoadFileWriter.check_validity_of_commonroad_file(commonroad_str, FileFormat.PROTOBUF))
+    scenario_pb = CommonRoadScenarioFileReader(pb_file_path, FileFormat.PROTOBUF).open()
 
-        commonroad_str = open(self.filename_invalid_pb, mode='rb').read()
+    #  In the old file reader we did not assign scenario tags to the planning problems
+    for planning_problem in scenario_pb.planning_problems:
+        planning_problem.scenario_tags = set()
 
-        self.assertFalse(CommonRoadFileWriter.check_validity_of_commonroad_file(commonroad_str, FileFormat.PROTOBUF))
+    return list(planning_problems_xml.planning_problem_dict.values()) == scenario_pb.planning_problems
+
+
+def write_read_compare_dynamic(xml_file_path: str, out_path: str) -> bool:
+    scenario_xml, planning_problems_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()
+    pb_file_path = out_path + '/' + str(scenario_xml.scenario_id) + '.pb'
+
+    CommonRoadFileWriter(scenario_xml, planning_problems_xml, file_format=FileFormat.PROTOBUF).write_dynamic_to_file(
+            pb_file_path, OverwriteExistingFile.ALWAYS)
+
+    dynamic_pb = CommonRoadDynamicFileReader(pb_file_path, FileFormat.PROTOBUF).open()
+
+    return scenario_xml.dynamic_obstacles == dynamic_pb.dynamic_obstacles and \
+        scenario_xml.static_obstacles == dynamic_pb.static_obstacles and \
+        scenario_xml.phantom_obstacle == dynamic_pb.phantom_obstacles and \
+        scenario_xml.environment_obstacle == dynamic_pb.environment_obstacles
 
 
 def handle_pytest_cache(path: str):
@@ -438,19 +490,6 @@ def handle_pytest_cache(path: str):
             for file in filenames:
                 if file.endswith('.xml'):
                     os.remove(os.path.join(dirpath, file))
-
-
-def write_read_compare(xml_file_path: str, out_path: str) -> bool:
-    scenario_xml, planning_problems_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()
-
-    pb_file_path = out_path + '/' + str(scenario_xml.scenario_id) + '.pb'
-
-    CommonRoadFileWriter(scenario_xml, planning_problems_xml, file_format=FileFormat.PROTOBUF).write_to_file(
-            pb_file_path, OverwriteExistingFile.ALWAYS, False)
-
-    scenario_pb, planning_problems_pb = CommonRoadFileReader(pb_file_path, FileFormat.PROTOBUF).open()
-
-    return scenario_xml == scenario_pb and planning_problems_xml == planning_problems_pb
 
 
 if __name__ == '__main__':

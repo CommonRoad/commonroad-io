@@ -4,7 +4,8 @@ from abc import ABC, abstractmethod
 from typing import Set, Union
 
 from commonroad.planning.planning_problem import PlanningProblemSet
-from commonroad.scenario.scenario import Scenario, Tag, Location
+from commonroad.scenario.scenario import Scenario, Tag
+from commonroad.common.common_scenario import Location
 
 
 class DecimalPrecision:
@@ -94,6 +95,16 @@ class FileWriter(ABC):
 
     @abstractmethod
     def _add_all_objects_from_scenario(self):
+        pass
+
+    #  method used for 2023 version
+    @abstractmethod
+    def _add_all_objects_from_scenario_to_map(self):
+        pass
+
+    #  method used for 2023 version
+    @abstractmethod
+    def _add_all_objects_from_scenario_to_dynamic(self):
         pass
 
     @abstractmethod

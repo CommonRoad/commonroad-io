@@ -18,8 +18,8 @@ from commonroad.scenario.lanelet import Lanelet
 from commonroad.common.common_lanelet import StopLine, LineMarking, LaneletType
 from commonroad.scenario.obstacle import Obstacle, DynamicObstacle, StaticObstacle, EnvironmentObstacle, \
     PhantomObstacle, ObstacleRole, ObstacleType, SignalState
-from commonroad.scenario.scenario import Location, GeoTransformation, Environment, TimeOfDay, Weather, Underground, \
-    Tag, Scenario
+from commonroad.scenario.scenario import Tag, Scenario
+from commonroad.common.common_scenario import TimeOfDay, Weather, Underground, Environment, GeoTransformation, Location
 from commonroad.scenario.traffic_sign import TrafficSign
 from commonroad.scenario.traffic_light import TrafficLightDirection, TrafficLightCycleElement, TrafficLight, \
     TrafficLightCycle
@@ -110,6 +110,14 @@ class XMLFileWriter(FileWriter):
     """
     Writes CommonRoad files in XML format.
     """
+
+    # method for 2023 version
+    def _add_all_objects_from_scenario_to_map(self):
+        pass
+
+    # method for 2023 version
+    def _add_all_objects_from_scenario_to_dynamic(self):
+        pass
 
     def __init__(self, scenario: Scenario, planning_problem_set: PlanningProblemSet, author: str = None,
                  affiliation: str = None, source: str = None, tags: Set[Tag] = None, location: Location = None,
@@ -248,7 +256,7 @@ class XMLFileWriter(FileWriter):
 
         """
         with open(os.path.dirname(os.path.abspath(__file__)) +
-                  '/../../scenario_definition/xml_definition_files/XML_commonRoad_XSD.xsd', 'rb',) as schema_file:
+                  '/../../common/xml_definition_files/XML_commonRoad_XSD.xsd', 'rb',) as schema_file:
             schema = etree.XMLSchema(etree.parse(schema_file))
 
         parser = objectify.makeparser(schema=schema, encoding='utf-8')
