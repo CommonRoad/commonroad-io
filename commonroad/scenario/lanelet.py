@@ -1,5 +1,4 @@
 import copy
-import enum
 from collections import defaultdict
 from typing import *
 
@@ -24,14 +23,6 @@ from commonroad.visualization.renderer import IRenderer
 from commonroad.visualization.draw_params import OptionalSpecificOrAllDrawParams, LaneletNetworkParams
 from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, LaneletType
 from commonroad.common.common_scenario import Location
-
-__author__ = "Christian Pek, Sebastian Maierhofer"
-__copyright__ = "TUM Cyber-Physical Systems Group"
-__credits__ = ["BMW CAR@TUM"]
-__version__ = "2022.1"
-__maintainer__ = "Sebastian Maierhofer"
-__email__ = "commonroad@lists.lrz.de"
-__status__ = "released"
 
 
 class Bound:
