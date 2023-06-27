@@ -4,6 +4,7 @@ We designed our format such that it can represent all features, is unambiguous, 
 We put additional emphasis to augment the road description by its implications, i.e., our format does not just describe a traffic situation, but already provides the meaning for motion planning.
 As a result, our scenarios can directly be used by a motion planner and do not require much additional computations in terms of pre-processing.
 Subsequently, we describe our specification.
+Note that it may differ in some cases to the data structures used in our tools, e.g., commonroad-io.
 
 All variables are given by decimal numbers based on SI units. We use a common Cartesian coordinate frame with x-, y-, and z-axis to be able to represent all road networks including bridges and tunnels. 
 If a scenario is only defined in a two-dimensional plane (which is often the case), we use the convention that all z-coordinates are zero.
@@ -471,13 +472,7 @@ All \textit{CommonRoad} scenarios meet the following requirements, which assure 
 
 \subsection{Traffic Signs} \label{subsec:traffic_signs}
 The element \textit{trafficSign} is used to represent different traffic signs within the scenario (see Fig.~\ref{fig:trafficSign}). Traffic signs are always valid either from the beginning of a lanelet or the end of a lanelet. For example, a priority sign at an intersection is valid from the end of the incoming lanelet. Therefore, it is not necessary to place the sign on the lanelets which go straight, left, or right. On the other hand, a speed limit sign is valid from the beginning of a lanelet so that the speed limit has to be considered for the entire lanelet. \\
-A \textit{trafficSign} element consists of one or multiple \textit{trafficSignElements}. This way, a combination of traffic signs can be represented. Additionally, the position of the traffic sign can be included and it can be specified whether the traffic sign is existent in the real world by the element \textit{virtual}, e.g., in the case one wants to add a speed limit which is in the real world outside of the captured road network. If \textit{virtual} is not specified or it is set to false, we assume that the traffic sign exists also in the real world at this position. A \textit{trafficSignElement} is defined by the \textit{trafficSignId} specified in national traffic laws and can be further described by one or multiple \textit{additionalValues}. For example, the \textit{trafficSignElement} for a speed limit of 16.66 m/s in Germany would be defined as:
-\begin{lstlisting}
-	<trafficSignElement>
-	<trafficSignId>274</trafficSignId>
-	<additionalValue>16.66</additionalValue>
-	</trafficSignElement>
-\end{lstlisting}
+A \textit{trafficSign} element consists of one or multiple \textit{trafficSignElements}. This way, a combination of traffic signs can be represented. Additionally, the position of the traffic sign can be included and it can be specified whether the traffic sign is existent in the real world by the element \textit{virtual}, e.g., in the case one wants to add a speed limit which is in the real world outside of the captured road network. If \textit{virtual} is not specified or it is set to false, we assume that the traffic sign exists also in the real world at this position. A \textit{trafficSignElement} is defined by the \textit{trafficSignId} specified in national traffic laws and can be further described by one or multiple \textit{additionalValues}.
 
 The currently by CommonRoad supported national traffic signs are listed in Tab.~\ref{tab:supportedNationalTrafficSigns}. In Tab.~\ref{tab:traffic_signs}, exemplary traffic signs from Germany with their description are shown.
 
