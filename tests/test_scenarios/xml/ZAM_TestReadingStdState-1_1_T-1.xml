@@ -1,4 +1,4 @@
-<commonRoad timeStepSize="0.1" commonRoadVersion="2018b" author="Moritz Klischat" affiliation="Technical University of Munich" source="Specification-based scenario synthesis" tags="merging_lanes single_lane highway parallel_lanes lane_change" benchmarkID="ZAM_Zip-1_1_T-1" date="2020-01-30">
+<commonRoad timeStepSize="0.1" commonRoadVersion="2018b" author="Moritz Klischat" affiliation="Technical University of Munich" source="Specification-based scenario synthesis" tags="merging_lanes single_lane highway parallel_lanes lane_change" benchmarkID="ZAM_TestReadingStdState-1_1_T-1" date="2020-01-30">
   <lanelet id="24">
     <leftBound>
       <point>
