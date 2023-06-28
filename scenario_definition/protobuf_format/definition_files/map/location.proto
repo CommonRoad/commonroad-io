@@ -2,8 +2,6 @@ syntax = "proto2";
 
 package commonroad_map;
 
-import "util.proto";
-
 message GeoTransformation {
     optional string geo_reference = 1;
     optional double x_translation = 2;

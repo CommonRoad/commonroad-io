@@ -11,8 +11,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from commonroad.generated_scripts.common import util_pb2 as util__pb2
-from commonroad.generated_scripts.map import lanelet_pb2 as lanelet__pb2
+import commonroad.common.pb_scripts.map.lanelet_pb2 as lanelet__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -21,9 +20,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\narea.proto\x12\x0e\x63ommonroad_map\x1a\nutil.proto\x1a\rlanelet.proto\"^\n\x0c\x41reaTypeEnum\"N\n\x08\x41reaType\x12\x0c\n\x08\x42US_STOP\x10\t\x12\n\n\x06\x42ORDER\x10\x0f\x12\x0b\n\x07PARKING\x10\x10\x12\x0e\n\nRESTRICTED\x10\x11\x12\x0b\n\x07UNKNOWN\x10\x12\"\x8b\x01\n\nAreaBorder\x12\x16\n\x0e\x61rea_border_id\x18\x01 \x02(\r\x12\x10\n\x08\x62oundary\x18\x02 \x02(\r\x12\x10\n\x08\x61\x64jacent\x18\x03 \x01(\r\x12\x41\n\x0cline_marking\x18\x04 \x01(\x0e\x32+.commonroad_map.LineMarkingEnum.LineMarking\"~\n\x04\x41rea\x12\x0f\n\x07\x61rea_id\x18\x01 \x02(\r\x12*\n\x06\x62order\x18\x02 \x03(\x0b\x32\x1a.commonroad_map.AreaBorder\x12\x39\n\narea_types\x18\x03 \x03(\x0e\x32%.commonroad_map.AreaTypeEnum.AreaType'
+  serialized_pb=b'\n\narea.proto\x12\x0e\x63ommonroad_map\x1a\rlanelet.proto\"^\n\x0c\x41reaTypeEnum\"N\n\x08\x41reaType\x12\x0c\n\x08\x42US_STOP\x10\t\x12\n\n\x06\x42ORDER\x10\x0f\x12\x0b\n\x07PARKING\x10\x10\x12\x0e\n\nRESTRICTED\x10\x11\x12\x0b\n\x07UNKNOWN\x10\x12\"\x8b\x01\n\nAreaBorder\x12\x16\n\x0e\x61rea_border_id\x18\x01 \x02(\r\x12\x10\n\x08\x62oundary\x18\x02 \x02(\r\x12\x10\n\x08\x61\x64jacent\x18\x03 \x01(\r\x12\x41\n\x0cline_marking\x18\x04 \x01(\x0e\x32+.commonroad_map.LineMarkingEnum.LineMarking\"~\n\x04\x41rea\x12\x0f\n\x07\x61rea_id\x18\x01 \x02(\r\x12*\n\x06\x62order\x18\x02 \x03(\x0b\x32\x1a.commonroad_map.AreaBorder\x12\x39\n\narea_types\x18\x03 \x03(\x0e\x32%.commonroad_map.AreaTypeEnum.AreaType'
   ,
-  dependencies=[util__pb2.DESCRIPTOR,lanelet__pb2.DESCRIPTOR,])
+  dependencies=[lanelet__pb2.DESCRIPTOR,])
 
 
 
@@ -62,8 +61,8 @@ _AREATYPEENUM_AREATYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=73,
-  serialized_end=151,
+  serialized_start=61,
+  serialized_end=139,
 )
 _sym_db.RegisterEnumDescriptor(_AREATYPEENUM_AREATYPE)
 
@@ -89,8 +88,8 @@ _AREATYPEENUM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=57,
-  serialized_end=151,
+  serialized_start=45,
+  serialized_end=139,
 )
 
 
@@ -142,8 +141,8 @@ _AREABORDER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=154,
-  serialized_end=293,
+  serialized_start=142,
+  serialized_end=281,
 )
 
 
@@ -188,8 +187,8 @@ _AREA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=295,
-  serialized_end=421,
+  serialized_start=283,
+  serialized_end=409,
 )
 
 _AREATYPEENUM_AREATYPE.containing_type = _AREATYPEENUM

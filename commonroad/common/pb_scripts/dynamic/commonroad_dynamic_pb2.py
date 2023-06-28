@@ -11,14 +11,14 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from commonroad.generated_scripts.dynamic import environment_pb2 as environment__pb2
-from commonroad.generated_scripts.dynamic import traffic_sign_value_pb2 as traffic__sign__value__pb2
-from commonroad.generated_scripts.dynamic import traffic_light_cycle_pb2 as traffic__light__cycle__pb2
-from commonroad.generated_scripts.dynamic import static_obstacle_pb2 as static__obstacle__pb2
-from commonroad.generated_scripts.dynamic import dynamic_obstacle_pb2 as dynamic__obstacle__pb2
-from commonroad.generated_scripts.dynamic import environment_obstacle_pb2 as environment__obstacle__pb2
-from commonroad.generated_scripts.dynamic import phantom_obstacle_pb2 as phantom__obstacle__pb2
-from commonroad.generated_scripts.common import scenario_meta_information_pb2 as scenario__meta__information__pb2
+import commonroad.common.pb_scripts.dynamic.environment_pb2 as environment__pb2
+import commonroad.common.pb_scripts.dynamic.traffic_sign_value_pb2 as traffic__sign__value__pb2
+import commonroad.common.pb_scripts.dynamic.traffic_light_cycle_pb2 as traffic__light__cycle__pb2
+import commonroad.common.pb_scripts.dynamic.static_obstacle_pb2 as static__obstacle__pb2
+import commonroad.common.pb_scripts.dynamic.dynamic_obstacle_pb2 as dynamic__obstacle__pb2
+import commonroad.common.pb_scripts.dynamic.environment_obstacle_pb2 as environment__obstacle__pb2
+import commonroad.common.pb_scripts.dynamic.phantom_obstacle_pb2 as phantom__obstacle__pb2
+import commonroad.common.pb_scripts.common.scenario_meta_information_pb2 as scenario__meta__information__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(

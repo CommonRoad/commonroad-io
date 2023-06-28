@@ -2,7 +2,6 @@ syntax = "proto2";
 
 package commonroad_map;
 
-import "util.proto";
 import "lanelet.proto";
 
 

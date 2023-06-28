@@ -967,13 +967,16 @@ class MapInformation:
     """
     Class which represents additional information about Lanelet Network
     """
-    def __init__(self, commonroad_version: str = "2023a", map_id: str = "map_id", date: Time = None,
-                 author: str = "author", affiliation: str = "affiliation", source: str = "source",
+    def __init__(self, commonroad_version: str = "2023a", country: str = "ZAM", map_name: str = "Test",
+                 map_id: int = 1, date: Time = None, author: str = "author", affiliation: str = "affiliation",
+                 source: str = "source",
                  license_name: str = "license_name", license_text: str = None):
         """
         Constructor for MapInformation
 
         :param commonroad_version: version of CommonRoad
+        :param country: Country of map
+        :param map_name: Name of map
         :param map_id: the id of the lanelet network
         :param date: date of the lanelet network
         :param author: author of the lanelet network
@@ -983,6 +986,8 @@ class MapInformation:
         :param license_text: license text of the lanelet network
         """
         self._commonroad_version = commonroad_version
+        self._country = country
+        self._map_name = map_name
         self._map_id = map_id
         if date is None:
             time = datetime.now()
@@ -1038,14 +1043,41 @@ class MapInformation:
         self._commonroad_version = commonroad_version
 
     @property
-    def map_id(self) -> str:
+    def map_id(self) -> int:
         """ The id of the lanelet network."""
         return self._map_id
 
     @map_id.setter
-    def map_id(self, map_id: str):
-        assert isinstance(map_id, str), '<MapInformation/map_id>: Provided map_id is not valid! id={}'.format(map_id)
+    def map_id(self, map_id: int):
+        assert isinstance(map_id, int), '<MapInformation/map_id>: Provided map_id is not valid! id={}'.format(map_id)
         self._map_id = map_id
+
+    @property
+    def country(self) -> str:
+        """ The country of the lanelet network."""
+        return self._country
+
+    @country.setter
+    def country(self, country: str):
+        assert isinstance(country, str), \
+            '<MapInformation/country>: Provided country is not valid! id={}'.format(country)
+        self._country = country
+
+    @property
+    def map_name(self) -> str:
+        """ The map name of the lanelet network."""
+        return self._map_name
+
+    @map_name.setter
+    def map_name(self, map_name: str):
+        assert isinstance(map_name, str), \
+            '<MapInformation/map_name>: Provided map_name is not valid! id={}'.format(map_name)
+        self._map_name = map_name
+
+    @property
+    def complete_map_name(self) -> str:
+        """Complete map name"""
+        return f"{self._country}_{self._map_name}-{self._map_id}"
 
     @property
     def date(self) -> Time:

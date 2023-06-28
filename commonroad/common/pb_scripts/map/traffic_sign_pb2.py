@@ -11,8 +11,8 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from commonroad.generated_scripts.common import util_pb2 as util__pb2
-from commonroad.generated_scripts.common import traffic_sign_element_pb2 as traffic__sign__element__pb2
+import commonroad.common.pb_scripts.common.util_pb2 as util__pb2
+import commonroad.common.pb_scripts.common.traffic_sign_element_pb2 as traffic__sign__element__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(

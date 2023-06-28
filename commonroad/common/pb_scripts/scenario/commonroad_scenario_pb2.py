@@ -11,8 +11,8 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from commonroad.generated_scripts.scenario import planning_problem_pb2 as planning__problem__pb2
-from commonroad.generated_scripts.common import scenario_meta_information_pb2 as scenario__meta__information__pb2
+import commonroad.common.pb_scripts.scenario.planning_problem_pb2 as planning__problem__pb2
+import commonroad.common.pb_scripts.common.scenario_meta_information_pb2 as scenario__meta__information__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(

@@ -11,7 +11,6 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from commonroad.generated_scripts.common import util_pb2 as util__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,9 +19,8 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0elocation.proto\x12\x0e\x63ommonroad_map\x1a\nutil.proto\"}\n\x11GeoTransformation\x12\x15\n\rgeo_reference\x18\x01 \x01(\t\x12\x15\n\rx_translation\x18\x02 \x01(\x01\x12\x15\n\ry_translation\x18\x03 \x01(\x01\x12\x12\n\nz_rotation\x18\x04 \x01(\x01\x12\x0f\n\x07scaling\x18\x05 \x01(\x01\"\x8b\x01\n\x08Location\x12\x13\n\x0bgeo_name_id\x18\x01 \x02(\x05\x12\x14\n\x0cgps_latitude\x18\x02 \x02(\x01\x12\x15\n\rgps_longitude\x18\x03 \x02(\x01\x12=\n\x12geo_transformation\x18\x04 \x01(\x0b\x32!.commonroad_map.GeoTransformation'
-  ,
-  dependencies=[util__pb2.DESCRIPTOR,])
+  serialized_pb=b'\n\x0elocation.proto\x12\x0e\x63ommonroad_map\"}\n\x11GeoTransformation\x12\x15\n\rgeo_reference\x18\x01 \x01(\t\x12\x15\n\rx_translation\x18\x02 \x01(\x01\x12\x15\n\ry_translation\x18\x03 \x01(\x01\x12\x12\n\nz_rotation\x18\x04 \x01(\x01\x12\x0f\n\x07scaling\x18\x05 \x01(\x01\"\x8b\x01\n\x08Location\x12\x13\n\x0bgeo_name_id\x18\x01 \x02(\x05\x12\x14\n\x0cgps_latitude\x18\x02 \x02(\x01\x12\x15\n\rgps_longitude\x18\x03 \x02(\x01\x12=\n\x12geo_transformation\x18\x04 \x01(\x0b\x32!.commonroad_map.GeoTransformation'
+)
 
 
 
@@ -82,8 +80,8 @@ _GEOTRANSFORMATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=46,
-  serialized_end=171,
+  serialized_start=34,
+  serialized_end=159,
 )
 
 
@@ -135,8 +133,8 @@ _LOCATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=174,
-  serialized_end=313,
+  serialized_start=162,
+  serialized_end=301,
 )
 
 _LOCATION.fields_by_name['geo_transformation'].message_type = _GEOTRANSFORMATION

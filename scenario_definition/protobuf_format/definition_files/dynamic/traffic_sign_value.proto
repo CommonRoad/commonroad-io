@@ -2,7 +2,6 @@ syntax = "proto2";
 
 package commonroad_dynamic;
 
-import "util.proto";
 import "traffic_sign_element.proto";
 
 message TrafficSignValue {

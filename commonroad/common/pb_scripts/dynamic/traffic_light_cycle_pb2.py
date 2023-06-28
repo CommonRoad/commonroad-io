@@ -11,7 +11,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from commonroad.generated_scripts.common import traffic_light_state_pb2 as traffic__light__state__pb2
+import commonroad.common.pb_scripts.common.traffic_light_state_pb2 as traffic__light__state__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(

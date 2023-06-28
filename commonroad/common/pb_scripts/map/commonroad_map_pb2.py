@@ -11,13 +11,13 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from commonroad.generated_scripts.common import util_pb2 as util__pb2
-from commonroad.generated_scripts.map import location_pb2 as location__pb2
-from commonroad.generated_scripts.map import lanelet_pb2 as lanelet__pb2
-from commonroad.generated_scripts.map import area_pb2 as area__pb2
-from commonroad.generated_scripts.map import traffic_sign_pb2 as traffic__sign__pb2
-from commonroad.generated_scripts.map import traffic_light_pb2 as traffic__light__pb2
-from commonroad.generated_scripts.map import intersection_pb2 as intersection__pb2
+import commonroad.common.pb_scripts.common.util_pb2 as util__pb2
+import commonroad.common.pb_scripts.map.location_pb2 as location__pb2
+import commonroad.common.pb_scripts.map.lanelet_pb2 as lanelet__pb2
+import commonroad.common.pb_scripts.map.area_pb2 as area__pb2
+import commonroad.common.pb_scripts.map.traffic_sign_pb2 as traffic__sign__pb2
+import commonroad.common.pb_scripts.map.traffic_light_pb2 as traffic__light__pb2
+import commonroad.common.pb_scripts.map.intersection_pb2 as intersection__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(

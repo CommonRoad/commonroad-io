@@ -11,9 +11,9 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from commonroad.generated_scripts.dynamic import obstacle_pb2 as obstacle__pb2
-from commonroad.generated_scripts.common import state_pb2 as state__pb2
-from commonroad.generated_scripts.common import util_pb2 as util__pb2
+import commonroad.common.pb_scripts.dynamic.obstacle_pb2 as obstacle__pb2
+import commonroad.common.pb_scripts.common.state_pb2 as state__pb2
+import commonroad.common.pb_scripts.common.util_pb2 as util__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
