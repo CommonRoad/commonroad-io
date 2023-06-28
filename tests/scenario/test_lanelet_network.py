@@ -18,34 +18,36 @@ from commonroad.scenario.area import Area
 class TestMapInformation(unittest.TestCase):
 
     def test_initialization(self):
-        mapInformation = MapInformation("2023a", "map_id", Time(12, 0, 1, 1, 2023), "author", "affiliation", "source")
-        self.assertEqual(mapInformation.commonroad_version, "2023a")
-        self.assertEqual(mapInformation.map_id, "map_id")
-        self.assertEqual(mapInformation.date, Time(12, 0, 1, 1, 2023))
-        self.assertEqual(mapInformation.author, "author")
-        self.assertEqual(mapInformation.affiliation, "affiliation")
-        self.assertEqual(mapInformation.source, "source")
+        map_information = MapInformation("2023a", "DEU", "MUC", 1, Time(12, 0, 1, 1, 2023), "author", "affiliation",
+                                         "source")
+        self.assertEqual(map_information.commonroad_version, "2023a")
+        self.assertEqual(map_information.map_id, 1)
+        self.assertEqual(map_information.date, Time(12, 0, 1, 1, 2023))
+        self.assertEqual(map_information.author, "author")
+        self.assertEqual(map_information.affiliation, "affiliation")
+        self.assertEqual(map_information.source, "source")
 
     def test_basic_properties(self):
-        mapInformation = MapInformation("2023a", "map_id", Time(12, 0, 1, 1, 2023), "author", "affiliation", "source")
+        map_information = MapInformation("2023a", "DEU", "MUC", 1, Time(12, 0, 1, 1, 2023), "author", "affiliation",
+                                         "source")
 
-        mapInformation.commonroad_version = "2024a"
-        self.assertEqual(mapInformation.commonroad_version, "2024a")
+        map_information.commonroad_version = "2024a"
+        self.assertEqual(map_information.commonroad_version, "2024a")
 
-        mapInformation.map_id = "map_id2"
-        self.assertEqual(mapInformation.map_id, "map_id2")
+        map_information.map_id = 2
+        self.assertEqual(map_information.map_id, 2)
 
-        mapInformation.date = Time(12, 0, 1, 1, 204)
-        self.assertEqual(mapInformation.date, Time(12, 0, 1, 1, 204))
+        map_information.date = Time(12, 0, 1, 1, 204)
+        self.assertEqual(map_information.date, Time(12, 0, 1, 1, 204))
 
-        mapInformation.author = "author2"
-        self.assertEqual(mapInformation.author, "author2")
+        map_information.author = "author2"
+        self.assertEqual(map_information.author, "author2")
 
-        mapInformation.affiliation = "affiliation2"
-        self.assertEqual(mapInformation.affiliation, "affiliation2")
+        map_information.affiliation = "affiliation2"
+        self.assertEqual(map_information.affiliation, "affiliation2")
 
-        mapInformation.time_step_size = np.double(2)
-        self.assertEqual(mapInformation.time_step_size, np.double(2))
+        map_information.time_step_size = np.double(2)
+        self.assertEqual(map_information.time_step_size, np.double(2))
 
 
 class TestLaneletNetwork(unittest.TestCase):
@@ -67,8 +69,8 @@ class TestLaneletNetwork(unittest.TestCase):
         traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED.value, ["15"])
         self.traffic_sign = TrafficSign(1, [traffic_sign_max_speed], {5}, np.array([0.0, 0.0]))
         cycle = TrafficLightCycle([TrafficLightCycleElement(TrafficLightState.GREEN, 2),
-                                        TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
-                                        TrafficLightCycleElement(TrafficLightState.RED, 2)])
+                                   TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
+                                   TrafficLightCycleElement(TrafficLightState.RED, 2)])
         self.traffic_light = TrafficLight(567, np.array([10., 10.]), cycle)
         self.adjacent_area = Area(1)
         self.stop_line = StopLine(self.left_vertices[-1], self.right_vertices[-1], LineMarking.SOLID,
@@ -91,7 +93,8 @@ class TestLaneletNetwork(unittest.TestCase):
                                  6, [self.lanelet.lanelet_id], [678], 910, True, 750, False, LineMarking.UNKNOWN,
                                  LineMarking.UNKNOWN)
 
-        self.lanelet_network = LaneletNetwork()
+        self.lanelet_network = LaneletNetwork(MapInformation("2023a", "DEU", "MUC", 1, Time(12, 0, 1, 1, 2024),
+                                                             "Max Mustermann", "TUM", "EDGAR", "GPL3"))
         self.lanelet_network.add_lanelet(self.lanelet)
         self.lanelet_network.add_lanelet(self.lanelet_2)
         self.lanelet_network.add_traffic_sign(self.traffic_sign, set())
@@ -137,14 +140,16 @@ class TestLaneletNetwork(unittest.TestCase):
         self.assertEqual(self.lanelet_network.lanelets[0].lanelet_id, self.lanelet.lanelet_id)
 
     def test_map_information_initialization(self):
-        default_map_information = MapInformation("2023a", "map_id", self.lanelet_network.information.date, "author",
-                                                 "affiliation", "source", "license_name")
-        self.assertEqual(self.lanelet_network.information, default_map_information)
+        map_information = MapInformation("2023a", "DEU", "MUC", 1, Time(12, 0, 1, 1, 2024),
+                                         "Max Mustermann", "TUM", "EDGAR", "GPL3")
+        self.assertEqual(self.lanelet_network.information, map_information)
 
-        updated_map_information = MapInformation("2024a", "map_id_new", Time(12, 0, 1, 1, 2024), "author2",
-                                                 "affiliation2", "source2", "license_name")
+        updated_map_information = MapInformation()
         self.lanelet_network.information = updated_map_information
         self.assertEqual(self.lanelet_network.information, updated_map_information)
+
+    def test_complete_map_name(self):
+        self.assertEqual(self.lanelet_network.information.complete_map_name, "DEU_MUC-1")
 
     def test_create_from_lanelet_network(self):
         lanelet_network = LaneletNetwork()
