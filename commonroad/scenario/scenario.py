@@ -15,7 +15,7 @@ from commonroad.common.validity import is_real_number, is_real_number_vector, is
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.lanelet import Lanelet, Bound
-from commonroad.scenario.lanelet import LaneletNetwork
+from commonroad.scenario.lanelet import LaneletNetwork, MapInformation
 from commonroad.scenario.obstacle import ObstacleRole
 from commonroad.scenario.obstacle import ObstacleType
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, Obstacle, \
@@ -237,7 +237,10 @@ class Scenario(IDrawable):
         self.dt: float = dt
         assert isinstance(scenario_id, ScenarioID)
         self.scenario_id = scenario_id
-        self._lanelet_network: LaneletNetwork = LaneletNetwork()
+        self._lanelet_network: LaneletNetwork = \
+            LaneletNetwork(MapInformation(
+                    map_id=f"{scenario_id.country_id}_{scenario_id.map_name}-{scenario_id.map_id}",
+                    author=author, affiliation=affiliation, source=source))
 
         self._static_obstacles: Dict[int, StaticObstacle] = defaultdict()
         self._dynamic_obstacles: Dict[int, DynamicObstacle] = defaultdict()
@@ -654,9 +657,9 @@ class Scenario(IDrawable):
                                  obstacle_role: Union[None, ObstacleRole] = None) -> List[Occupancy]:
         """ Returns the occupancies of all static and dynamic obstacles at a specific time step.
 
-            :param time_step: occupancies of obstacles at this time step
-            :param obstacle_role: obstacle role as defined in CommonRoad, e.g., static or dynamic
-            :return: list of occupancies of the obstacles
+        :param time_step: occupancies of obstacles at this time step
+        :param obstacle_role: obstacle role as defined in CommonRoad, e.g., static or dynamic
+        :return: list of occupancies of the obstacles
         """
         assert is_natural_number(time_step), '<Scenario/occupancies_at_time> argument "time_step" of wrong type. ' \
                                              'Expected type: %s. Got type: %s.' % (int, type(time_step))
