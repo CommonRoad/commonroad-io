@@ -3,7 +3,7 @@ import unittest
 
 from commonroad import SCENARIO_VERSION
 from commonroad.common.file_reader import CommonRoadFileReader, CommonRoadMapFileReader, CommonRoadDynamicFileReader, \
-    CommonRoadCombineMapDynamic, CommonRoadScenarioFileReader, CommonRoadCombineAll
+    CommonRoadCombineMapDynamic, CommonRoadScenarioFileReader, CommonRoadReadAll
 from commonroad.common.util import FileFormat
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
 from commonroad.prediction.prediction import *
@@ -11,8 +11,8 @@ from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
 from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, LaneletType
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario, Tag, ScenarioID
-from commonroad.common.common_scenario import TimeOfDay, Weather, Underground, GeoTransformation, Location, Environment
-from commonroad.scenario.state import STState, InitialState, CustomState, PMState, KSState, LateralState, STDState, \
+from commonroad.common.common_scenario import TimeOfDay, Weather, Underground, GeoTransformation, Location
+from commonroad.scenario.state import STState, InitialState, CustomState, KSState, LateralState, STDState, \
     LongitudinalState
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany
@@ -24,12 +24,14 @@ from commonroad.scenario.intersection import Intersection, IncomingGroup, Outgoi
 class TestXMLFileReader(unittest.TestCase):
     def setUp(self):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
-        self.filename_all = self.cwd_path + '/../test_scenarios/test_reading_all.xml'
-        self.filename_urban = self.cwd_path + '/../test_scenarios/test_reading_intersection_traffic_sign.xml'
-        self.filename_lanelets = self.cwd_path + '/../test_scenarios/test_reading_lanelets.xml'
-        self.filename_obstacle = self.cwd_path + '/../test_scenarios/test_reading_obstacles.xml'
-        self.filename_planning_problem = self.cwd_path + '/../test_scenarios/test_reading_planning_problem.xml'
-        self.filename_2018b = self.cwd_path + "/../test_scenarios/USA_Lanker-1_1_T-1.xml"
+        self.filename_all = self.cwd_path + '/../test_scenarios/xml/ZAM_TestReadingAll-1_1_T-1.xml'
+        self.filename_urban = \
+            self.cwd_path + '/../test_scenarios/xml/ZAM_TestReadingIntersectionTrafficSign-1_1_T-1.xml'
+        self.filename_lanelets = self.cwd_path + '/../test_scenarios/xml/ZAM_TestReadingLanelets-1_1_T-1.xml'
+        self.filename_obstacle = self.cwd_path + '/../test_scenarios/xml/ZAM_TestReadingObstacles-1_1_T-1.xml'
+        self.filename_planning_problem = \
+            self.cwd_path + '/../test_scenarios/xml/ZAM_TestReadingPlanningProblem-1_1_T-1.xml'
+        self.filename_2018b = self.cwd_path + "/../test_scenarios/xml/USA_Lanker-1_1_T-1.xml"
 
         # setup for reading obstacles, lanelets, planning problem and all (without intersection)
         rectangle = Rectangle(4.3, 8.9, center=np.array([0.1, 0.5]), orientation=1.7)
@@ -135,7 +137,8 @@ class TestXMLFileReader(unittest.TestCase):
         location = Location(2867714, 0.0, 0.0, geo_transformation)
 
         self.scenario = Scenario(0.1, ScenarioID.from_benchmark_id('ZAM_test_0-1', scenario_version=SCENARIO_VERSION),
-                                 tags=tags, location=location)
+                                 tags=tags)
+        self.lanelet_network.location = location
         self.scenario.add_objects([static_obs, dyn_set_obs, dyn_traj_obs, self.lanelet_network,
                                    self._environment_obstacle, self._phantom_obstacle])
 
@@ -225,9 +228,9 @@ class TestXMLFileReader(unittest.TestCase):
         exp_num_traffic_lights = 0
         exp_num_intersections = 0
         self.assertSetEqual(exp_tags, scenario.tags)
-        self.assertEqual(exp_location_geo_name_id, scenario.location.geo_name_id)
-        self.assertEqual(exp_location_gps_long, scenario.location.gps_longitude)
-        self.assertEqual(exp_location_gps_lat, scenario.location.gps_latitude)
+        self.assertEqual(exp_location_geo_name_id, scenario.lanelet_network.location.geo_name_id)
+        self.assertEqual(exp_location_gps_long, scenario.lanelet_network.location.gps_longitude)
+        self.assertEqual(exp_location_gps_lat, scenario.lanelet_network.location.gps_latitude)
         self.assertEqual(exp_num_lanelets, len(scenario.lanelet_network.lanelets))
         self.assertEqual(exp_num_dynamic_obstacles, len(scenario.dynamic_obstacles))
         self.assertEqual(exp_num_static_obstacles, len(scenario.static_obstacles))
@@ -912,7 +915,6 @@ class TestProtobufFileReader(unittest.TestCase):
         self.filename_longitudinal_state_xml = self.cwd_path + "/../test_scenarios/test_reading_longitudinal_state.xml"
         self.filename_lateral_state_xml = self.cwd_path + "/../test_scenarios/test_reading_lateral_state.xml"
 
-
     def test_open_map(self):
 
         #  Carcarana
@@ -1185,7 +1187,7 @@ def read_compare_old_scenario_new_all(xml_file_path: str, pb_map_file_path: str,
     map_pb = CommonRoadMapFileReader(pb_map_file_path, FileFormat.PROTOBUF).open()
     dynamic_pb = CommonRoadDynamicFileReader(pb_dynamic_file_path, FileFormat.PROTOBUF).open()
     scenario_pb = CommonRoadScenarioFileReader(pb_scenario_file_path, FileFormat.PROTOBUF).open()
-    scenario_pb, planning_problems_pb, _ = CommonRoadCombineAll(map_pb, dynamic_pb, scenario_pb).open()
+    scenario_pb, planning_problems_pb, _ = CommonRoadReadAll(map_pb, dynamic_pb, scenario_pb).open()
 
     scenario_pb.lanelet_network.information.date = scenario_xml.lanelet_network.information.date
 

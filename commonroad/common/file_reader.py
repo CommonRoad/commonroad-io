@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Tuple, Optional, List
+import os
 
 from commonroad.common.util import FileFormat, Path_T
 from commonroad.common.reader.file_reader_protobuf import ProtobufFileReaderScenario, \
@@ -8,7 +9,7 @@ from commonroad.common.reader.file_reader_xml import XMLFileReader
 from commonroad.planning.planning_problem import PlanningProblemSet, CooperativePlanningProblem
 from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad.scenario.lanelet import LaneletNetwork
-from commonroad.scenario.scenario import Scenario, ScenarioID
+from commonroad.scenario.scenario import Scenario
 from commonroad.common.reader.dynamic_interface import DynamicInterface
 from commonroad.common.reader.scenario_interface import ScenarioInterface
 
@@ -166,16 +167,15 @@ class CommonRoadCombineMapDynamic:
         :return: Scenario containing the lanelet network from map, and obstacles, traffic light cycles and traffic sign
         values from the dynamic.
         """
-        scenarioID = ScenarioID.from_benchmark_id(self._dynamic_interface.dynamic_meta_information.benchmark_id,
-                                                  self._dynamic_interface.dynamic_meta_information.commonroad_version)
+        scenario_id = self._dynamic_interface.dynamic_meta_information.scenario_id
         dt = self._dynamic_interface.dynamic_meta_information.time_step_size
-        scenario = Scenario(dt, scenarioID)
+        scenario = Scenario(dt, scenario_id)
 
         # Adding additional meta information to the scenario from dynamic_interface.information
-        scenario.author = self._dynamic_interface.dynamic_meta_information.author
-        scenario.affiliation = self._dynamic_interface.dynamic_meta_information.affiliation
-        scenario.source = self._dynamic_interface.dynamic_meta_information.source
-        scenario.location = self._map.location
+        scenario.author = self._dynamic_interface.dynamic_meta_information.file_information.author
+        scenario.affiliation = self._dynamic_interface.dynamic_meta_information.file_information.affiliation
+        scenario.source = self._dynamic_interface.dynamic_meta_information.file_information.source
+        scenario.lanelet_network.location = self._map.location
 
         # copying attributes from map to scenario.lanelet_network
         scenario.add_objects(self._map)
@@ -248,49 +248,90 @@ class CommonRoadCombineMapDynamic:
         return scenario
 
 
-class CommonRoadCombineAll:
+def combine_preloaded_(road_network: LaneletNetwork, dynamic_interface: DynamicInterface,
+                       scenario_interface: ScenarioInterface, lanelet_assignment: bool = False) \
+        -> Tuple[Scenario, PlanningProblemSet, List[CooperativePlanningProblem]]:
+    """
+    Combines the new version scenario, map and dynamic classes loaded from their respective files into one
+    scenario class.
+
+    :param road_network: Lanelet network that the user has read from the file
+    :param dynamic_interface: Dynamic interface that the user has read from the file
+    :param scenario_interface: Scenario interface that the user has read from the file
+    :param lanelet_assignment: Boolean that is used to assign the lanelets to scenario attributes, i.e.
+    static and dynamic obstacles.
+    :return: Tuple consisted of the Scenario (containing the lanelet network from map, and obstacles from
+    the dynamic), PlanningProblemSet and a list of CooperativePlanningProblems
+    """
+
+    scenario = CommonRoadCombineMapDynamic(road_network, dynamic_interface, lanelet_assignment).open()
+
+    # Update the scenario meta information as in this case we copy it from scenario_interface meta information,
+    # instead of dynamic_interface meta information as when combining only map and dynamic
+    scenario.scenario_id = scenario_interface.scenario_meta_information.scenario_id
+    scenario.dt = scenario_interface.scenario_meta_information.time_step_size
+    scenario.author = scenario_interface.scenario_meta_information.file_information.author
+    scenario.affiliation = scenario_interface.scenario_meta_information.file_information.affiliation
+    scenario.source = scenario_interface.scenario_meta_information.file_information.source
+    scenario.lanelet_network.location = road_network.location
+
+    # Get planning problem set and cooperative planning problems from the scenario_interface
+    planning_problem_set = PlanningProblemSet(scenario_interface.planning_problems)
+    multi_agent = scenario_interface.cooperative_planning_problems
+
+    return scenario, planning_problem_set, multi_agent
+
+
+class CommonRoadReadAll:
     """
     Reads all 3 of the separate .py classes that the user has obtained from reading the corresponding files.
     Combines them into one scenario .py class.
     """
-    def __init__(self, map: LaneletNetwork, dynamic_interface: DynamicInterface,
-                 scenario_interface: ScenarioInterface, lanelet_assignment: bool = False):
+
+    """
+        Reads CommonRoadMap files in XML or protobuf format. The corresponding stored scenario is
+        created by the reader.
         """
-        :param map: Lanelet network that the user has read from the file
-        :param dynamic_interface: Dynamic interface that the user has read from the file
-        :param scenario_interface: Scenario interface that the user has read from the file
-        :param lanelet_assignment: Boolean that is used to assign the lanelets to scenario attributes, i.e.
-        static and dynamic obstacles.
+
+    def __init__(self, filename: Path_T, file_format: Optional[FileFormat] = None):
         """
-        self._scenario_interface = scenario_interface
-        self._map = map
-        self._dynamic_interface = dynamic_interface
-        self._lanelet_assignment = lanelet_assignment
-        
+        Initializes file readers for reading CommonRoad map, scenario, and dynamic files.
+
+        :param filename: Name of file
+        :param file_format: Format of file. If None, inferred from file suffix.
+        """
+        self._file_reader = None
+
+        if file_format is None:
+            file_format = FileFormat(Path(filename).suffix)
+
+        base_name = os.path.basename(filename)
+        base_path = os.path.dirname(filename)
+        map_name = base_name.split("-")[0] + "-" + base_name.split("_")[1].split("-")[1]
+        pure_name = base_name.split(".pb")[0]
+        if pure_name.endswith("-SC"):
+            scenario_name = pure_name
+            dynamic_name = pure_name.split("-SC")[0]
+        else:
+            scenario_name = pure_name + "-SC"
+            dynamic_name = pure_name
+
+        if file_format == FileFormat.XML:
+            raise NotImplementedError("XML files are not yet supported by 2023a format.")
+        elif file_format == FileFormat.PROTOBUF:
+            self._file_reader_map = ProtobufFileReaderMap(os.path.join(base_path, map_name + ".pb"))
+            self._file_reader_dynamic = ProtobufFileReaderDynamic(os.path.join(base_path, dynamic_name + ".pb"))
+            self._file_reader_scenario = ProtobufFileReaderScenario(os.path.join(base_path, scenario_name + ".pb"))
+
     def open(self) -> Tuple[Scenario, PlanningProblemSet, List[CooperativePlanningProblem]]:
         """
-        Combines the new version scenario, map and dynamic classes loaded from their respective files into one
-        scenario class.
+        Loads map, dynamic and, scenario files and combines them.
 
         :return: Tuple consisted of the Scenario (containing the lanelet network from map, and obstacles from
         the dynamic), PlanningProblemSet and a list of CooperativePlanningProblems
         """
+        road_network = self._file_reader_map.open()
+        scenario = self._file_reader_scenario.open()
+        dynamic_pb = self._file_reader_dynamic.open()
 
-        scenario = CommonRoadCombineMapDynamic(self._map, self._dynamic_interface, self._lanelet_assignment).open()
-
-        # Update the scenario meta information as in this case we copy it from scenario_interface meta information,
-        # instead of dynamic_interface meta information as when combining only map and dynamic
-        scenarioID = ScenarioID.from_benchmark_id(self._scenario_interface.scenario_meta_information.benchmark_id,
-                                                  self._scenario_interface.scenario_meta_information.commonroad_version)
-        scenario.scenario_id = scenarioID
-        scenario.dt = self._scenario_interface.scenario_meta_information.time_step_size
-        scenario.author = self._scenario_interface.scenario_meta_information.author
-        scenario.affiliation = self._scenario_interface.scenario_meta_information.affiliation
-        scenario.source = self._scenario_interface.scenario_meta_information.source
-        scenario.location = self._map.location
-
-        # Get planning problem set and cooperative planning problems from the scenario_interface
-        planning_problem_set = PlanningProblemSet(self._scenario_interface.planning_problems)
-        multi_agent = self._scenario_interface.cooperative_planning_problems
-
-        return scenario, planning_problem_set, multi_agent
+        return combine_preloaded_(road_network, dynamic_pb, scenario)

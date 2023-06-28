@@ -1,15 +1,13 @@
 import copy
 from collections import defaultdict
-from typing import *
-
+from typing import Tuple, Dict, Set, List
 import numpy as np
-from datetime import datetime
 from shapely.geometry import Point as ShapelyPoint
 from shapely.geometry import Polygon as ShapelyPolygon
 from shapely.strtree import STRtree
 
 import commonroad.geometry.transform
-from commonroad.common.util import subtract_orientations, Time
+from commonroad.common.util import subtract_orientations
 from commonroad.common.validity import *
 from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape
 from commonroad.scenario.intersection import Intersection
@@ -22,7 +20,7 @@ from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.renderer import IRenderer
 from commonroad.visualization.draw_params import OptionalSpecificOrAllDrawParams, LaneletNetworkParams
 from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, LaneletType
-from commonroad.common.common_scenario import Location
+from commonroad.common.common_scenario import Location, MapMetaInformation
 
 
 class Bound:
@@ -963,198 +961,19 @@ class Lanelet:
         return np.arctan2(direction_vector[1], direction_vector[0])
 
 
-class MapInformation:
-    """
-    Class which represents additional information about Lanelet Network
-    """
-    def __init__(self, commonroad_version: str = "2023a", country: str = "ZAM", map_name: str = "Test",
-                 map_id: int = 1, date: Time = None, author: str = "author", affiliation: str = "affiliation",
-                 source: str = "source",
-                 license_name: str = "license_name", license_text: str = None):
-        """
-        Constructor for MapInformation
-
-        :param commonroad_version: version of CommonRoad
-        :param country: Country of map
-        :param map_name: Name of map
-        :param map_id: the id of the lanelet network
-        :param date: date of the lanelet network
-        :param author: author of the lanelet network
-        :param affiliation: affiliation of the lanelet network
-        :param source: source of the lanelet network
-        :param license_name: license name of the lanelet network
-        :param license_text: license text of the lanelet network
-        """
-        self._commonroad_version = commonroad_version
-        self._country = country
-        self._map_name = map_name
-        self._map_id = map_id
-        if date is None:
-            time = datetime.now()
-            self._date = Time(time.hour, time.minute, time.day, time.month, time.year)
-        else:
-            self._date = date
-        self._author = author
-        self._affiliation = affiliation
-        self._source = source
-        self._license_name = license_name
-        if license_text is None:
-            self._license_text = ""
-        else:
-            self._license_text = license_text
-
-    def __eq__(self, other):
-        if not isinstance(other, MapInformation):
-            warnings.warn(f"Inequality between MapInformation {repr(self)} and different type {type(other)}")
-            return False
-
-        if self._commonroad_version == other.commonroad_version and self._map_id == other.map_id and \
-           self._date == other.date and self._author == other.author and self._affiliation == other.affiliation and \
-           self._source == other.source and self._license_name == other.license_name and \
-           self._license_text == other.license_text:
-            return True
-
-        warnings.warn(f"Inequality of MapInformation {repr(self)} and the other one {repr(other)}")
-        return False
-
-    def __repr__(self):
-        return f"MapInformation(commonroad_version={self._commonroad_version}, map_id={self._map_id}," \
-               f" date={self._date}, author={self._author}, affiliation={self._affiliation}, source={self._source}," \
-               f" license_name={self._license_name}, license_text={self._license_text}"
-
-    def __str__(self):
-        return f"MapInformation with commonroad version {self._commonroad_version}, map_id {self._map_id}," \
-               f" date {self._date}, author {self._author}, affiliation {self._affiliation}, source {self._source}," \
-               f" license name {self._license_name} and license text {self._license_text}"
-
-    def __hash__(self):
-        return hash((self._commonroad_version, self._map_id, self._date, self._author, self._affiliation,
-                     self._source, self._license_name, self._license_text))
-
-    @property
-    def commonroad_version(self) -> str:
-        """ Version of CommonRoad."""
-        return self._commonroad_version
-
-    @commonroad_version.setter
-    def commonroad_version(self, commonroad_version: str):
-        assert isinstance(commonroad_version, str), '<MapInformation/commonroad_version>: ' \
-                                            'Provided commonroad_version is not valid! id={}'.format(commonroad_version)
-        self._commonroad_version = commonroad_version
-
-    @property
-    def map_id(self) -> int:
-        """ The id of the lanelet network."""
-        return self._map_id
-
-    @map_id.setter
-    def map_id(self, map_id: int):
-        assert isinstance(map_id, int), '<MapInformation/map_id>: Provided map_id is not valid! id={}'.format(map_id)
-        self._map_id = map_id
-
-    @property
-    def country(self) -> str:
-        """ The country of the lanelet network."""
-        return self._country
-
-    @country.setter
-    def country(self, country: str):
-        assert isinstance(country, str), \
-            '<MapInformation/country>: Provided country is not valid! id={}'.format(country)
-        self._country = country
-
-    @property
-    def map_name(self) -> str:
-        """ The map name of the lanelet network."""
-        return self._map_name
-
-    @map_name.setter
-    def map_name(self, map_name: str):
-        assert isinstance(map_name, str), \
-            '<MapInformation/map_name>: Provided map_name is not valid! id={}'.format(map_name)
-        self._map_name = map_name
-
-    @property
-    def complete_map_name(self) -> str:
-        """Complete map name"""
-        return f"{self._country}_{self._map_name}-{self._map_id}"
-
-    @property
-    def date(self) -> Time:
-        """ Date of the lanelet network."""
-        return self._date
-
-    @date.setter
-    def date(self, date: Time):
-        assert isinstance(date, Time), '<MapInformation/date>: Provided date is not valid! id={}'.format(date)
-        self._date = date
-
-    @property
-    def author(self) -> str:
-        """ Author of the lanelet network."""
-        return self._author
-
-    @author.setter
-    def author(self, author: str):
-        assert isinstance(author, str), '<MapInformation/author>: Provided author is not valid! id={}'.format(author)
-        self._author = author
-
-    @property
-    def affiliation(self) -> str:
-        """ Affiliation of the lanelet network."""
-        return self._affiliation
-
-    @affiliation.setter
-    def affiliation(self, affiliation: str):
-        assert isinstance(affiliation, str), '<MapInformation/affiliation>: ' \
-                                             'Provided affiliation is not valid! id={}'.format(affiliation)
-        self._affiliation = affiliation
-
-    @property
-    def source(self) -> str:
-        """ Source of the lanelet network."""
-        return self._source
-
-    @source.setter
-    def source(self, source: str):
-        assert isinstance(source, str), '<MapInformation/source>: ' \
-                                             'Provided source is not valid! id={}'.format(source)
-        self._source = source
-
-    @property
-    def license_name(self) -> str:
-        """ License name of the lanelet network."""
-        return self._license_name
-
-    @license_name.setter
-    def license_name(self, license_name: str):
-        assert isinstance(license_name, str), '<MapInformation/license_name>: ' \
-                                        'Provided license_name is not valid! id={}'.format(license_name)
-        self._license_name = license_name
-
-    @property
-    def license_text(self) -> Union[None, str]:
-        """ License text of the lanelet network."""
-        return self._license_text
-
-    @license_text.setter
-    def license_text(self, license_text: Union[None, str]):
-        self._license_text = license_text
-
-
 class LaneletNetwork(IDrawable):
     """
     Class which represents a network of connected lanelets
     """
 
-    def __init__(self, information: MapInformation = MapInformation(), location: Location = Location()):
+    def __init__(self, information: MapMetaInformation = MapMetaInformation(), location: Location = Location()):
         """
         Constructor for LaneletNetwork
 
         :param information: map information of the lanelet network
         :param location: location attribute of the lanelet network
         """
-        self._information = information
+        self._meta_information = information
         self._lanelets: Dict[int, Lanelet] = {}
         # lanelet_id, shapely_polygon
         self._buffered_polygons: Dict[int, ShapelyPolygon] = {}
@@ -1219,7 +1038,7 @@ class LaneletNetwork(IDrawable):
                     continue
                 if e.get(k) != e_other.get(k):
                     list_elements_eq = False
-        if self._information != other._information:
+        if self._meta_information != other._meta_information:
             lanelet_network_eq = False
 
         if self._location != other.location:
@@ -1231,7 +1050,7 @@ class LaneletNetwork(IDrawable):
         return lanelet_network_eq and list_elements_eq
 
     def __hash__(self):
-        return hash((self._information, self._location, frozenset(self._lanelets.items()),
+        return hash((self._meta_information, self._location, frozenset(self._lanelets.items()),
                      frozenset(self._intersections.items()), frozenset(self._traffic_signs.items()),
                      frozenset(self._traffic_lights.items()),frozenset(self._areas.items())))
 
@@ -1245,7 +1064,7 @@ class LaneletNetwork(IDrawable):
                f"and stop_lines {set(self._stop_lines.keys())}"
 
     def __repr__(self):
-        return f"LaneletNetwork(information={self._information}, location={self._location}, " \
+        return f"LaneletNetwork(information={self._meta_information}, location={self._location}, " \
                f"lanelets={repr(self._lanelets)}, " \
                f"intersections={repr(self._intersections)}, traffic_signs={repr(self._traffic_signs)}, " \
                f"traffic_lights={repr(self._traffic_lights)}), areas={repr(self._areas)}, " \
@@ -1255,15 +1074,16 @@ class LaneletNetwork(IDrawable):
         return self._lanelet_id_index_by_id[id(polygon)]
 
     @property
-    def information(self) -> MapInformation:
+    def meta_information(self) -> MapMetaInformation:
         """ Map information of the lanelet network."""
-        return self._information
+        return self._meta_information
 
-    @information.setter
-    def information(self, information: MapInformation):
-        assert isinstance(information, MapInformation), '<LaneletNetwork/information>: provided information is not ' \
-                                                        'valid! information = {}'.format(information)
-        self._information = information
+    @meta_information.setter
+    def meta_information(self, meta_information: MapMetaInformation):
+        assert isinstance(meta_information, MapMetaInformation), \
+            '<LaneletNetwork/information>: provided information is not valid! meta_information = {}'.format(
+                    meta_information)
+        self._meta_information = meta_information
 
     @property
     def lanelets(self) -> List[Lanelet]:

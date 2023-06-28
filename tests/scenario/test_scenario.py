@@ -584,14 +584,14 @@ class TestScenario(unittest.TestCase):
         exp_env_weather = Weather.SNOW
         exp_env_underground = Underground.ICE
 
-        self.assertEqual(exp_geo_name_id, self.scenario.location.geo_name_id)
-        self.assertEqual(exp_gps_latitude, self.scenario.location.gps_latitude)
-        self.assertEqual(exp_gps_longitude, self.scenario.location.gps_longitude)
-        self.assertEqual(exp_env_time_hours, self.scenario.location.environment.time.hours)
-        self.assertEqual(exp_env_time_min, self.scenario.location.environment.time.minutes)
-        self.assertEqual(exp_env_time_of_day, self.scenario.location.environment.time_of_day)
-        self.assertEqual(exp_env_weather, self.scenario.location.environment.weather)
-        self.assertEqual(exp_env_underground, self.scenario.location.environment.underground)
+        self.assertEqual(exp_geo_name_id, self.scenario.lanelet_network.location.geo_name_id)
+        self.assertEqual(exp_gps_latitude, self.scenario.lanelet_network.location.gps_latitude)
+        self.assertEqual(exp_gps_longitude, self.scenario.lanelet_network.location.gps_longitude)
+        self.assertEqual(exp_env_time_hours, self.scenario.lanelet_network.location.environment.time.hours)
+        self.assertEqual(exp_env_time_min, self.scenario.lanelet_network.location.environment.time.minutes)
+        self.assertEqual(exp_env_time_of_day, self.scenario.lanelet_network.location.environment.time_of_day)
+        self.assertEqual(exp_env_weather, self.scenario.lanelet_network.location.environment.weather)
+        self.assertEqual(exp_env_underground, self.scenario.lanelet_network.location.environment.underground)
 
     def test_assign_vehicles(self):
         states = list()

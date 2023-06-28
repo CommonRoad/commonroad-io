@@ -18,7 +18,8 @@ from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, La
 from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, EnvironmentObstacle, \
     SignalState, PhantomObstacle
 from commonroad.scenario.scenario import Scenario, Tag, ScenarioID
-from commonroad.common.common_scenario import TimeOfDay, Weather, Underground, Environment,  GeoTransformation, Location
+from commonroad.common.common_scenario import TimeOfDay, Weather, Underground, Environment,  GeoTransformation, \
+    Location, FileInformation, MapMetaInformation
 from commonroad.scenario.state import InitialState, TraceState, CustomState, SpecificStateClasses
 from commonroad.scenario.traffic_sign import *
 from commonroad.scenario.traffic_light import *
@@ -196,14 +197,21 @@ class ScenarioFactory:
         """
         if commonroad_version != '2018b':
             meta_data["tags"] = TagsFactory.create_from_xml_node(xml_node)
-            meta_data["location"] = LocationFactory.create_from_xml_node(xml_node)
+            location = LocationFactory.create_from_xml_node(xml_node)
         else:
+            location = None
             LaneletFactory._speed_limits = {}
 
         scenario_id = ScenarioID.from_benchmark_id(benchmark_id, commonroad_version)
-        scenario = Scenario(dt, scenario_id, **meta_data)
+        file_information = FileInformation(author=meta_data["author"],
+                                                             affiliation=meta_data["affiliation"],
+                                                             source=meta_data["source"])
+        scenario = Scenario(dt, scenario_id, file_information, meta_data["tags"])
+        scenario.lanelet_network.location = location
 
         scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
+        scenario.lanelet_network.meta_information.file_information = file_information
+        scenario.lanelet_network.meta_information.scenario_id = scenario_id
         if commonroad_version == '2018b':
             large_num = 10000
             scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network, lanelet_assignment))

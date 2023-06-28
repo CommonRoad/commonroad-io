@@ -1,5 +1,4 @@
 from typing import Union, Set
-
 from commonroad.common.util import FileFormat
 from commonroad.common.writer.file_writer_interface import OverwriteExistingFile
 from commonroad.common.writer.file_writer_protobuf import ProtobufFileWriter
@@ -17,7 +16,7 @@ class CommonRoadFileWriter:
 
     def __init__(self, scenario: Scenario, planning_problem_set: PlanningProblemSet, author: str = None,
                  affiliation: str = None, source: str = None, tags: Set[Tag] = None, location: Location = None,
-                 decimal_precision: int = 4, file_format: FileFormat = FileFormat.XML):
+                 decimal_precision: int = 4, file_format: FileFormat = FileFormat.PROTOBUF):
         """
         Initializes the FileWriter for CommonRoad files.
 
@@ -37,7 +36,7 @@ class CommonRoadFileWriter:
                                               source, tags, location, decimal_precision)
         elif file_format == FileFormat.PROTOBUF:
             self._file_writer = ProtobufFileWriter(scenario, planning_problem_set, author, affiliation,
-                                                   source, tags, location, decimal_precision)
+                                                   source, tags, decimal_precision)
 
     # Old version writer
     def write_to_file(self, filename: Union[str, None] = None,

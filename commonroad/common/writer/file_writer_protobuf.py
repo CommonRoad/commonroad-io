@@ -6,8 +6,9 @@ import logging
 import numpy as np
 from google.protobuf.message import DecodeError
 
+from commonroad.common.common_scenario import ScenarioID
 from commonroad.common.util import Interval, FileFormat, Time
-from commonroad.common.writer.file_writer_interface import FileWriter, OverwriteExistingFile
+from commonroad.common.writer.file_writer_interface import FileWriter, OverwriteExistingFile, FileType
 from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction, SetBasedPrediction
@@ -57,9 +58,9 @@ class ProtobufFileWriter(FileWriter):
         pass
 
     def __init__(self, scenario: Scenario, planning_problem_set: PlanningProblemSet, author: str = None,
-                 affiliation: str = None, source: str = None, tags: Set[Tag] = None, location: Location = None,
+                 affiliation: str = None, source: str = None, tags: Set[Tag] = None,
                  decimal_precision: int = 4):
-        super().__init__(scenario, planning_problem_set, author, affiliation, source, tags, location, decimal_precision)
+        super().__init__(scenario, planning_problem_set, author, affiliation, source, tags, decimal_precision)
 
         self._commonroad_dynamic_msg = commonroad_dynamic_pb2.CommonRoadDynamic()
         self._commonroad_map_msg = commonroad_map_pb2.CommonRoadMap()
@@ -69,14 +70,14 @@ class ProtobufFileWriter(FileWriter):
         """
         Stores all information about 2023 Map as protobuf message.
         """
-        map_info_msg = MapInformationMessage.create_message(self.scenario.lanelet_network.information.commonroad_version,
-                                                            self.scenario.lanelet_network.information.map_id,
-                                                            self.scenario.lanelet_network.information.date,
-                                                            self.scenario.lanelet_network.information.author,
-                                                            self.scenario.lanelet_network.information.affiliation,
-                                                            self.scenario.lanelet_network.information.source,
-                                                            self.scenario.lanelet_network.information.license_name,
-                                                            self.scenario.lanelet_network.information.license_text)
+        map_info_msg = MapInformationMessage.create_message(
+                self.scenario.scenario_id,
+                self.scenario.lanelet_network.meta_information.file_information.date,
+                self.scenario.lanelet_network.meta_information.file_information.author,
+                self.scenario.lanelet_network.meta_information.file_information.affiliation,
+                self.scenario.lanelet_network.meta_information.file_information.source,
+                self.scenario.lanelet_network.meta_information.file_information.license_name,
+                self.scenario.lanelet_network.meta_information.file_information.license_text)
 
         self._commonroad_map_msg.map_meta_information.CopyFrom(map_info_msg)
 
@@ -84,14 +85,14 @@ class ProtobufFileWriter(FileWriter):
         """
         Stores all information about 2023 Dynamic as protobuf message.
         """
-        dynamic_info_msg = DynamicInformationMessage.create_message(self.scenario.scenario_id.scenario_version,
-                                                                    str(self.scenario.scenario_id),
-                                                                    self.scenario.author,
-                                                                    self.scenario.affiliation,
-                                                                    self.scenario.source,
-                                                                    self.scenario.dt,
-                                                                self.scenario.lanelet_network.information.license_name,
-                                                                self.scenario.lanelet_network.information.license_text)
+        dynamic_info_msg = \
+            DynamicInformationMessage.create_message(self.scenario.scenario_id,
+                                                     self.scenario.file_information.license_name,
+                                                     self.scenario.file_information.license_text,
+                                                     self.scenario.file_information.author,
+                                                     self.scenario.file_information.affiliation,
+                                                     self.scenario.file_information.source,
+                                                     self.scenario.dt)
 
         self._commonroad_dynamic_msg.dynamic_meta_information.CopyFrom(dynamic_info_msg)
 
@@ -99,10 +100,9 @@ class ProtobufFileWriter(FileWriter):
         """
         Stores all information about 2023 Scenario as protobuf message.
         """
-        scenario_info_msg = ScenarioInformationMessage.create_message(self.scenario.scenario_id.scenario_version,
-         str(self.scenario.scenario_id),
-         self.scenario.lanelet_network.information.license_name,
-         self.scenario.lanelet_network.information.license_text,
+        scenario_info_msg = ScenarioInformationMessage.create_message(self.scenario.scenario_id,
+         self.scenario.file_information.license_name,
+         self.scenario.file_information.license_text,
          self._author,
          self._affiliation,
          self._source,
@@ -115,7 +115,7 @@ class ProtobufFileWriter(FileWriter):
         Stores all scenario objects that correspond to the map as protobuf message.
         """
 
-        location_msg = LocationMessage.create_message(self.location)
+        location_msg = LocationMessage.create_message(self.scenario.lanelet_network.location)
         self._commonroad_map_msg.location.CopyFrom(location_msg)
 
         for lanelet in self.scenario.lanelet_network.lanelets:
@@ -179,10 +179,7 @@ class ProtobufFileWriter(FileWriter):
                 traffic_sign_value_msg = TrafficSignValueMessage.create_message(traffic_sign_value)
                 self._commonroad_dynamic_msg.traffic_sign_value.append(traffic_sign_value_msg)
 
-        environment = Environment()
-        if self.scenario.location.environment is not None:
-            environment = self.scenario.location.environment
-
+        environment = self.scenario.environment if self.scenario.environment is not None else Environment()
         self._commonroad_dynamic_msg.environment.CopyFrom(EnvironmentMessage.create_message(environment))
 
     def _add_all_planning_problems_from_planning_problem_set(self):
@@ -227,9 +224,9 @@ class ProtobufFileWriter(FileWriter):
 
         :param filename: Name of file
         :param overwrite_existing_file: Mode of writing
-        :param check_validity: Validity checking before writing
+        :param check_validity: Validity checking before writing (only done for xml)
         """
-        filename = self._handle_file_path(filename, overwrite_existing_file)
+        filename = self._handle_file_path(filename, overwrite_existing_file, FileType.MAP)
         if not filename:
             return
 
@@ -250,7 +247,7 @@ class ProtobufFileWriter(FileWriter):
         :param overwrite_existing_file: Mode of writing
         :param check_validity: Validity checking before writing
         """
-        filename = self._handle_file_path(filename, overwrite_existing_file)
+        filename = self._handle_file_path(filename, overwrite_existing_file, FileType.DYNAMIC)
         if not filename:
             return
 
@@ -270,7 +267,7 @@ class ProtobufFileWriter(FileWriter):
         :param filename: Name of file
         :param overwrite_existing_file: Mode of writing
         """
-        filename = self._handle_file_path(filename, overwrite_existing_file)
+        filename = self._handle_file_path(filename, overwrite_existing_file, FileType.SCENARIO)
         if not filename:
             return
 
@@ -278,7 +275,7 @@ class ProtobufFileWriter(FileWriter):
 
         self._write_header_scenario()
         self._add_all_planning_problems_from_planning_problem_set()
-        self._commonroad_scenario_msg.map_id = self.scenario.lanelet_network.information.map_id
+        self._commonroad_scenario_msg.map_id = self.scenario.lanelet_network.meta_information.complete_map_name
         self._commonroad_scenario_msg.dynamic_id = str(self.scenario.scenario_id)
 
         self._serialize_write_msg(None, None, filename)
@@ -310,23 +307,61 @@ class ProtobufFileWriter(FileWriter):
             return False
 
 
-class MapInformationMessage:
-
+class ScenarioIDMessage:
     @classmethod
-    def create_message(cls, commonroad_version: str, map_id: str, date: Time, author: str, affiliation: str,
+    def create_message(cls, scenario_id: ScenarioID) -> scenario_meta_information_pb2.ScenarioID:
+        scenario_id_msg = scenario_meta_information_pb2.ScenarioID()
+        scenario_id_msg.cooperative = scenario_id.cooperative
+        map_id = MapIDMessage.create_message(scenario_id)
+        scenario_id_msg.map_id.CopyFrom(map_id)
+        scenario_id_msg.configuration_id = scenario_id.configuration_id
+        scenario_id_msg.obstacle_behavior = scenario_id.obstacle_behavior
+        scenario_id_msg.prediction_id = scenario_id.prediction_id
+        scenario_id_msg.scenario_version = scenario_id.scenario_version
+
+        return scenario_id_msg
+
+
+class MapIDMessage:
+    @classmethod
+    def create_message(cls, scenario_id: ScenarioID) -> scenario_meta_information_pb2.MapID:
+        map_id_msg = scenario_meta_information_pb2.MapID()
+        map_id_msg.country_id = scenario_id.country_id
+        map_id_msg.map_name = scenario_id.map_name
+        map_id_msg.map_id = scenario_id.map_id
+
+        return map_id_msg
+
+
+class FileInformationMessage:
+    @classmethod
+    def create_message(cls, date: Time, author: str, affiliation: str,
+                       source: str, license_name: str, license_text: str) -> \
+            scenario_meta_information_pb2.FileInformation:
+        file_information_msg = scenario_meta_information_pb2.FileInformation()
+        time_stamp_msg = TimeStampMessage.create_message(
+                datetime.datetime(date.year, date.month, date.day, date.hours, date.minutes))
+        file_information_msg.date.CopyFrom(time_stamp_msg)
+        file_information_msg.author = author
+        file_information_msg.affiliation = affiliation
+        file_information_msg.source = source
+        file_information_msg.license_name = license_name
+        file_information_msg.license_text = license_text
+
+        return file_information_msg
+
+
+class MapInformationMessage:
+    @classmethod
+    def create_message(cls, scenario_id: ScenarioID, date: Time, author: str, affiliation: str,
                        source: str, license_name: str, license_text: str) -> \
             commonroad_map_pb2.MapInformation:
         map_information_msg = commonroad_map_pb2.MapInformation()
-        map_information_msg.common_road_version = commonroad_version
-        map_information_msg.map_id = map_id
-        time_stamp_msg = TimeStampMessage.create_message(datetime.datetime
-                                                         (date.year, date.month, date.day, date.hours, date.minutes))
-        map_information_msg.date.CopyFrom(time_stamp_msg)
-        map_information_msg.author = author
-        map_information_msg.affiliation = affiliation
-        map_information_msg.source = source
-        map_information_msg.license_name = license_name
-        map_information_msg.license_text = license_text
+        map_id_msg = MapIDMessage.create_message(scenario_id)
+        file_information_msg = FileInformationMessage.create_message(date, author, affiliation, source, license_name,
+                                                                     license_text)
+        map_information_msg.map_id.CopyFrom(map_id_msg)
+        map_information_msg.file_information.CopyFrom(file_information_msg)
 
         return map_information_msg
 
@@ -334,20 +369,17 @@ class MapInformationMessage:
 class ScenarioInformationMessage:
 
     @classmethod
-    def create_message(cls, commonroad_version: str, benchmark_id: str, license_name: str, license_text: str,
+    def create_message(cls, scenario_id: ScenarioID, license_name: str, license_text: str,
                        author: str, affiliation: str, source: str, time_step_size: float) -> \
             scenario_meta_information_pb2.ScenarioMetaInformation:
         scenario_information_msg = scenario_meta_information_pb2.ScenarioMetaInformation()
-        scenario_information_msg.common_road_version = commonroad_version
-        scenario_information_msg.benchmark_id = benchmark_id
-        time_stamp_msg = TimeStampMessage.create_message(datetime.datetime.today())
-        scenario_information_msg.date.CopyFrom(time_stamp_msg)
-        scenario_information_msg.author = author
-        scenario_information_msg.affiliation = affiliation
-        scenario_information_msg.source = source
+        scenario_id_msg = ScenarioIDMessage.create_message(scenario_id)
+        scenario_information_msg.benchmark_id.CopyFrom(scenario_id_msg)
+        time = datetime.datetime.now()
+        file_information_msg = FileInformationMessage.create_message(Time(time.hour, time.minute, time.day, time.month, time.year),
+                                                  author, affiliation, source, license_name, license_text)
+        scenario_information_msg.file_information.CopyFrom(file_information_msg)
         scenario_information_msg.time_step_size = time_step_size
-        scenario_information_msg.license_name = license_name
-        scenario_information_msg.license_text = license_text
 
         return scenario_information_msg
 
@@ -355,20 +387,18 @@ class ScenarioInformationMessage:
 class DynamicInformationMessage:
 
     @classmethod
-    def create_message(cls, commonroad_version: str, benchmark_id: str, author: str, affiliation: str,
-                       source: str, time_step_size: float, license_name: str, license_text: str) -> \
+    def create_message(cls, scenario_id: ScenarioID, license_name: str, license_text: str,
+                       author: str, affiliation: str, source: str, time_step_size: float) -> \
             scenario_meta_information_pb2.ScenarioMetaInformation:
         dynamic_information_msg = scenario_meta_information_pb2.ScenarioMetaInformation()
-        dynamic_information_msg.common_road_version = commonroad_version
-        dynamic_information_msg.benchmark_id = benchmark_id
-        time_stamp_msg = TimeStampMessage.create_message(datetime.datetime.today())
-        dynamic_information_msg.date.CopyFrom(time_stamp_msg)
-        dynamic_information_msg.author = author
-        dynamic_information_msg.affiliation = affiliation
-        dynamic_information_msg.source = source
+        scenario_id_msg = ScenarioIDMessage.create_message(scenario_id)
+        dynamic_information_msg.benchmark_id.CopyFrom(scenario_id_msg)
+        time = datetime.datetime.today()
+        file_information_msg = FileInformationMessage.create_message(Time(time.hour, time.minute, time.day, time.month,
+                                                                          time.year), author, affiliation, source,
+                                                                     license_name, license_text)
+        dynamic_information_msg.file_information.CopyFrom(file_information_msg)
         dynamic_information_msg.time_step_size = time_step_size
-        dynamic_information_msg.license_name = license_name
-        dynamic_information_msg.license_text = license_text
 
         return dynamic_information_msg
 

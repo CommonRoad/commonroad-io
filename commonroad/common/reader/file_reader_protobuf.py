@@ -5,7 +5,7 @@ from typing import Tuple, List, Set, Union, Dict
 
 import numpy as np
 
-from commonroad.common.common_scenario import ScenarioMetaInformation
+from commonroad.common.common_scenario import ScenarioMetaInformation, FileInformation, MapMetaInformation
 from commonroad.common.reader.file_reader_interface import FileReaderScenario, FileReaderMap, \
     FileReaderDynamic
 from commonroad.common.util import Interval, AngleInterval, Path_T, Time
@@ -15,11 +15,11 @@ from commonroad.planning.planning_problem import PlanningProblem, CooperativePla
 from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction, SetBasedPrediction
 from commonroad.scenario.area import Area, AreaBorder, AreaType
 from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup
-from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, MapInformation, Bound
+from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, Bound
 from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, LaneletType
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, PhantomObstacle, \
     SignalState, ObstacleType, MetaInformationState
-from commonroad.scenario.scenario import Tag
+from commonroad.scenario.scenario import Tag, ScenarioID
 from commonroad.common.common_scenario import TimeOfDay, Weather, Underground, Environment, GeoTransformation, Location
 from commonroad.scenario.state import InitialState, TraceState, CustomState, SpecificStateClasses
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSignID, TrafficSign, TrafficSignValue
@@ -150,7 +150,7 @@ class CommonRoadMapFactory:
     @classmethod
     def create_from_message(cls, commonroad_map_msg: commonroad_map_pb2.CommonRoadMap) -> LaneletNetwork:
         map_information_msg = commonroad_map_msg.map_meta_information
-        map_information = ScenarioMapInformationFactory.create_from_message(map_information_msg)
+        map_information = MapMetaInformationFactory.create_from_message(map_information_msg)
         location_msg = commonroad_map_msg.location
         location = LocationFactory.create_from_message(location_msg)
         lanelet_network = LaneletNetwork(map_information, location)
@@ -213,41 +213,61 @@ class CommonRoadScenarioFactory:
         return scenario
 
 
-class ScenarioMapInformationFactory:
+class MapMetaInformationFactory:
     @classmethod
-    def create_from_message(cls, scenario_map_information_msg: commonroad_map_pb2.MapInformation) -> MapInformation:
-        common_road_version = scenario_map_information_msg.common_road_version
-        map_id = scenario_map_information_msg.map_id
-        date = TimeStampFactory.create_from_message(scenario_map_information_msg.date, cr_time=False)
-        author = scenario_map_information_msg.author
-        affiliation = scenario_map_information_msg.affiliation
-        source = scenario_map_information_msg.source
-        license_name = scenario_map_information_msg.license_name
-        map_information = MapInformation(common_road_version, map_id, date, author, affiliation, source, license_name)
-        if scenario_map_information_msg.HasField('license_text'):
-            map_information.license_text = scenario_map_information_msg.license_text
-        date = Time(date.hour, date.minute, date.day, date.month, date.year)
-        map_information.date = date
-        return map_information
+    def create_from_message(cls, map_meta_information_msg: commonroad_map_pb2.MapInformation) \
+            -> MapMetaInformation:
+        map_id = MapIDFactory.create_from_message(map_meta_information_msg.map_id)
+        file_information = FileInformationFactory.create_from_message(map_meta_information_msg.file_information)
+
+        return MapMetaInformation(map_id, file_information)
 
 
 class ScenarioMetaInformationFactory:
     @classmethod
     def create_from_message(cls, scenario_meta_information_msg: scenario_meta_information_pb2.ScenarioMetaInformation) \
             -> ScenarioMetaInformation:
-        common_road_version = scenario_meta_information_msg.common_road_version
-        benchmark_id = scenario_meta_information_msg.benchmark_id
-        license_name = scenario_meta_information_msg.license_name
-        license_text = ""
-        if scenario_meta_information_msg.HasField('license_text'):
-            license_text = scenario_meta_information_msg.license_text
-        date = TimeStampFactory.create_from_message(scenario_meta_information_msg.date, cr_time=False)
-        author = scenario_meta_information_msg.author
-        affiliation = scenario_meta_information_msg.affiliation
-        source = scenario_meta_information_msg.source
+        scenario_id = ScenarioIDFactory.create_from_message(scenario_meta_information_msg.benchmark_id)
+        file_information = FileInformationFactory.create_from_message(scenario_meta_information_msg.file_information)
         time_step_size = scenario_meta_information_msg.time_step_size
-        return ScenarioMetaInformation(common_road_version, benchmark_id, date, author, affiliation, source,
-                                       time_step_size, license_name, license_text)
+        return ScenarioMetaInformation(scenario_id, file_information, time_step_size)
+
+
+class ScenarioIDFactory:
+    @classmethod
+    def create_from_message(cls, scenario_id_msg: scenario_meta_information_pb2.ScenarioID) -> ScenarioID:
+        cooperative = scenario_id_msg.cooperative
+        scenario_id = MapIDFactory.create_from_message(scenario_id_msg.map_id)
+        configuration_id = scenario_id_msg.configuration_id
+        obstacle_behavior = scenario_id_msg.obstacle_behavior
+        prediction_id = scenario_id_msg.prediction_id
+        scenario_version = scenario_id_msg.scenario_version
+        return ScenarioID(cooperative, scenario_id.country_id, scenario_id.map_name, scenario_id.map_id,
+                          configuration_id, obstacle_behavior,
+                          prediction_id, scenario_version)
+
+
+class MapIDFactory:
+    @classmethod
+    def create_from_message(cls, map_msg: scenario_meta_information_pb2.MapID) -> ScenarioID:
+        return ScenarioID(country_id=map_msg.country_id, map_name=map_msg.map_name, map_id=map_msg.map_id)
+
+
+class FileInformationFactory:
+    @classmethod
+    def create_from_message(cls, file_information_msg: scenario_meta_information_pb2.FileInformation) \
+            -> FileInformation:
+        license_name = file_information_msg.license_name
+        if file_information_msg.HasField('license_text'):
+            license_text = file_information_msg.license_text
+        else:
+            license_text = None
+        date = TimeStampFactory.create_from_message(file_information_msg.date, cr_time=False)
+        author = file_information_msg.author
+        affiliation = file_information_msg.affiliation
+        source = file_information_msg.source
+
+        return FileInformation(date, author, affiliation, source, license_name, license_text)
 
 
 class ScenarioTagsFactory:

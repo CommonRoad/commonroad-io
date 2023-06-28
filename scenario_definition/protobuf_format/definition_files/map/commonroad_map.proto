@@ -2,23 +2,17 @@ syntax = "proto2";
 
 package commonroad_map;
 
-import "util.proto";
 import "location.proto";
 import "lanelet.proto";
 import "area.proto";
 import "traffic_sign.proto";
 import "traffic_light.proto";
 import "intersection.proto";
+import "scenario_meta_information.proto";
 
 message MapInformation {
-    required string common_road_version = 1;
-    required string map_id = 2;
-    required commonroad_common.TimeStamp date = 3;
-    required string author = 4;
-    required string affiliation = 5;
-    required string source = 6;
-    required string license_name = 7;
-    optional string license_text = 8;
+    required commonroad_common.MapID map_id = 1;
+    required commonroad_common.FileInformation file_information = 2;
 }
 
 message CommonRoadMap {

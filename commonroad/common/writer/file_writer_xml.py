@@ -25,7 +25,7 @@ from commonroad.scenario.traffic_light import TrafficLightDirection, TrafficLigh
     TrafficLightCycle
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import State
-from commonroad.common.writer.file_writer_interface import FileWriter, precision, OverwriteExistingFile
+from commonroad.common.writer.file_writer_interface import FileWriter, precision, OverwriteExistingFile, FileType
 
 logger = logging.getLogger(__name__)
 
@@ -191,7 +191,7 @@ class XMLFileWriter(FileWriter):
         :param check_validity: check xml file against .xsd definition
         :return:
         """
-        filename = self._handle_file_path(filename, overwrite_existing_file)
+        filename = self._handle_file_path(filename, overwrite_existing_file, FileType.DYNAMIC)
         if not filename:
             return
 

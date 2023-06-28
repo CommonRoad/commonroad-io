@@ -28,17 +28,19 @@ class TestXMLFileWriter(unittest.TestCase):
         self.xsd_path = \
             self.cwd_path + "/../../commonroad/common/xml_definition_files/XML_commonRoad_XSD.xsd"
         self.out_path = self.cwd_path + "/../.pytest_cache"
-        self.filename_read_1 = self.cwd_path + "/../test_scenarios/test_reading_intersection_traffic_sign.xml"
-        self.filename_read_2 = self.cwd_path + "/../test_scenarios/test_reading_all.xml"
-        self.filename_2018b = self.cwd_path + "/../test_scenarios/USA_Lanker-1_1_T-1.xml"
-        self.filename_invalid = self.cwd_path + "/../test_scenarios/test_writing_invalid.xml"
+        self.filename_read_1 = \
+            self.cwd_path + "/../test_scenarios/xml/ZAM_TestReadingIntersectionTrafficSign-1_1_T-1.xml"
+        self.filename_read_2 = self.cwd_path + "/../test_scenarios/xml/ZAM_TestReadingAll-1_1_T-1.xml"
+        self.filename_2018b = self.cwd_path + "/../test_scenarios/xml/USA_Lanker-1_1_T-1.xml"
+        self.filename_invalid = self.cwd_path + "/../test_scenarios/xml/ZAM_TestWritingInvalid-1_1_T-1.xml"
         handle_pytest_cache(self.out_path)
 
     def test_read_write_file(self):
         scenario_1, planning_problem_set_1 = CommonRoadFileReader(self.filename_read_1).open()
         filename = self.out_path + '/test_reading_intersection_traffic_sign.xml'
-        CommonRoadFileWriter(scenario_1, planning_problem_set_1, scenario_1.author, scenario_1.affiliation, 'test',
-                             scenario_1.tags, scenario_1.location) \
+        CommonRoadFileWriter(scenario_1, planning_problem_set_1, scenario_1.file_information.author,
+                             scenario_1.file_information.affiliation, 'test',
+                             scenario_1.tags, scenario_1.lanelet_network.location) \
             .write_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS,
                            check_validity=False)
 
@@ -46,15 +48,16 @@ class TestXMLFileWriter(unittest.TestCase):
 
         scenario_2, planning_problem_set_2 = CommonRoadFileReader(self.filename_read_2).open()
         filename = self.out_path + '/test_reading_all.xml'
-        CommonRoadFileWriter(scenario_2, planning_problem_set_2, scenario_2.author, scenario_2.affiliation, 'test',
-                             scenario_2.tags, scenario_2.location) \
+        CommonRoadFileWriter(scenario_2, planning_problem_set_2, scenario_2.file_information.author,
+                             scenario_2.file_information.affiliation, 'test',
+                             scenario_2.tags, scenario_2.lanelet_network.location) \
             .write_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS,
                            check_validity=False)
         assert self.validate_with_xsd(self.out_path + '/test_reading_all.xml')
 
     def test_write_scenario_without_location(self):
         scenario = Scenario(dt=0.1, author="Test", tags={Tag.URBAN}, affiliation="TUM", source="Test")
-        scenario.location = None
+        scenario.lanelet_network.location = None
 
         xml_file_path = self.out_path + '/' + str(scenario.scenario_id) + '.xml'
 
@@ -67,7 +70,7 @@ class TestXMLFileWriter(unittest.TestCase):
         scenario, planning_problem_set = CommonRoadFileReader(self.filename_2018b).open()
         filename = self.out_path + "/USA_Lanker-1_1_T-1.xml"
         CommonRoadFileWriter(scenario, planning_problem_set, scenario.author, scenario.affiliation,
-                             str(scenario.scenario_id), scenario.tags, scenario.location).write_to_file(
+                             str(scenario.scenario_id), scenario.tags, scenario.lanelet_network.location).write_to_file(
             filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS, check_validity=True)
 
         assert self.validate_with_xsd(self.out_path + "/USA_Lanker-1_1_T-1.xml")
@@ -381,10 +384,10 @@ class TestProtobufFileWriter(unittest.TestCase):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
         self.out_path = self.cwd_path + "/../.pytest_cache"
 
-        self.filename_carcarana_xml = self.cwd_path + "/../test_scenarios/ARG_Carcarana-4_5_T-1.xml"
-        self.filename_starnberg_xml = self.cwd_path + "/../test_scenarios/DEU_Starnberg-1_1_T-1.xml"
-        self.filename_anglet_xml = self.cwd_path + "/../test_scenarios/FRA_Anglet-1_1_T-1.xml"
-        self.filename_all_xml = self.cwd_path + "/../test_scenarios/test_reading_all.xml"
+        self.filename_carcarana_xml = self.cwd_path + "/../test_scenarios/xml/ARG_Carcarana-4_5_T-1.xml"
+        self.filename_starnberg_xml = self.cwd_path + "/../test_scenarios/xml/DEU_Starnberg-1_1_T-1.xml"
+        self.filename_anglet_xml = self.cwd_path + "/../test_scenarios/xml/FRA_Anglet-1_1_T-1.xml"
+        self.filename_all_xml = self.cwd_path + "/../test_scenarios/xml/ZAM_TestReadingAll-1_1_T-1.xml"
 
         handle_pytest_cache(self.out_path)
 
