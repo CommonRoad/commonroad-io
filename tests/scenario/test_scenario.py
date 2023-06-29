@@ -93,9 +93,9 @@ class TestScenario(unittest.TestCase):
         self.lanelet_network.add_intersection(self.intersection)
 
         self.environment = Environment(Time(12, 15), TimeOfDay.NIGHT, Weather.SNOW, Underground.ICE)
-        self.location = Location(geo_name_id=123, gps_latitude=456, gps_longitude=789, environment=self.environment)
+        self.location = Location(geo_name_id=123, gps_latitude=456, gps_longitude=789)
 
-        self.scenario = Scenario(0.1, location=self.location)
+        self.scenario = Scenario(0.1)
 
     def test_add_objects(self):
         expected_id_static_obs = self.static_obs.obstacle_id
@@ -572,9 +572,9 @@ class TestScenario(unittest.TestCase):
         self.assertEqual(exp_states_time_one[0].position[1],
                          self.scenario.obstacle_states_at_time_step(1)[0].position[1])
 
-    def test_location(self):
-        self.environment = Environment(Time(12, 15), TimeOfDay.NIGHT, Weather.SNOW, Underground.ICE)
-        self.location = Location(geo_name_id=123, gps_latitude=456, gps_longitude=789, environment=self.environment)
+    def test_location_and_environment(self):
+        self.scenario.environment = Environment(Time(12, 15), TimeOfDay.NIGHT, Weather.SNOW, Underground.ICE)
+        self.scenario.lanelet_network.location = Location(geo_name_id=123, gps_latitude=456, gps_longitude=789)
         exp_geo_name_id = 123
         exp_gps_latitude = 456
         exp_gps_longitude = 789
@@ -587,11 +587,11 @@ class TestScenario(unittest.TestCase):
         self.assertEqual(exp_geo_name_id, self.scenario.lanelet_network.location.geo_name_id)
         self.assertEqual(exp_gps_latitude, self.scenario.lanelet_network.location.gps_latitude)
         self.assertEqual(exp_gps_longitude, self.scenario.lanelet_network.location.gps_longitude)
-        self.assertEqual(exp_env_time_hours, self.scenario.lanelet_network.location.environment.time.hours)
-        self.assertEqual(exp_env_time_min, self.scenario.lanelet_network.location.environment.time.minutes)
-        self.assertEqual(exp_env_time_of_day, self.scenario.lanelet_network.location.environment.time_of_day)
-        self.assertEqual(exp_env_weather, self.scenario.lanelet_network.location.environment.weather)
-        self.assertEqual(exp_env_underground, self.scenario.lanelet_network.location.environment.underground)
+        self.assertEqual(exp_env_time_hours, self.scenario.environment.time.hours)
+        self.assertEqual(exp_env_time_min, self.scenario.environment.time.minutes)
+        self.assertEqual(exp_env_time_of_day, self.scenario.environment.time_of_day)
+        self.assertEqual(exp_env_weather, self.scenario.environment.weather)
+        self.assertEqual(exp_env_underground, self.scenario.environment.underground)
 
     def test_assign_vehicles(self):
         states = list()
@@ -797,37 +797,30 @@ class TestScenarioID(unittest.TestCase):
 class TestLocation(unittest.TestCase):
     def test_equality(self):
         geo_transformation = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.4)
-        environment = Environment(Time(8, 30), TimeOfDay.MORNING, Weather.CLEAR, Underground.CLEAN)
-        location_1 = Location(123, 456, 789, geo_transformation, environment)
-        location_2 = Location(123, 456, 789, geo_transformation, environment)
+        location_1 = Location(123, 456, 789, geo_transformation)
+        location_2 = Location(123, 456, 789, geo_transformation)
         self.assertTrue(location_1 == location_2)
 
-        location_2 = Location(321, 456, 789, geo_transformation, environment)
+        location_2 = Location(321, 456, 789, geo_transformation)
         self.assertFalse(location_1 == location_2)
 
-        location_2 = Location(123, 654, 789, geo_transformation, environment)
+        location_2 = Location(123, 654, 789, geo_transformation)
         self.assertFalse(location_1 == location_2)
 
-        location_2 = Location(123, 456, 987, geo_transformation, environment)
+        location_2 = Location(123, 456, 987, geo_transformation)
         self.assertFalse(location_1 == location_2)
 
         geo_transformation = GeoTransformation('4321', 1.1, 1.2, 1.3, 1.4)
-        location_2 = Location(123, 456, 789, geo_transformation, environment)
-        self.assertFalse(location_1 == location_2)
-
-        geo_transformation = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.4)
-        environment = Environment(Time(8, 30), TimeOfDay.MORNING, Weather.CLEAR, Underground.DIRTY)
-        location_2 = Location(123, 456, 789, geo_transformation, environment)
+        location_2 = Location(123, 456, 789, geo_transformation)
         self.assertFalse(location_1 == location_2)
 
     def test_hash(self):
         geo_transformation = GeoTransformation('1234', 1.1, 1.2, 1.3, 1.4)
-        environment = Environment(Time(8, 30), TimeOfDay.MORNING, Weather.CLEAR, Underground.CLEAN)
-        location_1 = Location(123, 456, 789, geo_transformation, environment)
-        location_2 = Location(123, 456, 789, geo_transformation, environment)
+        location_1 = Location(123, 456, 789, geo_transformation)
+        location_2 = Location(123, 456, 789, geo_transformation)
         self.assertEqual(hash(location_1), hash(location_2))
 
-        location_2 = Location(123, 457, 789, geo_transformation, environment)
+        location_2 = Location(123, 457, 789, geo_transformation)
         self.assertNotEqual(hash(location_1), hash(location_2))
 
 
