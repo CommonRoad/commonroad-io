@@ -2,7 +2,7 @@ syntax = "proto2";
 
 package commonroad_map;
 
-import "lanelet.proto";
+import "commonroad/common/pb_scripts/map/lanelet.proto";
 
 
 message AreaTypeEnum {

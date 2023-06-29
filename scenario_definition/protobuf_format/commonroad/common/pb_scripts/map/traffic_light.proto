@@ -2,8 +2,8 @@ syntax = "proto2";
 
 package commonroad_map;
 
-import "util.proto";
-import "traffic_light_state.proto";
+import "commonroad/common/pb_scripts/common/util.proto";
+import "commonroad/common/pb_scripts/common/traffic_light_state.proto";
 
 message TrafficLightDirectionEnum {
     enum TrafficLightDirection {

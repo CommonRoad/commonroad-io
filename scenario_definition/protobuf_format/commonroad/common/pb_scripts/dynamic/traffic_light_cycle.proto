@@ -2,7 +2,7 @@ syntax = "proto2";
 
 package commonroad_dynamic;
 
-import "traffic_light_state.proto";
+import "commonroad/common/pb_scripts/common/traffic_light_state.proto";
 
 message CycleElement {
     required uint32 duration = 1;

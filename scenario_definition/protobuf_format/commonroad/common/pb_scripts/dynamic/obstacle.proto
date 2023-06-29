@@ -2,8 +2,8 @@ syntax = "proto2";
 
 package commonroad_dynamic;
 
-import "util.proto";
-import "state.proto";
+import "commonroad/common/pb_scripts/common/util.proto";
+import "commonroad/common/pb_scripts/common/state.proto";
 
 message ObstacleTypeEnum {
     enum ObstacleType {

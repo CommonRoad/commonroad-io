@@ -2,8 +2,8 @@ syntax = "proto2";
 
 package commonroad_scenario;
 
-import "state.proto";
-import "scenario_tags.proto";
+import "commonroad/common/pb_scripts/common/state.proto";
+import "commonroad/common/pb_scripts/scenario/scenario_tags.proto";
 
 message GoalState {
     required commonroad_common.State state = 1;

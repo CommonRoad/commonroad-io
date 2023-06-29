@@ -2,8 +2,8 @@ syntax = "proto2";
 
 package commonroad_map;
 
-import "util.proto";
-import "traffic_sign_element.proto";
+import "commonroad/common/pb_scripts/common/util.proto";
+import "commonroad/common/pb_scripts/common/traffic_sign_element.proto";
 
 message TrafficSign {
     required uint32  traffic_sign_id = 1;

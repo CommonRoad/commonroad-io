@@ -2,13 +2,13 @@ syntax = "proto2";
 
 package commonroad_map;
 
-import "location.proto";
-import "lanelet.proto";
-import "area.proto";
-import "traffic_sign.proto";
-import "traffic_light.proto";
-import "intersection.proto";
-import "scenario_meta_information.proto";
+import "commonroad/common/pb_scripts/map/location.proto";
+import "commonroad/common/pb_scripts/map/lanelet.proto";
+import "commonroad/common/pb_scripts/map/area.proto";
+import "commonroad/common/pb_scripts/map/traffic_sign.proto";
+import "commonroad/common/pb_scripts/map/traffic_light.proto";
+import "commonroad/common/pb_scripts/map/intersection.proto";
+import "commonroad/common/pb_scripts/common/scenario_meta_information.proto";
 
 message MapInformation {
     required commonroad_common.MapID map_id = 1;

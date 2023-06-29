@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+package commonroad_dynamic;
+
+import "commonroad/common/pb_scripts/dynamic/environment.proto";
+import "commonroad/common/pb_scripts/dynamic/traffic_sign_value.proto";
+import "commonroad/common/pb_scripts/dynamic/traffic_light_cycle.proto";
+import "commonroad/common/pb_scripts/dynamic/static_obstacle.proto";
+import "commonroad/common/pb_scripts/dynamic/dynamic_obstacle.proto";
+import "commonroad/common/pb_scripts/dynamic/environment_obstacle.proto";
+import "commonroad/common/pb_scripts/dynamic/phantom_obstacle.proto";
+import "commonroad/common/pb_scripts/common/scenario_meta_information.proto";
+
+
+message CommonRoadDynamic {
+    required commonroad_common.ScenarioMetaInformation dynamic_meta_information = 1;
+    required Environment environment = 2;
+    repeated TrafficLightCycle traffic_light_cycle = 3;
+    repeated TrafficSignValue traffic_sign_value = 4;
+    repeated StaticObstacle static_obstacles = 5;
+    repeated DynamicObstacle dynamic_obstacles = 6;
+    repeated EnvironmentObstacle environment_obstacles = 7;
+    repeated PhantomObstacle phantom_obstacles = 8;
+}

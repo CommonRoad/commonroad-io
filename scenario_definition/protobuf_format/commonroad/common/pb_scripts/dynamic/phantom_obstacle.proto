@@ -2,7 +2,7 @@ syntax = "proto2";
 
 package commonroad_dynamic;
 
-import "obstacle.proto";
+import "commonroad/common/pb_scripts/dynamic/obstacle.proto";
 
 message PhantomObstacle {
     required uint32 obstacle_id = 1;

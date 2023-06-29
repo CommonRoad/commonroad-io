@@ -2,8 +2,8 @@ syntax = "proto2";
 
 package commonroad_scenario;
 
-import "planning_problem.proto";
-import "scenario_meta_information.proto";
+import "commonroad/common/pb_scripts/scenario/planning_problem.proto";
+import "commonroad/common/pb_scripts/common/scenario_meta_information.proto";
 
 message CommonRoadScenario {
     required commonroad_common.ScenarioMetaInformation scenario_meta_information = 1;

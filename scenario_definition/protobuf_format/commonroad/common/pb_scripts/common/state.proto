@@ -2,7 +2,7 @@ syntax = "proto2";
 
 package commonroad_common;
 
-import "util.proto";
+import "commonroad/common/pb_scripts/common/util.proto";
 
 message State {
     oneof position {

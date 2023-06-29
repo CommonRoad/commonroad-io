@@ -2,8 +2,8 @@ syntax = "proto2";
 
 package commonroad_dynamic;
 
-import "obstacle.proto";
-import "util.proto";
+import "commonroad/common/pb_scripts/dynamic/obstacle.proto";
+import "commonroad/common/pb_scripts/common/util.proto";
 
 message EnvironmentObstacle {
     required uint32 environment_obstacle_id = 1;
