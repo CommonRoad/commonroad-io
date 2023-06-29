@@ -35,7 +35,7 @@ class FileWriter(ABC):
     Interface for writing CommonRoad files in a specific format.
     """
 
-    def __init__(self, scenario: Scenario, planning_problem_set: Optional[PlanningProblemSet],
+    def __init__(self, scenario: Scenario, planning_problem_set: Optional[PlanningProblemSet] = None,
                  author: Optional[str] = None,
                  affiliation: Optional[str] = None, source: Optional[str] = None, tags: Optional[Set[Tag]] = None,
                  decimal_precision: int = 4):
