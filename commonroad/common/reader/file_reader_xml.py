@@ -212,7 +212,9 @@ class ScenarioFactory:
         scenario.lanelet_network.meta_information.file_information = file_information
         scenario.lanelet_network.location = location
         scenario.environment = environment
-        scenario.lanelet_network.meta_information.scenario_id = scenario_id
+        scenario.lanelet_network.meta_information.scenario_id = ScenarioID(country_id=scenario.scenario_id.country_id,
+                                                                           map_name=scenario.scenario_id.map_name,
+                                                                           map_id=scenario.scenario_id.map_id)
         if commonroad_version == '2018b':
             large_num = 10000
             scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network, lanelet_assignment))

@@ -899,7 +899,7 @@ class TestProtobufFileReader(unittest.TestCase):
 
         #  ST State
         self.filename_st_xml = self.cwd_path + "/../test_scenarios/ZAM_TestReadingStState-1_1_T-1.xml"
-        self.filename_st_map_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingStState-1_1_T-1.pb"
+        self.filename_st_map_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingStState-1.pb"
         self.filename_st_scenario_pb = \
             self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingStState-1_1_T-1-SC.pb"
         self.filename_st_dynamic_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingStState-1_1_T-1.pb"
@@ -1162,6 +1162,7 @@ def read_compare_old_scenario_new_dynamic_map(xml_file_path: str, pb_map_file_pa
         scenario_xml.lanelet_network.meta_information.file_information.date
     scenario_xml.lanelet_network.location = map_pb.location
     scenario_xml.tags = map_dynamic_pb.tags
+    map_dynamic_pb.file_information = scenario_xml.file_information
 
     # Environment is not a part of the location in the new format
     scenario_xml.environment = None
@@ -1197,6 +1198,8 @@ def read_compare_old_scenario_new_all(xml_file_path: str, pb_map_file_path: str,
 
     scenario_pb.lanelet_network.meta_information.file_information.date = \
         scenario_xml.lanelet_network.meta_information.file_information.date
+    scenario_pb.file_information.date = \
+        scenario_xml.file_information.date
 
     scenario_xml.lanelet_network.location = scenario_pb.lanelet_network.location
 
@@ -1212,13 +1215,6 @@ def read_compare_old_scenario_new_all(xml_file_path: str, pb_map_file_path: str,
         if ll.stop_line is not None:
             ll.stop_line.traffic_light_ref = None
             ll.stop_line.traffic_sign_ref = None
-
-    #  Line_marking_left and line_marking_right vertices got removed from boundary so for now just equalize them
-    for i in range(0, len(scenario_xml.lanelet_network.lanelets)):
-        scenario_xml.lanelet_network.lanelets[i].line_marking_left_vertices = scenario_pb.lanelet_network.lanelets[
-            i].line_marking_left_vertices
-        scenario_xml.lanelet_network.lanelets[i].line_marking_right_vertices = scenario_pb.lanelet_network.lanelets[
-            i].line_marking_right_vertices
 
     return scenario_xml == scenario_pb and planning_problems == planning_problems_pb
 

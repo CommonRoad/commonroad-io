@@ -273,7 +273,7 @@ def combine_preloaded_(road_network: LaneletNetwork, dynamic_interface: DynamicI
     scenario.author = scenario_interface.scenario_meta_information.file_information.author
     scenario.affiliation = scenario_interface.scenario_meta_information.file_information.affiliation
     scenario.source = scenario_interface.scenario_meta_information.file_information.source
-    scenario.lanelet_network.location = road_network.location
+    scenario.file_information = scenario_interface.scenario_meta_information.file_information
 
     # Get planning problem set and cooperative planning problems from the scenario_interface
     planning_problem_set = PlanningProblemSet(scenario_interface.planning_problems)

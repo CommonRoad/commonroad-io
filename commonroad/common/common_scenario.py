@@ -277,8 +277,8 @@ class MapMetaInformation:
         self._file_information = file_information
 
     def __eq__(self, other):
-        if not isinstance(other, ScenarioMetaInformation):
-            warnings.warn(f"Inequality between ScenarioMetaInformation {repr(self)} and different type {type(other)}")
+        if not isinstance(other, MapMetaInformation):
+            warnings.warn(f"Inequality between MapMetaInformation {repr(self)} and different type {type(other)}")
             return False
 
         return self._scenario_id == other.scenario_id and self._file_information == other.file_information

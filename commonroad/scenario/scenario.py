@@ -105,10 +105,8 @@ class Scenario(IDrawable):
             self.dynamic_obstacles == other.dynamic_obstacles and \
             self.environment_obstacle == other.environment_obstacle and \
             self.phantom_obstacle == other.phantom_obstacle and \
-            self._file_information.author == other._file_information.author and \
-            self.tags == other.tags and \
-            self._file_information.affiliation == other._file_information.affiliation and \
-            self._file_information.source == other._file_information.source
+            self.file_information == other._file_information and \
+            self.tags == other.tags
 
         return scenario_eq
 
