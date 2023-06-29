@@ -34,8 +34,8 @@ class TestVisualizationV2(unittest.TestCase):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
         full_path = os.path.dirname(os.path.abspath(__file__))
         self.out_path = self.cwd_path + "/../.pytest_cache"
-        self.ngsim_scen_1 = full_path + '/../test_scenarios/USA_Peach-4_8_T-1.xml'
-        self.ngsim_scen_2 = full_path + '/../test_scenarios/USA_US101-4_1_T-1.xml'
+        self.ngsim_scen_1 = full_path + '/../test_scenarios/xml/USA_Peach-4_8_T-1.xml'
+        self.ngsim_scen_2 = full_path + '/../test_scenarios/xml/USA_US101-4_1_T-1.xml'
         if not os.path.isdir(self.out_path):
             os.makedirs(self.out_path)
         else:
@@ -152,7 +152,7 @@ class TestVisualizationV2(unittest.TestCase):
         # print(full_path)
         # filename = full_path +
         # '/../../../../../scenarios/cooperative/C-USA_Lanker-2_4_T-1.xml'
-        filename = full_path + '/../test_scenarios/ZAM_TestReadingAll-1_1_T-1.xml'
+        filename = full_path + '/../test_scenarios/xml/ZAM_TestReadingAll-1_1_T-1.xml'
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         planning_problem_set: PlanningProblemSet = planning_problem_set
 

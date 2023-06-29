@@ -27,7 +27,7 @@ class TestUncertainStates(unittest.TestCase):
 
     def test_draw(self):
         full_path = os.path.dirname(os.path.abspath(__file__))
-        scenario_path = full_path + "/../test_scenarios/DEU_A9-3_1_T-1.xml"
+        scenario_path = full_path + "/../test_scenarios/xml/DEU_A9-3_1_T-1.xml"
         scenario, _ = CommonRoadFileReader(scenario_path).open()
         plot_limits = approximate_bounding_box_dyn_obstacles(
                 scenario.dynamic_obstacles, 0)
