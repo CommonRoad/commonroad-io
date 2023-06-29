@@ -2,7 +2,7 @@ import logging
 import re
 from abc import ABC
 from collections import defaultdict
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional
 from xml.etree import ElementTree
 
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
@@ -19,7 +19,7 @@ from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicOb
     SignalState, PhantomObstacle
 from commonroad.scenario.scenario import Scenario, Tag, ScenarioID
 from commonroad.common.common_scenario import TimeOfDay, Weather, Underground, Environment,  GeoTransformation, \
-    Location, FileInformation, MapMetaInformation
+    Location, FileInformation
 from commonroad.scenario.state import InitialState, TraceState, CustomState, SpecificStateClasses
 from commonroad.scenario.traffic_sign import *
 from commonroad.scenario.traffic_light import *
@@ -197,20 +197,21 @@ class ScenarioFactory:
         """
         if commonroad_version != '2018b':
             meta_data["tags"] = TagsFactory.create_from_xml_node(xml_node)
-            location = LocationFactory.create_from_xml_node(xml_node)
+            location, environment = LocationFactory.create_from_xml_node(xml_node)
         else:
-            location = None
+            location = Location()
+            environment = None
             LaneletFactory._speed_limits = {}
 
         scenario_id = ScenarioID.from_benchmark_id(benchmark_id, commonroad_version)
-        file_information = FileInformation(author=meta_data["author"],
-                                                             affiliation=meta_data["affiliation"],
-                                                             source=meta_data["source"])
+        file_information = FileInformation(author=meta_data["author"], affiliation=meta_data["affiliation"],
+                                           source=meta_data["source"])
         scenario = Scenario(dt, scenario_id, file_information, meta_data["tags"])
-        scenario.lanelet_network.location = location
 
         scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
         scenario.lanelet_network.meta_information.file_information = file_information
+        scenario.lanelet_network.location = location
+        scenario.environment = environment
         scenario.lanelet_network.meta_information.scenario_id = scenario_id
         if commonroad_version == '2018b':
             large_num = 10000
@@ -301,7 +302,7 @@ class TagsFactory:
 class LocationFactory:
     """ Class to create a location from an XML element."""
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Union[Location, None]:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Tuple[Location, Optional[Environment]]:
         """
         :param xml_node: XML element
         :return: location object
@@ -322,9 +323,9 @@ class LocationFactory:
             else:
                 environment = None
 
-            return Location(geo_name_id, gps_latitude, gps_longitude, geo_transformation, environment)
+            return Location(geo_name_id, gps_latitude, gps_longitude, geo_transformation), environment
         else:
-            return None
+            return Location(), None
 
 
 class GeoTransformationFactory:

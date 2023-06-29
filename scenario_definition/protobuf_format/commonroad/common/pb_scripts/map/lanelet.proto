@@ -72,8 +72,8 @@ message Lanelet {
     required int32 right_bound = 3;
     optional bool left_bound_reverse = 4;
     optional bool right_bound_reverse = 5;
-    optional uint32 left_bound_line_marking = 6;
-    optional uint32 right_bound_line_marking = 7;
+    optional LineMarkingEnum.LineMarking left_bound_line_marking = 6;
+    optional LineMarkingEnum.LineMarking right_bound_line_marking = 7;
     repeated uint32 predecessors = 8;
     repeated uint32 successors = 9;
     optional uint32 adjacent_left = 10;

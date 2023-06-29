@@ -120,9 +120,8 @@ class XMLFileWriter(FileWriter):
         pass
 
     def __init__(self, scenario: Scenario, planning_problem_set: PlanningProblemSet, author: str = None,
-                 affiliation: str = None, source: str = None, tags: Set[Tag] = None, location: Location = None,
-                 decimal_precision: int = 4):
-        super().__init__(scenario, planning_problem_set, author, affiliation, source, tags, location, decimal_precision)
+                 affiliation: str = None, source: str = None, tags: Set[Tag] = None, decimal_precision: int = 4):
+        super().__init__(scenario, planning_problem_set, author, affiliation, source, tags, decimal_precision)
 
         self._root_node = etree.Element('commonRoad')
 
@@ -151,11 +150,11 @@ class XMLFileWriter(FileWriter):
         self._root_node.set('date', datetime.datetime.today().strftime('%Y-%m-%d'))
 
     def _add_all_objects_from_scenario(self):
-        if self.location is not None:
-            self._root_node.append(LocationXMLNode.create_node(self.location))
-        else:
-            self._root_node.append(LocationXMLNode.create_node(Location()))
-            logger.warning("Default location will be written to xml!")
+        location = \
+            self.scenario.lanelet_network.location if self.scenario.lanelet_network.location is not None else Location()
+        environment = self.scenario.environment if self.scenario.environment is not None else None
+        self._root_node.append(LocationXMLNode.create_node(location, environment))
+
         self._root_node.append(TagXMLNode.create_node(self.tags))
         for let in self.scenario.lanelet_network.lanelets:
             self._root_node.append(LaneletXMLNode.create_node(let))
@@ -270,10 +269,11 @@ class XMLFileWriter(FileWriter):
 
 class LocationXMLNode:
     @classmethod
-    def create_node(cls, location: Location) -> etree.Element:
+    def create_node(cls, location: Location, environment: Environment) -> etree.Element:
         """
         Create XML-Node for a location
         :param location: location object
+        :param environment: Scenario environment, e.g., weather
         :return: node
         """
         location_node = etree.Element('location')
@@ -288,8 +288,8 @@ class LocationXMLNode:
         location_node.append(gps_longitude_node)
         if location.geo_transformation is not None:
             location_node.append(GeoTransformationXMLNode.create_node(location.geo_transformation))
-        if location.environment is not None:
-            location_node.append(EnvironmentXMLNode.create_node(location.environment))
+        if environment is not None:
+            location_node.append(EnvironmentXMLNode.create_node(environment))
 
         return location_node
 

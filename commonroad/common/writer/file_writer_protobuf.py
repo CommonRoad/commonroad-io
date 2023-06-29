@@ -100,13 +100,10 @@ class ProtobufFileWriter(FileWriter):
         """
         Stores all information about 2023 Scenario as protobuf message.
         """
-        scenario_info_msg = ScenarioInformationMessage.create_message(self.scenario.scenario_id,
-         self.scenario.file_information.license_name,
-         self.scenario.file_information.license_text,
-         self._author,
-         self._affiliation,
-         self._source,
-         self.scenario.dt)
+        scenario_info_msg = ScenarioInformationMessage.create_message(
+                self.scenario.scenario_id, self.scenario.file_information.license_name,
+                self.scenario.file_information.license_text, self._author, self._affiliation, self._source,
+                self.scenario.dt)
 
         self._commonroad_scenario_msg.scenario_meta_information.CopyFrom(scenario_info_msg)
 
@@ -114,8 +111,10 @@ class ProtobufFileWriter(FileWriter):
         """
         Stores all scenario objects that correspond to the map as protobuf message.
         """
-
-        location_msg = LocationMessage.create_message(self.scenario.lanelet_network.location)
+        if self.scenario.lanelet_network.location is not None:
+            location_msg = LocationMessage.create_message(self.scenario.lanelet_network.location)
+        else:
+            location_msg = LocationMessage.create_message(Location())
         self._commonroad_map_msg.location.CopyFrom(location_msg)
 
         for lanelet in self.scenario.lanelet_network.lanelets:
@@ -376,7 +375,8 @@ class ScenarioInformationMessage:
         scenario_id_msg = ScenarioIDMessage.create_message(scenario_id)
         scenario_information_msg.benchmark_id.CopyFrom(scenario_id_msg)
         time = datetime.datetime.now()
-        file_information_msg = FileInformationMessage.create_message(Time(time.hour, time.minute, time.day, time.month, time.year),
+        file_information_msg = \
+            FileInformationMessage.create_message(Time(time.hour, time.minute, time.day, time.month, time.year),
                                                   author, affiliation, source, license_name, license_text)
         scenario_information_msg.file_information.CopyFrom(file_information_msg)
         scenario_information_msg.time_step_size = time_step_size
@@ -520,6 +520,11 @@ class LaneletMessage:
                 lanelet_msg.adjacent_left_opposite_dir = False
             else:
                 lanelet_msg.adjacent_left_opposite_dir = True
+
+        lanelet_msg.left_bound_line_marking = \
+            lanelet_pb2.LineMarkingEnum.LineMarking.Value(lanelet.line_marking_left_vertices.name)
+        lanelet_msg.right_bound_line_marking = \
+            lanelet_pb2.LineMarkingEnum.LineMarking.Value(lanelet.line_marking_right_vertices.name)
 
         if lanelet.adj_right_same_direction is not None:
             if lanelet.adj_right_same_direction:

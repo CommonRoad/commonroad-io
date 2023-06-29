@@ -16,7 +16,7 @@ from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
 from commonroad.common.common_lanelet import LineMarking, LaneletType
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario, Tag, ScenarioID
-from commonroad.common.common_scenario import Location
+from commonroad.common.common_scenario import Location, FileInformation
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import KSState, InitialState
 
@@ -32,31 +32,32 @@ class TestXMLFileWriter(unittest.TestCase):
             self.cwd_path + "/../test_scenarios/xml/ZAM_TestReadingIntersectionTrafficSign-1_1_T-1.xml"
         self.filename_read_2 = self.cwd_path + "/../test_scenarios/xml/ZAM_TestReadingAll-1_1_T-1.xml"
         self.filename_2018b = self.cwd_path + "/../test_scenarios/xml/USA_Lanker-1_1_T-1.xml"
-        self.filename_invalid = self.cwd_path + "/../test_scenarios/xml/ZAM_TestWritingInvalid-1_1_T-1.xml"
+        self.filename_invalid = self.cwd_path + "/../test_scenarios/xml/ZAM_WritingInvalid-1_1_T-1.xml"
         handle_pytest_cache(self.out_path)
 
     def test_read_write_file(self):
         scenario_1, planning_problem_set_1 = CommonRoadFileReader(self.filename_read_1).open()
-        filename = self.out_path + '/test_reading_intersection_traffic_sign.xml'
+        filename = self.out_path + '/ZAM_TestReadingIntersectionTrafficSign-1_1_T-1.xml'
         CommonRoadFileWriter(scenario_1, planning_problem_set_1, scenario_1.file_information.author,
                              scenario_1.file_information.affiliation, 'test',
-                             scenario_1.tags, scenario_1.lanelet_network.location) \
+                             scenario_1.tags, scenario_1.lanelet_network.location, file_format=FileFormat.XML) \
             .write_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS,
                            check_validity=False)
 
-        assert self.validate_with_xsd(self.out_path + '/test_reading_intersection_traffic_sign.xml')
+        assert self.validate_with_xsd(self.out_path + '/ZAM_TestReadingIntersectionTrafficSign-1_1_T-1.xml')
 
         scenario_2, planning_problem_set_2 = CommonRoadFileReader(self.filename_read_2).open()
-        filename = self.out_path + '/test_reading_all.xml'
+        filename = self.out_path + '/ZAM_TestReadingAll-1_1_T-1.xml'
         CommonRoadFileWriter(scenario_2, planning_problem_set_2, scenario_2.file_information.author,
                              scenario_2.file_information.affiliation, 'test',
-                             scenario_2.tags, scenario_2.lanelet_network.location) \
+                             scenario_2.tags, scenario_2.lanelet_network.location, file_format=FileFormat.XML) \
             .write_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS,
                            check_validity=False)
-        assert self.validate_with_xsd(self.out_path + '/test_reading_all.xml')
+        assert self.validate_with_xsd(self.out_path + '/ZAM_TestReadingAll-1_1_T-1.xml')
 
     def test_write_scenario_without_location(self):
-        scenario = Scenario(dt=0.1, author="Test", tags={Tag.URBAN}, affiliation="TUM", source="Test")
+        file_information = FileInformation(author="Test", affiliation="TUM", source="Test")
+        scenario = Scenario(dt=0.1, tags={Tag.URBAN}, file_information=file_information)
         scenario.lanelet_network.location = None
 
         xml_file_path = self.out_path + '/' + str(scenario.scenario_id) + '.xml'
@@ -69,8 +70,10 @@ class TestXMLFileWriter(unittest.TestCase):
     def test_read_write_2018b_file(self):
         scenario, planning_problem_set = CommonRoadFileReader(self.filename_2018b).open()
         filename = self.out_path + "/USA_Lanker-1_1_T-1.xml"
-        CommonRoadFileWriter(scenario, planning_problem_set, scenario.author, scenario.affiliation,
-                             str(scenario.scenario_id), scenario.tags, scenario.lanelet_network.location).write_to_file(
+        CommonRoadFileWriter(scenario, planning_problem_set, scenario.file_information.author,
+                             scenario.file_information.affiliation,
+                             str(scenario.scenario_id), scenario.tags, scenario.lanelet_network.location,
+                             file_format=FileFormat.XML).write_to_file(
             filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS, check_validity=True)
 
         assert self.validate_with_xsd(self.out_path + "/USA_Lanker-1_1_T-1.xml")
@@ -99,12 +102,7 @@ class TestXMLFileWriter(unittest.TestCase):
         traj_pred = TrajectoryPrediction(trajectory, rectangle)
 
         static_obs = StaticObstacle(3, ObstacleType("unknown"), obstacle_shape=circ, initial_state=init_state)
-        dyn_set_obs = DynamicObstacle(1, ObstacleType("unknown"),
-                                      initial_state=traj_pred.trajectory.state_at_time_step(0), prediction=set_pred,
-                                      obstacle_shape=rectangle)
-        dyn_traj_obs = DynamicObstacle(2, ObstacleType("unknown"),
-                                       initial_state=traj_pred.trajectory.state_at_time_step(0), prediction=traj_pred,
-                                       obstacle_shape=rectangle)
+
         lanelet1 = Lanelet(np.array([[12345.12, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                            np.array([[0.0, 2], [1.0, 2], [2, 2]]), 100, [101], [101], 101, False, 101, True,
                            LineMarking.DASHED, LineMarking.SOLID, lanelet_type={LaneletType.URBAN})
@@ -128,20 +126,20 @@ class TestXMLFileWriter(unittest.TestCase):
         location = Location(2867714, 48.262333, 11.668775, None)
 
         CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', {Tag.URBAN},
-                             location).write_to_file(filename=filename,
+                             location, file_format=FileFormat.XML).write_to_file(filename=filename,
                                                      overwrite_existing_file=OverwriteExistingFile.ALWAYS)
         assert self.validate_with_xsd(self.out_path + '/test_writing_shapes.xml')
 
         # test overwriting
         CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', {Tag.URBAN},
-                             location).write_to_file(filename=filename,
-                                                     overwrite_existing_file=OverwriteExistingFile.SKIP)
+                             location, file_format=FileFormat.XML).write_to_file(
+                filename=filename, overwrite_existing_file=OverwriteExistingFile.SKIP)
         CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', {Tag.URBAN},
-                             location).write_to_file(filename=filename,
-                                                     overwrite_existing_file=OverwriteExistingFile.ALWAYS)
+                             location, file_format=FileFormat.XML).write_to_file(
+                filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS)
         CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM_no_problem', 'TU Munich', 'test', {Tag.URBAN},
-                             location).write_scenario_to_file(filename=filename,
-                                                              overwrite_existing_file=OverwriteExistingFile.ALWAYS)
+                             location, file_format=FileFormat.XML).write_scenario_to_file(
+                filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS)
 
     def validate_with_xsd(self, xml_path: str) -> bool:
         xmlschema_doc = etree.parse(self.xsd_path)
@@ -162,9 +160,9 @@ class TestXMLFileWriter(unittest.TestCase):
         f3 = 123456789
         f4 = 1e-23
         f5 = 0
+        file_information = FileInformation(author="sdf", affiliation="", source="")
         cw = CommonRoadFileWriter(decimal_precision=3,
-                                  scenario=Scenario(dt=0.1, tags=set(), author="sdf", affiliation="",
-                                                    source=""),
+                                  scenario=Scenario(dt=0.1, tags=set(), file_information=file_information),
                                   planning_problem_set=PlanningProblemSet())
         str1 = float_to_str(f)
         self.assertEqual(str1, "123456789.123")
@@ -184,8 +182,7 @@ class TestXMLFileWriter(unittest.TestCase):
         f4 = 1e-23
         f5 = 0
         cw = CommonRoadFileWriter(decimal_precision=5,
-                                  scenario=Scenario(dt=0.1, tags=set(), author="sdf", affiliation="",
-                                                    source=""),
+                                  scenario=Scenario(dt=0.1, tags=set(), file_information=file_information),
                                   planning_problem_set=PlanningProblemSet())
         str1 = float_to_str(f)
         self.assertEqual(str1, "123456789.12345")
@@ -428,7 +425,6 @@ def write_read_compare_map(xml_file_path: str, out_path: str) -> bool:
 
     map_pb = CommonRoadMapFileReader(pb_file_path, FileFormat.PROTOBUF).open()
     # As the location is added to the lanelet network in the new format, we have to assign it to the old format scenario
-    scenario_xml.lanelet_network.location = map_pb.location
 
     #  Protobuf reader does not implement line_marking_left_vertices and line_marking_right_vertices
     for i in range(0, len(scenario_xml.lanelet_network.lanelets)):
@@ -447,7 +443,7 @@ def write_read_compare_map(xml_file_path: str, out_path: str) -> bool:
     # We can't check the traffic lights as the formats differ. We can only do that in the combined map/dynamic file
 
     return scenario_xml.lanelet_network.lanelets == map_pb.lanelets and \
-        scenario_xml.lanelet_network.information == map_pb.information and \
+        scenario_xml.lanelet_network.meta_information.file_information == map_pb.meta_information.file_information and \
         scenario_xml.lanelet_network.traffic_signs == map_pb.traffic_signs and \
         scenario_xml.lanelet_network.areas == map_pb.areas and \
         scenario_xml.lanelet_network.intersections == map_pb.intersections and \

@@ -1,4 +1,3 @@
-import datetime
 import logging
 import re
 from typing import Tuple, List, Set, Union, Dict
@@ -396,13 +395,15 @@ class LaneletFactory:
             else:
                 lanelet.adj_right_same_direction = True
 
-        #  Should lanelet_msg.left_bound_line_marking be LineMarking instead of int?
         if lanelet_msg.HasField('left_bound_line_marking'):
-            lanelet.line_marking_left_vertices = lanelet_msg.left_bound_line_marking
+            lanelet.line_marking_left_vertices = \
+                LineMarking(
+                        str.lower(lanelet_pb2.LineMarkingEnum.LineMarking.Name(lanelet_msg.left_bound_line_marking)))
 
-        #  Should lanelet_msg.right_bound_line_marking be LineMarking instead of int?
         if lanelet_msg.HasField('right_bound_line_marking'):
-            lanelet.line_marking_right_vertices = lanelet_msg.right_bound_line_marking
+            lanelet.line_marking_right_vertices = \
+                LineMarking(
+                        str.lower(lanelet_pb2.LineMarkingEnum.LineMarking.Name(lanelet_msg.right_bound_line_marking)))
 
         #  TODO: add left_bound_reverse and right_bound_reverse booleans
 
@@ -1148,7 +1149,7 @@ class FloatListFactory:
 class TimeStampFactory:
 
     @classmethod
-    def create_from_message(cls, time_stamp_msg: util_pb2.TimeStamp, cr_time: bool) -> Union[datetime.datetime, Time]:
+    def create_from_message(cls, time_stamp_msg: util_pb2.TimeStamp, cr_time: bool) -> Time:
         year = 2022
         month = day = 1
         minute = hour = 0
@@ -1164,4 +1165,4 @@ class TimeStampFactory:
         if time_stamp_msg.HasField('minute'):
             minute = time_stamp_msg.minute
 
-        return Time(hour, minute) if cr_time else datetime.datetime(year, month, day, hour, minute)
+        return Time(hour, minute) if cr_time else Time(hour, minute, day, month, year)

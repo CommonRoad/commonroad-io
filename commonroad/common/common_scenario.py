@@ -545,7 +545,7 @@ class Location:
     """
 
     def __init__(self, geo_name_id: int = -999, gps_latitude: float = 999, gps_longitude: float = 999,
-                 geo_transformation: GeoTransformation = None, environment: Environment = None):
+                 geo_transformation: GeoTransformation = None):
         """
         Constructor of a location object
 
@@ -553,25 +553,21 @@ class Location:
         :param gps_latitude: GPS latitude coordinate
         :param gps_longitude: GPS longitude coordinate
         :param geo_transformation: description of geometric transformation during scenario generation
-        :param environment: environmental information, e.g. weather
         """
         self._geo_name_id = geo_name_id
         self._gps_latitude = gps_latitude
         self._gps_longitude = gps_longitude
         self._geo_transformation = geo_transformation
-        self._environment = environment
 
     def __eq__(self, other):
         if not isinstance(other, Location):
             return False
 
         return self._geo_name_id == other.geo_name_id and self._gps_latitude == other.gps_latitude and \
-            self._gps_longitude == other.gps_longitude and self._geo_transformation == other.geo_transformation and \
-            self._environment == other.environment
+            self._gps_longitude == other.gps_longitude and self._geo_transformation == other.geo_transformation
 
     def __hash__(self):
-        return hash((self._geo_name_id, self._gps_latitude, self._gps_longitude, self._geo_transformation,
-                     self._environment))
+        return hash((self._geo_name_id, self._gps_latitude, self._gps_longitude, self._geo_transformation))
 
     @property
     def geo_name_id(self) -> int:
@@ -604,11 +600,3 @@ class Location:
     @geo_transformation.setter
     def geo_transformation(self, geo_transformation: GeoTransformation):
         self._geo_transformation = geo_transformation
-
-    @property
-    def environment(self) -> Environment:
-        return self._environment
-
-    @environment.setter
-    def environment(self, environment: Environment):
-        self._environment = environment
