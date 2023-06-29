@@ -1,6 +1,6 @@
 import datetime
 import re
-from typing import Set, Union, List
+from typing import Set, Union, List, Optional
 import logging
 
 import numpy as np
@@ -57,8 +57,9 @@ class ProtobufFileWriter(FileWriter):
                       check_validity: bool = False):
         pass
 
-    def __init__(self, scenario: Scenario, planning_problem_set: PlanningProblemSet, author: str = None,
-                 affiliation: str = None, source: str = None, tags: Set[Tag] = None,
+    def __init__(self, scenario: Scenario, planning_problem_set: Optional[PlanningProblemSet],
+                 author: Optional[str] = None,
+                 affiliation: Optional[str] = None, source: Optional[str] = None, tags: Optional[Set[Tag]] = None,
                  decimal_precision: int = 4):
         super().__init__(scenario, planning_problem_set, author, affiliation, source, tags, decimal_precision)
 

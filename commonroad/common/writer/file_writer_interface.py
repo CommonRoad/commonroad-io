@@ -1,7 +1,7 @@
 import enum
 import pathlib
 from abc import ABC, abstractmethod
-from typing import Set, Union
+from typing import Set, Union, Optional
 
 from commonroad.planning.planning_problem import PlanningProblemSet
 from commonroad.scenario.scenario import Scenario, Tag
@@ -35,15 +35,17 @@ class FileWriter(ABC):
     Interface for writing CommonRoad files in a specific format.
     """
 
-    def __init__(self, scenario: Scenario, planning_problem_set: PlanningProblemSet, author: str = None,
-                 affiliation: str = None, source: str = None, tags: Set[Tag] = None, decimal_precision: int = 4):
+    def __init__(self, scenario: Scenario, planning_problem_set: Optional[PlanningProblemSet],
+                 author: Optional[str] = None,
+                 affiliation: Optional[str] = None, source: Optional[str] = None, tags: Optional[Set[Tag]] = None,
+                 decimal_precision: int = 4):
         assert not (author is None and scenario.file_information.author is None)
         assert not (affiliation is None and scenario.file_information.affiliation is None)
         assert not (source is None and scenario.file_information.source is None)
         assert not (tags is None and scenario.tags is None)
 
         self.scenario: Scenario = scenario
-        self.planning_problem_set: PlanningProblemSet = planning_problem_set
+        self.planning_problem_set: Optional[PlanningProblemSet] = planning_problem_set
         self.author = author if author is not None else scenario.file_information.author
         self.affiliation = affiliation if affiliation is not None else scenario.file_information.affiliation
         self.source = source if source is not None else scenario.file_information.source
