@@ -463,7 +463,9 @@ def write_read_compare_scenario(xml_file_path: str, out_path: str) -> bool:
     for planning_problem in scenario_pb.planning_problems:
         planning_problem.scenario_tags = set()
 
-    return list(planning_problems_xml.planning_problem_dict.values()) == scenario_pb.planning_problems
+    return list(planning_problems_xml.planning_problem_dict.values()) == scenario_pb.planning_problems \
+        and scenario_pb.scenario_meta_information.time_step_size == scenario_xml.dt \
+        and scenario_pb.scenario_meta_information.file_information == scenario_xml.file_information
 
 
 def write_read_compare_dynamic(xml_file_path: str, out_path: str) -> bool:
