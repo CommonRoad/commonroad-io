@@ -28,14 +28,14 @@ from commonroad.scenario.trajectory import Trajectory
 from commonroad.common.reader.dynamic_interface import DynamicInterface
 from commonroad.common.reader.scenario_interface import ScenarioInterface
 
-from commonroad.common.pb_scripts.map import area_pb2, commonroad_map_pb2, \
+from commonroad.common.protobuf.map import area_pb2, commonroad_map_pb2, \
     intersection_pb2, lanelet_pb2, location_pb2, traffic_light_pb2, traffic_sign_pb2
-from commonroad.common.pb_scripts.scenario import commonroad_scenario_pb2, \
+from commonroad.common.protobuf.scenario import commonroad_scenario_pb2, \
     planning_problem_pb2, scenario_tags_pb2
-from commonroad.common.pb_scripts.dynamic import commonroad_dynamic_pb2, \
+from commonroad.common.protobuf.dynamic import commonroad_dynamic_pb2, \
     dynamic_obstacle_pb2, environment_obstacle_pb2, environment_pb2, obstacle_pb2, phantom_obstacle_pb2, \
     static_obstacle_pb2, traffic_light_cycle_pb2, traffic_sign_value_pb2
-from commonroad.common.pb_scripts.common import state_pb2, \
+from commonroad.common.protobuf.common import state_pb2, \
     traffic_light_state_pb2, traffic_sign_element_pb2, util_pb2, scenario_meta_information_pb2
 
 

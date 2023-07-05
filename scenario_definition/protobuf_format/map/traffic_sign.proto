@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package commonroad_map;
+
+import "util.proto";
+import "traffic_sign_element.proto";
+
+message TrafficSign {
+    required uint32  traffic_sign_id = 1;
+    repeated commonroad_common.TrafficSignElement traffic_sign_elements = 2;
+    required commonroad_common.Point position = 3;
+    optional bool virtual = 4;
+}

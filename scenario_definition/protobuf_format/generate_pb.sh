@@ -2,24 +2,27 @@
 
 # generate map
 protoc \
---proto_path=./ \
---python_out=../../ \
-./commonroad/common/pb_scripts/map/*.proto
+--proto_path=./common/ \
+--proto_path=./map/ \
+--python_out=../../commonroad/common/protobuf/map/ \
+./map/*.proto
 
 # generate dynamic
 protoc \
---proto_path=./ \
---python_out=../../ \
-./commonroad/common/pb_scripts/dynamic/*.proto
+--proto_path=./common/ \
+--proto_path=./dynamic/ \
+--python_out=../../commonroad/common/protobuf/dynamic/ \
+./dynamic/*.proto
 
-### generate scenario
+## generate scenario
 protoc \
---proto_path=./ \
---python_out=../../ \
-./commonroad/common/pb_scripts/scenario/*.proto
+--proto_path=./common/ \
+--proto_path=./scenario/ \
+--python_out=../../commonroad/common/protobuf/scenario/ \
+./scenario/*.proto
 
 ## generate rest
 protoc \
---proto_path=./ \
---python_out=../../ \
-./commonroad/common/pb_scripts/common/*.proto
+--proto_path=./common/ \
+--python_out=../../commonroad/common/protobuf/common/ \
+./common/*.proto

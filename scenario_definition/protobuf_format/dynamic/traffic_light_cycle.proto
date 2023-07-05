@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package commonroad_dynamic;
+
+import "traffic_light_state.proto";
+
+message CycleElement {
+    required uint32 duration = 1;
+    required commonroad_common.TrafficLightStateEnum.TrafficLightState color = 2;
+}
+
+message TrafficLightCycle {
+    required uint32 traffic_light_id = 1;
+    repeated CycleElement cycle_elements = 2;
+    optional uint32 time_offset = 4;
+    optional bool active = 6;
+}

@@ -1,10 +1,10 @@
 # HOW TO PROTOBUF
 
-The .proto definition files can be found in `commonroad/scenario_definition/protobuf_format/definition_files`, where they have been mapped to 
+The .proto definition files can be found in `commonroad/scenario_definition/protobuf_format`, where they have been mapped to 
 their respective folders `common`,`dynamic`,`map` and `scenario`.
 
 Executable scripts for serializing and deserializing can be generated based on the previously mentioned
-definition files.<br>The scripts can be found in `commonroad/scenario_definition/protobuf_format/generated_scripts`.
+definition files.<br>The scripts can be found in `commonroad/common/protobuf/`.
 <br>Just like the definition files, they have been stored in their respective folders.
 
 After modifying the definition files, the corresponding scripts have to be generated immediately to be consistent.

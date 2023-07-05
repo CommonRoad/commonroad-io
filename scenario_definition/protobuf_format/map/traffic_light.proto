@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package commonroad_map;
+
+import "util.proto";
+import "traffic_light_state.proto";
+
+message TrafficLightDirectionEnum {
+    enum TrafficLightDirection {
+        RIGHT = 0;
+        STRAIGHT = 1;
+        LEFT = 2;
+        LEFT_STRAIGHT = 3;
+        STRAIGHT_RIGHT = 4;
+        LEFT_RIGHT = 5;
+        ALL = 6;
+    }
+}
+
+message TrafficLight {
+    required uint32 traffic_light_id = 1;
+    required commonroad_common.Point position = 2;
+    repeated commonroad_common.TrafficLightStateEnum.TrafficLightState color = 3;
+    optional TrafficLightDirectionEnum.TrafficLightDirection direction = 4;
+}
