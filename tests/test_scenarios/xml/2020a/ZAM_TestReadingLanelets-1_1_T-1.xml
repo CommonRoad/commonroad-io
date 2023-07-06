@@ -1,5 +1,9 @@
 <?xml version="1.0" ?>
-<commonRoad affiliation="TU Munich" author="PrinceOfZAM" benchmarkID="ZAM_TestReadingLanelets-1_1_T-1" commonRoadVersion="2018b" date="2018-10-25" source="unittest" tags="urban" timeStepSize="0.1">
+<commonRoad affiliation="TU Munich" author="PrinceOfZAM" benchmarkID="ZAM_TestReadingLanelets-1_1_T-1" commonRoadVersion="2020a" date="2018-10-25" source="unittest" tags="urban" timeStepSize="0.1">
+    <scenarioTags>
+    <intersection/>
+    <urban/>
+  </scenarioTags>
   <lanelet id="100">
     <leftBound>
       <point>

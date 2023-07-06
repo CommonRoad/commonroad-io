@@ -29,10 +29,10 @@ class TestXMLFileWriter(unittest.TestCase):
             self.cwd_path + "/../../commonroad/common/xml_definition_files/XML_commonRoad_XSD.xsd"
         self.out_path = self.cwd_path + "/../.pytest_cache"
         self.filename_read_1 = \
-            self.cwd_path + "/../test_scenarios/xml/ZAM_TestReadingIntersectionTrafficSign-1_1_T-1.xml"
-        self.filename_read_2 = self.cwd_path + "/../test_scenarios/xml/ZAM_TestReadingAll-1_1_T-1.xml"
-        self.filename_2018b = self.cwd_path + "/../test_scenarios/xml/USA_Lanker-1_1_T-1.xml"
-        self.filename_invalid = self.cwd_path + "/../test_scenarios/xml/ZAM_WritingInvalid-1_1_T-1.xml"
+            self.cwd_path + "/../test_scenarios/xml/2020a/ZAM_TestReadingIntersectionTrafficSign-1_1_T-1.xml"
+        self.filename_read_2 = self.cwd_path + "/../test_scenarios/xml/2020a/ZAM_TestReadingAll-1_1_T-1.xml"
+        self.filename_2018b = self.cwd_path + "/../test_scenarios/xml/2018b/USA_Lanker-1_1_T-1.xml"
+        self.filename_invalid = self.cwd_path + "/../test_scenarios/xml/2018b/ZAM_WritingInvalid-1_1_T-1.xml"
         handle_pytest_cache(self.out_path)
 
     def test_read_write_file(self):
@@ -381,10 +381,11 @@ class TestProtobufFileWriter(unittest.TestCase):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
         self.out_path = self.cwd_path + "/../.pytest_cache"
 
-        self.filename_carcarana_xml = self.cwd_path + "/../test_scenarios/xml/ARG_Carcarana-4_5_T-1.xml"
-        self.filename_starnberg_xml = self.cwd_path + "/../test_scenarios/xml/DEU_Starnberg-1_1_T-1.xml"
-        self.filename_anglet_xml = self.cwd_path + "/../test_scenarios/xml/FRA_Anglet-1_1_T-1.xml"
-        self.filename_all_xml = self.cwd_path + "/../test_scenarios/xml/ZAM_TestReadingAll-1_1_T-1.xml"
+        self.filename_carcarana_xml = self.cwd_path + "/../test_scenarios/xml/2020a/ARG_Carcarana-4_5_T-1.xml"
+        self.filename_starnberg_xml = self.cwd_path + "/../test_scenarios/xml/2020a/DEU_Starnberg-1_1_T-1.xml"
+        self.filename_anglet_xml = self.cwd_path + "/../test_scenarios/xml/2020a/FRA_Anglet-1_1_T-1.xml"
+        self.filename_all_xml = self.cwd_path + "/../test_scenarios/xml/2020a/ZAM_TestReadingAll-1_1_T-1.xml"
+        self.filename_lanker_xml = self.cwd_path + "/../test_scenarios/xml/2020a/USA_Lanker-1_1_T-1.xml"
 
         handle_pytest_cache(self.out_path)
 
@@ -396,6 +397,7 @@ class TestProtobufFileWriter(unittest.TestCase):
         self.assertTrue(write_read_compare_map(self.filename_starnberg_xml, self.out_path))
         self.assertTrue(write_read_compare_map(self.filename_anglet_xml, self.out_path))
         self.assertTrue(write_read_compare_map(self.filename_all_xml, self.out_path))
+        self.assertTrue(write_read_compare_map(self.filename_lanker_xml, self.out_path))
 
     def test_write_scenario_to_file(self):
         """
@@ -424,24 +426,15 @@ def write_read_compare_map(xml_file_path: str, out_path: str) -> bool:
             pb_file_path, OverwriteExistingFile.ALWAYS)
 
     map_pb = CommonRoadMapFileReader(pb_file_path, FileFormat.PROTOBUF).open()
-    # As the location is added to the lanelet network in the new format, we have to assign it to the old format scenario
 
-    #  Protobuf reader does not implement line_marking_left_vertices and line_marking_right_vertices
-    for i in range(0, len(scenario_xml.lanelet_network.lanelets)):
-        scenario_xml.lanelet_network.lanelets[i].line_marking_left_vertices = map_pb.lanelets[
-            i].line_marking_left_vertices
-        scenario_xml.lanelet_network.lanelets[i].line_marking_right_vertices = map_pb.lanelets[
-            i].line_marking_right_vertices
-
-        # As the new protobuf format Stop Line does not contain attributes "traffic_light_ref" and "traffic_sign_ref",
-        # they are set to None in the xml format scenario
-        for ll in scenario_xml.lanelet_network.lanelets:
-            if ll.stop_line is not None:
-                ll.stop_line.traffic_light_ref = None
-                ll.stop_line.traffic_sign_ref = None
+    # As the new protobuf format Stop Line does not contain attributes "traffic_light_ref" and "traffic_sign_ref",
+    # they are set to None in the xml format scenario
+    for ll in scenario_xml.lanelet_network.lanelets:
+        if ll.stop_line is not None:
+            ll.stop_line.traffic_light_ref = None
+            ll.stop_line.traffic_sign_ref = None
 
     # We can't check the traffic lights as the formats differ. We can only do that in the combined map/dynamic file
-
     return scenario_xml.lanelet_network.lanelets == map_pb.lanelets and \
         scenario_xml.lanelet_network.meta_information.file_information == map_pb.meta_information.file_information and \
         scenario_xml.lanelet_network.traffic_signs == map_pb.traffic_signs and \

@@ -24,14 +24,14 @@ from commonroad.scenario.intersection import Intersection, IncomingGroup, Outgoi
 class TestXMLFileReader(unittest.TestCase):
     def setUp(self):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
-        self.filename_all = self.cwd_path + '/../test_scenarios/xml/ZAM_TestReadingAll-1_1_T-1.xml'
+        self.filename_all = self.cwd_path + '/../test_scenarios/xml/2020a/ZAM_TestReadingAll-1_1_T-1.xml'
         self.filename_urban = \
-            self.cwd_path + '/../test_scenarios/xml/ZAM_TestReadingIntersectionTrafficSign-1_1_T-1.xml'
-        self.filename_lanelets = self.cwd_path + '/../test_scenarios/xml/ZAM_TestReadingLanelets-1_1_T-1.xml'
-        self.filename_obstacle = self.cwd_path + '/../test_scenarios/xml/ZAM_TestReadingObstacles-1_1_T-1.xml'
+            self.cwd_path + '/../test_scenarios/xml/2020a/ZAM_TestReadingIntersectionTrafficSign-1_1_T-1.xml'
+        self.filename_lanelets = self.cwd_path + '/../test_scenarios/xml/2020a/ZAM_TestReadingLanelets-1_1_T-1.xml'
+        self.filename_obstacle = self.cwd_path + '/../test_scenarios/xml/2020a/ZAM_TestReadingObstacles-1_1_T-1.xml'
         self.filename_planning_problem = \
-            self.cwd_path + '/../test_scenarios/xml/ZAM_TestReadingPlanningProblem-1_1_T-1.xml'
-        self.filename_2018b = self.cwd_path + "/../test_scenarios/xml/USA_Lanker-1_1_T-1.xml"
+            self.cwd_path + '/../test_scenarios/xml/2018b/ZAM_TestReadingPlanningProblem-1_1_T-1.xml'
+        self.filename_2018b = self.cwd_path + "/../test_scenarios/xml/2018b/USA_Lanker-1_1_T-1.xml"
 
         # setup for reading obstacles, lanelets, planning problem and all (without intersection)
         rectangle = Rectangle(4.3, 8.9, center=np.array([0.1, 0.5]), orientation=1.7)
@@ -854,37 +854,37 @@ class TestProtobufFileReader(unittest.TestCase):
         self.out_path = self.cwd_path + "/../.pytest_cache"
 
         #  Carcarana
-        self.filename_carcarana_xml = self.cwd_path + "/../test_scenarios/xml/ARG_Carcarana-4_5_T-1.xml"
+        self.filename_carcarana_xml = self.cwd_path + "/../test_scenarios/xml/2020a/ARG_Carcarana-4_5_T-1.xml"
         self.filename_carcarana_map_pb = self.cwd_path + "/../test_scenarios/protobuf/ARG_Carcarana-4.pb"
         self.filename_carcarana_scenario_pb = self.cwd_path + "/../test_scenarios/protobuf/ARG_Carcarana-4_5_T-1-SC.pb"
         self.filename_carcarana_dynamic_pb = self.cwd_path + "/../test_scenarios/protobuf/ARG_Carcarana-4_5_T-1.pb"
 
         #  Starnberg
-        self.filename_starnberg_xml = self.cwd_path + "/../test_scenarios/xml/DEU_Starnberg-1_1_T-1.xml"
+        self.filename_starnberg_xml = self.cwd_path + "/../test_scenarios/xml/2020a/DEU_Starnberg-1_1_T-1.xml"
         self.filename_starnberg_map_pb = self.cwd_path + "/../test_scenarios/protobuf/DEU_Starnberg-1.pb"
         self.filename_starnberg_scenario_pb = self.cwd_path + "/../test_scenarios/protobuf/DEU_Starnberg-1_1_T-1-SC.pb"
         self.filename_starnberg_dynamic_pb = self.cwd_path + "/../test_scenarios/protobuf/DEU_Starnberg-1_1_T-1.pb"
 
         #  Anglet
-        self.filename_anglet_xml = self.cwd_path + "/../test_scenarios/xml/FRA_Anglet-1_1_T-1.xml"
+        self.filename_anglet_xml = self.cwd_path + "/../test_scenarios/xml/2020a/FRA_Anglet-1_1_T-1.xml"
         self.filename_anglet_map_pb = self.cwd_path + "/../test_scenarios/protobuf/FRA_Anglet-1.pb"
         self.filename_anglet_scenario_pb = self.cwd_path + "/../test_scenarios/protobuf/FRA_Anglet-1_1_T-1-SC.pb"
         self.filename_anglet_dynamic_pb = self.cwd_path + "/../test_scenarios/protobuf/FRA_Anglet-1_1_T-1.pb"
 
         #  Peach
-        self.filename_peach_xml = self.cwd_path + "/../test_scenarios/xml/USA_Peach-4_8_T-1.xml"
+        self.filename_peach_xml = self.cwd_path + "/../test_scenarios/xml/2020a/USA_Peach-4_8_T-1.xml"
         self.filename_peach_map_pb = self.cwd_path + "/../test_scenarios/protobuf/USA_Peach-4.pb"
         self.filename_peach_scenario_pb = self.cwd_path + "/../test_scenarios/protobuf/USA_Peach-4_8_T-1-SC.pb"
         self.filename_peach_dynamic_pb = self.cwd_path + "/../test_scenarios/protobuf/USA_Peach-4_8_T-1.pb"
 
         #  All
-        self.filename_all_xml = self.cwd_path + "/../test_scenarios/xml/ZAM_TestReadingAll-1_1_T-1.xml"
+        self.filename_all_xml = self.cwd_path + "/../test_scenarios/xml/2020a/ZAM_TestReadingAll-1_1_T-1.xml"
         self.filename_all_map_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingAll-1.pb"
         self.filename_all_scenario_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingAll-1_1_T-1-SC.pb"
         self.filename_all_dynamic_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingAll-1_1_T-1.pb"
 
         #  KS State
-        self.filename_ks_xml = self.cwd_path + "/../test_scenarios/ZAM_TestReadingKsState-1_1_T-1.xml"
+        self.filename_ks_xml = self.cwd_path + "/../test_scenarios/2018b/ZAM_TestReadingKsState-1_1_T-1.xml"
         self.filename_ks_map_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingKsState-1.pb"
         self.filename_ks_scenario_pb = \
             self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingKsState-1_1_T-1-SC.pb"
