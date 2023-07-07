@@ -205,8 +205,8 @@ class CommonRoadScenarioFactory:
             scenario.planning_problems.append(planning_problem)
 
         for cooperative_planning_problem_msg in commonroad_scenario_msg.cooperative_planning_problems:
-            cooperative_planning_problem = CooperativePlanningProblemFactory.create_from_message\
-                (cooperative_planning_problem_msg)
+            cooperative_planning_problem = \
+                CooperativePlanningProblemFactory.create_from_message(cooperative_planning_problem_msg)
             scenario.cooperative_planning_problems.append(cooperative_planning_problem)
 
         return scenario
@@ -537,7 +537,7 @@ class TrafficLightFactory:
 
         for color in traffic_light_msg.color:
             traffic_light.color.append(TrafficLightState[traffic_light_state_pb2.TrafficLightStateEnum.
-                                        TrafficLightState.Name(color)])
+                                       TrafficLightState.Name(color)])
 
         return traffic_light
 
@@ -723,8 +723,8 @@ class DynamicObstacleFactory:
         dynamic_obstacle.signal_series = signal_states
 
         if dynamic_obstacle_msg.HasField('initial_meta_information_state'):
-            dynamic_obstacle.initial_meta_information_state = MetaInformationStateFactory.create_from_message\
-            (dynamic_obstacle_msg.meta_information_state)
+            dynamic_obstacle.initial_meta_information_state = \
+                MetaInformationStateFactory.create_from_message(dynamic_obstacle_msg.meta_information_state)
 
         for meta_information_state_msg in dynamic_obstacle_msg.meta_information_series:
             meta_information_state = MetaInformationStateFactory.create_from_message(meta_information_state_msg)
