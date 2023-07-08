@@ -28,7 +28,7 @@ The numbers in square brackets denote the number of allowed elements (while \tex
 		.2 [0..N] stop\_lines.
 		.2 [0..N] boundaries.
 		.2 [0..N] areas.
-		.2 [0..N] traffic\_sign.
+		.2 [0..N] traffic\_signs.
 		.2 [0..N] traffic\_lights.
 		.2 [0..N] intersections.
 	}
@@ -179,7 +179,7 @@ The numbers in square brackets denote the number of allowed elements (while \tex
 
 \subsection{Auxiliary Elements} \label{subsec:auxiliary}
 
-We use the following auxiliary geometry elements:
+Subsequently, we introduce general auxiliary geometry elements.
 
 \paragraph{Point}
 A point is the simplest primitives and described by an x-, y-, and z-coordinate.
@@ -348,6 +348,27 @@ It is defined by its {\it left} and {\it right boundary}, where each boundary is
 Optionally, line markings (solid, dashed, broad solid, broad dashed, no line marking, unknown, where unknown is the default line marking) can be included to model the boundary more precisely.
 We have chosen lanelets since they are as expressible as other formats, such as e.g. OpenDRIVE\footnote{\href{http://www.opendrive.org}{opendrive.org}}, yet have a lightweight and extensible representation.
 Our converter from OpenDRIVE to Lanelets is available on our website.
+
+A lanelet consists of the following elements:
+\begin{itemize}
+				.3 [1] leftBound.
+.4 [2..N] point.
+.4 [0..1] lineMarking.
+.3 [1] rightBound.
+.4 [2..N] point.
+.4 [0..1] lineMarking.
+.3 [0..N] predecessor (\textrm{ref to} lanelet).
+.3 [0..N] successor (\textrm{ref to} lanelet).
+.3 [0..1] adjacentLeft (\textrm{ref to} lanelet, \textrm{drivingDir}=same/opposite).
+.3 [0..1] adjacentRight (\textrm{ref to} lanelet, \textrm{drivingDir}=same/opposite).
+.3 [0..1] stopLine.
+.3 [1..N] laneletType: highway/urban/busStop/.../crosswalk.
+.3 [0..N] userOneWay: vehicle/car/truck/bicycle/.../pedestrian.
+.3 [0..N] userBidirectional: vehicle/car/truck/bicycle/.../pedestrian.
+.3 [0..N] trafficSignRef (\textrm{ref to} trafficSign).
+.3 [0..N] trafficLightRef (\textrm{ref to} trafficLight).
+\end{itemize}
+
 
 \begin{figure}[!htpb]
 	\centering
