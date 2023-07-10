@@ -286,7 +286,6 @@ class MPRenderer(IRenderer):
     def _connect_callbacks(self):
         """
         Connects collected callbacks with ax object.
-        :return:
         """
         for event, funcs in self.callbacks.items():
             for fun in funcs:
@@ -879,10 +878,15 @@ class MPRenderer(IRenderer):
                 outgg_2_intersections = obj.map_outgg_lanelets_to_intersections
                 for intersection in intersections:
                     for outgoing in intersection.outgoings:
-                        outgoings.append(outgoing.outgoing_lanelets)
-                        for l_id in outgoing.outgoing_lanelets:
-                            outgoing_groups_id[l_id] = outgoing.outgoing_id
-                outgoing_group_lanelets: Set[int] = set.union(*outgoings)
+                        # old scenarios have no outgoing groups
+                        if len(outgoing.outgoing_lanelets) > 0:
+                            outgoings.append(outgoing.outgoing_lanelets)
+                            for l_id in outgoing.outgoing_lanelets:
+                                outgoing_groups_id[l_id] = outgoing.outgoing_id
+                if len(outgoings) > 0: # old scenarios have no outgoing groups
+                    outgoing_group_lanelets: Set[int] = set.union(*outgoings)
+                else:
+                    draw_outgoing_group_lanelets = False
 
             if draw_crossings:
                 tmp_list: List[set] = []
