@@ -1154,6 +1154,14 @@ class LaneletNetwork(IDrawable):
         return {l_id: intersection for intersection in self.intersections for l_id in
                 list(intersection.map_incoming_lanelets.keys())}
 
+    @property
+    def map_outgg_lanelets_to_intersections(self) -> Dict[int, Intersection]:
+        """
+        dict that maps lanelet ids to the intersection of which it is an outgoing group lanelet.
+        """
+        return {l_id: intersection for intersection in self.intersections for l_id in
+                list(intersection.map_outgg_lanelets.keys())}
+
     @classmethod
     def create_from_lanelet_list(cls, lanelets: list, cleanup_ids: bool = False):
         """

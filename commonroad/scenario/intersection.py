@@ -356,6 +356,13 @@ class Intersection:
         """
         return {l_id: inc for inc in self.incomings for l_id in inc.incoming_lanelets}
 
+    @property
+    def map_outgg_lanelets(self) -> Dict[int, OutgoingGroup]:
+        """
+        Maps all outgoing group lanelet ids to IntersectionOutgoingElement
+        """
+        return {l_id: outgg for outgg in self.outgoings for l_id in outgg.outgoing_lanelets}
+
     def find_incoming_by_id(self, incoming_id: int) -> Union[IncomingGroup, None]:
         """
         Finds incoming of intersection by ID.
