@@ -10,7 +10,7 @@ CommonRoad-io
 The commonroad-io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tools of the CommonRoad Framework.
 With commonroad-io, those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`__.
 
-commonroad-io 2022.3 is compatible with CommonRoad scenarios of version 2020a and supports reading 2018b scenarios.
+commonroad-io 2023.2 is compatible with CommonRoad scenarios of version 2020a and supports reading 2018b scenarios.
 
 The software is written in Python and tested on Linux for the Python 3.8, 3.9, 3.10, and 3.11.
 
@@ -66,37 +66,28 @@ and add the folder commonroad-io to your Python environment.
 
 Changelog
 ============
-Compared to version 2022.1, the following features have been added or changed:
+Compared to version 2022.3, the following features have been added or changed:
 
 Added
 -----
-
-- Function for getting lanelet orientation closest to a given position
-- Function for getting most likely lanelet given an obstacle state
-- Function for erasing lanelet network from scenario
-- Function for replacing lanelet network of a scenario with new one
-- Support for Protobuf format
-- Predefined classes for specific states, point-mass model, kinematic single-track model, etc.
-- Function for computing shape group occupancy from state
-- Support for kinematic single-track model with one on-axle trailer
-- Three new lanelet types: parking, border, and restricted
-
-Changed
--------
-
-- Move tests, tutorial, and documentation folder to root directory
-- State classes in separate Python file
-
-Removed
--------
-- setter method for lanelet network in scenario class
+- Support for shapely>=2.0.0
 
 Fixed
 -----
 
-- Default constructor for ScenarioID produces invalid Benchmark ID
-- Changeable state list leads to inconsistent final time step of trajectory
-- Various small bug fixes
+- Writing scenarios without location to protobuf
+- Dashed lanelet boundaries with fixed dash position
+- Default plot limits for focused obstacle
+- Use dt from scenario as default for video creation
+- Apply axis visible-option also for video creation
+- Protobuf FileReader marking road network related IDs as used
+- State attribute comparison
+
+Changed
+-------
+
+- Name of SIDEWALK and BUSLANE traffic signs to PEDESTRIAN_SIDEWALK and BUS_LANE
+- Packaging and dependency management using poetry
 
 A detailed overview about the changes in each version is provided in the `Changelog <https://gitlab.lrz.de/tum-cps/commonroad_io/-/blob/master/CHANGELOG.md>`__.
 
