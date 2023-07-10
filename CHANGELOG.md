@@ -1,6 +1,6 @@
 # Changelog
 
-## [2023.2] - 2023-04-XX
+## [2023.2] - 2023-06-26
 
 ### Added
 - Area for modelling drivable areas which cannot be represented by lanelets
