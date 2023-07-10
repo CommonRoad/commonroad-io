@@ -30,7 +30,7 @@ Learn more about the scenario specification [here](https://gitlab.lrz.de/tum-cps
 The commonroad-io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tools of the CommonRoad Framework.
 With commonroad-io, those solutions can be written to xml-files for uploading them on [commonroad.in.tum.de](https://commonroad.in.tum.de/).
 
-commonroad-io 2022.3 is compatible with CommonRoad scenarios in version 2020a and supports reading 2018b scenarios.
+commonroad-io 2023.1 is compatible with CommonRoad scenarios in version 2020a and supports reading 2018b scenarios.
 
 The software is written in Python and tested on Linux for the Python 3.8, 3.9, 3.10, and 3.11.
 
@@ -80,35 +80,54 @@ Alternatively, clone from our gitlab repository::
 and add the folder commonroad-io to your Python environment.
 
 ## Changelog
-Compared to version 2022.1, the following features have been added or changed:
+Compared to version 2023.1, the following features have been added or changed:
 
 ### Added
-
-- Function for getting lanelet orientation closest to a given position
-- Function for getting most likely lanelet given an obstacle state
-- Function for erasing lanelet network from scenario
-- Function for replacing lanelet network of a scenario with new one
-- Support for Protobuf format
-- Predefined classes for specific states, point-mass model, kinematic single-track model, etc.
-- Function for computing shape group occupancy from state
-- Support for kinematic single-track model with one on-axle trailer
-- Three new lanelet types: parking, border, and restricted
-
-### Changed
-
-- Move tests, tutorial, and documentation folder to root directory
-- State classes in separate Python file
-
-### Removed
-- setter method for lanelet network in scenario class
+- Area for modelling drivable areas which cannot be represented by lanelets
+- New weather and time of day options
+- Allow file reader to determine format based on suffix 
 
 ### Fixed
 
-- Default constructor for ScenarioID produces invalid Benchmark ID
-- Changeable state list leads to inconsistent final time step of trajectory
-- Various small bug fixes
+- Visualization of all traffic signs by setting `show_traffic_signs = None` in draw parameters
+- Validity functions to support z-axis
+- Unreferenced traffic signs for lanelet networks filtered by lanelet type
 
-A detailed overview about the changes in each version is provided in the Changelog.
+### Changed
+
+- Visualization of direction arrow of narrow lanelets
+- Traffic light cycle optional
+- Traffic light in separate python file
+- Allow file reader to determine format based on suffix 
+- Broaden types allowed as file names 
+- Open files safely by using a context manager 
+- Use correct suffix when inferring filename from scenario id
+
+### Removed
+
+- function get_default_cycle for traffic lights
+- support for Python 3.7
+
+Compared to version 2022.3, the following features have been added or changed:
+
+### Added
+- Support for shapely>=2.0.0
+
+### Fixed
+
+- Writing scenarios without location to protobuf
+- Dashed lanelet boundaries with fixed dash position
+- Default plot limits for focused obstacle
+- Use dt from scenario as default for video creation
+- Apply axis visible-option also for video creation
+- Protobuf FileReader marking road network related IDs as used
+- State attribute comparison
+
+### Changed
+>>>>>>> README.md
+
+- Name of SIDEWALK and BUSLANE traffic signs to PEDESTRIAN_SIDEWALK and BUS_LANE
+- Packaging and dependency management using poetry
 
 
 ## Authors
