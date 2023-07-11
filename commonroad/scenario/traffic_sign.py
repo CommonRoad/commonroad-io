@@ -858,19 +858,19 @@ class TrafficSignIDBelgium(enum.Enum):
 
 @enum.unique
 class TrafficSignIDFrance(enum.Enum):
-    MAX_SPEED = '274'  # TODO: change to actual ID
-    UNKNOWN = ''  # TODO: add actual IDs
+    MAX_SPEED = 'B14'
+    UNKNOWN = ''
 
 
 @enum.unique
 class TrafficSignIDGreece(enum.Enum):
-    MAX_SPEED = '274'  # TODO: change to actual ID
-    UNKNOWN = ''  # TODO: add actual IDs
+    MAX_SPEED = 'Ρ-32'
+    UNKNOWN = ''
 
 
 @enum.unique
 class TrafficSignIDCroatia(enum.Enum):
-    MAX_SPEED = '274'  # TODO: change to actual ID
+    MAX_SPEED = 'B31'
     UNKNOWN = ''
 
 
@@ -882,8 +882,8 @@ class TrafficSignIDItaly(enum.Enum):
 
 @enum.unique
 class TrafficSignIDPuertoRico(enum.Enum):
-    MAX_SPEED = '274'  # TODO: change to actual ID
-    UNKNOWN = ''  # TODO: add actual IDs
+    MAX_SPEED = 'R2-1'
+    UNKNOWN = ''
 
 
 class TrafficSignElement:

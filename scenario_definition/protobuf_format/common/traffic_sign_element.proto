@@ -86,7 +86,7 @@ message TrafficSignIDEnum {
         TRAFFIC_CALMED_AREA_START = 79;
         TRAFFIC_CALMED_AREA_END = 80;
         TUNNEL = 81;
-        EMERYGECNY_STOP = 82;
+        EMERGENCY_STOP = 82;
         INTERSTATE_START = 83;
         INTERSTATE_END = 84;
         HIGHWAY_START = 85;
