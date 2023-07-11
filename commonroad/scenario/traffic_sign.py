@@ -840,8 +840,8 @@ class TrafficSignIDSpain(enum.Enum):
 
 @enum.unique
 class TrafficSignIDRussia(enum.Enum):
-    MAX_SPEED = '274'  # TODO: change to actual ID
-    UNKNOWN = ''  # TODO: add actual IDs
+    MAX_SPEED = '3.24'
+    UNKNOWN = ''
 
 
 @enum.unique

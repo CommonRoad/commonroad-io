@@ -1664,7 +1664,7 @@
   </lanelet>
   <trafficSign id="86064">
     <trafficSignElement>
-      <trafficSignID>274</trafficSignID>
+      <trafficSignID>B14</trafficSignID>
       <additionalValue>13.88888888888889</additionalValue>
     </trafficSignElement>
     <position>
@@ -1677,7 +1677,7 @@
   </trafficSign>
   <trafficSign id="86115">
     <trafficSignElement>
-      <trafficSignID>274</trafficSignID>
+      <trafficSignID>B14</trafficSignID>
       <additionalValue>13.88888888888889</additionalValue>
     </trafficSignElement>
     <position>
