@@ -238,8 +238,14 @@ class ScenarioIDFactory:
         cooperative = scenario_id_msg.cooperative
         scenario_id = MapIDFactory.create_from_message(scenario_id_msg.map_id)
         configuration_id = scenario_id_msg.configuration_id
-        obstacle_behavior = scenario_id_msg.obstacle_behavior
-        prediction_id = scenario_id_msg.prediction_id
+        if scenario_id_msg.HasField('obstacle_behavior'):
+            obstacle_behavior = scenario_id_msg.obstacle_behavior
+        else:
+            obstacle_behavior = None
+        if scenario_id_msg.HasField('prediction_id'):
+            prediction_id = scenario_id_msg.prediction_id
+        else:
+            prediction_id = None
         scenario_version = scenario_id_msg.scenario_version
         return ScenarioID(cooperative, scenario_id.country_id, scenario_id.map_name, scenario_id.map_id,
                           configuration_id, obstacle_behavior,

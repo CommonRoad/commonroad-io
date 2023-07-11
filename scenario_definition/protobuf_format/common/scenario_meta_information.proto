@@ -14,8 +14,8 @@ message ScenarioID {
     required bool cooperative = 1;
     required MapID map_id = 2;
     required uint64 configuration_id = 5;
-    required string obstacle_behavior = 6;
-    required uint64 prediction_id = 7;
+    optional string obstacle_behavior = 6;
+    optional uint64 prediction_id = 7;
     required string scenario_version = 8;
 }
 
