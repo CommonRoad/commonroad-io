@@ -315,7 +315,8 @@ class ScenarioIDMessage:
         map_id = MapIDMessage.create_message(scenario_id)
         scenario_id_msg.map_id.CopyFrom(map_id)
         scenario_id_msg.configuration_id = scenario_id.configuration_id
-        scenario_id_msg.obstacle_behavior = scenario_id.obstacle_behavior
+        scenario_id_msg.obstacle_behavior = scenario_id.obstacle_behavior \
+            if scenario_id.obstacle_behavior is not None else ""
         scenario_id_msg.prediction_id = scenario_id.prediction_id
         scenario_id_msg.scenario_version = scenario_id.scenario_version
 
