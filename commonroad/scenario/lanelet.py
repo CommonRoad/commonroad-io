@@ -1221,8 +1221,8 @@ class LaneletNetwork(IDrawable):
                 boundary_ids.add(la.left_bound)
             if la.right_bound is not None:
                 boundary_ids.add(la.right_bound)
-            if la.stop_line_id is not None:
-                stop_line_ids.add(la.stop_line_id)
+            if la.stop_line is not None:
+                stop_line_ids.add(la.stop_line.stop_line_id)
 
         for sign_id in traffic_sign_ids:
             new_lanelet_network.add_traffic_sign(copy.deepcopy(lanelet_network.find_traffic_sign_by_id(sign_id)), set())
