@@ -250,6 +250,9 @@ class ScenarioFactory:
             if la.right_bound is None:
                 la.right_bound = scenario.generate_object_id()
                 scenario.lanelet_network.boundaries.append(Bound(la.right_bound, la.right_vertices))
+            if la.stop_line is not None:
+                la.stop_line.stop_line_id = scenario.generate_object_id()
+                scenario.lanelet_network.stop_lines.append(la.stop_line)
 
         return scenario
 

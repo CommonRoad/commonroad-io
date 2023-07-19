@@ -536,8 +536,7 @@ class LaneletMessage:
                 lanelet_msg.adjacent_right_opposite_dir = True
 
         if lanelet.stop_line is not None:
-            if lanelet.stop_line_id is None:
-                lanelet.stop_line_id = lanelet.lanelet_id
+            lanelet.stop_line_id = lanelet.stop_line.stop_line_id
             lanelet_msg.stop_line = lanelet.stop_line_id
 
         for lanelet_type in lanelet.lanelet_type:

@@ -71,7 +71,7 @@ class Lanelet:
                  stop_line: Optional[StopLine] = None, lanelet_type: Optional[Set[LaneletType]] = None,
                  user_one_way: Optional[Set[RoadUser]] = None, user_bidirectional: Optional[Set[RoadUser]] = None,
                  traffic_signs: Optional[Set[TrafficSign]] = None, traffic_lights: Optional[Set[TrafficLight]] = None,
-                 adjacent_areas: Optional[Set[int]] = None, stop_line_id=None):
+                 adjacent_areas: Optional[Set[int]] = None):
         """
         Constructor of a Lanelet object
         :param left_vertices: The vertices of the left boundary of the Lanelet described as a
@@ -98,7 +98,6 @@ class Lanelet:
         :param traffic_signs: Traffic signs to be applied
         :param traffic_lights: Traffic lights to follow
         :param adjacent_areas: Areas that are adjacent to the lanelet
-        :param stop_line_id: id of the stop line only used for mapping to new protobuf format
         """
 
         # Set required properties
@@ -110,7 +109,7 @@ class Lanelet:
         self.lanelet_id = lanelet_id
         self.left_vertices = left_vertices if type(left_vertices) is np.ndarray else left_vertices.points
         self.right_vertices = right_vertices if type(right_vertices) is np.ndarray else right_vertices.points
-        self.center_vertices = center_vertices if type(center_vertices) is np.ndarray else center_vertices.points
+        self.center_vertices = center_vertices
         # check if length of each polyline is the same
         assert len(self.left_vertices[0]) == len(self.center_vertices[0]) == len(
                 self.right_vertices[0]), \
@@ -196,8 +195,6 @@ class Lanelet:
 
         self._left_bound = left_vertices.boundary_id if type(left_vertices) is Bound else None
         self._right_bound = right_vertices.boundary_id if type(right_vertices) is Bound else None
-
-        self._stop_line_id = stop_line_id
 
     def __eq__(self, other):
         if not isinstance(other, Lanelet):
@@ -543,14 +540,6 @@ class Lanelet:
     @right_bound.setter
     def right_bound(self, boundary_id: int):
         self._right_bound = boundary_id
-
-    @property
-    def stop_line_id(self) -> Union[int, None]:
-        return self._stop_line_id
-
-    @stop_line_id.setter
-    def stop_line_id(self, stop_line_id: Union[int, None]):
-        self._stop_line_id = stop_line_id
 
     def add_predecessor(self, lanelet: int):
         """

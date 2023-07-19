@@ -70,7 +70,7 @@ class StopLine:
         self._line_marking = line_marking
         self._traffic_sign_ref = traffic_sign_ref
         self._traffic_light_ref = traffic_light_ref
-        self._stop_line_id = stop_line_id  # attribute used for mapping to the new protobuf format
+        self._stop_line_id = stop_line_id
 
     def __eq__(self, other):
         if not isinstance(other, StopLine):

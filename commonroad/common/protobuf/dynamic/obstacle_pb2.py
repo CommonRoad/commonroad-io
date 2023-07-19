@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0eobstacle.proto\x12\x12\x63ommonroad_dynamic\x1a\nutil.proto\x1a\x0bstate.proto\"\x8f\x02\n\x10ObstacleTypeEnum\"\xfa\x01\n\x0cObstacleType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x0b\n\x07\x42ICYCLE\x10\x04\x12\x0e\n\nPEDESTRIAN\x10\x05\x12\x14\n\x10PRIORITY_VEHICLE\x10\x06\x12\x12\n\x0ePARKED_VEHICLE\x10\x07\x12\x15\n\x11\x43ONSTRUCTION_ZONE\x10\x08\x12\t\n\x05TRAIN\x10\t\x12\x11\n\rROAD_BOUNDARY\x10\n\x12\x0e\n\nMOTORCYCLE\x10\x0b\x12\x08\n\x04TAXI\x10\x0c\x12\x0c\n\x08\x42UILDING\x10\r\x12\n\n\x06PILLAR\x10\x0e\x12\x10\n\x0cMEDIAN_STRIP\x10\x0f\"\xb7\x04\n\x14MetaInformationState\x12P\n\rmeta_data_str\x18\x01 \x03(\x0b\x32\x39.commonroad_dynamic.MetaInformationState.MetaDataStrEntry\x12P\n\rmeta_data_int\x18\x02 \x03(\x0b\x32\x39.commonroad_dynamic.MetaInformationState.MetaDataIntEntry\x12T\n\x0fmeta_data_float\x18\x03 \x03(\x0b\x32;.commonroad_dynamic.MetaInformationState.MetaDataFloatEntry\x12R\n\x0emeta_data_bool\x18\x04 \x03(\x0b\x32:.commonroad_dynamic.MetaInformationState.MetaDataBoolEntry\x1a\x32\n\x10MetaDataStrEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\x1a\x32\n\x10MetaDataIntEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\x1a\x34\n\x12MetaDataFloatEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x02:\x02\x38\x01\x1a\x33\n\x11MetaDataBoolEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01\"r\n\tOccupancy\x12<\n\ttime_step\x18\x01 \x02(\x0b\x32).commonroad_common.IntegerExactOrInterval\x12\'\n\x05shape\x18\x02 \x02(\x0b\x32\x18.commonroad_common.Shape\"B\n\x0cOccupancySet\x12\x32\n\x0boccupancies\x18\x01 \x03(\x0b\x32\x1d.commonroad_dynamic.Occupancy\"Q\n\nTrajectory\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12(\n\x06states\x18\x02 \x03(\x0b\x32\x18.commonroad_common.State\"s\n\x14TrajectoryPrediction\x12\x32\n\ntrajectory\x18\x01 \x02(\x0b\x32\x1e.commonroad_dynamic.Trajectory\x12\'\n\x05shape\x18\x02 \x02(\x0b\x32\x18.commonroad_common.Shape\"h\n\x12SetBasedPrediction\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12\x37\n\roccupancy_set\x18\x02 \x02(\x0b\x32 .commonroad_dynamic.OccupancySet'
+  serialized_pb=b'\n\x0eobstacle.proto\x12\x12\x63ommonroad_dynamic\x1a\nutil.proto\x1a\x0bstate.proto\"\x9c\x02\n\x10ObstacleTypeEnum\"\x87\x02\n\x0cObstacleType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x0b\n\x07\x42ICYCLE\x10\x04\x12\x0e\n\nPEDESTRIAN\x10\x05\x12\x14\n\x10PRIORITY_VEHICLE\x10\x06\x12\x12\n\x0ePARKED_VEHICLE\x10\x07\x12\x15\n\x11\x43ONSTRUCTION_ZONE\x10\x08\x12\t\n\x05TRAIN\x10\t\x12\x11\n\rROAD_BOUNDARY\x10\n\x12\x0e\n\nMOTORCYCLE\x10\x0b\x12\x08\n\x04TAXI\x10\x0c\x12\x0c\n\x08\x42UILDING\x10\r\x12\n\n\x06PILLAR\x10\x0e\x12\x10\n\x0cMEDIAN_STRIP\x10\x0f\x12\x0b\n\x07VEHICLE\x10\x10\"\xb7\x04\n\x14MetaInformationState\x12P\n\rmeta_data_str\x18\x01 \x03(\x0b\x32\x39.commonroad_dynamic.MetaInformationState.MetaDataStrEntry\x12P\n\rmeta_data_int\x18\x02 \x03(\x0b\x32\x39.commonroad_dynamic.MetaInformationState.MetaDataIntEntry\x12T\n\x0fmeta_data_float\x18\x03 \x03(\x0b\x32;.commonroad_dynamic.MetaInformationState.MetaDataFloatEntry\x12R\n\x0emeta_data_bool\x18\x04 \x03(\x0b\x32:.commonroad_dynamic.MetaInformationState.MetaDataBoolEntry\x1a\x32\n\x10MetaDataStrEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\x1a\x32\n\x10MetaDataIntEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\x1a\x34\n\x12MetaDataFloatEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x02:\x02\x38\x01\x1a\x33\n\x11MetaDataBoolEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01\"r\n\tOccupancy\x12<\n\ttime_step\x18\x01 \x02(\x0b\x32).commonroad_common.IntegerExactOrInterval\x12\'\n\x05shape\x18\x02 \x02(\x0b\x32\x18.commonroad_common.Shape\"B\n\x0cOccupancySet\x12\x32\n\x0boccupancies\x18\x01 \x03(\x0b\x32\x1d.commonroad_dynamic.Occupancy\"Q\n\nTrajectory\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12(\n\x06states\x18\x02 \x03(\x0b\x32\x18.commonroad_common.State\"s\n\x14TrajectoryPrediction\x12\x32\n\ntrajectory\x18\x01 \x02(\x0b\x32\x1e.commonroad_dynamic.Trajectory\x12\'\n\x05shape\x18\x02 \x02(\x0b\x32\x18.commonroad_common.Shape\"h\n\x12SetBasedPrediction\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12\x37\n\roccupancy_set\x18\x02 \x02(\x0b\x32 .commonroad_dynamic.OccupancySet'
   ,
   dependencies=[util__pb2.DESCRIPTOR,state__pb2.DESCRIPTOR,])
 
@@ -114,11 +114,16 @@ _OBSTACLETYPEENUM_OBSTACLETYPE = _descriptor.EnumDescriptor(
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='VEHICLE', index=16, number=16,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
   serialized_start=85,
-  serialized_end=335,
+  serialized_end=348,
 )
 _sym_db.RegisterEnumDescriptor(_OBSTACLETYPEENUM_OBSTACLETYPE)
 
@@ -145,7 +150,7 @@ _OBSTACLETYPEENUM = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=64,
-  serialized_end=335,
+  serialized_end=348,
 )
 
 
@@ -183,8 +188,8 @@ _METAINFORMATIONSTATE_METADATASTRENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=696,
-  serialized_end=746,
+  serialized_start=709,
+  serialized_end=759,
 )
 
 _METAINFORMATIONSTATE_METADATAINTENTRY = _descriptor.Descriptor(
@@ -221,8 +226,8 @@ _METAINFORMATIONSTATE_METADATAINTENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=748,
-  serialized_end=798,
+  serialized_start=761,
+  serialized_end=811,
 )
 
 _METAINFORMATIONSTATE_METADATAFLOATENTRY = _descriptor.Descriptor(
@@ -259,8 +264,8 @@ _METAINFORMATIONSTATE_METADATAFLOATENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=800,
-  serialized_end=852,
+  serialized_start=813,
+  serialized_end=865,
 )
 
 _METAINFORMATIONSTATE_METADATABOOLENTRY = _descriptor.Descriptor(
@@ -297,8 +302,8 @@ _METAINFORMATIONSTATE_METADATABOOLENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=854,
-  serialized_end=905,
+  serialized_start=867,
+  serialized_end=918,
 )
 
 _METAINFORMATIONSTATE = _descriptor.Descriptor(
@@ -349,8 +354,8 @@ _METAINFORMATIONSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=338,
-  serialized_end=905,
+  serialized_start=351,
+  serialized_end=918,
 )
 
 
@@ -388,8 +393,8 @@ _OCCUPANCY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=907,
-  serialized_end=1021,
+  serialized_start=920,
+  serialized_end=1034,
 )
 
 
@@ -420,8 +425,8 @@ _OCCUPANCYSET = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1023,
-  serialized_end=1089,
+  serialized_start=1036,
+  serialized_end=1102,
 )
 
 
@@ -459,8 +464,8 @@ _TRAJECTORY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1091,
-  serialized_end=1172,
+  serialized_start=1104,
+  serialized_end=1185,
 )
 
 
@@ -498,8 +503,8 @@ _TRAJECTORYPREDICTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1174,
-  serialized_end=1289,
+  serialized_start=1187,
+  serialized_end=1302,
 )
 
 
@@ -537,8 +542,8 @@ _SETBASEDPREDICTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1291,
-  serialized_end=1395,
+  serialized_start=1304,
+  serialized_end=1408,
 )
 
 _OBSTACLETYPEENUM_OBSTACLETYPE.containing_type = _OBSTACLETYPEENUM

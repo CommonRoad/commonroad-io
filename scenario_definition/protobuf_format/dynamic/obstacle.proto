@@ -23,6 +23,7 @@ message ObstacleTypeEnum {
         BUILDING = 13;
         PILLAR = 14;
         MEDIAN_STRIP = 15;
+        VEHICLE = 16;
     }
 }
 
