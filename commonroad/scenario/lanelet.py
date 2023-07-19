@@ -1,6 +1,6 @@
 import copy
 from collections import defaultdict
-from typing import Tuple, Dict, Set, List
+from typing import Tuple, Dict, Set, List, Optional
 import numpy as np
 from shapely.geometry import Point as ShapelyPoint
 from shapely.geometry import Polygon as ShapelyPolygon
@@ -61,12 +61,17 @@ class Lanelet:
     left and right boundary (polylines). Furthermore, lanelets have relations to other lanelets, e.g. an adjacent left
     neighbor or a predecessor.
     """
-    def __init__(self, left_vertices: np.ndarray, center_vertices: np.ndarray, right_vertices: np.ndarray,
-                 lanelet_id: int, predecessor=None, successor=None, adjacent_left=None,
-                 adjacent_left_same_direction=None, adjacent_right=None, adjacent_right_same_direction=None,
-                 line_marking_left_vertices=LineMarking.NO_MARKING, line_marking_right_vertices=LineMarking.NO_MARKING,
-                 stop_line=None, lanelet_type=None, user_one_way=None, user_bidirectional=None, traffic_signs=None,
-                 traffic_lights=None, adjacent_areas=None, left_bound=None, right_bound=None, stop_line_id=None):
+    def __init__(self, left_vertices: Union[np.ndarray, Bound], center_vertices: np.ndarray,
+                 right_vertices: Union[np.ndarray, Bound],
+                 lanelet_id: int, predecessor: Optional[int] = None, successor: Optional[int] = None,
+                 adjacent_left: Optional[Set[int]] = None, adjacent_left_same_direction: Optional[bool] = None,
+                 adjacent_right: Optional[Set[int]] = None, adjacent_right_same_direction: Optional[bool] = None,
+                 line_marking_left_vertices: LineMarking = LineMarking.NO_MARKING,
+                 line_marking_right_vertices: LineMarking = LineMarking.NO_MARKING,
+                 stop_line: Optional[StopLine] = None, lanelet_type: Optional[Set[LaneletType]] = None,
+                 user_one_way: Optional[Set[RoadUser]] = None, user_bidirectional: Optional[Set[RoadUser]] = None,
+                 traffic_signs: Optional[Set[TrafficSign]] = None, traffic_lights: Optional[Set[TrafficLight]] = None,
+                 adjacent_areas: Optional[Set[int]] = None, stop_line_id=None):
         """
         Constructor of a Lanelet object
         :param left_vertices: The vertices of the left boundary of the Lanelet described as a
@@ -93,9 +98,6 @@ class Lanelet:
         :param traffic_signs: Traffic signs to be applied
         :param traffic_lights: Traffic lights to follow
         :param adjacent_areas: Areas that are adjacent to the lanelet
-
-        :param left_bound: left bound used for mapping to new protobuf format
-        :param right_bound: right bound used for mapping to new protobuf format
         :param stop_line_id: id of the stop line only used for mapping to new protobuf format
         """
 
@@ -106,13 +108,14 @@ class Lanelet:
         self._lanelet_id = None
 
         self.lanelet_id = lanelet_id
-        self.left_vertices = left_vertices
-        self.right_vertices = right_vertices
-        self.center_vertices = center_vertices
+        self.left_vertices = left_vertices if type(left_vertices) is np.ndarray else left_vertices.points
+        self.right_vertices = right_vertices if type(right_vertices) is np.ndarray else right_vertices.points
+        self.center_vertices = center_vertices if type(center_vertices) is np.ndarray else center_vertices.points
         # check if length of each polyline is the same
-        assert len(left_vertices[0]) == len(center_vertices[0]) == len(
-                right_vertices[0]), '<Lanelet/init>: Provided polylines do not share the same length! {}/{}/{}'.format(
-                len(left_vertices[0]), len(center_vertices[0]), len(right_vertices[0]))
+        assert len(self.left_vertices[0]) == len(self.center_vertices[0]) == len(
+                self.right_vertices[0]), \
+            '<Lanelet/init>: Provided polylines do not share the same length! {}/{}/{}'.format(
+                    len(self.left_vertices[0]), len(self.center_vertices[0]), len(self.right_vertices[0]))
 
         # Set lane markings
         self._line_marking_left_vertices = line_marking_left_vertices
@@ -191,18 +194,8 @@ class Lanelet:
         else:
             self.adjacent_areas = adjacent_areas
 
-        # As the left and right bounds have to have unique ids when mapping to the new protobuf format,
-        # left_bound is equal to the unique lanelet_id,
-        # while the right_bound is equal to the negative lanelet_id, making it unique as well
-        if left_bound is None:
-            self._left_bound = lanelet_id
-        else:
-            self._left_bound = left_bound
-
-        if right_bound is None:
-            self._right_bound = lanelet_id*-1
-        else:
-            self._right_bound = right_bound
+        self._left_bound = left_vertices.boundary_id if type(left_vertices) is Bound else None
+        self._right_bound = right_vertices.boundary_id if type(right_vertices) is Bound else None
 
         self._stop_line_id = stop_line_id
 
@@ -539,9 +532,17 @@ class Lanelet:
     def left_bound(self) -> int:
         return self._left_bound
 
+    @left_bound.setter
+    def left_bound(self, boundary_id: int):
+        self._left_bound = boundary_id
+
     @property
     def right_bound(self) -> int:
         return self._right_bound
+
+    @right_bound.setter
+    def right_bound(self, boundary_id: int):
+        self._right_bound = boundary_id
 
     @property
     def stop_line_id(self) -> Union[int, None]:

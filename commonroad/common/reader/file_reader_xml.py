@@ -13,7 +13,7 @@ from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup
-from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
+from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, Bound
 from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, LaneletType
 from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, EnvironmentObstacle, \
     SignalState, PhantomObstacle
@@ -242,6 +242,14 @@ class ScenarioFactory:
             LaneletFactory._speed_limits = {}
         else:
             scenario.add_objects(cls._obstacles(xml_node, scenario.lanelet_network, lanelet_assignment))
+
+        for la in scenario.lanelet_network.lanelets:
+            if la.left_bound is None:
+                la.left_bound = scenario.generate_object_id()
+                scenario.lanelet_network.boundaries.append(Bound(la.left_bound, la.left_vertices))
+            if la.right_bound is None:
+                la.right_bound = scenario.generate_object_id()
+                scenario.lanelet_network.boundaries.append(Bound(la.right_bound, la.right_vertices))
 
         return scenario
 

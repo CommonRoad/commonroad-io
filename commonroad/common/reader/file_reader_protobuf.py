@@ -363,17 +363,17 @@ class LaneletFactory:
         right_boundary_id = lanelet_msg.right_bound
 
         # Setting the initial values of left and right vertices, although we will always assign them bound.points
-        left_vertices = np.array(0)
-        right_vertices = np.array(0)
+        left_bound = None
+        right_bound = None
         for bound in bounds:
             if left_boundary_id == bound.boundary_id:
-                left_vertices = bound.points
+                left_bound = bound
             if right_boundary_id == bound.boundary_id:
-                right_vertices = bound.points
+                right_bound = bound
 
-        center_vertices = 0.5 * (left_vertices + right_vertices)
+        center_vertices = 0.5 * (left_bound.points + right_bound.points)
 
-        lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
+        lanelet = Lanelet(left_bound, center_vertices, right_bound, lanelet_id)
 
         predecessor = list(lanelet_msg.predecessors)
         lanelet.predecessor = predecessor
