@@ -10,7 +10,7 @@ import commonroad.geometry.transform
 from commonroad.common.util import subtract_orientations
 from commonroad.common.validity import *
 from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape
-from commonroad.scenario.intersection import Intersection
+from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup
 from commonroad.scenario.obstacle import Obstacle
 from commonroad.scenario.state import TraceState
 from commonroad.scenario.traffic_sign import TrafficSign
@@ -1458,7 +1458,7 @@ class LaneletNetwork(IDrawable):
 
     def find_intersection_by_id(self, intersection_id: int) -> Intersection:
         """
-        Finds a intersection for a given intersection_id
+        Finds an intersection for a given intersection_id
 
         :param intersection_id: The id of the intersection to find
         :return: The intersection object if the id exists and None otherwise
@@ -1467,6 +1467,30 @@ class LaneletNetwork(IDrawable):
                                                    'provided id is not valid! id = {}'.format(intersection_id)
 
         return self._intersections[intersection_id] if intersection_id in self._intersections else None
+
+    def find_incoming_group_by_id(self, inc_group_id: int) -> IncomingGroup:
+        """
+        Finds an incoming group for a given incoming_group_id
+
+        :param inc_group_id: The id of the incoming group to find
+        :return: The incoming group object if the id exists and None otherwise
+        """
+        assert is_natural_number(inc_group_id), '<LaneletNetwork/find_incoming_group_by_id>: ' \
+                                                'provided id is not valid! id = {}'.format(inc_group_id)
+        incoming = [incg for isec in self.intersections for incg in isec.incomings if incg.incoming_id == inc_group_id]
+        return incoming[0] if len(incoming) > 0 else None
+
+    def find_outgoing_group_by_id(self, outg_group_id: int) -> IncomingGroup:
+        """
+        Finds an incoming group for a given incoming_group_id
+
+        :param outg_group_id: The id of the outgoing group to find
+        :return: The outgoing group object if the id exists and None otherwise
+        """
+        assert is_natural_number(outg_group_id), '<LaneletNetwork/find_outgoing_group_by_id>: ' \
+                                                 'provided id is not valid! id = {}'.format(outg_group_id)
+        incoming = [incg for isec in self.intersections for incg in isec.incomings if incg.incoming_id == outg_group_id]
+        return incoming[0] if len(incoming) > 0 else None
 
     def add_lanelet(self, lanelet: Lanelet, rtree: bool = True):
         """
