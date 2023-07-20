@@ -167,7 +167,7 @@ class CommonRoadMapFactory:
         stop_lines = list()
         for stop_line_msg in commonroad_map_msg.stop_lines:
             stop_line = StopLineFactory.create_from_message(stop_line_msg)
-            lanelet_network.add_stop_line(stop_line)
+            lanelet_network.add_stop_line(stop_line, set())
             stop_lines.append(stop_line)
 
         for lanelet_msg in commonroad_map_msg.lanelets:
