@@ -1614,11 +1614,12 @@ class LaneletNetwork(IDrawable):
             self._boundaries[boundary.boundary_id] = boundary
             return True
 
-    def add_stop_line(self, stop_line: StopLine):
+    def add_stop_line(self, stop_line: StopLine, lanelet_ids: Set[int]):
         """
         Adds a stop line to the LaneletNetwork
 
         :param stop_line: The stop line to add
+        :param lanelet_ids: Lanelets the traffic sign should be referenced from
         :return: True if the stop line has successfully been added to the network, false otherwise
         """
         assert isinstance(stop_line, StopLine), '<LaneletNetwork/add_stop_line>: provided stop line is ' \
@@ -1630,6 +1631,12 @@ class LaneletNetwork(IDrawable):
             return False
         else:
             self._stop_lines[stop_line.stop_line_id] = stop_line
+            for lanelet_id in lanelet_ids:
+                lanelet = self.find_lanelet_by_id(lanelet_id)
+                if lanelet is not None:
+                    lanelet.stop_line = stop_line
+                else:
+                    warnings.warn('Stop line cannot be referenced to lanelet because the lanelet does not exist.')
             return True
 
     def add_intersection(self, intersection: Intersection):
