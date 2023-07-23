@@ -11,7 +11,7 @@ from commonroad.common.validity import is_real_number, is_real_number_vector, is
     is_integer_number
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
 from commonroad.scenario.intersection import Intersection
-from commonroad.scenario.lanelet import Lanelet, Bound
+from commonroad.scenario.lanelet import Lanelet, Bound, StopLine
 from commonroad.scenario.lanelet import LaneletNetwork, MapMetaInformation
 from commonroad.scenario.obstacle import ObstacleRole
 from commonroad.scenario.obstacle import ObstacleType
@@ -186,10 +186,10 @@ class Scenario(IDrawable):
         return list(self._phantom_obstacle.values())
 
     def add_objects(self, scenario_object: Union[List[Union[
-        Obstacle, Lanelet, LaneletNetwork, TrafficSign, TrafficLight, Intersection, PhantomObstacle,
+        Obstacle, Lanelet, Bound, StopLine, LaneletNetwork, TrafficSign, TrafficLight, Intersection, PhantomObstacle,
         EnvironmentObstacle]], Obstacle, Lanelet, LaneletNetwork, TrafficSign, TrafficLight, Intersection,
                                                  PhantomObstacle, EnvironmentObstacle],
-                    lanelet_ids: Set[int] = None):
+                    lanelet_ids: Optional[Set[int]] = None):
         """ Function to add objects, e.g., lanelets, dynamic and static obstacles, to the scenario.
 
             :param scenario_object: object(s) to be added to the scenario
@@ -231,6 +231,13 @@ class Scenario(IDrawable):
             lanelet_ids = set() if lanelet_ids is None else lanelet_ids
             self._mark_object_id_as_used(scenario_object.traffic_light_id)
             self._lanelet_network.add_traffic_light(scenario_object, lanelet_ids)
+        elif isinstance(scenario_object, Bound):
+            self._mark_object_id_as_used(scenario_object.boundary_id)
+            self._lanelet_network.add_boundary(scenario_object)
+        elif isinstance(scenario_object, StopLine):
+            lanelet_ids = set() if lanelet_ids is None else lanelet_ids
+            self._mark_object_id_as_used(scenario_object.stop_line_id)
+            self._lanelet_network.add_stop_line(scenario_object, lanelet_ids)
         elif isinstance(scenario_object, Intersection):
             self._mark_object_id_as_used(scenario_object.intersection_id)
             for inc in scenario_object.incomings:
