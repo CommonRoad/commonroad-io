@@ -63,7 +63,7 @@ class Lanelet:
     """
     def __init__(self, left_vertices: Union[np.ndarray, Bound], center_vertices: np.ndarray,
                  right_vertices: Union[np.ndarray, Bound],
-                 lanelet_id: int, predecessor: Optional[int] = None, successor: Optional[int] = None,
+                 lanelet_id: int, predecessor: Optional[List[int]] = None, successor: Optional[List[int]] = None,
                  adjacent_left: Optional[Set[int]] = None, adjacent_left_same_direction: Optional[bool] = None,
                  adjacent_right: Optional[Set[int]] = None, adjacent_right_same_direction: Optional[bool] = None,
                  line_marking_left_vertices: LineMarking = LineMarking.NO_MARKING,
