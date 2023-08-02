@@ -70,7 +70,7 @@ class Lanelet:
                  line_marking_right_vertices: LineMarking = LineMarking.NO_MARKING,
                  stop_line: Optional[StopLine] = None, lanelet_type: Optional[Set[LaneletType]] = None,
                  user_one_way: Optional[Set[RoadUser]] = None, user_bidirectional: Optional[Set[RoadUser]] = None,
-                 traffic_signs: Optional[Set[TrafficSign]] = None, traffic_lights: Optional[Set[TrafficLight]] = None,
+                 traffic_signs: Optional[Set[int]] = None, traffic_lights: Optional[Set[int]] = None,
                  adjacent_areas: Optional[Set[int]] = None):
         """
         Constructor of a Lanelet object
