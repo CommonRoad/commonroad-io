@@ -735,9 +735,9 @@ class TestXMLFileReader(unittest.TestCase):
         self.assertEqual(exp_dynamic_obstacles_on_lanelet_one,
                          xml_file[0].lanelet_network.lanelets[1].dynamic_obstacles_on_lanelet)
         self.assertEqual(exp_lanelet_of_static_obstacle,
-                        xml_file[0].obstacle_by_id(3).initial_shape_lanelet_ids)
+                         xml_file[0].obstacle_by_id(3).initial_shape_lanelet_ids)
         self.assertEqual(exp_lanelet_of_dynamic_obstacle_initial,
-                        xml_file[0].obstacle_by_id(2).initial_shape_lanelet_ids)
+                         xml_file[0].obstacle_by_id(2).initial_shape_lanelet_ids)
         self.assertEqual(exp_lanelet_of_dynamic_obstacle_prediction,
                          xml_file[0].obstacle_by_id(2).prediction.shape_lanelet_assignment)
 

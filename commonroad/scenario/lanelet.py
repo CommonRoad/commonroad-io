@@ -1,5 +1,4 @@
 import copy
-import enum
 from collections import defaultdict
 from typing import *
 
@@ -24,6 +23,7 @@ from commonroad.visualization.renderer import IRenderer
 from commonroad.visualization.draw_params import OptionalSpecificOrAllDrawParams, LaneletNetworkParams
 from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, LaneletType
 
+
 class Lanelet:
     """
     Class which describes a Lanelet entity according to the CommonRoad specification. Each lanelet is described by a
@@ -32,11 +32,16 @@ class Lanelet:
     """
 
     def __init__(self, left_vertices: np.ndarray, center_vertices: np.ndarray, right_vertices: np.ndarray,
-                 lanelet_id: int, predecessor=None, successor=None, adjacent_left=None,
-                 adjacent_left_same_direction=None, adjacent_right=None, adjacent_right_same_direction=None,
-                 line_marking_left_vertices=LineMarking.NO_MARKING, line_marking_right_vertices=LineMarking.NO_MARKING,
-                 stop_line=None, lanelet_type=None, user_one_way=None, user_bidirectional=None, traffic_signs=None,
-                 traffic_lights=None, adjacent_areas=None):
+                 lanelet_id: int, predecessor: Optional[List[int]] = None, successor: Optional[List[int]] = None,
+                 adjacent_left: Optional[int] = None,
+                 adjacent_left_same_direction: Optional[bool] = None, adjacent_right: Optional[int] = None,
+                 adjacent_right_same_direction: Optional[bool] = None,
+                 line_marking_left_vertices: LineMarking = LineMarking.NO_MARKING,
+                 line_marking_right_vertices: LineMarking = LineMarking.NO_MARKING,
+                 stop_line: Optional[StopLine] = None, lanelet_type: Optional[Set[LaneletType]] = None,
+                 user_one_way: Optional[Set[RoadUser]] = None, user_bidirectional: Optional[Set[RoadUser]] = None,
+                 traffic_signs: Optional[Set[int]] = None,
+                 traffic_lights: Optional[Set[int]] = None, adjacent_areas: Optional[Set[int]] = None):
         """
         Constructor of a Lanelet object
         :param left_vertices: The vertices of the left boundary of the Lanelet described as a
@@ -1194,7 +1199,7 @@ class LaneletNetwork(IDrawable):
                 list(intersection.map_incoming_lanelets.keys())}
 
     @classmethod
-    def create_from_lanelet_list(cls, lanelets: list, cleanup_ids: bool = False):
+    def create_from_lanelet_list(cls, lanelets: List[Lanelet], cleanup_ids: bool = True):
         """
         Creates a LaneletNetwork object from a given list of lanelets
 
@@ -1216,14 +1221,17 @@ class LaneletNetwork(IDrawable):
 
         if cleanup_ids:
             lanelet_network.cleanup_lanelet_references()
+            lanelet_network.cleanup_traffic_light_references()
+            lanelet_network.cleanup_traffic_sign_references()
 
         lanelet_network._create_strtree()
 
         return lanelet_network
 
     @classmethod
-    def create_from_lanelet_network(cls, lanelet_network: 'LaneletNetwork', shape_input=None,
-                                    exclude_lanelet_types=None):
+    def create_from_lanelet_network(cls, lanelet_network: 'LaneletNetwork', shape_input: Optional[Shape] = None,
+                                    exclude_lanelet_types: Optional[Set[LaneletType]] = None,
+                                    cleanup_ids: bool = True):
         """
         Creates a lanelet network from a given lanelet network (copy); adding a shape reduces the lanelets to those
         that intersect the shape provided and specifying a lanelet_type set excludes the lanelet types in the new
@@ -1232,6 +1240,7 @@ class LaneletNetwork(IDrawable):
         :param lanelet_network: The existing lanelet network
         :param shape_input: The lanelets intersecting this shape will be in the new network
         :param exclude_lanelet_types: Removes all lanelets with these lanelet_types
+        :param cleanup_ids: Boolean indicating whether unused IDs should be deleted
         :return: The new lanelet network
         """
         if exclude_lanelet_types is None:
@@ -1245,8 +1254,7 @@ class LaneletNetwork(IDrawable):
         for la in lanelet_network.lanelets:
             if len(la.lanelet_type.intersection(
                     exclude_lanelet_types)) > 0 or shape_input is not None and not \
-                    shape_input.shapely_object.intersects(
-                    la.polygon.shapely_object):
+                    shape_input.shapely_object.intersects(la.polygon.shapely_object):
                 continue
 
             lanelets.add(la)
@@ -1263,10 +1271,13 @@ class LaneletNetwork(IDrawable):
             new_lanelet_network.add_traffic_light(copy.deepcopy(lanelet_network.find_traffic_light_by_id(light_id)),
                                                   set())
         for area_id in area_ids:
-            new_lanelet_network.add_area(copy.deepcopy(lanelet_network.find_area_by_id(area_id)),
-                                         set())
+            new_lanelet_network.add_area(copy.deepcopy(lanelet_network.find_area_by_id(area_id)), set())
         for la in lanelets:
             new_lanelet_network.add_lanelet(copy.deepcopy(la), rtree=False)
+
+        if cleanup_ids:
+            new_lanelet_network.cleanup_lanelet_references()
+
         new_lanelet_network._create_strtree()
 
         return new_lanelet_network
