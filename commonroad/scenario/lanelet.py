@@ -1481,7 +1481,7 @@ class LaneletNetwork(IDrawable):
         incoming = [incg for isec in self.intersections for incg in isec.incomings if incg.incoming_id == inc_group_id]
         return incoming[0] if len(incoming) > 0 else None
 
-    def find_outgoing_group_by_id(self, outg_group_id: int) -> IncomingGroup:
+    def find_outgoing_group_by_id(self, outg_group_id: int) -> OutgoingGroup:
         """
         Finds an incoming group for a given incoming_group_id
 
