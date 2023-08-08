@@ -304,4 +304,14 @@ class TrafficLight(IDrawable):
         renderer.draw_traffic_light_sign(self, draw_params)
 
     def get_state_at_time_step(self, time_step: int) -> TrafficLightState:
-        return self.traffic_light_cycle.get_state_at_time_step(time_step)
+        """
+        Extract current traffic light state.
+        If traffic light has no cycle (e.g. only map loaded), then the first color is returned.
+
+        :param time_step: Time step of interest.
+        :return: Traffic light state (color)
+        """
+        if self._traffic_light_cycle is not None:
+            return self.traffic_light_cycle.get_state_at_time_step(time_step)
+        else:
+            return self.color[0]
