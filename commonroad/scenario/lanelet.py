@@ -1238,7 +1238,8 @@ class LaneletNetwork(IDrawable):
 
         for stop_line_id in stop_line_ids:
             if lanelet_network.find_stop_line_by_id(stop_line_id) is not None:
-                new_lanelet_network.add_stop_line(copy.deepcopy(lanelet_network.find_stop_line_by_id(stop_line_id)))
+                new_lanelet_network.add_stop_line(copy.deepcopy(lanelet_network.find_stop_line_by_id(stop_line_id)),
+                                                  set())
 
         for la in lanelets:
             new_lanelet_network.add_lanelet(copy.deepcopy(la), rtree=False)
