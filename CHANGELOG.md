@@ -1,5 +1,16 @@
 # Changelog
 
+## [2023.3] - 2023-XX-XX
+
+### Added
+- Type information for lanelet init function
+
+### Fixed
+- Function create_from_lanelet_network deletes references to removed lanelets
+
+### Changed
+- Cleanup lanelet, traffic sign, and traffic light references in function create_from_lanelet_list by default
+
 ## [2023.2] - 2023-06-26
 
 ### Added

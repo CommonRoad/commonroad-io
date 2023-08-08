@@ -405,7 +405,7 @@ class LaneletNetworkFactory:
         lanelets = []
         for lanelet_node in xml_node.findall('lanelet'):
             lanelets.append(LaneletFactory.create_from_xml_node(lanelet_node))
-        lanelet_network = LaneletNetwork.create_from_lanelet_list(lanelets)
+        lanelet_network = LaneletNetwork.create_from_lanelet_list(lanelets, cleanup_ids=False)
 
         country = cls._find_country(xml_node)
         first_traffic_sign_occurrence = cls._find_first_traffic_sign_occurence(lanelet_network)

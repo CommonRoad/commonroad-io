@@ -1153,7 +1153,7 @@ class LaneletNetwork(IDrawable):
                 list(intersection.map_outgg_lanelets.keys())}
 
     @classmethod
-    def create_from_lanelet_list(cls, lanelets: list, cleanup_ids: bool = False):
+    def create_from_lanelet_list(cls, lanelets: List[Lanelet], cleanup_ids: bool = True):
         """
         Creates a LaneletNetwork object from a given list of lanelets
 
@@ -1175,14 +1175,17 @@ class LaneletNetwork(IDrawable):
 
         if cleanup_ids:
             lanelet_network.cleanup_lanelet_references()
+            lanelet_network.cleanup_traffic_light_references()
+            lanelet_network.cleanup_traffic_sign_references()
 
         lanelet_network._create_strtree()
 
         return lanelet_network
 
     @classmethod
-    def create_from_lanelet_network(cls, lanelet_network: 'LaneletNetwork', shape_input=None,
-                                    exclude_lanelet_types=None):
+    def create_from_lanelet_network(cls, lanelet_network: 'LaneletNetwork', shape_input: Optional[Shape] = None,
+                                    exclude_lanelet_types: Optional[Set[LaneletType]] = None,
+                                    cleanup_ids: bool = True):
         """
         Creates a lanelet network from a given lanelet network (copy); adding a shape reduces the lanelets to those
         that intersect the shape provided and specifying a lanelet_type set excludes the lanelet types in the new
@@ -1191,6 +1194,7 @@ class LaneletNetwork(IDrawable):
         :param lanelet_network: The existing lanelet network
         :param shape_input: The lanelets intersecting this shape will be in the new network
         :param exclude_lanelet_types: Removes all lanelets with these lanelet_types
+        :param cleanup_ids: Boolean indicating whether unused IDs should be deleted
         :return: The new lanelet network
         """
         if exclude_lanelet_types is None:
@@ -1206,8 +1210,7 @@ class LaneletNetwork(IDrawable):
         for la in lanelet_network.lanelets:
             if len(la.lanelet_type.intersection(
                     exclude_lanelet_types)) > 0 or shape_input is not None and not \
-                    shape_input.shapely_object.intersects(
-                    la.polygon.shapely_object):
+                    shape_input.shapely_object.intersects(la.polygon.shapely_object):
                 continue
 
             lanelets.add(la)
@@ -1230,8 +1233,7 @@ class LaneletNetwork(IDrawable):
             new_lanelet_network.add_traffic_light(copy.deepcopy(lanelet_network.find_traffic_light_by_id(light_id)),
                                                   set())
         for area_id in area_ids:
-            new_lanelet_network.add_area(copy.deepcopy(lanelet_network.find_area_by_id(area_id)),
-                                         set())
+            new_lanelet_network.add_area(copy.deepcopy(lanelet_network.find_area_by_id(area_id)), set())
         for boundary_id in boundary_ids:
             if lanelet_network.find_boundary_by_id(boundary_id) is not None:
                 new_lanelet_network.add_boundary(copy.deepcopy(lanelet_network.find_boundary_by_id(boundary_id)))
@@ -1243,6 +1245,10 @@ class LaneletNetwork(IDrawable):
 
         for la in lanelets:
             new_lanelet_network.add_lanelet(copy.deepcopy(la), rtree=False)
+
+        if cleanup_ids:
+            new_lanelet_network.cleanup_lanelet_references()
+
         new_lanelet_network._create_strtree()
 
         return new_lanelet_network
