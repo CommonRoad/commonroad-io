@@ -4,6 +4,9 @@
 
 ### Added
 - Type information for lanelet init function
+- Dynamic obstacles can now store a history of their states
+- Function to update the initial state of a dynamic obstacle while storing the previous state in the history
+- Function to update behavior predictions of dynamic obstacles
 
 ### Fixed
 - Function create_from_lanelet_network deletes references to removed lanelets
