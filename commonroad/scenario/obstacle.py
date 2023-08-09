@@ -1,8 +1,7 @@
 import enum
 import warnings
-import math
 import numpy as np
-from typing import Union, Set, List, Dict, Optional, Tuple
+from typing import Union, Set, List, Optional
 from abc import abstractmethod
 
 
@@ -11,11 +10,10 @@ from commonroad.geometry.shape import Shape, \
     Rectangle, \
     Circle, \
     Polygon, \
-    ShapeGroup, \
     occupancy_shape_from_state, \
     shape_group_occupancy_shape_from_state
 from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
-from commonroad.scenario.state import TraceState, InitialState, State
+from commonroad.scenario.state import TraceState, InitialState, State, SignalState, MetaInformationState
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.renderer import IRenderer
 from commonroad.visualization.draw_params import OptionalSpecificOrAllDrawParams, PhantomObstacleParams, \
@@ -50,129 +48,6 @@ class ObstacleType(enum.Enum):
     BUILDING = "building"
     PILLAR = "pillar"
     MEDIAN_STRIP = "median_strip"
-
-
-class MetaInformationState:
-    """
-    Class that keeps the meta information state of an obstacle.
-    It freely allows to set attributes on a dynamic obstacle.
-    """
-    def __init__(self, meta_data_str: Dict[str, str] = None, meta_data_int: Dict[str, int] = None,
-                 meta_data_float: Dict[str, float] = None, meta_data_bool: Dict[str, bool] = None):
-        """
-        :param meta_data_str: dictionary of a key and a string
-        :param meta_data_int: dictionary of a key and an int
-        :param meta_data_float: dictionary of a key and a float
-        :param meta_data_bool: dictionary of a key and a bool
-        """
-        self._meta_data_str = meta_data_str
-        self._meta_data_int = meta_data_int
-        self._meta_data_float = meta_data_float
-        self._meta_data_bool = meta_data_bool
-
-    @property
-    def meta_data_str(self) -> Dict[str, str]:
-        """ Dictionary of a key and a string. """
-        return self._meta_data_str
-
-    @meta_data_str.setter
-    def meta_data_str(self, meta_data_str: Dict[str, str]):
-        assert isinstance(meta_data_str, Dict), '<MetaInformationState/meta_data_str>: Provided meta_data_str ' \
-                                                'is not valid! id={}'.format(meta_data_str)
-        self._meta_data_str = meta_data_str
-
-    @property
-    def meta_data_int(self) -> Dict[str, int]:
-        """ Dictionary of a key and an int. """
-        return self._meta_data_int
-
-    @meta_data_int.setter
-    def meta_data_int(self, meta_data_int: Dict[str, int]):
-        assert isinstance(meta_data_int, Dict), '<MetaInformationState/meta_data_int>: Provided meta_data_int ' \
-                                                'is not valid! id={}'.format(meta_data_int)
-        self._meta_data_int = meta_data_int
-
-    @property
-    def meta_data_float(self) -> Dict[str, float]:
-        """ Dictionary of a key and a float. """
-        return self._meta_data_float
-
-    @meta_data_float.setter
-    def meta_data_float(self, meta_data_float: Dict[str, float]):
-        assert isinstance(meta_data_float, Dict), '<MetaInformationState/meta_data_float>: Provided meta_data_float ' \
-                                                'is not valid! id={}'.format(meta_data_float)
-        self._meta_data_float = meta_data_float
-
-    @property
-    def meta_data_bool(self) -> Dict[str, bool]:
-        """ Dictionary of a key and a bool. """
-        return self._meta_data_bool
-
-    @meta_data_bool.setter
-    def meta_data_bool(self, meta_data_bool: Dict[str, bool]):
-        assert isinstance(meta_data_bool, Dict), '<MetaInformationState/meta_data_bool>: Provided meta_data_bool ' \
-                                                'is not valid! id={}'.format(meta_data_bool)
-        self._meta_data_bool = meta_data_bool
-
-
-class SignalState:
-    """ A signal state is a boolean value indicating the activity of the signal source at a time step.
-        The possible signal state elements are defined as slots:
-
-        :ivar horn: boolean indicating activity of horn
-        :ivar indicator_left: boolean indicating activity of left indicator
-        :ivar indicator_right: boolean indicating activity of right indicator
-        :ivar braking_lights: boolean indicating activity of braking lights
-        :ivar hazard_warning_lights: boolean indicating activity of hazard warning lights
-        :ivar flashing_blue_lights: boolean indicating activity of flashing blue lights (police, ambulance)
-        :ivar time_step: the discrete time step. Exact values are given as integers, uncertain values are given as
-              :class:`commonroad.common.util.Interval`
-    """
-
-    __slots__ = [
-        'horn',
-        'indicator_left',
-        'indicator_right',
-        'braking_lights',
-        'hazard_warning_lights',
-        'flashing_blue_lights',
-        'time_step',
-    ]
-
-    def __init__(self, **kwargs):
-        """ Elements of state vector are determined during runtime."""
-        for (field, value) in kwargs.items():
-            setattr(self, field, value)
-
-    def __eq__(self, other):
-        if not isinstance(other, SignalState):
-            warnings.warn(f"Inequality between SignalState {repr(self)} and different type {type(other)}")
-            return False
-
-        for attr in SignalState.__slots__:
-            value = None
-            value_other = None
-
-            has_attr = hasattr(self, attr)
-            if has_attr:
-                value = getattr(self, attr)
-
-            has_attr_other = hasattr(other, attr)
-            if has_attr_other:
-                value_other = getattr(other, attr)
-
-            if has_attr != has_attr_other or value != value_other:
-                return False
-
-        return True
-
-    def __hash__(self):
-        values = set()
-        for attr in SignalState.__slots__:
-            if hasattr(self, attr):
-                values.add(getattr(self, attr))
-
-        return hash(frozenset(values))
 
 
 class Obstacle(IDrawable):
@@ -500,6 +375,10 @@ class DynamicObstacle(Obstacle):
                  initial_meta_information_state: MetaInformationState = None,
                  meta_information_series: List[MetaInformationState] = None,
                  external_dataset_id: int = None,
+                 history: Optional[List[TraceState]] = None,
+                 signal_history: Optional[List[SignalState]] = None,
+                 center_lanelet_ids_history: Optional[List[Set[int]]] = None,
+                 shape_lanelet_ids_history: Optional[List[Set[int]]] = None,
                  **kwargs):
         """
             :param obstacle_id: unique ID of the obstacle
@@ -515,6 +394,8 @@ class DynamicObstacle(Obstacle):
             :param initial_meta_information_state: meta information of the dynamic obstacle
             :param meta_information_series: list of meta information
             :param external_dataset_id: ID of the external dataset
+            :param history: History of actual states
+            :param signal_history: History of signal states
         """
         for (field, value) in kwargs.items():
             setattr(self, field, value)
@@ -527,6 +408,10 @@ class DynamicObstacle(Obstacle):
         self.initial_meta_information_state = initial_meta_information_state
         self.meta_information_series = meta_information_series
         self.external_dataset_id = external_dataset_id
+        self.history = history or []
+        self.signal_history = signal_history or []
+        self.center_lanelet_ids_history = center_lanelet_ids_history or []
+        self.shape_lanelet_ids_history = shape_lanelet_ids_history or []
 
     def __eq__(self, other):
         if not isinstance(other, DynamicObstacle):
@@ -659,6 +544,60 @@ class DynamicObstacle(Obstacle):
             self.prediction.translate_rotate(translation, angle)
 
         self.initial_state = self._initial_state.translate_rotate(translation, angle)
+
+    def update_initial_state(self, current_state: TraceState,
+                             current_signal_state: Optional[SignalState] = None,
+                             current_center_lanelet_ids: Optional[Set[int]] = None,
+                             current_shape_lanelet_ids: Optional[Set[int]] = None,
+                             max_history_length: int = 6000):
+        """Updates the initial state to the given current state, appends the current initial state to the history, and
+        invalidates the prediction.
+
+        :param current_state: current state of the dynamic obstacle, will become the new initial state
+        :param current_signal_state: current signal state of the dynamic obstacle, will become the new initial signal
+                                     state
+        :param current_center_lanelet_ids: current center lanelet ids of the dynamic obstacle, will become the new
+                                           initial center lanelet ids
+        :param current_shape_lanelet_ids: current shape lanelet ids of the dynamic obstacle, will become the new
+                                          initial shape lanelet ids
+        :param max_history_length: maximum length of the history, if the history exceeds this it will be truncated,
+                                   dropping the oldest elements first; must be greater than 0
+        """
+        assert max_history_length > 0, f"<DynamicObstacle/update_initial_state>: argument max_history_length must be" \
+                                       f"greater than 0. max_history_length = {max_history_length}"
+
+        # append current initial state to history
+        self.history.append(self.initial_state)
+        self.signal_history.append(self.initial_signal_state)
+        self.center_lanelet_ids_history.append(self.initial_center_lanelet_ids)
+        self.shape_lanelet_ids_history.append(self.initial_shape_lanelet_ids)
+
+        # set initial state to current state
+        self.initial_state = current_state
+        self.initial_signal_state = current_signal_state
+        self.initial_center_lanelet_ids = current_center_lanelet_ids
+        self.initial_shape_lanelet_ids = current_shape_lanelet_ids
+
+        # invalidate prediction
+        self.prediction = None
+        self.signal_series = None
+
+        # truncate history if it is longer than desired max. length
+        if len(self.history) > max_history_length:
+            self.history = self.history[-max_history_length:]
+            self.signal_history = self.signal_history[-max_history_length:]
+            self.center_lanelet_ids_history = self.center_lanelet_ids_history[-max_history_length:]
+            self.shape_lanelet_ids_history = self.shape_lanelet_ids_history[-max_history_length:]
+
+    def update_prediction(self, prediction: Union[Prediction, SetBasedPrediction, TrajectoryPrediction],
+                          signal_series: Optional[List[SignalState]] = None):
+        """Updates the prediction of the dynamic obstacle.
+
+        :param prediction: updated movement prediction of the dynamic obstacle
+        :param signal_series: updated prediction of the signal state of the dynamic obstacle
+        """
+        self.prediction = prediction
+        self.signal_series = signal_series
 
     def __str__(self):
         obs_str = 'Dynamic Obstacle:\n'
