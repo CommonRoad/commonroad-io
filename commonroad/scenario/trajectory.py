@@ -1,10 +1,9 @@
-import warnings
-
-from commonroad.common.validity import (is_natural_number, is_positive)
+from typing import Tuple
+from commonroad.common.validity import is_natural_number, is_positive
 from commonroad.scenario.state import *
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.renderer import IRenderer
-from commonroad.visualization.draw_params import TrajectoryParams, OptionalSpecificOrAllDrawParams, StateParams
+from commonroad.visualization.draw_params import TrajectoryParams, OptionalSpecificOrAllDrawParams
 
 
 class Trajectory(IDrawable):
