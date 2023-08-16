@@ -1,8 +1,6 @@
 import logging
 import re
-from typing import Tuple, List, Set, Union, Dict
-
-import numpy as np
+from typing import Tuple, Dict  # List, Set, Union via traffic_sign imported (see below)
 
 from commonroad.common.common_scenario import ScenarioMetaInformation, FileInformation, MapMetaInformation
 from commonroad.common.reader.file_reader_interface import FileReaderScenario, FileReaderMap, \
@@ -21,7 +19,7 @@ from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, Enviro
 from commonroad.scenario.scenario import Tag, ScenarioID
 from commonroad.common.common_scenario import TimeOfDay, Weather, Underground, Environment, GeoTransformation, Location
 from commonroad.scenario.state import InitialState, TraceState, CustomState, SpecificStateClasses
-from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSignID, TrafficSign, TrafficSignValue
+from commonroad.scenario.traffic_sign import *
 from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightDirection, \
     TrafficLightCycleElement,  TrafficLight, TrafficLightCycle
 from commonroad.scenario.trajectory import Trajectory
@@ -174,7 +172,8 @@ class CommonRoadMapFactory:
             lanelet = LaneletFactory.create_from_message(lanelet_msg, bounds, stop_lines)
             lanelet_network.add_lanelet(lanelet)
         for traffic_sign_msg in commonroad_map_msg.traffic_signs:
-            traffic_sign = TrafficSignFactory.create_from_message(traffic_sign_msg)
+            traffic_sign = TrafficSignFactory.create_from_message(traffic_sign_msg,
+                                                                  map_information.scenario_id.country_id)
             lanelet_network.add_traffic_sign(traffic_sign, set())
         for traffic_light_msg in commonroad_map_msg.traffic_lights:
             traffic_light = TrafficLightFactory.create_from_message(traffic_light_msg)
@@ -485,12 +484,12 @@ class StopLineFactory:
 class TrafficSignFactory:
 
     @classmethod
-    def create_from_message(cls, traffic_sign_msg: traffic_sign_pb2.TrafficSign):
+    def create_from_message(cls, traffic_sign_msg: traffic_sign_pb2.TrafficSign, country: str):
         traffic_sign_id = traffic_sign_msg.traffic_sign_id
 
         traffic_sign_elements = list()
         for traffic_sign_element_msg in traffic_sign_msg.traffic_sign_elements:
-            traffic_sign_element = TrafficSignElementFactory.create_from_message(traffic_sign_element_msg)
+            traffic_sign_element = TrafficSignElementFactory.create_from_message(traffic_sign_element_msg, country)
             traffic_sign_elements.append(traffic_sign_element)
 
         point = PointFactory.create_from_message(traffic_sign_msg.position)
@@ -518,8 +517,10 @@ class TrafficSignValueFactory:
 class TrafficSignElementFactory:
 
     @classmethod
-    def create_from_message(cls, traffic_sign_element_msg: traffic_sign_element_pb2.TrafficSignElement):
-        element_id = TrafficSignID[traffic_sign_element_pb2.TrafficSignIDEnum.TrafficSignID.Name(
+    def create_from_message(cls, traffic_sign_element_msg: traffic_sign_element_pb2.TrafficSignElement,
+                            country: str = "ZAM"):
+        element_id = globals()["TrafficSignID" + SupportedTrafficSignCountry(country).name.lower().capitalize()][
+            traffic_sign_element_pb2.TrafficSignIDEnum.TrafficSignID.Name(
                 traffic_sign_element_msg.element_id)]
         traffic_sign_element = TrafficSignElement(element_id)
 
