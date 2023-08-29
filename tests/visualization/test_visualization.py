@@ -36,6 +36,7 @@ class TestVisualizationV2(unittest.TestCase):
         self.out_path = self.cwd_path + "/../.pytest_cache"
         self.ngsim_scen_1 = full_path + '/../test_scenarios/USA_Peach-4_8_T-1.xml'
         self.ngsim_scen_2 = full_path + '/../test_scenarios/USA_US101-4_1_T-1.xml'
+        self.scenario_3d_points = full_path + '/../test_scenarios/test_3d_points.xml'
         if not os.path.isdir(self.out_path):
             os.makedirs(self.out_path)
         else:
@@ -109,6 +110,16 @@ class TestVisualizationV2(unittest.TestCase):
             rnd.render()
 
         # plt.close('all')
+
+    def test_scenario_3d(self):
+        scenario, _ = CommonRoadFileReader(self.scenario_3d_points).open()
+        rnd = MPRenderer()
+        draw_params = MPDrawParams()
+        draw_params.lanelet_network.traffic_sign.draw_traffic_signs = True
+        draw_params.lanelet_network.traffic_light.draw_traffic_lights = True
+        draw_params.lanelet_network.lanelet.show_label = True
+        scenario.lanelet_network.draw(rnd, draw_params)
+        rnd.render()
 
     def test_focus_obstacle(self):
 
