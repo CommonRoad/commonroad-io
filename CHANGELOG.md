@@ -11,6 +11,7 @@
 ### Fixed
 - Function create_from_lanelet_network deletes references to removed lanelets
 - Write environment time to XML in correct format
+- Failing visualization of lanelets, stop lines, traffic signs, and traffic lights with z-coordinate
 
 ### Changed
 - Cleanup lanelet, traffic sign, and traffic light references in function create_from_lanelet_list by default
