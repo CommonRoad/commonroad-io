@@ -180,20 +180,16 @@ class Lanelet:
             polyline_other_string = np.array2string(np.around(polyline_other.astype(float), 10), precision=10)
             lanelet_eq = lanelet_eq and polyline_string == polyline_other_string
 
-        if lanelet_eq and self.lanelet_id == other.lanelet_id and self._line_marking_left_vertices == \
-                other.line_marking_left_vertices and self._line_marking_right_vertices == \
-                other.line_marking_right_vertices and set(
-                self._predecessor) == set(other.predecessor) and set(self._successor) == set(
-                other.successor) and self._adj_left == other.adj_left and self._adj_right == other.adj_right and \
-                self._adj_left_same_direction == other.adj_left_same_direction and self._adj_right_same_direction == \
-                other.adj_right_same_direction and self._lanelet_type == other.lanelet_type and self._user_one_way ==\
-                self.user_one_way and self._user_bidirectional == other.user_bidirectional and self._traffic_signs ==\
-                other.traffic_signs and self._traffic_lights == other.traffic_lights and self._adjacent_areas == \
-                other.adjacent_areas:
-            return list_elements_eq
-
-        warnings.warn(f"Inequality of Lanelet {repr(self)} and the other one {repr(other)}")
-        return False
+        return (list_elements_eq and lanelet_eq and self.lanelet_id == other.lanelet_id and
+                self._line_marking_left_vertices == other.line_marking_left_vertices and
+                self._line_marking_right_vertices == other.line_marking_right_vertices and
+                set(self._predecessor) == set(other.predecessor) and set(self._successor) == set(other.successor) and
+                self._adj_left == other.adj_left and self._adj_right == other.adj_right and
+                self._adj_left_same_direction == other.adj_left_same_direction and self._adj_right_same_direction
+                == other.adj_right_same_direction and self._lanelet_type == other.lanelet_type and
+                self._user_one_way == self.user_one_way and self._user_bidirectional == other.user_bidirectional
+                and self._traffic_signs == other.traffic_signs and self._traffic_lights == other.traffic_lights
+                and self._adjacent_areas == other.adjacent_areas)
 
     def __hash__(self):
         polylines = [self._left_vertices, self._right_vertices, self._center_vertices]
@@ -1016,14 +1012,10 @@ class MapInformation:
             warnings.warn(f"Inequality between MapInformation {repr(self)} and different type {type(other)}")
             return False
 
-        if self._commonroad_version == other.commonroad_version and self._map_id == other.map_id and \
-           self._date == other.date and self._author == other.author and self._affiliation == other.affiliation and \
-           self._source == other.source and self._licence_name == other.licence_name and \
-           self._licence_text == other.licence_text:
-            return True
-
-        warnings.warn(f"Inequality of MapInformation {repr(self)} and the other one {repr(other)}")
-        return False
+        return (self._commonroad_version == other.commonroad_version and self._map_id == other.map_id and
+                self._date == other.date and self._author == other.author and self._affiliation ==
+                other.affiliation and self._source == other.source and self._licence_name == other.licence_name
+                and self._licence_text == other.licence_text)
 
     def __repr__(self):
         return f"MapInformation(commonroad_version={self._commonroad_version}, map_id={self._map_id}," \
@@ -1198,9 +1190,6 @@ class LaneletNetwork(IDrawable):
                     list_elements_eq = False
         if self._information != other._information:
             lanelet_network_eq = False
-
-        if not lanelet_network_eq:
-            warnings.warn(f"Inequality of LaneletNetwork {repr(self)} and the other one {repr(other)}")
 
         return lanelet_network_eq and list_elements_eq
 

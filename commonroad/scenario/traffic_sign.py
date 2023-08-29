@@ -661,12 +661,8 @@ class TrafficSignElement:
             warnings.warn(f"Inequality between TrafficSignElement {repr(self)} and different type {type(other)}")
             return False
 
-        if self.traffic_sign_element_id == other.traffic_sign_element_id \
-                and set(self.additional_values) == set(other.additional_values):
-            return True
-
-        warnings.warn(f"Inequality of TrafficSignElement {repr(self)} and the other one {repr(other)}")
-        return False
+        return self.traffic_sign_element_id == other.traffic_sign_element_id and set(self.additional_values) == set(
+                other.additional_values)
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -739,13 +735,9 @@ class TrafficSign(IDrawable):
         position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
         position_other_string = np.array2string(np.around(other.position.astype(float), 10), precision=10)
 
-        if traffic_sign_eq and self._traffic_sign_id == other.traffic_sign_id \
-                and position_string == position_other_string and self._virtual == other.virtual \
-                and self._first_occurrence == other.first_occurrence:
-            return list_elements_eq
-
-        warnings.warn(f"Inequality of TrafficSign {repr(self)} and the other one {repr(other)}")
-        return False
+        return (list_elements_eq and traffic_sign_eq and self._traffic_sign_id == other.traffic_sign_id and
+                position_string == position_other_string and self._virtual == other.virtual and
+                self._first_occurrence == other.first_occurrence)
 
     def __hash__(self):
         position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
