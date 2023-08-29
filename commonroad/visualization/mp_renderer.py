@@ -934,6 +934,11 @@ class MPRenderer(IRenderer):
             if isinstance(draw_lanlet_ids, list) and lanelet.lanelet_id not in draw_lanlet_ids:
                 continue
 
+            # project lanelet vertices to xy-plane as we make a 2D plot
+            center_vertices_2d = lanelet.center_vertices[:, :2]
+            left_vertices_2d = lanelet.left_vertices[:, :2]
+            right_vertices_2d = lanelet.right_vertices[:, :2]
+
             def _draw_bound(vertices, line_marking, paths, coordinate_border_vertices):
                 if draw_border_vertices:
                     coordinate_border_vertices.append(vertices)
@@ -942,7 +947,7 @@ class MPRenderer(IRenderer):
                         LineMarking.NO_MARKING:
                     linestyle, dashes, linewidth_metres = line_marking_to_linestyle(line_marking)
                     if lanelet.distance[-1] <= linewidth_metres:
-                        paths.append(Path(lanelet.right_vertices, closed=False))
+                        paths.append(Path(right_vertices_2d, closed=False))
                     else:
                         tmp_vertices = vertices.copy()
                         line_string = shapely.geometry.LineString(tmp_vertices)
@@ -975,17 +980,18 @@ class MPRenderer(IRenderer):
             # left bound
             if (draw_border_vertices or draw_left_bound) and (
                     lanelet.adj_left is None or not lanelet.adj_left_same_direction):
-                _draw_bound(lanelet.left_vertices, lanelet.line_marking_left_vertices, left_paths,
+                _draw_bound(left_vertices_2d, lanelet.line_marking_left_vertices, left_paths,
                             coordinates_left_border_vertices)
 
             # right bound
             if draw_border_vertices or draw_right_bound:
-                _draw_bound(lanelet.right_vertices, lanelet.line_marking_right_vertices, right_paths,
+                _draw_bound(right_vertices_2d, lanelet.line_marking_right_vertices, right_paths,
                             coordinates_right_border_vertices)
 
             # stop line
             if draw_stop_line and lanelet.stop_line:
-                stop_line = np.vstack([lanelet.stop_line.start, lanelet.stop_line.end])
+                # project stop line to xy-plane for 2D plot
+                stop_line = np.vstack([lanelet.stop_line.start[:2], lanelet.stop_line.end[:2]])
                 linestyle, dashes, linewidth_metres = line_marking_to_linestyle(lanelet.stop_line.line_marking)
                 # cut off in the beginning, because linewidth_metres is added
                 # later
@@ -1004,9 +1010,9 @@ class MPRenderer(IRenderer):
 
             # direction arrow
             if draw_start_and_direction:
-                center = lanelet.center_vertices[0]
-                orientation = math.atan2(*(lanelet.center_vertices[1] - center)[::-1])
-                lanelet_width = np.linalg.norm(lanelet.right_vertices[0] - lanelet.left_vertices[0])
+                center = center_vertices_2d[0]
+                orientation = math.atan2(*(center_vertices_2d[1] - center)[::-1])
+                lanelet_width = np.linalg.norm(right_vertices_2d[0] - left_vertices_2d[0])
                 arrow_width = min(lanelet_width, 1.5)
                 path = get_arrow_path_at(*center, orientation, arrow_width)
                 if unique_colors:
@@ -1027,12 +1033,10 @@ class MPRenderer(IRenderer):
                     linestyle = '--' if light_state == TrafficLightState.RED_YELLOW else '-'
                     dashes = (5, 5) if linestyle == '--' else (None, None)
 
-                    # cut off in the beginning, because linewidth_metres is
-                    # added
-                    # later
-                    tmp_center = lanelet.center_vertices.copy()
+                    # cut off in the beginning, because linewidth_metres is added later
+                    tmp_center = center_vertices_2d.copy()
                     if lanelet.distance[-1] > linewidth_metres:
-                        tmp_center[0, :] = lanelet.interpolate_position(linewidth_metres)[0]
+                        tmp_center[0, :] = lanelet.interpolate_position(linewidth_metres)[0][:2]
                     zorder = ZOrders.LIGHT_STATE_GREEN if light_state == TrafficLightState.GREEN else \
                         ZOrders.LIGHT_STATE_OTHER
                     line = LineDataUnits(tmp_center[:, 0], tmp_center[:, 1], zorder=zorder, linewidth=linewidth_metres,
@@ -1045,21 +1049,21 @@ class MPRenderer(IRenderer):
             is_outgoing = draw_intersections and draw_outgoings and lanelet.lanelet_id in all_outgoings
             if is_outgoing:
                 if lanelet.lanelet_id in outgoings_left:
-                    out_left_paths.append(Path(lanelet.center_vertices, closed=False))
+                    out_left_paths.append(Path(center_vertices_2d, closed=False))
                 elif lanelet.lanelet_id in outgoings_straight:
-                    out_straight_paths.append(Path(lanelet.center_vertices, closed=False))
+                    out_straight_paths.append(Path(center_vertices_2d, closed=False))
                 else:
-                    out_right_paths.append(Path(lanelet.center_vertices, closed=False))
+                    out_right_paths.append(Path(center_vertices_2d, closed=False))
 
             elif draw_center_bound:
                 if unique_colors:
-                    center_paths.append(mpl.patches.PathPatch(Path(lanelet.center_vertices, closed=False),
+                    center_paths.append(mpl.patches.PathPatch(Path(center_vertices_2d, closed=False),
                                                               edgecolor=center_bound_color, facecolor='none',
                                                               lw=draw_linewidth, zorder=ZOrders.CENTER_BOUND,
                                                               antialiased=antialiased))
                 elif colormap_tangent:
                     relative_angle = draw_params.relative_angle
-                    points = lanelet.center_vertices.reshape(-1, 1, 2)
+                    points = center_vertices_2d.reshape(-1, 1, 2)
                     angles = get_tangent_angle(points[:, 0, :], relative_angle)
                     segments = np.concatenate([points[:-1], points[1:]], axis=1)
                     norm = plt.Normalize(0, 360)
@@ -1077,19 +1081,19 @@ class MPRenderer(IRenderer):
             # Draw lanelet area
             if fill_lanelet:
                 if not is_incoming_lanelet and not is_crossing and not is_outgoing_group_lanelet:
-                    vertices_fill.append(np.concatenate((lanelet.right_vertices, np.flip(lanelet.left_vertices, 0))))
+                    vertices_fill.append(np.concatenate((right_vertices_2d, np.flip(left_vertices_2d, 0))))
 
             # collect incoming lanelets in separate list for plotting in
             # different color
             if is_incoming_lanelet:
                 incoming_vertices_fill.append(
-                        np.concatenate((lanelet.right_vertices, np.flip(lanelet.left_vertices, 0))))
+                        np.concatenate((right_vertices_2d, np.flip(left_vertices_2d, 0))))
             elif is_crossing:
                 crossing_vertices_fill.append(
-                        np.concatenate((lanelet.right_vertices, np.flip(lanelet.left_vertices, 0))))
+                        np.concatenate((right_vertices_2d, np.flip(left_vertices_2d, 0))))
             elif is_outgoing_group_lanelet:
                 outgoing_group_vertices_fill.append(
-                        np.concatenate((lanelet.right_vertices, np.flip(lanelet.left_vertices, 0))))
+                        np.concatenate((right_vertices_2d, np.flip(left_vertices_2d, 0))))
 
             # Draw labels
             if show_label or show_intersection_labels or draw_traffic_signs:
@@ -1123,6 +1127,8 @@ class MPRenderer(IRenderer):
                 if len(label_string) > 0:
                     # compute normal angle of label box
                     clr_positions = lanelet.interpolate_position(0.5 * lanelet.distance[-1])
+                    # project to xy-plane (last tuple element is an index, so we do not need to project it)
+                    clr_positions = (clr_positions[0][:2], clr_positions[1][:2], clr_positions[2][:2], clr_positions[3])
                     normal_vector = np.array(clr_positions[1]) - np.array(clr_positions[2])
                     angle = np.rad2deg(math.atan2(normal_vector[1], normal_vector[0])) - 90
                     angle = angle if Interval(-90, 90).contains(angle) else angle - 180

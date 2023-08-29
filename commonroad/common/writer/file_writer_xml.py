@@ -335,10 +335,7 @@ class EnvironmentXMLNode:
         environment_node = etree.Element('environment')
         if environment.time_of_day.value is not TimeOfDay.UNKNOWN:
             time_node = etree.Element('time')
-            if environment.time.hours < 10:
-                time_node.text = "0" + str(environment.time.hours) + ":" + str(environment.time.minutes) + ":00"
-            else:
-                time_node.text = str(environment.time.hours) + ":" + str(environment.time.minutes)
+            time_node.text = f"{environment.time.hours:02d}:{environment.time.minutes:02d}:00"
             environment_node.append(time_node)
             time_of_day_node = etree.Element('timeOfDay')
             time_of_day_node.text = environment.time_of_day.value

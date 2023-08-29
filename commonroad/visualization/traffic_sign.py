@@ -354,7 +354,7 @@ def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], Traffi
         # horizontally stack all traffic sign elements of the traffic sign
         if len(imageboxes) > 0:
             hbox = HPacker(children=imageboxes, pad=0, sep=0.05, align='baseline')
-            imageboxes_all[tuple(traffic_sign.position.tolist())].append(hbox)
+            imageboxes_all[tuple(traffic_sign.position[:2].tolist())].append(hbox)
 
     return imageboxes_all
 
@@ -404,7 +404,7 @@ def create_img_boxes_traffic_lights(traffic_lights: Union[List[TrafficLight], Tr
         # stack boxes vertically
         img_box = VPacker(children=boxes, pad=0, sep=0, align='center')
 
-        imageboxes_all[tuple(traffic_light.position.tolist())].append(img_box)
+        imageboxes_all[tuple(traffic_light.position[:2].tolist())].append(img_box)
 
     return imageboxes_all
 
