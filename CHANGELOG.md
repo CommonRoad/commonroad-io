@@ -17,6 +17,7 @@
 
 ### Changed
 - Cleanup lanelet, traffic sign, and traffic light references in function create_from_lanelet_list by default
+- Equality checks of scenario elements no longer emit a warning on inequality (except if the elements are of different types)
 
 ## [2023.2] - 2023-06-26
 
