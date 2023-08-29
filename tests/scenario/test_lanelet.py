@@ -261,6 +261,80 @@ class TestLanelet(unittest.TestCase):
         np.testing.assert_array_almost_equal(merged_lanelets[0].right_vertices, out_vertices_right)
         np.testing.assert_array_almost_equal(merged_lanelets[0].center_vertices, out_vertices_center)
 
+    def test_all_lanelets_by_merging_predecessors_from_lanelet(self):
+        v_right1 = np.array([[0, 0], [1, 0]])
+        v_left1 = np.array([[0, 1], [1, 1]])
+        v_center1 = np.array([[0, .5], [1, .5]])
+        v_right2 = np.array([[1, 0], [2, 0]])
+        v_left2 = np.array([[1, 1], [2, 1]])
+        v_center2 = np.array([[1, .5], [2, .5]])
+        v_right3 = np.array([[2, 0], [3, 0]])
+        v_left3 = np.array([[2, 1], [3, 1]])
+        v_center3 = np.array([[2, .5], [3, .5]])
+        lanelet1 = Lanelet(v_left1, v_center1, v_right1, lanelet_id=1, successor=[2], predecessor=[])
+        lanelet2 = Lanelet(v_left2, v_center2, v_right2, lanelet_id=2, successor=[3], predecessor=[1])
+        lanelet3 = Lanelet(v_left3, v_center3, v_right3, lanelet_id=3, successor=[], predecessor=[2])
+
+        lanelet_network = LaneletNetwork.create_from_lanelet_list([lanelet1, lanelet2, lanelet3])
+
+        merged_lanelets, output_ids = Lanelet.all_lanelets_by_merging_predecessors_from_lanelet(lanelet3,
+                                                                                                lanelet_network,
+                                                                                                max_length=100.0)
+        expected = [[3, 2, 1]]
+        self.assertListEqual(output_ids[0], expected[0])
+        out_vertices_right = np.array([v_right1[0], v_right2[0], v_right3[0], v_right3[1]])
+        out_vertices_left = np.array([v_left1[0], v_left2[0], v_left3[0], v_left3[1]])
+        out_vertices_center = np.array([v_center1[0], v_center2[0], v_center3[0], v_center3[1]])
+        np.testing.assert_array_almost_equal(merged_lanelets[0].left_vertices, out_vertices_left)
+        np.testing.assert_array_almost_equal(merged_lanelets[0].right_vertices, out_vertices_right)
+        np.testing.assert_array_almost_equal(merged_lanelets[0].center_vertices, out_vertices_center)
+
+        # test length restriction
+        merged_lanelets, output_ids = Lanelet.all_lanelets_by_merging_predecessors_from_lanelet(lanelet3,
+                                                                                                lanelet_network,
+                                                                                                max_length=1)
+
+        expected = [[3, 2]]
+        self.assertListEqual(output_ids[0], expected[0])
+        out_vertices_right = np.array([v_right2[0], v_right3[0], v_right3[1]])
+        out_vertices_left = np.array([v_left2[0], v_left3[0], v_left3[1]])
+        out_vertices_center = np.array([v_center2[0], v_center3[0], v_center3[1]])
+        np.testing.assert_array_almost_equal(merged_lanelets[0].left_vertices, out_vertices_left)
+        np.testing.assert_array_almost_equal(merged_lanelets[0].right_vertices, out_vertices_right)
+        np.testing.assert_array_almost_equal(merged_lanelets[0].center_vertices, out_vertices_center)
+
+        # test when lanelet has no predecessors
+        lanelet4 = Lanelet(v_left2, v_center2, v_right2, lanelet_id=4, successor=[], predecessor=[])
+        merged_lanelets, output_ids = Lanelet.all_lanelets_by_merging_predecessors_from_lanelet(lanelet4,
+                                                                                                lanelet_network)
+        self.assertEqual(merged_lanelets, [lanelet4])
+        self.assertListEqual(output_ids, [[lanelet4.lanelet_id]])
+
+        # test with two created paths (1-4-3 and 1-2-3)
+        lanelet4.predecessor = [1]
+        lanelet4.successor = [3]
+        lanelet1.successor = [2, 4]
+        lanelet3.predecessor = [2, 4]
+
+        lanelet_network.add_lanelet(lanelet4)
+
+        merged_lanelets, output_ids = Lanelet.all_lanelets_by_merging_predecessors_from_lanelet(lanelet3,
+                                                                                                lanelet_network)
+
+        self.assertListEqual(output_ids, [[3, 2, 1], [3, 4, 1]])
+
+        out_vertices_right = np.array([v_right1[0], v_right2[0], v_right3[0], v_right3[1]])
+        out_vertices_left = np.array([v_left1[0], v_left2[0], v_left3[0], v_left3[1]])
+        out_vertices_center = np.array([v_center1[0], v_center2[0], v_center3[0], v_center3[1]])
+
+        np.testing.assert_array_almost_equal(merged_lanelets[0].left_vertices, out_vertices_left)
+        np.testing.assert_array_almost_equal(merged_lanelets[0].right_vertices, out_vertices_right)
+        np.testing.assert_array_almost_equal(merged_lanelets[0].center_vertices, out_vertices_center)
+
+        np.testing.assert_array_almost_equal(merged_lanelets[1].left_vertices, out_vertices_left)
+        np.testing.assert_array_almost_equal(merged_lanelets[1].right_vertices, out_vertices_right)
+        np.testing.assert_array_almost_equal(merged_lanelets[1].center_vertices, out_vertices_center)
+
     def test_lanelet_successors_in_range(self):
         v_right1 = np.array([[0, 0], [1, 0]])
         v_left1 = np.array([[0, 1], [1, 1]])
