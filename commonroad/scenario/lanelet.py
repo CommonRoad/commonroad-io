@@ -807,6 +807,43 @@ class Lanelet:
 
         return paths_final
 
+    def find_lanelet_predecessors_in_range(self, lanelet_network: "LaneletNetwork", max_length=50.0) -> List[List[int]]:
+        """
+        Finds all possible predecessor paths (id sequences) within max_length.
+
+        :param lanelet_network: lanelet network
+        :param max_length: abort once length of path is reached
+        :return: list of lanelet IDs
+        """
+        paths = [[p] for p in self.predecessor]
+        paths_final = []
+        lengths = [lanelet_network.find_lanelet_by_id(p).distance[-1] for p in self.predecessor]
+        while paths:
+            paths_next = []
+            lengths_next = []
+            for p, le in zip(paths, lengths):
+                predecessors = lanelet_network.find_lanelet_by_id(p[-1]).predecessor
+                if not predecessors:
+                    paths_final.append(p)
+                else:
+                    for pred in predecessors:
+                        if pred in p or pred == self.lanelet_id or le >= max_length:
+                            # prevent loops and consider length of first predecessor
+                            paths_final.append(p)
+                            continue
+
+                        l_next = le + lanelet_network.find_lanelet_by_id(pred).distance[-1]
+                        if l_next < max_length:
+                            paths_next.append(p + [pred])
+                            lengths_next.append(l_next)
+                        else:
+                            paths_final.append(p + [pred])
+
+            paths = paths_next
+            lengths = lengths_next
+
+        return paths_final
+
     def add_dynamic_obstacle_to_lanelet(self, obstacle_id: int, time_step: int):
         """
         Adds a dynamic obstacle ID to lanelet

@@ -289,7 +289,42 @@ class TestLanelet(unittest.TestCase):
         paths2 = lanelet1.find_lanelet_successors_in_range(ln, max_length=1.0)
         self.assertIn([2], paths2)
         self.assertTrue(len(paths2) == 1)
+
+    def test_lanelet_predecessors_in_range(self):
+        v_right1 = np.array([[0, 0], [1, 0]])
+        v_left1 = np.array([[0, 1], [1, 1]])
+        v_center1 = np.array([[0, .5], [1, .5]])
+        v_right2 = np.array([[1, 0], [2, 0]])
+        v_left2 = np.array([[1, 1], [2, 1]])
+        v_center2 = np.array([[1, .5], [2, .5]])
+        v_right3 = np.array([[2, 0], [3, 0]])
+        v_left3 = np.array([[2, 1], [3, 1]])
+        v_center3 = np.array([[2, .5], [3, .5]])
+        v_right4 = np.array([[3, 0], [4, 0]])
+        v_left4 = np.array([[3, 1], [4, 1]])
+        v_center4 = np.array([[3, .5], [4, .5]])
+
+        lanelet1 = Lanelet(v_left1, v_center1, v_right1, lanelet_id=1, successor=[2], predecessor=[])
+        lanelet2 = Lanelet(v_left2, v_center2, v_right2, lanelet_id=2, successor=[3], predecessor=[1])
+        lanelet3 = Lanelet(v_left3, v_center3, v_right3, lanelet_id=3, successor=[4], predecessor=[2])
+        lanelet4 = Lanelet(v_left4, v_center4, v_right4, lanelet_id=4, successor=[], predecessor=[3, 2])
+        ln = LaneletNetwork.create_from_lanelet_list([lanelet1, lanelet2, lanelet3, lanelet4])
+
+        paths = lanelet4.find_lanelet_predecessors_in_range(ln)
+        self.assertIn([2, 1], paths)
+        self.assertIn([3, 2, 1], paths)
+        self.assertTrue(len(paths) == 2)
+
+        paths2 = lanelet4.find_lanelet_predecessors_in_range(ln, max_length=1)
+        self.assertIn([3], paths2)
+        self.assertIn([2], paths2)
+        self.assertTrue(len(paths2) == 2)
         print(paths2)
+
+        paths3 = lanelet4.find_lanelet_predecessors_in_range(ln, max_length=1.5)
+        self.assertIn([3, 2], paths3)
+        self.assertIn([2, 1], paths3)
+        self.assertTrue(len(paths3) == 2)
 
     def test_add_predecessor(self):
         right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
