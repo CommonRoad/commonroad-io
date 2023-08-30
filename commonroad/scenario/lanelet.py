@@ -64,8 +64,8 @@ class Lanelet:
     def __init__(self, left_vertices: Union[np.ndarray, Bound], center_vertices: np.ndarray,
                  right_vertices: Union[np.ndarray, Bound],
                  lanelet_id: int, predecessor: Optional[List[int]] = None, successor: Optional[List[int]] = None,
-                 adjacent_left: Optional[Set[int]] = None, adjacent_left_same_direction: Optional[bool] = None,
-                 adjacent_right: Optional[Set[int]] = None, adjacent_right_same_direction: Optional[bool] = None,
+                 adjacent_left: Optional[int] = None, adjacent_left_same_direction: Optional[bool] = None,
+                 adjacent_right: Optional[int] = None, adjacent_right_same_direction: Optional[bool] = None,
                  line_marking_left_vertices: LineMarking = LineMarking.NO_MARKING,
                  line_marking_right_vertices: LineMarking = LineMarking.NO_MARKING,
                  stop_line: Optional[StopLine] = None, lanelet_type: Optional[Set[LaneletType]] = None,
@@ -1386,7 +1386,12 @@ class LaneletNetwork(IDrawable):
                 inc._outgoing_straight = set(inc.outgoing_straight).intersection(existing_ids)
                 inc._outgoing_right = set(inc.outgoing_right).intersection(existing_ids)
                 inc._outgoing_left = set(inc.outgoing_left).intersection(existing_ids)
-                inc._crossings = set(inc.crossings).intersection(existing_ids)
+
+            for out in inter.outgoings:
+                out._outgoing_lanelets = set(out.outgoing_lanelets).intersection(existing_ids)
+
+            for cros in inter.crossings:
+                cros._crossing_lanelets = set(cros.crossing_lanelets).intersection(existing_ids)
 
     def remove_traffic_sign(self, traffic_sign_id: int):
         """

@@ -12,7 +12,7 @@ from commonroad.scenario.state import InitialState
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany
 from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightCycleElement, TrafficLight, \
     TrafficLightCycle
-from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup
+from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup, CrossingGroup
 from commonroad.scenario.area import Area
 
 
@@ -76,11 +76,13 @@ class TestLaneletNetwork(unittest.TestCase):
         self.stop_line = StopLine(self.left_vertices[-1], self.right_vertices[-1], LineMarking.SOLID,
                                   {self.traffic_sign.traffic_sign_id}, {self.traffic_light.traffic_light_id})
 
-        incoming_1 = IncomingGroup(2, {self.lanelet_id, 11}, 1, {12, 13}, {14, 15}, {16, 17}, {1})
-        incoming_2 = IncomingGroup(3, {20, 21}, 2, {22, 23}, {24, 25}, {26, 27}, {2})
-        outgoing_1 = OutgoingGroup(1, {1, 2, 3})
-        outgoing_2 = OutgoingGroup(2, {4, 5, 6})
-        self.intersection = Intersection(1, [incoming_1, incoming_2], [outgoing_1, outgoing_2])
+        incoming_1 = IncomingGroup(1228, {self.lanelet_id, 11}, 1, {12, 13}, {14, 15}, {16, 17})
+        incoming_2 = IncomingGroup(1229, {20, 21}, 2, {22, 23}, {24, 25}, {26, 27})
+        outgoing_1 = OutgoingGroup(1230, {1, 2, 3})
+        outgoing_2 = OutgoingGroup(1231, {4, 5, 6})
+        crossing_1 = CrossingGroup(1234, {1}, 1228, 1230)
+        crossing_2 = CrossingGroup(1235, {2}, 1229, 1231)
+        self.intersection = Intersection(1, [incoming_1, incoming_2], [outgoing_1, outgoing_2], [crossing_1, crossing_2])
 
         self.lanelet = Lanelet(self.left_vertices, self.center_vertices, self.right_vertices, self.lanelet_id,
                                self.predecessor, self.successor, self.adjacent_left, self.adjacent_left_same_dir,
@@ -480,8 +482,9 @@ class TestLaneletNetwork(unittest.TestCase):
         lanelet_id = 3
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
 
-        incoming = IncomingGroup(2, {9, 11}, 1, {12, 13}, {14, 15}, {16, 17}, {1})
+        incoming = IncomingGroup(2, {9, 11}, 1, {12, 13}, {14, 15}, {16, 17})
         outgoing = OutgoingGroup(1, {1, 2, 3})
+        crossing = CrossingGroup(1234, {30, 31}, 2, 1)
         intersection = Intersection(1, [incoming], [outgoing])
 
         traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, ["15"])
@@ -505,7 +508,7 @@ class TestLaneletNetwork(unittest.TestCase):
         self.assertNotEqual(hash(lanelet_network_1), hash(lanelet_network_2))
 
         lanelet_network_2.add_lanelet(lanelet)
-        lanelet_network_2.add_intersection(Intersection(2, [incoming], {30, 31}))
+        lanelet_network_2.add_intersection(Intersection(2, [incoming], crossings=[crossing]))
         self.assertFalse(lanelet_network_1 == lanelet_network_2)
         self.assertNotEqual(hash(lanelet_network_1), hash(lanelet_network_2))
 

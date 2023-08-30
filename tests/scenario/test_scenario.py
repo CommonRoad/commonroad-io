@@ -6,7 +6,7 @@ from copy import deepcopy
 from commonroad import SCENARIO_VERSION
 from commonroad.common.util import Interval, Time
 from commonroad.geometry.shape import *
-from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup
+from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup, CrossingGroup
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
 from commonroad.common.common_lanelet import LineMarking
 from commonroad.scenario.obstacle import *
@@ -82,9 +82,10 @@ class TestScenario(unittest.TestCase):
                                             prediction=self.traj_pred, obstacle_shape=self.rectangle,
                                             initial_shape_lanelet_ids={100, 101})
 
-        self.incoming_1 = IncomingGroup(22, {10, 11}, 1, {12, 13}, {14, 15}, {16, 17}, {1})
-        self.incoming_2 = IncomingGroup(23, {20, 21}, 2, {22, 23}, {24, 25}, {26, 27}, {1})
-        self.incoming_3 = IncomingGroup(122, {100}, 3, crossings={1})
+        self.incoming_1 = IncomingGroup(22, {10, 11}, 1, {12, 13}, {14, 15}, {16, 17})
+        self.incoming_2 = IncomingGroup(23, {20, 21}, 2, {22, 23}, {24, 25}, {26, 27})
+        self.incoming_3 = IncomingGroup(122, {100}, 3)
+        self.crossing_1 = CrossingGroup(9384, {3891}, 22, 1)
         self.outgoing_1 = OutgoingGroup(1, {1, 2, 3})
         self.outgoing_2 = OutgoingGroup(2, {4, 5, 6})
         self.outgoing_3 = OutgoingGroup(3, {7, 8, 9})
