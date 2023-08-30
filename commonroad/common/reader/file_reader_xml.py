@@ -1,7 +1,9 @@
 import logging
 import re
+import sys
 from abc import ABC
 from collections import defaultdict
+import random
 from typing import Dict, Tuple, Optional
 from xml.etree import ElementTree
 
@@ -12,7 +14,7 @@ from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Sh
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
-from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup
+from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup, CrossingGroup
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, Bound
 from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, LaneletType
 from commonroad.scenario.obstacle import ObstacleType, StaticObstacle, DynamicObstacle, Obstacle, EnvironmentObstacle, \
@@ -1001,12 +1003,16 @@ class IntersectionFactory:
         """
         intersection_id = int(xml_node.get('id'))
 
-        # In 2020a format, crossing is directly in the intersection, so we remap it to the first incoming element and
-        # generate a warning to the user
+        # In 2020a format, crossing is directly in the intersection, so we keep the incoming/outgoing group reference
+        # empty and generate a warning to the user
+        crossings = []
         if xml_node.find('crossing') is not None:
             logger.warning("After 2020a format, crossing is no longer mapped directly into intersection, "
                            "thus it has been remapped to the first incoming element")
-            xml_node.findall('incoming')[0].append(xml_node.find('crossing'))
+            crossing_lanelets = set()
+            for crossing_ref in xml_node.find('crossing').findall('crossingLanelet'):
+                crossing_lanelets.add(int(crossing_ref.get('ref')))
+            crossings.append(CrossingGroup(random.randint(123456789, sys.maxsize) , crossing_lanelets))
 
         incomings = []
         for incoming_node in xml_node.findall('incoming'):
@@ -1016,7 +1022,8 @@ class IntersectionFactory:
         for outgoing_node in xml_node.findall('outgoing'):
             outgoings.append(OutgoingGroupFactory.create_from_xml_node(outgoing_node))
 
-        return Intersection(intersection_id=intersection_id, incomings=incomings, outgoings=outgoings)
+        return Intersection(intersection_id=intersection_id, incomings=incomings, outgoings=outgoings,
+                            crossings=crossings)
 
 
 class OutgoingGroupFactory:
@@ -1052,7 +1059,6 @@ class IntersectionIncomingFactory:
         outgoing_right = set()
         outgoing_straight = set()
         outgoing_left = set()
-        crossings = set()
 
         for incoming_lanelet_ref in xml_node.findall('incomingLanelet'):
             incoming_lanelets.add(int(incoming_lanelet_ref.get('ref')))
@@ -1079,16 +1085,10 @@ class IntersectionIncomingFactory:
                            " is of deprecated format, thus mapped to outgoingLeft")
             outgoing_left.add(int(successor_left_ref.get('ref')))
 
-        if xml_node.find('crossing') is not None:
-            for crossing_ref in xml_node.find('crossing').findall('crossingLanelet'):
-                crossings.add(int(crossing_ref.get('ref')))
-        else:
-            crossings = None
-
-        return IncomingGroup(incoming_id=incoming_id, outgoing_id=outgoing_id,
+        return IncomingGroup(incoming_id=incoming_id, outgoing_group_id=outgoing_id,
                              incoming_lanelets=incoming_lanelets,
                              outgoing_right=outgoing_right, outgoing_straight=outgoing_straight,
-                             outgoing_left=outgoing_left, crossings=crossings)
+                             outgoing_left=outgoing_left)
 
 
 class ObstacleFactory(ABC):

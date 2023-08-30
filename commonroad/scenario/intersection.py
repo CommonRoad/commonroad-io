@@ -38,24 +38,24 @@ class IncomingGroup:
             return False
 
         return (self._incoming_id == other.incoming_id and self._incoming_lanelets == other.incoming_lanelets and
-                self._outgoing_id == other.outgoing_id and self._outgoing_right == other.outgoing_right and
+                self._outgoing_group_id == other.outgoing_group_id and self._outgoing_right == other.outgoing_right and
                 self._outgoing_straight == other.outgoing_straight and self._outgoing_left ==
                 other.outgoing_left)
 
     def __hash__(self):
-        return hash((self._incoming_id, frozenset(self._incoming_lanelets), self._outgoing_id,
+        return hash((self._incoming_id, frozenset(self._incoming_lanelets), self._outgoing_group_id,
                      frozenset(self._outgoing_right), frozenset(self._outgoing_straight),
                      frozenset(self._outgoing_left)))
 
     def __str__(self):
         return f"IncomingGroup with id {self._incoming_id} represents the incoming" \
-               f" lanelets {self._incoming_lanelets} and has outgoing lanelet {self._outgoing_id}," \
+               f" lanelets {self._incoming_lanelets} and has outgoing lanelet {self._outgoing_group_id}," \
                f" right outgoings {self._outgoing_right}, straight outgoings {self._outgoing_straight}," \
                f" left outgoings {self._outgoing_left}"
 
     def __repr__(self):
         return f"IncomingGroup(incoming_id={self._incoming_id}, " \
-               f"incoming_lanelets={self._incoming_lanelets}, outgoing_id={self._outgoing_id}," \
+               f"incoming_lanelets={self._incoming_lanelets}, outgoing_id={self._outgoing_group_id}," \
                f"outgoing_right={self._outgoing_right}, outgoing_straight={self._outgoing_straight}, " \
                f"outgoing_left={self._outgoing_left})"
 
@@ -237,7 +237,7 @@ class CrossingGroup:
     """
 
     def __init__(self, crossing_id: int, crossing_lanelets: Optional[Set[int]] = None, 
-                 incoming_group_id: Optional[int] = None, outgoing_group_id: Optional[Set[int]] = None):
+                 incoming_group_id: Optional[int] = None, outgoing_group_id: Optional[int] = None):
         """
         :param crossing_id: crossing group ID
         :param crossing_lanelets: set of IDs of crossing lanelets

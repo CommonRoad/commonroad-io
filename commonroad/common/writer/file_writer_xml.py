@@ -1085,9 +1085,9 @@ class IntersectionXMLNode:
                 incoming_lanelet_node.set('ref', str(incoming_lanelet))
                 incoming_node.append(incoming_lanelet_node)
 
-            if incoming.outgoing_id is not None:
+            if incoming.outgoing_group_id is not None:
                 outgoing_id_node = etree.Element('outgoingId')
-                outgoing_id_node.set('ref', str(incoming.outgoing_id))
+                outgoing_id_node.set('ref', str(incoming.outgoing_group_id))
                 incoming_node.append(outgoing_id_node)
 
             if incoming.outgoing_right:
@@ -1111,20 +1111,6 @@ class IntersectionXMLNode:
                     outgoing_left_node.set('ref', str(outgoing_left))
                     incoming_node.append(outgoing_left_node)
 
-            if incoming.crossings is not None and len(incoming.crossings) > 0:
-                if incoming_crossing_exists is False:
-                    # As a temporary solution, crossing of incomings are mapped to just one crossing
-                    # in the intersection.
-                    # Crossing node is only created once, when the first crossing of an incoming is detected.
-                    # After that, we add additional crossings of all incomings to that single node,
-                    # and append that node to the general intersection element.
-                    crossing_node = etree.Element('crossing')
-                    incoming_crossing_exists = True
-                for crossing_lanelet in incoming.crossings:
-                    crossing_lanelet_node = etree.Element('crossingLanelet')
-                    crossing_lanelet_node.set('ref', str(crossing_lanelet))
-                    crossing_node.append(crossing_lanelet_node)
-
             for outgoing in intersection.outgoings:
                 outgoing_node = etree.Element('outgoing')
                 outgoing_node.set('id', str(outgoing.outgoing_id))
@@ -1135,9 +1121,6 @@ class IntersectionXMLNode:
                 incoming_node.append(outgoing_node)
 
             intersection_node.append(incoming_node)
-
-            if incoming_crossing_exists is True:
-                intersection_node.append(crossing_node)
 
         return intersection_node
 
