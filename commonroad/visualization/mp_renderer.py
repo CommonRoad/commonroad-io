@@ -889,10 +889,10 @@ class MPRenderer(IRenderer):
                     draw_outgoing_group_lanelets = False
 
             if draw_crossings:
-                tmp_list: List[set] = []
+                tmp_list: List[set] = [set()]
                 for intersection in intersections:
-                    for incomingGroup in intersection.incomings:
-                        tmp_list.append(incomingGroup.crossings)
+                    for crossing_group in intersection.crossings:
+                        tmp_list.append(crossing_group.crossing_lanelets)
                 crossings: Set[int] = set.union(*tmp_list)
 
             if draw_outgoings:
