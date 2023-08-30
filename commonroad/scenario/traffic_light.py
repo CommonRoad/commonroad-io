@@ -51,11 +51,7 @@ class TrafficLightCycleElement:
             warnings.warn(f"Inequality between TrafficLightCycleElement {repr(self)} and different type {type(other)}")
             return False
 
-        if self._state == other.state and self._duration == other.duration:
-            return True
-
-        warnings.warn(f"Inequality of TrafficLightCycleElement {repr(self)} and the other one {repr(other)}")
-        return False
+        return self._state == other.state and self._duration == other.duration
 
     def __hash__(self):
         return hash((self._state, self._duration))
@@ -107,12 +103,8 @@ class TrafficLightCycle:
             warnings.warn(f"Inequality between TrafficLightCycle {repr(self)} and different type {type(other)}")
             return False
 
-        if self._cycle_elements == other.cycle_elements and \
-           self._time_offset == other.time_offset and self._active == other.active:
-            return True
-
-        warnings.warn(f"Inequality of TrafficLightCycle {repr(self)} and the other one {repr(other)}")
-        return False
+        return (self._cycle_elements == other.cycle_elements and self._time_offset == other.time_offset and
+                self._active == other.active)
 
     def __str__(self):
         return f"TrafficLightCycle element with " \
@@ -196,13 +188,9 @@ class TrafficLight(IDrawable):
         position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
         position_other_string = np.array2string(np.around(other.position.astype(float), 10), precision=10)
 
-        if self._traffic_light_id == other.traffic_light_id and position_string == position_other_string \
-                and self._color == other.color and self._direction == other.direction and \
-                self._traffic_light_cycle == other.traffic_light_cycle and self._active == other.active:
-            return True
-
-        warnings.warn(f"Inequality of TrafficLight {repr(self)} and the other one {repr(other)}")
-        return False
+        return (self._traffic_light_id == other.traffic_light_id and position_string == position_other_string and
+                self._color == other.color and self._direction == other.direction and self._traffic_light_cycle
+                == other.traffic_light_cycle and self._active == other.active)
 
     def __hash__(self):
         position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)

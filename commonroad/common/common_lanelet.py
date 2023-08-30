@@ -83,13 +83,9 @@ class StopLine:
         end_string = np.array2string(np.around(self._end.astype(float), prec), precision=prec)
         end_other_string = np.array2string(np.around(other.end.astype(float), prec), precision=prec)
 
-        if start_string == start_other_string and end_string == end_other_string and self._line_marking == \
-                other.line_marking and self._traffic_sign_ref == other.traffic_sign_ref and self._traffic_light_ref \
-                == other.traffic_light_ref:
-            return True
-
-        warnings.warn(f"Inequality of StopLine {repr(self)} and the other one {repr(other)}")
-        return False
+        return (start_string == start_other_string and end_string == end_other_string and self._line_marking ==
+                other.line_marking and self._traffic_sign_ref == other.traffic_sign_ref and self._traffic_light_ref
+                == other.traffic_light_ref)
 
     def __hash__(self):
         if self._start is None:

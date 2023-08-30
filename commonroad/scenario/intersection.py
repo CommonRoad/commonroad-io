@@ -40,16 +40,10 @@ class IncomingGroup:
                           f"{repr(self)} and different type {type(other)}")
             return False
 
-        if self._incoming_id == other.incoming_id and self._incoming_lanelets == other.incoming_lanelets \
-                and self._outgoing_id == other.outgoing_id \
-                and self._outgoing_right == other.outgoing_right \
-                and self._outgoing_straight == other.outgoing_straight \
-                and self._outgoing_left == other.outgoing_left\
-                and self._crossings == other.crossings:
-            return True
-
-        warnings.warn(f"Inequality of IntersectionIncomingElement {repr(self)} and the other one {repr(other)}")
-        return False
+        return (self._incoming_id == other.incoming_id and self._incoming_lanelets == other.incoming_lanelets and
+                self._outgoing_id == other.outgoing_id and self._outgoing_right == other.outgoing_right and
+                self._outgoing_straight == other.outgoing_straight and self._outgoing_left ==
+                other.outgoing_left and self._crossings == other.crossings)
 
     def __hash__(self):
         return hash((self._incoming_id, frozenset(self._incoming_lanelets), self._outgoing_id,
@@ -291,11 +285,7 @@ class Intersection:
             if outgoings.get(k) != outgoings_other.get(k):
                 list_elements_eq = False
 
-        if intersection_eq and self._intersection_id == other.intersection_id:
-            return list_elements_eq
-
-        warnings.warn(f"Inequality of Intersection {repr(self)} and the other one {repr(other)}")
-        return False
+        return list_elements_eq and intersection_eq and self._intersection_id == other.intersection_id
 
     def __hash__(self):
         return hash((self._intersection_id, frozenset(self._incomings), frozenset(self._outgoings)))
