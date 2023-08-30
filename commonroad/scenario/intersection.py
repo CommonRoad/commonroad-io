@@ -198,11 +198,7 @@ class OutgoingGroup:
                           f"{repr(self)} and different type {type(other)}")
             return False
 
-        if self._outgoing_id == other.outgoing_id and self._outgoing_lanelets == other.outgoing_lanelets:
-            return True
-
-        warnings.warn(f"Inequality of OutgoingGroupElement {repr(self)} and the other one {repr(other)}")
-        return False
+        return self._outgoing_id == other.outgoing_id and self._outgoing_lanelets == other.outgoing_lanelets
 
     def __hash__(self):
         return hash((self.outgoing_id, frozenset(self._outgoing_lanelets)))
