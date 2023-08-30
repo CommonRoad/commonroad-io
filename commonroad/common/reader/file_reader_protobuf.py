@@ -11,7 +11,7 @@ from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblem, CooperativePlanningProblem
 from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction, SetBasedPrediction
 from commonroad.scenario.area import Area, AreaBorder, AreaType
-from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup
+from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup, CrossingGroup
 from commonroad.scenario.lanelet import LaneletNetwork, Lanelet, Bound
 from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, LaneletType
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, PhantomObstacle, \
@@ -626,17 +626,22 @@ class IntersectionFactory:
     def create_from_message(cls, intersection_msg: intersection_pb2.Intersection) -> Intersection:
         intersection_id = intersection_msg.intersection_id
 
-        incomings = list()
+        incomings = []
         for incoming_msg in intersection_msg.incomings:
             incoming = IncomingGroupFactory.create_from_message(incoming_msg)
             incomings.append(incoming)
 
-        outgoings = list()
+        outgoings = []
         for outgoing_msg in intersection_msg.outgoings:
             outgoing = OutgoingGroupFactory.create_from_message(outgoing_msg)
             outgoings.append(outgoing)
 
-        intersection = Intersection(intersection_id, incomings, outgoings)
+        crossings = []
+        for crossing_msg in intersection_msg.crossings:
+            crossing = CrossingGroupFactory.create_from_message(crossing_msg)
+            crossings.append(crossing)
+
+        intersection = Intersection(intersection_id, incomings, outgoings, crossings)
 
         return intersection
 
@@ -647,11 +652,10 @@ class IncomingGroupFactory:
         incoming = IncomingGroup(incoming_group_msg.incoming_group_id)
         incoming.incoming_lanelets = set(incoming_group_msg.incoming_lanelets)
         if incoming_group_msg.HasField('outgoing_group_id'):
-            incoming.outgoing_id = incoming_group_msg.outgoing_group_id
+            incoming.outgoing_group_id = incoming_group_msg.outgoing_group_id
         incoming.outgoing_right = set(incoming_group_msg.outgoing_right)
         incoming.outgoing_straight = set(incoming_group_msg.outgoing_straight)
         incoming.outgoing_left = set(incoming_group_msg.outgoing_left)
-        incoming.crossings = set(incoming_group_msg.crossing_lanelets)
         return incoming
 
 
@@ -660,7 +664,24 @@ class OutgoingGroupFactory:
     def create_from_message(cls, outgoing_group_msg: intersection_pb2.OutgoingGroup) -> OutgoingGroup:
         outgoing_id = outgoing_group_msg.outgoing_group_id
         outgoing_lanelets = set(outgoing_group_msg.outgoing_lanelets)
-        return OutgoingGroup(outgoing_id, outgoing_lanelets)
+        incoming_group_id = None
+        if outgoing_group_msg.HasField('incoming_group_id'):
+            incoming_group_id = outgoing_group_msg.incoming_group_id
+        return OutgoingGroup(outgoing_id, outgoing_lanelets, incoming_group_id)
+
+
+class CrossingGroupFactory:
+    @classmethod
+    def create_from_message(cls, crossing_group_msg: intersection_pb2.CrossingGroup) -> CrossingGroup:
+        crossing_id = crossing_group_msg.crossing_group_id
+        crossing_lanelets = set(crossing_group_msg.crossing_lanelets)
+        incoming_group_id = None
+        if crossing_group_msg.HasField('incoming_group_id'):
+            incoming_group_id = crossing_group_msg.incoming_group_id
+        outgoing_group_id = None
+        if crossing_group_msg.HasField('outgoing_group_id'):
+            outgoing_group_id = crossing_group_msg.outgoing_group_id
+        return CrossingGroup(crossing_id, crossing_lanelets, incoming_group_id, outgoing_group_id)
 
 
 class StaticObstacleFactory:

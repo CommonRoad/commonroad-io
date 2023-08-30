@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x12intersection.proto\x12\x0e\x63ommonroad_map\"\xc5\x01\n\rIncomingGroup\x12\x19\n\x11incoming_group_id\x18\x01 \x02(\r\x12\x19\n\x11incoming_lanelets\x18\x02 \x03(\r\x12\x19\n\x11outgoing_group_id\x18\x03 \x01(\r\x12\x16\n\x0eoutgoing_right\x18\x04 \x03(\r\x12\x19\n\x11outgoing_straight\x18\x05 \x03(\r\x12\x15\n\routgoing_left\x18\x06 \x03(\r\x12\x19\n\x11\x63rossing_lanelets\x18\x07 \x03(\r\"E\n\rOutgoingGroup\x12\x19\n\x11outgoing_group_id\x18\x01 \x02(\r\x12\x19\n\x11outgoing_lanelets\x18\x02 \x03(\r\"\x8b\x01\n\x0cIntersection\x12\x17\n\x0fintersection_id\x18\x01 \x02(\r\x12\x30\n\tincomings\x18\x02 \x03(\x0b\x32\x1d.commonroad_map.IncomingGroup\x12\x30\n\toutgoings\x18\x03 \x03(\x0b\x32\x1d.commonroad_map.OutgoingGroup'
+  serialized_pb=b'\n\x12intersection.proto\x12\x0e\x63ommonroad_map\"\xaa\x01\n\rIncomingGroup\x12\x19\n\x11incoming_group_id\x18\x01 \x02(\r\x12\x19\n\x11incoming_lanelets\x18\x02 \x03(\r\x12\x19\n\x11outgoing_group_id\x18\x03 \x01(\r\x12\x16\n\x0eoutgoing_right\x18\x04 \x03(\r\x12\x19\n\x11outgoing_straight\x18\x05 \x03(\r\x12\x15\n\routgoing_left\x18\x06 \x03(\r\"`\n\rOutgoingGroup\x12\x19\n\x11outgoing_group_id\x18\x01 \x02(\r\x12\x19\n\x11outgoing_lanelets\x18\x02 \x03(\r\x12\x19\n\x11incoming_group_id\x18\x03 \x01(\r\"{\n\rCrossingGroup\x12\x19\n\x11\x63rossing_group_id\x18\x01 \x02(\r\x12\x19\n\x11\x63rossing_lanelets\x18\x02 \x03(\r\x12\x19\n\x11incoming_group_id\x18\x03 \x01(\r\x12\x19\n\x11outgoing_group_id\x18\x04 \x01(\r\"\xbd\x01\n\x0cIntersection\x12\x17\n\x0fintersection_id\x18\x01 \x02(\r\x12\x30\n\tincomings\x18\x02 \x03(\x0b\x32\x1d.commonroad_map.IncomingGroup\x12\x30\n\toutgoings\x18\x03 \x03(\x0b\x32\x1d.commonroad_map.OutgoingGroup\x12\x30\n\tcrossings\x18\x04 \x03(\x0b\x32\x1d.commonroad_map.CrossingGroup'
 )
 
 
@@ -75,13 +75,6 @@ _INCOMINGGROUP = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='crossing_lanelets', full_name='commonroad_map.IncomingGroup.crossing_lanelets', index=6,
-      number=7, type=13, cpp_type=3, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -95,7 +88,7 @@ _INCOMINGGROUP = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=39,
-  serialized_end=236,
+  serialized_end=209,
 )
 
 
@@ -121,6 +114,13 @@ _OUTGOINGGROUP = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='incoming_group_id', full_name='commonroad_map.OutgoingGroup.incoming_group_id', index=2,
+      number=3, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -133,8 +133,61 @@ _OUTGOINGGROUP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=238,
+  serialized_start=211,
   serialized_end=307,
+)
+
+
+_CROSSINGGROUP = _descriptor.Descriptor(
+  name='CrossingGroup',
+  full_name='commonroad_map.CrossingGroup',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='crossing_group_id', full_name='commonroad_map.CrossingGroup.crossing_group_id', index=0,
+      number=1, type=13, cpp_type=3, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='crossing_lanelets', full_name='commonroad_map.CrossingGroup.crossing_lanelets', index=1,
+      number=2, type=13, cpp_type=3, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='incoming_group_id', full_name='commonroad_map.CrossingGroup.incoming_group_id', index=2,
+      number=3, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='outgoing_group_id', full_name='commonroad_map.CrossingGroup.outgoing_group_id', index=3,
+      number=4, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=309,
+  serialized_end=432,
 )
 
 
@@ -167,6 +220,13 @@ _INTERSECTION = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='crossings', full_name='commonroad_map.Intersection.crossings', index=3,
+      number=4, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -179,14 +239,16 @@ _INTERSECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=310,
-  serialized_end=449,
+  serialized_start=435,
+  serialized_end=624,
 )
 
 _INTERSECTION.fields_by_name['incomings'].message_type = _INCOMINGGROUP
 _INTERSECTION.fields_by_name['outgoings'].message_type = _OUTGOINGGROUP
+_INTERSECTION.fields_by_name['crossings'].message_type = _CROSSINGGROUP
 DESCRIPTOR.message_types_by_name['IncomingGroup'] = _INCOMINGGROUP
 DESCRIPTOR.message_types_by_name['OutgoingGroup'] = _OUTGOINGGROUP
+DESCRIPTOR.message_types_by_name['CrossingGroup'] = _CROSSINGGROUP
 DESCRIPTOR.message_types_by_name['Intersection'] = _INTERSECTION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -203,6 +265,13 @@ OutgoingGroup = _reflection.GeneratedProtocolMessageType('OutgoingGroup', (_mess
   # @@protoc_insertion_point(class_scope:commonroad_map.OutgoingGroup)
   })
 _sym_db.RegisterMessage(OutgoingGroup)
+
+CrossingGroup = _reflection.GeneratedProtocolMessageType('CrossingGroup', (_message.Message,), {
+  'DESCRIPTOR' : _CROSSINGGROUP,
+  '__module__' : 'intersection_pb2'
+  # @@protoc_insertion_point(class_scope:commonroad_map.CrossingGroup)
+  })
+_sym_db.RegisterMessage(CrossingGroup)
 
 Intersection = _reflection.GeneratedProtocolMessageType('Intersection', (_message.Message,), {
   'DESCRIPTOR' : _INTERSECTION,

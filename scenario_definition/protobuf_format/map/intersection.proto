@@ -9,16 +9,24 @@ message IncomingGroup {
     repeated uint32 outgoing_right = 4;
     repeated uint32 outgoing_straight = 5;
     repeated uint32 outgoing_left = 6;
-    repeated uint32 crossing_lanelets = 7;
 }
 
 message OutgoingGroup {
     required uint32 outgoing_group_id = 1;
     repeated uint32 outgoing_lanelets = 2;
+    optional uint32 incoming_group_id = 3;
+}
+
+message CrossingGroup {
+    required uint32 crossing_group_id = 1;
+    repeated uint32 crossing_lanelets = 2;
+    optional uint32 incoming_group_id = 3;
+    optional uint32 outgoing_group_id = 4;
 }
 
 message Intersection {
     required uint32 intersection_id = 1;
     repeated IncomingGroup incomings = 2;
     repeated OutgoingGroup outgoings = 3;
+    repeated CrossingGroup crossings = 4;
 }

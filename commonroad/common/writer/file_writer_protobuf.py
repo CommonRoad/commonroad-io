@@ -23,7 +23,7 @@ from commonroad.common.protobuf.common import state_pb2, \
     traffic_light_state_pb2, traffic_sign_element_pb2, util_pb2, scenario_meta_information_pb2
 
 
-from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup
+from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup, CrossingGroup
 from commonroad.scenario.lanelet import Lanelet
 from commonroad.scenario.area import Area, AreaBorder
 from commonroad.common.common_lanelet import StopLine
@@ -718,6 +718,10 @@ class IntersectionMessage:
             outgoing_msg = OutgoingGroupMessage.create_message(outgoing)
             intersection_msg.outgoings.append(outgoing_msg)
 
+        for crossing in intersection.crossings:
+            crossing_msg = CrossingGroupMessage.create_message(crossing)
+            intersection_msg.crosings.append(crossing_msg)
+
         return intersection_msg
 
 
@@ -731,7 +735,25 @@ class OutgoingGroupMessage:
         for outgoing_lanelet in outgoing.outgoing_lanelets:
             outgoing_msg.outgoing_lanelets.append(outgoing_lanelet)
 
+        if outgoing.incoming_group_id is not None:
+            outgoing_msg.incoming_group_id = outgoing.incoming_group_id
+
         return outgoing_msg
+
+
+class CrossingGroupMessage:
+    @classmethod
+    def create_message(cls, crossing: CrossingGroup) -> intersection_pb2.CrossingGroup:
+        crossing_msg = intersection_pb2.CrossingGroup()
+
+        crossing_msg.crossing_id = crossing.crossing_id
+        crossing_msg.incoming_group_id = crossing.incoming_group_id
+        crossing_msg.outgoing_group_id = crossing.outgoing_group_id
+
+        for crossing_lanelet in crossing.crossing_lanelets:
+            crossing_msg.crossing_lanelets.append(crossing_lanelet)
+
+        return crossing_msg
 
 
 class IncomingGroupMessage:
@@ -745,8 +767,8 @@ class IncomingGroupMessage:
         for incoming_lanelet in incoming.incoming_lanelets:
             incoming_msg.incoming_lanelets.append(incoming_lanelet)
 
-        if incoming.outgoing_id is not None:
-            incoming_msg.outgoing_group_id = incoming.outgoing_id
+        if incoming.outgoing_group_id is not None:
+            incoming_msg.outgoing_group_id = incoming.outgoing_group_id
 
         for outgoing_right in incoming.outgoing_right:
             incoming_msg.outgoing_right.append(outgoing_right)
@@ -756,9 +778,6 @@ class IncomingGroupMessage:
 
         for outgoing_left in incoming.outgoing_left:
             incoming_msg.outgoing_left.append(outgoing_left)
-
-        for crossing_lanelet in incoming.crossings:
-            incoming_msg.crossing_lanelets.append(crossing_lanelet)
 
         return incoming_msg
 
