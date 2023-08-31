@@ -746,7 +746,7 @@ class CrossingGroupMessage:
     def create_message(cls, crossing: CrossingGroup) -> intersection_pb2.CrossingGroup:
         crossing_msg = intersection_pb2.CrossingGroup()
 
-        crossing_msg.crossing_id = crossing.crossing_id
+        crossing_msg.crossing_group_id = crossing.crossing_id
         crossing_msg.incoming_group_id = crossing.incoming_group_id
         crossing_msg.outgoing_group_id = crossing.outgoing_group_id
 
