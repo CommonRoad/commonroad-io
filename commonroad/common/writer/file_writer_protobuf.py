@@ -720,7 +720,7 @@ class IntersectionMessage:
 
         for crossing in intersection.crossings:
             crossing_msg = CrossingGroupMessage.create_message(crossing)
-            intersection_msg.crosings.append(crossing_msg)
+            intersection_msg.crossings.append(crossing_msg)
 
         return intersection_msg
 
