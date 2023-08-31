@@ -1004,7 +1004,7 @@ class IntersectionFactory:
         intersection_id = int(xml_node.get('id'))
 
         # In 2020a format, crossing is directly in the intersection, so we keep the incoming/outgoing group reference
-        # empty and generate a warning to the user
+        # empty and generate a warning to the user. We also map all crossing lanelets to only one crossing group.
         crossings = []
         if xml_node.find('crossing') is not None:
             logger.warning("After 2020a format, crossing is no longer mapped directly into intersection, "
