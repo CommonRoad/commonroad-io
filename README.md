@@ -124,7 +124,6 @@ Compared to version 2022.3, the following features have been added or changed:
 - State attribute comparison
 
 ### Changed
->>>>>>> README.md
 
 - Name of SIDEWALK and BUSLANE traffic signs to PEDESTRIAN_SIDEWALK and BUS_LANE
 - Packaging and dependency management using poetry
@@ -150,6 +149,7 @@ We gratefully acknowledge partial financial support by
 	title = {CommonRoad: Composable benchmarks for motion planning on roads},
 	booktitle = {Proc. of the IEEE Intelligent Vehicles Symposium},
 	year = {2017},
+	pages={719-726},
 	abstract = {Numerical experiments for motion planning of road vehicles require numerous components: vehicle 
 	            dynamics, a road network, static obstacles, dynamic obstacles and their movement over time, goal 
 	            regions, a cost function, etc. Providing a description of the numerical experiment precise enough to 
