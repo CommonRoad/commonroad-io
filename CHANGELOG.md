@@ -4,12 +4,20 @@
 
 ### Added
 - Type information for lanelet init function
+- Dynamic obstacles can now store a history of their states
+- Function to update the initial state of a dynamic obstacle while storing the previous state in the history
+- Function to update behavior predictions of dynamic obstacles
+- Function to find lanelet predecessors in range to lanelet network
+- Function to compute all predecessor lanelets starting from a provided lanelet and merge them to a single lanelet for each route.
 
 ### Fixed
 - Function create_from_lanelet_network deletes references to removed lanelets
+- Write environment time to XML in correct format
+- Failing visualization of lanelets, stop lines, traffic signs, and traffic lights with z-coordinate
 
 ### Changed
 - Cleanup lanelet, traffic sign, and traffic light references in function create_from_lanelet_list by default
+- Equality checks of scenario elements no longer emit a warning on inequality (except if the elements are of different types)
 
 ## [2023.2] - 2023-06-26
 
