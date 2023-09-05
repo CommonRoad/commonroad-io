@@ -9,6 +9,7 @@
 - Function to update behavior predictions of dynamic obstacles
 - Function to find lanelet predecessors in range to lanelet network
 - Function to compute all predecessor lanelets starting from a provided lanelet and merge them to a single lanelet for each route.
+- Documentation for renderers (including video creation)
 
 ### Fixed
 - Function create_from_lanelet_network deletes references to removed lanelets
