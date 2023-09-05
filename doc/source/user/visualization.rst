@@ -93,3 +93,28 @@ Note, that colors are specified as `matplotlib colors`_.
 ---------------
 
 The drawn area of a scenario can be clipped by providing axes limits with :code:`plot_limits=[x_min, x_max, y_min, y_max]` to the renderer. In cases where performance matters, this option should be preferred over setting axes limits with :code:`pyplot.get_gca().set_xlim`. The latter would only crop the shown area of the scenario after drawing the whole scenario.
+
+Creating videos in CommonRoad
+-----------------------------
+
+You can use :class:`~commonroad.visualization.mp_renderer.MPRenderer` to create a video of a scenario in mp4, gif, or avi format (see :meth:`~commonroad.visualization.mp_renderer.MPRenderer.create_video`).
+
+Example
+"""""""
+
+We want to create a gif following the vehicle with ID 394 in the scenario. This can be achieved as follows: ::
+
+    from commonroad.visualization.mp_renderer import MPDrawParams
+
+    scenario, _ = CommonRoadFileReader(filename).open()
+    rnd = MPRenderer()
+    rnd.focus_obstacle_id = 394
+    draw_params = MPDrawParams()
+    draw_params.time_end = 25
+    draw_params.dynamic_obstacle.show_label = False
+    draw_params.dynamic_obstacle.draw_icon = True
+    draw_params.dynamic_obstacle.draw_shape = True
+    rnd.create_video([scenario], str(scenario.scenario_id) + ".gif", draw_params=draw_params)
+
+.. image:: ../img/USA_US101-4_1_T-1.gif
+    :align: center
