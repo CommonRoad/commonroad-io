@@ -7,6 +7,7 @@ from typing import Dict, Union, Tuple
 from PIL import Image
 from matplotlib.axes import Axes, mtext
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox, HPacker, TextArea, VPacker, OffsetBox
+from matplotlib.transforms import Bbox
 from scipy.cluster.hierarchy import linkage, fcluster
 
 from commonroad.geometry.shape import *
@@ -47,16 +48,16 @@ class TextAreaAutoscale(TextArea):
         self.dy_pix = dy_pix
 
     def ax_update(self, ax: Axes):
-        '''
+        """
         Update image size based on axes limits and window size in pixels
-        '''
+        """
         bbox = ax.get_window_extent()
         width_px, height_px = bbox.width, bbox.height
         # Get the range for the new area
         _, _, xdelta, ydelta = ax.viewLim.bounds
         self.set_ax_lims(xdelta, ydelta, width_px, height_px)
 
-    def get_extent(self, renderer):
+    def get_bbox(self, renderer):
         correction_x = self.dx_pix / self.dx_m * self.px_per_metre
         correction_y = self.dy_pix / self.dy_m * self.px_per_metre
         corr = min(correction_x, correction_y)
@@ -85,7 +86,16 @@ class TextAreaAutoscale(TextArea):
             d = max(d, d_)
             h = h_d + d
 
-        return w * corr, h * corr, 0., d * corr
+        return Bbox.from_bounds(0., -d * corr, w * corr, h * corr)
+
+    def get_extent(self, renderer):
+        """Alternative for get_bbox for matplotlib < 3.7
+
+        Method was deprecated in matplotlib 3.7
+        """
+        # TODO: Remove this method when support for matplotlib < 3.7 is dropped
+        bbox = self.get_bbox(renderer)
+        return bbox.width, bbox.height, -bbox.x0, -bbox.y0
 
 
 class OffsetImageAutoscale(OffsetImage):
@@ -124,10 +134,10 @@ class OffsetImageAutoscale(OffsetImage):
         self.set_ax_lims(xdelta, ydelta, width_px, height_px)
         self.text_area.set_ax_lims(xdelta, ydelta, width_px, height_px)
 
-    def get_extent(self, renderer=None):
+    def get_bbox(self, renderer=None):
         self.text_area._text.figure = self.figure
         if renderer is not None:
-            self.text_area.get_extent(renderer)
+            self.text_area.get_bbox(renderer)
 
         if renderer is not None and self._dpi_cor:  # True, do correction
             dpi_cor = renderer.points_to_pixels(1.)
@@ -141,7 +151,16 @@ class OffsetImageAutoscale(OffsetImage):
         ny, nx = data.shape[:2]
         w, h = dpi_cor * nx * corr, dpi_cor * ny * corr
 
-        return w, h, 0, 0
+        return Bbox.from_bounds(0, 0, w, h)
+
+    def get_extent(self, renderer):
+        """Alternative for get_bbox for matplotlib < 3.7
+
+        Method was deprecated in matplotlib 3.7
+        """
+        # TODO: Remove this method when support for matplotlib < 3.7 is dropped
+        bbox = self.get_bbox(renderer)
+        return bbox.width, bbox.height, -bbox.x0, -bbox.y0
 
     def draw(self, renderer):
         # docstring inherited
@@ -153,7 +172,8 @@ class OffsetImageAutoscale(OffsetImage):
     def set_offset(self, xy):
         super().set_offset(xy)
         self.text_area.offset_transform.clear()
-        w, h, _, _ = self.get_extent()
+        bbox = self.get_bbox()
+        w, h = bbox.width, bbox.height
         xy = (xy[0] + w * self.txt_offset_x, xy[1] + h * self.txt_offset_y)
         self.text_area.offset_transform.translate(xy[0], xy[1])
 
