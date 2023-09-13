@@ -1,6 +1,6 @@
 # Changelog
 
-## [2023.3] - 2023-XX-XX
+## [2023.3] - 2023-09-XX
 
 ### Added
 - Type information for lanelet init function
@@ -10,6 +10,7 @@
 - Function to find lanelet predecessors in range to lanelet network
 - Function to compute all predecessor lanelets starting from a provided lanelet and merge them to a single lanelet for each route.
 - Documentation for renderers (including video creation)
+- Abstract interfaces for motion planner and prediction for usage in other tools
 
 ### Fixed
 - Function create_from_lanelet_network deletes references to removed lanelets
