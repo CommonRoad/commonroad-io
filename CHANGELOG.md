@@ -11,6 +11,8 @@
 - Function to compute all predecessor lanelets starting from a provided lanelet and merge them to a single lanelet for each route.
 - Documentation for renderers (including video creation)
 - Abstract interfaces for motion planner and prediction for usage in other tools
+- New ExtendedPMState to support states with position, velocity, orientation, and acceleration
+- Orientation property to PMState
 
 ### Fixed
 - Function create_from_lanelet_network deletes references to removed lanelets
