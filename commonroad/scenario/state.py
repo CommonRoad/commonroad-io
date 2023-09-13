@@ -245,19 +245,17 @@ class State(abc.ABC):
 
         return transformed_state
 
-    def convert_state_to_state(self, state: TraceState) -> TraceState:
+    def convert_state_to_state(self, state: SpecificStateClasses) -> SpecificStateClasses:
         """
         Converts state to state from different state types.
 
         :param state: State for converting
         """
-        from_fields = dataclasses.fields(type(self))
-        to_fields = dataclasses.fields(type(state))
-        for from_field in from_fields:
-            for to_field in to_fields:
-                if from_field.name == to_field.name:
-                    setattr(state, to_field.name, getattr(self, from_field.name))
-
+        for to_field in dataclasses.fields(type(state)):
+            for from_field in self.attributes:
+                if from_field == to_field.name:
+                    setattr(state, to_field.name, getattr(self, from_field))
+                    break
         return state
 
     def fill_with_defaults(self):
