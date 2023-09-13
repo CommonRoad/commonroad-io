@@ -1,6 +1,6 @@
 # Changelog
 
-## [2023.3] - 2023-XX-XX
+## [2023.3] - 2023-09-XX
 
 ### Added
 - Type information for lanelet init function
@@ -9,11 +9,14 @@
 - Function to update behavior predictions of dynamic obstacles
 - Function to find lanelet predecessors in range to lanelet network
 - Function to compute all predecessor lanelets starting from a provided lanelet and merge them to a single lanelet for each route.
+- Documentation for renderers (including video creation)
+- Abstract interfaces for motion planner and prediction for usage in other tools
 
 ### Fixed
 - Function create_from_lanelet_network deletes references to removed lanelets
 - Write environment time to XML in correct format
 - Failing visualization of lanelets, stop lines, traffic signs, and traffic lights with z-coordinate
+- Traffic lights now correctly change size in interactive matplotlib plots (only affected matplotlib>=3.7)
 
 ### Changed
 - Cleanup lanelet, traffic sign, and traffic light references in function create_from_lanelet_list by default

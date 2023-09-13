@@ -74,6 +74,7 @@ class ZOrders:
 
 
 class MPRenderer(IRenderer):
+    """Renderer with matplotlib backend"""
 
     def __init__(self, draw_params: Optional[MPDrawParams] = None,
                  plot_limits: Union[List[Union[int, float]], None] = None, ax: Union[mpl.axes.Axes, None] = None,
