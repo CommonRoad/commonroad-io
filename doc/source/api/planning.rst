@@ -26,5 +26,16 @@ Goal Region
 .. autoclass:: GoalRegion
    :members:
 
+Trajectory Planner Interface
+----------------------------
+
+.. automodule:: commonroad.planning.planner_interface
+
+``TrajectoryPlannerInterface`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: TrajectoryPlannerInterface
+   :members:
+
+
 
 
