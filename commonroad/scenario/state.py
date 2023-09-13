@@ -88,8 +88,10 @@ class State(abc.ABC):
     This is a class representing the Base State.
 
     :param time_step: Discrete time step :math:`t_i`
+    :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
     """
     time_step: Union[int, Interval] = None
+    position: ExactOrShape = None
 
     def __eq__(self, other: State):
         if not isinstance(other, State):
@@ -288,7 +290,6 @@ class InitialState(State):
     """
     This is a class representing the Initial State.
 
-    :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
     :param orientation: Yaw angle :math:`\\Psi`
     :param velocity: Velocity :math:`v_x` in longitudinal direction
     :param acceleration: Acceleration :math:`a_x`
@@ -308,11 +309,9 @@ class PMState(State):
     """
     This is a class representing Point Mass State (PM State).
 
-    :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
     :param velocity: Velocity :math:`v_x` in longitudinal direction
     :param velocity_y: Velocity :math:`v_x` in lateral direction
     """
-    position: ExactOrShape = None
     velocity: FloatExactOrInterval = None
     velocity_y: FloatExactOrInterval = None
 
@@ -322,12 +321,10 @@ class KSState(State):
     """
     This is a class representing Kinematic Single Track State (KS State).
 
-    :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
     :param steering_angle: Steering angle :math:`\\delta`
     :param velocity: Velocity :math:`v_x` in longitudinal direction
     :param orientation: Yaw angle :math:`\\Psi`
     """
-    position: ExactOrShape = None
     steering_angle: FloatExactOrInterval = None
     velocity: FloatExactOrInterval = None
     orientation: AngleExactOrInterval = None
@@ -372,7 +369,6 @@ class MBState(State):
     """
     This is a class representing Multi Body State (MB State).
 
-    :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
     :param steering_angle: Steering angle :math:`\\delta`
     :param velocity: Velocity :math:`v_x` in longitudinal direction
     :param orientation: Yaw angle :math:`\\Psi`
@@ -401,7 +397,6 @@ class MBState(State):
     :param delta_y_f: Front lateral displacement :math:`\\delta_{y,f}` of sprung mass due to roll
     :param delta_y_r: Rear lateral displacement :math:`\\delta_{y,r}` of sprung mass due to roll
     """
-    position: ExactOrShape = None
     steering_angle: FloatExactOrInterval = None
     velocity: FloatExactOrInterval = None
     orientation: AngleExactOrInterval = None
@@ -465,42 +460,6 @@ class LateralState(State):
     curvature_rate: FloatExactOrInterval = None
 
 
-@dataclass(eq=False)
-class InputState(State):
-    """
-    This is a class representing the input for most supported models.
-
-    :param steering_angle_speed: Steering angle speed :math:`\\dot{\\delta}` of front wheels
-    :param acceleration: Acceleration :math:`a_x`
-    """
-    steering_angle_speed: FloatExactOrInterval = None
-    acceleration: FloatExactOrInterval = None
-
-
-@dataclass(eq=False)
-class PMInputState(State):
-    """
-    This is a class representing the input for PM model (PM Input).
-
-    :param acceleration: Acceleration :math:`a_x`
-    :param acceleration_y: Acceleration :math:`a_y`
-    """
-    acceleration: FloatExactOrInterval = None
-    acceleration_y: FloatExactOrInterval = None
-
-
-@dataclass(eq=False)
-class LKSInputState(State):
-    """
-    This is a class representing the input for the linearized kinematic single track (LKS) model (LKS Input).
-
-    :param jerk_dot: change of longitudinal jerk (i.e., jerk_dot): math:`\\dot{j}`
-    :param kappa_dot_dot: change of curvature rate (i.e., kappa_dot_dot)  :math:`\\ddot{\\kappa}`
-    """
-    jerk_dot: FloatExactOrInterval = None
-    kappa_dot_dot: FloatExactOrInterval = None
-
-
 class CustomState(State):
     """
     This is a class representing the custom state. State variables can be added at runtime. The attributes position
@@ -539,6 +498,113 @@ class CustomState(State):
         assert attr in self.attributes, "{} is not an attribute of this custom state!".format(attr)
 
         setattr(self, attr, value)
+
+
+@dataclass
+class InputState(abc.ABC):
+    """
+    This is a class representing the Base Input State. The class does not inherit from State, as it is used in a very
+    different context from State and because it is not a drop-in replacement for State (Liskov substitution principle).
+
+    :param time_step: Discrete time step :math:`t_i`
+    """
+    time_step: Union[int, Interval] = None
+
+    def __eq__(self, other: InputState):
+        if not isinstance(other, InputState):
+            return False
+        if set(self.attributes) != set(other.attributes):
+            return False
+
+        dec = 10
+        for attr in self.attributes:
+            val_self = getattr(self, attr)
+            val_other = getattr(other, attr)
+
+            if isinstance(val_self, float):
+                val_self = round(val_self, dec)
+            if isinstance(val_other, float):
+                val_other = round(val_other, dec)
+
+            if val_self != val_other:
+                return False
+
+        return True
+
+    def __hash__(self):
+        values = list()
+
+        dec = 10
+        for attr in self.attributes:
+            val = getattr(self, attr)
+
+            if isinstance(val, float):
+                val = round(val, dec)
+            values.append(val)
+        # Hash attributes to prevent collision when subclasses have same values, e.g. DefaultInputState and PMInputState
+        # both have two attributes of the same type, but with different names
+        return hash((*self.attributes, *values))
+
+    @property
+    def attributes(self) -> List[str]:
+        """
+        Returns all attributes used in state space.
+
+        Attributes
+        """
+        fields = self.__dict__
+
+        return [field_name for field_name in fields]
+
+    @property
+    def used_attributes(self) -> List[str]:
+        """
+        Returns all initialized attributed in state space.
+
+        Initialized attributes
+        """
+        used_fields = list()
+        for field_name in self.attributes:
+            if getattr(self, field_name) is not None:
+                used_fields.append(field_name)
+
+        return used_fields
+
+
+@dataclass(eq=False)
+class DefaultInputState(InputState):
+    """
+    This is a class representing the input for most supported models.
+
+    :param steering_angle_speed: Steering angle speed :math:`\\dot{\\delta}` of front wheels
+    :param acceleration: Acceleration :math:`a_x`
+    """
+    steering_angle_speed: FloatExactOrInterval = None
+    acceleration: FloatExactOrInterval = None
+
+
+@dataclass(eq=False)
+class PMInputState(InputState):
+    """
+    This is a class representing the input for PM model (PM Input).
+
+    :param acceleration: Acceleration :math:`a_x`
+    :param acceleration_y: Acceleration :math:`a_y`
+    """
+    acceleration: FloatExactOrInterval = None
+    acceleration_y: FloatExactOrInterval = None
+
+
+@dataclass(eq=False)
+class LKSInputState(InputState):
+    """
+    This is a class representing the input for the linearized kinematic single track (LKS) model (LKS Input).
+
+    :param jerk_dot: change of longitudinal jerk (i.e., jerk_dot): math:`\\dot{j}`
+    :param kappa_dot_dot: change of curvature rate (i.e., kappa_dot_dot)  :math:`\\ddot{\\kappa}`
+    """
+    jerk_dot: FloatExactOrInterval = None
+    kappa_dot_dot: FloatExactOrInterval = None
 
 
 class SignalState:
@@ -601,8 +667,8 @@ class SignalState:
         return hash(frozenset(values))
 
 
-TraceState = Union[State, InitialState, PMState, KSState, KSTState, STState, STDState, MBState, InputState,
-                   PMInputState, LateralState, LongitudinalState, CustomState]
+TraceState = Union[State, InitialState, PMState, KSState, KSTState, STState, STDState, MBState, LateralState,
+                   LongitudinalState, CustomState]
 
-SpecificStateClasses = [InitialState, PMState, KSState, KSTState, STState, STDState, MBState, InputState,
-                        PMInputState, LateralState, LongitudinalState]
+SpecificStateClasses = [InitialState, PMState, KSState, KSTState, STState, STDState, MBState, LateralState,
+                        LongitudinalState]

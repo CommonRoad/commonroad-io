@@ -12,7 +12,7 @@ class Trajectory(IDrawable):
     uncertain (see :class:`commonroad.scenario.trajectory.State`); however,
     only exact time_step are allowed. """
 
-    def __init__(self, initial_time_step: int, state_list: List[TraceState]):
+    def __init__(self, initial_time_step: int, state_list: List[Union[TraceState, InputState]]):
         """
         :param initial_time_step: initial time step of the trajectory
         :param state_list: ordered sequence of states over time representing
@@ -35,11 +35,9 @@ class Trajectory(IDrawable):
                                               'Expected type: %s. Got type: %s.' % (list, type(state_list)))
         assert len(state_list) >= 1, ('<Trajectory/state_list>: argument state_list must contain at least one state.'
                                       ' length of state_list: %s.' % len(state_list))
-        assert all(isinstance(state, State) for state in state_list), ('<Trajectory/state_list>: element of '
-                                                                       'state_list is of wrong type. Expected type: '
-                                                                       '%s.' % List[State])
-        assert all(is_natural_number(state.time_step) for state in state_list if hasattr(state,
-                                                                                         'time_step')), \
+        assert all(isinstance(state, (State, InputState)) for state in state_list), \
+            '<Trajectory/state_list>: element of state_list is of wrong type. Expected type: %s.' % List[State]
+        assert all(is_natural_number(state.time_step) for state in state_list if hasattr(state, 'time_step')), \
             '<Trajectory/state_list>: Element time_step of each state must be an integer.'
         assert all(set(state_list[0].used_attributes) == set(state.used_attributes) for state in state_list), (
                 '<Trajectory/state_list>: all states must have the same attributes. Attributes of first state: %s.' %

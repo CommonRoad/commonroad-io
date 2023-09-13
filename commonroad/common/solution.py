@@ -20,7 +20,7 @@ from commonroad.geometry.shape import Rectangle
 from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad.scenario.obstacle import DynamicObstacle, ObstacleType
 from commonroad.scenario.scenario import ScenarioID
-from commonroad.scenario.state import TraceState, PMState, MBState, KSState, STState, PMInputState, InputState
+from commonroad.scenario.state import TraceState, PMState, MBState, KSState, STState, PMInputState, DefaultInputState
 from commonroad.scenario.trajectory import Trajectory
 
 
@@ -658,7 +658,7 @@ class CommonRoadSolutionReader:
             raise SolutionReaderException("Given xml node is not a '%s' node!" % state_type.value)
 
         state_types = {StateType.MB: MBState, StateType.KS: KSState, StateType.PM: PMState, StateType.ST: STState,
-                       StateType.Input: InputState, StateType.PMInput: PMInputState}
+                       StateType.Input: DefaultInputState, StateType.PMInput: PMInputState}
 
         state_vals = {}
         for mapping in list(zip(state_type.xml_fields, state_type.fields)):

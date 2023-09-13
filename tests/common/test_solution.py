@@ -10,7 +10,7 @@ from commonroad.common.solution import StateFields, XMLStateFields, StateType, T
     Solution, CommonRoadSolutionWriter, CommonRoadSolutionReader, VehicleModel, VehicleType, CostFunction
 from commonroad.scenario.scenario import ScenarioID
 from commonroad.scenario.trajectory import Trajectory
-from commonroad.scenario.state import PMState, KSState, STState, MBState, PMInputState, InputState, TraceState
+from commonroad.scenario.state import PMState, KSState, STState, MBState, PMInputState, DefaultInputState, TraceState
 
 
 class DummyDataGenerator:
@@ -94,9 +94,9 @@ class DummyDataGenerator:
 
     @classmethod
     def create_random_input(cls, time_step=0):
-        state = InputState(acceleration=cls.create_random_float(-5, 5),
-                           steering_angle_speed=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
-                           time_step=time_step)
+        state = DefaultInputState(acceleration=cls.create_random_float(-5, 5),
+                                  steering_angle_speed=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+                                  time_step=time_step)
         return state
 
     @classmethod
@@ -262,7 +262,7 @@ class DummyDataGenerator:
         )
 
     @classmethod
-    def create_input_xml(cls, state: InputState):
+    def create_input_xml(cls, state: DefaultInputState):
         return '''
         <input>
             <steeringAngleSpeed>%s</steeringAngleSpeed>
