@@ -185,11 +185,16 @@ class Obstacle(IDrawable):
 
     @initial_state.setter
     def initial_state(self, initial_state: InitialState):
-        assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of ' \
-                                                      'wrong type. Expected types: %s. Got type: %s.' \
-                                                      % (State, type(initial_state))
+        assert isinstance(initial_state, InitialState), (
+                '<Obstacle/initial_state>: argument initial_state of wrong type. '
+                'Expected types: %s. Got type: %s.' % (InitialState, type(initial_state)))
         self._initial_state = initial_state
         self._initial_occupancy_shape = occupancy_shape_from_state(self._obstacle_shape, initial_state)
+        if not hasattr(self, 'wheelbase_lengths'):
+            return
+        shapes = self.obstacle_shape.shapes
+        self._initial_occupancy_shape = shape_group_occupancy_shape_from_state(shapes, initial_state,
+                                                                               self.wheelbase_lengths)
 
     @property
     def initial_center_lanelet_ids(self) -> Union[None, Set[int]]:
@@ -366,7 +371,7 @@ class DynamicObstacle(Obstacle):
 
     def __init__(self, obstacle_id: int, obstacle_type: ObstacleType,
                  obstacle_shape: Shape,
-                 initial_state: TraceState,
+                 initial_state: InitialState,
                  prediction: Union[None, Prediction, TrajectoryPrediction, SetBasedPrediction] = None,
                  initial_center_lanelet_ids: Union[None, Set[int]] = None,
                  initial_shape_lanelet_ids: Union[None, Set[int]] = None,
@@ -426,23 +431,6 @@ class DynamicObstacle(Obstacle):
     def __hash__(self):
         return hash((self._prediction, self._initial_meta_information_state, self._meta_information_series,
                      self._external_dataset_id, Obstacle.__hash__(self)))
-
-    @property
-    def initial_state(self) -> State:
-        """ Initial state of the obstacle, e.g., obtained through sensor measurements."""
-        return self._initial_state
-
-    @initial_state.setter
-    def initial_state(self, initial_state: State):
-        assert isinstance(initial_state, State), '<Obstacle/initial_state>: argument initial_state of wrong type. ' \
-                                                 'Expected types: %s. Got type: %s.' % (State, type(initial_state))
-        self._initial_state = initial_state
-        self._initial_occupancy_shape = occupancy_shape_from_state(self._obstacle_shape, initial_state)
-        if not hasattr(self, 'wheelbase_lengths'):
-            return
-        shapes = self.obstacle_shape.shapes
-        self._initial_occupancy_shape = shape_group_occupancy_shape_from_state(shapes, initial_state,
-                                                                               self.wheelbase_lengths)
 
     @property
     def prediction(self) -> Union[Prediction, TrajectoryPrediction, SetBasedPrediction, None]:

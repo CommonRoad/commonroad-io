@@ -7,7 +7,7 @@ from commonroad.common.common_lanelet import StopLine
 from commonroad.geometry.shape import Polygon, Rectangle
 from commonroad.prediction.prediction import Trajectory, TrajectoryPrediction
 from commonroad.scenario.obstacle import DynamicObstacle, ObstacleType
-from commonroad.scenario.state import STState
+from commonroad.scenario.state import STState, InitialState
 from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany
 from commonroad.scenario.area import Area
 
@@ -140,9 +140,8 @@ class TestLanelet(unittest.TestCase):
         trajectory = Trajectory(1, state_list)
         prediction = TrajectoryPrediction(trajectory, rect)
 
-        # without initial_state
         dynamic_obs = DynamicObstacle(obstacle_id=30, obstacle_type=ObstacleType.PARKED_VEHICLE, prediction=prediction,
-                                      initial_state=STState(
+                                      initial_state=InitialState(
                                               **{'position': np.array([0, 2]), 'orientation': 0, 'time_step': 0}),
                                       obstacle_shape=rect)
 

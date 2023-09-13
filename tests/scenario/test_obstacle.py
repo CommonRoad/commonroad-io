@@ -172,8 +172,9 @@ class TestObstacle(unittest.TestCase):
         prediction = TrajectoryPrediction(trajectory, rect)
 
         dynamic_obs = DynamicObstacle(
-            obstacle_id=30, obstacle_type=ObstacleType.PARKED_VEHICLE, initial_state=KSState(**{'position': np.array(
-                [0, 0]), 'orientation': 0.0, 'time_step': 0}), obstacle_shape=rect, prediction=prediction)
+                obstacle_id=30, obstacle_type=ObstacleType.PARKED_VEHICLE,
+                initial_state=InitialState(**{'position': np.array([0, 0]), 'orientation': 0.0, 'time_step': 0}),
+                obstacle_shape=rect, prediction=prediction)
 
         for i in range(5):
             if i <= 3:
@@ -256,7 +257,8 @@ class TestObstacle(unittest.TestCase):
                                       initial_shape_lanelet_ids=initial_shape_lanelet_ids,
                                       obstacle_shape=rect, prediction=prediction, signal_series=signal_series)
 
-        current_state = KSState(position=np.array([1.0, 1.0]), orientation=0.3, time_step=1)
+        current_state = KSState(position=np.array([1.0, 1.0]), orientation=0.3,
+                                time_step=1).convert_state_to_state(InitialState())
         current_signal_state = SignalState(braking_lights=False, time_step=1)
         current_center_lanelet_ids = {11, 22}
         current_shape_lanelet_ids = {33, 44}
@@ -304,7 +306,7 @@ class TestObstacle(unittest.TestCase):
                                       center_lanelet_ids_history=copy.deepcopy(center_lanelet_ids_history),
                                       shape_lanelet_ids_history=copy.deepcopy(shape_lanelet_ids_history))
 
-        current_state = KSState(position=np.array([3.0, 3.0]), orientation=0.3, time_step=3)
+        current_state = InitialState(position=np.array([3.0, 3.0]), orientation=0.3, time_step=3)
         current_signal_state = SignalState(braking_lights=True, time_step=3)
         current_center_lanelet_ids = {11, 22}
         current_shape_lanelet_ids = {33, 44}

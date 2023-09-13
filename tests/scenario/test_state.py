@@ -105,6 +105,11 @@ class TestState(unittest.TestCase):
         self.assertEqual(initial_state.velocity, pm_state.velocity)
         self.assertEqual(pm_state.velocity_y, None)
 
+        custom_state = CustomState(time_step=0, position=Rectangle(20., 5.), orientation=0.1,
+                                   velocity=10., acceleration=5., yaw_rate=4., slip_angle=6., hitch=5.0)
+        initial_state_new = custom_state.convert_state_to_state(InitialState())
+        self.assertEqual(initial_state.velocity, initial_state_new.velocity)
+
     def test_fill_with_defaults(self):
         initial_state = InitialState()
         initial_state.fill_with_defaults()
