@@ -3,9 +3,10 @@ import abc
 import copy
 import dataclasses
 from dataclasses import dataclass
-from typing import Union, List, Any, Dict
+from typing import Union, List, Any, Dict, Optional
 import warnings
 import numpy as np
+import math
 
 import commonroad.geometry.transform
 from commonroad.common.util import Interval, AngleInterval, make_valid_orientation
@@ -316,6 +317,45 @@ class PMState(State):
     velocity: FloatExactOrInterval = None
     velocity_y: FloatExactOrInterval = None
 
+    @property
+    def orientation(self) -> Optional[float]:
+        """
+        Orientation: Yaw angle :math:`\\Psi`
+        Does not consider intervals.
+        """
+        if self.velocity is not None and self.velocity_y is not None:
+            return math.atan2(self.velocity_y, self.velocity)
+        else:
+            return None
+
+
+@dataclass(eq=False)
+class ExtendedPMState(State):
+    """
+    This is a class extending the Point Mass State (PM State) since many existing CommonRoad scenarios use position,
+    velocity, orientation, and acceleration as state which is not supported by a commonroad-io class.
+
+    :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
+    :param velocity: :math:`v_x` in longitudinal direction
+    :param orientation: Yaw angle :math:`\\Psi`
+    :param acceleration: Acceleration :math:`a_x`
+    """
+    position: ExactOrShape = None
+    velocity: FloatExactOrInterval = None
+    orientation: AngleExactOrInterval = None
+    acceleration: FloatExactOrInterval = None
+
+    @property
+    def velocity_y(self) -> Optional[float]:
+        """
+        Velocity_y: math:`v_x` in lateral direction
+        Does not consider intervals.
+        """
+        if self.velocity is not None and self.orientation is not None:
+            return math.sin(self.orientation) * self.velocity
+        else:
+            return None
+
 
 @dataclass(eq=False)
 class KSState(State):
@@ -602,7 +642,7 @@ class SignalState:
 
 
 TraceState = Union[State, InitialState, PMState, KSState, KSTState, STState, STDState, MBState, InputState,
-                   PMInputState, LateralState, LongitudinalState, CustomState]
+                   PMInputState, LateralState, LongitudinalState, CustomState, ExtendedPMState]
 
 SpecificStateClasses = [InitialState, PMState, KSState, KSTState, STState, STDState, MBState, InputState,
-                        PMInputState, LateralState, LongitudinalState]
+                        PMInputState, LateralState, LongitudinalState, ExtendedPMState]

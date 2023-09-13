@@ -318,11 +318,6 @@ class PlanningProblemSolution:
         :param trajectory_type: TrajectoryType
         :return: True if valid.
         """
-        if self._vehicle_model == VehicleModel.PM and self._trajectory_type == TrajectoryType.PM:
-            for state in self._trajectory.state_list:
-                if isinstance(state, PMState) and not hasattr(state, 'orientation'):
-                    state.orientation = math.atan2(state.velocity_y, state.velocity)
-
         if not trajectory_type.valid_vehicle_model(vehicle_model):
             raise SolutionException('Vehicle model %s is not valid for the trajectory type %s!'
                                     % (vehicle_model.name, trajectory_type.name))
