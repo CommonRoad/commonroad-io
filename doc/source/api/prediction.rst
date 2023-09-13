@@ -30,3 +30,15 @@ The CommonRoad XML-specification provides three possibilities to describe the mo
 .. autoclass:: Occupancy
    :members:
 
+
+Predictor Interface
+-------------------
+
+.. automodule:: commonroad.prediction.prediction_interface
+
+``PredictorInterface`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: PredictorInterface
+   :members:
+
+
