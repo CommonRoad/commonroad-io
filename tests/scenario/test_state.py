@@ -1,7 +1,4 @@
 import unittest
-import math
-
-import numpy as np
 
 from commonroad.scenario.state import *
 from commonroad.geometry.shape import Rectangle
@@ -108,6 +105,11 @@ class TestState(unittest.TestCase):
         self.assertEqual(initial_state.velocity, pm_state.velocity)
         self.assertEqual(pm_state.velocity_y, None)
 
+        custom_state = CustomState(time_step=0, position=Rectangle(20., 5.), orientation=0.1,
+                                   velocity=10., acceleration=5., yaw_rate=4., slip_angle=6., hitch=5.0)
+        initial_state_new = custom_state.convert_state_to_state(InitialState())
+        self.assertEqual(initial_state.velocity, initial_state_new.velocity)
+
     def test_fill_with_defaults(self):
         initial_state = InitialState()
         initial_state.fill_with_defaults()
@@ -167,6 +169,16 @@ class TestState(unittest.TestCase):
         self.assertEqual(custom_state_2.velocity.end, 1)
         self.assertEqual(custom_state_2.time_step.start, 0)
         self.assertEqual(custom_state_2.time_step.end, 1)
+
+    def test_extra_state_properties(self):
+        state = PMState(time_step=Interval(0, 1), velocity=0.0, velocity_y=0.0, position=np.array([0, 0]))
+        self.assertEqual(state.orientation, 0.0)
+        state = PMState(time_step=Interval(0, 1), velocity=0.0, velocity_y=1.0, position=np.array([0, 0]))
+        self.assertAlmostEqual(state.orientation, 1.57079, 3)
+
+        state = ExtendedPMState(time_step=Interval(0, 1), velocity=0.0, acceleration=1.0,
+                                position=np.array([0, 0]), orientation=0.0)
+        self.assertEqual(state.velocity_y, 0.0)
 
 
 if __name__ == '__main__':
