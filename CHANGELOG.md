@@ -1,5 +1,15 @@
 # Changelog
 
+## [2024.1] - 2024-03-XX
+
+### Added
+- Support for CommonRoad format 2024a
+- CommonRoad documentation source files
+
+### Removed
+- Writing 2020a XML and Protobuf scenarios
+- Reading 2020a Protobuf scenarios
+
 ## [2023.3] - 2023-09-XX
 
 ### Added
