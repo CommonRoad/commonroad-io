@@ -30,7 +30,7 @@ Learn more about the scenario specification [here](https://gitlab.lrz.de/tum-cps
 The commonroad-io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tools of the CommonRoad Framework.
 With commonroad-io, those solutions can be written to xml-files for uploading them on [commonroad.in.tum.de](https://commonroad.in.tum.de/).
 
-commonroad-io 2023.2 is compatible with CommonRoad scenarios in version 2020a and supports reading 2018b scenarios.
+commonroad-io 2023.3 is compatible with CommonRoad scenarios in version 2020a and supports reading 2018b scenarios.
 
 The software is written in Python and tested on Linux for the Python 3.8, 3.9, 3.10, and 3.11.
 
@@ -80,53 +80,36 @@ Alternatively, clone from our gitlab repository::
 and add the folder commonroad-io to your Python environment.
 
 ## Changelog
-Compared to version 2023.1, the following features have been added or changed:
+Compared to version 2023.2, the following features have been added or changed:
 
 ### Added
-- Area for modelling drivable areas which cannot be represented by lanelets
-- New weather and time of day options
-- Allow file reader to determine format based on suffix 
+- Type information for lanelet init function
+- Dynamic obstacles can now store a history of their states
+- Function to update the initial state of a dynamic obstacle while storing the previous state in the history
+- Function to update behavior predictions of dynamic obstacles
+- Function to find lanelet predecessors in range to lanelet network
+- Function to compute all predecessor lanelets starting from a provided lanelet and merge them to a single lanelet for each route.
+- Documentation for renderers (including video creation)
+- Abstract interfaces for motion planner and prediction for usage in other tools
+- New ExtendedPMState to support states with position, velocity, orientation, and acceleration
+- Orientation property to PMState
+- Hash and equality functions for area
 
 ### Fixed
-
-- Visualization of all traffic signs by setting `show_traffic_signs = None` in draw parameters
-- Validity functions to support z-axis
-- Unreferenced traffic signs for lanelet networks filtered by lanelet type
+- Function create_from_lanelet_network deletes references to removed lanelets
+- Write environment time to XML in correct format
+- Failing visualization of lanelets, stop lines, traffic signs, and traffic lights with z-coordinate
+- Traffic lights now correctly change size in interactive matplotlib plots (only affected matplotlib>=3.7)
+- Considering state attributes not part of dataclass definition in state to state conversion
+- Enforce InitialState class for initial state property of dynamic obstacle
+- Hash function of obstacle
 
 ### Changed
-
-- Visualization of direction arrow of narrow lanelets
-- Traffic light cycle optional
-- Traffic light in separate python file
-- Allow file reader to determine format based on suffix 
-- Broaden types allowed as file names 
-- Open files safely by using a context manager 
-- Use correct suffix when inferring filename from scenario id
+- Cleanup lanelet, traffic sign, and traffic light references in function create_from_lanelet_list by default
+- Equality checks of scenario elements no longer emit a warning on inequality (except if the elements are of different types)
 
 ### Removed
-
-- function get_default_cycle for traffic lights
-- support for Python 3.7
-
-Compared to version 2022.3, the following features have been added or changed:
-
-### Added
-- Support for shapely>=2.0.0
-
-### Fixed
-
-- Writing scenarios without location to protobuf
-- Dashed lanelet boundaries with fixed dash position
-- Default plot limits for focused obstacle
-- Use dt from scenario as default for video creation
-- Apply axis visible-option also for video creation
-- Protobuf FileReader marking road network related IDs as used
-- State attribute comparison
-
-### Changed
-
-- Name of SIDEWALK and BUSLANE traffic signs to PEDESTRIAN_SIDEWALK and BUS_LANE
-- Packaging and dependency management using poetry
+- Duplicated initial_state property of dynamic obstacle
 
 
 ## Authors
