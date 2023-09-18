@@ -1,5 +1,36 @@
 # Changelog
 
+## [2023.3] - 2023-09-18
+
+### Added
+- Type information for lanelet init function
+- Dynamic obstacles can now store a history of their states
+- Function to update the initial state of a dynamic obstacle while storing the previous state in the history
+- Function to update behavior predictions of dynamic obstacles
+- Function to find lanelet predecessors in range to lanelet network
+- Function to compute all predecessor lanelets starting from a provided lanelet and merge them to a single lanelet for each route.
+- Documentation for renderers (including video creation)
+- Abstract interfaces for motion planner and prediction for usage in other tools
+- New ExtendedPMState to support states with position, velocity, orientation, and acceleration
+- Orientation property to PMState
+- Hash and equality functions for area
+
+### Fixed
+- Function create_from_lanelet_network deletes references to removed lanelets
+- Write environment time to XML in correct format
+- Failing visualization of lanelets, stop lines, traffic signs, and traffic lights with z-coordinate
+- Traffic lights now correctly change size in interactive matplotlib plots (only affected matplotlib>=3.7)
+- Considering state attributes not part of dataclass definition in state to state conversion
+- Enforce InitialState class for initial state property of dynamic obstacle
+- Hash function of obstacle
+
+### Changed
+- Cleanup lanelet, traffic sign, and traffic light references in function create_from_lanelet_list by default
+- Equality checks of scenario elements no longer emit a warning on inequality (except if the elements are of different types)
+
+### Removed
+- Duplicated initial_state property of dynamic obstacle
+
 ## [2023.2] - 2023-06-26
 
 ### Added

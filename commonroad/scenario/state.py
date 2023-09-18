@@ -3,9 +3,11 @@ import abc
 import copy
 import dataclasses
 from dataclasses import dataclass
-from typing import Union, List, Any, Tuple
-
+from typing import Union, List, Any, Dict, Optional
+import warnings
 import numpy as np
+import math
+import json
 
 import commonroad.geometry.transform
 from commonroad.common.util import Interval, AngleInterval, make_valid_orientation
@@ -17,6 +19,73 @@ from commonroad.visualization.renderer import IRenderer
 FloatExactOrInterval = Union[float, Interval]
 AngleExactOrInterval = Union[float, AngleInterval]
 ExactOrShape = Union[np.ndarray, Shape]
+
+
+class MetaInformationState:
+    """
+    Class that keeps the meta information state of an obstacle.
+    It freely allows to set attributes on a dynamic obstacle.
+    """
+    def __init__(self, meta_data_str: Dict[str, str] = None, meta_data_int: Dict[str, int] = None,
+                 meta_data_float: Dict[str, float] = None, meta_data_bool: Dict[str, bool] = None):
+        """
+        :param meta_data_str: dictionary of a key and a string
+        :param meta_data_int: dictionary of a key and an int
+        :param meta_data_float: dictionary of a key and a float
+        :param meta_data_bool: dictionary of a key and a bool
+        """
+        self._meta_data_str = meta_data_str
+        self._meta_data_int = meta_data_int
+        self._meta_data_float = meta_data_float
+        self._meta_data_bool = meta_data_bool
+
+    @property
+    def meta_data_str(self) -> Dict[str, str]:
+        """ Dictionary of a key and a string. """
+        return self._meta_data_str
+
+    @meta_data_str.setter
+    def meta_data_str(self, meta_data_str: Dict[str, str]):
+        assert isinstance(meta_data_str, Dict), '<MetaInformationState/meta_data_str>: Provided meta_data_str ' \
+                                                'is not valid! id={}'.format(meta_data_str)
+        self._meta_data_str = meta_data_str
+
+    @property
+    def meta_data_int(self) -> Dict[str, int]:
+        """ Dictionary of a key and an int. """
+        return self._meta_data_int
+
+    @meta_data_int.setter
+    def meta_data_int(self, meta_data_int: Dict[str, int]):
+        assert isinstance(meta_data_int, Dict), '<MetaInformationState/meta_data_int>: Provided meta_data_int ' \
+                                                'is not valid! id={}'.format(meta_data_int)
+        self._meta_data_int = meta_data_int
+
+    @property
+    def meta_data_float(self) -> Dict[str, float]:
+        """ Dictionary of a key and a float. """
+        return self._meta_data_float
+
+    @meta_data_float.setter
+    def meta_data_float(self, meta_data_float: Dict[str, float]):
+        assert isinstance(meta_data_float, Dict), '<MetaInformationState/meta_data_float>: Provided meta_data_float ' \
+                                                'is not valid! id={}'.format(meta_data_float)
+        self._meta_data_float = meta_data_float
+
+    @property
+    def meta_data_bool(self) -> Dict[str, bool]:
+        """ Dictionary of a key and a bool. """
+        return self._meta_data_bool
+
+    @meta_data_bool.setter
+    def meta_data_bool(self, meta_data_bool: Dict[str, bool]):
+        assert isinstance(meta_data_bool, Dict), '<MetaInformationState/meta_data_bool>: Provided meta_data_bool ' \
+                                                'is not valid! id={}'.format(meta_data_bool)
+        self._meta_data_bool = meta_data_bool
+
+    def __hash__(self):
+        return hash((json.dumps(self._meta_data_str), json.dumps(self._meta_data_int),
+                     json.dumps(self._meta_data_float), json.dumps(self._meta_data_bool)))
 
 
 @dataclass
@@ -181,19 +250,17 @@ class State(abc.ABC):
 
         return transformed_state
 
-    def convert_state_to_state(self, state: TraceState) -> TraceState:
+    def convert_state_to_state(self, state: SpecificStateClasses) -> SpecificStateClasses:
         """
         Converts state to state from different state types.
 
         :param state: State for converting
         """
-        from_fields = dataclasses.fields(type(self))
-        to_fields = dataclasses.fields(type(state))
-        for from_field in from_fields:
-            for to_field in to_fields:
-                if from_field.name == to_field.name:
-                    setattr(state, to_field.name, getattr(self, from_field.name))
-
+        for to_field in dataclasses.fields(type(state)):
+            for from_field in self.attributes:
+                if from_field == to_field.name:
+                    setattr(state, to_field.name, getattr(self, from_field))
+                    break
         return state
 
     def fill_with_defaults(self):
@@ -252,6 +319,45 @@ class PMState(State):
     position: ExactOrShape = None
     velocity: FloatExactOrInterval = None
     velocity_y: FloatExactOrInterval = None
+
+    @property
+    def orientation(self) -> Optional[float]:
+        """
+        Orientation: Yaw angle :math:`\\Psi`
+        Does not consider intervals.
+        """
+        if self.velocity is not None and self.velocity_y is not None:
+            return math.atan2(self.velocity_y, self.velocity)
+        else:
+            return None
+
+
+@dataclass(eq=False)
+class ExtendedPMState(State):
+    """
+    This is a class extending the Point Mass State (PM State) since many existing CommonRoad scenarios use position,
+    velocity, orientation, and acceleration as state which is not supported by a commonroad-io class.
+
+    :param position: Position :math:`s_x`- and :math:`s_y` in a global coordinate system
+    :param velocity: :math:`v_x` in longitudinal direction
+    :param orientation: Yaw angle :math:`\\Psi`
+    :param acceleration: Acceleration :math:`a_x`
+    """
+    position: ExactOrShape = None
+    velocity: FloatExactOrInterval = None
+    orientation: AngleExactOrInterval = None
+    acceleration: FloatExactOrInterval = None
+
+    @property
+    def velocity_y(self) -> Optional[float]:
+        """
+        Velocity_y: math:`v_x` in lateral direction
+        Does not consider intervals.
+        """
+        if self.velocity is not None and self.orientation is not None:
+            return math.sin(self.orientation) * self.velocity
+        else:
+            return None
 
 
 @dataclass(eq=False)
@@ -431,8 +537,8 @@ class LKSInputState(State):
     """
     This is a class representing the input for the linearized kinematic single track (LKS) model (LKS Input).
 
-    :param longitudinal snap: change of longitudinal jerk (i.e., jerk_dot): math:`\\dot{j}`
-    :param curvature rate rate: change of curvature rate (i.e., kappa_dot_dot)  :math:`\\ddot{\\kappa}`
+    :param jerk_dot: change of longitudinal jerk (i.e., jerk_dot): math:`\\dot{j}`
+    :param kappa_dot_dot: change of curvature rate (i.e., kappa_dot_dot)  :math:`\\ddot{\\kappa}`
     """
     jerk_dot: FloatExactOrInterval = None
     kappa_dot_dot: FloatExactOrInterval = None
@@ -478,8 +584,68 @@ class CustomState(State):
         setattr(self, attr, value)
 
 
+class SignalState:
+    """ A signal state is a boolean value indicating the activity of the signal source at a time step.
+        The possible signal state elements are defined as slots:
+
+        :ivar bool horn: boolean indicating activity of horn
+        :ivar bool indicator_left: boolean indicating activity of left indicator
+        :ivar bool indicator_right: boolean indicating activity of right indicator
+        :ivar bool braking_lights: boolean indicating activity of braking lights
+        :ivar bool hazard_warning_lights: boolean indicating activity of hazard warning lights
+        :ivar bool flashing_blue_lights: boolean indicating activity of flashing blue lights (police, ambulance)
+        :ivar bool time_step: the discrete time step. Exact values are given as integers, uncertain values are given as
+              :class:`commonroad.common.util.Interval`
+    """
+
+    __slots__ = [
+        'horn',
+        'indicator_left',
+        'indicator_right',
+        'braking_lights',
+        'hazard_warning_lights',
+        'flashing_blue_lights',
+        'time_step',
+    ]
+
+    def __init__(self, **kwargs):
+        """ Elements of state vector are determined during runtime."""
+        for (field, value) in kwargs.items():
+            setattr(self, field, value)
+
+    def __eq__(self, other):
+        if not isinstance(other, SignalState):
+            warnings.warn(f"Inequality between SignalState {repr(self)} and different type {type(other)}")
+            return False
+
+        for attr in SignalState.__slots__:
+            value = None
+            value_other = None
+
+            has_attr = hasattr(self, attr)
+            if has_attr:
+                value = getattr(self, attr)
+
+            has_attr_other = hasattr(other, attr)
+            if has_attr_other:
+                value_other = getattr(other, attr)
+
+            if has_attr != has_attr_other or value != value_other:
+                return False
+
+        return True
+
+    def __hash__(self):
+        values = set()
+        for attr in SignalState.__slots__:
+            if hasattr(self, attr):
+                values.add(getattr(self, attr))
+
+        return hash(frozenset(values))
+
+
 TraceState = Union[State, InitialState, PMState, KSState, KSTState, STState, STDState, MBState, InputState,
-                   PMInputState, LateralState, LongitudinalState, CustomState]
+                   PMInputState, LateralState, LongitudinalState, CustomState, ExtendedPMState]
 
 SpecificStateClasses = [InitialState, PMState, KSState, KSTState, STState, STDState, MBState, InputState,
-                        PMInputState, LateralState, LongitudinalState]
+                        PMInputState, LateralState, LongitudinalState, ExtendedPMState]
