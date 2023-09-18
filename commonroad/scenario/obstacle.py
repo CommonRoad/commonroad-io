@@ -57,10 +57,10 @@ class Obstacle(IDrawable):
     def __init__(self, obstacle_id: int, obstacle_role: ObstacleRole,
                  obstacle_type: ObstacleType, obstacle_shape: Shape,
                  initial_state: InitialState = None,
-                 initial_center_lanelet_ids: Union[None, Set[int]] = None,
-                 initial_shape_lanelet_ids: Union[None, Set[int]] = None,
-                 initial_signal_state: Union[None, SignalState] = None,
-                 signal_series: List[SignalState] = None):
+                 initial_center_lanelet_ids: Optional[Set[int]] = None,
+                 initial_shape_lanelet_ids: Optional[Set[int]] = None,
+                 initial_signal_state: Optional[SignalState] = None,
+                 signal_series: Optional[List[SignalState]] = None):
         """
         :param obstacle_id: unique ID of the obstacle
         :param obstacle_role: obstacle role as defined in CommonRoad
@@ -72,16 +72,16 @@ class Obstacle(IDrawable):
         :param initial_signal_state: initial signal state of obstacle
         :param signal_series: list of signal states over time
         """
-        self._initial_occupancy_shape: Union[None, Shape] = None
+        self._initial_occupancy_shape: Optional[Shape] = None
         self.obstacle_id: int = obstacle_id
         self.obstacle_role: ObstacleRole = obstacle_role
         self.obstacle_type: ObstacleType = obstacle_type
         self.obstacle_shape: Shape = obstacle_shape
         self.initial_state: InitialState = initial_state
-        self.initial_center_lanelet_ids: Union[None, Set[int]] = initial_center_lanelet_ids
-        self.initial_shape_lanelet_ids: Union[None, Set[int]] = initial_shape_lanelet_ids
-        self.initial_signal_state: Union[None, SignalState] = initial_signal_state
-        self.signal_series: List[SignalState] = signal_series
+        self.initial_center_lanelet_ids: Optional[Set[int]] = initial_center_lanelet_ids
+        self.initial_shape_lanelet_ids: Optional[Set[int]] = initial_shape_lanelet_ids
+        self.initial_signal_state: Optional[SignalState] = initial_signal_state
+        self.signal_series: Optional[List[SignalState]] = signal_series
 
     def __eq__(self, other):
         if not isinstance(other, Obstacle):
@@ -108,15 +108,10 @@ class Obstacle(IDrawable):
         return obstacle_eq
 
     def __hash__(self):
-        initial_center_lanelet_ids = None if self._initial_center_lanelet_ids is None \
-            else self._initial_center_lanelet_ids
-        initial_shape_lanelet_ids = None if self._initial_shape_lanelet_ids is None \
-            else self._initial_shape_lanelet_ids
-        signal_series = None if self._signal_series is None else self.signal_series
 
         return hash((self._obstacle_id, self._obstacle_role, self._obstacle_type, self._obstacle_shape,
-                     self._initial_state, initial_center_lanelet_ids, initial_shape_lanelet_ids,
-                     self._initial_signal_state, signal_series))
+                     self._initial_state, frozenset(self.initial_center_lanelet_ids),
+                     frozenset(self.initial_shape_lanelet_ids), self._initial_signal_state, tuple(self.signal_series)))
 
     @property
     def obstacle_id(self) -> int:
@@ -373,9 +368,9 @@ class DynamicObstacle(Obstacle):
                  obstacle_shape: Shape,
                  initial_state: InitialState,
                  prediction: Union[None, Prediction, TrajectoryPrediction, SetBasedPrediction] = None,
-                 initial_center_lanelet_ids: Union[None, Set[int]] = None,
-                 initial_shape_lanelet_ids: Union[None, Set[int]] = None,
-                 initial_signal_state: Union[None, SignalState] = None,
+                 initial_center_lanelet_ids: Optional[Set[int]] = None,
+                 initial_shape_lanelet_ids: Optional[Set[int]] = None,
+                 initial_signal_state: Optional[SignalState] = None,
                  signal_series: List[SignalState] = None,
                  initial_meta_information_state: MetaInformationState = None,
                  meta_information_series: List[MetaInformationState] = None,
@@ -426,14 +421,25 @@ class DynamicObstacle(Obstacle):
         return self._prediction == other.prediction and Obstacle.__eq__(self, other) and \
             self._initial_meta_information_state == other.initial_meta_information_state and \
             self._meta_information_series == other.meta_information_series and \
-            self._external_dataset_id == other.external_dataset_id
+            self._external_dataset_id == other.external_dataset_id and self.history == other.history and \
+            self.signal_history == other.signal_history and\
+            self.center_lanelet_ids_history == other.center_lanelet_ids_history and \
+            self.shape_lanelet_ids_history == other.shape_lanelet_ids_history
 
     def __hash__(self):
-        return hash((self._prediction, self._initial_meta_information_state, self._meta_information_series,
-                     self._external_dataset_id, Obstacle.__hash__(self)))
+        center_lanelet_ids_history = \
+            None if self.center_lanelet_ids_history is None else tuple(frozenset(value)
+                                                                       for value in self.center_lanelet_ids_history)
+        shape_lanelet_ids_history = \
+            None if self.shape_lanelet_ids_history is None else tuple(frozenset(value)
+                                                                      for value in self.shape_lanelet_ids_history)
+
+        return hash((self._prediction, self._initial_meta_information_state, tuple(self._meta_information_series),
+                     self._external_dataset_id, tuple(self.history), tuple(self.signal_history),
+                     center_lanelet_ids_history, shape_lanelet_ids_history, Obstacle.__hash__(self)))
 
     @property
-    def prediction(self) -> Union[Prediction, TrajectoryPrediction, SetBasedPrediction, None]:
+    def prediction(self) -> Union[None, Prediction, TrajectoryPrediction, SetBasedPrediction]:
         """ Prediction describing the movement of the dynamic obstacle over time."""
         return self._prediction
 

@@ -7,6 +7,7 @@ from typing import Union, List, Any, Dict, Optional
 import warnings
 import numpy as np
 import math
+import json
 
 import commonroad.geometry.transform
 from commonroad.common.util import Interval, AngleInterval, make_valid_orientation
@@ -81,6 +82,10 @@ class MetaInformationState:
         assert isinstance(meta_data_bool, Dict), '<MetaInformationState/meta_data_bool>: Provided meta_data_bool ' \
                                                 'is not valid! id={}'.format(meta_data_bool)
         self._meta_data_bool = meta_data_bool
+
+    def __hash__(self):
+        return hash((json.dumps(self._meta_data_str), json.dumps(self._meta_data_int),
+                     json.dumps(self._meta_data_float), json.dumps(self._meta_data_bool)))
 
 
 @dataclass
