@@ -13,6 +13,7 @@
 - Abstract interfaces for motion planner and prediction for usage in other tools
 - New ExtendedPMState to support states with position, velocity, orientation, and acceleration
 - Orientation property to PMState
+- Hash and equality functions for area
 
 ### Fixed
 - Function create_from_lanelet_network deletes references to removed lanelets
@@ -21,6 +22,7 @@
 - Traffic lights now correctly change size in interactive matplotlib plots (only affected matplotlib>=3.7)
 - Considering state attributes not part of dataclass definition in state to state conversion
 - Enforce InitialState class for initial state property of dynamic obstacle
+- Hash function of obstacle
 
 ### Changed
 - Cleanup lanelet, traffic sign, and traffic light references in function create_from_lanelet_list by default
