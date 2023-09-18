@@ -1,6 +1,6 @@
 # Changelog
 
-## [2023.3] - 2023-09-XX
+## [2023.3] - 2023-09-18
 
 ### Added
 - Type information for lanelet init function
