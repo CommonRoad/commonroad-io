@@ -10,7 +10,7 @@
 - Writing 2020a XML and Protobuf scenarios
 - Reading 2020a Protobuf scenarios
 
-## [2023.3] - 2023-09-XX
+## [2023.3] - 2023-09-18
 
 ### Added
 - Type information for lanelet init function
