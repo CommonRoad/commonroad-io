@@ -4,7 +4,6 @@ from typing import Set, List
 
 import numpy as np
 
-from commonroad.common.validity import is_valid_polyline
 from commonroad.common.common_lanelet import LineMarking
 
 
@@ -84,15 +83,11 @@ class AreaBorder:
         if not isinstance(other, AreaBorder):
             warnings.warn(f"Inequality between AreaBorder {repr(self)} and different type {type(other)}")
             return False
-        polyline_string = np.array2string(np.around(self._border_vertices.astype(float), 10), precision=10)
-        polyline_other_string = np.array2string(np.around(other.border_vertices.astype(float), 10), precision=10)
-        return self._area_border_id == other.area_border_id and polyline_string == polyline_other_string \
+        return self._area_border_id == other.area_border_id and self._boundary == other.boundary \
             and self._adjacent == other.adjacent and self._line_marking == other.line_marking
 
     def __hash__(self):
-        return hash((self._area_border_id,
-                     np.array2string(np.around(self._border_vertices.astype(float), 10), precision=10),
-                     self._adjacent, self._line_marking))
+        return hash((self._area_border_id, self.boundary, self._adjacent, self._line_marking))
 
 
 class Area:

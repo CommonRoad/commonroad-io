@@ -1,5 +1,4 @@
 import unittest
-import numpy as np
 from commonroad.scenario.area import Area, AreaBorder, AreaType
 from commonroad.common.common_lanelet import LineMarking
 
@@ -123,32 +122,32 @@ class TestArea(unittest.TestCase):
         self.assertEqual(area.area_types, area_type_set)
 
     def test_hash_area_border(self):
-        area_border1 = AreaBorder(1, np.array([[1, 2], [3, 4]]))
-        area_border2 = AreaBorder(1, np.array([[1, 2], [3, 4]]))
+        area_border1 = AreaBorder(1, 2)
+        area_border2 = AreaBorder(1, 2)
         self.assertEqual(area_border1.__hash__(), area_border2.__hash__())
 
         area_border1.line_marking = LineMarking.SOLID
         self.assertNotEqual(area_border1.__hash__(), area_border2.__hash__())
 
     def test_hash_area(self):
-        area1 = Area(1, [AreaBorder(1, np.array([[1, 2], [3, 4]])), AreaBorder(2, np.array([[1, 2], [3, 4]]))])
-        area2 = Area(1, [AreaBorder(1, np.array([[1, 2], [3, 4]])), AreaBorder(2, np.array([[1, 2], [3, 4]]))])
+        area1 = Area(1, [AreaBorder(1, 2), AreaBorder(2, 3)])
+        area2 = Area(1, [AreaBorder(1, 2), AreaBorder(2, 3)])
         self.assertEqual(area1.__hash__(), area2.__hash__())
 
         area1.area_types = {AreaType.BUS_STOP, AreaType.PARKING}
         self.assertNotEqual(area1.__hash__(), area2.__hash__())
 
     def test_equality_area_border(self):
-        area_border1 = AreaBorder(1, np.array([[1, 2], [3, 4]]))
-        area_border2 = AreaBorder(1, np.array([[1, 2], [3, 4]]))
+        area_border1 = AreaBorder(1, 2)
+        area_border2 = AreaBorder(1, 2)
         self.assertTrue(area_border1 == area_border2)
 
         area_border1.line_marking = LineMarking.SOLID
         self.assertFalse(area_border1 == area_border2)
 
     def test_equality_area(self):
-        area1 = Area(1, [AreaBorder(1, np.array([[1, 2], [3, 4]])), AreaBorder(2, np.array([[1, 2], [3, 4]]))])
-        area2 = Area(1, [AreaBorder(1, np.array([[1, 2], [3, 4]])), AreaBorder(2, np.array([[1, 2], [3, 4]]))])
+        area1 = Area(1, [AreaBorder(1, 2, 3)])
+        area2 = Area(1, [AreaBorder(1, 2, 3)])
         self.assertTrue(area1 == area2)
 
         area1.area_types = {AreaType.BUS_STOP, AreaType.PARKING}
