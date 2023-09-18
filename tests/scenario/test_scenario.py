@@ -75,10 +75,12 @@ class TestScenario(unittest.TestCase):
         self.static_obs = StaticObstacle(0, ObstacleType("unknown"), obstacle_shape=self.circ,
                                          initial_state=self.init_state, initial_shape_lanelet_ids={100, 101})
         self.dyn_set_obs = DynamicObstacle(1, ObstacleType("unknown"),
-                                           initial_state=self.traj_pred.trajectory.state_at_time_step(0),
+                                           initial_state=self.traj_pred.trajectory.state_at_time_step(
+                                                   0).convert_state_to_state(InitialState()),
                                            prediction=self.set_pred, obstacle_shape=self.rectangle)
         self.dyn_traj_obs = DynamicObstacle(2, ObstacleType("unknown"),
-                                            initial_state=self.traj_pred.trajectory.state_at_time_step(0),
+                                            initial_state=self.traj_pred.trajectory.state_at_time_step(
+                                                    0).convert_state_to_state(InitialState()),
                                             prediction=self.traj_pred, obstacle_shape=self.rectangle,
                                             initial_shape_lanelet_ids={100, 101})
 
@@ -351,10 +353,12 @@ class TestScenario(unittest.TestCase):
                                      initial_state=self.init_state)
         static_obs3 = StaticObstacle(5000, ObstacleType("car"), obstacle_shape=self.circ, initial_state=self.init_state)
         dyn_set_obs1 = DynamicObstacle(20, ObstacleType("unknown"),
-                                       initial_state=self.traj_pred.trajectory.state_at_time_step(0),
+                                       initial_state=self.traj_pred.trajectory.state_at_time_step(
+                                               0).convert_state_to_state(InitialState()),
                                        prediction=self.set_pred, obstacle_shape=self.rectangle)
         dyn_set_obs2 = DynamicObstacle(-20, ObstacleType("unknown"),
-                                       initial_state=self.traj_pred.trajectory.state_at_time_step(0),
+                                       initial_state=self.traj_pred.trajectory.state_at_time_step(
+                                               0).convert_state_to_state(InitialState()),
                                        prediction=self.set_pred, obstacle_shape=self.rectangle)
 
         self.scenario.add_objects(static_obs1)
@@ -401,10 +405,12 @@ class TestScenario(unittest.TestCase):
                                      initial_state=self.init_state)
         static_obs3 = StaticObstacle(3, ObstacleType("car"), obstacle_shape=self.circ, initial_state=self.init_state)
         dyn_set_obs1 = DynamicObstacle(4, ObstacleType("unknown"),
-                                       initial_state=self.traj_pred.trajectory.state_at_time_step(0),
+                                       initial_state=self.traj_pred.trajectory.state_at_time_step(
+                                               0).convert_state_to_state(InitialState()),
                                        prediction=self.set_pred, obstacle_shape=self.rectangle)
         dyn_set_obs2 = DynamicObstacle(5, ObstacleType("car"),
-                                       initial_state=self.traj_pred.trajectory.state_at_time_step(0),
+                                       initial_state=self.traj_pred.trajectory.state_at_time_step(
+                                               0).convert_state_to_state(InitialState()),
                                        prediction=self.set_pred, obstacle_shape=self.rectangle)
 
         expected_obstacle_num_static_obstacles = 3
@@ -444,7 +450,8 @@ class TestScenario(unittest.TestCase):
         static_obs3 = StaticObstacle(3, ObstacleType("car"), obstacle_shape=self.circ, initial_state=init_state3)
         static_obs4 = StaticObstacle(4, ObstacleType("car"), obstacle_shape=self.circ, initial_state=init_state4)
         dyn_set_obs1 = DynamicObstacle(5, ObstacleType("unknown"),
-                                       initial_state=self.traj_pred.trajectory.state_at_time_step(0),
+                                       initial_state=self.traj_pred.trajectory.state_at_time_step(
+                                               0).convert_state_to_state(InitialState()),
                                        prediction=self.set_pred, obstacle_shape=self.rectangle)
 
         expected_obstacle_ids_in_interval = {1, 2, 5}
@@ -604,7 +611,8 @@ class TestScenario(unittest.TestCase):
 
         traj_pred = TrajectoryPrediction(trajectory, self.rectangle)
         dyn_traj_obs = DynamicObstacle(2, ObstacleType("unknown"),
-                                       initial_state=traj_pred.trajectory.state_at_time_step(0), prediction=traj_pred,
+                                       initial_state=traj_pred.trajectory.state_at_time_step(
+                                               0).convert_state_to_state(InitialState()), prediction=traj_pred,
                                        obstacle_shape=self.rectangle, initial_shape_lanelet_ids=None)
         sc = Scenario(dt=0.1)
         right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
@@ -651,7 +659,8 @@ class TestScenario(unittest.TestCase):
         # assign only a selected obstacle
         scenario_tmp: Scenario = deepcopy(sc)
         dyn_traj_obs_3 = DynamicObstacle(3, ObstacleType("unknown"),
-                                         initial_state=traj_pred.trajectory.state_at_time_step(0), prediction=traj_pred,
+                                         initial_state=traj_pred.trajectory.state_at_time_step(
+                                                 0).convert_state_to_state(InitialState()), prediction=traj_pred,
                                          obstacle_shape=self.rectangle, initial_shape_lanelet_ids=None)
         scenario_tmp.add_objects(dyn_traj_obs_3)
         scenario_tmp.assign_obstacles_to_lanelets(time_steps=None, obstacle_ids={3})

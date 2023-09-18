@@ -56,7 +56,7 @@ class TestUncertainStates(unittest.TestCase):
         prediction = TrajectoryPrediction(Trajectory(1, uncertain_states[1:]),
                                           shape)
         dyn_obs = DynamicObstacle(0, ObstacleType.CAR, shape,
-                                  uncertain_states[0], prediction)
+                                  uncertain_states[0].convert_state_to_state(InitialState()), prediction)
         dyn_obs.draw(self.rnd)
         self.rnd.render(show=True)
 
@@ -71,7 +71,7 @@ class TestUncertainStates(unittest.TestCase):
         prediction = TrajectoryPrediction(Trajectory(1, uncertain_states[1:]),
                                           shape)
         dyn_obs = DynamicObstacle(0, ObstacleType.CAR, shape,
-                                  uncertain_states[0], prediction)
+                                  uncertain_states[0].convert_state_to_state(InitialState()), prediction)
         dyn_obs.draw(self.rnd, )
         self.rnd.render(show=True)
 
@@ -85,7 +85,7 @@ class TestUncertainStates(unittest.TestCase):
         prediction = TrajectoryPrediction(Trajectory(1, uncertain_states[1:]),
                                           shape)
         dyn_obs = DynamicObstacle(0, ObstacleType.CAR, shape,
-                                  uncertain_states[0], prediction)
+                                  uncertain_states[0].convert_state_to_state(InitialState()), prediction)
         dyn_obs.draw(self.rnd, )
         self.rnd.render(show=True)
         self.rnd.clear()

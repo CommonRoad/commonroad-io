@@ -1,4 +1,5 @@
 import enum
+import warnings
 from typing import Set, List
 
 import numpy as np
@@ -79,6 +80,20 @@ class AreaBorder:
                                                'is not valid! type = {}'.format(type(value))
         self._line_marking = value
 
+    def __eq__(self, other):
+        if not isinstance(other, AreaBorder):
+            warnings.warn(f"Inequality between AreaBorder {repr(self)} and different type {type(other)}")
+            return False
+        polyline_string = np.array2string(np.around(self._border_vertices.astype(float), 10), precision=10)
+        polyline_other_string = np.array2string(np.around(other.border_vertices.astype(float), 10), precision=10)
+        return self._area_border_id == other.area_border_id and polyline_string == polyline_other_string \
+            and self._adjacent == other.adjacent and self._line_marking == other.line_marking
+
+    def __hash__(self):
+        return hash((self._area_border_id,
+                     np.array2string(np.around(self._border_vertices.astype(float), 10), precision=10),
+                     self._adjacent, self._line_marking))
+
 
 class Area:
     """
@@ -132,3 +147,13 @@ class Area:
             assert isinstance(val, AreaType), '<Area/area_types>: Provided area type set is not valid! id={}'\
                 .format(value)
         self._area_types = value
+
+    def __eq__(self, other):
+        if not isinstance(other, Area):
+            warnings.warn(f"Inequality between Area {repr(self)} and different type {type(other)}")
+            return False
+        return self._area_id == other.area_id and self._border == other.border and self._area_types == other.area_types
+
+    def __hash__(self):
+        return hash((self._area_id, tuple(self._border),
+                     frozenset(self._area_types if self._area_types is not None else set())))

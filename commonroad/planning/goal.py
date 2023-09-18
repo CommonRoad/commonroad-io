@@ -189,7 +189,6 @@ class GoalRegion(IDrawable):
                 and not {'velocity', 'velocity_y'}.issubset(goal_state_fields):
 
             if 'orientation' not in state_fields:
-                state_new.orientation = math.atan2(state_new.velocity_y, state_new.velocity)
                 state_fields.add('orientation')
 
             state_new.velocity = np.linalg.norm(np.array([state_new.velocity, state_new.velocity_y]))
