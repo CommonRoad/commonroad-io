@@ -11,7 +11,8 @@ from matplotlib.transforms import Bbox
 from scipy.cluster.hierarchy import linkage, fcluster
 
 from commonroad.geometry.shape import *
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDUsa
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDUsa, TrafficSignIDGermany, \
+    TrafficSignIDZamunda, TrafficSignIDSpain, TrafficSignIDChina, TrafficSignIDRussia
 from commonroad.scenario.traffic_light import TrafficLight
 from commonroad.visualization.draw_params import TrafficLightParams, TrafficSignParams
 
@@ -293,7 +294,8 @@ def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], Traffi
             if show_traffic_signs is not None and el_id.value not in show_traffic_signs:
                 continue
             show_label = show_label_default
-            path = os.path.join(traffic_sign_path, el_id.__class__.__name__, el_id.value + '.png')
+
+            path = _get_traffic_sign_img_path(el_id)
             plot_img = True
             # get png image
             if not os.path.exists(path):
@@ -377,6 +379,21 @@ def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], Traffi
             imageboxes_all[tuple(traffic_sign.position[:2].tolist())].append(hbox)
 
     return imageboxes_all
+
+
+def _get_traffic_sign_img_path(traffic_sign_element_id: Union[TrafficSignIDZamunda, TrafficSignIDUsa,
+                               TrafficSignIDSpain, TrafficSignIDGermany, TrafficSignIDChina,
+                               TrafficSignIDRussia]) -> str:
+    """
+    Returns the path to the image corresponding to the given traffic sign element ID.
+
+    :param traffic_sign_element_id: The traffic sign element ID to lookup.
+    :return: The path to the corresponding image.
+    """
+    class_name = traffic_sign_element_id.__class__.__name__
+    directory = class_name if class_name != "TrafficSignIDZamunda" else "TrafficSignIDGermany"
+
+    return os.path.join(traffic_sign_path, directory, f"{traffic_sign_element_id.value}.png")
 
 
 def create_img_boxes_traffic_lights(traffic_lights: Union[List[TrafficLight], TrafficLight],
