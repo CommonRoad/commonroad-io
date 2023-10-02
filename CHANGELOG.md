@@ -1,5 +1,13 @@
 # Changelog
 
+## [2023.4] - 2023-12-??
+
+### Changed
+- Traffic signs for Zamunda now use images of German traffic signs
+
+### Removed
+- Images for Zamunda traffic signs
+
 ## [2023.3] - 2023-09-18
 
 ### Added
