@@ -1,6 +1,5 @@
 import unittest
-from copy import deepcopy
-
+import unittest.mock as mock
 from copy import deepcopy
 
 from commonroad import SCENARIO_VERSION
@@ -482,6 +481,26 @@ class TestScenario(unittest.TestCase):
             self.scenario.translate_rotate(np.array([3, 5, -7]), np.pi / 2)
         with self.assertRaises(AssertionError):
             self.scenario.translate_rotate(np.array([3]), np.pi / 2)
+
+    def test_convert_to_2d(self):
+        scenario = Scenario(0.1, ScenarioID(map_name="Test"))
+        lanelet_network_mock = mock.MagicMock(spec=LaneletNetwork)
+        scenario.replace_lanelet_network(lanelet_network_mock)
+
+        scenario.convert_to_2d()
+
+        self.assertEqual(scenario.scenario_id.map_name, "Test2D")
+        lanelet_network_mock.convert_to_2d.assert_called_once()
+
+    def test_convert_to_2d_with_name(self):
+        scenario = Scenario(0.1, ScenarioID(map_name="Test"))
+        lanelet_network_mock = mock.MagicMock(spec=LaneletNetwork)
+        scenario.replace_lanelet_network(lanelet_network_mock)
+
+        scenario.convert_to_2d(map_name="2DTest")
+
+        self.assertEqual(scenario.scenario_id.map_name, "2DTest")
+        lanelet_network_mock.convert_to_2d.assert_called_once()
 
     def test_is_object_id_used(self):
         static_obs1 = StaticObstacle(10, ObstacleType("unknown"), obstacle_shape=self.circ,

@@ -167,3 +167,11 @@ class StopLine:
         tmp = tmp[0:2, :].transpose()
         self._start, self._end = tmp[0], tmp[1]
 
+    def convert_to_2d(self) -> None:
+        """
+        Convert the stop line to a 2D representation by removing the z-coordinate from start and end vertex.
+
+        This has no effect if the stop line is already 2D.
+        """
+        self._start = self._start[:2]
+        self._end = self._end[:2]

@@ -14,6 +14,15 @@ class TestTrafficSign(unittest.TestCase):
 
         np.testing.assert_array_almost_equal(traffic_sign.position, desired_traffic_light_position)
 
+    def test_convert_to_2d(self):
+        traffic_sign_max_speed = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED.value, ["15"])
+        traffic_sign = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0, 3.0]))
+
+        traffic_sign.convert_to_2d()
+
+        self.assertEqual(traffic_sign.position.shape, (2,))
+        np.testing.assert_array_almost_equal(traffic_sign.position, np.array([10.0, 7.0]))
+
     def test_equality(self):
         traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, ["15"])
         traffic_sign_one = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0]))
