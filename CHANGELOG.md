@@ -4,7 +4,8 @@
 
 ### Added
 - Function to convert 3D scenarios to 2D scenarios
-- 
+- Support for Python 3.12
+
 ### Changed
 - Traffic signs for Zamunda now use images of German traffic signs
 

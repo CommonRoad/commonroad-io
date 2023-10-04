@@ -37,26 +37,18 @@ style_check_merge_result:
     - merge_requests
   allow_failure: true
 
-build_and_test_python_3_8:
-  image: python:3.8
+build_and_test_python:
+  image : python:$PYTHON_VERSIONS
   stage: test
+  parallel :
+    matrix :
+      - PYTHON_VERSIONS : [ "3.8", "3.9", "3.10", "3.11" ]
   script:
     - *run-test-with-coverage
+  needs: []
 
-build_and_test_python_3_9:
-  image: python:3.9
-  stage: test
-  script:
-    - *run-test-with-coverage
-
-build_and_test_python_3_10:
-  image: python:3.10
-  stage: test
-  script:
-    - *run-test-with-coverage
-
-build_and_test_python_3_11:
-  image: python:3.11
+build_and_test_python_3_12:
+  image: python:3.12
   stage: test
   script:
     - *run-test-with-coverage
