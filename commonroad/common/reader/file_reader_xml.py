@@ -1012,7 +1012,7 @@ class IntersectionFactory:
             crossing_lanelets = set()
             for crossing_ref in xml_node.find('crossing').findall('crossingLanelet'):
                 crossing_lanelets.add(int(crossing_ref.get('ref')))
-            crossings.append(CrossingGroup(random.randint(123456789, sys.maxsize) , crossing_lanelets))
+            crossings.append(CrossingGroup(random.randint(1000000, 100000000), crossing_lanelets))
 
         incomings = []
         for incoming_node in xml_node.findall('incoming'):
