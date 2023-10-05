@@ -10,6 +10,17 @@
 - Writing 2020a XML and Protobuf scenarios
 - Reading 2020a Protobuf scenarios
 
+## [2023.4] - 2023-12-??
+
+### Added
+- Function to convert 3D scenarios to 2D scenarios
+- 
+### Changed
+- Traffic signs for Zamunda now use images of German traffic signs
+
+### Removed
+- Images for Zamunda traffic signs
+
 ## [2023.3] - 2023-09-18
 
 ### Added

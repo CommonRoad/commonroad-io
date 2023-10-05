@@ -606,6 +606,22 @@ class Lanelet:
         # recreate polygon in case it existed
         self._polygon = Polygon(np.concatenate((self.right_vertices, np.flip(self.left_vertices, 0))))
 
+    def convert_to_2d(self) -> None:
+        """
+        Convert the lanelet to 2D by removing the z-coordinate from all vertices.
+
+        This has no effect if the lanelet is already 2D.
+        """
+        self._center_vertices = self._center_vertices[:, :2]
+        self._left_vertices = self._left_vertices[:, :2]
+        self._right_vertices = self._right_vertices[:, :2]
+
+        if self._stop_line is not None:
+            self._stop_line.convert_to_2d()
+
+        # recreate polygon in 2D
+        self._polygon = Polygon(np.concatenate((self.right_vertices, np.flip(self.left_vertices, 0))))
+
     def interpolate_position(self, distance: float) -> Tuple[np.ndarray, np.ndarray, np.ndarray, int]:
         """
         Computes the interpolated positions on the center/right/left polyline of the lanelet for a given distance
@@ -1775,6 +1791,19 @@ class LaneletNetwork(IDrawable):
             traffic_sign.translate_rotate(translation, angle)
         for traffic_light in self._traffic_lights.values():
             traffic_light.translate_rotate(translation, angle)
+
+    def convert_to_2d(self) -> None:
+        """
+        Convert the lanelet network to 2D by removing the z-coordinate from all lanelets and traffic signs/lights.
+
+        This has no effect if the lanelet network is already 2D.
+        """
+        for lanelet in self._lanelets.values():
+            lanelet.convert_to_2d()
+        for traffic_sign in self._traffic_signs.values():
+            traffic_sign.convert_to_2d()
+        for traffic_light in self._traffic_lights.values():
+            traffic_light.convert_to_2d()
 
     def find_lanelet_by_position(self, point_list: List[np.ndarray]) -> List[List[int]]:
         """

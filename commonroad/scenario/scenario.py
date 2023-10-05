@@ -764,6 +764,19 @@ class Scenario(IDrawable):
         for obstacle in self.obstacles:
             obstacle.translate_rotate(translation, angle)
 
+    def convert_to_2d(self, map_name: Optional[str] = None) -> None:
+        """Convert the scenario to 2D by removing the z-coordinate from all objects in the scenario.
+
+            :param map_name: name for the 2D map to be used in the scenario ID
+                (if None, "2D" is appended to the current name)
+        """
+        if map_name is not None:
+            self.scenario_id.map_name = map_name
+        else:
+            self.scenario_id.map_name += "2D"
+
+        self._lanelet_network.convert_to_2d()
+
     def _is_object_id_used(self, object_id: int) -> bool:
         """ Checks if an ID is already assigned to an object in the scenario.
 

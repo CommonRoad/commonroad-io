@@ -1112,5 +1112,13 @@ class TrafficSign(IDrawable):
         self._position = commonroad.geometry.transform.translate_rotate(np.array([self._position]), translation, angle)[
             0]
 
+    def convert_to_2d(self) -> None:
+        """
+        Convert the traffic sign to 2D by removing the z-coordinate from its position.
+
+        This has no effect if the traffic sign is already 2D.
+        """
+        self._position = self._position[:2]
+
     def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[TrafficSignParams] = None):
         renderer.draw_traffic_light_sign(self, draw_params)
