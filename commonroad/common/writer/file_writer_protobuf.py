@@ -747,8 +747,11 @@ class CrossingGroupMessage:
         crossing_msg = intersection_pb2.CrossingGroup()
 
         crossing_msg.crossing_group_id = crossing.crossing_id
-        crossing_msg.incoming_group_id = crossing.incoming_group_id
-        crossing_msg.outgoing_group_id = crossing.outgoing_group_id
+
+        if crossing.incoming_group_id is not None:
+            crossing_msg.incoming_group_id = crossing.incoming_group_id
+        if crossing.outgoing_group_id is not None:
+            crossing_msg.outgoing_group_id = crossing.outgoing_group_id
 
         for crossing_lanelet in crossing.crossing_lanelets:
             crossing_msg.crossing_lanelets.append(crossing_lanelet)
