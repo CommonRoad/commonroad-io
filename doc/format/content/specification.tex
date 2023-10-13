@@ -313,9 +313,7 @@ If the GeoName-ID and the GPS coordinates are unknown, e.g., in artificial road 
 To specify the geometrical transformation which were performed while creating the lanelets, one can add a \texttt{geoTransformation} element. This may contain two children:
 
 \begin{enumerate}
-
 	\item The optional \texttt{geoReference} element contains a \emph{proj-strings}\footnote{\href{https://proj.org/usage/quickstart.html}{proj.org}} describing a coordinate transformation from geodetic coordinates to the projected (Cartesian) coordinates. This projection can then be used to transform the Cartesian coordinates back to geodetic coordinates used by OSM (cf. Sec.~\ref{sec:OSM}).
-
 	\item The \texttt{additionalTransformation} element (see Fig.~\ref{fig:additionalTransformation}) describes geometrical operations which were performed (after the geoReference) to transform the Cartesian coordinates. The execution order of the transformations is according to the order of the following list:
 	\begin{itemize}
 		\item \texttt{xTranslation} Translating x-coordinates of all points by this value.
@@ -350,24 +348,24 @@ We have chosen lanelets since they are as expressible as other formats, such as 
 Our converter from OpenDRIVE to Lanelets is available on our website.
 
 A lanelet consists of the following elements:
-\begin{itemize}
-				.3 [1] leftBound.
-.4 [2..N] point.
-.4 [0..1] lineMarking.
-.3 [1] rightBound.
-.4 [2..N] point.
-.4 [0..1] lineMarking.
-.3 [0..N] predecessor (\textrm{ref to} lanelet).
-.3 [0..N] successor (\textrm{ref to} lanelet).
-.3 [0..1] adjacentLeft (\textrm{ref to} lanelet, \textrm{drivingDir}=same/opposite).
-.3 [0..1] adjacentRight (\textrm{ref to} lanelet, \textrm{drivingDir}=same/opposite).
-.3 [0..1] stopLine.
-.3 [1..N] laneletType: highway/urban/busStop/.../crosswalk.
-.3 [0..N] userOneWay: vehicle/car/truck/bicycle/.../pedestrian.
-.3 [0..N] userBidirectional: vehicle/car/truck/bicycle/.../pedestrian.
-.3 [0..N] trafficSignRef (\textrm{ref to} trafficSign).
-.3 [0..N] trafficLightRef (\textrm{ref to} trafficLight).
-\end{itemize}
+%\begin{itemize}
+%3 [1] leftBound.
+%.4 [2..N] point.
+%.4 [0..1] lineMarking.
+%.3 [1] rightBound.
+%.4 [2..N] point.
+%.4 [0..1] lineMarking.
+%.3 [0..N] predecessor (\textrm{ref to} lanelet).
+%.3 [0..N] successor (\textrm{ref to} lanelet).
+%.3 [0..1] adjacentLeft (\textrm{ref to} lanelet, \textrm{drivingDir}=same/opposite).
+%.3 [0..1] adjacentRight (\textrm{ref to} lanelet, \textrm{drivingDir}=same/opposite).
+%.3 [0..1] stopLine.
+%.3 [1..N] laneletType: highway/urban/busStop/.../crosswalk.
+%.3 [0..N] userOneWay: vehicle/car/truck/bicycle/.../pedestrian.
+%.3 [0..N] userBidirectional: vehicle/car/truck/bicycle/.../pedestrian.
+%.3 [0..N] trafficSignRef (\textrm{ref to} trafficSign).
+%.3 [0..N] trafficLightRef (\textrm{ref to} trafficLight).
+%\end{itemize}
 
 
 \begin{figure}[!htpb]
