@@ -12,6 +12,8 @@ from commonroad.scenario.scenario import ScenarioID
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import PMState, KSState, STState, MBState, PMInputState, InputState, TraceState
 
+from tests.test_utils import get_test_directory
+
 
 class DummyDataGenerator:
 
@@ -935,6 +937,12 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
     def test_open_invalid_path(self):
         with self.assertRaises(FileNotFoundError):
             parsed_solution_single = CommonRoadSolutionReader.open(self.solution_single_path + 'invalid')
+
+    def test_read_solution_from_xml(self):
+        solution = CommonRoadSolutionReader.open(get_test_directory()
+                                                 + "/solutions/solution_KS2_SM1_DEU_Ibbenbueren-10_2_T-1_2020a.xml")
+        obs = solution.create_dynamic_obstacle()
+        assert obs.pop(1).obstacle_id == 1
 
 
 if __name__ == '__main__':
