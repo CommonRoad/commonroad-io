@@ -388,7 +388,7 @@ class TestObstacle(unittest.TestCase):
         self.assertEqual(dynamic_obstacle.__hash__(), dynamic_obstacle2.__hash__())
 
         dynamic_obstacle.history.append(state_list[-1])
-        self.assertNotEquals(dynamic_obstacle.__hash__(), dynamic_obstacle2.__hash__())
+        self.assertNotEqual(dynamic_obstacle.__hash__(), dynamic_obstacle2.__hash__())
 
 
 if __name__ == '__main__':
