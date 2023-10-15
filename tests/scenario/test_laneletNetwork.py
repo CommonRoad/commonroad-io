@@ -192,8 +192,8 @@ class TestLaneletNetwork(unittest.TestCase):
                                                                                 {LaneletType.URBAN})
         lanelets_in_network = [la.lanelet_id for la in new_network_lanelet_types.lanelets]
         self.assertNotIn(lanelet2.lanelet_id, lanelets_in_network)
-        self.assertEquals(lanelet1.traffic_signs, new_network_lanelet_types.lanelets[0].traffic_signs)
-        self.assertEquals(lanelet1.traffic_lights, new_network_lanelet_types.lanelets[0].traffic_lights)
+        self.assertEqual(lanelet1.traffic_signs, new_network_lanelet_types.lanelets[0].traffic_signs)
+        self.assertEqual(lanelet1.traffic_lights, new_network_lanelet_types.lanelets[0].traffic_lights)
 
         new_network = lanelet_network.create_from_lanelet_network(lanelet_network,
                                                                   Rectangle(0.25, 0.25, np.array([5.5, 1.5])))
