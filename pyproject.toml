@@ -30,7 +30,7 @@ numpy = [
     {version = ">=1.22", python = ">=3.8,<3.11"},
     {version = "^1.26.1", python = ">=3.11,<3.13"}
 ]
-scipy = ">=1.5.2,<1.11" # if Python 3.8 support is remove, we can also support >=1.11
+scipy = ">=1.5.2,<1.11" # if Python 3.8 support is removed, we can also support >=1.11
 shapely = "^2.0.1"
 matplotlib = ">=3.0.0"
 lxml = ">=4.2.2"
