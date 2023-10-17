@@ -85,6 +85,15 @@ class TestTrafficLight(unittest.TestCase):
 
         np.testing.assert_array_almost_equal(traffic_light.position, desired_traffic_light_position)
 
+    def test_convert_to_2d(self):
+        color = [TrafficLightState.GREEN, TrafficLightState.YELLOW, TrafficLightState.RED]
+        traffic_light = TrafficLight(1, position=np.array([10.0, 7.0, 3.0]), color=color)
+
+        traffic_light.convert_to_2d()
+
+        self.assertEqual(traffic_light.position.shape, (2,))
+        np.testing.assert_array_almost_equal(traffic_light.position, np.array([10.0, 7.0]))
+
     def test_equality(self):
         traffic_light_cycle = TrafficLightCycle([TrafficLightCycleElement(TrafficLightState.RED, 1)])
         color = [TrafficLightState.GREEN]

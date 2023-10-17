@@ -1,5 +1,7 @@
 import copy
 import unittest
+import unittest.mock as mock
+
 import numpy as np
 from numpy import double
 
@@ -297,6 +299,23 @@ class TestLaneletNetwork(unittest.TestCase):
             self.lanelet_network.translate_rotate(np.array([3]), np.pi / 2)
         with self.assertRaises(AssertionError):
             self.lanelet_network.translate_rotate(0.0, np.pi / 2)
+
+    def test_convert_to_2d(self):
+        lanelet_network = LaneletNetwork()
+        lanelet_mocks = [mock.MagicMock(spec=Lanelet), mock.MagicMock(spec=Lanelet)]
+        for lanelet_mock in lanelet_mocks:
+            lanelet_network.add_lanelet(lanelet_mock)
+        traffic_sign_mocks = [mock.MagicMock(spec=TrafficSign), mock.MagicMock(spec=TrafficSign)]
+        for traffic_sign_mock in traffic_sign_mocks:
+            lanelet_network.add_traffic_sign(traffic_sign_mock, set())
+        traffic_light_mocks = [mock.MagicMock(spec=TrafficLight), mock.MagicMock(spec=TrafficLight)]
+        for traffic_light_mock in traffic_light_mocks:
+            lanelet_network.add_traffic_light(traffic_light_mock, set())
+
+        lanelet_network.convert_to_2d()
+
+        for mock_object in lanelet_mocks + traffic_sign_mocks + traffic_light_mocks:
+            mock_object.convert_to_2d.assert_called_once()
 
     def test_find_lanelet_by_position(self):
         additional_lanelet_network = LaneletNetwork.create_from_lanelet_network(self.lanelet_network)

@@ -15,7 +15,6 @@ from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
 from commonroad.common.common_lanelet import LineMarking, LaneletType
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario, Tag, Location, ScenarioID
-from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import KSState, InitialState
 
 
@@ -71,34 +70,14 @@ class TestXMLFileWriter(unittest.TestCase):
 
     def test_writing_shapes(self):
         rectangle = Rectangle(4.3, 8.9, center=np.array([2.5, -1.8]), orientation=1.7)
-        polygon = Polygon(
-            np.array([np.array((0.0, 0.0)), np.array((0.0, 1.0)), np.array((1.0, 1.0)), np.array((1.0, 0.0))]))
         circ = Circle(2.0, np.array([10.0, 0.0]))
-        sg = ShapeGroup([circ, rectangle])
-        occupancy_list = list()
-        occupancy_list.append(Occupancy(0, rectangle))
-        occupancy_list.append(Occupancy(1, circ))
-        occupancy_list.append(Occupancy(2, polygon))
-        occupancy_list.append(Occupancy(3, circ))
-
-        set_pred = SetBasedPrediction(0, occupancy_list)
 
         states = list()
         states.append(KSState(time_step=0, orientation=0, position=np.array([0, 0])))
         states.append(KSState(time_step=1, orientation=0, position=np.array([0, 1])))
-        trajectory = Trajectory(0, states)
 
-        init_state = KSState(time_step=0, orientation=0, position=np.array([0, 0]))
-
-        traj_pred = TrajectoryPrediction(trajectory, rectangle)
-
+        init_state = InitialState(time_step=0, orientation=0, position=np.array([0, 0]))
         static_obs = StaticObstacle(3, ObstacleType("unknown"), obstacle_shape=circ, initial_state=init_state)
-        dyn_set_obs = DynamicObstacle(1, ObstacleType("unknown"),
-                                      initial_state=traj_pred.trajectory.state_at_time_step(0), prediction=set_pred,
-                                      obstacle_shape=rectangle)
-        dyn_traj_obs = DynamicObstacle(2, ObstacleType("unknown"),
-                                       initial_state=traj_pred.trajectory.state_at_time_step(0), prediction=traj_pred,
-                                       obstacle_shape=rectangle)
         lanelet1 = Lanelet(np.array([[12345.12, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
                            np.array([[0.0, 2], [1.0, 2], [2, 2]]), 100, [101], [101], 101, False, 101, True,
                            LineMarking.DASHED, LineMarking.SOLID, lanelet_type={LaneletType.URBAN})
@@ -156,10 +135,9 @@ class TestXMLFileWriter(unittest.TestCase):
         f3 = 123456789
         f4 = 1e-23
         f5 = 0
-        cw = CommonRoadFileWriter(decimal_precision=3,
-                                  scenario=Scenario(dt=0.1, tags=set(), author="sdf", affiliation="",
-                                                    source=""),
-                                  planning_problem_set=PlanningProblemSet())
+        CommonRoadFileWriter(decimal_precision=3,
+                             scenario=Scenario(dt=0.1, tags=set(), author="sdf", affiliation="", source=""),
+                             planning_problem_set=PlanningProblemSet())
         str1 = float_to_str(f)
         self.assertEqual(str1, "123456789.123")
         str2 = float_to_str(f2)
@@ -177,10 +155,9 @@ class TestXMLFileWriter(unittest.TestCase):
         f3 = 123456789
         f4 = 1e-23
         f5 = 0
-        cw = CommonRoadFileWriter(decimal_precision=5,
-                                  scenario=Scenario(dt=0.1, tags=set(), author="sdf", affiliation="",
-                                                    source=""),
-                                  planning_problem_set=PlanningProblemSet())
+        CommonRoadFileWriter(decimal_precision=5,
+                             scenario=Scenario(dt=0.1, tags=set(), author="sdf", affiliation="", source=""),
+                             planning_problem_set=PlanningProblemSet())
         str1 = float_to_str(f)
         self.assertEqual(str1, "123456789.12345")
         str2 = float_to_str(f2)

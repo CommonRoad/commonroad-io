@@ -7,6 +7,7 @@ from typing import Union, List, Any, Dict, Optional
 import warnings
 import numpy as np
 import math
+import json
 
 import commonroad.geometry.transform
 from commonroad.common.util import Interval, AngleInterval, make_valid_orientation
@@ -81,6 +82,10 @@ class MetaInformationState:
         assert isinstance(meta_data_bool, Dict), '<MetaInformationState/meta_data_bool>: Provided meta_data_bool ' \
                                                 'is not valid! id={}'.format(meta_data_bool)
         self._meta_data_bool = meta_data_bool
+
+    def __hash__(self):
+        return hash((json.dumps(self._meta_data_str), json.dumps(self._meta_data_int),
+                     json.dumps(self._meta_data_float), json.dumps(self._meta_data_bool)))
 
 
 @dataclass
@@ -247,19 +252,17 @@ class State(abc.ABC):
 
         return transformed_state
 
-    def convert_state_to_state(self, state: TraceState) -> TraceState:
+    def convert_state_to_state(self, state: SpecificStateClasses) -> SpecificStateClasses:
         """
         Converts state to state from different state types.
 
         :param state: State for converting
         """
-        from_fields = dataclasses.fields(type(self))
-        to_fields = dataclasses.fields(type(state))
-        for from_field in from_fields:
-            for to_field in to_fields:
-                if from_field.name == to_field.name:
-                    setattr(state, to_field.name, getattr(self, from_field.name))
-
+        for to_field in dataclasses.fields(type(state)):
+            for from_field in self.attributes:
+                if from_field == to_field.name:
+                    setattr(state, to_field.name, getattr(self, from_field))
+                    break
         return state
 
     def fill_with_defaults(self):
@@ -705,7 +708,7 @@ class SignalState:
         return hash(frozenset(values))
 
 
-TraceState = Union[Sytate, InitialState, PMState, KSState, KSTState, STState, STDState, MBState, LateralState,
+TraceState = Union[State, InitialState, PMState, KSState, KSTState, STState, STDState, MBState, LateralState,
                    LongitudinalState, CustomState, ExtendedPMState]
 
 SpecificStateClasses = [InitialState, PMState, KSState, KSTState, STState, STDState, MBState, LateralState,

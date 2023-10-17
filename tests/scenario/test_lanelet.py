@@ -1,15 +1,16 @@
 import copy
 import unittest
+import unittest.mock as mock
 import numpy as np
 
-from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork
 from commonroad.common.common_lanelet import StopLine
 from commonroad.geometry.shape import Polygon, Rectangle
 from commonroad.prediction.prediction import Trajectory, TrajectoryPrediction
-from commonroad.scenario.obstacle import DynamicObstacle, ObstacleType
-from commonroad.scenario.state import STState
-from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany
 from commonroad.scenario.area import Area
+from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork
+from commonroad.scenario.obstacle import DynamicObstacle, ObstacleType
+from commonroad.scenario.state import STState, InitialState
+from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany
 
 
 class TestLanelet(unittest.TestCase):
@@ -79,6 +80,20 @@ class TestLanelet(unittest.TestCase):
         np.testing.assert_array_almost_equal(lanelet.stop_line.start, desired_stop_line_start)
         np.testing.assert_array_almost_equal(lanelet.stop_line.end, desired_stop_line_end)
 
+    def test_convert_to_2d(self):
+        right_vertices = np.array([[0, 0, 5], [1, 0, 4], [2, 0, 3], [3, .5, 2]])
+        left_vertices = np.array([[0, 1, 5], [1, 1, 4], [2, 1, 3], [3, 1.5, 2]])
+        center_vertices = np.array([[0, .5, 5], [1, .5, 4], [2, .5, 3], [3, 1, 2]])
+        stop_line_mock = mock.MagicMock(spec=StopLine)
+        lanelet = Lanelet(left_vertices, center_vertices, right_vertices, 1, stop_line=stop_line_mock)
+
+        lanelet.convert_to_2d()
+
+        np.testing.assert_allclose(lanelet.right_vertices, np.array([[0, 0], [1, 0], [2, 0], [3, .5]]))
+        np.testing.assert_allclose(lanelet.left_vertices, np.array([[0, 1], [1, 1], [2, 1], [3, 1.5]]))
+        np.testing.assert_allclose(lanelet.center_vertices, np.array([[0, .5], [1, .5], [2, .5], [3, 1]]))
+        stop_line_mock.convert_to_2d.assert_called_once()
+
     def test_translate_invalid(self):
         right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, .5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
         left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
@@ -140,9 +155,8 @@ class TestLanelet(unittest.TestCase):
         trajectory = Trajectory(1, state_list)
         prediction = TrajectoryPrediction(trajectory, rect)
 
-        # without initial_state
         dynamic_obs = DynamicObstacle(obstacle_id=30, obstacle_type=ObstacleType.PARKED_VEHICLE, prediction=prediction,
-                                      initial_state=STState(
+                                      initial_state=InitialState(
                                               **{'position': np.array([0, 2]), 'orientation': 0, 'time_step': 0}),
                                       obstacle_shape=rect)
 
@@ -597,6 +611,17 @@ class TestLanelet(unittest.TestCase):
 
 
 class TestStopLine(unittest.TestCase):
+
+    def test_convert_to_2d(self):
+        stop_line = StopLine(np.array([0, 0, 0]), np.array([0, 1, 2]), LineMarking.SOLID, {1, 2}, {3, 4})
+
+        stop_line.convert_to_2d()
+
+        self.assertEqual(stop_line.start.shape, (2,))
+        np.testing.assert_array_almost_equal(stop_line.start, np.array([0, 0]))
+        self.assertEqual(stop_line.end.shape, (2,))
+        np.testing.assert_array_almost_equal(stop_line.end, np.array([0, 1]))
+
     def test_equality(self):
         stop_line_1 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
         stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})

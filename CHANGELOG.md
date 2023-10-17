@@ -1,6 +1,20 @@
 # Changelog
 
-## [2023.3] - 2023-09-XX
+## [2023.4] - 2023-12-??
+
+### Added
+- Function to convert 3D scenarios to 2D scenarios
+
+### Fixed
+- Conversion to initial state in function create_dynamic_obstacle of solution object
+
+### Changed
+- Traffic signs for Zamunda now use images of German traffic signs
+
+### Removed
+- Images for Zamunda traffic signs
+
+## [2023.3] - 2023-09-18
 
 ### Added
 - Type information for lanelet init function
@@ -13,16 +27,23 @@
 - Abstract interfaces for motion planner and prediction for usage in other tools
 - New ExtendedPMState to support states with position, velocity, orientation, and acceleration
 - Orientation property to PMState
+- Hash and equality functions for area
 
 ### Fixed
 - Function create_from_lanelet_network deletes references to removed lanelets
 - Write environment time to XML in correct format
 - Failing visualization of lanelets, stop lines, traffic signs, and traffic lights with z-coordinate
 - Traffic lights now correctly change size in interactive matplotlib plots (only affected matplotlib>=3.7)
+- Considering state attributes not part of dataclass definition in state to state conversion
+- Enforce InitialState class for initial state property of dynamic obstacle
+- Hash function of obstacle
 
 ### Changed
 - Cleanup lanelet, traffic sign, and traffic light references in function create_from_lanelet_list by default
 - Equality checks of scenario elements no longer emit a warning on inequality (except if the elements are of different types)
+
+### Removed
+- Duplicated initial_state property of dynamic obstacle
 
 ## [2023.2] - 2023-06-26
 

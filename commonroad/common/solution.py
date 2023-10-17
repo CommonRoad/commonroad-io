@@ -20,7 +20,8 @@ from commonroad.geometry.shape import Rectangle
 from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad.scenario.obstacle import DynamicObstacle, ObstacleType
 from commonroad.scenario.scenario import ScenarioID
-from commonroad.scenario.state import TraceState, PMState, MBState, KSState, STState, PMInputState, DefaultInputState
+from commonroad.scenario.state import TraceState, PMState, MBState, KSState, STState, PMInputState, DefaultInputState, \
+    InitialState
 from commonroad.scenario.trajectory import Trajectory
 
 
@@ -542,10 +543,11 @@ class Solution:
             trajectory = Trajectory(initial_time_step=solution.trajectory.initial_time_step + 1,
                                     state_list=solution.trajectory.state_list[1:])
             prediction = TrajectoryPrediction(trajectory, shape=shape)
+            init_state = solution.trajectory.state_list[0].convert_state_to_state(InitialState())
             obs[pp_id] = DynamicObstacle(obstacle_id=pp_id,
                                          obstacle_type=ObstacleType.CAR,
                                          obstacle_shape=shape,
-                                         initial_state=solution.trajectory.state_list[0],
+                                         initial_state=init_state,
                                          prediction=prediction)
 
         return obs

@@ -11,7 +11,7 @@ from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad.scenario.lanelet import Lanelet
 from commonroad.scenario.obstacle import ObstacleType, DynamicObstacle
 from commonroad.scenario.scenario import Scenario, ScenarioID
-from commonroad.scenario.state import KSState
+from commonroad.scenario.state import KSState, InitialState
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.visualization import icons
 from commonroad.visualization.draw_params import MPDrawParams
@@ -63,7 +63,7 @@ class TestIcons(unittest.TestCase):
         shape = Rectangle(5, 2)
         state = KSState(time_step=0, position=np.array((0, 2)), orientation=0.0)
         for i, veh_type in enumerate(icons.supported_icons()):
-            init_state = copy.deepcopy(state)
+            init_state = copy.deepcopy(state).convert_state_to_state(InitialState())
             init_state.position[0] = (i + 1) * 10
             traj_state = copy.deepcopy(init_state)
             traj_state.time_step = 1
