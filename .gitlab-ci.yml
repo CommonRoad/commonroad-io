@@ -1,16 +1,15 @@
-image: python:3.8
-
 stages:
   - style_check
   - test
   - deploy
 
-before_script:
-  - pip install poetry
-  - poetry config installer.modern-installation false # this should be removed in the future, required because of invalid third-party wheels (https://github.com/python-poetry/poetry/issues/7686)
-  - poetry config virtualenvs.in-project true
-  - poetry install --with tests
-  - source .venv/bin/activate
+default:
+  image: python:3.8
+  before_script:
+    - pip install poetry
+    - poetry config virtualenvs.in-project true
+    - poetry install --with tests
+    - source .venv/bin/activate
 
 .run-test-with-coverage: &run-test-with-coverage
   - apt-get update && apt-get install -y ffmpeg
@@ -54,24 +53,21 @@ build_and_test_python_arm:
   stage: test
   parallel :
     matrix :
-      - PYTHON_VERSIONS : [ "3.8", "3.9", "3.10", "3.11" ]
+      - PYTHON_VERSIONS : [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
   script:
     - *run-test-with-coverage
   needs: []
 
-#build_and_test_python_macos:
-#  image : arm64v8/python:$PYTHON_VERSIONS
-#  tags :
-#    - macos
-#  stage: test
-#  parallel :
-#    matrix :
-#      - PYTHON_VERSIONS : [ "3.8", "3.9"]
-#  variables:
-#    QT_QPA_PLATFORM : "offscreen"
-#  script:
-#    - *run-test-with-coverage
-#  needs: []
+build_and_test_python_macos:
+  tags :
+    - macos
+  stage: test
+  #parallel :
+  #  matrix :
+  #    - PYTHON_VERSIONS : [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
+  script:
+    - *run-test-with-coverage
+  needs: []
 
 build_and_test_python_3_12:
   image: python:3.12
