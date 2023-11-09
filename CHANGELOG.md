@@ -14,6 +14,7 @@
 
 ### Removed
 - Images for Zamunda traffic signs
+- Function commonorad.common.util.interpolate_angle
 
 ## [2023.3] - 2023-09-18
 

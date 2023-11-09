@@ -7,16 +7,6 @@ from commonroad.common.util import Interval, interpolate_angle, subtract_orienta
 
 
 class TestUtils(unittest.TestCase):
-    def test_interpolate_angle(self):
-        a = interpolate_angle(x=0.5, xp=np.array([0., 1.]), fp=np.array([0., 2 * np.pi]), degrees=False)
-        b = interpolate_angle(x=0.5, xp=np.array([0., 1.]), fp=np.array([0., 360.]), degrees=True)
-        c = interpolate_angle(x=0.5, xp=np.array([0., 1.]), fp=np.array([-np.pi, np.pi]), degrees=False)
-        d = interpolate_angle(x=0.5, xp=np.array([0., 1.]), fp=np.array([-180., 180.]), degrees=True)
-        self.assertAlmostEqual(a, 0.)
-        self.assertAlmostEqual(b, 0.)
-        self.assertAlmostEqual(c, np.pi)
-        self.assertAlmostEqual(d, 180.)
-
     def test_subtract_orientations(self):
         self.assertAlmostEqual(subtract_orientations(0.1, -0.1), 0.2)
         self.assertAlmostEqual(subtract_orientations(0.0, -0.1), 0.1)
