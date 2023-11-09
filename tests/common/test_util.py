@@ -2,7 +2,7 @@ import math
 import unittest
 import numpy as np
 
-from commonroad.common.util import Interval, interpolate_angle, subtract_orientations, vectorized_angle_difference, \
+from commonroad.common.util import Interval, subtract_orientations, vectorized_angle_difference, \
     AngleInterval
 
 
