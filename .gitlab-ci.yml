@@ -58,16 +58,16 @@ build_and_test_python_arm:
     - *run-test-with-coverage
   needs: []
 
-#build_and_test_python_macos:
-#  tags :
-#    - macos
-#  stage: test
-#  parallel :
-#    matrix :
-#    - PYTHON_VERSIONS : [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
-#  script:
-#    - *run-test-with-coverage
-#  needs: []
+build_and_test_python_macos:
+  tags :
+    - macos
+  stage: test
+  parallel :
+    matrix :
+    - PYTHON_VERSIONS : [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
+  script:
+    - *run-test-with-coverage
+  needs: []
 
 build_and_test_python_3_12:
   image: python:3.12
