@@ -2,19 +2,21 @@
 \section{Introduction}
 \label{sec:introduction}
 \subsection{Overview about CommonRoad}
-Within \textit{CommonRoad}\cite{Althoff2017a}\footnote{\href{https://commonroad.in.tum.de}{commonroad.in.tum.de}}, Protocol Buffers\footnote{https://protobuf.dev/} and XML files (currently only up to version 2020a) are used to store the data for specific driving scenarios. 
-In this documentation, we present the definition of CommonRoad scenarios, which are composed of (1) meta information describing the scenario (see Section~\ref{subsec:meta}), (2) a formal representation of the road network (see Section~\ref{subsec:lanelets}-\ref{subsec:intersections}), (3) static and dynamic obstacles (see Section~\ref{subsec:obstacles}), and (4) the planning problem of the ego vehicle(s) (see Section~\ref{subsec:egoVehicles}). 
-In non-collaborative scenarios, only one planning problem exists, while in collaborating scenarios several planning problems have to be solved.
+With \textit{CommonRoad}\cite{Althoff2017a}\footnote{\href{https://commonroad.in.tum.de}{commonroad.in.tum.de}} one can store driving scenarios. The scenarios can be loaded and processed by many tools available in the CommonRoad framework, e.g., drivability-checker, route planner, motion planners.  
+The scenarios can be stored in two formats which are Protocol Buffers\footnote{https://protobuf.dev/} and XML files (currently only up to version 2020a). 
+In this documentation, we present the definition of CommonRoad scenarios, which are composed of (1) a formal representation of the road network (see Section~\ref{subsec:lanelets}-\ref{subsec:intersections}), (2) static and dynamic obstacles (see Section~\ref{subsec:obstacles}), and (3) the planning problem of the ego vehicle(s) (see Section~\ref{subsec:egoVehicles}). 
+Additionally, all of the mentioned components consists of meta information describing the element (see Section~\ref{subsec:meta}).
+%In non-collaborative scenarios, only one planning problem exists, while in collaborating scenarios several planning problems have to be solved.
 
 A visualization of all scenarios is on our website\footnote{\href{https://commonroad.in.tum.de/scenarios/}{commonroad.in.tum.de/scenarios}}, where you can also search for specific types of scenarios.
 
-Since CommonRoad version 2023a, the default representation of a CommonRoad scenario consists of three Protobuf files instead of a  single (Protobuf/XML) file.
+Since CommonRoad version 2024a, the default representation of a CommonRoad scenario consists of three Protobuf files instead of a  single (Protobuf/XML) file.
 However, for a better exchange of files it is possible to write and read all information in just one file.
 
 
 \subsection{Changes Compared to Version 2020a}
 
-For a quick reference, we summarize the major changes of version 2023a compared to version 2020a:
+For a quick reference, we summarize the major changes of version 2024a compared to version 2020a:
 \begin{itemize}
 \item New intersection definition
 \item Separation into three files: map, dynamic, scenario 
