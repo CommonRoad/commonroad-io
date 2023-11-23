@@ -865,6 +865,9 @@ class TestProtobufFileReader(unittest.TestCase):
         self.filename_custom_state_xml = self.cwd_path + "/../test_scenarios/test_reading_custom_state.xml"
         self.filename_custom_state_pb = self.cwd_path + "/../test_scenarios/test_reading_custom_state.pb"
 
+        self.filename_longitudinal_state_xml = self.cwd_path + "/../test_scenarios/test_reading_longitudinal_state.xml"
+        self.filename_lateral_state_xml = self.cwd_path + "/../test_scenarios/test_reading_lateral_state.xml"
+
     def test_open(self):
         self.assertTrue(read_compare(self.filename_all_xml, self.filename_all_pb))
 
@@ -891,6 +894,14 @@ class TestProtobufFileReader(unittest.TestCase):
         self._check_correct_matched_state(self.filename_std_state_pb, FileFormat.PROTOBUF, STDState)
         self._check_correct_matched_state(self.filename_custom_state_xml, FileFormat.XML, CustomState)
         self._check_correct_matched_state(self.filename_custom_state_pb, FileFormat.PROTOBUF, CustomState)
+
+        # Attributes orientation and velocity in y direction are not included by longitudinal state
+        with self.assertRaises(Exception):
+            self._check_correct_matched_state(self.filename_longitudinal_state_xml, FileFormat.XML, LongitudinalState)
+
+        # Attribute position is not included by lateral state
+        with self.assertRaises(Exception):
+            self._check_correct_matched_state(self.filename_lateral_state_xml, FileFormat.XML, LateralState)
 
     def _check_correct_matched_state(self, file_name: str, file_format: FileFormat, state_type: type):
         scenario, _ = CommonRoadFileReader(file_name, file_format).open()
