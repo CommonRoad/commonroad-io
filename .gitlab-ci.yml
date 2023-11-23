@@ -61,6 +61,8 @@ build_and_test_python_arm:
 build_and_test_python_macos:
   tags :
     - macos
+  variables:
+    GIT_CLONE_PATH: $CI_BUILDS_DIR
   stage: test
   #parallel :
   #  matrix :
