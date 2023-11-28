@@ -8,10 +8,14 @@ message LineMarkingEnum {
     enum LineMarking {
         DASHED = 0;
         SOLID = 1;
-        BROAD_DASHED = 2;
-        BROAD_SOLID = 3;
-        UNKNOWN = 4;
-        NO_MARKING = 5;
+        SOLID_SOLID = 2;
+        DASHED_DASHED = 3;
+        CURB = 4;
+        LOWERED_CURB = 5;
+        BROAD_DASHED = 6;
+        BROAD_SOLID = 7;
+        UNKNOWN = 8;
+        NO_MARKING = 9;
     }
 }
 

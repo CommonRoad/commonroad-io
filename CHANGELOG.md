@@ -4,6 +4,7 @@
 
 ### Added
 - Function to convert 3D scenarios to 2D scenarios
+- New line marking types
 
 ### Fixed
 - Conversion to initial state in function create_dynamic_obstacle of solution object
