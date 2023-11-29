@@ -4,7 +4,12 @@
 
 ### Added
 - Function to convert 3D scenarios to 2D scenarios
-- 
+- Function to retrieve all lanlets who have a reference to a give traffic sign/light
+- New line marking types
+
+### Fixed
+- Conversion to initial state in function create_dynamic_obstacle of solution object
+
 ### Changed
 - Traffic signs for Zamunda now use images of German traffic signs
 

@@ -310,9 +310,9 @@ class TrajectoryPrediction(Prediction):
         self._trajectory.translate_rotate(translation, angle)
         self._occupancy_set = self._create_occupancy_set()
 
-    def _create_occupancy_set(self):
+    def _create_occupancy_set(self) -> List[Occupancy]:
         """ Computes the occupancy set over time given the predicted trajectory and shape of the object."""
-        occupancy_set = list()
+        occupancy_set = []
 
         for k, state in enumerate(self._trajectory.state_list):
             if not hasattr(state, "orientation"):
