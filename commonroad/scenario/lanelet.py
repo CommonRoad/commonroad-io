@@ -32,7 +32,12 @@ class Bound:
 
     boundary_id: int  # id of boundary
     vertices: np.ndarray  # boundary vertices
-    line_marking: LineMarking = LineMarking.NO_MARKING # line marking of boundary
+    line_marking: LineMarking = LineMarking.NO_MARKING  # line marking of boundary
+
+    def __hash__(self):
+        return hash((self.boundary_id,
+                     np.array2string(np.around(self.vertices.astype(float), 10), precision=10),
+                     self.line_marking))
 
 
 class Lanelet:
