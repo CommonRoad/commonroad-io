@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\nutil.proto\x12\x11\x63ommonroad_common\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x02(\x01\x12\t\n\x01y\x18\x02 \x02(\x01\"i\n\tRectangle\x12\x0e\n\x06length\x18\x01 \x02(\x01\x12\r\n\x05width\x18\x02 \x02(\x01\x12(\n\x06\x63\x65nter\x18\x03 \x01(\x0b\x32\x18.commonroad_common.Point\x12\x13\n\x0borientation\x18\x04 \x01(\x01\"B\n\x06\x43ircle\x12\x0e\n\x06radius\x18\x01 \x02(\x01\x12(\n\x06\x63\x65nter\x18\x02 \x01(\x0b\x32\x18.commonroad_common.Point\"5\n\x07Polygon\x12*\n\x08vertices\x18\x01 \x03(\x0b\x32\x18.commonroad_common.Point\"6\n\nShapeGroup\x12(\n\x06shapes\x18\x01 \x03(\x0b\x32\x18.commonroad_common.Shape\"\xd5\x01\n\x05Shape\x12\x31\n\trectangle\x18\x01 \x01(\x0b\x32\x1c.commonroad_common.RectangleH\x00\x12+\n\x06\x63ircle\x18\x02 \x01(\x0b\x32\x19.commonroad_common.CircleH\x00\x12-\n\x07polygon\x18\x03 \x01(\x0b\x32\x1a.commonroad_common.PolygonH\x00\x12\x34\n\x0bshape_group\x18\x04 \x01(\x0b\x32\x1d.commonroad_common.ShapeGroupH\x00\x42\x07\n\x05shape\"-\n\x0fIntegerInterval\x12\r\n\x05start\x18\x01 \x02(\x05\x12\x0b\n\x03\x65nd\x18\x02 \x02(\x05\"+\n\rFloatInterval\x12\r\n\x05start\x18\x01 \x02(\x01\x12\x0b\n\x03\x65nd\x18\x02 \x02(\x01\"v\n\x16IntegerExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x05H\x00\x12\x36\n\x08interval\x18\x02 \x01(\x0b\x32\".commonroad_common.IntegerIntervalH\x00\x42\x13\n\x11\x65xact_or_interval\"r\n\x14\x46loatExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x01H\x00\x12\x34\n\x08interval\x18\x02 \x01(\x0b\x32 .commonroad_common.FloatIntervalH\x00\x42\x13\n\x11\x65xact_or_interval\"\x1d\n\x0bIntegerList\x12\x0e\n\x06values\x18\x01 \x03(\x05\"\x1b\n\tFloatList\x12\x0e\n\x06values\x18\x01 \x03(\x05\"S\n\tTimeStamp\x12\x0c\n\x04year\x18\x01 \x01(\r\x12\r\n\x05month\x18\x02 \x01(\r\x12\x0b\n\x03\x64\x61y\x18\x03 \x01(\r\x12\x0c\n\x04hour\x18\x04 \x01(\r\x12\x0e\n\x06minute\x18\x05 \x01(\r'
+  serialized_pb=b'\n\nutil.proto\x12\x11\x63ommonroad_common\"(\n\x05Point\x12\t\n\x01x\x18\x01 \x02(\x01\x12\t\n\x01y\x18\x02 \x02(\x01\x12\t\n\x01z\x18\x03 \x01(\x01\"i\n\tRectangle\x12\x0e\n\x06length\x18\x01 \x02(\x01\x12\r\n\x05width\x18\x02 \x02(\x01\x12(\n\x06\x63\x65nter\x18\x03 \x01(\x0b\x32\x18.commonroad_common.Point\x12\x13\n\x0borientation\x18\x04 \x01(\x01\"B\n\x06\x43ircle\x12\x0e\n\x06radius\x18\x01 \x02(\x01\x12(\n\x06\x63\x65nter\x18\x02 \x01(\x0b\x32\x18.commonroad_common.Point\"5\n\x07Polygon\x12*\n\x08vertices\x18\x01 \x03(\x0b\x32\x18.commonroad_common.Point\"6\n\nShapeGroup\x12(\n\x06shapes\x18\x01 \x03(\x0b\x32\x18.commonroad_common.Shape\"\xd5\x01\n\x05Shape\x12\x31\n\trectangle\x18\x01 \x01(\x0b\x32\x1c.commonroad_common.RectangleH\x00\x12+\n\x06\x63ircle\x18\x02 \x01(\x0b\x32\x19.commonroad_common.CircleH\x00\x12-\n\x07polygon\x18\x03 \x01(\x0b\x32\x1a.commonroad_common.PolygonH\x00\x12\x34\n\x0bshape_group\x18\x04 \x01(\x0b\x32\x1d.commonroad_common.ShapeGroupH\x00\x42\x07\n\x05shape\"-\n\x0fIntegerInterval\x12\r\n\x05start\x18\x01 \x02(\x05\x12\x0b\n\x03\x65nd\x18\x02 \x02(\x05\"+\n\rFloatInterval\x12\r\n\x05start\x18\x01 \x02(\x01\x12\x0b\n\x03\x65nd\x18\x02 \x02(\x01\"v\n\x16IntegerExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x05H\x00\x12\x36\n\x08interval\x18\x02 \x01(\x0b\x32\".commonroad_common.IntegerIntervalH\x00\x42\x13\n\x11\x65xact_or_interval\"r\n\x14\x46loatExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x01H\x00\x12\x34\n\x08interval\x18\x02 \x01(\x0b\x32 .commonroad_common.FloatIntervalH\x00\x42\x13\n\x11\x65xact_or_interval\"\x1d\n\x0bIntegerList\x12\x0e\n\x06values\x18\x01 \x03(\x05\"\x1b\n\tFloatList\x12\x0e\n\x06values\x18\x01 \x03(\x05\"S\n\tTimeStamp\x12\x0c\n\x04year\x18\x01 \x01(\r\x12\r\n\x05month\x18\x02 \x01(\r\x12\x0b\n\x03\x64\x61y\x18\x03 \x01(\r\x12\x0c\n\x04hour\x18\x04 \x01(\r\x12\x0e\n\x06minute\x18\x05 \x01(\r'
 )
 
 
@@ -47,6 +47,13 @@ _POINT = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='z', full_name='commonroad_common.Point.z', index=2,
+      number=3, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -60,7 +67,7 @@ _POINT = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=33,
-  serialized_end=62,
+  serialized_end=73,
 )
 
 
@@ -112,8 +119,8 @@ _RECTANGLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=64,
-  serialized_end=169,
+  serialized_start=75,
+  serialized_end=180,
 )
 
 
@@ -151,8 +158,8 @@ _CIRCLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=171,
-  serialized_end=237,
+  serialized_start=182,
+  serialized_end=248,
 )
 
 
@@ -183,8 +190,8 @@ _POLYGON = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=239,
-  serialized_end=292,
+  serialized_start=250,
+  serialized_end=303,
 )
 
 
@@ -215,8 +222,8 @@ _SHAPEGROUP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=294,
-  serialized_end=348,
+  serialized_start=305,
+  serialized_end=359,
 )
 
 
@@ -273,8 +280,8 @@ _SHAPE = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=351,
-  serialized_end=564,
+  serialized_start=362,
+  serialized_end=575,
 )
 
 
@@ -312,8 +319,8 @@ _INTEGERINTERVAL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=566,
-  serialized_end=611,
+  serialized_start=577,
+  serialized_end=622,
 )
 
 
@@ -351,8 +358,8 @@ _FLOATINTERVAL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=613,
-  serialized_end=656,
+  serialized_start=624,
+  serialized_end=667,
 )
 
 
@@ -395,8 +402,8 @@ _INTEGEREXACTORINTERVAL = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=658,
-  serialized_end=776,
+  serialized_start=669,
+  serialized_end=787,
 )
 
 
@@ -439,8 +446,8 @@ _FLOATEXACTORINTERVAL = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=778,
-  serialized_end=892,
+  serialized_start=789,
+  serialized_end=903,
 )
 
 
@@ -471,8 +478,8 @@ _INTEGERLIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=894,
-  serialized_end=923,
+  serialized_start=905,
+  serialized_end=934,
 )
 
 
@@ -503,8 +510,8 @@ _FLOATLIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=925,
-  serialized_end=952,
+  serialized_start=936,
+  serialized_end=963,
 )
 
 
@@ -563,8 +570,8 @@ _TIMESTAMP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=954,
-  serialized_end=1037,
+  serialized_start=965,
+  serialized_end=1048,
 )
 
 _RECTANGLE.fields_by_name['center'].message_type = _POINT

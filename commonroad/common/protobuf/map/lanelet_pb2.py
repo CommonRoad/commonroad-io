@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\rlanelet.proto\x12\x0e\x63ommonroad_map\x1a\nutil.proto\"w\n\x0fLineMarkingEnum\"d\n\x0bLineMarking\x12\n\n\x06\x44\x41SHED\x10\x00\x12\t\n\x05SOLID\x10\x01\x12\x10\n\x0c\x42ROAD_DASHED\x10\x02\x12\x0f\n\x0b\x42ROAD_SOLID\x10\x03\x12\x0b\n\x07UNKNOWN\x10\x04\x12\x0e\n\nNO_MARKING\x10\x05\"\xbd\x02\n\x0fLaneletTypeEnum\"\xa9\x02\n\x0bLaneletType\x12\t\n\x05URBAN\x10\x00\x12\x0b\n\x07\x43OUNTRY\x10\x01\x12\x0b\n\x07HIGHWAY\x10\x02\x12\r\n\tDRIVE_WAY\x10\x03\x12\x15\n\x11MAIN_CARRIAGE_WAY\x10\x04\x12\x0f\n\x0b\x41\x43\x43\x45SS_RAMP\x10\x05\x12\r\n\tEXIT_RAMP\x10\x06\x12\x0c\n\x08SHOULDER\x10\x07\x12\x0c\n\x08\x42US_LANE\x10\x08\x12\x0c\n\x08\x42US_STOP\x10\t\x12\x10\n\x0c\x42ICYCLE_LANE\x10\n\x12\x0c\n\x08SIDEWALK\x10\x0b\x12\r\n\tCROSSWALK\x10\x0c\x12\x0e\n\nINTERSTATE\x10\r\x12\x10\n\x0cINTERSECTION\x10\x0e\x12\n\n\x06\x42ORDER\x10\x0f\x12\x0b\n\x07PARKING\x10\x10\x12\x0e\n\nRESTRICTED\x10\x11\x12\x0b\n\x07UNKNOWN\x10\x12\"\x9d\x01\n\x0cRoadUserEnum\"\x8c\x01\n\x08RoadUser\x12\x0b\n\x07VEHICLE\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x14\n\x10PRIORITY_VEHICLE\x10\x04\x12\x0e\n\nMOTORCYCLE\x10\x05\x12\x0b\n\x07\x42ICYCLE\x10\x06\x12\x0e\n\nPEDESTRIAN\x10\x07\x12\t\n\x05TRAIN\x10\x08\x12\x08\n\x04TAXI\x10\t\"F\n\x05\x42ound\x12\x13\n\x0b\x62oundary_id\x18\x01 \x02(\x05\x12(\n\x06points\x18\x02 \x03(\x0b\x32\x18.commonroad_common.Point\"\xbf\x01\n\x08StopLine\x12\x14\n\x0cstop_line_id\x18\x01 \x02(\r\x12-\n\x0bstart_point\x18\x02 \x02(\x0b\x32\x18.commonroad_common.Point\x12+\n\tend_point\x18\x03 \x02(\x0b\x32\x18.commonroad_common.Point\x12\x41\n\x0cline_marking\x18\x04 \x02(\x0e\x32+.commonroad_map.LineMarkingEnum.LineMarking\"\xe4\x05\n\x07Lanelet\x12\x12\n\nlanelet_id\x18\x01 \x02(\r\x12\x12\n\nleft_bound\x18\x02 \x02(\x05\x12\x13\n\x0bright_bound\x18\x03 \x02(\x05\x12\x1a\n\x12left_bound_reverse\x18\x04 \x01(\x08\x12\x1b\n\x13right_bound_reverse\x18\x05 \x01(\x08\x12L\n\x17left_bound_line_marking\x18\x06 \x01(\x0e\x32+.commonroad_map.LineMarkingEnum.LineMarking\x12M\n\x18right_bound_line_marking\x18\x07 \x01(\x0e\x32+.commonroad_map.LineMarkingEnum.LineMarking\x12\x14\n\x0cpredecessors\x18\x08 \x03(\r\x12\x12\n\nsuccessors\x18\t \x03(\r\x12\x15\n\radjacent_left\x18\n \x01(\r\x12\x16\n\x0e\x61\x64jacent_right\x18\x0b \x01(\r\x12\"\n\x1a\x61\x64jacent_left_opposite_dir\x18\x0c \x01(\x08\x12#\n\x1b\x61\x64jacent_right_opposite_dir\x18\r \x01(\x08\x12\x11\n\tstop_line\x18\x0e \x01(\r\x12\x42\n\rlanelet_types\x18\x0f \x03(\x0e\x32+.commonroad_map.LaneletTypeEnum.LaneletType\x12;\n\x0cuser_one_way\x18\x10 \x03(\x0e\x32%.commonroad_map.RoadUserEnum.RoadUser\x12\x41\n\x12user_bidirectional\x18\x11 \x03(\x0e\x32%.commonroad_map.RoadUserEnum.RoadUser\x12\x19\n\x11traffic_sign_refs\x18\x12 \x03(\r\x12\x1a\n\x12traffic_light_refs\x18\x13 \x03(\r\x12\x16\n\x0e\x61\x64jacent_areas\x18\x14 \x03(\r'
+  serialized_pb=b'\n\rlanelet.proto\x12\x0e\x63ommonroad_map\x1a\nutil.proto\"\xb8\x01\n\x0fLineMarkingEnum\"\xa4\x01\n\x0bLineMarking\x12\n\n\x06\x44\x41SHED\x10\x00\x12\t\n\x05SOLID\x10\x01\x12\x0f\n\x0bSOLID_SOLID\x10\x02\x12\x11\n\rDASHED_DASHED\x10\x03\x12\x08\n\x04\x43URB\x10\x04\x12\x10\n\x0cLOWERED_CURB\x10\x05\x12\x10\n\x0c\x42ROAD_DASHED\x10\x06\x12\x0f\n\x0b\x42ROAD_SOLID\x10\x07\x12\x0b\n\x07UNKNOWN\x10\x08\x12\x0e\n\nNO_MARKING\x10\t\"\xbd\x02\n\x0fLaneletTypeEnum\"\xa9\x02\n\x0bLaneletType\x12\t\n\x05URBAN\x10\x00\x12\x0b\n\x07\x43OUNTRY\x10\x01\x12\x0b\n\x07HIGHWAY\x10\x02\x12\r\n\tDRIVE_WAY\x10\x03\x12\x15\n\x11MAIN_CARRIAGE_WAY\x10\x04\x12\x0f\n\x0b\x41\x43\x43\x45SS_RAMP\x10\x05\x12\r\n\tEXIT_RAMP\x10\x06\x12\x0c\n\x08SHOULDER\x10\x07\x12\x0c\n\x08\x42US_LANE\x10\x08\x12\x0c\n\x08\x42US_STOP\x10\t\x12\x10\n\x0c\x42ICYCLE_LANE\x10\n\x12\x0c\n\x08SIDEWALK\x10\x0b\x12\r\n\tCROSSWALK\x10\x0c\x12\x0e\n\nINTERSTATE\x10\r\x12\x10\n\x0cINTERSECTION\x10\x0e\x12\n\n\x06\x42ORDER\x10\x0f\x12\x0b\n\x07PARKING\x10\x10\x12\x0e\n\nRESTRICTED\x10\x11\x12\x0b\n\x07UNKNOWN\x10\x12\"\x9d\x01\n\x0cRoadUserEnum\"\x8c\x01\n\x08RoadUser\x12\x0b\n\x07VEHICLE\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x14\n\x10PRIORITY_VEHICLE\x10\x04\x12\x0e\n\nMOTORCYCLE\x10\x05\x12\x0b\n\x07\x42ICYCLE\x10\x06\x12\x0e\n\nPEDESTRIAN\x10\x07\x12\t\n\x05TRAIN\x10\x08\x12\x08\n\x04TAXI\x10\t\"\x89\x01\n\x05\x42ound\x12\x13\n\x0b\x62oundary_id\x18\x01 \x02(\x05\x12(\n\x06points\x18\x02 \x03(\x0b\x32\x18.commonroad_common.Point\x12\x41\n\x0cline_marking\x18\x03 \x01(\x0e\x32+.commonroad_map.LineMarkingEnum.LineMarking\"\xbf\x01\n\x08StopLine\x12\x14\n\x0cstop_line_id\x18\x01 \x02(\r\x12-\n\x0bstart_point\x18\x02 \x02(\x0b\x32\x18.commonroad_common.Point\x12+\n\tend_point\x18\x03 \x02(\x0b\x32\x18.commonroad_common.Point\x12\x41\n\x0cline_marking\x18\x04 \x02(\x0e\x32+.commonroad_map.LineMarkingEnum.LineMarking\"\xc7\x04\n\x07Lanelet\x12\x12\n\nlanelet_id\x18\x01 \x02(\r\x12\x12\n\nleft_bound\x18\x02 \x02(\x05\x12\x13\n\x0bright_bound\x18\x03 \x02(\x05\x12\x1a\n\x12left_bound_reverse\x18\x04 \x01(\x08\x12\x1b\n\x13right_bound_reverse\x18\x05 \x01(\x08\x12\x14\n\x0cpredecessors\x18\x06 \x03(\r\x12\x12\n\nsuccessors\x18\x07 \x03(\r\x12\x15\n\radjacent_left\x18\x08 \x01(\r\x12\x16\n\x0e\x61\x64jacent_right\x18\t \x01(\r\x12\"\n\x1a\x61\x64jacent_left_opposite_dir\x18\n \x01(\x08\x12#\n\x1b\x61\x64jacent_right_opposite_dir\x18\x0b \x01(\x08\x12\x11\n\tstop_line\x18\x0c \x01(\r\x12\x42\n\rlanelet_types\x18\r \x03(\x0e\x32+.commonroad_map.LaneletTypeEnum.LaneletType\x12;\n\x0cuser_one_way\x18\x0e \x03(\x0e\x32%.commonroad_map.RoadUserEnum.RoadUser\x12\x41\n\x12user_bidirectional\x18\x0f \x03(\x0e\x32%.commonroad_map.RoadUserEnum.RoadUser\x12\x19\n\x11traffic_sign_refs\x18\x10 \x03(\r\x12\x1a\n\x12traffic_light_refs\x18\x11 \x03(\r\x12\x16\n\x0e\x61\x64jacent_areas\x18\x12 \x03(\r'
   ,
   dependencies=[util__pb2.DESCRIPTOR,])
 
@@ -44,30 +44,50 @@ _LINEMARKINGENUM_LINEMARKING = _descriptor.EnumDescriptor(
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='BROAD_DASHED', index=2, number=2,
+      name='SOLID_SOLID', index=2, number=2,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='BROAD_SOLID', index=3, number=3,
+      name='DASHED_DASHED', index=3, number=3,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='UNKNOWN', index=4, number=4,
+      name='CURB', index=4, number=4,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='NO_MARKING', index=5, number=5,
+      name='LOWERED_CURB', index=5, number=5,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='BROAD_DASHED', index=6, number=6,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='BROAD_SOLID', index=7, number=7,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='UNKNOWN', index=8, number=8,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='NO_MARKING', index=9, number=9,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=64,
-  serialized_end=164,
+  serialized_start=66,
+  serialized_end=230,
 )
 _sym_db.RegisterEnumDescriptor(_LINEMARKINGENUM_LINEMARKING)
 
@@ -176,8 +196,8 @@ _LANELETTYPEENUM_LANELETTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=187,
-  serialized_end=484,
+  serialized_start=253,
+  serialized_end=550,
 )
 _sym_db.RegisterEnumDescriptor(_LANELETTYPEENUM_LANELETTYPE)
 
@@ -241,8 +261,8 @@ _ROADUSERENUM_ROADUSER = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=504,
-  serialized_end=644,
+  serialized_start=570,
+  serialized_end=710,
 )
 _sym_db.RegisterEnumDescriptor(_ROADUSERENUM_ROADUSER)
 
@@ -268,8 +288,8 @@ _LINEMARKINGENUM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=45,
-  serialized_end=164,
+  serialized_start=46,
+  serialized_end=230,
 )
 
 
@@ -294,8 +314,8 @@ _LANELETTYPEENUM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=167,
-  serialized_end=484,
+  serialized_start=233,
+  serialized_end=550,
 )
 
 
@@ -320,8 +340,8 @@ _ROADUSERENUM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=487,
-  serialized_end=644,
+  serialized_start=553,
+  serialized_end=710,
 )
 
 
@@ -347,6 +367,13 @@ _BOUND = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='line_marking', full_name='commonroad_map.Bound.line_marking', index=2,
+      number=3, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -359,8 +386,8 @@ _BOUND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=646,
-  serialized_end=716,
+  serialized_start=713,
+  serialized_end=850,
 )
 
 
@@ -412,8 +439,8 @@ _STOPLINE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=719,
-  serialized_end=910,
+  serialized_start=853,
+  serialized_end=1044,
 )
 
 
@@ -461,106 +488,92 @@ _LANELET = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='left_bound_line_marking', full_name='commonroad_map.Lanelet.left_bound_line_marking', index=5,
-      number=6, type=14, cpp_type=8, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='right_bound_line_marking', full_name='commonroad_map.Lanelet.right_bound_line_marking', index=6,
-      number=7, type=14, cpp_type=8, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='predecessors', full_name='commonroad_map.Lanelet.predecessors', index=7,
-      number=8, type=13, cpp_type=3, label=3,
+      name='predecessors', full_name='commonroad_map.Lanelet.predecessors', index=5,
+      number=6, type=13, cpp_type=3, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='successors', full_name='commonroad_map.Lanelet.successors', index=8,
-      number=9, type=13, cpp_type=3, label=3,
+      name='successors', full_name='commonroad_map.Lanelet.successors', index=6,
+      number=7, type=13, cpp_type=3, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='adjacent_left', full_name='commonroad_map.Lanelet.adjacent_left', index=9,
-      number=10, type=13, cpp_type=3, label=1,
+      name='adjacent_left', full_name='commonroad_map.Lanelet.adjacent_left', index=7,
+      number=8, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='adjacent_right', full_name='commonroad_map.Lanelet.adjacent_right', index=10,
-      number=11, type=13, cpp_type=3, label=1,
+      name='adjacent_right', full_name='commonroad_map.Lanelet.adjacent_right', index=8,
+      number=9, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='adjacent_left_opposite_dir', full_name='commonroad_map.Lanelet.adjacent_left_opposite_dir', index=11,
-      number=12, type=8, cpp_type=7, label=1,
+      name='adjacent_left_opposite_dir', full_name='commonroad_map.Lanelet.adjacent_left_opposite_dir', index=9,
+      number=10, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='adjacent_right_opposite_dir', full_name='commonroad_map.Lanelet.adjacent_right_opposite_dir', index=12,
-      number=13, type=8, cpp_type=7, label=1,
+      name='adjacent_right_opposite_dir', full_name='commonroad_map.Lanelet.adjacent_right_opposite_dir', index=10,
+      number=11, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='stop_line', full_name='commonroad_map.Lanelet.stop_line', index=13,
-      number=14, type=13, cpp_type=3, label=1,
+      name='stop_line', full_name='commonroad_map.Lanelet.stop_line', index=11,
+      number=12, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='lanelet_types', full_name='commonroad_map.Lanelet.lanelet_types', index=14,
+      name='lanelet_types', full_name='commonroad_map.Lanelet.lanelet_types', index=12,
+      number=13, type=14, cpp_type=8, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='user_one_way', full_name='commonroad_map.Lanelet.user_one_way', index=13,
+      number=14, type=14, cpp_type=8, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='user_bidirectional', full_name='commonroad_map.Lanelet.user_bidirectional', index=14,
       number=15, type=14, cpp_type=8, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='user_one_way', full_name='commonroad_map.Lanelet.user_one_way', index=15,
-      number=16, type=14, cpp_type=8, label=3,
+      name='traffic_sign_refs', full_name='commonroad_map.Lanelet.traffic_sign_refs', index=15,
+      number=16, type=13, cpp_type=3, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='user_bidirectional', full_name='commonroad_map.Lanelet.user_bidirectional', index=16,
-      number=17, type=14, cpp_type=8, label=3,
+      name='traffic_light_refs', full_name='commonroad_map.Lanelet.traffic_light_refs', index=16,
+      number=17, type=13, cpp_type=3, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='traffic_sign_refs', full_name='commonroad_map.Lanelet.traffic_sign_refs', index=17,
+      name='adjacent_areas', full_name='commonroad_map.Lanelet.adjacent_areas', index=17,
       number=18, type=13, cpp_type=3, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='traffic_light_refs', full_name='commonroad_map.Lanelet.traffic_light_refs', index=18,
-      number=19, type=13, cpp_type=3, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='adjacent_areas', full_name='commonroad_map.Lanelet.adjacent_areas', index=19,
-      number=20, type=13, cpp_type=3, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -577,19 +590,18 @@ _LANELET = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=913,
-  serialized_end=1653,
+  serialized_start=1047,
+  serialized_end=1630,
 )
 
 _LINEMARKINGENUM_LINEMARKING.containing_type = _LINEMARKINGENUM
 _LANELETTYPEENUM_LANELETTYPE.containing_type = _LANELETTYPEENUM
 _ROADUSERENUM_ROADUSER.containing_type = _ROADUSERENUM
 _BOUND.fields_by_name['points'].message_type = util__pb2._POINT
+_BOUND.fields_by_name['line_marking'].enum_type = _LINEMARKINGENUM_LINEMARKING
 _STOPLINE.fields_by_name['start_point'].message_type = util__pb2._POINT
 _STOPLINE.fields_by_name['end_point'].message_type = util__pb2._POINT
 _STOPLINE.fields_by_name['line_marking'].enum_type = _LINEMARKINGENUM_LINEMARKING
-_LANELET.fields_by_name['left_bound_line_marking'].enum_type = _LINEMARKINGENUM_LINEMARKING
-_LANELET.fields_by_name['right_bound_line_marking'].enum_type = _LINEMARKINGENUM_LINEMARKING
 _LANELET.fields_by_name['lanelet_types'].enum_type = _LANELETTYPEENUM_LANELETTYPE
 _LANELET.fields_by_name['user_one_way'].enum_type = _ROADUSERENUM_ROADUSER
 _LANELET.fields_by_name['user_bidirectional'].enum_type = _ROADUSERENUM_ROADUSER
