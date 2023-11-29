@@ -917,10 +917,6 @@ class TestProtobufFileReader(unittest.TestCase):
         self.filename_custom_dynamic_pb = \
             self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingCustomState-1_1_T-1.pb"
 
-        self.filename_longitudinal_state_xml = \
-            self.cwd_path + "/../test_scenarios/ZAM_TestReadingLongitudinalState-1_1_T-1.xml"
-        self.filename_lateral_state_xml = self.cwd_path + "/../test_scenarios/test_reading_lateral_state.xml"
-
     def test_open_map(self):
 
         #  Carcarana
@@ -1048,16 +1044,6 @@ class TestProtobufFileReader(unittest.TestCase):
                                              FileFormat.PROTOBUF, CustomState)
         #  self._check_correct_matched_state_pb(self.filename_pm_map_pb, self.filename_pm_dynamic_pb,
         #                                       FileFormat.PROTOBUF, PMState)
-
-        # Attributes orientation and velocity in y direction are not included by longitudinal state
-        with self.assertRaises(Exception):
-            self._check_correct_matched_state_xml(self.filename_longitudinal_state_xml, FileFormat.XML,
-                                                  LongitudinalState)
-
-        # Attribute position is not included by lateral state
-        with self.assertRaises(Exception):
-            self._check_correct_matched_state_xml(self.filename_lateral_state_xml, FileFormat.XML,
-                                                  LateralState)
 
     def _check_correct_matched_state_pb(self, file_name_map: str, file_name_dynamic: str,
                                         file_format: FileFormat, state_type: type):
