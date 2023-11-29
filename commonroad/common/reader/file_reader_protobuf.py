@@ -370,7 +370,7 @@ class LaneletFactory:
             if right_boundary_id == bound.boundary_id:
                 right_bound = bound
 
-        center_vertices = 0.5 * (left_bound.points + right_bound.points)
+        center_vertices = 0.5 * (left_bound.vertices + right_bound.vertices)
 
         lanelet = Lanelet(left_bound, center_vertices, right_bound, lanelet_id)
 
@@ -399,16 +399,6 @@ class LaneletFactory:
                 lanelet.adj_right_same_direction = False
             else:
                 lanelet.adj_right_same_direction = True
-
-        if lanelet_msg.HasField('left_bound_line_marking'):
-            lanelet.line_marking_left_vertices = \
-                LineMarking(
-                        str.lower(lanelet_pb2.LineMarkingEnum.LineMarking.Name(lanelet_msg.left_bound_line_marking)))
-
-        if lanelet_msg.HasField('right_bound_line_marking'):
-            lanelet.line_marking_right_vertices = \
-                LineMarking(
-                        str.lower(lanelet_pb2.LineMarkingEnum.LineMarking.Name(lanelet_msg.right_bound_line_marking)))
 
         #  TODO: add left_bound_reverse and right_bound_reverse booleans
 
@@ -459,7 +449,8 @@ class BoundFactory:
             point = PointFactory.create_from_message(point_msg)
             points.append(point)
 
-        bound = Bound(boundary_id, np.array(points))
+        bound = Bound(boundary_id, np.array(points),
+                      LineMarking(str.lower(lanelet_pb2.LineMarkingEnum.LineMarking.Name(bound_msg.line_marking))))
 
         return bound
 

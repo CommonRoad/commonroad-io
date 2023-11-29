@@ -5,6 +5,7 @@ package commonroad_common;
 message Point {
     required double x = 1;
     required double y = 2;
+    optional double z = 3;
 }
 
 message Rectangle {

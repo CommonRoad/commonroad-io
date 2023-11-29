@@ -26,7 +26,7 @@ from commonroad.common.protobuf.common import state_pb2, \
 from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup, CrossingGroup
 from commonroad.scenario.lanelet import Lanelet
 from commonroad.scenario.area import Area, AreaBorder
-from commonroad.common.common_lanelet import StopLine
+from commonroad.common.common_lanelet import StopLine, LineMarking
 from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, SignalState, \
     PhantomObstacle
 from commonroad.scenario.scenario import Scenario, Tag
@@ -120,8 +120,10 @@ class ProtobufFileWriter(FileWriter):
 
         for lanelet in self.scenario.lanelet_network.lanelets:
             lanelet_msg = LaneletMessage.create_message(lanelet)
-            left_bound_msg = BoundMessage.create_message(lanelet.left_bound, lanelet.left_vertices)
-            right_bound_msg = BoundMessage.create_message(lanelet.right_bound, lanelet.right_vertices)
+            left_bound_msg = BoundMessage.create_message(lanelet.left_bound, lanelet.left_vertices,
+                                                         lanelet.line_marking_left_vertices)
+            right_bound_msg = BoundMessage.create_message(lanelet.right_bound, lanelet.right_vertices,
+                                                          lanelet.line_marking_right_vertices)
 
             if lanelet.stop_line is not None:
                 if lanelet.stop_line_id is None:
@@ -524,11 +526,6 @@ class LaneletMessage:
             else:
                 lanelet_msg.adjacent_left_opposite_dir = True
 
-        lanelet_msg.left_bound_line_marking = \
-            lanelet_pb2.LineMarkingEnum.LineMarking.Value(lanelet.line_marking_left_vertices.name)
-        lanelet_msg.right_bound_line_marking = \
-            lanelet_pb2.LineMarkingEnum.LineMarking.Value(lanelet.line_marking_right_vertices.name)
-
         if lanelet.adj_right_same_direction is not None:
             if lanelet.adj_right_same_direction:
                 lanelet_msg.adjacent_right_opposite_dir = False
@@ -563,7 +560,7 @@ class LaneletMessage:
 class BoundMessage:
 
     @classmethod
-    def create_message(cls, boundary_id: int, vertices: np.ndarray) -> lanelet_pb2.Bound:
+    def create_message(cls, boundary_id: int, vertices: np.ndarray, line_marking: LineMarking) -> lanelet_pb2.Bound:
         bound_msg = lanelet_pb2.Bound()
 
         bound_msg.boundary_id = boundary_id
@@ -571,6 +568,8 @@ class BoundMessage:
         for vertex in vertices:
             point_msg = PointMessage.create_message(vertex)
             bound_msg.points.append(point_msg)
+
+        bound_msg.line_marking = lanelet_pb2.LineMarkingEnum.LineMarking.Value(line_marking.name)
 
         return bound_msg
 

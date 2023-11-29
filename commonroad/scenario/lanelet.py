@@ -1,4 +1,5 @@
 import copy
+import dataclasses
 from collections import defaultdict
 from typing import Tuple, Dict, Set, List, Optional
 import numpy as np
@@ -23,36 +24,15 @@ from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, La
 from commonroad.common.common_scenario import Location, MapMetaInformation
 
 
+@dataclasses.dataclass
 class Bound:
     """
     Class that describes a Boundary entity.
     """
-    def __init__(self, boundary_id: int, points: np.ndarray):
-        """
-        Constructor of a Bound object
-        :param boundary_id: id of the boundary
-        :param points: boundary points
-        """
-        self._boundary_id = boundary_id
-        self._points = points
 
-    @property
-    def boundary_id(self) -> int:
-        """ Id of the boundary."""
-        return self._boundary_id
-
-    @boundary_id.setter
-    def boundary_id(self, boundary_id: int):
-        self._boundary_id = boundary_id
-
-    @property
-    def points(self) -> np.ndarray:
-        """ Boundary points."""
-        return self._points
-
-    @points.setter
-    def points(self, points: np.ndarray):
-        self._points = points
+    boundary_id: int  # id of boundary
+    vertices: np.ndarray  # boundary vertices
+    line_marking: LineMarking = LineMarking.NO_MARKING # line marking of boundary
 
 
 class Lanelet:
@@ -71,7 +51,8 @@ class Lanelet:
                  stop_line: Optional[StopLine] = None, lanelet_type: Optional[Set[LaneletType]] = None,
                  user_one_way: Optional[Set[RoadUser]] = None, user_bidirectional: Optional[Set[RoadUser]] = None,
                  traffic_signs: Optional[Set[int]] = None, traffic_lights: Optional[Set[int]] = None,
-                 adjacent_areas: Optional[Set[int]] = None):
+                 adjacent_areas: Optional[Set[int]] = None, left_bound_reverse: bool = False,
+                 right_bound_reverse: bool = False):
         """
         Constructor of a Lanelet object
         :param left_vertices: The vertices of the left boundary of the Lanelet described as a
@@ -98,6 +79,8 @@ class Lanelet:
         :param traffic_signs: Traffic signs to be applied
         :param traffic_lights: Traffic lights to follow
         :param adjacent_areas: Areas that are adjacent to the lanelet
+        :param left_bound_reverse: Boolean indicating whether left boundary must be reversed
+        :param right_bound_reverse: Boolean indicating whether right boundary must be reversed
         """
 
         # Set required properties
@@ -107,18 +90,16 @@ class Lanelet:
         self._lanelet_id = None
 
         self.lanelet_id = lanelet_id
-        self.left_vertices = left_vertices if type(left_vertices) is np.ndarray else left_vertices.points
-        self.right_vertices = right_vertices if type(right_vertices) is np.ndarray else right_vertices.points
+        self.left_vertices, self.line_marking_left_vertices = \
+            self._boundary_to_vertices(left_vertices, line_marking_left_vertices, left_bound_reverse)
+        self.right_vertices, self._line_marking_right_vertices = \
+            self._boundary_to_vertices(right_vertices, line_marking_right_vertices, right_bound_reverse)
         self.center_vertices = center_vertices
         # check if length of each polyline is the same
         assert len(self.left_vertices[0]) == len(self.center_vertices[0]) == len(
                 self.right_vertices[0]), \
             '<Lanelet/init>: Provided polylines do not share the same length! {}/{}/{}'.format(
                     len(self.left_vertices[0]), len(self.center_vertices[0]), len(self.right_vertices[0]))
-
-        # Set lane markings
-        self._line_marking_left_vertices = line_marking_left_vertices
-        self._line_marking_right_vertices = line_marking_right_vertices
 
         # Set predecessors and successors
         self._predecessor = None
@@ -260,6 +241,16 @@ class Lanelet:
                f"user_bidirectional={self._user_bidirectional}, traffic_signs={self._traffic_signs}, " \
                f"traffic_lights={self._traffic_lights}, "\
                f"adjacent_areas={self._adjacent_areas}"
+
+    def _boundary_to_vertices(self, boundary: Union[np.ndarray, Bound], line_marking: LineMarking, reverse: bool) \
+            -> Tuple[np.ndarray, LineMarking]:
+        if type(boundary) is np.ndarray:
+            return boundary, line_marking
+        else:
+            if reverse:
+                return np.flip(boundary.vertices), boundary.line_marking
+            else:
+                return boundary.vertices, boundary.line_marking
 
     @property
     def distance(self) -> np.ndarray:
