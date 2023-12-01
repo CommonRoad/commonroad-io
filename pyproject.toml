@@ -32,7 +32,7 @@ numpy = [
     {version = "^1.26.1", python = ">=3.9,<3.13"}
 ]
 scipy = [
-    {version = ">=1.5.2,<1.11", python = "3.8"},
+    {version = ">=1.10.0,<1.11", python = "3.8"},
     {version = "^1.11.3", python =  ">=3.9,<3.13"}
 ]
 shapely = "^2.0.1"
@@ -43,7 +43,7 @@ Pillow = ">=7.0.0"
 iso3166 = ">=1.0.1"
 commonroad-vehicle-models = ">=2.0.0"
 rtree = ">=0.8.3"
-protobuf = "==3.20.1"
+protobuf = "==3.20.2"
 omegaconf = ">=2.0"
 tqdm = ">=4.64"
 
