@@ -529,6 +529,38 @@ class TestLaneletNetwork(unittest.TestCase):
         self.assertFalse(lanelet_network_1 == lanelet_network_2)
         self.assertNotEqual(hash(lanelet_network_1), hash(lanelet_network_2))
 
+    def test_traffic_sign_light_references(self):
+        traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED.value, ["15"])
+        traffic_sign = TrafficSign(19, [traffic_sign_max_speed], {5}, np.array([0.0, 0.0]))
+        cycle = TrafficLightCycle([TrafficLightCycleElement(TrafficLightState.GREEN, 2),
+                                   TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
+                                   TrafficLightCycleElement(TrafficLightState.RED, 2)])
+        traffic_light = TrafficLight(20, np.array([10., 10.]), cycle)
+
+
+        lanelet_1 = Lanelet(np.array([[10, 1], [11, 1]]), np.array([[10, .5], [11, .5]]),
+                                 np.array([[10, 0], [11, 0]]), 4, [], [678], 910, True, 750,
+                                 False, LineMarking.UNKNOWN, LineMarking.UNKNOWN, traffic_signs={traffic_sign.traffic_sign_id}, traffic_lights = {traffic_light.traffic_light_id})
+        lanelet_2 = Lanelet(np.array([[8, 1], [9, 1]]), np.array([[8, .5], [9, .5]]),
+                                 np.array([[8, 0], [9, 0]]), 5, [], [678], 910, True, 750,
+                                 False, LineMarking.UNKNOWN, LineMarking.UNKNOWN, traffic_signs={traffic_sign.traffic_sign_id}, traffic_lights = {traffic_light.traffic_light_id})
+        lanelet_3 = Lanelet(np.array([[0, 1], [1, 1]]), np.array([[0, .5], [1, .5]]),
+                                 np.array([[0, 0], [1, 0]]), 6, [], [678], 910, True, 750,
+                                 False, LineMarking.UNKNOWN, LineMarking.UNKNOWN)
+
+        lanelet_network = LaneletNetwork()
+        lanelet_network.add_lanelet(lanelet_1)
+        lanelet_network.add_lanelet(lanelet_2)
+        lanelet_network.add_lanelet(lanelet_3)
+
+        #Test for existing traffic Signs/Lights
+        self.assertEqual(lanelet_network.get_traffic_sign_referenced_lanelets(19), [lanelet_1, lanelet_2])
+        self.assertEqual(lanelet_network.get_traffic_lights_referenced_lanelets(20), [lanelet_1, lanelet_2])
+        #Test for non existing Traffic Signs/Lights
+        self.assertEqual(lanelet_network.get_traffic_sign_referenced_lanelets(1), [])
+        self.assertEqual(lanelet_network.get_traffic_lights_referenced_lanelets(2), [])
+
+
 
 if __name__ == '__main__':
     unittest.main()

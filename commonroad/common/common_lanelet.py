@@ -29,6 +29,10 @@ class LineMarking(enum.Enum):
     """
     DASHED = 'dashed'
     SOLID = 'solid'
+    SOLID_SOLID = 'solid_solid'
+    DASHED_DASHED = 'dashed_dashed'
+    CURB = 'curb'
+    LOWERED_CURB = 'lowered_curb'
     BROAD_DASHED = 'broad_dashed'
     BROAD_SOLID = 'broad_solid'
     UNKNOWN = 'unknown'
