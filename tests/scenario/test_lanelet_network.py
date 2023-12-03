@@ -121,6 +121,11 @@ class TestLaneletNetwork(unittest.TestCase):
         lanelet_id = 1
         self.diagonal_lanelet_network.add_lanelet(Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id))
 
+    def test_compute_member_lanelets_of_intersection(self):
+        lanelets = self.intersection.compute_member_lanelets(self.lanelet_network)
+        gt_lanelets = {1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25, 26, 27}
+        self.assertEqual(lanelets, gt_lanelets)
+
     def test_initialize_lanelets(self):
         s1 = np.sqrt(1.25)
         s2 = np.sqrt(2.0)
