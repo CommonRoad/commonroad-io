@@ -4,6 +4,7 @@
 
 ### Added
 - Function to convert 3D scenarios to 2D scenarios
+- Support for Python 3.12
 - Function to retrieve all lanelets referencing a given traffic sign/light
 - New line marking types
 - Traffic light shape
@@ -16,6 +17,7 @@
 
 ### Removed
 - Images for Zamunda traffic signs
+- Function commonorad.common.util.interpolate_angle
 
 ## [2023.3] - 2023-09-18
 
