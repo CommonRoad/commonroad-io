@@ -5,8 +5,9 @@
 ### Added
 - Function to convert 3D scenarios to 2D scenarios
 - Support for Python 3.12
-- Function to retrieve all lanlets who have a reference to a give traffic sign/light
+- Function to retrieve all lanelets referencing a given traffic sign/light
 - New line marking types
+- Traffic light shape
 
 ### Fixed
 - Conversion to initial state in function create_dynamic_obstacle of solution object
