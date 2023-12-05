@@ -1,8 +1,9 @@
 import enum
-from typing import List
+from typing import List, Optional
 import numpy as np
 
 import commonroad.geometry.transform
+from commonroad.geometry.shape import Rectangle
 from commonroad.visualization.draw_params import OptionalSpecificOrAllDrawParams, TrafficLightParams
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.renderer import IRenderer
@@ -161,7 +162,7 @@ class TrafficLight(IDrawable):
 
     def __init__(self, traffic_light_id: int, position: np.ndarray, traffic_light_cycle: TrafficLightCycle = None,
                  color: List[TrafficLightState] = None, active: bool = True,
-                 direction: TrafficLightDirection = TrafficLightDirection.ALL):
+                 direction: TrafficLightDirection = TrafficLightDirection.ALL, shape: Optional[Rectangle] = None):
         """
         :param traffic_light_id: ID of the traffic light
         :param position: position of the traffic light
@@ -179,6 +180,7 @@ class TrafficLight(IDrawable):
         self._traffic_light_cycle = traffic_light_cycle
         self._active = active
         self._direction = direction
+        self._shape = shape
 
     def __eq__(self, other):
         if not isinstance(other, TrafficLight):
@@ -190,12 +192,12 @@ class TrafficLight(IDrawable):
 
         return (self._traffic_light_id == other.traffic_light_id and position_string == position_other_string and
                 self._color == other.color and self._direction == other.direction and self._traffic_light_cycle
-                == other.traffic_light_cycle and self._active == other.active)
+                == other.traffic_light_cycle and self._active == other.active and self._shape == other.shape)
 
     def __hash__(self):
         position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
         return hash((self._traffic_light_id, position_string, self._traffic_light_cycle, frozenset(self._color),
-                     self._active, self._direction))
+                     self._active, self._direction, self._shape))
 
     def __str__(self):
         return f"TrafficLight with id {self._traffic_light_id} placed at {self._position}"
@@ -264,6 +266,15 @@ class TrafficLight(IDrawable):
     @direction.setter
     def direction(self, direction: TrafficLightDirection):
         self._direction = direction
+
+    @property
+    def shape(self) -> Rectangle:
+        """ Shape of rectangle."""
+        return self._shape
+
+    @shape.setter
+    def shape(self, shape: Rectangle):
+        self._shape = shape
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """

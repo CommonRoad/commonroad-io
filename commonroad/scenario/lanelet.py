@@ -1415,6 +1415,24 @@ class LaneletNetwork(IDrawable):
             del self._traffic_signs[traffic_sign_id]
             self.cleanup_traffic_sign_references()
 
+    def get_traffic_sign_referenced_lanelets(self, traffic_sign_id) -> List[Lanelet]:
+        """
+        Retrieves the lanelets which have a reference to the given traffic_sign_id
+
+        :param traffic_sign_id: Id of the Traffic Sign of which the lanelets should be searched
+        :returns: List of Lanelets which have a reference to the Traffic Sign
+        """
+        return list(filter(lambda la: traffic_sign_id in la.traffic_signs, self.lanelets))
+
+    def get_traffic_lights_referenced_lanelets(self, traffic_light_id) -> List[Lanelet]:
+        """
+        Retrieves the lanelets which have a reference to the given traffic_light_id
+
+        :param traffic_light_id: Id of the Traffic Light of which the lanelets should be searched
+        :returns: List of Lanelets which have a reference to the Traffic Light
+        """
+        return list(filter(lambda la: traffic_light_id in la.traffic_lights, self.lanelets))
+
     def cleanup_traffic_sign_references(self):
         """
         Deletes traffic sign IDs which do not exist in the lanelet network. Useful when cutting out lanelet networks.

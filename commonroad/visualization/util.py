@@ -295,7 +295,11 @@ def line_marking_to_linestyle(line_marking: LineMarking) -> Tuple:
             LineMarking.DASHED:       ('--', (10, 10), 0.25,),
             LineMarking.SOLID:        ('-', (None, None), 0.25),
             LineMarking.BROAD_DASHED: ('--', (10, 10), 0.5),
-            LineMarking.BROAD_SOLID:  ('-', (None, None), 0.5)
+            LineMarking.BROAD_SOLID:  ('-', (None, None), 0.5),
+            LineMarking.CURB: ('-', (None, None), 1.0),
+            LineMarking.LOWERED_CURB: ('-', (None, None), 0.75),
+            LineMarking.DASHED_DASHED: ('-', (10, 10), 1.0),
+            LineMarking.SOLID_SOLID: ('-', (None, None), 1.0),
     }[line_marking]
 
 
