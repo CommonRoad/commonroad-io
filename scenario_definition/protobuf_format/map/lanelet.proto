@@ -10,12 +10,14 @@ message LineMarkingEnum {
         SOLID = 1;
         SOLID_SOLID = 2;
         DASHED_DASHED = 3;
-        CURB = 4;
-        LOWERED_CURB = 5;
-        BROAD_DASHED = 6;
-        BROAD_SOLID = 7;
-        UNKNOWN = 8;
-        NO_MARKING = 9;
+        SOLID_DASHED = 4;
+        DASHED_SOLID = 5;
+        CURB = 6;
+        LOWERED_CURB = 7;
+        BROAD_DASHED = 8;
+        BROAD_SOLID = 9;
+        UNKNOWN = 10;
+        NO_MARKING = 11;
     }
 }
 
