@@ -122,8 +122,31 @@ class TestLaneletNetwork(unittest.TestCase):
         self.diagonal_lanelet_network.add_lanelet(Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id))
 
     def test_compute_member_lanelets_of_intersection(self):
+        incoming_1 = IncomingGroup(1228, {self.lanelet_id, 11}, 1, {12, 13}, {14, 15}, {16, 17})
+        incoming_2 = IncomingGroup(1229, {20, 21}, 2, {22, 23}, {24, 25}, {26, 27})
+        outgoing_1 = OutgoingGroup(1230, {1, 2, 3})
+        outgoing_2 = OutgoingGroup(1231, {4, 5, 6})
+        crossing_1 = CrossingGroup(1234, {1}, 1228, 1230)
+        crossing_2 = CrossingGroup(1235, {2}, 1229, 1231)
+        self.intersection = Intersection(1, [incoming_1, incoming_2], [outgoing_1, outgoing_2],
+                                         [crossing_1, crossing_2])
+
+        lanelet_1 = Lanelet(left_vertices=np.array([[20, 1], [21, 1]]), center_vertices=np.array([[20, .5], [21, .5]]),
+                            right_vertices=np.array([[20, 0], [21, 0]]), lanelet_id=11, successor=[28])
+        lanelet_2 = Lanelet(left_vertices=np.array([[20, 1], [21, 1]]), center_vertices=np.array([[20, .5], [21, .5]]),
+                            right_vertices=np.array([[20, 0], [21, 0]]), lanelet_id=28, successor=[12])
+        lanelet_3 = Lanelet(left_vertices=np.array([[20, 1], [21, 1]]), center_vertices=np.array([[20, .5], [21, .5]]),
+                            right_vertices=np.array([[20, 0], [21, 0]]), lanelet_id=14, successor=[29])
+        lanelet_4 = Lanelet(left_vertices=np.array([[20, 1], [21, 1]]), center_vertices=np.array([[20, .5], [21, .5]]),
+                            right_vertices=np.array([[20, 0], [21, 0]]), lanelet_id=16, successor=[30])
+
+        self.lanelet_network.add_lanelet(lanelet_1)
+        self.lanelet_network.add_lanelet(lanelet_2)
+        self.lanelet_network.add_lanelet(lanelet_3)
+        self.lanelet_network.add_lanelet(lanelet_4)
+
         lanelets = self.intersection.compute_member_lanelets(self.lanelet_network)
-        gt_lanelets = {1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25, 26, 27}
+        gt_lanelets = {1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30}
         self.assertEqual(lanelets, gt_lanelets)
 
     def test_initialize_lanelets(self):

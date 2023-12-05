@@ -1,5 +1,10 @@
-from typing import List, Set, Dict, Optional
+from __future__ import annotations
+from typing import List, Set, Dict, Optional, TYPE_CHECKING
 from commonroad.common.validity import *
+
+
+if TYPE_CHECKING:
+    from commonroad.scenario.lanelet import LaneletNetwork
 
 
 class IncomingGroup:
@@ -487,7 +492,11 @@ class Intersection:
                 return incoming
         return None
 
-    def compute_member_lanelets(self, lanelet_network):
+    def compute_member_lanelets(self, lanelet_network: LaneletNetwork):
+        """
+        Returns all lanelets of an intersection
+        :return: Set of lanelets IDs
+        """
         outgoing_lanelets = set()
         incoming_lanelets = set()
         intermediate_lanelets = set()
