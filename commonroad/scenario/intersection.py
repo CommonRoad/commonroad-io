@@ -513,8 +513,8 @@ class Intersection:
             outgoing_lanelets = outgoing_lanelets.union(incoming_group.outgoing_right)
             for lanelet_id in incoming_group.outgoing_right:
                 if lanelet_network.find_lanelet_by_id(lanelet_id) is not None:
-                    outgoing_lanelets = outgoing_lanelets.union(
-                    set(lanelet_network.find_lanelet_by_id(lanelet_id).successor))
+                    outgoing_lanelets = (
+                        outgoing_lanelets.union(set(lanelet_network.find_lanelet_by_id(lanelet_id).successor)))
 
             outgoing_lanelets = outgoing_lanelets.union(incoming_group.outgoing_straight)
             for lanelet_id in incoming_group.outgoing_straight:
