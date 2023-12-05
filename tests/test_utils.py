@@ -1,5 +1,4 @@
 import os
-import shutil
 
 
 def get_test_directory():

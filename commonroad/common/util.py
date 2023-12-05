@@ -1,31 +1,13 @@
 import enum
-
-import enum
 from pathlib import Path
 
 import numpy as np
 import math
-from scipy.spatial.transform.rotation import Rotation
-from scipy.spatial.transform import Slerp
 from typing import Tuple
 from commonroad.common import validity
 from commonroad.common.validity import *
 
 Path_T = Union[str, bytes, Path]
-
-
-def interpolate_angle(x: Union[float, np.array], xp: np.array, fp: np.array, degrees=False):
-    """
-    :param x: The x-coordinates at which to evaluate the interpolated values.
-    :param xp: The x-coordinates of the data points.
-    :param fp: The y-coordinates (angles) of the data points, same length as xp.
-    :param degrees: True if the input and returned angles are in degrees
-    :return: The interpolated angles in radian, same shape as x.
-    """
-
-    rotations = Rotation.from_euler("z", fp, degrees=degrees)
-    slerp = Slerp(xp, rotations)
-    return slerp(x).as_euler("zxy", degrees=degrees)[0]
 
 
 def subtract_orientations(lhs, rhs):

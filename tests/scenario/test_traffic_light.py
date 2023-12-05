@@ -1,6 +1,7 @@
 import numpy as np
 import unittest
 
+from commonroad.geometry.shape import Rectangle
 from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightDirection, TrafficLightCycleElement, \
     TrafficLight, TrafficLightCycle
 
@@ -80,10 +81,17 @@ class TestTrafficLight(unittest.TestCase):
         traffic_light = TrafficLight(1, position=np.array([1., 1.]), color=color)
 
         traffic_light.translate_rotate(np.array([2, -4]), np.pi/2)
-
         desired_traffic_light_position = np.array([3, 3])
-
         np.testing.assert_array_almost_equal(traffic_light.position, desired_traffic_light_position)
+
+    def test_shape(self):
+        color = [TrafficLightState.GREEN, TrafficLightState.YELLOW, TrafficLightState.RED]
+        shape = Rectangle(0.5, 0.2, np.array([2, 3]))
+        traffic_light = TrafficLight(1, position=np.array([1., 1.]), color=color, shape=shape)
+
+        self.assertEqual(traffic_light.shape.width, 0.2)
+        traffic_light.shape = Rectangle(0.4, 0.3, np.array([1, 4]))
+        self.assertEqual(traffic_light.shape.width, 0.3)
 
     def test_convert_to_2d(self):
         color = [TrafficLightState.GREEN, TrafficLightState.YELLOW, TrafficLightState.RED]
@@ -97,8 +105,10 @@ class TestTrafficLight(unittest.TestCase):
     def test_equality(self):
         traffic_light_cycle = TrafficLightCycle([TrafficLightCycleElement(TrafficLightState.RED, 1)])
         color = [TrafficLightState.GREEN]
-        traffic_light_1 = TrafficLight(234, np.array([10., 10.]), None, color)
-        traffic_light_2 = TrafficLight(234, np.array([10., 10.]), None, color)
+        traffic_light_1 = TrafficLight(234, np.array([10., 10.]), None, color,
+                                       shape=Rectangle(0.5, 0.2, np.array([2, 3])))
+        traffic_light_2 = TrafficLight(234, np.array([10., 10.]), None, color,
+                                       shape=Rectangle(0.5, 0.2, np.array([2, 3])))
         self.assertTrue(traffic_light_1 == traffic_light_2)
 
         traffic_light_2 = TrafficLight(235, np.array([10., 10.]), None, color)
@@ -109,6 +119,7 @@ class TestTrafficLight(unittest.TestCase):
         self.assertFalse(traffic_light_1 == traffic_light_2)
 
         color = [TrafficLightState.GREEN]
+        traffic_light_1.shape = None
         traffic_light_2 = TrafficLight(234, np.array([10., 2.5 * 4]), None, color)
         self.assertTrue(traffic_light_1 == traffic_light_2)
 
