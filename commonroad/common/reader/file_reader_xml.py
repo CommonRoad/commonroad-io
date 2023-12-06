@@ -847,32 +847,15 @@ class TrafficSignElementFactory:
         :return: object of class TrafficSignElement according to the CommonRoad specification.
         """
         try:
-            if country is SupportedTrafficSignCountry.GERMANY:
-                traffic_sign_element_id = TrafficSignIDGermany(xml_node.find('trafficSignID').text)
-            elif country is SupportedTrafficSignCountry.ZAMUNDA:
-                traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find('trafficSignID').text)
-            elif country is SupportedTrafficSignCountry.USA:
-                traffic_sign_element_id = TrafficSignIDUsa(xml_node.find('trafficSignID').text)
-            elif country is SupportedTrafficSignCountry.CHINA:
-                traffic_sign_element_id = TrafficSignIDChina(xml_node.find('trafficSignID').text)
-            elif country is SupportedTrafficSignCountry.SPAIN:
-                traffic_sign_element_id = TrafficSignIDSpain(xml_node.find('trafficSignID').text)
-            elif country is SupportedTrafficSignCountry.RUSSIA:
-                traffic_sign_element_id = TrafficSignIDRussia(xml_node.find('trafficSignID').text)
-            elif country is SupportedTrafficSignCountry.ARGENTINA:
-                traffic_sign_element_id = TrafficSignIDArgentina(xml_node.find('trafficSignID').text)
-            elif country is SupportedTrafficSignCountry.ITALY:
-                traffic_sign_element_id = TrafficSignIDItaly(xml_node.find('trafficSignID').text)
-            elif country is SupportedTrafficSignCountry.FRANCE:
-                traffic_sign_element_id = TrafficSignIDFrance(xml_node.find('trafficSignID').text)
-            elif country is SupportedTrafficSignCountry.PUERTO_RICO:
-                traffic_sign_element_id = TrafficSignIDPuertoRico(xml_node.find('trafficSignID').text)
-            elif country is SupportedTrafficSignCountry.CROATIA:
-                traffic_sign_element_id = TrafficSignIDCroatia(xml_node.find('trafficSignID').text)
-            elif country is SupportedTrafficSignCountry.GREECE:
-                traffic_sign_element_id = TrafficSignIDGreece(xml_node.find('trafficSignID').text)
-            elif country is SupportedTrafficSignCountry.BELGIUM:
-                traffic_sign_element_id = TrafficSignIDBelgium(xml_node.find('trafficSignID').text)
+            if country in [val for val in SupportedTrafficSignCountry]:
+                if xml_node.find('trafficSignID').text == '274':
+                    traffic_sign_element_id = \
+                        (globals()["TrafficSignID" +
+                                   SupportedTrafficSignCountry(country.value).name.lower().title()].MAX_SPEED)
+                else:
+                    traffic_sign_element_id = (globals()[
+                        "TrafficSignID" + SupportedTrafficSignCountry(
+                                country.value).name.lower().title()](xml_node.find('trafficSignID').text))
             else:
                 logger.warning(
                         "Unknown country: Default traffic sign ID is used. Specified country: {}".format(country.value))

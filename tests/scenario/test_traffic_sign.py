@@ -1,6 +1,10 @@
 import unittest
 import numpy as np
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDZamunda, TrafficSignIDGermany
+from pathlib import Path
+
+from commonroad.common.file_reader import CommonRoadFileReader
+from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDZamunda, \
+    TrafficSignIDGermany, TrafficSignIDArgentina
 
 
 class TestTrafficSign(unittest.TestCase):
@@ -92,6 +96,13 @@ class TestTrafficSignElement(unittest.TestCase):
 
         traffic_sign_element_2 = TrafficSignElement(TrafficSignIDGermany.DIRECTIONS_SIGN, ["15", "16"])
         self.assertNotEqual(hash(traffic_sign_element_1), hash(traffic_sign_element_2))
+
+    def test_foreign_country(self):
+        scenario, _ = CommonRoadFileReader(
+                Path(__file__).parent.parent / Path("test_scenarios/xml/2020a/ARG_Carcarana-4_5_T-1.xml")).open()
+        self.assertEqual(
+                scenario.lanelet_network.find_traffic_sign_by_id(6357).traffic_sign_elements[0].traffic_sign_element_id,
+                TrafficSignIDArgentina.MAX_SPEED)
 
 
 if __name__ == '__main__':
