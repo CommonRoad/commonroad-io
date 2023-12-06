@@ -851,7 +851,8 @@ class TrafficSignElementFactory:
                 if xml_node.find('trafficSignID').text == '274':
                     traffic_sign_element_id = \
                         (globals()["TrafficSignID" +
-                                   SupportedTrafficSignCountry(country.value).name.lower().title()].MAX_SPEED)
+                                   SupportedTrafficSignCountry(country.value).name.lower().replace(
+                                           "_", "").title()].MAX_SPEED)
                 else:
                     traffic_sign_element_id = (globals()[
                         "TrafficSignID" + SupportedTrafficSignCountry(
