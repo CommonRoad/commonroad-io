@@ -851,12 +851,13 @@ class TrafficSignElementFactory:
                 if xml_node.find('trafficSignID').text == '274':
                     traffic_sign_element_id = \
                         (globals()["TrafficSignID" +
-                                   SupportedTrafficSignCountry(country.value).name.lower().replace(
-                                           "_", "").title()].MAX_SPEED)
+                                   SupportedTrafficSignCountry(country.value).name.replace(
+                                           "_", " ").title().replace(" ", "")].MAX_SPEED)
                 else:
                     traffic_sign_element_id = (globals()[
                         "TrafficSignID" + SupportedTrafficSignCountry(
-                                country.value).name.lower().title()](xml_node.find('trafficSignID').text))
+                                country.value).name.replace("_", " ").title().replace(
+                                " ", "")](xml_node.find('trafficSignID').text))
             else:
                 logger.warning(
                         "Unknown country: Default traffic sign ID is used. Specified country: {}".format(country.value))
