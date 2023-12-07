@@ -215,6 +215,10 @@ class Scenario(IDrawable):
                 self._mark_object_id_as_used(traffic_sign.traffic_sign_id)
             for traffic_light in scenario_object.traffic_lights:
                 self._mark_object_id_as_used(traffic_light.traffic_light_id)
+            for bound in scenario_object.boundaries:
+                self._mark_object_id_as_used(bound.boundary_id)
+            for stl in scenario_object.stop_lines:
+                self._mark_object_id_as_used(stl.stop_line_id)
             for intersection in scenario_object.intersections:
                 self._mark_object_id_as_used(intersection.intersection_id)
                 for inc in intersection.incomings:
