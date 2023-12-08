@@ -377,6 +377,8 @@ class Scenario(IDrawable):
             self.remove_intersection(intersection)
         for boundary in self.lanelet_network.boundaries:
             self.remove_boundary(boundary)
+        for st_line in self.lanelet_network.stop_lines:
+            self.remove_stop_line(st_line)
         self._lanelet_network = LaneletNetwork()
 
     def replace_lanelet_network(self, lanelet_network: LaneletNetwork):
@@ -515,6 +517,24 @@ class Scenario(IDrawable):
 
         self.lanelet_network.remove_boundary(boundary.boundary_id)
         self._id_set.remove(boundary.boundary_id)
+
+    def remove_stop_line(self, stop_line: Union[List[StopLine], StopLine]):
+        """
+        Removes a stop line or a list of stop line from the scenario.
+
+        :param stop_line: StopLine which should be removed from scenario.
+        """
+        assert isinstance(stop_line, (list, StopLine)), '<Scenario/remove_stop_line> argument ' \
+                                                        '"StopLine" of wrong type. Expected type: %s. ' \
+                                                        'Got type: %s.' % (Bound, type(StopLine))
+        if isinstance(stop_line, list):
+            for st_line in stop_line:
+                self.lanelet_network.remove_stop_line(st_line.stop_line_id)
+                self._id_set.remove(st_line.stop_line_id)
+            return
+
+        self.lanelet_network.remove_stop_line(stop_line.stop_line_id)
+        self._id_set.remove(stop_line.stop_line_id)
 
     def generate_object_id(self) -> int:
         """ Generates a unique ID which is not assigned to any object in the scenario.
