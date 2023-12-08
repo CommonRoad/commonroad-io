@@ -143,109 +143,144 @@ class CommonRoadMapFileReader:
         return self._file_reader.open()
 
 
-class CommonRoadCombineMapDynamic:
+class CommonRoadMapDynamicFileReader:
     """
-    Reads separate map and dynamic .py classes that the user has obtained from reading the corresponding files.
-    Combines them into one scenario .py class.
+    Reads CommonRoadMap files in XML or protobuf format. The corresponding stored scenario is
+    created by the reader.
     """
-    def __init__(self, map: LaneletNetwork, dynamic_interface: DynamicInterface, lanelet_assignment: bool = False):
+    def __init__(self, filename: Path_T, file_format: Optional[FileFormat] = None):
         """
-        :param map: Lanelet network that the user has read from the file
-        :param dynamic_interface: Dynamic interface class that the user has read from the file
-        :param lanelet_assignment: Boolean that is used to assign the lanelets to scenario attributes, i.e.
-        static and dynamic obstacles.
+        Initializes the FileReaderMap for CommonRoad files.
+
+        :param filename: Name of file
+        :param file_format: Format of file. If None, inferred from file suffix.
         """
-        self._map = map
-        self._dynamic_interface = dynamic_interface
-        self._lanelet_assignment = lanelet_assignment
+        self._file_reader = None
+
+        if file_format is None:
+            file_format = FileFormat(Path(filename).suffix)
+
+        base_name = os.path.basename(filename)
+        base_path = os.path.dirname(filename)
+        map_name = base_name.split("-")[0] + "-" + base_name.split("_")[1].split("-")[1]
+        dynamic_name = base_name.split(".pb")[0]
+
+        if file_format is None:
+            file_format = FileFormat(Path(filename).suffix)
+
+        if file_format == FileFormat.XML:
+            raise NotImplementedError("XML files are not yet supported by 2023a format.")
+        elif file_format == FileFormat.PROTOBUF:
+            self._file_reader_map = ProtobufFileReaderMap(os.path.join(base_path, map_name + ".pb"))
+            self._file_reader_dynamic = ProtobufFileReaderDynamic(os.path.join(base_path, dynamic_name + ".pb"))
 
     def open(self) -> Scenario:
         """
-        Combines the new version map and dynamic classes loaded from their respective files into one
-        scenario class.
+        Loads map, dynamic and, scenario files and combines them.
 
-        :return: Scenario containing the lanelet network from map, and obstacles, traffic light cycles and traffic sign
-        values from the dynamic.
+        :return: Tuple consisted of the Scenario (containing the lanelet network from map, and obstacles from
+        the dynamic), PlanningProblemSet and a list of CooperativePlanningProblems
         """
-        scenario_id = self._dynamic_interface.dynamic_meta_information.scenario_id
-        dt = self._dynamic_interface.dynamic_meta_information.time_step_size
-        scenario = Scenario(dt, scenario_id)
 
-        # Adding additional meta information to the scenario from dynamic_interface.information
-        scenario.author = self._dynamic_interface.dynamic_meta_information.file_information.author
-        scenario.affiliation = self._dynamic_interface.dynamic_meta_information.file_information.affiliation
-        scenario.source = self._dynamic_interface.dynamic_meta_information.file_information.source
-        scenario.lanelet_network.location = self._map.location
+        road_network = self._file_reader_map.open()
+        dynamic = self._file_reader_dynamic.open()
 
-        # copying attributes from map to scenario.lanelet_network
-        scenario.add_objects(self._map)
+        return combine_map_dynamic(road_network, dynamic)
 
-        # Adding environment obstacles to the scenario
-        for environment_obstacle in self._dynamic_interface.environment_obstacles:
-            scenario.add_objects(environment_obstacle)
 
-        # Adding phantom obstacles to the scenario
-        for phantom_obstacle in self._dynamic_interface.phantom_obstacles:
-            scenario.add_objects(phantom_obstacle)
+def combine_map_dynamic(road_network: LaneletNetwork, dynamic_interface: DynamicInterface,
+                        lanelet_assignment: bool = False):
+    """
+    Combines map and dynamic into one scenario.
 
-        # Adding static obstacles to the scenario
-        for static_obstacle in self._dynamic_interface.static_obstacles:
-            # Appending lanelets to the static obstacle if lanelet_assignment is set to True
-            if self._lanelet_assignment is True:
-                rotated_shape = static_obstacle.obstacle_shape.rotate_translate_local\
-                (static_obstacle.initial_state.position, static_obstacle.initial_state.orientation)
-                initial_shape_lanelet_ids = set(scenario.lanelet_network.find_lanelet_by_shape(rotated_shape))
-                initial_center_lanelet_ids = set(scenario.lanelet_network.find_lanelet_by_position
-                                                 ([static_obstacle.initial_state.position])[0])
-                for l_id in initial_shape_lanelet_ids:
-                    scenario.lanelet_network.find_lanelet_by_id(l_id).add_static_obstacle_to_lanelet(
-                            obstacle_id=static_obstacle.obstacle_id)
-                static_obstacle.initial_center_lanelet_ids = initial_center_lanelet_ids
-                static_obstacle.initial_shape_lanelet_ids = initial_shape_lanelet_ids
-            scenario.add_objects(static_obstacle)
+    :param road_network: Lanelet network that the user has read from the file
+    :param dynamic_interface: Dynamic interface class that the user has read from the file
+    :param lanelet_assignment: Boolean that is used to assign the lanelets to scenario attributes, i.e.
+    static and dynamic obstacles.
+    :return: Scenario containing the lanelet network from map, and obstacles, traffic light cycles and traffic sign
+    values from the dynamic.
+    """
+    scenario_id = dynamic_interface.dynamic_meta_information.scenario_id
+    dt = dynamic_interface.dynamic_meta_information.time_step_size
+    scenario = Scenario(dt, scenario_id)
 
-        # Adding dynamic obstacles to the scenario
-        for dynamic_obstacle in self._dynamic_interface.dynamic_obstacles:
-            # Only append lanelets to the obstacle if the prediction is the trajectory prediction
-            # and lanelet_assignment is set to True
-            if dynamic_obstacle.prediction is TrajectoryPrediction and self._lanelet_assignment is True:
-                rotated_shape = dynamic_obstacle.obstacle_shape.rotate_translate_local\
-                (dynamic_obstacle.initial_state.position, dynamic_obstacle.initial_state.orientation)
-                initial_shape_lanelet_ids = set(scenario.lanelet_network.find_lanelet_by_shape(rotated_shape))
-                initial_center_lanelet_ids = set(scenario.lanelet_network.find_lanelet_by_position
-                                                 ([dynamic_obstacle.initial_state.position])[0])
-                for l_id in initial_shape_lanelet_ids:
-                    scenario.lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet\
-                    (obstacle_id=dynamic_obstacle.obstacle_id,
-                     time_step=dynamic_obstacle.initial_state.time_step)
-                dynamic_obstacle.initial_shape_lanelet_ids = initial_shape_lanelet_ids
-                dynamic_obstacle.initial_center_lanelet_ids = initial_center_lanelet_ids
-                # Now have to update the trajectory prediction
-                shape_lanelet_assignment = \
-                    TrajectoryPredictionFactory.find_obstacle_shape_lanelets\
-                    (dynamic_obstacle.initial_state, dynamic_obstacle.prediction.trajectory.state_list,
-                     scenario.lanelet_network, dynamic_obstacle.obstacle_id, dynamic_obstacle.obstacle_shape)
-                center_lanelet_assignment = \
-                    TrajectoryPredictionFactory.find_obstacle_center_lanelets\
-                    (dynamic_obstacle.initial_state, dynamic_obstacle.prediction.trajectory.state_list,
+    # Adding additional meta information to the scenario from dynamic_interface.information
+    scenario.author = dynamic_interface.dynamic_meta_information.file_information.author
+    scenario.affiliation = dynamic_interface.dynamic_meta_information.file_information.affiliation
+    scenario.source = dynamic_interface.dynamic_meta_information.file_information.source
+    scenario.lanelet_network.location = road_network.location
+
+    # copying attributes from map to scenario.lanelet_network
+    scenario.add_objects(road_network)
+
+    # Adding environment obstacles to the scenario
+    for environment_obstacle in dynamic_interface.environment_obstacles:
+        scenario.add_objects(environment_obstacle)
+
+    # Adding phantom obstacles to the scenario
+    for phantom_obstacle in dynamic_interface.phantom_obstacles:
+        scenario.add_objects(phantom_obstacle)
+
+    # Adding static obstacles to the scenario
+    for static_obstacle in dynamic_interface.static_obstacles:
+        # Appending lanelets to the static obstacle if lanelet_assignment is set to True
+        if lanelet_assignment is True:
+            rotated_shape = \
+                static_obstacle.obstacle_shape.rotate_translate_local(static_obstacle.initial_state.position,
+                                                                      static_obstacle.initial_state.orientation)
+            initial_shape_lanelet_ids = set(scenario.lanelet_network.find_lanelet_by_shape(rotated_shape))
+            initial_center_lanelet_ids = set(scenario.lanelet_network.find_lanelet_by_position
+                                             ([static_obstacle.initial_state.position])[0])
+            for l_id in initial_shape_lanelet_ids:
+                scenario.lanelet_network.find_lanelet_by_id(l_id).add_static_obstacle_to_lanelet(
+                        obstacle_id=static_obstacle.obstacle_id)
+            static_obstacle.initial_center_lanelet_ids = initial_center_lanelet_ids
+            static_obstacle.initial_shape_lanelet_ids = initial_shape_lanelet_ids
+        scenario.add_objects(static_obstacle)
+
+    # Adding dynamic obstacles to the scenario
+    for dynamic_obstacle in dynamic_interface.dynamic_obstacles:
+        # Only append lanelets to the obstacle if the prediction is the trajectory prediction
+        # and lanelet_assignment is set to True
+        if dynamic_obstacle.prediction is TrajectoryPrediction and lanelet_assignment is True:
+            rotated_shape = \
+                dynamic_obstacle.obstacle_shape.rotate_translate_local(dynamic_obstacle.initial_state.position,
+                                                                       dynamic_obstacle.initial_state.orientation)
+            initial_shape_lanelet_ids = set(scenario.lanelet_network.find_lanelet_by_shape(rotated_shape))
+            initial_center_lanelet_ids = set(scenario.lanelet_network.find_lanelet_by_position
+                                             ([dynamic_obstacle.initial_state.position])[0])
+            for l_id in initial_shape_lanelet_ids:
+                scenario.lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet(
+                        obstacle_id=dynamic_obstacle.obstacle_id,
+                        time_step=dynamic_obstacle.initial_state.time_step)
+            dynamic_obstacle.initial_shape_lanelet_ids = initial_shape_lanelet_ids
+            dynamic_obstacle.initial_center_lanelet_ids = initial_center_lanelet_ids
+            # Now have to update the trajectory prediction
+            shape_lanelet_assignment = \
+                TrajectoryPredictionFactory.find_obstacle_shape_lanelets(
+                        dynamic_obstacle.initial_state, dynamic_obstacle.prediction.trajectory.state_list,
+                        scenario.lanelet_network, dynamic_obstacle.obstacle_id, dynamic_obstacle.obstacle_shape)
+            center_lanelet_assignment = \
+                TrajectoryPredictionFactory.find_obstacle_center_lanelets(
+                        dynamic_obstacle.initial_state, dynamic_obstacle.prediction.trajectory.state_list,
                         scenario.lanelet_network)
-                dynamic_obstacle.prediction.shape_lanelet_assignment = shape_lanelet_assignment
-                dynamic_obstacle.prediction.center_lanelet_assignment = center_lanelet_assignment
-            scenario.add_objects(dynamic_obstacle)
+            dynamic_obstacle.prediction.shape_lanelet_assignment = shape_lanelet_assignment
+            dynamic_obstacle.prediction.center_lanelet_assignment = center_lanelet_assignment
+        scenario.add_objects(dynamic_obstacle)
 
-        # Adding traffic light cycles from dynamic to the corresponding traffic lights
-        light_cycle_id_dict = self._dynamic_interface.light_cycle_id_dict
-        for tl_id in light_cycle_id_dict.keys():
-            traffic_light = scenario.lanelet_network.find_traffic_light_by_id(tl_id)
-            traffic_light.traffic_light_cycle = light_cycle_id_dict[tl_id]
+    # Adding traffic light cycles from dynamic to the corresponding traffic lights
+    light_cycle_id_dict = dynamic_interface.light_cycle_id_dict
+    for tl_id in light_cycle_id_dict.keys():
+        traffic_light = scenario.lanelet_network.find_traffic_light_by_id(tl_id)
+        traffic_light.traffic_light_cycle = light_cycle_id_dict[tl_id]
 
-        # Adding traffic sign elements from dynamic to the corresponding traffic signs
-        for traffic_sign_value in self._dynamic_interface.traffic_sign_value:
-            traffic_sign_id = traffic_sign_value.traffic_sign_id
-            traffic_sign = scenario.lanelet_network.find_traffic_sign_by_id(traffic_sign_id)
-            traffic_sign.traffic_sign_elements = traffic_sign_value.traffic_sign_elements
+    # Adding traffic sign elements from dynamic to the corresponding traffic signs
+    for traffic_sign_value in dynamic_interface.traffic_sign_value:
+        traffic_sign_id = traffic_sign_value.traffic_sign_id
+        traffic_sign = scenario.lanelet_network.find_traffic_sign_by_id(traffic_sign_id)
+        traffic_sign.traffic_sign_elements = traffic_sign_value.traffic_sign_elements
 
-        return scenario
+    return scenario
 
 
 def combine_preloaded_(road_network: LaneletNetwork, dynamic_interface: DynamicInterface,
@@ -264,7 +299,7 @@ def combine_preloaded_(road_network: LaneletNetwork, dynamic_interface: DynamicI
     the dynamic), PlanningProblemSet and a list of CooperativePlanningProblems
     """
 
-    scenario = CommonRoadCombineMapDynamic(road_network, dynamic_interface, lanelet_assignment).open()
+    scenario = combine_map_dynamic(road_network, dynamic_interface, lanelet_assignment)
 
     # Update the scenario meta information as in this case we copy it from scenario_interface meta information,
     # instead of dynamic_interface meta information as when combining only map and dynamic
@@ -287,11 +322,6 @@ class CommonRoadReadAll:
     Reads all 3 of the separate .py classes that the user has obtained from reading the corresponding files.
     Combines them into one scenario .py class.
     """
-
-    """
-        Reads CommonRoadMap files in XML or protobuf format. The corresponding stored scenario is
-        created by the reader.
-        """
 
     def __init__(self, filename: Path_T, file_format: Optional[FileFormat] = None):
         """

@@ -3,7 +3,7 @@ import unittest
 
 from commonroad import SCENARIO_VERSION
 from commonroad.common.file_reader import CommonRoadFileReader, CommonRoadMapFileReader, CommonRoadDynamicFileReader, \
-    CommonRoadCombineMapDynamic, CommonRoadScenarioFileReader, CommonRoadReadAll
+    combine_map_dynamic, CommonRoadScenarioFileReader, CommonRoadReadAll
 from commonroad.common.util import FileFormat
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
 from commonroad.prediction.prediction import *
@@ -12,8 +12,7 @@ from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, La
 from commonroad.scenario.obstacle import *
 from commonroad.scenario.scenario import Scenario, Tag, ScenarioID
 from commonroad.common.common_scenario import TimeOfDay, Weather, Underground, GeoTransformation, Location
-from commonroad.scenario.state import STState, InitialState, CustomState, KSState, LateralState, STDState, \
-    LongitudinalState
+from commonroad.scenario.state import STState, InitialState, CustomState, KSState, STDState
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany
 from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightDirection, TrafficLightCycleElement, \
@@ -1050,7 +1049,7 @@ class TestProtobufFileReader(unittest.TestCase):
         road_network = CommonRoadMapFileReader(file_name_map, file_format).open()
         dynamic = CommonRoadDynamicFileReader(file_name_dynamic, file_format).open()
 
-        scenario = CommonRoadCombineMapDynamic(road_network, dynamic, lanelet_assignment=True).open()
+        scenario = combine_map_dynamic(road_network, dynamic, lanelet_assignment=True)
         obstacle = scenario.obstacles[0]
         self.assertIsInstance(obstacle.initial_state, InitialState)
         for state in obstacle.prediction.trajectory.state_list:
@@ -1140,7 +1139,7 @@ def read_compare_old_scenario_new_dynamic_map(xml_file_path: str, pb_map_file_pa
     scenario_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()[0]
     map_pb = CommonRoadMapFileReader(pb_map_file_path, FileFormat.PROTOBUF).open()
     dynamic_pb = CommonRoadDynamicFileReader(pb_dynamic_file_path, FileFormat.PROTOBUF).open()
-    map_dynamic_pb = CommonRoadCombineMapDynamic(map_pb, dynamic_pb).open()
+    map_dynamic_pb = combine_map_dynamic(map_pb, dynamic_pb)
 
     map_dynamic_pb.lanelet_network.meta_information.file_information.date = \
         scenario_xml.lanelet_network.meta_information.file_information.date
