@@ -163,7 +163,11 @@ class CommonRoadMapDynamicFileReader:
         base_name = os.path.basename(filename)
         base_path = os.path.dirname(filename)
         map_name = base_name.split("-")[0] + "-" + base_name.split("_")[1].split("-")[1]
-        dynamic_name = base_name.split(".pb")[0]
+        pure_name = base_name.split(".pb")[0]
+        if pure_name.endswith("-SC"):
+            dynamic_name = pure_name.split("-SC")[0]
+        else:
+            dynamic_name = pure_name
 
         if file_format is None:
             file_format = FileFormat(Path(filename).suffix)
