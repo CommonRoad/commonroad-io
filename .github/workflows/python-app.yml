@@ -31,5 +31,5 @@ jobs:
           poetry install --with tests
       - name : Execute tests
         run : |
-          poetry run coverage run tests/common/test_file_reader.py 
+          poetry run coverage run tests/run_tests.py
           poetry run coverage report -m || true
