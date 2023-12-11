@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\rlanelet.proto\x12\ncommonroad\x1a\nutil.proto\"\xb8\x01\n\x0fLineMarkingEnum\"\xa4\x01\n\x0bLineMarking\x12\n\n\x06\x44\x41SHED\x10\x00\x12\t\n\x05SOLID\x10\x01\x12\x0f\n\x0bSOLID_SOLID\x10\x02\x12\x11\n\rDASHED_DASHED\x10\x03\x12\x08\n\x04\x43URB\x10\x04\x12\x10\n\x0cLOWERED_CURB\x10\x05\x12\x10\n\x0c\x42ROAD_DASHED\x10\x06\x12\x0f\n\x0b\x42ROAD_SOLID\x10\x07\x12\x0b\n\x07UNKNOWN\x10\x08\x12\x0e\n\nNO_MARKING\x10\t\"6\n\x0e\x44rivingDirEnum\"$\n\nDrivingDir\x12\x08\n\x04SAME\x10\x00\x12\x0c\n\x08OPPOSITE\x10\x01\"\xbd\x02\n\x0fLaneletTypeEnum\"\xa9\x02\n\x0bLaneletType\x12\t\n\x05URBAN\x10\x00\x12\x0b\n\x07\x43OUNTRY\x10\x01\x12\x0b\n\x07HIGHWAY\x10\x02\x12\r\n\tDRIVE_WAY\x10\x03\x12\x15\n\x11MAIN_CARRIAGE_WAY\x10\x04\x12\x0f\n\x0b\x41\x43\x43\x45SS_RAMP\x10\x05\x12\r\n\tEXIT_RAMP\x10\x06\x12\x0c\n\x08SHOULDER\x10\x07\x12\x0c\n\x08\x42US_LANE\x10\x08\x12\x0c\n\x08\x42US_STOP\x10\t\x12\x10\n\x0c\x42ICYCLE_LANE\x10\n\x12\x0c\n\x08SIDEWALK\x10\x0b\x12\r\n\tCROSSWALK\x10\x0c\x12\x0e\n\nINTERSTATE\x10\r\x12\x10\n\x0cINTERSECTION\x10\x0e\x12\n\n\x06\x42ORDER\x10\x0f\x12\x0b\n\x07PARKING\x10\x10\x12\x0e\n\nRESTRICTED\x10\x11\x12\x0b\n\x07UNKNOWN\x10\x12\"\x9d\x01\n\x0cRoadUserEnum\"\x8c\x01\n\x08RoadUser\x12\x0b\n\x07VEHICLE\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x14\n\x10PRIORITY_VEHICLE\x10\x04\x12\x0e\n\nMOTORCYCLE\x10\x05\x12\x0b\n\x07\x42ICYCLE\x10\x06\x12\x0e\n\nPEDESTRIAN\x10\x07\x12\t\n\x05TRAIN\x10\x08\x12\x08\n\x04TAXI\x10\t\"i\n\x05\x42ound\x12!\n\x06points\x18\x01 \x03(\x0b\x32\x11.commonroad.Point\x12=\n\x0cline_marking\x18\x02 \x01(\x0e\x32\'.commonroad.LineMarkingEnum.LineMarking\"\xa3\x01\n\x08StopLine\x12!\n\x06points\x18\x01 \x03(\x0b\x32\x11.commonroad.Point\x12=\n\x0cline_marking\x18\x02 \x02(\x0e\x32\'.commonroad.LineMarkingEnum.LineMarking\x12\x19\n\x11traffic_sign_refs\x18\x03 \x03(\r\x12\x1a\n\x12traffic_light_refs\x18\x04 \x03(\r\"\xe2\x04\n\x07Lanelet\x12\x12\n\nlanelet_id\x18\x01 \x02(\r\x12%\n\nleft_bound\x18\x02 \x02(\x0b\x32\x11.commonroad.Bound\x12&\n\x0bright_bound\x18\x03 \x02(\x0b\x32\x11.commonroad.Bound\x12\x14\n\x0cpredecessors\x18\x04 \x03(\r\x12\x12\n\nsuccessors\x18\x05 \x03(\r\x12\x15\n\radjacent_left\x18\x06 \x01(\r\x12\x16\n\x0e\x61\x64jacent_right\x18\x07 \x01(\r\x12@\n\x11\x61\x64jacent_left_dir\x18\x08 \x01(\x0e\x32%.commonroad.DrivingDirEnum.DrivingDir\x12\x41\n\x12\x61\x64jacent_right_dir\x18\t \x01(\x0e\x32%.commonroad.DrivingDirEnum.DrivingDir\x12\'\n\tstop_line\x18\n \x01(\x0b\x32\x14.commonroad.StopLine\x12>\n\rlanelet_types\x18\x0b \x03(\x0e\x32\'.commonroad.LaneletTypeEnum.LaneletType\x12\x37\n\x0cuser_one_way\x18\x0c \x03(\x0e\x32!.commonroad.RoadUserEnum.RoadUser\x12=\n\x12user_bidirectional\x18\r \x03(\x0e\x32!.commonroad.RoadUserEnum.RoadUser\x12\x19\n\x11traffic_sign_refs\x18\x0e \x03(\r\x12\x1a\n\x12traffic_light_refs\x18\x0f \x03(\r'
+  serialized_pb=b'\n\rlanelet.proto\x12\ncommonroad\x1a\nutil.proto\"\xdc\x01\n\x0fLineMarkingEnum\"\xc8\x01\n\x0bLineMarking\x12\n\n\x06\x44\x41SHED\x10\x00\x12\t\n\x05SOLID\x10\x01\x12\x0f\n\x0bSOLID_SOLID\x10\x02\x12\x11\n\rDASHED_DASHED\x10\x03\x12\x10\n\x0cSOLID_DASHED\x10\x04\x12\x10\n\x0c\x44\x41SHED_SOLID\x10\x05\x12\x08\n\x04\x43URB\x10\x06\x12\x10\n\x0cLOWERED_CURB\x10\x07\x12\x10\n\x0c\x42ROAD_DASHED\x10\x08\x12\x0f\n\x0b\x42ROAD_SOLID\x10\t\x12\x0b\n\x07UNKNOWN\x10\n\x12\x0e\n\nNO_MARKING\x10\x0b\"6\n\x0e\x44rivingDirEnum\"$\n\nDrivingDir\x12\x08\n\x04SAME\x10\x00\x12\x0c\n\x08OPPOSITE\x10\x01\"\xbd\x02\n\x0fLaneletTypeEnum\"\xa9\x02\n\x0bLaneletType\x12\t\n\x05URBAN\x10\x00\x12\x0b\n\x07\x43OUNTRY\x10\x01\x12\x0b\n\x07HIGHWAY\x10\x02\x12\r\n\tDRIVE_WAY\x10\x03\x12\x15\n\x11MAIN_CARRIAGE_WAY\x10\x04\x12\x0f\n\x0b\x41\x43\x43\x45SS_RAMP\x10\x05\x12\r\n\tEXIT_RAMP\x10\x06\x12\x0c\n\x08SHOULDER\x10\x07\x12\x0c\n\x08\x42US_LANE\x10\x08\x12\x0c\n\x08\x42US_STOP\x10\t\x12\x10\n\x0c\x42ICYCLE_LANE\x10\n\x12\x0c\n\x08SIDEWALK\x10\x0b\x12\r\n\tCROSSWALK\x10\x0c\x12\x0e\n\nINTERSTATE\x10\r\x12\x10\n\x0cINTERSECTION\x10\x0e\x12\n\n\x06\x42ORDER\x10\x0f\x12\x0b\n\x07PARKING\x10\x10\x12\x0e\n\nRESTRICTED\x10\x11\x12\x0b\n\x07UNKNOWN\x10\x12\"\x9d\x01\n\x0cRoadUserEnum\"\x8c\x01\n\x08RoadUser\x12\x0b\n\x07VEHICLE\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x14\n\x10PRIORITY_VEHICLE\x10\x04\x12\x0e\n\nMOTORCYCLE\x10\x05\x12\x0b\n\x07\x42ICYCLE\x10\x06\x12\x0e\n\nPEDESTRIAN\x10\x07\x12\t\n\x05TRAIN\x10\x08\x12\x08\n\x04TAXI\x10\t\"i\n\x05\x42ound\x12!\n\x06points\x18\x01 \x03(\x0b\x32\x11.commonroad.Point\x12=\n\x0cline_marking\x18\x02 \x01(\x0e\x32\'.commonroad.LineMarkingEnum.LineMarking\"\xa3\x01\n\x08StopLine\x12!\n\x06points\x18\x01 \x03(\x0b\x32\x11.commonroad.Point\x12=\n\x0cline_marking\x18\x02 \x02(\x0e\x32\'.commonroad.LineMarkingEnum.LineMarking\x12\x19\n\x11traffic_sign_refs\x18\x03 \x03(\r\x12\x1a\n\x12traffic_light_refs\x18\x04 \x03(\r\"\xe2\x04\n\x07Lanelet\x12\x12\n\nlanelet_id\x18\x01 \x02(\r\x12%\n\nleft_bound\x18\x02 \x02(\x0b\x32\x11.commonroad.Bound\x12&\n\x0bright_bound\x18\x03 \x02(\x0b\x32\x11.commonroad.Bound\x12\x14\n\x0cpredecessors\x18\x04 \x03(\r\x12\x12\n\nsuccessors\x18\x05 \x03(\r\x12\x15\n\radjacent_left\x18\x06 \x01(\r\x12\x16\n\x0e\x61\x64jacent_right\x18\x07 \x01(\r\x12@\n\x11\x61\x64jacent_left_dir\x18\x08 \x01(\x0e\x32%.commonroad.DrivingDirEnum.DrivingDir\x12\x41\n\x12\x61\x64jacent_right_dir\x18\t \x01(\x0e\x32%.commonroad.DrivingDirEnum.DrivingDir\x12\'\n\tstop_line\x18\n \x01(\x0b\x32\x14.commonroad.StopLine\x12>\n\rlanelet_types\x18\x0b \x03(\x0e\x32\'.commonroad.LaneletTypeEnum.LaneletType\x12\x37\n\x0cuser_one_way\x18\x0c \x03(\x0e\x32!.commonroad.RoadUserEnum.RoadUser\x12=\n\x12user_bidirectional\x18\r \x03(\x0e\x32!.commonroad.RoadUserEnum.RoadUser\x12\x19\n\x11traffic_sign_refs\x18\x0e \x03(\r\x12\x1a\n\x12traffic_light_refs\x18\x0f \x03(\r'
   ,
   dependencies=[util__pb2.DESCRIPTOR,])
 
@@ -54,32 +54,42 @@ _LINEMARKINGENUM_LINEMARKING = _descriptor.EnumDescriptor(
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='CURB', index=4, number=4,
+      name='SOLID_DASHED', index=4, number=4,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='LOWERED_CURB', index=5, number=5,
+      name='DASHED_SOLID', index=5, number=5,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='BROAD_DASHED', index=6, number=6,
+      name='CURB', index=6, number=6,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='BROAD_SOLID', index=7, number=7,
+      name='LOWERED_CURB', index=7, number=7,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='UNKNOWN', index=8, number=8,
+      name='BROAD_DASHED', index=8, number=8,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='NO_MARKING', index=9, number=9,
+      name='BROAD_SOLID', index=9, number=9,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='UNKNOWN', index=10, number=10,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='NO_MARKING', index=11, number=11,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
@@ -87,7 +97,7 @@ _LINEMARKINGENUM_LINEMARKING = _descriptor.EnumDescriptor(
   containing_type=None,
   serialized_options=None,
   serialized_start=62,
-  serialized_end=226,
+  serialized_end=262,
 )
 _sym_db.RegisterEnumDescriptor(_LINEMARKINGENUM_LINEMARKING)
 
@@ -111,8 +121,8 @@ _DRIVINGDIRENUM_DRIVINGDIR = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=246,
-  serialized_end=282,
+  serialized_start=282,
+  serialized_end=318,
 )
 _sym_db.RegisterEnumDescriptor(_DRIVINGDIRENUM_DRIVINGDIR)
 
@@ -221,8 +231,8 @@ _LANELETTYPEENUM_LANELETTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=305,
-  serialized_end=602,
+  serialized_start=341,
+  serialized_end=638,
 )
 _sym_db.RegisterEnumDescriptor(_LANELETTYPEENUM_LANELETTYPE)
 
@@ -286,8 +296,8 @@ _ROADUSERENUM_ROADUSER = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=622,
-  serialized_end=762,
+  serialized_start=658,
+  serialized_end=798,
 )
 _sym_db.RegisterEnumDescriptor(_ROADUSERENUM_ROADUSER)
 
@@ -314,7 +324,7 @@ _LINEMARKINGENUM = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=42,
-  serialized_end=226,
+  serialized_end=262,
 )
 
 
@@ -339,8 +349,8 @@ _DRIVINGDIRENUM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=228,
-  serialized_end=282,
+  serialized_start=264,
+  serialized_end=318,
 )
 
 
@@ -365,8 +375,8 @@ _LANELETTYPEENUM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=285,
-  serialized_end=602,
+  serialized_start=321,
+  serialized_end=638,
 )
 
 
@@ -391,8 +401,8 @@ _ROADUSERENUM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=605,
-  serialized_end=762,
+  serialized_start=641,
+  serialized_end=798,
 )
 
 
@@ -430,8 +440,8 @@ _BOUND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=764,
-  serialized_end=869,
+  serialized_start=800,
+  serialized_end=905,
 )
 
 
@@ -483,8 +493,8 @@ _STOPLINE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=872,
-  serialized_end=1035,
+  serialized_start=908,
+  serialized_end=1071,
 )
 
 
@@ -613,8 +623,8 @@ _LANELET = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1038,
-  serialized_end=1648,
+  serialized_start=1074,
+  serialized_end=1684,
 )
 
 _LINEMARKINGENUM_LINEMARKING.containing_type = _LINEMARKINGENUM

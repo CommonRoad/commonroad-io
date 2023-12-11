@@ -4,7 +4,7 @@ stages:
   - deploy
 
 default:
-  image: python:3.8
+  image: python:3.11
   before_script:
     - pip install poetry
     - poetry config virtualenvs.in-project true
