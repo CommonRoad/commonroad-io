@@ -260,8 +260,7 @@ class Trajectory(IDrawable):
             else:
                 values_i.append(np.interp(t_i, time_stamps_cont, values))
 
-        state_type = states[0].__class__.__name__
-        print(state_type)
+        state_type = states[0].__class__
 
         # create new trajectory
         states_new = list()
@@ -271,7 +270,7 @@ class Trajectory(IDrawable):
                 variables[s] = values_i[j][i]
             variables["time_step"] = i
 
-            states_new.append(globals()[state_type](**variables))
+            states_new.append(state_type(**variables))
 
         return cls(states_new[0].time_step, states_new)
 
