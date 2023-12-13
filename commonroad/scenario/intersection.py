@@ -1,5 +1,10 @@
-from typing import List, Set, Dict, Optional
+from __future__ import annotations
+from typing import List, Set, Dict, Optional, TYPE_CHECKING
 from commonroad.common.validity import *
+
+
+if TYPE_CHECKING:
+    from commonroad.scenario.lanelet import LaneletNetwork
 
 
 class IncomingGroup:
@@ -486,3 +491,55 @@ class Intersection:
             if incoming.incoming_id == incoming_id:
                 return incoming
         return None
+
+    def compute_member_lanelets(self, lanelet_network: LaneletNetwork):
+        """
+        Returns all lanelets of an intersection
+        :return: Set of lanelets IDs
+        """
+        outgoing_lanelets = set()
+        incoming_lanelets = set()
+        intermediate_lanelets = set()
+
+        for incoming_group in self.incomings:
+            incoming_lanelets = incoming_lanelets.union(incoming_group.incoming_lanelets)
+
+            outgoing_lanelets = outgoing_lanelets.union(incoming_group.outgoing_left)
+            for lanelet_id in incoming_group.outgoing_left:
+                if lanelet_network.find_lanelet_by_id(lanelet_id) is not None:
+                    outgoing_lanelets = outgoing_lanelets.union(
+                        set(lanelet_network.find_lanelet_by_id(lanelet_id).successor))
+
+            outgoing_lanelets = outgoing_lanelets.union(incoming_group.outgoing_right)
+            for lanelet_id in incoming_group.outgoing_right:
+                if lanelet_network.find_lanelet_by_id(lanelet_id) is not None:
+                    outgoing_lanelets = (
+                        outgoing_lanelets.union(set(lanelet_network.find_lanelet_by_id(lanelet_id).successor)))
+
+            outgoing_lanelets = outgoing_lanelets.union(incoming_group.outgoing_straight)
+            for lanelet_id in incoming_group.outgoing_straight:
+                if lanelet_network.find_lanelet_by_id(lanelet_id) is not None:
+                    outgoing_lanelets = outgoing_lanelets.union(
+                        set(lanelet_network.find_lanelet_by_id(lanelet_id).successor))
+
+        if self.outgoings is not None:
+            for outgoing_group in self.outgoings:
+                if outgoing_group.outgoing_lanelets is not None:
+                    outgoing_lanelets = outgoing_lanelets.union(outgoing_group.outgoing_lanelets)
+        # find all intermediate lanelets in the intersection
+        for inc_lanelet in incoming_lanelets:
+            tmp_lanelets = set()
+            tmp_lanelets.add(inc_lanelet)
+            while len(tmp_lanelets) > 0:
+                tmp_lanelet = tmp_lanelets.pop()
+                if tmp_lanelet not in outgoing_lanelets:
+                    intermediate_lanelets.add(tmp_lanelet)
+
+                    tmp_succesor_lanelets = lanelet_network.find_lanelet_by_id(tmp_lanelet).successor \
+                        if lanelet_network.find_lanelet_by_id(tmp_lanelet) is not None else None
+                    if tmp_succesor_lanelets is not None:
+                        for tmp_suc_lanelet in tmp_succesor_lanelets:
+                            if tmp_suc_lanelet not in outgoing_lanelets:
+                                intermediate_lanelets.add(tmp_suc_lanelet)
+
+        return incoming_lanelets.union(intermediate_lanelets, outgoing_lanelets)
