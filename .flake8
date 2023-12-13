@@ -1,0 +1,4 @@
+[flake8]
+extend-ignore = E501
+extend-exclude = traffic_signs,generated_scripts
+max-line-length = 120
