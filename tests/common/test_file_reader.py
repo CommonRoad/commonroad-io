@@ -47,8 +47,6 @@ from commonroad.scenario.state import (
     CustomState,
     InitialState,
     KSState,
-    LateralState,
-    LongitudinalState,
     PMState,
     SignalState,
     STDState,

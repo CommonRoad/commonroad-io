@@ -80,7 +80,7 @@ class TestVisualizationV2(unittest.TestCase):
         scenario: Scenario = scenario
 
         rnd = MPRenderer()
-        with pytest.warns(None) as record_warnings:
+        with pytest.warns(None):
             scenario.lanelet_network.draw(
                 rnd,
             )
@@ -149,7 +149,7 @@ class TestVisualizationV2(unittest.TestCase):
         x0 = -40
         rnd = MPRenderer(plot_limits=[x0, 40, -40, 40], focus_obstacle=scenario.obstacle_by_id(1239))
         rnd.draw_params.dynamic_obstacle.occupancy.draw_occupancies = True
-        with pytest.warns(None) as record_warnings:
+        with pytest.warns(None):
             scenario.lanelet_network.draw(
                 rnd,
             )

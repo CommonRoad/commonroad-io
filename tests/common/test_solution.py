@@ -1030,7 +1030,7 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
 
     def test_open_invalid_path(self):
         with self.assertRaises(FileNotFoundError):
-            parsed_solution_single = CommonRoadSolutionReader.open(self.solution_single_path + "invalid")
+            CommonRoadSolutionReader.open(self.solution_single_path + "invalid")
 
     def test_read_solution_from_xml(self):
         solution = CommonRoadSolutionReader.open(

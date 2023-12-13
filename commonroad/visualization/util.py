@@ -160,19 +160,23 @@ def collect_center_line_colors(
                     TrafficLightDirection.LEFT_RIGHT,
                     TrafficLightDirection.STRAIGHT_RIGHT,
                 ):
-                    update_state_dict({l: state for l in inc_ele.successors_right})
+                    update_state_dict(
+                        {l_id: state for l_id in inc_ele.successors_right}
+                    )
                 if direction in (
                     TrafficLightDirection.LEFT,
                     TrafficLightDirection.LEFT_RIGHT,
                     TrafficLightDirection.LEFT_STRAIGHT,
                 ):
-                    update_state_dict({l: state for l in inc_ele.successors_left})
+                    update_state_dict({l_id: state for l_id in inc_ele.successors_left})
                 if direction in (
                     TrafficLightDirection.STRAIGHT,
                     TrafficLightDirection.STRAIGHT_RIGHT,
                     TrafficLightDirection.LEFT_STRAIGHT,
                 ):
-                    update_state_dict({l: state for l in inc_ele.successors_straight})
+                    update_state_dict(
+                        {l_id: state for l_id in inc_ele.successors_straight}
+                    )
             elif len(lanelet.successor) == 1:
                 update_state_dict({lanelet.successor[0]: state})
             else:
@@ -203,9 +207,9 @@ def approximate_bounding_box_dyn_obstacles(obj: list, time_step=0) -> Union[Tupl
 
     dynamic_obstacles_filtered = []
     for o in obj:
-        if type(o) == DynamicObstacle:
+        if isinstance(o, DynamicObstacle):
             dynamic_obstacles_filtered.append(o)
-        elif type(o) == Scenario:
+        elif isinstance(o, Scenario):
             dynamic_obstacles_filtered.extend(o.dynamic_obstacles)
 
     x_int = [np.inf, -np.inf]
@@ -264,10 +268,12 @@ def get_vehicle_direction_triangle(rect: Rectangle) -> np.ndarray:
     """
     :returns vertices of triangle pointing in the driving direction
     """
-    l = rect.length * 0.49
-    w = rect.width * 0.49
-    dist = min(l + 1.0, 0.65 * rect.width)
-    vertices = np.array([[l - dist, w], [l - dist, -w], [l, 0.0]])
+    length = rect.length * 0.49
+    width = rect.width * 0.49
+    dist = min(length + 1.0, 0.65 * rect.width)
+    vertices = np.array(
+        [[length - dist, width], [length - dist, -width], [length, 0.0]]
+    )
     return rotate_translate(vertices, rect.center, rect.orientation)
 
 

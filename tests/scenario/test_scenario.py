@@ -7,7 +7,7 @@ import numpy as np
 from commonroad import SCENARIO_VERSION
 from commonroad.common.common_lanelet import LineMarking
 from commonroad.common.util import Interval, Time
-from commonroad.geometry.shape import Circle, Polygon, Rectangle, ShapeGroup
+from commonroad.geometry.shape import Circle, Polygon, Rectangle
 from commonroad.prediction.prediction import (
     Occupancy,
     SetBasedPrediction,
@@ -52,7 +52,7 @@ class TestScenario(unittest.TestCase):
             np.array([np.array((0.0, 0.0)), np.array((0.0, 1.0)), np.array((1.0, 1.0)), np.array((1.0, 0.0))])
         )
         self.circ = Circle(2.0)
-        sg = ShapeGroup([self.circ, self.rectangle])
+        # sg = ShapeGroup([self.circ, self.rectangle])
         occupancy_list = list()
 
         occupancy_list.append(Occupancy(0, self.rectangle))

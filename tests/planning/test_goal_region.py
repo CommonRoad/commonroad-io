@@ -53,9 +53,9 @@ class TestIsReached(unittest.TestCase):
         goal_state_1 = KSState(
             time_step=Interval(3.0, 3.2), orientation=AngleInterval(0.1, 1), velocity=Interval(20, 30.5)
         )
-        goal_state_2 = KSState(
-            time_step=Interval(3.0, 3.1), orientation=AngleInterval(0.1, 1), velocity=Interval(15, 25.5)
-        )
+        # goal_state_2 = KSState(
+        #     time_step=Interval(3.0, 3.1), orientation=AngleInterval(0.1, 1), velocity=Interval(15, 25.5)
+        # )
 
         goal_region_1 = GoalRegion([goal_state_1])
 
