@@ -1,12 +1,14 @@
 import enum
 import math
+import warnings
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Union
 
 import numpy as np
 
+from commonroad import TWO_PI
 from commonroad.common import validity
-from commonroad.common.validity import *
+from commonroad.common.validity import is_valid_orientation
 
 Path_T = Union[str, bytes, Path]
 

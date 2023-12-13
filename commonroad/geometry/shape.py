@@ -1,7 +1,7 @@
 import abc
 import math
 import warnings
-from typing import List, Optional, Tuple, Union
+from typing import List
 
 import numpy as np
 import shapely.affinity
@@ -9,10 +9,8 @@ import shapely.geometry
 
 from commonroad.common.util import make_valid_orientation
 from commonroad.common.validity import (
-    is_real_number,
     is_real_number_vector,
     is_valid_orientation,
-    is_valid_polyline,
 )
 from commonroad.geometry.transform import rotate_translate, translate_rotate
 from commonroad.visualization.draw_params import (

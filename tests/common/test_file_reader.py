@@ -1,6 +1,8 @@
 import os
 import unittest
 
+import numpy as np
+
 from commonroad import SCENARIO_VERSION
 from commonroad.common.common_lanelet import (
     LaneletType,
@@ -9,16 +11,28 @@ from commonroad.common.common_lanelet import (
     StopLine,
 )
 from commonroad.common.file_reader import CommonRoadFileReader
-from commonroad.common.util import FileFormat
+from commonroad.common.util import FileFormat, Interval
+from commonroad.geometry.shape import Circle, Polygon, Rectangle
 from commonroad.planning.planning_problem import (
     GoalRegion,
     PlanningProblem,
     PlanningProblemSet,
 )
-from commonroad.prediction.prediction import *
+from commonroad.prediction.prediction import (
+    Occupancy,
+    SetBasedPrediction,
+    TrajectoryPrediction,
+)
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
-from commonroad.scenario.obstacle import *
+from commonroad.scenario.obstacle import (
+    DynamicObstacle,
+    EnvironmentObstacle,
+    ObstacleType,
+    PhantomObstacle,
+    StaticObstacle,
+)
+
 from commonroad.scenario.scenario import (
     GeoTransformation,
     Location,
@@ -36,6 +50,7 @@ from commonroad.scenario.state import (
     LateralState,
     LongitudinalState,
     PMState,
+    SignalState,
     STDState,
     STState,
 )

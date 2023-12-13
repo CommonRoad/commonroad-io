@@ -1,10 +1,15 @@
 import enum
-from typing import List, Optional
+import warnings
+from typing import List, Optional, Union
 
 import numpy as np
 
 import commonroad.geometry.transform
-from commonroad.common.validity import *
+from commonroad.common.validity import (
+    is_real_number,
+    is_real_number_vector,
+    is_valid_orientation,
+)
 from commonroad.geometry.shape import Rectangle
 from commonroad.visualization.draw_params import (
     OptionalSpecificOrAllDrawParams,

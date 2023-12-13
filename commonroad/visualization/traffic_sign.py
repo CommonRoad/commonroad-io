@@ -1,9 +1,10 @@
 import copy
-import enum
 import os
+import warnings
 from collections import defaultdict
-from typing import Dict, Tuple, Union
+from typing import Dict, List, Tuple, Union
 
+import numpy as np
 from matplotlib.axes import Axes, mtext
 from matplotlib.offsetbox import (
     AnnotationBbox,
@@ -17,7 +18,6 @@ from matplotlib.transforms import Bbox
 from PIL import Image
 from scipy.cluster.hierarchy import fcluster, linkage
 
-from commonroad.geometry.shape import *
 from commonroad.scenario.traffic_light import TrafficLight
 from commonroad.scenario.traffic_sign import (
     TrafficSign,
@@ -29,6 +29,7 @@ from commonroad.scenario.traffic_sign import (
     TrafficSignIDZamunda,
 )
 from commonroad.visualization.draw_params import TrafficLightParams, TrafficSignParams
+from commonroad.visualization.renderer import IRenderer
 
 # path to traffic sign .png files
 traffic_sign_path = os.path.join(os.path.dirname(__file__), "traffic_signs/")

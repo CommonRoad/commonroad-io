@@ -16,7 +16,7 @@ from commonroad.geometry.shape import (
     occupancy_shape_from_state,
     shape_group_occupancy_shape_from_state,
 )
-from commonroad.scenario.trajectory import State, Trajectory
+from commonroad.scenario.trajectory import Trajectory
 from commonroad.visualization.draw_params import OccupancyParams
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.renderer import IRenderer

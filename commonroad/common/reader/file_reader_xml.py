@@ -2,8 +2,10 @@ import logging
 import re
 from abc import ABC
 from collections import defaultdict
-from typing import Dict, Tuple
+from typing import Dict, List, Set, Tuple, Union
 from xml.etree import ElementTree
+
+import numpy as np
 
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.common_lanelet import (
@@ -50,8 +52,33 @@ from commonroad.scenario.state import (
     SpecificStateClasses,
     TraceState,
 )
-from commonroad.scenario.traffic_light import *
-from commonroad.scenario.traffic_sign import *
+from commonroad.scenario.traffic_light import (
+    TrafficLight,
+    TrafficLightCycle,
+    TrafficLightCycleElement,
+    TrafficLightDirection,
+    TrafficLightState,
+)
+from commonroad.scenario.traffic_sign import (
+    LEFT_HAND_TRAFFIC,
+    TRAFFIC_SIGN_VALIDITY_START,
+    SupportedTrafficSignCountry,
+    TrafficSign,
+    TrafficSignElement,
+    TrafficSignIDArgentina,
+    TrafficSignIDBelgium,
+    TrafficSignIDChina,
+    TrafficSignIDCroatia,
+    TrafficSignIDFrance,
+    TrafficSignIDGermany,
+    TrafficSignIDGreece,
+    TrafficSignIDItaly,
+    TrafficSignIDPuertoRico,
+    TrafficSignIDRussia,
+    TrafficSignIDSpain,
+    TrafficSignIDUsa,
+    TrafficSignIDZamunda,
+)
 from commonroad.scenario.trajectory import Trajectory
 
 logger = logging.getLogger(__name__)

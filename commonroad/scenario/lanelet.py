@@ -1,7 +1,8 @@
 import copy
+import warnings
 from collections import defaultdict
 from datetime import datetime
-from typing import *
+from typing import Dict, List, Optional, Set, Tuple, Union
 
 import numpy as np
 from shapely.geometry import Point as ShapelyPoint
@@ -16,7 +17,16 @@ from commonroad.common.common_lanelet import (
     StopLine,
 )
 from commonroad.common.util import Time, subtract_orientations
-from commonroad.common.validity import *
+from commonroad.common.validity import (
+    ValidTypes,
+    is_list_of_natural_numbers,
+    is_natural_number,
+    is_positive,
+    is_real_number,
+    is_real_number_vector,
+    is_valid_orientation,
+    is_valid_polyline,
+)
 from commonroad.geometry.shape import Circle, Polygon, Rectangle, Shape, ShapeGroup
 from commonroad.scenario.area import Area
 from commonroad.scenario.intersection import Intersection

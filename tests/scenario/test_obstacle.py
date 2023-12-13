@@ -1,9 +1,29 @@
 import copy
 import unittest
 
-from commonroad.prediction.prediction import *
-from commonroad.scenario.obstacle import *
-from commonroad.scenario.state import InitialState, KSState
+import numpy as np
+
+from commonroad.geometry.shape import Circle, Polygon, Rectangle, ShapeGroup
+from commonroad.prediction.prediction import (
+    Occupancy,
+    SetBasedPrediction,
+    TrajectoryPrediction,
+)
+from commonroad.scenario.obstacle import (
+    DynamicObstacle,
+    EnvironmentObstacle,
+    ObstacleRole,
+    ObstacleType,
+    PhantomObstacle,
+    StaticObstacle,
+)
+from commonroad.scenario.state import (
+    InitialState,
+    KSState,
+    MetaInformationState,
+    SignalState,
+)
+from commonroad.scenario.trajectory import Trajectory
 
 
 class TestObstacle(unittest.TestCase):

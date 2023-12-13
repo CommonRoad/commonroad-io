@@ -1,7 +1,16 @@
-from typing import Tuple
+import warnings
+from typing import List, Tuple, Union
 
-from commonroad.common.validity import is_natural_number, is_positive
-from commonroad.scenario.state import *
+import numpy as np
+
+from commonroad.common.validity import (
+    is_natural_number,
+    is_positive,
+    is_real_number,
+    is_real_number_vector,
+    is_valid_orientation,
+)
+from commonroad.scenario.state import State, TraceState
 from commonroad.visualization.draw_params import (
     OptionalSpecificOrAllDrawParams,
     TrajectoryParams,

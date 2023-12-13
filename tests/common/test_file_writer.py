@@ -2,13 +2,14 @@ import logging
 import os
 import unittest
 
+import numpy as np
 from lxml import etree
 
 from commonroad import SCENARIO_VERSION
 from commonroad.common.common_lanelet import LaneletType, LineMarking
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.common.file_writer import CommonRoadFileWriter
-from commonroad.common.util import FileFormat
+from commonroad.common.util import FileFormat, Interval
 from commonroad.common.writer.file_writer_interface import (
     OverwriteExistingFile,
     precision,
@@ -19,14 +20,14 @@ from commonroad.common.writer.file_writer_xml import (
     RectangleXMLNode,
     float_to_str,
 )
+from commonroad.geometry.shape import Circle, Rectangle
 from commonroad.planning.planning_problem import (
     GoalRegion,
     PlanningProblem,
     PlanningProblemSet,
 )
-from commonroad.prediction.prediction import *
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
-from commonroad.scenario.obstacle import *
+from commonroad.scenario.obstacle import ObstacleType, StaticObstacle
 from commonroad.scenario.scenario import Location, Scenario, ScenarioID, Tag
 from commonroad.scenario.state import InitialState, KSState
 

@@ -2,13 +2,25 @@ import unittest
 import unittest.mock as mock
 from copy import deepcopy
 
+import numpy as np
+
 from commonroad import SCENARIO_VERSION
 from commonroad.common.common_lanelet import LineMarking
 from commonroad.common.util import Interval, Time
-from commonroad.geometry.shape import *
+from commonroad.geometry.shape import Circle, Polygon, Rectangle, ShapeGroup
+from commonroad.prediction.prediction import (
+    Occupancy,
+    SetBasedPrediction,
+    TrajectoryPrediction,
+)
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
-from commonroad.scenario.obstacle import *
+from commonroad.scenario.obstacle import (
+    DynamicObstacle,
+    ObstacleRole,
+    ObstacleType,
+    StaticObstacle,
+)
 from commonroad.scenario.scenario import (
     Environment,
     GeoTransformation,

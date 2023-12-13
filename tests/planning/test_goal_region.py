@@ -1,7 +1,11 @@
+import math
 import unittest
 
+import numpy as np
+
+from commonroad.common.util import AngleInterval, Interval
 from commonroad.geometry.shape import Rectangle
-from commonroad.planning.goal import *
+from commonroad.planning.goal import GoalRegion
 from commonroad.scenario.state import KSState, PMState, STState
 
 

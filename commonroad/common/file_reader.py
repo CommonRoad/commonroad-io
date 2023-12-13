@@ -7,7 +7,6 @@ from commonroad.common.util import FileFormat, Path_T
 from commonroad.planning.planning_problem import PlanningProblemSet
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.scenario import Scenario
-from commonroad.scenario.traffic_sign import *
 
 
 class CommonRoadFileReader:

@@ -28,7 +28,6 @@ from commonroad.scenario.state import (
     InitialState,
     MetaInformationState,
     SignalState,
-    State,
     TraceState,
 )
 from commonroad.visualization.draw_params import (

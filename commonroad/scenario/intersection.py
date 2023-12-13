@@ -1,6 +1,7 @@
+import warnings
 from typing import Dict, List, Set
 
-from commonroad.common.validity import *
+from commonroad.common.validity import is_natural_number
 
 
 class IntersectionIncomingElement:
