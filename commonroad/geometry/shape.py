@@ -8,10 +8,7 @@ import shapely.affinity
 import shapely.geometry
 
 from commonroad.common.util import make_valid_orientation
-from commonroad.common.validity import (
-    is_real_number_vector,
-    is_valid_orientation,
-)
+from commonroad.common.validity import is_real_number_vector, is_valid_orientation
 from commonroad.geometry.transform import rotate_translate, translate_rotate
 from commonroad.visualization.draw_params import (
     OptionalSpecificOrAllDrawParams,

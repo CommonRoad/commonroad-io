@@ -606,9 +606,7 @@ class Solution:
                 "but expected type float,"
                 "measured in seconds!".format(type(computation_time))
             )
-            assert is_positive(
-                computation_time
-            ), "<Solution> computation_time needs to be positive!"
+            assert is_positive(computation_time), "<Solution> computation_time needs to be positive!"
         self._computation_time = computation_time
 
     def create_dynamic_obstacle(self) -> Dict[int, DynamicObstacle]:

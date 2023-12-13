@@ -160,9 +160,7 @@ def collect_center_line_colors(
                     TrafficLightDirection.LEFT_RIGHT,
                     TrafficLightDirection.STRAIGHT_RIGHT,
                 ):
-                    update_state_dict(
-                        {l_id: state for l_id in inc_ele.successors_right}
-                    )
+                    update_state_dict({l_id: state for l_id in inc_ele.successors_right})
                 if direction in (
                     TrafficLightDirection.LEFT,
                     TrafficLightDirection.LEFT_RIGHT,
@@ -174,9 +172,7 @@ def collect_center_line_colors(
                     TrafficLightDirection.STRAIGHT_RIGHT,
                     TrafficLightDirection.LEFT_STRAIGHT,
                 ):
-                    update_state_dict(
-                        {l_id: state for l_id in inc_ele.successors_straight}
-                    )
+                    update_state_dict({l_id: state for l_id in inc_ele.successors_straight})
             elif len(lanelet.successor) == 1:
                 update_state_dict({lanelet.successor[0]: state})
             else:
@@ -271,9 +267,7 @@ def get_vehicle_direction_triangle(rect: Rectangle) -> np.ndarray:
     length = rect.length * 0.49
     width = rect.width * 0.49
     dist = min(length + 1.0, 0.65 * rect.width)
-    vertices = np.array(
-        [[length - dist, width], [length - dist, -width], [length, 0.0]]
-    )
+    vertices = np.array([[length - dist, width], [length - dist, -width], [length, 0.0]])
     return rotate_translate(vertices, rect.center, rect.orientation)
 
 

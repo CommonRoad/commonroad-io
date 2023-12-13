@@ -32,7 +32,6 @@ from commonroad.scenario.obstacle import (
     PhantomObstacle,
     StaticObstacle,
 )
-
 from commonroad.scenario.scenario import (
     GeoTransformation,
     Location,
