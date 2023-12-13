@@ -1,11 +1,11 @@
-from typing import Union, Set
+from typing import Set, Union
 
 from commonroad.common.util import FileFormat
 from commonroad.common.writer.file_writer_interface import OverwriteExistingFile
 from commonroad.common.writer.file_writer_protobuf import ProtobufFileWriter
 from commonroad.common.writer.file_writer_xml import XMLFileWriter
 from commonroad.planning.planning_problem import PlanningProblemSet
-from commonroad.scenario.scenario import Scenario, Tag, Location
+from commonroad.scenario.scenario import Location, Scenario, Tag
 
 
 class CommonRoadFileWriter:
@@ -14,9 +14,18 @@ class CommonRoadFileWriter:
     are stored by the writer.
     """
 
-    def __init__(self, scenario: Scenario, planning_problem_set: PlanningProblemSet, author: str = None,
-                 affiliation: str = None, source: str = None, tags: Set[Tag] = None, location: Location = None,
-                 decimal_precision: int = 4, file_format: FileFormat = FileFormat.XML):
+    def __init__(
+        self,
+        scenario: Scenario,
+        planning_problem_set: PlanningProblemSet,
+        author: str = None,
+        affiliation: str = None,
+        source: str = None,
+        tags: Set[Tag] = None,
+        location: Location = None,
+        decimal_precision: int = 4,
+        file_format: FileFormat = FileFormat.XML,
+    ):
         """
         Initializes the FileWriter for CommonRoad files.
 
@@ -33,15 +42,20 @@ class CommonRoadFileWriter:
         self._file_format = file_format
         self._file_writer = None
         if file_format == FileFormat.XML:
-            self._file_writer = XMLFileWriter(scenario, planning_problem_set, author, affiliation,
-                                              source, tags, location, decimal_precision)
+            self._file_writer = XMLFileWriter(
+                scenario, planning_problem_set, author, affiliation, source, tags, location, decimal_precision
+            )
         elif file_format == FileFormat.PROTOBUF:
-            self._file_writer = ProtobufFileWriter(scenario, planning_problem_set, author, affiliation,
-                                                   source, tags, location, decimal_precision)
+            self._file_writer = ProtobufFileWriter(
+                scenario, planning_problem_set, author, affiliation, source, tags, location, decimal_precision
+            )
 
-    def write_to_file(self, filename: Union[str, None] = None,
-                      overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
-                      check_validity: bool = False):
+    def write_to_file(
+        self,
+        filename: Union[str, None] = None,
+        overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+        check_validity: bool = False,
+    ):
         """
         Writes CommonRoad scenario and planning problems to file.
 
@@ -52,8 +66,11 @@ class CommonRoadFileWriter:
         """
         self._file_writer.write_to_file(filename, overwrite_existing_file, check_validity)
 
-    def write_scenario_to_file(self, filename: Union[str, None] = None,
-                               overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT):
+    def write_scenario_to_file(
+        self,
+        filename: Union[str, None] = None,
+        overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+    ):
         """
         Writes CommonRoad scenario to file.
 
@@ -64,8 +81,9 @@ class CommonRoadFileWriter:
         self._file_writer.write_scenario_to_file(filename, overwrite_existing_file)
 
     @staticmethod
-    def check_validity_of_commonroad_file(commonroad_str: Union[str, bytes], file_format: FileFormat = FileFormat.XML) \
-            -> bool:
+    def check_validity_of_commonroad_file(
+        commonroad_str: Union[str, bytes], file_format: FileFormat = FileFormat.XML
+    ) -> bool:
         """
         Checks validity of CommonRoad scenario and planning problem stored in XML or protobuf format.
 

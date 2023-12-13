@@ -1,21 +1,23 @@
 import warnings
-from typing import Union, List, Tuple, Dict
+from typing import Dict, List, Tuple, Union
 
 import numpy as np
 
-from commonroad.scenario.trajectory import Trajectory
-from commonroad.scenario.state import InitialState
-from commonroad.planning.goal import GoalRegion
 from commonroad.common.validity import is_natural_number
+from commonroad.planning.goal import GoalRegion
+from commonroad.scenario.state import InitialState
+from commonroad.scenario.trajectory import Trajectory
+from commonroad.visualization.draw_params import (
+    OptionalSpecificOrAllDrawParams,
+    PlanningProblemParams,
+    PlanningProblemSetParams,
+)
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.renderer import IRenderer
-from commonroad.visualization.draw_params import PlanningProblemParams, OptionalSpecificOrAllDrawParams, \
-    PlanningProblemSetParams
 
 
 class PlanningProblem(IDrawable):
-    def __init__(self, planning_problem_id: int, initial_state: InitialState,
-                 goal_region: GoalRegion):
+    def __init__(self, planning_problem_id: int, initial_state: InitialState, goal_region: GoalRegion):
         self.planning_problem_id = planning_problem_id
         self.initial_state = initial_state
         self.goal = goal_region
@@ -25,8 +27,11 @@ class PlanningProblem(IDrawable):
             warnings.warn(f"Inequality between PlanningProblem {repr(self)} and different type {type(other)}")
             return False
 
-        return self.planning_problem_id == other.planning_problem_id and self.initial_state == other.initial_state and \
-            self.goal == other.goal
+        return (
+            self.planning_problem_id == other.planning_problem_id
+            and self.initial_state == other.initial_state
+            and self.goal == other.goal
+        )
 
     def __hash__(self):
         return hash((self.planning_problem_id, self.initial_state, self.goal))
@@ -38,13 +43,14 @@ class PlanningProblem(IDrawable):
 
     @planning_problem_id.setter
     def planning_problem_id(self, problem_id: int):
-        if not hasattr(self, '_planning_problem_id'):
-            assert is_natural_number(problem_id), '<PlanningProblem/planning_problem_id>: Argument "problem_id" of ' \
-                                                  'wrong type. Expected type: %s. Got type: %s.' \
-                                                  % (int, type(problem_id))
+        if not hasattr(self, "_planning_problem_id"):
+            assert is_natural_number(problem_id), (
+                '<PlanningProblem/planning_problem_id>: Argument "problem_id" of '
+                "wrong type. Expected type: %s. Got type: %s." % (int, type(problem_id))
+            )
             self._planning_problem_id = problem_id
         else:
-            warnings.warn('<PlanningProblem/planning_problem_id> planning_problem_id is immutable')
+            warnings.warn("<PlanningProblem/planning_problem_id> planning_problem_id is immutable")
 
     @property
     def initial_state(self) -> InitialState:
@@ -53,11 +59,13 @@ class PlanningProblem(IDrawable):
 
     @initial_state.setter
     def initial_state(self, state: InitialState):
-        mandatory_fields = ['position', 'velocity', 'orientation', 'yaw_rate', 'slip_angle', 'time_step']
+        mandatory_fields = ["position", "velocity", "orientation", "yaw_rate", "slip_angle", "time_step"]
         for field in mandatory_fields:
             if getattr(state, field) is None:
-                raise ValueError('<PlanningProblem/initial_state> fields [{}] are mandatory. '
-                                 'No {} attribute found.'.format(', '.join(mandatory_fields), field))
+                raise ValueError(
+                    "<PlanningProblem/initial_state> fields [{}] are mandatory. "
+                    "No {} attribute found.".format(", ".join(mandatory_fields), field)
+                )
         self._initial_state = state
 
     @property
@@ -67,8 +75,9 @@ class PlanningProblem(IDrawable):
 
     @goal.setter
     def goal(self, goal_region: GoalRegion):
-        assert(isinstance(goal_region, GoalRegion)), 'argument "goal_region" of wrong type. Expected type: %s. ' \
-                                                     'Got type: %s.' % (GoalRegion, type(goal_region))
+        assert isinstance(
+            goal_region, GoalRegion
+        ), 'argument "goal_region" of wrong type. Expected type: %s. ' "Got type: %s." % (GoalRegion, type(goal_region))
         self._goal_region = goal_region
 
     def goal_reached(self, trajectory: Trajectory) -> Tuple[bool, int]:
@@ -107,8 +116,8 @@ class PlanningProblemSet(IDrawable):
         self._valid_planning_problem_list(planning_problem_list)
 
         self._planning_problem_dict = {
-                planning_problem.planning_problem_id: planning_problem for
-                planning_problem in planning_problem_list}
+            planning_problem.planning_problem_id: planning_problem for planning_problem in planning_problem_list
+        }
 
     def __eq__(self, other):
         if not isinstance(other, PlanningProblemSet):
@@ -127,7 +136,7 @@ class PlanningProblemSet(IDrawable):
 
     @planning_problem_dict.setter
     def planning_problem_dict(self, _dict):
-        warnings.warn('<PlanningProblemSet/planning_problem_dict> planning_problem_dict is immutable')
+        warnings.warn("<PlanningProblemSet/planning_problem_dict> planning_problem_dict is immutable")
 
     @staticmethod
     def _valid_planning_problem_list(planning_problem_list: List[PlanningProblem]):
@@ -136,13 +145,16 @@ class PlanningProblemSet(IDrawable):
 
         :param planning_problem_list: List[PlanningProblem]
         """
-        assert isinstance(planning_problem_list, list), 'argument "planning_problem_list" of wrong type. ' \
-                                                        'Expected type: %s. Got type: %s.' \
-                                                        % (list, type(planning_problem_list))
+        assert isinstance(
+            planning_problem_list, list
+        ), 'argument "planning_problem_list" of wrong type. ' "Expected type: %s. Got type: %s." % (
+            list,
+            type(planning_problem_list),
+        )
 
-        assert all(isinstance(p, PlanningProblem) for p in planning_problem_list), 'Elements of ' \
-                                                                                   '"planning_problem_list" of wrong ' \
-                                                                                   'type.'
+        assert all(isinstance(p, PlanningProblem) for p in planning_problem_list), (
+            "Elements of " '"planning_problem_list" of wrong ' "type."
+        )
 
     def add_planning_problem(self, planning_problem: PlanningProblem):
         """
@@ -150,12 +162,14 @@ class PlanningProblemSet(IDrawable):
 
         :param planning_problem: Planning problem to add
         """
-        assert isinstance(planning_problem, PlanningProblem), 'argument "planning_problem" of wrong type. ' \
-                                                              'Expected type: %s. Got type: %s.' \
-                                                              % (planning_problem, PlanningProblem)
+        assert isinstance(
+            planning_problem, PlanningProblem
+        ), 'argument "planning_problem" of wrong type. ' "Expected type: %s. Got type: %s." % (
+            planning_problem,
+            PlanningProblem,
+        )
         if planning_problem.planning_problem_id in self.planning_problem_dict.keys():
-            raise ValueError(
-                "Id {} is already used in PlanningProblemSet".format(planning_problem.planning_problem_id))
+            raise ValueError("Id {} is already used in PlanningProblemSet".format(planning_problem.planning_problem_id))
 
         self.planning_problem_dict[planning_problem.planning_problem_id] = planning_problem
 

@@ -1,13 +1,14 @@
-import numpy as np
 import unittest
+
+import numpy as np
+
 from commonroad.geometry.transform import translation_rotation_matrix
 
 
 class TestTranslationRotationMatrix(unittest.TestCase):
-
     def test_rotate_90deg(self):
         translation = np.array([0.0, 0.0])
-        rotation_angle = np.pi/2
+        rotation_angle = np.pi / 2
 
         homogenous_initial_vector = np.array([1, 1, 1])
         expected_transposed_vector = np.array([-1, 1, 1])
@@ -30,5 +31,5 @@ class TestTranslationRotationMatrix(unittest.TestCase):
             self.assertAlmostEqual(elt, expected_transposed_vector[i])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

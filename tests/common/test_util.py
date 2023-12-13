@@ -1,9 +1,14 @@
 import math
 import unittest
+
 import numpy as np
 
-from commonroad.common.util import Interval, subtract_orientations, vectorized_angle_difference, \
-    AngleInterval
+from commonroad.common.util import (
+    AngleInterval,
+    Interval,
+    subtract_orientations,
+    vectorized_angle_difference,
+)
 
 
 class TestUtils(unittest.TestCase):
@@ -152,7 +157,6 @@ class TestInterval(unittest.TestCase):
 
 
 class TestAngleInterval(unittest.TestCase):
-
     def test__contains__(self):
         interval = AngleInterval(-np.pi / 2, np.pi / 2)
         self.assertTrue(interval.__contains__(0.0))
@@ -217,5 +221,5 @@ class TestAngleInterval(unittest.TestCase):
         self.assertTrue(interval.contains(other_interval))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

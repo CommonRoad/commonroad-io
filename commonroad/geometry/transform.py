@@ -1,10 +1,12 @@
-import numpy as np
 import math
 from typing import List, Union
 
+import numpy as np
 
-def translate_rotate(vertices: np.ndarray, translation: Union[np.array, List[float]], angle: Union[float, int])\
-        -> np.ndarray:
+
+def translate_rotate(
+    vertices: np.ndarray, translation: Union[np.array, List[float]], angle: Union[float, int]
+) -> np.ndarray:
     """
     First translates the list of vertices, then rotates the list of vertices around the origin.
 
@@ -15,12 +17,14 @@ def translate_rotate(vertices: np.ndarray, translation: Union[np.array, List[flo
     """
 
     h_vertices = to_homogeneous_coordinates(vertices)
-    return from_homogeneous_coordinates(translation_rotation_matrix(translation, angle).
-                                        dot(h_vertices.transpose()).transpose())
+    return from_homogeneous_coordinates(
+        translation_rotation_matrix(translation, angle).dot(h_vertices.transpose()).transpose()
+    )
 
 
-def rotate_translate(vertices: np.ndarray, translation: Union[np.array, List[float]], angle: Union[float, int])\
-        -> np.ndarray:
+def rotate_translate(
+    vertices: np.ndarray, translation: Union[np.array, List[float]], angle: Union[float, int]
+) -> np.ndarray:
     """
     First rotates the list of vertices around the origin and then translates the list of vertices.
 
@@ -31,8 +35,9 @@ def rotate_translate(vertices: np.ndarray, translation: Union[np.array, List[flo
     """
 
     h_vertices = to_homogeneous_coordinates(vertices)
-    return from_homogeneous_coordinates(rotation_translation_matrix(translation, angle).
-                                        dot(h_vertices.transpose()).transpose())
+    return from_homogeneous_coordinates(
+        rotation_translation_matrix(translation, angle).dot(h_vertices.transpose()).transpose()
+    )
 
 
 def rotation_translation_matrix(translation: Union[np.array, List[float]], angle: Union[float, int]) -> np.ndarray:
@@ -50,9 +55,7 @@ def rotation_translation_matrix(translation: Union[np.array, List[float]], angle
         cos_angle = math.cos(angle)
         sin_angle = math.sin(angle)
 
-    return np.array([[cos_angle, -sin_angle, translation[0]],
-                     [sin_angle,  cos_angle, translation[1]],
-                     [0, 0, 1]])
+    return np.array([[cos_angle, -sin_angle, translation[0]], [sin_angle, cos_angle, translation[1]], [0, 0, 1]])
 
 
 def translation_rotation_matrix(translation: Union[np.array, List[float]], angle: Union[float, int]) -> np.ndarray:
@@ -63,9 +66,9 @@ def translation_rotation_matrix(translation: Union[np.array, List[float]], angle
     :param angle: angle in rad [-2pi, +2pi]
     :return: matrix
     """
-    translation_matrix = np.array([[1.0, 0.0, translation[0]],
-                                   [0.0, 1.0, translation[1]],
-                                   [0.0, 0.0, 1.0]], dtype=np.float64)
+    translation_matrix = np.array(
+        [[1.0, 0.0, translation[0]], [0.0, 1.0, translation[1]], [0.0, 0.0, 1.0]], dtype=np.float64
+    )
     if np.abs(angle) <= 0.05:
         cos_angle = 1.0
         sin_angle = angle
@@ -73,9 +76,9 @@ def translation_rotation_matrix(translation: Union[np.array, List[float]], angle
         cos_angle = math.cos(angle)
         sin_angle = math.sin(angle)
 
-    rotation_matrix = np.array([[cos_angle, -sin_angle, 0.0],
-                                [sin_angle, cos_angle, 0.0],
-                                [0.0, 0.0, 1.0]], dtype=np.float64)
+    rotation_matrix = np.array(
+        [[cos_angle, -sin_angle, 0.0], [sin_angle, cos_angle, 0.0], [0.0, 0.0, 1.0]], dtype=np.float64
+    )
     return rotation_matrix.dot(translation_matrix)
 
 
@@ -86,8 +89,8 @@ def to_homogeneous_coordinates(points: np.array) -> np.ndarray:
     :param points: array of points
     :return: homogeneous points
     """
-    assert(len(points.shape) == 2)
-    assert(points.shape[1] == 2)
+    assert len(points.shape) == 2
+    assert points.shape[1] == 2
     return np.hstack((points, np.ones((len(points), 1))))
 
 
@@ -98,6 +101,6 @@ def from_homogeneous_coordinates(points) -> np.ndarray:
     :param points: array of points
     :return: array of 2D points
     """
-    assert(len(points.shape) == 2)
-    assert(points.shape[1] == 3)
+    assert len(points.shape) == 2
+    assert points.shape[1] == 3
     return points[:, 0:2]

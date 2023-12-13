@@ -51,7 +51,7 @@ def compute_polyline_curvatures(polyline: np.ndarray) -> np.ndarray:
     y_d = np.gradient(polyline[:, 1])
     y_dd = np.gradient(y_d)
 
-    return (x_d * y_dd - x_dd * y_d) / ((x_d ** 2 + y_d ** 2) ** (3. / 2.))
+    return (x_d * y_dd - x_dd * y_d) / ((x_d**2 + y_d**2) ** (3.0 / 2.0))
 
 
 def compute_polyline_orientations(polyline: np.ndarray) -> np.ndarray:
@@ -142,7 +142,6 @@ def compute_polyline_intersections(polyline_1: np.ndarray, polyline_2: np.ndarra
 
     for i in range(0, len(polyline_1) - 1):
         for j in range(0, len(polyline_2) - 1):
-
             x_diff = [polyline_1[i][0] - polyline_1[i + 1][0], polyline_2[j][0] - polyline_2[j + 1][0]]
             y_diff = [polyline_1[i][1] - polyline_1[i + 1][1], polyline_2[j][1] - polyline_2[j + 1][1]]
 
@@ -151,9 +150,11 @@ def compute_polyline_intersections(polyline_1: np.ndarray, polyline_2: np.ndarra
                 continue
 
             d_1 = np.linalg.det(
-                np.array([[polyline_1[i][0], polyline_1[i][1]], [polyline_1[i + 1][0], polyline_1[i + 1][1]]]))
+                np.array([[polyline_1[i][0], polyline_1[i][1]], [polyline_1[i + 1][0], polyline_1[i + 1][1]]])
+            )
             d_2 = np.linalg.det(
-                np.array([[polyline_2[j][0], polyline_2[j][1]], [polyline_2[j + 1][0], polyline_2[j + 1][1]]]))
+                np.array([[polyline_2[j][0], polyline_2[j][1]], [polyline_2[j + 1][0], polyline_2[j + 1][1]]])
+            )
             d = [d_1, d_2]
             x = np.linalg.det(np.array([d, x_diff])) / div
             y = np.linalg.det(np.array([d, y_diff])) / div
@@ -209,7 +210,7 @@ def resample_polyline_with_number(polyline: np.ndarray, number: int) -> np.ndarr
     :return: Resampled polyline
     """
     assert is_valid_polyline(polyline), "Polyline p={} is malformed!".format(polyline)
-    assert number > 1, 'Number n={} has to be at least two'.format(number)
+    assert number > 1, "Number n={} has to be at least two".format(number)
 
     line = LineString(polyline)
     dists = np.linspace(0, line.length, number)
@@ -232,7 +233,7 @@ def resample_polyline_with_distance(polyline: np.ndarray, distance: float) -> np
     :return: Resampled polyline
     """
     assert is_valid_polyline(polyline), "Polyline p={} is malformed!".format(polyline)
-    assert distance > 0, 'Distance d={} has to be greater than 0'.format(distance)
+    assert distance > 0, "Distance d={} has to be greater than 0".format(distance)
 
     line = LineString(polyline)
     dists = np.arange(0, line.length, distance)
@@ -257,9 +258,11 @@ def equalize_polyline_length(long_polyline: np.ndarray, short_polyline: np.ndarr
     """
     assert is_valid_polyline(long_polyline), "Long polyline p={} is malformed!".format(long_polyline)
     assert is_valid_polyline(short_polyline), "Short polyline p={} is malformed!".format(short_polyline)
-    assert len(long_polyline) > len(short_polyline), "The number of vertices of long polyline p={} must be greater " \
-                                                     "compared to short polyline p={}!".format(long_polyline,
-                                                                                               short_polyline)
+    assert len(long_polyline) > len(
+        short_polyline
+    ), "The number of vertices of long polyline p={} must be greater " "compared to short polyline p={}!".format(
+        long_polyline, short_polyline
+    )
 
     path_length_long = compute_polyline_lengths(long_polyline)
     path_length_percentage_long = path_length_long / path_length_long[-1]
@@ -281,9 +284,9 @@ def equalize_polyline_length(long_polyline: np.ndarray, short_polyline: np.ndarr
             ub = org_polyline[value]
             lb = short_polyline[last_key]
             for idx in range(1, counter + 1):
-                insertion_factor = \
-                    (path_length_percentage_long[last_key + idx] - path_length_percentage_long[last_key]) / \
-                    (path_length_percentage_long[key] - path_length_percentage_long[last_key])
+                insertion_factor = (
+                    path_length_percentage_long[last_key + idx] - path_length_percentage_long[last_key]
+                ) / (path_length_percentage_long[key] - path_length_percentage_long[last_key])
                 new_vertex = insertion_factor * (ub - lb) + lb
                 short_polyline_updated = np.insert(short_polyline, last_key + idx, new_vertex, 0)
                 short_polyline = short_polyline_updated
@@ -294,8 +297,9 @@ def equalize_polyline_length(long_polyline: np.ndarray, short_polyline: np.ndarr
     return short_polyline
 
 
-def create_indices_mapping(path_length_percentage_long: np.ndarray,
-                           path_length_percentage_short: np.ndarray) -> List[int]:
+def create_indices_mapping(
+    path_length_percentage_long: np.ndarray, path_length_percentage_short: np.ndarray
+) -> List[int]:
     """
     Extracts places (indices) where new vertices have to be added in shorter polyline.
     Helper function for insert_vertices
@@ -305,7 +309,7 @@ def create_indices_mapping(path_length_percentage_long: np.ndarray,
     :return: Mapping of existing indices of shorter polyline to longer polyline
     """
     path_length_percentages = [path_length_percentage_long, path_length_percentage_short]
-    path_length_percentage_names = ['Long path length percentage', 'Short path length percentage']
+    path_length_percentage_names = ["Long path length percentage", "Short path length percentage"]
     for i in range(0, len(path_length_percentages)):
         path_length_percentage = path_length_percentages[i]
         path_length_percentage_name = path_length_percentage_names[i]
@@ -316,11 +320,13 @@ def create_indices_mapping(path_length_percentage_long: np.ndarray,
                 valid_path_percentage = False
                 break
             p = percentage
-        assert valid_path_percentage and len(path_length_percentage) > 1, \
-            str(path_length_percentage_name) + " p={} is malformed!".format(path_length_percentage)
-    assert len(path_length_percentage_long) > len(path_length_percentage_short), \
-        "The number of long path length percentage p={} must be greater compared to the number of short path length " \
+        assert valid_path_percentage and len(path_length_percentage) > 1, str(
+            path_length_percentage_name
+        ) + " p={} is malformed!".format(path_length_percentage)
+    assert len(path_length_percentage_long) > len(path_length_percentage_short), (
+        "The number of long path length percentage p={} must be greater compared to the number of short path length "
         "percentage p={}!".format(path_length_percentage_long, path_length_percentage_short)
+    )
 
     index_mapping = [-1] * len(path_length_percentage_long)
     index_mapping[0] = 0
@@ -333,8 +339,9 @@ def create_indices_mapping(path_length_percentage_long: np.ndarray,
         value = path_length_percentage_short[key]
         threshold = 0.01
         while key not in index_mapping and not finished:
-            for idx_long in range(last_idx_long,
-                                  len(path_length_percentage_long) - (len(path_length_percentage_short) - key) + 1):
+            for idx_long in range(
+                last_idx_long, len(path_length_percentage_long) - (len(path_length_percentage_short) - key) + 1
+            ):
                 if abs(path_length_percentage_long[idx_long] - value) < threshold and index_mapping[idx_long] == -1:
                     index_mapping[idx_long] = key
                     last_idx_long = idx_long

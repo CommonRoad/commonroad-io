@@ -1,4 +1,5 @@
 from abc import ABC
+
 from commonroad.scenario.scenario import Scenario
 
 
