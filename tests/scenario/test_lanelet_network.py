@@ -78,13 +78,15 @@ class TestLaneletNetwork(unittest.TestCase):
         self.stop_line = StopLine(self.left_vertices[-1], self.right_vertices[-1], LineMarking.SOLID,
                                   {self.traffic_sign.traffic_sign_id}, {self.traffic_light.traffic_light_id})
 
-        incoming_1 = IncomingGroup(1228, {self.lanelet_id, 11}, 1, {12, 13}, {14, 15}, {16, 17})
+        incoming_1 = (
+            IncomingGroup(1228, {self.lanelet_id, 11}, 1, {12, 13}, {14, 15}, {16, 17}))
         incoming_2 = IncomingGroup(1229, {20, 21}, 2, {22, 23}, {24, 25}, {26, 27})
         outgoing_1 = OutgoingGroup(1230, {1, 2, 3})
         outgoing_2 = OutgoingGroup(1231, {4, 5, 6})
         crossing_1 = CrossingGroup(1234, {1}, 1228, 1230)
         crossing_2 = CrossingGroup(1235, {2}, 1229, 1231)
-        self.intersection = Intersection(1, [incoming_1, incoming_2], [outgoing_1, outgoing_2], [crossing_1, crossing_2])
+        self.intersection = (
+            Intersection(1, [incoming_1, incoming_2], [outgoing_1, outgoing_2], [crossing_1, crossing_2]))
 
         self.lanelet = Lanelet(self.left_vertices, self.center_vertices, self.right_vertices, self.lanelet_id,
                                self.predecessor, self.successor, self.adjacent_left, self.adjacent_left_same_dir,
@@ -120,6 +122,37 @@ class TestLaneletNetwork(unittest.TestCase):
         center_vertices = (right_vertices + left_vertices) * 0.5
         lanelet_id = 1
         self.diagonal_lanelet_network.add_lanelet(Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id))
+
+    def test_compute_member_lanelets_of_intersection(self):
+        incoming_1 = IncomingGroup(1228, {self.lanelet_id, 11}, 1, {12, 13}, {14, 15}, {16, 17})
+        incoming_2 = IncomingGroup(1229, {20, 21}, 2, {22, 23}, {24, 25}, {26, 27})
+        outgoing_1 = OutgoingGroup(1230, {1, 2, 3})
+        outgoing_2 = OutgoingGroup(1231, {4, 5, 6})
+        crossing_1 = CrossingGroup(1234, {1}, 1228, 1230)
+        crossing_2 = CrossingGroup(1235, {2}, 1229, 1231)
+        self.intersection = Intersection(1, [incoming_1, incoming_2], [outgoing_1, outgoing_2],
+                                         [crossing_1, crossing_2])
+
+        lanelet_1 = Lanelet(left_vertices=np.array([[20, 1], [21, 1]]), center_vertices=np.array([[20, .5], [21, .5]]),
+                            right_vertices=np.array([[20, 0], [21, 0]]), lanelet_id=11, successor=[28])
+        lanelet_2 = Lanelet(left_vertices=np.array([[20, 1], [21, 1]]), center_vertices=np.array([[20, .5], [21, .5]]),
+                            right_vertices=np.array([[20, 0], [21, 0]]), lanelet_id=12, successor=[29])
+        lanelet_3 = Lanelet(left_vertices=np.array([[20, 1], [21, 1]]), center_vertices=np.array([[20, .5], [21, .5]]),
+                            right_vertices=np.array([[20, 0], [21, 0]]), lanelet_id=28, successor=[12])
+        lanelet_4 = Lanelet(left_vertices=np.array([[20, 1], [21, 1]]), center_vertices=np.array([[20, .5], [21, .5]]),
+                            right_vertices=np.array([[20, 0], [21, 0]]), lanelet_id=14, successor=[30])
+        lanelet_5 = Lanelet(left_vertices=np.array([[20, 1], [21, 1]]), center_vertices=np.array([[20, .5], [21, .5]]),
+                            right_vertices=np.array([[20, 0], [21, 0]]), lanelet_id=16, successor=[31])
+
+        self.lanelet_network.add_lanelet(lanelet_1)
+        self.lanelet_network.add_lanelet(lanelet_2)
+        self.lanelet_network.add_lanelet(lanelet_3)
+        self.lanelet_network.add_lanelet(lanelet_4)
+        self.lanelet_network.add_lanelet(lanelet_5)
+
+        lanelets = self.intersection.compute_member_lanelets(self.lanelet_network)
+        gt_lanelets = {1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31}
+        self.assertEqual(lanelets, gt_lanelets)
 
     def test_initialize_lanelets(self):
         s1 = np.sqrt(1.25)
@@ -549,29 +582,34 @@ class TestLaneletNetwork(unittest.TestCase):
                                    TrafficLightCycleElement(TrafficLightState.RED, 2)])
         traffic_light = TrafficLight(20, np.array([10., 10.]), cycle)
 
-
         lanelet_1 = Lanelet(np.array([[10, 1], [11, 1]]), np.array([[10, .5], [11, .5]]),
-                                 np.array([[10, 0], [11, 0]]), 4, [], [678], 910, True, 750,
-                                 False, LineMarking.UNKNOWN, LineMarking.UNKNOWN, traffic_signs={traffic_sign.traffic_sign_id}, traffic_lights = {traffic_light.traffic_light_id})
+                            np.array([[10, 0], [11, 0]]), 4, [], [678],
+                            910, True, 750,
+                            False, LineMarking.UNKNOWN, LineMarking.UNKNOWN,
+                            traffic_signs={traffic_sign.traffic_sign_id},
+                            traffic_lights={traffic_light.traffic_light_id})
         lanelet_2 = Lanelet(np.array([[8, 1], [9, 1]]), np.array([[8, .5], [9, .5]]),
-                                 np.array([[8, 0], [9, 0]]), 5, [], [678], 910, True, 750,
-                                 False, LineMarking.UNKNOWN, LineMarking.UNKNOWN, traffic_signs={traffic_sign.traffic_sign_id}, traffic_lights = {traffic_light.traffic_light_id})
+                            np.array([[8, 0], [9, 0]]), 5, [], [678],
+                            910, True, 750,
+                            False, LineMarking.UNKNOWN, LineMarking.UNKNOWN,
+                            traffic_signs={traffic_sign.traffic_sign_id},
+                            traffic_lights={traffic_light.traffic_light_id})
         lanelet_3 = Lanelet(np.array([[0, 1], [1, 1]]), np.array([[0, .5], [1, .5]]),
-                                 np.array([[0, 0], [1, 0]]), 6, [], [678], 910, True, 750,
-                                 False, LineMarking.UNKNOWN, LineMarking.UNKNOWN)
+                            np.array([[0, 0], [1, 0]]), 6, [], [678],
+                            910, True, 750,
+                            False, LineMarking.UNKNOWN, LineMarking.UNKNOWN)
 
         lanelet_network = LaneletNetwork()
         lanelet_network.add_lanelet(lanelet_1)
         lanelet_network.add_lanelet(lanelet_2)
         lanelet_network.add_lanelet(lanelet_3)
 
-        #Test for existing traffic Signs/Lights
+        # Test for existing traffic Signs/Lights
         self.assertEqual(lanelet_network.get_traffic_sign_referenced_lanelets(19), [lanelet_1, lanelet_2])
         self.assertEqual(lanelet_network.get_traffic_lights_referenced_lanelets(20), [lanelet_1, lanelet_2])
-        #Test for non existing Traffic Signs/Lights
+        # Test for non-existing Traffic Signs/Lights
         self.assertEqual(lanelet_network.get_traffic_sign_referenced_lanelets(1), [])
         self.assertEqual(lanelet_network.get_traffic_lights_referenced_lanelets(2), [])
-
 
 
 if __name__ == '__main__':
