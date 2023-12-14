@@ -29,7 +29,7 @@ message FileInformation {
 }
 
 message ScenarioMetaInformation {
-    required ScenarioID benchmark_id = 1;
+    required ScenarioID benchmark_id = 2;
     required FileInformation file_information = 3;
     required double time_step_size = 4;
 }

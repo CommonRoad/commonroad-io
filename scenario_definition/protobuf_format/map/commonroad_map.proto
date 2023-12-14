@@ -25,4 +25,6 @@ message CommonRoadMap {
     repeated TrafficSign traffic_signs = 7;
     repeated TrafficLight traffic_lights = 8;
     repeated Intersection intersections = 9;
+    repeated StaticObstacle static_obstacle = 11;
+    repeated EnvironmentObstacle environment_obstacle = 10;
 }
