@@ -77,5 +77,5 @@ cvxpy = ">=0.4.9"
 jupyter = ">=1.0.0"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.8.0"]
 build-backend = "poetry.core.masonry.api"
