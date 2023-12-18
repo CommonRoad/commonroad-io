@@ -10,13 +10,23 @@ from commonroad import SCENARIO_VERSION, SUPPORTED_COMMONROAD_VERSIONS
 
 
 class ScenarioID:
-    benchmark_id_pattern = re.compile(r"(?P<cooperative>C-)?(?P<country_id>[A-Z]{3})_(?P<map_name>[a-zA-Z0-9]+)-("
-                                      r"?P<map_id>[1-9][0-9]*)(_(?P<configuration_id>[1-9][0-9]*)(_("
-                                      r"?P<prediction_type>[STPI])(?P<prediction_ids>(-([1-9][0-9]*))+))?)?")
+    benchmark_id_pattern = re.compile(
+        r"(?P<cooperative>C-)?(?P<country_id>[A-Z]{3})_(?P<map_name>[a-zA-Z0-9]+)-("
+        r"?P<map_id>[1-9][0-9]*)(_(?P<configuration_id>[1-9][0-9]*)(_("
+        r"?P<prediction_type>[STPI])(?P<prediction_ids>(-([1-9][0-9]*))+))?)?"
+    )
 
-    def __init__(self, cooperative: bool = False, country_id: str = "ZAM", map_name: str = "Test", map_id: int = 1,
-                 configuration_id: Union[None, int] = None, obstacle_behavior: Union[None, str] = None,
-                 prediction_id: Union[None, int, List[int]] = None, scenario_version: str = SCENARIO_VERSION):
+    def __init__(
+        self,
+        cooperative: bool = False,
+        country_id: str = "ZAM",
+        map_name: str = "Test",
+        map_id: int = 1,
+        configuration_id: Union[None, int] = None,
+        obstacle_behavior: Union[None, str] = None,
+        prediction_id: Union[None, int, List[int]] = None,
+        scenario_version: str = SCENARIO_VERSION,
+    ):
         """
         Implements the scenario ID as specified in the scenario documentation
         (see https://gitlab.lrz.de/tum-cps/commonroad-scenarios/-/tree/master/documentation)
@@ -31,8 +41,9 @@ class ScenarioID:
         :param prediction_id: enumerates different predictions for the same initial configuration (e.g. 1)
         :param scenario_version: scenario version identifier (e.g. 2020a)
         """
-        assert scenario_version in SUPPORTED_COMMONROAD_VERSIONS, 'Scenario_version {} not supported.'.format(
-                scenario_version)
+        assert scenario_version in SUPPORTED_COMMONROAD_VERSIONS, "Scenario_version {} not supported.".format(
+            scenario_version
+        )
         self.scenario_version: str = scenario_version
         self.cooperative: bool = cooperative
         self._country_id = None
@@ -45,8 +56,9 @@ class ScenarioID:
 
         # Obstacle behavior has to be defined if a prediction id is given. We can't recover from this!
         # prediction id is not None => obstacle_behavior is not None
-        assert prediction_id is None or obstacle_behavior is not None, "Prediction id was given, but obstacle " \
-                                                                       "behavior undefined!"
+        assert prediction_id is None or obstacle_behavior is not None, (
+            "Prediction id was given, but obstacle " "behavior undefined!"
+        )
         if not is_map:
             if has_prediction:
                 prediction_id = prediction_id or 1
@@ -56,9 +68,9 @@ class ScenarioID:
         self.prediction_id: Union[None, int, List[int]] = prediction_id
 
         # Validate object
-        assert self.obstacle_behavior in [None, "S", "T", "P",
-                                          "I"], f"Unsupported prediction type '{obstacle_behavior}'! " \
-                                                f"Available prediction types: S, T, P, I"
+        assert self.obstacle_behavior in [None, "S", "T", "P", "I"], (
+            f"Unsupported prediction type '{obstacle_behavior}'! " f"Available prediction types: S, T, P, I"
+        )
         assert self.map_id > 0, f"Map id {configuration_id} <= 0!"
         assert is_map or self.configuration_id > 0, f"Configuration id {configuration_id} <= 0!"
         prediction_id = prediction_id if isinstance(prediction_id, list) else [prediction_id]
@@ -69,16 +81,32 @@ class ScenarioID:
             warnings.warn(f"Inequality between ScenarioID {repr(self)} and different type {type(other)}")
             return False
 
-        id_eq = self.cooperative == other.cooperative and self.country_id == other.country_id and \
-            self.map_name == other.map_name and self.map_id == other.map_id and \
-            self.configuration_id == other.configuration_id and self.obstacle_behavior == other.obstacle_behavior and \
-            self.prediction_id == other.prediction_id and self.scenario_version == other.scenario_version
+        id_eq = (
+            self.cooperative == other.cooperative
+            and self.country_id == other.country_id
+            and self.map_name == other.map_name
+            and self.map_id == other.map_id
+            and self.configuration_id == other.configuration_id
+            and self.obstacle_behavior == other.obstacle_behavior
+            and self.prediction_id == other.prediction_id
+            and self.scenario_version == other.scenario_version
+        )
 
         return id_eq
 
     def __hash__(self):
-        return hash((self.cooperative, self.country_id, self.map_name, self.map_id, self.configuration_id,
-                     self.obstacle_behavior, self.prediction_id, self.scenario_version))
+        return hash(
+            (
+                self.cooperative,
+                self.country_id,
+                self.map_name,
+                self.map_id,
+                self.configuration_id,
+                self.obstacle_behavior,
+                self.prediction_id,
+                self.scenario_version,
+            )
+        )
 
     def __str__(self):
         if self.obstacle_behavior is not None:
@@ -113,11 +141,11 @@ class ScenarioID:
     @country_id.setter
     def country_id(self, country_id: str):
         if country_id is None:
-            self._country_id = 'ZAM'
-        elif country_id in iso3166.countries_by_alpha3 or country_id == 'ZAM':
+            self._country_id = "ZAM"
+        elif country_id in iso3166.countries_by_alpha3 or country_id == "ZAM":
             self._country_id = country_id
         else:
-            raise ValueError('Country ID {} is not in the ISO-3166 three-letter format. '.format(country_id))
+            raise ValueError("Country ID {} is not in the ISO-3166 three-letter format. ".format(country_id))
 
     @property
     def prediction_type(self):
@@ -141,7 +169,7 @@ class ScenarioID:
         """
         match = ScenarioID.benchmark_id_pattern.fullmatch(benchmark_id)
         if match is None:
-            warnings.warn('Not a valid scenario ID: ' + benchmark_id)
+            warnings.warn("Not a valid scenario ID: " + benchmark_id)
             return ScenarioID(cooperative=False, map_name=benchmark_id, map_id=1)
 
         # extract sub IDs from string
@@ -159,8 +187,16 @@ class ScenarioID:
             if len(prediction_id) == 1:
                 prediction_id = prediction_id[0]
 
-        return ScenarioID(cooperative, country_id, map_name, map_id, configuration_id, prediction_type, prediction_id,
-                          scenario_version)
+        return ScenarioID(
+            cooperative,
+            country_id,
+            map_name,
+            map_id,
+            configuration_id,
+            prediction_type,
+            prediction_id,
+            scenario_version,
+        )
 
 
 class FileInformation:
@@ -168,8 +204,15 @@ class FileInformation:
     Class that contains meta information regarding the files
     """
 
-    def __init__(self, date: Optional[Time] = None, author: str = "", affiliation: str = "",
-                 source: str = "", license_name: str = "", license_text: str = None):
+    def __init__(
+        self,
+        date: Optional[Time] = None,
+        author: str = "",
+        affiliation: str = "",
+        source: str = "",
+        license_name: str = "",
+        license_text: str = None,
+    ):
         """
         :param date: date of the scenario
         :param author: authors of the CommonRoad scenario
@@ -198,16 +241,21 @@ class FileInformation:
             warnings.warn(f"Inequality between FileInformation {repr(self)} and different type {type(other)}")
             return False
 
-        return self._license_name == other.license_name and self._license_text == other.license_text and \
-            self._date == other.date and self._author == other.author and self._affiliation == other.affiliation and \
-            self._source == other.source
+        return (
+            self._license_name == other.license_name
+            and self._license_text == other.license_text
+            and self._date == other.date
+            and self._author == other.author
+            and self._affiliation == other.affiliation
+            and self._source == other.source
+        )
 
     def __hash__(self):
         return hash((self._date, self._author, self._affiliation, self._source, self._license_name, self._license_text))
 
     @property
     def license_name(self) -> str:
-        """ license name of the scenario."""
+        """license name of the scenario."""
         return self._license_name
 
     @license_name.setter
@@ -216,7 +264,7 @@ class FileInformation:
 
     @property
     def license_text(self) -> Union[None, str]:
-        """ license text of the scenario."""
+        """license text of the scenario."""
         return self._license_text
 
     @license_text.setter
@@ -228,7 +276,7 @@ class FileInformation:
 
     @property
     def date(self) -> Time:
-        """ date of the scenario."""
+        """date of the scenario."""
         return self._date
 
     @date.setter
@@ -237,7 +285,7 @@ class FileInformation:
 
     @property
     def author(self) -> str:
-        """ authors of the CommonRoad scenario."""
+        """authors of the CommonRoad scenario."""
         return self._author
 
     @author.setter
@@ -246,7 +294,7 @@ class FileInformation:
 
     @property
     def affiliation(self) -> str:
-        """ institution of the authors."""
+        """institution of the authors."""
         return self._affiliation
 
     @affiliation.setter
@@ -255,7 +303,7 @@ class FileInformation:
 
     @property
     def source(self) -> str:
-        """ source of the scenario, e.g. generated by a map converter and a traffic simulator."""
+        """source of the scenario, e.g. generated by a map converter and a traffic simulator."""
         return self._source
 
     @source.setter
@@ -288,7 +336,7 @@ class MapMetaInformation:
 
     @property
     def scenario_id(self) -> ScenarioID:
-        """ CommonRoad scenario ID of the scenario."""
+        """CommonRoad scenario ID of the scenario."""
         return self._scenario_id
 
     @scenario_id.setter
@@ -297,7 +345,7 @@ class MapMetaInformation:
 
     @property
     def file_information(self) -> FileInformation:
-        """ File information of the scenario."""
+        """File information of the scenario."""
         return self._file_information
 
     @file_information.setter
@@ -306,7 +354,7 @@ class MapMetaInformation:
 
     @property
     def complete_map_name(self) -> str:
-        """ Creates map name as string"""
+        """Creates map name as string"""
         return f"{self._scenario_id.country_id}_{self._scenario_id.map_name}-{self._scenario_id.map_id}"
 
 
@@ -330,15 +378,18 @@ class ScenarioMetaInformation:
             warnings.warn(f"Inequality between ScenarioMetaInformation {repr(self)} and different type {type(other)}")
             return False
 
-        return self._scenario_id == other.scenario_id and self._file_information == other.file_information and \
-            self._time_step_size == other.time_step_size
+        return (
+            self._scenario_id == other.scenario_id
+            and self._file_information == other.file_information
+            and self._time_step_size == other.time_step_size
+        )
 
     def __hash__(self):
         return hash((self._scenario_id, self._file_information, self._time_step_size))
 
     @property
     def scenario_id(self) -> ScenarioID:
-        """ CommonRoad scenario ID of the scenario."""
+        """CommonRoad scenario ID of the scenario."""
         return self._scenario_id
 
     @scenario_id.setter
@@ -347,7 +398,7 @@ class ScenarioMetaInformation:
 
     @property
     def file_information(self) -> FileInformation:
-        """ File information of the scenario."""
+        """File information of the scenario."""
         return self._file_information
 
     @file_information.setter
@@ -356,7 +407,7 @@ class ScenarioMetaInformation:
 
     @property
     def time_step_size(self) -> double:
-        """ global time step size of the time-discrete scenario."""
+        """global time step size of the time-discrete scenario."""
         return self._time_step_size
 
     @time_step_size.setter
@@ -366,7 +417,8 @@ class ScenarioMetaInformation:
 
 @enum.unique
 class TimeOfDay(enum.Enum):
-    """ Enum containing all possible time of days."""
+    """Enum containing all possible time of days."""
+
     NIGHT = "night"
     SUNSET = "sunset"
     AFTERNOON = "afternoon"
@@ -377,7 +429,8 @@ class TimeOfDay(enum.Enum):
 
 @enum.unique
 class Weather(enum.Enum):
-    """ Enum containing all possible weathers."""
+    """Enum containing all possible weathers."""
+
     CLEAR = "clear"
     LIGHT_RAIN = "light_rain"
     MID_RAIN = "mid_rain"
@@ -391,7 +444,8 @@ class Weather(enum.Enum):
 
 @enum.unique
 class Underground(enum.Enum):
-    """ Enum containing all possible undergrounds."""
+    """Enum containing all possible undergrounds."""
+
     WET = "wet"
     CLEAN = "clean"
     DIRTY = "dirty"
@@ -406,8 +460,9 @@ class Environment:
     Class which describes the environment where a scenario takes place as specified in the CommonRoad specification.
     """
 
-    def __init__(self, time: Time = None, time_of_day: TimeOfDay = None, weather: Weather = None,
-                 underground: Underground = None):
+    def __init__(
+        self, time: Time = None, time_of_day: TimeOfDay = None, weather: Weather = None, underground: Underground = None
+    ):
         """
         Constructor of an environment object
 
@@ -425,8 +480,12 @@ class Environment:
         if not isinstance(other, Environment):
             return False
 
-        return self._time == other.time and self._time_of_day == other.time_of_day and \
-            self._weather == other.weather and self._underground == other.underground
+        return (
+            self._time == other.time
+            and self._time_of_day == other.time_of_day
+            and self._weather == other.weather
+            and self._underground == other.underground
+        )
 
     def __hash__(self):
         return hash((self._time, self._time_of_day, self._weather, self._underground))
@@ -470,8 +529,14 @@ class GeoTransformation:
     CommonRoad specification
     """
 
-    def __init__(self, geo_reference: str = None, x_translation: float = None, y_translation: float = None,
-                 z_rotation: float = None, scaling: float = None):
+    def __init__(
+        self,
+        geo_reference: str = None,
+        x_translation: float = None,
+        y_translation: float = None,
+        z_rotation: float = None,
+        scaling: float = None,
+    ):
         """
         Constructor of a location object
 
@@ -491,9 +556,13 @@ class GeoTransformation:
         if not isinstance(other, GeoTransformation):
             return False
 
-        return self._geo_reference == other.geo_reference and self._x_translation == other.x_translation and \
-            self._y_translation == other.y_translation and self._z_rotation == other.z_rotation and \
-            self._scaling == other.scaling
+        return (
+            self._geo_reference == other.geo_reference
+            and self._x_translation == other.x_translation
+            and self._y_translation == other.y_translation
+            and self._z_rotation == other.z_rotation
+            and self._scaling == other.scaling
+        )
 
     def __hash__(self):
         return hash((self._geo_reference, self._x_translation, self._y_translation, self._z_rotation, self._scaling))
@@ -544,8 +613,13 @@ class Location:
     Class which describes a location according to the CommonRoad specification.
     """
 
-    def __init__(self, geo_name_id: int = -999, gps_latitude: float = 999, gps_longitude: float = 999,
-                 geo_transformation: GeoTransformation = None):
+    def __init__(
+        self,
+        geo_name_id: int = -999,
+        gps_latitude: float = 999,
+        gps_longitude: float = 999,
+        geo_transformation: GeoTransformation = None,
+    ):
         """
         Constructor of a location object
 
@@ -563,8 +637,12 @@ class Location:
         if not isinstance(other, Location):
             return False
 
-        return self._geo_name_id == other.geo_name_id and self._gps_latitude == other.gps_latitude and \
-            self._gps_longitude == other.gps_longitude and self._geo_transformation == other.geo_transformation
+        return (
+            self._geo_name_id == other.geo_name_id
+            and self._gps_latitude == other.gps_latitude
+            and self._gps_longitude == other.gps_longitude
+            and self._geo_transformation == other.geo_transformation
+        )
 
     def __hash__(self):
         return hash((self._geo_name_id, self._gps_latitude, self._gps_longitude, self._geo_transformation))

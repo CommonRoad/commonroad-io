@@ -14,9 +14,18 @@ class CommonRoadFileWriter:
     are stored by the writer.
     """
 
-    def __init__(self, scenario: Scenario, planning_problem_set: PlanningProblemSet, author: str = None,
-                 affiliation: str = None, source: str = None, tags: Set[Tag] = None, location: Location = None,
-                 decimal_precision: int = 4, file_format: FileFormat = FileFormat.PROTOBUF):
+    def __init__(
+        self,
+        scenario: Scenario,
+        planning_problem_set: PlanningProblemSet,
+        author: str = None,
+        affiliation: str = None,
+        source: str = None,
+        tags: Set[Tag] = None,
+        location: Location = None,
+        decimal_precision: int = 4,
+        file_format: FileFormat = FileFormat.PROTOBUF,
+    ):
         """
         Initializes the FileWriter for CommonRoad files.
 
@@ -32,16 +41,21 @@ class CommonRoadFileWriter:
         self._file_format = file_format
         self._file_writer = None
         if file_format == FileFormat.XML:
-            self._file_writer = XMLFileWriter(scenario, planning_problem_set, author, affiliation,
-                                              source, tags, decimal_precision)
+            self._file_writer = XMLFileWriter(
+                scenario, planning_problem_set, author, affiliation, source, tags, decimal_precision
+            )
         elif file_format == FileFormat.PROTOBUF:
-            self._file_writer = ProtobufFileWriter(scenario, planning_problem_set, author, affiliation,
-                                                   source, tags, decimal_precision)
+            self._file_writer = ProtobufFileWriter(
+                scenario, planning_problem_set, author, affiliation, source, tags, decimal_precision
+            )
 
     # Old version writer
-    def write_to_file(self, filename: Union[str, None] = None,
-                      overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
-                      check_validity: bool = False):
+    def write_to_file(
+        self,
+        filename: Union[str, None] = None,
+        overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+        check_validity: bool = False,
+    ):
         """
         Writes CommonRoad scenario and planning problems to file.
 
@@ -53,9 +67,12 @@ class CommonRoadFileWriter:
         self._file_writer.write_to_file(filename, overwrite_existing_file, check_validity)
 
     # New version writers (2023 map, scenario, dynamic)
-    def write_map_to_file(self, filename: Union[str, None] = None,
-                          overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
-                          check_validity: bool = False):
+    def write_map_to_file(
+        self,
+        filename: Union[str, None] = None,
+        overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+        check_validity: bool = False,
+    ):
         """
         Writes 2023 CommonRoad Map to the file.
 
@@ -66,8 +83,11 @@ class CommonRoadFileWriter:
         """
         self._file_writer.write_map_to_file(filename, overwrite_existing_file, check_validity)
 
-    def write_scenario_to_file(self, filename: Union[str, None] = None,
-                               overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT):
+    def write_scenario_to_file(
+        self,
+        filename: Union[str, None] = None,
+        overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+    ):
         """
         Writes 2023 CommonRoad Scenario to the file.
 
@@ -77,8 +97,11 @@ class CommonRoadFileWriter:
         """
         self._file_writer.write_scenario_to_file(filename, overwrite_existing_file)
 
-    def write_dynamic_to_file(self, filename: Union[str, None] = None,
-                              overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT):
+    def write_dynamic_to_file(
+        self,
+        filename: Union[str, None] = None,
+        overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+    ):
         """
         Writes 2023 CommonRoad Dynamic to file.
 
@@ -89,8 +112,9 @@ class CommonRoadFileWriter:
         self._file_writer.write_dynamic_to_file(filename, overwrite_existing_file)
 
     @staticmethod
-    def check_validity_of_commonroad_file(commonroad_str: Union[str, bytes], file_format: FileFormat = FileFormat.XML) \
-            -> bool:
+    def check_validity_of_commonroad_file(
+        commonroad_str: Union[str, bytes], file_format: FileFormat = FileFormat.XML
+    ) -> bool:
         """
         Checks validity of CommonRoad scenario and planning problem stored in XML or protobuf format.
 

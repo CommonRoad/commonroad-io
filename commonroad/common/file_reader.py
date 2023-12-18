@@ -3,8 +3,12 @@ from typing import Tuple, Optional, List
 import os
 
 from commonroad.common.util import FileFormat, Path_T
-from commonroad.common.reader.file_reader_protobuf import ProtobufFileReaderScenario, \
-    ProtobufFileReaderMap, ProtobufFileReaderDynamic, TrajectoryPredictionFactory
+from commonroad.common.reader.file_reader_protobuf import (
+    ProtobufFileReaderScenario,
+    ProtobufFileReaderMap,
+    ProtobufFileReaderDynamic,
+    TrajectoryPredictionFactory,
+)
 from commonroad.common.reader.file_reader_xml import XMLFileReader
 from commonroad.planning.planning_problem import PlanningProblemSet, CooperativePlanningProblem
 from commonroad.prediction.prediction import TrajectoryPrediction
@@ -19,6 +23,7 @@ class CommonRoadFileReader:
     Reads CommonRoad files in XML or protobuf format. The corresponding stored scenario and planning problem set
     are created by the reader.
     """
+
     def __init__(self, filename: Path_T, file_format: Optional[FileFormat] = None):
         """
         Initializes the FileReader for CommonRoad files.
@@ -55,6 +60,7 @@ class CommonRoadDynamicFileReader:
     Reads CommonRoadDynamic files in XML or protobuf format. The corresponding stored scenario is
     created by the reader.
     """
+
     def __init__(self, filename: Path_T, file_format: Optional[FileFormat] = None):
         """
         Initializes the FileReaderDynamic for CommonRoad files.
@@ -86,6 +92,7 @@ class CommonRoadScenarioFileReader:
     Reads CommonRoadScenario files in XML or protobuf format. The corresponding stored scenario is
     created by the reader.
     """
+
     def __init__(self, filename: Path_T, file_format: Optional[FileFormat] = None):
         """
         Initializes the FileReaderScenario for CommonRoad files.
@@ -117,6 +124,7 @@ class CommonRoadMapFileReader:
     Reads CommonRoadMap files in XML or protobuf format. The corresponding stored scenario is
     created by the reader.
     """
+
     def __init__(self, filename: Path_T, file_format: Optional[FileFormat] = None):
         """
         Initializes the FileReaderMap for CommonRoad files.
@@ -148,6 +156,7 @@ class CommonRoadMapDynamicFileReader:
     Reads CommonRoadMap files in XML or protobuf format. The corresponding stored scenario is
     created by the reader.
     """
+
     def __init__(self, filename: Path_T, file_format: Optional[FileFormat] = None):
         """
         Initializes the FileReaderMap for CommonRoad files.
@@ -192,8 +201,9 @@ class CommonRoadMapDynamicFileReader:
         return combine_map_dynamic(road_network, dynamic)
 
 
-def combine_map_dynamic(road_network: LaneletNetwork, dynamic_interface: DynamicInterface,
-                        lanelet_assignment: bool = False):
+def combine_map_dynamic(
+    road_network: LaneletNetwork, dynamic_interface: DynamicInterface, lanelet_assignment: bool = False
+):
     """
     Combines map and dynamic into one scenario.
 
@@ -229,15 +239,17 @@ def combine_map_dynamic(road_network: LaneletNetwork, dynamic_interface: Dynamic
     for static_obstacle in dynamic_interface.static_obstacles:
         # Appending lanelets to the static obstacle if lanelet_assignment is set to True
         if lanelet_assignment is True:
-            rotated_shape = \
-                static_obstacle.obstacle_shape.rotate_translate_local(static_obstacle.initial_state.position,
-                                                                      static_obstacle.initial_state.orientation)
+            rotated_shape = static_obstacle.obstacle_shape.rotate_translate_local(
+                static_obstacle.initial_state.position, static_obstacle.initial_state.orientation
+            )
             initial_shape_lanelet_ids = set(scenario.lanelet_network.find_lanelet_by_shape(rotated_shape))
-            initial_center_lanelet_ids = set(scenario.lanelet_network.find_lanelet_by_position
-                                             ([static_obstacle.initial_state.position])[0])
+            initial_center_lanelet_ids = set(
+                scenario.lanelet_network.find_lanelet_by_position([static_obstacle.initial_state.position])[0]
+            )
             for l_id in initial_shape_lanelet_ids:
                 scenario.lanelet_network.find_lanelet_by_id(l_id).add_static_obstacle_to_lanelet(
-                        obstacle_id=static_obstacle.obstacle_id)
+                    obstacle_id=static_obstacle.obstacle_id
+                )
             static_obstacle.initial_center_lanelet_ids = initial_center_lanelet_ids
             static_obstacle.initial_shape_lanelet_ids = initial_shape_lanelet_ids
         scenario.add_objects(static_obstacle)
@@ -247,27 +259,32 @@ def combine_map_dynamic(road_network: LaneletNetwork, dynamic_interface: Dynamic
         # Only append lanelets to the obstacle if the prediction is the trajectory prediction
         # and lanelet_assignment is set to True
         if dynamic_obstacle.prediction is TrajectoryPrediction and lanelet_assignment is True:
-            rotated_shape = \
-                dynamic_obstacle.obstacle_shape.rotate_translate_local(dynamic_obstacle.initial_state.position,
-                                                                       dynamic_obstacle.initial_state.orientation)
+            rotated_shape = dynamic_obstacle.obstacle_shape.rotate_translate_local(
+                dynamic_obstacle.initial_state.position, dynamic_obstacle.initial_state.orientation
+            )
             initial_shape_lanelet_ids = set(scenario.lanelet_network.find_lanelet_by_shape(rotated_shape))
-            initial_center_lanelet_ids = set(scenario.lanelet_network.find_lanelet_by_position
-                                             ([dynamic_obstacle.initial_state.position])[0])
+            initial_center_lanelet_ids = set(
+                scenario.lanelet_network.find_lanelet_by_position([dynamic_obstacle.initial_state.position])[0]
+            )
             for l_id in initial_shape_lanelet_ids:
                 scenario.lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet(
-                        obstacle_id=dynamic_obstacle.obstacle_id,
-                        time_step=dynamic_obstacle.initial_state.time_step)
+                    obstacle_id=dynamic_obstacle.obstacle_id, time_step=dynamic_obstacle.initial_state.time_step
+                )
             dynamic_obstacle.initial_shape_lanelet_ids = initial_shape_lanelet_ids
             dynamic_obstacle.initial_center_lanelet_ids = initial_center_lanelet_ids
             # Now have to update the trajectory prediction
-            shape_lanelet_assignment = \
-                TrajectoryPredictionFactory.find_obstacle_shape_lanelets(
-                        dynamic_obstacle.initial_state, dynamic_obstacle.prediction.trajectory.state_list,
-                        scenario.lanelet_network, dynamic_obstacle.obstacle_id, dynamic_obstacle.obstacle_shape)
-            center_lanelet_assignment = \
-                TrajectoryPredictionFactory.find_obstacle_center_lanelets(
-                        dynamic_obstacle.initial_state, dynamic_obstacle.prediction.trajectory.state_list,
-                        scenario.lanelet_network)
+            shape_lanelet_assignment = TrajectoryPredictionFactory.find_obstacle_shape_lanelets(
+                dynamic_obstacle.initial_state,
+                dynamic_obstacle.prediction.trajectory.state_list,
+                scenario.lanelet_network,
+                dynamic_obstacle.obstacle_id,
+                dynamic_obstacle.obstacle_shape,
+            )
+            center_lanelet_assignment = TrajectoryPredictionFactory.find_obstacle_center_lanelets(
+                dynamic_obstacle.initial_state,
+                dynamic_obstacle.prediction.trajectory.state_list,
+                scenario.lanelet_network,
+            )
             dynamic_obstacle.prediction.shape_lanelet_assignment = shape_lanelet_assignment
             dynamic_obstacle.prediction.center_lanelet_assignment = center_lanelet_assignment
         scenario.add_objects(dynamic_obstacle)
@@ -287,9 +304,12 @@ def combine_map_dynamic(road_network: LaneletNetwork, dynamic_interface: Dynamic
     return scenario
 
 
-def combine_preloaded_(road_network: LaneletNetwork, dynamic_interface: DynamicInterface,
-                       scenario_interface: ScenarioInterface, lanelet_assignment: bool = False) \
-        -> Tuple[Scenario, PlanningProblemSet, List[CooperativePlanningProblem]]:
+def combine_preloaded_(
+    road_network: LaneletNetwork,
+    dynamic_interface: DynamicInterface,
+    scenario_interface: ScenarioInterface,
+    lanelet_assignment: bool = False,
+) -> Tuple[Scenario, PlanningProblemSet, List[CooperativePlanningProblem]]:
     """
     Combines the new version scenario, map and dynamic classes loaded from their respective files into one
     scenario class.

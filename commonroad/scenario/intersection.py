@@ -17,9 +17,15 @@ class IncomingGroup:
     The crossing element models lanelets which cross other lanelets, e.g., these are usually lanelets of type crosswalk.
     """
 
-    def __init__(self, incoming_id: int, incoming_lanelets: Optional[Set[int]] = None,
-                 outgoing_group_id: Optional[int] = None, outgoing_right: Optional[Set[int]] = None,
-                 outgoing_straight: Optional[Set[int]] = None, outgoing_left: Optional[Set[int]] = None):
+    def __init__(
+        self,
+        incoming_id: int,
+        incoming_lanelets: Optional[Set[int]] = None,
+        outgoing_group_id: Optional[int] = None,
+        outgoing_right: Optional[Set[int]] = None,
+        outgoing_straight: Optional[Set[int]] = None,
+        outgoing_left: Optional[Set[int]] = None,
+    ):
         """
         :param incoming_id: incoming element ID
         :param incoming_lanelets: set of IDs of incoming lanelets
@@ -42,27 +48,42 @@ class IncomingGroup:
             warnings.warn(f"Inequality between IncomingGroup element {repr(self)} and different type {type(other)}")
             return False
 
-        return (self._incoming_id == other.incoming_id and self._incoming_lanelets == other.incoming_lanelets and
-                self._outgoing_group_id == other.outgoing_group_id and self._outgoing_right == other.outgoing_right and
-                self._outgoing_straight == other.outgoing_straight and self._outgoing_left ==
-                other.outgoing_left)
+        return (
+            self._incoming_id == other.incoming_id
+            and self._incoming_lanelets == other.incoming_lanelets
+            and self._outgoing_group_id == other.outgoing_group_id
+            and self._outgoing_right == other.outgoing_right
+            and self._outgoing_straight == other.outgoing_straight
+            and self._outgoing_left == other.outgoing_left
+        )
 
     def __hash__(self):
-        return hash((self._incoming_id, frozenset(self._incoming_lanelets), self._outgoing_group_id,
-                     frozenset(self._outgoing_right), frozenset(self._outgoing_straight),
-                     frozenset(self._outgoing_left)))
+        return hash(
+            (
+                self._incoming_id,
+                frozenset(self._incoming_lanelets),
+                self._outgoing_group_id,
+                frozenset(self._outgoing_right),
+                frozenset(self._outgoing_straight),
+                frozenset(self._outgoing_left),
+            )
+        )
 
     def __str__(self):
-        return f"IncomingGroup with id {self._incoming_id} represents the incoming" \
-               f" lanelets {self._incoming_lanelets} and has outgoing lanelet {self._outgoing_group_id}," \
-               f" right outgoings {self._outgoing_right}, straight outgoings {self._outgoing_straight}," \
-               f" left outgoings {self._outgoing_left}"
+        return (
+            f"IncomingGroup with id {self._incoming_id} represents the incoming"
+            f" lanelets {self._incoming_lanelets} and has outgoing lanelet {self._outgoing_group_id},"
+            f" right outgoings {self._outgoing_right}, straight outgoings {self._outgoing_straight},"
+            f" left outgoings {self._outgoing_left}"
+        )
 
     def __repr__(self):
-        return f"IncomingGroup(incoming_id={self._incoming_id}, " \
-               f"incoming_lanelets={self._incoming_lanelets}, outgoing_id={self._outgoing_group_id}," \
-               f"outgoing_right={self._outgoing_right}, outgoing_straight={self._outgoing_straight}, " \
-               f"outgoing_left={self._outgoing_left})"
+        return (
+            f"IncomingGroup(incoming_id={self._incoming_id}, "
+            f"incoming_lanelets={self._incoming_lanelets}, outgoing_id={self._outgoing_group_id},"
+            f"outgoing_right={self._outgoing_right}, outgoing_straight={self._outgoing_straight}, "
+            f"outgoing_left={self._outgoing_left})"
+        )
 
     @property
     def incoming_id(self) -> int:
@@ -76,8 +97,9 @@ class IncomingGroup:
         """
         :param i_id: ID of incoming
         """
-        assert is_natural_number(i_id), '<IncomingGroup/incoming_id>: Provided incoming_id is not ' \
-                                        'valid! id={}'.format(i_id)
+        assert is_natural_number(
+            i_id
+        ), "<IncomingGroup/incoming_id>: Provided incoming_id is not " "valid! id={}".format(i_id)
         self._incoming_id = i_id
 
     @property
@@ -166,8 +188,9 @@ class OutgoingGroup:
     It contains a group of lanelets that are going out of a lanelet in an intersection.
     """
 
-    def __init__(self, outgoing_id: int, outgoing_lanelets: Optional[Set[int]] = None,
-                 incoming_group_id: Optional[int] = None):
+    def __init__(
+        self, outgoing_id: int, outgoing_lanelets: Optional[Set[int]] = None, incoming_group_id: Optional[int] = None
+    ):
         """
         :param outgoing_id: id of the outgoing group
         :param outgoing_lanelets: set of outgoing lanelets
@@ -205,8 +228,9 @@ class OutgoingGroup:
 
     @outgoing_id.setter
     def outgoing_id(self, outgoing_id: int):
-        assert is_natural_number(outgoing_id), '<OutgoingGroup/outgoing_id>: Provided outgoing_id is not ' \
-                                        'valid! id={}'.format(outgoing_id)
+        assert is_natural_number(
+            outgoing_id
+        ), "<OutgoingGroup/outgoing_id>: Provided outgoing_id is not " "valid! id={}".format(outgoing_id)
         self._outgoing_id = outgoing_id
 
     @property
@@ -241,8 +265,13 @@ class CrossingGroup:
     A crossing group can consist of several lanelets. The crossing group references an incoming and/or outgoing group.
     """
 
-    def __init__(self, crossing_id: int, crossing_lanelets: Optional[Set[int]] = None, 
-                 incoming_group_id: Optional[int] = None, outgoing_group_id: Optional[int] = None):
+    def __init__(
+        self,
+        crossing_id: int,
+        crossing_lanelets: Optional[Set[int]] = None,
+        incoming_group_id: Optional[int] = None,
+        outgoing_group_id: Optional[int] = None,
+    ):
         """
         :param crossing_id: crossing group ID
         :param crossing_lanelets: set of IDs of crossing lanelets
@@ -261,22 +290,29 @@ class CrossingGroup:
             warnings.warn(f"Inequality between CrossingGroup {repr(self)} and different type {type(other)}")
             return False
 
-        return (self._crossing_id == other.crossing_id and self._crossing_lanelets == other.crossing_lanelets and
-                self._outgoing_group_id == other.outgoing_group_id and
-                self._incoming_group_id == other.incoming_group_id)
+        return (
+            self._crossing_id == other.crossing_id
+            and self._crossing_lanelets == other.crossing_lanelets
+            and self._outgoing_group_id == other.outgoing_group_id
+            and self._incoming_group_id == other.incoming_group_id
+        )
 
     def __hash__(self):
         return hash((self._crossing_id, frozenset(self._crossing_lanelets), self._outgoing_group_id))
 
     def __str__(self):
-        return f"CrossingGroup with id {self._crossing_id} represents the crossing" \
-               f" lanelets {self._crossing_lanelets} and references the incoming group {self.incoming_group_id}," \
-               f" and the outgoing group {self.outgoing_group_id}"
+        return (
+            f"CrossingGroup with id {self._crossing_id} represents the crossing"
+            f" lanelets {self._crossing_lanelets} and references the incoming group {self.incoming_group_id},"
+            f" and the outgoing group {self.outgoing_group_id}"
+        )
 
     def __repr__(self):
-        return f"CrossingGroup(crossing_id={self._crossing_id}, " \
-               f"crossing_lanelets={self._crossing_lanelets}, incoming_group_id={self.incoming_group_id}," \
-               f"outgoing_group_id={self.outgoing_group_id}"
+        return (
+            f"CrossingGroup(crossing_id={self._crossing_id}, "
+            f"crossing_lanelets={self._crossing_lanelets}, incoming_group_id={self.incoming_group_id},"
+            f"outgoing_group_id={self.outgoing_group_id}"
+        )
 
     @property
     def crossing_id(self) -> int:
@@ -290,8 +326,9 @@ class CrossingGroup:
         """
         :param c_id: ID of crossing
         """
-        assert is_natural_number(c_id), '<CrossingGroup/incoming_id>: Provided crossing_id is not ' \
-                                        'valid! id={}'.format(c_id)
+        assert is_natural_number(
+            c_id
+        ), "<CrossingGroup/incoming_id>: Provided crossing_id is not " "valid! id={}".format(c_id)
         self._crossing_id = c_id
 
     @property
@@ -343,8 +380,13 @@ class Intersection:
     An intersection element is defined by at least one incoming and an optional outgoing group element.
     """
 
-    def __init__(self, intersection_id: int, incomings: List[IncomingGroup],
-                 outgoings: Optional[List[OutgoingGroup]] = None, crossings: Optional[List[CrossingGroup]] = None):
+    def __init__(
+        self,
+        intersection_id: int,
+        incomings: List[IncomingGroup],
+        outgoings: Optional[List[OutgoingGroup]] = None,
+        crossings: Optional[List[CrossingGroup]] = None,
+    ):
         """
         :param intersection_id: ID of intersection element
         :param incomings: set of incoming elements in intersection
@@ -379,8 +421,11 @@ class Intersection:
         outgoings_other = {outgoing.outgoing_id: outgoing for outgoing in other.outgoings}
         crossings = {crossing.crossing_id: crossing for crossing in self._crossings}
         crossings_other = {crossing.crossing_id: crossing for crossing in other.crossings}
-        intersection_eq = (len(incomings) == len(incomings_other) and len(outgoings) == len(outgoings_other)
-                           and len(crossings) == len(crossings_other))
+        intersection_eq = (
+            len(incomings) == len(incomings_other)
+            and len(outgoings) == len(outgoings_other)
+            and len(crossings) == len(crossings_other)
+        )
         for k in incomings.keys():
             if k not in incomings_other:
                 intersection_eq = False
@@ -405,16 +450,21 @@ class Intersection:
         return list_elements_eq and intersection_eq and self._intersection_id == other.intersection_id
 
     def __hash__(self):
-        return hash((self._intersection_id, frozenset(self._incomings), frozenset(self._outgoings),
-                     frozenset(self._crossings)))
+        return hash(
+            (self._intersection_id, frozenset(self._incomings), frozenset(self._outgoings), frozenset(self._crossings))
+        )
 
     def __str__(self):
-        return f"Intersection with id {self._intersection_id} consisting of {len(self._incomings)} incoming elements " \
-               f"and outgoing elements {self._outgoings} and crossing elements {self._crossings}"
+        return (
+            f"Intersection with id {self._intersection_id} consisting of {len(self._incomings)} incoming elements "
+            f"and outgoing elements {self._outgoings} and crossing elements {self._crossings}"
+        )
 
     def __repr__(self):
-        return f"Intersection(intersection_id={self._intersection_id}, incomings={repr(self._incomings)}, " \
-               f"outgoings={self._outgoings}, crossings={self._crossings})"
+        return (
+            f"Intersection(intersection_id={self._intersection_id}, incomings={repr(self._incomings)}, "
+            f"outgoings={self._outgoings}, crossings={self._crossings})"
+        )
 
     @property
     def intersection_id(self) -> int:
@@ -428,8 +478,9 @@ class Intersection:
         """
         :param i_id: ID of intersection element
         """
-        assert is_natural_number(i_id), '<Intersection/intersection_id>: Provided intersection_id is not ' \
-                                        'valid! id={}'.format(i_id)
+        assert is_natural_number(
+            i_id
+        ), "<Intersection/intersection_id>: Provided intersection_id is not " "valid! id={}".format(i_id)
         self._intersection_id = i_id
 
     @property
@@ -508,19 +559,22 @@ class Intersection:
             for lanelet_id in incoming_group.outgoing_left:
                 if lanelet_network.find_lanelet_by_id(lanelet_id) is not None:
                     outgoing_lanelets = outgoing_lanelets.union(
-                        set(lanelet_network.find_lanelet_by_id(lanelet_id).successor))
+                        set(lanelet_network.find_lanelet_by_id(lanelet_id).successor)
+                    )
 
             outgoing_lanelets = outgoing_lanelets.union(incoming_group.outgoing_right)
             for lanelet_id in incoming_group.outgoing_right:
                 if lanelet_network.find_lanelet_by_id(lanelet_id) is not None:
-                    outgoing_lanelets = (
-                        outgoing_lanelets.union(set(lanelet_network.find_lanelet_by_id(lanelet_id).successor)))
+                    outgoing_lanelets = outgoing_lanelets.union(
+                        set(lanelet_network.find_lanelet_by_id(lanelet_id).successor)
+                    )
 
             outgoing_lanelets = outgoing_lanelets.union(incoming_group.outgoing_straight)
             for lanelet_id in incoming_group.outgoing_straight:
                 if lanelet_network.find_lanelet_by_id(lanelet_id) is not None:
                     outgoing_lanelets = outgoing_lanelets.union(
-                        set(lanelet_network.find_lanelet_by_id(lanelet_id).successor))
+                        set(lanelet_network.find_lanelet_by_id(lanelet_id).successor)
+                    )
 
         if self.outgoings is not None:
             for outgoing_group in self.outgoings:
@@ -535,8 +589,11 @@ class Intersection:
                 if tmp_lanelet not in outgoing_lanelets:
                     intermediate_lanelets.add(tmp_lanelet)
 
-                    tmp_succesor_lanelets = lanelet_network.find_lanelet_by_id(tmp_lanelet).successor \
-                        if lanelet_network.find_lanelet_by_id(tmp_lanelet) is not None else None
+                    tmp_succesor_lanelets = (
+                        lanelet_network.find_lanelet_by_id(tmp_lanelet).successor
+                        if lanelet_network.find_lanelet_by_id(tmp_lanelet) is not None
+                        else None
+                    )
                     if tmp_succesor_lanelets is not None:
                         for tmp_suc_lanelet in tmp_succesor_lanelets:
                             if tmp_suc_lanelet not in outgoing_lanelets:

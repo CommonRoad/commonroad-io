@@ -35,10 +35,16 @@ class FileWriter(ABC):
     Interface for writing CommonRoad files in a specific format.
     """
 
-    def __init__(self, scenario: Scenario, planning_problem_set: Optional[PlanningProblemSet] = None,
-                 author: Optional[str] = None,
-                 affiliation: Optional[str] = None, source: Optional[str] = None, tags: Optional[Set[Tag]] = None,
-                 decimal_precision: int = 4):
+    def __init__(
+        self,
+        scenario: Scenario,
+        planning_problem_set: Optional[PlanningProblemSet] = None,
+        author: Optional[str] = None,
+        affiliation: Optional[str] = None,
+        source: Optional[str] = None,
+        tags: Optional[Set[Tag]] = None,
+        decimal_precision: int = 4,
+    ):
         assert not (author is None and scenario.file_information.author is None)
         assert not (affiliation is None and scenario.file_information.affiliation is None)
         assert not (source is None and scenario.file_information.source is None)
@@ -59,8 +65,9 @@ class FileWriter(ABC):
 
     @author.setter
     def author(self, author):
-        assert isinstance(author, str), '<CommonRoadFileWriter/author> author must be a string, ' \
-                                        'but has type {}'.format(type(author))
+        assert isinstance(
+            author, str
+        ), "<CommonRoadFileWriter/author> author must be a string, " "but has type {}".format(type(author))
         self._author = author
 
     @property
@@ -69,8 +76,11 @@ class FileWriter(ABC):
 
     @affiliation.setter
     def affiliation(self, affiliation):
-        assert isinstance(affiliation, str), '<CommonRoadFileWriter/affiliation> affiliation must be a string, ' \
-                                             'but has type {}'.format(type(affiliation))
+        assert isinstance(
+            affiliation, str
+        ), "<CommonRoadFileWriter/affiliation> affiliation must be a string, " "but has type {}".format(
+            type(affiliation)
+        )
         self._affiliation = affiliation
 
     @property
@@ -79,8 +89,9 @@ class FileWriter(ABC):
 
     @source.setter
     def source(self, source):
-        assert isinstance(source, str), '<CommonRoadFileWriter/source> source must be a string, ' \
-                                        'but has type {}'.format(type(source))
+        assert isinstance(
+            source, str
+        ), "<CommonRoadFileWriter/source> source must be a string, " "but has type {}".format(type(source))
         self._source = source
 
     @property
@@ -90,8 +101,9 @@ class FileWriter(ABC):
     @tags.setter
     def tags(self, tags):
         for tag in tags:
-            assert isinstance(tag, Tag), '<CommonRoadFileWriter/tags> tag must ' \
-                                         'be a enum of type Tag, but has type {}'.format(type(tag))
+            assert isinstance(
+                tag, Tag
+            ), "<CommonRoadFileWriter/tags> tag must " "be a enum of type Tag, but has type {}".format(type(tag))
         self._tags = tags
 
     @abstractmethod
@@ -117,14 +129,20 @@ class FileWriter(ABC):
         pass
 
     @abstractmethod
-    def write_to_file(self, filename: Union[str, None] = None,
-                      overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
-                      check_validity: bool = False):
+    def write_to_file(
+        self,
+        filename: Union[str, None] = None,
+        overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+        check_validity: bool = False,
+    ):
         pass
 
     @abstractmethod
-    def write_scenario_to_file(self, filename: Union[str, None] = None,
-                               overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT):
+    def write_scenario_to_file(
+        self,
+        filename: Union[str, None] = None,
+        overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+    ):
         pass
 
     @staticmethod
@@ -135,8 +153,9 @@ class FileWriter(ABC):
     def _get_suffix(self) -> str:
         pass
 
-    def _handle_file_path(self, filename: Union[str, None], overwrite_existing_file: OverwriteExistingFile,
-                          file_type: FileType) -> str:
+    def _handle_file_path(
+        self, filename: Union[str, None], overwrite_existing_file: OverwriteExistingFile, file_type: FileType
+    ) -> str:
         if filename is None and file_type is FileType.DYNAMIC:
             filename = str(self.scenario.scenario_id) + self._get_suffix()
         if filename is None and file_type is FileType.SCENARIO:
@@ -146,16 +165,16 @@ class FileWriter(ABC):
 
         if pathlib.Path(filename).is_file():
             if overwrite_existing_file is OverwriteExistingFile.ASK_USER_INPUT:
-                overwrite = input('File {} already exists, replace old file (or else skip)? (y/n)'.format(filename))
+                overwrite = input("File {} already exists, replace old file (or else skip)? (y/n)".format(filename))
             elif overwrite_existing_file is OverwriteExistingFile.SKIP:
-                overwrite = 'n'
+                overwrite = "n"
             else:
-                overwrite = 'y'
+                overwrite = "y"
 
-            if overwrite == 'n':
-                print('Writing of file {} skipped'.format(filename))
+            if overwrite == "n":
+                print("Writing of file {} skipped".format(filename))
                 return ""
             else:
-                print('Replace file {}'.format(filename))
+                print("Replace file {}".format(filename))
 
         return filename

@@ -24,9 +24,8 @@ class AreaBorder:
     """
     Class which describes a border of an area
     """
-    def __init__(
-            self, area_border_id: int, boundary: int, adjacent: int = None, line_marking: LineMarking = None
-    ):
+
+    def __init__(self, area_border_id: int, boundary: int, adjacent: int = None, line_marking: LineMarking = None):
         """
         Constructor of an AreaBorder object
 
@@ -52,17 +51,14 @@ class AreaBorder:
 
     @property
     def boundary(self) -> int:
-        """ Id of the area border boundary"""
+        """Id of the area border boundary"""
         return self._boundary
 
     @boundary.setter
     def boundary(self, boundary: int):
         assert isinstance(
-                boundary,
-                int
-        ), '<AreaBorder/boundary>: Provided boundary id is not valid! adjacent={}'.format(
-                boundary
-        )
+            boundary, int
+        ), "<AreaBorder/boundary>: Provided boundary id is not valid! adjacent={}".format(boundary)
         self._boundary = boundary
 
     @property
@@ -92,21 +88,14 @@ class AreaBorder:
             warnings.warn(f"Inequality between AreaBorder {repr(self)} and different type {type(other)}")
             return False
         return (
-                self._area_border_id == other.area_border_id
-                and self._boundary == other.boundary
-                and self._adjacent == other.adjacent
-                and self._line_marking == other.line_marking
+            self._area_border_id == other.area_border_id
+            and self._boundary == other.boundary
+            and self._adjacent == other.adjacent
+            and self._line_marking == other.line_marking
         )
 
     def __hash__(self):
-        return hash(
-                (
-                    self._area_border_id,
-                    self.boundary,
-                    self._adjacent,
-                    self._line_marking
-                )
-        )
+        return hash((self._area_border_id, self.boundary, self._adjacent, self._line_marking))
 
 
 class Area:
