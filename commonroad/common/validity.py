@@ -1,7 +1,7 @@
-import numpy as npy
 import warnings
 from typing import Union
 
+import numpy as npy
 
 from commonroad import TWO_PI
 
@@ -10,6 +10,7 @@ class ValidTypes:
     """
     Default Type Lists
     """
+
     NUMBERS = (float, int, npy.number)  # real numbers
     INT_NUMBERS = (int, npy.integer)  # integer numbers
 
@@ -78,8 +79,11 @@ def is_real_number_vector(x: Union[npy.ndarray, float], length=None):
     :param length: optional parameter which tests if the vector is a real vector of specified length
     :return: True if the specified variable is a vector of real numbers
     """
-    return isinstance(x, ValidTypes.ARRAY) and all(is_real_number(elem) for elem in x) and (
-        len(x) >= 0 if length is None else len(x) == length)
+    return (
+        isinstance(x, ValidTypes.ARRAY)
+        and all(is_real_number(elem) for elem in x)
+        and (len(x) >= 0 if length is None else len(x) == length)
+    )
 
 
 def is_integer_number_vector(x: Union[npy.ndarray, float], length=None):
@@ -89,8 +93,11 @@ def is_integer_number_vector(x: Union[npy.ndarray, float], length=None):
     :param length: optional parameter which tests if the vector is a real vector of specified length
     :return: True if the specified variable is a vector of integer numbers
     """
-    return isinstance(x, ValidTypes.ARRAY) and all(is_integer_number(elem) for elem in x) and (
-        len(x) >= 0 if length is None else len(x) == length)
+    return (
+        isinstance(x, ValidTypes.ARRAY)
+        and all(is_integer_number(elem) for elem in x)
+        and (len(x) >= 0 if length is None else len(x) == length)
+    )
 
 
 def is_natural_number_vector(x: npy.ndarray, length=None):
@@ -100,8 +107,11 @@ def is_natural_number_vector(x: npy.ndarray, length=None):
     :param length: optional parameter which tests if the vector is a natural number vector of specified length
     :return: True if the specified variable is a vector of real numbers
     """
-    return isinstance(x, ValidTypes.ARRAY) and all(is_natural_number(elem) for elem in x) and (
-        len(x) >= 0 if length is None else len(x) == length)
+    return (
+        isinstance(x, ValidTypes.ARRAY)
+        and all(is_natural_number(elem) for elem in x)
+        and (len(x) >= 0 if length is None else len(x) == length)
+    )
 
 
 def is_list_of_numbers(x: list, length=None):
@@ -153,20 +163,22 @@ def is_in_interval(x: float, x_min: float, x_max: float) -> bool:
     :return: True if the specified number (or vector) is within [x_min,x_max], False otherwise
     """
     if x_min is not None:
-        assert is_real_number(x_min), '<Validity>: provided lower bound is not valid'
+        assert is_real_number(x_min), "<Validity>: provided lower bound is not valid"
 
     if x_max is not None:
-        assert is_real_number(x_max), '<Validity>: provided upper bound is not valid'
+        assert is_real_number(x_max), "<Validity>: provided upper bound is not valid"
 
     if x_min is not None and x_max is not None and npy.greater(x_min, x_max):
         warnings.warn("<Validity>: x_min is greater than x_max", UserWarning)
 
     if is_real_number(x):
         return (npy.greater_equal(x, x_min) if x_min is not None else True) and (
-            npy.greater_equal(x_max, x) if x_max is not None else True)
+            npy.greater_equal(x_max, x) if x_max is not None else True
+        )
     if is_real_number_vector(x):
         return (npy.greater_equal(x, x_min).all() if x_min is not None else True) and (
-            npy.greater_equal(x_max, x).all() if x_max is not None else True)
+            npy.greater_equal(x_max, x).all() if x_max is not None else True
+        )
 
     return False
 
@@ -221,11 +233,17 @@ def is_valid_polyline(polyline: npy.ndarray, length=None):
     if length is not None:
         assert is_valid_length(length)
 
-    return isinstance(polyline, ValidTypes.ARRAY) and len(polyline) >= 2 and all(
+    return (
+        isinstance(polyline, ValidTypes.ARRAY)
+        and len(polyline) >= 2
+        and all(
             #  it is not possible (ValueError) to create a polyline (np.array) with different sized vectors,
             #  so all the polyline points will either be 2d (without z-coordinate) or 3d (with z-coordinate)
-            is_real_number_vector(elem, 2) or is_real_number_vector(elem, 3) for elem in polyline) and (
-               len(polyline) == length if length is not None else True)
+            is_real_number_vector(elem, 2) or is_real_number_vector(elem, 3)
+            for elem in polyline
+        )
+        and (len(polyline) == length if length is not None else True)
+    )
 
 
 def is_valid_list_of_vertices(vertices: list, number_of_vertices=None):
@@ -240,11 +258,17 @@ def is_valid_list_of_vertices(vertices: list, number_of_vertices=None):
     if number_of_vertices is not None:
         assert is_valid_length(number_of_vertices)
 
-    return isinstance(vertices, ValidTypes.LISTS) and len(vertices) >= 1 and all(
+    return (
+        isinstance(vertices, ValidTypes.LISTS)
+        and len(vertices) >= 1
+        and all(
             # it is possible to create a list with different sized elements, i.e. [[x1,y1],[x1,y1,z1]],
             # there is no value error, as the lists are not np.arrays
-            is_list_of_numbers(elem, 2) or is_list_of_numbers(elem, 3) for elem in vertices) and (
-               len(vertices) == number_of_vertices if number_of_vertices is not None else True)
+            is_list_of_numbers(elem, 2) or is_list_of_numbers(elem, 3)
+            for elem in vertices
+        )
+        and (len(vertices) == number_of_vertices if number_of_vertices is not None else True)
+    )
 
 
 def is_valid_array_of_vertices(vertices: npy.ndarray, number_of_vertices=None):
@@ -259,8 +283,14 @@ def is_valid_array_of_vertices(vertices: npy.ndarray, number_of_vertices=None):
     if number_of_vertices is not None:
         assert is_valid_length(number_of_vertices)
 
-    return isinstance(vertices, ValidTypes.ARRAY) and len(vertices) >= 1 and all(
+    return (
+        isinstance(vertices, ValidTypes.ARRAY)
+        and len(vertices) >= 1
+        and all(
             #  it is not possible (ValueError) to create am array (np.array) with different sized vectors,
             #  so all the vectors will either be 2d (without z-coordinate) or 3d (with z-coordinate)
-            is_real_number_vector(elem, 2) or is_real_number_vector(elem, 3) for elem in vertices) and (
-               len(vertices) == number_of_vertices if number_of_vertices is not None else True)
+            is_real_number_vector(elem, 2) or is_real_number_vector(elem, 3)
+            for elem in vertices
+        )
+        and (len(vertices) == number_of_vertices if number_of_vertices is not None else True)
+    )
