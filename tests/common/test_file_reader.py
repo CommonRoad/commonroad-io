@@ -1,34 +1,66 @@
 import os
 import unittest
+import numpy as np
 
 from commonroad import SCENARIO_VERSION
+from commonroad.common.common_lanelet import (
+    LaneletType,
+    LineMarking,
+    RoadUser,
+    StopLine,
+)
+from commonroad.common.common_scenario import (
+    GeoTransformation,
+    Location,
+    TimeOfDay,
+    Underground,
+    Weather,
+)
 from commonroad.common.file_reader import (
+    CommonRoadDynamicFileReader,
     CommonRoadFileReader,
     CommonRoadMapFileReader,
-    CommonRoadDynamicFileReader,
-    combine_map_dynamic,
-    CommonRoadScenarioFileReader,
     CommonRoadReadAll,
+    CommonRoadScenarioFileReader,
+    combine_map_dynamic,
 )
-from commonroad.common.util import FileFormat
-from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
-from commonroad.prediction.prediction import *
+from commonroad.common.util import FileFormat, Interval
+from commonroad.geometry.shape import Circle, Polygon, Rectangle
+from commonroad.planning.planning_problem import (
+    GoalRegion,
+    PlanningProblem,
+    PlanningProblemSet,
+)
+from commonroad.prediction.prediction import TrajectoryPrediction, SetBasedPrediction, Occupancy
+from commonroad.scenario.intersection import (
+    CrossingGroup,
+    IncomingGroup,
+    Intersection,
+    OutgoingGroup,
+)
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
-from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, LaneletType
-from commonroad.scenario.obstacle import *
-from commonroad.scenario.scenario import Scenario, Tag, ScenarioID
-from commonroad.common.common_scenario import TimeOfDay, Weather, Underground, GeoTransformation, Location
-from commonroad.scenario.state import STState, InitialState, CustomState, KSState, STDState
-from commonroad.scenario.trajectory import Trajectory
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany
+from commonroad.scenario.obstacle import (
+    DynamicObstacle,
+    ObstacleType,
+    PhantomObstacle,
+    StaticObstacle,
+    EnvironmentObstacle
+)
+from commonroad.scenario.scenario import Scenario, ScenarioID, Tag
+from commonroad.scenario.state import CustomState, InitialState, KSState, STDState, STState, SignalState
 from commonroad.scenario.traffic_light import (
-    TrafficLightState,
-    TrafficLightDirection,
-    TrafficLightCycleElement,
     TrafficLight,
     TrafficLightCycle,
+    TrafficLightCycleElement,
+    TrafficLightDirection,
+    TrafficLightState,
 )
-from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup, CrossingGroup
+from commonroad.scenario.traffic_sign import (
+    TrafficSign,
+    TrafficSignElement,
+    TrafficSignIDGermany,
+)
+from commonroad.scenario.trajectory import Trajectory
 
 
 class TestXMLFileReader(unittest.TestCase):

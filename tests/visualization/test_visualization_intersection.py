@@ -12,12 +12,12 @@ from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.scenario.traffic_sign import (
     TrafficSign,
     TrafficSignElement,
+    TrafficSignIDChina,
     TrafficSignIDGermany,
-    TrafficSignIDUsa,
-    TrafficSignIDZamunda,
     TrafficSignIDRussia,
     TrafficSignIDSpain,
-    TrafficSignIDChina,
+    TrafficSignIDUsa,
+    TrafficSignIDZamunda,
 )
 from commonroad.visualization.draw_params import MPDrawParams
 from commonroad.visualization.mp_renderer import MPRenderer

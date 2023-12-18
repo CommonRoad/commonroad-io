@@ -1,6 +1,7 @@
 import unittest
-from commonroad.scenario.area import Area, AreaBorder, AreaType
+
 from commonroad.common.common_lanelet import LineMarking
+from commonroad.scenario.area import Area, AreaBorder, AreaType
 
 
 class TestArea(unittest.TestCase):

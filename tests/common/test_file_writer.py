@@ -1,28 +1,40 @@
 import logging
 import os
 import unittest
+import numpy as np
+from lxml import etree
 
 from commonroad import SCENARIO_VERSION
-from commonroad.common.file_writer import CommonRoadFileWriter
-from commonroad.common.util import FileFormat
-from commonroad.common.writer.file_writer_interface import precision, OverwriteExistingFile
-from commonroad.common.writer.file_writer_xml import float_to_str, Point, RectangleXMLNode, CircleXMLNode
+from commonroad.common.common_lanelet import LaneletType, LineMarking
+from commonroad.common.common_scenario import FileInformation, Location
 from commonroad.common.file_reader import (
+    CommonRoadDynamicFileReader,
     CommonRoadFileReader,
     CommonRoadMapFileReader,
     CommonRoadScenarioFileReader,
-    CommonRoadDynamicFileReader,
 )
-from lxml import etree
-from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
-from commonroad.prediction.prediction import *
+from commonroad.common.file_writer import CommonRoadFileWriter
+from commonroad.common.util import FileFormat, Interval
+from commonroad.common.writer.file_writer_interface import (
+    OverwriteExistingFile,
+    precision,
+)
+from commonroad.common.writer.file_writer_xml import (
+    CircleXMLNode,
+    Point,
+    RectangleXMLNode,
+    float_to_str,
+)
+from commonroad.geometry.shape import Circle, Rectangle
+from commonroad.planning.planning_problem import (
+    GoalRegion,
+    PlanningProblem,
+    PlanningProblemSet,
+)
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
-from commonroad.common.common_lanelet import LineMarking, LaneletType
-from commonroad.scenario.obstacle import *
-from commonroad.scenario.scenario import Scenario, Tag, ScenarioID
-from commonroad.common.common_scenario import Location, FileInformation
-from commonroad.scenario.trajectory import Trajectory
-from commonroad.scenario.state import KSState, InitialState
+from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
+from commonroad.scenario.scenario import Scenario, ScenarioID, Tag
+from commonroad.scenario.state import InitialState, KSState
 
 
 class TestXMLFileWriter(unittest.TestCase):

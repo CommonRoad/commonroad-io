@@ -1,10 +1,11 @@
 import enum
-from typing import Set, Union
 import warnings
+from typing import Set, Union
+
 import numpy as np
 
-from commonroad.common.validity import is_real_number_vector, is_valid_orientation
 import commonroad.geometry.transform
+from commonroad.common.validity import is_real_number_vector, is_valid_orientation
 
 
 class RoadUser(enum.Enum):

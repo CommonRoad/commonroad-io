@@ -1,11 +1,12 @@
-from typing import Union, Set
+from typing import Set, Union
+
+from commonroad.common.common_scenario import Location
 from commonroad.common.util import FileFormat
 from commonroad.common.writer.file_writer_interface import OverwriteExistingFile
 from commonroad.common.writer.file_writer_protobuf import ProtobufFileWriter
 from commonroad.common.writer.file_writer_xml import XMLFileWriter
 from commonroad.planning.planning_problem import PlanningProblemSet
 from commonroad.scenario.scenario import Scenario, Tag
-from commonroad.common.common_scenario import Location
 
 
 class CommonRoadFileWriter:

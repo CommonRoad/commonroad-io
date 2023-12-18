@@ -1,6 +1,7 @@
 # Helper script to create protobuf files from old xml test files
 
 import os
+
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.common.file_writer import CommonRoadFileWriter, OverwriteExistingFile
 

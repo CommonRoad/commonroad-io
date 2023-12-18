@@ -1,9 +1,13 @@
 import warnings
-from typing import List, Union, Dict
+from typing import Dict, List, Union
 
-from commonroad.common.common_scenario import ScenarioMetaInformation
-from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, PhantomObstacle
-from commonroad.common.common_scenario import Environment
+from commonroad.common.common_scenario import Environment, ScenarioMetaInformation
+from commonroad.scenario.obstacle import (
+    DynamicObstacle,
+    EnvironmentObstacle,
+    PhantomObstacle,
+    StaticObstacle,
+)
 from commonroad.scenario.traffic_light import TrafficLightCycle
 from commonroad.scenario.traffic_sign import TrafficSignValue
 

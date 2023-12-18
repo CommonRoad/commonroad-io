@@ -3,6 +3,7 @@
 # matplotlib.use('TkAgg')
 import math
 import os
+import tempfile
 import time
 import unittest
 import warnings
@@ -10,28 +11,38 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-import tempfile
 
 from commonroad.common.file_reader import CommonRoadFileReader
-from commonroad.geometry.shape import Rectangle, Circle, Polygon
-from commonroad.geometry.shape import ShapeGroup
+from commonroad.geometry.shape import Circle, Polygon, Rectangle, ShapeGroup
 from commonroad.planning.planning_problem import PlanningProblemSet
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction
-from commonroad.scenario.obstacle import StaticObstacle, ObstacleType, PhantomObstacle, EnvironmentObstacle
+from commonroad.scenario.obstacle import (
+    EnvironmentObstacle,
+    ObstacleType,
+    PhantomObstacle,
+    StaticObstacle,
+)
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.state import InitialState
 from commonroad.scenario.traffic_sign import (
     TRAFFIC_SIGN_WITH_ADDITIONAL_VALUE,
-    TrafficSignIDGermany,
-    TrafficSignIDSpain,
-    TrafficSignIDZamunda,
-    TrafficSignIDUsa,
     TrafficSign,
     TrafficSignElement,
+    TrafficSignIDGermany,
+    TrafficSignIDSpain,
+    TrafficSignIDUsa,
+    TrafficSignIDZamunda,
 )
-from commonroad.visualization.draw_params import MPDrawParams, VehicleShapeParams, DynamicObstacleParams
+from commonroad.visualization.draw_params import (
+    DynamicObstacleParams,
+    MPDrawParams,
+    VehicleShapeParams,
+)
 from commonroad.visualization.mp_renderer import MPRenderer
-from commonroad.visualization.traffic_sign import text_prop_dict, draw_traffic_light_signs
+from commonroad.visualization.traffic_sign import (
+    draw_traffic_light_signs,
+    text_prop_dict,
+)
 
 
 class TestVisualizationV2(unittest.TestCase):
@@ -69,7 +80,7 @@ class TestVisualizationV2(unittest.TestCase):
         scenario: Scenario = scenario
 
         rnd = MPRenderer()
-        with pytest.warns(None) as record_warnings:
+        with pytest.warns(None):
             scenario.lanelet_network.draw(
                 rnd,
             )
@@ -138,7 +149,7 @@ class TestVisualizationV2(unittest.TestCase):
         x0 = -40
         rnd = MPRenderer(plot_limits=[x0, 40, -40, 40], focus_obstacle=scenario.obstacle_by_id(1239))
         rnd.draw_params.dynamic_obstacle.occupancy.draw_occupancies = True
-        with pytest.warns(None) as record_warnings:
+        with pytest.warns(None):
             scenario.lanelet_network.draw(
                 rnd,
             )

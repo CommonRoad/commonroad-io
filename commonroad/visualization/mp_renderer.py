@@ -1,11 +1,9 @@
+import math
 import os
+import warnings
 from collections import defaultdict
 from copy import deepcopy
-from typing import Set, Callable, Tuple, Optional, Union, List
-from tqdm import tqdm
-import math
-import numpy as np
-import warnings
+from typing import Callable, List, Optional, Set, Tuple, Union
 
 import matplotlib as mpl
 import matplotlib.artist as artists
@@ -14,34 +12,35 @@ import matplotlib.collections as collections
 import matplotlib.figure
 import matplotlib.pyplot as plt
 import matplotlib.text as text
+import numpy as np
 import shapely.geometry
 from matplotlib.animation import FuncAnimation
-from matplotlib.colors import hsv_to_rgb, rgb_to_hsv, to_rgb, to_hex
+from matplotlib.colors import hsv_to_rgb, rgb_to_hsv, to_hex, to_rgb
 from matplotlib.path import Path
+from tqdm import tqdm
 
 import commonroad.geometry.shape
 import commonroad.prediction.prediction
 import commonroad.scenario.obstacle
+from commonroad.common.common_lanelet import LineMarking
 from commonroad.common.util import Interval
 from commonroad.geometry.shape import Rectangle
 from commonroad.planning.goal import GoalRegion
-from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
+from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet
 from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction
 from commonroad.scenario.lanelet import LaneletNetwork
-from commonroad.common.common_lanelet import LineMarking
 from commonroad.scenario.obstacle import (
     DynamicObstacle,
-    StaticObstacle,
-    SignalState,
-    PhantomObstacle,
     EnvironmentObstacle,
     Obstacle,
+    PhantomObstacle,
+    SignalState,
+    StaticObstacle,
 )
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.state import TraceState
+from commonroad.scenario.traffic_light import TrafficLight, TrafficLightState
 from commonroad.scenario.traffic_sign import TrafficSign
-from commonroad.scenario.traffic_light import TrafficLight
-from commonroad.scenario.traffic_light import TrafficLightState
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.visualization.draw_params import (
     BaseParam,
@@ -64,20 +63,20 @@ from commonroad.visualization.draw_params import (
     VehicleSignalParams,
 )
 from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.icons import supported_icons, get_obstacle_icon_patch
+from commonroad.visualization.icons import get_obstacle_icon_patch, supported_icons
 from commonroad.visualization.renderer import IRenderer
 from commonroad.visualization.traffic_sign import draw_traffic_light_signs
 from commonroad.visualization.util import (
+    LineCollectionDataUnits,
     LineDataUnits,
+    approximate_bounding_box_dyn_obstacles,
     collect_center_line_colors,
-    get_arrow_path_at,
     colormap_idx,
+    get_arrow_path_at,
+    get_tangent_angle,
+    get_vehicle_direction_triangle,
     line_marking_to_linestyle,
     traffic_light_color_dict,
-    get_tangent_angle,
-    approximate_bounding_box_dyn_obstacles,
-    get_vehicle_direction_triangle,
-    LineCollectionDataUnits,
 )
 
 traffic_sign_path = os.path.join(os.path.dirname(__file__), "traffic_signs/")

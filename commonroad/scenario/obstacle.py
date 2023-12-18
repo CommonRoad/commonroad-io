@@ -1,30 +1,44 @@
 import enum
 import warnings
-import numpy as np
-from typing import Union, Set, List, Optional
 from abc import abstractmethod
+from typing import List, Optional, Set, Union
 
+import numpy as np
 
-from commonroad.common.validity import is_valid_orientation, is_real_number_vector, is_real_number
+from commonroad.common.validity import (
+    is_real_number,
+    is_real_number_vector,
+    is_valid_orientation,
+)
 from commonroad.geometry.shape import (
-    Shape,
-    Rectangle,
     Circle,
     Polygon,
+    Rectangle,
+    Shape,
     occupancy_shape_from_state,
     shape_group_occupancy_shape_from_state,
 )
-from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
-from commonroad.scenario.state import TraceState, InitialState, SignalState, MetaInformationState
-from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.renderer import IRenderer
+from commonroad.prediction.prediction import (
+    Occupancy,
+    Prediction,
+    SetBasedPrediction,
+    TrajectoryPrediction,
+)
+from commonroad.scenario.state import (
+    InitialState,
+    MetaInformationState,
+    SignalState,
+    TraceState,
+)
 from commonroad.visualization.draw_params import (
+    DynamicObstacleParams,
+    EnvironmentObstacleParams,
     OptionalSpecificOrAllDrawParams,
     PhantomObstacleParams,
-    EnvironmentObstacleParams,
-    DynamicObstacleParams,
     StaticObstacleParams,
 )
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.renderer import IRenderer
 
 
 @enum.unique

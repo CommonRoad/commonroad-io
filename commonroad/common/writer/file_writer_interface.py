@@ -1,7 +1,7 @@
 import enum
 import pathlib
 from abc import ABC, abstractmethod
-from typing import Set, Union, Optional
+from typing import Optional, Set, Union
 
 from commonroad.planning.planning_problem import PlanningProblemSet
 from commonroad.scenario.scenario import Scenario, Tag

@@ -2,32 +2,50 @@ import enum
 import itertools
 import warnings
 from collections import defaultdict
-from typing import Union, List, Set, Dict, Tuple, Optional
+from typing import Dict, List, Optional, Set, Tuple, Union
 
 import numpy as np
 
+from commonroad.common.common_scenario import Environment, FileInformation, ScenarioID
 from commonroad.common.util import Interval
 from commonroad.common.validity import (
+    is_integer_number,
+    is_natural_number,
     is_real_number,
     is_real_number_vector,
     is_valid_orientation,
-    is_natural_number,
-    is_integer_number,
 )
-from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
+from commonroad.prediction.prediction import (
+    Occupancy,
+    SetBasedPrediction,
+    TrajectoryPrediction,
+)
 from commonroad.scenario.intersection import Intersection
-from commonroad.scenario.lanelet import Lanelet, Bound, StopLine
-from commonroad.scenario.lanelet import LaneletNetwork, MapMetaInformation
-from commonroad.scenario.obstacle import ObstacleRole
-from commonroad.scenario.obstacle import ObstacleType
-from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, Obstacle, PhantomObstacle
+from commonroad.scenario.lanelet import (
+    Bound,
+    Lanelet,
+    LaneletNetwork,
+    MapMetaInformation,
+    StopLine,
+)
+from commonroad.scenario.obstacle import (
+    DynamicObstacle,
+    EnvironmentObstacle,
+    Obstacle,
+    ObstacleRole,
+    ObstacleType,
+    PhantomObstacle,
+    StaticObstacle,
+)
 from commonroad.scenario.state import TraceState
-from commonroad.scenario.traffic_sign import TrafficSign
 from commonroad.scenario.traffic_light import TrafficLight
+from commonroad.scenario.traffic_sign import TrafficSign
+from commonroad.visualization.draw_params import (
+    MPDrawParams,
+    OptionalSpecificOrAllDrawParams,
+)
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.renderer import IRenderer
-from commonroad.visualization.draw_params import OptionalSpecificOrAllDrawParams, MPDrawParams
-from commonroad.common.common_scenario import ScenarioID, FileInformation, Environment
 
 
 @enum.unique

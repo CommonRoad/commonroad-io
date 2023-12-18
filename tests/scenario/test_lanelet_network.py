@@ -4,22 +4,35 @@ import unittest.mock as mock
 
 import numpy as np
 
-from commonroad.common.common_scenario import MapMetaInformation, FileInformation, ScenarioID
+from commonroad.common.common_lanelet import LaneletType, StopLine
+from commonroad.common.common_scenario import (
+    FileInformation,
+    MapMetaInformation,
+    ScenarioID,
+)
 from commonroad.common.util import Time
-from commonroad.scenario.lanelet import Lanelet, LineMarking, LaneletNetwork
-from commonroad.common.common_lanelet import StopLine, LaneletType
-from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
 from commonroad.geometry.shape import Rectangle
+from commonroad.scenario.area import Area
+from commonroad.scenario.intersection import (
+    CrossingGroup,
+    IncomingGroup,
+    Intersection,
+    OutgoingGroup,
+)
+from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking
+from commonroad.scenario.obstacle import ObstacleType, StaticObstacle
 from commonroad.scenario.state import InitialState
-from commonroad.scenario.traffic_sign import TrafficSignElement, TrafficSign, TrafficSignIDGermany
 from commonroad.scenario.traffic_light import (
-    TrafficLightState,
-    TrafficLightCycleElement,
     TrafficLight,
     TrafficLightCycle,
+    TrafficLightCycleElement,
+    TrafficLightState,
 )
-from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup, CrossingGroup
-from commonroad.scenario.area import Area
+from commonroad.scenario.traffic_sign import (
+    TrafficSign,
+    TrafficSignElement,
+    TrafficSignIDGermany,
+)
 
 
 class TestMapMetaInformation(unittest.TestCase):

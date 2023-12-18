@@ -1,27 +1,25 @@
 import datetime
-import re
-from typing import Set, Union, List, Optional
 import logging
+import re
+from typing import List, Optional, Set, Union
 
 import numpy as np
 from google.protobuf.message import DecodeError
 
-from commonroad.common.common_scenario import ScenarioID
-from commonroad.common.util import Interval, FileFormat, Time
-from commonroad.common.writer.file_writer_interface import FileWriter, OverwriteExistingFile, FileType
-from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
-from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
-from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction, SetBasedPrediction
-from commonroad.common.protobuf.map import (
-    area_pb2,
-    commonroad_map_pb2,
-    intersection_pb2,
-    lanelet_pb2,
-    location_pb2,
-    traffic_light_pb2,
-    traffic_sign_pb2,
+from commonroad.common.common_lanelet import LineMarking, StopLine
+from commonroad.common.common_scenario import (
+    Environment,
+    GeoTransformation,
+    Location,
+    ScenarioID,
 )
-from commonroad.common.protobuf.scenario import commonroad_scenario_pb2, planning_problem_pb2, scenario_tags_pb2
+from commonroad.common.protobuf.common import (
+    scenario_meta_information_pb2,
+    state_pb2,
+    traffic_light_state_pb2,
+    traffic_sign_element_pb2,
+    util_pb2,
+)
 from commonroad.common.protobuf.dynamic import (
     commonroad_dynamic_pb2,
     dynamic_obstacle_pb2,
@@ -33,32 +31,61 @@ from commonroad.common.protobuf.dynamic import (
     traffic_light_cycle_pb2,
     traffic_sign_value_pb2,
 )
-from commonroad.common.protobuf.common import (
-    state_pb2,
-    traffic_light_state_pb2,
-    traffic_sign_element_pb2,
-    util_pb2,
-    scenario_meta_information_pb2,
+from commonroad.common.protobuf.map import (
+    area_pb2,
+    commonroad_map_pb2,
+    intersection_pb2,
+    lanelet_pb2,
+    location_pb2,
+    traffic_light_pb2,
+    traffic_sign_pb2,
 )
-
-
-from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup, CrossingGroup
-from commonroad.scenario.lanelet import Lanelet
+from commonroad.common.protobuf.scenario import (
+    commonroad_scenario_pb2,
+    planning_problem_pb2,
+    scenario_tags_pb2,
+)
+from commonroad.common.util import FileFormat, Interval, Time
+from commonroad.common.writer.file_writer_interface import (
+    FileType,
+    FileWriter,
+    OverwriteExistingFile,
+)
+from commonroad.geometry.shape import Circle, Polygon, Rectangle, Shape, ShapeGroup
+from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet
+from commonroad.prediction.prediction import (
+    Occupancy,
+    SetBasedPrediction,
+    TrajectoryPrediction,
+)
 from commonroad.scenario.area import Area, AreaBorder
-from commonroad.common.common_lanelet import StopLine, LineMarking
+from commonroad.scenario.intersection import (
+    CrossingGroup,
+    IncomingGroup,
+    Intersection,
+    OutgoingGroup,
+)
+from commonroad.scenario.lanelet import Lanelet
 from commonroad.scenario.obstacle import (
-    StaticObstacle,
     DynamicObstacle,
     EnvironmentObstacle,
-    SignalState,
     PhantomObstacle,
+    SignalState,
+    StaticObstacle,
 )
 from commonroad.scenario.scenario import Scenario, Tag
-from commonroad.common.common_scenario import Environment, GeoTransformation, Location
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignValue
-from commonroad.scenario.traffic_light import TrafficLightCycleElement, TrafficLight, TrafficLightCycle
-from commonroad.scenario.trajectory import Trajectory
 from commonroad.scenario.state import State
+from commonroad.scenario.traffic_light import (
+    TrafficLight,
+    TrafficLightCycle,
+    TrafficLightCycleElement,
+)
+from commonroad.scenario.traffic_sign import (
+    TrafficSign,
+    TrafficSignElement,
+    TrafficSignValue,
+)
+from commonroad.scenario.trajectory import Trajectory
 
 logger = logging.getLogger(__name__)
 

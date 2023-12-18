@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import Tuple
 
+from commonroad.common.reader.dynamic_interface import DynamicInterface
+from commonroad.common.reader.scenario_interface import ScenarioInterface
 from commonroad.common.util import Path_T
 from commonroad.planning.planning_problem import PlanningProblemSet
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.scenario import Scenario
-from commonroad.common.reader.dynamic_interface import DynamicInterface
-from commonroad.common.reader.scenario_interface import ScenarioInterface
 
 
 class FileReader(ABC):

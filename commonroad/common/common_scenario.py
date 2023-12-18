@@ -1,12 +1,14 @@
-from datetime import datetime
 import enum
-import warnings
 import re
+import warnings
+from datetime import datetime
+from typing import List, Optional, Union
+
 import iso3166
-from typing import Union, List, Optional
 from numpy import double
-from commonroad.common.util import Time
+
 from commonroad import SCENARIO_VERSION, SUPPORTED_COMMONROAD_VERSIONS
+from commonroad.common.util import Time
 
 
 class ScenarioID:

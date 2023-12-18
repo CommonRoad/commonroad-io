@@ -1,14 +1,15 @@
 import unittest
-import numpy as np
 from pathlib import Path
+
+import numpy as np
 
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.scenario.traffic_sign import (
     TrafficSign,
     TrafficSignElement,
-    TrafficSignIDZamunda,
-    TrafficSignIDGermany,
     TrafficSignIDArgentina,
+    TrafficSignIDGermany,
+    TrafficSignIDZamunda,
 )
 
 

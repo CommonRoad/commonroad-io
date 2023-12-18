@@ -1,21 +1,24 @@
-from pathlib import Path
-from typing import Tuple, Optional, List
 import os
+from pathlib import Path
+from typing import List, Optional, Tuple
 
-from commonroad.common.util import FileFormat, Path_T
+from commonroad.common.reader.dynamic_interface import DynamicInterface
 from commonroad.common.reader.file_reader_protobuf import (
-    ProtobufFileReaderScenario,
-    ProtobufFileReaderMap,
     ProtobufFileReaderDynamic,
+    ProtobufFileReaderMap,
+    ProtobufFileReaderScenario,
     TrajectoryPredictionFactory,
 )
 from commonroad.common.reader.file_reader_xml import XMLFileReader
-from commonroad.planning.planning_problem import PlanningProblemSet, CooperativePlanningProblem
+from commonroad.common.reader.scenario_interface import ScenarioInterface
+from commonroad.common.util import FileFormat, Path_T
+from commonroad.planning.planning_problem import (
+    CooperativePlanningProblem,
+    PlanningProblemSet,
+)
 from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.scenario import Scenario
-from commonroad.common.reader.dynamic_interface import DynamicInterface
-from commonroad.common.reader.scenario_interface import ScenarioInterface
 
 
 class CommonRoadFileReader:

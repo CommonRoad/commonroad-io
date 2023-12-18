@@ -1,37 +1,46 @@
 import copy
 import dataclasses
+import warnings
 from collections import defaultdict
-from typing import Tuple, Dict, Set, List, Optional, Union
+from typing import Dict, List, Optional, Set, Tuple, Union
+
 import numpy as np
 from shapely.geometry import Point as ShapelyPoint
 from shapely.geometry import Polygon as ShapelyPolygon
 from shapely.strtree import STRtree
-import warnings
 
 import commonroad.geometry.transform
+from commonroad.common.common_lanelet import (
+    LaneletType,
+    LineMarking,
+    RoadUser,
+    StopLine,
+)
+from commonroad.common.common_scenario import Location, MapMetaInformation
 from commonroad.common.util import subtract_orientations
 from commonroad.common.validity import (
-    is_valid_polyline,
-    is_real_number,
-    is_valid_orientation,
     ValidTypes,
-    is_natural_number,
-    is_real_number_vector,
-    is_positive,
     is_list_of_natural_numbers,
+    is_natural_number,
+    is_positive,
+    is_real_number,
+    is_real_number_vector,
+    is_valid_orientation,
+    is_valid_polyline,
 )
-from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape
-from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup
+from commonroad.geometry.shape import Circle, Polygon, Rectangle, Shape, ShapeGroup
+from commonroad.scenario.area import Area
+from commonroad.scenario.intersection import IncomingGroup, Intersection, OutgoingGroup
 from commonroad.scenario.obstacle import Obstacle
 from commonroad.scenario.state import TraceState
-from commonroad.scenario.traffic_sign import TrafficSign
 from commonroad.scenario.traffic_light import TrafficLight
-from commonroad.scenario.area import Area
+from commonroad.scenario.traffic_sign import TrafficSign
+from commonroad.visualization.draw_params import (
+    LaneletNetworkParams,
+    OptionalSpecificOrAllDrawParams,
+)
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.renderer import IRenderer
-from commonroad.visualization.draw_params import OptionalSpecificOrAllDrawParams, LaneletNetworkParams
-from commonroad.common.common_lanelet import RoadUser, StopLine, LineMarking, LaneletType
-from commonroad.common.common_scenario import Location, MapMetaInformation
 
 
 @dataclasses.dataclass

@@ -1,5 +1,11 @@
 import unittest
-from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup, CrossingGroup
+
+from commonroad.scenario.intersection import (
+    CrossingGroup,
+    IncomingGroup,
+    Intersection,
+    OutgoingGroup,
+)
 
 
 class TestIntersection(unittest.TestCase):

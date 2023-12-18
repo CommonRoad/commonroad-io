@@ -1,8 +1,9 @@
 from __future__ import annotations
-from typing import List, Set, Dict, Optional, TYPE_CHECKING, Union
-import warnings
-from commonroad.common.validity import is_natural_number
 
+import warnings
+from typing import TYPE_CHECKING, Dict, List, Optional, Set, Union
+
+from commonroad.common.validity import is_natural_number
 
 if TYPE_CHECKING:
     from commonroad.scenario.lanelet import LaneletNetwork

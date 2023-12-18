@@ -2,7 +2,10 @@ import warnings
 from typing import List, Union
 
 from commonroad.common.common_scenario import ScenarioMetaInformation
-from commonroad.planning.planning_problem import PlanningProblem, CooperativePlanningProblem
+from commonroad.planning.planning_problem import (
+    CooperativePlanningProblem,
+    PlanningProblem,
+)
 
 
 class ScenarioInterface:

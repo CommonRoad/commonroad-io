@@ -1,43 +1,60 @@
 import datetime
+import logging
 import os
 import pathlib
 import re
 import warnings
-from typing import Set, Union, List
+from typing import List, Set, Union
+
 import numpy as np
 from lxml import etree, objectify
-import logging
 
 from commonroad import SCENARIO_VERSION
-from commonroad.common.util import Interval, FileFormat
-from commonroad.geometry.shape import ShapeGroup, Shape, Circle, Rectangle, Polygon
+from commonroad.common.common_lanelet import LaneletType, LineMarking, StopLine
+from commonroad.common.common_scenario import (
+    Environment,
+    GeoTransformation,
+    Location,
+    TimeOfDay,
+    Underground,
+    Weather,
+)
+from commonroad.common.util import FileFormat, Interval
+from commonroad.common.writer.file_writer_interface import (
+    FileType,
+    FileWriter,
+    OverwriteExistingFile,
+    precision,
+)
+from commonroad.geometry.shape import Circle, Polygon, Rectangle, Shape, ShapeGroup
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet
-from commonroad.prediction.prediction import SetBasedPrediction, TrajectoryPrediction, Occupancy
+from commonroad.prediction.prediction import (
+    Occupancy,
+    SetBasedPrediction,
+    TrajectoryPrediction,
+)
 from commonroad.scenario.intersection import Intersection
 from commonroad.scenario.lanelet import Lanelet
-from commonroad.common.common_lanelet import StopLine, LineMarking, LaneletType
 from commonroad.scenario.obstacle import (
-    Obstacle,
     DynamicObstacle,
-    StaticObstacle,
     EnvironmentObstacle,
-    PhantomObstacle,
+    Obstacle,
     ObstacleRole,
     ObstacleType,
+    PhantomObstacle,
     SignalState,
+    StaticObstacle,
 )
-from commonroad.scenario.scenario import Tag, Scenario
-from commonroad.common.common_scenario import TimeOfDay, Weather, Underground, Environment, GeoTransformation, Location
-from commonroad.scenario.traffic_sign import TrafficSign
+from commonroad.scenario.scenario import Scenario, Tag
+from commonroad.scenario.state import State
 from commonroad.scenario.traffic_light import (
-    TrafficLightDirection,
-    TrafficLightCycleElement,
     TrafficLight,
     TrafficLightCycle,
+    TrafficLightCycleElement,
+    TrafficLightDirection,
 )
+from commonroad.scenario.traffic_sign import TrafficSign
 from commonroad.scenario.trajectory import Trajectory
-from commonroad.scenario.state import State
-from commonroad.common.writer.file_writer_interface import FileWriter, precision, OverwriteExistingFile, FileType
 
 logger = logging.getLogger(__name__)
 

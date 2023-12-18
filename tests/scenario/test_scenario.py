@@ -1,19 +1,41 @@
 import unittest
 import unittest.mock as mock
 from copy import deepcopy
+import numpy as np
 
 from commonroad import SCENARIO_VERSION
-from commonroad.common.util import Interval, Time
-from commonroad.geometry.shape import *
-from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup, CrossingGroup
-from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
 from commonroad.common.common_lanelet import LineMarking
-from commonroad.scenario.obstacle import *
+from commonroad.common.common_scenario import (
+    Environment,
+    GeoTransformation,
+    Location,
+    TimeOfDay,
+    Underground,
+    Weather,
+)
+from commonroad.common.util import Interval, Time
+from commonroad.geometry.shape import Rectangle, Circle, Polygon
+from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction, SetBasedPrediction
+from commonroad.scenario.intersection import (
+    CrossingGroup,
+    IncomingGroup,
+    Intersection,
+    OutgoingGroup,
+)
+from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
+from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, ObstacleType, ObstacleRole
 from commonroad.scenario.scenario import Scenario, ScenarioID
-from commonroad.common.common_scenario import TimeOfDay, Weather, Underground, Environment, GeoTransformation, Location
-from commonroad.scenario.state import KSState, InitialState
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDGermany
-from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightCycleElement, TrafficLight
+from commonroad.scenario.state import InitialState, KSState
+from commonroad.scenario.traffic_light import (
+    TrafficLight,
+    TrafficLightCycleElement,
+    TrafficLightState,
+)
+from commonroad.scenario.traffic_sign import (
+    TrafficSign,
+    TrafficSignElement,
+    TrafficSignIDGermany,
+)
 from commonroad.scenario.trajectory import Trajectory
 
 
@@ -24,7 +46,6 @@ class TestScenario(unittest.TestCase):
             np.array([np.array((0.0, 0.0)), np.array((0.0, 1.0)), np.array((1.0, 1.0)), np.array((1.0, 0.0))])
         )
         self.circ = Circle(2.0)
-        sg = ShapeGroup([self.circ, self.rectangle])
         occupancy_list = list()
 
         occupancy_list.append(Occupancy(0, self.rectangle))

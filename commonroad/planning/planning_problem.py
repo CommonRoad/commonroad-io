@@ -1,20 +1,20 @@
 import warnings
-from typing import Union, List, Tuple, Dict, Set
+from typing import Dict, List, Set, Tuple, Union
 
 import numpy as np
 
-from commonroad.scenario.scenario import Tag
-from commonroad.scenario.trajectory import Trajectory
-from commonroad.scenario.state import InitialState
-from commonroad.planning.goal import GoalRegion
 from commonroad.common.validity import is_natural_number
-from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.renderer import IRenderer
+from commonroad.planning.goal import GoalRegion
+from commonroad.scenario.scenario import Tag
+from commonroad.scenario.state import InitialState
+from commonroad.scenario.trajectory import Trajectory
 from commonroad.visualization.draw_params import (
-    PlanningProblemParams,
     OptionalSpecificOrAllDrawParams,
+    PlanningProblemParams,
     PlanningProblemSetParams,
 )
+from commonroad.visualization.drawable import IDrawable
+from commonroad.visualization.renderer import IRenderer
 
 
 class PlanningProblem(IDrawable):
