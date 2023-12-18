@@ -1,10 +1,11 @@
-from typing import Optional
-import numpy as np
 from abc import ABC
+from typing import Optional
 
-from commonroad.scenario.trajectory import Trajectory
-from commonroad.scenario.scenario import Scenario
+import numpy as np
+
 from commonroad.planning.planning_problem import PlanningProblem
+from commonroad.scenario.scenario import Scenario
+from commonroad.scenario.trajectory import Trajectory
 
 
 class TrajectoryPlannerInterface(ABC):

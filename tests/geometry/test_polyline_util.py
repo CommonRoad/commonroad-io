@@ -3,20 +3,26 @@ import unittest
 import numpy as np
 
 from commonroad.geometry import polyline_util
-from commonroad.geometry.polyline_util import compare_polylines_equality, is_point_on_polyline, \
-    compute_polyline_intersections, resample_polyline_with_number, resample_polyline_with_distance, \
-    equalize_polyline_length, concatenate_polylines, create_indices_mapping
+from commonroad.geometry.polyline_util import (
+    compare_polylines_equality,
+    compute_polyline_intersections,
+    concatenate_polylines,
+    create_indices_mapping,
+    equalize_polyline_length,
+    is_point_on_polyline,
+    resample_polyline_with_distance,
+    resample_polyline_with_number,
+)
 
 
 class TestPolylineUtil(unittest.TestCase):
-
     def test_compute_polyline_lengths(self):
-        polylines = [np.array([[-1, 0], [1, 0], [4, 0]]),
-                     np.array([[0, 0], [1, 1], [3, 3], [0, 0]]),
-                     np.array([[-7, -7], [7, 7]])]
-        lengths_exps = [[0., 2., 5.],
-                        [0., 1.41421356, 4.24264069, 8.48528137],
-                        [0., 19.79898987322333]]
+        polylines = [
+            np.array([[-1, 0], [1, 0], [4, 0]]),
+            np.array([[0, 0], [1, 1], [3, 3], [0, 0]]),
+            np.array([[-7, -7], [7, 7]]),
+        ]
+        lengths_exps = [[0.0, 2.0, 5.0], [0.0, 1.41421356, 4.24264069, 8.48528137], [0.0, 19.79898987322333]]
 
         for p in range(0, len(polylines)):
             polyline = polylines[p]
@@ -28,10 +34,12 @@ class TestPolylineUtil(unittest.TestCase):
                 self.assertAlmostEqual(lengths[i], lengths_exp[i])
 
     def test_compute_total_polyline_length(self):
-        polylines = [np.array([[1, 1], [3, 1], [7, 1], [0, 1]]),
-                     np.array([[1, 1], [-2, -2], [-3, -2], [0, -2]]),
-                     np.array([[-7, -7], [7, 7]])]
-        length_exps = [13., 8.242640687119284, 19.79898987322333]
+        polylines = [
+            np.array([[1, 1], [3, 1], [7, 1], [0, 1]]),
+            np.array([[1, 1], [-2, -2], [-3, -2], [0, -2]]),
+            np.array([[-7, -7], [7, 7]]),
+        ]
+        length_exps = [13.0, 8.242640687119284, 19.79898987322333]
 
         for i in range(0, len(polylines)):
             polyline = polylines[i]
@@ -40,20 +48,24 @@ class TestPolylineUtil(unittest.TestCase):
             self.assertAlmostEqual(length, length_exp)
 
     def test_compute_polyline_curvatures(self):
-        polylines = [np.array([[-7, 0], [-3, 0], [1, 0], [5, 0]]),
-                     np.array([[-2, 0], [-1, 0.5], [0, 1], [1, 0.5], [2, 0]]),
-                     np.array([[-2, 0], [-1, -0.5], [0, -1], [1, -0.5], [2, 0]]),
-                     np.array([[-2, 0], [-1, 1], [0, 0], [1, -1], [2, 0]]),
-                     np.array([[0, 0], [1, 1], [2, 2]]),
-                     np.array([[1, 1], [2, 3], [3, 6]]),
-                     np.array([[4, 6], [5, 5], [6, 3]])]
-        curvatures_exps = [[0., 0., 0., 0.],
-                           [0., -0.17888544, -0.5, -0.17888544, 0.],
-                           [0., 0.17888544, 0.5, 0.17888544, 0.],
-                           [-0.35355339, -1., 0., 1., 0.35355339],
-                           [0., 0., 0.],
-                           [0.044721359549995794, 0.025613150093386463, 0.015811388300841896],
-                           [-0.17677669529663687, -0.08533849172695833, -0.044721359549995794]]
+        polylines = [
+            np.array([[-7, 0], [-3, 0], [1, 0], [5, 0]]),
+            np.array([[-2, 0], [-1, 0.5], [0, 1], [1, 0.5], [2, 0]]),
+            np.array([[-2, 0], [-1, -0.5], [0, -1], [1, -0.5], [2, 0]]),
+            np.array([[-2, 0], [-1, 1], [0, 0], [1, -1], [2, 0]]),
+            np.array([[0, 0], [1, 1], [2, 2]]),
+            np.array([[1, 1], [2, 3], [3, 6]]),
+            np.array([[4, 6], [5, 5], [6, 3]]),
+        ]
+        curvatures_exps = [
+            [0.0, 0.0, 0.0, 0.0],
+            [0.0, -0.17888544, -0.5, -0.17888544, 0.0],
+            [0.0, 0.17888544, 0.5, 0.17888544, 0.0],
+            [-0.35355339, -1.0, 0.0, 1.0, 0.35355339],
+            [0.0, 0.0, 0.0],
+            [0.044721359549995794, 0.025613150093386463, 0.015811388300841896],
+            [-0.17677669529663687, -0.08533849172695833, -0.044721359549995794],
+        ]
 
         for p in range(0, len(polylines)):
             polyline = polylines[p]
@@ -65,11 +77,16 @@ class TestPolylineUtil(unittest.TestCase):
                 self.assertAlmostEqual(curvatures[i], curvatures_exp[i])
 
     def test_compute_polyline_orientations(self):
-        polylines = [np.array([[0, 0], [4, 0], [4, 4], [0, 4], [0, 0]]), np.array([[1, 1], [2, 2], [-7, -7]]),
-                     np.array([[5, 5], [0, 4]])]
-        orientations_exps = [[0., 1.5707963267948966, 3.141592653589793, -1.5707963267948966, -1.5707963267948966],
-                             [0.7853981633974483, -2.356194490192345, -2.356194490192345],
-                             [-2.9441970937399127, -2.9441970937399127]]
+        polylines = [
+            np.array([[0, 0], [4, 0], [4, 4], [0, 4], [0, 0]]),
+            np.array([[1, 1], [2, 2], [-7, -7]]),
+            np.array([[5, 5], [0, 4]]),
+        ]
+        orientations_exps = [
+            [0.0, 1.5707963267948966, 3.141592653589793, -1.5707963267948966, -1.5707963267948966],
+            [0.7853981633974483, -2.356194490192345, -2.356194490192345],
+            [-2.9441970937399127, -2.9441970937399127],
+        ]
 
         for p in range(0, len(polylines)):
             polyline = polylines[p]
@@ -81,11 +98,13 @@ class TestPolylineUtil(unittest.TestCase):
                 self.assertAlmostEqual(orientations[i], orientations_exp[i])
 
     def test_compute_polyline_initial_orientation(self):
-        polylines = [np.array([[0, 0], [4, -4]]),
-                     np.array([[1, 1], [7, 1]]),
-                     np.array([[-1, -1], [-1, 1], [3, 2], [7, 4]]),
-                     np.array([[0, 0], [9, 0.1]])]
-        orientation_exps = [-0.7853981633974483, 0., 1.5707963267948966, 0.011110653897607473]
+        polylines = [
+            np.array([[0, 0], [4, -4]]),
+            np.array([[1, 1], [7, 1]]),
+            np.array([[-1, -1], [-1, 1], [3, 2], [7, 4]]),
+            np.array([[0, 0], [9, 0.1]]),
+        ]
+        orientation_exps = [-0.7853981633974483, 0.0, 1.5707963267948966, 0.011110653897607473]
 
         for i in range(0, len(polylines)):
             polyline = polylines[i]
@@ -124,15 +143,19 @@ class TestPolylineUtil(unittest.TestCase):
         print(intersections)
         self.assertEqual(intersections.size, 0)
 
-        polylines_1 = [np.array([[0, 0], [1, 0], [2, 0], [3, 0]]),
-                       np.array([[-1, -1], [0, 0], [1, 1]]),
-                       np.array([[2, -5], [2, -3], [2, 2]]),
-                       np.array([[-2, -2], [2, 2]])]
-        polylines_2 = [np.array([[2.5, -1.5], [2.5, 2], [2.5, 3]]),
-                       np.array([[1, 0], [1, 0.5], [1, 1]]),
-                       np.array([[0, 0], [3, 0], [3, -1], [0, -1], [0, -2], [7, -2]]),
-                       np.array([[-2, 2], [2, -2]])]
-        intersections_exps = [[[2.5, 0.]], [[1, 1]], [[2, 0], [2, -1], [2, -2]], [[0, 0]]]
+        polylines_1 = [
+            np.array([[0, 0], [1, 0], [2, 0], [3, 0]]),
+            np.array([[-1, -1], [0, 0], [1, 1]]),
+            np.array([[2, -5], [2, -3], [2, 2]]),
+            np.array([[-2, -2], [2, 2]]),
+        ]
+        polylines_2 = [
+            np.array([[2.5, -1.5], [2.5, 2], [2.5, 3]]),
+            np.array([[1, 0], [1, 0.5], [1, 1]]),
+            np.array([[0, 0], [3, 0], [3, -1], [0, -1], [0, -2], [7, -2]]),
+            np.array([[-2, 2], [2, -2]]),
+        ]
+        intersections_exps = [[[2.5, 0.0]], [[1, 1]], [[2, 0], [2, -1], [2, -2]], [[0, 0]]]
         for i in range(0, len(polylines_1)):
             polyline_1 = polylines_1[i]
             polyline_2 = polylines_2[i]
@@ -145,10 +168,12 @@ class TestPolylineUtil(unittest.TestCase):
                 self.assertAlmostEqual(y, y_exp)
 
     def test_is_polyline_self_intersection(self):
-        polylines = [np.array([[0, 0], [1, 0], [2, 0], [7, 0]]),
-                     np.array([[0, 0], [1, 0], [1, 1], [0.5, 1], [0.5, -1]]),
-                     np.array([[0, 0], [1, 1], [-1, -1]]),
-                     np.array([[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]])]
+        polylines = [
+            np.array([[0, 0], [1, 0], [2, 0], [7, 0]]),
+            np.array([[0, 0], [1, 0], [1, 1], [0.5, 1], [0.5, -1]]),
+            np.array([[0, 0], [1, 1], [-1, -1]]),
+            np.array([[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]),
+        ]
         self_intersection_exps = [False, True, True, False]
 
         for i in range(0, len(polylines)):
@@ -175,21 +200,24 @@ class TestPolylineUtil(unittest.TestCase):
         self.assertTrue(compare_polylines_equality(polyline_1, polyline_2))
 
     def test_resample_polyline_with_number_and_distance(self):
-        polylines = [np.array([[0, 0], [1, 0], [2, 0], [3, 0]]),
-                     np.array([[0., 0.], [0.5, 0.], [1., 0.], [1.5, 0.], [2., 0.], [2.5, 0.], [3, 0.]]),
-                     np.array([[0, -1], [0, 0], [0, 1]]),
-                     np.array([[-3, -3], [-1, -1], [1, 1], [3, 3]]),
-                     np.array([[0, 0], [0, 1], [1, 1], [1, 2], [2, 2]]),
-                     np.array([[-1, 0], [0, 0]])]
-        resampled_polyline_exps = [[[0., 0.], [0.5, 0.], [1., 0.], [1.5, 0.], [2., 0.], [2.5, 0.], [3, 0.]],
-                                   [[0., 0.], [1, 0.], [2, 0.], [3, 0.]],
-                                   [[0., -1], [0., 1]],
-                                   [[-3, -3], [-1.8, -1.8], [-0.6, -0.6], [0.6, 0.6], [1.8, 1.8], [3, 3]],
-                                   [[0., 0.], [0., 0.5], [0., 1], [0.5, 1.], [1., 1.], [1., 1.5], [1., 2.], [1.5, 2.],
-                                    [2., 2.]],
-                                   [[-1., 0.], [-0.66666667, 0.], [-0.33333333, 0.], [0., 0.]]]
+        polylines = [
+            np.array([[0, 0], [1, 0], [2, 0], [3, 0]]),
+            np.array([[0.0, 0.0], [0.5, 0.0], [1.0, 0.0], [1.5, 0.0], [2.0, 0.0], [2.5, 0.0], [3, 0.0]]),
+            np.array([[0, -1], [0, 0], [0, 1]]),
+            np.array([[-3, -3], [-1, -1], [1, 1], [3, 3]]),
+            np.array([[0, 0], [0, 1], [1, 1], [1, 2], [2, 2]]),
+            np.array([[-1, 0], [0, 0]]),
+        ]
+        resampled_polyline_exps = [
+            [[0.0, 0.0], [0.5, 0.0], [1.0, 0.0], [1.5, 0.0], [2.0, 0.0], [2.5, 0.0], [3, 0.0]],
+            [[0.0, 0.0], [1, 0.0], [2, 0.0], [3, 0.0]],
+            [[0.0, -1], [0.0, 1]],
+            [[-3, -3], [-1.8, -1.8], [-0.6, -0.6], [0.6, 0.6], [1.8, 1.8], [3, 3]],
+            [[0.0, 0.0], [0.0, 0.5], [0.0, 1], [0.5, 1.0], [1.0, 1.0], [1.0, 1.5], [1.0, 2.0], [1.5, 2.0], [2.0, 2.0]],
+            [[-1.0, 0.0], [-0.66666667, 0.0], [-0.33333333, 0.0], [0.0, 0.0]],
+        ]
         numbers = [7, 4, 2, 6, 9, 4]
-        distances = [0.5, 1., 2., 1.697056274847714, 0.5, 1 / 3]
+        distances = [0.5, 1.0, 2.0, 1.697056274847714, 0.5, 1 / 3]
 
         for i in range(0, len(polylines)):
             polyline = polylines[i]
@@ -213,62 +241,73 @@ class TestPolylineUtil(unittest.TestCase):
             resample_polyline_with_distance(polyline, 0)
 
     def test_equalize_polyline_length(self):
-        long_polylines = [np.array([[0., 0.], [1., 0.], [2., 0.], [3., 0.]]),
-                          np.array([[0., 1.], [0., 2.], [0., 3.], [0., 4.], [0., 5.]]),
-                          np.array([[0., 0.], [1., 0.], [4., 0.], [10., 0.]])]
-        short_polylines = [np.array([[0., 1.], [1., 1.], [3., 1.]]),
-                           np.array([[1., 1.], [1., 5.]]),
-                           np.array([[0., 0.], [0.1, 0.], [0.2, 0.]])]
-        expected_polylines = [np.array([[0., 1.], [1., 1.], [2., 1.], [3., 1.]]),
-                              np.array([[1., 1.], [1., 2.], [1., 3.], [1., 4.], [1., 5.]]),
-                              np.array([[0.0, 0.0], [0.025, 0.0], [0.1, 0.0], [0.2, 0.0]])]
+        long_polylines = [
+            np.array([[0.0, 0.0], [1.0, 0.0], [2.0, 0.0], [3.0, 0.0]]),
+            np.array([[0.0, 1.0], [0.0, 2.0], [0.0, 3.0], [0.0, 4.0], [0.0, 5.0]]),
+            np.array([[0.0, 0.0], [1.0, 0.0], [4.0, 0.0], [10.0, 0.0]]),
+        ]
+        short_polylines = [
+            np.array([[0.0, 1.0], [1.0, 1.0], [3.0, 1.0]]),
+            np.array([[1.0, 1.0], [1.0, 5.0]]),
+            np.array([[0.0, 0.0], [0.1, 0.0], [0.2, 0.0]]),
+        ]
+        expected_polylines = [
+            np.array([[0.0, 1.0], [1.0, 1.0], [2.0, 1.0], [3.0, 1.0]]),
+            np.array([[1.0, 1.0], [1.0, 2.0], [1.0, 3.0], [1.0, 4.0], [1.0, 5.0]]),
+            np.array([[0.0, 0.0], [0.025, 0.0], [0.1, 0.0], [0.2, 0.0]]),
+        ]
 
         for i in range(0, len(long_polylines)):
             long_polyline = long_polylines[i]
             short_polyline = short_polylines[i]
             expected_polyline = expected_polylines[i]
-            self.assertEqual(expected_polyline.tolist(), equalize_polyline_length(long_polyline,
-                                                                                  short_polyline).tolist())
+            self.assertEqual(
+                expected_polyline.tolist(), equalize_polyline_length(long_polyline, short_polyline).tolist()
+            )
 
-        long_polyline = np.array([[0., 0.], [4., 0.]])
-        short_polyline = np.array([[0., 1.], [2., 1.], [4., 1.]])
+        long_polyline = np.array([[0.0, 0.0], [4.0, 0.0]])
+        short_polyline = np.array([[0.0, 1.0], [2.0, 1.0], [4.0, 1.0]])
 
         with self.assertRaises(AssertionError):
             equalize_polyline_length(long_polyline, short_polyline)
 
     def test_create_mapping(self):
-        long_path_length_percentages = [np.array([0., 0.3333333, 1.]),
-                                        np.array([0., 0.3333333, 0.6666666, 1.]),
-                                        np.array([0., 0.05, 0.95, 1.])]
-        short_path_length_percentages = [np.array([0., 1.]),
-                                         np.array([0., 0.5, 1.]),
-                                         np.array([0., 0.99, 1.])]
+        long_path_length_percentages = [
+            np.array([0.0, 0.3333333, 1.0]),
+            np.array([0.0, 0.3333333, 0.6666666, 1.0]),
+            np.array([0.0, 0.05, 0.95, 1.0]),
+        ]
+        short_path_length_percentages = [np.array([0.0, 1.0]), np.array([0.0, 0.5, 1.0]), np.array([0.0, 0.99, 1.0])]
         expected_index_mappings = [[0, -1, 1], [0, 1, -1, 2], [0, -1, 1, 2]]
 
         for i in range(0, len(long_path_length_percentages)):
             long_path_length_percentage = long_path_length_percentages[i]
             short_path_length_percentage = short_path_length_percentages[i]
             expected_index_mapping = expected_index_mappings[i]
-            self.assertEqual(expected_index_mapping,
-                             create_indices_mapping(long_path_length_percentage, short_path_length_percentage))
+            self.assertEqual(
+                expected_index_mapping,
+                create_indices_mapping(long_path_length_percentage, short_path_length_percentage),
+            )
 
         with self.assertRaises(AssertionError):
-            create_indices_mapping(np.array([0., 0.5, 1.]), np.array([0., 0.75, 1.]))
+            create_indices_mapping(np.array([0.0, 0.5, 1.0]), np.array([0.0, 0.75, 1.0]))
 
         with self.assertRaises(AssertionError):
-            create_indices_mapping(np.array([0., 0.5, 1.]), np.array([0.]))
+            create_indices_mapping(np.array([0.0, 0.5, 1.0]), np.array([0.0]))
 
         with self.assertRaises(AssertionError):
-            create_indices_mapping(np.array([0., -0.5, 1.]), np.array([0., 1.]))
+            create_indices_mapping(np.array([0.0, -0.5, 1.0]), np.array([0.0, 1.0]))
 
     def test_concatenate_polylines(self):
-        left_polyline = np.array([[0., 0.], [1., 0.], [2., 0.], [3., 0], [4., 0]])
-        right_polyline = np.array([[5., 0], [6., 0.], [7., 0.]])
+        left_polyline = np.array([[0.0, 0.0], [1.0, 0.0], [2.0, 0.0], [3.0, 0], [4.0, 0]])
+        right_polyline = np.array([[5.0, 0], [6.0, 0.0], [7.0, 0.0]])
 
-        expected_polyline = np.array([[0., 0.], [1., 0.], [2., 0.], [3., 0], [4., 0], [5., 0], [6., 0.], [7., 0.]])
+        expected_polyline = np.array(
+            [[0.0, 0.0], [1.0, 0.0], [2.0, 0.0], [3.0, 0], [4.0, 0], [5.0, 0], [6.0, 0.0], [7.0, 0.0]]
+        )
 
         self.assertEqual(expected_polyline.tolist(), concatenate_polylines(left_polyline, right_polyline).tolist())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
