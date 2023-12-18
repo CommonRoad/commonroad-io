@@ -2,10 +2,7 @@ import enum
 import warnings
 from typing import List, Set
 
-import numpy as np
-
 from commonroad.common.common_lanelet import LineMarking
-from commonroad.common.validity import is_valid_polyline
 
 
 class AreaType(enum.Enum):

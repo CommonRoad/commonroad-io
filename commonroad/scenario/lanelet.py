@@ -1,15 +1,25 @@
 import copy
 import dataclasses
 from collections import defaultdict
-from typing import Tuple, Dict, Set, List, Optional
+from typing import Tuple, Dict, Set, List, Optional, Union
 import numpy as np
 from shapely.geometry import Point as ShapelyPoint
 from shapely.geometry import Polygon as ShapelyPolygon
 from shapely.strtree import STRtree
+import warnings
 
 import commonroad.geometry.transform
 from commonroad.common.util import subtract_orientations
-from commonroad.common.validity import *
+from commonroad.common.validity import (
+    is_valid_polyline,
+    is_real_number,
+    is_valid_orientation,
+    ValidTypes,
+    is_natural_number,
+    is_real_number_vector,
+    is_positive,
+    is_list_of_natural_numbers
+)
 from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape
 from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup
 from commonroad.scenario.obstacle import Obstacle

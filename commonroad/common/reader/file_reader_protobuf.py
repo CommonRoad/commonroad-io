@@ -1,6 +1,7 @@
 import logging
 import re
-from typing import Tuple, Dict  # List, Set, Union via traffic_sign imported (see below)
+from typing import Tuple, Dict, List, Set, Union
+import numpy as np
 
 from commonroad.common.common_scenario import ScenarioMetaInformation, FileInformation, MapMetaInformation
 from commonroad.common.reader.file_reader_interface import FileReaderScenario, FileReaderMap, FileReaderDynamic
@@ -25,7 +26,12 @@ from commonroad.scenario.obstacle import (
 from commonroad.scenario.scenario import Tag, ScenarioID
 from commonroad.common.common_scenario import TimeOfDay, Weather, Underground, Environment, GeoTransformation, Location
 from commonroad.scenario.state import InitialState, TraceState, CustomState, SpecificStateClasses
-from commonroad.scenario.traffic_sign import *
+from commonroad.scenario.traffic_sign import (
+    TrafficSignElement,
+    TrafficSign,
+    SupportedTrafficSignCountry,
+    TrafficSignValue
+)
 from commonroad.scenario.traffic_light import (
     TrafficLightState,
     TrafficLightDirection,

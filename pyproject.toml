@@ -88,12 +88,12 @@ cvxpy = ">=0.4.9"
 jupyter = ">=1.0.0"
 
 [tool.black]
-extend-exclude = "(traffic_signs/)|(generated_scripts/)"
+extend-exclude = "(traffic_signs/)|(generated_scripts/)|common/protobuf/"
 line-length = 120
 
 [tool.isort]
 profile = "black"
-extend_skip = ["traffic_signs", "generated_scripts"]
+extend_skip = ["traffic_signs", "generated_scripts", "common/protobuf/"]
 
 [build-system]
 requires = ["poetry-core>=1.8.0"]

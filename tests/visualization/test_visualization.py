@@ -20,36 +20,42 @@ from commonroad.prediction.prediction import Occupancy, SetBasedPrediction
 from commonroad.scenario.obstacle import StaticObstacle, ObstacleType, PhantomObstacle, EnvironmentObstacle
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.state import InitialState
-from commonroad.scenario.traffic_sign import TRAFFIC_SIGN_WITH_ADDITIONAL_VALUE, TrafficSignIDGermany, \
-    TrafficSignIDSpain, TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSign, TrafficSignElement
+from commonroad.scenario.traffic_sign import (
+    TRAFFIC_SIGN_WITH_ADDITIONAL_VALUE,
+    TrafficSignIDGermany,
+    TrafficSignIDSpain,
+    TrafficSignIDZamunda,
+    TrafficSignIDUsa,
+    TrafficSign,
+    TrafficSignElement,
+)
 from commonroad.visualization.draw_params import MPDrawParams, VehicleShapeParams, DynamicObstacleParams
 from commonroad.visualization.mp_renderer import MPRenderer
 from commonroad.visualization.traffic_sign import text_prop_dict, draw_traffic_light_signs
 
 
 class TestVisualizationV2(unittest.TestCase):
-
     def setUp(self) -> None:
         self.rnd = MPRenderer()
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
         full_path = os.path.dirname(os.path.abspath(__file__))
         self.out_path = self.cwd_path + "/../.pytest_cache"
-        self.ngsim_scen_1 = full_path + '/../test_scenarios/xml/2020a/USA_Peach-4_8_T-1.xml'
-        self.ngsim_scen_2 = full_path + '/../test_scenarios/xml/2020a/USA_US101-4_1_T-1.xml'
-        self.scenario_3d_points = full_path + '/../test_scenarios/xml/2020a/test_3d_points.xml'
+        self.ngsim_scen_1 = full_path + "/../test_scenarios/xml/2020a/USA_Peach-4_8_T-1.xml"
+        self.ngsim_scen_2 = full_path + "/../test_scenarios/xml/2020a/USA_US101-4_1_T-1.xml"
+        self.scenario_3d_points = full_path + "/../test_scenarios/xml/2020a/test_3d_points.xml"
         if not os.path.isdir(self.out_path):
             os.makedirs(self.out_path)
         else:
-            for (dirpath, dirnames, filenames) in os.walk(self.out_path):
+            for dirpath, dirnames, filenames in os.walk(self.out_path):
                 for file in filenames:
-                    if file.endswith('.mp4') or file.endswith('.gif') or file.endswith('.png'):
+                    if file.endswith(".mp4") or file.endswith(".gif") or file.endswith(".png"):
                         os.remove(os.path.join(dirpath, file))
 
     def test_primitive(self):
         params = MPDrawParams()
 
         rect = Rectangle(1, 2, np.array([1.5, 2.0]), math.pi * 0.25)
-        poly = Polygon(np.array([[.2, .2], [.2, .4], [.3, .6], [.4, .4], [.4, .2], [.2, .2]]))
+        poly = Polygon(np.array([[0.2, 0.2], [0.2, 0.4], [0.3, 0.6], [0.4, 0.4], [0.4, 0.2], [0.2, 0.2]]))
         circ = Circle(2, np.array([3, 3]))
 
         rect.draw(self.rnd, params)
@@ -58,22 +64,26 @@ class TestVisualizationV2(unittest.TestCase):
         self.rnd.render()
 
     def test_scenario(self):
-
         # test draw_object for all possible object types
         scenario, planning_problem_set = CommonRoadFileReader(self.ngsim_scen_1).open()
         scenario: Scenario = scenario
 
         rnd = MPRenderer()
         with pytest.warns(None) as record_warnings:
-            scenario.lanelet_network.draw(rnd, )
+            scenario.lanelet_network.draw(
+                rnd,
+            )
             rnd.render()
             # visualization
             circ = Circle(2.0, np.array([10.0, 0.0]))
-            obs = StaticObstacle(1000, ObstacleType.CAR, circ,
-                                 initial_state=InitialState(position=np.array([0, 0]), orientation=0.4))
+            obs = StaticObstacle(
+                1000, ObstacleType.CAR, circ, initial_state=InitialState(position=np.array([0, 0]), orientation=0.4)
+            )
             scenario.add_objects(obs)
             for obs in scenario.static_obstacles:
-                obs.draw(rnd, )
+                obs.draw(
+                    rnd,
+                )
             rnd.render()
 
             draw_params = MPDrawParams()
@@ -122,7 +132,6 @@ class TestVisualizationV2(unittest.TestCase):
         rnd.render()
 
     def test_focus_obstacle(self):
-
         # test draw_object for all possible object types
         scenario, planning_problem_set = CommonRoadFileReader(self.ngsim_scen_1).open()
         scenario: Scenario = scenario
@@ -130,7 +139,9 @@ class TestVisualizationV2(unittest.TestCase):
         rnd = MPRenderer(plot_limits=[x0, 40, -40, 40], focus_obstacle=scenario.obstacle_by_id(1239))
         rnd.draw_params.dynamic_obstacle.occupancy.draw_occupancies = True
         with pytest.warns(None) as record_warnings:
-            scenario.lanelet_network.draw(rnd, )
+            scenario.lanelet_network.draw(
+                rnd,
+            )
 
             rnd.draw_list(scenario.dynamic_obstacles)
             assert rnd.plot_limits_focused[0] != 40
@@ -140,7 +151,7 @@ class TestVisualizationV2(unittest.TestCase):
             rnd.draw_list(scenario.dynamic_obstacles)
             assert rnd.plot_limits_focused[0] == x0
 
-        plt.close('all')
+        plt.close("all")
 
     def test_plotting_all_traffic_signs(self):
         traffic_sign_types = [TrafficSignIDZamunda, TrafficSignIDGermany, TrafficSignIDUsa, TrafficSignIDSpain]
@@ -149,13 +160,23 @@ class TestVisualizationV2(unittest.TestCase):
             for ts_type in traffic_sign_types:
                 for v in ts_type:
                     # print(v)
-                    ts = TrafficSign(100, [TrafficSignElement(v, ["test1", "test2"])], first_occurrence={0},
-                                     position=np.array([0.0, 0.0]), virtual=False)
-                    draw_traffic_light_signs(ts, traffic_sign_params=rnd.draw_params.traffic_sign,
-                                             traffic_light_params=rnd.draw_params.traffic_light, rnd=rnd)
+                    ts = TrafficSign(
+                        100,
+                        [TrafficSignElement(v, ["test1", "test2"])],
+                        first_occurrence={0},
+                        position=np.array([0.0, 0.0]),
+                        virtual=False,
+                    )
+                    draw_traffic_light_signs(
+                        ts,
+                        traffic_sign_params=rnd.draw_params.traffic_sign,
+                        traffic_light_params=rnd.draw_params.traffic_light,
+                        rnd=rnd,
+                    )
 
-            self.assertEqual(len(w), 0,
-                             msg="The following warnings were raised:\n" + "\n".join(str(w_tmp.message) for w_tmp in w))
+            self.assertEqual(
+                len(w), 0, msg="The following warnings were raised:\n" + "\n".join(str(w_tmp.message) for w_tmp in w)
+            )
 
     def test_planning(self):
         # test draw_object for all possible object types
@@ -163,22 +184,26 @@ class TestVisualizationV2(unittest.TestCase):
         # print(full_path)
         # filename = full_path +
         # '/../../../../../scenarios/cooperative/C-USA_Lanker-2_4_T-1.xml'
-        filename = full_path + '/../test_scenarios/xml/2020a/ZAM_TestReadingAll-1_1_T-1.xml'
+        filename = full_path + "/../test_scenarios/xml/2020a/ZAM_TestReadingAll-1_1_T-1.xml"
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         planning_problem_set: PlanningProblemSet = planning_problem_set
 
         with pytest.warns(None) as record_warnings:
-            planning_problem_set.draw(self.rnd, )
+            planning_problem_set.draw(
+                self.rnd,
+            )
             self.rnd.render()
             self.rnd.clear()
             problem = list(planning_problem_set.planning_problem_dict.values())[0]
-            problem.draw(self.rnd, )
+            problem.draw(
+                self.rnd,
+            )
             problem.goal.draw(self.rnd)
             problem.initial_state.draw(self.rnd)
             self.rnd.render()
 
         self.assertEqual(0, len(record_warnings))
-        plt.close('all')
+        plt.close("all")
 
     def test_trajectory_unique_colors(self):
         scenario, planning_problem_set = CommonRoadFileReader(self.ngsim_scen_2).open()
@@ -193,18 +218,17 @@ class TestVisualizationV2(unittest.TestCase):
     def test_visual_appearance(self):
         tt = 0
         nrun = 20
-        plt.close('all')
+        plt.close("all")
         # plt.ioff()
         # set_non_blocking()
         scenario, planning_problem_set = CommonRoadFileReader(self.ngsim_scen_2).open()
         scenario: Scenario = scenario
         # plt.autoscale(False)
-        plt.style.use('classic')
+        plt.style.use("classic")
         inch_in_cm = 2.54
         figsize = [20, 15]
         plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
-        plt.gca().set(title='occupancies should be be plotted with opacity, '
-                            'plot limits: [-50,60,-50,50]')
+        plt.gca().set(title="occupancies should be be plotted with opacity, " "plot limits: [-50,60,-50,50]")
         plt.gca().autoscale_view(False, False, False)
         self.rnd = MPRenderer(plot_limits=[-50, 60, -50, 50])
         for i in range(0, nrun):
@@ -218,17 +242,19 @@ class TestVisualizationV2(unittest.TestCase):
             scenario.draw(self.rnd, draw_params=draw_params)
             # plt.tight_layout()
             planning_problem_set.draw(self.rnd, draw_params=draw_params)
-            self.rnd.render(show=False, filename='/tmp/{}.png'.format(i))
+            self.rnd.render(show=False, filename="/tmp/{}.png".format(i))
             self.rnd.clear()
             tt += time.time() - t1  # plt.close()
 
-        print('time: {}'.format(tt / nrun))
+        print("time: {}".format(tt / nrun))
 
     def test_traffic_sign_plotting_properties(self):
         vis_dict = text_prop_dict()
         for t_id in TRAFFIC_SIGN_WITH_ADDITIONAL_VALUE:
-            self.assertTrue(TrafficSignIDGermany[t_id].value in vis_dict,
-                            f"Create plot settings for traffic sign {t_id} with ID {TrafficSignIDGermany[t_id].value}")
+            self.assertTrue(
+                TrafficSignIDGermany[t_id].value in vis_dict,
+                f"Create plot settings for traffic sign {t_id} with ID {TrafficSignIDGermany[t_id].value}",
+            )
 
     def test_stylesheet(self):
         # Write default params to file
@@ -273,8 +299,9 @@ class TestVisualizationV2(unittest.TestCase):
             draw_params.dynamic_obstacle.show_label = False
             draw_params.dynamic_obstacle.draw_icon = True
             draw_params.dynamic_obstacle.draw_shape = True
-            self.rnd.create_video([scenario], os.path.join(self.out_path, str(scenario.scenario_id) + ".mp4"),
-                                  draw_params=draw_params)
+            self.rnd.create_video(
+                [scenario], os.path.join(self.out_path, str(scenario.scenario_id) + ".mp4"), draw_params=draw_params
+            )
 
         print(time.time() - t0)
 
@@ -282,14 +309,18 @@ class TestVisualizationV2(unittest.TestCase):
         occupancy = [Occupancy(0, Rectangle(10, 10)), Occupancy(1, Rectangle(10, 10, np.array([10.0, 10.0])))]
         pred = SetBasedPrediction(0, occupancy)
         phantom_obs = PhantomObstacle(0, pred)
-        phantom_obs.draw(self.rnd, )
+        phantom_obs.draw(
+            self.rnd,
+        )
         self.rnd.render(show=True)
 
         self.rnd.clear()
 
         scn = Scenario(0.1)
         scn.add_objects(phantom_obs)
-        scn.draw(self.rnd, )
+        scn.draw(
+            self.rnd,
+        )
         self.rnd.render(show=True)
 
     def test_environment_obstacle(self):
@@ -302,7 +333,9 @@ class TestVisualizationV2(unittest.TestCase):
 
         scn = Scenario(0.1)
         scn.add_objects(env_obs)
-        scn.draw(self.rnd, )
+        scn.draw(
+            self.rnd,
+        )
         self.rnd.render(show=True)
 
     def test_label_clearing(self):
@@ -379,5 +412,5 @@ class TestVisualizationV2(unittest.TestCase):
     #  scenario.draw(rnd)  #         planning_problem_set.draw(rnd)  #         rnd.render()  #         rnd.clear()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

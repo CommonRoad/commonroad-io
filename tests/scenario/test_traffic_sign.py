@@ -3,8 +3,13 @@ import numpy as np
 from pathlib import Path
 
 from commonroad.common.file_reader import CommonRoadFileReader
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, TrafficSignIDZamunda, \
-    TrafficSignIDGermany, TrafficSignIDArgentina
+from commonroad.scenario.traffic_sign import (
+    TrafficSign,
+    TrafficSignElement,
+    TrafficSignIDZamunda,
+    TrafficSignIDGermany,
+    TrafficSignIDArgentina,
+)
 
 
 class TestTrafficSign(unittest.TestCase):
@@ -12,7 +17,7 @@ class TestTrafficSign(unittest.TestCase):
         traffic_sign_max_speed = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED.value, ["15"])
         traffic_sign = TrafficSign(1, [traffic_sign_max_speed], {5}, np.array([1.0, 1.0]))
 
-        traffic_sign.translate_rotate(np.array([2, -4]), np.pi/2)
+        traffic_sign.translate_rotate(np.array([2, -4]), np.pi / 2)
 
         desired_traffic_light_position = np.array([3, 3])
 
@@ -52,12 +57,12 @@ class TestTrafficSign(unittest.TestCase):
         traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0]), True)
         self.assertFalse(traffic_sign_one == traffic_sign_two)
 
-        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1., 1.]), True)
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1.0, 1.0]), True)
         self.assertFalse(traffic_sign_one == traffic_sign_two)
         self.assertFalse(traffic_sign_two == traffic_sign_one)
 
-        traffic_sign_one = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1., 1.]))
-        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1., 1.]))
+        traffic_sign_one = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1.0, 1.0]))
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1.0, 1.0]))
         self.assertTrue(traffic_sign_one == traffic_sign_two)
 
     def test_hash(self):
@@ -69,11 +74,11 @@ class TestTrafficSign(unittest.TestCase):
         traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0000000001, 7.0]))
         self.assertNotEqual(hash(traffic_sign_one), hash(traffic_sign_two))
 
-        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1., 1.]))
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1.0, 1.0]))
         self.assertNotEqual(hash(traffic_sign_one), hash(traffic_sign_two))
 
-        traffic_sign_one = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1., 1.]))
-        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1., 1.]))
+        traffic_sign_one = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1.0, 1.0]))
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1.0, 1.0]))
         self.assertEqual(hash(traffic_sign_one), hash(traffic_sign_two))
 
 
@@ -99,11 +104,13 @@ class TestTrafficSignElement(unittest.TestCase):
 
     def test_foreign_country(self):
         scenario, _ = CommonRoadFileReader(
-                Path(__file__).parent.parent / Path("test_scenarios/xml/2020a/ARG_Carcarana-4_5_T-1.xml")).open()
+            Path(__file__).parent.parent / Path("test_scenarios/xml/2020a/ARG_Carcarana-4_5_T-1.xml")
+        ).open()
         self.assertEqual(
-                scenario.lanelet_network.find_traffic_sign_by_id(6357).traffic_sign_elements[0].traffic_sign_element_id,
-                TrafficSignIDArgentina.MAX_SPEED)
+            scenario.lanelet_network.find_traffic_sign_by_id(6357).traffic_sign_elements[0].traffic_sign_element_id,
+            TrafficSignIDArgentina.MAX_SPEED,
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

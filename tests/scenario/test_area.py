@@ -4,7 +4,6 @@ from commonroad.common.common_lanelet import LineMarking
 
 
 class TestArea(unittest.TestCase):
-
     def test_initialize_area_border(self):
         # test the initialization without 'adjacent' and 'line_marking' parameters
         area_border = AreaBorder(1, 1)
@@ -40,19 +39,19 @@ class TestArea(unittest.TestCase):
         # test the properties of area_border_id
         area_border.area_border_id = 2
         with self.assertRaises(AssertionError):
-            area_border.area_border_id = 'a'
+            area_border.area_border_id = "a"
         self.assertEqual(area_border.area_border_id, 2)
 
         # test the properties of boundary
         area_border.boundary = 2
         with self.assertRaises(AssertionError):
-            area_border.boundary = 'test'
+            area_border.boundary = "test"
         self.assertEqual(area_border.boundary, 2)
 
         # test the properties of adjacent
         area_border.adjacent = 1
         with self.assertRaises(AssertionError):
-            area_border.adjacent = 'a'
+            area_border.adjacent = "a"
         self.assertEqual(area_border.adjacent, 1)
 
         # test the properties of line_marking
@@ -60,7 +59,7 @@ class TestArea(unittest.TestCase):
         with self.assertRaises(AssertionError):
             area_border.line_marking = 1
         with self.assertRaises(AssertionError):
-            area_border.line_marking = 'dashed'
+            area_border.line_marking = "dashed"
         self.assertEqual(area_border.line_marking, LineMarking.DASHED)
 
     def test_initialize_area(self):
@@ -104,7 +103,7 @@ class TestArea(unittest.TestCase):
         # test the properties of area_id
         area.area_id = 2
         with self.assertRaises(AssertionError):
-            area.area_id = 'a'
+            area.area_id = "a"
         self.assertEqual(area.area_id, 2)
 
         # test the properties of border

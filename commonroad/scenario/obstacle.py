@@ -1,7 +1,7 @@
 import enum
 import warnings
 import numpy as np
-from typing import Union, Set, List, Dict, Optional
+from typing import Union, Set, List, Optional
 from abc import abstractmethod
 
 
@@ -15,7 +15,7 @@ from commonroad.geometry.shape import (
     shape_group_occupancy_shape_from_state,
 )
 from commonroad.prediction.prediction import Prediction, Occupancy, SetBasedPrediction, TrajectoryPrediction
-from commonroad.scenario.state import TraceState, InitialState, State, SignalState, MetaInformationState
+from commonroad.scenario.state import TraceState, InitialState, SignalState, MetaInformationState
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.renderer import IRenderer
 from commonroad.visualization.draw_params import (

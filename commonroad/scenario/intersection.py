@@ -1,6 +1,7 @@
 from __future__ import annotations
-from typing import List, Set, Dict, Optional, TYPE_CHECKING
-from commonroad.common.validity import *
+from typing import List, Set, Dict, Optional, TYPE_CHECKING, Union
+import warnings
+from commonroad.common.validity import is_natural_number
 
 
 if TYPE_CHECKING:

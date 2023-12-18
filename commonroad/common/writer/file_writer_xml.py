@@ -507,13 +507,13 @@ class ObstacleXMLNode:
         :param obstacle: Obstacle for creating a node
         :return:
         """
-        if type(obstacle) == DynamicObstacle:
+        if isinstance(obstacle, DynamicObstacle):
             return DynamicObstacleXMLNode.create_node(obstacle)
-        elif type(obstacle) == StaticObstacle:
+        elif isinstance(obstacle, StaticObstacle):
             return StaticObstacleXMLNode.create_node(obstacle)
-        elif type(obstacle) == EnvironmentObstacle:
+        elif isinstance(obstacle, EnvironmentObstacle):
             return EnvironmentObstacleXMLNode.create_node(obstacle)
-        elif type(obstacle) == PhantomObstacle:
+        elif isinstance(obstacle, PhantomObstacle):
             return PhantomObstacleXMLNode.create_node(obstacle)
         else:
             raise Exception()
@@ -722,7 +722,7 @@ class ShapeXMLNode:
         :param dynamic_obstacle_shape: specify whether the shape belongs to an dynamic obstacle or not
         :return: node
         """
-        if type(shape) == ShapeGroup:
+        if isinstance(shape, ShapeGroup):
             shape_node_list = []
             for s in shape.shapes:
                 shape_node_list.append(cls._create_single_element(s, dynamic_obstacle_shape))
@@ -741,11 +741,11 @@ class ShapeXMLNode:
         :param dynamic_obstacle_shape: specify whether the shape belongs to an dynamic obstacle or not
         :return: node
         """
-        if type(shape) == Rectangle:
+        if isinstance(shape, Rectangle):
             node = RectangleXMLNode.create_rectangle_node(shape, dynamic_obstacle_shape)
-        elif type(shape) == Circle:
+        elif isinstance(shape, Circle):
             node = CircleXMLNode.create_circle_node(shape, dynamic_obstacle_shape)
-        elif type(shape) == Polygon:
+        elif isinstance(shape, Polygon):
             node = PolygonXMLNode.create_polygon_node(shape, dynamic_obstacle_shape)
         else:
             raise TypeError(
@@ -757,11 +757,11 @@ class ShapeXMLNode:
 
 class RectangleXMLNode:
     @classmethod
-    def create_rectangle_node(cls, rectangle: Rectangle, dynamic_obstacle_shape=False) -> etree.Element:
+    def create_rectangle_node(cls, rectangle: Rectangle, dynamic_obstacle_shape: bool = False) -> etree.Element:
         """
         Create XML-Node for a rectangle
         :param rectangle: rectangle for creating a node
-        :param dynamic_obstacle_shape: specify whether the shape belongs to an dynamic obstacle or not
+        :param dynamic_obstacle_shape: specify whether the shape belongs to a dynamic obstacle or not
         :return: node
         """
         rectangle_node = etree.Element("rectangle")
@@ -1069,7 +1069,6 @@ class IntersectionXMLNode:
         # in the intersection.
 
         # crossing_exists variable is used to create only one crossing node which will be appended to the intersection
-        incoming_crossing_exists = False
 
         for incoming in intersection.incomings:
             incoming_node = etree.Element("incoming")

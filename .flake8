@@ -1,4 +1,4 @@
 [flake8]
 extend-ignore = E501
-extend-exclude = traffic_signs,generated_scripts
+extend-exclude = traffic_signs,commonroad/common/protobuf/
 max-line-length = 120

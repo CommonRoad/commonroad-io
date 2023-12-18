@@ -1,27 +1,29 @@
 import os
 from collections import defaultdict
 from copy import deepcopy
-from typing import Set, Callable, Tuple
+from typing import Set, Callable, Tuple, Optional, Union, List
+from tqdm import tqdm
+import math
+import numpy as np
+import warnings
 
 import matplotlib as mpl
 import matplotlib.artist as artists
 import matplotlib.axes
 import matplotlib.collections as collections
 import matplotlib.figure
-import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import matplotlib.text as text
 import shapely.geometry
 from matplotlib.animation import FuncAnimation
 from matplotlib.colors import hsv_to_rgb, rgb_to_hsv, to_rgb, to_hex
 from matplotlib.path import Path
-from tqdm import tqdm
 
 import commonroad.geometry.shape
 import commonroad.prediction.prediction
 import commonroad.scenario.obstacle
 from commonroad.common.util import Interval
-from commonroad.geometry.shape import *
+from commonroad.geometry.shape import Rectangle
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction
@@ -41,8 +43,29 @@ from commonroad.scenario.traffic_sign import TrafficSign
 from commonroad.scenario.traffic_light import TrafficLight
 from commonroad.scenario.traffic_light import TrafficLightState
 from commonroad.scenario.trajectory import Trajectory
-from commonroad.visualization.draw_params import *
+from commonroad.visualization.draw_params import (
+    BaseParam,
+    DynamicObstacleParams,
+    EnvironmentObstacleParams,
+    InitialStateParams,
+    LaneletNetworkParams,
+    MPDrawParams,
+    OccupancyParams,
+    OptionalSpecificOrAllDrawParams,
+    PhantomObstacleParams,
+    PlanningProblemParams,
+    PlanningProblemSetParams,
+    ShapeParams,
+    StateParams,
+    StaticObstacleParams,
+    TrafficLightParams,
+    TrafficSignParams,
+    TrajectoryParams,
+    VehicleSignalParams,
+)
+from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.icons import supported_icons, get_obstacle_icon_patch
+from commonroad.visualization.renderer import IRenderer
 from commonroad.visualization.traffic_sign import draw_traffic_light_signs
 from commonroad.visualization.util import (
     LineDataUnits,
@@ -525,7 +548,7 @@ class MPRenderer(IRenderer):
         if (
             draw_icon
             and obj.obstacle_type in supported_icons()
-            and type(obj.prediction) == commonroad.prediction.prediction.TrajectoryPrediction
+            and isinstance(obj.prediction, commonroad.prediction.prediction.TrajectoryPrediction)
         ):
             try:
                 length = obj.obstacle_shape.length
@@ -564,7 +587,7 @@ class MPRenderer(IRenderer):
             veh_occ = obj.occupancy_at_time(time_begin)
             if veh_occ is not None:
                 self._draw_occupancy(veh_occ, obj.initial_state, draw_params.vehicle_shape.occupancy)
-                if draw_direction and veh_occ is not None and type(veh_occ.shape) == Rectangle:
+                if draw_direction and veh_occ is not None and isinstance(veh_occ.shape, Rectangle):
                     v_tri = get_vehicle_direction_triangle(veh_occ.shape)
                     self.draw_polygon(v_tri, draw_params.vehicle_shape.direction)
 
@@ -576,7 +599,7 @@ class MPRenderer(IRenderer):
                 self._draw_signal_state(sig, veh_occ, draw_params.signals)
 
         # draw occupancies
-        if draw_occupancies and type(obj.prediction) == commonroad.prediction.prediction.SetBasedPrediction:
+        if draw_occupancies and isinstance(obj.prediction, commonroad.prediction.prediction.SetBasedPrediction):
             if draw_shape:
                 # occupancy already plotted
                 time_begin_occ = time_begin + 1
@@ -591,14 +614,14 @@ class MPRenderer(IRenderer):
                 self._draw_occupancy(occ, state, draw_params.occupancy)
 
         # draw trajectory
-        if draw_trajectory and type(obj.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:
+        if draw_trajectory and isinstance(obj.prediction, commonroad.prediction.prediction.TrajectoryPrediction):
             obj.prediction.trajectory.draw(self, draw_params.trajectory)
 
         # get state
         state = None
         if time_begin == 0:
             state = obj.initial_state
-        elif type(obj.prediction) == commonroad.prediction.prediction.TrajectoryPrediction:
+        elif isinstance(obj.prediction, commonroad.prediction.prediction.TrajectoryPrediction):
             state = obj.prediction.trajectory.state_at_time_step(time_begin)
 
         # set plot center state
@@ -1579,7 +1602,7 @@ class MPRenderer(IRenderer):
             draw_params = draw_params.goal_region
 
         if hasattr(obj, "position"):
-            if type(obj.position) == list:
+            if isinstance(obj.position, list):
                 for pos in obj.position:
                     pos.draw(self, draw_params.shape)
             else:

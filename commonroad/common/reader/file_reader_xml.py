@@ -1,16 +1,16 @@
 import logging
 import re
-import sys
 from abc import ABC
 from collections import defaultdict
 import random
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple, Set, Union, List, Optional
 from xml.etree import ElementTree
+import numpy as np
 
 from commonroad import SUPPORTED_COMMONROAD_VERSIONS
 from commonroad.common.reader.file_reader_interface import FileReader
 from commonroad.common.util import Interval, AngleInterval, Path_T, Time
-from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
+from commonroad.geometry.shape import Circle, Polygon, ShapeGroup, Shape, Rectangle
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
 from commonroad.prediction.prediction import Occupancy, SetBasedPrediction, TrajectoryPrediction
@@ -37,8 +37,26 @@ from commonroad.common.common_scenario import (
     FileInformation,
 )
 from commonroad.scenario.state import InitialState, TraceState, CustomState, SpecificStateClasses
-from commonroad.scenario.traffic_sign import *
-from commonroad.scenario.traffic_light import *
+from commonroad.scenario.traffic_sign import (
+    LEFT_HAND_TRAFFIC,
+    TRAFFIC_SIGN_VALIDITY_START,
+    SupportedTrafficSignCountry,
+    TrafficSign,
+    TrafficSignElement,
+    TrafficSignIDChina,
+    TrafficSignIDGermany,
+    TrafficSignIDRussia,
+    TrafficSignIDSpain,
+    TrafficSignIDUsa,
+    TrafficSignIDZamunda,
+)
+from commonroad.scenario.traffic_light import (
+    TrafficLight,
+    TrafficLightDirection,
+    TrafficLightCycleElement,
+    TrafficLightCycle,
+    TrafficLightState
+)
 from commonroad.scenario.trajectory import Trajectory
 
 logger = logging.getLogger(__name__)

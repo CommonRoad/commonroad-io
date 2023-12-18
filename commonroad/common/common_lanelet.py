@@ -1,9 +1,9 @@
 import enum
-from typing import Set
-
+from typing import Set, Union
+import warnings
 import numpy as np
 
-from commonroad.common.validity import *
+from commonroad.common.validity import is_real_number_vector, is_valid_orientation
 import commonroad.geometry.transform
 
 
