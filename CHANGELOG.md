@@ -1,6 +1,6 @@
 # Changelog
 
-## [2023.4] - 2023-12-??
+## [2023.4] - 2023-12-19
 
 ### Added
 - Function to convert 3D scenarios to 2D scenarios
@@ -8,6 +8,7 @@
 - Function to retrieve all lanelets referencing a given traffic sign/light
 - New line marking types
 - Traffic light shape
+- GitHub actions
 
 ### Fixed
 - Conversion to initial state in function create_dynamic_obstacle of solution object
