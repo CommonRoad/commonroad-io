@@ -88,7 +88,6 @@ Compared to version 2023.3, the following features have been added or changed:
 - Function to retrieve all lanelets referencing a given traffic sign/light
 - New line marking types
 - Traffic light shape
-- GitHub actions
 
 ### Fixed
 - Conversion to initial state in function create_dynamic_obstacle of solution object

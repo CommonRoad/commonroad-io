@@ -75,7 +75,6 @@ Added
 - Function to retrieve all lanelets referencing a given traffic sign/light
 - New line marking types
 - Traffic light shape
-- GitHub actions
 
 Fixed
 -----
