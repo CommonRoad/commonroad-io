@@ -1,7 +1,7 @@
 import os
 from collections import defaultdict
 from copy import deepcopy
-from typing import Set, Callable
+from typing import Set, Callable, Tuple
 
 import matplotlib as mpl
 import matplotlib.artist as artists
