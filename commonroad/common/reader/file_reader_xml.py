@@ -43,12 +43,8 @@ from commonroad.scenario.traffic_sign import (
     SupportedTrafficSignCountry,
     TrafficSign,
     TrafficSignElement,
-    TrafficSignIDChina,
-    TrafficSignIDGermany,
-    TrafficSignIDRussia,
-    TrafficSignIDSpain,
-    TrafficSignIDUsa,
-    TrafficSignIDZamunda,
+    TrafficSignIDCountries,
+    TrafficSignIDZamunda
 )
 from commonroad.scenario.traffic_light import (
     TrafficLight,
@@ -262,18 +258,8 @@ class ScenarioFactory:
             scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network, lanelet_assignment))
             for key, value in LaneletFactory._speed_limits.items():
                 for lanelet in value:
-                    if SupportedTrafficSignCountry.GERMANY.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.USA.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDUsa.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.CHINA.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDChina.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.SPAIN.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.RUSSIA.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.ZAMUNDA.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
+                    if scenario_id.country_id in [val for val in SupportedTrafficSignCountry]:
+                        traffic_sign_element = TrafficSignElement(TrafficSignIDCountries[scenario_id.country_id].MAX_SPEED, [str(key)])
                     else:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
                         logger.warning("Unknown country: Default traffic sign IDs are used.")
@@ -957,15 +943,9 @@ class TrafficSignElementFactory:
         try:
             if country in [val for val in SupportedTrafficSignCountry]:
                 if xml_node.find("trafficSignID").text == "274":
-                    traffic_sign_element_id = globals()[
-                        "TrafficSignID"
-                        + SupportedTrafficSignCountry(country.value).name.replace("_", " ").title().replace(" ", "")
-                    ].MAX_SPEED
+                    traffic_sign_element_id = TrafficSignIDCountries[country.value].MAX_SPEED
                 else:
-                    traffic_sign_element_id = globals()[
-                        "TrafficSignID"
-                        + SupportedTrafficSignCountry(country.value).name.replace("_", " ").title().replace(" ", "")
-                    ](xml_node.find("trafficSignID").text)
+                    traffic_sign_element_id = TrafficSignIDCountries[country.value](xml_node.find("trafficSignID").text)
             else:
                 logger.warning(
                     "Unknown country: Default traffic sign ID is used. Specified country: {}".format(country.value)

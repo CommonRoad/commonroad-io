@@ -953,6 +953,14 @@ class TrafficSignIDPuertoRico(enum.Enum):
     UNKNOWN = ""
 
 
+TrafficSignIDCountries = \
+    {
+        ele.value: globals()["TrafficSignID" + SupportedTrafficSignCountry(
+                ele.value).name.replace("_", " ").title().replace(" ", "")]
+        for ele in SupportedTrafficSignCountry
+    }
+
+
 class TrafficSignElement:
     """Class which represents a collection of traffic signs at one position"""
 
