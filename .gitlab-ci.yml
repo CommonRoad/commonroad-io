@@ -1,62 +1,48 @@
-image: python:3.8
-
 stages:
   - style_check
   - test
   - deploy
 
-before_script:
-  - pip install poetry
-  - poetry config installer.modern-installation false # this should be removed in the future, required because of invalid third-party wheels (https://github.com/python-poetry/poetry/issues/7686)
-  - poetry config virtualenvs.in-project true
-  - poetry install --with tests
-  - source .venv/bin/activate
+default:
+  image: python:3.11
+  before_script:
+    - pip install poetry
+    - poetry config virtualenvs.in-project true
+    - poetry install --with tests
+    - source .venv/bin/activate
 
 .run-test-with-coverage: &run-test-with-coverage
   - apt-get update && apt-get install -y ffmpeg
-  - coverage run tests/run_tests.py
+  - coverage run --source ./commonroad tests/run_tests.py
   - coverage report -m || true
 
-style_checks:
+formatting_check:
   stage: style_check
   before_script: [ ]
   script:
-    - pip install pycodestyle
-    - git  diff ${CI_COMMIT_BEFORE_SHA}...${CI_COMMIT_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff --exclude=./commonroad/scenario_definition/*
-  except:
-    - merge_requests
-  allow_failure: true
+    - pip install black isort
+    - black --check .
+    - isort --check-only .
 
-style_check_merge_result:
+lint_flake8:
   stage: style_check
   before_script: [ ]
   script:
-    - pip install pycodestyle
-    - git  diff ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA}...${CI_MERGE_REQUEST_SOURCE_BRANCH_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff --exclude=./commonroad/scenario_definition/*
-  only:
-    - merge_requests
-  allow_failure: true
+    - pip install flake8
+    - flake8 .
 
-build_and_test_python_3_8:
-  image: python:3.8
+build_and_test_python:
+  image : python:$PYTHON_VERSIONS
   stage: test
+  parallel :
+    matrix :
+      - PYTHON_VERSIONS : [ "3.8", "3.9", "3.10", "3.11" ]
   script:
     - *run-test-with-coverage
+  needs: []
 
-build_and_test_python_3_9:
-  image: python:3.9
-  stage: test
-  script:
-    - *run-test-with-coverage
-
-build_and_test_python_3_10:
-  image: python:3.10
-  stage: test
-  script:
-    - *run-test-with-coverage
-
-build_and_test_python_3_11:
-  image: python:3.11
+build_and_test_python_3_12:
+  image: python:3.12
   stage: test
   script:
     - *run-test-with-coverage
@@ -122,7 +108,7 @@ push_to_external_pipy_test_registry:
   script:
     - poetry config repositories.test https://test.pypi.org/legacy/
     - poetry build
-    - poetry publish --repository test -u ${CR_PYPI_TEST_USERNAME} -p ${CR_PYPI_TEST_PASSWORD}
+    - poetry publish --repository test -u __token__ -p ${CR_PYPI_TEST_API_TOKEN}
 
 push_to_external_pipy_release_registry:
   stage: deploy
@@ -131,5 +117,5 @@ push_to_external_pipy_release_registry:
     - master
   script:
     - poetry build
-    - poetry publish -u ${CR_PYPI_RELEASE_USERNAME} -p ${CR_PYPI_RELEASE_PASSWORD}
+    - poetry publish -u __token__ -p ${CR_PYPI_RELEASE_API_TOKEN}
 

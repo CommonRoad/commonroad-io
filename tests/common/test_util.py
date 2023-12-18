@@ -1,22 +1,17 @@
 import math
 import unittest
+
 import numpy as np
 
-from commonroad.common.util import Interval, interpolate_angle, subtract_orientations, vectorized_angle_difference, \
-    AngleInterval
+from commonroad.common.util import (
+    AngleInterval,
+    Interval,
+    subtract_orientations,
+    vectorized_angle_difference,
+)
 
 
 class TestUtils(unittest.TestCase):
-    def test_interpolate_angle(self):
-        a = interpolate_angle(x=0.5, xp=np.array([0., 1.]), fp=np.array([0., 2 * np.pi]), degrees=False)
-        b = interpolate_angle(x=0.5, xp=np.array([0., 1.]), fp=np.array([0., 360.]), degrees=True)
-        c = interpolate_angle(x=0.5, xp=np.array([0., 1.]), fp=np.array([-np.pi, np.pi]), degrees=False)
-        d = interpolate_angle(x=0.5, xp=np.array([0., 1.]), fp=np.array([-180., 180.]), degrees=True)
-        self.assertAlmostEqual(a, 0.)
-        self.assertAlmostEqual(b, 0.)
-        self.assertAlmostEqual(c, np.pi)
-        self.assertAlmostEqual(d, 180.)
-
     def test_subtract_orientations(self):
         self.assertAlmostEqual(subtract_orientations(0.1, -0.1), 0.2)
         self.assertAlmostEqual(subtract_orientations(0.0, -0.1), 0.1)
@@ -162,7 +157,6 @@ class TestInterval(unittest.TestCase):
 
 
 class TestAngleInterval(unittest.TestCase):
-
     def test__contains__(self):
         interval = AngleInterval(-np.pi / 2, np.pi / 2)
         self.assertTrue(interval.__contains__(0.0))
@@ -227,5 +221,5 @@ class TestAngleInterval(unittest.TestCase):
         self.assertTrue(interval.contains(other_interval))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

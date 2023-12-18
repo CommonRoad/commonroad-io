@@ -1,13 +1,22 @@
-from functools import lru_cache
-from typing import Union, FrozenSet
 import enum
-from commonroad.scenario.traffic_sign import TrafficSignIDSpain, TrafficSignIDUsa, TrafficSignIDGermany, \
-    TrafficSignIDZamunda, TrafficSignIDChina, TrafficSignIDRussia, SupportedTrafficSignCountry
+from functools import lru_cache
+from typing import FrozenSet, Union
+
 from commonroad.scenario.lanelet import LaneletNetwork
+from commonroad.scenario.traffic_sign import (
+    SupportedTrafficSignCountry,
+    TrafficSignIDChina,
+    TrafficSignIDGermany,
+    TrafficSignIDRussia,
+    TrafficSignIDSpain,
+    TrafficSignIDUsa,
+    TrafficSignIDZamunda,
+)
 
 
 class TrafficSigInterpreter:
-    """ Class to extract traffic sign information from the road network"""
+    """Class to extract traffic sign information from the road network"""
+
     def __init__(self, country: SupportedTrafficSignCountry, lanelet_network: LaneletNetwork):
         """
         Constructor
@@ -74,7 +83,7 @@ class TrafficSigInterpreter:
         :param lanelet_ids: IDs of lanelets the vehicle is on
         :returns: minimum required speed of provided lanelets or None if no required speed exists
         """
-        if not hasattr(self.traffic_sign_ids, 'MIN_SPEED'):
+        if not hasattr(self.traffic_sign_ids, "MIN_SPEED"):
             return None
 
         required_velocities = []

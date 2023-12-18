@@ -1,24 +1,40 @@
 import copy
-import enum
 import os
+import warnings
 from collections import defaultdict
-from typing import Dict, Union, Tuple
+from typing import Dict, List, Tuple, Union
 
-from PIL import Image
+import numpy as np
 from matplotlib.axes import Axes, mtext
-from matplotlib.offsetbox import OffsetImage, AnnotationBbox, HPacker, TextArea, VPacker, OffsetBox
+from matplotlib.offsetbox import (
+    AnnotationBbox,
+    HPacker,
+    OffsetBox,
+    OffsetImage,
+    TextArea,
+    VPacker,
+)
 from matplotlib.transforms import Bbox
-from scipy.cluster.hierarchy import linkage, fcluster
+from PIL import Image
+from scipy.cluster.hierarchy import fcluster, linkage
 
-from commonroad.geometry.shape import *
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignIDUsa
 from commonroad.scenario.traffic_light import TrafficLight
+from commonroad.scenario.traffic_sign import (
+    TrafficSign,
+    TrafficSignIDChina,
+    TrafficSignIDGermany,
+    TrafficSignIDRussia,
+    TrafficSignIDSpain,
+    TrafficSignIDUsa,
+    TrafficSignIDZamunda,
+)
 from commonroad.visualization.draw_params import TrafficLightParams, TrafficSignParams
+from commonroad.visualization.renderer import IRenderer
 
 # path to traffic sign .png files
-traffic_sign_path = os.path.join(os.path.dirname(__file__), 'traffic_signs/')
+traffic_sign_path = os.path.join(os.path.dirname(__file__), "traffic_signs/")
 
-speed_limit_factors = {'mph': 2.23694, 'kmh': 3.6, 'ms': 1.0}
+speed_limit_factors = {"mph": 2.23694, "kmh": 3.6, "ms": 1.0}
 
 # default scaling for traffic sign images and annotations
 px_per_metre = 0.018
@@ -61,9 +77,9 @@ class TextAreaAutoscale(TextArea):
         correction_x = self.dx_pix / self.dx_m * self.px_per_metre
         correction_y = self.dy_pix / self.dy_m * self.px_per_metre
         corr = min(correction_x, correction_y)
-        if 'size' in self.textprops_init:
+        if "size" in self.textprops_init:
             textprops = copy.copy(self.textprops_init)
-            textprops['size'] *= corr
+            textprops["size"] *= corr
             f = self._text.figure
             self._text = mtext.Text(0, 0, self.get_text(), **textprops)
             self._text.figure = f
@@ -86,7 +102,7 @@ class TextAreaAutoscale(TextArea):
             d = max(d, d_)
             h = h_d + d
 
-        return Bbox.from_bounds(0., -d * corr, w * corr, h * corr)
+        return Bbox.from_bounds(0.0, -d * corr, w * corr, h * corr)
 
     def get_extent(self, renderer):
         """Alternative for get_bbox for matplotlib < 3.7
@@ -102,11 +118,37 @@ class OffsetImageAutoscale(OffsetImage):
     """OffsetImage that scales proportionally to data units (not display units, i.e. pixels)
     and includes overlayed text."""
 
-    def __init__(self, arr, px_per_metre=px_per_metre, px_per_metre_text=px_per_metre_text, text=None, txt_offset_x=0.7,
-                 txt_offset_y=0.45, textprops=None, cmap=None, norm=None, interpolation=None, origin=None,
-                 filternorm=True, filterrad=4.0, resample=False, dpi_cor=True, **kwargs):
-        super().__init__(arr, cmap=cmap, norm=norm, interpolation=interpolation, origin=origin, filternorm=filternorm,
-                         filterrad=filterrad, resample=resample, dpi_cor=dpi_cor, **kwargs)
+    def __init__(
+        self,
+        arr,
+        px_per_metre=px_per_metre,
+        px_per_metre_text=px_per_metre_text,
+        text=None,
+        txt_offset_x=0.7,
+        txt_offset_y=0.45,
+        textprops=None,
+        cmap=None,
+        norm=None,
+        interpolation=None,
+        origin=None,
+        filternorm=True,
+        filterrad=4.0,
+        resample=False,
+        dpi_cor=True,
+        **kwargs,
+    ):
+        super().__init__(
+            arr,
+            cmap=cmap,
+            norm=norm,
+            interpolation=interpolation,
+            origin=origin,
+            filternorm=filternorm,
+            filterrad=filterrad,
+            resample=resample,
+            dpi_cor=dpi_cor,
+            **kwargs,
+        )
 
         self.text_area = TextAreaAutoscale(text, px_per_metre=px_per_metre_text, textprops=textprops)
         self.txt_offset_x = txt_offset_x
@@ -140,9 +182,9 @@ class OffsetImageAutoscale(OffsetImage):
             self.text_area.get_bbox(renderer)
 
         if renderer is not None and self._dpi_cor:  # True, do correction
-            dpi_cor = renderer.points_to_pixels(1.)
+            dpi_cor = renderer.points_to_pixels(1.0)
         else:
-            dpi_cor = 1.
+            dpi_cor = 1.0
 
         data = self.get_data()
         correction_x = self.dx_pix / self.dx_m * self.px_per_metre
@@ -164,7 +206,9 @@ class OffsetImageAutoscale(OffsetImage):
 
     def draw(self, renderer):
         # docstring inherited
-        self.image.draw(renderer, )
+        self.image.draw(
+            renderer,
+        )
         self.text_area._text.figure = self.figure
         self.text_area._text.draw(renderer)
         self.stale = False
@@ -192,13 +236,13 @@ def speed_limit_factor(country_code) -> float:
     mph_countries = [TrafficSignIDUsa]
 
     if type(country_code) in mph_countries:
-        return speed_limit_factors['mph']
+        return speed_limit_factors["mph"]
     else:
-        return speed_limit_factors['kmh']
+        return speed_limit_factors["kmh"]
 
 
 # denotes traffic signs that are speed limits
-unit_conversion_required = ['274', '274.1', '275', '1004-31', 'R2-1', 'r301']
+unit_conversion_required = ["274", "274.1", "275", "1004-31", "R2-1", "r301"]
 
 
 def text_prop_dict() -> dict:
@@ -209,27 +253,44 @@ def text_prop_dict() -> dict:
         (proportional to traffic sign size)
     """
     return {
-        'default': {'mpl_args': {'weight': 'bold', 'size': 13.5}, 'rescale_threshold': 2, 'position_offset_y': 0.45},
-        '262': {'mpl_args': {'weight': 'bold', 'size': 8}, 'rescale_threshold': 2, 'position_offset_y': 0.53},
-        '264': {'mpl_args': {'weight': 'bold', 'size': 12}, 'rescale_threshold': 2, 'position_offset_y': 0.47},
-        '265': {'mpl_args': {'weight': 'normal', 'size': 13}, 'rescale_threshold': 2, 'position_offset_y': 0.45},
-        '266': {'mpl_args': {'weight': 'bold', 'size': 5}, 'rescale_threshold': 2, 'position_offset_y': 0.37},
-        '274': {'mpl_args': {'weight': 'bold', 'size': 13.5}, 'rescale_threshold': 2, 'position_offset_y': 0.45},
-        '274.1': {'mpl_args': {'weight': 'bold', 'size': 8.5}, 'rescale_threshold': 2, 'position_offset_y': 0.65},
-        '275': {'mpl_args': {'weight': 'bold', 'color': 'white', 'size': 13.5}, 'rescale_threshold': 2,
-                'position_offset_y': 0.45},
-        '278': {'mpl_args': {'weight': 'bold', 'color': 'gray', 'size': 10}, 'position_offset': -16.5,
-                'position_offset_y': 0.45},
-        '279': {'mpl_args': {'weight': 'bold', 'color': 'white', 'size': 10}, 'position_offset': -16.5,
-                'position_offset_y': 0.45},
-        '310': {'mpl_args': {'weight': 'normal', 'color': 'black', 'size': 10, }, 'position_offset_y': -0.55},
-        '380': {'mpl_args': {'weight': 'bold', 'color': 'white', 'size': 10}, 'position_offset_y': 0.45},
-        '381': {'mpl_args': {'weight': 'bold', 'color': 'white', 'size': 10}, 'position_offset_y': 0.45},
-        '1040-30': {'mpl_args': {'weight': 'normal', 'color': 'black', 'size': 8}, 'position_offset_y': 0.4},
-        '1001-30': {'mpl_args': {'weight': 'normal', 'color': 'black', 'size': 8}, 'position_offset_y': 0.4},
-        '1004-31': {'mpl_args': {'weight': 'normal', 'color': 'black', 'size': 8}, 'position_offset_y': 0.4},
-        'R2-1': {'mpl_args': {'weight': 'normal', 'color': 'black', 'size': 10.5}, 'position_offset_y': 0.3},
-        'r301': {'mpl_args': {'weight': 'bold', 'size': 13.5}, 'rescale_threshold': 2, 'position_offset_y': 0.45}, }
+        "default": {"mpl_args": {"weight": "bold", "size": 13.5}, "rescale_threshold": 2, "position_offset_y": 0.45},
+        "262": {"mpl_args": {"weight": "bold", "size": 8}, "rescale_threshold": 2, "position_offset_y": 0.53},
+        "264": {"mpl_args": {"weight": "bold", "size": 12}, "rescale_threshold": 2, "position_offset_y": 0.47},
+        "265": {"mpl_args": {"weight": "normal", "size": 13}, "rescale_threshold": 2, "position_offset_y": 0.45},
+        "266": {"mpl_args": {"weight": "bold", "size": 5}, "rescale_threshold": 2, "position_offset_y": 0.37},
+        "274": {"mpl_args": {"weight": "bold", "size": 13.5}, "rescale_threshold": 2, "position_offset_y": 0.45},
+        "274.1": {"mpl_args": {"weight": "bold", "size": 8.5}, "rescale_threshold": 2, "position_offset_y": 0.65},
+        "275": {
+            "mpl_args": {"weight": "bold", "color": "white", "size": 13.5},
+            "rescale_threshold": 2,
+            "position_offset_y": 0.45,
+        },
+        "278": {
+            "mpl_args": {"weight": "bold", "color": "gray", "size": 10},
+            "position_offset": -16.5,
+            "position_offset_y": 0.45,
+        },
+        "279": {
+            "mpl_args": {"weight": "bold", "color": "white", "size": 10},
+            "position_offset": -16.5,
+            "position_offset_y": 0.45,
+        },
+        "310": {
+            "mpl_args": {
+                "weight": "normal",
+                "color": "black",
+                "size": 10,
+            },
+            "position_offset_y": -0.55,
+        },
+        "380": {"mpl_args": {"weight": "bold", "color": "white", "size": 10}, "position_offset_y": 0.45},
+        "381": {"mpl_args": {"weight": "bold", "color": "white", "size": 10}, "position_offset_y": 0.45},
+        "1040-30": {"mpl_args": {"weight": "normal", "color": "black", "size": 8}, "position_offset_y": 0.4},
+        "1001-30": {"mpl_args": {"weight": "normal", "color": "black", "size": 8}, "position_offset_y": 0.4},
+        "1004-31": {"mpl_args": {"weight": "normal", "color": "black", "size": 8}, "position_offset_y": 0.4},
+        "R2-1": {"mpl_args": {"weight": "normal", "color": "black", "size": 10.5}, "position_offset_y": 0.3},
+        "r301": {"mpl_args": {"weight": "bold", "size": 13.5}, "rescale_threshold": 2, "position_offset_y": 0.45},
+    }
 
 
 def rescale_text(string: str, prop: dict, scale_factor: float, default_scale_factor: float) -> dict:
@@ -240,24 +301,25 @@ def rescale_text(string: str, prop: dict, scale_factor: float, default_scale_fac
     prop = copy.deepcopy(prop)
     if default_scale_factor != scale_factor:
         tmp_scale_factor = scale_factor / default_scale_factor
-        if 'position_offset' in prop:
-            prop['position_offset'] *= tmp_scale_factor
+        if "position_offset" in prop:
+            prop["position_offset"] *= tmp_scale_factor
 
-        if 'mpl_args' in prop and 'size' in prop['mpl_args']:
-            prop['mpl_args']['size'] *= tmp_scale_factor
+        if "mpl_args" in prop and "size" in prop["mpl_args"]:
+            prop["mpl_args"]["size"] *= tmp_scale_factor
 
-    if 'rescale_threshold' in prop:
-        if len(string) > prop['rescale_threshold']:
-            if 'mpl_args' in prop and 'size' in prop['mpl_args']:
-                prop['mpl_args']['size'] *= prop['rescale_threshold'] / len(string) * 1.1
-            if 'position_offset' in prop:
-                prop['position_offset'] *= prop['rescale_threshold'] / len(string) * 1.35
+    if "rescale_threshold" in prop:
+        if len(string) > prop["rescale_threshold"]:
+            if "mpl_args" in prop and "size" in prop["mpl_args"]:
+                prop["mpl_args"]["size"] *= prop["rescale_threshold"] / len(string) * 1.1
+            if "position_offset" in prop:
+                prop["position_offset"] *= prop["rescale_threshold"] / len(string) * 1.35
 
     return prop
 
 
-def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], TrafficSign], draw_params: TrafficSignParams,
-                                  rnd) -> Dict[Tuple[float, float], List[OffsetBox]]:
+def create_img_boxes_traffic_sign(
+    traffic_signs: Union[List[TrafficSign], TrafficSign], draw_params: TrafficSignParams, rnd
+) -> Dict[Tuple[float, float], List[OffsetBox]]:
     """
     For each Traffic sign an OffsetBox is created, containing the png image
     and optionally labels. These boxes can
@@ -293,12 +355,13 @@ def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], Traffi
             if show_traffic_signs is not None and el_id.value not in show_traffic_signs:
                 continue
             show_label = show_label_default
-            path = os.path.join(traffic_sign_path, el_id.__class__.__name__, el_id.value + '.png')
+
+            path = _get_traffic_sign_img_path(el_id)
             plot_img = True
             # get png image
             if not os.path.exists(path):
                 warnings.warn(f"File for traffic sign {element} at {path} does not exist!")
-                path = os.path.join(traffic_sign_path, '.png')
+                path = os.path.join(traffic_sign_path, ".png")
                 if not os.path.exists(path):
                     show_label = True
                     plot_img = False
@@ -312,20 +375,21 @@ def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], Traffi
                 sign_img = Image.open(path)
                 if len(element.additional_values) > 0:
                     if element.traffic_sign_element_id.value in unit_conversion_required and isfloat(
-                            element.additional_values[0]):
-                        if speed_limit_unit == 'auto':
+                        element.additional_values[0]
+                    ):
+                        if speed_limit_unit == "auto":
                             speed_factor = speed_limit_factor(element.traffic_sign_element_id)
                         else:
                             speed_factor = speed_limit_factors[speed_limit_unit]
 
                         add_text = str(round(speed_factor * float(element.additional_values[0])))
                     else:
-                        add_text = '\n'.join(element.additional_values)
+                        add_text = "\n".join(element.additional_values)
 
-                    props = prop_dict[el_id.value] if el_id.value in prop_dict else prop_dict['default']
+                    props = prop_dict[el_id.value] if el_id.value in prop_dict else prop_dict["default"]
                     props = rescale_text(add_text, props, scale_factor, scale_factor_default)
-                    props_txt = props['mpl_args']
-                    txt_offset_y = props['position_offset_y'] if 'position_offset_y' in props else -0.2
+                    props_txt = props["mpl_args"]
+                    txt_offset_y = props["position_offset_y"] if "position_offset_y" in props else -0.2
                 else:
                     txt_offset_y = -0.2
                     props_txt = None
@@ -334,53 +398,88 @@ def create_img_boxes_traffic_sign(traffic_signs: Union[List[TrafficSign], Traffi
                 if sign_img.mode != "RGBA":
                     sign_img = sign_img.convert("RGBA")
 
-                boxes.append(OffsetImageAutoscale(sign_img, text=add_text, px_per_metre=px_per_metre * scale_factor,
-                                                  px_per_metre_text=px_per_metre_text * scale_factor,
-                                                  txt_offset_y=txt_offset_y, textprops=props_txt, zorder=zorder,
-                                                  resample=True))
+                boxes.append(
+                    OffsetImageAutoscale(
+                        sign_img,
+                        text=add_text,
+                        px_per_metre=px_per_metre * scale_factor,
+                        px_per_metre_text=px_per_metre_text * scale_factor,
+                        txt_offset_y=txt_offset_y,
+                        textprops=props_txt,
+                        zorder=zorder,
+                        resample=True,
+                    )
+                )
                 # add callback for automatic rescaling of image
-                rnd.add_callback('xlim_changed', boxes[-1].ax_update)
+                rnd.add_callback("xlim_changed", boxes[-1].ax_update)
 
             # already stack label and img in case both are shown (prevents
             # misalignment with additional text)
             if len(boxes) > 1:
-                boxes = [VPacker(children=boxes, pad=0, sep=0, align='center')]
+                boxes = [VPacker(children=boxes, pad=0, sep=0, align="center")]
 
             sep = 0
             # get additional values string (like speed limits) in case the image is not plotted
             if not plot_img:
                 if element.traffic_sign_element_id.value in unit_conversion_required and isfloat(
-                        element.additional_values[0]):
-                    if speed_limit_unit == 'auto':
+                    element.additional_values[0]
+                ):
+                    if speed_limit_unit == "auto":
                         speed_factor = speed_limit_factor(element.traffic_sign_element_id)
                     else:
                         speed_factor = speed_limit_factors[speed_limit_unit]
 
                     add_text = str(round(speed_factor * float(element.additional_values[0])))
                 else:
-                    add_text = '\n'.join(element.additional_values)
+                    add_text = "\n".join(element.additional_values)
 
-                props = prop_dict[el_id.value] if el_id.value in prop_dict else {'mpl_args': {}}
+                props = prop_dict[el_id.value] if el_id.value in prop_dict else {"mpl_args": {}}
                 props = rescale_text(add_text, props, scale_factor, scale_factor_default)
-                boxes.append(TextAreaAutoscale(add_text, px_per_metre=px_per_metre_text * scale_factor,
-                                               textprops=props['mpl_args']))
+                boxes.append(
+                    TextAreaAutoscale(
+                        add_text, px_per_metre=px_per_metre_text * scale_factor, textprops=props["mpl_args"]
+                    )
+                )
                 # add callback for automatic rescaling of text
-                rnd.add_callback('xlim_changed', boxes[-1].ax_update)
+                rnd.add_callback("xlim_changed", boxes[-1].ax_update)
 
             # stack boxes vertically
-            img = VPacker(children=boxes, pad=0, sep=sep, align='center')
+            img = VPacker(children=boxes, pad=0, sep=sep, align="center")
             imageboxes.append(img)
 
         # horizontally stack all traffic sign elements of the traffic sign
         if len(imageboxes) > 0:
-            hbox = HPacker(children=imageboxes, pad=0, sep=0.05, align='baseline')
+            hbox = HPacker(children=imageboxes, pad=0, sep=0.05, align="baseline")
             imageboxes_all[tuple(traffic_sign.position[:2].tolist())].append(hbox)
 
     return imageboxes_all
 
 
-def create_img_boxes_traffic_lights(traffic_lights: Union[List[TrafficLight], TrafficLight],
-                                    draw_params: TrafficLightParams, rnd) -> Dict[Tuple[float, float], List[OffsetBox]]:
+def _get_traffic_sign_img_path(
+    traffic_sign_element_id: Union[
+        TrafficSignIDZamunda,
+        TrafficSignIDUsa,
+        TrafficSignIDSpain,
+        TrafficSignIDGermany,
+        TrafficSignIDChina,
+        TrafficSignIDRussia,
+    ]
+) -> str:
+    """
+    Returns the path to the image corresponding to the given traffic sign element ID.
+
+    :param traffic_sign_element_id: The traffic sign element ID to lookup.
+    :return: The path to the corresponding image.
+    """
+    class_name = traffic_sign_element_id.__class__.__name__
+    directory = class_name if class_name != "TrafficSignIDZamunda" else "TrafficSignIDGermany"
+
+    return os.path.join(traffic_sign_path, directory, f"{traffic_sign_element_id.value}.png")
+
+
+def create_img_boxes_traffic_lights(
+    traffic_lights: Union[List[TrafficLight], TrafficLight], draw_params: TrafficLightParams, rnd
+) -> Dict[Tuple[float, float], List[OffsetBox]]:
     """
     For each Traffic light an OffsetBox is created, containing the png image
     and optionally labels. These boxes can
@@ -408,21 +507,22 @@ def create_img_boxes_traffic_lights(traffic_lights: Union[List[TrafficLight], Tr
             continue
         if traffic_light.active:
             state = traffic_light.get_state_at_time_step(time_begin)
-            path = os.path.join(traffic_sign_path, 'traffic_light_state_' + str(state.value) + '.png')
+            path = os.path.join(traffic_sign_path, "traffic_light_state_" + str(state.value) + ".png")
         else:
-            path = os.path.join(traffic_sign_path, 'traffic_light_state_inactive.png')
+            path = os.path.join(traffic_sign_path, "traffic_light_state_inactive.png")
 
         boxes = []  # collect matplotlib offset boxes for text and images
         sign_img = Image.open(path)
         boxes.append(
-                OffsetImageAutoscale(sign_img, px_per_metre=px_per_metre * scale_factor, zorder=zorder, resample=True))
-        rnd.add_callback('xlim_changed', boxes[-1].ax_update)
+            OffsetImageAutoscale(sign_img, px_per_metre=px_per_metre * scale_factor, zorder=zorder, resample=True)
+        )
+        rnd.add_callback("xlim_changed", boxes[-1].ax_update)
 
         if show_label:
             boxes.append(TextArea(str(state.value)))
 
         # stack boxes vertically
-        img_box = VPacker(children=boxes, pad=0, sep=0, align='center')
+        img_box = VPacker(children=boxes, pad=0, sep=0, align="center")
 
         imageboxes_all[tuple(traffic_light.position[:2].tolist())].append(img_box)
 
@@ -430,8 +530,11 @@ def create_img_boxes_traffic_lights(traffic_lights: Union[List[TrafficLight], Tr
 
 
 def draw_traffic_light_signs(
-        traffic_lights_signs: Union[List[Union[TrafficLight, TrafficSign]], TrafficLight, TrafficSign],
-        traffic_light_params: TrafficLightParams, traffic_sign_params: TrafficSignParams, rnd: IRenderer):
+    traffic_lights_signs: Union[List[Union[TrafficLight, TrafficSign]], TrafficLight, TrafficSign],
+    traffic_light_params: TrafficLightParams,
+    traffic_sign_params: TrafficSignParams,
+    rnd: IRenderer,
+):
     """
     Draws OffsetBoxes which are first collected for all traffic signs and
     -lights. Boxes are stacked together when they
@@ -464,8 +567,7 @@ def draw_traffic_light_signs(
         elif isinstance(obj, TrafficLight):
             traffic_lights.append(obj)
         else:
-            warnings.warn('Object of type {}, but expected type TrafficSign or '
-                          'TrafficLight'.format(type(obj)))
+            warnings.warn("Object of type {}, but expected type TrafficSign or " "TrafficLight".format(type(obj)))
 
     # collect ImageBoxes of traffic signs/lights grouped by their positions
     boxes_tl = create_img_boxes_traffic_lights(traffic_lights, traffic_light_params, rnd)
@@ -490,8 +592,8 @@ def draw_traffic_light_signs(
     if len(positions) <= 1:
         groups[positions[0]] = box_lists[0]
     else:
-        Z = linkage(np.array(positions), 'single', metric='chebyshev')
-        clusters = fcluster(Z, threshold_grouping, criterion='distance')
+        Z = linkage(np.array(positions), "single", metric="chebyshev")
+        clusters = fcluster(Z, threshold_grouping, criterion="distance")
         for i, cluster_id in enumerate(clusters):
             group_boxes[cluster_id].extend(box_lists[i])
             group_positions[cluster_id].append(positions[i])
@@ -500,7 +602,7 @@ def draw_traffic_light_signs(
             groups[tuple(np.average(group_positions[cluster_id], axis=0).tolist())] = boxes
 
     # add default AnnotationBox args if not specified by user
-    default_params = dict(xycoords='data', frameon=False)
+    default_params = dict(xycoords="data", frameon=False)
     for param, value in default_params.items():
         if param not in kwargs:
             kwargs[param] = value
@@ -510,10 +612,10 @@ def draw_traffic_light_signs(
     for position_tmp, box_list_tmp in groups.items():
         position_tmp = np.array(position_tmp)
         kwargs_tmp = copy.deepcopy(kwargs)
-        if 'xybox' not in kwargs_tmp:
-            kwargs_tmp['xybox'] = position_tmp
+        if "xybox" not in kwargs_tmp:
+            kwargs_tmp["xybox"] = position_tmp
 
-        hbox = HPacker(children=box_list_tmp, pad=0, sep=0.1, align='baseline')
+        hbox = HPacker(children=box_list_tmp, pad=0, sep=0.1, align="baseline")
         ab = AnnotationBbox(hbox, position_tmp, **kwargs_tmp)
         ab.zorder = zorder
         artists.append(ab)

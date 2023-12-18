@@ -1,70 +1,86 @@
 import enum
+import warnings
 from typing import Set
 
 import numpy as np
 
-from commonroad.common.validity import *
 import commonroad.geometry.transform
+from commonroad.common.validity import is_real_number_vector, is_valid_orientation
 
 
 class RoadUser(enum.Enum):
     """
     Enum describing different types of road users
     """
-    VEHICLE = 'vehicle'
-    CAR = 'car'
-    TRUCK = 'truck'
-    BUS = 'bus'
-    PRIORITY_VEHICLE = 'priorityVehicle'
-    MOTORCYCLE = 'motorcycle'
-    BICYCLE = 'bicycle'
-    PEDESTRIAN = 'pedestrian'
-    TRAIN = 'train'
-    TAXI = 'taxi'
+
+    VEHICLE = "vehicle"
+    CAR = "car"
+    TRUCK = "truck"
+    BUS = "bus"
+    PRIORITY_VEHICLE = "priorityVehicle"
+    MOTORCYCLE = "motorcycle"
+    BICYCLE = "bicycle"
+    PEDESTRIAN = "pedestrian"
+    TRAIN = "train"
+    TAXI = "taxi"
 
 
 class LineMarking(enum.Enum):
     """
     Enum describing different types of line markings, i.e. dashed or solid lines
     """
-    DASHED = 'dashed'
-    SOLID = 'solid'
-    BROAD_DASHED = 'broad_dashed'
-    BROAD_SOLID = 'broad_solid'
-    UNKNOWN = 'unknown'
-    NO_MARKING = 'no_marking'
+
+    DASHED = "dashed"
+    SOLID = "solid"
+    SOLID_SOLID = "solid_solid"
+    DASHED_DASHED = "dashed_dashed"
+    SOLID_DASHED = "solid_dashed"
+    DASHED_SOLID = "dashed_solid"
+    CURB = "curb"
+    LOWERED_CURB = "lowered_curb"
+    BROAD_DASHED = "broad_dashed"
+    BROAD_SOLID = "broad_solid"
+    UNKNOWN = "unknown"
+    NO_MARKING = "no_marking"
 
 
 class LaneletType(enum.Enum):
     """
     Enum describing different types of lanelets
     """
-    URBAN = 'urban'
-    COUNTRY = 'country'
-    HIGHWAY = 'highway'
-    DRIVE_WAY = 'driveWay'
-    MAIN_CARRIAGE_WAY = 'mainCarriageWay'
-    ACCESS_RAMP = 'accessRamp'
-    EXIT_RAMP = 'exitRamp'
-    SHOULDER = 'shoulder'
-    BUS_LANE = 'busLane'
-    BUS_STOP = 'busStop'
-    BICYCLE_LANE = 'bicycleLane'
-    SIDEWALK = 'sidewalk'
-    CROSSWALK = 'crosswalk'
-    INTERSTATE = 'interstate'
-    INTERSECTION = 'intersection'
-    BORDER = 'border'
-    PARKING = 'parking'
-    RESTRICTED = 'restricted'  # cars not allowed, e.g., special lanes for busses
-    UNKNOWN = 'unknown'
+
+    URBAN = "urban"
+    COUNTRY = "country"
+    HIGHWAY = "highway"
+    DRIVE_WAY = "driveWay"
+    MAIN_CARRIAGE_WAY = "mainCarriageWay"
+    ACCESS_RAMP = "accessRamp"
+    EXIT_RAMP = "exitRamp"
+    SHOULDER = "shoulder"
+    BUS_LANE = "busLane"
+    BUS_STOP = "busStop"
+    BICYCLE_LANE = "bicycleLane"
+    SIDEWALK = "sidewalk"
+    CROSSWALK = "crosswalk"
+    INTERSTATE = "interstate"
+    INTERSECTION = "intersection"
+    BORDER = "border"
+    PARKING = "parking"
+    RESTRICTED = "restricted"  # cars not allowed, e.g., special lanes for busses
+    UNKNOWN = "unknown"
 
 
 class StopLine:
     """Class which describes the stop line of a lanelet"""
 
-    def __init__(self, start: np.ndarray, end: np.ndarray, line_marking: LineMarking, traffic_sign_ref: Set[int] = None,
-                 traffic_light_ref: Set[int] = None):
+    def __init__(
+        self,
+        start: np.ndarray,
+        end: np.ndarray,
+        line_marking: LineMarking,
+        traffic_sign_ref: Set[int] = None,
+        traffic_light_ref: Set[int] = None,
+    ):
         self._start = start
         self._end = end
         self._line_marking = line_marking
@@ -82,9 +98,13 @@ class StopLine:
         end_string = np.array2string(np.around(self._end.astype(float), prec), precision=prec)
         end_other_string = np.array2string(np.around(other.end.astype(float), prec), precision=prec)
 
-        return (start_string == start_other_string and end_string == end_other_string and self._line_marking ==
-                other.line_marking and self._traffic_sign_ref == other.traffic_sign_ref and self._traffic_light_ref
-                == other.traffic_light_ref)
+        return (
+            start_string == start_other_string
+            and end_string == end_other_string
+            and self._line_marking == other.line_marking
+            and self._traffic_sign_ref == other.traffic_sign_ref
+            and self._traffic_light_ref == other.traffic_light_ref
+        )
 
     def __hash__(self):
         if self._start is None:
@@ -100,11 +120,13 @@ class StopLine:
         return hash((start_string, end_string, self._line_marking, sign_ref, light_ref))
 
     def __str__(self):
-        return f'StopLine from {self._start} to {self._end}'
+        return f"StopLine from {self._start} to {self._end}"
 
     def __repr__(self):
-        return f"StopLine(start={self._start.tolist()}, end={self._end.tolist()}, line_marking={self._line_marking}, " \
-               f"traffic_sign_ref={self._traffic_sign_ref}, traffic_light_ref={self._traffic_light_ref})"
+        return (
+            f"StopLine(start={self._start.tolist()}, end={self._end.tolist()}, line_marking={self._line_marking}, "
+            f"traffic_sign_ref={self._traffic_sign_ref}, traffic_light_ref={self._traffic_light_ref})"
+        )
 
     @property
     def start(self) -> np.ndarray:
@@ -154,10 +176,12 @@ class StopLine:
         :param angle: The rotation angle in radian (counter-clockwise defined)
         """
 
-        assert is_real_number_vector(translation, 2), '<Lanelet/translate_rotate>: provided translation ' \
-                                                      'is not valid! translation = {}'.format(translation)
+        assert is_real_number_vector(
+            translation, 2
+        ), "<Lanelet/translate_rotate>: provided translation " "is not valid! translation = {}".format(translation)
         assert is_valid_orientation(
-                angle), '<Lanelet/translate_rotate>: provided angle is not valid! angle = {}'.format(angle)
+            angle
+        ), "<Lanelet/translate_rotate>: provided angle is not valid! angle = {}".format(angle)
 
         # create transformation matrix
         t_m = commonroad.geometry.transform.translation_rotation_matrix(translation, angle)
@@ -167,3 +191,11 @@ class StopLine:
         tmp = tmp[0:2, :].transpose()
         self._start, self._end = tmp[0], tmp[1]
 
+    def convert_to_2d(self) -> None:
+        """
+        Convert the stop line to a 2D representation by removing the z-coordinate from start and end vertex.
+
+        This has no effect if the stop line is already 2D.
+        """
+        self._start = self._start[:2]
+        self._end = self._end[:2]
