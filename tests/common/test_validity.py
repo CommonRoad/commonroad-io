@@ -1,7 +1,22 @@
-from commonroad.common.validity import *
-
 import unittest
+
 import numpy as np
+
+from commonroad.common.validity import (
+    is_in_interval,
+    is_integer_number,
+    is_integer_number_vector,
+    is_natural_number,
+    is_natural_number_vector,
+    is_positive,
+    is_real_number,
+    is_real_number_vector,
+    is_valid_array_of_vertices,
+    is_valid_length,
+    is_valid_list_of_vertices,
+    is_valid_polyline,
+    is_valid_velocity,
+)
 
 
 class TestValidity(unittest.TestCase):
@@ -12,18 +27,18 @@ class TestValidity(unittest.TestCase):
         """
 
         # all test cases below should return true
-        self.assertTrue(is_valid_velocity(0.))
+        self.assertTrue(is_valid_velocity(0.0))
         self.assertTrue(is_valid_velocity(10))
         self.assertTrue(is_valid_velocity(12.7))
-        self.assertTrue(is_valid_velocity(37. / 12.))
-        self.assertTrue(is_valid_velocity(129.))
+        self.assertTrue(is_valid_velocity(37.0 / 12.0))
+        self.assertTrue(is_valid_velocity(129.0))
         self.assertTrue(is_valid_velocity(10000.0))
 
-        self.assertTrue(is_valid_velocity(-0.))
+        self.assertTrue(is_valid_velocity(-0.0))
         self.assertTrue(is_valid_velocity(-10))
         self.assertTrue(is_valid_velocity(-12.7))
-        self.assertTrue(is_valid_velocity(-37. / 12.))
-        self.assertTrue(is_valid_velocity(-129.))
+        self.assertTrue(is_valid_velocity(-37.0 / 12.0))
+        self.assertTrue(is_valid_velocity(-129.0))
         self.assertTrue(is_valid_velocity(-10000.0))
 
         self.assertTrue(is_valid_velocity(np.float64(12)))
@@ -42,10 +57,10 @@ class TestValidity(unittest.TestCase):
         """
 
         # all test cases below should return true
-        self.assertFalse(is_valid_velocity('a'))
+        self.assertFalse(is_valid_velocity("a"))
         self.assertFalse(is_valid_velocity(None))
         self.assertFalse(is_valid_velocity(list()))
-        self.assertFalse(is_valid_velocity(list([0, 12., 'a'])))
+        self.assertFalse(is_valid_velocity(list([0, 12.0, "a"])))
 
     def test_real_number(self):
         """
@@ -55,7 +70,7 @@ class TestValidity(unittest.TestCase):
 
         # test cases for true
         self.assertTrue(is_real_number(1))
-        self.assertTrue(is_real_number(123.))
+        self.assertTrue(is_real_number(123.0))
         self.assertTrue(is_real_number(44.78234234))
         self.assertTrue(is_real_number(np.float64(12)))
         self.assertTrue(is_real_number(np.int16(8)))
@@ -64,7 +79,7 @@ class TestValidity(unittest.TestCase):
         self.assertTrue(is_real_number(-10000.1))
 
         # test cases for false
-        self.assertFalse(is_real_number('a'))
+        self.assertFalse(is_real_number("a"))
         self.assertFalse(is_real_number(None))
         self.assertFalse(is_real_number(list()))
         self.assertFalse(is_real_number(object()))
@@ -88,15 +103,15 @@ class TestValidity(unittest.TestCase):
         self.assertTrue(is_integer_number(np.int32(-385)))
 
         # test cases for false
-        self.assertFalse(is_integer_number(1.))
+        self.assertFalse(is_integer_number(1.0))
         self.assertFalse(is_integer_number(12.3))
         self.assertFalse(is_integer_number(-123.1))
         self.assertFalse(is_integer_number(-10000.1))
         self.assertFalse(is_integer_number(44.78234234))
-        self.assertFalse(is_integer_number(123.))
+        self.assertFalse(is_integer_number(123.0))
         self.assertFalse(is_integer_number(np.float64(12)))
         self.assertFalse(is_integer_number(np.float64(123)))
-        self.assertFalse(is_integer_number('a'))
+        self.assertFalse(is_integer_number("a"))
         self.assertFalse(is_integer_number(None))
         self.assertFalse(is_integer_number(list()))
         self.assertFalse(is_integer_number(object()))
@@ -118,21 +133,21 @@ class TestValidity(unittest.TestCase):
         self.assertTrue(is_natural_number(np.int32(445)))
 
         # test cases for false
-        self.assertFalse(is_natural_number(0.))
-        self.assertFalse(is_natural_number(-0.))
+        self.assertFalse(is_natural_number(0.0))
+        self.assertFalse(is_natural_number(-0.0))
         self.assertFalse(is_natural_number(-1))
         self.assertFalse(is_natural_number(-12))
         self.assertFalse(is_natural_number(np.int16(-39)))
         self.assertFalse(is_natural_number(np.int32(-385)))
-        self.assertFalse(is_natural_number(1.))
+        self.assertFalse(is_natural_number(1.0))
         self.assertFalse(is_natural_number(12.3))
         self.assertFalse(is_natural_number(-123.1))
         self.assertFalse(is_natural_number(-10000.1))
         self.assertFalse(is_natural_number(44.78234234))
-        self.assertFalse(is_natural_number(123.))
+        self.assertFalse(is_natural_number(123.0))
         self.assertFalse(is_natural_number(np.float64(12)))
         self.assertFalse(is_natural_number(np.float64(123)))
-        self.assertFalse(is_natural_number('a'))
+        self.assertFalse(is_natural_number("a"))
         self.assertFalse(is_natural_number(None))
         self.assertFalse(is_natural_number(list()))
         self.assertFalse(is_natural_number(object()))
@@ -145,13 +160,13 @@ class TestValidity(unittest.TestCase):
 
         # test cases for true
         self.assertTrue(is_positive(1))
-        self.assertTrue(is_positive(123.))
+        self.assertTrue(is_positive(123.0))
         self.assertTrue(is_positive(47))
         self.assertTrue(is_positive(np.int16(12)))
         self.assertTrue(is_positive(np.float64(44467)))
 
         # test cases for false
-        self.assertFalse(is_positive('a'))
+        self.assertFalse(is_positive("a"))
         self.assertFalse(is_positive(list()))
         self.assertFalse(is_positive(None))
         self.assertFalse(is_positive(object()))
@@ -159,7 +174,7 @@ class TestValidity(unittest.TestCase):
         self.assertFalse(is_positive(-1))
         self.assertFalse(is_positive(-123.4))
         self.assertFalse(is_positive(-np.int16(12)))
-        self.assertFalse(is_positive(-np.float64(447423.)))
+        self.assertFalse(is_positive(-np.float64(447423.0)))
 
     def test_negative(self):
         """
@@ -172,15 +187,15 @@ class TestValidity(unittest.TestCase):
         self.assertFalse(is_positive(-1))
         self.assertFalse(is_positive(-123.4))
         self.assertFalse(is_positive(-np.int16(12)))
-        self.assertFalse(is_positive(-np.float64(447423.)))
+        self.assertFalse(is_positive(-np.float64(447423.0)))
 
         # test cases for false
         self.assertTrue(is_positive(1))
-        self.assertTrue(is_positive(123.))
+        self.assertTrue(is_positive(123.0))
         self.assertTrue(is_positive(47))
         self.assertTrue(is_positive(np.int16(12)))
         self.assertTrue(is_positive(np.float64(44467)))
-        self.assertFalse(is_positive('a'))
+        self.assertFalse(is_positive("a"))
         self.assertFalse(is_positive(None))
         self.assertFalse(is_positive(list()))
         self.assertFalse(is_positive(object()))
@@ -198,7 +213,7 @@ class TestValidity(unittest.TestCase):
         self.assertTrue(is_valid_length(np.int32(123)))
 
         # test cases for false
-        self.assertFalse(is_valid_length('a'))
+        self.assertFalse(is_valid_length("a"))
         self.assertFalse(is_valid_length(None))
         self.assertFalse(is_valid_length(list()))
         self.assertFalse(is_valid_length(object()))
@@ -222,12 +237,12 @@ class TestValidity(unittest.TestCase):
         self.assertTrue(is_real_number_vector(np.zeros(12)))
 
         # test cases for false
-        self.assertFalse(is_real_number_vector('a'))
+        self.assertFalse(is_real_number_vector("a"))
         self.assertFalse(is_real_number_vector(None))
         self.assertFalse(is_real_number_vector(list()))
         self.assertFalse(is_real_number_vector(object()))
-        self.assertFalse(is_real_number_vector([1, 'a']))
-        self.assertFalse(is_real_number_vector(['a']))
+        self.assertFalse(is_real_number_vector([1, "a"]))
+        self.assertFalse(is_real_number_vector(["a"]))
         self.assertFalse(is_real_number_vector([1, None]))
         self.assertFalse(is_real_number_vector([None, 123]))
 
@@ -259,12 +274,12 @@ class TestValidity(unittest.TestCase):
         self.assertTrue(is_integer_number_vector(np.zeros(12, dtype=int)))
 
         # test cases for false
-        self.assertFalse(is_integer_number_vector('a'))
+        self.assertFalse(is_integer_number_vector("a"))
         self.assertFalse(is_integer_number_vector(None))
         self.assertFalse(is_integer_number_vector(list()))
         self.assertFalse(is_integer_number_vector(object()))
-        self.assertFalse(is_integer_number_vector([1, 'a']))
-        self.assertFalse(is_integer_number_vector(['a']))
+        self.assertFalse(is_integer_number_vector([1, "a"]))
+        self.assertFalse(is_integer_number_vector(["a"]))
         self.assertFalse(is_integer_number_vector([1, None]))
         self.assertFalse(is_integer_number_vector([None, 123]))
         self.assertFalse(is_integer_number_vector(np.array([-1, 2, 3, 7.0238420358, 120])))
@@ -299,12 +314,12 @@ class TestValidity(unittest.TestCase):
         self.assertTrue(is_natural_number_vector(np.zeros(12, dtype=int)))
 
         # test cases for false
-        self.assertFalse(is_natural_number_vector('a'))
+        self.assertFalse(is_natural_number_vector("a"))
         self.assertFalse(is_natural_number_vector(None))
         self.assertFalse(is_natural_number_vector(list()))
         self.assertFalse(is_natural_number_vector(object()))
-        self.assertFalse(is_natural_number_vector([1, 'a']))
-        self.assertFalse(is_natural_number_vector(['a']))
+        self.assertFalse(is_natural_number_vector([1, "a"]))
+        self.assertFalse(is_natural_number_vector(["a"]))
         self.assertFalse(is_natural_number_vector([1, None]))
         self.assertFalse(is_natural_number_vector([None, 123]))
         self.assertFalse(is_natural_number_vector(np.array([1, -2, 3, 4, 6])))
@@ -382,13 +397,32 @@ class TestValidity(unittest.TestCase):
         #  test cases for false
         self.assertFalse(is_valid_polyline(None))
         self.assertFalse(is_valid_polyline(list()))
-        self.assertFalse(is_valid_polyline('a'))
-        self.assertFalse(is_valid_polyline([[0, 0, 0], [1, 2, ]]))
-        self.assertFalse(is_valid_polyline([[0, 0, 0], [1, ]]))
+        self.assertFalse(is_valid_polyline("a"))
+        self.assertFalse(
+            is_valid_polyline(
+                [
+                    [0, 0, 0],
+                    [
+                        1,
+                        2,
+                    ],
+                ]
+            )
+        )
+        self.assertFalse(
+            is_valid_polyline(
+                [
+                    [0, 0, 0],
+                    [
+                        1,
+                    ],
+                ]
+            )
+        )
         self.assertFalse(is_valid_polyline([[0], [14]]))
         self.assertFalse(is_valid_polyline([[0, 0]]))
         self.assertFalse(is_valid_polyline([[0, 0], [1, 2, 3], [1, 2, 3, 4]]))
-        self.assertFalse(is_valid_polyline([[0, 'a'], [1, 2]]))
+        self.assertFalse(is_valid_polyline([[0, "a"], [1, 2]]))
         self.assertFalse(is_valid_polyline([[0, 0, 0], np.ones(10)]))
         self.assertFalse(is_valid_polyline([[0, 0, 0], [1, 2, None]]))
         self.assertFalse(is_valid_polyline([[0, 0, 0], [1, 2, list()]]))
@@ -398,7 +432,7 @@ class TestValidity(unittest.TestCase):
         self.assertFalse(is_valid_polyline(np.array([[0, 0]])))
 
         #  test cases for false with z-coordinate
-        self.assertFalse(is_valid_polyline(np.array([[1, 2, 3], [1, 2, 'a'], [1, 2, 3]])))
+        self.assertFalse(is_valid_polyline(np.array([[1, 2, 3], [1, 2, "a"], [1, 2, 3]])))
         self.assertFalse(is_valid_polyline(np.array([[1, 2, None], [1, 2, 3], [1, 2, 3]])))
         self.assertFalse(is_valid_polyline(np.array([[1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4]])))
         self.assertFalse(is_valid_polyline(np.array([[-1, 0.2, 3]])))
@@ -416,22 +450,24 @@ class TestValidity(unittest.TestCase):
 
         #  test cases for true with desired length and z-coordinate
         self.assertTrue(is_valid_polyline(np.array([[1, 2, 3], [1, 2, 3], [1, 2, 3]]), length=3))
-        self.assertTrue(is_valid_polyline(np.array([[-1, 0.2, 3], [11, -22, 3], [1, 2, 3], [-1, -2, .5]]), length=4))
+        self.assertTrue(is_valid_polyline(np.array([[-1, 0.2, 3], [11, -22, 3], [1, 2, 3], [-1, -2, 0.5]]), length=4))
         self.assertTrue(is_valid_polyline(np.array([[-1, 0.2, 3], [11, -22, 3]]), length=2))
 
         # test cases for false with desired length
         self.assertFalse(is_valid_polyline(np.array([[-1, 2, 3, 4], [10, 5, 23, 12]]).transpose(), length=2))
         self.assertFalse(
-                is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=10))
+            is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=10)
+        )
         self.assertFalse(is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=1))
         self.assertFalse(
-                is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=1909))
+            is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=1909)
+        )
         self.assertFalse(is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=1))
         self.assertFalse(is_valid_polyline(np.array([np.zeros(100), np.ones(100)]).transpose(), length=99))
 
         #  test cases for false with desired length and z-coordinate
         self.assertFalse(is_valid_polyline(np.array([[1, 2, 3], [1, 2, 3], [1, 2, 3]]), length=22))
-        self.assertFalse(is_valid_polyline(np.array([[-1, 0.2, 3], [11, -22, 3], [1, 2, 3], [-1, -2, .5]]), length=3))
+        self.assertFalse(is_valid_polyline(np.array([[-1, 0.2, 3], [11, -22, 3], [1, 2, 3], [-1, -2, 0.5]]), length=3))
         self.assertFalse(is_valid_polyline(np.array([[-1, 0.2, 3], [11, -22, 3]]), length=99))
         self.assertFalse(is_valid_polyline(np.array([[-1, 0.2, 3]]), length=1))
 
@@ -464,9 +500,9 @@ class TestValidity(unittest.TestCase):
         #  test cases for false
         self.assertFalse(is_valid_list_of_vertices(None))
         self.assertFalse(is_valid_list_of_vertices(list()))
-        self.assertFalse(is_valid_list_of_vertices('a'))
+        self.assertFalse(is_valid_list_of_vertices("a"))
         self.assertFalse(is_valid_list_of_vertices(np.array([[0, 0], [1, 2]])))
-        self.assertFalse(is_valid_list_of_vertices([[0, 'a'], [1, 2]]))
+        self.assertFalse(is_valid_list_of_vertices([[0, "a"], [1, 2]]))
 
         #  test cases for true with desired number of vertices
         self.assertTrue(is_valid_list_of_vertices([[1, 2], [3, 4], [5, 6], [7, 8]], number_of_vertices=4))
@@ -476,7 +512,7 @@ class TestValidity(unittest.TestCase):
 
         #  test cases for true with desired number of vertices with z-coordinate
         self.assertTrue(is_valid_list_of_vertices([[0, 0, 1], [3, 4, 3]], number_of_vertices=2))
-        self.assertTrue(is_valid_list_of_vertices([[0, -0, 1], [3, -4, .3], [-1, -2, -3]], number_of_vertices=3))
+        self.assertTrue(is_valid_list_of_vertices([[0, -0, 1], [3, -4, 0.3], [-1, -2, -3]], number_of_vertices=3))
         self.assertTrue(is_valid_list_of_vertices([[0, -0, 1]], number_of_vertices=1))
 
         #  test cases for false with desired number of vertices
@@ -486,7 +522,7 @@ class TestValidity(unittest.TestCase):
         self.assertFalse(is_valid_list_of_vertices([[0, 0, 1], [3, 4, 3]], number_of_vertices=3))
 
         #  test cases for false with desired number of vertices with z-coordinate
-        self.assertFalse(is_valid_list_of_vertices([[0, 0, 3], [3, 0.4, .4]], number_of_vertices=22))
+        self.assertFalse(is_valid_list_of_vertices([[0, 0, 3], [3, 0.4, 0.4]], number_of_vertices=22))
         self.assertFalse(is_valid_list_of_vertices([[0, 0, 1], [3, 4, 3]], number_of_vertices=101))
 
     def test_valid_array_of_vertices(self):
@@ -505,6 +541,5 @@ class TestValidity(unittest.TestCase):
         self.assertTrue(is_valid_array_of_vertices(np.array([[0, 0, 0]])))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
-

@@ -3,8 +3,12 @@ import unittest
 import numpy as np
 
 from commonroad.common.util import Interval
-from commonroad.geometry.shape import Rectangle, Circle, ShapeGroup
-from commonroad.prediction.prediction import TrajectoryPrediction, SetBasedPrediction, Occupancy
+from commonroad.geometry.shape import Circle, Rectangle, ShapeGroup
+from commonroad.prediction.prediction import (
+    Occupancy,
+    SetBasedPrediction,
+    TrajectoryPrediction,
+)
 from commonroad.scenario.state import KSState
 from commonroad.scenario.trajectory import Trajectory
 
@@ -95,13 +99,19 @@ class TestTrajectoryPrediction(unittest.TestCase):
 
     def test_eq_is_order_independent_for_center_lanelet_assignment(self):
         """test if __eq__ ignores the order of the values in center_lanelet_assignment"""
-        for x, y in zip(list(self.center_lanelet_assignment[3]),
-                        list(self.center_lanelet_assignment_different_order[3])):
+        for x, y in zip(
+            list(self.center_lanelet_assignment[3]), list(self.center_lanelet_assignment_different_order[3])
+        ):
             self.assertNotEqual(x, y, msg="This test relies on these two sets having different iteration orders!")
-        tp = TrajectoryPrediction(self.trajectory, Rectangle(2, 1), self.center_lanelet_assignment,
-                                  self.shape_lanelet_assignment)
-        tp_copy = TrajectoryPrediction(self.trajectory, Rectangle(2, 1), self.center_lanelet_assignment_different_order,
-                                       self.shape_lanelet_assignment)
+        tp = TrajectoryPrediction(
+            self.trajectory, Rectangle(2, 1), self.center_lanelet_assignment, self.shape_lanelet_assignment
+        )
+        tp_copy = TrajectoryPrediction(
+            self.trajectory,
+            Rectangle(2, 1),
+            self.center_lanelet_assignment_different_order,
+            self.shape_lanelet_assignment,
+        )
         # Should be equal as they represent exactly the same trajectory
         self.assertEqual(tp, tp_copy)
 
@@ -109,10 +119,18 @@ class TestTrajectoryPrediction(unittest.TestCase):
         """test if __eq__ ignores the order of the values in center_lanelet_assignment"""
         for x, y in zip(list(self.shape_lanelet_assignment[2]), list(self.shape_lanelet_assignment_different_order[2])):
             self.assertNotEqual(x, y, msg="This test relies on these two sets having different iteration orders!")
-        tp = TrajectoryPrediction(self.trajectory, Rectangle(2, 1), self.center_lanelet_assignment,
-                                  self.shape_lanelet_assignment_different_order)
-        tp_copy = TrajectoryPrediction(self.trajectory, Rectangle(2, 1), self.center_lanelet_assignment,
-                                       self.shape_lanelet_assignment_different_order)
+        tp = TrajectoryPrediction(
+            self.trajectory,
+            Rectangle(2, 1),
+            self.center_lanelet_assignment,
+            self.shape_lanelet_assignment_different_order,
+        )
+        tp_copy = TrajectoryPrediction(
+            self.trajectory,
+            Rectangle(2, 1),
+            self.center_lanelet_assignment,
+            self.shape_lanelet_assignment_different_order,
+        )
         # Should be equal as they represent exactly the same trajectory
         self.assertEqual(tp, tp_copy)
 
@@ -168,5 +186,5 @@ class TestSetBasedPrediction(unittest.TestCase):
         self.assertAlmostEqual(sp.occupancy_set[1].shape.shapes[1].center[1], 1.0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

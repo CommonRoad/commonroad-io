@@ -6,7 +6,7 @@ authors = ["Cyber-Physical Systems Group, Technical University of Munich <common
 license = "BSD"
 readme = "README.md"
 homepage = "https://commonroad.in.tum.de"
-keywords= ["autonomous", "automated", "vehicles", "driving", "motion", "planning"]
+keywords = ["autonomous", "automated", "vehicles", "driving", "motion", "planning"]
 classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -28,12 +28,12 @@ Source = "https://gitlab.lrz.de/tum-cps/commonroad_io"
 [tool.poetry.dependencies]
 python = "^3.8"
 numpy = [
-    {version = ">=1.22, <1.26", python = "3.8"},
-    {version = "^1.26.1", python = ">=3.9,<3.13"}
+    { version = ">=1.22, <1.26", python = "3.8" },
+    { version = "^1.26.1", python = ">=3.9,<3.13" }
 ]
 scipy = [
-    {version = ">=1.10.0,<1.11", python = "3.8"},
-    {version = "^1.11.3", python =  ">=3.9,<3.13"}
+    { version = ">=1.10.0,<1.11", python = "3.8" },
+    { version = "^1.11.3", python = ">=3.9,<3.13" }
 ]
 shapely = "^2.0.1"
 matplotlib = ">=3.0.0"
@@ -60,6 +60,17 @@ sphinx-gallery = ">=0.2.0"
 ipython = ">=8.10.0"
 
 
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.12.0"
+isort = "^5.13.1"
+flake8 = [
+    { version = "^5.0.4", python = ">=3.8,<3.8.1" },
+    { version = "^6.1.0", python = ">=3.8.1" }
+]
+
 [tool.poetry.group.tests]
 optional = true
 
@@ -75,6 +86,14 @@ optional = true
 [tool.poetry.group.tutorials.dependencies]
 cvxpy = ">=0.4.9"
 jupyter = ">=1.0.0"
+
+[tool.black]
+extend-exclude = "(traffic_signs/)|(generated_scripts/)"
+line-length = 120
+
+[tool.isort]
+profile = "black"
+extend_skip = ["traffic_signs", "generated_scripts"]
 
 [build-system]
 requires = ["poetry-core>=1.8.0"]
