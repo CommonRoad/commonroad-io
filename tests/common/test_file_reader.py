@@ -44,7 +44,7 @@ from commonroad.scenario.obstacle import (
     ObstacleType,
     PhantomObstacle,
     StaticObstacle,
-    EnvironmentObstacle
+    EnvironmentObstacle,
 )
 from commonroad.scenario.scenario import Scenario, ScenarioID, Tag
 from commonroad.scenario.state import CustomState, InitialState, KSState, STDState, STState, SignalState

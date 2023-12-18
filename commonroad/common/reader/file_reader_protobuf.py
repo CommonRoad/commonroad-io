@@ -104,7 +104,6 @@ from commonroad.scenario.traffic_light import (
     TrafficLightState,
 )
 from commonroad.scenario.traffic_sign import (
-    SupportedTrafficSignCountry,
     TrafficSign,
     TrafficSignElement,
     TrafficSignIDCountries,
