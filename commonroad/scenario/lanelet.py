@@ -18,7 +18,7 @@ from commonroad.common.validity import (
     is_natural_number,
     is_real_number_vector,
     is_positive,
-    is_list_of_natural_numbers
+    is_list_of_natural_numbers,
 )
 from commonroad.geometry.shape import Polygon, ShapeGroup, Circle, Rectangle, Shape
 from commonroad.scenario.intersection import Intersection, IncomingGroup, OutgoingGroup

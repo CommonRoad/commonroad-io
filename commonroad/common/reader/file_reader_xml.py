@@ -44,14 +44,14 @@ from commonroad.scenario.traffic_sign import (
     TrafficSign,
     TrafficSignElement,
     TrafficSignIDCountries,
-    TrafficSignIDZamunda
+    TrafficSignIDZamunda,
 )
 from commonroad.scenario.traffic_light import (
     TrafficLight,
     TrafficLightDirection,
     TrafficLightCycleElement,
     TrafficLightCycle,
-    TrafficLightState
+    TrafficLightState,
 )
 from commonroad.scenario.trajectory import Trajectory
 
@@ -259,7 +259,9 @@ class ScenarioFactory:
             for key, value in LaneletFactory._speed_limits.items():
                 for lanelet in value:
                     if scenario_id.country_id in [val for val in SupportedTrafficSignCountry]:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDCountries[scenario_id.country_id].MAX_SPEED, [str(key)])
+                        traffic_sign_element = TrafficSignElement(
+                            TrafficSignIDCountries[scenario_id.country_id].MAX_SPEED, [str(key)]
+                        )
                     else:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
                         logger.warning("Unknown country: Default traffic sign IDs are used.")

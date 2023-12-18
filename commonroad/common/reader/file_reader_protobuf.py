@@ -29,8 +29,9 @@ from commonroad.scenario.state import InitialState, TraceState, CustomState, Spe
 from commonroad.scenario.traffic_sign import (
     TrafficSignElement,
     TrafficSign,
+    TrafficSignIDCountries,
     SupportedTrafficSignCountry,
-    TrafficSignValue
+    TrafficSignValue,
 )
 from commonroad.scenario.traffic_light import (
     TrafficLightState,
@@ -550,7 +551,7 @@ class TrafficSignElementFactory:
     def create_from_message(
         cls, traffic_sign_element_msg: traffic_sign_element_pb2.TrafficSignElement, country: str = "ZAM"
     ):
-        element_id = globals()["TrafficSignID" + SupportedTrafficSignCountry(country).name.lower().capitalize()][
+        element_id = TrafficSignIDCountries[country][
             traffic_sign_element_pb2.TrafficSignIDEnum.TrafficSignID.Name(traffic_sign_element_msg.element_id)
         ]
         traffic_sign_element = TrafficSignElement(element_id)
