@@ -13,7 +13,7 @@ default:
 
 .run-test-with-coverage: &run-test-with-coverage
   - apt-get update && apt-get install -y ffmpeg
-  - coverage run tests/run_tests.py
+  - coverage run --source ./commonroad tests/run_tests.py
   - coverage report -m || true
 
 formatting_check:
