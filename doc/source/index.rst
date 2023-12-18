@@ -10,9 +10,9 @@ CommonRoad-io
 The commonroad-io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tools of the CommonRoad Framework.
 With commonroad-io, those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`__.
 
-commonroad-io 2023.3 is compatible with CommonRoad scenarios of version 2020a and supports reading 2018b scenarios.
+commonroad-io 2023.4 is compatible with CommonRoad scenarios of version 2020a and supports reading 2018b scenarios.
 
-The software is written in Python and tested on Linux for the Python 3.8, 3.9, 3.10, and 3.11.
+The software is written in Python and tested on Linux for the Python 3.8, 3.9, 3.10, 3.11, and 3.12.
 
 Documentation
 =============
@@ -66,42 +66,31 @@ and add the folder commonroad-io to your Python environment.
 
 Changelog
 =========
-Compared to version 2023.2, the following features have been added or changed:
+Compared to version 2023.3, the following features have been added or changed:
 
 Added
 -----
-- Type information for lanelet init function
-- Dynamic obstacles can now store a history of their states
-- Function to update the initial state of a dynamic obstacle while storing the previous state in the history
-- Function to update behavior predictions of dynamic obstacles
-- Function to find lanelet predecessors in range to lanelet network
-- Function to compute all predecessor lanelets starting from a provided lanelet and merge them to a single lanelet for each route.
-- Documentation for renderers (including video creation)
-- Abstract interfaces for motion planner and prediction for usage in other tools
-- New ExtendedPMState to support states with position, velocity, orientation, and acceleration
-- Orientation property to PMState
-- Hash and equality functions for area
+- Function to convert 3D scenarios to 2D scenarios
+- Support for Python 3.12
+- Function to retrieve all lanelets referencing a given traffic sign/light
+- New line marking types
+- Traffic light shape
 
 Fixed
 -----
 
-- Function create_from_lanelet_network deletes references to removed lanelets
-- Write environment time to XML in correct format
-- Failing visualization of lanelets, stop lines, traffic signs, and traffic lights with z-coordinate
-- Traffic lights now correctly change size in interactive matplotlib plots (only affected matplotlib>=3.7)
-- Considering state attributes not part of dataclass definition in state to state conversion
-- Enforce InitialState class for initial state property of dynamic obstacle
-- Hash function of obstacle
+- Conversion to initial state in function create_dynamic_obstacle of solution object
 
 Changed
 -------
 
-- Cleanup lanelet, traffic sign, and traffic light references in function create_from_lanelet_list by default
-- Equality checks of scenario elements no longer emit a warning on inequality (except if the elements are of different types)
+- Traffic signs for Zamunda now use images of German traffic signs
+- Code formatting (flake8, black, isort)
 
 Removed
 -------
-- Duplicated initial_state property of dynamic obstacle
+- Images for Zamunda traffic signs
+- Function commonorad.common.util.interpolate_angle
 
 A detailed overview about the changes in each version is provided in the `Changelog <https://gitlab.lrz.de/tum-cps/commonroad_io/-/blob/master/CHANGELOG.md>`__.
 
