@@ -1,34 +1,75 @@
 import datetime
-import re
-from typing import Set, Union, List
 import logging
+import re
+from typing import List, Set, Union
 
 import numpy as np
 from google.protobuf.message import DecodeError
 
-from commonroad.common.util import Interval, FileFormat, Time
-from commonroad.common.writer.file_writer_interface import FileWriter, OverwriteExistingFile
-from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup, Shape
-from commonroad.planning.planning_problem import PlanningProblemSet, PlanningProblem
-from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction, SetBasedPrediction
-from commonroad.scenario_definition.protobuf_format.generated_scripts import commonroad_pb2, util_pb2, \
-    phantom_obstacle_pb2
-from commonroad.scenario_definition.protobuf_format.generated_scripts import lanelet_pb2, planning_problem_pb2, \
-    traffic_sign_pb2, scenario_tags_pb2, environment_obstacle_pb2, obstacle_pb2, intersection_pb2, \
-    dynamic_obstacle_pb2, static_obstacle_pb2, traffic_light_pb2, location_pb2
+from commonroad.common.common_lanelet import LineMarking, StopLine
+from commonroad.common.util import FileFormat, Interval, Time
+from commonroad.common.writer.file_writer_interface import (
+    FileWriter,
+    OverwriteExistingFile,
+)
+from commonroad.geometry.shape import Circle, Polygon, Rectangle, Shape, ShapeGroup
+from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet
+from commonroad.prediction.prediction import (
+    Occupancy,
+    SetBasedPrediction,
+    TrajectoryPrediction,
+)
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.lanelet import Lanelet
-from commonroad.common.common_lanelet import StopLine, LineMarking
-from commonroad.scenario.obstacle import StaticObstacle, DynamicObstacle, EnvironmentObstacle, SignalState, \
-    PhantomObstacle
-from commonroad.scenario.scenario import Scenario, Tag, Location, GeoTransformation, Environment
-from commonroad.scenario.traffic_sign import TrafficSign, TrafficSignElement, \
-    TrafficSignIDGermany, TrafficSignIDFrance, TrafficSignIDZamunda, TrafficSignIDUsa, TrafficSignIDChina, \
-    TrafficSignIDSpain, TrafficSignIDRussia, TrafficSignIDArgentina, TrafficSignIDBelgium, TrafficSignIDGreece, \
-    TrafficSignIDCroatia, TrafficSignIDItaly
-from commonroad.scenario.traffic_light import TrafficLightCycleElement, TrafficLight
-from commonroad.scenario.trajectory import Trajectory
+from commonroad.scenario.obstacle import (
+    DynamicObstacle,
+    EnvironmentObstacle,
+    PhantomObstacle,
+    SignalState,
+    StaticObstacle,
+)
+from commonroad.scenario.scenario import (
+    Environment,
+    GeoTransformation,
+    Location,
+    Scenario,
+    Tag,
+)
 from commonroad.scenario.state import State
+from commonroad.scenario.traffic_light import TrafficLight, TrafficLightCycleElement
+from commonroad.scenario.traffic_sign import (
+    TrafficSign,
+    TrafficSignElement,
+    TrafficSignIDArgentina,
+    TrafficSignIDBelgium,
+    TrafficSignIDChina,
+    TrafficSignIDCroatia,
+    TrafficSignIDFrance,
+    TrafficSignIDGermany,
+    TrafficSignIDGreece,
+    TrafficSignIDItaly,
+    TrafficSignIDRussia,
+    TrafficSignIDSpain,
+    TrafficSignIDUsa,
+    TrafficSignIDZamunda,
+)
+from commonroad.scenario.trajectory import Trajectory
+from commonroad.scenario_definition.protobuf_format.generated_scripts import (
+    commonroad_pb2,
+    dynamic_obstacle_pb2,
+    environment_obstacle_pb2,
+    intersection_pb2,
+    lanelet_pb2,
+    location_pb2,
+    obstacle_pb2,
+    phantom_obstacle_pb2,
+    planning_problem_pb2,
+    scenario_tags_pb2,
+    static_obstacle_pb2,
+    traffic_light_pb2,
+    traffic_sign_pb2,
+    util_pb2,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -38,9 +79,17 @@ class ProtobufFileWriter(FileWriter):
     Writes CommonRoad files in protobuf format.
     """
 
-    def __init__(self, scenario: Scenario, planning_problem_set: PlanningProblemSet, author: str = None,
-                 affiliation: str = None, source: str = None, tags: Set[Tag] = None, location: Location = None,
-                 decimal_precision: int = 4):
+    def __init__(
+        self,
+        scenario: Scenario,
+        planning_problem_set: PlanningProblemSet,
+        author: str = None,
+        affiliation: str = None,
+        source: str = None,
+        tags: Set[Tag] = None,
+        location: Location = None,
+        decimal_precision: int = 4,
+    ):
         super().__init__(scenario, planning_problem_set, author, affiliation, source, tags, location, decimal_precision)
 
         self._commonroad_msg = commonroad_pb2.CommonRoad()
@@ -51,9 +100,14 @@ class ProtobufFileWriter(FileWriter):
 
         :return:
         """
-        information_msg = ScenarioInformationMessage.create_message(self.scenario.scenario_id.scenario_version,
-                                                                    str(self.scenario.scenario_id), self._author,
-                                                                    self._affiliation, self._source, self.scenario.dt)
+        information_msg = ScenarioInformationMessage.create_message(
+            self.scenario.scenario_id.scenario_version,
+            str(self.scenario.scenario_id),
+            self._author,
+            self._affiliation,
+            self._source,
+            self.scenario.dt,
+        )
 
         self._commonroad_msg.information.CopyFrom(information_msg)
 
@@ -128,9 +182,12 @@ class ProtobufFileWriter(FileWriter):
     def _get_suffix(self) -> str:
         return FileFormat.PROTOBUF.value
 
-    def write_to_file(self, filename: Union[str, None] = None,
-                      overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
-                      check_validity: bool = False):
+    def write_to_file(
+        self,
+        filename: Union[str, None] = None,
+        overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+        check_validity: bool = False,
+    ):
         """
         Writes message of type commonroad into file.
 
@@ -154,8 +211,11 @@ class ProtobufFileWriter(FileWriter):
 
         self._serialize_write_msg(filename)
 
-    def write_scenario_to_file(self, filename: Union[str, None] = None,
-                               overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT):
+    def write_scenario_to_file(
+        self,
+        filename: Union[str, None] = None,
+        overwrite_existing_file: OverwriteExistingFile = OverwriteExistingFile.ASK_USER_INPUT,
+    ):
         """
         Writes scenario as protobuf message into file.
 
@@ -191,10 +251,16 @@ class ProtobufFileWriter(FileWriter):
 
 
 class ScenarioInformationMessage:
-
     @classmethod
-    def create_message(cls, commonroad_version: str, benchmark_id: str, author: str, affiliation: str, source: str,
-                       time_step_size: float) -> commonroad_pb2.ScenarioInformation:
+    def create_message(
+        cls,
+        commonroad_version: str,
+        benchmark_id: str,
+        author: str,
+        affiliation: str,
+        source: str,
+        time_step_size: float,
+    ) -> commonroad_pb2.ScenarioInformation:
         scenario_information_msg = commonroad_pb2.ScenarioInformation()
         scenario_information_msg.common_road_version = commonroad_version
         scenario_information_msg.benchmark_id = benchmark_id
@@ -209,7 +275,6 @@ class ScenarioInformationMessage:
 
 
 class ScenarioTagsMessage:
-
     @classmethod
     def create_message(cls, tags: List[Tag]) -> scenario_tags_pb2.ScenarioTags:
         scenario_tags_msg = scenario_tags_pb2.ScenarioTags()
@@ -221,7 +286,6 @@ class ScenarioTagsMessage:
 
 
 class LocationMessage:
-
     @classmethod
     def create_message(cls, location: Location) -> location_pb2.Location:
         location_msg = location_pb2.Location()
@@ -241,7 +305,6 @@ class LocationMessage:
 
 
 class GeoTransformationMessage:
-
     @classmethod
     def create_message(cls, geo_transformation: GeoTransformation) -> location_pb2.GeoTransformation:
         geo_transformation_msg = location_pb2.GeoTransformation()
@@ -256,7 +319,6 @@ class GeoTransformationMessage:
 
 
 class EnvironmentMessage:
-
     @classmethod
     def create_message(cls, environment: Environment) -> location_pb2.Environment:
         environment_msg = location_pb2.Environment()
@@ -275,7 +337,6 @@ class EnvironmentMessage:
 
 
 class LaneletMessage:
-
     @classmethod
     def create_message(cls, lanelet: Lanelet) -> lanelet_pb2.Lanelet:
         lanelet_msg = lanelet_pb2.Lanelet()
@@ -302,15 +363,15 @@ class LaneletMessage:
 
         if lanelet.adj_left_same_direction is not None:
             if lanelet.adj_left_same_direction:
-                lanelet_msg.adjacent_left_dir = lanelet_pb2.DrivingDirEnum.DrivingDir.Value('SAME')
+                lanelet_msg.adjacent_left_dir = lanelet_pb2.DrivingDirEnum.DrivingDir.Value("SAME")
             else:
-                lanelet_msg.adjacent_left_dir = lanelet_pb2.DrivingDirEnum.DrivingDir.Value('OPPOSITE')
+                lanelet_msg.adjacent_left_dir = lanelet_pb2.DrivingDirEnum.DrivingDir.Value("OPPOSITE")
 
         if lanelet.adj_right_same_direction is not None:
             if lanelet.adj_right_same_direction:
-                lanelet_msg.adjacent_right_dir = lanelet_pb2.DrivingDirEnum.DrivingDir.Value('SAME')
+                lanelet_msg.adjacent_right_dir = lanelet_pb2.DrivingDirEnum.DrivingDir.Value("SAME")
             else:
-                lanelet_msg.adjacent_right_dir = lanelet_pb2.DrivingDirEnum.DrivingDir.Value('OPPOSITE')
+                lanelet_msg.adjacent_right_dir = lanelet_pb2.DrivingDirEnum.DrivingDir.Value("OPPOSITE")
 
         if lanelet.stop_line is not None:
             stop_line_msg = StopLineMessage.create_message(lanelet.stop_line)
@@ -335,7 +396,6 @@ class LaneletMessage:
 
 
 class BoundMessage:
-
     @classmethod
     def create_message(cls, vertices: np.ndarray, line_marking: LineMarking) -> lanelet_pb2.Bound:
         bound_msg = lanelet_pb2.Bound()
@@ -351,7 +411,6 @@ class BoundMessage:
 
 
 class StopLineMessage:
-
     @classmethod
     def create_message(cls, stop_line: StopLine) -> lanelet_pb2.StopLine:
         stop_line_msg = lanelet_pb2.StopLine()
@@ -378,7 +437,6 @@ class StopLineMessage:
 
 
 class TrafficSignMessage:
-
     @classmethod
     def create_message(cls, traffic_sign: TrafficSign) -> traffic_sign_pb2.TrafficSign:
         traffic_sign_msg = traffic_sign_pb2.TrafficSign()
@@ -400,51 +458,63 @@ class TrafficSignMessage:
 
 
 class TrafficSignElementMessage:
-
     @classmethod
     def create_message(cls, traffic_sign_element: TrafficSignElement) -> traffic_sign_pb2.TrafficSignElement:
         traffic_sign_element_msg = traffic_sign_pb2.TrafficSignElement()
 
         element_id = traffic_sign_element.traffic_sign_element_id
         if isinstance(element_id, TrafficSignIDGermany):
-            traffic_sign_element_msg.germany_element_id = traffic_sign_pb2.TrafficSignIDGermanyEnum \
-                .TrafficSignIDGermany.Value(element_id.name)
+            traffic_sign_element_msg.germany_element_id = (
+                traffic_sign_pb2.TrafficSignIDGermanyEnum.TrafficSignIDGermany.Value(element_id.name)
+            )
         elif isinstance(element_id, TrafficSignIDZamunda):
-            traffic_sign_element_msg.zamunda_element_id = traffic_sign_pb2.TrafficSignIDZamundaEnum \
-                .TrafficSignIDZamunda.Value(element_id.name)
+            traffic_sign_element_msg.zamunda_element_id = (
+                traffic_sign_pb2.TrafficSignIDZamundaEnum.TrafficSignIDZamunda.Value(element_id.name)
+            )
         elif isinstance(element_id, TrafficSignIDUsa):
-            traffic_sign_element_msg.usa_element_id = traffic_sign_pb2.TrafficSignIDUsaEnum \
-                .TrafficSignIDUsa.Value(element_id.name)
+            traffic_sign_element_msg.usa_element_id = traffic_sign_pb2.TrafficSignIDUsaEnum.TrafficSignIDUsa.Value(
+                element_id.name
+            )
         elif isinstance(element_id, TrafficSignIDChina):
-            traffic_sign_element_msg.china_element_id = traffic_sign_pb2.TrafficSignIDChinaEnum \
-                .TrafficSignIDChina.Value(element_id.name)
+            traffic_sign_element_msg.china_element_id = (
+                traffic_sign_pb2.TrafficSignIDChinaEnum.TrafficSignIDChina.Value(element_id.name)
+            )
         elif isinstance(element_id, TrafficSignIDSpain):
-            traffic_sign_element_msg.spain_element_id = traffic_sign_pb2.TrafficSignIDSpainEnum \
-                .TrafficSignIDSpain.Value(element_id.name)
+            traffic_sign_element_msg.spain_element_id = (
+                traffic_sign_pb2.TrafficSignIDSpainEnum.TrafficSignIDSpain.Value(element_id.name)
+            )
         elif isinstance(element_id, TrafficSignIDRussia):
-            traffic_sign_element_msg.russia_element_id = traffic_sign_pb2.TrafficSignIDRussiaEnum \
-                .TrafficSignIDRussia.Value(element_id.name)
+            traffic_sign_element_msg.russia_element_id = (
+                traffic_sign_pb2.TrafficSignIDRussiaEnum.TrafficSignIDRussia.Value(element_id.name)
+            )
         elif isinstance(element_id, TrafficSignIDArgentina):
-            traffic_sign_element_msg.argentina_element_id = traffic_sign_pb2.TrafficSignIDArgentinaEnum \
-                .TrafficSignIDArgentina.Value(element_id.name)
+            traffic_sign_element_msg.argentina_element_id = (
+                traffic_sign_pb2.TrafficSignIDArgentinaEnum.TrafficSignIDArgentina.Value(element_id.name)
+            )
         elif isinstance(element_id, TrafficSignIDBelgium):
-            traffic_sign_element_msg.belgium_element_id = traffic_sign_pb2.TrafficSignIDBelgiumEnum \
-                .TrafficSignIDBelgium.Value(element_id.name)
+            traffic_sign_element_msg.belgium_element_id = (
+                traffic_sign_pb2.TrafficSignIDBelgiumEnum.TrafficSignIDBelgium.Value(element_id.name)
+            )
         elif isinstance(element_id, TrafficSignIDFrance):
-            traffic_sign_element_msg.france_element_id = traffic_sign_pb2.TrafficSignIDFranceEnum \
-                .TrafficSignIDFrance.Value(element_id.name)
+            traffic_sign_element_msg.france_element_id = (
+                traffic_sign_pb2.TrafficSignIDFranceEnum.TrafficSignIDFrance.Value(element_id.name)
+            )
         elif isinstance(element_id, TrafficSignIDGreece):
-            traffic_sign_element_msg.greece_element_id = traffic_sign_pb2.TrafficSignIDGreeceEnum \
-                .TrafficSignIDGreece.Value(element_id.name)
+            traffic_sign_element_msg.greece_element_id = (
+                traffic_sign_pb2.TrafficSignIDGreeceEnum.TrafficSignIDGreece.Value(element_id.name)
+            )
         elif isinstance(element_id, TrafficSignIDCroatia):
-            traffic_sign_element_msg.croatia_element_id = traffic_sign_pb2.TrafficSignIDCroatiaEnum \
-                .TrafficSignIDCroatia.Value(element_id.name)
+            traffic_sign_element_msg.croatia_element_id = (
+                traffic_sign_pb2.TrafficSignIDCroatiaEnum.TrafficSignIDCroatia.Value(element_id.name)
+            )
         elif isinstance(element_id, TrafficSignIDItaly):
-            traffic_sign_element_msg.italy_element_id = traffic_sign_pb2.TrafficSignIDItalyEnum \
-                .TrafficSignIDItaly.Value(element_id.name)
+            traffic_sign_element_msg.italy_element_id = (
+                traffic_sign_pb2.TrafficSignIDItalyEnum.TrafficSignIDItaly.Value(element_id.name)
+            )
         else:
-            traffic_sign_element_msg.puerto_rico_element_id = traffic_sign_pb2.TrafficSignIDPuertoRicoEnum \
-                .TrafficSignIDPuertoRico.Value(element_id.name)
+            traffic_sign_element_msg.puerto_rico_element_id = (
+                traffic_sign_pb2.TrafficSignIDPuertoRicoEnum.TrafficSignIDPuertoRico.Value(element_id.name)
+            )
 
         for additional_value in traffic_sign_element.additional_values:
             traffic_sign_element_msg.additional_values.append(additional_value)
@@ -453,7 +523,6 @@ class TrafficSignElementMessage:
 
 
 class TrafficLightMessage:
-
     @classmethod
     def create_message(cls, traffic_light: TrafficLight) -> traffic_light_pb2.TrafficLight:
         traffic_light_msg = traffic_light_pb2.TrafficLight()
@@ -472,8 +541,9 @@ class TrafficLightMessage:
             traffic_light_msg.time_offset = traffic_light.traffic_light_cycle.time_offset
 
         if traffic_light.direction is not None:
-            traffic_light_msg.direction = traffic_light_pb2.TrafficLightDirectionEnum.TrafficLightDirection \
-                .Value(traffic_light.direction.name)
+            traffic_light_msg.direction = traffic_light_pb2.TrafficLightDirectionEnum.TrafficLightDirection.Value(
+                traffic_light.direction.name
+            )
 
         if traffic_light.active is not None:
             traffic_light_msg.active = traffic_light.active
@@ -482,20 +552,19 @@ class TrafficLightMessage:
 
 
 class CycleElementMessage:
-
     @classmethod
     def create_message(cls, cycle_element: TrafficLightCycleElement) -> traffic_light_pb2.CycleElement:
         cycle_element_msg = traffic_light_pb2.CycleElement()
 
         cycle_element_msg.duration = cycle_element.duration
-        cycle_element_msg.color = traffic_light_pb2.TrafficLightStateEnum.TrafficLightState \
-            .Value(cycle_element.state.name)
+        cycle_element_msg.color = traffic_light_pb2.TrafficLightStateEnum.TrafficLightState.Value(
+            cycle_element.state.name
+        )
 
         return cycle_element_msg
 
 
 class IntersectionMessage:
-
     @classmethod
     def create_message(cls, intersection: Intersection) -> intersection_pb2.Intersection:
         intersection_msg = intersection_pb2.Intersection()
@@ -513,7 +582,6 @@ class IntersectionMessage:
 
 
 class IncomingMessage:
-
     @classmethod
     def create_message(cls, incoming: IntersectionIncomingElement) -> intersection_pb2.Incoming:
         incoming_msg = intersection_pb2.Incoming()
@@ -538,15 +606,15 @@ class IncomingMessage:
 
 
 class StaticObstacleMessage:
-
     @classmethod
     def create_message(cls, static_obstacle: StaticObstacle) -> static_obstacle_pb2.StaticObstacle:
         static_obstacle_msg = static_obstacle_pb2.StaticObstacle()
 
         static_obstacle_msg.static_obstacle_id = static_obstacle.obstacle_id
 
-        static_obstacle_msg.obstacle_type = obstacle_pb2.ObstacleTypeEnum.ObstacleType \
-            .Value(static_obstacle.obstacle_type.name)
+        static_obstacle_msg.obstacle_type = obstacle_pb2.ObstacleTypeEnum.ObstacleType.Value(
+            static_obstacle.obstacle_type.name
+        )
 
         shape_msg = ShapeMessage.create_message(static_obstacle.obstacle_shape)
         static_obstacle_msg.shape.CopyFrom(shape_msg)
@@ -565,7 +633,6 @@ class StaticObstacleMessage:
 
 
 class StateMessage:
-
     @classmethod
     def create_message(cls, state: State) -> obstacle_pb2.State:
         state_msg = obstacle_pb2.State()
@@ -574,12 +641,12 @@ class StateMessage:
             if getattr(state, attr) is None:
                 continue
 
-            if attr == 'position':
+            if attr == "position":
                 if isinstance(state.position, np.ndarray):
                     state_msg.point.CopyFrom(PointMessage.create_message(state.position))
                 else:
                     state_msg.shape.CopyFrom(ShapeMessage.create_message(state.position))
-            elif attr == 'time_step':
+            elif attr == "time_step":
                 integer_exact_or_interval_msg = IntegerExactOrIntervalMessage.create_message(state.time_step)
                 state_msg.time_step.CopyFrom(integer_exact_or_interval_msg)
             else:
@@ -590,11 +657,10 @@ class StateMessage:
 
     @staticmethod
     def _map_to_pb_prop(prop: str) -> str:
-        return re.sub('(?<!^)(?=[A-Z])', '_', prop).lower()
+        return re.sub("(?<!^)(?=[A-Z])", "_", prop).lower()
 
 
 class SignalStateMessage:
-
     @classmethod
     def create_message(cls, signal_state: SignalState) -> obstacle_pb2.SignalState:
         signal_state_msg = obstacle_pb2.SignalState()
@@ -604,7 +670,7 @@ class SignalStateMessage:
                 if getattr(signal_state, attr) is None:
                     continue
 
-                if attr == 'time_step':
+                if attr == "time_step":
                     integer_exact_or_interval_msg = IntegerExactOrIntervalMessage.create_message(signal_state.time_step)
                     signal_state_msg.time_step.CopyFrom(integer_exact_or_interval_msg)
                 else:
@@ -614,14 +680,14 @@ class SignalStateMessage:
 
 
 class DynamicObstacleMessage:
-
     @classmethod
     def create_message(cls, dynamic_obstacle: DynamicObstacle) -> dynamic_obstacle_pb2.DynamicObstacle:
         dynamic_obstacle_msg = dynamic_obstacle_pb2.DynamicObstacle()
 
         dynamic_obstacle_msg.dynamic_obstacle_id = dynamic_obstacle.obstacle_id
-        dynamic_obstacle_msg.obstacle_type = obstacle_pb2.ObstacleTypeEnum.ObstacleType \
-            .Value(dynamic_obstacle.obstacle_type.name)
+        dynamic_obstacle_msg.obstacle_type = obstacle_pb2.ObstacleTypeEnum.ObstacleType.Value(
+            dynamic_obstacle.obstacle_type.name
+        )
 
         shape_msg = ShapeMessage.create_message(dynamic_obstacle.obstacle_shape)
         dynamic_obstacle_msg.shape.CopyFrom(shape_msg)
@@ -649,7 +715,6 @@ class DynamicObstacleMessage:
 
 
 class TrajectoryMessage:
-
     @classmethod
     def create_message(cls, trajectory: Trajectory) -> obstacle_pb2.Trajectory:
         trajectory_msg = obstacle_pb2.Trajectory()
@@ -664,7 +729,6 @@ class TrajectoryMessage:
 
 
 class OccupancySetMessage:
-
     @classmethod
     def create_message(cls, occupancy_set: List[Occupancy]) -> obstacle_pb2.OccupancySet:
         occupancy_set_msg = obstacle_pb2.OccupancySet()
@@ -677,7 +741,6 @@ class OccupancySetMessage:
 
 
 class OccupancyMessage:
-
     @classmethod
     def create_message(cls, occupancy: Occupancy) -> obstacle_pb2.Occupancy:
         occupancy_msg = obstacle_pb2.Occupancy()
@@ -692,7 +755,6 @@ class OccupancyMessage:
 
 
 class TrajectoryPredictionMessage:
-
     @classmethod
     def create_message(cls, trajectory_prediction: TrajectoryPrediction) -> obstacle_pb2.TrajectoryPrediction:
         trajectory_prediction_msg = obstacle_pb2.TrajectoryPrediction()
@@ -707,7 +769,6 @@ class TrajectoryPredictionMessage:
 
 
 class SetBasedPredictionMessage:
-
     @classmethod
     def create_message(cls, set_based_prediction: SetBasedPrediction) -> obstacle_pb2.SetBasedPrediction:
         set_based_prediction_msg = obstacle_pb2.SetBasedPrediction()
@@ -721,14 +782,14 @@ class SetBasedPredictionMessage:
 
 
 class EnvironmentObstacleMessage:
-
     @classmethod
     def create_message(cls, environment_obstacle: EnvironmentObstacle) -> environment_obstacle_pb2.EnvironmentObstacle:
         environment_obstacle_msg = environment_obstacle_pb2.EnvironmentObstacle()
 
         environment_obstacle_msg.environment_obstacle_id = environment_obstacle.obstacle_id
-        environment_obstacle_msg.obstacle_type = obstacle_pb2.ObstacleTypeEnum.ObstacleType \
-            .Value(environment_obstacle.obstacle_type.name)
+        environment_obstacle_msg.obstacle_type = obstacle_pb2.ObstacleTypeEnum.ObstacleType.Value(
+            environment_obstacle.obstacle_type.name
+        )
 
         shape_msg = ShapeMessage.create_message(environment_obstacle.obstacle_shape)
         environment_obstacle_msg.obstacle_shape.CopyFrom(shape_msg)
@@ -737,7 +798,6 @@ class EnvironmentObstacleMessage:
 
 
 class PhantomObstacleMessage:
-
     @classmethod
     def create_message(cls, phantom_obstacle: PhantomObstacle) -> phantom_obstacle_pb2.PhantomObstacle:
         phantom_obstacle_msg = phantom_obstacle_pb2.PhantomObstacle()
@@ -752,7 +812,6 @@ class PhantomObstacleMessage:
 
 
 class PlanningProblemMessage:
-
     @classmethod
     def create_message(cls, planning_problem: PlanningProblem) -> planning_problem_pb2.PlanningProblem:
         planning_problem_msg = planning_problem_pb2.PlanningProblem()
@@ -764,8 +823,9 @@ class PlanningProblemMessage:
 
         for i, state in enumerate(planning_problem.goal.state_list):
             if planning_problem.goal.lanelets_of_goal_position is not None:
-                goal_state_msg = GoalStateMessage \
-                    .create_message(state, planning_problem.goal.lanelets_of_goal_position[i])
+                goal_state_msg = GoalStateMessage.create_message(
+                    state, planning_problem.goal.lanelets_of_goal_position[i]
+                )
             else:
                 goal_state_msg = GoalStateMessage.create_message(state, list())
             planning_problem_msg.goal_states.append(goal_state_msg)
@@ -774,7 +834,6 @@ class PlanningProblemMessage:
 
 
 class GoalStateMessage:
-
     @classmethod
     def create_message(cls, state: State, lanelets_of_goal_position: List[int]) -> planning_problem_pb2.GoalState:
         goal_state_msg = planning_problem_pb2.GoalState()
@@ -789,7 +848,6 @@ class GoalStateMessage:
 
 
 class PointMessage:
-
     @classmethod
     def create_message(cls, point: np.ndarray) -> util_pb2.Point:
         point_msg = util_pb2.Point()
@@ -801,7 +859,6 @@ class PointMessage:
 
 
 class ShapeMessage:
-
     @classmethod
     def create_message(cls, shape: Shape) -> util_pb2.Shape:
         shape_msg = util_pb2.Shape()
@@ -819,7 +876,6 @@ class ShapeMessage:
 
 
 class RectangleMessage:
-
     @classmethod
     def create_message(cls, rectangle: Rectangle) -> util_pb2.Rectangle:
         rectangle_msg = util_pb2.Rectangle()
@@ -838,7 +894,6 @@ class RectangleMessage:
 
 
 class CircleMessage:
-
     @classmethod
     def create_message(cls, circle: Circle) -> util_pb2.Circle:
         circle_msg = util_pb2.Circle()
@@ -853,7 +908,6 @@ class CircleMessage:
 
 
 class PolygonMessage:
-
     @classmethod
     def create_message(cls, polygon: Polygon) -> util_pb2.Polygon:
         polygon_msg = util_pb2.Polygon()
@@ -866,7 +920,6 @@ class PolygonMessage:
 
 
 class ShapeGroupMessage:
-
     @classmethod
     def create_message(cls, shape_group: ShapeGroup) -> util_pb2.ShapeGroup:
         shape_group_msg = util_pb2.ShapeGroup()
@@ -879,7 +932,6 @@ class ShapeGroupMessage:
 
 
 class IntegerIntervalMessage:
-
     @classmethod
     def create_message(cls, interval: Interval) -> util_pb2.IntegerInterval:
         integer_interval_msg = util_pb2.IntegerInterval()
@@ -891,7 +943,6 @@ class IntegerIntervalMessage:
 
 
 class FloatIntervalMessage:
-
     @classmethod
     def create_message(cls, interval: Interval) -> util_pb2.FloatInterval:
         float_interval_msg = util_pb2.FloatInterval()
@@ -903,7 +954,6 @@ class FloatIntervalMessage:
 
 
 class IntegerExactOrIntervalMessage:
-
     @classmethod
     def create_message(cls, value: Union[int, Interval]) -> util_pb2.IntegerExactOrInterval:
         integer_exact_or_interval_msg = util_pb2.IntegerExactOrInterval()
@@ -918,7 +968,6 @@ class IntegerExactOrIntervalMessage:
 
 
 class FloatExactOrIntervalMessage:
-
     @classmethod
     def create_message(cls, value: Union[int, Interval]) -> util_pb2.FloatExactOrInterval:
         float_exact_or_interval_msg = util_pb2.FloatExactOrInterval()
@@ -933,7 +982,6 @@ class FloatExactOrIntervalMessage:
 
 
 class IntegerListMessage:
-
     @classmethod
     def create_message(cls, values: List[int]) -> util_pb2.IntegerList:
         integer_list_msg = util_pb2.IntegerList()
@@ -945,7 +993,6 @@ class IntegerListMessage:
 
 
 class FloatListMessage:
-
     @classmethod
     def create_message(cls, values: List[float]) -> util_pb2.FloatList:
         float_list_msg = util_pb2.FloatList()
@@ -957,7 +1004,6 @@ class FloatListMessage:
 
 
 class TimeStampMessage:
-
     @classmethod
     def create_message(cls, time_stamp: Union[datetime.datetime, Time]):
         time_stamp_msg = util_pb2.TimeStamp()

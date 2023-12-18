@@ -1,6 +1,11 @@
-from commonroad.common.file_reader import CommonRoadFileReader
-from commonroad.common.file_writer import CommonRoadFileWriter, OverwriteExistingFile, FileFormat
 from pathlib import Path
+
+from commonroad.common.file_reader import CommonRoadFileReader
+from commonroad.common.file_writer import (
+    CommonRoadFileWriter,
+    FileFormat,
+    OverwriteExistingFile,
+)
 
 for path in list(Path(__file__).parent.glob("*.xml")):
     file_name_new = Path(str(path).replace("xml", "pb"))
