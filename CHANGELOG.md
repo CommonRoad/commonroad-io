@@ -14,6 +14,7 @@
 
 ### Changed
 - Traffic signs for Zamunda now use images of German traffic signs
+- Code formatting (flake8, black, isort)
 
 ### Removed
 - Images for Zamunda traffic signs

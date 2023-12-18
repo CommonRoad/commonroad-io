@@ -94,6 +94,7 @@ Compared to version 2023.3, the following features have been added or changed:
 
 ### Changed
 - Traffic signs for Zamunda now use images of German traffic signs
+- Code formatting (flake8, black, isort)
 
 ### Removed
 - Images for Zamunda traffic signs
