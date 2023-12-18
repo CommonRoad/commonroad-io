@@ -524,7 +524,7 @@ class Intersection:
     @property
     def map_incoming_lanelets(self) -> Dict[int, IncomingGroup]:
         """
-        Maps all incoming lanelet ids to IntersectionIncomingElement
+        Maps all incoming lanelet ids to IncomingGroup
         """
         return {l_id: inc for inc in self.incomings for l_id in inc.incoming_lanelets}
 
@@ -551,29 +551,17 @@ class Intersection:
         :return: Set of lanelets IDs
         """
         outgoing_lanelets = set()
-        incoming_lanelets = set()
+        incoming_lanelets = set(self.map_incoming_lanelets.keys())
         intermediate_lanelets = set()
 
         for incoming_group in self.incomings:
-            incoming_lanelets = incoming_lanelets.union(incoming_group.incoming_lanelets)
-
-            outgoing_lanelets = outgoing_lanelets.union(incoming_group.outgoing_left)
-            for lanelet_id in incoming_group.outgoing_left:
-                if lanelet_network.find_lanelet_by_id(lanelet_id) is not None:
-                    outgoing_lanelets = outgoing_lanelets.union(
-                        set(lanelet_network.find_lanelet_by_id(lanelet_id).successor)
-                    )
-
-            outgoing_lanelets = outgoing_lanelets.union(incoming_group.outgoing_right)
-            for lanelet_id in incoming_group.outgoing_right:
-                if lanelet_network.find_lanelet_by_id(lanelet_id) is not None:
-                    outgoing_lanelets = outgoing_lanelets.union(
-                        set(lanelet_network.find_lanelet_by_id(lanelet_id).successor)
-                    )
-
-            outgoing_lanelets = outgoing_lanelets.union(incoming_group.outgoing_straight)
-            for lanelet_id in incoming_group.outgoing_straight:
-                if lanelet_network.find_lanelet_by_id(lanelet_id) is not None:
+            outgoing_lanelets = outgoing_lanelets.union(
+                incoming_group.outgoing_left, incoming_group.outgoing_right, incoming_group.outgoing_straight
+            )
+            for lanelet_id in incoming_group.outgoing_left.union(
+                incoming_group.outgoing_right, incoming_group.outgoing_straight
+            ):
+                if lanelet_network.find_lanelet_by_id(lanelet_id) is not None:  # considers also incoming adjacent
                     outgoing_lanelets = outgoing_lanelets.union(
                         set(lanelet_network.find_lanelet_by_id(lanelet_id).successor)
                     )
