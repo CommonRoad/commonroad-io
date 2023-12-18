@@ -1,14 +1,14 @@
 import unittest
+
 import numpy as np
 
+from commonroad.common.util import Interval
 from commonroad.scenario.state import KSState
 from commonroad.scenario.trajectory import Trajectory
-from commonroad.common.util import Interval
 
 
 class TestTrajectory(unittest.TestCase):
     def test_constructor(self):
-
         self.assertRaises(AssertionError, Trajectory, 0, list())
 
         states = list()
@@ -116,7 +116,7 @@ class TestTrajectory(unittest.TestCase):
             self.assertEqual(x.time_step, i)
             self.assertEqual(x.position[0], x_t[i])
             self.assertEqual(x.position[1], x_t[i])
-            self.assertEqual(x.orientation, 10+x_t[i])
+            self.assertEqual(x.orientation, 10 + x_t[i])
 
         traj_new = Trajectory.resample_continuous_time_state_list(states, time, 2.5, 2, initial_time_cont=5)
         x_t = np.interp(np.arange(5, 2.5 * 4 + 2.5, 2.5), time, [0, 5, 10])
@@ -131,15 +131,31 @@ class TestTrajectory(unittest.TestCase):
         self.assertRaises(AssertionError, Trajectory, 0, 1)
         self.assertRaises(AssertionError, Trajectory, 0, [])
         self.assertRaises(AssertionError, Trajectory, 0, [0, 1])
-        self.assertRaises(AssertionError, Trajectory, 0,
-                          [KSState(time_step='a', position=np.array([0, 0]), velocity=0, orientation=10)])
-        self.assertRaises(AssertionError, Trajectory, 0,
-                          [KSState(time_step=0, position=np.array([0, 0]), velocity=0, orientation=10),
-                           KSState(time_step=0, position=np.array([0, 0]))])
-        self.assertRaises(AssertionError, Trajectory, 2,
-                          [KSState(time_step=0, position=np.array([0, 0]), velocity=0, orientation=10),
-                           KSState(time_step=0, position=np.array([0, 0]))])
+        self.assertRaises(
+            AssertionError,
+            Trajectory,
+            0,
+            [KSState(time_step="a", position=np.array([0, 0]), velocity=0, orientation=10)],
+        )
+        self.assertRaises(
+            AssertionError,
+            Trajectory,
+            0,
+            [
+                KSState(time_step=0, position=np.array([0, 0]), velocity=0, orientation=10),
+                KSState(time_step=0, position=np.array([0, 0])),
+            ],
+        )
+        self.assertRaises(
+            AssertionError,
+            Trajectory,
+            2,
+            [
+                KSState(time_step=0, position=np.array([0, 0]), velocity=0, orientation=10),
+                KSState(time_step=0, position=np.array([0, 0])),
+            ],
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -1,22 +1,24 @@
 import copy
-import math
 import warnings
-from typing import Union, List, Dict, Set
+from typing import Dict, List, Set, Union
 
 import numpy as np
 
-from commonroad.common.util import Interval, AngleInterval
+from commonroad.common.util import AngleInterval, Interval
 from commonroad.geometry.shape import Shape
 from commonroad.scenario.state import TraceState
+from commonroad.visualization.draw_params import (
+    OccupancyParams,
+    OptionalSpecificOrAllDrawParams,
+)
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.renderer import IRenderer
-from commonroad.visualization.draw_params import OccupancyParams, OptionalSpecificOrAllDrawParams
 
 
 class GoalRegion(IDrawable):
-    def __init__(self, state_list: List[TraceState],
-                 lanelets_of_goal_position: Union[
-                     None, Dict[int, List[int]]] = None):
+    def __init__(
+        self, state_list: List[TraceState], lanelets_of_goal_position: Union[None, Dict[int, List[int]]] = None
+    ):
         """
         Region, that has to be reached by the vehicle. Contains a list of
         goal states of which one has to be fulfilled
@@ -40,15 +42,18 @@ class GoalRegion(IDrawable):
             warnings.warn(f"Inequality between GoalRegion {repr(self)} and different type {type(other)}")
             return False
 
-        lanelets_of_goal_position = None if self.lanelets_of_goal_position is None \
-            else self.lanelets_of_goal_position.items()
-        lanelets_of_goal_position_other = None if other.lanelets_of_goal_position is None \
-            else other.lanelets_of_goal_position.items()
+        lanelets_of_goal_position = (
+            None if self.lanelets_of_goal_position is None else self.lanelets_of_goal_position.items()
+        )
+        lanelets_of_goal_position_other = (
+            None if other.lanelets_of_goal_position is None else other.lanelets_of_goal_position.items()
+        )
         return self.state_list == other.state_list and lanelets_of_goal_position == lanelets_of_goal_position_other
 
     def __hash__(self):
-        lanelets_of_goal_position = None if self.lanelets_of_goal_position is None \
-            else self.lanelets_of_goal_position.items()
+        lanelets_of_goal_position = (
+            None if self.lanelets_of_goal_position is None else self.lanelets_of_goal_position.items()
+        )
         return hash((self.state_list, lanelets_of_goal_position))
 
     @property
@@ -70,7 +75,7 @@ class GoalRegion(IDrawable):
 
     @lanelets_of_goal_position.setter
     def lanelets_of_goal_position(self, lanelets: Union[None, Dict[int, List[int]]]):
-        if not hasattr(self, '_lanelets_of_goal_position'):
+        if not hasattr(self, "_lanelets_of_goal_position"):
             if lanelets is not None:
                 assert isinstance(lanelets, dict)
                 assert all(isinstance(x, int) for x in lanelets.keys())
@@ -78,7 +83,7 @@ class GoalRegion(IDrawable):
                 assert all(isinstance(x, int) for lanelet_list in lanelets.values() for x in lanelet_list)
             self._lanelets_of_goal_position = lanelets
         else:
-            warnings.warn('<GoalRegion/lanelets_of_goal_position> lanelets_of_goal_position are immutable')
+            warnings.warn("<GoalRegion/lanelets_of_goal_position> lanelets_of_goal_position are immutable")
 
     def is_reached(self, state: TraceState) -> bool:
         """
@@ -93,12 +98,16 @@ class GoalRegion(IDrawable):
             goal_state_tmp = copy.deepcopy(goal_state)
             goal_state_fields = set(goal_state.used_attributes)
             state_fields = set(state.used_attributes)
-            state_new, state_fields, goal_state_tmp, goal_state_fields = \
-                self._harmonize_state_types(state, goal_state_tmp, state_fields, goal_state_fields)
+            state_new, state_fields, goal_state_tmp, goal_state_fields = self._harmonize_state_types(
+                state, goal_state_tmp, state_fields, goal_state_fields
+            )
 
             if not goal_state_fields.issubset(state_fields):
-                raise ValueError('The goal states {} are not a subset of the provided states {}!'
-                                 .format(goal_state_fields, state_fields))
+                raise ValueError(
+                    "The goal states {} are not a subset of the provided states {}!".format(
+                        goal_state_fields, state_fields
+                    )
+                )
             is_reached = True
             if goal_state.time_step is not None:
                 is_reached = is_reached and self._check_value_in_interval(state_new.time_step, goal_state.time_step)
@@ -122,8 +131,9 @@ class GoalRegion(IDrawable):
             self.state_list[i] = state.translate_rotate(translation, angle)
 
     @classmethod
-    def _check_value_in_interval(cls, value: Union[int, float], desired_interval: Union[AngleInterval, Interval]) -> \
-            bool:
+    def _check_value_in_interval(
+        cls, value: Union[int, float], desired_interval: Union[AngleInterval, Interval]
+    ) -> bool:
         """
         Checks if an exact value is included in the desired interval. If desired_interval is not an interval,
         an exception is thrown.
@@ -135,9 +145,10 @@ class GoalRegion(IDrawable):
         if isinstance(desired_interval, (Interval, AngleInterval)):
             is_reached = desired_interval.contains(value)
         else:
-            raise ValueError("<GoalRegion/_check_value_in_interval>: argument 'desired_interval' of wrong type. "
-                             "Expected type: {}. Got type: {}.".format((type(Interval), type(AngleInterval)),
-                                                                       type(desired_interval)))
+            raise ValueError(
+                "<GoalRegion/_check_value_in_interval>: argument 'desired_interval' of wrong type. "
+                "Expected type: {}. Got type: {}.".format((type(Interval), type(AngleInterval)), type(desired_interval))
+            )
         return is_reached
 
     @classmethod
@@ -148,35 +159,44 @@ class GoalRegion(IDrawable):
         :param state: state to check
         """
         # mandatory fields:
-        if getattr(state, 'time_step') is None:
-            raise ValueError('<GoalRegion/_goal_state_is_valid> field time_step is mandatory. '
-                             'No time_step attribute found.')
+        if getattr(state, "time_step") is None:
+            raise ValueError(
+                "<GoalRegion/_goal_state_is_valid> field time_step is mandatory. " "No time_step attribute found."
+            )
 
         # optional fields
-        valid_fields = ['time_step', 'position', 'velocity', 'orientation']
+        valid_fields = ["time_step", "position", "velocity", "orientation"]
 
         for attr in state.used_attributes:
             if attr not in valid_fields:
-                raise ValueError('<GoalRegion/_goal_state_is_valid> field error: allowed fields are '
-                                 '[time_step, position, velocity, orientation]; "%s" detected' % attr)
-            elif attr == 'position':
+                raise ValueError(
+                    "<GoalRegion/_goal_state_is_valid> field error: allowed fields are "
+                    '[time_step, position, velocity, orientation]; "%s" detected' % attr
+                )
+            elif attr == "position":
                 if not isinstance(getattr(state, attr), Shape):
                     raise ValueError(
-                        '<GoalRegion/_goal_state_is_valid> position needs to be an instance of '
-                        '%s; got instance of %s instead' % (Shape, getattr(state, attr).__class__))
-            elif attr == 'orientation':
+                        "<GoalRegion/_goal_state_is_valid> position needs to be an instance of "
+                        "%s; got instance of %s instead" % (Shape, getattr(state, attr).__class__)
+                    )
+            elif attr == "orientation":
                 if not isinstance(getattr(state, attr), AngleInterval):
-                    raise ValueError('<GoalRegion/_goal_state_is_valid> orientation needs to be an instance of %s; got '
-                                     'instance of %s instead' % (AngleInterval, getattr(state, attr).__class__))
+                    raise ValueError(
+                        "<GoalRegion/_goal_state_is_valid> orientation needs to be an instance of %s; got "
+                        "instance of %s instead" % (AngleInterval, getattr(state, attr).__class__)
+                    )
             else:
                 if not isinstance(getattr(state, attr), Interval):
-                    raise ValueError('<GoalRegion/_goal_state_is_valid> attributes must be instances of '
-                                     '%s only (except from position and orientation); got "%s" for '
-                                     'attribute "%s"' % (Interval, getattr(state, attr).__class__, attr))
+                    raise ValueError(
+                        "<GoalRegion/_goal_state_is_valid> attributes must be instances of "
+                        '%s only (except from position and orientation); got "%s" for '
+                        'attribute "%s"' % (Interval, getattr(state, attr).__class__, attr)
+                    )
 
     @staticmethod
-    def _harmonize_state_types(state: TraceState, goal_state: TraceState,  state_fields: Set[str],
-                               goal_state_fields: Set[str]):
+    def _harmonize_state_types(
+        state: TraceState, goal_state: TraceState, state_fields: Set[str], goal_state_fields: Set[str]
+    ):
         """
         Transforms states from value_x, value_y to orientation, value representation if required.
         :param state: state to check for goal
@@ -184,15 +204,16 @@ class GoalRegion(IDrawable):
         :return:
         """
         state_new = copy.deepcopy(state)
-        if {'velocity', 'velocity_y'}.issubset(state_fields) \
-                and ({'orientation'}.issubset(goal_state_fields) or {'velocity'}.issubset(goal_state_fields))\
-                and not {'velocity', 'velocity_y'}.issubset(goal_state_fields):
-
-            if 'orientation' not in state_fields:
-                state_fields.add('orientation')
+        if (
+            {"velocity", "velocity_y"}.issubset(state_fields)
+            and ({"orientation"}.issubset(goal_state_fields) or {"velocity"}.issubset(goal_state_fields))
+            and not {"velocity", "velocity_y"}.issubset(goal_state_fields)
+        ):
+            if "orientation" not in state_fields:
+                state_fields.add("orientation")
 
             state_new.velocity = np.linalg.norm(np.array([state_new.velocity, state_new.velocity_y]))
-            state_fields.remove('velocity_y')
+            state_fields.remove("velocity_y")
 
         return state_new, state_fields, goal_state, goal_state_fields
 

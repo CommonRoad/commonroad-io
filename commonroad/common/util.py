@@ -1,11 +1,14 @@
 import enum
+import math
+import warnings
 from pathlib import Path
+from typing import Tuple, Union
 
 import numpy as np
-import math
-from typing import Tuple
+
+from commonroad import TWO_PI
 from commonroad.common import validity
-from commonroad.common.validity import *
+from commonroad.common.validity import is_valid_orientation
 
 Path_T = Union[str, bytes, Path]
 
@@ -75,25 +78,25 @@ class Interval:
         yield self._start
         yield self._end
 
-    def __truediv__(self, other) -> 'Interval':
+    def __truediv__(self, other) -> "Interval":
         if other > 0.0:
-            return type(self)(self._start/other, self._end/other)
+            return type(self)(self._start / other, self._end / other)
         else:
             return type(self)(self._end / other, self._start / other)
 
-    def __mul__(self, other: Union[int, float]) -> 'Interval':
+    def __mul__(self, other: Union[int, float]) -> "Interval":
         if other > 0.0:
             return type(self)(self._start * other, self._end * other)
         else:
             return type(self)(self._end * other, self._start * other)
 
-    def __round__(self, n=None) -> 'Interval':
+    def __round__(self, n=None) -> "Interval":
         return type(self)(round(self._start, n), round(self._end, n))
 
-    def __add__(self, other: Union[float, int]) -> 'Interval':
+    def __add__(self, other: Union[float, int]) -> "Interval":
         return type(self)(self._start + other, self._end + other)
 
-    def __sub__(self, other: Union[float, int]) -> 'Interval':
+    def __sub__(self, other: Union[float, int]) -> "Interval":
         return type(self)(self._start - other, self._end - other)
 
     @property
@@ -103,8 +106,11 @@ class Interval:
     @start.setter
     def start(self, start: Union[int, float]):
         if self._end is not None:
-            assert start <= self._end, '<common.util/Interval> start of interval must be <= end, ' \
-                                       'but start {} > end {}'.format(start, self._end)
+            assert (
+                start <= self._end
+            ), "<common.util/Interval> start of interval must be <= end, " "but start {} > end {}".format(
+                start, self._end
+            )
         self._start = start
 
     @property
@@ -114,11 +120,14 @@ class Interval:
     @end.setter
     def end(self, end: Union[int, float]):
         if self._start is not None:
-            assert end >= self._start, '<common.util/Interval> start of interval must be <= end, ' \
-                                       'but start {} > end {}'.format(self._start, end)
+            assert (
+                end >= self._start
+            ), "<common.util/Interval> start of interval must be <= end, " "but start {} > end {}".format(
+                self._start, end
+            )
         self._end = end
 
-    def contains(self, other: Union[int, float, 'Interval']) -> bool:
+    def contains(self, other: Union[int, float, "Interval"]) -> bool:
         if type(other) is Interval:
             return self.start <= other.start and other.end <= self.end
         else:
@@ -127,10 +136,10 @@ class Interval:
     def __contains__(self, value: Union[int, float, "Interval"]):
         return self.contains(value)
 
-    def overlaps(self, interval: 'Interval') -> bool:
+    def overlaps(self, interval: "Interval") -> bool:
         return self.end >= interval.start and interval.end >= self.start
 
-    def intersection(self, other: 'Interval') -> Union[None, 'Interval']:
+    def intersection(self, other: "Interval") -> Union[None, "Interval"]:
         """
         Returns the intersections with another interval.
         :param other: Interval
@@ -165,10 +174,11 @@ class Interval:
 
 
 class AngleInterval(Interval):
-    """ Allows only angles from interval [-2pi,2pi]"""
+    """Allows only angles from interval [-2pi,2pi]"""
+
     def __init__(self, start: Union[int, float], end: Union[int, float]):
         start, end = make_valid_orientation_interval(start, end)
-        assert end - start < TWO_PI, '<common.util/AngleInterval> Interval must not be |start-end| > 2pi'
+        assert end - start < TWO_PI, "<common.util/AngleInterval> Interval must not be |start-end| > 2pi"
         Interval.__init__(self, start, end)
 
     @property
@@ -177,10 +187,13 @@ class AngleInterval(Interval):
 
     @start.setter
     def start(self, start: Union[int, float]):
-        assert is_valid_orientation(start), '<common.util/AngleInterval> start angle needs to be in interval [-2pi,2pi]'
+        assert is_valid_orientation(start), "<common.util/AngleInterval> start angle needs to be in interval [-2pi,2pi]"
         if self._end is not None:
-            assert start <= self._end, '<common.util/Interval> start of interval must be <= end, ' \
-                                       'but start {} > end {}'.format(start, self._end)
+            assert (
+                start <= self._end
+            ), "<common.util/Interval> start of interval must be <= end, " "but start {} > end {}".format(
+                start, self._end
+            )
         self._start = start
 
     @property
@@ -189,16 +202,19 @@ class AngleInterval(Interval):
 
     @end.setter
     def end(self, end: Union[int, float]):
-        assert is_valid_orientation(end), '<common.util/AngleInterval> end angle needs to be in interval [-2pi,2pi]'
+        assert is_valid_orientation(end), "<common.util/AngleInterval> end angle needs to be in interval [-2pi,2pi]"
         if self._start is not None:
-            assert end >= self._start, '<common.util/Interval> start of interval must be <= end, ' \
-                                       'but start {} > end {}'.format(self._start, end)
+            assert (
+                end >= self._start
+            ), "<common.util/Interval> start of interval must be <= end, " "but start {} > end {}".format(
+                self._start, end
+            )
         self._end = end
 
-    def intersect(self, other: 'AngleInterval'):
+    def intersect(self, other: "AngleInterval"):
         raise NotImplementedError()
 
-    def contains(self, other: Union[float, 'AngleInterval']) -> bool:
+    def contains(self, other: Union[float, "AngleInterval"]) -> bool:
         if isinstance(other, float):
             return self.__contains__(other)
         interval_diff = vectorized_angle_difference(self.end, self.start)
@@ -218,6 +234,7 @@ class FileFormat(enum.Enum):
     """
     Specifies the format of file.
     """
+
     XML = ".xml"
     PROTOBUF = ".pb"
 
@@ -247,8 +264,13 @@ class Time:
         if not isinstance(other, Time):
             return False
 
-        return self._hours == other.hours and self._minutes == other.minutes and self._day == other.day and \
-            self._month == other.month and self._year == other.year
+        return (
+            self._hours == other.hours
+            and self._minutes == other.minutes
+            and self._day == other.day
+            and self._month == other.month
+            and self._year == other.year
+        )
 
     def __str__(self):
         return f"Year {self._year}, month {self._month}, day {self._day}, hour {self._hours}, minute {self.minutes}"
@@ -258,7 +280,7 @@ class Time:
 
     @property
     def hours(self) -> int:
-        """ Hours at start of scenario (0-24)"""
+        """Hours at start of scenario (0-24)"""
         return self._hours
 
     @hours.setter
@@ -267,7 +289,7 @@ class Time:
 
     @property
     def minutes(self) -> int:
-        """ Minutes at start of scenario (0-60)"""
+        """Minutes at start of scenario (0-60)"""
         return self._minutes
 
     @minutes.setter
@@ -276,7 +298,7 @@ class Time:
 
     @property
     def day(self) -> Union[None, int]:
-        """ Day at start of scenario (1-31)"""
+        """Day at start of scenario (1-31)"""
         return self._day
 
     @day.setter
@@ -285,7 +307,7 @@ class Time:
 
     @property
     def month(self) -> Union[None, int]:
-        """ Month at start of scenario (1-12)"""
+        """Month at start of scenario (1-12)"""
         return self._month
 
     @month.setter
@@ -294,10 +316,9 @@ class Time:
 
     @property
     def year(self) -> Union[None, int]:
-        """ Year at start of scenario"""
+        """Year at start of scenario"""
         return self._year
 
     @year.setter
     def year(self, year: Union[None, int]):
         self._year = year
-

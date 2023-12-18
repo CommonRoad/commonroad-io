@@ -1,13 +1,22 @@
 import enum
-from typing import List, Optional
+import warnings
+from typing import List, Optional, Union
+
 import numpy as np
 
 import commonroad.geometry.transform
+from commonroad.common.validity import (
+    is_real_number,
+    is_real_number_vector,
+    is_valid_orientation,
+)
 from commonroad.geometry.shape import Rectangle
-from commonroad.visualization.draw_params import OptionalSpecificOrAllDrawParams, TrafficLightParams
+from commonroad.visualization.draw_params import (
+    OptionalSpecificOrAllDrawParams,
+    TrafficLightParams,
+)
 from commonroad.visualization.drawable import IDrawable
 from commonroad.visualization.renderer import IRenderer
-from commonroad.common.validity import *
 
 
 @enum.unique
@@ -15,6 +24,7 @@ class TrafficLightState(enum.Enum):
     """
     Enum for the possible types of traffic light in signals
     """
+
     RED = "red"
     YELLOW = "yellow"
     RED_YELLOW = "redYellow"
@@ -27,6 +37,7 @@ class TrafficLightDirection(enum.Enum):
     """
     Enum for all the possible directions for a traffic signal
     """
+
     RIGHT = "right"
     STRAIGHT = "straight"
     LEFT = "left"
@@ -81,9 +92,11 @@ class TrafficLightCycleElement:
 
 
 class TrafficLightCycle:
-    """ Class to represent a traffic light cycle"""
-    def __init__(self, cycle_elements: List[TrafficLightCycleElement] = None,
-                 time_offset: int = 0, active: bool = True):
+    """Class to represent a traffic light cycle"""
+
+    def __init__(
+        self, cycle_elements: List[TrafficLightCycleElement] = None, time_offset: int = 0, active: bool = True
+    ):
         """
         :param cycle_elements: list of traffic light cycle elements
         :param time_offset: offset of the traffic light cycle
@@ -104,20 +117,27 @@ class TrafficLightCycle:
             warnings.warn(f"Inequality between TrafficLightCycle {repr(self)} and different type {type(other)}")
             return False
 
-        return (self._cycle_elements == other.cycle_elements and self._time_offset == other.time_offset and
-                self._active == other.active)
+        return (
+            self._cycle_elements == other.cycle_elements
+            and self._time_offset == other.time_offset
+            and self._active == other.active
+        )
 
     def __str__(self):
-        return f"TrafficLightCycle element with " \
-               f"cycle_elements={self._cycle_elements}, time_offset={self._time_offset} and active={self._active}"
+        return (
+            f"TrafficLightCycle element with "
+            f"cycle_elements={self._cycle_elements}, time_offset={self._time_offset} and active={self._active}"
+        )
 
     def __repr__(self):
-        return f"TrafficLightCycle(cycle_elements={self._cycle_elements}," \
-               f" time_offset={self._time_offset}, active={self._active}"
+        return (
+            f"TrafficLightCycle(cycle_elements={self._cycle_elements},"
+            f" time_offset={self._time_offset}, active={self._active}"
+        )
 
     @property
     def cycle_elements(self) -> Union[None, List[TrafficLightCycleElement]]:
-        """ List of traffic light cycle elements."""
+        """List of traffic light cycle elements."""
         return self._cycle_elements
 
     @cycle_elements.setter
@@ -126,7 +146,7 @@ class TrafficLightCycle:
 
     @property
     def time_offset(self) -> int:
-        """ Offset of the traffic light cycle."""
+        """Offset of the traffic light cycle."""
         return self._time_offset
 
     @time_offset.setter
@@ -135,7 +155,7 @@ class TrafficLightCycle:
 
     @property
     def active(self) -> bool:
-        """ Boolean indicating if the traffic light is currently active."""
+        """Boolean indicating if the traffic light is currently active."""
         return self._active
 
     @active.setter
@@ -144,25 +164,33 @@ class TrafficLightCycle:
 
     @property
     def cycle_init_timesteps(self):
-        if not hasattr(self, '_cycle_init_timesteps'):
+        if not hasattr(self, "_cycle_init_timesteps"):
             durations = [cycle_el.duration for cycle_el in self._cycle_elements]
             self._cycle_init_timesteps = np.cumsum(durations) + self.time_offset
             self._cycle_init_timesteps = np.insert(self._cycle_init_timesteps, 0, self.time_offset)
         return self._cycle_init_timesteps
 
     def get_state_at_time_step(self, time_step: int) -> TrafficLightState:
-        time_step_mod = ((time_step - self.time_offset) % (
-                    self.cycle_init_timesteps[-1] - self.time_offset)) + self.time_offset
+        time_step_mod = (
+            (time_step - self.time_offset) % (self.cycle_init_timesteps[-1] - self.time_offset)
+        ) + self.time_offset
         i_cycle = np.argmax(time_step_mod < self.cycle_init_timesteps) - 1
         return self.cycle_elements[i_cycle].state
 
 
 class TrafficLight(IDrawable):
-    """ Class to represent a traffic light"""
+    """Class to represent a traffic light"""
 
-    def __init__(self, traffic_light_id: int, position: np.ndarray, traffic_light_cycle: TrafficLightCycle = None,
-                 color: List[TrafficLightState] = None, active: bool = True,
-                 direction: TrafficLightDirection = TrafficLightDirection.ALL, shape: Optional[Rectangle] = None):
+    def __init__(
+        self,
+        traffic_light_id: int,
+        position: np.ndarray,
+        traffic_light_cycle: TrafficLightCycle = None,
+        color: List[TrafficLightState] = None,
+        active: bool = True,
+        direction: TrafficLightDirection = TrafficLightDirection.ALL,
+        shape: Optional[Rectangle] = None,
+    ):
         """
         :param traffic_light_id: ID of the traffic light
         :param position: position of the traffic light
@@ -190,41 +218,60 @@ class TrafficLight(IDrawable):
         position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
         position_other_string = np.array2string(np.around(other.position.astype(float), 10), precision=10)
 
-        return (self._traffic_light_id == other.traffic_light_id and position_string == position_other_string and
-                self._color == other.color and self._direction == other.direction and self._traffic_light_cycle
-                == other.traffic_light_cycle and self._active == other.active and self._shape == other.shape)
+        return (
+            self._traffic_light_id == other.traffic_light_id
+            and position_string == position_other_string
+            and self._color == other.color
+            and self._direction == other.direction
+            and self._traffic_light_cycle == other.traffic_light_cycle
+            and self._active == other.active
+            and self._shape == other.shape
+        )
 
     def __hash__(self):
         position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
-        return hash((self._traffic_light_id, position_string, self._traffic_light_cycle, frozenset(self._color),
-                     self._active, self._direction, self._shape))
+        return hash(
+            (
+                self._traffic_light_id,
+                position_string,
+                self._traffic_light_cycle,
+                frozenset(self._color),
+                self._active,
+                self._direction,
+                self._shape,
+            )
+        )
 
     def __str__(self):
         return f"TrafficLight with id {self._traffic_light_id} placed at {self._position}"
 
     def __repr__(self):
-        return f"TrafficLight(traffic_light_id={self._traffic_light_id}, " \
-               f"position={self._position.tolist()}, " \
-               f"traffic light cycle={self._traffic_light_cycle}, " \
-               f"color={self._color}, " \
-               f"active={self._active}, "\
-               f"direction={self._direction}"
+        return (
+            f"TrafficLight(traffic_light_id={self._traffic_light_id}, "
+            f"position={self._position.tolist()}, "
+            f"traffic light cycle={self._traffic_light_cycle}, "
+            f"color={self._color}, "
+            f"active={self._active}, "
+            f"direction={self._direction}"
+        )
 
     @property
     def traffic_light_id(self) -> int:
-        """ ID of the traffic light."""
+        """ID of the traffic light."""
         return self._traffic_light_id
 
     @traffic_light_id.setter
     def traffic_light_id(self, traffic_light_id: int):
-        assert isinstance(traffic_light_id, int), '<TrafficLight/traffic_light_id>: ' \
-                                                  'Provided traffic_light_id is not valid! ' \
-                                                  'id={}'.format(traffic_light_id)
+        assert isinstance(traffic_light_id, int), (
+            "<TrafficLight/traffic_light_id>: "
+            "Provided traffic_light_id is not valid! "
+            "id={}".format(traffic_light_id)
+        )
         self._traffic_light_id = traffic_light_id
 
     @property
     def position(self) -> np.ndarray:
-        """ Position of the traffic light."""
+        """Position of the traffic light."""
         return self._position
 
     @position.setter
@@ -233,7 +280,7 @@ class TrafficLight(IDrawable):
 
     @property
     def traffic_light_cycle(self) -> Union[None, TrafficLightCycle]:
-        """ Traffic light cycle of the traffic light."""
+        """Traffic light cycle of the traffic light."""
         return self._traffic_light_cycle
 
     @traffic_light_cycle.setter
@@ -242,7 +289,7 @@ class TrafficLight(IDrawable):
 
     @property
     def color(self) -> List[TrafficLightState]:
-        """ List of traffic light color light states."""
+        """List of traffic light color light states."""
         return self._color
 
     @color.setter
@@ -251,7 +298,7 @@ class TrafficLight(IDrawable):
 
     @property
     def active(self) -> Union[None, bool]:
-        """ Boolean indicating if the traffic light is currently active."""
+        """Boolean indicating if the traffic light is currently active."""
         return self._active
 
     @active.setter
@@ -260,7 +307,7 @@ class TrafficLight(IDrawable):
 
     @property
     def direction(self) -> TrafficLightDirection:
-        """ Driving directions for which the traffic light is valid."""
+        """Driving directions for which the traffic light is valid."""
         return self._direction
 
     @direction.setter
@@ -269,7 +316,7 @@ class TrafficLight(IDrawable):
 
     @property
     def shape(self) -> Rectangle:
-        """ Shape of rectangle."""
+        """Shape of rectangle."""
         return self._shape
 
     @shape.setter
@@ -284,20 +331,24 @@ class TrafficLight(IDrawable):
         :param angle: The rotation angle in radian (counter-clockwise defined)
         """
 
-        assert is_real_number_vector(translation, 2), '<TrafficLight/translate_rotate>: ' \
-                                                      'argument translation is ' \
-                                                      'not a vector of real numbers of ' \
-                                                      'length 2.'
-        assert is_real_number(angle), '<TrafficLight/translate_rotate>: argument angle must ' \
-                                      'be ' \
-                                      'a scalar. ' \
-                                      'angle = %s' % angle
-        assert is_valid_orientation(angle), '<TrafficLight/translate_rotate>: argument angle must ' \
-                                            'be ' \
-                                            'within the ' \
-                                            'interval [-2pi, 2pi]. angle = %s' % angle
+        assert is_real_number_vector(translation, 2), (
+            "<TrafficLight/translate_rotate>: "
+            "argument translation is "
+            "not a vector of real numbers of "
+            "length 2."
+        )
+        assert is_real_number(angle), (
+            "<TrafficLight/translate_rotate>: argument angle must " "be " "a scalar. " "angle = %s" % angle
+        )
+        assert is_valid_orientation(angle), (
+            "<TrafficLight/translate_rotate>: argument angle must "
+            "be "
+            "within the "
+            "interval [-2pi, 2pi]. angle = %s" % angle
+        )
         self._position = commonroad.geometry.transform.translate_rotate(np.array([self._position]), translation, angle)[
-            0]
+            0
+        ]
 
     def convert_to_2d(self) -> None:
         """

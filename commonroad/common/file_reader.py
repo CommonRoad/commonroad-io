@@ -1,13 +1,12 @@
 from pathlib import Path
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
-from commonroad.common.util import FileFormat, Path_T
 from commonroad.common.reader.file_reader_protobuf import ProtobufFileReader
 from commonroad.common.reader.file_reader_xml import XMLFileReader
+from commonroad.common.util import FileFormat, Path_T
 from commonroad.planning.planning_problem import PlanningProblemSet
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.scenario import Scenario
-from commonroad.scenario.traffic_sign import *
 
 
 class CommonRoadFileReader:
@@ -15,6 +14,7 @@ class CommonRoadFileReader:
     Reads CommonRoad files in XML or protobuf format. The corresponding stored scenario and planning problem set
     are created by the reader.
     """
+
     def __init__(self, filename: Path_T, file_format: Optional[FileFormat] = None):
         """
         Initializes the FileReader for CommonRoad files.

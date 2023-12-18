@@ -1,13 +1,14 @@
-import numpy as np
 import unittest
-from commonroad.geometry.shape import Rectangle, Circle, Polygon, ShapeGroup
+
+import numpy as np
+
+from commonroad.geometry.shape import Circle, Polygon, Rectangle, ShapeGroup
 
 
 class TestRectangle(unittest.TestCase):
-
     def test_rotate_90deg(self):
         translation = np.array([0.0, 0.0])
-        rotation_angle = np.pi/2
+        rotation_angle = np.pi / 2
 
         homogeneous_initial_vector = Rectangle(1, 1)
         expected_transposed_vertices = np.array([[0.5, -0.5], [-0.5, -0.5], [-0.5, 0.5], [0.5, 0.5], [0.5, -0.5]])
@@ -32,7 +33,6 @@ class TestRectangle(unittest.TestCase):
                 self.assertAlmostEqual(tv_item, etv_item)
 
     def test_contains_point(self):
-
         initial_rectangle = Rectangle(1, 1)
         expected_contained_point = np.array([0, 0])
 
@@ -46,7 +46,6 @@ class TestRectangle(unittest.TestCase):
         np.testing.assert_array_equal(np.array([0.0, 0.0]), rectangle_2.center)
 
     def test__compute_vertices(self):
-
         initial_rectangle = Rectangle(1, 1)
         expected_computed_vertices = np.array([[-0.5, -0.5], [-0.5, 0.5], [0.5, 0.5], [0.5, -0.5], [-0.5, -0.5]])
 
@@ -58,7 +57,6 @@ class TestRectangle(unittest.TestCase):
 
 
 class TestCircle(unittest.TestCase):
-
     def test_rotate_90deg(self):
         translation = np.array([0.0, 0.0])
         rotation_angle = np.pi / 2
@@ -91,7 +89,6 @@ class TestCircle(unittest.TestCase):
         np.testing.assert_array_equal(np.array([0.0, 0.0]), circle_2.center)
 
     def test_contains_point(self):
-
         initial_circle = Rectangle(0, 0)
         expected_contained_point = np.array([0, 0])
 
@@ -99,7 +96,6 @@ class TestCircle(unittest.TestCase):
 
 
 class TestPolygon(unittest.TestCase):
-
     def test_rotate_90deg(self):
         translation = np.array([0.0, 0.0])
         rotation_angle = np.pi / 2
@@ -134,7 +130,6 @@ class TestPolygon(unittest.TestCase):
 
 
 class TestShapeGroup(unittest.TestCase):
-
     def test_rotate_90deg(self):
         translation = np.array([0.0, 0.0])
         rotation_angle = np.pi / 2
@@ -159,14 +154,13 @@ class TestShapeGroup(unittest.TestCase):
         shape_group = shape_group.translate_rotate(translation, rotation_angle)
 
         for sg, et in zip(shape_group.shapes[0:2], expected_transposed[0:2]):
-                for sg1, et1 in zip(sg.vertices, et):
-                    for sg1_item, et1_item in zip(sg1, et1):
-                        self.assertAlmostEqual(sg1_item, et1_item)
+            for sg1, et1 in zip(sg.vertices, et):
+                for sg1_item, et1_item in zip(sg1, et1):
+                    self.assertAlmostEqual(sg1_item, et1_item)
         for sg, et in zip(shape_group.shapes[2].center, expected_transposed[2]):
             self.assertAlmostEqual(sg, et)
 
     def test_translate(self):
-
         translation = np.array([5.52, -2.2])
         rotation_angle = 0
 
@@ -179,8 +173,12 @@ class TestShapeGroup(unittest.TestCase):
         shape_group.append(initial_shape_three)
         shape_group = ShapeGroup(shape_group)
 
-        expected_transposed_vertices_one = np.array([[5.02, -2.7], [5.02, -1.7], [6.02, -1.7], [6.02, -2.7], [5.02, -2.7]])
-        expected_transposed_vertices_two = np.array([[5.02, -2.7], [5.02, -1.7], [6.02, -1.7], [6.02, -2.7], [5.02, -2.7]])
+        expected_transposed_vertices_one = np.array(
+            [[5.02, -2.7], [5.02, -1.7], [6.02, -1.7], [6.02, -2.7], [5.02, -2.7]]
+        )
+        expected_transposed_vertices_two = np.array(
+            [[5.02, -2.7], [5.02, -1.7], [6.02, -1.7], [6.02, -2.7], [5.02, -2.7]]
+        )
         expected_transposed_center_three = np.array([5.52, -2.2])
         expected_transposed = list()
         expected_transposed.append(expected_transposed_vertices_one)
@@ -190,14 +188,13 @@ class TestShapeGroup(unittest.TestCase):
         shape_group = shape_group.translate_rotate(translation, rotation_angle)
 
         for sg, et in zip(shape_group.shapes[0:2], expected_transposed[0:2]):
-                for sg1, et1 in zip(sg.vertices, et):
-                    for sg1_item, et1_item in zip(sg1, et1):
-                        self.assertAlmostEqual(sg1_item, et1_item)
+            for sg1, et1 in zip(sg.vertices, et):
+                for sg1_item, et1_item in zip(sg1, et1):
+                    self.assertAlmostEqual(sg1_item, et1_item)
         for sg, et in zip(shape_group.shapes[2].center, expected_transposed[2]):
             self.assertAlmostEqual(sg, et)
 
     def test_contains_point(self):
-
         expected_contained_point = np.array([0, 0])
 
         initial_shape_one = Polygon(np.array([[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]]))
@@ -212,5 +209,5 @@ class TestShapeGroup(unittest.TestCase):
         self.assertTrue(shape_group.contains_point(expected_contained_point))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,6 @@
+import math
 import warnings
-from typing import List, Dict, Tuple, Union
+from typing import Dict, List, Tuple, Union
 
 import matplotlib as mpl
 import matplotlib.cm as cm
@@ -7,23 +8,26 @@ import matplotlib.collections as collections
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
-import math
+from matplotlib.axes import Axes
+from matplotlib.lines import Line2D
+from matplotlib.path import Path
 
+from commonroad.common.common_lanelet import LineMarking
 from commonroad.geometry.shape import Rectangle
 from commonroad.geometry.transform import rotate_translate
 from commonroad.scenario.lanelet import LaneletNetwork
-from commonroad.common.common_lanelet import LineMarking
 from commonroad.scenario.obstacle import DynamicObstacle
 from commonroad.scenario.scenario import Scenario
-from commonroad.scenario.traffic_light import TrafficLightState, TrafficLightDirection, TrafficLight
-from matplotlib.lines import Line2D
-from matplotlib.path import Path
-from matplotlib.axes import Axes
+from commonroad.scenario.traffic_light import (
+    TrafficLight,
+    TrafficLightDirection,
+    TrafficLightState,
+)
 
 
 def _data_units_to_pt(axes: Axes, lw_meter: float) -> float:
-    """Convert data (axis) unit to line width. """
-    ppd = 72. / axes.figure.dpi
+    """Convert data (axis) unit to line width."""
+    ppd = 72.0 / axes.figure.dpi
     trans = axes.transData.transform
     return ((trans((1, lw_meter)) - trans((0, 0))) * ppd)[1]
 
@@ -69,9 +73,9 @@ class LineCollectionDataUnits(collections.LineCollection):
     _linewidths = property(_get_lw, _set_lw)
 
 
-def draw_polygon_as_patch(vertices, ax, zorder=5, facecolor='#ffffff',
-                          edgecolor='#000000', lw=0.5,
-                          alpha=1.0) -> mpl.patches.Patch:
+def draw_polygon_as_patch(
+    vertices, ax, zorder=5, facecolor="#ffffff", edgecolor="#000000", lw=0.5, alpha=1.0
+) -> mpl.patches.Patch:
     """
     vertices are no closed polygon (first element != last element)
     """
@@ -85,18 +89,15 @@ def draw_polygon_as_patch(vertices, ax, zorder=5, facecolor='#ffffff',
     verts.append((0, 0))
 
     path = Path(verts, codes)
-    patch = patches.PathPatch(path, facecolor=facecolor, edgecolor=edgecolor,
-                              lw=lw, zorder=zorder, alpha=alpha)
+    patch = patches.PathPatch(path, facecolor=facecolor, edgecolor=edgecolor, lw=lw, zorder=zorder, alpha=alpha)
     ax.add_patch(patch)
 
     return patch
 
 
-def draw_polygon_collection_as_patch(vertices: List[list], ax, zorder=5,
-                                     facecolor='#ffffff', edgecolor='#000000',
-                                     lw=0.5, alpha=1.0,
-                                     antialiased=True) -> \
-        mpl.collections.Collection:
+def draw_polygon_collection_as_patch(
+    vertices: List[list], ax, zorder=5, facecolor="#ffffff", edgecolor="#000000", lw=0.5, alpha=1.0, antialiased=True
+) -> mpl.collections.Collection:
     """
     vertices are no closed polygon (first element != last element)
     """
@@ -112,29 +113,32 @@ def draw_polygon_collection_as_patch(vertices: List[list], ax, zorder=5,
         verts.append((0, 0))
 
         path_list.append(Path(verts, codes))
-        collection_tmp = collections.PathCollection(path_list,
-                                                    facecolor=facecolor,
-                                                    edgecolor=edgecolor, lw=lw,
-                                                    zorder=zorder, alpha=alpha,
-                                                    antialiaseds=antialiased)
+        collection_tmp = collections.PathCollection(
+            path_list,
+            facecolor=facecolor,
+            edgecolor=edgecolor,
+            lw=lw,
+            zorder=zorder,
+            alpha=alpha,
+            antialiaseds=antialiased,
+        )
         collection = ax.add_collection(collection_tmp)
 
     return collection
 
 
-def collect_center_line_colors(lanelet_network: LaneletNetwork,
-                               traffic_lights: List[TrafficLight], time_step)\
-        -> \
-Dict[int, TrafficLightState]:
+def collect_center_line_colors(
+    lanelet_network: LaneletNetwork, traffic_lights: List[TrafficLight], time_step
+) -> Dict[int, TrafficLightState]:
     """Collects traffic light states that each lanelet is affected by."""
 
     def update_state_dict(new_dict: Dict[int, TrafficLightState]):
-        """ Updates state in dict. If new_state is inactive, an existing state is not overwritten."""
+        """Updates state in dict. If new_state is inactive, an existing state is not overwritten."""
         for lanelet_id, new_state in new_dict.items():
             if lanelet_id in l2state:
                 if new_state == TrafficLightState.INACTIVE or (
-                        new_state == TrafficLightState.RED and l2state[
-                    lanelet_id] == TrafficLightState.GREEN):
+                    new_state == TrafficLightState.RED and l2state[lanelet_id] == TrafficLightState.GREEN
+                ):
                     continue
 
             l2state[lanelet_id] = new_state
@@ -142,43 +146,42 @@ Dict[int, TrafficLightState]:
     l2int = lanelet_network.map_inc_lanelets_to_intersections
     l2state = {}
     for lanelet in lanelet_network.lanelets:
-        intersection = l2int[
-            lanelet.lanelet_id] if lanelet.lanelet_id in l2int else None
+        intersection = l2int[lanelet.lanelet_id] if lanelet.lanelet_id in l2int else None
         for tl_id in lanelet.traffic_lights:
             tl = lanelet_network.find_traffic_light_by_id(tl_id)
             direction = tl.direction
             state = tl.get_state_at_time_step(time_step)
             if direction == TrafficLightDirection.ALL:
-                update_state_dict(
-                        {succ_id: state for succ_id in lanelet.successor})
+                update_state_dict({succ_id: state for succ_id in lanelet.successor})
             elif intersection is not None:
                 inc_ele = intersection.map_incoming_lanelets[lanelet.lanelet_id]
                 if direction in (
-                TrafficLightDirection.RIGHT, TrafficLightDirection.LEFT_RIGHT,
-                TrafficLightDirection.STRAIGHT_RIGHT):
-                    update_state_dict(
-                            {l: state for l in inc_ele.successors_right})
+                    TrafficLightDirection.RIGHT,
+                    TrafficLightDirection.LEFT_RIGHT,
+                    TrafficLightDirection.STRAIGHT_RIGHT,
+                ):
+                    update_state_dict({l_id: state for l_id in inc_ele.successors_right})
                 if direction in (
-                TrafficLightDirection.LEFT, TrafficLightDirection.LEFT_RIGHT,
-                TrafficLightDirection.LEFT_STRAIGHT):
-                    update_state_dict(
-                            {l: state for l in inc_ele.successors_left})
-                if direction in (TrafficLightDirection.STRAIGHT,
-                                 TrafficLightDirection.STRAIGHT_RIGHT,
-                                 TrafficLightDirection.LEFT_STRAIGHT):
-                    update_state_dict(
-                            {l: state for l in inc_ele.successors_straight})
+                    TrafficLightDirection.LEFT,
+                    TrafficLightDirection.LEFT_RIGHT,
+                    TrafficLightDirection.LEFT_STRAIGHT,
+                ):
+                    update_state_dict({l_id: state for l_id in inc_ele.successors_left})
+                if direction in (
+                    TrafficLightDirection.STRAIGHT,
+                    TrafficLightDirection.STRAIGHT_RIGHT,
+                    TrafficLightDirection.LEFT_STRAIGHT,
+                ):
+                    update_state_dict({l_id: state for l_id in inc_ele.successors_straight})
             elif len(lanelet.successor) == 1:
                 update_state_dict({lanelet.successor[0]: state})
             else:
-                warnings.warn(
-                    'Direction of traffic light cannot be visualized.')
+                warnings.warn("Direction of traffic light cannot be visualized.")
 
     return l2state
 
 
-def approximate_bounding_box_dyn_obstacles(obj: list, time_step=0) -> Union[
-    Tuple[list], None]:
+def approximate_bounding_box_dyn_obstacles(obj: list, time_step=0) -> Union[Tuple[list], None]:
     """
     Compute bounding box of dynamic obstacles at time step
     :param obj: All possible objects. DynamicObstacles are filtered.
@@ -200,9 +203,9 @@ def approximate_bounding_box_dyn_obstacles(obj: list, time_step=0) -> Union[
 
     dynamic_obstacles_filtered = []
     for o in obj:
-        if type(o) == DynamicObstacle:
+        if isinstance(o, DynamicObstacle):
             dynamic_obstacles_filtered.append(o)
-        elif type(o) == Scenario:
+        elif isinstance(o, Scenario):
             dynamic_obstacles_filtered.extend(o.dynamic_obstacles)
 
     x_int = [np.inf, -np.inf]
@@ -219,9 +222,9 @@ def approximate_bounding_box_dyn_obstacles(obj: list, time_step=0) -> Union[
                 shapely_set = shape._shapely_polygon
             else:
                 shapely_set = shapely_set.union(shape._shapely_polygon)
-        elif hasattr(shape, 'center'):  # Rectangle, Circle
+        elif hasattr(shape, "center"):  # Rectangle, Circle
             bounds = update_bounds(shape.center, bounds=bounds)
-        elif hasattr(shape, 'vertices'):  # Polygon, Triangle
+        elif hasattr(shape, "vertices"):  # Polygon, Triangle
             v = shape.vertices
             bounds = update_bounds(np.min(v, axis=0), bounds=bounds)
             bounds = update_bounds(np.max(v, axis=0), bounds=bounds)
@@ -229,8 +232,7 @@ def approximate_bounding_box_dyn_obstacles(obj: list, time_step=0) -> Union[
     envelope_bounds = np.array(envelope_bounds).reshape((2, 2))
     bounds = update_bounds(envelope_bounds[0], bounds)
     bounds = update_bounds(envelope_bounds[1], bounds)
-    if np.inf in bounds[0] or -np.inf in bounds[0] or np.inf in bounds[
-        1] or -np.inf in bounds[1]:
+    if np.inf in bounds[0] or -np.inf in bounds[0] or np.inf in bounds[1] or -np.inf in bounds[1]:
         return None
     else:
         return tuple(bounds)
@@ -262,13 +264,12 @@ def get_vehicle_direction_triangle(rect: Rectangle) -> np.ndarray:
     """
     :returns vertices of triangle pointing in the driving direction
     """
-    l = rect.length * 0.49
-    w = rect.width * 0.49
-    dist = min(l+1.0, 0.65*rect.width)
-    vertices = np.array([[l - dist,  w],
-                         [l - dist, -w],
-                         [l, 0.0]])
+    length = rect.length * 0.49
+    width = rect.width * 0.49
+    dist = min(length + 1.0, 0.65 * rect.width)
+    vertices = np.array([[length - dist, width], [length - dist, -width], [length, 0.0]])
     return rotate_translate(vertices, rect.center, rect.orientation)
+
 
 def set_non_blocking() -> None:
     """
@@ -280,37 +281,41 @@ def set_non_blocking() -> None:
     plt.ion()
     if not mpl.is_interactive():
         warnings.warn(
-                'The current backend of matplotlib does not support '
-                'interactive '
-                'mode: ' + str(
-                        mpl.get_backend()) + '. Select another backend with: '
-                                             '\"matplotlib.use(\'TkAgg\')\"',
-                UserWarning, stacklevel=3)
+            "The current backend of matplotlib does not support "
+            "interactive "
+            "mode: " + str(mpl.get_backend()) + ". Select another backend with: "
+            "\"matplotlib.use('TkAgg')\"",
+            UserWarning,
+            stacklevel=3,
+        )
 
 
 def line_marking_to_linestyle(line_marking: LineMarking) -> Tuple:
     """:returns: Tuple[line_style, dashes, line_width] for matplotlib
     plotting options."""
     return {
-            LineMarking.DASHED:       ('--', (10, 10), 0.25,),
-            LineMarking.SOLID:        ('-', (None, None), 0.25),
-            LineMarking.BROAD_DASHED: ('--', (10, 10), 0.5),
-            LineMarking.BROAD_SOLID:  ('-', (None, None), 0.5),
-            LineMarking.CURB: ('-', (None, None), 1.0),
-            LineMarking.LOWERED_CURB: ('-', (None, None), 0.75),
-            LineMarking.DASHED_DASHED: ('-', (10, 10), 1.0),
-            LineMarking.SOLID_SOLID: ('-', (None, None), 1.0),
+        LineMarking.DASHED: (
+            "--",
+            (10, 10),
+            0.25,
+        ),
+        LineMarking.SOLID: ("-", (None, None), 0.25),
+        LineMarking.BROAD_DASHED: ("--", (10, 10), 0.5),
+        LineMarking.BROAD_SOLID: ("-", (None, None), 0.5),
+        LineMarking.CURB: ("-", (None, None), 1.0),
+        LineMarking.LOWERED_CURB: ("-", (None, None), 0.75),
+        LineMarking.DASHED_DASHED: ("-", (10, 10), 1.0),
+        LineMarking.SOLID_SOLID: ("-", (None, None), 1.0),
     }[line_marking]
 
 
-def traffic_light_color_dict(traffic_light_state: TrafficLightState,
-                             params: dict):
+def traffic_light_color_dict(traffic_light_state: TrafficLightState, params: dict):
     """Retrieve color code for traffic light state."""
     return {
-            TrafficLightState.RED:        params['red_color'],
-            TrafficLightState.YELLOW:     params['yellow_color'],
-            TrafficLightState.GREEN:      params['green_color'],
-            TrafficLightState.RED_YELLOW: params['red_yellow_color']
+        TrafficLightState.RED: params["red_color"],
+        TrafficLightState.YELLOW: params["yellow_color"],
+        TrafficLightState.GREEN: params["green_color"],
+        TrafficLightState.RED_YELLOW: params["red_yellow_color"],
     }[traffic_light_state]
 
 

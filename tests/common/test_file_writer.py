@@ -2,28 +2,42 @@ import logging
 import os
 import unittest
 
-from commonroad import SCENARIO_VERSION
-from commonroad.common.file_writer import CommonRoadFileWriter
-from commonroad.common.util import FileFormat
-from commonroad.common.writer.file_writer_interface import precision, OverwriteExistingFile
-from commonroad.common.writer.file_writer_xml import float_to_str, Point, RectangleXMLNode, CircleXMLNode
-from commonroad.common.file_reader import CommonRoadFileReader
+import numpy as np
 from lxml import etree
-from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet, GoalRegion
-from commonroad.prediction.prediction import *
+
+from commonroad import SCENARIO_VERSION
+from commonroad.common.common_lanelet import LaneletType, LineMarking
+from commonroad.common.file_reader import CommonRoadFileReader
+from commonroad.common.file_writer import CommonRoadFileWriter
+from commonroad.common.util import FileFormat, Interval
+from commonroad.common.writer.file_writer_interface import (
+    OverwriteExistingFile,
+    precision,
+)
+from commonroad.common.writer.file_writer_xml import (
+    CircleXMLNode,
+    Point,
+    RectangleXMLNode,
+    float_to_str,
+)
+from commonroad.geometry.shape import Circle, Rectangle
+from commonroad.planning.planning_problem import (
+    GoalRegion,
+    PlanningProblem,
+    PlanningProblemSet,
+)
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
-from commonroad.common.common_lanelet import LineMarking, LaneletType
-from commonroad.scenario.obstacle import *
-from commonroad.scenario.scenario import Scenario, Tag, Location, ScenarioID
-from commonroad.scenario.state import KSState, InitialState
+from commonroad.scenario.obstacle import ObstacleType, StaticObstacle
+from commonroad.scenario.scenario import Location, Scenario, ScenarioID, Tag
+from commonroad.scenario.state import InitialState, KSState
 
 
 class TestXMLFileWriter(unittest.TestCase):
-
     def setUp(self):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
-        self.xsd_path = \
+        self.xsd_path = (
             self.cwd_path + "/../../commonroad/scenario_definition/xml_definition_files/XML_commonRoad_XSD.xsd"
+        )
         self.out_path = self.cwd_path + "/../.pytest_cache"
         self.filename_read_1 = self.cwd_path + "/../test_scenarios/test_reading_intersection_traffic_sign.xml"
         self.filename_read_2 = self.cwd_path + "/../test_scenarios/test_reading_all.xml"
@@ -33,38 +47,55 @@ class TestXMLFileWriter(unittest.TestCase):
 
     def test_read_write_file(self):
         scenario_1, planning_problem_set_1 = CommonRoadFileReader(self.filename_read_1).open()
-        filename = self.out_path + '/test_reading_intersection_traffic_sign.xml'
-        CommonRoadFileWriter(scenario_1, planning_problem_set_1, scenario_1.author, scenario_1.affiliation, 'test',
-                             scenario_1.tags, scenario_1.location) \
-            .write_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS,
-                           check_validity=False)
-        assert self.validate_with_xsd(self.out_path + '/test_reading_intersection_traffic_sign.xml')
+        filename = self.out_path + "/test_reading_intersection_traffic_sign.xml"
+        CommonRoadFileWriter(
+            scenario_1,
+            planning_problem_set_1,
+            scenario_1.author,
+            scenario_1.affiliation,
+            "test",
+            scenario_1.tags,
+            scenario_1.location,
+        ).write_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS, check_validity=False)
+        assert self.validate_with_xsd(self.out_path + "/test_reading_intersection_traffic_sign.xml")
 
         scenario_2, planning_problem_set_2 = CommonRoadFileReader(self.filename_read_2).open()
-        filename = self.out_path + '/test_reading_all.xml'
-        CommonRoadFileWriter(scenario_2, planning_problem_set_2, scenario_2.author, scenario_2.affiliation, 'test',
-                             scenario_2.tags, scenario_2.location) \
-            .write_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS,
-                           check_validity=False)
-        assert self.validate_with_xsd(self.out_path + '/test_reading_all.xml')
+        filename = self.out_path + "/test_reading_all.xml"
+        CommonRoadFileWriter(
+            scenario_2,
+            planning_problem_set_2,
+            scenario_2.author,
+            scenario_2.affiliation,
+            "test",
+            scenario_2.tags,
+            scenario_2.location,
+        ).write_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS, check_validity=False)
+        assert self.validate_with_xsd(self.out_path + "/test_reading_all.xml")
 
     def test_write_scenario_without_location(self):
         scenario = Scenario(dt=0.1, author="Test", tags={Tag.URBAN}, affiliation="TUM", source="Test")
         scenario.location = None
 
-        xml_file_path = self.out_path + '/' + str(scenario.scenario_id) + '.xml'
+        xml_file_path = self.out_path + "/" + str(scenario.scenario_id) + ".xml"
 
         CommonRoadFileWriter(scenario, PlanningProblemSet(), file_format=FileFormat.XML).write_scenario_to_file(
-                xml_file_path, OverwriteExistingFile.ALWAYS)
+            xml_file_path, OverwriteExistingFile.ALWAYS
+        )
 
         self.assertTrue(os.path.exists(xml_file_path))
 
     def test_read_write_2018b_file(self):
         scenario, planning_problem_set = CommonRoadFileReader(self.filename_2018b).open()
         filename = self.out_path + "/USA_Lanker-1_1_T-1.xml"
-        CommonRoadFileWriter(scenario, planning_problem_set, scenario.author, scenario.affiliation,
-                             str(scenario.scenario_id), scenario.tags, scenario.location).write_to_file(
-            filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS, check_validity=True)
+        CommonRoadFileWriter(
+            scenario,
+            planning_problem_set,
+            scenario.author,
+            scenario.affiliation,
+            str(scenario.scenario_id),
+            scenario.tags,
+            scenario.location,
+        ).write_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS, check_validity=True)
 
         assert self.validate_with_xsd(self.out_path + "/USA_Lanker-1_1_T-1.xml")
 
@@ -78,43 +109,75 @@ class TestXMLFileWriter(unittest.TestCase):
 
         init_state = InitialState(time_step=0, orientation=0, position=np.array([0, 0]))
         static_obs = StaticObstacle(3, ObstacleType("unknown"), obstacle_shape=circ, initial_state=init_state)
-        lanelet1 = Lanelet(np.array([[12345.12, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
-                           np.array([[0.0, 2], [1.0, 2], [2, 2]]), 100, [101], [101], 101, False, 101, True,
-                           LineMarking.DASHED, LineMarking.SOLID, lanelet_type={LaneletType.URBAN})
-        lanelet2 = Lanelet(np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]), np.array([[0.0, 1], [1.0, 1], [2, 1]]),
-                           np.array([[0.0, 2], [1.0, 2], [2, 2]]), 101, [100], [100], 100, False, 100, True,
-                           LineMarking.SOLID, LineMarking.DASHED, lanelet_type={LaneletType.URBAN})
+        lanelet1 = Lanelet(
+            np.array([[12345.12, 0.0], [1.0, 0.0], [2, 0]]),
+            np.array([[0.0, 1], [1.0, 1], [2, 1]]),
+            np.array([[0.0, 2], [1.0, 2], [2, 2]]),
+            100,
+            [101],
+            [101],
+            101,
+            False,
+            101,
+            True,
+            LineMarking.DASHED,
+            LineMarking.SOLID,
+            lanelet_type={LaneletType.URBAN},
+        )
+        lanelet2 = Lanelet(
+            np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]),
+            np.array([[0.0, 1], [1.0, 1], [2, 1]]),
+            np.array([[0.0, 2], [1.0, 2], [2, 2]]),
+            101,
+            [100],
+            [100],
+            100,
+            False,
+            100,
+            True,
+            LineMarking.SOLID,
+            LineMarking.DASHED,
+            lanelet_type={LaneletType.URBAN},
+        )
 
         lanelet_network = LaneletNetwork().create_from_lanelet_list(list([lanelet1, lanelet2]))
-        scenario = Scenario(0.1, ScenarioID.from_benchmark_id('ZAM_test_0-1', scenario_version=SCENARIO_VERSION))
+        scenario = Scenario(0.1, ScenarioID.from_benchmark_id("ZAM_test_0-1", scenario_version=SCENARIO_VERSION))
         scenario.add_objects([static_obs, lanelet_network])
 
-        goal_region = GoalRegion([KSState(time_step=Interval(0, 1), velocity=Interval(0.0, 1), position=rectangle),
-                                  KSState(time_step=Interval(1, 2), velocity=Interval(0.0, 1), position=circ)],
-                                 {0: [100, 101], 1: [101]})
-        planning_problem = PlanningProblem(1000, InitialState(velocity=0.1, position=np.array([[0], [0]]),
-                                                              orientation=0, yaw_rate=0, slip_angle=0, time_step=0),
-                                           goal_region)
+        goal_region = GoalRegion(
+            [
+                KSState(time_step=Interval(0, 1), velocity=Interval(0.0, 1), position=rectangle),
+                KSState(time_step=Interval(1, 2), velocity=Interval(0.0, 1), position=circ),
+            ],
+            {0: [100, 101], 1: [101]},
+        )
+        planning_problem = PlanningProblem(
+            1000,
+            InitialState(
+                velocity=0.1, position=np.array([[0], [0]]), orientation=0, yaw_rate=0, slip_angle=0, time_step=0
+            ),
+            goal_region,
+        )
         planning_problem_set = PlanningProblemSet(list([planning_problem]))
 
-        filename = self.out_path + '/test_writing_shapes.xml'
+        filename = self.out_path + "/test_writing_shapes.xml"
         location = Location(2867714, 48.262333, 11.668775, None)
 
-        CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', {Tag.URBAN},
-                             location).write_to_file(filename=filename,
-                                                     overwrite_existing_file=OverwriteExistingFile.ALWAYS)
-        assert self.validate_with_xsd(self.out_path + '/test_writing_shapes.xml')
+        CommonRoadFileWriter(
+            scenario, planning_problem_set, "PrinceOfZAM", "TU Munich", "test", {Tag.URBAN}, location
+        ).write_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS)
+        assert self.validate_with_xsd(self.out_path + "/test_writing_shapes.xml")
 
         # test overwriting
-        CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', {Tag.URBAN},
-                             location).write_to_file(filename=filename,
-                                                     overwrite_existing_file=OverwriteExistingFile.SKIP)
-        CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM', 'TU Munich', 'test', {Tag.URBAN},
-                             location).write_to_file(filename=filename,
-                                                     overwrite_existing_file=OverwriteExistingFile.ALWAYS)
-        CommonRoadFileWriter(scenario, planning_problem_set, 'PrinceOfZAM_no_problem', 'TU Munich', 'test', {Tag.URBAN},
-                             location).write_scenario_to_file(filename=filename,
-                                                              overwrite_existing_file=OverwriteExistingFile.ALWAYS)
+        CommonRoadFileWriter(
+            scenario, planning_problem_set, "PrinceOfZAM", "TU Munich", "test", {Tag.URBAN}, location
+        ).write_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.SKIP)
+        CommonRoadFileWriter(
+            scenario, planning_problem_set, "PrinceOfZAM", "TU Munich", "test", {Tag.URBAN}, location
+        ).write_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS)
+        CommonRoadFileWriter(
+            scenario, planning_problem_set, "PrinceOfZAM_no_problem", "TU Munich", "test", {Tag.URBAN}, location
+        ).write_scenario_to_file(filename=filename, overwrite_existing_file=OverwriteExistingFile.ALWAYS)
 
     def validate_with_xsd(self, xml_path: str) -> bool:
         xmlschema_doc = etree.parse(self.xsd_path)
@@ -126,7 +189,7 @@ class TestXMLFileWriter(unittest.TestCase):
             return True
         except Exception as e:
             print(str(e))
-            logging.error('xml produced by file_writer not conformant with xsd-scheme: ' + str(e))
+            logging.error("xml produced by file_writer not conformant with xsd-scheme: " + str(e))
             return False
 
     def test_float_to_str(self):
@@ -135,9 +198,11 @@ class TestXMLFileWriter(unittest.TestCase):
         f3 = 123456789
         f4 = 1e-23
         f5 = 0
-        CommonRoadFileWriter(decimal_precision=3,
-                             scenario=Scenario(dt=0.1, tags=set(), author="sdf", affiliation="", source=""),
-                             planning_problem_set=PlanningProblemSet())
+        CommonRoadFileWriter(
+            decimal_precision=3,
+            scenario=Scenario(dt=0.1, tags=set(), author="sdf", affiliation="", source=""),
+            planning_problem_set=PlanningProblemSet(),
+        )
         str1 = float_to_str(f)
         self.assertEqual(str1, "123456789.123")
         str2 = float_to_str(f2)
@@ -155,9 +220,11 @@ class TestXMLFileWriter(unittest.TestCase):
         f3 = 123456789
         f4 = 1e-23
         f5 = 0
-        CommonRoadFileWriter(decimal_precision=5,
-                             scenario=Scenario(dt=0.1, tags=set(), author="sdf", affiliation="", source=""),
-                             planning_problem_set=PlanningProblemSet())
+        CommonRoadFileWriter(
+            decimal_precision=5,
+            scenario=Scenario(dt=0.1, tags=set(), author="sdf", affiliation="", source=""),
+            planning_problem_set=PlanningProblemSet(),
+        )
         str1 = float_to_str(f)
         self.assertEqual(str1, "123456789.12345")
         str2 = float_to_str(f2)
@@ -204,11 +271,11 @@ class TestXMLFileWriter(unittest.TestCase):
                     self.assertEqual(expected, pos.text)
 
     def test_check_validity_of_commonroad_file(self):
-        commonroad_str = open(self.filename_read_1, mode='r').read()
+        commonroad_str = open(self.filename_read_1, mode="r").read()
 
         self.assertTrue(CommonRoadFileWriter.check_validity_of_commonroad_file(commonroad_str, FileFormat.XML))
 
-        commonroad_str = open(self.filename_invalid, mode='rb').read()
+        commonroad_str = open(self.filename_invalid, mode="rb").read()
 
         self.assertFalse(CommonRoadFileWriter.check_validity_of_commonroad_file(commonroad_str, FileFormat.XML))
 
@@ -350,7 +417,6 @@ class TestXMLFileWriter(unittest.TestCase):
 
 
 class TestProtobufFileWriter(unittest.TestCase):
-
     def setUp(self):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
         self.out_path = self.cwd_path + "/../.pytest_cache"
@@ -378,10 +444,11 @@ class TestProtobufFileWriter(unittest.TestCase):
     def test_write_scenario(self):
         scenario_xml, planning_problems_xml = CommonRoadFileReader(self.filename_all_xml, FileFormat.XML).open()
 
-        pb_file_path = self.out_path + '/' + str(scenario_xml.scenario_id) + '.pb'
+        pb_file_path = self.out_path + "/" + str(scenario_xml.scenario_id) + ".pb"
 
-        CommonRoadFileWriter(scenario_xml, planning_problems_xml, file_format=FileFormat.PROTOBUF) \
-            .write_scenario_to_file(pb_file_path, OverwriteExistingFile.ALWAYS)
+        CommonRoadFileWriter(
+            scenario_xml, planning_problems_xml, file_format=FileFormat.PROTOBUF
+        ).write_scenario_to_file(pb_file_path, OverwriteExistingFile.ALWAYS)
 
         self.assertTrue(os.path.exists(pb_file_path))
 
@@ -389,19 +456,20 @@ class TestProtobufFileWriter(unittest.TestCase):
         scenario = Scenario(dt=0.1, author="Test", tags={Tag.URBAN}, affiliation="TUM", source="Test")
         scenario.location = None
 
-        pb_file_path = self.out_path + '/' + str(scenario.scenario_id) + '.pb'
+        pb_file_path = self.out_path + "/" + str(scenario.scenario_id) + ".pb"
 
-        CommonRoadFileWriter(scenario, PlanningProblemSet(), file_format=FileFormat.PROTOBUF) \
-            .write_scenario_to_file(pb_file_path, OverwriteExistingFile.ALWAYS)
+        CommonRoadFileWriter(scenario, PlanningProblemSet(), file_format=FileFormat.PROTOBUF).write_scenario_to_file(
+            pb_file_path, OverwriteExistingFile.ALWAYS
+        )
 
         self.assertTrue(os.path.exists(pb_file_path))
 
     def test_check_validity_of_commonroad_file(self):
-        commonroad_str = open(self.filename_carcarana_pb, mode='rb').read()
+        commonroad_str = open(self.filename_carcarana_pb, mode="rb").read()
 
         self.assertTrue(CommonRoadFileWriter.check_validity_of_commonroad_file(commonroad_str, FileFormat.PROTOBUF))
 
-        commonroad_str = open(self.filename_invalid_pb, mode='rb').read()
+        commonroad_str = open(self.filename_invalid_pb, mode="rb").read()
 
         self.assertFalse(CommonRoadFileWriter.check_validity_of_commonroad_file(commonroad_str, FileFormat.PROTOBUF))
 
@@ -410,24 +478,25 @@ def handle_pytest_cache(path: str):
     if not os.path.isdir(path):
         os.makedirs(path)
     else:
-        for (dirpath, dirnames, filenames) in os.walk(path):
+        for dirpath, dirnames, filenames in os.walk(path):
             for file in filenames:
-                if file.endswith('.xml'):
+                if file.endswith(".xml"):
                     os.remove(os.path.join(dirpath, file))
 
 
 def write_read_compare(xml_file_path: str, out_path: str) -> bool:
     scenario_xml, planning_problems_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()
 
-    pb_file_path = out_path + '/' + str(scenario_xml.scenario_id) + '.pb'
+    pb_file_path = out_path + "/" + str(scenario_xml.scenario_id) + ".pb"
 
     CommonRoadFileWriter(scenario_xml, planning_problems_xml, file_format=FileFormat.PROTOBUF).write_to_file(
-            pb_file_path, OverwriteExistingFile.ALWAYS, False)
+        pb_file_path, OverwriteExistingFile.ALWAYS, False
+    )
 
     scenario_pb, planning_problems_pb = CommonRoadFileReader(pb_file_path, FileFormat.PROTOBUF).open()
 
     return scenario_xml == scenario_pb and planning_problems_xml == planning_problems_pb
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

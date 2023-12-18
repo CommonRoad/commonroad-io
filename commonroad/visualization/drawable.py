@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from commonroad.visualization.renderer import IRenderer
 from commonroad.visualization.draw_params import BaseParam
+from commonroad.visualization.renderer import IRenderer
 
 
 class IDrawable(ABC):
