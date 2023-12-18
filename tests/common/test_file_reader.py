@@ -1,5 +1,6 @@
 import os
 import unittest
+
 import numpy as np
 
 from commonroad import SCENARIO_VERSION
@@ -31,7 +32,11 @@ from commonroad.planning.planning_problem import (
     PlanningProblem,
     PlanningProblemSet,
 )
-from commonroad.prediction.prediction import TrajectoryPrediction, SetBasedPrediction, Occupancy
+from commonroad.prediction.prediction import (
+    Occupancy,
+    SetBasedPrediction,
+    TrajectoryPrediction,
+)
 from commonroad.scenario.intersection import (
     CrossingGroup,
     IncomingGroup,
@@ -41,13 +46,20 @@ from commonroad.scenario.intersection import (
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
 from commonroad.scenario.obstacle import (
     DynamicObstacle,
+    EnvironmentObstacle,
     ObstacleType,
     PhantomObstacle,
     StaticObstacle,
-    EnvironmentObstacle,
 )
 from commonroad.scenario.scenario import Scenario, ScenarioID, Tag
-from commonroad.scenario.state import CustomState, InitialState, KSState, STDState, STState, SignalState
+from commonroad.scenario.state import (
+    CustomState,
+    InitialState,
+    KSState,
+    SignalState,
+    STDState,
+    STState,
+)
 from commonroad.scenario.traffic_light import (
     TrafficLight,
     TrafficLightCycle,

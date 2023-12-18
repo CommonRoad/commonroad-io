@@ -1,6 +1,7 @@
 import logging
 import os
 import unittest
+
 import numpy as np
 from lxml import etree
 
@@ -32,7 +33,7 @@ from commonroad.planning.planning_problem import (
     PlanningProblemSet,
 )
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
-from commonroad.scenario.obstacle import StaticObstacle, ObstacleType
+from commonroad.scenario.obstacle import ObstacleType, StaticObstacle
 from commonroad.scenario.scenario import Scenario, ScenarioID, Tag
 from commonroad.scenario.state import InitialState, KSState
 

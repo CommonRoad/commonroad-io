@@ -1,6 +1,7 @@
 import unittest
 import unittest.mock as mock
 from copy import deepcopy
+
 import numpy as np
 
 from commonroad import SCENARIO_VERSION
@@ -14,8 +15,12 @@ from commonroad.common.common_scenario import (
     Weather,
 )
 from commonroad.common.util import Interval, Time
-from commonroad.geometry.shape import Rectangle, Circle, Polygon
-from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction, SetBasedPrediction
+from commonroad.geometry.shape import Circle, Polygon, Rectangle
+from commonroad.prediction.prediction import (
+    Occupancy,
+    SetBasedPrediction,
+    TrajectoryPrediction,
+)
 from commonroad.scenario.intersection import (
     CrossingGroup,
     IncomingGroup,
@@ -23,7 +28,12 @@ from commonroad.scenario.intersection import (
     OutgoingGroup,
 )
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
-from commonroad.scenario.obstacle import DynamicObstacle, StaticObstacle, ObstacleType, ObstacleRole
+from commonroad.scenario.obstacle import (
+    DynamicObstacle,
+    ObstacleRole,
+    ObstacleType,
+    StaticObstacle,
+)
 from commonroad.scenario.scenario import Scenario, ScenarioID
 from commonroad.scenario.state import InitialState, KSState
 from commonroad.scenario.traffic_light import (
