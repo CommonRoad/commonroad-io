@@ -9,9 +9,9 @@ from matplotlib import patches
 from commonroad.geometry.shape import Rectangle
 from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad.scenario.lanelet import Lanelet
-from commonroad.scenario.obstacle import ObstacleType, DynamicObstacle
+from commonroad.scenario.obstacle import DynamicObstacle, ObstacleType
 from commonroad.scenario.scenario import Scenario, ScenarioID
-from commonroad.scenario.state import KSState, InitialState
+from commonroad.scenario.state import InitialState, KSState
 from commonroad.scenario.trajectory import Trajectory
 from commonroad.visualization import icons
 from commonroad.visualization.draw_params import MPDrawParams
@@ -44,9 +44,18 @@ def parallel_lanelets(num_lanes, lanelet_width=4.0, lanelet_length=90.0) -> List
             adjacent_left = None
         else:
             adjacent_left = i + 1
-        lanelets.append(Lanelet(left_vertices_lane, center_vertices_lane, right_vertices_lane, lanelet_id=i,
-                                adjacent_left=adjacent_left, adjacent_right=adjacent_right,
-                                adjacent_right_same_direction=True, adjacent_left_same_direction=True, ))
+        lanelets.append(
+            Lanelet(
+                left_vertices_lane,
+                center_vertices_lane,
+                right_vertices_lane,
+                lanelet_id=i,
+                adjacent_left=adjacent_left,
+                adjacent_right=adjacent_right,
+                adjacent_right_same_direction=True,
+                adjacent_left_same_direction=True,
+            )
+        )
     return lanelets
 
 
@@ -82,7 +91,11 @@ class TestIcons(unittest.TestCase):
         """Test if the icons return patches without raising an exception."""
 
         for draw_func in self._get_draw_funcs():
-            patch_list = draw_func(pos_x=0, pos_y=0, orientation=0, )
+            patch_list = draw_func(
+                pos_x=0,
+                pos_y=0,
+                orientation=0,
+            )
             for patch in patch_list:
                 assert isinstance(patch, patches.Patch)
 
@@ -134,8 +147,16 @@ class TestIcons(unittest.TestCase):
         if unsupported_obstacle is None:
             assert True
         else:
-            self.assertRaises(TypeError, icons.get_obstacle_icon_patch, obstacle_type=unsupported_obstacle, pos_x=0,
-                              pos_y=0, orientation=0, vehicle_length=100, vehicle_width=100, )
+            self.assertRaises(
+                TypeError,
+                icons.get_obstacle_icon_patch,
+                obstacle_type=unsupported_obstacle,
+                pos_x=0,
+                pos_y=0,
+                orientation=0,
+                vehicle_length=100,
+                vehicle_width=100,
+            )
 
 
 if __name__ == "__main__":

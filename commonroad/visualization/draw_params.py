@@ -1,8 +1,8 @@
 import dataclasses
 import inspect
-from dataclasses import dataclass, field
 import pathlib
-from typing import Any, Optional, Dict, TypeVar, Union, List
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional, TypeVar, Union
 
 from omegaconf import OmegaConf
 
@@ -76,8 +76,9 @@ class BaseParam:
 
     def save(self, file_path: Union[pathlib.Path, str]):
         # Avoid saving private attributes
-        dict_cfg = dataclasses.asdict(self, dict_factory=lambda items: {key: val for key, val in items if
-                                                                        not key.startswith("_")})
+        dict_cfg = dataclasses.asdict(
+            self, dict_factory=lambda items: {key: val for key, val in items if not key.startswith("_")}
+        )
         OmegaConf.save(OmegaConf.create(dict_cfg), file_path, resolve=True)
 
 
@@ -128,31 +129,36 @@ class OccupancyParams(BaseParam):
     draw_occupancies: bool = True
     shape: ShapeParams = field(default_factory=lambda: ShapeParams(zorder=18, opacity=0.2))
     uncertain_position: ShapeParams = field(
-            default_factory=lambda: ShapeParams(opacity=0.6, facecolor="k", edgecolor="r"))
+        default_factory=lambda: ShapeParams(opacity=0.6, facecolor="k", edgecolor="r")
+    )
 
 
 @dataclass
 class HistoryParams(BaseParam):
     """Draw the history of an object with fading colors."""
+
     draw_history: bool = False
     steps: int = 5
     step_size: int = 1
     fade_color: float = 0.1
     basecolor: Color = "#ffe119"
     occupancy: ShapeParams = field(
-            default_factory=lambda: ShapeParams(opacity=0.2, edgecolor="k", linewidth=0.0, zorder=17))
+        default_factory=lambda: ShapeParams(opacity=0.2, edgecolor="k", linewidth=0.0, zorder=17)
+    )
 
 
 @dataclass
 class StaticObstacleParams(BaseParam):
     occupancy: OccupancyParams = field(
-            default_factory=lambda: OccupancyParams(shape=ShapeParams(facecolor="#d95558", edgecolor="#831d20")))
+        default_factory=lambda: OccupancyParams(shape=ShapeParams(facecolor="#d95558", edgecolor="#831d20"))
+    )
 
 
 @dataclass
 class EnvironmentObstacleParams(BaseParam):
     occupancy: OccupancyParams = field(
-            default_factory=lambda: OccupancyParams(shape=ShapeParams(facecolor="#0e6000", edgecolor="#831d20")))
+        default_factory=lambda: OccupancyParams(shape=ShapeParams(facecolor="#0e6000", edgecolor="#831d20"))
+    )
 
 
 @dataclass
@@ -263,15 +269,23 @@ class InitialStateParams(BaseParam):
     label_zorder: float = 35
     label: str = ""
     state: StateParams = field(
-            default_factory=lambda: StateParams(draw_arrow=True, radius=1.0, scale_factor=0.5, facecolor="g", zorder=11,
-                                                arrow=ArrowParams(facecolor="g", edgecolor="g")))
+        default_factory=lambda: StateParams(
+            draw_arrow=True,
+            radius=1.0,
+            scale_factor=0.5,
+            facecolor="g",
+            zorder=11,
+            arrow=ArrowParams(facecolor="g", edgecolor="g"),
+        )
+    )
 
 
 @dataclass
 class PlanningProblemParams(BaseParam):
     initial_state: InitialStateParams = field(default_factory=InitialStateParams)
     goal_region: OccupancyParams = field(
-        default_factory=lambda: OccupancyParams(shape=ShapeParams(facecolor="#f1b514", edgecolor="#302404", zorder=15)))
+        default_factory=lambda: OccupancyParams(shape=ShapeParams(facecolor="#f1b514", edgecolor="#302404", zorder=15))
+    )
     #: Goal lanelet parameters
     lanelet: LaneletParams = field(default_factory=LaneletParams)
 
@@ -289,7 +303,8 @@ class VehicleShapeParams(BaseParam):
     direction: ShapeParams = field(default_factory=lambda: ShapeParams(facecolor="#00478f"))
     #: Options for visualizing the vehicle's occupancy in the current time step.
     occupancy: OccupancyParams = field(
-            default_factory=lambda: OccupancyParams(shape=ShapeParams(opacity=1.0, zorder=20)))
+        default_factory=lambda: OccupancyParams(shape=ShapeParams(opacity=1.0, zorder=20))
+    )
 
 
 @dataclass
@@ -330,7 +345,8 @@ class PhantomObstacleParams(BaseParam):
     zorder: float = 20
     draw_signals: bool = True
     vehicle_shape: VehicleShapeParams = field(
-        default_factory=lambda: VehicleShapeParams(occupancy=OccupancyParams(shape=ShapeParams(facecolor="#e59dff"))))
+        default_factory=lambda: VehicleShapeParams(occupancy=OccupancyParams(shape=ShapeParams(facecolor="#e59dff")))
+    )
     signals: VehicleSignalParams = field(default_factory=VehicleSignalParams)
     draw_initial_state: bool = False
     state: StateParams = field(default_factory=StateParams)

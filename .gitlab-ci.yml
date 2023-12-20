@@ -13,28 +13,23 @@ default:
 
 .run-test-with-coverage: &run-test-with-coverage
   - apt-get update && apt-get install -y ffmpeg
-  - coverage run tests/run_tests.py
+  - coverage run --source ./commonroad tests/run_tests.py
   - coverage report -m || true
 
-style_checks:
+formatting_check:
   stage: style_check
   before_script: [ ]
   script:
-    - pip install pycodestyle
-    - git  diff ${CI_COMMIT_BEFORE_SHA}...${CI_COMMIT_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff --exclude=./commonroad/scenario_definition/*
-  except:
-    - merge_requests
-  allow_failure: true
+    - pip install black isort
+    - black --check .
+    - isort --check-only .
 
-style_check_merge_result:
+lint_flake8:
   stage: style_check
   before_script: [ ]
   script:
-    - pip install pycodestyle
-    - git  diff ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA}...${CI_MERGE_REQUEST_SOURCE_BRANCH_SHA} -- '*.py' | pycodestyle --max-line-length=120 --diff --exclude=./commonroad/scenario_definition/*
-  only:
-    - merge_requests
-  allow_failure: true
+    - pip install flake8
+    - flake8 .
 
 build_and_test_python:
   image : python:$PYTHON_VERSIONS
