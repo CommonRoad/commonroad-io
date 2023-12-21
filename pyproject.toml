@@ -96,5 +96,5 @@ profile = "black"
 extend_skip = ["traffic_signs", "generated_scripts", "protobuf"]
 
 [build-system]
-requires = ["poetry-core>=1.8.0"]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
