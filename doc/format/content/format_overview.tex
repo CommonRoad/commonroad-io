@@ -1,0 +1,218 @@
+% !TeX root = ../CommonRoad_Format.tex
+
+
+\section{Specification of the Format}
+
+We designed our format such that it can represent all features, is unambiguous, and is easy to use. 
+We put additional emphasis to augment the road description by its implications, i.e., our format does not just describe a traffic situation, but already provides the meaning for motion planning.
+As a result, our scenarios can directly be used by a motion planner and do not require much additional computations in terms of pre-processing.
+Subsequently, we describe our specification.
+Note that it may differ in some cases to the data structures used in our tools, e.g., commonroad-io.
+
+All variables are given by decimal numbers based on SI units. We use a common Cartesian coordinate frame with x-, y-, and z-axis to be able to represent all road networks including bridges and tunnels. 
+If a scenario is only defined in a two-dimensional plane (which is often the case), we use the convention that all z-coordinates are zero.
+Angles are measured counter-clockwise around the positive z-axis with the zero angle along the x-axis.
+
+\colorbox{red}{Add figure for orientation since this often leads to questions.}
+
+The overall structure of the CommonRoad format is shown by Fig.~\ref{fig:structureMap}, Fig.~\ref{fig:structureDynamic}, and Fig.~\ref{fig:structureScenario}. 
+Each scenario element has a unique\footnote{Unique within the whole scenario.} ID (of type positive integer) making it possible to reference it.
+The numbers in square brackets denote the number of allowed elements (while \texttt{N} can be different for each element).
+%If an element is omitted (number of allowed elements is $ \geq 0$), the default value is none or its default value is specified in the description of this element.
+
+
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 [1] commonroad\_map.
+		.2 [1] map\_meta\_information.
+		.2 [1] location.
+		.2 [0..N] lanelets.
+		.2 [0..N] stop\_lines.
+		.2 [0..N] boundaries.
+		.2 [0..N] areas.
+		.2 [0..N] traffic\_signs.
+		.2 [0..N] traffic\_lights.
+		.2 [0..N] intersections.
+	}
+	\caption{Structure encoding map information.}
+	\label{fig:structureMap}
+\end{figure}
+
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 [1] commonroad\_dynamic.
+		.2 [1] dynamic\_meta\_information.
+		.2 [1] environment.
+		.2 [0..N] traffic\_light\_cycles.
+		.2 [0..N] traffic\_sign\_values.
+		.2 [0..N] static\_obstacles. 
+		.2 [0..N] dynamic\_obstacles.
+		.2 [0..N] environment\_obstacles.
+		.2 [0..N] phantom\_obstacles.
+	}
+	\caption{Structure encoding dynamic scenario information.}
+	\label{fig:structureDynamic}
+\end{figure}
+
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 [1] commonRoa\_scenario.
+		.2 [1] scenario\_meta\_information.
+		.2 [1] map\_id. 
+		.2 [1] dynamic\_id.
+		.2 [1..N] planning\_problems.
+		.2 [0..N] coopearative\_planning\_problems.
+	}
+	\caption{Structure encoding scenario information.}
+	\label{fig:structureScenario}
+\end{figure}
+\newpage % to have subsection 2.1 started after this section
+
+
+\subsubsection{Benchmark ID} \label{subsec:id}
+The benchmark ID of each scenarios consists of four elements: \\
+\centerline{COUNTRY\_SCENE\_CONFIG\_PRED\_PROBLEM.} \\
+The scenario ID has the prefix C- if the scenario has multiple planning problems, i.e. it is a cooperative planning problem (otherwise, it has no prefix).
+
+\paragraph{COUNTRY} is the capitalized three-letter country code defined by the ISO 3166-1 standard\footnote{\url{https://www.iso.org/obp/ui/\#search/code/}}, e.g. Germany has DEU and United States has USA.
+If a scenario is based on an artificial road network, we use ZAM for Zamunda\footnote{\href{https://en.wikipedia.org/?title=Zamunda&redirect=no}{en.wikipedia.org/?title=Zamunda}}.
+
+\paragraph{SCENE} = MAP-$\{1$-$9\}^*$ specifies the road network. MAP is for rural scenarios a two/three letter city code (e.g. Muc) and for highways/major roads the road code (e.g. A9 or Lanker). It is appended by an integer counting up. Note that if COUNTRY\_SCENE is the same for two scenarios, all their lanelets are identical.
+
+\paragraph{CONFIG} = $\{1$-$9\}^*$ specifies the initial configuration of obstacles and the planning problem(s). Note that CONFIG is counting independently for non-cooperative scenarios (i.e. only one planning problem) and cooperative scenarios (i.e. multiple planning problems), since the prefix allows to distinguish between them. Thus, if PREFIX-COUNTRY\_SCENE\_CONFIG is the same for two scenarios, the road network, initial configuration of obstacles, and the planning problem(s) are equal, and only the prediction of the obstacles differs.
+
+\paragraph{PRED} = $\{$S,T,P$\}$-$\{1$-$9\}^*$ specifies the future behavior of the obstacles, i.e. their prediction, where S = set-based occupancies, T = single trajectories, P = probability distributions, appended by an integer to distinguish predictions on the same initial configuration but with different prediction parameters.
+If no prediction is used (i.e. the scenario has no dynamic obstacles), we omit the element PRED in the benchmark ID.
+
+\paragraph{PROBLEM} = $\{1$-$9\}^*$ ID of planning problem set.
+
+\paragraph{Examples:} Possible examples of a benchmark ID are: C-USA\_US101-1\_123\_T-1\_3-0, DEU\_FFB-2\_42\_S-4\_3-0-2, DEU\_Hhr-1\_1\_0-2.
+
+\subsection{Auxiliary Elements} \label{subsec:auxiliary}
+
+Subsequently, we introduce general auxiliary geometry elements.
+
+\paragraph{Point}
+A point is the simplest primitives and described by an x-, y-, and z-coordinate.
+If the z-coordinate is zero (for all two-dimensional scenarios), we omit the z-element.
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 point OR center.
+		.2 [1] x.
+		.2 [1] y.
+		.2 [0..1] z.
+	}
+	\caption{Definition of point.}
+	\label{fig:auxiliary}
+\end{figure}
+
+
+\paragraph{Rectangle}
+The element \textit{rectangle} can be used to model rectangular obstacles, e.g., a vehicle.
+It is specified by the length (longitudinal direction) and the width (lateral direction), the orientation, and a center point (reference point of a rectangle is its geometric center).
+The orientation and center can be omitted if their values are zero.
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 rectangle.
+		.2 [1] length.
+		.2 [1] width.
+		.2 [0..1] orientation.
+		.2 [0..1] center.
+	}
+	\caption{Definition of rectangle.}
+	\label{fig:auxiliary}
+\end{figure}
+
+
+\paragraph{Circle}
+The element \textit{circle} can be used to model circular obstacles, for example a pedestrian or a vehicle by using three circles.
+A circle is defined by its radius and its center (reference point of a circle is its geometric center).
+Analogously to the rectangle, the center can be omitted if all its coordinates are zero.
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 circle.
+		.2 [1] radius.
+		.2 [0..1] center.
+	}
+	\caption{Definition of circle.}
+	\label{fig:auxiliary}
+\end{figure}
+
+\paragraph{Polygon}
+The element \textit{polygon} can be used to model any other two-dimensional obstacle. 
+A polygon is defined by an ordered list of points, in which the first one is its reference point. 
+We adhere to the convention that the polygon points are ordered clockwise.
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 polygon.
+		.2 [3..N] point.
+%		.3 shape.
+%		.2 [1..N] rectangle/circle/polygon.
+	}
+	\caption{Definition of polygon.}
+	\label{fig:auxiliary}
+\end{figure}
+
+%Since the position of the nodes is specified in the global coordinate frame, the configuration of the polygon is already completely described. If a polygon is used to specify the shape of an obstacle and thus the position is not relevant, one should translate the polygon such that the first node is located at the origin.
+% Since dynamic obstacles are rarely described using polygons, this is not a shortcoming of our specification.
+
+
+\paragraph{Shape}
+Elements of type \emph{shape} specify the dimension of an object and can contain one or more elements of the geometric primitives (i.e. rectangle, circle, or polygon). Please note that we separate the representation of the dimension and position/orientation of an object into the elements shape and position/orientation (described subsequently), respectively. Thus, the shape elements should usually use the origin as center point and an orientation of zero, unless a certain offset is desired.
+
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 shape.
+		.2 [1..N] rectangle/circle/polygon.
+	}
+	\caption{Definition of shape (group).}
+	\label{fig:auxiliary}
+\end{figure}
+
+\paragraph{Positions}
+The position of an object is specified by the element \emph{position} which contains either a point, rectangle, circle, polygon, or lanelet (unless for a planning problem as specified later), as shown in Fig.~\ref{fig:position}.
+
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 /.
+		.2 [1] position.		
+		.3 [1] point\\OR.
+		.3 [1..N] rectangle/circle/polygon\\OR.
+		.3 [1..N] lanelet (\textrm{ref to} lanelet).
+	}
+	\caption{Element \textit{position}.}
+	\label{fig:position}
+\end{figure}
+
+Note that if the position of an object is given as an area (i.e. not a single point), the area does not enclose the geometric shape of the object, but only models the interval of possible positions, e.g. the uncertainty of the position measurement.
+
+
+\paragraph{Numeric Values}
+Elements describing the state of an object, e.g. orientation or velocity, can have either an exact value or an interval of values, e.g. to specify the goal state or to include uncertainties.
+%More specifically, one can specify the value \texttt{exact} or as an interval by specifying the \texttt{intervalStart} and \texttt{intervalEnd}.
+For example, an \textit{orientation} element can be defined using \texttt{exact} or \texttt{intervalStart} and \texttt{intervalEnd}:
+
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+			.1 /.
+			.2 [1] orientation.
+			.3 [1] exact\\OR.
+			.3 [1] intervalStart.
+			.3 [1] intervalEnd.
+		}
+	\caption{Element \textit{orientation}.}
+	\label{fig:XML_orientation}
+\end{figure}
+
+\paragraph{Time}
+All time elements are not given as numeric values, but as integers (i.e. non-negative whole numbers). Thus, the time element can specify the time stamp of an time-discrete object. Since the initial time is always $0$ and the constant time step size is given in the CommonRoad root element, the time in seconds can be directly calculated.

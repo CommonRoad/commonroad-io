@@ -1,0 +1,145 @@
+% !TeX root = ../CommonRoad_Format.tex
+
+\section{CommonRoad Scenario}
+
+
+
+
+
+
+\subsubsection{Tags for Scenarios} \label{subsubsec:tags}
+
+To allow users to select scenarios meeting their needs, the list of scenarios on our website can be filtered by the tags given in the element \texttt{tags}.  %We currently support the following list of tags: $\mathtt{urban}$, $\mathtt{highway}$, $\mathtt{race\_track}$, $\mathtt{rural}$, $\mathtt{lane\_following}$, $\mathtt{lane\_change}$, $\mathtt{turn\_left}$, $\mathtt{turn\_right}$, $\mathtt{u\_turn}$, $\mathtt{comfort}$,  $\mathtt{evasive}$, $\mathtt{lane\_blocked}$, $\mathtt{traffic\_jam}$, $\mathtt{no\_oncoming\_traffic}$, $\mathtt{roundabout}$, $\mathtt{intersection}$,  $\mathtt{oncoming\_traffic}$, $\mathtt{cut\_in}$, $\mathtt{illegal\_cut\_in}$,  $\mathtt{ghost\_driving}$, \\ $\mathtt{single\_lane}$, $\mathtt{two\_lane}$, $\mathtt{multi\_lane}$, $\mathtt{parallel\_lanes}$,  $\mathtt{mergin\_lanes}$, $\mathtt{slip\_road}$.
+Additionally, the filtering based on the number of static obstacles, dynamic obstacles, obstacle types, type of future behavior of obstacles, number of ego vehicles, number of goal states, and time horizon of the scenario is possible.
+
+%\subsubsection{Type of road}
+%\label{subsec:road_type}
+%\begin{align*}
+%\mathtt{type\_of\_road} \iff \mathtt{urban} \lor \mathtt{interstate} \lor \mathtt{race\_track} \lor \mathtt{rural} \lor ...
+%\end{align*}
+%
+%\subsubsection{Type of required planning maneuver}
+%\label{subsec:plan_maneuver_type}
+%\begin{align*}
+%\mathtt{required\_planning\_maneuver} \iff \mathtt{lane\_following} \lor \mathtt{lane\_change} \lor \mathtt{turn\_left} \\
+%\lor \, \mathtt{turn\_right} \lor \mathtt{u\_turn} \lor \mathtt{comfort} \lor \mathtt{evaisve} \lor ...
+%\end{align*}
+%
+%\subsubsection{Traffic regulations}
+%\label{subsec:traffic_regulations}
+%\begin{align*}
+%\mathtt{traffic\_regulations} \iff \mathtt{speed\_limit} \lor \mathtt{no\_overtaking} \lor ...
+%\end{align*}
+%
+%\subsubsection{Behavior of other vehicles}
+%\label{subsec:behavior_other_vehicles}
+%\begin{align*}
+%\mathtt{behavior\_other\_vehicles} \iff \mathtt{lane\_blocked}  \lor \mathtt{traffic\_jam} \lor \mathtt{no\_oncoming\_traffic} \\
+% \lor \, \mathtt{oncoming\_traffic} \lor \mathtt{cut\_in} \lor \mathtt{illegal\_cut\_in} \lor \mathtt{ghost\_driving} \lor ...
+%\end{align*}
+%
+%\subsubsection{Road elements}
+%\label{subsec:road_elements}
+%\begin{align*}
+%\mathtt{road\_elements} \iff \mathtt{single\_lane}  \lor \mathtt{two\_lane} \lor \mathtt{multi\_lane} \lor \mathtt{parallel\_lanes} \\
+%\lor \,  \mathtt{intersection} \lor \mathtt{roundabout} \lor \mathtt{mergin\_lanes} \lor \mathtt{slip\_road} \lor ...
+%\end{align*}
+
+\subsection{Planning Problem} \label{subsec:egoVehicles}
+%The aim of the \textit{CommonRoad} benchmarks is to compare trajectory planners. Thus, 
+The element \textit{planningProblem} is used to specify the initial state and one or more goal state(s) for the motion planning problem.
+Note that the shape of the ego vehicle is not included in the scenario description, since this property depends on which vehicle parameter set is chosen (see the \textit{vehicle model documentation} on our website).
+%\begin{lstlisting}
+%<planningProblem id='100'>
+%	<initialState>
+%		...
+%	</initialState>
+%	<goalRegion>
+%		<state>
+%			...
+%		</state>
+%		...
+%	</goalRegion>
+%</planningProblem>
+%\end{lstlisting}
+
+\paragraph{Initial States}
+We use the element \textit{initial state} to describe the initial state of the planning problem. In contrast to the general element \textit{state}, all state variables are mandatory and must be given exact, as shown in Fig.~\ref{fig:initialState_planningProblem}. 
+The element \textit{initial state} of each planning problem allows the initialization of each vehicle model, as described in more detail in our \textit{vehicle model documentation}.
+
+%\begin{lstlisting}
+%<initialState>
+%	<position>
+%		...
+%	</position>	
+%	<velocity>
+%		...
+%	</velocity>
+%	<orientation>
+%		...
+%	</orientation>
+%	<yawRate>
+%		...
+%	</yawRate>
+%	<slipAngle>
+%		...
+%	</slipAngle>
+%	<time>
+%		...
+%	</time>
+%</initialState>
+%\end{lstlisting}
+
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 /.
+		.2 initialState.
+		.3 [1] position.
+		.4 [1] point.
+		.3 [1] velocity.
+		.4 [1] exact.		
+		.3 [1] orientation.
+		.4 [1] exact.
+		.3 [1] yawRate.
+		.4 [1] exact.
+		.3 [1] slipAngle.
+		.4 [1] exact.
+		.3 [1] time.
+		.4 [1] exact.
+		.5 [1] $0{.}0$.
+		.3 [0..1] acceleration.
+		.4 [1] exact.
+	}
+	\caption{Element \textit{initial state} of a planning problem}
+	\label{fig:initialState_planningProblem}
+\end{figure}
+
+
+
+\paragraph{Goal States}
+A planning problem may contain several elements \textit{goal state} (cf. Fig.~\ref{fig:structure}). In contrast to the general element \textit{state}, all state variables except time are optional and all variables can only be given as an interval, as specified in Fig.~\ref{fig:goalState}.
+
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 /.
+		.2 goalState.
+		.3 [1] time.
+		.4 [1] intervalStart.
+		.4 [1] intervalEnd.
+		.3 [0..1] position.
+		.4 [1..N] rectangle/circle/polygon\\OR.
+		.4 [1..N] lanelet (\textrm{ref to} lanelet).
+		.3 [0..1] orientation.
+		.4 [1] intervalStart.
+		.4 [1] intervalEnd.
+		.3 [0..1] velocity.
+		.4 [1] intervalStart.
+		.4 [1] intervalEnd.
+	}
+	\caption{Element \textit{goal state} of a planning problem}
+	\label{fig:goalState}
+\end{figure}
+
+

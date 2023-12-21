@@ -1,0 +1,474 @@
+% !TeX root = ../CommonRoad_Format.tex
+
+\section{CommonRoad Dynamic}
+Subsequently, we specify the dynamic CommonRoad elements, e.g., obstacles or changeable environment properties.
+They can be stored in a separate file. 
+
+\subsection{Dynamic Meta Information}
+The \textit{CommonRoad} dynamic meta information has the following attributes (its elements are shown in Fig.~\ref{fig:scenarioMetaInformation}:
+\begin{itemize}
+	\item \texttt{commonRoadVersion}: version of the specification,
+	\item \texttt{benchmarkID}: benchmark ID of the scenario (see Sec.~\ref{subsec:id}),
+	\item \texttt{date}: date when scenario was generated,
+	\item \texttt{author}: author(s) of the scenario in alphabetic order,
+	\item \texttt{affiliation}: affiliation of the author(s), e.g., name and country of the university or company,
+	\item \texttt{source}: if applicable, description of the data source of the scenario, e.g., name of dataset or map service,
+	\item \texttt{sourceLink}: link(s) to source of the scenario,
+	\item \texttt{license}: name or link to license of scenario,
+	\item \texttt{timeStepSize}: global step size of the time-discrete scenario. 
+\end{itemize}
+
+\begin{figure}[!htpb]
+	\centering
+	\begin{minipage}{10cm}
+		\small
+		\dirtree{%
+			.1 /.
+			.2 [1] benchmarkID.
+			.2 [1] fileInformation.
+			.2 [1] timeStepSize.
+		}
+		\caption{Structure encoding \textit{ScenarioMetaInformation}}
+		\label{fig:scenarioMetaInformation}
+	\end{minipage}
+\end{figure}
+
+\begin{figure}[!htpb]
+	\centering
+	\begin{minipage}{10cm}
+		\small
+		\dirtree{%
+			.1 /.
+			.2 [1] cooperative.
+			.2 [1] mapID.
+			.2 [1] configurationID.
+			.2 [0..1] obstacleBehavior.
+			.2 [0..1] predictionID.
+			.2 [1] scenarioVersion.
+		}
+		\caption{Structure encoding \textit{BenchmarkID}}
+		\label{fig:benchmarkID}
+	\end{minipage}
+\end{figure}
+
+\begin{figure}[!htpb]
+	\centering
+	\begin{minipage}{10cm}
+		\small
+		\dirtree{%
+			.1 /.
+			.2 [1] countryID.
+			.2 [1] mapName.
+			.2 [1] mapID.
+		}
+		\caption{Structure encoding \textit{MapID}}
+		\label{fig:benchmarkID}
+	\end{minipage}
+\end{figure}
+
+
+\begin{figure}[!htpb]
+	\centering
+	\begin{minipage}{10cm}
+		\small
+		\dirtree{%
+			.1 /.
+			.2 [1] licenseName.
+			.2 [1] licenseText.
+			.2 [1] date.
+			.2 [1] author.
+			.2 [1] affiliation.
+			.2 [1] source.
+		}
+		\caption{Structure encoding \textit{FileMetaInformation}}
+		\label{fig:fileMetaInformation}
+	\end{minipage}
+\end{figure}
+
+The \textit{CommonRoad} root element has the following attributes (its elements are shown in Fig.~\ref{fig:structureStatic} and Fig.~\ref{fig:structureDynamic}), where the timeStepSize is not present in files representing static information:
+\begin{itemize}
+	\item \texttt{commonRoadVersion}: version of the specification,
+	\item \texttt{benchmarkID}: benchmark ID of the scenario (see Sec.~\ref{subsec:id}),
+	\item \texttt{date}: date when scenario was generated,
+	\item \texttt{author}: author(s) of the scenario in alphabetic order,
+	\item \texttt{affiliation}: affiliation of the author(s), e.g., name and country of the university or company,
+	\item \texttt{source}: if applicable, description of the data source of the scenario, e.g., name of dataset or map service,
+	\item \texttt{sourceLink}: link(s) to source of the scenario,
+	\item \texttt{license}: name or link to license of scenario,
+	\item \texttt{timeStepSize}: global step size of the time-discrete scenario. %The property \textit{timeStepSize} defines the global step size since we use discrete time steps to save time-dependent information.
+\end{itemize}
+
+\subsection{Environment}
+The optional element \textit{environment} contains information about the time (in hours, minutes and seconds) at which the scenario starts, the time of day, the current weather, and the underground.
+\begin{figure}[!htpb]
+	\centering
+	\begin{minipage}{10cm}
+		\small
+		\dirtree{%
+			.1 /.
+			.2 [0..1] time.
+			.2 [0..1] timeOfDay: night/day.
+			.2 [0..1] weather: sunny/light\_rain/heavy\_ŗain/fog/snow/hail.
+			.2 [0..1] underground: wet/clean/dirty/damaged/snow/ice.
+		}
+		\caption{Structure encoding \textit{environment} information}
+		\label{fig:environment}
+	\end{minipage}
+\end{figure}
+
+\subsection{Dynamic Map Elements}
+Some map elements might change within a scenario or recording.
+However, if one would integrate them in the map, map sharing between scenarios is not possible.
+
+\subsubsection{Traffic Light Cycle}
+Each phase/color of a \textit{trafficLight} and its duration is defined by the element \textit{cycleElement}. 
+Similarly to the \textit{time} elements, the duration is not given as numeric value, but as integer. 
+The color value inactive indicates that currently no phase is activated, e.g. a green right arrow traffic light can be activated iteratively. 
+The order of the different phases is determined by the order of the \textit{cycleElements} in the element \textit{cycle}. By specifying the element \textit{timeOffset}, the cycle is shifted by this value. 
+
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 trafficLight (id).
+		.2 [1..N] cycleElements.
+		.3 [1] duration.
+		.3 [1] color: red/redYellow/green/yellow/inactive.
+		.2 [0..1] timeOffset.
+		.2 [0..1] active: true/false.
+	}
+	\caption{Element \textit{trafficLight}.}
+	\label{fig:trafficLight}
+\end{figure}
+
+\subsubsection{Traffic Sign Value}
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 trafficSign (id).
+		.2 [1..N] trafficSignElement.
+		.3 [1] trafficSignID.
+		.3 [0..N] additionalValue.
+	}
+	\caption{Element \textit{trafficSign}.}
+	\label{fig:trafficSign}
+\end{figure} 
+
+\subsection{Obstacles} \label{subsec:obstacles}
+%In order to model the reality, the benchmark scenarios comprise not only lanes but different traffic participants as well. %These obstacles can be static like parked vehicles or dynamic like other vehicles driving on the road. To represent all kind of static and dynamic obstacles, different elements have been developed and are specified as follows.
+The elements \textit{staticObstacle} and \textit{dynamicObstacle} are used to represent different kinds of traffic participants within the scenario. 
+Additionally, the element \textit{environmentObstacle} is used to represent objects outside of the road network, e.g. buildings. Each obstacle element can have a \textit{type} as listed in Table~\ref{tab:obstacleTypes}.
+
+\begin{table}[!htb]\centering
+	\caption{Types of obstacles.}
+	\ra{1.3}
+	\begin{tabular}{@{}ll@{}} \toprule
+		\textbf{Role} & \textbf{Type} \\ \midrule
+		Static & parkedVehicle, constructionZone, roadBoundary, phantom, unknown \\
+		Dynamic & car, truck, bus, motorcycle, bicycle, pedestrian, priorityVehicle, train, phantom, unknown \\
+		Environment & building, pillar, median\_strip, unknown \\
+		\bottomrule
+	\end{tabular}
+	\label{tab:obstacleTypes}
+\end{table}
+
+The dimensions of an obstacle is specified by the element \textit{shape} (cf. Sec.~\ref{subsec:auxiliary}), and its initial configuration by the element \textit{initialState}. 
+Additionally, the element \textit{initialSignalState} can be included, to account for properties which are not related to the dynamic of an obstacle, e.g., whether the indicators are turned on or off.
+
+\paragraph{Initial state of obstacles}
+The configuration of an obstacle at the initial time ($ t = 0$) is specified by the element \textit{initialState} with the following state variables: \textit{position}, \textit{orientation}, \textit{time}, \textit{velocity} (scalar),  \textit{acceleration} (scalar), \textit{yawRate}, and \textit{slipAngle}, as shown in Fig.~\ref{fig:initialState}. 
+
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 /.
+		.2 initialState.
+		.3 [1] position.		
+		.3 [1] orientation.
+		.3 [1] time.
+		.4 [1] exact.
+		.5 [1] $0$.
+		.3 [0..1] velocity.
+		.3 [0..1] acceleration.
+		.3 [0..1] yawRate.
+		.3 [0..1] slipAngle.
+		%		.3 [0..1] curvature.
+		%		.3 [0..1] curvatureChange.
+	}
+	\caption{Element \textit{initialState} of an obstacle, where each state variable (except time) can be exact or an interval.}
+	\label{fig:initialState}
+\end{figure}
+
+
+\paragraph{Initial signal state of obstacles}
+The state of various signals of an obstacle at the initial time ($ t = 0$) is specified by the element \textit{initialSignalState} with the following state variables: \textit{time}, \textit{horn}, \textit{indicatorLeft}, \textit{indicatorRight},  \textit{brakingLights}, \textit{hazardWarningLights}, and \textit{flashingBlueLights}, as shown in Fig.~\ref{fig:initialSignalState}. 
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 /.
+		.2 initialSignalState.
+		.3 [1] time.
+		.4 [1] exact.
+		.5 [1] $0$.
+		.3 [0..1] horn.
+		.3 [0..1] indicatorLeft.
+		.3 [0..1] indicatorRight.
+		.3 [0..1] brakingLights.
+		.3 [0..1] hazardWarningLights.
+		.3 [0..1] flashingBlueLights.
+	}
+	\caption{Element \textit{initialSignalState} of an obstacle.}
+	\label{fig:initialSignalState}
+\end{figure}
+
+\subsubsection{Static Obstacles}
+A static obstacle has no further information, as shown in Fig.~\ref{fig:structure}.
+%\begin{lstlisting}
+%<obstacle id='57'>
+%	<role>static</role>
+%	<type>parkedVehicle</type>
+%	<shape>
+%		...
+%	</shape>
+%</obstacle>
+%\end{lstlisting}
+
+In addition to static obstacles, traffic scenarios can contain dynamic obstacles. 
+Please note that only elements of either of the following three behavior models may be present: with known behavior, with unknown behavior, or with unknown stochastic behavior. 
+We do not use these different behavior models together within one traffic scenario, as indicated in Fig.~\ref{fig:structure}.
+
+\subsubsection{Dynamic Obstacles with Known Behavior}
+A dynamic obstacle with known behavior contains a trajectory of states and a series of signals (cf. Fig.~\ref{fig:structure}). 
+The trajectory allows us to represent the states of a dynamic traffic participant along a path for $t > 0$. 
+The trajectory is obtained from a dataset (whose measurements can be exact or with uncertainties), from a prediction (which generates a single trajectory for each obstacle), or created hand-crafted. 
+The signal series is obtained from a simulator or created hand-crafted.
+
+%\begin{lstlisting}
+%<obstacle id='58'>
+%	<role>dynamic</role>
+%	<type>car</type>
+%	<shape> 
+%		...
+%	</shape>
+%	<trajectory>
+%		<state>
+%			...
+%		</state>
+%		...
+%	</trajectory>
+%</obstacle>
+%\end{lstlisting}
+
+
+\paragraph{States}
+The time-discrete states of a trajectory are specified by the element \textit{state} with the following state variables: \textit{position}, \textit{orientation}, and \textit{time}, \textit{velocity} (scalar),  \textit{acceleration} (scalar), \textit{yawRate}, and \textit{slipAngle}, as shown in Fig.~\ref{fig:state}. 
+%Note that we optionally include acceleration as a state variable for obstacles to provide additional information, e.g. for motion prediction, even though acceleration is often used as input for vehicle models.
+
+%\begin{lstlisting}
+%<state>
+%	<position>
+%		...
+%	</position>	
+%	<orientation>
+%		<exact>0.04</exact>
+%		<!-- or -->	
+%		<intervalStart>0.0</intervalStart>
+%		<intervalEnd>0.08</intervalEnd>
+%	</orientation>
+%	<time>
+%		<exact>0.0</exact>
+%		<!-- or -->	
+%		<intervalStart>0.0</intervalStart>
+%		<intervalEnd>1.0</intervalEnd>
+%	</time>
+%	<!-- optional -->
+%	<velocity>
+%		<exact>15.5</exact>
+%		<!-- or -->	
+%		<intervalStart>15.0</intervalStart>
+%		<intervalEnd>16.0</intervalEnd>
+%	</velocity>
+%	<!-- optional -->
+%	<acceleration>
+%		<exact>0.0</exact>
+%		<!-- or -->	
+%		<intervalStart>0.0</intervalStart>
+%		<intervalEnd>-0.2</intervalEnd>
+%	</acceleration>
+%</state>
+%\end{lstlisting} 
+
+
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 /.
+		.2 state.
+		.3 [1] time.
+		.3 [1] position.
+		.3 [1] orientation.
+		.3 [0..1] velocity.
+		.3 [0..1] acceleration.
+		.3 [0..1] yawRate.
+		.3 [0..1] slipAngle.
+		%		.3 [0..1] curvature.
+		%		.3 [0..1] curvatureChange.
+		%		.3 [0..1] signalStates.
+		%		.4 [0..1] horn.
+		%		.4 [0..1] indicatorLeft.
+		%		.4 [0..1] indicatorRight.
+		%		.4 [0..1] brakingLights.
+		%		.4 [0..1] hazardWarningLights.
+		%		.4 [0..1] flashingBlueLights.
+	}
+	\caption{Element \textit{state} of a trajectory, where each state variable can be exact or an interval.}
+	\label{fig:state}
+\end{figure}
+
+\paragraph{Signal States}
+The time-discrete states of a signal series are specified by the element \textit{signalState} with the following state variables: \textit{time}, \textit{horn}, \textit{indicatorLeft}, \textit{indicatorRight},  \textit{brakingLights}, \textit{hazardWarningLights}, and \textit{flashingBlueLights}, as shown in Fig.~\ref{fig:signalState}.
+
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 /.
+		.2 signalState.
+		.3 [1] time.
+		.3 [0..1] horn.
+		.3 [0..1] indicatorLeft.
+		.3 [0..1] indicatorRight.
+		.3 [0..1] brakingLights.
+		.3 [0..1] hazardWarningLights.
+		.3 [0..1] flashingBlueLights.
+	}
+	\caption{Element \textit{signalState} of a signal series.}
+	\label{fig:signalState}
+\end{figure}
+
+
+%The shape of the obstacle is not included in the trajectory, since the shape is usually not varying over time. However, time varying shapes could be included with a new element \textit{timeVaryingShape} instead of the standard \textit{shape} element, but we advise to use dynamic obstacles with unknown behavior (i.e. with occupancy elements) instead.
+%\begin{lstlisting}
+%<timeVaryingShape>
+%	<shapeWithTime>
+%		<shape>
+%			...
+%		</shape>
+%		<time>
+%			...
+%		</time>
+%	</shapeWithTime>
+%	...
+%</timeVaryingShape>
+%\end{lstlisting}
+
+\subsubsection{Dynamic Obstacles with Unknown Behavior}
+For motion planning, we often do not know the exact future behavior of dynamic obstacles, but we instead represent their future behavior by bounded sets. 
+Thus, dynamic obstacles with a unknown behavior are specified by an \textit{occupancy set}, which represents the occupied area over time by bounded sets. 
+As shown in Fig.~\ref{fig:structure}, an \textit{occupancy set} contains a list of \textit{occupancy} elements. %, which start at $t > 0$ or $t \in [0, t^*]$, $t^* > 0$.
+%\begin{lstlisting}
+%<obstacle id='59'>
+%	<role>dynamic</role>
+%	<type>car</type>
+%	<occupancySet>
+%		<occupancy>
+%			<shape>
+%				...
+%			</shape>
+%			<time>
+%				...
+%			</time>
+%		</occupancy>
+%		...
+%	</occupancySet>
+%</obstacle>
+%\end{lstlisting}
+
+\paragraph{Occupancies}
+The \textit{occupancy} element consists of a shape (occupied area) and a time, as shown in Fig.~\ref{fig:occupancy}.
+
+%\begin{lstlisting}
+%<occupancy>
+%	<shape>
+%		...
+%	</shape>
+%	<time>
+%		...
+%	</time>
+%</occupancy>
+%\end{lstlisting}
+
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 /.
+		.2 occupancy.
+		.3 [1] shape.
+		.3 [1] time.
+		.4 [1] exact\\OR.
+		.4 [1] intervalStart.
+		.4 [1] intervalEnd.		
+	}
+	\caption{Element \textit{occupancy} of an occupancy set.}
+	\label{fig:occupancy}
+\end{figure}
+
+
+\subsubsection{Dynamic Obstacles with Unknown Stochastic Behavior}
+One can describe unknown stochastic behavior by probability distributions of states. 
+Since many different probability distributions are used, we only provide a placeholder for probability distributions. \todo{Note that this element needs further refinement.}
+\todo{Further details will follow.} 
+
+%\begin{lstlisting}
+%<obstacle id='60'>
+%	<role>dynamic</role>
+%	<type>car</type>
+%	<shape>
+%		...
+%	</shape>
+%	<probabilityDistribution>
+%		...
+%	</probabilityDistribution>
+%</obstacle>
+%\end{lstlisting}
+
+%\paragraph{Probability Distribution}
+%We can either describe the occupancy by bounded regions that evolve over time or by probability distributions. We approximate the probability distribution by their level sets, where each level set is modeled by a shape (e.g. polygon) and assigned with a probability.
+
+%\begin{lstlisting}
+%<probabilityDistribution>
+%	...
+%</probabilityDistribution>
+%\end{lstlisting}
+
+%If we describe the occupancy as a bounded set, we use a single level set with probability 1 obtained from set-based prediction\cite{Althoff2016d}.
+%\begin{lstlisting}
+%<occupancy>
+%	<levelSet>
+%		<shape>
+%			...
+%		</shape>
+%		<probability>1</probability>
+%	</levelSet>
+%	<time>
+%		...
+%	</time>
+%</occupancy>
+%\end{lstlisting}
+
+%\paragraph{Optional Tags for Obstacles}
+%Elements of type \textit{tag} can be optionally added to an obstacle element, e.g. properties which might be required for some computations. They are given as a key-value pair.
+%\begin{lstlisting}
+%    <tag k='' v=''/>
+%\end{lstlisting}
+\subsubsection{Phantom Obstalces}
+The element \textit{phantomObstacle} is used to specify potential occluded obstacles. 
+Therefore, they have no trajectory, but an occupancy set.
+
+
+%\subsubsection{Environment Obstalces}
+%The element \textit{environmentObstacle} is used to specify the outline of environmental or infrastructure objects to properly compute occlusions. A \textit{environmentObstacle} is specified by its type, e.g. building, and its shape. 
+
+
+
+
+
+
