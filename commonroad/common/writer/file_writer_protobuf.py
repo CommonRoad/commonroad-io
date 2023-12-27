@@ -33,8 +33,8 @@ from commonroad.common.protobuf.dynamic import (
 from commonroad.common.protobuf.map import (
     area_pb2,
     commonroad_map_pb2,
-    intersection_pb2,
     environment_obstacle_pb2,
+    intersection_pb2,
     lanelet_pb2,
     location_pb2,
     traffic_light_pb2,
@@ -1073,8 +1073,10 @@ class EnvironmentObstacleMessage:
         environment_obstacle_msg = environment_obstacle_pb2.EnvironmentObstacle()
 
         environment_obstacle_msg.environment_obstacle_id = environment_obstacle.obstacle_id
-        environment_obstacle_msg.obstacle_type = environment_obstacle_pb2.EnvironmentObstacleTypeEnum.EnvironmentObstacleType.Value(
-            environment_obstacle.obstacle_type.name
+        environment_obstacle_msg.obstacle_type = (
+            environment_obstacle_pb2.EnvironmentObstacleTypeEnum.EnvironmentObstacleType.Value(
+                environment_obstacle.obstacle_type.name
+            )
         )
 
         shape_msg = ShapeMessage.create_message(environment_obstacle.obstacle_shape)

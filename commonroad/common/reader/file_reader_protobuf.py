@@ -41,8 +41,8 @@ from commonroad.common.protobuf.dynamic import (
 from commonroad.common.protobuf.map import (
     area_pb2,
     commonroad_map_pb2,
-    intersection_pb2,
     environment_obstacle_pb2,
+    intersection_pb2,
     lanelet_pb2,
     location_pb2,
     traffic_light_pb2,
