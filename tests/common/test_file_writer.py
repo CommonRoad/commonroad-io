@@ -507,7 +507,7 @@ def write_read_compare_map(xml_file_path: str, out_path: str) -> bool:
         pb_file_path, OverwriteExistingFile.ALWAYS
     )
 
-    map_pb = CommonRoadMapFileReader(pb_file_path, FileFormat.PROTOBUF).open()
+    map_pb, environment_obstacles = CommonRoadMapFileReader(pb_file_path, FileFormat.PROTOBUF).open()
 
     # As the new protobuf format Stop Line does not contain attributes "traffic_light_ref" and "traffic_sign_ref",
     # they are set to None in the xml format scenario
@@ -524,6 +524,7 @@ def write_read_compare_map(xml_file_path: str, out_path: str) -> bool:
         and scenario_xml.lanelet_network.areas == map_pb.areas
         and scenario_xml.lanelet_network.intersections == map_pb.intersections
         and scenario_xml.lanelet_network.location == map_pb.location
+        and scenario_xml.environment_obstacle == environment_obstacles
     )
 
 
