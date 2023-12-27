@@ -17,7 +17,7 @@ message DynamicObstacle {
     }
     optional commonroad_common.SignalState initial_signal_state = 7;
     repeated commonroad_common.SignalState signal_series = 8;
-    optional MetaInformationState initial_meta_information_state = 9;
-    repeated MetaInformationState meta_information_series = 10;
+    optional commonroad_common.MetaInformationState initial_meta_information_state = 9;
+    repeated commonroad_common.MetaInformationState meta_information_series = 10;
     optional uint32 external_dataset_id = 11;
 }

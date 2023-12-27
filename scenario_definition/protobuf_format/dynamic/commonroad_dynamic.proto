@@ -7,7 +7,6 @@ import "traffic_sign_value.proto";
 import "traffic_light_cycle.proto";
 import "static_obstacle.proto";
 import "dynamic_obstacle.proto";
-import "environment_obstacle.proto";
 import "phantom_obstacle.proto";
 import "scenario_meta_information.proto";
 
@@ -19,6 +18,5 @@ message CommonRoadDynamic {
     repeated TrafficSignValue traffic_sign_value = 4;
     repeated StaticObstacle static_obstacles = 5;
     repeated DynamicObstacle dynamic_obstacles = 6;
-    repeated EnvironmentObstacle environment_obstacles = 7;
-    repeated PhantomObstacle phantom_obstacles = 8;
+    repeated PhantomObstacle phantom_obstacles = 7;
 }

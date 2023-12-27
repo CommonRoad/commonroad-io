@@ -23,7 +23,6 @@ from commonroad.common.protobuf.common import (
 from commonroad.common.protobuf.dynamic import (
     commonroad_dynamic_pb2,
     dynamic_obstacle_pb2,
-    environment_obstacle_pb2,
     environment_pb2,
     obstacle_pb2,
     phantom_obstacle_pb2,
@@ -35,6 +34,7 @@ from commonroad.common.protobuf.map import (
     area_pb2,
     commonroad_map_pb2,
     intersection_pb2,
+    environment_obstacle_pb2,
     lanelet_pb2,
     location_pb2,
     traffic_light_pb2,
@@ -233,7 +233,7 @@ class ProtobufFileWriter(FileWriter):
 
         for environment_obstacle in self.scenario.environment_obstacle:
             environment_obstacle_msg = EnvironmentObstacleMessage.create_message(environment_obstacle)
-            self._commonroad_dynamic_msg.environment_obstacles.append(environment_obstacle_msg)
+            self._commonroad_map_msg.environment_obstacles.append(environment_obstacle_msg)
 
         for phantom_obstacle in self.scenario.phantom_obstacle:
             phantom_obstacle_msg = PhantomObstacleMessage.create_message(phantom_obstacle)
@@ -1073,7 +1073,7 @@ class EnvironmentObstacleMessage:
         environment_obstacle_msg = environment_obstacle_pb2.EnvironmentObstacle()
 
         environment_obstacle_msg.environment_obstacle_id = environment_obstacle.obstacle_id
-        environment_obstacle_msg.obstacle_type = obstacle_pb2.ObstacleTypeEnum.ObstacleType.Value(
+        environment_obstacle_msg.obstacle_type = environment_obstacle_pb2.EnvironmentObstacleTypeEnum.EnvironmentObstacleType.Value(
             environment_obstacle.obstacle_type.name
         )
 

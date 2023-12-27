@@ -200,14 +200,24 @@ The currently by CommonRoad supported national traffic signs are listed in Tab.~
 	\dirtree{%
 		.1 trafficSign (id).
 		.2 [1..N] trafficSignElement.
-		.3 [1] trafficSignID.
-		.3 [0..N] additionalValue.
 		.2 [0..1] position.
 		.3 [1] point.
 		.2 [0..1] virtual.
 	}
 	\caption{Element \textit{trafficSign}.}
 	\label{fig:trafficSign}
+\end{figure} 
+
+
+\begin{figure}[!htpb]
+	\small
+	\dirtree{%
+		.1 trafficSignElement.
+		.2 [1] trafficSignID.
+		.2 [0..N] additionalValue.
+	}
+	\caption{Element \textit{trafficSign}.}
+	\label{fig:trafficSignElement}
 \end{figure} 
 
 \begin{table}[!htb]\centering
@@ -323,7 +333,8 @@ The elements \textit{outgoingsRight}/\textit{Straight}/\textit{Left} are used to
 
 \footnotetext{\href{https://commons.wikimedia.org}{commons.wikimedia.org}}
 
-
 \subsubsection{Environment Obstalces}
 The element \textit{environmentObstacle} is used to specify the outline of environmental or infrastructure objects to properly compute occlusions. A \textit{environmentObstacle} is specified by its type, e.g. building, and its shape. 
+
+
 

@@ -57,3 +57,11 @@ message SignalState {
     optional bool hazard_warning_lights = 6;
     optional bool flashing_blue_lights = 7;
 }
+
+message MetaInformationState {
+    required IntegerExactOrInterval time_step = 1;
+    map<string, string> meta_data_str = 2;
+    map<string, int32> meta_data_int = 3;
+    map<string, float> meta_data_float = 4;
+    map<string, bool> meta_data_bool = 5;
+}

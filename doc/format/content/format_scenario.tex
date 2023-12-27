@@ -4,6 +4,67 @@
 
 
 
+\subsection{Scenario Meta Information} \label{sec:scenario_meta_info}
+The \textit{CommonRoad} dynamic meta information has the following attributes (its elements are shown in Fig.~\ref{fig:scenarioMetaInformation}:
+\begin{itemize}
+	\item \texttt{commonRoadVersion}: version of the specification,
+	\item \texttt{benchmarkID}: benchmark ID of the scenario (see Sec.~\ref{subsec:id}),
+	\item \texttt{date}: date when scenario was generated,
+	\item \texttt{author}: author(s) of the scenario in alphabetic order,
+	\item \texttt{affiliation}: affiliation of the author(s), e.g., name and country of the university or company,
+	\item \texttt{source}: if applicable, description of the data source of the scenario, e.g., name of dataset or map service,
+	\item \texttt{sourceLink}: link(s) to source of the scenario,
+	\item \texttt{license}: name or link to license of scenario,
+	\item \texttt{timeStepSize}: global step size of the time-discrete scenario. 
+\end{itemize}
+
+\begin{figure}[!htpb]
+	\centering
+	\begin{minipage}{10cm}
+		\small
+		\dirtree{%
+			.1 /.
+			.2 [1] benchmarkID.
+			.2 [1] fileInformation.
+			.2 [1] timeStepSize.
+		}
+		\caption{Structure encoding \textit{ScenarioMetaInformation}}
+		\label{fig:scenarioMetaInformation}
+	\end{minipage}
+\end{figure}
+
+\begin{figure}[!htpb]
+	\centering
+	\begin{minipage}{10cm}
+		\small
+		\dirtree{%
+			.1 /.
+			.2 [1] cooperative.
+			.2 [1] mapID.
+			.2 [1] configurationID.
+			.2 [0..1] obstacleBehavior.
+			.2 [0..1] predictionID.
+			.2 [1] scenarioVersion.
+		}
+		\caption{Structure encoding \textit{BenchmarkID}}
+		\label{fig:benchmarkID}
+	\end{minipage}
+\end{figure}
+
+\begin{figure}[!htpb]
+	\centering
+	\begin{minipage}{10cm}
+		\small
+		\dirtree{%
+			.1 /.
+			.2 [1] countryID.
+			.2 [1] mapName.
+			.2 [1] mapID.
+		}
+		\caption{Structure encoding \textit{MapID}}
+		\label{fig:benchmarkID}
+	\end{minipage}
+\end{figure}
 
 
 

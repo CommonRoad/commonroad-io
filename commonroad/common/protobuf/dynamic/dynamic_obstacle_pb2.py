@@ -22,7 +22,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x16\x64ynamic_obstacle.proto\x12\x12\x63ommonroad_dynamic\x1a\x0eobstacle.proto\x1a\x0bstate.proto\x1a\nutil.proto\"\xa2\x05\n\x0f\x44ynamicObstacle\x12\x1b\n\x13\x64ynamic_obstacle_id\x18\x01 \x02(\r\x12H\n\robstacle_type\x18\x02 \x02(\x0e\x32\x31.commonroad_dynamic.ObstacleTypeEnum.ObstacleType\x12\'\n\x05shape\x18\x03 \x02(\x0b\x32\x18.commonroad_common.Shape\x12/\n\rinitial_state\x18\x04 \x02(\x0b\x32\x18.commonroad_common.State\x12I\n\x15trajectory_prediction\x18\x05 \x01(\x0b\x32(.commonroad_dynamic.TrajectoryPredictionH\x00\x12\x46\n\x14set_based_prediction\x18\x06 \x01(\x0b\x32&.commonroad_dynamic.SetBasedPredictionH\x00\x12<\n\x14initial_signal_state\x18\x07 \x01(\x0b\x32\x1e.commonroad_common.SignalState\x12\x35\n\rsignal_series\x18\x08 \x03(\x0b\x32\x1e.commonroad_common.SignalState\x12P\n\x1einitial_meta_information_state\x18\t \x01(\x0b\x32(.commonroad_dynamic.MetaInformationState\x12I\n\x17meta_information_series\x18\n \x03(\x0b\x32(.commonroad_dynamic.MetaInformationState\x12\x1b\n\x13\x65xternal_dataset_id\x18\x0b \x01(\rB\x0c\n\nprediction'
+  serialized_pb=b'\n\x16\x64ynamic_obstacle.proto\x12\x12\x63ommonroad_dynamic\x1a\x0eobstacle.proto\x1a\x0bstate.proto\x1a\nutil.proto\"\xa0\x05\n\x0f\x44ynamicObstacle\x12\x1b\n\x13\x64ynamic_obstacle_id\x18\x01 \x02(\r\x12H\n\robstacle_type\x18\x02 \x02(\x0e\x32\x31.commonroad_dynamic.ObstacleTypeEnum.ObstacleType\x12\'\n\x05shape\x18\x03 \x02(\x0b\x32\x18.commonroad_common.Shape\x12/\n\rinitial_state\x18\x04 \x02(\x0b\x32\x18.commonroad_common.State\x12I\n\x15trajectory_prediction\x18\x05 \x01(\x0b\x32(.commonroad_dynamic.TrajectoryPredictionH\x00\x12\x46\n\x14set_based_prediction\x18\x06 \x01(\x0b\x32&.commonroad_dynamic.SetBasedPredictionH\x00\x12<\n\x14initial_signal_state\x18\x07 \x01(\x0b\x32\x1e.commonroad_common.SignalState\x12\x35\n\rsignal_series\x18\x08 \x03(\x0b\x32\x1e.commonroad_common.SignalState\x12O\n\x1einitial_meta_information_state\x18\t \x01(\x0b\x32\'.commonroad_common.MetaInformationState\x12H\n\x17meta_information_series\x18\n \x03(\x0b\x32\'.commonroad_common.MetaInformationState\x12\x1b\n\x13\x65xternal_dataset_id\x18\x0b \x01(\rB\x0c\n\nprediction'
   ,
   dependencies=[obstacle__pb2.DESCRIPTOR,state__pb2.DESCRIPTOR,util__pb2.DESCRIPTOR,])
 
@@ -132,7 +132,7 @@ _DYNAMICOBSTACLE = _descriptor.Descriptor(
     fields=[]),
   ],
   serialized_start=88,
-  serialized_end=762,
+  serialized_end=760,
 )
 
 _DYNAMICOBSTACLE.fields_by_name['obstacle_type'].enum_type = obstacle__pb2._OBSTACLETYPEENUM_OBSTACLETYPE
@@ -142,8 +142,8 @@ _DYNAMICOBSTACLE.fields_by_name['trajectory_prediction'].message_type = obstacle
 _DYNAMICOBSTACLE.fields_by_name['set_based_prediction'].message_type = obstacle__pb2._SETBASEDPREDICTION
 _DYNAMICOBSTACLE.fields_by_name['initial_signal_state'].message_type = state__pb2._SIGNALSTATE
 _DYNAMICOBSTACLE.fields_by_name['signal_series'].message_type = state__pb2._SIGNALSTATE
-_DYNAMICOBSTACLE.fields_by_name['initial_meta_information_state'].message_type = obstacle__pb2._METAINFORMATIONSTATE
-_DYNAMICOBSTACLE.fields_by_name['meta_information_series'].message_type = obstacle__pb2._METAINFORMATIONSTATE
+_DYNAMICOBSTACLE.fields_by_name['initial_meta_information_state'].message_type = state__pb2._METAINFORMATIONSTATE
+_DYNAMICOBSTACLE.fields_by_name['meta_information_series'].message_type = state__pb2._METAINFORMATIONSTATE
 _DYNAMICOBSTACLE.oneofs_by_name['prediction'].fields.append(
   _DYNAMICOBSTACLE.fields_by_name['trajectory_prediction'])
 _DYNAMICOBSTACLE.fields_by_name['trajectory_prediction'].containing_oneof = _DYNAMICOBSTACLE.oneofs_by_name['prediction']

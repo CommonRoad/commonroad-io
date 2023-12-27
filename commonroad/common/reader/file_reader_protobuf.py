@@ -31,7 +31,6 @@ from commonroad.common.protobuf.common import (
 from commonroad.common.protobuf.dynamic import (
     commonroad_dynamic_pb2,
     dynamic_obstacle_pb2,
-    environment_obstacle_pb2,
     environment_pb2,
     obstacle_pb2,
     phantom_obstacle_pb2,
@@ -43,6 +42,7 @@ from commonroad.common.protobuf.map import (
     area_pb2,
     commonroad_map_pb2,
     intersection_pb2,
+    environment_obstacle_pb2,
     lanelet_pb2,
     location_pb2,
     traffic_light_pb2,
@@ -867,7 +867,7 @@ class PhantomObstacleFactory:
 
 class MetaInformationStateFactory:
     @classmethod
-    def create_from_message(cls, meta_information_state_msg: obstacle_pb2.MetaInformationState) -> MetaInformationState:
+    def create_from_message(cls, meta_information_state_msg: state_pb2.MetaInformationState) -> MetaInformationState:
         meta_information_state = MetaInformationState()
         if meta_information_state_msg.HasField("meta_data_str"):
             meta_information_state.meta_data_str = meta_information_state_msg.meta_data_str

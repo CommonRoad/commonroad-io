@@ -16,7 +16,6 @@ import commonroad.common.protobuf.dynamic.traffic_sign_value_pb2 as traffic__sig
 import commonroad.common.protobuf.dynamic.traffic_light_cycle_pb2 as traffic__light__cycle__pb2
 import commonroad.common.protobuf.dynamic.static_obstacle_pb2 as static__obstacle__pb2
 import commonroad.common.protobuf.dynamic.dynamic_obstacle_pb2 as dynamic__obstacle__pb2
-import commonroad.common.protobuf.dynamic.environment_obstacle_pb2 as environment__obstacle__pb2
 import commonroad.common.protobuf.dynamic.phantom_obstacle_pb2 as phantom__obstacle__pb2
 import commonroad.common.protobuf.common.scenario_meta_information_pb2 as scenario__meta__information__pb2
 
@@ -27,9 +26,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x18\x63ommonroad_dynamic.proto\x12\x12\x63ommonroad_dynamic\x1a\x11\x65nvironment.proto\x1a\x18traffic_sign_value.proto\x1a\x19traffic_light_cycle.proto\x1a\x15static_obstacle.proto\x1a\x16\x64ynamic_obstacle.proto\x1a\x1a\x65nvironment_obstacle.proto\x1a\x16phantom_obstacle.proto\x1a\x1fscenario_meta_information.proto\"\xa3\x04\n\x11\x43ommonRoadDynamic\x12L\n\x18\x64ynamic_meta_information\x18\x01 \x02(\x0b\x32*.commonroad_common.ScenarioMetaInformation\x12\x34\n\x0b\x65nvironment\x18\x02 \x02(\x0b\x32\x1f.commonroad_dynamic.Environment\x12\x42\n\x13traffic_light_cycle\x18\x03 \x03(\x0b\x32%.commonroad_dynamic.TrafficLightCycle\x12@\n\x12traffic_sign_value\x18\x04 \x03(\x0b\x32$.commonroad_dynamic.TrafficSignValue\x12<\n\x10static_obstacles\x18\x05 \x03(\x0b\x32\".commonroad_dynamic.StaticObstacle\x12>\n\x11\x64ynamic_obstacles\x18\x06 \x03(\x0b\x32#.commonroad_dynamic.DynamicObstacle\x12\x46\n\x15\x65nvironment_obstacles\x18\x07 \x03(\x0b\x32\'.commonroad_dynamic.EnvironmentObstacle\x12>\n\x11phantom_obstacles\x18\x08 \x03(\x0b\x32#.commonroad_dynamic.PhantomObstacle'
+  serialized_pb=b'\n\x18\x63ommonroad_dynamic.proto\x12\x12\x63ommonroad_dynamic\x1a\x11\x65nvironment.proto\x1a\x18traffic_sign_value.proto\x1a\x19traffic_light_cycle.proto\x1a\x15static_obstacle.proto\x1a\x16\x64ynamic_obstacle.proto\x1a\x16phantom_obstacle.proto\x1a\x1fscenario_meta_information.proto\"\xdb\x03\n\x11\x43ommonRoadDynamic\x12L\n\x18\x64ynamic_meta_information\x18\x01 \x02(\x0b\x32*.commonroad_common.ScenarioMetaInformation\x12\x34\n\x0b\x65nvironment\x18\x02 \x02(\x0b\x32\x1f.commonroad_dynamic.Environment\x12\x42\n\x13traffic_light_cycle\x18\x03 \x03(\x0b\x32%.commonroad_dynamic.TrafficLightCycle\x12@\n\x12traffic_sign_value\x18\x04 \x03(\x0b\x32$.commonroad_dynamic.TrafficSignValue\x12<\n\x10static_obstacles\x18\x05 \x03(\x0b\x32\".commonroad_dynamic.StaticObstacle\x12>\n\x11\x64ynamic_obstacles\x18\x06 \x03(\x0b\x32#.commonroad_dynamic.DynamicObstacle\x12>\n\x11phantom_obstacles\x18\x07 \x03(\x0b\x32#.commonroad_dynamic.PhantomObstacle'
   ,
-  dependencies=[environment__pb2.DESCRIPTOR,traffic__sign__value__pb2.DESCRIPTOR,traffic__light__cycle__pb2.DESCRIPTOR,static__obstacle__pb2.DESCRIPTOR,dynamic__obstacle__pb2.DESCRIPTOR,environment__obstacle__pb2.DESCRIPTOR,phantom__obstacle__pb2.DESCRIPTOR,scenario__meta__information__pb2.DESCRIPTOR,])
+  dependencies=[environment__pb2.DESCRIPTOR,traffic__sign__value__pb2.DESCRIPTOR,traffic__light__cycle__pb2.DESCRIPTOR,static__obstacle__pb2.DESCRIPTOR,dynamic__obstacle__pb2.DESCRIPTOR,phantom__obstacle__pb2.DESCRIPTOR,scenario__meta__information__pb2.DESCRIPTOR,])
 
 
 
@@ -85,15 +84,8 @@ _COMMONROADDYNAMIC = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='environment_obstacles', full_name='commonroad_dynamic.CommonRoadDynamic.environment_obstacles', index=6,
+      name='phantom_obstacles', full_name='commonroad_dynamic.CommonRoadDynamic.phantom_obstacles', index=6,
       number=7, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='phantom_obstacles', full_name='commonroad_dynamic.CommonRoadDynamic.phantom_obstacles', index=7,
-      number=8, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -110,8 +102,8 @@ _COMMONROADDYNAMIC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=253,
-  serialized_end=800,
+  serialized_start=225,
+  serialized_end=700,
 )
 
 _COMMONROADDYNAMIC.fields_by_name['dynamic_meta_information'].message_type = scenario__meta__information__pb2._SCENARIOMETAINFORMATION
@@ -120,7 +112,6 @@ _COMMONROADDYNAMIC.fields_by_name['traffic_light_cycle'].message_type = traffic_
 _COMMONROADDYNAMIC.fields_by_name['traffic_sign_value'].message_type = traffic__sign__value__pb2._TRAFFICSIGNVALUE
 _COMMONROADDYNAMIC.fields_by_name['static_obstacles'].message_type = static__obstacle__pb2._STATICOBSTACLE
 _COMMONROADDYNAMIC.fields_by_name['dynamic_obstacles'].message_type = dynamic__obstacle__pb2._DYNAMICOBSTACLE
-_COMMONROADDYNAMIC.fields_by_name['environment_obstacles'].message_type = environment__obstacle__pb2._ENVIRONMENTOBSTACLE
 _COMMONROADDYNAMIC.fields_by_name['phantom_obstacles'].message_type = phantom__obstacle__pb2._PHANTOMOBSTACLE
 DESCRIPTOR.message_types_by_name['CommonRoadDynamic'] = _COMMONROADDYNAMIC
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
