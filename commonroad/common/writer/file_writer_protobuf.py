@@ -219,6 +219,10 @@ class ProtobufFileWriter(FileWriter):
             intersection_msg = IntersectionMessage.create_message(intersection)
             self._commonroad_map_msg.intersections.append(intersection_msg)
 
+        for environment_obstacle in self.scenario.environment_obstacle:
+            environment_obstacle_msg = EnvironmentObstacleMessage.create_message(environment_obstacle)
+            self._commonroad_map_msg.environment_obstacles.append(environment_obstacle_msg)
+
     def _add_all_objects_from_scenario_to_dynamic(self):
         """
         Stores all scenario objects that correspond to the dynamic as protobuf message.
@@ -230,10 +234,6 @@ class ProtobufFileWriter(FileWriter):
         for dynamic_obstacle in self.scenario.dynamic_obstacles:
             dynamic_obstacle_msg = DynamicObstacleMessage.create_message(dynamic_obstacle)
             self._commonroad_dynamic_msg.dynamic_obstacles.append(dynamic_obstacle_msg)
-
-        for environment_obstacle in self.scenario.environment_obstacle:
-            environment_obstacle_msg = EnvironmentObstacleMessage.create_message(environment_obstacle)
-            self._commonroad_map_msg.environment_obstacles.append(environment_obstacle_msg)
 
         for phantom_obstacle in self.scenario.phantom_obstacle:
             phantom_obstacle_msg = PhantomObstacleMessage.create_message(phantom_obstacle)

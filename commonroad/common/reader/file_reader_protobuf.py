@@ -142,7 +142,7 @@ class ProtobufFileReaderMap(FileReaderMap):
     def __init__(self, filename: Path_T):
         super().__init__(filename)
 
-    def open(self) -> LaneletNetwork:
+    def open(self) -> Tuple[LaneletNetwork, List[EnvironmentObstacle]]:
         """
         Reads a CommonRoadMap file in protobuf format.
         :return: CommonRoadMap
@@ -192,10 +192,6 @@ class CommonRoadDynamicFactory:
             dynamic_obstacle = DynamicObstacleFactory.create_from_message(dynamic_obstacle_msg)
             dynamic.dynamic_obstacles.append(dynamic_obstacle)
 
-        for environment_obstacle_msg in commonroad_dynamic_msg.environment_obstacles:
-            environment_obstacle = EnvironmentObstacleFactory.create_from_message(environment_obstacle_msg)
-            dynamic.environment_obstacles.append(environment_obstacle)
-
         for phantom_obstacle_msg in commonroad_dynamic_msg.phantom_obstacles:
             phantom_obstacle = PhantomObstacleFactory.create_from_message(phantom_obstacle_msg)
             dynamic.phantom_obstacles.append(phantom_obstacle)
@@ -219,7 +215,9 @@ class CommonRoadDynamicFactory:
 
 class CommonRoadMapFactory:
     @classmethod
-    def create_from_message(cls, commonroad_map_msg: commonroad_map_pb2.CommonRoadMap) -> LaneletNetwork:
+    def create_from_message(
+        cls, commonroad_map_msg: commonroad_map_pb2.CommonRoadMap
+    ) -> Tuple[LaneletNetwork, List[EnvironmentObstacle]]:
         map_information_msg = commonroad_map_msg.map_meta_information
         map_information = MapMetaInformationFactory.create_from_message(map_information_msg)
         location_msg = commonroad_map_msg.location
@@ -260,7 +258,12 @@ class CommonRoadMapFactory:
             area = AreaFactory.create_from_message(area_msg)
             lanelet_network.add_area(area, set())
 
-        return lanelet_network
+        environment_obstacles = []
+        for environment_obstacle_msg in commonroad_map_msg.environment_obstacles:
+            environment_obstacle = EnvironmentObstacleFactory.create_from_message(environment_obstacle_msg)
+            environment_obstacles.append(environment_obstacle)
+
+        return lanelet_network, environment_obstacles
 
 
 class CommonRoadScenarioFactory:
@@ -843,7 +846,9 @@ class EnvironmentObstacleFactory:
         environment_obstacle_id = environment_obstacle_msg.environment_obstacle_id
 
         obstacle_type = ObstacleType[
-            obstacle_pb2.ObstacleTypeEnum.ObstacleType.Name(environment_obstacle_msg.obstacle_type)
+            environment_obstacle_pb2.EnvironmentObstacleTypeEnum.EnvironmentObstacleType.Name(
+                environment_obstacle_msg.obstacle_type
+            )
         ]
 
         shape = ShapeFactory.create_from_message(environment_obstacle_msg.obstacle_shape)

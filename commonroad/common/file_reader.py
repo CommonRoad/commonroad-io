@@ -18,6 +18,7 @@ from commonroad.planning.planning_problem import (
 )
 from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad.scenario.lanelet import LaneletNetwork
+from commonroad.scenario.obstacle import EnvironmentObstacle
 from commonroad.scenario.scenario import Scenario
 
 
@@ -145,7 +146,7 @@ class CommonRoadMapFileReader:
         elif file_format == FileFormat.PROTOBUF:
             self._file_reader = ProtobufFileReaderMap(filename)
 
-    def open(self) -> LaneletNetwork:
+    def open(self) -> Tuple[LaneletNetwork, List[EnvironmentObstacle]]:
         """
         Opens and loads CommonRoadMap from the file.
 
@@ -198,8 +199,9 @@ class CommonRoadMapDynamicFileReader:
         the dynamic), PlanningProblemSet and a list of CooperativePlanningProblems
         """
 
-        road_network = self._file_reader_map.open()
+        road_network, env_obstacles = self._file_reader_map.open()
         dynamic = self._file_reader_dynamic.open()
+        dynamic.environment_obstacles = env_obstacles
 
         return combine_map_dynamic(road_network, dynamic)
 
@@ -387,8 +389,9 @@ class CommonRoadReadAll:
         :return: Tuple consisted of the Scenario (containing the lanelet network from map, and obstacles from
         the dynamic), PlanningProblemSet and a list of CooperativePlanningProblems
         """
-        road_network = self._file_reader_map.open()
+        road_network, environment_obstacles = self._file_reader_map.open()
         scenario = self._file_reader_scenario.open()
         dynamic_pb = self._file_reader_dynamic.open()
+        dynamic_pb.environment_obstacles = environment_obstacles
 
         return combine_preloaded_(road_network, dynamic_pb, scenario)

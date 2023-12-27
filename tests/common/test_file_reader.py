@@ -1397,8 +1397,9 @@ class TestProtobufFileReader(unittest.TestCase):
     def _check_correct_matched_state_pb(
         self, file_name_map: str, file_name_dynamic: str, file_format: FileFormat, state_type: type
     ):
-        road_network = CommonRoadMapFileReader(file_name_map, file_format).open()
+        road_network, environment_obstacles = CommonRoadMapFileReader(file_name_map, file_format).open()
         dynamic = CommonRoadDynamicFileReader(file_name_dynamic, file_format).open()
+        dynamic.environment_obstacles = environment_obstacles
 
         scenario = combine_map_dynamic(road_network, dynamic, lanelet_assignment=True)
         obstacle = scenario.obstacles[0]
@@ -1435,7 +1436,7 @@ def read_compare_old_scenario_new_map(xml_file_path: str, pb_map_file_path: str)
     map reader function returns.
     """
     scenario_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()[0]
-    map_pb = CommonRoadMapFileReader(pb_map_file_path, FileFormat.PROTOBUF).open()
+    map_pb, environment_obstacles = CommonRoadMapFileReader(pb_map_file_path, FileFormat.PROTOBUF).open()
 
     # Make dates the same as they are dependent on the creation of the file
     scenario_xml.lanelet_network.meta_information.file_information.date = map_pb.meta_information.file_information.date
@@ -1468,6 +1469,7 @@ def read_compare_old_scenario_new_map(xml_file_path: str, pb_map_file_path: str)
         and scenario_xml.lanelet_network.areas == map_pb.areas
         and scenario_xml.lanelet_network.intersections == map_pb.intersections
         and scenario_xml.lanelet_network.location == map_pb.location
+        and scenario_xml.environment_obstacle == environment_obstacles
     )
 
 
@@ -1483,7 +1485,6 @@ def read_compare_old_scenario_new_dynamic(xml_file_path: str, pb_dynamic_file_pa
         scenario_xml.dynamic_obstacles == dynamic_pb.dynamic_obstacles
         and scenario_xml.static_obstacles == dynamic_pb.static_obstacles
         and scenario_xml.phantom_obstacle == dynamic_pb.phantom_obstacles
-        and scenario_xml.environment_obstacle == dynamic_pb.environment_obstacles
     )
 
 
@@ -1495,8 +1496,9 @@ def read_compare_old_scenario_new_dynamic_map(
     that the protobuf reader for map and dynamic files returns.
     """
     scenario_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()[0]
-    map_pb = CommonRoadMapFileReader(pb_map_file_path, FileFormat.PROTOBUF).open()
+    map_pb, environment_obstacles = CommonRoadMapFileReader(pb_map_file_path, FileFormat.PROTOBUF).open()
     dynamic_pb = CommonRoadDynamicFileReader(pb_dynamic_file_path, FileFormat.PROTOBUF).open()
+    dynamic_pb.environment_obstacles = environment_obstacles
     map_dynamic_pb = combine_map_dynamic(map_pb, dynamic_pb)
 
     map_dynamic_pb.lanelet_network.meta_information.file_information.date = (
