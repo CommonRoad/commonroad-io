@@ -13,10 +13,10 @@ message MapID {
 message ScenarioID {
     required bool cooperative = 1;
     required MapID map_id = 2;
-    required uint64 configuration_id = 5;
-    optional string obstacle_behavior = 6;
-    optional uint64 prediction_id = 7;
-    required string scenario_version = 8;
+    required uint64 configuration_id = 3;
+    optional string obstacle_behavior = 4;
+    optional uint64 prediction_id = 5;
+    required string scenario_version = 6;
 }
 
 message FileInformation {
@@ -29,7 +29,7 @@ message FileInformation {
 }
 
 message ScenarioMetaInformation {
-    required ScenarioID benchmark_id = 2;
-    required FileInformation file_information = 3;
-    required double time_step_size = 4;
+    required ScenarioID benchmark_id = 1;
+    required FileInformation file_information = 2;
+    required double time_step_size = 3;
 }
