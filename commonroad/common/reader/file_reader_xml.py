@@ -65,18 +65,7 @@ from commonroad.scenario.traffic_sign import (
     SupportedTrafficSignCountry,
     TrafficSign,
     TrafficSignElement,
-    TrafficSignIDArgentina,
-    TrafficSignIDBelgium,
-    TrafficSignIDChina,
-    TrafficSignIDCroatia,
-    TrafficSignIDFrance,
-    TrafficSignIDGermany,
-    TrafficSignIDGreece,
-    TrafficSignIDItaly,
-    TrafficSignIDPuertoRico,
-    TrafficSignIDRussia,
-    TrafficSignIDSpain,
-    TrafficSignIDUsa,
+    TrafficSignIDCountries,
     TrafficSignIDZamunda,
 )
 from commonroad.scenario.trajectory import Trajectory
@@ -271,18 +260,10 @@ class ScenarioFactory:
             scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network, lanelet_assignment))
             for key, value in LaneletFactory._speed_limits.items():
                 for lanelet in value:
-                    if SupportedTrafficSignCountry.GERMANY.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.USA.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDUsa.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.CHINA.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDChina.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.SPAIN.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDSpain.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.RUSSIA.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDRussia.MAX_SPEED, [str(key)])
-                    elif SupportedTrafficSignCountry.ZAMUNDA.value == scenario_id.country_id:
-                        traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
+                    if scenario_id.country_id in [val for val in SupportedTrafficSignCountry]:
+                        traffic_sign_element = TrafficSignElement(
+                            TrafficSignIDCountries[scenario_id.country_id].MAX_SPEED, [str(key)]
+                        )
                     else:
                         traffic_sign_element = TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, [str(key)])
                         logger.warning("Unknown country: Default traffic sign IDs are used.")
@@ -953,32 +934,11 @@ class TrafficSignElementFactory:
         :return: object of class TrafficSignElement according to the CommonRoad specification.
         """
         try:
-            if country is SupportedTrafficSignCountry.GERMANY:
-                traffic_sign_element_id = TrafficSignIDGermany(xml_node.find("trafficSignID").text)
-            elif country is SupportedTrafficSignCountry.ZAMUNDA:
-                traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find("trafficSignID").text)
-            elif country is SupportedTrafficSignCountry.USA:
-                traffic_sign_element_id = TrafficSignIDUsa(xml_node.find("trafficSignID").text)
-            elif country is SupportedTrafficSignCountry.CHINA:
-                traffic_sign_element_id = TrafficSignIDChina(xml_node.find("trafficSignID").text)
-            elif country is SupportedTrafficSignCountry.SPAIN:
-                traffic_sign_element_id = TrafficSignIDSpain(xml_node.find("trafficSignID").text)
-            elif country is SupportedTrafficSignCountry.RUSSIA:
-                traffic_sign_element_id = TrafficSignIDRussia(xml_node.find("trafficSignID").text)
-            elif country is SupportedTrafficSignCountry.ARGENTINA:
-                traffic_sign_element_id = TrafficSignIDArgentina(xml_node.find("trafficSignID").text)
-            elif country is SupportedTrafficSignCountry.ITALY:
-                traffic_sign_element_id = TrafficSignIDItaly(xml_node.find("trafficSignID").text)
-            elif country is SupportedTrafficSignCountry.FRANCE:
-                traffic_sign_element_id = TrafficSignIDFrance(xml_node.find("trafficSignID").text)
-            elif country is SupportedTrafficSignCountry.PUERTO_RICO:
-                traffic_sign_element_id = TrafficSignIDPuertoRico(xml_node.find("trafficSignID").text)
-            elif country is SupportedTrafficSignCountry.CROATIA:
-                traffic_sign_element_id = TrafficSignIDCroatia(xml_node.find("trafficSignID").text)
-            elif country is SupportedTrafficSignCountry.GREECE:
-                traffic_sign_element_id = TrafficSignIDGreece(xml_node.find("trafficSignID").text)
-            elif country is SupportedTrafficSignCountry.BELGIUM:
-                traffic_sign_element_id = TrafficSignIDBelgium(xml_node.find("trafficSignID").text)
+            if country in [val for val in SupportedTrafficSignCountry]:
+                if xml_node.find("trafficSignID").text == "274":
+                    traffic_sign_element_id = TrafficSignIDCountries[country.value].MAX_SPEED
+                else:
+                    traffic_sign_element_id = TrafficSignIDCountries[country.value](xml_node.find("trafficSignID").text)
             else:
                 logger.warning(
                     "Unknown country: Default traffic sign ID is used. Specified country: {}".format(country.value)
