@@ -935,6 +935,7 @@ class TrafficSignElementFactory:
         """
         try:
             if country in [val for val in SupportedTrafficSignCountry]:
+                # some existing scenarios store the max speed sign using the German ID
                 if xml_node.find("trafficSignID").text == "274":
                     traffic_sign_element_id = TrafficSignIDCountries[country.value].MAX_SPEED
                 else:
