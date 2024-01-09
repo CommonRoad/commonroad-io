@@ -14,7 +14,7 @@ from commonroad.scenario.traffic_sign import (
 )
 
 
-class TrafficSigInterpreter:
+class TrafficSignInterpreter:
     """Class to extract traffic sign information from the road network"""
 
     def __init__(self, country: SupportedTrafficSignCountry, lanelet_network: LaneletNetwork):
