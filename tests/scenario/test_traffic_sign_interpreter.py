@@ -13,7 +13,7 @@ from commonroad.scenario.traffic_sign import (
 from commonroad.scenario.traffic_sign_interpreter import TrafficSignInterpreter
 
 
-class TestTrafficSigInterpreter(unittest.TestCase):
+class TestTrafficSignInterpreter(unittest.TestCase):
     def setUp(self):
         lanelet_one = Lanelet(
             left_vertices=np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]),

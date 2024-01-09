@@ -185,9 +185,9 @@ Traffic Sign Interpreter
 
 .. automodule:: commonroad.scenario.traffic_sign_interpreter
 
-``TrafficSigInterpreter`` class
+``TrafficSignInterpreter`` class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: TrafficSigInterpreter
+.. autoclass:: TrafficSignInterpreter
    :members:
    :undoc-members:
    :member-order: bysource
