@@ -103,6 +103,7 @@ class TestTrafficSignElement(unittest.TestCase):
         self.assertNotEqual(hash(traffic_sign_element_1), hash(traffic_sign_element_2))
 
     def test_traffic_sign_ids(self):
+        # ensure that size of TrafficSignID equals number of all available traffic sign ID names
         signs = set()
         for country in list(TrafficSignIDCountries.values()):
             signs = signs.union(set(country._member_names_))
