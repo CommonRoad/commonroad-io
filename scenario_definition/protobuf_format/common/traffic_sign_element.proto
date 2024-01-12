@@ -244,7 +244,10 @@ message TrafficSignIDEnum {
         ADDITION_VALID_ON_SHOULDER = 238;
         ADDITION_VALID_WHEN_WET = 239;
         LINE_MARKING_MISSING = 240;
-        UNKNOWN = 241;
+        STOP_4_WAY = 241;
+        NO_TURN_ON_RED = 242;
+        ONEWAY = 243;
+        UNKNOWN = 244;
     }
 }
 
