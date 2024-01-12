@@ -346,7 +346,10 @@ class TrafficSignID(enum.Enum):
     ADDITION_VALID_ON_SHOULDER = 238
     ADDITION_VALID_WHEN_WET = 239
     LINE_MARKING_MISSING = 240
-    UNKNOWN = 241
+    STOP_4_WAY = 241
+    NO_TURN_ON_RED = 242
+    ONEWAY = 243
+    UNKNOWN = 244
 
 
 @enum.unique
@@ -363,6 +366,7 @@ class SupportedTrafficSignCountry(enum.Enum):
     CROATIA = "HRV"
     ITALY = "ITA"
     PUERTO_RICO = "PRI"
+    AUSTRALIA = "AUS"
     ZAMUNDA = "ZAM"  # default
 
 
@@ -859,6 +863,8 @@ class TrafficSignIDZamunda(enum.Enum):  # default traffic sign IDs (similar to G
 
 @enum.unique
 class TrafficSignIDUsa(enum.Enum):
+    STOP = "R1-1"
+    STOP_4_WAY = "R1-3"
     MAX_SPEED = "R2-1"
     U_TURN = "R3-4"
     ROAD_WORK_AHEAD = "CW20-1"
@@ -873,6 +879,8 @@ class TrafficSignIDUsa(enum.Enum):
     TURN_ONLY_LANES = "R3-8b"
     NO_RIGHT_TURN = "R3-1"
     KEEP_RIGHT = "R4-7"
+    NO_TURN_ON_RED = "R10-11"
+    ONEWAY = "R1-6"
     SIGNAL_AHEAD = "W3-3"
     LOADING_ZONE = "R8-3gP"
     NO_PARKING = "R8-3"
@@ -961,6 +969,12 @@ class TrafficSignIDPuertoRico(enum.Enum):
     UNKNOWN = ""
 
 
+@enum.unique
+class TrafficSignIDAustralia(enum.Enum):
+    STOP = "R1-1"
+    UNKNOWN = ""
+
+
 TrafficSignIDCountries = {
     ele.value: globals()[
         "TrafficSignID" + SupportedTrafficSignCountry(ele.value).name.replace("_", " ").title().replace(" ", "")
@@ -982,6 +996,7 @@ class TrafficSignElement:
             TrafficSignIDGermany,
             TrafficSignIDChina,
             TrafficSignIDRussia,
+            TrafficSignIDAustralia,
         ],
         additional_values: List[str] = [],
     ):

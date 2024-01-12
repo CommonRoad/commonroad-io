@@ -5,6 +5,7 @@ from typing import FrozenSet, Union
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.traffic_sign import (
     SupportedTrafficSignCountry,
+    TrafficSignIDAustralia,
     TrafficSignIDChina,
     TrafficSignIDGermany,
     TrafficSignIDRussia,
@@ -48,6 +49,8 @@ class TrafficSigInterpreter:
             return TrafficSignIDChina
         elif country == SupportedTrafficSignCountry.RUSSIA:
             return TrafficSignIDRussia
+        elif country == SupportedTrafficSignCountry.AUSTRALIA:
+            return TrafficSignIDAustralia
         else:
             return TrafficSignIDZamunda
 
