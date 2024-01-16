@@ -1,5 +1,10 @@
 # Changelog
 
+## [2024.1] - 2023-xx-xx
+
+### Fixed
+- Typo: `TrafficSigInterpreter` → `TrafficSignInterpreter`
+
 ## [2023.4] - 2023-12-19
 
 ### Added
