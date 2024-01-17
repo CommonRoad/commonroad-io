@@ -7,6 +7,7 @@
 - Automatically generated TrafficSignIDCountries enum for importing in other scripts
 
 ### Fixed
+- Typo: `TrafficSigInterpreter` → `TrafficSignInterpreter`
 - Typo EMERGENCY_STOP traffic sign enum name
 
 ### Changed
