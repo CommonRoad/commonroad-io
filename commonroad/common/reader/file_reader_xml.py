@@ -493,7 +493,7 @@ class LaneletNetworkFactory:
         else:
             country = xml_node._root.attrib["benchmarkID"][:3]
 
-        if country in [c.val for c in SupportedTrafficSignCountry]:
+        if country in [c.value for c in SupportedTrafficSignCountry]:
             return SupportedTrafficSignCountry(country)
         else:
             logger.warning("Unknown country: Default traffic sign IDs are used. Specified country: " + country)
