@@ -46,7 +46,7 @@ rtree = ">=0.8.3"
 protobuf = "==3.20.2"
 omegaconf = ">=2.0"
 tqdm = ">=4.64"
-pillow = ">=10.2.0" # https://github.com/CommonRoad/commonroad-io/security/dependabot/23
+# pillow = ">=10.2.0" # https://github.com/CommonRoad/commonroad-io/security/dependabot/23 commented since sumocr and crsd needs an update at the same time
 
 
 [tool.poetry.group.docs]
