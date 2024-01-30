@@ -1,5 +1,18 @@
 # Changelog
 
+## [2024.1] - 2024-03-XX
+### Added
+- Country-independent traffic sign enum
+- Missing country-specific max speed sign IDs
+- Automatically generated TrafficSignIDCountries enum for importing in other scripts
+
+### Fixed
+- Typo: `TrafficSigInterpreter` → `TrafficSignInterpreter`
+- Typo EMERGENCY_STOP traffic sign enum name
+
+### Changed
+- Simplified traffic sign matching in FileReader
+
 ## [2023.4] - 2023-12-19
 
 ### Added
