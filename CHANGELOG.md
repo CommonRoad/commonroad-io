@@ -2,6 +2,12 @@
 
 ## [2024.1] - 2023-xx-xx
 
+### Added
+- GroundTruthPredictor class to use stored trajectories as prediction
+
+### Changed
+- Optimization-based planner tutorial now uses planner and predictor interfaces
+
 ### Fixed
 - Typo: `TrafficSigInterpreter` → `TrafficSignInterpreter`
 
