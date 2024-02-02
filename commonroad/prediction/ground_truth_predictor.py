@@ -1,6 +1,6 @@
+from commonroad.prediction.prediction_interface import PredictorInterface
 from commonroad.scenario.scenario import Scenario
 from commonroad.scenario.trajectory import Trajectory
-from commonroad.prediction.prediction_interface import PredictorInterface
 
 
 class GroundTruthPredictor(PredictorInterface):
@@ -14,8 +14,9 @@ class GroundTruthPredictor(PredictorInterface):
         :return: CommonRoad scenario containing prediction.
         """
         for obstacle in sc.dynamic_obstacles:
-            state_list = [state for state in obstacle.prediction.trajectory.state_list
-                          if state.time_step >= initial_time_step]
+            state_list = [
+                state for state in obstacle.prediction.trajectory.state_list if state.time_step >= initial_time_step
+            ]
             traj = Trajectory(state_list[0].time_step, state_list)
             obstacle.prediction.trajectory = traj
 
