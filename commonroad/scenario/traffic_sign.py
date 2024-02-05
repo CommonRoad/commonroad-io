@@ -375,9 +375,12 @@ class TrafficSignID(enum.Enum):
     ON_PAVEMENT = 265
     DO_NOT_BLOCK_INTERSECTION = 266
     WARNING_ARROW_LEFT = 267
+    STOP_4_WAY = 268
+    NO_TURN_ON_RED = 269
+    ONEWAY = 270
     # Spain
-    NO_STOPPING = 268
-    NO_WAITING = 269
+    NO_STOPPING = 271
+    NO_WAITING = 272
 
 
 @enum.unique
