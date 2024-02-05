@@ -22,11 +22,313 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x16\x64ynamic_obstacle.proto\x12\x12\x63ommonroad_dynamic\x1a\x0eobstacle.proto\x1a\x0bstate.proto\x1a\nutil.proto\"\xa0\x05\n\x0f\x44ynamicObstacle\x12\x1b\n\x13\x64ynamic_obstacle_id\x18\x01 \x02(\r\x12H\n\robstacle_type\x18\x02 \x02(\x0e\x32\x31.commonroad_dynamic.ObstacleTypeEnum.ObstacleType\x12\'\n\x05shape\x18\x03 \x02(\x0b\x32\x18.commonroad_common.Shape\x12/\n\rinitial_state\x18\x04 \x02(\x0b\x32\x18.commonroad_common.State\x12I\n\x15trajectory_prediction\x18\x05 \x01(\x0b\x32(.commonroad_dynamic.TrajectoryPredictionH\x00\x12\x46\n\x14set_based_prediction\x18\x06 \x01(\x0b\x32&.commonroad_dynamic.SetBasedPredictionH\x00\x12<\n\x14initial_signal_state\x18\x07 \x01(\x0b\x32\x1e.commonroad_common.SignalState\x12\x35\n\rsignal_series\x18\x08 \x03(\x0b\x32\x1e.commonroad_common.SignalState\x12O\n\x1einitial_meta_information_state\x18\t \x01(\x0b\x32\'.commonroad_common.MetaInformationState\x12H\n\x17meta_information_series\x18\n \x03(\x0b\x32\'.commonroad_common.MetaInformationState\x12\x1b\n\x13\x65xternal_dataset_id\x18\x0b \x01(\rB\x0c\n\nprediction'
+  serialized_pb=b'\n\x16\x64ynamic_obstacle.proto\x12\x12\x63ommonroad_dynamic\x1a\x0eobstacle.proto\x1a\x0bstate.proto\x1a\nutil.proto\"\xb6\x08\n\x14MetaInformationState\x12<\n\ttime_step\x18\x01 \x02(\x0b\x32).commonroad_common.IntegerExactOrInterval\x12P\n\rmeta_data_str\x18\x02 \x03(\x0b\x32\x39.commonroad_dynamic.MetaInformationState.MetaDataStrEntry\x12P\n\rmeta_data_int\x18\x03 \x03(\x0b\x32\x39.commonroad_dynamic.MetaInformationState.MetaDataIntEntry\x12T\n\x0fmeta_data_float\x18\x04 \x03(\x0b\x32;.commonroad_dynamic.MetaInformationState.MetaDataFloatEntry\x12R\n\x0emeta_data_bool\x18\x05 \x03(\x0b\x32:.commonroad_dynamic.MetaInformationState.MetaDataBoolEntry\x12s\n\x1fmeta_data_trajectory_prediction\x18\x06 \x03(\x0b\x32J.commonroad_dynamic.MetaInformationState.MetaDataTrajectoryPredictionEntry\x12p\n\x1emeta_data_set_based_prediction\x18\x07 \x03(\x0b\x32H.commonroad_dynamic.MetaInformationState.MetaDataSetBasedPredictionEntry\x1a\x32\n\x10MetaDataStrEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\x1a\x32\n\x10MetaDataIntEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\x1a\x34\n\x12MetaDataFloatEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x02:\x02\x38\x01\x1a\x33\n\x11MetaDataBoolEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01\x1am\n!MetaDataTrajectoryPredictionEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x37\n\x05value\x18\x02 \x01(\x0b\x32(.commonroad_dynamic.TrajectoryPrediction:\x02\x38\x01\x1ai\n\x1fMetaDataSetBasedPredictionEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x35\n\x05value\x18\x02 \x01(\x0b\x32&.commonroad_dynamic.SetBasedPrediction:\x02\x38\x01\"\xa2\x05\n\x0f\x44ynamicObstacle\x12\x1b\n\x13\x64ynamic_obstacle_id\x18\x01 \x02(\r\x12H\n\robstacle_type\x18\x02 \x02(\x0e\x32\x31.commonroad_dynamic.ObstacleTypeEnum.ObstacleType\x12\'\n\x05shape\x18\x03 \x02(\x0b\x32\x18.commonroad_common.Shape\x12/\n\rinitial_state\x18\x04 \x02(\x0b\x32\x18.commonroad_common.State\x12I\n\x15trajectory_prediction\x18\x05 \x01(\x0b\x32(.commonroad_dynamic.TrajectoryPredictionH\x00\x12\x46\n\x14set_based_prediction\x18\x06 \x01(\x0b\x32&.commonroad_dynamic.SetBasedPredictionH\x00\x12<\n\x14initial_signal_state\x18\x07 \x01(\x0b\x32\x1e.commonroad_common.SignalState\x12\x35\n\rsignal_series\x18\x08 \x03(\x0b\x32\x1e.commonroad_common.SignalState\x12P\n\x1einitial_meta_information_state\x18\t \x01(\x0b\x32(.commonroad_dynamic.MetaInformationState\x12I\n\x17meta_information_series\x18\n \x03(\x0b\x32(.commonroad_dynamic.MetaInformationState\x12\x1b\n\x13\x65xternal_dataset_id\x18\x0b \x01(\rB\x0c\n\nprediction'
   ,
   dependencies=[obstacle__pb2.DESCRIPTOR,state__pb2.DESCRIPTOR,util__pb2.DESCRIPTOR,])
 
 
+
+
+_METAINFORMATIONSTATE_METADATASTRENTRY = _descriptor.Descriptor(
+  name='MetaDataStrEntry',
+  full_name='commonroad_dynamic.MetaInformationState.MetaDataStrEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='commonroad_dynamic.MetaInformationState.MetaDataStrEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='commonroad_dynamic.MetaInformationState.MetaDataStrEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=b'8\001',
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=739,
+  serialized_end=789,
+)
+
+_METAINFORMATIONSTATE_METADATAINTENTRY = _descriptor.Descriptor(
+  name='MetaDataIntEntry',
+  full_name='commonroad_dynamic.MetaInformationState.MetaDataIntEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='commonroad_dynamic.MetaInformationState.MetaDataIntEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='commonroad_dynamic.MetaInformationState.MetaDataIntEntry.value', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=b'8\001',
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=791,
+  serialized_end=841,
+)
+
+_METAINFORMATIONSTATE_METADATAFLOATENTRY = _descriptor.Descriptor(
+  name='MetaDataFloatEntry',
+  full_name='commonroad_dynamic.MetaInformationState.MetaDataFloatEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='commonroad_dynamic.MetaInformationState.MetaDataFloatEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='commonroad_dynamic.MetaInformationState.MetaDataFloatEntry.value', index=1,
+      number=2, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=b'8\001',
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=843,
+  serialized_end=895,
+)
+
+_METAINFORMATIONSTATE_METADATABOOLENTRY = _descriptor.Descriptor(
+  name='MetaDataBoolEntry',
+  full_name='commonroad_dynamic.MetaInformationState.MetaDataBoolEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='commonroad_dynamic.MetaInformationState.MetaDataBoolEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='commonroad_dynamic.MetaInformationState.MetaDataBoolEntry.value', index=1,
+      number=2, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=b'8\001',
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=897,
+  serialized_end=948,
+)
+
+_METAINFORMATIONSTATE_METADATATRAJECTORYPREDICTIONENTRY = _descriptor.Descriptor(
+  name='MetaDataTrajectoryPredictionEntry',
+  full_name='commonroad_dynamic.MetaInformationState.MetaDataTrajectoryPredictionEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='commonroad_dynamic.MetaInformationState.MetaDataTrajectoryPredictionEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='commonroad_dynamic.MetaInformationState.MetaDataTrajectoryPredictionEntry.value', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=b'8\001',
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=950,
+  serialized_end=1059,
+)
+
+_METAINFORMATIONSTATE_METADATASETBASEDPREDICTIONENTRY = _descriptor.Descriptor(
+  name='MetaDataSetBasedPredictionEntry',
+  full_name='commonroad_dynamic.MetaInformationState.MetaDataSetBasedPredictionEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='commonroad_dynamic.MetaInformationState.MetaDataSetBasedPredictionEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='commonroad_dynamic.MetaInformationState.MetaDataSetBasedPredictionEntry.value', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=b'8\001',
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1061,
+  serialized_end=1166,
+)
+
+_METAINFORMATIONSTATE = _descriptor.Descriptor(
+  name='MetaInformationState',
+  full_name='commonroad_dynamic.MetaInformationState',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='time_step', full_name='commonroad_dynamic.MetaInformationState.time_step', index=0,
+      number=1, type=11, cpp_type=10, label=2,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='meta_data_str', full_name='commonroad_dynamic.MetaInformationState.meta_data_str', index=1,
+      number=2, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='meta_data_int', full_name='commonroad_dynamic.MetaInformationState.meta_data_int', index=2,
+      number=3, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='meta_data_float', full_name='commonroad_dynamic.MetaInformationState.meta_data_float', index=3,
+      number=4, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='meta_data_bool', full_name='commonroad_dynamic.MetaInformationState.meta_data_bool', index=4,
+      number=5, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='meta_data_trajectory_prediction', full_name='commonroad_dynamic.MetaInformationState.meta_data_trajectory_prediction', index=5,
+      number=6, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='meta_data_set_based_prediction', full_name='commonroad_dynamic.MetaInformationState.meta_data_set_based_prediction', index=6,
+      number=7, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[_METAINFORMATIONSTATE_METADATASTRENTRY, _METAINFORMATIONSTATE_METADATAINTENTRY, _METAINFORMATIONSTATE_METADATAFLOATENTRY, _METAINFORMATIONSTATE_METADATABOOLENTRY, _METAINFORMATIONSTATE_METADATATRAJECTORYPREDICTIONENTRY, _METAINFORMATIONSTATE_METADATASETBASEDPREDICTIONENTRY, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=88,
+  serialized_end=1166,
+)
 
 
 _DYNAMICOBSTACLE = _descriptor.Descriptor(
@@ -131,10 +433,25 @@ _DYNAMICOBSTACLE = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=88,
-  serialized_end=760,
+  serialized_start=1169,
+  serialized_end=1843,
 )
 
+_METAINFORMATIONSTATE_METADATASTRENTRY.containing_type = _METAINFORMATIONSTATE
+_METAINFORMATIONSTATE_METADATAINTENTRY.containing_type = _METAINFORMATIONSTATE
+_METAINFORMATIONSTATE_METADATAFLOATENTRY.containing_type = _METAINFORMATIONSTATE
+_METAINFORMATIONSTATE_METADATABOOLENTRY.containing_type = _METAINFORMATIONSTATE
+_METAINFORMATIONSTATE_METADATATRAJECTORYPREDICTIONENTRY.fields_by_name['value'].message_type = obstacle__pb2._TRAJECTORYPREDICTION
+_METAINFORMATIONSTATE_METADATATRAJECTORYPREDICTIONENTRY.containing_type = _METAINFORMATIONSTATE
+_METAINFORMATIONSTATE_METADATASETBASEDPREDICTIONENTRY.fields_by_name['value'].message_type = obstacle__pb2._SETBASEDPREDICTION
+_METAINFORMATIONSTATE_METADATASETBASEDPREDICTIONENTRY.containing_type = _METAINFORMATIONSTATE
+_METAINFORMATIONSTATE.fields_by_name['time_step'].message_type = util__pb2._INTEGEREXACTORINTERVAL
+_METAINFORMATIONSTATE.fields_by_name['meta_data_str'].message_type = _METAINFORMATIONSTATE_METADATASTRENTRY
+_METAINFORMATIONSTATE.fields_by_name['meta_data_int'].message_type = _METAINFORMATIONSTATE_METADATAINTENTRY
+_METAINFORMATIONSTATE.fields_by_name['meta_data_float'].message_type = _METAINFORMATIONSTATE_METADATAFLOATENTRY
+_METAINFORMATIONSTATE.fields_by_name['meta_data_bool'].message_type = _METAINFORMATIONSTATE_METADATABOOLENTRY
+_METAINFORMATIONSTATE.fields_by_name['meta_data_trajectory_prediction'].message_type = _METAINFORMATIONSTATE_METADATATRAJECTORYPREDICTIONENTRY
+_METAINFORMATIONSTATE.fields_by_name['meta_data_set_based_prediction'].message_type = _METAINFORMATIONSTATE_METADATASETBASEDPREDICTIONENTRY
 _DYNAMICOBSTACLE.fields_by_name['obstacle_type'].enum_type = obstacle__pb2._OBSTACLETYPEENUM_OBSTACLETYPE
 _DYNAMICOBSTACLE.fields_by_name['shape'].message_type = util__pb2._SHAPE
 _DYNAMICOBSTACLE.fields_by_name['initial_state'].message_type = state__pb2._STATE
@@ -142,16 +459,72 @@ _DYNAMICOBSTACLE.fields_by_name['trajectory_prediction'].message_type = obstacle
 _DYNAMICOBSTACLE.fields_by_name['set_based_prediction'].message_type = obstacle__pb2._SETBASEDPREDICTION
 _DYNAMICOBSTACLE.fields_by_name['initial_signal_state'].message_type = state__pb2._SIGNALSTATE
 _DYNAMICOBSTACLE.fields_by_name['signal_series'].message_type = state__pb2._SIGNALSTATE
-_DYNAMICOBSTACLE.fields_by_name['initial_meta_information_state'].message_type = state__pb2._METAINFORMATIONSTATE
-_DYNAMICOBSTACLE.fields_by_name['meta_information_series'].message_type = state__pb2._METAINFORMATIONSTATE
+_DYNAMICOBSTACLE.fields_by_name['initial_meta_information_state'].message_type = _METAINFORMATIONSTATE
+_DYNAMICOBSTACLE.fields_by_name['meta_information_series'].message_type = _METAINFORMATIONSTATE
 _DYNAMICOBSTACLE.oneofs_by_name['prediction'].fields.append(
   _DYNAMICOBSTACLE.fields_by_name['trajectory_prediction'])
 _DYNAMICOBSTACLE.fields_by_name['trajectory_prediction'].containing_oneof = _DYNAMICOBSTACLE.oneofs_by_name['prediction']
 _DYNAMICOBSTACLE.oneofs_by_name['prediction'].fields.append(
   _DYNAMICOBSTACLE.fields_by_name['set_based_prediction'])
 _DYNAMICOBSTACLE.fields_by_name['set_based_prediction'].containing_oneof = _DYNAMICOBSTACLE.oneofs_by_name['prediction']
+DESCRIPTOR.message_types_by_name['MetaInformationState'] = _METAINFORMATIONSTATE
 DESCRIPTOR.message_types_by_name['DynamicObstacle'] = _DYNAMICOBSTACLE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
+
+MetaInformationState = _reflection.GeneratedProtocolMessageType('MetaInformationState', (_message.Message,), {
+
+  'MetaDataStrEntry' : _reflection.GeneratedProtocolMessageType('MetaDataStrEntry', (_message.Message,), {
+    'DESCRIPTOR' : _METAINFORMATIONSTATE_METADATASTRENTRY,
+    '__module__' : 'dynamic_obstacle_pb2'
+    # @@protoc_insertion_point(class_scope:commonroad_dynamic.MetaInformationState.MetaDataStrEntry)
+    })
+  ,
+
+  'MetaDataIntEntry' : _reflection.GeneratedProtocolMessageType('MetaDataIntEntry', (_message.Message,), {
+    'DESCRIPTOR' : _METAINFORMATIONSTATE_METADATAINTENTRY,
+    '__module__' : 'dynamic_obstacle_pb2'
+    # @@protoc_insertion_point(class_scope:commonroad_dynamic.MetaInformationState.MetaDataIntEntry)
+    })
+  ,
+
+  'MetaDataFloatEntry' : _reflection.GeneratedProtocolMessageType('MetaDataFloatEntry', (_message.Message,), {
+    'DESCRIPTOR' : _METAINFORMATIONSTATE_METADATAFLOATENTRY,
+    '__module__' : 'dynamic_obstacle_pb2'
+    # @@protoc_insertion_point(class_scope:commonroad_dynamic.MetaInformationState.MetaDataFloatEntry)
+    })
+  ,
+
+  'MetaDataBoolEntry' : _reflection.GeneratedProtocolMessageType('MetaDataBoolEntry', (_message.Message,), {
+    'DESCRIPTOR' : _METAINFORMATIONSTATE_METADATABOOLENTRY,
+    '__module__' : 'dynamic_obstacle_pb2'
+    # @@protoc_insertion_point(class_scope:commonroad_dynamic.MetaInformationState.MetaDataBoolEntry)
+    })
+  ,
+
+  'MetaDataTrajectoryPredictionEntry' : _reflection.GeneratedProtocolMessageType('MetaDataTrajectoryPredictionEntry', (_message.Message,), {
+    'DESCRIPTOR' : _METAINFORMATIONSTATE_METADATATRAJECTORYPREDICTIONENTRY,
+    '__module__' : 'dynamic_obstacle_pb2'
+    # @@protoc_insertion_point(class_scope:commonroad_dynamic.MetaInformationState.MetaDataTrajectoryPredictionEntry)
+    })
+  ,
+
+  'MetaDataSetBasedPredictionEntry' : _reflection.GeneratedProtocolMessageType('MetaDataSetBasedPredictionEntry', (_message.Message,), {
+    'DESCRIPTOR' : _METAINFORMATIONSTATE_METADATASETBASEDPREDICTIONENTRY,
+    '__module__' : 'dynamic_obstacle_pb2'
+    # @@protoc_insertion_point(class_scope:commonroad_dynamic.MetaInformationState.MetaDataSetBasedPredictionEntry)
+    })
+  ,
+  'DESCRIPTOR' : _METAINFORMATIONSTATE,
+  '__module__' : 'dynamic_obstacle_pb2'
+  # @@protoc_insertion_point(class_scope:commonroad_dynamic.MetaInformationState)
+  })
+_sym_db.RegisterMessage(MetaInformationState)
+_sym_db.RegisterMessage(MetaInformationState.MetaDataStrEntry)
+_sym_db.RegisterMessage(MetaInformationState.MetaDataIntEntry)
+_sym_db.RegisterMessage(MetaInformationState.MetaDataFloatEntry)
+_sym_db.RegisterMessage(MetaInformationState.MetaDataBoolEntry)
+_sym_db.RegisterMessage(MetaInformationState.MetaDataTrajectoryPredictionEntry)
+_sym_db.RegisterMessage(MetaInformationState.MetaDataSetBasedPredictionEntry)
 
 DynamicObstacle = _reflection.GeneratedProtocolMessageType('DynamicObstacle', (_message.Message,), {
   'DESCRIPTOR' : _DYNAMICOBSTACLE,
@@ -161,4 +534,10 @@ DynamicObstacle = _reflection.GeneratedProtocolMessageType('DynamicObstacle', (_
 _sym_db.RegisterMessage(DynamicObstacle)
 
 
+_METAINFORMATIONSTATE_METADATASTRENTRY._options = None
+_METAINFORMATIONSTATE_METADATAINTENTRY._options = None
+_METAINFORMATIONSTATE_METADATAFLOATENTRY._options = None
+_METAINFORMATIONSTATE_METADATABOOLENTRY._options = None
+_METAINFORMATIONSTATE_METADATATRAJECTORYPREDICTIONENTRY._options = None
+_METAINFORMATIONSTATE_METADATASETBASEDPREDICTIONENTRY._options = None
 # @@protoc_insertion_point(module_scope)

@@ -6,189 +6,251 @@ from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
 
 
-import commonroad.common.protobuf.common.util_pb2 as util__pb2
+import util_pb2 as util__pb2
 
-DESCRIPTOR = _descriptor.FileDescriptor(name='scenario_meta_information.proto', package='commonroad_common',
-                                        syntax='proto2', serialized_options=None,
-                                        create_key=_descriptor._internal_create_key,
-                                        serialized_pb=b'\n\x1fscenario_meta_information.proto\x12\x11'
-                                                      b'\x63ommonroad_common\x1a\nutil.proto\"=\n'
-                                                      b'\x05MapID\x12\x12\n\ncountry_id\x18\x01 \x02('
-                                                      b'\t\x12\x10\n\x08map_name\x18\x02 \x02('
-                                                      b'\t\x12\x0e\n\x06map_id\x18\x03 \x02('
-                                                      b'\x04\"\xb1\x01\n\nScenarioID\x12\x13\n\x0b\x63ooperative\x18\x01 \x02(\x08\x12('
-                                                      b'\n\x06map_id\x18\x02 \x02('
-                                                      b'\x0b\x32\x18.commonroad_common.MapID\x12\x18\n\x10\x63onfiguration_id\x18\x03 \x02('
-                                                      b'\x04\x12\x19\n\x11obstacle_behavior\x18\x04 \x01('
-                                                      b'\t\x12\x15\n\rprediction_id\x18\x05 \x01('
-                                                      b'\x04\x12\x18\n\x10scenario_version\x18\x06 \x02('
-                                                      b'\t\"\x9e\x01\n\x0f\x46ileInformation\x12\x14\n\x0clicense_name\x18\x01 \x02('
-                                                      b'\t\x12\x14\n\x0clicense_text\x18\x02 \x01('
-                                                      b'\t\x12*\n\x04\x64\x61te\x18\x03 \x02('
-                                                      b'\x0b\x32\x1c.commonroad_common.TimeStamp\x12\x0e\n\x06\x61uthor\x18\x04 \x02('
-                                                      b'\t\x12\x13\n\x0b\x61\x66\x66iliation\x18\x05 \x02('
-                                                      b'\t\x12\x0e\n\x06source\x18\x06 \x02('
-                                                      b'\t\"\xa4\x01\n\x17ScenarioMetaInformation\x12\x33\n\x0c\x62\x65nchmark_id\x18\x01 \x02('
-                                                      b'\x0b\x32\x1d.commonroad_common.ScenarioID\x12<\n\x10\x66ile_information\x18\x02 \x02('
-                                                      b'\x0b\x32\".commonroad_common.FileInformation\x12\x16\n\x0etime_step_size\x18\x03 \x02(\x01',
-                                        dependencies=[util__pb2.DESCRIPTOR, ])
 
-_MAPID = _descriptor.Descriptor(name='MapID', full_name='commonroad_common.MapID', filename=None, file=DESCRIPTOR,
-                                containing_type=None, create_key=_descriptor._internal_create_key, fields=[
-        _descriptor.FieldDescriptor(name='country_id', full_name='commonroad_common.MapID.country_id', index=0,
-                                    number=1, type=9, cpp_type=9, label=2, has_default_value=False,
-                                    default_value=b"".decode('utf-8'), message_type=None, enum_type=None,
-                                    containing_type=None, is_extension=False, extension_scope=None,
-                                    serialized_options=None, file=DESCRIPTOR,
-                                    create_key=_descriptor._internal_create_key),
-        _descriptor.FieldDescriptor(name='map_name', full_name='commonroad_common.MapID.map_name', index=1, number=2,
-                                    type=9, cpp_type=9, label=2, has_default_value=False,
-                                    default_value=b"".decode('utf-8'), message_type=None, enum_type=None,
-                                    containing_type=None, is_extension=False, extension_scope=None,
-                                    serialized_options=None, file=DESCRIPTOR,
-                                    create_key=_descriptor._internal_create_key),
-        _descriptor.FieldDescriptor(name='map_id', full_name='commonroad_common.MapID.map_id', index=2, number=3,
-                                    type=4, cpp_type=4, label=2, has_default_value=False, default_value=0,
-                                    message_type=None, enum_type=None, containing_type=None, is_extension=False,
-                                    extension_scope=None, serialized_options=None, file=DESCRIPTOR,
-                                    create_key=_descriptor._internal_create_key), ], extensions=[], nested_types=[],
-                                enum_types=[], serialized_options=None, is_extendable=False, syntax='proto2',
-                                extension_ranges=[], oneofs=[], serialized_start=66, serialized_end=127, )
+DESCRIPTOR = _descriptor.FileDescriptor(
+  name='scenario_meta_information.proto',
+  package='commonroad_common',
+  syntax='proto2',
+  serialized_options=None,
+  create_key=_descriptor._internal_create_key,
+  serialized_pb=b'\n\x1fscenario_meta_information.proto\x12\x11\x63ommonroad_common\x1a\nutil.proto\"=\n\x05MapID\x12\x12\n\ncountry_id\x18\x01 \x02(\t\x12\x10\n\x08map_name\x18\x02 \x02(\t\x12\x0e\n\x06map_id\x18\x03 \x02(\x04\"\xb1\x01\n\nScenarioID\x12\x13\n\x0b\x63ooperative\x18\x01 \x02(\x08\x12(\n\x06map_id\x18\x02 \x02(\x0b\x32\x18.commonroad_common.MapID\x12\x18\n\x10\x63onfiguration_id\x18\x03 \x02(\x04\x12\x19\n\x11obstacle_behavior\x18\x04 \x01(\t\x12\x15\n\rprediction_id\x18\x05 \x01(\x04\x12\x18\n\x10scenario_version\x18\x06 \x02(\t\"\x9e\x01\n\x0f\x46ileInformation\x12\x14\n\x0clicense_name\x18\x01 \x02(\t\x12\x14\n\x0clicense_text\x18\x02 \x01(\t\x12*\n\x04\x64\x61te\x18\x03 \x02(\x0b\x32\x1c.commonroad_common.TimeStamp\x12\x0e\n\x06\x61uthor\x18\x04 \x02(\t\x12\x13\n\x0b\x61\x66\x66iliation\x18\x05 \x02(\t\x12\x0e\n\x06source\x18\x06 \x02(\t\"\xa4\x01\n\x17ScenarioMetaInformation\x12\x33\n\x0c\x62\x65nchmark_id\x18\x01 \x02(\x0b\x32\x1d.commonroad_common.ScenarioID\x12<\n\x10\x66ile_information\x18\x02 \x02(\x0b\x32\".commonroad_common.FileInformation\x12\x16\n\x0etime_step_size\x18\x03 \x02(\x01'
+  ,
+  dependencies=[util__pb2.DESCRIPTOR,])
 
-_SCENARIOID = _descriptor.Descriptor(name='ScenarioID', full_name='commonroad_common.ScenarioID', filename=None,
-                                     file=DESCRIPTOR, containing_type=None, create_key=_descriptor._internal_create_key,
-                                     fields=[_descriptor.FieldDescriptor(name='cooperative',
-                                                                         full_name='commonroad_common.ScenarioID.cooperative',
-                                                                         index=0, number=1, type=8, cpp_type=7, label=2,
-                                                                         has_default_value=False, default_value=False,
-                                                                         message_type=None, enum_type=None,
-                                                                         containing_type=None, is_extension=False,
-                                                                         extension_scope=None, serialized_options=None,
-                                                                         file=DESCRIPTOR,
-                                                                         create_key=_descriptor._internal_create_key),
-                                         _descriptor.FieldDescriptor(name='map_id',
-                                                                     full_name='commonroad_common.ScenarioID.map_id',
-                                                                     index=1, number=2, type=11, cpp_type=10, label=2,
-                                                                     has_default_value=False, default_value=None,
-                                                                     message_type=None, enum_type=None,
-                                                                     containing_type=None, is_extension=False,
-                                                                     extension_scope=None, serialized_options=None,
-                                                                     file=DESCRIPTOR,
-                                                                     create_key=_descriptor._internal_create_key),
-                                         _descriptor.FieldDescriptor(name='configuration_id',
-                                                                     full_name='commonroad_common.ScenarioID.configuration_id',
-                                                                     index=2, number=3, type=4, cpp_type=4, label=2,
-                                                                     has_default_value=False, default_value=0,
-                                                                     message_type=None, enum_type=None,
-                                                                     containing_type=None, is_extension=False,
-                                                                     extension_scope=None, serialized_options=None,
-                                                                     file=DESCRIPTOR,
-                                                                     create_key=_descriptor._internal_create_key),
-                                         _descriptor.FieldDescriptor(name='obstacle_behavior',
-                                                                     full_name='commonroad_common.ScenarioID.obstacle_behavior',
-                                                                     index=3, number=4, type=9, cpp_type=9, label=1,
-                                                                     has_default_value=False,
-                                                                     default_value=b"".decode('utf-8'),
-                                                                     message_type=None, enum_type=None,
-                                                                     containing_type=None, is_extension=False,
-                                                                     extension_scope=None, serialized_options=None,
-                                                                     file=DESCRIPTOR,
-                                                                     create_key=_descriptor._internal_create_key),
-                                         _descriptor.FieldDescriptor(name='prediction_id',
-                                                                     full_name='commonroad_common.ScenarioID.prediction_id',
-                                                                     index=4, number=5, type=4, cpp_type=4, label=1,
-                                                                     has_default_value=False, default_value=0,
-                                                                     message_type=None, enum_type=None,
-                                                                     containing_type=None, is_extension=False,
-                                                                     extension_scope=None, serialized_options=None,
-                                                                     file=DESCRIPTOR,
-                                                                     create_key=_descriptor._internal_create_key),
-                                         _descriptor.FieldDescriptor(name='scenario_version',
-                                                                     full_name='commonroad_common.ScenarioID.scenario_version',
-                                                                     index=5, number=6, type=9, cpp_type=9, label=2,
-                                                                     has_default_value=False,
-                                                                     default_value=b"".decode('utf-8'),
-                                                                     message_type=None, enum_type=None,
-                                                                     containing_type=None, is_extension=False,
-                                                                     extension_scope=None, serialized_options=None,
-                                                                     file=DESCRIPTOR,
-                                                                     create_key=_descriptor._internal_create_key), ],
-                                     extensions=[], nested_types=[], enum_types=[], serialized_options=None,
-                                     is_extendable=False, syntax='proto2', extension_ranges=[], oneofs=[],
-                                     serialized_start=130, serialized_end=307, )
 
-_FILEINFORMATION = _descriptor.Descriptor(name='FileInformation', full_name='commonroad_common.FileInformation',
-                                          filename=None, file=DESCRIPTOR, containing_type=None,
-                                          create_key=_descriptor._internal_create_key, fields=[
-        _descriptor.FieldDescriptor(name='license_name', full_name='commonroad_common.FileInformation.license_name',
-                                    index=0, number=1, type=9, cpp_type=9, label=2, has_default_value=False,
-                                    default_value=b"".decode('utf-8'), message_type=None, enum_type=None,
-                                    containing_type=None, is_extension=False, extension_scope=None,
-                                    serialized_options=None, file=DESCRIPTOR,
-                                    create_key=_descriptor._internal_create_key),
-        _descriptor.FieldDescriptor(name='license_text', full_name='commonroad_common.FileInformation.license_text',
-                                    index=1, number=2, type=9, cpp_type=9, label=1, has_default_value=False,
-                                    default_value=b"".decode('utf-8'), message_type=None, enum_type=None,
-                                    containing_type=None, is_extension=False, extension_scope=None,
-                                    serialized_options=None, file=DESCRIPTOR,
-                                    create_key=_descriptor._internal_create_key),
-        _descriptor.FieldDescriptor(name='date', full_name='commonroad_common.FileInformation.date', index=2, number=3,
-                                    type=11, cpp_type=10, label=2, has_default_value=False, default_value=None,
-                                    message_type=None, enum_type=None, containing_type=None, is_extension=False,
-                                    extension_scope=None, serialized_options=None, file=DESCRIPTOR,
-                                    create_key=_descriptor._internal_create_key),
-        _descriptor.FieldDescriptor(name='author', full_name='commonroad_common.FileInformation.author', index=3,
-                                    number=4, type=9, cpp_type=9, label=2, has_default_value=False,
-                                    default_value=b"".decode('utf-8'), message_type=None, enum_type=None,
-                                    containing_type=None, is_extension=False, extension_scope=None,
-                                    serialized_options=None, file=DESCRIPTOR,
-                                    create_key=_descriptor._internal_create_key),
-        _descriptor.FieldDescriptor(name='affiliation', full_name='commonroad_common.FileInformation.affiliation',
-                                    index=4, number=5, type=9, cpp_type=9, label=2, has_default_value=False,
-                                    default_value=b"".decode('utf-8'), message_type=None, enum_type=None,
-                                    containing_type=None, is_extension=False, extension_scope=None,
-                                    serialized_options=None, file=DESCRIPTOR,
-                                    create_key=_descriptor._internal_create_key),
-        _descriptor.FieldDescriptor(name='source', full_name='commonroad_common.FileInformation.source', index=5,
-                                    number=6, type=9, cpp_type=9, label=2, has_default_value=False,
-                                    default_value=b"".decode('utf-8'), message_type=None, enum_type=None,
-                                    containing_type=None, is_extension=False, extension_scope=None,
-                                    serialized_options=None, file=DESCRIPTOR,
-                                    create_key=_descriptor._internal_create_key), ], extensions=[], nested_types=[],
-                                          enum_types=[], serialized_options=None, is_extendable=False, syntax='proto2',
-                                          extension_ranges=[], oneofs=[], serialized_start=310, serialized_end=468, )
 
-_SCENARIOMETAINFORMATION = _descriptor.Descriptor(name='ScenarioMetaInformation',
-                                                  full_name='commonroad_common.ScenarioMetaInformation', filename=None,
-                                                  file=DESCRIPTOR, containing_type=None,
-                                                  create_key=_descriptor._internal_create_key, fields=[
-        _descriptor.FieldDescriptor(name='benchmark_id',
-                                    full_name='commonroad_common.ScenarioMetaInformation.benchmark_id', index=0,
-                                    number=1, type=11, cpp_type=10, label=2, has_default_value=False,
-                                    default_value=None, message_type=None, enum_type=None, containing_type=None,
-                                    is_extension=False, extension_scope=None, serialized_options=None, file=DESCRIPTOR,
-                                    create_key=_descriptor._internal_create_key),
-        _descriptor.FieldDescriptor(name='file_information',
-                                    full_name='commonroad_common.ScenarioMetaInformation.file_information', index=1,
-                                    number=2, type=11, cpp_type=10, label=2, has_default_value=False,
-                                    default_value=None, message_type=None, enum_type=None, containing_type=None,
-                                    is_extension=False, extension_scope=None, serialized_options=None, file=DESCRIPTOR,
-                                    create_key=_descriptor._internal_create_key),
-        _descriptor.FieldDescriptor(name='time_step_size',
-                                    full_name='commonroad_common.ScenarioMetaInformation.time_step_size', index=2,
-                                    number=3, type=1, cpp_type=5, label=2, has_default_value=False,
-                                    default_value=float(0), message_type=None, enum_type=None, containing_type=None,
-                                    is_extension=False, extension_scope=None, serialized_options=None, file=DESCRIPTOR,
-                                    create_key=_descriptor._internal_create_key), ], extensions=[], nested_types=[],
-                                                  enum_types=[], serialized_options=None, is_extendable=False,
-                                                  syntax='proto2', extension_ranges=[], oneofs=[], serialized_start=471,
-                                                  serialized_end=635, )
+
+_MAPID = _descriptor.Descriptor(
+  name='MapID',
+  full_name='commonroad_common.MapID',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='country_id', full_name='commonroad_common.MapID.country_id', index=0,
+      number=1, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='map_name', full_name='commonroad_common.MapID.map_name', index=1,
+      number=2, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='map_id', full_name='commonroad_common.MapID.map_id', index=2,
+      number=3, type=4, cpp_type=4, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=66,
+  serialized_end=127,
+)
+
+
+_SCENARIOID = _descriptor.Descriptor(
+  name='ScenarioID',
+  full_name='commonroad_common.ScenarioID',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='cooperative', full_name='commonroad_common.ScenarioID.cooperative', index=0,
+      number=1, type=8, cpp_type=7, label=2,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='map_id', full_name='commonroad_common.ScenarioID.map_id', index=1,
+      number=2, type=11, cpp_type=10, label=2,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='configuration_id', full_name='commonroad_common.ScenarioID.configuration_id', index=2,
+      number=3, type=4, cpp_type=4, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='obstacle_behavior', full_name='commonroad_common.ScenarioID.obstacle_behavior', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='prediction_id', full_name='commonroad_common.ScenarioID.prediction_id', index=4,
+      number=5, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='scenario_version', full_name='commonroad_common.ScenarioID.scenario_version', index=5,
+      number=6, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=130,
+  serialized_end=307,
+)
+
+
+_FILEINFORMATION = _descriptor.Descriptor(
+  name='FileInformation',
+  full_name='commonroad_common.FileInformation',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='license_name', full_name='commonroad_common.FileInformation.license_name', index=0,
+      number=1, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='license_text', full_name='commonroad_common.FileInformation.license_text', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='date', full_name='commonroad_common.FileInformation.date', index=2,
+      number=3, type=11, cpp_type=10, label=2,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='author', full_name='commonroad_common.FileInformation.author', index=3,
+      number=4, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='affiliation', full_name='commonroad_common.FileInformation.affiliation', index=4,
+      number=5, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='source', full_name='commonroad_common.FileInformation.source', index=5,
+      number=6, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=310,
+  serialized_end=468,
+)
+
+
+_SCENARIOMETAINFORMATION = _descriptor.Descriptor(
+  name='ScenarioMetaInformation',
+  full_name='commonroad_common.ScenarioMetaInformation',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='benchmark_id', full_name='commonroad_common.ScenarioMetaInformation.benchmark_id', index=0,
+      number=1, type=11, cpp_type=10, label=2,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='file_information', full_name='commonroad_common.ScenarioMetaInformation.file_information', index=1,
+      number=2, type=11, cpp_type=10, label=2,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='time_step_size', full_name='commonroad_common.ScenarioMetaInformation.time_step_size', index=2,
+      number=3, type=1, cpp_type=5, label=2,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=471,
+  serialized_end=635,
+)
 
 _SCENARIOID.fields_by_name['map_id'].message_type = _MAPID
 _FILEINFORMATION.fields_by_name['date'].message_type = util__pb2._TIMESTAMP
@@ -200,34 +262,33 @@ DESCRIPTOR.message_types_by_name['FileInformation'] = _FILEINFORMATION
 DESCRIPTOR.message_types_by_name['ScenarioMetaInformation'] = _SCENARIOMETAINFORMATION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-MapID = _reflection.GeneratedProtocolMessageType('MapID', (_message.Message,),
-                                                 {'DESCRIPTOR': _MAPID, '__module__': 'scenario_meta_information_pb2'
-                                                  # @@protoc_insertion_point(class_scope:commonroad_common.MapID)
-                                                  })
+MapID = _reflection.GeneratedProtocolMessageType('MapID', (_message.Message,), {
+  'DESCRIPTOR' : _MAPID,
+  '__module__' : 'scenario_meta_information_pb2'
+  # @@protoc_insertion_point(class_scope:commonroad_common.MapID)
+  })
 _sym_db.RegisterMessage(MapID)
 
-ScenarioID = _reflection.GeneratedProtocolMessageType('ScenarioID', (_message.Message,), {'DESCRIPTOR': _SCENARIOID,
-                                                                                          '__module__':
-                                                                                              'scenario_meta_information_pb2'
-                                                                                          # @@protoc_insertion_point(
-                                                                                          # class_scope:commonroad_common.ScenarioID)
-                                                                                          })
+ScenarioID = _reflection.GeneratedProtocolMessageType('ScenarioID', (_message.Message,), {
+  'DESCRIPTOR' : _SCENARIOID,
+  '__module__' : 'scenario_meta_information_pb2'
+  # @@protoc_insertion_point(class_scope:commonroad_common.ScenarioID)
+  })
 _sym_db.RegisterMessage(ScenarioID)
 
-FileInformation = _reflection.GeneratedProtocolMessageType('FileInformation', (_message.Message,),
-                                                           {'DESCRIPTOR': _FILEINFORMATION,
-                                                            '__module__': 'scenario_meta_information_pb2'
-                                                            # @@protoc_insertion_point(
-                                                            # class_scope:commonroad_common.FileInformation)
-                                                            })
+FileInformation = _reflection.GeneratedProtocolMessageType('FileInformation', (_message.Message,), {
+  'DESCRIPTOR' : _FILEINFORMATION,
+  '__module__' : 'scenario_meta_information_pb2'
+  # @@protoc_insertion_point(class_scope:commonroad_common.FileInformation)
+  })
 _sym_db.RegisterMessage(FileInformation)
 
-ScenarioMetaInformation = _reflection.GeneratedProtocolMessageType('ScenarioMetaInformation', (_message.Message,),
-                                                                   {'DESCRIPTOR': _SCENARIOMETAINFORMATION,
-                                                                    '__module__': 'scenario_meta_information_pb2'
-                                                                    # @@protoc_insertion_point(
-                                                                    # class_scope:commonroad_common.ScenarioMetaInformation)
-                                                                    })
+ScenarioMetaInformation = _reflection.GeneratedProtocolMessageType('ScenarioMetaInformation', (_message.Message,), {
+  'DESCRIPTOR' : _SCENARIOMETAINFORMATION,
+  '__module__' : 'scenario_meta_information_pb2'
+  # @@protoc_insertion_point(class_scope:commonroad_common.ScenarioMetaInformation)
+  })
 _sym_db.RegisterMessage(ScenarioMetaInformation)
+
 
 # @@protoc_insertion_point(module_scope)

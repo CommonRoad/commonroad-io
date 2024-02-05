@@ -6,6 +6,18 @@ import "obstacle.proto";
 import "state.proto";
 import "util.proto";
 
+
+message MetaInformationState {
+    required commonroad_common.IntegerExactOrInterval time_step = 1;
+    map<string, string> meta_data_str = 2;
+    map<string, int32> meta_data_int = 3;
+    map<string, float> meta_data_float = 4;
+    map<string, bool> meta_data_bool = 5;
+    map<string, commonroad_dynamic.TrajectoryPrediction> meta_data_trajectory_prediction = 6;
+    map<string, commonroad_dynamic.SetBasedPrediction> meta_data_set_based_prediction = 7;
+}
+
+
 message DynamicObstacle {
     required uint32 dynamic_obstacle_id = 1;
     required ObstacleTypeEnum.ObstacleType obstacle_type = 2;
@@ -17,7 +29,7 @@ message DynamicObstacle {
     }
     optional commonroad_common.SignalState initial_signal_state = 7;
     repeated commonroad_common.SignalState signal_series = 8;
-    optional commonroad_common.MetaInformationState initial_meta_information_state = 9;
-    repeated commonroad_common.MetaInformationState meta_information_series = 10;
+    optional MetaInformationState initial_meta_information_state = 9;
+    repeated MetaInformationState meta_information_series = 10;
     optional uint32 external_dataset_id = 11;
 }
