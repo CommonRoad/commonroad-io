@@ -882,6 +882,14 @@ class MetaInformationStateFactory:
             meta_information_state.meta_data_float = meta_information_state_msg.meta_data_float
         if meta_information_state_msg.HasField("meta_data_bool"):
             meta_information_state.meta_data_bool = meta_information_state_msg.meta_data_bool
+        if meta_information_state_msg.HasField("meta_data_trajectory_prediction"):
+            meta_information_state.meta_data_trajectory_prediction = (
+                meta_information_state_msg.meta_data_trajectory_prediction
+            )
+        if meta_information_state_msg.HasField("meta_data_set_based_prediction"):
+            meta_information_state.meta_data_set_based_prediction = (
+                meta_information_state_msg.meta_data_set_based_prediction
+            )
 
         return meta_information_state
 

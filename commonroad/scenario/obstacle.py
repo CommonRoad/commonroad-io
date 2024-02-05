@@ -5,6 +5,7 @@ from typing import List, Optional, Set, Union
 
 import numpy as np
 
+from commonroad.common.common_scenario import MetaInformationState
 from commonroad.common.validity import (
     is_real_number,
     is_real_number_vector,
@@ -24,12 +25,7 @@ from commonroad.prediction.prediction import (
     SetBasedPrediction,
     TrajectoryPrediction,
 )
-from commonroad.scenario.state import (
-    InitialState,
-    MetaInformationState,
-    SignalState,
-    TraceState,
-)
+from commonroad.scenario.state import InitialState, SignalState, TraceState
 from commonroad.visualization.draw_params import (
     DynamicObstacleParams,
     EnvironmentObstacleParams,

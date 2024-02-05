@@ -3,6 +3,7 @@ import unittest
 
 import numpy as np
 
+from commonroad.common.common_scenario import MetaInformationState
 from commonroad.geometry.shape import Circle, Polygon, Rectangle, ShapeGroup
 from commonroad.prediction.prediction import (
     Occupancy,
@@ -17,12 +18,7 @@ from commonroad.scenario.obstacle import (
     PhantomObstacle,
     StaticObstacle,
 )
-from commonroad.scenario.state import (
-    InitialState,
-    KSState,
-    MetaInformationState,
-    SignalState,
-)
+from commonroad.scenario.state import InitialState, KSState, SignalState
 from commonroad.scenario.trajectory import Trajectory
 
 

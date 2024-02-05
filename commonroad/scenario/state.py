@@ -3,11 +3,10 @@ from __future__ import annotations
 import abc
 import copy
 import dataclasses
-import json
 import math
 import warnings
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, List, Optional, Union
 
 import numpy as np
 
@@ -29,93 +28,6 @@ from commonroad.visualization.renderer import IRenderer
 FloatExactOrInterval = Union[float, Interval]
 AngleExactOrInterval = Union[float, AngleInterval]
 ExactOrShape = Union[np.ndarray, Shape]
-
-
-class MetaInformationState:
-    """
-    Class that keeps the meta information state of an obstacle.
-    It freely allows to set attributes on a dynamic obstacle.
-    """
-
-    def __init__(
-        self,
-        meta_data_str: Dict[str, str] = None,
-        meta_data_int: Dict[str, int] = None,
-        meta_data_float: Dict[str, float] = None,
-        meta_data_bool: Dict[str, bool] = None,
-    ):
-        """
-        :param meta_data_str: dictionary of a key and a string
-        :param meta_data_int: dictionary of a key and an int
-        :param meta_data_float: dictionary of a key and a float
-        :param meta_data_bool: dictionary of a key and a bool
-        """
-        self._meta_data_str = meta_data_str
-        self._meta_data_int = meta_data_int
-        self._meta_data_float = meta_data_float
-        self._meta_data_bool = meta_data_bool
-
-    @property
-    def meta_data_str(self) -> Dict[str, str]:
-        """Dictionary of a key and a string."""
-        return self._meta_data_str
-
-    @meta_data_str.setter
-    def meta_data_str(self, meta_data_str: Dict[str, str]):
-        assert isinstance(
-            meta_data_str, Dict
-        ), "<MetaInformationState/meta_data_str>: Provided meta_data_str " "is not valid! id={}".format(meta_data_str)
-        self._meta_data_str = meta_data_str
-
-    @property
-    def meta_data_int(self) -> Dict[str, int]:
-        """Dictionary of a key and an int."""
-        return self._meta_data_int
-
-    @meta_data_int.setter
-    def meta_data_int(self, meta_data_int: Dict[str, int]):
-        assert isinstance(
-            meta_data_int, Dict
-        ), "<MetaInformationState/meta_data_int>: Provided meta_data_int " "is not valid! id={}".format(meta_data_int)
-        self._meta_data_int = meta_data_int
-
-    @property
-    def meta_data_float(self) -> Dict[str, float]:
-        """Dictionary of a key and a float."""
-        return self._meta_data_float
-
-    @meta_data_float.setter
-    def meta_data_float(self, meta_data_float: Dict[str, float]):
-        assert isinstance(
-            meta_data_float, Dict
-        ), "<MetaInformationState/meta_data_float>: Provided meta_data_float " "is not valid! id={}".format(
-            meta_data_float
-        )
-        self._meta_data_float = meta_data_float
-
-    @property
-    def meta_data_bool(self) -> Dict[str, bool]:
-        """Dictionary of a key and a bool."""
-        return self._meta_data_bool
-
-    @meta_data_bool.setter
-    def meta_data_bool(self, meta_data_bool: Dict[str, bool]):
-        assert isinstance(
-            meta_data_bool, Dict
-        ), "<MetaInformationState/meta_data_bool>: Provided meta_data_bool " "is not valid! id={}".format(
-            meta_data_bool
-        )
-        self._meta_data_bool = meta_data_bool
-
-    def __hash__(self):
-        return hash(
-            (
-                json.dumps(self._meta_data_str),
-                json.dumps(self._meta_data_int),
-                json.dumps(self._meta_data_float),
-                json.dumps(self._meta_data_bool),
-            )
-        )
 
 
 @dataclass

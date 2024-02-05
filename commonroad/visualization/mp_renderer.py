@@ -953,9 +953,9 @@ class MPRenderer(IRenderer):
             outgoings_right_color = draw_params.intersection.outgoings_right_color
             show_intersection_labels = draw_params.intersection.show_label
         else:
-            draw_incoming_lanelets = (
-                draw_outgoing_group_lanelets
-            ) = draw_crossings = draw_outgoings = show_intersection_labels = False
+            draw_incoming_lanelets = draw_outgoing_group_lanelets = draw_crossings = draw_outgoings = (
+                show_intersection_labels
+            ) = False
 
         left_bound_color = draw_params.lanelet.left_bound_color
         right_bound_color = draw_params.lanelet.right_bound_color
