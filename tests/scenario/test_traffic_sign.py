@@ -7,8 +7,8 @@ from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.scenario.traffic_sign import (
     TrafficSign,
     TrafficSignElement,
-    TrafficSignIDArgentina,
     TrafficSignID,
+    TrafficSignIDArgentina,
     TrafficSignIDCountries,
     TrafficSignIDGermany,
     TrafficSignIDZamunda,

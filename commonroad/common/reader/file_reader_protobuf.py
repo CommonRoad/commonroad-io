@@ -872,7 +872,9 @@ class PhantomObstacleFactory:
 
 class MetaInformationStateFactory:
     @classmethod
-    def create_from_message(cls, meta_information_state_msg: dynamic_obstacle_pb2.MetaInformationState) -> MetaInformationState:
+    def create_from_message(
+        cls, meta_information_state_msg: dynamic_obstacle_pb2.MetaInformationState
+    ) -> MetaInformationState:
         meta_information_state = MetaInformationState()
         if meta_information_state_msg.HasField("meta_data_str"):
             meta_information_state.meta_data_str = meta_information_state_msg.meta_data_str
