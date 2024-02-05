@@ -522,32 +522,8 @@ class LaneletNetworkFactory:
         else:
             country = xml_node._root.attrib["benchmarkID"][:3]
 
-        if SupportedTrafficSignCountry.GERMANY.value == country:
-            return SupportedTrafficSignCountry.GERMANY
-        elif SupportedTrafficSignCountry.USA.value == country:
-            return SupportedTrafficSignCountry.USA
-        elif SupportedTrafficSignCountry.CHINA.value == country:
-            return SupportedTrafficSignCountry.CHINA
-        elif SupportedTrafficSignCountry.SPAIN.value == country:
-            return SupportedTrafficSignCountry.SPAIN
-        elif SupportedTrafficSignCountry.RUSSIA.value == country:
-            return SupportedTrafficSignCountry.RUSSIA
-        elif SupportedTrafficSignCountry.ARGENTINA.value == country:
-            return SupportedTrafficSignCountry.ARGENTINA
-        elif SupportedTrafficSignCountry.ITALY.value == country:
-            return SupportedTrafficSignCountry.ITALY
-        elif SupportedTrafficSignCountry.FRANCE.value == country:
-            return SupportedTrafficSignCountry.FRANCE
-        elif SupportedTrafficSignCountry.PUERTO_RICO.value == country:
-            return SupportedTrafficSignCountry.PUERTO_RICO
-        elif SupportedTrafficSignCountry.CROATIA.value == country:
-            return SupportedTrafficSignCountry.CROATIA
-        elif SupportedTrafficSignCountry.GREECE.value == country:
-            return SupportedTrafficSignCountry.GREECE
-        elif SupportedTrafficSignCountry.BELGIUM.value == country:
-            return SupportedTrafficSignCountry.BELGIUM
-        elif SupportedTrafficSignCountry.ZAMUNDA.value == country:
-            return SupportedTrafficSignCountry.ZAMUNDA
+        if country in [c.value for c in SupportedTrafficSignCountry]:
+            return SupportedTrafficSignCountry(country)
         else:
             logger.warning("Unknown country: Default traffic sign IDs are used. Specified country: " + country)
             return SupportedTrafficSignCountry.ZAMUNDA
@@ -963,16 +939,11 @@ class TrafficSignElementFactory:
         :return: object of class TrafficSignElement according to the CommonRoad specification.
         """
         try:
-            if country in [val for val in SupportedTrafficSignCountry]:
-                if xml_node.find("trafficSignID").text == "274":
-                    traffic_sign_element_id = TrafficSignIDCountries[country.value].MAX_SPEED
-                else:
-                    traffic_sign_element_id = TrafficSignIDCountries[country.value](xml_node.find("trafficSignID").text)
+            # some existing scenarios store the max speed sign using the German ID
+            if xml_node.find("trafficSignID").text == "274":
+                traffic_sign_element_id = TrafficSignIDCountries[country.value].MAX_SPEED
             else:
-                logger.warning(
-                    "Unknown country: Default traffic sign ID is used. Specified country: {}".format(country.value)
-                )
-                traffic_sign_element_id = TrafficSignIDZamunda(xml_node.find("trafficSignID").text)
+                traffic_sign_element_id = TrafficSignIDCountries[country.value](xml_node.find("trafficSignID").text)
         except ValueError:
             logger.warning(
                 "<FileReader>: Unknown TrafficElementID! Default traffic sign ID is used. Specified country: "

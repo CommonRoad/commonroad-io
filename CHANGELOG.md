@@ -1,6 +1,6 @@
 # Changelog
 
-## [2024.1] - 2024-03-XX
+## [2024.2] - 2024-03-XX
 
 ### Added
 - Support for CommonRoad format 2024a
@@ -9,6 +9,25 @@
 ### Removed
 - Writing 2020a XML and Protobuf scenarios
 - Reading 2020a Protobuf scenarios
+
+## [2024.1] - 2024-03-XX
+### Added
+- Country-independent traffic sign enum
+- Missing country-specific max speed sign IDs
+- Automatically generated TrafficSignIDCountries enum for importing in other scripts
+
+### Added
+- GroundTruthPredictor class to use stored trajectories as prediction
+
+### Changed
+- Optimization-based planner tutorial now uses planner and predictor interfaces
+
+### Fixed
+- Typo: `TrafficSigInterpreter` → `TrafficSignInterpreter`
+- Typo EMERGENCY_STOP traffic sign enum name
+
+### Changed
+- Simplified traffic sign matching in FileReader
 
 ## [2023.4] - 2023-12-19
 

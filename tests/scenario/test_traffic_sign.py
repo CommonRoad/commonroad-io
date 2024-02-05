@@ -8,6 +8,8 @@ from commonroad.scenario.traffic_sign import (
     TrafficSign,
     TrafficSignElement,
     TrafficSignIDArgentina,
+    TrafficSignID,
+    TrafficSignIDCountries,
     TrafficSignIDGermany,
     TrafficSignIDZamunda,
 )
@@ -111,6 +113,13 @@ class TestTrafficSignElement(unittest.TestCase):
             scenario.lanelet_network.find_traffic_sign_by_id(6357).traffic_sign_elements[0].traffic_sign_element_id,
             TrafficSignIDArgentina.MAX_SPEED,
         )
+
+    def test_traffic_sign_ids(self):
+        # ensure that size of TrafficSignID equals number of all available traffic sign ID names
+        signs = set()
+        for country in list(TrafficSignIDCountries.values()):
+            signs = signs.union(set(country._member_names_))
+        self.assertEqual(len(TrafficSignID), len(signs))
 
 
 if __name__ == "__main__":
