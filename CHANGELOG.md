@@ -6,6 +6,12 @@
 - Missing country-specific max speed sign IDs
 - Automatically generated TrafficSignIDCountries enum for importing in other scripts
 
+### Added
+- GroundTruthPredictor class to use stored trajectories as prediction
+
+### Changed
+- Optimization-based planner tutorial now uses planner and predictor interfaces
+
 ### Fixed
 - Typo: `TrafficSigInterpreter` → `TrafficSignInterpreter`
 - Typo EMERGENCY_STOP traffic sign enum name
