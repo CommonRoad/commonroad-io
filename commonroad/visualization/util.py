@@ -306,6 +306,8 @@ def line_marking_to_linestyle(line_marking: LineMarking) -> Tuple:
         LineMarking.LOWERED_CURB: ("-", (None, None), 0.75),
         LineMarking.DASHED_DASHED: ("-", (10, 10), 1.0),
         LineMarking.SOLID_SOLID: ("-", (None, None), 1.0),
+        LineMarking.SOLID_DASHED: ("-", (None, None), 1.0),  # TODO better visualization
+        LineMarking.DASHED_SOLID: ("-", (None, None), 1.0),  # TODO better visualization
     }[line_marking]
 
 
