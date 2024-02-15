@@ -37,7 +37,7 @@ The software is written in Python and tested on Linux for the Python 3.8, 3.9, 3
 
 ## Documentation
 
-The full documentation of the API and introducing examples can be found under [commonroad.in.tum.de](https://commonroad-io.readthedocs.io/en/latest/).
+The full documentation of the API and introducing examples can be found under [https://cps.pages.gitlab.lrz.de/commonroad/commonroad-io/](https://cps.pages.gitlab.lrz.de/commonroad/commonroad-io/).
 
 For getting started, we recommend our [tutorials](https://commonroad.in.tum.de/commonroad-io).
 
