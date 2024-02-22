@@ -36,6 +36,7 @@ class CommonRoadFileReader:
         :param file_format: Format of file. If None, inferred from file suffix.
         """
         self._file_reader = None
+        self._filename = filename
 
         if file_format is None:
             file_format = FileFormat(Path(filename).suffix)
@@ -43,6 +44,7 @@ class CommonRoadFileReader:
         if file_format == FileFormat.XML:
             self._file_reader = XMLFileReader(filename)
 
+    # 2020a reader
     def open(self, lanelet_assignment: bool = False) -> Tuple[Scenario, PlanningProblemSet]:
         """
         Opens and loads CommonRoad scenario and planning problems from file.
@@ -50,13 +52,92 @@ class CommonRoadFileReader:
         :param lanelet_assignment: Activates calculation of lanelets occupied by obstacles
         :return: Scenario and planning problems
         """
+        # XML reader
         return self._file_reader.open(lanelet_assignment)
 
+    # 2020a reader
     def open_lanelet_network(self) -> LaneletNetwork:
         """
         Opens and loads CommonRoad lanelet network from file.
         """
+        # XML reader
         return self._file_reader.open_lanelet_network()
+
+    def open_scenario(self) -> ScenarioInterface:
+        """
+        Opens and loads CommonRoadScenario from the file.
+
+        :return: ScenarioInterface
+        """
+        self._file_reader = ProtobufFileReaderScenario(self._filename)
+        return self._file_reader.open()
+
+    def open_dynamic(self) -> DynamicInterface:
+        """
+        Opens and loads CommonRoadDynamic from the file.
+
+        :return: DynamicInterface
+        """
+        self._file_reader = ProtobufFileReaderDynamic(self._filename)
+        return self._file_reader.open()
+
+    def open_map(self) -> Tuple[LaneletNetwork, List[EnvironmentObstacle]]:
+        """
+        Opens and loads CommonRoadMap from the file.
+
+        :return: Tuple with LaneletNetwork and a list of Environment Obstacles
+        """
+        self._file_reader = ProtobufFileReaderMap(self._filename)
+        return self._file_reader.open()
+
+    def open_map_dynamic(self) -> Scenario:
+        """
+        Opens and combines CommonRoadMap and CommonRoadDynamic files.
+
+        :return: Scenario
+        """
+        base_name = os.path.basename(self._filename)
+        base_path = os.path.dirname(self._filename)
+        map_name = base_name.split("-")[0] + "-" + base_name.split("_")[1].split("-")[1]
+        pure_name = base_name.split(".pb")[0]
+        if pure_name.endswith("-SC"):
+            dynamic_name = pure_name.split("-SC")[0]
+        else:
+            dynamic_name = pure_name
+
+        # Protobuf
+        road_network, env_obstacles = ProtobufFileReaderMap(os.path.join(base_path, map_name + ".pb")).open()
+        dynamic = ProtobufFileReaderDynamic(os.path.join(base_path, dynamic_name + ".pb")).open()
+
+        dynamic.environment_obstacles = env_obstacles
+
+        return combine_map_dynamic(road_network, dynamic)
+
+    def open_all(self) -> Tuple[Scenario, PlanningProblemSet, List[CooperativePlanningProblem]]:
+        """
+        Opens and combines CommonRoadMap, CommonRoadDynamic and CommonRoadScenario files.
+
+        :return: Tuple of a Scenario, PlanningProblemSet and a list of CooperativePlanningProblems
+        """
+        base_name = os.path.basename(self._filename)
+        base_path = os.path.dirname(self._filename)
+        map_name = base_name.split("-")[0] + "-" + base_name.split("_")[1].split("-")[1]
+        pure_name = base_name.split(".pb")[0]
+        if pure_name.endswith("-SC"):
+            scenario_name = pure_name
+            dynamic_name = pure_name.split("-SC")[0]
+        else:
+            scenario_name = pure_name + "-SC"
+            dynamic_name = pure_name
+
+        # Protobuf
+        road_network, environment_obstacles = ProtobufFileReaderMap(os.path.join(base_path, map_name + ".pb")).open()
+        scenario = ProtobufFileReaderScenario(os.path.join(base_path, scenario_name + ".pb")).open()
+        dynamic_pb = ProtobufFileReaderDynamic(os.path.join(base_path, dynamic_name + ".pb")).open()
+
+        dynamic_pb.environment_obstacles = environment_obstacles
+
+        return combine_preloaded_(road_network, dynamic_pb, scenario)
 
 
 class CommonRoadDynamicFileReader:
