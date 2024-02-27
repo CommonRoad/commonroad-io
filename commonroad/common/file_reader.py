@@ -28,8 +28,13 @@ class CommonRoadFileReader:
     The corresponding stored scenario and planning problem set are created by the reader.
     """
 
-    def __init__(self, filename_2020a: Path_T = None, filename_map: Path_T = None, filename_scenario: Path_T = None,
-                 filename_dynamic: Path_T = None):
+    def __init__(
+        self,
+        filename_2020a: Path_T = None,
+        filename_map: Path_T = None,
+        filename_scenario: Path_T = None,
+        filename_dynamic: Path_T = None,
+    ):
         """
         Initializes the FileReader for CommonRoad files.
         The user can send 4 filenames (1 for 2020a and 3 for 2024 format)
@@ -49,16 +54,19 @@ class CommonRoadFileReader:
         self._filename_dynamic = filename_dynamic
 
     @property
-    def file_reader(self) -> Union[XMLFileReader, ProtobufFileReaderDynamic, ProtobufFileReaderMap,
-                                   ProtobufFileReaderScenario]:
+    def file_reader(
+        self,
+    ) -> Union[XMLFileReader, ProtobufFileReaderDynamic, ProtobufFileReaderMap, ProtobufFileReaderScenario]:
         """
         File reader that reads the file depending on its format.
         """
         return self._file_reader
 
     @file_reader.setter
-    def file_reader(self, file_reader: Union[XMLFileReader, ProtobufFileReaderDynamic, ProtobufFileReaderScenario,
-                                             ProtobufFileReaderMap]):
+    def file_reader(
+        self,
+        file_reader: Union[XMLFileReader, ProtobufFileReaderDynamic, ProtobufFileReaderScenario, ProtobufFileReaderMap],
+    ):
         self._file_reader = file_reader
 
     @property
