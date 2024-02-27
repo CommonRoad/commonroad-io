@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 from commonroad.common.reader.dynamic_interface import DynamicInterface
 from commonroad.common.reader.file_reader_protobuf import (
@@ -24,19 +24,86 @@ from commonroad.scenario.scenario import Scenario
 
 class CommonRoadFileReader:
     """
-    Reads CommonRoad files in XML or protobuf format. The corresponding stored scenario and planning problem set
-    are created by the reader.
+    Reads CommonRoad files in XML (2020a) or protobuf format (2024).
+    The corresponding stored scenario and planning problem set are created by the reader.
     """
 
-    def __init__(self, filename: Path_T):
+    def __init__(self, filename_2020a: Path_T = None, filename_map: Path_T = None, filename_scenario: Path_T = None,
+                 filename_dynamic: Path_T = None):
         """
         Initializes the FileReader for CommonRoad files.
+        The user can send 4 filenames (1 for 2020a and 3 for 2024 format)
+        Depending on the format of the files, user can call different functions to read the respective files.
 
-        :param filename: Name of the file
+        :param filename_2020a: Path of the 2020a xml file
+        :param filename_map: Path of the 2024 protobuf map file
+        :param filename_scenario: Path of the 2024 protobuf scenario file
+        :param filename_dynamic: Path of the 2024 protobuf dynamic file
         """
+
         self._file_reader = None
-        self._filename = filename
-        self._file_format = FileFormat(Path(filename).suffix)
+
+        self._filename_2020a = filename_2020a
+        self._filename_map = filename_map
+        self._filename_scenario = filename_scenario
+        self._filename_dynamic = filename_dynamic
+
+    @property
+    def file_reader(self) -> Union[XMLFileReader, ProtobufFileReaderDynamic, ProtobufFileReaderMap,
+                                   ProtobufFileReaderScenario]:
+        """
+        File reader that reads the file depending on its format.
+        """
+        return self._file_reader
+
+    @file_reader.setter
+    def file_reader(self, file_reader: Union[XMLFileReader, ProtobufFileReaderDynamic, ProtobufFileReaderScenario,
+                                             ProtobufFileReaderMap]):
+        self._file_reader = file_reader
+
+    @property
+    def filename_2020a(self) -> Union[None, Path_T]:
+        """
+        Path of the 2020a xml file path.
+        """
+        return self._filename_2020a
+
+    @filename_2020a.setter
+    def filename_2020a(self, filename_2020a: Union[None, Path_T]):
+        self._filename_2020a = filename_2020a
+
+    @property
+    def filename_map(self) -> Union[None, Path_T]:
+        """
+        Path of the 2024 map file.
+        """
+        return self._filename_map
+
+    @filename_map.setter
+    def filename_map(self, filename_map: Union[None, Path_T]):
+        self._filename_map = filename_map
+
+    @property
+    def filename_scenario(self) -> Union[None, Path_T]:
+        """
+        Path of the 2024 scenario file.
+        """
+        return self._filename_scenario
+
+    @filename_scenario.setter
+    def filename_scenario(self, filename_scenario: Union[None, Path_T]):
+        self._filename_scenario = filename_scenario
+
+    @property
+    def filename_dynamic(self) -> Union[None, Path_T]:
+        """
+        Path of the 2024 dynamic file.
+        """
+        return self._filename_dynamic
+
+    @filename_dynamic.setter
+    def filename_dynamic(self, filename_dynamic: Union[None, Path_T]):
+        self._filename_dynamic = filename_dynamic
 
     # 2020a reader
     def open(self, lanelet_assignment: bool = False) -> Tuple[Scenario, PlanningProblemSet]:
@@ -45,23 +112,31 @@ class CommonRoadFileReader:
 
         :param lanelet_assignment: Activates calculation of lanelets occupied by obstacles
         :return: Scenario and planning problems
+
+        :return: Tuple consisted of a Scenario and a PlanningProblemSet
         """
 
-        # this function only works with 2020a xml files
-        self._file_reader = XMLFileReader(self._filename)
-        # XML reader
-        return self._file_reader.open(lanelet_assignment)
+        # this function only works with the 2020a xml files
+        if self.filename_2020a is None:
+            raise NameError("Filename of the 2020a xml file is missing")
+        else:
+            self.file_reader = XMLFileReader(self.filename_2020a)
+            return self.file_reader.open(lanelet_assignment)
 
     # 2020a reader
     def open_lanelet_network(self) -> LaneletNetwork:
         """
         Opens and loads CommonRoad lanelet network from file.
+
+        :return: LaneletNetwork
         """
 
         # this function only works with 2020a xml files
-        self._file_reader = XMLFileReader(self._filename)
-        # XML reader
-        return self._file_reader.open_lanelet_network()
+        if self.filename_2020a is None:
+            raise NameError("Filename of the 2020a xml file is missing")
+        else:
+            self.file_reader = XMLFileReader(self.filename_2020a)
+            return self.file_reader.open_lanelet_network()
 
     def open_scenario(self) -> ScenarioInterface:
         """
@@ -69,10 +144,13 @@ class CommonRoadFileReader:
 
         :return: ScenarioInterface
         """
-
         # this function only works with 2024 protobuf files
-        self._file_reader = ProtobufFileReaderScenario(self._filename)
-        return self._file_reader.open()
+
+        if self.filename_scenario is None:
+            raise NameError("Filename of the 2024 scenario file is missing")
+        else:
+            self.file_reader = ProtobufFileReaderScenario(self.filename_scenario)
+            return self.file_reader.open()
 
     def open_dynamic(self) -> DynamicInterface:
         """
@@ -80,10 +158,13 @@ class CommonRoadFileReader:
 
         :return: DynamicInterface
         """
-
         # this function only works with 2024 protobuf files
-        self._file_reader = ProtobufFileReaderDynamic(self._filename)
-        return self._file_reader.open()
+
+        if self.filename_dynamic is None:
+            raise NameError("Filename of the 2024 dynamic file is missing")
+        else:
+            self.file_reader = ProtobufFileReaderDynamic(self.filename_dynamic)
+            return self.file_reader.open()
 
     def open_map(self) -> Tuple[LaneletNetwork, List[EnvironmentObstacle]]:
         """
@@ -91,10 +172,13 @@ class CommonRoadFileReader:
 
         :return: Tuple with LaneletNetwork and a list of Environment Obstacles
         """
-
         # this function only works with 2024 protobuf files
-        self._file_reader = ProtobufFileReaderMap(self._filename)
-        return self._file_reader.open()
+
+        if self.filename_map is None:
+            raise NameError("Filename of the 2024 map file is missing")
+        else:
+            self.file_reader = ProtobufFileReaderMap(self.filename_map)
+            return self.file_reader.open()
 
     def open_map_dynamic(self) -> Scenario:
         """
@@ -102,8 +186,8 @@ class CommonRoadFileReader:
 
         :return: Scenario
         """
-        base_name = os.path.basename(self._filename)
-        base_path = os.path.dirname(self._filename)
+        base_name = os.path.basename(self.filename_dynamic)
+        base_path = os.path.dirname(self.filename_dynamic)
         map_name = base_name.split("-")[0] + "-" + base_name.split("_")[1].split("-")[1]
         pure_name = base_name.split(".pb")[0]
         if pure_name.endswith("-SC"):
@@ -125,8 +209,8 @@ class CommonRoadFileReader:
 
         :return: Tuple of a Scenario, PlanningProblemSet and a list of CooperativePlanningProblems
         """
-        base_name = os.path.basename(self._filename)
-        base_path = os.path.dirname(self._filename)
+        base_name = os.path.basename(self.filename_scenario)
+        base_path = os.path.dirname(self.filename_scenario)
         map_name = base_name.split("-")[0] + "-" + base_name.split("_")[1].split("-")[1]
         pure_name = base_name.split(".pb")[0]
         if pure_name.endswith("-SC"):
