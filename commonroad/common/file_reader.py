@@ -28,21 +28,15 @@ class CommonRoadFileReader:
     are created by the reader.
     """
 
-    def __init__(self, filename: Path_T, file_format: Optional[FileFormat] = None):
+    def __init__(self, filename: Path_T):
         """
         Initializes the FileReader for CommonRoad files.
 
-        :param filename: Name of file
-        :param file_format: Format of file. If None, inferred from file suffix.
+        :param filename: Name of the file
         """
         self._file_reader = None
         self._filename = filename
-
-        if file_format is None:
-            file_format = FileFormat(Path(filename).suffix)
-
-        if file_format == FileFormat.XML:
-            self._file_reader = XMLFileReader(filename)
+        self._file_format = FileFormat(Path(filename).suffix)
 
     # 2020a reader
     def open(self, lanelet_assignment: bool = False) -> Tuple[Scenario, PlanningProblemSet]:
@@ -52,6 +46,9 @@ class CommonRoadFileReader:
         :param lanelet_assignment: Activates calculation of lanelets occupied by obstacles
         :return: Scenario and planning problems
         """
+
+        # this function only works with 2020a xml files
+        self._file_reader = XMLFileReader(self._filename)
         # XML reader
         return self._file_reader.open(lanelet_assignment)
 
@@ -60,6 +57,9 @@ class CommonRoadFileReader:
         """
         Opens and loads CommonRoad lanelet network from file.
         """
+
+        # this function only works with 2020a xml files
+        self._file_reader = XMLFileReader(self._filename)
         # XML reader
         return self._file_reader.open_lanelet_network()
 
@@ -69,6 +69,8 @@ class CommonRoadFileReader:
 
         :return: ScenarioInterface
         """
+
+        # this function only works with 2024 protobuf files
         self._file_reader = ProtobufFileReaderScenario(self._filename)
         return self._file_reader.open()
 
@@ -78,6 +80,8 @@ class CommonRoadFileReader:
 
         :return: DynamicInterface
         """
+
+        # this function only works with 2024 protobuf files
         self._file_reader = ProtobufFileReaderDynamic(self._filename)
         return self._file_reader.open()
 
@@ -87,6 +91,8 @@ class CommonRoadFileReader:
 
         :return: Tuple with LaneletNetwork and a list of Environment Obstacles
         """
+
+        # this function only works with 2024 protobuf files
         self._file_reader = ProtobufFileReaderMap(self._filename)
         return self._file_reader.open()
 
@@ -105,7 +111,7 @@ class CommonRoadFileReader:
         else:
             dynamic_name = pure_name
 
-        # Protobuf
+        # this function only works with 2024 protobuf files
         road_network, env_obstacles = ProtobufFileReaderMap(os.path.join(base_path, map_name + ".pb")).open()
         dynamic = ProtobufFileReaderDynamic(os.path.join(base_path, dynamic_name + ".pb")).open()
 
@@ -130,7 +136,7 @@ class CommonRoadFileReader:
             scenario_name = pure_name + "-SC"
             dynamic_name = pure_name
 
-        # Protobuf
+        # this function only works with 2024 protobuf files
         road_network, environment_obstacles = ProtobufFileReaderMap(os.path.join(base_path, map_name + ".pb")).open()
         scenario = ProtobufFileReaderScenario(os.path.join(base_path, scenario_name + ".pb")).open()
         dynamic_pb = ProtobufFileReaderDynamic(os.path.join(base_path, dynamic_name + ".pb")).open()

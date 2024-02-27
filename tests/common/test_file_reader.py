@@ -1408,7 +1408,7 @@ class TestProtobufFileReader(unittest.TestCase):
             self.assertIsInstance(state, state_type)
 
     def _check_correct_matched_state_xml(self, file_name: str, file_format: FileFormat, state_type: type):
-        scenario, _ = CommonRoadFileReader(file_name, file_format).open()
+        scenario, _ = CommonRoadFileReader(file_name).open()
         obstacle = scenario.obstacles[0]
         self.assertIsInstance(obstacle.initial_state, InitialState)
         for state in obstacle.prediction.trajectory.state_list:
@@ -1420,7 +1420,7 @@ def read_compare_old_scenario_new_scenario(xml_file_path: str, pb_scenario_file_
     Testing the similarities between the planning problems from the xml scenario and planning problems that the protobuf
     scenario reader function returns.
     """
-    planning_problems = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()[1]
+    planning_problems = CommonRoadFileReader(xml_file_path).open()[1]
     scenario_pb = CommonRoadScenarioFileReader(pb_scenario_file_path, FileFormat.PROTOBUF).open()
 
     #  In the old file reader we did not assign scenario tags to the planning problems
@@ -1435,7 +1435,7 @@ def read_compare_old_scenario_new_map(xml_file_path: str, pb_map_file_path: str)
     Testing the similarities between the lanelet network from the xml scenario and the lanelet network that the protobuf
     map reader function returns.
     """
-    scenario_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()[0]
+    scenario_xml = CommonRoadFileReader(xml_file_path).open()[0]
     map_pb, environment_obstacles = CommonRoadMapFileReader(pb_map_file_path, FileFormat.PROTOBUF).open()
 
     # Make dates the same as they are dependent on the creation of the file
@@ -1478,7 +1478,7 @@ def read_compare_old_scenario_new_dynamic(xml_file_path: str, pb_dynamic_file_pa
     Testing the similarities between the obstacles from the xml scenario and the obstacles that the protobuf
     dynamic reader function returns.
     """
-    scenario_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()[0]
+    scenario_xml = CommonRoadFileReader(xml_file_path).open()[0]
     dynamic_pb = CommonRoadDynamicFileReader(pb_dynamic_file_path, FileFormat.PROTOBUF).open()
 
     return (
@@ -1495,7 +1495,7 @@ def read_compare_old_scenario_new_dynamic_map(
     Testing the similarities between the lanelet network and other scenario attributes from scenario, and the attributes
     that the protobuf reader for map and dynamic files returns.
     """
-    scenario_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()[0]
+    scenario_xml = CommonRoadFileReader(xml_file_path).open()[0]
     map_pb, environment_obstacles = CommonRoadMapFileReader(pb_map_file_path, FileFormat.PROTOBUF).open()
     dynamic_pb = CommonRoadDynamicFileReader(pb_dynamic_file_path, FileFormat.PROTOBUF).open()
     dynamic_pb.environment_obstacles = environment_obstacles
@@ -1540,7 +1540,7 @@ def read_compare_old_scenario_new_all(
     """
     Testing the similarities between the new and the old format reader scenario and planning problems.
     """
-    scenario_xml, planning_problems = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()
+    scenario_xml, planning_problems = CommonRoadFileReader(xml_file_path).open()
     scenario_pb, planning_problems_pb, _ = CommonRoadReadAll(pb_dynamic_file_path).open()
 
     scenario_pb.lanelet_network.meta_information.file_information.date = (

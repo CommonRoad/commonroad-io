@@ -500,7 +500,7 @@ class TestProtobufFileWriter(unittest.TestCase):
 
 
 def write_read_compare_map(xml_file_path: str, out_path: str) -> bool:
-    scenario_xml, planning_problems_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()
+    scenario_xml, planning_problems_xml = CommonRoadFileReader(xml_file_path).open()
     pb_file_path = out_path + "/" + str(scenario_xml.scenario_id) + ".pb"
 
     CommonRoadFileWriter(scenario_xml, planning_problems_xml, file_format=FileFormat.PROTOBUF).write_map_to_file(
@@ -529,7 +529,7 @@ def write_read_compare_map(xml_file_path: str, out_path: str) -> bool:
 
 
 def write_read_compare_scenario(xml_file_path: str, out_path: str) -> bool:
-    scenario_xml, planning_problems_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()
+    scenario_xml, planning_problems_xml = CommonRoadFileReader(xml_file_path).open()
     pb_file_path = out_path + "/" + str(scenario_xml.scenario_id) + ".pb"
 
     CommonRoadFileWriter(scenario_xml, planning_problems_xml, file_format=FileFormat.PROTOBUF).write_scenario_to_file(
@@ -550,7 +550,7 @@ def write_read_compare_scenario(xml_file_path: str, out_path: str) -> bool:
 
 
 def write_read_compare_dynamic(xml_file_path: str, out_path: str) -> bool:
-    scenario_xml, planning_problems_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()
+    scenario_xml, planning_problems_xml = CommonRoadFileReader(xml_file_path).open()
     pb_file_path = out_path + "/" + str(scenario_xml.scenario_id) + ".pb"
 
     CommonRoadFileWriter(scenario_xml, planning_problems_xml, file_format=FileFormat.PROTOBUF).write_dynamic_to_file(
