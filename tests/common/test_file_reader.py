@@ -2,6 +2,7 @@ import os
 import unittest
 
 import numpy as np
+import pytest
 
 from commonroad import SCENARIO_VERSION
 from commonroad.common.common_lanelet import (
@@ -1378,6 +1379,29 @@ class TestProtobufFileReader(unittest.TestCase):
         self._check_correct_matched_state_pb(self.filename_custom_map_pb, self.filename_custom_dynamic_pb, CustomState)
         #  self._check_correct_matched_state_pb(self.filename_pm_map_pb, self.filename_pm_dynamic_pb,
         #                                       FileFormat.PROTOBUF, PMState)
+
+    def test_wrong_filenames(self):
+        reader = CommonRoadFileReader()
+
+        with pytest.raises(NameError) as exc_info:
+            reader.open()
+        assert str(exc_info.value) == "Filename of the 2020a xml file is missing"
+
+        with pytest.raises(NameError) as exc_info:
+            reader.open_lanelet_network()
+        assert str(exc_info.value) == "Filename of the 2020a xml file is missing"
+
+        with pytest.raises(NameError) as exc_info:
+            reader.open_map()
+        assert str(exc_info.value) == "Filename of the 2024 map file is missing"
+
+        with pytest.raises(NameError) as exc_info:
+            reader.open_dynamic()
+        assert str(exc_info.value) == "Filename of the 2024 dynamic file is missing"
+
+        with pytest.raises(NameError) as exc_info:
+            reader.open_scenario()
+        assert str(exc_info.value) == "Filename of the 2024 scenario file is missing"
 
     def _check_correct_matched_state_pb(self, file_name_map: str, file_name_dynamic: str, state_type: type):
         road_network, environment_obstacles = CommonRoadFileReader(filename_map=file_name_map).open_map()
