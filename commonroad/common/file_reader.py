@@ -1,6 +1,5 @@
 import os
-from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import List, Tuple, Union
 
 from commonroad.common.reader.dynamic_interface import DynamicInterface
 from commonroad.common.reader.file_reader_protobuf import (
@@ -11,7 +10,7 @@ from commonroad.common.reader.file_reader_protobuf import (
 )
 from commonroad.common.reader.file_reader_xml import XMLFileReader
 from commonroad.common.reader.scenario_interface import ScenarioInterface
-from commonroad.common.util import FileFormat, Path_T
+from commonroad.common.util import Path_T
 from commonroad.planning.planning_problem import (
     CooperativePlanningProblem,
     PlanningProblemSet,
