@@ -5,7 +5,11 @@ import numpy as np
 
 from commonroad.common.util import Interval
 from commonroad.geometry.shape import Circle, Rectangle, ShapeGroup
-from commonroad.prediction.prediction import (Occupancy, SetBasedPrediction, TrajectoryPrediction, )
+from commonroad.prediction.prediction import (
+    Occupancy,
+    SetBasedPrediction,
+    TrajectoryPrediction,
+)
 from commonroad.scenario.state import KSState
 from commonroad.scenario.trajectory import Trajectory
 
