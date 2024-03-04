@@ -1,4 +1,5 @@
 import abc
+import functools
 import math
 import warnings
 from typing import Dict, List, Optional, Set, Union
@@ -94,29 +95,73 @@ class Occupancy(IDrawable):
         self.shape.draw(renderer, draw_params.shape if draw_params is not None else None)
 
 
-class Prediction:
+class Prediction(abc.ABC):
     """
     Base class for a prediction module.
     """
 
+    @property
+    @abc.abstractmethod
+    def initial_time_step(self) -> int:
+        """Initial time step of the prediction."""
+        pass
+
+    @property
+    @abc.abstractmethod
+    def final_time_step(self) -> Union[int, Interval]:
+        """Final time step of the prediction."""
+        pass
+
+    @property
+    @abc.abstractmethod
+    def occupancy_set(self) -> List[Occupancy]:
+        """List of occupancies over time."""
+        pass
+
+    def occupancy_at_time_step(self, time_step: int) -> Union[None, Occupancy]:
+        """Occupancy at a specific time step.
+
+        :param time_step: discrete time step
+        :return: occupancy at time_step if time_step is within the time interval of the prediction; otherwise, None
+        """
+        assert isinstance(time_step, int), (
+            '<Prediction/occupancy_at_time_step>: argument "time_step" of '
+            "wrong type. Expected type: %s. Got type: %s." % (int, type(time_step))
+        )
+        for occ in self.occupancy_set:
+            if isinstance(occ.time_step, Interval):
+                if occ.time_step.contains(time_step):
+                    return occ
+            elif isinstance(occ.time_step, int):
+                if occ.time_step == time_step:
+                    return occ
+        return None
+
+    @abc.abstractmethod
+    def translate_rotate(self, translation: list, angle: float):
+        pass
+
+
+class SetBasedPrediction(Prediction):
+    """Class to represent the future behavior of obstacles by bounded occupancy sets."""
+
+    _initial_time_step: int
+    _occupancy_set: List[Occupancy]
+
     def __init__(self, initial_time_step: int, occupancy_set: List[Occupancy]):
         """
-        :param initial_time_step: initial time step of the prediction
+        :param initial_time_step: initial time step of the set-based prediction
         :param occupancy_set: list of occupancies defined for different time steps or time intervals.
         """
-        self.initial_time_step: int = initial_time_step
-        self.occupancy_set: List[Occupancy] = occupancy_set
+        self._initial_time_step = initial_time_step
+        self._occupancy_set = occupancy_set
 
     def __eq__(self, other):
-        if not isinstance(other, Prediction):
-            warnings.warn(f"Inequality between Prediction {repr(self)} and different type {type(other)}")
+        if not isinstance(other, SetBasedPrediction):
+            warnings.warn(f"Inequality between SetBasedPrediction {repr(self)} and different type {type(other)}")
             return False
 
-        prediction_eq = (
-            self._initial_time_step == other.initial_time_step and self._occupancy_set == other.occupancy_set
-        )
-
-        return prediction_eq
+        return self._initial_time_step == other.initial_time_step and self._occupancy_set == other.occupancy_set
 
     def __hash__(self):
         return hash((self._initial_time_step, frozenset(self._occupancy_set)))
@@ -126,26 +171,10 @@ class Prediction:
         """Initial time step of the prediction."""
         return self._initial_time_step
 
-    @initial_time_step.setter
-    def initial_time_step(self, initial_time_step: int):
-        assert isinstance(initial_time_step, int), (
-            '<Prediction/initial_time_step>: argument "initial_time_step" of '
-            "wrong type. Expected type: %s. Got type: %s." % (int, type(initial_time_step))
-        )
-        self._initial_time_step = initial_time_step
-
     @property
     def final_time_step(self) -> Union[int, Interval]:
         """Final time step of the prediction."""
-        return self._final_time_step
-
-    @final_time_step.setter
-    def final_time_step(self, final_time_step: Union[int, Interval]):
-        assert isinstance(final_time_step, (int, Interval)), (
-            '<Prediction/final_time_step>: argument "final_time_step" of '
-            "wrong type. Expected type: %s. Got type: %s." % ([int, Interval], type(final_time_step))
-        )
-        self._final_time_step = final_time_step
+        return max(occ.time_step for occ in self.occupancy_set)
 
     @property
     def occupancy_set(self) -> List[Occupancy]:
@@ -165,54 +194,6 @@ class Prediction:
             "%s." % Occupancy
         )
         self._occupancy_set = occupancy_set
-        self.final_time_step = max([occ.time_step for occ in self._occupancy_set])
-
-    def occupancy_at_time_step(self, time_step: int) -> Union[None, Occupancy]:
-        """Occupancy at a specific time step.
-
-        :param time_step: discrete time step
-        :return: occupancy at time_step if time_step is within the time interval of the prediction; otherwise, None
-        """
-        assert isinstance(time_step, int), (
-            '<Prediction/occupancy_at_time_step>: argument "time_step" of '
-            "wrong type. Expected type: %s. Got type: %s." % (int, type(time_step))
-        )
-        occupancy = None
-        for occ in self._occupancy_set:
-            if isinstance(occ.time_step, Interval):
-                if occ.time_step.contains(time_step):
-                    occupancy = occ
-                    break
-            elif isinstance(occ.time_step, int):
-                if occ.time_step == time_step:
-                    occupancy = occ
-                    break
-        return occupancy
-
-    @abc.abstractmethod
-    def translate_rotate(self, translation: list, angle: float):
-        pass
-
-
-class SetBasedPrediction(Prediction):
-    """Class to represent the future behavior of obstacles by bounded occupancy sets."""
-
-    def __init__(self, initial_time_step: int, occupancy_set: List[Occupancy]):
-        """
-        :param initial_time_step: initial time step of the set-based prediction
-        :param occupancy_set: list of occupancies defined for different time steps or time intervals.
-        """
-        Prediction.__init__(self, initial_time_step, occupancy_set)
-
-    def __eq__(self, other):
-        if not isinstance(other, SetBasedPrediction):
-            warnings.warn(f"Inequality between SetBasedPrediction {repr(self)} and different type {type(other)}")
-            return False
-
-        return Prediction.__eq__(self, other)
-
-    def __hash__(self):
-        return Prediction.__hash__(self)
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """Translates and rotates the occupancy set.
@@ -235,51 +216,54 @@ class TrajectoryPrediction(Prediction):
     """Class to represent the predicted movement of an obstacle using a trajectory. A trajectory is modeled as a
     state sequence over time. The occupancy of an obstacle along a trajectory is uniquely defined given its shape."""
 
+    _shape: Shape
+    _trajectory: Trajectory
+    _shape_lanelet_assignment: Optional[Dict[int, Set[int]]]
+    _center_lanelet_assignment: Optional[Dict[int, Set[int]]]
+
     def __init__(
         self,
         trajectory: Trajectory,
         shape: Shape,
-        center_lanelet_assignment: Union[None, Dict[int, Set[int]]] = None,
-        shape_lanelet_assignment: Union[None, Dict[int, Set[int]]] = None,
+        center_lanelet_assignment: Optional[Dict[int, Set[int]]] = None,
+        shape_lanelet_assignment: Optional[Dict[int, Set[int]]] = None,
         **kwargs,
     ):
         """
         :param trajectory: predicted trajectory of the obstacle
+        :param center_lanelet_assignment: predicted lanelet assignment of obstacle center
+        :param shape_lanelet_assignment: predicted lanelet assignment of obstacle shape
         :param shape: shape of the obstacle
         """
-        self.shape: Shape = shape
-        self.trajectory: Trajectory = trajectory
-        self.shape_lanelet_assignment: Dict[int, Set[int]] = shape_lanelet_assignment
-        self.center_lanelet_assignment: Dict[int, Set[int]] = center_lanelet_assignment
+        self._shape = shape
+        self._trajectory = trajectory
+        self._shape_lanelet_assignment = shape_lanelet_assignment
+        self._center_lanelet_assignment = center_lanelet_assignment
         for field, value in kwargs.items():
             setattr(self, field, value)
-        Prediction.__init__(self, self._trajectory.initial_time_step, self._create_occupancy_set())
 
     def __eq__(self, other):
         if not isinstance(other, TrajectoryPrediction):
             warnings.warn(f"Inequality between TrajectoryPrediction {repr(self)} and different type {type(other)}")
             return False
 
-        prediction_eq = (
+        return (
             self._shape == other.shape
             and self._trajectory == other.trajectory
-            and self.center_lanelet_assignment == other.center_lanelet_assignment
-            and self.shape_lanelet_assignment == other.shape_lanelet_assignment
-            and Prediction.__eq__(self, other)
+            and self._center_lanelet_assignment == other.center_lanelet_assignment
+            and self._shape_lanelet_assignment == other.shape_lanelet_assignment
         )
-
-        return prediction_eq
 
     def __hash__(self):
         center_lanelet_assignment = (
-            None
-            if self._center_lanelet_assignment is None
-            else dict((key, list(value)) for key, value in self._center_lanelet_assignment.items()).items()
+            frozenset((key, frozenset(value)) for key, value in self._center_lanelet_assignment.items())
+            if self._center_lanelet_assignment is not None
+            else None
         )
         shape_lanelet_assignment = (
-            None
-            if self._shape_lanelet_assignment is None
-            else dict((key, list(value)) for key, value in self._shape_lanelet_assignment.items()).items()
+            frozenset((key, frozenset(value)) for key, value in self._shape_lanelet_assignment.items())
+            if self._shape_lanelet_assignment is not None
+            else None
         )
 
         return hash(
@@ -288,9 +272,23 @@ class TrajectoryPrediction(Prediction):
                 self._shape,
                 center_lanelet_assignment,
                 shape_lanelet_assignment,
-                Prediction.__hash__(self),
             )
         )
+
+    @property
+    def initial_time_step(self) -> int:
+        """Initial time step of the prediction."""
+        return self._trajectory.initial_time_step
+
+    @property
+    def final_time_step(self) -> Union[int, Interval]:
+        """Final time step of the prediction."""
+        return self._trajectory.final_state.time_step
+
+    @property
+    def occupancy_set(self) -> List[Occupancy]:
+        """List of occupancies over time."""
+        return self._create_occupancy_set()
 
     @property
     def shape(self) -> Shape:
@@ -368,8 +366,8 @@ class TrajectoryPrediction(Prediction):
         )
 
         self._trajectory.translate_rotate(translation, angle)
-        self._occupancy_set = self._create_occupancy_set()
 
+    @functools.lru_cache(maxsize=40)
     def _create_occupancy_set(self) -> List[Occupancy]:
         """Computes the occupancy set over time given the predicted trajectory and shape of the object."""
         occupancy_set = []
