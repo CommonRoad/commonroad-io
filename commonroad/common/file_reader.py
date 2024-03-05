@@ -1,6 +1,4 @@
-import os
-from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 from commonroad.common.reader.dynamic_interface import DynamicInterface
 from commonroad.common.reader.file_reader_protobuf import (
@@ -11,7 +9,7 @@ from commonroad.common.reader.file_reader_protobuf import (
 )
 from commonroad.common.reader.file_reader_xml import XMLFileReader
 from commonroad.common.reader.scenario_interface import ScenarioInterface
-from commonroad.common.util import FileFormat, Path_T
+from commonroad.common.util import Path_T
 from commonroad.planning.planning_problem import (
     CooperativePlanningProblem,
     PlanningProblemSet,
@@ -24,186 +22,221 @@ from commonroad.scenario.scenario import Scenario
 
 class CommonRoadFileReader:
     """
-    Reads CommonRoad files in XML or protobuf format. The corresponding stored scenario and planning problem set
-    are created by the reader.
+    Reads CommonRoad files in XML (2020a) or protobuf format (2024).
+    The corresponding stored scenario and planning problem set are created by the reader.
     """
 
-    def __init__(self, filename: Path_T, file_format: Optional[FileFormat] = None):
+    def __init__(
+        self,
+        filename_2020a: Path_T = None,
+        filename_map: Path_T = None,
+        filename_scenario: Path_T = None,
+        filename_dynamic: Path_T = None,
+    ):
         """
         Initializes the FileReader for CommonRoad files.
+        The user can send 4 filenames (1 for 2020a and 3 for 2024 format)
+        Depending on the format of the files, user can call different functions to read the respective files.
 
-        :param filename: Name of file
-        :param file_format: Format of file. If None, inferred from file suffix.
+        :param filename_2020a: Path of the 2020a xml file
+        :param filename_map: Path of the 2024 protobuf map file
+        :param filename_scenario: Path of the 2024 protobuf scenario file
+        :param filename_dynamic: Path of the 2024 protobuf dynamic file
         """
+
         self._file_reader = None
 
-        if file_format is None:
-            file_format = FileFormat(Path(filename).suffix)
+        self._filename_2020a = filename_2020a
+        self._filename_map = filename_map
+        self._filename_scenario = filename_scenario
+        self._filename_dynamic = filename_dynamic
 
-        if file_format == FileFormat.XML:
-            self._file_reader = XMLFileReader(filename)
+    @property
+    def file_reader(
+        self,
+    ) -> Union[XMLFileReader, ProtobufFileReaderDynamic, ProtobufFileReaderMap, ProtobufFileReaderScenario]:
+        """
+        File reader that reads the file depending on its format.
+        """
+        return self._file_reader
 
+    @file_reader.setter
+    def file_reader(
+        self,
+        file_reader: Union[XMLFileReader, ProtobufFileReaderDynamic, ProtobufFileReaderScenario, ProtobufFileReaderMap],
+    ):
+        self._file_reader = file_reader
+
+    @property
+    def filename_2020a(self) -> Optional[Path_T]:
+        """
+        Path of the 2020a xml file path.
+        """
+        return self._filename_2020a
+
+    @filename_2020a.setter
+    def filename_2020a(self, filename_2020a: Optional[Path_T]):
+        self._filename_2020a = filename_2020a
+
+    @property
+    def filename_map(self) -> Optional[Path_T]:
+        """
+        Path of the 2024 map file.
+        """
+        return self._filename_map
+
+    @filename_map.setter
+    def filename_map(self, filename_map: Optional[Path_T]):
+        self._filename_map = filename_map
+
+    @property
+    def filename_scenario(self) -> Optional[Path_T]:
+        """
+        Path of the 2024 scenario file.
+        """
+        return self._filename_scenario
+
+    @filename_scenario.setter
+    def filename_scenario(self, filename_scenario: Optional[Path_T]):
+        self._filename_scenario = filename_scenario
+
+    @property
+    def filename_dynamic(self) -> Optional[Path_T]:
+        """
+        Path of the 2024 dynamic file.
+        """
+        return self._filename_dynamic
+
+    @filename_dynamic.setter
+    def filename_dynamic(self, filename_dynamic: Optional[Path_T]):
+        self._filename_dynamic = filename_dynamic
+
+    # 2020a reader
     def open(self, lanelet_assignment: bool = False) -> Tuple[Scenario, PlanningProblemSet]:
         """
         Opens and loads CommonRoad scenario and planning problems from file.
 
         :param lanelet_assignment: Activates calculation of lanelets occupied by obstacles
         :return: Scenario and planning problems
-        """
-        return self._file_reader.open(lanelet_assignment)
 
+        :return: Tuple consisted of a Scenario and a PlanningProblemSet
+        """
+
+        # this function only works with the 2020a xml files
+        if self.filename_2020a is None:
+            raise NameError("Filename of the 2020a xml file is missing")
+        else:
+            self.file_reader = XMLFileReader(self.filename_2020a)
+            return self.file_reader.open(lanelet_assignment)
+
+    # 2020a reader
     def open_lanelet_network(self) -> LaneletNetwork:
         """
         Opens and loads CommonRoad lanelet network from file.
+
+        :return: LaneletNetwork
         """
-        return self._file_reader.open_lanelet_network()
 
+        # this function only works with 2020a xml files
+        if self.filename_2020a is None:
+            raise NameError("Filename of the 2020a xml file is missing")
+        else:
+            self.file_reader = XMLFileReader(self.filename_2020a)
+            return self.file_reader.open_lanelet_network()
 
-class CommonRoadDynamicFileReader:
-    """
-    Reads CommonRoadDynamic files in XML or protobuf format. The corresponding stored scenario is
-    created by the reader.
-    """
-
-    def __init__(self, filename: Path_T, file_format: Optional[FileFormat] = None):
-        """
-        Initializes the FileReaderDynamic for CommonRoad files.
-
-        :param filename: Name of file
-        :param file_format: Format of file. If None, inferred from file suffix.
-        """
-        self._file_reader = None
-
-        if file_format is None:
-            file_format = FileFormat(Path(filename).suffix)
-
-        if file_format == FileFormat.XML:
-            self._file_reader = XMLFileReader(filename)
-        elif file_format == FileFormat.PROTOBUF:
-            self._file_reader = ProtobufFileReaderDynamic(filename)
-
-    def open(self) -> DynamicInterface:
-        """
-        Opens and loads CommonRoadDynamic from the file.
-
-        :return: Dynamic
-        """
-        return self._file_reader.open()
-
-
-class CommonRoadScenarioFileReader:
-    """
-    Reads CommonRoadScenario files in XML or protobuf format. The corresponding stored scenario is
-    created by the reader.
-    """
-
-    def __init__(self, filename: Path_T, file_format: Optional[FileFormat] = None):
-        """
-        Initializes the FileReaderScenario for CommonRoad files.
-
-        :param filename: Name of file
-        :param file_format: Format of file. If None, inferred from file suffix.
-        """
-        self._file_reader = None
-
-        if file_format is None:
-            file_format = FileFormat(Path(filename).suffix)
-
-        if file_format == FileFormat.XML:
-            self._file_reader = XMLFileReader(filename)
-        elif file_format == FileFormat.PROTOBUF:
-            self._file_reader = ProtobufFileReaderScenario(filename)
-
-    def open(self) -> ScenarioInterface:
+    def open_scenario(self) -> ScenarioInterface:
         """
         Opens and loads CommonRoadScenario from the file.
 
-        :return: Scenario
+        :return: ScenarioInterface
         """
-        return self._file_reader.open()
+        # this function only works with 2024 protobuf files
 
+        if self.filename_scenario is None:
+            raise NameError("Filename of the 2024 scenario file is missing")
+        else:
+            self.file_reader = ProtobufFileReaderScenario(self.filename_scenario)
+            return self.file_reader.open()
 
-class CommonRoadMapFileReader:
-    """
-    Reads CommonRoadMap files in XML or protobuf format. The corresponding stored scenario is
-    created by the reader.
-    """
-
-    def __init__(self, filename: Path_T, file_format: Optional[FileFormat] = None):
+    def open_dynamic(self) -> DynamicInterface:
         """
-        Initializes the FileReaderMap for CommonRoad files.
+        Opens and loads CommonRoadDynamic from the file.
 
-        :param filename: Name of file
-        :param file_format: Format of file. If None, inferred from file suffix.
+        :return: DynamicInterface
         """
-        self._file_reader = None
+        # this function only works with 2024 protobuf files
 
-        if file_format is None:
-            file_format = FileFormat(Path(filename).suffix)
+        if self.filename_dynamic is None:
+            raise NameError("Filename of the 2024 dynamic file is missing")
+        else:
+            self.file_reader = ProtobufFileReaderDynamic(self.filename_dynamic)
+            return self.file_reader.open()
 
-        if file_format == FileFormat.XML:
-            self._file_reader = XMLFileReader(filename)
-        elif file_format == FileFormat.PROTOBUF:
-            self._file_reader = ProtobufFileReaderMap(filename)
-
-    def open(self) -> Tuple[LaneletNetwork, List[EnvironmentObstacle]]:
+    def open_map(self) -> Tuple[LaneletNetwork, List[EnvironmentObstacle]]:
         """
         Opens and loads CommonRoadMap from the file.
 
-        :return: Map
+        :return: Tuple with LaneletNetwork and a list of Environment Obstacles
         """
-        return self._file_reader.open()
+        # this function only works with 2024 protobuf files
 
-
-class CommonRoadMapDynamicFileReader:
-    """
-    Reads CommonRoadMap files in XML or protobuf format. The corresponding stored scenario is
-    created by the reader.
-    """
-
-    def __init__(self, filename: Path_T, file_format: Optional[FileFormat] = None):
-        """
-        Initializes the FileReaderMap for CommonRoad files.
-
-        :param filename: Name of file
-        :param file_format: Format of file. If None, inferred from file suffix.
-        """
-        self._file_reader = None
-
-        if file_format is None:
-            file_format = FileFormat(Path(filename).suffix)
-
-        base_name = os.path.basename(filename)
-        base_path = os.path.dirname(filename)
-        map_name = base_name.split("-")[0] + "-" + base_name.split("_")[1].split("-")[1]
-        pure_name = base_name.split(".pb")[0]
-        if pure_name.endswith("-SC"):
-            dynamic_name = pure_name.split("-SC")[0]
+        if self.filename_map is None:
+            raise NameError("Filename of the 2024 map file is missing")
         else:
-            dynamic_name = pure_name
+            self.file_reader = ProtobufFileReaderMap(self.filename_map)
+            return self.file_reader.open()
 
-        if file_format is None:
-            file_format = FileFormat(Path(filename).suffix)
-
-        if file_format == FileFormat.XML:
-            raise NotImplementedError("XML files are not yet supported by 2023a format.")
-        elif file_format == FileFormat.PROTOBUF:
-            self._file_reader_map = ProtobufFileReaderMap(os.path.join(base_path, map_name + ".pb"))
-            self._file_reader_dynamic = ProtobufFileReaderDynamic(os.path.join(base_path, dynamic_name + ".pb"))
-
-    def open(self) -> Scenario:
+    def open_map_dynamic(self) -> Scenario:
         """
-        Loads map, dynamic and, scenario files and combines them.
+        Opens and combines CommonRoadMap and CommonRoadDynamic files.
+        The user has to provide both map and dynamic filenames in order to call this function.
 
-        :return: Tuple consisted of the Scenario (containing the lanelet network from map, and obstacles from
-        the dynamic), PlanningProblemSet and a list of CooperativePlanningProblems
+        :return: Scenario
         """
 
-        road_network, env_obstacles = self._file_reader_map.open()
-        dynamic = self._file_reader_dynamic.open()
+        # check for the map filename
+        if self.filename_map is None:
+            raise NameError("Filename of the 2024 map file is missing")
+
+        # check for the dynamic filename
+        if self.filename_dynamic is None:
+            raise NameError("Filename of the 2024 dynamic file is missing")
+
+        # this function only works with 2024 protobuf files
+        road_network, env_obstacles = ProtobufFileReaderMap(filename=self.filename_map).open()
+        dynamic = ProtobufFileReaderDynamic(filename=self.filename_dynamic).open()
+
         dynamic.environment_obstacles = env_obstacles
 
         return combine_map_dynamic(road_network, dynamic)
+
+    def open_all(self) -> Tuple[Scenario, PlanningProblemSet, List[CooperativePlanningProblem]]:
+        """
+        Opens and combines CommonRoadMap, CommonRoadDynamic and CommonRoadScenario files.
+        The user has to provide scenario, dynamic and map filenames in order to call this function.
+
+        :return: Tuple of a Scenario, PlanningProblemSet and a list of CooperativePlanningProblems
+        """
+        # check for the map filename
+        if self.filename_map is None:
+            raise NameError("Filename of the 2024 map file is missing")
+
+        # check for the dynamic filename
+        if self.filename_dynamic is None:
+            raise NameError("Filename of the 2024 dynamic file is missing")
+
+        # check for the scenario filename
+        if self.filename_scenario is None:
+            raise NameError("Filename of the 2024 scenario file is missing")
+
+        # this function only works with 2024 protobuf files
+        road_network, environment_obstacles = ProtobufFileReaderMap(filename=self.filename_map).open()
+        scenario = ProtobufFileReaderScenario(filename=self.filename_scenario).open()
+        dynamic_pb = ProtobufFileReaderDynamic(filename=self.filename_dynamic).open()
+
+        dynamic_pb.environment_obstacles = environment_obstacles
+
+        return combine_preloaded_(road_network, dynamic_pb, scenario)
 
 
 def combine_map_dynamic(
@@ -344,54 +377,3 @@ def combine_preloaded_(
     multi_agent = scenario_interface.cooperative_planning_problems
 
     return scenario, planning_problem_set, multi_agent
-
-
-class CommonRoadReadAll:
-    """
-    Reads all 3 of the separate .py classes that the user has obtained from reading the corresponding files.
-    Combines them into one scenario .py class.
-    """
-
-    def __init__(self, filename: Path_T, file_format: Optional[FileFormat] = None):
-        """
-        Initializes file readers for reading CommonRoad map, scenario, and dynamic files.
-
-        :param filename: Name of file
-        :param file_format: Format of file. If None, inferred from file suffix.
-        """
-        self._file_reader = None
-
-        if file_format is None:
-            file_format = FileFormat(Path(filename).suffix)
-
-        base_name = os.path.basename(filename)
-        base_path = os.path.dirname(filename)
-        map_name = base_name.split("-")[0] + "-" + base_name.split("_")[1].split("-")[1]
-        pure_name = base_name.split(".pb")[0]
-        if pure_name.endswith("-SC"):
-            scenario_name = pure_name
-            dynamic_name = pure_name.split("-SC")[0]
-        else:
-            scenario_name = pure_name + "-SC"
-            dynamic_name = pure_name
-
-        if file_format == FileFormat.XML:
-            raise NotImplementedError("XML files are not yet supported by 2023a format.")
-        elif file_format == FileFormat.PROTOBUF:
-            self._file_reader_map = ProtobufFileReaderMap(os.path.join(base_path, map_name + ".pb"))
-            self._file_reader_dynamic = ProtobufFileReaderDynamic(os.path.join(base_path, dynamic_name + ".pb"))
-            self._file_reader_scenario = ProtobufFileReaderScenario(os.path.join(base_path, scenario_name + ".pb"))
-
-    def open(self) -> Tuple[Scenario, PlanningProblemSet, List[CooperativePlanningProblem]]:
-        """
-        Loads map, dynamic and, scenario files and combines them.
-
-        :return: Tuple consisted of the Scenario (containing the lanelet network from map, and obstacles from
-        the dynamic), PlanningProblemSet and a list of CooperativePlanningProblems
-        """
-        road_network, environment_obstacles = self._file_reader_map.open()
-        scenario = self._file_reader_scenario.open()
-        dynamic_pb = self._file_reader_dynamic.open()
-        dynamic_pb.environment_obstacles = environment_obstacles
-
-        return combine_preloaded_(road_network, dynamic_pb, scenario)
