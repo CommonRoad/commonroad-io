@@ -1548,7 +1548,9 @@ def read_compare_old_scenario_new_all(
     Testing the similarities between the new and the old format reader scenario and planning problems.
     """
     scenario_xml, planning_problems = CommonRoadFileReader(xml_file_path).open()
-    scenario_pb, planning_problems_pb, _ = CommonRoadFileReader(filename_dynamic=pb_dynamic_file_path).open_all()
+    scenario_pb, planning_problems_pb, _ = CommonRoadFileReader(
+        filename_dynamic=pb_dynamic_file_path, filename_map=pb_map_file_path, filename_scenario=pb_scenario_file_path
+    ).open_all()
 
     scenario_pb.lanelet_network.meta_information.file_information.date = (
         scenario_xml.lanelet_network.meta_information.file_information.date
