@@ -8,12 +8,7 @@ from lxml import etree
 from commonroad import SCENARIO_VERSION
 from commonroad.common.common_lanelet import LaneletType, LineMarking
 from commonroad.common.common_scenario import FileInformation, Location
-from commonroad.common.file_reader import (
-    CommonRoadDynamicFileReader,
-    CommonRoadFileReader,
-    CommonRoadMapFileReader,
-    CommonRoadScenarioFileReader,
-)
+from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.common.file_writer import CommonRoadFileWriter
 from commonroad.common.util import FileFormat, Interval
 from commonroad.common.writer.file_writer_interface import (
@@ -500,14 +495,14 @@ class TestProtobufFileWriter(unittest.TestCase):
 
 
 def write_read_compare_map(xml_file_path: str, out_path: str) -> bool:
-    scenario_xml, planning_problems_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()
+    scenario_xml, planning_problems_xml = CommonRoadFileReader(xml_file_path).open()
     pb_file_path = out_path + "/" + str(scenario_xml.scenario_id) + ".pb"
 
     CommonRoadFileWriter(scenario_xml, planning_problems_xml, file_format=FileFormat.PROTOBUF).write_map_to_file(
         pb_file_path, OverwriteExistingFile.ALWAYS
     )
 
-    map_pb, environment_obstacles = CommonRoadMapFileReader(pb_file_path, FileFormat.PROTOBUF).open()
+    map_pb, environment_obstacles = CommonRoadFileReader(filename_map=pb_file_path).open_map()
 
     # As the new protobuf format Stop Line does not contain attributes "traffic_light_ref" and "traffic_sign_ref",
     # they are set to None in the xml format scenario
@@ -529,14 +524,14 @@ def write_read_compare_map(xml_file_path: str, out_path: str) -> bool:
 
 
 def write_read_compare_scenario(xml_file_path: str, out_path: str) -> bool:
-    scenario_xml, planning_problems_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()
+    scenario_xml, planning_problems_xml = CommonRoadFileReader(xml_file_path).open()
     pb_file_path = out_path + "/" + str(scenario_xml.scenario_id) + ".pb"
 
     CommonRoadFileWriter(scenario_xml, planning_problems_xml, file_format=FileFormat.PROTOBUF).write_scenario_to_file(
         pb_file_path, OverwriteExistingFile.ALWAYS
     )
 
-    scenario_pb = CommonRoadScenarioFileReader(pb_file_path, FileFormat.PROTOBUF).open()
+    scenario_pb = CommonRoadFileReader(filename_scenario=pb_file_path).open_scenario()
 
     #  In the old file reader we did not assign scenario tags to the planning problems
     for planning_problem in scenario_pb.planning_problems:
@@ -550,14 +545,14 @@ def write_read_compare_scenario(xml_file_path: str, out_path: str) -> bool:
 
 
 def write_read_compare_dynamic(xml_file_path: str, out_path: str) -> bool:
-    scenario_xml, planning_problems_xml = CommonRoadFileReader(xml_file_path, FileFormat.XML).open()
+    scenario_xml, planning_problems_xml = CommonRoadFileReader(xml_file_path).open()
     pb_file_path = out_path + "/" + str(scenario_xml.scenario_id) + ".pb"
 
     CommonRoadFileWriter(scenario_xml, planning_problems_xml, file_format=FileFormat.PROTOBUF).write_dynamic_to_file(
         pb_file_path, OverwriteExistingFile.ALWAYS
     )
 
-    dynamic_pb = CommonRoadDynamicFileReader(pb_file_path, FileFormat.PROTOBUF).open()
+    dynamic_pb = CommonRoadFileReader(filename_dynamic=pb_file_path).open_dynamic()
 
     return (
         scenario_xml.dynamic_obstacles == dynamic_pb.dynamic_obstacles
