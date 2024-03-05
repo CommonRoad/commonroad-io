@@ -1403,6 +1403,27 @@ class TestProtobufFileReader(unittest.TestCase):
             reader.open_scenario()
         assert str(exc_info.value) == "Filename of the 2024 scenario file is missing"
 
+        with pytest.raises(NameError) as exc_info:
+            reader.filename_map = self.filename_starnberg_map_pb
+            reader.open_map_dynamic()
+        assert str(exc_info.value) == "Filename of the 2024 dynamic file is missing"
+
+        with pytest.raises(NameError) as exc_info:
+            reader.filename_map = None
+            reader.filename_dynamic = self.filename_starnberg_dynamic_pb
+            reader.open_map_dynamic()
+        assert str(exc_info.value) == "Filename of the 2024 map file is missing"
+
+        with pytest.raises(NameError) as exc_info:
+            reader.open_all()
+        assert str(exc_info.value) == "Filename of the 2024 map file is missing"
+
+        with pytest.raises(NameError) as exc_info:
+            reader.filename_dynamic = self.filename_starnberg_dynamic_pb
+            reader.filename_map = self.filename_starnberg_map_pb
+            reader.open_all()
+        assert str(exc_info.value) == "Filename of the 2024 scenario file is missing"
+
     def _check_correct_matched_state_pb(self, file_name_map: str, file_name_dynamic: str, state_type: type):
         road_network, environment_obstacles = CommonRoadFileReader(filename_map=file_name_map).open_map()
         dynamic = CommonRoadFileReader(filename_dynamic=file_name_dynamic).open_dynamic()
