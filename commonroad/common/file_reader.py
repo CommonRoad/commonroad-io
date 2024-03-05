@@ -1,5 +1,4 @@
-import os
-from typing import List, Tuple, Union, Optional
+from typing import List, Optional, Tuple, Union
 
 from commonroad.common.reader.dynamic_interface import DynamicInterface
 from commonroad.common.reader.file_reader_protobuf import (
