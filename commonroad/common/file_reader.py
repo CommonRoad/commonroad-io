@@ -1,5 +1,5 @@
 import os
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Optional
 
 from commonroad.common.reader.dynamic_interface import DynamicInterface
 from commonroad.common.reader.file_reader_protobuf import (
@@ -69,47 +69,47 @@ class CommonRoadFileReader:
         self._file_reader = file_reader
 
     @property
-    def filename_2020a(self) -> Union[None, Path_T]:
+    def filename_2020a(self) -> Optional[Path_T]:
         """
         Path of the 2020a xml file path.
         """
         return self._filename_2020a
 
     @filename_2020a.setter
-    def filename_2020a(self, filename_2020a: Union[None, Path_T]):
+    def filename_2020a(self, filename_2020a: Optional[Path_T]):
         self._filename_2020a = filename_2020a
 
     @property
-    def filename_map(self) -> Union[None, Path_T]:
+    def filename_map(self) -> Optional[Path_T]:
         """
         Path of the 2024 map file.
         """
         return self._filename_map
 
     @filename_map.setter
-    def filename_map(self, filename_map: Union[None, Path_T]):
+    def filename_map(self, filename_map: Optional[Path_T]):
         self._filename_map = filename_map
 
     @property
-    def filename_scenario(self) -> Union[None, Path_T]:
+    def filename_scenario(self) -> Optional[Path_T]:
         """
         Path of the 2024 scenario file.
         """
         return self._filename_scenario
 
     @filename_scenario.setter
-    def filename_scenario(self, filename_scenario: Union[None, Path_T]):
+    def filename_scenario(self, filename_scenario: Optional[Path_T]):
         self._filename_scenario = filename_scenario
 
     @property
-    def filename_dynamic(self) -> Union[None, Path_T]:
+    def filename_dynamic(self) -> Optional[Path_T]:
         """
         Path of the 2024 dynamic file.
         """
         return self._filename_dynamic
 
     @filename_dynamic.setter
-    def filename_dynamic(self, filename_dynamic: Union[None, Path_T]):
+    def filename_dynamic(self, filename_dynamic: Optional[Path_T]):
         self._filename_dynamic = filename_dynamic
 
     # 2020a reader
@@ -190,21 +190,22 @@ class CommonRoadFileReader:
     def open_map_dynamic(self) -> Scenario:
         """
         Opens and combines CommonRoadMap and CommonRoadDynamic files.
+        The user has to provide both map and dynamic filenames in order to call this function.
 
         :return: Scenario
         """
-        base_name = os.path.basename(self.filename_dynamic)
-        base_path = os.path.dirname(self.filename_dynamic)
-        map_name = base_name.split("-")[0] + "-" + base_name.split("_")[1].split("-")[1]
-        pure_name = base_name.split(".pb")[0]
-        if pure_name.endswith("-SC"):
-            dynamic_name = pure_name.split("-SC")[0]
-        else:
-            dynamic_name = pure_name
+
+        # check for the map filename
+        if self.filename_map is None:
+            raise NameError("Filename of the 2024 map file is missing")
+
+        # check for the dynamic filename
+        if self.filename_dynamic is None:
+            raise NameError("Filename of the 2024 dynamic file is missing")
 
         # this function only works with 2024 protobuf files
-        road_network, env_obstacles = ProtobufFileReaderMap(os.path.join(base_path, map_name + ".pb")).open()
-        dynamic = ProtobufFileReaderDynamic(os.path.join(base_path, dynamic_name + ".pb")).open()
+        road_network, env_obstacles = ProtobufFileReaderMap(filename=self.filename_map).open()
+        dynamic = ProtobufFileReaderDynamic(filename=self.filename_dynamic).open()
 
         dynamic.environment_obstacles = env_obstacles
 
@@ -213,24 +214,26 @@ class CommonRoadFileReader:
     def open_all(self) -> Tuple[Scenario, PlanningProblemSet, List[CooperativePlanningProblem]]:
         """
         Opens and combines CommonRoadMap, CommonRoadDynamic and CommonRoadScenario files.
+        The user has to provide scenario, dynamic and map filenames in order to call this function.
 
         :return: Tuple of a Scenario, PlanningProblemSet and a list of CooperativePlanningProblems
         """
-        base_name = os.path.basename(self.filename_dynamic)
-        base_path = os.path.dirname(self.filename_dynamic)
-        map_name = base_name.split("-")[0] + "-" + base_name.split("_")[1].split("-")[1]
-        pure_name = base_name.split(".pb")[0]
-        if pure_name.endswith("-SC"):
-            scenario_name = pure_name
-            dynamic_name = pure_name.split("-SC")[0]
-        else:
-            scenario_name = pure_name + "-SC"
-            dynamic_name = pure_name
+        # check for the map filename
+        if self.filename_map is None:
+            raise NameError("Filename of the 2024 map file is missing")
+
+        # check for the dynamic filename
+        if self.filename_dynamic is None:
+            raise NameError("Filename of the 2024 dynamic file is missing")
+
+        # check for the scenario filename
+        if self.filename_scenario is None:
+            raise NameError("Filename of the 2024 scenario file is missing")
 
         # this function only works with 2024 protobuf files
-        road_network, environment_obstacles = ProtobufFileReaderMap(os.path.join(base_path, map_name + ".pb")).open()
-        scenario = ProtobufFileReaderScenario(os.path.join(base_path, scenario_name + ".pb")).open()
-        dynamic_pb = ProtobufFileReaderDynamic(os.path.join(base_path, dynamic_name + ".pb")).open()
+        road_network, environment_obstacles = ProtobufFileReaderMap(filename=self.filename_map).open()
+        scenario = ProtobufFileReaderScenario(filename=self.filename_scenario).open()
+        dynamic_pb = ProtobufFileReaderDynamic(filename=self.filename_dynamic).open()
 
         dynamic_pb.environment_obstacles = environment_obstacles
 
