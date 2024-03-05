@@ -6,6 +6,9 @@
 - Support for CommonRoad format 2024a
 - CommonRoad documentation source files
 
+### Changed
+- Consolidated 2024a CommonRoad FileReader classes into a single class
+
 ### Removed
 - Writing 2020a XML and Protobuf scenarios
 - Reading 2020a Protobuf scenarios
