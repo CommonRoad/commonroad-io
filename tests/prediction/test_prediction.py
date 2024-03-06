@@ -1,4 +1,5 @@
 import unittest
+from typing import List
 
 import numpy as np
 
@@ -57,28 +58,31 @@ class TestTrajectoryPrediction(unittest.TestCase):
 
     def setUp(self):
         """create sample trajectory"""
+        # Define shape of predicted object
+        self.shape = Rectangle(2, 1)
+
+        # Create a trajectory
         state1 = KSState(time_step=2, position=np.array([0.0, 0.0]), orientation=0.0)
         state2 = KSState(time_step=3, position=np.array([1.0, 0.0]), orientation=np.pi / 4)
         state3 = KSState(time_step=4, position=np.array([2.0, 1.0]), orientation=np.pi / 2)
         self.trajectory = Trajectory(2, [state1, state2, state3])
+
+        # Create reversed trajectory
+        state1 = KSState(time_step=4, position=np.array([0.0, 0.0]), orientation=0.0)
+        state2 = KSState(time_step=3, position=np.array([1.0, 0.0]), orientation=np.pi / 4)
+        state3 = KSState(time_step=2, position=np.array([2.0, 1.0]), orientation=np.pi / 2)
+        self.reverse_trajectory = Trajectory(2, [state3, state2, state1])
+
         # Pretend that we transition from lanelet -1 to lanelet -2 on this trajectory
         self.center_lanelet_assignment = {2: {-1}, 3: {-1, -2}, 4: {-2}}
         self.center_lanelet_assignment_different_order = {2: {-1}, 3: {-2, -1}, 4: {-2}}
+
         # Assume that our shape is already on lanelet -2 while the center is only on lanelet -1 at time-step 2
         self.shape_lanelet_assignment = {2: {-1, -2}, 3: {-1, -2}, 4: {-2}}
         self.shape_lanelet_assignment_different_order = {2: {-2, -1}, 3: {-1, -2}, 4: {-2}}
 
-    def test_initialization(self):
-        """test if TrajectoryPrediction initializes correctly and setter and getter for member variables work."""
-        tp = TrajectoryPrediction(self.trajectory, Rectangle(2, 1))
-        self.assertEqual(tp.shape.length, 2)
-        self.assertEqual(tp.shape.width, 1)
-        self.assertEqual(tp.trajectory.final_state.time_step, 4)
-        np.testing.assert_array_equal(tp.trajectory.final_state.position, np.array([2.0, 1.0]))
-
-    def test_occupancy_set(self):
-        """test if occupancy set is created correctly"""
-        occ_set = TrajectoryPrediction(self.trajectory, Rectangle(2, 1)).occupancy_set
+    def check_occupancy_set_for_trajectory(self, occ_set: List[Occupancy]):
+        """Check if the occupancy set is as expected for a prediction with self.trajectory and self.shape"""
         self.assertEqual(len(occ_set), 3)
         np.testing.assert_array_equal(occ_set[0].shape.center, np.array([0.0, 0.0]))
         np.testing.assert_array_equal(occ_set[1].shape.center, np.array([1.0, 0.0]))
@@ -89,6 +93,24 @@ class TestTrajectoryPrediction(unittest.TestCase):
         self.assertEqual(occ_set[0].time_step, 2)
         self.assertEqual(occ_set[1].time_step, 3)
         self.assertEqual(occ_set[2].time_step, 4)
+
+    def test_initialization(self):
+        """test if TrajectoryPrediction initializes correctly and setter and getter for member variables work."""
+        tp = TrajectoryPrediction(self.trajectory, self.shape)
+        self.assertEqual(tp.shape.length, 2)
+        self.assertEqual(tp.shape.width, 1)
+        self.assertEqual(tp.trajectory.final_state.time_step, 4)
+        np.testing.assert_array_equal(tp.trajectory.final_state.position, np.array([2.0, 1.0]))
+
+    def test_occupancy_set(self):
+        """test if occupancy set is created correctly"""
+        occ_set = TrajectoryPrediction(self.trajectory, self.shape).occupancy_set
+        self.check_occupancy_set_for_trajectory(occ_set)
+
+    def test_occupancy_set_updates(self):
+        pred = TrajectoryPrediction(self.reverse_trajectory, self.shape)
+        pred.trajectory = self.trajectory
+        self.check_occupancy_set_for_trajectory(pred.occupancy_set)
 
     def test_occupancy_at_time_step(self):
         """test if occupancy_at_time_step returns the correct occupancy"""
@@ -104,11 +126,11 @@ class TestTrajectoryPrediction(unittest.TestCase):
         ):
             self.assertNotEqual(x, y, msg="This test relies on these two sets having different iteration orders!")
         tp = TrajectoryPrediction(
-            self.trajectory, Rectangle(2, 1), self.center_lanelet_assignment, self.shape_lanelet_assignment
+            self.trajectory, self.shape, self.center_lanelet_assignment, self.shape_lanelet_assignment
         )
         tp_copy = TrajectoryPrediction(
             self.trajectory,
-            Rectangle(2, 1),
+            self.shape,
             self.center_lanelet_assignment_different_order,
             self.shape_lanelet_assignment,
         )
@@ -121,13 +143,13 @@ class TestTrajectoryPrediction(unittest.TestCase):
             self.assertNotEqual(x, y, msg="This test relies on these two sets having different iteration orders!")
         tp = TrajectoryPrediction(
             self.trajectory,
-            Rectangle(2, 1),
+            self.shape,
             self.center_lanelet_assignment,
             self.shape_lanelet_assignment_different_order,
         )
         tp_copy = TrajectoryPrediction(
             self.trajectory,
-            Rectangle(2, 1),
+            self.shape,
             self.center_lanelet_assignment,
             self.shape_lanelet_assignment_different_order,
         )
@@ -136,7 +158,7 @@ class TestTrajectoryPrediction(unittest.TestCase):
 
     def test_translate_rotate(self):
         """test if TrajectoryPrediction can be translated and rotated properly"""
-        tp = TrajectoryPrediction(self.trajectory, Rectangle(2, 1))
+        tp = TrajectoryPrediction(self.trajectory, self.shape)
         tp.translate_rotate(np.array([3.0, 2.2]), -np.pi)
         self.assertIsInstance(tp.occupancy_set[0].shape, Rectangle)
         self.assertAlmostEqual(tp.occupancy_set[0].shape.orientation, -np.pi)

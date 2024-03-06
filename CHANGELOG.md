@@ -18,6 +18,11 @@
 
 ### Changed
 - Simplified traffic sign matching in FileReader
+- The occupancy set, initial time step ,and final time step are now computed properties of TrajectoryPrediction
+
+### Removed
+- Setters for initial and final time step in predictions
+- Setter for occupancy_set in TrajectoryPrediction
 
 ## [2023.4] - 2023-12-19
 
