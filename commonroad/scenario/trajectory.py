@@ -109,13 +109,13 @@ class Trajectory(IDrawable):
         assert set(self._state_list[0].used_attributes) == set(state.used_attributes), (
             "<Trajectory/append_state>: attributes of argument state do not match"
             " the attributes of the other states in the state list."
-            "Expected attributes '%s'. Go attributes '%s'" % (self._state_list[0].attributes, state.attributes)
+            " Expected attributes '%s'. Go attributes '%s'" % (self._state_list[0].attributes, state.attributes)
         )
 
         assert state.time_step > self.final_state.time_step, (
             "<Trajectory/append_state>: the time step of the argument state"
             " must be larger than the time step of the last state in the trajectory."
-            "Time step of last state in trajectory: %s. Got time step: %s"
+            " Time step of last state in trajectory: %s. Got time step: %s"
             % (self.final_state.time_step, state.time_step)
         )
 
