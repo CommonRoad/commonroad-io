@@ -1,5 +1,5 @@
 import warnings
-from typing import List, Tuple, Union
+from typing import List, Union
 
 import numpy as np
 
@@ -25,7 +25,7 @@ class Trajectory(IDrawable):
     uncertain (see :class:`commonroad.scenario.trajectory.State`); however,
     only exact time_step are allowed."""
 
-    def __init__(self, initial_time_step: int, state_list: List[TraceState]):
+    def __init__(self, initial_time_step: int, state_list: List[TraceState], raise_warning_on_mutation: bool = True):
         """
         :param initial_time_step: initial time step of the trajectory
         :param state_list: ordered sequence of states over time representing
@@ -35,7 +35,8 @@ class Trajectory(IDrawable):
         """
         self.initial_time_step: int = initial_time_step
 
-        self._state_list: Tuple[TraceState] = tuple(self.check_state_list(state_list))
+        self._state_list: List[TraceState] = self.check_state_list(state_list)
+        self._raise_warning_on_mutation = raise_warning_on_mutation
 
     def check_state_list(self, state_list: List[TraceState]) -> List[TraceState]:
         """
@@ -79,7 +80,7 @@ class Trajectory(IDrawable):
         return self._initial_time_step == other.initial_time_step and list(self._state_list) == list(other.state_list)
 
     def __hash__(self):
-        return hash((self._initial_time_step, self._state_list))
+        return hash((self._initial_time_step, tuple(self._state_list)))
 
     @property
     def initial_time_step(self) -> int:
@@ -94,10 +95,39 @@ class Trajectory(IDrawable):
         )
         self._initial_time_step = initial_time_step
 
+    def append_state(self, state: TraceState):
+        """Append the state to the trajectory.
+
+        :param state: The new state. It's time step must be larger than the time step of the last state in the trajectory
+        """
+        assert isinstance(
+            state, State
+        ), "<Trajectory/append_state>: argument state of wrong type. Expected type: %s. Got type: %s." % (
+            State,
+            type(state),
+        )
+        assert set(self._state_list[0].used_attributes) == set(state.used_attributes), (
+            "<Trajectory/append_state>: attributes of argument state do not match"
+            " the attributes of the other states in the state list."
+            "Expected attributes '%s'. Go attributes '%s'" % (self._state_list[0].attributes, state.attributes)
+        )
+
+        assert state.time_step > self.final_state.time_step, (
+            "<Trajectory/append_state>: the time step of the argument state"
+            " must be larger than the time step of the last state in the trajectory."
+            "Time step of last state in trajectory: %s. Got time step: %s"
+            % (self.final_state.time_step, state.time_step)
+        )
+
+        if self._raise_warning_on_mutation:
+            warnings.warn("<Trajectory/append_state>: Mutating the internal state_list of the Trajectory")
+
+        self._state_list.append(state)
+
     @property
     def state_list(self) -> List[TraceState]:
         """List of states of the trajectory over time."""
-        return list(self._state_list)
+        return self._state_list
 
     @property
     def final_state(self) -> TraceState:
@@ -147,7 +177,7 @@ class Trajectory(IDrawable):
         new_state_list = []
         for i in range(len(self._state_list)):
             new_state_list.append(self._state_list[i].translate_rotate(translation, angle))
-        self._state_list = tuple(new_state_list)
+        self._state_list = new_state_list
 
     @classmethod
     def resample_continuous_time_state_list(
