@@ -25,7 +25,7 @@ class Trajectory(IDrawable):
     uncertain (see :class:`commonroad.scenario.trajectory.State`); however,
     only exact time_step are allowed."""
 
-    def __init__(self, initial_time_step: int, state_list: List[TraceState], raise_warning_on_mutation: bool = True):
+    def __init__(self, initial_time_step: int, state_list: List[TraceState]):
         """
         :param initial_time_step: initial time step of the trajectory
         :param state_list: ordered sequence of states over time representing
@@ -36,7 +36,6 @@ class Trajectory(IDrawable):
         self.initial_time_step: int = initial_time_step
 
         self._state_list: List[TraceState] = self.check_state_list(state_list)
-        self._raise_warning_on_mutation = raise_warning_on_mutation
 
     def check_state_list(self, state_list: List[TraceState]) -> List[TraceState]:
         """
@@ -107,9 +106,9 @@ class Trajectory(IDrawable):
             type(state),
         )
         assert set(self._state_list[0].used_attributes) == set(state.used_attributes), (
-            "<Trajectory/append_state>: attributes of argument state do not match"
+            "<Trajectory/append_state>: attributes of the argument state do not match"
             " the attributes of the other states in the state list."
-            " Expected attributes '%s'. Go attributes '%s'" % (self._state_list[0].attributes, state.attributes)
+            " Expected attributes: '%s'. Got attributes: '%s'" % (self._state_list[0].attributes, state.attributes)
         )
 
         assert state.time_step > self.final_state.time_step, (
@@ -118,9 +117,6 @@ class Trajectory(IDrawable):
             " Time step of last state in trajectory: %s. Got time step: %s"
             % (self.final_state.time_step, state.time_step)
         )
-
-        if self._raise_warning_on_mutation:
-            warnings.warn("<Trajectory/append_state>: Mutating the internal state_list of the Trajectory")
 
         self._state_list.append(state)
 
