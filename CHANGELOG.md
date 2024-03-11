@@ -17,6 +17,7 @@
 - Simplified traffic sign matching in FileReader
 - The occupancy set, initial time step ,and final time step are now computed properties of TrajectoryPrediction
 - Trajectory now allows direct access to the state list
+- Activation condition for drawing occupancies
 
 ### Removed
 - Setters for initial and final time step in predictions
