@@ -170,7 +170,6 @@ class TestVisualizationV2(unittest.TestCase):
         with warnings.catch_warnings(record=True) as w:
             for ts_type in traffic_sign_types:
                 for v in ts_type:
-                    # print(v)
                     ts = TrafficSign(
                         100,
                         [TrafficSignElement(v, ["test1", "test2"])],
@@ -192,9 +191,6 @@ class TestVisualizationV2(unittest.TestCase):
     def test_planning(self):
         # test draw_object for all possible object types
         full_path = os.path.dirname(os.path.abspath(__file__))
-        # print(full_path)
-        # filename = full_path +
-        # '/../../../../../scenarios/cooperative/C-USA_Lanker-2_4_T-1.xml'
         filename = full_path + "/../test_scenarios/test_reading_all.xml"
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         planning_problem_set: PlanningProblemSet = planning_problem_set
