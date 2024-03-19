@@ -3,11 +3,8 @@ import unittest
 import warnings
 
 import matplotlib as mpl
-
-# mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
-import pytest
 
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.scenario.traffic_sign import (

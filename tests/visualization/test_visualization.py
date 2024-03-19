@@ -1,6 +1,3 @@
-# import matplotlib
-# matplotlib.use('Qt5Agg')
-# matplotlib.use('TkAgg')
 import math
 import os
 import tempfile
@@ -10,7 +7,6 @@ import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pytest
 
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.geometry.shape import Circle, Polygon, Rectangle, ShapeGroup
