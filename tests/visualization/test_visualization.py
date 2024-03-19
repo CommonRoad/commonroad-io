@@ -80,7 +80,7 @@ class TestVisualizationV2(unittest.TestCase):
         scenario: Scenario = scenario
 
         rnd = MPRenderer()
-        with pytest.warns(None):
+        with warnings.catch_warnings(record=True):
             scenario.lanelet_network.draw(
                 rnd,
             )
@@ -149,7 +149,7 @@ class TestVisualizationV2(unittest.TestCase):
         x0 = -40
         rnd = MPRenderer(plot_limits=[x0, 40, -40, 40], focus_obstacle=scenario.obstacle_by_id(1239))
         rnd.draw_params.dynamic_obstacle.occupancy.draw_occupancies = True
-        with pytest.warns(None):
+        with warnings.catch_warnings(record=True):
             scenario.lanelet_network.draw(
                 rnd,
             )
@@ -195,7 +195,7 @@ class TestVisualizationV2(unittest.TestCase):
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         planning_problem_set: PlanningProblemSet = planning_problem_set
 
-        with pytest.warns(None) as record_warnings:
+        with warnings.catch_warnings(record=True) as record_warnings:
             planning_problem_set.draw(
                 self.rnd,
             )

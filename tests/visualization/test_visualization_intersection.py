@@ -1,5 +1,6 @@
 import os
 import unittest
+import warnings
 
 import matplotlib as mpl
 
@@ -106,7 +107,7 @@ class TestVisualizationV2(unittest.TestCase):
         plt.close("all")
         plt.figure(figsize=[10, 10])
         self.rnd = MPRenderer(ax=plt.gca())
-        with pytest.warns(None) as record:
+        with warnings.catch_warnings(record=True) as record:
             for value in TrafficSignIDGermany:
                 kwargs["position"] = kwargs["position"] + np.array([0.0, 5.0])
                 TrafficSign(traffic_sign_elements=[TrafficSignElement(value, ["foo"])], **kwargs).draw(self.rnd)
