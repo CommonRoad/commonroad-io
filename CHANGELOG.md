@@ -12,6 +12,8 @@
 - Typo: `TrafficSigInterpreter` → `TrafficSignInterpreter`
 - Typo EMERGENCY_STOP traffic sign enum name
 - Activation condition for drawing occupancies
+- Traffic sign with first occurrence set to None can be hashed
+- Traffic light can be plotted without a TrafficLightCycle
 
 ### Changed
 - Optimization-based planner tutorial now uses planner and predictor interfaces
