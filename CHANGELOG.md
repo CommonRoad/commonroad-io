@@ -11,6 +11,7 @@
 ### Fixed
 - Typo: `TrafficSigInterpreter` → `TrafficSignInterpreter`
 - Typo EMERGENCY_STOP traffic sign enum name
+- Traffic Sign with first occurrence set to None can be hashed
 
 ### Changed
 - Optimization-based planner tutorial now uses planner and predictor interfaces

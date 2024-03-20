@@ -81,6 +81,10 @@ class TestTrafficSign(unittest.TestCase):
         traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1.0, 1.0]))
         self.assertEqual(hash(traffic_sign_one), hash(traffic_sign_two))
 
+        traffic_sign_one = TrafficSign(1, [traffic_sign_max_speed], set(), np.array([1.0, 1.0]))
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], None, np.array([1.0, 1.0]))
+        self.assertEqual(hash(traffic_sign_one), hash(traffic_sign_two))
+
 
 class TestTrafficSignElement(unittest.TestCase):
     def test_equality(self):
