@@ -11,6 +11,7 @@
 ### Fixed
 - Typo: `TrafficSigInterpreter` → `TrafficSignInterpreter`
 - Typo EMERGENCY_STOP traffic sign enum name
+- Traffic Light can be plotted without a TrafficLightCycle
 
 ### Changed
 - Optimization-based planner tutorial now uses planner and predictor interfaces
