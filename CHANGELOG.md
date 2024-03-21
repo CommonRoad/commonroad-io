@@ -11,15 +11,17 @@
 ### Fixed
 - Typo: `TrafficSigInterpreter` → `TrafficSignInterpreter`
 - Typo EMERGENCY_STOP traffic sign enum name
+- Activation condition for drawing occupancies
 - Traffic sign with first occurrence set to None can be hashed
 - Traffic light can be plotted without a TrafficLightCycle
 
 ### Changed
 - Optimization-based planner tutorial now uses planner and predictor interfaces
 - Simplified traffic sign matching in FileReader
-- The occupancy set, initial time step ,and final time step are now computed properties of TrajectoryPrediction
+- The occupancy set, initial time step, and final time step are now computed properties of TrajectoryPrediction
 - Trajectory now allows direct access to the state list
-- Activation condition for drawing occupancies
+- Drawing occupancies by default false
+- Improved visual appearance of notebooks
 
 ### Removed
 - Setters for initial and final time step in predictions
