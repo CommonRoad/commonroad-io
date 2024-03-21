@@ -140,7 +140,6 @@ class TestPolylineUtil(unittest.TestCase):
 
         polyline_2 = np.array([[1.5, 0.5], [1.5, 1], [1.5, 1.5], [1.5, 2]])
         intersections = compute_polyline_intersections(polyline_1, polyline_2)
-        print(intersections)
         self.assertEqual(intersections.size, 0)
 
         polylines_1 = [

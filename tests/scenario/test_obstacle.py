@@ -193,7 +193,6 @@ class TestObstacle(unittest.TestCase):
 
         # check transformation of occupancies
         for i in range(3):
-            print(dynamic_obs.occupancy_at_time(i).shape.center, target_statelist[i])
             np.testing.assert_array_almost_equal(dynamic_obs.occupancy_at_time(i).shape.center, target_statelist[i])
 
         # rotation
