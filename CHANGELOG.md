@@ -1,6 +1,7 @@
 # Changelog
 
-## [2024.1] - 2024-03-XX
+## [2024.1] - 2024-03-21
+
 ### Added
 - Country-independent traffic sign enum
 - Missing country-specific max speed sign IDs
