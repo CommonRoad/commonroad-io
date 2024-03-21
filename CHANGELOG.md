@@ -13,24 +13,33 @@
 - Writing 2020a XML and Protobuf scenarios
 - Reading 2020a Protobuf scenarios
 
-## [2024.1] - 2024-03-XX
+## [2024.1] - 2024-03-21
+
 ### Added
 - Country-independent traffic sign enum
 - Missing country-specific max speed sign IDs
 - Automatically generated TrafficSignIDCountries enum for importing in other scripts
-
-### Added
 - GroundTruthPredictor class to use stored trajectories as prediction
-
-### Changed
-- Optimization-based planner tutorial now uses planner and predictor interfaces
+- Function to append a state to a trajectory
 
 ### Fixed
 - Typo: `TrafficSigInterpreter` → `TrafficSignInterpreter`
 - Typo EMERGENCY_STOP traffic sign enum name
+- Activation condition for drawing occupancies
+- Traffic sign with first occurrence set to None can be hashed
+- Traffic light can be plotted without a TrafficLightCycle
 
 ### Changed
+- Optimization-based planner tutorial now uses planner and predictor interfaces
 - Simplified traffic sign matching in FileReader
+- The occupancy set, initial time step, and final time step are now computed properties of TrajectoryPrediction
+- Trajectory now allows direct access to the state list
+- Drawing occupancies by default false
+- Improved visual appearance of notebooks
+
+### Removed
+- Setters for initial and final time step in predictions
+- Setter for occupancy_set in TrajectoryPrediction
 
 ## [2023.4] - 2023-12-19
 

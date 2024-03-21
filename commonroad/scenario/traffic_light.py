@@ -206,7 +206,10 @@ class TrafficLight(IDrawable):
         else:
             self._color = color
         self._traffic_light_cycle = traffic_light_cycle
-        self._active = active
+        if self._traffic_light_cycle is None or len(self._traffic_light_cycle.cycle_elements) == 0:
+            self._active = False
+        else:
+            self._active = active
         self._direction = direction
         self._shape = shape
 

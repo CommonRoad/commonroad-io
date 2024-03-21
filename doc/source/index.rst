@@ -10,14 +10,14 @@ CommonRoad-io
 The commonroad-io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tools of the CommonRoad Framework.
 With commonroad-io, those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`__.
 
-commonroad-io 2023.4 is compatible with CommonRoad scenarios of version 2020a and supports reading 2018b scenarios.
+commonroad-io 2024.1 is compatible with CommonRoad scenarios of version 2020a and supports reading 2018b scenarios.
 
 The software is written in Python and tested on Linux for the Python 3.8, 3.9, 3.10, 3.11, and 3.12.
 
 Documentation
 =============
 
-The full documentation of the API and introducing examples can be found under `commonroad.in.tum.de <https://commonroad-io.readthedocs.io/en/latest/>`__.
+The full documentation of the API and introducing examples can be found under `https://cps.pages.gitlab.lrz.de/commonroad/commonroad-io/ <https://cps.pages.gitlab.lrz.de/commonroad/commonroad-io/>`__.
 
 For getting started, we recommend our `tutorials <https://commonroad.in.tum.de/commonroad-io>`__.
 
@@ -66,31 +66,41 @@ and add the folder commonroad-io to your Python environment.
 
 Changelog
 =========
-Compared to version 2023.3, the following features have been added or changed:
+Compared to version 2024.1, the following features have been added or changed:
 
 Added
 -----
-- Function to convert 3D scenarios to 2D scenarios
-- Support for Python 3.12
-- Function to retrieve all lanelets referencing a given traffic sign/light
-- New line marking types
-- Traffic light shape
+
+- Country-independent traffic sign enum
+- Missing country-specific max speed sign IDs
+- Automatically generated TrafficSignIDCountries enum for importing in other scripts
+- GroundTruthPredictor class to use stored trajectories as prediction
+- Function to append a state to a trajectory
 
 Fixed
 -----
 
-- Conversion to initial state in function create_dynamic_obstacle of solution object
+- Typo: `TrafficSigInterpreter` → `TrafficSignInterpreter`
+- Typo EMERGENCY_STOP traffic sign enum name
+- Activation condition for drawing occupancies
+- Traffic sign with first occurrence set to None can be hashed
+- Traffic light can be plotted without a TrafficLightCycle
 
 Changed
 -------
 
-- Traffic signs for Zamunda now use images of German traffic signs
-- Code formatting (flake8, black, isort)
+- Optimization-based planner tutorial now uses planner and predictor interfaces
+- Simplified traffic sign matching in FileReader
+- The occupancy set, initial time step, and final time step are now computed properties of TrajectoryPrediction
+- Trajectory now allows direct access to the state list
+- Drawing occupancies by default false
+- Improved visual appearance of notebooks
 
 Removed
 -------
-- Images for Zamunda traffic signs
-- Function commonorad.common.util.interpolate_angle
+
+- Setters for initial and final time step in predictions
+- Setter for occupancy_set in TrajectoryPrediction
 
 A detailed overview about the changes in each version is provided in the `Changelog <https://gitlab.lrz.de/tum-cps/commonroad_io/-/blob/master/CHANGELOG.md>`__.
 

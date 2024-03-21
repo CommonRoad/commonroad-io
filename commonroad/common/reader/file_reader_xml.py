@@ -278,7 +278,7 @@ class ScenarioFactory:
             scenario.add_objects(cls._obstacles_2018b(xml_node, scenario.lanelet_network, lanelet_assignment))
             for key, value in LaneletFactory._speed_limits.items():
                 for lanelet in value:
-                    if scenario_id.country_id in [val for val in SupportedTrafficSignCountry]:
+                    if scenario_id.country_id in [val.value for val in SupportedTrafficSignCountry]:
                         traffic_sign_element = TrafficSignElement(
                             TrafficSignIDCountries[scenario_id.country_id].MAX_SPEED, [str(key)]
                         )

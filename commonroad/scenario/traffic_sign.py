@@ -914,6 +914,8 @@ class TrafficSign(IDrawable):
         self._traffic_sign_elements = traffic_sign_elements
         self._virtual = virtual
         self._first_occurrence = first_occurrence
+        if self._first_occurrence is None:
+            self._first_occurrence = set()
 
     def __eq__(self, other):
         if not isinstance(other, TrafficSign):

@@ -1,6 +1,3 @@
-# import matplotlib
-# matplotlib.use('Qt5Agg')
-# matplotlib.use('TkAgg')
 import math
 import os
 import tempfile
@@ -10,7 +7,6 @@ import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pytest
 
 from commonroad.common.file_reader import CommonRoadFileReader
 from commonroad.geometry.shape import Circle, Polygon, Rectangle, ShapeGroup
@@ -80,7 +76,7 @@ class TestVisualizationV2(unittest.TestCase):
         scenario: Scenario = scenario
 
         rnd = MPRenderer()
-        with pytest.warns(None):
+        with warnings.catch_warnings(record=True):
             scenario.lanelet_network.draw(
                 rnd,
             )
@@ -149,7 +145,7 @@ class TestVisualizationV2(unittest.TestCase):
         x0 = -40
         rnd = MPRenderer(plot_limits=[x0, 40, -40, 40], focus_obstacle=scenario.obstacle_by_id(1239))
         rnd.draw_params.dynamic_obstacle.occupancy.draw_occupancies = True
-        with pytest.warns(None):
+        with warnings.catch_warnings(record=True):
             scenario.lanelet_network.draw(
                 rnd,
             )
@@ -170,7 +166,6 @@ class TestVisualizationV2(unittest.TestCase):
         with warnings.catch_warnings(record=True) as w:
             for ts_type in traffic_sign_types:
                 for v in ts_type:
-                    # print(v)
                     ts = TrafficSign(
                         100,
                         [TrafficSignElement(v, ["test1", "test2"])],
@@ -192,14 +187,11 @@ class TestVisualizationV2(unittest.TestCase):
     def test_planning(self):
         # test draw_object for all possible object types
         full_path = os.path.dirname(os.path.abspath(__file__))
-        # print(full_path)
-        # filename = full_path +
-        # '/../../../../../scenarios/cooperative/C-USA_Lanker-2_4_T-1.xml'
         filename = full_path + "/../test_scenarios/xml/2020a/ZAM_TestReadingAll-1_1_T-1.xml"
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         planning_problem_set: PlanningProblemSet = planning_problem_set
 
-        with pytest.warns(None) as record_warnings:
+        with warnings.catch_warnings(record=True) as record_warnings:
             planning_problem_set.draw(
                 self.rnd,
             )

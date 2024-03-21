@@ -38,6 +38,7 @@ from commonroad.scenario.scenario import Scenario, ScenarioID
 from commonroad.scenario.state import InitialState, KSState
 from commonroad.scenario.traffic_light import (
     TrafficLight,
+    TrafficLightCycle,
     TrafficLightCycleElement,
     TrafficLightState,
 )
@@ -113,11 +114,13 @@ class TestScenario(unittest.TestCase):
         self.traffic_sign2 = TrafficSign(301, [traffic_sign_max_speed], {100}, np.array([0.0, 2]))
         self.traffic_sign3 = TrafficSign(302, [traffic_sign_max_speed], {100}, np.array([0.0, 2]))
         self.traffic_sign4 = TrafficSign(303, [traffic_sign_max_speed], {100}, np.array([0.0, 2]))
-        cycle = [
-            TrafficLightCycleElement(TrafficLightState.GREEN, 2),
-            TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
-            TrafficLightCycleElement(TrafficLightState.RED, 2),
-        ]
+        cycle = TrafficLightCycle(
+            [
+                TrafficLightCycleElement(TrafficLightState.GREEN, 2),
+                TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
+                TrafficLightCycleElement(TrafficLightState.RED, 2),
+            ]
+        )
         self.traffic_light = TrafficLight(42, np.array([10.0, 10.0]), cycle)
         self.traffic_light100 = TrafficLight(200, np.array([10.0, 10.0]), cycle)
         self.traffic_light101 = TrafficLight(201, np.array([10.0, 10.0]), cycle)
