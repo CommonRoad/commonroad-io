@@ -126,7 +126,7 @@ class StateParams(BaseParam):
 
 @dataclass
 class OccupancyParams(BaseParam):
-    draw_occupancies: bool = True
+    draw_occupancies: bool = False
     shape: ShapeParams = field(default_factory=lambda: ShapeParams(zorder=18, opacity=0.2))
     uncertain_position: ShapeParams = field(
         default_factory=lambda: ShapeParams(opacity=0.6, facecolor="k", edgecolor="r")
