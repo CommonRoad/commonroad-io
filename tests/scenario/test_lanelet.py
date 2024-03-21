@@ -76,7 +76,6 @@ class TestLanelet(unittest.TestCase):
         for i, (min_dist, dist) in enumerate(zip(lanelet.inner_distance, lanelet.distance)):
             self.assertAlmostEqual(dist, desired_dist[i])
             self.assertLessEqual(min_dist, dist)
-            print(min_dist, dist)
 
         self.assertEqual(lanelet.lanelet_id, lanelet_id)
         np.testing.assert_array_almost_equal(lanelet.right_vertices, right_vertices)
@@ -465,7 +464,6 @@ class TestLanelet(unittest.TestCase):
         self.assertIn([3], paths2)
         self.assertIn([2], paths2)
         self.assertTrue(len(paths2) == 2)
-        print(paths2)
 
         paths3 = lanelet4.find_lanelet_predecessors_in_range(ln, max_length=1.5)
         self.assertIn([3, 2], paths3)
