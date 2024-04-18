@@ -16,10 +16,10 @@ class TestArea(unittest.TestCase):
         self.assertIsNone(area_border.line_marking)
 
         # test the initialization without 'line_marking' parameter
-        area_border = AreaBorder(1, np.array([[1, 2], [3, 4]]), 1)
+        area_border = AreaBorder(1, np.array([[1, 2], [3, 4]]), [1])
         self.assertEqual(area_border.area_border_id, 1)
         self.assertEqual(area_border.border_vertices.all(), np.array([[1, 2], [3, 4]]).all())
-        self.assertEqual(area_border.adjacent, 1)
+        self.assertEqual(area_border.adjacent, [1])
         self.assertIsNone(area_border.line_marking)
 
         # test the initialization without 'adjacent' parameter
@@ -30,10 +30,10 @@ class TestArea(unittest.TestCase):
         self.assertIsNone(area_border.adjacent)
 
         # test the initialization with all parameters
-        area_border = AreaBorder(1, np.array([[1, 2], [3, 4]]), 1, LineMarking.SOLID)
+        area_border = AreaBorder(1, np.array([[1, 2], [3, 4]]), [1], LineMarking.SOLID)
         self.assertEqual(area_border.area_border_id, 1)
         self.assertEqual(area_border.border_vertices.tolist(), np.array([[1, 2], [3, 4]]).tolist())
-        self.assertEqual(area_border.adjacent, 1)
+        self.assertEqual(area_border.adjacent, [1])
         self.assertEqual(area_border.line_marking, LineMarking.SOLID)
 
     def test_basic_properties_area_border(self):
@@ -52,10 +52,18 @@ class TestArea(unittest.TestCase):
         self.assertEqual(area_border.border_vertices.all(), np.array([[1, 2, 3], [4, 5, 6]]).all())
 
         # test the properties of adjacent
-        area_border.adjacent = 1
+        area_border.adjacent = [1]
         with self.assertRaises(AssertionError):
             area_border.adjacent = "a"
-        self.assertEqual(area_border.adjacent, 1)
+        self.assertEqual(area_border.adjacent, [1])
+        area_border.adjacent = [1, 2, 3]
+        with self.assertRaises(AssertionError):
+            area_border.adjacent = [1, 'a', 3]
+        with self.assertRaises(AssertionError):
+            area_border.adjacent = 1
+        with self.assertRaises(AssertionError):
+            area_border.adjacent = ['a', 'b', 'c']
+        self.assertEqual(area_border.adjacent, [1, 2, 3])
 
         # test the properties of line_marking
         area_border.line_marking = LineMarking.DASHED
