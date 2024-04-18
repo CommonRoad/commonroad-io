@@ -29,8 +29,8 @@ class AreaBorder:
         self,
         area_border_id: int,
         border_vertices: np.ndarray,
-        adjacent: List[int] = None,
-        line_marking: LineMarking = None,
+        adjacent: Optional[List[int]] = None,
+        line_marking: Optional[LineMarking] = None,
     ):
         """
         Constructor of an AreaBorder object
