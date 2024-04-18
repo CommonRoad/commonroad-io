@@ -29,7 +29,7 @@ class AreaBorder:
         self,
         area_border_id: int,
         border_vertices: np.ndarray,
-        adjacent: list[int] = None,
+        adjacent: List[int] = None,
         line_marking: LineMarking = None,
     ):
         """

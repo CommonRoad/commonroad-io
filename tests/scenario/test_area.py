@@ -58,11 +58,11 @@ class TestArea(unittest.TestCase):
         self.assertEqual(area_border.adjacent, [1])
         area_border.adjacent = [1, 2, 3]
         with self.assertRaises(AssertionError):
-            area_border.adjacent = [1, 'a', 3]
+            area_border.adjacent = [1, "a", 3]
         with self.assertRaises(AssertionError):
             area_border.adjacent = 1
         with self.assertRaises(AssertionError):
-            area_border.adjacent = ['a', 'b', 'c']
+            area_border.adjacent = ["a", "b", "c"]
         self.assertEqual(area_border.adjacent, [1, 2, 3])
 
         # test the properties of line_marking
