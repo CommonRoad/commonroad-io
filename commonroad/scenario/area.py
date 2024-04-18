@@ -70,12 +70,12 @@ class AreaBorder:
         self._border_vertices = value
 
     @property
-    def adjacent(self) -> Optional[list[int]]:
+    def adjacent(self) -> Optional[List[int]]:
         """Id of lanelets adjacent to the border."""
         return self._adjacent
 
     @adjacent.setter
-    def adjacent(self, val: list[int]):
+    def adjacent(self, val: List[int]):
         assert isinstance(val, list) and all(
             isinstance(x, int) for x in val
         ), "<AreaBorder/adjacent>: Provided adjacent is not valid! adjacent={}".format(val)
