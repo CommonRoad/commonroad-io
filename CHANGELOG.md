@@ -8,6 +8,7 @@
 - Automatically generated TrafficSignIDCountries enum for importing in other scripts
 - GroundTruthPredictor class to use stored trajectories as prediction
 - Function to append a state to a trajectory
+- AreaBorder can have multiple adjacent lanelets
 
 ### Fixed
 - Typo: `TrafficSigInterpreter` → `TrafficSignInterpreter`
