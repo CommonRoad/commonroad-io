@@ -1,5 +1,10 @@
 # Changelog
 
+## [2024.2] - 2024-06-XX
+
+### Fixed
+- AreaBorder can have multiple adjacent lanelets
+
 ## [2024.1] - 2024-03-21
 
 ### Added
@@ -8,7 +13,6 @@
 - Automatically generated TrafficSignIDCountries enum for importing in other scripts
 - GroundTruthPredictor class to use stored trajectories as prediction
 - Function to append a state to a trajectory
-- AreaBorder can have multiple adjacent lanelets
 
 ### Fixed
 - Typo: `TrafficSigInterpreter` → `TrafficSignInterpreter`
