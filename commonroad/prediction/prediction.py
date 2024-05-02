@@ -365,7 +365,7 @@ class TrajectoryPrediction(Prediction):
         return self._wheelbase_lengths
 
     @wheelbase_lengths.setter
-    def wheelbase_lengths(self, wheelbase_lenghts):
+    def wheelbase_lengths(self, wheelbase_lenghts: List[float]):
         self._wheelbase_lenghts = wheelbase_lenghts
         self._invalidate_occupancy_set()
 
