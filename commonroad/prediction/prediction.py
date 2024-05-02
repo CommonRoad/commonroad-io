@@ -220,6 +220,7 @@ class TrajectoryPrediction(Prediction):
     _trajectory: Trajectory
     _shape_lanelet_assignment: Optional[Dict[int, Set[int]]]
     _center_lanelet_assignment: Optional[Dict[int, Set[int]]]
+    _wheelbase_lengths: Optional[List[float]]
 
     def __init__(
         self,
@@ -239,6 +240,7 @@ class TrajectoryPrediction(Prediction):
         self._trajectory = trajectory
         self._shape_lanelet_assignment = shape_lanelet_assignment
         self._center_lanelet_assignment = center_lanelet_assignment
+        self._wheelbase_lengths = None
         for field, value in kwargs.items():
             setattr(self, field, value)
 
@@ -285,10 +287,15 @@ class TrajectoryPrediction(Prediction):
         """Final time step of the prediction."""
         return self._trajectory.final_state.time_step
 
-    @property
+    @functools.cached_property
     def occupancy_set(self) -> List[Occupancy]:
         """List of occupancies over time."""
         return self._create_occupancy_set()
+
+    def _invalidate_occupancy_set(self):
+        # Don't use hasattr for checking whether occupancy_set has been cached, since that would always compute the property
+        if "occupancy_set" in self.__dict__:
+            del self.occupancy_set
 
     @property
     def shape(self) -> Shape:
@@ -304,6 +311,7 @@ class TrajectoryPrediction(Prediction):
             type(shape),
         )
         self._shape = shape
+        self._invalidate_occupancy_set()
 
     @property
     def trajectory(self) -> Trajectory:
@@ -317,6 +325,7 @@ class TrajectoryPrediction(Prediction):
             " type. Expected type: %s. Got type: %s." % (Trajectory, type(trajectory))
         )
         self._trajectory = trajectory
+        self._invalidate_occupancy_set()
 
     @property
     def shape_lanelet_assignment(self) -> Union[None, Dict[int, Set[int]]]:
@@ -350,6 +359,16 @@ class TrajectoryPrediction(Prediction):
             )
         self._center_lanelet_assignment = center_lanelet_assignment
 
+    @property
+    def wheelbase_lengths(self) -> Optional[List[float]]:
+        """List of wheelbase lengths corresponding to the shape."""
+        return self._wheelbase_lengths
+
+    @wheelbase_lengths.setter
+    def wheelbase_lengths(self, wheelbase_lenghts: List[float]):
+        self._wheelbase_lenghts = wheelbase_lenghts
+        self._invalidate_occupancy_set()
+
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """Translates and rotates all states of the trajectory and re-computes the translated and rotated occupancy
         set.
@@ -367,19 +386,19 @@ class TrajectoryPrediction(Prediction):
 
         self._trajectory.translate_rotate(translation, angle)
 
-    @functools.lru_cache(maxsize=40)
     def _create_occupancy_set(self) -> List[Occupancy]:
         """Computes the occupancy set over time given the predicted trajectory and shape of the object."""
         occupancy_set = []
 
-        for k, state in enumerate(self._trajectory.state_list):
+        for state in self._trajectory.state_list:
             if not hasattr(state, "orientation"):
                 state.orientation = math.atan2(getattr(state, "velocity_y"), state.velocity)
-            occupied_region = occupancy_shape_from_state(self._shape, state)
 
-            if hasattr(self, "wheelbase_lengths"):
+            if self.wheelbase_lengths is not None:
                 shapes = self._shape.shapes
                 occupied_region = shape_group_occupancy_shape_from_state(shapes, state, self.wheelbase_lengths)
+            else:
+                occupied_region = occupancy_shape_from_state(self._shape, state)
 
             occupancy_set.append(Occupancy(state.time_step, occupied_region))
         return occupancy_set

@@ -4,6 +4,7 @@
 
 ### Fixed
 - AreaBorder can have multiple adjacent lanelets
+- Performance regression for occupancy_set lookups in TrajectoryPrediction
 
 ## [2024.1] - 2024-03-21
 
