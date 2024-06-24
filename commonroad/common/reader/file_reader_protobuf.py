@@ -147,9 +147,13 @@ class ProtobufFileReaderMap(FileReaderMap):
         Reads a CommonRoadMap file in protobuf format.
         :return: CommonRoadMap
         """
-        with open(self._filename, "rb") as file:
+        if isinstance(self._filename, bytes):
             commonroad_map_msg = commonroad_map_pb2.CommonRoadMap()
-            commonroad_map_msg.ParseFromString(file.read())
+            commonroad_map_msg.ParseFromString(self._filename)
+        else:
+            with open(self._filename, "rb") as file:
+                commonroad_map_msg = commonroad_map_pb2.CommonRoadMap()
+                commonroad_map_msg.ParseFromString(file.read())
 
         return CommonRoadMapFactory.create_from_message(commonroad_map_msg)
 
@@ -167,9 +171,13 @@ class ProtobufFileReaderDynamic(FileReaderDynamic):
         Reads a CommonRoadDynamic file in protobuf format.
         :return: CommonRoadDynamic
         """
-        with open(self._filename, "rb") as file:
+        if isinstance(self._filename, bytes):
             commonroad_dynamic_msg = commonroad_dynamic_pb2.CommonRoadDynamic()
-            commonroad_dynamic_msg.ParseFromString(file.read())
+            commonroad_dynamic_msg.ParseFromString(self._filename)
+        else:
+            with open(self._filename, "rb") as file:
+                commonroad_dynamic_msg = commonroad_dynamic_pb2.CommonRoadDynamic()
+                commonroad_dynamic_msg.ParseFromString(file.read())
 
         return CommonRoadDynamicFactory.create_from_message(commonroad_dynamic_msg)
 
