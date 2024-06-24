@@ -1,6 +1,6 @@
 import enum
 import warnings
-from typing import List, Set
+from typing import List, Optional, Set
 
 from commonroad.common.common_lanelet import LineMarking
 
@@ -22,13 +22,18 @@ class AreaBorder:
     Class which describes a border of an area
     """
 
-    def __init__(self, area_border_id: int, boundary: int, adjacent: int = None, line_marking: LineMarking = None):
+    def __init__(
+            self,
+            area_border_id: int,
+            boundary: int,
+            adjacent: Optional[List[int]] = None,
+            line_marking: Optional[LineMarking] = None):
         """
         Constructor of an AreaBorder object
 
         :param area_border_id: id of the area border
         :param boundary: id of the area border boundary
-        :param adjacent: id of the lanelet adjacent to the border
+        :param adjacent: id of lanelets adjacent to the border
         :param line_marking: line marking of the area border
         """
         self._area_border_id = area_border_id
@@ -59,13 +64,15 @@ class AreaBorder:
         self._boundary = boundary
 
     @property
-    def adjacent(self) -> int:
-        """Id of the lanelet adjacent to the border."""
+    def adjacent(self) -> Optional[List[int]]:
+        """Id of lanelets adjacent to the border."""
         return self._adjacent
 
     @adjacent.setter
-    def adjacent(self, val: int):
-        assert isinstance(val, int), "<AreaBorder/adjacent>: Provided adjacent is not valid! adjacent={}".format(val)
+    def adjacent(self, val: List[int]):
+        assert isinstance(val, list) and all(
+            isinstance(x, int) for x in val
+        ), "<AreaBorder/adjacent>: Provided adjacent is not valid! adjacent={}".format(val)
         self._adjacent = val
 
     @property

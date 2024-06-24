@@ -1,6 +1,6 @@
 # Changelog
 
-## [2024.2] - 2024-03-XX
+## [2024.3] - 2024-03-XX
 
 ### Added
 - Support for CommonRoad format 2024a
@@ -12,6 +12,12 @@
 ### Removed
 - Writing 2020a XML and Protobuf scenarios
 - Reading 2020a Protobuf scenarios
+
+## [2024.2] - 2024-06-XX
+
+### Fixed
+- AreaBorder can have multiple adjacent lanelets
+- Performance regression for occupancy_set lookups in TrajectoryPrediction
 
 ## [2024.1] - 2024-03-21
 
