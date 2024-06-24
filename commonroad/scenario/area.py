@@ -23,11 +23,12 @@ class AreaBorder:
     """
 
     def __init__(
-            self,
-            area_border_id: int,
-            boundary: int,
-            adjacent: Optional[List[int]] = None,
-            line_marking: Optional[LineMarking] = None):
+        self,
+        area_border_id: int,
+        boundary: int,
+        adjacent: Optional[List[int]] = None,
+        line_marking: Optional[LineMarking] = None,
+    ):
         """
         Constructor of an AreaBorder object
 
