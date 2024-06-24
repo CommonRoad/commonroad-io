@@ -127,9 +127,13 @@ class ProtobufFileReaderScenario(FileReaderScenario):
         Reads a CommonRoadScenario file in protobuf format.
         :return: CommonRoadScenario
         """
-        with open(self._filename, "rb") as file:
+        if isinstance(self._filename, bytes):
             commonroad_scenario_msg = commonroad_scenario_pb2.CommonRoadScenario()
-            commonroad_scenario_msg.ParseFromString(file.read())
+            commonroad_scenario_msg.ParseFromString(self._filename)
+        else:
+            with open(self._filename, "rb") as file:
+                commonroad_scenario_msg = commonroad_scenario_pb2.CommonRoadScenario()
+                commonroad_scenario_msg.ParseFromString(file.read())
 
         return CommonRoadScenarioFactory.create_from_message(commonroad_scenario_msg)
 
