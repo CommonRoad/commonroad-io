@@ -4,7 +4,7 @@
 
 ### Added
 - Github actions for ubuntu, windows, and macOS
-- Gitlab runner for arm
+- Gitlab runner for arm64 ubuntu
 
 ### Fixed
 - AreaBorder can have multiple adjacent lanelets
