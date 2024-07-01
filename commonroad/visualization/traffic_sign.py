@@ -5,7 +5,8 @@ from collections import defaultdict
 from typing import Dict, List, Tuple, Union
 
 import numpy as np
-from matplotlib.axes import Axes, mtext
+import matplotlib.text as mtext
+from matplotlib.axes import Axes
 from matplotlib.offsetbox import (
     AnnotationBbox,
     HPacker,
