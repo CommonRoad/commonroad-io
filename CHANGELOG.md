@@ -1,6 +1,9 @@
 # Changelog
 
-## [2024.2] - 2024-06-XX
+## [2024.2] - 2024-07-XX
+
+### Added
+- Github actions
 
 ### Fixed
 - AreaBorder can have multiple adjacent lanelets
