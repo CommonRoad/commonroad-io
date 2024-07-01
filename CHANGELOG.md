@@ -3,7 +3,8 @@
 ## [2024.2] - 2024-07-XX
 
 ### Added
-- Github actions
+- Github actions for ubuntu, windows, and macOS
+- Gitlab runner for arm
 
 ### Fixed
 - AreaBorder can have multiple adjacent lanelets
