@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "commonroad-io"
-version = "2023.4"
+version = "2024.1"
 description = "Python tool to read, write, and visualize CommonRoad scenarios and solutions for automated vehicles."
 authors = ["Cyber-Physical Systems Group, Technical University of Munich <commonroad@lists.lrz.de>"]
 license = "BSD"
@@ -21,9 +21,9 @@ classifiers = [
 packages = [{ include = "commonroad" }]
 
 [tool.poetry.urls]
-Documentation = "https://commonroad.in.tum.de/static/docs/commonroad-io/index.html"
-Forum = "https://commonroad.in.tum.de/forum/c/commonroad-io"
-Source = "https://gitlab.lrz.de/tum-cps/commonroad_io"
+Documentation = "https://cps.pages.gitlab.lrz.de/commonroad/commonroad-io/"
+Forum = "https://github.com/orgs/CommonRoad/discussions"
+Source = "https://github.com/CommonRoad/commonroad-io"
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -46,6 +46,7 @@ rtree = ">=0.8.3"
 protobuf = "==3.20.2"
 omegaconf = ">=2.0"
 tqdm = ">=4.64"
+# pillow = ">=10.2.0" # https://github.com/CommonRoad/commonroad-io/security/dependabot/23 commented since sumocr and crsd needs an update at the same time
 
 
 [tool.poetry.group.docs]
@@ -64,7 +65,7 @@ ipython = ">=6.5.0"
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.12.0"
+black = "^24.1.1"
 isort = "^5.13.1"
 flake8 = [
     { version = "^5.0.4", python = ">=3.8,<3.8.1" },
@@ -86,6 +87,8 @@ optional = true
 [tool.poetry.group.tutorials.dependencies]
 cvxpy = ">=0.4.9"
 jupyter = ">=1.0.0"
+jupyterlab = ">=4.0.11"  # https://github.com/CommonRoad/commonroad-io/security/dependabot/22
+jupyter-lsp = ">=2.2.2" # https://github.com/CommonRoad/commonroad-io/security/dependabot/18
 
 [tool.black]
 extend-exclude = "(traffic_signs/)|(generated_scripts/)"

@@ -5,6 +5,8 @@ import numpy as np
 from commonroad.scenario.traffic_sign import (
     TrafficSign,
     TrafficSignElement,
+    TrafficSignID,
+    TrafficSignIDCountries,
     TrafficSignIDGermany,
     TrafficSignIDZamunda,
 )
@@ -79,6 +81,10 @@ class TestTrafficSign(unittest.TestCase):
         traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1.0, 1.0]))
         self.assertEqual(hash(traffic_sign_one), hash(traffic_sign_two))
 
+        traffic_sign_one = TrafficSign(1, [traffic_sign_max_speed], set(), np.array([1.0, 1.0]))
+        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], None, np.array([1.0, 1.0]))
+        self.assertEqual(hash(traffic_sign_one), hash(traffic_sign_two))
+
 
 class TestTrafficSignElement(unittest.TestCase):
     def test_equality(self):
@@ -99,6 +105,13 @@ class TestTrafficSignElement(unittest.TestCase):
 
         traffic_sign_element_2 = TrafficSignElement(TrafficSignIDGermany.DIRECTIONS_SIGN, ["15", "16"])
         self.assertNotEqual(hash(traffic_sign_element_1), hash(traffic_sign_element_2))
+
+    def test_traffic_sign_ids(self):
+        # ensure that size of TrafficSignID equals number of all available traffic sign ID names
+        signs = set()
+        for country in list(TrafficSignIDCountries.values()):
+            signs = signs.union(set(country._member_names_))
+        self.assertEqual(len(TrafficSignID), len(signs))
 
 
 if __name__ == "__main__":

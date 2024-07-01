@@ -1,4 +1,5 @@
 """Module for drawing obstacle icons."""
+
 import math
 from typing import Union
 

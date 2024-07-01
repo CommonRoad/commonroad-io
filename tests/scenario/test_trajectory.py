@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 
 from commonroad.common.util import Interval
-from commonroad.scenario.state import KSState
+from commonroad.scenario.state import InitialState, KSState
 from commonroad.scenario.trajectory import Trajectory
 
 
@@ -155,6 +155,26 @@ class TestTrajectory(unittest.TestCase):
                 KSState(time_step=0, position=np.array([0, 0])),
             ],
         )
+
+    def test_append_state(self):
+        states = list()
+        states.append(KSState(position=np.array([1.35, -2.4]), orientation=0.87, time_step=5))
+        trajectory = Trajectory(5, states)
+        self.assertRaises(AssertionError, trajectory.append_state, None)
+        self.assertRaises(
+            AssertionError,
+            trajectory.append_state,
+            InitialState(time_step=6, position=np.array([1.0, -2.0]), orientation=0.5, velocity=3.3, acceleration=1.3),
+        )
+        self.assertRaises(
+            AssertionError,
+            trajectory.append_state,
+            KSState(position=np.array([1.0, -2.0]), orientation=0.8, time_step=0),
+        )
+
+        new_state = KSState(position=np.array([2.0, -3.0]), orientation=0.9, time_step=6)
+        trajectory.append_state(new_state)
+        self.assertEqual(trajectory.state_at_time_step(6), new_state)
 
 
 if __name__ == "__main__":
