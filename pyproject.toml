@@ -39,14 +39,13 @@ shapely = "^2.0.1"
 matplotlib = ">=3.0.0"
 lxml = ">=4.2.2"
 networkx = ">=2.2"
-Pillow = ">=7.0.0"
+pillow = ">=10.4.0"
 iso3166 = ">=1.0.1"
 commonroad-vehicle-models = ">=2.0.0"
 rtree = ">=0.8.3"
 protobuf = "==3.20.2"
 omegaconf = ">=2.0"
 tqdm = ">=4.64"
-# pillow = ">=10.2.0" # https://github.com/CommonRoad/commonroad-io/security/dependabot/23 commented since sumocr and crsd needs an update at the same time
 
 
 [tool.poetry.group.docs]
