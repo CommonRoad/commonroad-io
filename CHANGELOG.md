@@ -2,6 +2,10 @@
 
 ## [2024.2] - 2024-07-XX
 
+### Added
+- Github actions for ubuntu, windows, and macOS
+- Gitlab runner for arm64 ubuntu
+
 ### Fixed
 - AreaBorder can have multiple adjacent lanelets
 - Performance regression for occupancy_set lookups in TrajectoryPrediction
