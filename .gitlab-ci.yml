@@ -4,7 +4,7 @@ stages:
   - deploy
 
 default:
-  image: python:3.11
+  image: python:3.12
   before_script:
     - pip install poetry
     - poetry config virtualenvs.in-project true
@@ -37,6 +37,18 @@ build_and_test_python:
   parallel :
     matrix :
       - PYTHON_VERSIONS : [ "3.8", "3.9", "3.10", "3.11" ]
+  script:
+    - *run-test-with-coverage
+  needs: []
+
+build_and_test_python_arm:
+  image : arm64v8/python:$PYTHON_VERSIONS
+  tags :
+    - arm
+  stage: test
+  parallel :
+    matrix :
+      - PYTHON_VERSIONS : [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
   script:
     - *run-test-with-coverage
   needs: []
