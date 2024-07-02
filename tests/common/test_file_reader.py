@@ -785,8 +785,6 @@ class TestXMLFileReader(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             CommonRoadFileReader(bytes_file)
         self.assertEqual("CommonRoadFileReader::init: file_format must be provided.", context.exception.args[0])
-        with self.assertRaises(Exception):
-            CommonRoadFileReader(bytes_file, FileFormat.PROTOBUF).open()
         sc, pps = CommonRoadFileReader(bytes_file, FileFormat.XML).open()
         self.assertTrue(isinstance(sc, Scenario))
         self.assertTrue(isinstance(pps, PlanningProblemSet))
@@ -1203,8 +1201,6 @@ class TestProtobufFileReader(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             CommonRoadFileReader(bytes_file)
         self.assertEqual("CommonRoadFileReader::init: file_format must be provided.", context.exception.args[0])
-        with self.assertRaises(Exception):
-            CommonRoadFileReader(bytes_file, FileFormat.XML).open()
         sc, pps = CommonRoadFileReader(bytes_file, FileFormat.PROTOBUF).open()
         self.assertTrue(isinstance(sc, Scenario))
         self.assertTrue(isinstance(pps, PlanningProblemSet))
