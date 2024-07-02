@@ -108,9 +108,13 @@ class ProtobufFileReader(FileReader):
         :param lanelet_assignment: Activates calculation of lanelets occupied by obstacles
         :return: Scenario and planning problems
         """
-        with open(self._filename, "rb") as file:
+        if isinstance(self._filename, bytes):
             commonroad_msg = commonroad_pb2.CommonRoad()
-            commonroad_msg.ParseFromString(file.read())
+            commonroad_msg.ParseFromString(self._filename)
+        else:
+            with open(self._filename, "rb") as file:
+                commonroad_msg = commonroad_pb2.CommonRoad()
+                commonroad_msg.ParseFromString(file.read())
 
         return CommonRoadFactory.create_from_message(commonroad_msg, lanelet_assignment)
 
@@ -120,9 +124,13 @@ class ProtobufFileReader(FileReader):
 
         :return: Lanelet network
         """
-        with open(self._filename, "rb") as file:
+        if isinstance(self._filename, bytes):
             commonroad_msg = commonroad_pb2.CommonRoad()
-            commonroad_msg.ParseFromString(file.read())
+            commonroad_msg.ParseFromString(self._filename)
+        else:
+            with open(self._filename, "rb") as file:
+                commonroad_msg = commonroad_pb2.CommonRoad()
+                commonroad_msg.ParseFromString(file.read())
 
         scenario, _ = CommonRoadFactory.create_from_message(commonroad_msg, False)
 
