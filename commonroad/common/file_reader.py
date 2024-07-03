@@ -26,7 +26,10 @@ class CommonRoadFileReader:
         self._file_reader = None
 
         if file_format is None:
-            file_format = FileFormat(Path(filename).suffix)
+            if isinstance(filename, bytes):
+                raise RuntimeError("CommonRoadFileReader::init: file_format must be provided.")
+            else:
+                file_format = FileFormat(Path(filename).suffix)
 
         if file_format == FileFormat.XML:
             self._file_reader = XMLFileReader(filename)

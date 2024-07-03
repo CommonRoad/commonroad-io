@@ -5,6 +5,7 @@
 ### Added
 - Github actions for ubuntu, windows, and macOS
 - Gitlab runner for arm64 ubuntu
+- Support for reading xml and protobuf byte streams
 
 ### Fixed
 - AreaBorder can have multiple adjacent lanelets

@@ -184,7 +184,10 @@ class XMLFileReader(FileReader):
 
     def _parse_file(self):
         """Parses the CommonRoad XML-file into element tree."""
-        self._tree = ElementTree.parse(self._filename)
+        if isinstance(self._filename, bytes):
+            self._tree = ElementTree.ElementTree(ElementTree.fromstring(self._filename))
+        else:
+            self._tree = ElementTree.parse(self._filename)
 
     def _get_dt(self) -> float:
         """Reads the time step size of the time-discrete scenario."""
