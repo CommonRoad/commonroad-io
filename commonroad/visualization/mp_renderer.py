@@ -526,6 +526,8 @@ class MPRenderer(IRenderer):
         draw_occupancies = draw_params.occupancy.draw_occupancies
         draw_signals = draw_params.draw_signals
         draw_trajectory = draw_params.trajectory.draw_trajectory
+        zorder = draw_params.zorder
+        opacity = draw_params.opacity
 
         draw_history = draw_params.history.draw_history
 
@@ -575,7 +577,8 @@ class MPRenderer(IRenderer):
                             vehicle_width=width,
                             vehicle_color=vehicle_color,
                             edgecolor=vehicle_edge_color,
-                            zorder=ZOrders.CAR_PATCH,
+                            zorder=zorder,
+                            opacity=opacity,
                         )
                     )
         elif draw_icon is True:

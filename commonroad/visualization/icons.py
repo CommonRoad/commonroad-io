@@ -40,6 +40,7 @@ def get_obstacle_icon_patch(
     vehicle_color: str = "#ffffff",
     edgecolor="black",
     lw=0.5,
+    opacity=1,
 ):
     """Get a list of mpl.patches to draw a obstacle specific icon."""
     if obstacle_type not in supported_icons():
@@ -61,6 +62,7 @@ def get_obstacle_icon_patch(
         vehicle_color=vehicle_color,
         edgecolor=edgecolor,
         lw=lw,
+        opacity=opacity,
     )
     return patch
 
@@ -108,6 +110,7 @@ def draw_bus_icon(
     vehicle_color: str = "#ffffff",
     edgecolor="black",
     lw=0.5,
+    opacity=1,
 ):
     """Return the patches of the truck icon.
 
@@ -204,6 +207,7 @@ def draw_truck_icon(
     vehicle_color: str = "#ffffff",
     edgecolor="black",
     lw=0.5,
+    opacity=1,
 ):
     """Return the patches of the truck icon.
 
@@ -270,6 +274,7 @@ def draw_bicycle_icon(
     vehicle_color: str = "#ffffff",
     edgecolor="black",
     lw=0.5,
+    opacity=1,
 ):
     """Return the patches of the truck icon.
 
@@ -348,6 +353,7 @@ def draw_car_icon(
     vehicle_color: str = "#ffffff",
     edgecolor="black",
     lw=0.5,
+    opacity=1,
 ):
     """Return the patches of the car icon.
 
@@ -519,13 +525,15 @@ def draw_car_icon(
             fc=window_color,
             ec=edgecolor,
             lw=lw,
-            zorder=zorder + 1,
+            alpha=opacity,
+            zorder=zorder,
             closed=True,
         )
         for window in windows
     ]
     car_patches = [
-        mpl.patches.Polygon(part, fc=vehicle_color, ec=edgecolor, lw=lw, zorder=zorder, closed=True) for part in car
+        mpl.patches.Polygon(part, fc=vehicle_color, ec=edgecolor, lw=lw, alpha=opacity, zorder=zorder, closed=True)
+        for part in car
     ]
 
     return car_patches + window_patches

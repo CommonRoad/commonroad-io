@@ -333,6 +333,8 @@ class DynamicObstacleParams(BaseParam):
     occupancy: OccupancyParams = field(default_factory=OccupancyParams)
     #: Options for visualizing the vehicle trajectory in future time steps.
     trajectory: TrajectoryParams = field(default_factory=TrajectoryParams)
+    zorder: int = 20
+    opacity: int = 1
 
 
 @dataclass
