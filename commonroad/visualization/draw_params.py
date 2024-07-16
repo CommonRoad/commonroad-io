@@ -311,7 +311,7 @@ class VehicleShapeParams(BaseParam):
 class DynamicObstacleParams(BaseParam):
     draw_shape: bool = True
     #: Draw a type-dependent icon (if available) instead of the primitive geometric shape.
-    draw_icon: bool = True
+    draw_icon: bool = False
     #: Draw the direction indicator of the dynamic obstacle.
     draw_direction: bool = False
     draw_bounding_box: bool = True

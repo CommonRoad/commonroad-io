@@ -261,7 +261,8 @@ def draw_truck_icon(
         for part in truck
     ]
     patch_list = [
-        mpl.patches.Polygon(part, fc=vehicle_color, ec=edgecolor, lw=lw, zorder=zorder, alpha=opacity, closed=True) for part in truck
+        mpl.patches.Polygon(part, fc=vehicle_color, ec=edgecolor, lw=lw, zorder=zorder, alpha=opacity, closed=True)
+        for part in truck
     ]
 
     return patch_list
