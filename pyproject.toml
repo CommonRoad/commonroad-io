@@ -8,7 +8,6 @@ readme = "README.md"
 homepage = "https://commonroad.in.tum.de"
 keywords = ["autonomous", "automated", "vehicles", "driving", "motion", "planning"]
 classifiers = [
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
