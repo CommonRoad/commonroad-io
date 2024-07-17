@@ -56,9 +56,9 @@ class DummyDataGenerator:
     def create_random_ks_state(cls, time_step=0):
         return KSState(
             position=np.array([cls.create_random_float(-100, 100), cls.create_random_float(-100, 100)]),
-            steering_angle=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            steering_angle=cls.create_random_float(-np.pi / 10, np.pi / 10),
             velocity=cls.create_random_float(-5, 5),
-            orientation=cls.create_random_float(-np.math.pi, np.math.pi),
+            orientation=cls.create_random_float(-np.pi, np.pi),
             time_step=time_step,
         )
 
@@ -66,11 +66,11 @@ class DummyDataGenerator:
     def create_random_st_state(cls, time_step=0):
         return STState(
             position=np.array([cls.create_random_float(-100, 100), cls.create_random_float(-100, 100)]),
-            steering_angle=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            steering_angle=cls.create_random_float(-np.pi / 10, np.pi / 10),
             velocity=cls.create_random_float(-5, 5),
-            orientation=cls.create_random_float(-np.math.pi, np.math.pi),
-            yaw_rate=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
-            slip_angle=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            orientation=cls.create_random_float(-np.pi, np.pi),
+            yaw_rate=cls.create_random_float(-np.pi / 10, np.pi / 10),
+            slip_angle=cls.create_random_float(-np.pi / 10, np.pi / 10),
             time_step=time_step,
         )
 
@@ -78,24 +78,24 @@ class DummyDataGenerator:
     def create_random_mb_state(cls, time_step=0):
         return MBState(
             position=np.array([cls.create_random_float(-100, 100), cls.create_random_float(-100, 100)]),
-            steering_angle=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            steering_angle=cls.create_random_float(-np.pi / 10, np.pi / 10),
             velocity=cls.create_random_float(-5, 5),
-            orientation=cls.create_random_float(-np.math.pi, np.math.pi),
-            yaw_rate=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
-            roll_angle=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
-            roll_rate=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
-            pitch_angle=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
-            pitch_rate=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            orientation=cls.create_random_float(-np.pi, np.pi),
+            yaw_rate=cls.create_random_float(-np.pi / 10, np.pi / 10),
+            roll_angle=cls.create_random_float(-np.pi / 10, np.pi / 10),
+            roll_rate=cls.create_random_float(-np.pi / 10, np.pi / 10),
+            pitch_angle=cls.create_random_float(-np.pi / 10, np.pi / 10),
+            pitch_rate=cls.create_random_float(-np.pi / 10, np.pi / 10),
             velocity_y=cls.create_random_float(-5, 5),
             position_z=cls.create_random_float(-10, 10),
             velocity_z=cls.create_random_float(-5, 5),
-            roll_angle_front=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
-            roll_rate_front=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            roll_angle_front=cls.create_random_float(-np.pi / 10, np.pi / 10),
+            roll_rate_front=cls.create_random_float(-np.pi / 10, np.pi / 10),
             velocity_y_front=cls.create_random_float(-5, 5),
             position_z_front=cls.create_random_float(-10, 10),
             velocity_z_front=cls.create_random_float(-5, 5),
-            roll_angle_rear=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
-            roll_rate_rear=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            roll_angle_rear=cls.create_random_float(-np.pi / 10, np.pi / 10),
+            roll_rate_rear=cls.create_random_float(-np.pi / 10, np.pi / 10),
             velocity_y_rear=cls.create_random_float(-5, 5),
             position_z_rear=cls.create_random_float(-10, 10),
             velocity_z_rear=cls.create_random_float(-5, 5),
@@ -112,7 +112,7 @@ class DummyDataGenerator:
     def create_random_input(cls, time_step=0):
         state = InputState(
             acceleration=cls.create_random_float(-5, 5),
-            steering_angle_speed=cls.create_random_float(-np.math.pi / 10, np.math.pi / 10),
+            steering_angle_speed=cls.create_random_float(-np.pi / 10, np.pi / 10),
             time_step=time_step,
         )
         return state
