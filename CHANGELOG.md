@@ -10,7 +10,13 @@
 ### Fixed
 - AreaBorder can have multiple adjacent lanelets
 - Performance regression for occupancy_set lookups in TrajectoryPrediction
-- Matplotlib >= 3.9.0 support
+- Matplotlib `>=3.9.0` support
+
+### Changed
+- Numpy version: `>=2.0`
+
+### Removed
+- Support for Python 3.8
 
 ## [2024.1] - 2024-03-21
 
