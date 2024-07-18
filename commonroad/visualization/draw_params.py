@@ -231,6 +231,7 @@ class LaneletParams(BaseParam):
     fill_lanelet: bool = True
     #: Fill color of the lanelet.
     facecolor: Color = "#c7c7c7"
+    zorder: int = 9
 
 
 @dataclass

@@ -18,8 +18,9 @@ draw_params = MPDrawParams()
 for i in range(5, 6):
     plt.figure(figsize=(25, 10))
     rnd = MPRenderer()
-    rnd.draw_params.dynamic_obstacle.zorder = 20
+    rnd.draw_params.dynamic_obstacle.zorder = 18
     rnd.draw_params.dynamic_obstacle.opacity = 0.3
+    rnd.draw_params.lanelet_network.lanelet.zorder = 12
     rnd.draw_params.time_begin = i
     scenario.draw(rnd)
     planning_problem_set.draw(rnd)
