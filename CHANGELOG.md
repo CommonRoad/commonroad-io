@@ -7,6 +7,7 @@
 - Gitlab runner for arm64 ubuntu
 - Support for reading xml and protobuf byte streams
 - Support for numpy `>=2.0`
+- Adjustable zorder for dynamic obstacle & lanelet visualization
 
 ### Fixed
 - AreaBorder can have multiple adjacent lanelets
