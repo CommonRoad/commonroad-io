@@ -6,6 +6,7 @@
 - Github actions for ubuntu, windows, and macOS
 - Gitlab runner for arm64 ubuntu
 - Support for reading xml and protobuf byte streams
+- Adjustable zorder for dynamic obstacle & lanelet visualization
 
 ### Fixed
 - AreaBorder can have multiple adjacent lanelets
