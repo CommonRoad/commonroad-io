@@ -754,7 +754,7 @@ class MPRenderer(IRenderer):
                         path,
                         color=draw_params.facecolor,
                         lw=draw_params.line_width,
-                        zorder=draw_params.zorder,
+                        zorder=draw_params.zorder + 0.1,
                         fill=False,
                     )
                 )
@@ -768,7 +768,7 @@ class MPRenderer(IRenderer):
                         offset_transform=self.ax.transData,
                         units="xy",
                         linewidths=0,
-                        zorder=draw_params.zorder,
+                        zorder=draw_params.zorder + 0.1,
                         facecolor=draw_params.facecolor,
                     )
                 )
