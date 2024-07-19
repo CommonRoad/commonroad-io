@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "commonroad-io"
-version = "2024.1"
+version = "2024.2"
 description = "Python tool to read, write, and visualize CommonRoad scenarios and solutions for automated vehicles."
 authors = ["Cyber-Physical Systems Group, Technical University of Munich <commonroad@lists.lrz.de>"]
 license = "BSD"

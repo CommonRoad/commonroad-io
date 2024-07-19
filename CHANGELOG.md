@@ -1,6 +1,6 @@
 # Changelog
 
-## [2024.2] - 2024-07-XX
+## [2024.2] - 2024-07-22
 
 ### Added
 - Github actions for ubuntu, windows, and macOS

@@ -10,7 +10,7 @@ CommonRoad-io
 The commonroad-io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tools of the CommonRoad Framework.
 With commonroad-io, those solutions can be written to xml-files for uploading them on `commonroad.in.tum.de <https://commonroad.in.tum.de/>`__.
 
-commonroad-io 2024.1 is compatible with CommonRoad scenarios of version 2020a and supports reading 2018b scenarios.
+commonroad-io 2024.2 is compatible with CommonRoad scenarios of version 2020a and supports reading 2018b scenarios.
 
 The software is written in Python and tested on Linux for the Python 3.8, 3.9, 3.10, 3.11, and 3.12.
 
@@ -66,43 +66,7 @@ and add the folder commonroad-io to your Python environment.
 
 Changelog
 =========
-Compared to version 2024.1, the following features have been added or changed:
-
-Added
------
-
-- Country-independent traffic sign enum
-- Missing country-specific max speed sign IDs
-- Automatically generated TrafficSignIDCountries enum for importing in other scripts
-- GroundTruthPredictor class to use stored trajectories as prediction
-- Function to append a state to a trajectory
-
-Fixed
------
-
-- Typo: `TrafficSigInterpreter` → `TrafficSignInterpreter`
-- Typo EMERGENCY_STOP traffic sign enum name
-- Activation condition for drawing occupancies
-- Traffic sign with first occurrence set to None can be hashed
-- Traffic light can be plotted without a TrafficLightCycle
-
-Changed
--------
-
-- Optimization-based planner tutorial now uses planner and predictor interfaces
-- Simplified traffic sign matching in FileReader
-- The occupancy set, initial time step, and final time step are now computed properties of TrajectoryPrediction
-- Trajectory now allows direct access to the state list
-- Drawing occupancies by default false
-- Improved visual appearance of notebooks
-
-Removed
--------
-
-- Setters for initial and final time step in predictions
-- Setter for occupancy_set in TrajectoryPrediction
-
-A detailed overview about the changes in each version is provided in the `Changelog <https://gitlab.lrz.de/tum-cps/commonroad_io/-/blob/master/CHANGELOG.md>`__.
+A detailed overview about the changes in each version is provided in the `Changelog <https://github.com/CommonRoad/commonroad-io/tree/master>`__.
 
 Getting Started
 ===============
