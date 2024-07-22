@@ -1,5 +1,22 @@
 # Changelog
 
+## [2024.2] - 2024-07-22
+
+### Added
+- Github actions for ubuntu, windows, and macOS
+- Gitlab runner for arm64 ubuntu
+- Support for reading xml and protobuf byte streams
+- Support for numpy `>=2.0`
+- Adjustable zorder for dynamic obstacle & lanelet visualization
+
+### Fixed
+- AreaBorder can have multiple adjacent lanelets
+- Performance regression for occupancy_set lookups in TrajectoryPrediction
+- Matplotlib `>=3.9.0` support
+
+### Removed
+- Support for Python 3.8
+
 ## [2024.1] - 2024-03-21
 
 ### Added
