@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "commonroad-io"
-version = "2024.1"
+version = "2024.2"
 description = "Python tool to read, write, and visualize CommonRoad scenarios and solutions for automated vehicles."
 authors = ["Cyber-Physical Systems Group, Technical University of Munich <commonroad@lists.lrz.de>"]
 license = "BSD"
@@ -8,7 +8,6 @@ readme = "README.md"
 homepage = "https://commonroad.in.tum.de"
 keywords = ["autonomous", "automated", "vehicles", "driving", "motion", "planning"]
 classifiers = [
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -26,15 +25,9 @@ Forum = "https://github.com/orgs/CommonRoad/discussions"
 Source = "https://github.com/CommonRoad/commonroad-io"
 
 [tool.poetry.dependencies]
-python = "^3.8"
-numpy = [
-    { version = ">=1.22, <1.26", python = "3.8" },
-    { version = ">=1.26.1", python = ">=3.9,<3.13" }
-]
-scipy = [
-    { version = ">=1.10.0,<1.11", python = "3.8" },
-    { version = "^1.11.3", python = ">=3.9,<3.13" }
-]
+python = "^3.9"
+numpy = ">=1.26.1"
+scipy = "^1.11.3"
 shapely = "^2.0.1"
 matplotlib = ">=3.0.0"
 lxml = ">=4.2.2"

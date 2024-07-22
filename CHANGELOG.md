@@ -1,6 +1,6 @@
 # Changelog
 
-## [2024.2] - 2024-07-XX
+## [2024.2] - 2024-07-22
 
 ### Added
 - Github actions for ubuntu, windows, and macOS
@@ -13,6 +13,9 @@
 - AreaBorder can have multiple adjacent lanelets
 - Performance regression for occupancy_set lookups in TrajectoryPrediction
 - Matplotlib `>=3.9.0` support
+
+### Removed
+- Support for Python 3.8
 
 ## [2024.1] - 2024-03-21
 
