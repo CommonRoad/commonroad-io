@@ -36,7 +36,7 @@ build_and_test_python:
   stage: test
   parallel :
     matrix :
-      - PYTHON_VERSIONS : [ "3.8", "3.9", "3.10", "3.11" ]
+      - PYTHON_VERSIONS : [ "3.9", "3.10", "3.11" ]
   script:
     - *run-test-with-coverage
   needs: []
@@ -48,7 +48,7 @@ build_and_test_python_arm:
   stage: test
   parallel :
     matrix :
-      - PYTHON_VERSIONS : [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
+      - PYTHON_VERSIONS : [ "3.9", "3.10", "3.11", "3.12" ]
   script:
     - *run-test-with-coverage
   needs: []
@@ -65,6 +65,30 @@ build_and_test_python_3_12:
       coverage_report:
         coverage_format: cobertura
         path: coverage.xml
+
+build_and_update_packages_arm:
+  image : arm64v8/python:$PYTHON_VERSIONS
+  tags :
+    - arm
+  stage: test
+  parallel :
+    matrix :
+      - PYTHON_VERSIONS : [ "3.9", "3.10", "3.11", "3.12" ]
+  script:
+    - poetry update
+    - poetry install
+  needs: []
+
+build_and_update_packages_debian:
+  image : python:$PYTHON_VERSIONS
+  stage: test
+  parallel :
+    matrix :
+      - PYTHON_VERSIONS : [ "3.9", "3.10", "3.11", "3.12" ]
+  script:
+    - poetry update
+    - poetry install
+  needs: []
 
 build_doc:
   stage: test
