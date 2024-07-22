@@ -1,6 +1,6 @@
 # Changelog
 
-## [2024.3] - 2024-03-XX
+## [2024.X] - 2024-XX-XX
 
 ### Added
 - Support for CommonRoad format 2024a
@@ -13,11 +13,22 @@
 - Writing 2020a XML and Protobuf scenarios
 - Reading 2020a Protobuf scenarios
 
-## [2024.2] - 2024-06-XX
+## [2024.2] - 2024-07-22
+
+### Added
+- Github actions for ubuntu, windows, and macOS
+- Gitlab runner for arm64 ubuntu
+- Support for reading xml and protobuf byte streams
+- Support for numpy `>=2.0`
+- Adjustable zorder for dynamic obstacle & lanelet visualization
 
 ### Fixed
 - AreaBorder can have multiple adjacent lanelets
 - Performance regression for occupancy_set lookups in TrajectoryPrediction
+- Matplotlib `>=3.9.0` support
+
+### Removed
+- Support for Python 3.8
 
 ## [2024.1] - 2024-03-21
 

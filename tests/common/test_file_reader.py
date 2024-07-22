@@ -787,6 +787,16 @@ class TestXMLFileReader(unittest.TestCase):
         self.assertEqual(exp_location_env_time_of_day, xml_file[0].environment.time_of_day)
         self.assertEqual(exp_location_env_weather, xml_file[0].environment.weather)
 
+    def test_open_byte(self):
+        with open(self.filename_all, "rb") as file:
+            bytes_file = file.read()
+        with self.assertRaises(Exception) as context:
+            CommonRoadFileReader(bytes_file)
+        self.assertEqual("CommonRoadFileReader::init: file_format must be provided.", context.exception.args[0])
+        sc, pps = CommonRoadFileReader(bytes_file, FileFormat.XML).open()
+        self.assertTrue(isinstance(sc, Scenario))
+        self.assertTrue(isinstance(pps, PlanningProblemSet))
+
     def test_open_intersection(self):
         exp_lanelet_stop_line_17_point_1 = self.stop_line_17.start
         exp_lanelet_stop_line_17_point_2 = self.stop_line_17.end
@@ -1371,6 +1381,16 @@ class TestProtobufFileReader(unittest.TestCase):
                 self.filename_all_scenario_pb,
             )
         )
+
+    def test_open_byte(self):
+        with open(self.filename_all_pb, "rb") as file:
+            bytes_file = file.read()
+        with self.assertRaises(Exception) as context:
+            CommonRoadFileReader(bytes_file)
+        self.assertEqual("CommonRoadFileReader::init: file_format must be provided.", context.exception.args[0])
+        sc, pps = CommonRoadFileReader(bytes_file, FileFormat.PROTOBUF).open()
+        self.assertTrue(isinstance(sc, Scenario))
+        self.assertTrue(isinstance(pps, PlanningProblemSet))
 
     def test_read_correct_matched_state(self):
         self._check_correct_matched_state_pb(self.filename_ks_map_pb, self.filename_ks_dynamic_pb, KSState)

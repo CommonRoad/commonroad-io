@@ -233,6 +233,7 @@ class LaneletParams(BaseParam):
     fill_lanelet: bool = True
     #: Fill color of the lanelet.
     facecolor: Color = "#c7c7c7"
+    zorder: int = 9
 
 
 @dataclass
@@ -335,6 +336,8 @@ class DynamicObstacleParams(BaseParam):
     occupancy: OccupancyParams = field(default_factory=OccupancyParams)
     #: Options for visualizing the vehicle trajectory in future time steps.
     trajectory: TrajectoryParams = field(default_factory=TrajectoryParams)
+    zorder: int = 20
+    opacity: int = 1
 
 
 @dataclass

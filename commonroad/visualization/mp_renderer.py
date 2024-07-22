@@ -277,7 +277,7 @@ class MPRenderer(IRenderer):
 
         self.obstacle_patches.sort(key=lambda x: x.zorder)
         patch_col = mpl.collections.PatchCollection(
-            self.obstacle_patches, match_original=True, zorder=ZOrders.OBSTACLES
+            self.obstacle_patches, match_original=True, zorder=self.draw_params.dynamic_obstacle.zorder
         )
         self.ax.add_collection(patch_col)
         artist_list.append(patch_col)
@@ -526,6 +526,8 @@ class MPRenderer(IRenderer):
         draw_occupancies = draw_params.occupancy.draw_occupancies
         draw_signals = draw_params.draw_signals
         draw_trajectory = draw_params.trajectory.draw_trajectory
+        zorder = draw_params.zorder
+        opacity = draw_params.opacity
 
         draw_history = draw_params.history.draw_history
 
@@ -575,7 +577,8 @@ class MPRenderer(IRenderer):
                             vehicle_width=width,
                             vehicle_color=vehicle_color,
                             edgecolor=vehicle_edge_color,
-                            zorder=ZOrders.CAR_PATCH,
+                            zorder=zorder,
+                            opacity=opacity,
                         )
                     )
         elif draw_icon is True:
@@ -751,7 +754,7 @@ class MPRenderer(IRenderer):
                         path,
                         color=draw_params.facecolor,
                         lw=draw_params.line_width,
-                        zorder=draw_params.zorder,
+                        zorder=draw_params.zorder + 0.1,
                         fill=False,
                     )
                 )
@@ -765,7 +768,7 @@ class MPRenderer(IRenderer):
                         offset_transform=self.ax.transData,
                         units="xy",
                         linewidths=0,
-                        zorder=draw_params.zorder,
+                        zorder=draw_params.zorder + 0.1,
                         facecolor=draw_params.facecolor,
                     )
                 )
@@ -974,6 +977,7 @@ class MPRenderer(IRenderer):
         fill_lanelet = draw_params.lanelet.fill_lanelet
         facecolor = draw_params.lanelet.facecolor
         antialiased = draw_params.antialiased
+        lanelet_zorder = draw_params.lanelet.zorder
 
         draw_lanlet_ids = draw_params.draw_ids
 
@@ -1340,7 +1344,7 @@ class MPRenderer(IRenderer):
                     edgecolor=right_bound_color,
                     facecolor="none",
                     lw=draw_linewidth,
-                    zorder=ZOrders.RIGHT_BOUND,
+                    zorder=lanelet_zorder + 0.1,
                     antialiased=antialiased,
                 )
             )
@@ -1351,7 +1355,7 @@ class MPRenderer(IRenderer):
                     edgecolor=left_bound_color,
                     facecolor="none",
                     lw=draw_linewidth,
-                    zorder=ZOrders.LEFT_BOUND,
+                    zorder=lanelet_zorder + 0.1,
                     antialiased=antialiased,
                 )
             )
@@ -1431,7 +1435,7 @@ class MPRenderer(IRenderer):
         self.static_collections.append(
             collections.PolyCollection(
                 vertices_fill,
-                zorder=ZOrders.LANELET_POLY,
+                zorder=lanelet_zorder,
                 facecolor=facecolor,
                 edgecolor="none",
                 antialiased=antialiased,

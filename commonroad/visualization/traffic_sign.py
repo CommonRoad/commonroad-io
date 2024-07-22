@@ -4,8 +4,9 @@ import warnings
 from collections import defaultdict
 from typing import Dict, List, Tuple, Union
 
+import matplotlib.text as mtext
 import numpy as np
-from matplotlib.axes import Axes, mtext
+from matplotlib.axes import Axes
 from matplotlib.offsetbox import (
     AnnotationBbox,
     HPacker,
