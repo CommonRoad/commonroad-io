@@ -19,7 +19,6 @@ from commonroad.common.common_scenario import (
     Weather,
 )
 from commonroad.common.file_reader import CommonRoadFileReader, combine_map_dynamic
-from commonroad.common.reader.scenario_interface import ScenarioInterface
 from commonroad.common.util import FileFormat, Interval
 from commonroad.geometry.shape import Circle, Polygon, Rectangle
 from commonroad.planning.planning_problem import (
