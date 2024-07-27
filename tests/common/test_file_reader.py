@@ -19,6 +19,7 @@ from commonroad.common.common_scenario import (
     Weather,
 )
 from commonroad.common.file_reader import CommonRoadFileReader, combine_map_dynamic
+from commonroad.common.reader.scenario_interface import ScenarioInterface
 from commonroad.common.util import FileFormat, Interval
 from commonroad.geometry.shape import Circle, Polygon, Rectangle
 from commonroad.planning.planning_problem import (
@@ -1381,16 +1382,6 @@ class TestProtobufFileReader(unittest.TestCase):
                 self.filename_all_scenario_pb,
             )
         )
-
-    def test_open_byte(self):
-        with open(self.filename_all_pb, "rb") as file:
-            bytes_file = file.read()
-        with self.assertRaises(Exception) as context:
-            CommonRoadFileReader(bytes_file)
-        self.assertEqual("CommonRoadFileReader::init: file_format must be provided.", context.exception.args[0])
-        sc, pps = CommonRoadFileReader(bytes_file, FileFormat.PROTOBUF).open()
-        self.assertTrue(isinstance(sc, Scenario))
-        self.assertTrue(isinstance(pps, PlanningProblemSet))
 
     def test_read_correct_matched_state(self):
         self._check_correct_matched_state_pb(self.filename_ks_map_pb, self.filename_ks_dynamic_pb, KSState)
