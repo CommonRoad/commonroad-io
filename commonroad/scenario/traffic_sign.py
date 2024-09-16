@@ -761,6 +761,8 @@ class TrafficSignIDPuertoRico(enum.Enum):
 @enum.unique
 class TrafficSignIDAustralia(enum.Enum):
     STOP = "R1-1"
+    YIELD = "R1-2"
+    PEDESTRIANS_CROSSING = "R3-1"
     UNKNOWN = ""
 
 

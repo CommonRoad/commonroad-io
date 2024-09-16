@@ -13,6 +13,11 @@
 - Writing 2020a XML and Protobuf scenarios
 - Reading 2020a Protobuf scenarios
 
+## [2024.3] - 2024-XX-XX
+
+### Added
+- New Australia and US traffic signs
+
 ## [2024.2] - 2024-07-22
 
 ### Added
