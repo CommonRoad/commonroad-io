@@ -375,9 +375,12 @@ class TrafficSignID(enum.Enum):
     ON_PAVEMENT = 265
     DO_NOT_BLOCK_INTERSECTION = 266
     WARNING_ARROW_LEFT = 267
+    STOP_4_WAY = 268
+    NO_TURN_ON_RED = 269
+    ONEWAY = 270
     # Spain
-    NO_STOPPING = 268
-    NO_WAITING = 269
+    NO_STOPPING = 271
+    NO_WAITING = 272
 
 
 @enum.unique
@@ -394,6 +397,7 @@ class SupportedTrafficSignCountry(enum.Enum):
     CROATIA = "HRV"
     ITALY = "ITA"
     PUERTO_RICO = "PRI"
+    AUSTRALIA = "AUS"
     ZAMUNDA = "ZAM"  # default
 
 
@@ -648,6 +652,8 @@ TrafficSignIDZamunda = TrafficSignIDGermany  # default traffic sign IDs (similar
 
 @enum.unique
 class TrafficSignIDUsa(enum.Enum):
+    STOP = "R1-1"
+    STOP_4_WAY = "R1-3"
     MAX_SPEED = "R2-1"
     U_TURN = "R3-4"
     ROAD_WORK_AHEAD = "CW20-1"
@@ -662,6 +668,8 @@ class TrafficSignIDUsa(enum.Enum):
     TURN_ONLY_LANES = "R3-8b"
     NO_RIGHT_TURN = "R3-1"
     KEEP_RIGHT = "R4-7"
+    NO_TURN_ON_RED = "R10-11"
+    ONEWAY = "R1-6"
     SIGNAL_AHEAD = "W3-3"
     LOADING_ZONE = "R8-3gP"
     NO_PARKING = "R8-3"
@@ -750,6 +758,14 @@ class TrafficSignIDPuertoRico(enum.Enum):
     UNKNOWN = ""
 
 
+@enum.unique
+class TrafficSignIDAustralia(enum.Enum):
+    STOP = "R1-1"
+    YIELD = "R1-2"
+    PEDESTRIANS_CROSSING = "R3-1"
+    UNKNOWN = ""
+
+
 TrafficSignIDCountries = {
     ele.value: globals()[
         "TrafficSignID" + SupportedTrafficSignCountry(ele.value).name.replace("_", " ").title().replace(" ", "")
@@ -770,6 +786,7 @@ class TrafficSignElement:
             TrafficSignIDGermany,
             TrafficSignIDChina,
             TrafficSignIDRussia,
+            TrafficSignIDAustralia,
         ],
         additional_values: List[str] = [],
     ):
