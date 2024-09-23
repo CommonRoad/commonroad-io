@@ -319,6 +319,7 @@ __status__ = "released"
       <xs:enumeration value="border"/>
       <xs:enumeration value="parking"/>
       <xs:enumeration value="restricted"/>
+      <xs:enumeration value="restricted_area"/>
       <xs:enumeration value="unknown"/>
     </xs:restriction>
   </xs:simpleType>
