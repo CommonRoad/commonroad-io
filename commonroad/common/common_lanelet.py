@@ -67,6 +67,7 @@ class LaneletType(enum.Enum):
     BORDER = "border"
     PARKING = "parking"
     RESTRICTED = "restricted"  # cars not allowed, e.g., special lanes for busses
+    RESTRICTED_AREA = "restricted_area"  # area where vehicles are not allowed; usually the area is indicated by diagonal line markings, e.g., German traffic sign ID 298
     UNKNOWN = "unknown"
 
 
