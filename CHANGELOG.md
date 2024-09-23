@@ -2,6 +2,7 @@
 
 ## [2024.3] - 2024-10-XX
 ### Added
+- New Australia and US traffic signs
 - New lanelet type: `restricted_area`
 
 ## [2024.2] - 2024-07-22
