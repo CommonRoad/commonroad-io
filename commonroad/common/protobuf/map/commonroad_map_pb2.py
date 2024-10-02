@@ -12,14 +12,14 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import location_pb2 as location__pb2
-import lanelet_pb2 as lanelet__pb2
-import area_pb2 as area__pb2
-import traffic_sign_pb2 as traffic__sign__pb2
-import traffic_light_pb2 as traffic__light__pb2
-import intersection_pb2 as intersection__pb2
-import environment_obstacle_pb2 as environment__obstacle__pb2
-import scenario_meta_information_pb2 as scenario__meta__information__pb2
+import commonroad.common.protobuf.map.location_pb2 as location__pb2
+import commonroad.common.protobuf.map.lanelet_pb2 as lanelet__pb2
+import commonroad.common.protobuf.map.area_pb2 as area__pb2
+import commonroad.common.protobuf.map.traffic_sign_pb2 as traffic__sign__pb2
+import commonroad.common.protobuf.map.traffic_light_pb2 as traffic__light__pb2
+import commonroad.common.protobuf.map.intersection_pb2 as intersection__pb2
+import commonroad.common.protobuf.map.environment_obstacle_pb2 as environment__obstacle__pb2
+import commonroad.common.protobuf.common.scenario_meta_information_pb2 as scenario__meta__information__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
