@@ -378,5 +378,7 @@ class TrafficLight(IDrawable):
         """
         if self._traffic_light_cycle is not None:
             return self.traffic_light_cycle.get_state_at_time_step(time_step)
-        else:
+        elif len(self.color) > 0:
             return self.color[0]
+        else:
+            return TrafficLightState.RED
