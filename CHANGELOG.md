@@ -1,22 +1,22 @@
 # Changelog
 
-## [2024.X] - 2024-XX-XX
+## [202X.X] - 202X-XX-XX
 
 ### Added
-- Support for CommonRoad format 2024a
+- Support for CommonRoad format 202Xa
 - CommonRoad documentation source files
 
 ### Changed
-- Consolidated 2024a CommonRoad FileReader classes into a single class
+- Consolidated 202Xa CommonRoad FileReader classes into a single class
 
 ### Removed
 - Writing 2020a XML and Protobuf scenarios
 - Reading 2020a Protobuf scenarios
 
-## [2024.3] - 2024-XX-XX
-
+## [2024.3] - 2024-10-XX
 ### Added
 - New Australia and US traffic signs
+- New lanelet type: `restricted_area`
 
 ## [2024.2] - 2024-07-22
 
