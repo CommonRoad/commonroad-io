@@ -1,5 +1,7 @@
 syntax = "proto2";
 
+option optimize_for = LITE_RUNTIME;
+
 package commonroad_dynamic;
 
 import "traffic_light_state.proto";
