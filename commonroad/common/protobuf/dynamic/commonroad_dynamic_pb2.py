@@ -12,13 +12,13 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import environment_pb2 as environment__pb2
-import traffic_sign_value_pb2 as traffic__sign__value__pb2
-import traffic_light_cycle_pb2 as traffic__light__cycle__pb2
-import static_obstacle_pb2 as static__obstacle__pb2
-import dynamic_obstacle_pb2 as dynamic__obstacle__pb2
-import phantom_obstacle_pb2 as phantom__obstacle__pb2
-import scenario_meta_information_pb2 as scenario__meta__information__pb2
+import commonroad.common.protobuf.dynamic.environment_pb2 as environment__pb2
+import commonroad.common.protobuf.dynamic.traffic_sign_value_pb2 as traffic__sign__value__pb2
+import commonroad.common.protobuf.dynamic.traffic_light_cycle_pb2 as traffic__light__cycle__pb2
+import commonroad.common.protobuf.dynamic.static_obstacle_pb2 as static__obstacle__pb2
+import commonroad.common.protobuf.dynamic.dynamic_obstacle_pb2 as dynamic__obstacle__pb2
+import commonroad.common.protobuf.dynamic.phantom_obstacle_pb2 as phantom__obstacle__pb2
+import commonroad.common.protobuf.common.scenario_meta_information_pb2 as scenario__meta__information__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
