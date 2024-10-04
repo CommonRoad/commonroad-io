@@ -12,15 +12,15 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import commonroad.common.protobuf.common.util_pb2 as util__pb2
+import util_pb2 as util__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='scenario_meta_information.proto',
   package='commonroad_common',
   syntax='proto2',
-  serialized_options=None,
-  serialized_pb=_b('\n\x1fscenario_meta_information.proto\x12\x11\x63ommonroad_common\x1a\nutil.proto\"=\n\x05MapID\x12\x12\n\ncountry_id\x18\x01 \x02(\t\x12\x10\n\x08map_name\x18\x02 \x02(\t\x12\x0e\n\x06map_id\x18\x03 \x02(\x04\"\xb1\x01\n\nScenarioID\x12\x13\n\x0b\x63ooperative\x18\x01 \x02(\x08\x12(\n\x06map_id\x18\x02 \x02(\x0b\x32\x18.commonroad_common.MapID\x12\x18\n\x10\x63onfiguration_id\x18\x03 \x02(\x04\x12\x19\n\x11obstacle_behavior\x18\x04 \x01(\t\x12\x15\n\rprediction_id\x18\x05 \x01(\x04\x12\x18\n\x10scenario_version\x18\x06 \x02(\t\"\x9e\x01\n\x0f\x46ileInformation\x12\x14\n\x0clicense_name\x18\x01 \x02(\t\x12\x14\n\x0clicense_text\x18\x02 \x01(\t\x12*\n\x04\x64\x61te\x18\x03 \x02(\x0b\x32\x1c.commonroad_common.TimeStamp\x12\x0e\n\x06\x61uthor\x18\x04 \x02(\t\x12\x13\n\x0b\x61\x66\x66iliation\x18\x05 \x02(\t\x12\x0e\n\x06source\x18\x06 \x02(\t\"\xa4\x01\n\x17ScenarioMetaInformation\x12\x33\n\x0c\x62\x65nchmark_id\x18\x01 \x02(\x0b\x32\x1d.commonroad_common.ScenarioID\x12<\n\x10\x66ile_information\x18\x02 \x02(\x0b\x32\".commonroad_common.FileInformation\x12\x16\n\x0etime_step_size\x18\x03 \x02(\x01')
+  serialized_options=_b('H\003'),
+  serialized_pb=_b('\n\x1fscenario_meta_information.proto\x12\x11\x63ommonroad_common\x1a\nutil.proto\"=\n\x05MapID\x12\x12\n\ncountry_id\x18\x01 \x02(\t\x12\x10\n\x08map_name\x18\x02 \x02(\t\x12\x0e\n\x06map_id\x18\x03 \x02(\x04\"\xb1\x01\n\nScenarioID\x12\x13\n\x0b\x63ooperative\x18\x01 \x02(\x08\x12(\n\x06map_id\x18\x02 \x02(\x0b\x32\x18.commonroad_common.MapID\x12\x18\n\x10\x63onfiguration_id\x18\x03 \x02(\x04\x12\x19\n\x11obstacle_behavior\x18\x04 \x01(\t\x12\x15\n\rprediction_id\x18\x05 \x01(\x04\x12\x18\n\x10scenario_version\x18\x06 \x02(\t\"\x9e\x01\n\x0f\x46ileInformation\x12\x14\n\x0clicense_name\x18\x01 \x02(\t\x12\x14\n\x0clicense_text\x18\x02 \x01(\t\x12*\n\x04\x64\x61te\x18\x03 \x02(\x0b\x32\x1c.commonroad_common.TimeStamp\x12\x0e\n\x06\x61uthor\x18\x04 \x02(\t\x12\x13\n\x0b\x61\x66\x66iliation\x18\x05 \x02(\t\x12\x0e\n\x06source\x18\x06 \x02(\t\"\xa4\x01\n\x17ScenarioMetaInformation\x12\x33\n\x0c\x62\x65nchmark_id\x18\x01 \x02(\x0b\x32\x1d.commonroad_common.ScenarioID\x12<\n\x10\x66ile_information\x18\x02 \x02(\x0b\x32\".commonroad_common.FileInformation\x12\x16\n\x0etime_step_size\x18\x03 \x02(\x01\x42\x02H\x03')
   ,
   dependencies=[util__pb2.DESCRIPTOR,])
 
@@ -287,4 +287,5 @@ ScenarioMetaInformation = _reflection.GeneratedProtocolMessageType('ScenarioMeta
 _sym_db.RegisterMessage(ScenarioMetaInformation)
 
 
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)

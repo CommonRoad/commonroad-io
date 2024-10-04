@@ -11,15 +11,16 @@ from google.protobuf import symbol_database as _symbol_database
 
 _sym_db = _symbol_database.Default()
 
-import commonroad.common.protobuf.map.lanelet_pb2 as lanelet__pb2
+
+import lanelet_pb2 as lanelet__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='area.proto',
   package='commonroad_map',
   syntax='proto2',
-  serialized_options=None,
-  serialized_pb=_b('\n\narea.proto\x12\x0e\x63ommonroad_map\x1a\rlanelet.proto\"^\n\x0c\x41reaTypeEnum\"N\n\x08\x41reaType\x12\x0c\n\x08\x42US_STOP\x10\t\x12\n\n\x06\x42ORDER\x10\x0f\x12\x0b\n\x07PARKING\x10\x10\x12\x0e\n\nRESTRICTED\x10\x11\x12\x0b\n\x07UNKNOWN\x10\x12\"\x8b\x01\n\nAreaBorder\x12\x16\n\x0e\x61rea_border_id\x18\x01 \x02(\r\x12\x10\n\x08\x62oundary\x18\x02 \x02(\r\x12\x10\n\x08\x61\x64jacent\x18\x03 \x01(\r\x12\x41\n\x0cline_marking\x18\x04 \x01(\x0e\x32+.commonroad_map.LineMarkingEnum.LineMarking\"~\n\x04\x41rea\x12\x0f\n\x07\x61rea_id\x18\x01 \x02(\r\x12*\n\x06\x62order\x18\x02 \x03(\x0b\x32\x1a.commonroad_map.AreaBorder\x12\x39\n\narea_types\x18\x03 \x03(\x0e\x32%.commonroad_map.AreaTypeEnum.AreaType')
+  serialized_options=_b('H\003'),
+  serialized_pb=_b('\n\narea.proto\x12\x0e\x63ommonroad_map\x1a\rlanelet.proto\"^\n\x0c\x41reaTypeEnum\"N\n\x08\x41reaType\x12\x0c\n\x08\x42US_STOP\x10\t\x12\n\n\x06\x42ORDER\x10\x0f\x12\x0b\n\x07PARKING\x10\x10\x12\x0e\n\nRESTRICTED\x10\x11\x12\x0b\n\x07UNKNOWN\x10\x12\"\x8b\x01\n\nAreaBorder\x12\x16\n\x0e\x61rea_border_id\x18\x01 \x02(\r\x12\x10\n\x08\x62oundary\x18\x02 \x02(\r\x12\x10\n\x08\x61\x64jacent\x18\x03 \x01(\r\x12\x41\n\x0cline_marking\x18\x04 \x01(\x0e\x32+.commonroad_map.LineMarkingEnum.LineMarking\"~\n\x04\x41rea\x12\x0f\n\x07\x61rea_id\x18\x01 \x02(\r\x12*\n\x06\x62order\x18\x02 \x03(\x0b\x32\x1a.commonroad_map.AreaBorder\x12\x39\n\narea_types\x18\x03 \x03(\x0e\x32%.commonroad_map.AreaTypeEnum.AreaTypeB\x02H\x03')
   ,
   dependencies=[lanelet__pb2.DESCRIPTOR,])
 
@@ -212,4 +213,5 @@ Area = _reflection.GeneratedProtocolMessageType('Area', (_message.Message,), dic
 _sym_db.RegisterMessage(Area)
 
 
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)

@@ -12,16 +12,16 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import commonroad.common.protobuf.common.state_pb2 as state__pb2
-import commonroad.common.protobuf.scenario.scenario_tags_pb2 as scenario__tags__pb2
+import state_pb2 as state__pb2
+import scenario_tags_pb2 as scenario__tags__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='planning_problem.proto',
   package='commonroad_scenario',
   syntax='proto2',
-  serialized_options=None,
-  serialized_pb=_b('\n\x16planning_problem.proto\x12\x13\x63ommonroad_scenario\x1a\x0bstate.proto\x1a\x13scenario_tags.proto\"T\n\tGoalState\x12\'\n\x05state\x18\x01 \x02(\x0b\x32\x18.commonroad_common.State\x12\x1e\n\x16goal_position_lanelets\x18\x02 \x03(\r\"\xde\x01\n\x0fPlanningProblem\x12\x1b\n\x13planning_problem_id\x18\x01 \x02(\r\x12/\n\rinitial_state\x18\x02 \x02(\x0b\x32\x18.commonroad_common.State\x12\x33\n\x0bgoal_states\x18\x03 \x03(\x0b\x32\x1e.commonroad_scenario.GoalState\x12\x0e\n\x06\x65go_id\x18\x04 \x01(\r\x12\x38\n\rscenario_tags\x18\x05 \x02(\x0b\x32!.commonroad_scenario.ScenarioTags\"i\n\x1a\x43ooperativePlanningProblem\x12\'\n\x1f\x63ooperative_planning_problem_id\x18\x01 \x02(\r\x12\"\n\x1asingle_planning_problem_id\x18\x02 \x03(\r')
+  serialized_options=_b('H\003'),
+  serialized_pb=_b('\n\x16planning_problem.proto\x12\x13\x63ommonroad_scenario\x1a\x0bstate.proto\x1a\x13scenario_tags.proto\"T\n\tGoalState\x12\'\n\x05state\x18\x01 \x02(\x0b\x32\x18.commonroad_common.State\x12\x1e\n\x16goal_position_lanelets\x18\x02 \x03(\r\"\xde\x01\n\x0fPlanningProblem\x12\x1b\n\x13planning_problem_id\x18\x01 \x02(\r\x12/\n\rinitial_state\x18\x02 \x02(\x0b\x32\x18.commonroad_common.State\x12\x33\n\x0bgoal_states\x18\x03 \x03(\x0b\x32\x1e.commonroad_scenario.GoalState\x12\x0e\n\x06\x65go_id\x18\x04 \x01(\r\x12\x38\n\rscenario_tags\x18\x05 \x02(\x0b\x32!.commonroad_scenario.ScenarioTags\"i\n\x1a\x43ooperativePlanningProblem\x12\'\n\x1f\x63ooperative_planning_problem_id\x18\x01 \x02(\r\x12\"\n\x1asingle_planning_problem_id\x18\x02 \x03(\rB\x02H\x03')
   ,
   dependencies=[state__pb2.DESCRIPTOR,scenario__tags__pb2.DESCRIPTOR,])
 
@@ -193,4 +193,5 @@ CooperativePlanningProblem = _reflection.GeneratedProtocolMessageType('Cooperati
 _sym_db.RegisterMessage(CooperativePlanningProblem)
 
 
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)

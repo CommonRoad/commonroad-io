@@ -18,8 +18,8 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='traffic_light_state.proto',
   package='commonroad_common',
   syntax='proto2',
-  serialized_options=None,
-  serialized_pb=_b('\n\x19traffic_light_state.proto\x12\x11\x63ommonroad_common\"j\n\x15TrafficLightStateEnum\"Q\n\x11TrafficLightState\x12\x07\n\x03RED\x10\x00\x12\x0e\n\nRED_YELLOW\x10\x01\x12\t\n\x05GREEN\x10\x02\x12\n\n\x06YELLOW\x10\x03\x12\x0c\n\x08INACTIVE\x10\x04')
+  serialized_options=_b('H\003'),
+  serialized_pb=_b('\n\x19traffic_light_state.proto\x12\x11\x63ommonroad_common\"j\n\x15TrafficLightStateEnum\"Q\n\x11TrafficLightState\x12\x07\n\x03RED\x10\x00\x12\x0e\n\nRED_YELLOW\x10\x01\x12\t\n\x05GREEN\x10\x02\x12\n\n\x06YELLOW\x10\x03\x12\x0c\n\x08INACTIVE\x10\x04\x42\x02H\x03')
 )
 
 
@@ -95,4 +95,5 @@ TrafficLightStateEnum = _reflection.GeneratedProtocolMessageType('TrafficLightSt
 _sym_db.RegisterMessage(TrafficLightStateEnum)
 
 
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)

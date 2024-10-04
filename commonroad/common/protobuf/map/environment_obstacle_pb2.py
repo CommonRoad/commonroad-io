@@ -12,15 +12,15 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import commonroad.common.protobuf.common.util_pb2 as util__pb2
+import util_pb2 as util__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='environment_obstacle.proto',
   package='commonroad_map',
   syntax='proto2',
-  serialized_options=None,
-  serialized_pb=_b('\n\x1a\x65nvironment_obstacle.proto\x12\x0e\x63ommonroad_map\x1a\nutil.proto\"\x84\x01\n\x1b\x45nvironmentObstacleTypeEnum\"e\n\x17\x45nvironmentObstacleType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0c\n\x08\x42UILDING\x10\x01\x12\x11\n\rROAD_BOUNDARY\x10\x02\x12\n\n\x06PILLAR\x10\x03\x12\x10\n\x0cMEDIAN_STRIP\x10\x04\"\xc4\x01\n\x13\x45nvironmentObstacle\x12\x1f\n\x17\x65nvironment_obstacle_id\x18\x01 \x02(\r\x12Z\n\robstacle_type\x18\x02 \x02(\x0e\x32\x43.commonroad_map.EnvironmentObstacleTypeEnum.EnvironmentObstacleType\x12\x30\n\x0eobstacle_shape\x18\x03 \x02(\x0b\x32\x18.commonroad_common.Shape')
+  serialized_options=_b('H\003'),
+  serialized_pb=_b('\n\x1a\x65nvironment_obstacle.proto\x12\x0e\x63ommonroad_map\x1a\nutil.proto\"\x84\x01\n\x1b\x45nvironmentObstacleTypeEnum\"e\n\x17\x45nvironmentObstacleType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0c\n\x08\x42UILDING\x10\x01\x12\x11\n\rROAD_BOUNDARY\x10\x02\x12\n\n\x06PILLAR\x10\x03\x12\x10\n\x0cMEDIAN_STRIP\x10\x04\"\xc4\x01\n\x13\x45nvironmentObstacle\x12\x1f\n\x17\x65nvironment_obstacle_id\x18\x01 \x02(\r\x12Z\n\robstacle_type\x18\x02 \x02(\x0e\x32\x43.commonroad_map.EnvironmentObstacleTypeEnum.EnvironmentObstacleType\x12\x30\n\x0eobstacle_shape\x18\x03 \x02(\x0b\x32\x18.commonroad_common.ShapeB\x02H\x03')
   ,
   dependencies=[util__pb2.DESCRIPTOR,])
 
@@ -152,4 +152,5 @@ EnvironmentObstacle = _reflection.GeneratedProtocolMessageType('EnvironmentObsta
 _sym_db.RegisterMessage(EnvironmentObstacle)
 
 
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)

@@ -12,16 +12,16 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import commonroad.common.protobuf.scenario.planning_problem_pb2 as planning__problem__pb2
-import commonroad.common.protobuf.common.scenario_meta_information_pb2 as scenario__meta__information__pb2
+import planning_problem_pb2 as planning__problem__pb2
+import scenario_meta_information_pb2 as scenario__meta__information__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='commonroad_scenario.proto',
   package='commonroad_scenario',
   syntax='proto2',
-  serialized_options=None,
-  serialized_pb=_b('\n\x19\x63ommonroad_scenario.proto\x12\x13\x63ommonroad_scenario\x1a\x16planning_problem.proto\x1a\x1fscenario_meta_information.proto\"\xa0\x02\n\x12\x43ommonRoadScenario\x12M\n\x19scenario_meta_information\x18\x01 \x02(\x0b\x32*.commonroad_common.ScenarioMetaInformation\x12\x0e\n\x06map_id\x18\x03 \x02(\t\x12\x12\n\ndynamic_id\x18\x04 \x02(\t\x12?\n\x11planning_problems\x18\x05 \x03(\x0b\x32$.commonroad_scenario.PlanningProblem\x12V\n\x1d\x63ooperative_planning_problems\x18\x06 \x03(\x0b\x32/.commonroad_scenario.CooperativePlanningProblem')
+  serialized_options=_b('H\003'),
+  serialized_pb=_b('\n\x19\x63ommonroad_scenario.proto\x12\x13\x63ommonroad_scenario\x1a\x16planning_problem.proto\x1a\x1fscenario_meta_information.proto\"\xa0\x02\n\x12\x43ommonRoadScenario\x12M\n\x19scenario_meta_information\x18\x01 \x02(\x0b\x32*.commonroad_common.ScenarioMetaInformation\x12\x0e\n\x06map_id\x18\x03 \x02(\t\x12\x12\n\ndynamic_id\x18\x04 \x02(\t\x12?\n\x11planning_problems\x18\x05 \x03(\x0b\x32$.commonroad_scenario.PlanningProblem\x12V\n\x1d\x63ooperative_planning_problems\x18\x06 \x03(\x0b\x32/.commonroad_scenario.CooperativePlanningProblemB\x02H\x03')
   ,
   dependencies=[planning__problem__pb2.DESCRIPTOR,scenario__meta__information__pb2.DESCRIPTOR,])
 
@@ -100,4 +100,5 @@ CommonRoadScenario = _reflection.GeneratedProtocolMessageType('CommonRoadScenari
 _sym_db.RegisterMessage(CommonRoadScenario)
 
 
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)

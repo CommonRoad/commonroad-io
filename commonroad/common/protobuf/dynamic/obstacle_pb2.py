@@ -12,16 +12,16 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import commonroad.common.protobuf.common.util_pb2 as util__pb2
-import commonroad.common.protobuf.common.state_pb2 as state__pb2
+import util_pb2 as util__pb2
+import state_pb2 as state__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='obstacle.proto',
   package='commonroad_dynamic',
   syntax='proto2',
-  serialized_options=None,
-  serialized_pb=_b('\n\x0eobstacle.proto\x12\x12\x63ommonroad_dynamic\x1a\nutil.proto\x1a\x0bstate.proto\"\x9c\x02\n\x10ObstacleTypeEnum\"\x87\x02\n\x0cObstacleType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x0b\n\x07\x42ICYCLE\x10\x04\x12\x0e\n\nPEDESTRIAN\x10\x05\x12\x14\n\x10PRIORITY_VEHICLE\x10\x06\x12\x12\n\x0ePARKED_VEHICLE\x10\x07\x12\x15\n\x11\x43ONSTRUCTION_ZONE\x10\x08\x12\t\n\x05TRAIN\x10\t\x12\x11\n\rROAD_BOUNDARY\x10\n\x12\x0e\n\nMOTORCYCLE\x10\x0b\x12\x08\n\x04TAXI\x10\x0c\x12\x0c\n\x08\x42UILDING\x10\r\x12\n\n\x06PILLAR\x10\x0e\x12\x10\n\x0cMEDIAN_STRIP\x10\x0f\x12\x0b\n\x07VEHICLE\x10\x10\"r\n\tOccupancy\x12<\n\ttime_step\x18\x01 \x02(\x0b\x32).commonroad_common.IntegerExactOrInterval\x12\'\n\x05shape\x18\x02 \x02(\x0b\x32\x18.commonroad_common.Shape\"B\n\x0cOccupancySet\x12\x32\n\x0boccupancies\x18\x01 \x03(\x0b\x32\x1d.commonroad_dynamic.Occupancy\"Q\n\nTrajectory\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12(\n\x06states\x18\x02 \x03(\x0b\x32\x18.commonroad_common.State\"s\n\x14TrajectoryPrediction\x12\x32\n\ntrajectory\x18\x01 \x02(\x0b\x32\x1e.commonroad_dynamic.Trajectory\x12\'\n\x05shape\x18\x02 \x02(\x0b\x32\x18.commonroad_common.Shape\"h\n\x12SetBasedPrediction\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12\x37\n\roccupancy_set\x18\x02 \x02(\x0b\x32 .commonroad_dynamic.OccupancySet')
+  serialized_options=_b('H\003'),
+  serialized_pb=_b('\n\x0eobstacle.proto\x12\x12\x63ommonroad_dynamic\x1a\nutil.proto\x1a\x0bstate.proto\"\x9c\x02\n\x10ObstacleTypeEnum\"\x87\x02\n\x0cObstacleType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x0b\n\x07\x42ICYCLE\x10\x04\x12\x0e\n\nPEDESTRIAN\x10\x05\x12\x14\n\x10PRIORITY_VEHICLE\x10\x06\x12\x12\n\x0ePARKED_VEHICLE\x10\x07\x12\x15\n\x11\x43ONSTRUCTION_ZONE\x10\x08\x12\t\n\x05TRAIN\x10\t\x12\x11\n\rROAD_BOUNDARY\x10\n\x12\x0e\n\nMOTORCYCLE\x10\x0b\x12\x08\n\x04TAXI\x10\x0c\x12\x0c\n\x08\x42UILDING\x10\r\x12\n\n\x06PILLAR\x10\x0e\x12\x10\n\x0cMEDIAN_STRIP\x10\x0f\x12\x0b\n\x07VEHICLE\x10\x10\"r\n\tOccupancy\x12<\n\ttime_step\x18\x01 \x02(\x0b\x32).commonroad_common.IntegerExactOrInterval\x12\'\n\x05shape\x18\x02 \x02(\x0b\x32\x18.commonroad_common.Shape\"B\n\x0cOccupancySet\x12\x32\n\x0boccupancies\x18\x01 \x03(\x0b\x32\x1d.commonroad_dynamic.Occupancy\"Q\n\nTrajectory\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12(\n\x06states\x18\x02 \x03(\x0b\x32\x18.commonroad_common.State\"s\n\x14TrajectoryPrediction\x12\x32\n\ntrajectory\x18\x01 \x02(\x0b\x32\x1e.commonroad_dynamic.Trajectory\x12\'\n\x05shape\x18\x02 \x02(\x0b\x32\x18.commonroad_common.Shape\"h\n\x12SetBasedPrediction\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12\x37\n\roccupancy_set\x18\x02 \x02(\x0b\x32 .commonroad_dynamic.OccupancySetB\x02H\x03')
   ,
   dependencies=[util__pb2.DESCRIPTOR,state__pb2.DESCRIPTOR,])
 
@@ -376,4 +376,5 @@ SetBasedPrediction = _reflection.GeneratedProtocolMessageType('SetBasedPredictio
 _sym_db.RegisterMessage(SetBasedPrediction)
 
 
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)

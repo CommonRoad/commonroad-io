@@ -12,16 +12,16 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import commonroad.common.protobuf.common.util_pb2 as util__pb2
-import commonroad.common.protobuf.common.traffic_light_state_pb2 as traffic__light__state__pb2
+import util_pb2 as util__pb2
+import traffic_light_state_pb2 as traffic__light__state__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='traffic_light.proto',
   package='commonroad_map',
   syntax='proto2',
-  serialized_options=None,
-  serialized_pb=_b('\n\x13traffic_light.proto\x12\x0e\x63ommonroad_map\x1a\nutil.proto\x1a\x19traffic_light_state.proto\"\x97\x01\n\x19TrafficLightDirectionEnum\"z\n\x15TrafficLightDirection\x12\t\n\x05RIGHT\x10\x00\x12\x0c\n\x08STRAIGHT\x10\x01\x12\x08\n\x04LEFT\x10\x02\x12\x11\n\rLEFT_STRAIGHT\x10\x03\x12\x12\n\x0eSTRAIGHT_RIGHT\x10\x04\x12\x0e\n\nLEFT_RIGHT\x10\x05\x12\x07\n\x03\x41LL\x10\x06\"\xf3\x01\n\x0cTrafficLight\x12\x18\n\x10traffic_light_id\x18\x01 \x02(\r\x12*\n\x08position\x18\x02 \x02(\x0b\x32\x18.commonroad_common.Point\x12I\n\x05\x63olor\x18\x03 \x03(\x0e\x32:.commonroad_common.TrafficLightStateEnum.TrafficLightState\x12R\n\tdirection\x18\x04 \x01(\x0e\x32?.commonroad_map.TrafficLightDirectionEnum.TrafficLightDirection')
+  serialized_options=_b('H\003'),
+  serialized_pb=_b('\n\x13traffic_light.proto\x12\x0e\x63ommonroad_map\x1a\nutil.proto\x1a\x19traffic_light_state.proto\"\x97\x01\n\x19TrafficLightDirectionEnum\"z\n\x15TrafficLightDirection\x12\t\n\x05RIGHT\x10\x00\x12\x0c\n\x08STRAIGHT\x10\x01\x12\x08\n\x04LEFT\x10\x02\x12\x11\n\rLEFT_STRAIGHT\x10\x03\x12\x12\n\x0eSTRAIGHT_RIGHT\x10\x04\x12\x0e\n\nLEFT_RIGHT\x10\x05\x12\x07\n\x03\x41LL\x10\x06\"\xf3\x01\n\x0cTrafficLight\x12\x18\n\x10traffic_light_id\x18\x01 \x02(\r\x12*\n\x08position\x18\x02 \x02(\x0b\x32\x18.commonroad_common.Point\x12I\n\x05\x63olor\x18\x03 \x03(\x0e\x32:.commonroad_common.TrafficLightStateEnum.TrafficLightState\x12R\n\tdirection\x18\x04 \x01(\x0e\x32?.commonroad_map.TrafficLightDirectionEnum.TrafficLightDirectionB\x02H\x03')
   ,
   dependencies=[util__pb2.DESCRIPTOR,traffic__light__state__pb2.DESCRIPTOR,])
 
@@ -169,4 +169,5 @@ TrafficLight = _reflection.GeneratedProtocolMessageType('TrafficLight', (_messag
 _sym_db.RegisterMessage(TrafficLight)
 
 
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)

@@ -12,15 +12,15 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import commonroad.common.protobuf.dynamic.obstacle_pb2 as obstacle__pb2
+import obstacle_pb2 as obstacle__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='phantom_obstacle.proto',
   package='commonroad_dynamic',
   syntax='proto2',
-  serialized_options=None,
-  serialized_pb=_b('\n\x16phantom_obstacle.proto\x12\x12\x63ommonroad_dynamic\x1a\x0eobstacle.proto\"b\n\x0fPhantomObstacle\x12\x13\n\x0bobstacle_id\x18\x01 \x02(\r\x12:\n\nprediction\x18\x02 \x01(\x0b\x32&.commonroad_dynamic.SetBasedPrediction')
+  serialized_options=_b('H\003'),
+  serialized_pb=_b('\n\x16phantom_obstacle.proto\x12\x12\x63ommonroad_dynamic\x1a\x0eobstacle.proto\"b\n\x0fPhantomObstacle\x12\x13\n\x0bobstacle_id\x18\x01 \x02(\r\x12:\n\nprediction\x18\x02 \x01(\x0b\x32&.commonroad_dynamic.SetBasedPredictionB\x02H\x03')
   ,
   dependencies=[obstacle__pb2.DESCRIPTOR,])
 
@@ -76,4 +76,5 @@ PhantomObstacle = _reflection.GeneratedProtocolMessageType('PhantomObstacle', (_
 _sym_db.RegisterMessage(PhantomObstacle)
 
 
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)

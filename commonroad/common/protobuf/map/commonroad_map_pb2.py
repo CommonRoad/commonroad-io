@@ -12,22 +12,22 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import commonroad.common.protobuf.map.location_pb2 as location__pb2
-import commonroad.common.protobuf.map.lanelet_pb2 as lanelet__pb2
-import commonroad.common.protobuf.map.area_pb2 as area__pb2
-import commonroad.common.protobuf.map.traffic_sign_pb2 as traffic__sign__pb2
-import commonroad.common.protobuf.map.traffic_light_pb2 as traffic__light__pb2
-import commonroad.common.protobuf.map.intersection_pb2 as intersection__pb2
-import commonroad.common.protobuf.map.environment_obstacle_pb2 as environment__obstacle__pb2
-import commonroad.common.protobuf.common.scenario_meta_information_pb2 as scenario__meta__information__pb2
+import location_pb2 as location__pb2
+import lanelet_pb2 as lanelet__pb2
+import area_pb2 as area__pb2
+import traffic_sign_pb2 as traffic__sign__pb2
+import traffic_light_pb2 as traffic__light__pb2
+import intersection_pb2 as intersection__pb2
+import environment_obstacle_pb2 as environment__obstacle__pb2
+import scenario_meta_information_pb2 as scenario__meta__information__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='commonroad_map.proto',
   package='commonroad_map',
   syntax='proto2',
-  serialized_options=None,
-  serialized_pb=_b('\n\x14\x63ommonroad_map.proto\x12\x0e\x63ommonroad_map\x1a\x0elocation.proto\x1a\rlanelet.proto\x1a\narea.proto\x1a\x12traffic_sign.proto\x1a\x13traffic_light.proto\x1a\x12intersection.proto\x1a\x1a\x65nvironment_obstacle.proto\x1a\x1fscenario_meta_information.proto\"x\n\x0eMapInformation\x12(\n\x06map_id\x18\x01 \x02(\x0b\x32\x18.commonroad_common.MapID\x12<\n\x10\x66ile_information\x18\x02 \x02(\x0b\x32\".commonroad_common.FileInformation\"\x85\x04\n\rCommonRoadMap\x12<\n\x14map_meta_information\x18\x01 \x02(\x0b\x32\x1e.commonroad_map.MapInformation\x12*\n\x08location\x18\x02 \x02(\x0b\x32\x18.commonroad_map.Location\x12)\n\x08lanelets\x18\x03 \x03(\x0b\x32\x17.commonroad_map.Lanelet\x12,\n\nstop_lines\x18\x04 \x03(\x0b\x32\x18.commonroad_map.StopLine\x12)\n\nboundaries\x18\x05 \x03(\x0b\x32\x15.commonroad_map.Bound\x12#\n\x05\x61reas\x18\x06 \x03(\x0b\x32\x14.commonroad_map.Area\x12\x32\n\rtraffic_signs\x18\x07 \x03(\x0b\x32\x1b.commonroad_map.TrafficSign\x12\x34\n\x0etraffic_lights\x18\x08 \x03(\x0b\x32\x1c.commonroad_map.TrafficLight\x12\x33\n\rintersections\x18\t \x03(\x0b\x32\x1c.commonroad_map.Intersection\x12\x42\n\x15\x65nvironment_obstacles\x18\n \x03(\x0b\x32#.commonroad_map.EnvironmentObstacle')
+  serialized_options=_b('H\003'),
+  serialized_pb=_b('\n\x14\x63ommonroad_map.proto\x12\x0e\x63ommonroad_map\x1a\x0elocation.proto\x1a\rlanelet.proto\x1a\narea.proto\x1a\x12traffic_sign.proto\x1a\x13traffic_light.proto\x1a\x12intersection.proto\x1a\x1a\x65nvironment_obstacle.proto\x1a\x1fscenario_meta_information.proto\"x\n\x0eMapInformation\x12(\n\x06map_id\x18\x01 \x02(\x0b\x32\x18.commonroad_common.MapID\x12<\n\x10\x66ile_information\x18\x02 \x02(\x0b\x32\".commonroad_common.FileInformation\"\x85\x04\n\rCommonRoadMap\x12<\n\x14map_meta_information\x18\x01 \x02(\x0b\x32\x1e.commonroad_map.MapInformation\x12*\n\x08location\x18\x02 \x02(\x0b\x32\x18.commonroad_map.Location\x12)\n\x08lanelets\x18\x03 \x03(\x0b\x32\x17.commonroad_map.Lanelet\x12,\n\nstop_lines\x18\x04 \x03(\x0b\x32\x18.commonroad_map.StopLine\x12)\n\nboundaries\x18\x05 \x03(\x0b\x32\x15.commonroad_map.Bound\x12#\n\x05\x61reas\x18\x06 \x03(\x0b\x32\x14.commonroad_map.Area\x12\x32\n\rtraffic_signs\x18\x07 \x03(\x0b\x32\x1b.commonroad_map.TrafficSign\x12\x34\n\x0etraffic_lights\x18\x08 \x03(\x0b\x32\x1c.commonroad_map.TrafficLight\x12\x33\n\rintersections\x18\t \x03(\x0b\x32\x1c.commonroad_map.Intersection\x12\x42\n\x15\x65nvironment_obstacles\x18\n \x03(\x0b\x32#.commonroad_map.EnvironmentObstacleB\x02H\x03')
   ,
   dependencies=[location__pb2.DESCRIPTOR,lanelet__pb2.DESCRIPTOR,area__pb2.DESCRIPTOR,traffic__sign__pb2.DESCRIPTOR,traffic__light__pb2.DESCRIPTOR,intersection__pb2.DESCRIPTOR,environment__obstacle__pb2.DESCRIPTOR,scenario__meta__information__pb2.DESCRIPTOR,])
 
@@ -196,4 +196,5 @@ CommonRoadMap = _reflection.GeneratedProtocolMessageType('CommonRoadMap', (_mess
 _sym_db.RegisterMessage(CommonRoadMap)
 
 
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)

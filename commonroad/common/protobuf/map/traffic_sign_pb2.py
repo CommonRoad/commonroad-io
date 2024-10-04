@@ -12,16 +12,16 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import commonroad.common.protobuf.common.util_pb2 as util__pb2
-import commonroad.common.protobuf.common.traffic_sign_element_pb2 as traffic__sign__element__pb2
+import util_pb2 as util__pb2
+import traffic_sign_element_pb2 as traffic__sign__element__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='traffic_sign.proto',
   package='commonroad_map',
   syntax='proto2',
-  serialized_options=None,
-  serialized_pb=_b('\n\x12traffic_sign.proto\x12\x0e\x63ommonroad_map\x1a\nutil.proto\x1a\x1atraffic_sign_element.proto\"\xa9\x01\n\x0bTrafficSign\x12\x17\n\x0ftraffic_sign_id\x18\x01 \x02(\r\x12\x44\n\x15traffic_sign_elements\x18\x02 \x03(\x0b\x32%.commonroad_common.TrafficSignElement\x12*\n\x08position\x18\x03 \x02(\x0b\x32\x18.commonroad_common.Point\x12\x0f\n\x07virtual\x18\x04 \x01(\x08')
+  serialized_options=_b('H\003'),
+  serialized_pb=_b('\n\x12traffic_sign.proto\x12\x0e\x63ommonroad_map\x1a\nutil.proto\x1a\x1atraffic_sign_element.proto\"\xa9\x01\n\x0bTrafficSign\x12\x17\n\x0ftraffic_sign_id\x18\x01 \x02(\r\x12\x44\n\x15traffic_sign_elements\x18\x02 \x03(\x0b\x32%.commonroad_common.TrafficSignElement\x12*\n\x08position\x18\x03 \x02(\x0b\x32\x18.commonroad_common.Point\x12\x0f\n\x07virtual\x18\x04 \x01(\x08\x42\x02H\x03')
   ,
   dependencies=[util__pb2.DESCRIPTOR,traffic__sign__element__pb2.DESCRIPTOR,])
 
@@ -92,4 +92,5 @@ TrafficSign = _reflection.GeneratedProtocolMessageType('TrafficSign', (_message.
 _sym_db.RegisterMessage(TrafficSign)
 
 
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)

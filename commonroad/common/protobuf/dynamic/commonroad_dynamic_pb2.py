@@ -12,21 +12,21 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import commonroad.common.protobuf.dynamic.environment_pb2 as environment__pb2
-import commonroad.common.protobuf.dynamic.traffic_sign_value_pb2 as traffic__sign__value__pb2
-import commonroad.common.protobuf.dynamic.traffic_light_cycle_pb2 as traffic__light__cycle__pb2
-import commonroad.common.protobuf.dynamic.static_obstacle_pb2 as static__obstacle__pb2
-import commonroad.common.protobuf.dynamic.dynamic_obstacle_pb2 as dynamic__obstacle__pb2
-import commonroad.common.protobuf.dynamic.phantom_obstacle_pb2 as phantom__obstacle__pb2
-import commonroad.common.protobuf.common.scenario_meta_information_pb2 as scenario__meta__information__pb2
+import environment_pb2 as environment__pb2
+import traffic_sign_value_pb2 as traffic__sign__value__pb2
+import traffic_light_cycle_pb2 as traffic__light__cycle__pb2
+import static_obstacle_pb2 as static__obstacle__pb2
+import dynamic_obstacle_pb2 as dynamic__obstacle__pb2
+import phantom_obstacle_pb2 as phantom__obstacle__pb2
+import scenario_meta_information_pb2 as scenario__meta__information__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='commonroad_dynamic.proto',
   package='commonroad_dynamic',
   syntax='proto2',
-  serialized_options=None,
-  serialized_pb=_b('\n\x18\x63ommonroad_dynamic.proto\x12\x12\x63ommonroad_dynamic\x1a\x11\x65nvironment.proto\x1a\x18traffic_sign_value.proto\x1a\x19traffic_light_cycle.proto\x1a\x15static_obstacle.proto\x1a\x16\x64ynamic_obstacle.proto\x1a\x16phantom_obstacle.proto\x1a\x1fscenario_meta_information.proto\"\xdb\x03\n\x11\x43ommonRoadDynamic\x12L\n\x18\x64ynamic_meta_information\x18\x01 \x02(\x0b\x32*.commonroad_common.ScenarioMetaInformation\x12\x34\n\x0b\x65nvironment\x18\x02 \x02(\x0b\x32\x1f.commonroad_dynamic.Environment\x12\x42\n\x13traffic_light_cycle\x18\x03 \x03(\x0b\x32%.commonroad_dynamic.TrafficLightCycle\x12@\n\x12traffic_sign_value\x18\x04 \x03(\x0b\x32$.commonroad_dynamic.TrafficSignValue\x12<\n\x10static_obstacles\x18\x05 \x03(\x0b\x32\".commonroad_dynamic.StaticObstacle\x12>\n\x11\x64ynamic_obstacles\x18\x06 \x03(\x0b\x32#.commonroad_dynamic.DynamicObstacle\x12>\n\x11phantom_obstacles\x18\x07 \x03(\x0b\x32#.commonroad_dynamic.PhantomObstacle')
+  serialized_options=_b('H\003'),
+  serialized_pb=_b('\n\x18\x63ommonroad_dynamic.proto\x12\x12\x63ommonroad_dynamic\x1a\x11\x65nvironment.proto\x1a\x18traffic_sign_value.proto\x1a\x19traffic_light_cycle.proto\x1a\x15static_obstacle.proto\x1a\x16\x64ynamic_obstacle.proto\x1a\x16phantom_obstacle.proto\x1a\x1fscenario_meta_information.proto\"\xdb\x03\n\x11\x43ommonRoadDynamic\x12L\n\x18\x64ynamic_meta_information\x18\x01 \x02(\x0b\x32*.commonroad_common.ScenarioMetaInformation\x12\x34\n\x0b\x65nvironment\x18\x02 \x02(\x0b\x32\x1f.commonroad_dynamic.Environment\x12\x42\n\x13traffic_light_cycle\x18\x03 \x03(\x0b\x32%.commonroad_dynamic.TrafficLightCycle\x12@\n\x12traffic_sign_value\x18\x04 \x03(\x0b\x32$.commonroad_dynamic.TrafficSignValue\x12<\n\x10static_obstacles\x18\x05 \x03(\x0b\x32\".commonroad_dynamic.StaticObstacle\x12>\n\x11\x64ynamic_obstacles\x18\x06 \x03(\x0b\x32#.commonroad_dynamic.DynamicObstacle\x12>\n\x11phantom_obstacles\x18\x07 \x03(\x0b\x32#.commonroad_dynamic.PhantomObstacleB\x02H\x03')
   ,
   dependencies=[environment__pb2.DESCRIPTOR,traffic__sign__value__pb2.DESCRIPTOR,traffic__light__cycle__pb2.DESCRIPTOR,static__obstacle__pb2.DESCRIPTOR,dynamic__obstacle__pb2.DESCRIPTOR,phantom__obstacle__pb2.DESCRIPTOR,scenario__meta__information__pb2.DESCRIPTOR,])
 
@@ -123,4 +123,5 @@ CommonRoadDynamic = _reflection.GeneratedProtocolMessageType('CommonRoadDynamic'
 _sym_db.RegisterMessage(CommonRoadDynamic)
 
 
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)

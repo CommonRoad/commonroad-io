@@ -12,15 +12,15 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import commonroad.common.protobuf.common.traffic_sign_element_pb2 as traffic__sign__element__pb2
+import traffic_sign_element_pb2 as traffic__sign__element__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='traffic_sign_value.proto',
   package='commonroad_dynamic',
   syntax='proto2',
-  serialized_options=None,
-  serialized_pb=_b('\n\x18traffic_sign_value.proto\x12\x12\x63ommonroad_dynamic\x1a\x1atraffic_sign_element.proto\"q\n\x10TrafficSignValue\x12\x17\n\x0ftraffic_sign_id\x18\x01 \x02(\r\x12\x44\n\x15traffic_sign_elements\x18\x02 \x03(\x0b\x32%.commonroad_common.TrafficSignElement')
+  serialized_options=_b('H\003'),
+  serialized_pb=_b('\n\x18traffic_sign_value.proto\x12\x12\x63ommonroad_dynamic\x1a\x1atraffic_sign_element.proto\"q\n\x10TrafficSignValue\x12\x17\n\x0ftraffic_sign_id\x18\x01 \x02(\r\x12\x44\n\x15traffic_sign_elements\x18\x02 \x03(\x0b\x32%.commonroad_common.TrafficSignElementB\x02H\x03')
   ,
   dependencies=[traffic__sign__element__pb2.DESCRIPTOR,])
 
@@ -76,4 +76,5 @@ TrafficSignValue = _reflection.GeneratedProtocolMessageType('TrafficSignValue', 
 _sym_db.RegisterMessage(TrafficSignValue)
 
 
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)

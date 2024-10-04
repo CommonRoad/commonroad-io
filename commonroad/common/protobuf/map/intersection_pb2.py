@@ -18,8 +18,8 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='intersection.proto',
   package='commonroad_map',
   syntax='proto2',
-  serialized_options=None,
-  serialized_pb=_b('\n\x12intersection.proto\x12\x0e\x63ommonroad_map\"\xaa\x01\n\rIncomingGroup\x12\x19\n\x11incoming_group_id\x18\x01 \x02(\r\x12\x19\n\x11incoming_lanelets\x18\x02 \x03(\r\x12\x19\n\x11outgoing_group_id\x18\x03 \x01(\r\x12\x16\n\x0eoutgoing_right\x18\x04 \x03(\r\x12\x19\n\x11outgoing_straight\x18\x05 \x03(\r\x12\x15\n\routgoing_left\x18\x06 \x03(\r\"`\n\rOutgoingGroup\x12\x19\n\x11outgoing_group_id\x18\x01 \x02(\r\x12\x19\n\x11outgoing_lanelets\x18\x02 \x03(\r\x12\x19\n\x11incoming_group_id\x18\x03 \x01(\r\"{\n\rCrossingGroup\x12\x19\n\x11\x63rossing_group_id\x18\x01 \x02(\r\x12\x19\n\x11\x63rossing_lanelets\x18\x02 \x03(\r\x12\x19\n\x11incoming_group_id\x18\x03 \x01(\r\x12\x19\n\x11outgoing_group_id\x18\x04 \x01(\r\"\xbd\x01\n\x0cIntersection\x12\x17\n\x0fintersection_id\x18\x01 \x02(\r\x12\x30\n\tincomings\x18\x02 \x03(\x0b\x32\x1d.commonroad_map.IncomingGroup\x12\x30\n\toutgoings\x18\x03 \x03(\x0b\x32\x1d.commonroad_map.OutgoingGroup\x12\x30\n\tcrossings\x18\x04 \x03(\x0b\x32\x1d.commonroad_map.CrossingGroup')
+  serialized_options=_b('H\003'),
+  serialized_pb=_b('\n\x12intersection.proto\x12\x0e\x63ommonroad_map\"\xaa\x01\n\rIncomingGroup\x12\x19\n\x11incoming_group_id\x18\x01 \x02(\r\x12\x19\n\x11incoming_lanelets\x18\x02 \x03(\r\x12\x19\n\x11outgoing_group_id\x18\x03 \x01(\r\x12\x16\n\x0eoutgoing_right\x18\x04 \x03(\r\x12\x19\n\x11outgoing_straight\x18\x05 \x03(\r\x12\x15\n\routgoing_left\x18\x06 \x03(\r\"`\n\rOutgoingGroup\x12\x19\n\x11outgoing_group_id\x18\x01 \x02(\r\x12\x19\n\x11outgoing_lanelets\x18\x02 \x03(\r\x12\x19\n\x11incoming_group_id\x18\x03 \x01(\r\"{\n\rCrossingGroup\x12\x19\n\x11\x63rossing_group_id\x18\x01 \x02(\r\x12\x19\n\x11\x63rossing_lanelets\x18\x02 \x03(\r\x12\x19\n\x11incoming_group_id\x18\x03 \x01(\r\x12\x19\n\x11outgoing_group_id\x18\x04 \x01(\r\"\xbd\x01\n\x0cIntersection\x12\x17\n\x0fintersection_id\x18\x01 \x02(\r\x12\x30\n\tincomings\x18\x02 \x03(\x0b\x32\x1d.commonroad_map.IncomingGroup\x12\x30\n\toutgoings\x18\x03 \x03(\x0b\x32\x1d.commonroad_map.OutgoingGroup\x12\x30\n\tcrossings\x18\x04 \x03(\x0b\x32\x1d.commonroad_map.CrossingGroupB\x02H\x03')
 )
 
 
@@ -277,4 +277,5 @@ Intersection = _reflection.GeneratedProtocolMessageType('Intersection', (_messag
 _sym_db.RegisterMessage(Intersection)
 
 
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)

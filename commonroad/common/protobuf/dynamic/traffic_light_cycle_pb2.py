@@ -12,15 +12,15 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import commonroad.common.protobuf.common.traffic_light_state_pb2 as traffic__light__state__pb2
+import traffic_light_state_pb2 as traffic__light__state__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='traffic_light_cycle.proto',
   package='commonroad_dynamic',
   syntax='proto2',
-  serialized_options=None,
-  serialized_pb=_b('\n\x19traffic_light_cycle.proto\x12\x12\x63ommonroad_dynamic\x1a\x19traffic_light_state.proto\"k\n\x0c\x43ycleElement\x12\x10\n\x08\x64uration\x18\x01 \x02(\r\x12I\n\x05\x63olor\x18\x02 \x02(\x0e\x32:.commonroad_common.TrafficLightStateEnum.TrafficLightState\"\x8c\x01\n\x11TrafficLightCycle\x12\x18\n\x10traffic_light_id\x18\x01 \x02(\r\x12\x38\n\x0e\x63ycle_elements\x18\x02 \x03(\x0b\x32 .commonroad_dynamic.CycleElement\x12\x13\n\x0btime_offset\x18\x04 \x01(\r\x12\x0e\n\x06\x61\x63tive\x18\x06 \x01(\x08')
+  serialized_options=_b('H\003'),
+  serialized_pb=_b('\n\x19traffic_light_cycle.proto\x12\x12\x63ommonroad_dynamic\x1a\x19traffic_light_state.proto\"k\n\x0c\x43ycleElement\x12\x10\n\x08\x64uration\x18\x01 \x02(\r\x12I\n\x05\x63olor\x18\x02 \x02(\x0e\x32:.commonroad_common.TrafficLightStateEnum.TrafficLightState\"\x8c\x01\n\x11TrafficLightCycle\x12\x18\n\x10traffic_light_id\x18\x01 \x02(\r\x12\x38\n\x0e\x63ycle_elements\x18\x02 \x03(\x0b\x32 .commonroad_dynamic.CycleElement\x12\x13\n\x0btime_offset\x18\x04 \x01(\r\x12\x0e\n\x06\x61\x63tive\x18\x06 \x01(\x08\x42\x02H\x03')
   ,
   dependencies=[traffic__light__state__pb2.DESCRIPTOR,])
 
@@ -137,4 +137,5 @@ TrafficLightCycle = _reflection.GeneratedProtocolMessageType('TrafficLightCycle'
 _sym_db.RegisterMessage(TrafficLightCycle)
 
 
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)

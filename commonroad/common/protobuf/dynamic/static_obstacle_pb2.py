@@ -12,17 +12,17 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import commonroad.common.protobuf.dynamic.obstacle_pb2 as obstacle__pb2
-import commonroad.common.protobuf.common.state_pb2 as state__pb2
-import commonroad.common.protobuf.common.util_pb2 as util__pb2
+import obstacle_pb2 as obstacle__pb2
+import state_pb2 as state__pb2
+import util_pb2 as util__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='static_obstacle.proto',
   package='commonroad_dynamic',
   syntax='proto2',
-  serialized_options=None,
-  serialized_pb=_b('\n\x15static_obstacle.proto\x12\x12\x63ommonroad_dynamic\x1a\x0eobstacle.proto\x1a\x0bstate.proto\x1a\nutil.proto\"\xc5\x02\n\x0eStaticObstacle\x12\x1a\n\x12static_obstacle_id\x18\x01 \x02(\r\x12H\n\robstacle_type\x18\x02 \x02(\x0e\x32\x31.commonroad_dynamic.ObstacleTypeEnum.ObstacleType\x12\'\n\x05shape\x18\x03 \x02(\x0b\x32\x18.commonroad_common.Shape\x12/\n\rinitial_state\x18\x04 \x02(\x0b\x32\x18.commonroad_common.State\x12<\n\x14initial_signal_state\x18\x05 \x01(\x0b\x32\x1e.commonroad_common.SignalState\x12\x35\n\rsignal_series\x18\x06 \x03(\x0b\x32\x1e.commonroad_common.SignalState')
+  serialized_options=_b('H\003'),
+  serialized_pb=_b('\n\x15static_obstacle.proto\x12\x12\x63ommonroad_dynamic\x1a\x0eobstacle.proto\x1a\x0bstate.proto\x1a\nutil.proto\"\xc5\x02\n\x0eStaticObstacle\x12\x1a\n\x12static_obstacle_id\x18\x01 \x02(\r\x12H\n\robstacle_type\x18\x02 \x02(\x0e\x32\x31.commonroad_dynamic.ObstacleTypeEnum.ObstacleType\x12\'\n\x05shape\x18\x03 \x02(\x0b\x32\x18.commonroad_common.Shape\x12/\n\rinitial_state\x18\x04 \x02(\x0b\x32\x18.commonroad_common.State\x12<\n\x14initial_signal_state\x18\x05 \x01(\x0b\x32\x1e.commonroad_common.SignalState\x12\x35\n\rsignal_series\x18\x06 \x03(\x0b\x32\x1e.commonroad_common.SignalStateB\x02H\x03')
   ,
   dependencies=[obstacle__pb2.DESCRIPTOR,state__pb2.DESCRIPTOR,util__pb2.DESCRIPTOR,])
 
@@ -110,4 +110,5 @@ StaticObstacle = _reflection.GeneratedProtocolMessageType('StaticObstacle', (_me
 _sym_db.RegisterMessage(StaticObstacle)
 
 
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)
