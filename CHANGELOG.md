@@ -4,6 +4,7 @@
 ### Added
 - New Australia and US traffic signs
 - New lanelet type: `restricted_area`
+- `LaneletNetwork.create_from_lanelet_network` now also includes intersections
 
 ## [2024.2] - 2024-07-22
 
