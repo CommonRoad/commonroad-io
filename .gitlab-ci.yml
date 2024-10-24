@@ -4,7 +4,7 @@ stages:
   - deploy
 
 default:
-  image: python:3.12
+  image: python:3.13
   before_script:
     - pip install poetry
     - poetry config virtualenvs.in-project true
@@ -36,7 +36,7 @@ build_and_test_python:
   stage: test
   parallel :
     matrix :
-      - PYTHON_VERSIONS : [ "3.9", "3.10", "3.11" ]
+      - PYTHON_VERSIONS : [ "3.9", "3.10", "3.11", "3.12" ]
   script:
     - *run-test-with-coverage
   needs: []
@@ -48,13 +48,13 @@ build_and_test_python_arm:
   stage: test
   parallel :
     matrix :
-      - PYTHON_VERSIONS : [ "3.9", "3.10", "3.11", "3.12" ]
+      - PYTHON_VERSIONS : [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
   script:
     - *run-test-with-coverage
   needs: []
 
-build_and_test_python_3_12:
-  image: python:3.12
+build_and_test_python_3_13:
+  image: python:3.13
   stage: test
   script:
     - *run-test-with-coverage
@@ -73,7 +73,7 @@ build_and_update_packages_arm:
   stage: test
   parallel :
     matrix :
-      - PYTHON_VERSIONS : [ "3.9", "3.10", "3.11", "3.12" ]
+      - PYTHON_VERSIONS : [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
   script:
     - poetry update
     - poetry install
@@ -84,7 +84,7 @@ build_and_update_packages_debian:
   stage: test
   parallel :
     matrix :
-      - PYTHON_VERSIONS : [ "3.9", "3.10", "3.11", "3.12" ]
+      - PYTHON_VERSIONS : [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
   script:
     - poetry update
     - poetry install
@@ -103,6 +103,7 @@ build_doc:
 
 validate_tutorials:
   stage: test
+  image : python:3.12  # needs to be updated when cvxpy supports python 3.13
   script:
     - poetry install --with tutorials
     - pytest --nbval-lax ./tutorials/
