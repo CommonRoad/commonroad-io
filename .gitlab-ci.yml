@@ -53,8 +53,8 @@ build_and_test_python_arm:
     - *run-test-with-coverage
   needs: []
 
-build_and_test_python_3_12:
-  image: python:3.12
+build_and_test_python_3_13:
+  image: python:3.13
   stage: test
   script:
     - *run-test-with-coverage
@@ -103,6 +103,7 @@ build_doc:
 
 validate_tutorials:
   stage: test
+  image : python:3.12  # needs to be updated when cvxpy supports python 3.13
   script:
     - poetry install --with tutorials
     - pytest --nbval-lax ./tutorials/
