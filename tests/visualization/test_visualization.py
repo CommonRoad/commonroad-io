@@ -295,7 +295,7 @@ class TestVisualizationV2(unittest.TestCase):
     def is_ffmpeg_installed(self):
         """Check if ffmpeg is installed. Only relevant for github macos-latest runner."""
         try:
-            subprocess.run(['ffmpeg', '-version'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            subprocess.run(["ffmpeg", "-version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             return True
         except (subprocess.CalledProcessError, FileNotFoundError):
             return False
