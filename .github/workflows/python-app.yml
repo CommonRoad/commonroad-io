@@ -12,10 +12,13 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-13, windows-latest] # we use macos-13 since FedericoCarboni/setup-ffmpeg@v3 has problems with macos-latest -> update to macos-latest as soon problem is fixed in ffmpeg action
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps :
       - uses : actions/checkout@v4
-      - uses : FedericoCarboni/setup-ffmpeg@v3
+      - name : Setup FFmpeg (with retries)
+        uses : ./actions/setup-ffmpeg
+        with :
+          github-token : ${{ secrets.GITHUB_TOKEN }}
       - name : Set up Python
         uses : actions/setup-python@v4
         with :
