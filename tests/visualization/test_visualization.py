@@ -1,5 +1,6 @@
 import math
 import os
+import subprocess
 import tempfile
 import time
 import unittest
@@ -291,6 +292,15 @@ class TestVisualizationV2(unittest.TestCase):
         self.assertEqual(params.dynamic_obstacle.time_end, 2)
         self.assertEqual(params.time_end, 2)
 
+    def is_ffmpeg_installed(self):
+        """Check if ffmpeg is installed. Only relevant for github macos-latest runner."""
+        try:
+            subprocess.run(['ffmpeg', '-version'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            return True
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            return False
+
+    @unittest.skipIf(not is_ffmpeg_installed(), "ffmpeg is not installed; check your setup")
     def test_video(self):
         scenario, _ = CommonRoadFileReader(self.ngsim_scen_1).open()  #
         t0 = time.time()
