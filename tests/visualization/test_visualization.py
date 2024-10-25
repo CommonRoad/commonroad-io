@@ -292,7 +292,7 @@ class TestVisualizationV2(unittest.TestCase):
         self.assertEqual(params.dynamic_obstacle.time_end, 2)
         self.assertEqual(params.time_end, 2)
 
-    def is_ffmpeg_installed(self):
+    def is_ffmpeg_installed():
         """Check if ffmpeg is installed. Only relevant for github macos-latest runner."""
         try:
             subprocess.run(["ffmpeg", "-version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
