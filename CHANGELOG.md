@@ -7,6 +7,9 @@
 - `LaneletNetwork.create_from_lanelet_network` now also includes intersections
 - Support for Python 3.13
 
+### Fixed
+- `DynamicObstacle` cannot be hashed if some optional attributes are missing
+
 ## [2024.2] - 2024-07-22
 
 ### Added
