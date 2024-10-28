@@ -526,6 +526,21 @@ class TestObstacle(unittest.TestCase):
         dynamic_obstacle.history.append(state_list[-1])
         self.assertNotEqual(dynamic_obstacle.__hash__(), dynamic_obstacle2.__hash__())
 
+        dynamic_obstacle3 = DynamicObstacle(
+            obstacle_id=200,
+            obstacle_type=ObstacleType.TRUCK,
+            obstacle_shape=Rectangle(4.0, 2.0),
+            initial_state=state_list[1],
+        )
+        dynamic_obstacle4 = DynamicObstacle(
+            obstacle_id=200,
+            obstacle_type=ObstacleType.TRUCK,
+            obstacle_shape=Rectangle(4.0, 2.0),
+            initial_state=state_list[1],
+        )
+        self.assertNotEqual(dynamic_obstacle.__hash__(), dynamic_obstacle3.__hash__())
+        self.assertEqual(dynamic_obstacle3.__hash__(), dynamic_obstacle4.__hash__())
+
 
 if __name__ == "__main__":
     unittest.main()
