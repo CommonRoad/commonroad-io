@@ -30,7 +30,12 @@ from commonroad.common.validity import (
 )
 from commonroad.geometry.shape import Circle, Polygon, Rectangle, Shape, ShapeGroup
 from commonroad.scenario.area import Area
-from commonroad.scenario.intersection import IncomingGroup, Intersection, OutgoingGroup, CrossingGroup
+from commonroad.scenario.intersection import (
+    CrossingGroup,
+    IncomingGroup,
+    Intersection,
+    OutgoingGroup,
+)
 from commonroad.scenario.obstacle import Obstacle
 from commonroad.scenario.state import TraceState
 from commonroad.scenario.traffic_light import TrafficLight
