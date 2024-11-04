@@ -319,6 +319,20 @@ class TestLaneletNetwork(unittest.TestCase):
         lanelet3 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
         lanelet_network.add_lanelet(lanelet3)
 
+        incoming_element1 = IntersectionIncomingElement(8, {lanelet3.lanelet_id}, {lanelet1.lanelet_id})
+        incoming_element2 = IntersectionIncomingElement(
+            9, {lanelet1.lanelet_id}, {lanelet3.lanelet_id}, {lanelet2.lanelet_id}
+        )
+        intersection1 = Intersection(
+            11, incomings=[incoming_element1, incoming_element2], crossings={lanelet3.lanelet_id, lanelet2.lanelet_id}
+        )
+        lanelet_network.add_intersection(intersection1)
+
+        intersection2 = Intersection(
+            12, incomings=[incoming_element1], crossings={lanelet3.lanelet_id, lanelet2.lanelet_id}
+        )
+        lanelet_network.add_intersection(intersection2)
+
         new_network = lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2))
         new_network_la_ids = [la.lanelet_id for la in new_network.lanelets]
         self.assertIn(lanelet1.lanelet_id, new_network_la_ids)
@@ -329,6 +343,16 @@ class TestLaneletNetwork(unittest.TestCase):
         self.assertEqual(lanelet1.traffic_signs, {1})
         self.assertEqual(lanelet1.traffic_lights, {567})
         self.assertNotIn(lanelet3.lanelet_id, new_network.find_lanelet_by_id(5).successor)
+        new_network_intersection = new_network.find_intersection_by_id(intersection1.intersection_id)
+        self.assertIsNotNone(new_network_intersection)
+        self.assertIn(lanelet2.lanelet_id, new_network_intersection.crossings)
+        self.assertNotIn(lanelet3.lanelet_id, new_network_intersection.crossings)
+        self.assertEqual(len(new_network_intersection.incomings), 1)
+        new_network_intersection_incoming = new_network_intersection.incomings[0]
+        self.assertIn(lanelet1.lanelet_id, new_network_intersection_incoming.incoming_lanelets)
+        self.assertIn(lanelet2.lanelet_id, new_network_intersection_incoming.successors_straight)
+        self.assertNotIn(lanelet3.lanelet_id, new_network_intersection_incoming.successors_right)
+        self.assertIsNone(new_network.find_intersection_by_id(intersection2.intersection_id))
 
         new_network_lanelet_types = lanelet_network.create_from_lanelet_network(
             lanelet_network, Rectangle(2, 2), {LaneletType.URBAN}

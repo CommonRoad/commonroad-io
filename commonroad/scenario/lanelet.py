@@ -1421,7 +1421,7 @@ class LaneletNetwork(IDrawable):
         area_ids = set()
         boundary_ids = set()
         stop_line_ids = set()
-        lanelets = set()
+        lanelet_ids = set()
 
         for la in lanelet_network.lanelets:
             if (
@@ -1431,7 +1431,8 @@ class LaneletNetwork(IDrawable):
             ):
                 continue
 
-            lanelets.add(la)
+            lanelet_ids.add(la.lanelet_id)
+
             for sign_id in la.traffic_signs:
                 traffic_sign_ids.add(sign_id)
             for light_id in la.traffic_lights:
@@ -1444,6 +1445,47 @@ class LaneletNetwork(IDrawable):
                 boundary_ids.add(la.right_bound)
             if la.stop_line is not None:
                 stop_line_ids.add(la.stop_line.stop_line_id)
+
+        # In contrast to the other objects, intersections need some special processing:
+        # Some lanelets might be excluded from the new lanelet network, but those lanelets could
+        # be referenced as incomings, successors or crossings. Therfore, new intersections
+        # are created here, which only reference lanelets that are also in the new lanelet network
+        for old_intersection in lanelet_network.intersections:
+            new_incomings = list()
+            for old_incoming in old_intersection.incomings:
+                new_incoming_lanelets = old_incoming.incoming_lanelets.intersection(lanelet_ids)
+                if len(new_incoming_lanelets) == 0:
+                    continue
+
+                new_successors_right = old_incoming.successors_right.intersection(lanelet_ids)
+                new_successors_left = old_incoming.successors_left.intersection(lanelet_ids)
+                new_successors_straight = old_incoming.successors_straight.intersection(lanelet_ids)
+
+                if len(new_successors_left) + len(new_successors_straight) + len(new_successors_right) < 1:
+                    continue
+
+                new_incoming = IntersectionIncomingElement(
+                    incoming_id=old_incoming.incoming_id,
+                    incoming_lanelets=new_incoming_lanelets,
+                    successors_right=new_successors_right,
+                    successors_straight=new_successors_straight,
+                    successors_left=new_successors_left,
+                    left_of=old_incoming.left_of,
+                )
+                new_incomings.append(new_incoming)
+
+            if len(new_incomings) == 0:
+                continue
+
+            new_crossings = set()
+            for crossing in old_intersection.crossings:
+                if crossing in lanelet_ids:
+                    new_crossings.add(crossing)
+
+            new_intersection = Intersection(
+                intersection_id=old_intersection.intersection_id, incomings=new_incomings, crossings=new_crossings
+            )
+            new_lanelet_network.add_intersection(new_intersection)
 
         for sign_id in traffic_sign_ids:
             new_lanelet_network.add_traffic_sign(copy.deepcopy(lanelet_network.find_traffic_sign_by_id(sign_id)), set())
@@ -1462,9 +1504,8 @@ class LaneletNetwork(IDrawable):
                 new_lanelet_network.add_stop_line(
                     copy.deepcopy(lanelet_network.find_stop_line_by_id(stop_line_id)), set()
                 )
-
-        for la in lanelets:
-            new_lanelet_network.add_lanelet(copy.deepcopy(la), rtree=False)
+        for lanelet_id in lanelet_ids:
+            new_lanelet_network.add_lanelet(copy.deepcopy(lanelet_network.find_lanelet_by_id(lanelet_id)), rtree=False)
 
         if cleanup_ids:
             new_lanelet_network.cleanup_lanelet_references()
