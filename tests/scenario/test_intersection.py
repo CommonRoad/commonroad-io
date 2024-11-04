@@ -150,8 +150,8 @@ class TestOutgoingGroup(unittest.TestCase):
         self.assertNotEqual(hash(outgoing_group_1), hash(outgoing_group_2))
 
 
-class TestIntersectionIncomingElement(unittest.TestCase):
-    def test_initialization_IntersectionIncomingElement(self):
+class TestIntersectionIncomingGroup(unittest.TestCase):
+    def test_initialization_IntersectionIncomingGroup(self):
         incoming_id_1 = 2
         lanelets_1 = {10, 11}
         outgoing_right_1 = {12, 13}

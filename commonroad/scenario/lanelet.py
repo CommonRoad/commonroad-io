@@ -1487,6 +1487,9 @@ class LaneletNetwork(IDrawable):
                 )
                 new_outgoings.append(new_outgoing)
 
+            if len(new_incomings) == 0 and len(new_outgoings) == 0:
+                continue
+
             new_crossings = list()
             for old_crossing in old_intersection.crossings:
                 new_crossing_lanelets = old_crossing.crossing_lanelets.intersection(lanelet_ids)
