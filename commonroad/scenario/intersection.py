@@ -135,7 +135,7 @@ class IncomingGroup:
     @property
     def outgoing_right(self) -> Set[int]:
         """
-        set of IDs of incoming lanelets which turn right
+        set of IDs of outgoing lanelets which turn right
         """
         return self._outgoing_right
 
@@ -152,7 +152,7 @@ class IncomingGroup:
     @property
     def outgoing_straight(self) -> Set[int]:
         """
-        set of IDs of incoming lanelets which go straight
+        set of IDs of outgoing lanelets which go straight
         """
         return self._outgoing_straight
 

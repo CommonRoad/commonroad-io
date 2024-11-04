@@ -30,7 +30,7 @@ from commonroad.common.validity import (
 )
 from commonroad.geometry.shape import Circle, Polygon, Rectangle, Shape, ShapeGroup
 from commonroad.scenario.area import Area
-from commonroad.scenario.intersection import IncomingGroup, Intersection, OutgoingGroup
+from commonroad.scenario.intersection import IncomingGroup, Intersection, OutgoingGroup, CrossingGroup
 from commonroad.scenario.obstacle import Obstacle
 from commonroad.scenario.state import TraceState
 from commonroad.scenario.traffic_light import TrafficLight
@@ -1448,7 +1448,7 @@ class LaneletNetwork(IDrawable):
 
         # In contrast to the other objects, intersections need some special processing:
         # Some lanelets might be excluded from the new lanelet network, but those lanelets could
-        # be referenced as incomings, successors or crossings. Therfore, new intersections
+        # be referenced as incomings, successors or crossings. Therefore, new intersections
         # are created here, which only reference lanelets that are also in the new lanelet network
         for old_intersection in lanelet_network.intersections:
             new_incomings = list()
@@ -1457,33 +1457,55 @@ class LaneletNetwork(IDrawable):
                 if len(new_incoming_lanelets) == 0:
                     continue
 
-                new_successors_right = old_incoming.successors_right.intersection(lanelet_ids)
-                new_successors_left = old_incoming.successors_left.intersection(lanelet_ids)
-                new_successors_straight = old_incoming.successors_straight.intersection(lanelet_ids)
+                new_outgoings_right = old_incoming.outgoing_right.intersection(lanelet_ids)
+                new_outgoing_left = old_incoming.outgoing_left.intersection(lanelet_ids)
+                new_outgoing_straight = old_incoming.outgoing_straight.intersection(lanelet_ids)
 
-                if len(new_successors_left) + len(new_successors_straight) + len(new_successors_right) < 1:
+                if len(new_outgoing_left) + len(new_outgoing_straight) + len(new_outgoings_right) < 1:
                     continue
 
-                new_incoming = IntersectionIncomingElement(
+                new_incoming = IncomingGroup(
                     incoming_id=old_incoming.incoming_id,
                     incoming_lanelets=new_incoming_lanelets,
-                    successors_right=new_successors_right,
-                    successors_straight=new_successors_straight,
-                    successors_left=new_successors_left,
-                    left_of=old_incoming.left_of,
+                    outgoing_group_id=old_incoming.outgoing_group_id,
+                    outgoing_right=new_outgoings_right,
+                    outgoing_left=new_outgoing_left,
+                    outgoing_straight=new_outgoing_straight,
                 )
                 new_incomings.append(new_incoming)
 
-            if len(new_incomings) == 0:
-                continue
+            new_outgoings = list()
+            for old_outgoing in old_intersection.outgoings:
+                new_outgoing_lanelets = old_outgoing.outgoing_lanelets.intersection(lanelet_ids)
+                if len(new_outgoing_lanelets) == 0:
+                    continue
 
-            new_crossings = set()
-            for crossing in old_intersection.crossings:
-                if crossing in lanelet_ids:
-                    new_crossings.add(crossing)
+                new_outgoing = OutgoingGroup(
+                    outgoing_id=old_outgoing.outgoing_id,
+                    outgoing_lanelets=new_outgoing_lanelets,
+                    incoming_group_id=old_outgoing.incoming_group_id,
+                )
+                new_outgoings.append(new_outgoing)
+
+            new_crossings = list()
+            for old_crossing in old_intersection.crossings:
+                new_crossing_lanelets = old_crossing.crossing_lanelets.intersection(lanelet_ids)
+                if len(new_crossing_lanelets) == 0:
+                    continue
+
+                new_crossing = CrossingGroup(
+                    crossing_id=old_crossing.crossing_id,
+                    crossing_lanelets=new_crossing_lanelets,
+                    incoming_group_id=old_crossing.incoming_group_id,
+                    outgoing_group_id=old_crossing.outgoing_group_id,
+                )
+                new_crossings.append(new_crossing)
 
             new_intersection = Intersection(
-                intersection_id=old_intersection.intersection_id, incomings=new_incomings, crossings=new_crossings
+                intersection_id=old_intersection.intersection_id,
+                incomings=new_incomings,
+                outgoings=new_outgoings,
+                crossings=new_crossings,
             )
             new_lanelet_network.add_intersection(new_intersection)
 
