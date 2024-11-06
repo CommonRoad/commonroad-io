@@ -29,7 +29,24 @@ class CommonRoadFileReader:
             if isinstance(filename, bytes):
                 raise RuntimeError("CommonRoadFileReader::init: file_format must be provided.")
             else:
-                file_format = FileFormat(Path(filename).suffix)
+                file_path = Path(filename)
+                if len(file_path.suffixes) == 0:
+                    raise ValueError(
+                        f"Failed to create CommonRoadFileReader for file '{filename}': "
+                        f"Cannot determine file format, because file name does not have a suffix! "
+                        f"File suffix must either be '{FileFormat.XML.value}' or "
+                        f"'{FileFormat.PROTOBUF.value}'. If the filename intentionally has "
+                        "no suffix, you must provide the `file_format` option."
+                    )
+                if file_path.suffix not in list(FileFormat):
+                    raise ValueError(
+                        f"Failed to create CommonRoadFileReader for file '{filename}': "
+                        f"Cannot determine file format, because file suffix '{file_path.suffix}' "
+                        f"does not match the supported suffixes '{FileFormat.XML.value}' "
+                        f"or '{FileFormat.PROTOBUF.value}'. If the filename intentionally has "
+                        "this suffix, you must provide the `file_format` option."
+                    )
+                file_format = FileFormat(file_path.suffix)
 
         if file_format == FileFormat.XML:
             self._file_reader = XMLFileReader(filename)
