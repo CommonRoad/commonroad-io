@@ -60,7 +60,9 @@ class TrafficLightCycleElement:
 
     def __eq__(self, other):
         if not isinstance(other, TrafficLightCycleElement):
-            warnings.warn(f"Inequality between TrafficLightCycleElement {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between TrafficLightCycleElement {repr(self)} and different type {type(other)}"
+            )
             return False
 
         return self._state == other.state and self._duration == other.duration
@@ -95,7 +97,10 @@ class TrafficLightCycle:
     """Class to represent a traffic light cycle"""
 
     def __init__(
-        self, cycle_elements: List[TrafficLightCycleElement] = None, time_offset: int = 0, active: bool = True
+        self,
+        cycle_elements: List[TrafficLightCycleElement] = None,
+        time_offset: int = 0,
+        active: bool = True,
     ):
         """
         :param cycle_elements: list of traffic light cycle elements
@@ -114,7 +119,9 @@ class TrafficLightCycle:
 
     def __eq__(self, other):
         if not isinstance(other, TrafficLightCycle):
-            warnings.warn(f"Inequality between TrafficLightCycle {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between TrafficLightCycle {repr(self)} and different type {type(other)}"
+            )
             return False
 
         return (
@@ -215,11 +222,15 @@ class TrafficLight(IDrawable):
 
     def __eq__(self, other):
         if not isinstance(other, TrafficLight):
-            warnings.warn(f"Inequality between TrafficLight {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between TrafficLight {repr(self)} and different type {type(other)}"
+            )
             return False
 
         position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
-        position_other_string = np.array2string(np.around(other.position.astype(float), 10), precision=10)
+        position_other_string = np.array2string(
+            np.around(other.position.astype(float), 10), precision=10
+        )
 
         return (
             self._traffic_light_id == other.traffic_light_id
@@ -341,7 +352,10 @@ class TrafficLight(IDrawable):
             "length 2."
         )
         assert is_real_number(angle), (
-            "<TrafficLight/translate_rotate>: argument angle must " "be " "a scalar. " "angle = %s" % angle
+            "<TrafficLight/translate_rotate>: argument angle must "
+            "be "
+            "a scalar. "
+            "angle = %s" % angle
         )
         assert is_valid_orientation(angle), (
             "<TrafficLight/translate_rotate>: argument angle must "
@@ -349,9 +363,9 @@ class TrafficLight(IDrawable):
             "within the "
             "interval [-2pi, 2pi]. angle = %s" % angle
         )
-        self._position = commonroad.geometry.transform.translate_rotate(np.array([self._position]), translation, angle)[
-            0
-        ]
+        self._position = commonroad.geometry.transform.translate_rotate(
+            np.array([self._position]), translation, angle
+        )[0]
 
     def convert_to_2d(self) -> None:
         """
@@ -361,7 +375,11 @@ class TrafficLight(IDrawable):
         """
         self._position = self._position[:2]
 
-    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[TrafficLightParams] = None):
+    def draw(
+        self,
+        renderer: IRenderer,
+        draw_params: OptionalSpecificOrAllDrawParams[TrafficLightParams] = None,
+    ):
         renderer.draw_traffic_light_sign(self, draw_params)
 
     def get_state_at_time_step(self, time_step: int) -> TrafficLightState:

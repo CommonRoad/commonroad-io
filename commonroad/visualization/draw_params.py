@@ -67,7 +67,9 @@ class BaseParam:
     @classmethod
     def load(cls, file_path: Union[pathlib.Path, str], validate_types: bool = True):
         file_path = pathlib.Path(file_path)
-        assert file_path.suffix == ".yaml", f"File type {file_path.suffix} is unsupported! Please use .yaml!"
+        assert (
+            file_path.suffix == ".yaml"
+        ), f"File type {file_path.suffix} is unsupported! Please use .yaml!"
         loaded_yaml = OmegaConf.load(file_path)
         if validate_types:
             OmegaConf.merge(OmegaConf.structured(MPDrawParams), loaded_yaml)
@@ -77,7 +79,8 @@ class BaseParam:
     def save(self, file_path: Union[pathlib.Path, str]):
         # Avoid saving private attributes
         dict_cfg = dataclasses.asdict(
-            self, dict_factory=lambda items: {key: val for key, val in items if not key.startswith("_")}
+            self,
+            dict_factory=lambda items: {key: val for key, val in items if not key.startswith("_")},
         )
         OmegaConf.save(OmegaConf.create(dict_cfg), file_path, resolve=True)
 
@@ -98,10 +101,18 @@ class ShapeParams(BaseParam):
 @dataclass
 class VehicleSignalParams(BaseParam):
     signal_radius: float = 0.5
-    indicator: ShapeParams = field(default_factory=lambda: ShapeParams(facecolor="#ebc200", zorder=20.2, linewidth=0.0))
-    braking: ShapeParams = field(default_factory=lambda: ShapeParams(facecolor="red", zorder=20.2, linewidth=0.0))
-    horn: ShapeParams = field(default_factory=lambda: ShapeParams(facecolor="red", zorder=20.1, linewidth=0.0))
-    bluelight: ShapeParams = field(default_factory=lambda: ShapeParams(facecolor="blue", zorder=20.1, linewidth=0.0))
+    indicator: ShapeParams = field(
+        default_factory=lambda: ShapeParams(facecolor="#ebc200", zorder=20.2, linewidth=0.0)
+    )
+    braking: ShapeParams = field(
+        default_factory=lambda: ShapeParams(facecolor="red", zorder=20.2, linewidth=0.0)
+    )
+    horn: ShapeParams = field(
+        default_factory=lambda: ShapeParams(facecolor="red", zorder=20.1, linewidth=0.0)
+    )
+    bluelight: ShapeParams = field(
+        default_factory=lambda: ShapeParams(facecolor="blue", zorder=20.1, linewidth=0.0)
+    )
 
 
 @dataclass
@@ -150,14 +161,18 @@ class HistoryParams(BaseParam):
 @dataclass
 class StaticObstacleParams(BaseParam):
     occupancy: OccupancyParams = field(
-        default_factory=lambda: OccupancyParams(shape=ShapeParams(facecolor="#d95558", edgecolor="#831d20"))
+        default_factory=lambda: OccupancyParams(
+            shape=ShapeParams(facecolor="#d95558", edgecolor="#831d20")
+        )
     )
 
 
 @dataclass
 class EnvironmentObstacleParams(BaseParam):
     occupancy: OccupancyParams = field(
-        default_factory=lambda: OccupancyParams(shape=ShapeParams(facecolor="#0e6000", edgecolor="#831d20"))
+        default_factory=lambda: OccupancyParams(
+            shape=ShapeParams(facecolor="#0e6000", edgecolor="#831d20")
+        )
     )
 
 
@@ -261,7 +276,9 @@ class TrajectoryParams(BaseParam):
     #: Use unique colors for each of the trajectories points.
     unique_colors: bool = False
     #: Parameters for shapes of uncertain position.
-    shape: ShapeParams = field(default_factory=lambda: ShapeParams(facecolor="k", edgecolor="r", zorder=24))
+    shape: ShapeParams = field(
+        default_factory=lambda: ShapeParams(facecolor="k", edgecolor="r", zorder=24)
+    )
     zorder: float = 24
 
 
@@ -285,7 +302,9 @@ class InitialStateParams(BaseParam):
 class PlanningProblemParams(BaseParam):
     initial_state: InitialStateParams = field(default_factory=InitialStateParams)
     goal_region: OccupancyParams = field(
-        default_factory=lambda: OccupancyParams(shape=ShapeParams(facecolor="#f1b514", edgecolor="#302404", zorder=15))
+        default_factory=lambda: OccupancyParams(
+            shape=ShapeParams(facecolor="#f1b514", edgecolor="#302404", zorder=15)
+        )
     )
     #: Goal lanelet parameters
     lanelet: LaneletParams = field(default_factory=LaneletParams)
@@ -348,13 +367,17 @@ class PhantomObstacleParams(BaseParam):
     zorder: float = 20
     draw_signals: bool = True
     vehicle_shape: VehicleShapeParams = field(
-        default_factory=lambda: VehicleShapeParams(occupancy=OccupancyParams(shape=ShapeParams(facecolor="#e59dff")))
+        default_factory=lambda: VehicleShapeParams(
+            occupancy=OccupancyParams(shape=ShapeParams(facecolor="#e59dff"))
+        )
     )
     signals: VehicleSignalParams = field(default_factory=VehicleSignalParams)
     draw_initial_state: bool = False
     state: StateParams = field(default_factory=StateParams)
     history: HistoryParams = field(default_factory=HistoryParams)
-    occupancy: OccupancyParams = field(default_factory=lambda: OccupancyParams(shape=ShapeParams(facecolor="#c641f6")))
+    occupancy: OccupancyParams = field(
+        default_factory=lambda: OccupancyParams(shape=ShapeParams(facecolor="#c641f6"))
+    )
     trajectory: TrajectoryParams = field(default_factory=TrajectoryParams)
 
 
@@ -366,7 +389,9 @@ class MPDrawParams(BaseParam):
     dynamic_obstacle: DynamicObstacleParams = field(default_factory=DynamicObstacleParams)
     static_obstacle: StaticObstacleParams = field(default_factory=StaticObstacleParams)
     phantom_obstacle: PhantomObstacleParams = field(default_factory=PhantomObstacleParams)
-    environment_obstacle: EnvironmentObstacleParams = field(default_factory=EnvironmentObstacleParams)
+    environment_obstacle: EnvironmentObstacleParams = field(
+        default_factory=EnvironmentObstacleParams
+    )
     trajectory: TrajectoryParams = field(default_factory=TrajectoryParams)
     lanelet_network: LaneletNetworkParams = field(default_factory=LaneletNetworkParams)
     traffic_light: TrafficLightParams = field(default_factory=TrafficLightParams)
