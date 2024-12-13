@@ -9,6 +9,7 @@
 
 ### Fixed
 - `DynamicObstacle` cannot be hashed if some optional attributes are missing
+- `TrafficLightCycle` does not invalidate cached cycle init timesteps after modification
 
 ## [2024.2] - 2024-07-22
 
