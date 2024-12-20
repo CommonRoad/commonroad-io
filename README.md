@@ -30,7 +30,7 @@ Learn more about the scenario specification [here](https://gitlab.lrz.de/tum-cps
 The commonroad-io package provides methods to read, write, and visualize CommonRoad scenarios and planning problems. Furthermore, it can be used as a framework for implementing motion planning algorithms to solve CommonRoad Benchmarks and is the basis for other tools of the CommonRoad Framework.
 With commonroad-io, those solutions can be written to xml-files for uploading them on [commonroad.in.tum.de](https://commonroad.in.tum.de/).
 
-commonroad-io 2024.2 is compatible with CommonRoad scenarios in version 2020a and supports reading 2018b scenarios.
+This commonroad-io version is compatible with CommonRoad scenarios in version 2020a and supports reading 2018b scenarios.
 
 The software is written in Python and tested on Linux for the Python 3.9, 3.10, 3.11, 3.12, and 3.13.
 
@@ -80,22 +80,8 @@ Alternatively, clone from our gitlab repository::
 and add the folder commonroad-io to your Python environment.
 
 ## Changelog
-Compared to version 2024.1, the following features have been added or changed:
+A detailed overview about the changes in each version is provided in the `Changelog <https://github.com/CommonRoad/commonroad-io/tree/master>`__.
 
-### Added
-- Github actions for ubuntu, windows, and macOS
-- Gitlab runner for arm64 ubuntu
-- Support for reading xml and protobuf byte streams
-- Support for numpy `>=2.0`
-- Adjustable zorder for dynamic obstacle & lanelet visualization
-
-### Fixed
-- AreaBorder can have multiple adjacent lanelets
-- Performance regression for occupancy_set lookups in TrajectoryPrediction
-- Matplotlib `>=3.9.0` support
-
-### Removed
-- Support for Python 3.8
 
 
 ## Authors
