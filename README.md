@@ -80,9 +80,7 @@ Alternatively, clone from our gitlab repository::
 and add the folder commonroad-io to your Python environment.
 
 ## Changelog
-A detailed overview about the changes in each version is provided in the `Changelog <https://github.com/CommonRoad/commonroad-io/tree/master>`__.
-
-
+A detailed overview about the changes in each version is provided in the [Changelog](https://github.com/CommonRoad/commonroad-io/blob/master/CHANGELOG.md).
 
 ## Authors
 Contribution (in alphabetic order by last name): Yannick Ballnath, Behtarin Ferdousi, Luis Gressenbuch, Moritz Klischat, 
