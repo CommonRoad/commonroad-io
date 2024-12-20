@@ -145,6 +145,13 @@ class Obstacle(IDrawable):
         return obstacle_eq
 
     def __hash__(self):
+        initial_center_lanelet_ids = (
+            None if self.initial_center_lanelet_ids is None else frozenset(self.initial_center_lanelet_ids)
+        )
+        initial_shape_lanelet_ids = (
+            None if self.initial_shape_lanelet_ids is None else frozenset(self.initial_shape_lanelet_ids)
+        )
+        signal_series = None if self.signal_series is None else frozenset(self.signal_series)
         return hash(
             (
                 self._obstacle_id,
@@ -152,10 +159,10 @@ class Obstacle(IDrawable):
                 self._obstacle_type,
                 self._obstacle_shape,
                 self._initial_state,
-                frozenset(self.initial_center_lanelet_ids),
-                frozenset(self.initial_shape_lanelet_ids),
+                initial_center_lanelet_ids,
+                initial_shape_lanelet_ids,
                 self._initial_signal_state,
-                tuple(self.signal_series),
+                signal_series,
             )
         )
 
@@ -538,12 +545,15 @@ class DynamicObstacle(Obstacle):
             if self.shape_lanelet_ids_history is None
             else tuple(frozenset(value) for value in self.shape_lanelet_ids_history)
         )
+        meta_information_series = (
+            None if self._meta_information_series is None else tuple(self._meta_information_series)
+        )
 
         return hash(
             (
                 self._prediction,
                 self._initial_meta_information_state,
-                tuple(self._meta_information_series),
+                meta_information_series,
                 self._external_dataset_id,
                 tuple(self.history),
                 tuple(self.signal_history),

@@ -1,5 +1,17 @@
 # Changelog
 
+## [2024.3] - 2024-12-20
+### Added
+- New Australia and US traffic signs
+- New lanelet type: `restricted_area`
+- `LaneletNetwork.create_from_lanelet_network` now also includes intersections
+- Support for Python 3.13
+- TR2 cost function enum value
+
+### Fixed
+- `DynamicObstacle` cannot be hashed if some optional attributes are missing
+- `TrafficLightCycle` does not invalidate cached cycle init timesteps after modification
+
 ## [2024.2] - 2024-07-22
 
 ### Added
