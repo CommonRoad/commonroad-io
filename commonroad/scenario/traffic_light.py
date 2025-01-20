@@ -150,6 +150,9 @@ class TrafficLightCycle:
     @cycle_elements.setter
     def cycle_elements(self, cycle_elements: Union[None, List[TrafficLightCycleElement]]):
         self._cycle_elements = cycle_elements
+        # Invalidate cached attribute which was calculated based on the previous cycle elements
+        if hasattr(self, "_cycle_init_timesteps"):
+            del self._cycle_init_timesteps
 
     @property
     def time_offset(self) -> int:
@@ -159,6 +162,9 @@ class TrafficLightCycle:
     @time_offset.setter
     def time_offset(self, time_offset: int):
         self._time_offset = time_offset
+        # Invalidate cached attribute which was calculated based on the previous time offset
+        if hasattr(self, "_cycle_init_timesteps"):
+            del self._cycle_init_timesteps
 
     @property
     def active(self) -> bool:

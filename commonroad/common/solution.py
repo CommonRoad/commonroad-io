@@ -91,6 +91,7 @@ class CostFunction(Enum):
     SM3 = 5
     MW1 = 6
     TR1 = 7
+    TR2 = 8
 
 
 @unique

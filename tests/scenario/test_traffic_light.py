@@ -82,6 +82,33 @@ class TestTrafficLightCycle(unittest.TestCase):
         light_cycle2 = TrafficLightCycle(cycle_elements=cycle, time_offset=10)
         assert light_cycle2.get_state_at_time_step(12) == cycle[1].state
 
+    def test_update_cycle_elements(self):
+        # Verify that get_state_at_time_step is still correct after the cycle was updated
+        cycle = [
+            TrafficLightCycleElement(TrafficLightState.GREEN, 2),
+            TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
+            TrafficLightCycleElement(TrafficLightState.RED, 2),
+        ]
+        light_cycle = TrafficLightCycle(cycle_elements=cycle, time_offset=0)
+        assert light_cycle.get_state_at_time_step(7) == cycle[0].state
+
+        new_cycle = cycle + [TrafficLightCycleElement(TrafficLightState.RED_YELLOW, 1)]
+        light_cycle.cycle_elements = new_cycle
+        assert light_cycle.get_state_at_time_step(7) == new_cycle[-1].state
+
+    def test_update_time_offset(self):
+        # Verify that get_state_at_time_step is still correct after the time offset was updated
+        cycle = [
+            TrafficLightCycleElement(TrafficLightState.GREEN, 2),
+            TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
+            TrafficLightCycleElement(TrafficLightState.RED, 2),
+        ]
+        light_cycle = TrafficLightCycle(cycle_elements=cycle, time_offset=0)
+        assert light_cycle.get_state_at_time_step(1) == cycle[0].state
+
+        light_cycle.time_offset = 5
+        assert light_cycle.get_state_at_time_step(1) == cycle[1].state
+
 
 class TestTrafficLight(unittest.TestCase):
     def test_translate_rotate(self):
