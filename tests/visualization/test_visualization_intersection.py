@@ -27,9 +27,15 @@ class TestVisualizationV2(unittest.TestCase):
         self.filename_urban = os.path.join(
             self.full_path, "../test_scenarios/test_reading_intersection_traffic_sign.xml"
         )
-        self.filename_complex_tl = os.path.join(self.full_path, "../test_scenarios/test_reading_complex_tl.xml")
-        self.filename_lanelet = os.path.join(self.full_path, "../test_scenarios/test_reading_lanelets.xml")
-        self.filename_test_all = os.path.join(self.full_path, "../test_scenarios/test_reading_all.xml")
+        self.filename_complex_tl = os.path.join(
+            self.full_path, "../test_scenarios/test_reading_complex_tl.xml"
+        )
+        self.filename_lanelet = os.path.join(
+            self.full_path, "../test_scenarios/test_reading_lanelets.xml"
+        )
+        self.filename_test_all = os.path.join(
+            self.full_path, "../test_scenarios/test_reading_all.xml"
+        )
         self.rnd = MPRenderer()
 
     def test_intersection_plot(self):
@@ -68,10 +74,18 @@ class TestVisualizationV2(unittest.TestCase):
             traffic_sign_id=100000,
             traffic_sign_elements=[
                 TrafficSignElement(TrafficSignIDGermany.MAX_WIDTH, additional_values=[str(3)]),
-                TrafficSignElement(TrafficSignIDGermany.MAX_SPEED_ZONE_START, additional_values=[str(30 / 3.6)]),
-                TrafficSignElement(TrafficSignIDGermany.ADDITION_VALID_IN_X_KILOMETERS, additional_values=[str(3)]),
-                TrafficSignElement(TrafficSignIDGermany.ADDITION_VALID_FOR_X_METERS, additional_values=[str(3)]),
-                TrafficSignElement(TrafficSignIDGermany.ADDITION_TIME_PERIOD_PERMITTED, additional_values=[str(3)]),
+                TrafficSignElement(
+                    TrafficSignIDGermany.MAX_SPEED_ZONE_START, additional_values=[str(30 / 3.6)]
+                ),
+                TrafficSignElement(
+                    TrafficSignIDGermany.ADDITION_VALID_IN_X_KILOMETERS, additional_values=[str(3)]
+                ),
+                TrafficSignElement(
+                    TrafficSignIDGermany.ADDITION_VALID_FOR_X_METERS, additional_values=[str(3)]
+                ),
+                TrafficSignElement(
+                    TrafficSignIDGermany.ADDITION_TIME_PERIOD_PERMITTED, additional_values=[str(3)]
+                ),
                 # TrafficSignElement(TrafficSignIDGermany.MAX_LENGTH,
                 #                    additional_values=[str(3)]),
                 #     TrafficSignElement(TrafficSignIDUsa.MAX_SPEED,
@@ -107,27 +121,39 @@ class TestVisualizationV2(unittest.TestCase):
         with warnings.catch_warnings(record=True) as record:
             for value in TrafficSignIDGermany:
                 kwargs["position"] = kwargs["position"] + np.array([0.0, 5.0])
-                TrafficSign(traffic_sign_elements=[TrafficSignElement(value, ["foo"])], **kwargs).draw(self.rnd)
+                TrafficSign(
+                    traffic_sign_elements=[TrafficSignElement(value, ["foo"])], **kwargs
+                ).draw(self.rnd)
 
             for value in TrafficSignIDUsa:
                 kwargs["position"] = kwargs["position"] + np.array([0.0, 5.0])
-                TrafficSign(traffic_sign_elements=[TrafficSignElement(value, ["foo"])], **kwargs).draw(self.rnd)
+                TrafficSign(
+                    traffic_sign_elements=[TrafficSignElement(value, ["foo"])], **kwargs
+                ).draw(self.rnd)
 
             for value in TrafficSignIDRussia:
                 kwargs["position"] = kwargs["position"] + np.array([0.0, 5.0])
-                TrafficSign(traffic_sign_elements=[TrafficSignElement(value, ["foo"])], **kwargs).draw(self.rnd)
+                TrafficSign(
+                    traffic_sign_elements=[TrafficSignElement(value, ["foo"])], **kwargs
+                ).draw(self.rnd)
 
             for value in TrafficSignIDSpain:
                 kwargs["position"] = kwargs["position"] + np.array([0.0, 5.0])
-                TrafficSign(traffic_sign_elements=[TrafficSignElement(value, ["foo"])], **kwargs).draw(self.rnd)
+                TrafficSign(
+                    traffic_sign_elements=[TrafficSignElement(value, ["foo"])], **kwargs
+                ).draw(self.rnd)
 
             for value in TrafficSignIDChina:
                 kwargs["position"] = kwargs["position"] + np.array([0.0, 5.0])
-                TrafficSign(traffic_sign_elements=[TrafficSignElement(value, ["foo"])], **kwargs).draw(self.rnd)
+                TrafficSign(
+                    traffic_sign_elements=[TrafficSignElement(value, ["foo"])], **kwargs
+                ).draw(self.rnd)
 
             for value in TrafficSignIDZamunda:
                 kwargs["position"] = kwargs["position"] + np.array([0.0, 5.0])
-                TrafficSign(traffic_sign_elements=[TrafficSignElement(value, ["foo"])], **kwargs).draw(self.rnd)
+                TrafficSign(
+                    traffic_sign_elements=[TrafficSignElement(value, ["foo"])], **kwargs
+                ).draw(self.rnd)
 
         # uncomment to check plots
         self.rnd.render(show=True)

@@ -90,12 +90,16 @@ class StopLine:
 
     def __eq__(self, other):
         if not isinstance(other, StopLine):
-            warnings.warn(f"Inequality between StopLine {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between StopLine {repr(self)} and different type {type(other)}"
+            )
             return False
 
         prec = 10
         start_string = np.array2string(np.around(self._start.astype(float), prec), precision=prec)
-        start_other_string = np.array2string(np.around(other.start.astype(float), prec), precision=prec)
+        start_other_string = np.array2string(
+            np.around(other.start.astype(float), prec), precision=prec
+        )
         end_string = np.array2string(np.around(self._end.astype(float), prec), precision=prec)
         end_other_string = np.array2string(np.around(other.end.astype(float), prec), precision=prec)
 
@@ -177,9 +181,10 @@ class StopLine:
         :param angle: The rotation angle in radian (counter-clockwise defined)
         """
 
-        assert is_real_number_vector(
-            translation, 2
-        ), "<Lanelet/translate_rotate>: provided translation " "is not valid! translation = {}".format(translation)
+        assert is_real_number_vector(translation, 2), (
+            "<Lanelet/translate_rotate>: provided translation "
+            "is not valid! translation = {}".format(translation)
+        )
         assert is_valid_orientation(
             angle
         ), "<Lanelet/translate_rotate>: provided angle is not valid! angle = {}".format(angle)

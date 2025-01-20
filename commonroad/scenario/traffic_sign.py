@@ -768,7 +768,8 @@ class TrafficSignIDAustralia(enum.Enum):
 
 TrafficSignIDCountries = {
     ele.value: globals()[
-        "TrafficSignID" + SupportedTrafficSignCountry(ele.value).name.replace("_", " ").title().replace(" ", "")
+        "TrafficSignID"
+        + SupportedTrafficSignCountry(ele.value).name.replace("_", " ").title().replace(" ", "")
     ]
     for ele in SupportedTrafficSignCountry
 }
@@ -800,12 +801,14 @@ class TrafficSignElement:
 
     def __eq__(self, other):
         if not isinstance(other, TrafficSignElement):
-            warnings.warn(f"Inequality between TrafficSignElement {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between TrafficSignElement {repr(self)} and different type {type(other)}"
+            )
             return False
 
-        return self.traffic_sign_element_id == other.traffic_sign_element_id and set(self.additional_values) == set(
-            other.additional_values
-        )
+        return self.traffic_sign_element_id == other.traffic_sign_element_id and set(
+            self.additional_values
+        ) == set(other.additional_values)
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -869,7 +872,9 @@ class TrafficSign(IDrawable):
 
     def __eq__(self, other):
         if not isinstance(other, TrafficSign):
-            warnings.warn(f"Inequality between TrafficSign {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between TrafficSign {repr(self)} and different type {type(other)}"
+            )
             return False
 
         list_elements_eq = True
@@ -890,7 +895,9 @@ class TrafficSign(IDrawable):
                 list_elements_eq = False
 
         position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
-        position_other_string = np.array2string(np.around(other.position.astype(float), 10), precision=10)
+        position_other_string = np.array2string(
+            np.around(other.position.astype(float), 10), precision=10
+        )
 
         return (
             list_elements_eq
@@ -973,10 +980,14 @@ class TrafficSign(IDrawable):
         """
 
         assert is_real_number_vector(translation, 2), (
-            "<TrafficSign/translate_rotate>: argument translation is " "not a vector of real " "numbers of length 2."
+            "<TrafficSign/translate_rotate>: argument translation is "
+            "not a vector of real "
+            "numbers of length 2."
         )
         assert is_real_number(angle), (
-            "<TrafficSign/translate_rotate>: argument angle must be a " "scalar. " "angle = %s" % angle
+            "<TrafficSign/translate_rotate>: argument angle must be a "
+            "scalar. "
+            "angle = %s" % angle
         )
         assert is_valid_orientation(angle), (
             "<TrafficSign/translate_rotate>: argument angle must "
@@ -984,9 +995,9 @@ class TrafficSign(IDrawable):
             "within the "
             "interval [-2pi, 2pi]. angle = %s" % angle
         )
-        self._position = commonroad.geometry.transform.translate_rotate(np.array([self._position]), translation, angle)[
-            0
-        ]
+        self._position = commonroad.geometry.transform.translate_rotate(
+            np.array([self._position]), translation, angle
+        )[0]
 
     def convert_to_2d(self) -> None:
         """
@@ -996,5 +1007,9 @@ class TrafficSign(IDrawable):
         """
         self._position = self._position[:2]
 
-    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[TrafficSignParams] = None):
+    def draw(
+        self,
+        renderer: IRenderer,
+        draw_params: OptionalSpecificOrAllDrawParams[TrafficSignParams] = None,
+    ):
         renderer.draw_traffic_light_sign(self, draw_params)

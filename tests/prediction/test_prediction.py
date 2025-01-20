@@ -122,11 +122,17 @@ class TestTrajectoryPrediction(unittest.TestCase):
     def test_eq_is_order_independent_for_center_lanelet_assignment(self):
         """test if __eq__ ignores the order of the values in center_lanelet_assignment"""
         for x, y in zip(
-            list(self.center_lanelet_assignment[3]), list(self.center_lanelet_assignment_different_order[3])
+            list(self.center_lanelet_assignment[3]),
+            list(self.center_lanelet_assignment_different_order[3]),
         ):
-            self.assertNotEqual(x, y, msg="This test relies on these two sets having different iteration orders!")
+            self.assertNotEqual(
+                x, y, msg="This test relies on these two sets having different iteration orders!"
+            )
         tp = TrajectoryPrediction(
-            self.trajectory, self.shape, self.center_lanelet_assignment, self.shape_lanelet_assignment
+            self.trajectory,
+            self.shape,
+            self.center_lanelet_assignment,
+            self.shape_lanelet_assignment,
         )
         tp_copy = TrajectoryPrediction(
             self.trajectory,
@@ -139,8 +145,13 @@ class TestTrajectoryPrediction(unittest.TestCase):
 
     def test_eq_is_order_independent_for_shape_lanelet_assignment(self):
         """test if __eq__ ignores the order of the values in center_lanelet_assignment"""
-        for x, y in zip(list(self.shape_lanelet_assignment[2]), list(self.shape_lanelet_assignment_different_order[2])):
-            self.assertNotEqual(x, y, msg="This test relies on these two sets having different iteration orders!")
+        for x, y in zip(
+            list(self.shape_lanelet_assignment[2]),
+            list(self.shape_lanelet_assignment_different_order[2]),
+        ):
+            self.assertNotEqual(
+                x, y, msg="This test relies on these two sets having different iteration orders!"
+            )
         tp = TrajectoryPrediction(
             self.trajectory,
             self.shape,

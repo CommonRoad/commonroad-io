@@ -106,7 +106,9 @@ class TestTrajectory(unittest.TestCase):
         states = list()
         states.append(KSState(time_step=5, position=np.array([0, 0]), velocity=0, orientation=10))
         states.append(KSState(time_step=5, position=np.array([5, 5]), velocity=5, orientation=15))
-        states.append(KSState(time_step=5, position=np.array([10, 10]), velocity=10, orientation=20))
+        states.append(
+            KSState(time_step=5, position=np.array([10, 10]), velocity=10, orientation=20)
+        )
         time = np.array([0, 5, 10])
 
         traj_new = Trajectory.resample_continuous_time_state_list(states, time, 2.5, 4)
@@ -118,7 +120,9 @@ class TestTrajectory(unittest.TestCase):
             self.assertEqual(x.position[1], x_t[i])
             self.assertEqual(x.orientation, 10 + x_t[i])
 
-        traj_new = Trajectory.resample_continuous_time_state_list(states, time, 2.5, 2, initial_time_cont=5)
+        traj_new = Trajectory.resample_continuous_time_state_list(
+            states, time, 2.5, 2, initial_time_cont=5
+        )
         x_t = np.interp(np.arange(5, 2.5 * 4 + 2.5, 2.5), time, [0, 5, 10])
         for i, x in enumerate(traj_new.state_list):
             self.assertEqual(x.velocity, x_t[i])
@@ -164,7 +168,13 @@ class TestTrajectory(unittest.TestCase):
         self.assertRaises(
             AssertionError,
             trajectory.append_state,
-            InitialState(time_step=6, position=np.array([1.0, -2.0]), orientation=0.5, velocity=3.3, acceleration=1.3),
+            InitialState(
+                time_step=6,
+                position=np.array([1.0, -2.0]),
+                orientation=0.5,
+                velocity=3.3,
+                acceleration=1.3,
+            ),
         )
         self.assertRaises(
             AssertionError,

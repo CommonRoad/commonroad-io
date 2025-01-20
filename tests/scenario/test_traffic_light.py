@@ -112,7 +112,9 @@ class TestTrafficLight(unittest.TestCase):
         np.testing.assert_array_almost_equal(traffic_light.position, np.array([10.0, 7.0]))
 
     def test_equality(self):
-        traffic_light_cycle = TrafficLightCycle([TrafficLightCycleElement(TrafficLightState.RED, 1)])
+        traffic_light_cycle = TrafficLightCycle(
+            [TrafficLightCycleElement(TrafficLightState.RED, 1)]
+        )
         color = [TrafficLightState.GREEN]
         traffic_light_1 = TrafficLight(
             234, np.array([10.0, 10.0]), None, color, shape=Rectangle(0.5, 0.2, np.array([2, 3]))
@@ -150,13 +152,19 @@ class TestTrafficLight(unittest.TestCase):
         traffic_light_2 = TrafficLight(234, np.array([10.0, 9.95]), None, color)
         self.assertFalse(traffic_light_1 == traffic_light_2)
 
-        traffic_light_2 = TrafficLight(234, np.array([10.0, 10.0]), None, color, True, TrafficLightDirection.LEFT)
+        traffic_light_2 = TrafficLight(
+            234, np.array([10.0, 10.0]), None, color, True, TrafficLightDirection.LEFT
+        )
         self.assertFalse(traffic_light_1 == traffic_light_2)
 
-        traffic_light_2 = TrafficLight(234, np.array([10.0, 10.0]), None, color, True, TrafficLightDirection.STRAIGHT)
+        traffic_light_2 = TrafficLight(
+            234, np.array([10.0, 10.0]), None, color, True, TrafficLightDirection.STRAIGHT
+        )
         self.assertFalse(traffic_light_1 == traffic_light_2)
 
-        traffic_light_2 = TrafficLight(234, np.array([10.0, 10.0]), None, color, False, TrafficLightDirection.ALL)
+        traffic_light_2 = TrafficLight(
+            234, np.array([10.0, 10.0]), None, color, False, TrafficLightDirection.ALL
+        )
         self.assertFalse(traffic_light_1 == traffic_light_2)
 
         traffic_light_1 = TrafficLight(234, np.array([10.0, 10.0]), traffic_light_cycle, color)
@@ -164,7 +172,9 @@ class TestTrafficLight(unittest.TestCase):
         self.assertFalse(traffic_light_1 == traffic_light_2)
 
     def test_hash(self):
-        traffic_light_cycle = TrafficLightCycle([TrafficLightCycleElement(TrafficLightState.RED, 1)])
+        traffic_light_cycle = TrafficLightCycle(
+            [TrafficLightCycleElement(TrafficLightState.RED, 1)]
+        )
         color = [TrafficLightState.RED]
         traffic_light_1 = TrafficLight(234, np.array([10, 10]), None, color)
         traffic_light_2 = TrafficLight(234, np.array([10.0, 10.0]), None, color)

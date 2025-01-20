@@ -43,7 +43,9 @@ class Rectangle(Shape):
     and its geometric center. If we model the shape of an obstacle, the orientation and geometric center can be
     omitted; therefore, we set the orientation, and the x- and y-coordinate of the geometric center to zero."""
 
-    def __init__(self, length: float, width: float, center: np.ndarray = None, orientation: float = 0.0):
+    def __init__(
+        self, length: float, width: float, center: np.ndarray = None, orientation: float = 0.0
+    ):
         """
 
         :param length: length of the rectangle in longitudinal direction
@@ -63,11 +65,15 @@ class Rectangle(Shape):
 
     def __eq__(self, other):
         if not isinstance(other, Rectangle):
-            warnings.warn(f"Inequality between Rectangle {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between Rectangle {repr(self)} and different type {type(other)}"
+            )
             return False
 
         center_string = np.array2string(np.around(self._center.astype(float), 10), precision=10)
-        center_other_string = np.array2string(np.around(other.center.astype(float), 10), precision=10)
+        center_other_string = np.array2string(
+            np.around(other.center.astype(float), 10), precision=10
+        )
 
         return (
             self._length == other.length
@@ -86,7 +92,9 @@ class Rectangle(Shape):
     @property
     def _shapely_polygon(self) -> shapely.geometry.Polygon:
         if self.__shapely_polygon is None:
-            self.__shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self.vertices)
+            self.__shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(
+                self.vertices
+            )
 
         return self.__shapely_polygon
 
@@ -120,10 +128,9 @@ class Rectangle(Shape):
 
     @center.setter
     def center(self, center: np.ndarray):
-        assert is_real_number_vector(
-            center, 2
-        ), '<Rectangle/center>: argument "center" is not a vector ' "of real numbers of length 2. center = {}".format(
-            center
+        assert is_real_number_vector(center, 2), (
+            '<Rectangle/center>: argument "center" is not a vector '
+            "of real numbers of length 2. center = {}".format(center)
         )
         self._center = center
 
@@ -135,9 +142,10 @@ class Rectangle(Shape):
 
     @orientation.setter
     def orientation(self, orientation: float):
-        assert is_valid_orientation(
-            orientation
-        ), '<Rectangle/orientation>: argument "orientation" is not valid. ' "orientation = {}".format(orientation)
+        assert is_valid_orientation(orientation), (
+            '<Rectangle/orientation>: argument "orientation" is not valid. '
+            "orientation = {}".format(orientation)
+        )
         self._orientation = orientation
 
     @property
@@ -169,9 +177,10 @@ class Rectangle(Shape):
             "not a vector of real numbers of length 2. translation = "
             "{}".format(translation)
         )
-        assert is_valid_orientation(
-            angle
-        ), '<Rectangle/translate_rotate>: argument "orientation" is not valid.' "orientation = {}".format(angle)
+        assert is_valid_orientation(angle), (
+            '<Rectangle/translate_rotate>: argument "orientation" is not valid.'
+            "orientation = {}".format(angle)
+        )
         new_center = translate_rotate(self._center.reshape([1, -1]), translation, angle)[0]
         new_orientation = make_valid_orientation(self._orientation + angle)
         return Rectangle(self._length, self._width, new_center, new_orientation)
@@ -220,7 +229,9 @@ class Rectangle(Shape):
         output += "\t orientation: {} \n".format(self._orientation)
         return output
 
-    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None):
+    def draw(
+        self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None
+    ):
         renderer.draw_rectangle(self.vertices, draw_params)
 
 
@@ -237,17 +248,21 @@ class Circle(Shape):
         """
         self.radius: float = radius
         self.center: np.ndarray = center if center is not None else np.array([0.0, 0.0])
-        self._shapely_circle: shapely.geometry = shapely.geometry.Point(self.center[0], self.center[1]).buffer(
-            radius / 2
-        )
+        self._shapely_circle: shapely.geometry = shapely.geometry.Point(
+            self.center[0], self.center[1]
+        ).buffer(radius / 2)
 
     def __eq__(self, other):
         if not isinstance(other, Circle):
-            warnings.warn(f"Inequality between Circle {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between Circle {repr(self)} and different type {type(other)}"
+            )
             return False
 
         center_string = np.array2string(np.around(self._center.astype(float), 10), precision=10)
-        center_other_string = np.array2string(np.around(other.center.astype(float), 10), precision=10)
+        center_other_string = np.array2string(
+            np.around(other.center.astype(float), 10), precision=10
+        )
 
         return self._radius == other.radius and center_string == center_other_string
 
@@ -331,7 +346,9 @@ class Circle(Shape):
         output += "\t center: {} \n".format(self._center)
         return output
 
-    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None):
+    def draw(
+        self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None
+    ):
         renderer.draw_ellipse(self.center, self.radius, self.radius, draw_params)
 
 
@@ -348,15 +365,21 @@ class Polygon(Shape):
         self._max: np.ndarray = np.max(vertices, axis=0)
         self._shapely_polygon: shapely.geometry.Polygon = shapely.geometry.Polygon(self._vertices)
         # ensure that vertices are sorted clockwise and the first and last point are the same
-        self._vertices = np.array(shapely.geometry.polygon.orient(self._shapely_polygon, sign=-1.0).exterior.coords)
+        self._vertices = np.array(
+            shapely.geometry.polygon.orient(self._shapely_polygon, sign=-1.0).exterior.coords
+        )
 
     def __eq__(self, other):
         if not isinstance(other, Polygon):
-            warnings.warn(f"Inequality between Polygon {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between Polygon {repr(self)} and different type {type(other)}"
+            )
             return False
 
         vertices_string = np.array2string(np.around(self._vertices.astype(float), 10), precision=10)
-        vertices_string_other = np.array2string(np.around(other._vertices.astype(float), 10), precision=10)
+        vertices_string_other = np.array2string(
+            np.around(other._vertices.astype(float), 10), precision=10
+        )
 
         return vertices_string == vertices_string_other
 
@@ -399,9 +422,10 @@ class Polygon(Shape):
             "not a vector of real numbers of length 2. translation = "
             "{}".format(translation)
         )
-        assert is_valid_orientation(
-            angle
-        ), '<Polygon/translate_rotate>: argument "orientation" is not valid.' "orientation = {}".format(angle)
+        assert is_valid_orientation(angle), (
+            '<Polygon/translate_rotate>: argument "orientation" is not valid.'
+            "orientation = {}".format(angle)
+        )
         return Polygon(translate_rotate(self._vertices, translation, angle))
 
     def rotate_translate_local(self, translation: np.ndarray, angle: float) -> "Polygon":
@@ -416,9 +440,10 @@ class Polygon(Shape):
             "not a vector of real numbers of length 2. translation = "
             "{}".format(translation)
         )
-        assert is_valid_orientation(
-            angle
-        ), '<Polygon/rotate_translate_local>: argument "orientation" is not valid.' "orientation = {}".format(angle)
+        assert is_valid_orientation(angle), (
+            '<Polygon/rotate_translate_local>: argument "orientation" is not valid.'
+            "orientation = {}".format(angle)
+        )
         rotated_shapely_polygon = shapely.affinity.rotate(
             self._shapely_polygon, angle, origin="centroid", use_radians=True
         )
@@ -444,7 +469,9 @@ class Polygon(Shape):
             """
             return all(np.less_equal(self._min, point)) and all(np.less_equal(point, self._max))
 
-        return in_axis_aligned_bounding_box(point) and self._shapely_polygon.intersects(shapely.geometry.Point(point))
+        return in_axis_aligned_bounding_box(point) and self._shapely_polygon.intersects(
+            shapely.geometry.Point(point)
+        )
 
     def __str__(self):
         output = "Polygon: \n"
@@ -452,7 +479,9 @@ class Polygon(Shape):
         output += "\t center: {} \n".format(self.center)
         return output
 
-    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None):
+    def draw(
+        self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None
+    ):
         renderer.draw_polygon(self.vertices, draw_params)
 
 
@@ -468,7 +497,9 @@ class ShapeGroup(Shape):
 
     def __eq__(self, other):
         if not isinstance(other, ShapeGroup):
-            warnings.warn(f"Inequality between ShapeGroup {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between ShapeGroup {repr(self)} and different type {type(other)}"
+            )
             return False
 
         return self._shapes == other.shapes
@@ -484,9 +515,10 @@ class ShapeGroup(Shape):
     @shapes.setter
     def shapes(self, shapes: List[Shape]):
         if not hasattr(self, "_shapes"):
-            assert isinstance(shapes, list) and all(
-                isinstance(elem, Shape) for elem in shapes
-            ), '<ShapeGroup/shapes>: argument "shapes" is not a valid ' "list of shapes. shapes = {}".format(shapes)
+            assert isinstance(shapes, list) and all(isinstance(elem, Shape) for elem in shapes), (
+                '<ShapeGroup/shapes>: argument "shapes" is not a valid '
+                "list of shapes. shapes = {}".format(shapes)
+            )
             self._shapes = shapes
         else:
             warnings.warn("<ShapeGroup/shapes>: shapes of shape group are immutable.")
@@ -503,9 +535,10 @@ class ShapeGroup(Shape):
             "not a vector of real numbers of length 2. translation = "
             "{}".format(translation)
         )
-        assert is_valid_orientation(
-            angle
-        ), '<ShapeGroup/translate_rotate>: argument "orientation" is not valid.' "orientation = {}".format(angle)
+        assert is_valid_orientation(angle), (
+            '<ShapeGroup/translate_rotate>: argument "orientation" is not valid.'
+            "orientation = {}".format(angle)
+        )
 
         new_shapes = list()
         for s in self._shapes:
@@ -524,9 +557,10 @@ class ShapeGroup(Shape):
             "is not a vector of real numbers of length 2. translation = "
             "{}".format(translation)
         )
-        assert is_valid_orientation(
-            angle
-        ), '<ShapeGroup/rotate_translate_local>: argument "orientation" is not ' "valid. orientation = {}".format(angle)
+        assert is_valid_orientation(angle), (
+            '<ShapeGroup/rotate_translate_local>: argument "orientation" is not '
+            "valid. orientation = {}".format(angle)
+        )
 
         new_shapes = list()
         for s in self._shapes:
@@ -553,7 +587,9 @@ class ShapeGroup(Shape):
         output += "\t number of shapes: {} \n".format(len(self._shapes))
         return output
 
-    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None):
+    def draw(
+        self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None
+    ):
         for s in self._shapes:
             s.draw(renderer, draw_params)
 

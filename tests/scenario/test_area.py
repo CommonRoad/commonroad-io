@@ -140,8 +140,14 @@ class TestArea(unittest.TestCase):
         self.assertNotEqual(area_border1.__hash__(), area_border2.__hash__())
 
     def test_hash_area(self):
-        area1 = Area(1, [AreaBorder(1, np.array([[1, 2], [3, 4]])), AreaBorder(2, np.array([[1, 2], [3, 4]]))])
-        area2 = Area(1, [AreaBorder(1, np.array([[1, 2], [3, 4]])), AreaBorder(2, np.array([[1, 2], [3, 4]]))])
+        area1 = Area(
+            1,
+            [AreaBorder(1, np.array([[1, 2], [3, 4]])), AreaBorder(2, np.array([[1, 2], [3, 4]]))],
+        )
+        area2 = Area(
+            1,
+            [AreaBorder(1, np.array([[1, 2], [3, 4]])), AreaBorder(2, np.array([[1, 2], [3, 4]]))],
+        )
         self.assertEqual(area1.__hash__(), area2.__hash__())
 
         area1.area_types = {AreaType.BUS_STOP, AreaType.PARKING}
@@ -156,8 +162,14 @@ class TestArea(unittest.TestCase):
         self.assertFalse(area_border1 == area_border2)
 
     def test_equality_area(self):
-        area1 = Area(1, [AreaBorder(1, np.array([[1, 2], [3, 4]])), AreaBorder(2, np.array([[1, 2], [3, 4]]))])
-        area2 = Area(1, [AreaBorder(1, np.array([[1, 2], [3, 4]])), AreaBorder(2, np.array([[1, 2], [3, 4]]))])
+        area1 = Area(
+            1,
+            [AreaBorder(1, np.array([[1, 2], [3, 4]])), AreaBorder(2, np.array([[1, 2], [3, 4]]))],
+        )
+        area2 = Area(
+            1,
+            [AreaBorder(1, np.array([[1, 2], [3, 4]])), AreaBorder(2, np.array([[1, 2], [3, 4]]))],
+        )
         self.assertTrue(area1 == area2)
 
         area1.area_types = {AreaType.BUS_STOP, AreaType.PARKING}

@@ -155,4 +155,3 @@ push_to_external_pipy_release_registry:
   script:
     - poetry build
     - poetry publish -u __token__ -p ${CR_PYPI_RELEASE_API_TOKEN}
-

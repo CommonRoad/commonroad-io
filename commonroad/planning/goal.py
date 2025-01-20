@@ -17,7 +17,9 @@ from commonroad.visualization.renderer import IRenderer
 
 class GoalRegion(IDrawable):
     def __init__(
-        self, state_list: List[TraceState], lanelets_of_goal_position: Union[None, Dict[int, List[int]]] = None
+        self,
+        state_list: List[TraceState],
+        lanelets_of_goal_position: Union[None, Dict[int, List[int]]] = None,
     ):
         """
         Region, that has to be reached by the vehicle. Contains a list of
@@ -39,20 +41,31 @@ class GoalRegion(IDrawable):
 
     def __eq__(self, other):
         if not isinstance(other, GoalRegion):
-            warnings.warn(f"Inequality between GoalRegion {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between GoalRegion {repr(self)} and different type {type(other)}"
+            )
             return False
 
         lanelets_of_goal_position = (
-            None if self.lanelets_of_goal_position is None else self.lanelets_of_goal_position.items()
+            None
+            if self.lanelets_of_goal_position is None
+            else self.lanelets_of_goal_position.items()
         )
         lanelets_of_goal_position_other = (
-            None if other.lanelets_of_goal_position is None else other.lanelets_of_goal_position.items()
+            None
+            if other.lanelets_of_goal_position is None
+            else other.lanelets_of_goal_position.items()
         )
-        return self.state_list == other.state_list and lanelets_of_goal_position == lanelets_of_goal_position_other
+        return (
+            self.state_list == other.state_list
+            and lanelets_of_goal_position == lanelets_of_goal_position_other
+        )
 
     def __hash__(self):
         lanelets_of_goal_position = (
-            None if self.lanelets_of_goal_position is None else self.lanelets_of_goal_position.items()
+            None
+            if self.lanelets_of_goal_position is None
+            else self.lanelets_of_goal_position.items()
         )
         return hash((self.state_list, lanelets_of_goal_position))
 
@@ -80,10 +93,14 @@ class GoalRegion(IDrawable):
                 assert isinstance(lanelets, dict)
                 assert all(isinstance(x, int) for x in lanelets.keys())
                 assert all(isinstance(x, list) for x in lanelets.values())
-                assert all(isinstance(x, int) for lanelet_list in lanelets.values() for x in lanelet_list)
+                assert all(
+                    isinstance(x, int) for lanelet_list in lanelets.values() for x in lanelet_list
+                )
             self._lanelets_of_goal_position = lanelets
         else:
-            warnings.warn("<GoalRegion/lanelets_of_goal_position> lanelets_of_goal_position are immutable")
+            warnings.warn(
+                "<GoalRegion/lanelets_of_goal_position> lanelets_of_goal_position are immutable"
+            )
 
     def is_reached(self, state: TraceState) -> bool:
         """
@@ -98,8 +115,8 @@ class GoalRegion(IDrawable):
             goal_state_tmp = copy.deepcopy(goal_state)
             goal_state_fields = set(goal_state.used_attributes)
             state_fields = set(state.used_attributes)
-            state_new, state_fields, goal_state_tmp, goal_state_fields = self._harmonize_state_types(
-                state, goal_state_tmp, state_fields, goal_state_fields
+            state_new, state_fields, goal_state_tmp, goal_state_fields = (
+                self._harmonize_state_types(state, goal_state_tmp, state_fields, goal_state_fields)
             )
 
             if not goal_state_fields.issubset(state_fields):
@@ -110,13 +127,19 @@ class GoalRegion(IDrawable):
                 )
             is_reached = True
             if goal_state.time_step is not None:
-                is_reached = is_reached and self._check_value_in_interval(state_new.time_step, goal_state.time_step)
+                is_reached = is_reached and self._check_value_in_interval(
+                    state_new.time_step, goal_state.time_step
+                )
             if goal_state.has_value("position") and state_new.has_value("position"):
                 is_reached = is_reached and goal_state.position.contains_point(state_new.position)
             if goal_state.has_value("orientation") and state_new.has_value("orientation"):
-                is_reached = is_reached and self._check_value_in_interval(state_new.orientation, goal_state.orientation)
+                is_reached = is_reached and self._check_value_in_interval(
+                    state_new.orientation, goal_state.orientation
+                )
             if goal_state.has_value("velocity") and state_new.has_value("velocity"):
-                is_reached = is_reached and self._check_value_in_interval(state_new.velocity, goal_state.velocity)
+                is_reached = is_reached and self._check_value_in_interval(
+                    state_new.velocity, goal_state.velocity
+                )
             is_reached_list.append(is_reached)
         return np.any(is_reached_list)
 
@@ -147,7 +170,9 @@ class GoalRegion(IDrawable):
         else:
             raise ValueError(
                 "<GoalRegion/_check_value_in_interval>: argument 'desired_interval' of wrong type. "
-                "Expected type: {}. Got type: {}.".format((type(Interval), type(AngleInterval)), type(desired_interval))
+                "Expected type: {}. Got type: {}.".format(
+                    (type(Interval), type(AngleInterval)), type(desired_interval)
+                )
             )
         return is_reached
 
@@ -161,7 +186,8 @@ class GoalRegion(IDrawable):
         # mandatory fields:
         if getattr(state, "time_step") is None:
             raise ValueError(
-                "<GoalRegion/_goal_state_is_valid> field time_step is mandatory. " "No time_step attribute found."
+                "<GoalRegion/_goal_state_is_valid> field time_step is mandatory. "
+                "No time_step attribute found."
             )
 
         # optional fields
@@ -195,7 +221,10 @@ class GoalRegion(IDrawable):
 
     @staticmethod
     def _harmonize_state_types(
-        state: TraceState, goal_state: TraceState, state_fields: Set[str], goal_state_fields: Set[str]
+        state: TraceState,
+        goal_state: TraceState,
+        state_fields: Set[str],
+        goal_state_fields: Set[str],
     ):
         """
         Transforms states from value_x, value_y to orientation, value representation if required.
@@ -206,16 +235,25 @@ class GoalRegion(IDrawable):
         state_new = copy.deepcopy(state)
         if (
             {"velocity", "velocity_y"}.issubset(state_fields)
-            and ({"orientation"}.issubset(goal_state_fields) or {"velocity"}.issubset(goal_state_fields))
+            and (
+                {"orientation"}.issubset(goal_state_fields)
+                or {"velocity"}.issubset(goal_state_fields)
+            )
             and not {"velocity", "velocity_y"}.issubset(goal_state_fields)
         ):
             if "orientation" not in state_fields:
                 state_fields.add("orientation")
 
-            state_new.velocity = np.linalg.norm(np.array([state_new.velocity, state_new.velocity_y]))
+            state_new.velocity = np.linalg.norm(
+                np.array([state_new.velocity, state_new.velocity_y])
+            )
             state_fields.remove("velocity_y")
 
         return state_new, state_fields, goal_state, goal_state_fields
 
-    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[OccupancyParams] = None):
+    def draw(
+        self,
+        renderer: IRenderer,
+        draw_params: OptionalSpecificOrAllDrawParams[OccupancyParams] = None,
+    ):
         renderer.draw_goal_region(self, draw_params)

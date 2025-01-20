@@ -188,7 +188,9 @@ class MPRenderer(IRenderer):
         """
         plot limits centered around focus_obstacle_id defined in draw_params
         """
-        if self.plot_limits is not None and (self.plot_limits == "auto" or self.plot_center is None):
+        if self.plot_limits is not None and (
+            self.plot_limits == "auto" or self.plot_center is None
+        ):
             return self.plot_limits
         elif self.plot_center is not None:
             plot_limits_f = np.array(self.plot_limits, dtype=int)
@@ -200,7 +202,9 @@ class MPRenderer(IRenderer):
         self.callbacks[event].append(func)
 
     def draw_list(
-        self, drawable_list: List[IDrawable], draw_params: Union[MPDrawParams, List[Optional[BaseParam]], None] = None
+        self,
+        drawable_list: List[IDrawable],
+        draw_params: Union[MPDrawParams, List[Optional[BaseParam]], None] = None,
     ) -> None:
         """
         Simple wrapper to draw a list of drawable objects
@@ -212,7 +216,8 @@ class MPRenderer(IRenderer):
         if not isinstance(draw_params, list):
             draw_params = [draw_params] * len(drawable_list)
         assert len(draw_params) == len(drawable_list), (
-            f"Number of drawables has to match number of draw params {len(drawable_list)} vs. " f"{len(draw_params)}!"
+            f"Number of drawables has to match number of draw params {len(drawable_list)} vs. "
+            f"{len(draw_params)}!"
         )
         for elem, params in zip(drawable_list, draw_params):
             elem.draw(self, params)
@@ -260,7 +265,10 @@ class MPRenderer(IRenderer):
         """
         artist_list = []
         self.traffic_sign_artists = draw_traffic_light_signs(
-            self.traffic_signs, self._traffic_light_draw_params, self._traffic_sign_draw_params, self
+            self.traffic_signs,
+            self._traffic_light_draw_params,
+            self._traffic_sign_draw_params,
+            self,
         )
         for art in self.dynamic_artists:
             self.ax.add_artist(art)
@@ -276,7 +284,9 @@ class MPRenderer(IRenderer):
 
         self.obstacle_patches.sort(key=lambda x: x.zorder)
         patch_col = mpl.collections.PatchCollection(
-            self.obstacle_patches, match_original=True, zorder=self.draw_params.dynamic_obstacle.zorder
+            self.obstacle_patches,
+            match_original=True,
+            zorder=self.draw_params.dynamic_obstacle.zorder,
         )
         self.ax.add_collection(patch_col)
         artist_list.append(patch_col)
@@ -298,7 +308,9 @@ class MPRenderer(IRenderer):
         self._connect_callbacks()
         return self.static_collections + self.static_artists
 
-    def render(self, show: bool = False, filename: str = None, keep_static_artists=False) -> List[artists.Artist]:
+    def render(
+        self, show: bool = False, filename: str = None, keep_static_artists=False
+    ) -> List[artists.Artist]:
         """
         Render all objects from buffer
 
@@ -350,7 +362,9 @@ class MPRenderer(IRenderer):
         dt: Optional[int] = None,
         dpi: int = 120,
         progress: bool = True,
-        callback: Optional[Callable[[matplotlib.figure.Figure, matplotlib.axes.Axes, int], None]] = None,
+        callback: Optional[
+            Callable[[matplotlib.figure.Figure, matplotlib.axes.Axes, int], None]
+        ] = None,
     ) -> None:
         """
         Creates a video of one or multiple CommonRoad objects in mp4, gif,
@@ -396,7 +410,9 @@ class MPRenderer(IRenderer):
             current_time_step = time_begin + delta_time_steps * frame
             for params in draw_params:
                 params.time_begin = current_time_step
-                params.time_end = time_begin + min(frame_count, delta_time_steps * frame + plotting_horizon)
+                params.time_end = time_begin + min(
+                    frame_count, delta_time_steps * frame + plotting_horizon
+                )
             self.remove_dynamic()
             self.clear()
             self.draw_list(obj_lists, draw_params=draw_params)
@@ -435,9 +451,13 @@ class MPRenderer(IRenderer):
         frame_count = (time_end - time_begin) // delta_time_steps
         plt.ioff()
         # Interval determines the duration of each frame in ms
-        anim = FuncAnimation(self.f, update, frames=frame_count, init_func=init_frame, blit=False, interval=dt)
+        anim = FuncAnimation(
+            self.f, update, frames=frame_count, init_func=init_frame, blit=False, interval=dt
+        )
 
-        if not any([file_path.endswith(".mp4"), file_path.endswith(".gif"), file_path.endswith(".avi")]):
+        if not any(
+            [file_path.endswith(".mp4"), file_path.endswith(".gif"), file_path.endswith(".avi")]
+        ):
             file_path += ".mp4"
         interval_seconds = dt / 1000.0
         with tqdm(total=frame_count, unit="frame", disable=not progress) as t:
@@ -472,7 +492,9 @@ class MPRenderer(IRenderer):
                 o.draw(self, draw_params.phantom_obstacle)
 
     def draw_static_obstacle(
-        self, obj: StaticObstacle, draw_params: OptionalSpecificOrAllDrawParams[StaticObstacleParams] = None
+        self,
+        obj: StaticObstacle,
+        draw_params: OptionalSpecificOrAllDrawParams[StaticObstacleParams] = None,
     ) -> None:
         """
         :param obj: object to be plotted
@@ -489,7 +511,10 @@ class MPRenderer(IRenderer):
         self._draw_occupancy(occ, obj.initial_state, draw_params.occupancy)
 
     def _draw_occupancy(
-        self, occ: Occupancy, state: TraceState, draw_params: OptionalSpecificOrAllDrawParams[OccupancyParams] = None
+        self,
+        occ: Occupancy,
+        state: TraceState,
+        draw_params: OptionalSpecificOrAllDrawParams[OccupancyParams] = None,
     ) -> None:
         if draw_params is None:
             draw_params = self.draw_params.occupancy
@@ -503,7 +528,9 @@ class MPRenderer(IRenderer):
             state.position.draw(self, shape_params)
 
     def draw_dynamic_obstacle(
-        self, obj: DynamicObstacle, draw_params: OptionalSpecificOrAllDrawParams[DynamicObstacleParams]
+        self,
+        obj: DynamicObstacle,
+        draw_params: OptionalSpecificOrAllDrawParams[DynamicObstacleParams],
     ) -> None:
         """
         :param obj: object to be plotted
@@ -542,7 +569,9 @@ class MPRenderer(IRenderer):
         ) or obj.initial_state.time_step > time_end:
             return
 
-        if draw_history and isinstance(obj.prediction, commonroad.prediction.prediction.TrajectoryPrediction):
+        if draw_history and isinstance(
+            obj.prediction, commonroad.prediction.prediction.TrajectoryPrediction
+        ):
             self._draw_history(obj, draw_params)
 
         # draw car icon
@@ -588,7 +617,9 @@ class MPRenderer(IRenderer):
         if draw_shape:
             veh_occ = obj.occupancy_at_time(time_begin)
             if veh_occ is not None:
-                self._draw_occupancy(veh_occ, obj.initial_state, draw_params.vehicle_shape.occupancy)
+                self._draw_occupancy(
+                    veh_occ, obj.initial_state, draw_params.vehicle_shape.occupancy
+                )
                 if draw_direction and veh_occ is not None and isinstance(veh_occ.shape, Rectangle):
                     v_tri = get_vehicle_direction_triangle(veh_occ.shape)
                     self.draw_polygon(v_tri, draw_params.vehicle_shape.direction)
@@ -601,7 +632,9 @@ class MPRenderer(IRenderer):
                 self._draw_signal_state(sig, veh_occ, draw_params.signals)
 
         # draw occupancies
-        if draw_occupancies or isinstance(obj.prediction, commonroad.prediction.prediction.SetBasedPrediction):
+        if draw_occupancies or isinstance(
+            obj.prediction, commonroad.prediction.prediction.SetBasedPrediction
+        ):
             if draw_shape:
                 # occupancy already plotted
                 time_begin_occ = time_begin + 1
@@ -616,7 +649,9 @@ class MPRenderer(IRenderer):
                 self._draw_occupancy(occ, state, draw_params.occupancy)
 
         # draw trajectory
-        if draw_trajectory and isinstance(obj.prediction, commonroad.prediction.prediction.TrajectoryPrediction):
+        if draw_trajectory and isinstance(
+            obj.prediction, commonroad.prediction.prediction.TrajectoryPrediction
+        ):
             obj.prediction.trajectory.draw(self, draw_params.trajectory)
 
         # get state
@@ -635,7 +670,13 @@ class MPRenderer(IRenderer):
             if state is not None:
                 position = state.position
                 self.dynamic_labels.append(
-                    text.Text(position[0] + 0.5, position[1], str(obj.obstacle_id), clip_on=True, zorder=ZOrders.LABELS)
+                    text.Text(
+                        position[0] + 0.5,
+                        position[1],
+                        str(obj.obstacle_id),
+                        clip_on=True,
+                        zorder=ZOrders.LABELS,
+                    )
                 )
 
         # draw initial state
@@ -643,7 +684,9 @@ class MPRenderer(IRenderer):
             state.draw(self, draw_params.state)
 
     def draw_phantom_obstacle(
-        self, obj: PhantomObstacle, draw_params: OptionalSpecificOrAllDrawParams[PhantomObstacleParams] = None
+        self,
+        obj: PhantomObstacle,
+        draw_params: OptionalSpecificOrAllDrawParams[PhantomObstacleParams] = None,
     ) -> None:
         """
         :param obj: object to be plotted
@@ -677,7 +720,9 @@ class MPRenderer(IRenderer):
                     occ.draw(self, draw_params.occupancy)
 
     def draw_environment_obstacle(
-        self, obj: EnvironmentObstacle, draw_params: OptionalSpecificOrAllDrawParams[EnvironmentObstacleParams] = None
+        self,
+        obj: EnvironmentObstacle,
+        draw_params: OptionalSpecificOrAllDrawParams[EnvironmentObstacleParams] = None,
     ) -> None:
         """
         :param obj: object to be plotted
@@ -778,7 +823,9 @@ class MPRenderer(IRenderer):
             pset.draw(self, draw_params.shape)
 
     def draw_trajectories(
-        self, obj: List[Trajectory], draw_params: OptionalSpecificOrAllDrawParams[TrajectoryParams] = None
+        self,
+        obj: List[Trajectory],
+        draw_params: OptionalSpecificOrAllDrawParams[TrajectoryParams] = None,
     ) -> None:
         if draw_params is None:
             draw_params = self.draw_params.trajectory
@@ -792,7 +839,9 @@ class MPRenderer(IRenderer):
         else:
             self.draw_list(obj, draw_params)
 
-    def draw_polygon(self, vertices, draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None) -> None:
+    def draw_polygon(
+        self, vertices, draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None
+    ) -> None:
         """
         Draws a polygon shape
 
@@ -863,7 +912,9 @@ class MPRenderer(IRenderer):
             )
         )
 
-    def draw_state(self, state: TraceState, draw_params: OptionalSpecificOrAllDrawParams[StateParams] = None) -> None:
+    def draw_state(
+        self, state: TraceState, draw_params: OptionalSpecificOrAllDrawParams[StateParams] = None
+    ) -> None:
         """
         Draws a state as an arrow of its velocity vector
 
@@ -880,7 +931,12 @@ class MPRenderer(IRenderer):
         if zorder is None:
             zorder = ZOrders.STATE
         self.obstacle_patches.append(
-            mpl.patches.Circle(state.position, radius=draw_params.radius, zorder=zorder, color=draw_params.facecolor)
+            mpl.patches.Circle(
+                state.position,
+                radius=draw_params.radius,
+                zorder=zorder,
+                color=draw_params.facecolor,
+            )
         )
 
         if draw_params.draw_arrow:
@@ -904,7 +960,9 @@ class MPRenderer(IRenderer):
             )
 
     def draw_lanelet_network(
-        self, obj: LaneletNetwork, draw_params: OptionalSpecificOrAllDrawParams[LaneletNetworkParams] = None
+        self,
+        obj: LaneletNetwork,
+        draw_params: OptionalSpecificOrAllDrawParams[LaneletNetworkParams] = None,
     ) -> None:
         """
         Draws a lanelet network
@@ -954,7 +1012,9 @@ class MPRenderer(IRenderer):
             successors_right_color = draw_params.intersection.successors_right_color
             show_intersection_labels = draw_params.intersection.show_label
         else:
-            draw_incoming_lanelets = draw_crossings = draw_successors = show_intersection_labels = False
+            draw_incoming_lanelets = draw_crossings = draw_successors = show_intersection_labels = (
+                False
+            )
 
         left_bound_color = draw_params.lanelet.left_bound_color
         right_bound_color = draw_params.lanelet.right_bound_color
@@ -1007,7 +1067,9 @@ class MPRenderer(IRenderer):
 
             if draw_successors:
                 tmp_list: List[set] = [
-                    incoming.successors_left for intersection in intersections for incoming in intersection.incomings
+                    incoming.successors_left
+                    for intersection in intersections
+                    for incoming in intersection.incomings
                 ]
                 successors_left: Set[int] = set.union(*tmp_list)
                 tmp_list: List[set] = [
@@ -1017,7 +1079,9 @@ class MPRenderer(IRenderer):
                 ]
                 successors_straight: Set[int] = set.union(*tmp_list)
                 tmp_list: List[set] = [
-                    incoming.successors_right for intersection in intersections for incoming in intersection.incomings
+                    incoming.successors_right
+                    for intersection in intersections
+                    for incoming in intersection.incomings
                 ]
                 successors_right: Set[int] = set.union(*tmp_list)
                 all_successors = set.union(successors_straight, successors_right, successors_left)
@@ -1068,7 +1132,10 @@ class MPRenderer(IRenderer):
                     else:
                         tmp_vertices = vertices.copy()
                         line_string = shapely.geometry.LineString(tmp_vertices)
-                        max_dist = line_string.project(shapely.geometry.Point(*vertices[-1])) - linewidth_metres / 2
+                        max_dist = (
+                            line_string.project(shapely.geometry.Point(*vertices[-1]))
+                            - linewidth_metres / 2
+                        )
 
                         if line_marking in (LineMarking.DASHED, LineMarking.BROAD_DASHED):
                             # In Germany, dashed lines are 6m long and 12m apart.
@@ -1089,7 +1156,9 @@ class MPRenderer(IRenderer):
                             self.static_collections.append(collection)
                         else:
                             # Offset, start and end of the line marking, to make them aligned with the lanelet.
-                            tmp_vertices[0, :] = line_string.interpolate(linewidth_metres / 2).coords
+                            tmp_vertices[0, :] = line_string.interpolate(
+                                linewidth_metres / 2
+                            ).coords
                             tmp_vertices[-1, :] = line_string.interpolate(max_dist).coords
                             self.static_artists.append(
                                 LineDataUnits(
@@ -1111,7 +1180,10 @@ class MPRenderer(IRenderer):
                 lanelet.adj_left is None or not lanelet.adj_left_same_direction
             ):
                 _draw_bound(
-                    left_vertices_2d, lanelet.line_marking_left_vertices, left_paths, coordinates_left_border_vertices
+                    left_vertices_2d,
+                    lanelet.line_marking_left_vertices,
+                    left_paths,
+                    coordinates_left_border_vertices,
                 )
 
             # right bound
@@ -1127,7 +1199,9 @@ class MPRenderer(IRenderer):
             if draw_stop_line and lanelet.stop_line:
                 # project stop line to xy-plane for 2D plot
                 stop_line = np.vstack([lanelet.stop_line.start[:2], lanelet.stop_line.end[:2]])
-                linestyle, dashes, linewidth_metres = line_marking_to_linestyle(lanelet.stop_line.line_marking)
+                linestyle, dashes, linewidth_metres = line_marking_to_linestyle(
+                    lanelet.stop_line.line_marking
+                )
                 # cut off in the beginning, because linewidth_metres is added
                 # later
                 vec = stop_line[1, :] - stop_line[0, :]
@@ -1204,7 +1278,9 @@ class MPRenderer(IRenderer):
 
             # draw colored center bound. Hierarchy or colors: successors > usual
             # center bound
-            is_successor = draw_intersections and draw_successors and lanelet.lanelet_id in all_successors
+            is_successor = (
+                draw_intersections and draw_successors and lanelet.lanelet_id in all_successors
+            )
             if is_successor:
                 if lanelet.lanelet_id in successors_left:
                     succ_left_paths.append(Path(center_vertices_2d, closed=False))
@@ -1243,21 +1319,31 @@ class MPRenderer(IRenderer):
                     self.static_collections.append(lc)
 
             is_incoming_lanelet = (
-                draw_intersections and draw_incoming_lanelets and (lanelet.lanelet_id in incoming_lanelets)
+                draw_intersections
+                and draw_incoming_lanelets
+                and (lanelet.lanelet_id in incoming_lanelets)
             )
-            is_crossing = draw_intersections and draw_crossings and (lanelet.lanelet_id in crossings)
+            is_crossing = (
+                draw_intersections and draw_crossings and (lanelet.lanelet_id in crossings)
+            )
 
             # Draw lanelet area
             if fill_lanelet:
                 if not is_incoming_lanelet and not is_crossing:
-                    vertices_fill.append(np.concatenate((right_vertices_2d, np.flip(left_vertices_2d, 0))))
+                    vertices_fill.append(
+                        np.concatenate((right_vertices_2d, np.flip(left_vertices_2d, 0)))
+                    )
 
             # collect incoming lanelets in separate list for plotting in
             # different color
             if is_incoming_lanelet:
-                incoming_vertices_fill.append(np.concatenate((right_vertices_2d, np.flip(left_vertices_2d, 0))))
+                incoming_vertices_fill.append(
+                    np.concatenate((right_vertices_2d, np.flip(left_vertices_2d, 0)))
+                )
             elif is_crossing:
-                crossing_vertices_fill.append(np.concatenate((right_vertices_2d, np.flip(left_vertices_2d, 0))))
+                crossing_vertices_fill.append(
+                    np.concatenate((right_vertices_2d, np.flip(left_vertices_2d, 0)))
+                )
 
             # Draw labels
             if show_label or show_intersection_labels or draw_traffic_signs:
@@ -1265,7 +1351,9 @@ class MPRenderer(IRenderer):
                 if show_label:
                     strings.append(str(lanelet.lanelet_id))
                 if is_incoming_lanelet and show_intersection_labels:
-                    strings.append(f"int_id: {inc_2_intersections[lanelet.lanelet_id].intersection_id}")
+                    strings.append(
+                        f"int_id: {inc_2_intersections[lanelet.lanelet_id].intersection_id}"
+                    )
                     strings.append("inc_id: " + str(incomings_id[lanelet.lanelet_id]))
                     strings.append("inc_left: " + str(incomings_left[lanelet.lanelet_id]))
                 if draw_traffic_signs and show_traffic_sign_label:
@@ -1290,7 +1378,12 @@ class MPRenderer(IRenderer):
                     # compute normal angle of label box
                     clr_positions = lanelet.interpolate_position(0.5 * lanelet.distance[-1])
                     # project to xy-plane (last tuple element is an index, so we do not need to project it)
-                    clr_positions = (clr_positions[0][:2], clr_positions[1][:2], clr_positions[2][:2], clr_positions[3])
+                    clr_positions = (
+                        clr_positions[0][:2],
+                        clr_positions[1][:2],
+                        clr_positions[2][:2],
+                        clr_positions[3],
+                    )
                     normal_vector = np.array(clr_positions[1]) - np.array(clr_positions[2])
                     angle = np.rad2deg(math.atan2(normal_vector[1], normal_vector[0])) - 90
                     angle = angle if Interval(-90, 90).contains(angle) else angle - 180
@@ -1336,13 +1429,19 @@ class MPRenderer(IRenderer):
                 if draw_center_bound:
                     self.static_collections.append(
                         collections.PatchCollection(
-                            center_paths, match_original=True, zorder=ZOrders.CENTER_BOUND, antialiased=antialiased
+                            center_paths,
+                            match_original=True,
+                            zorder=ZOrders.CENTER_BOUND,
+                            antialiased=antialiased,
                         )
                     )
                 if draw_start_and_direction:
                     self.static_collections.append(
                         collections.PatchCollection(
-                            direction_list, match_original=True, zorder=ZOrders.DIRECTION_ARROW, antialiased=antialiased
+                            direction_list,
+                            match_original=True,
+                            zorder=ZOrders.DIRECTION_ARROW,
+                            antialiased=antialiased,
                         )
                     )
 
@@ -1436,7 +1535,9 @@ class MPRenderer(IRenderer):
 
         # draw_border_vertices
         if draw_border_vertices:
-            coordinates_left_border_vertices = np.concatenate(coordinates_left_border_vertices, axis=0)
+            coordinates_left_border_vertices = np.concatenate(
+                coordinates_left_border_vertices, axis=0
+            )
             # left vertices
             self.static_collections.append(
                 collections.EllipseCollection(
@@ -1449,7 +1550,9 @@ class MPRenderer(IRenderer):
                 )
             )
 
-            coordinates_right_border_vertices = np.concatenate(coordinates_right_border_vertices, axis=0)
+            coordinates_right_border_vertices = np.concatenate(
+                coordinates_right_border_vertices, axis=0
+            )
             # right_vertices
             self.static_collections.append(
                 collections.EllipseCollection(
@@ -1473,7 +1576,9 @@ class MPRenderer(IRenderer):
                 light.draw(self, draw_params.traffic_light)
 
     def draw_planning_problem_set(
-        self, obj: PlanningProblemSet, draw_params: OptionalSpecificOrAllDrawParams[PlanningProblemSetParams] = None
+        self,
+        obj: PlanningProblemSet,
+        draw_params: OptionalSpecificOrAllDrawParams[PlanningProblemSetParams] = None,
     ) -> None:
         """
         Draws all or selected planning problems from the planning problem set. Planning problems can be selected by
@@ -1492,7 +1597,9 @@ class MPRenderer(IRenderer):
                 self.draw_planning_problem(problem, draw_params.planning_problem)
 
     def draw_planning_problem(
-        self, obj: PlanningProblem, draw_params: OptionalSpecificOrAllDrawParams[PlanningProblemParams] = None
+        self,
+        obj: PlanningProblem,
+        draw_params: OptionalSpecificOrAllDrawParams[PlanningProblemParams] = None,
     ) -> None:
         """
         Draw initial state and goal region of the planning problem
@@ -1509,7 +1616,9 @@ class MPRenderer(IRenderer):
         self.draw_goal_region(obj.goal, draw_params.goal_region)
 
     def draw_initital_state(
-        self, obj: TraceState, draw_params: OptionalSpecificOrAllDrawParams[InitialStateParams] = None
+        self,
+        obj: TraceState,
+        draw_params: OptionalSpecificOrAllDrawParams[InitialStateParams] = None,
     ) -> None:
         """
         Draw initial state with label
@@ -1576,7 +1685,9 @@ class MPRenderer(IRenderer):
     def draw_traffic_light_sign(
         self,
         obj: Union[TrafficLight, TrafficSign],
-        draw_params: OptionalSpecificOrAllDrawParams[Union[TrafficLightParams, TrafficLightParams]] = None,
+        draw_params: OptionalSpecificOrAllDrawParams[
+            Union[TrafficLightParams, TrafficLightParams]
+        ] = None,
     ):
         """
         Draw traffic sings and lights
@@ -1594,7 +1705,10 @@ class MPRenderer(IRenderer):
         self.traffic_signs.append(obj)
 
     def _draw_signal_state(
-        self, sig: SignalState, occ: Occupancy, draw_params: OptionalSpecificOrAllDrawParams[VehicleSignalParams] = None
+        self,
+        sig: SignalState,
+        occ: Occupancy,
+        draw_params: OptionalSpecificOrAllDrawParams[VehicleSignalParams] = None,
     ):
         """
         Draw the vehicle signals
@@ -1618,7 +1732,12 @@ class MPRenderer(IRenderer):
         if isinstance(occ.shape, Rectangle):
             if hasattr(sig, "hazard_warning_lights") and sig.hazard_warning_lights is True:
                 indicators.extend(
-                    [occ.shape.vertices[0], occ.shape.vertices[1], occ.shape.vertices[2], occ.shape.vertices[3]]
+                    [
+                        occ.shape.vertices[0],
+                        occ.shape.vertices[1],
+                        occ.shape.vertices[2],
+                        occ.shape.vertices[3],
+                    ]
                 )
             else:
                 if hasattr(sig, "indicator_left") and sig.indicator_left is True:
@@ -1647,4 +1766,6 @@ class MPRenderer(IRenderer):
                 self.draw_ellipse(pos, signal_radius * 1.5, signal_radius * 1.5, draw_params.horn)
 
         else:
-            warnings.warn("Plotting signal states only implemented for " "obstacle_shapes Rectangle.")
+            warnings.warn(
+                "Plotting signal states only implemented for " "obstacle_shapes Rectangle."
+            )
