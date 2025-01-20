@@ -20,8 +20,12 @@ from commonroad.scenario.traffic_sign import (
 
 class TestLanelet(unittest.TestCase):
     def test_initialize_lanelet(self):
-        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
-        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
+        right_vertices = np.array(
+            [[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]]
+        )
+        left_vertices = np.array(
+            [[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]]
+        )
         center_vertices = np.array(
             [[0, 0.5], [1, 0.5], [2, 0.5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, 0.5], [8, 0.5]]
         )
@@ -34,7 +38,9 @@ class TestLanelet(unittest.TestCase):
         adjacent_left_same_dir = False
         line_marking_right = LineMarking.SOLID
         line_marking_left = LineMarking.DASHED
-        stop_line = StopLine(start=np.array([0, 0]), end=np.array([0, 1]), line_marking=LineMarking.SOLID)
+        stop_line = StopLine(
+            start=np.array([0, 0]), end=np.array([0, 1]), line_marking=LineMarking.SOLID
+        )
         traffic_sign_max_speed = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, ["15"])
         traffic_sign = TrafficSign(1, [traffic_sign_max_speed], {5}, np.array([0.0, 0.0]))
         area = Area(1)
@@ -94,19 +100,35 @@ class TestLanelet(unittest.TestCase):
         self.assertEqual(lanelet.adjacent_areas, {area.area_id})
 
     def test_translate_rotate(self):
-        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
-        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
+        right_vertices = np.array(
+            [[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]]
+        )
+        left_vertices = np.array(
+            [[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]]
+        )
         center_vertices = np.array(
             [[0, 0.5], [1, 0.5], [2, 0.5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, 0.5], [8, 0.5]]
         )
-        stop_line = StopLine(start=np.array([0, 0]), end=np.array([0, 1]), line_marking=LineMarking.SOLID)
+        stop_line = StopLine(
+            start=np.array([0, 0]), end=np.array([0, 1]), line_marking=LineMarking.SOLID
+        )
 
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, 1, stop_line=stop_line)
 
         lanelet.translate_rotate(np.array([2, -4]), np.pi / 2)
 
         desired_lanelet_center = np.array(
-            [[3.5, 2], [3.5, 3], [3.5, 4], [3, 5], [2.5, 6], [2.5, 7], [2.5, 8], [3.5, 9], [3.5, 10]]
+            [
+                [3.5, 2],
+                [3.5, 3],
+                [3.5, 4],
+                [3, 5],
+                [2.5, 6],
+                [2.5, 7],
+                [2.5, 8],
+                [3.5, 9],
+                [3.5, 10],
+            ]
         )
         desired_stop_line_start = np.array([4, 2])
         desired_stop_line_end = np.array([3, 2])
@@ -120,18 +142,30 @@ class TestLanelet(unittest.TestCase):
         left_vertices = np.array([[0, 1, 5], [1, 1, 4], [2, 1, 3], [3, 1.5, 2]])
         center_vertices = np.array([[0, 0.5, 5], [1, 0.5, 4], [2, 0.5, 3], [3, 1, 2]])
         stop_line_mock = mock.MagicMock(spec=StopLine)
-        lanelet = Lanelet(left_vertices, center_vertices, right_vertices, 1, stop_line=stop_line_mock)
+        lanelet = Lanelet(
+            left_vertices, center_vertices, right_vertices, 1, stop_line=stop_line_mock
+        )
 
         lanelet.convert_to_2d()
 
-        np.testing.assert_allclose(lanelet.right_vertices, np.array([[0, 0], [1, 0], [2, 0], [3, 0.5]]))
-        np.testing.assert_allclose(lanelet.left_vertices, np.array([[0, 1], [1, 1], [2, 1], [3, 1.5]]))
-        np.testing.assert_allclose(lanelet.center_vertices, np.array([[0, 0.5], [1, 0.5], [2, 0.5], [3, 1]]))
+        np.testing.assert_allclose(
+            lanelet.right_vertices, np.array([[0, 0], [1, 0], [2, 0], [3, 0.5]])
+        )
+        np.testing.assert_allclose(
+            lanelet.left_vertices, np.array([[0, 1], [1, 1], [2, 1], [3, 1.5]])
+        )
+        np.testing.assert_allclose(
+            lanelet.center_vertices, np.array([[0, 0.5], [1, 0.5], [2, 0.5], [3, 1]])
+        )
         stop_line_mock.convert_to_2d.assert_called_once()
 
     def test_translate_invalid(self):
-        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
-        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
+        right_vertices = np.array(
+            [[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]]
+        )
+        left_vertices = np.array(
+            [[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]]
+        )
         center_vertices = np.array(
             [[0, 0.5], [1, 0.5], [2, 0.5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, 0.5], [8, 0.5]]
         )
@@ -148,8 +182,12 @@ class TestLanelet(unittest.TestCase):
             lanelet.translate_rotate(0.0, np.pi / 2)
 
     def test_interpolate_position(self):
-        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
-        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
+        right_vertices = np.array(
+            [[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]]
+        )
+        left_vertices = np.array(
+            [[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]]
+        )
         center_vertices = np.array(
             [[0, 0.5], [1, 0.5], [2, 0.5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, 0.5], [8, 0.5]]
         )
@@ -166,8 +204,12 @@ class TestLanelet(unittest.TestCase):
         self.assertEqual(interpolated_position[3], 5)
 
     def test_interpolate_position_invalid(self):
-        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
-        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
+        right_vertices = np.array(
+            [[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]]
+        )
+        left_vertices = np.array(
+            [[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]]
+        )
         center_vertices = np.array(
             [[0, 0.5], [1, 0.5], [2, 0.5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, 0.5], [8, 0.5]]
         )
@@ -202,7 +244,9 @@ class TestLanelet(unittest.TestCase):
             obstacle_id=30,
             obstacle_type=ObstacleType.PARKED_VEHICLE,
             prediction=prediction,
-            initial_state=InitialState(**{"position": np.array([0, 2]), "orientation": 0, "time_step": 0}),
+            initial_state=InitialState(
+                **{"position": np.array([0, 2]), "orientation": 0, "time_step": 0}
+            ),
             obstacle_shape=rect,
         )
 
@@ -230,13 +274,22 @@ class TestLanelet(unittest.TestCase):
         left_vertices1 = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5]])
         center_vertices1 = np.array([[0, 0.5], [1, 0.5], [2, 0.5], [3, 1]])
 
-        lanelet1 = Lanelet(left_vertices1, center_vertices1, right_vertices1, 1, successor=[2], predecessor=[5, 7])
+        lanelet1 = Lanelet(
+            left_vertices1, center_vertices1, right_vertices1, 1, successor=[2], predecessor=[5, 7]
+        )
 
         right_vertices2 = np.array([[3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
         left_vertices2 = np.array([[3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
         center_vertices2 = np.array([[3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, 0.5], [8, 0.5]])
 
-        lanelet2 = Lanelet(left_vertices2, center_vertices2, right_vertices2, 2, predecessor=[1], successor=[10, 11])
+        lanelet2 = Lanelet(
+            left_vertices2,
+            center_vertices2,
+            right_vertices2,
+            2,
+            predecessor=[1],
+            successor=[10, 11],
+        )
 
         lanelet1.add_static_obstacle_to_lanelet(100)
         lanelet2.add_static_obstacle_to_lanelet(101)
@@ -259,13 +312,15 @@ class TestLanelet(unittest.TestCase):
             merged_lanelet.left_vertices, np.append(left_vertices1, left_vertices2[1:], axis=0)
         )
         np.testing.assert_array_almost_equal(
-            merged_lanelet.center_vertices, np.append(center_vertices1, center_vertices2[1:], axis=0)
+            merged_lanelet.center_vertices,
+            np.append(center_vertices1, center_vertices2[1:], axis=0),
         )
 
         # merging of obstacle assignment
         self.assertSetEqual(merged_lanelet.static_obstacles_on_lanelet, {100, 101})
         self.assertEqual(
-            merged_lanelet.dynamic_obstacles_on_lanelet, {0: {102, 103}, 1: {102, 103}, 2: {102, 103}, 3: {103}}
+            merged_lanelet.dynamic_obstacles_on_lanelet,
+            {0: {102, 103}, 1: {102, 103}, 2: {102, 103}, 3: {103}},
         )
 
         # merging works also in reverse order
@@ -279,7 +334,8 @@ class TestLanelet(unittest.TestCase):
             merged_lanelet.left_vertices, np.append(left_vertices1, left_vertices2[1:], axis=0)
         )
         np.testing.assert_array_almost_equal(
-            merged_lanelet.center_vertices, np.append(center_vertices1, center_vertices2[1:], axis=0)
+            merged_lanelet.center_vertices,
+            np.append(center_vertices1, center_vertices2[1:], axis=0),
         )
 
         # lanelets that have no successor-predecessor connection cannot be merged
@@ -297,9 +353,15 @@ class TestLanelet(unittest.TestCase):
         v_right3 = np.array([[2, 0], [3, 0]])
         v_left3 = np.array([[2, 1], [3, 1]])
         v_center3 = np.array([[2, 0.5], [3, 0.5]])
-        lanelet1 = Lanelet(v_left1, v_center1, v_right1, lanelet_id=1, successor=[2], predecessor=[3])
-        lanelet2 = Lanelet(v_left2, v_center2, v_right2, lanelet_id=2, successor=[3], predecessor=[1])
-        lanelet3 = Lanelet(v_left3, v_center3, v_right3, lanelet_id=3, successor=[1], predecessor=[2])
+        lanelet1 = Lanelet(
+            v_left1, v_center1, v_right1, lanelet_id=1, successor=[2], predecessor=[3]
+        )
+        lanelet2 = Lanelet(
+            v_left2, v_center2, v_right2, lanelet_id=2, successor=[3], predecessor=[1]
+        )
+        lanelet3 = Lanelet(
+            v_left3, v_center3, v_right3, lanelet_id=3, successor=[1], predecessor=[2]
+        )
 
         lanelet_network = LaneletNetwork.create_from_lanelet_list([lanelet1, lanelet2, lanelet3])
 
@@ -314,7 +376,9 @@ class TestLanelet(unittest.TestCase):
         out_vertices_center = np.array([v_center1[0], v_center2[0], v_center3[0], v_center3[1]])
         np.testing.assert_array_almost_equal(merged_lanelets[0].left_vertices, out_vertices_left)
         np.testing.assert_array_almost_equal(merged_lanelets[0].right_vertices, out_vertices_right)
-        np.testing.assert_array_almost_equal(merged_lanelets[0].center_vertices, out_vertices_center)
+        np.testing.assert_array_almost_equal(
+            merged_lanelets[0].center_vertices, out_vertices_center
+        )
 
         # test length restriction
         merged_lanelets, output_ids = Lanelet.all_lanelets_by_merging_successors_from_lanelet(
@@ -328,7 +392,9 @@ class TestLanelet(unittest.TestCase):
         out_vertices_center = np.array([v_center1[0], v_center2[0], v_center3[0]])
         np.testing.assert_array_almost_equal(merged_lanelets[0].left_vertices, out_vertices_left)
         np.testing.assert_array_almost_equal(merged_lanelets[0].right_vertices, out_vertices_right)
-        np.testing.assert_array_almost_equal(merged_lanelets[0].center_vertices, out_vertices_center)
+        np.testing.assert_array_almost_equal(
+            merged_lanelets[0].center_vertices, out_vertices_center
+        )
 
     def test_all_lanelets_by_merging_predecessors_from_lanelet(self):
         v_right1 = np.array([[0, 0], [1, 0]])
@@ -340,9 +406,15 @@ class TestLanelet(unittest.TestCase):
         v_right3 = np.array([[2, 0], [3, 0]])
         v_left3 = np.array([[2, 1], [3, 1]])
         v_center3 = np.array([[2, 0.5], [3, 0.5]])
-        lanelet1 = Lanelet(v_left1, v_center1, v_right1, lanelet_id=1, successor=[2], predecessor=[])
-        lanelet2 = Lanelet(v_left2, v_center2, v_right2, lanelet_id=2, successor=[3], predecessor=[1])
-        lanelet3 = Lanelet(v_left3, v_center3, v_right3, lanelet_id=3, successor=[], predecessor=[2])
+        lanelet1 = Lanelet(
+            v_left1, v_center1, v_right1, lanelet_id=1, successor=[2], predecessor=[]
+        )
+        lanelet2 = Lanelet(
+            v_left2, v_center2, v_right2, lanelet_id=2, successor=[3], predecessor=[1]
+        )
+        lanelet3 = Lanelet(
+            v_left3, v_center3, v_right3, lanelet_id=3, successor=[], predecessor=[2]
+        )
 
         lanelet_network = LaneletNetwork.create_from_lanelet_list([lanelet1, lanelet2, lanelet3])
 
@@ -356,7 +428,9 @@ class TestLanelet(unittest.TestCase):
         out_vertices_center = np.array([v_center1[0], v_center2[0], v_center3[0], v_center3[1]])
         np.testing.assert_array_almost_equal(merged_lanelets[0].left_vertices, out_vertices_left)
         np.testing.assert_array_almost_equal(merged_lanelets[0].right_vertices, out_vertices_right)
-        np.testing.assert_array_almost_equal(merged_lanelets[0].center_vertices, out_vertices_center)
+        np.testing.assert_array_almost_equal(
+            merged_lanelets[0].center_vertices, out_vertices_center
+        )
 
         # test length restriction
         merged_lanelets, output_ids = Lanelet.all_lanelets_by_merging_predecessors_from_lanelet(
@@ -370,7 +444,9 @@ class TestLanelet(unittest.TestCase):
         out_vertices_center = np.array([v_center2[0], v_center3[0], v_center3[1]])
         np.testing.assert_array_almost_equal(merged_lanelets[0].left_vertices, out_vertices_left)
         np.testing.assert_array_almost_equal(merged_lanelets[0].right_vertices, out_vertices_right)
-        np.testing.assert_array_almost_equal(merged_lanelets[0].center_vertices, out_vertices_center)
+        np.testing.assert_array_almost_equal(
+            merged_lanelets[0].center_vertices, out_vertices_center
+        )
 
         # test when lanelet has no predecessors
         lanelet4 = Lanelet(v_left2, v_center2, v_right2, lanelet_id=4, successor=[], predecessor=[])
@@ -400,11 +476,15 @@ class TestLanelet(unittest.TestCase):
 
         np.testing.assert_array_almost_equal(merged_lanelets[0].left_vertices, out_vertices_left)
         np.testing.assert_array_almost_equal(merged_lanelets[0].right_vertices, out_vertices_right)
-        np.testing.assert_array_almost_equal(merged_lanelets[0].center_vertices, out_vertices_center)
+        np.testing.assert_array_almost_equal(
+            merged_lanelets[0].center_vertices, out_vertices_center
+        )
 
         np.testing.assert_array_almost_equal(merged_lanelets[1].left_vertices, out_vertices_left)
         np.testing.assert_array_almost_equal(merged_lanelets[1].right_vertices, out_vertices_right)
-        np.testing.assert_array_almost_equal(merged_lanelets[1].center_vertices, out_vertices_center)
+        np.testing.assert_array_almost_equal(
+            merged_lanelets[1].center_vertices, out_vertices_center
+        )
 
     def test_lanelet_successors_in_range(self):
         v_right1 = np.array([[0, 0], [1, 0]])
@@ -420,10 +500,18 @@ class TestLanelet(unittest.TestCase):
         v_left4 = np.array([[3, 1], [4, 1]])
         v_center4 = np.array([[3, 0.5], [4, 0.5]])
 
-        lanelet1 = Lanelet(v_left1, v_center1, v_right1, lanelet_id=1, successor=[2], predecessor=[3])
-        lanelet2 = Lanelet(v_left2, v_center2, v_right2, lanelet_id=2, successor=[3], predecessor=[1])
-        lanelet3 = Lanelet(v_left3, v_center3, v_right3, lanelet_id=3, successor=[1, 4], predecessor=[2])
-        lanelet4 = Lanelet(v_left4, v_center4, v_right4, lanelet_id=4, successor=[], predecessor=[3])
+        lanelet1 = Lanelet(
+            v_left1, v_center1, v_right1, lanelet_id=1, successor=[2], predecessor=[3]
+        )
+        lanelet2 = Lanelet(
+            v_left2, v_center2, v_right2, lanelet_id=2, successor=[3], predecessor=[1]
+        )
+        lanelet3 = Lanelet(
+            v_left3, v_center3, v_right3, lanelet_id=3, successor=[1, 4], predecessor=[2]
+        )
+        lanelet4 = Lanelet(
+            v_left4, v_center4, v_right4, lanelet_id=4, successor=[], predecessor=[3]
+        )
         ln = LaneletNetwork.create_from_lanelet_list([lanelet1, lanelet2, lanelet3, lanelet4])
 
         paths = lanelet1.find_lanelet_successors_in_range(ln)
@@ -449,10 +537,18 @@ class TestLanelet(unittest.TestCase):
         v_left4 = np.array([[3, 1], [4, 1]])
         v_center4 = np.array([[3, 0.5], [4, 0.5]])
 
-        lanelet1 = Lanelet(v_left1, v_center1, v_right1, lanelet_id=1, successor=[2], predecessor=[])
-        lanelet2 = Lanelet(v_left2, v_center2, v_right2, lanelet_id=2, successor=[3], predecessor=[1])
-        lanelet3 = Lanelet(v_left3, v_center3, v_right3, lanelet_id=3, successor=[4], predecessor=[2])
-        lanelet4 = Lanelet(v_left4, v_center4, v_right4, lanelet_id=4, successor=[], predecessor=[3, 2])
+        lanelet1 = Lanelet(
+            v_left1, v_center1, v_right1, lanelet_id=1, successor=[2], predecessor=[]
+        )
+        lanelet2 = Lanelet(
+            v_left2, v_center2, v_right2, lanelet_id=2, successor=[3], predecessor=[1]
+        )
+        lanelet3 = Lanelet(
+            v_left3, v_center3, v_right3, lanelet_id=3, successor=[4], predecessor=[2]
+        )
+        lanelet4 = Lanelet(
+            v_left4, v_center4, v_right4, lanelet_id=4, successor=[], predecessor=[3, 2]
+        )
         ln = LaneletNetwork.create_from_lanelet_list([lanelet1, lanelet2, lanelet3, lanelet4])
 
         paths = lanelet4.find_lanelet_predecessors_in_range(ln)
@@ -471,8 +567,12 @@ class TestLanelet(unittest.TestCase):
         self.assertTrue(len(paths3) == 2)
 
     def test_add_predecessor(self):
-        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
-        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
+        right_vertices = np.array(
+            [[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]]
+        )
+        left_vertices = np.array(
+            [[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]]
+        )
         center_vertices = np.array(
             [[0, 0.5], [1, 0.5], [2, 0.5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, 0.5], [8, 0.5]]
         )
@@ -502,8 +602,12 @@ class TestLanelet(unittest.TestCase):
         self.assertListEqual(lanelet.predecessor, [1, 2, 10, 12])
 
     def test_remove_predecessor(self):
-        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
-        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
+        right_vertices = np.array(
+            [[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]]
+        )
+        left_vertices = np.array(
+            [[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]]
+        )
         center_vertices = np.array(
             [[0, 0.5], [1, 0.5], [2, 0.5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, 0.5], [8, 0.5]]
         )
@@ -532,8 +636,12 @@ class TestLanelet(unittest.TestCase):
         self.assertListEqual(lanelet.predecessor, [2])
 
     def test_add_successor(self):
-        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
-        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
+        right_vertices = np.array(
+            [[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]]
+        )
+        left_vertices = np.array(
+            [[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]]
+        )
         center_vertices = np.array(
             [[0, 0.5], [1, 0.5], [2, 0.5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, 0.5], [8, 0.5]]
         )
@@ -563,8 +671,12 @@ class TestLanelet(unittest.TestCase):
         self.assertListEqual(lanelet.successor, [6, 7, 10, 12])
 
     def test_remove_successor(self):
-        right_vertices = np.array([[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]])
-        left_vertices = np.array([[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]])
+        right_vertices = np.array(
+            [[0, 0], [1, 0], [2, 0], [3, 0.5], [4, 1], [5, 1], [6, 1], [7, 0], [8, 0]]
+        )
+        left_vertices = np.array(
+            [[0, 1], [1, 1], [2, 1], [3, 1.5], [4, 2], [5, 2], [6, 2], [7, 1], [8, 1]]
+        )
         center_vertices = np.array(
             [[0, 0.5], [1, 0.5], [2, 0.5], [3, 1], [4, 1.5], [5, 1.5], [6, 1.5], [7, 0.5], [8, 0.5]]
         )
@@ -602,24 +714,43 @@ class TestLanelet(unittest.TestCase):
         lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, lanelet_id)
         self.assertTrue(lanelet_1 == lanelet_2)
 
-        lanelet_2 = Lanelet(np.array([[0, 1.00000000001], [1, 1], [8, 1]]), center_vertices, right_vertices, lanelet_id)
-        self.assertTrue(lanelet_1 == lanelet_2)
-
-        lanelet_2 = Lanelet(np.array([[0, 1.0001], [1, 1], [8, 1]]), center_vertices, right_vertices, lanelet_id)
-        self.assertFalse(lanelet_1 == lanelet_2)
-
         lanelet_2 = Lanelet(
-            left_vertices, np.array([[0, 0.5], [1, 0.49999999999], [8, 0.5]]), right_vertices, lanelet_id
+            np.array([[0, 1.00000000001], [1, 1], [8, 1]]),
+            center_vertices,
+            right_vertices,
+            lanelet_id,
         )
         self.assertTrue(lanelet_1 == lanelet_2)
 
-        lanelet_2 = Lanelet(left_vertices, np.array([[0, 0.5], [1, 0.6], [8, 0.5]]), right_vertices, lanelet_id)
+        lanelet_2 = Lanelet(
+            np.array([[0, 1.0001], [1, 1], [8, 1]]), center_vertices, right_vertices, lanelet_id
+        )
         self.assertFalse(lanelet_1 == lanelet_2)
 
-        lanelet_2 = Lanelet(left_vertices, center_vertices, np.array([[0, 0], [1, 0], [7.999999999997, 0]]), lanelet_id)
+        lanelet_2 = Lanelet(
+            left_vertices,
+            np.array([[0, 0.5], [1, 0.49999999999], [8, 0.5]]),
+            right_vertices,
+            lanelet_id,
+        )
         self.assertTrue(lanelet_1 == lanelet_2)
 
-        lanelet_2 = Lanelet(left_vertices, center_vertices, np.array([[0, 0], [1, 0], [7.7, 0]]), lanelet_id)
+        lanelet_2 = Lanelet(
+            left_vertices, np.array([[0, 0.5], [1, 0.6], [8, 0.5]]), right_vertices, lanelet_id
+        )
+        self.assertFalse(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(
+            left_vertices,
+            center_vertices,
+            np.array([[0, 0], [1, 0], [7.999999999997, 0]]),
+            lanelet_id,
+        )
+        self.assertTrue(lanelet_1 == lanelet_2)
+
+        lanelet_2 = Lanelet(
+            left_vertices, center_vertices, np.array([[0, 0], [1, 0], [7.7, 0]]), lanelet_id
+        )
         self.assertFalse(lanelet_1 == lanelet_2)
 
         lanelet_2 = Lanelet(left_vertices, center_vertices, right_vertices, 8)
@@ -798,7 +929,9 @@ class TestLanelet(unittest.TestCase):
             lanelet_2 = copy.deepcopy(lanelet)
             lanelet_2.translate_rotate(translation=np.array([0.0, 0.0]), angle=rotation)
 
-            self.assertAlmostEqual(lanelet_2.orientation_by_position(lanelet_2.center_vertices[2]), rotation)
+            self.assertAlmostEqual(
+                lanelet_2.orientation_by_position(lanelet_2.center_vertices[2]), rotation
+            )
 
     def test_orientation_by_position_invalid(self):
         left_vertices = np.array([[0, 1], [1, 1], [8, 1]])
@@ -818,7 +951,9 @@ class TestLanelet(unittest.TestCase):
 
 class TestStopLine(unittest.TestCase):
     def test_convert_to_2d(self):
-        stop_line = StopLine(np.array([0, 0, 0]), np.array([0, 1, 2]), LineMarking.SOLID, {1, 2}, {3, 4})
+        stop_line = StopLine(
+            np.array([0, 0, 0]), np.array([0, 1, 2]), LineMarking.SOLID, {1, 2}, {3, 4}
+        )
 
         stop_line.convert_to_2d()
 
@@ -828,26 +963,42 @@ class TestStopLine(unittest.TestCase):
         np.testing.assert_array_almost_equal(stop_line.end, np.array([0, 1]))
 
     def test_equality(self):
-        stop_line_1 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
-        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
+        stop_line_1 = StopLine(
+            np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4}
+        )
+        stop_line_2 = StopLine(
+            np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4}
+        )
         self.assertTrue(stop_line_1 == stop_line_2)
 
-        stop_line_2 = StopLine(np.array([0, 0.00000000001]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
+        stop_line_2 = StopLine(
+            np.array([0, 0.00000000001]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4}
+        )
         self.assertTrue(stop_line_1 == stop_line_2)
 
-        stop_line_2 = StopLine(np.array([0, 0.005]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
+        stop_line_2 = StopLine(
+            np.array([0, 0.005]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4}
+        )
         self.assertFalse(stop_line_1 == stop_line_2)
 
-        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 0.99999999999]), LineMarking.SOLID, {1, 2}, {3, 4})
+        stop_line_2 = StopLine(
+            np.array([0, 0]), np.array([0, 0.99999999999]), LineMarking.SOLID, {1, 2}, {3, 4}
+        )
         self.assertTrue(stop_line_1 == stop_line_2)
 
-        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1.05]), LineMarking.SOLID, {1, 2}, {3, 4})
+        stop_line_2 = StopLine(
+            np.array([0, 0]), np.array([0, 1.05]), LineMarking.SOLID, {1, 2}, {3, 4}
+        )
         self.assertFalse(stop_line_1 == stop_line_2)
 
-        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.DASHED, {1, 2}, {3, 4})
+        stop_line_2 = StopLine(
+            np.array([0, 0]), np.array([0, 1]), LineMarking.DASHED, {1, 2}, {3, 4}
+        )
         self.assertFalse(stop_line_1 == stop_line_2)
 
-        stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2, 5}, {3, 4})
+        stop_line_2 = StopLine(
+            np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2, 5}, {3, 4}
+        )
         self.assertFalse(stop_line_1 == stop_line_2)
 
         stop_line_2 = StopLine(np.array([0, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3})
@@ -857,11 +1008,17 @@ class TestStopLine(unittest.TestCase):
         self.assertFalse(stop_line_1 == stop_line_2)
 
     def test_hash(self):
-        stop_line_1 = StopLine(np.array([1, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
-        stop_line_2 = StopLine(np.array([1, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
+        stop_line_1 = StopLine(
+            np.array([1, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4}
+        )
+        stop_line_2 = StopLine(
+            np.array([1, 0]), np.array([0, 1]), LineMarking.SOLID, {1, 2}, {3, 4}
+        )
         self.assertEqual(hash(stop_line_1), hash(stop_line_2))
 
-        stop_line_2 = StopLine(np.array([1, 0]), np.array([-0.001, 1]), LineMarking.SOLID, {1, 2}, {3, 4})
+        stop_line_2 = StopLine(
+            np.array([1, 0]), np.array([-0.001, 1]), LineMarking.SOLID, {1, 2}, {3, 4}
+        )
         self.assertNotEqual(hash(stop_line_1), hash(stop_line_2))
 
 

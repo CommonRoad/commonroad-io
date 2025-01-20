@@ -97,5 +97,3 @@ message Lanelet {
     repeated uint32 traffic_sign_refs = 14;
     repeated uint32 traffic_light_refs = 15;
 }
-
-

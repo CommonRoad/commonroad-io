@@ -261,7 +261,9 @@ def draw_truck_icon(
         for part in truck
     ]
     patch_list = [
-        mpl.patches.Polygon(part, fc=vehicle_color, ec=edgecolor, lw=lw, zorder=zorder, alpha=opacity, closed=True)
+        mpl.patches.Polygon(
+            part, fc=vehicle_color, ec=edgecolor, lw=lw, zorder=zorder, alpha=opacity, closed=True
+        )
         for part in truck
     ]
 
@@ -339,7 +341,9 @@ def draw_bicycle_icon(
         for part in list_bicycle
     ]
     patch_list = [
-        mpl.patches.Polygon(part, fc=vehicle_color, ec=edgecolor, lw=lw, zorder=zorder, alpha=opacity, closed=True)
+        mpl.patches.Polygon(
+            part, fc=vehicle_color, ec=edgecolor, lw=lw, zorder=zorder, alpha=opacity, closed=True
+        )
         for part in list_bicycle
     ]
 
@@ -536,7 +540,9 @@ def draw_car_icon(
         for window in windows
     ]
     car_patches = [
-        mpl.patches.Polygon(part, fc=vehicle_color, ec=edgecolor, lw=lw, alpha=opacity, zorder=zorder, closed=True)
+        mpl.patches.Polygon(
+            part, fc=vehicle_color, ec=edgecolor, lw=lw, alpha=opacity, zorder=zorder, closed=True
+        )
         for part in car
     ]
 

@@ -91,9 +91,9 @@ def create_exact_node_int(value: Union[int]) -> etree.Element:
     :param value: exact value
     :return: node for exact value
     """
-    assert np.issubdtype(
-        type(value), np.integer
-    ), "<util/create_exact_node_int> expected type int for value but" " got %s" % (type(value))
+    assert np.issubdtype(type(value), np.integer), (
+        "<util/create_exact_node_int> expected type int for value but" " got %s" % (type(value))
+    )
     node = etree.Element("exact")
     node.text = str(value)
     return node
@@ -118,12 +118,14 @@ def create_interval_node_int(interval: Interval) -> List[etree.Element]:
     :param interval:
     :return: list of Element nodes with start and end of interval
     """
-    assert np.issubdtype(
-        type(interval.start), np.integer
-    ), "<util/create_exact_node_int> expected type int for value but got %s" % (type(interval.start))
-    assert np.issubdtype(
-        type(interval.end), np.integer
-    ), "<util/create_exact_node_int> expected type int for value but got %s" % (type(interval.start))
+    assert np.issubdtype(type(interval.start), np.integer), (
+        "<util/create_exact_node_int> expected type int for value but got %s"
+        % (type(interval.start))
+    )
+    assert np.issubdtype(type(interval.end), np.integer), (
+        "<util/create_exact_node_int> expected type int for value but got %s"
+        % (type(interval.start))
+    )
 
     node_lo = etree.Element("intervalStart")
     node_lo.text = str(interval.start)
@@ -148,7 +150,16 @@ class XMLFileWriter(FileWriter):
         location: Location = None,
         decimal_precision: int = 4,
     ):
-        super().__init__(scenario, planning_problem_set, author, affiliation, source, tags, location, decimal_precision)
+        super().__init__(
+            scenario,
+            planning_problem_set,
+            author,
+            affiliation,
+            source,
+            tags,
+            location,
+            decimal_precision,
+        )
 
         self._root_node = etree.Element("commonRoad")
 
@@ -158,7 +169,9 @@ class XMLFileWriter(FileWriter):
 
     @root_node.setter
     def root_node(self, root_node):
-        warnings.warn("<CommonRoadFileWriter/root_node> root_node of CommonRoadFileWriter is immutable")
+        warnings.warn(
+            "<CommonRoadFileWriter/root_node> root_node of CommonRoadFileWriter is immutable"
+        )
 
     def _write_header(self):
         self._root_node.set("timeStepSize", str(self.scenario.dt))
@@ -251,7 +264,11 @@ class XMLFileWriter(FileWriter):
 
         if pathlib.Path(filename).is_file():
             if overwrite_existing_file is OverwriteExistingFile.ASK_USER_INPUT:
-                overwrite = input("File {} already exists, replace old file (or else skip)? (y/n)".format(filename))
+                overwrite = input(
+                    "File {} already exists, replace old file (or else skip)? (y/n)".format(
+                        filename
+                    )
+                )
             elif overwrite_existing_file is OverwriteExistingFile.SKIP:
                 overwrite = "n"
             else:
@@ -509,7 +526,10 @@ class LaneletXMLNode:
 class ObstacleXMLNode:
     @classmethod
     def create_node(
-        cls, obstacle: Union[Obstacle, DynamicObstacle, StaticObstacle, EnvironmentObstacle, PhantomObstacle]
+        cls,
+        obstacle: Union[
+            Obstacle, DynamicObstacle, StaticObstacle, EnvironmentObstacle, PhantomObstacle
+        ],
     ) -> etree.Element:
         """
         Create XML-Node for an Obstacle
@@ -528,7 +548,9 @@ class ObstacleXMLNode:
             raise Exception()
 
     @classmethod
-    def create_obstacle_node_header(cls, obstacle_id: int, obstacle_role: ObstacleRole, obstacle_type: ObstacleType):
+    def create_obstacle_node_header(
+        cls, obstacle_id: int, obstacle_role: ObstacleRole, obstacle_type: ObstacleType
+    ):
         obstacle_node = etree.Element(obstacle_role.value + "Obstacle")
         obstacle_node.set("id", str(obstacle_id))
         type_node = etree.Element("type")
@@ -569,7 +591,11 @@ class PhantomObstacleXMLNode:
             phantom_obstacle.obstacle_id, phantom_obstacle.obstacle_role
         )
         if isinstance(phantom_obstacle.prediction, SetBasedPrediction):
-            node.append(DynamicObstacleXMLNode.create_occupancy_node(phantom_obstacle.prediction.occupancy_set))
+            node.append(
+                DynamicObstacleXMLNode.create_occupancy_node(
+                    phantom_obstacle.prediction.occupancy_set
+                )
+            )
         return node
 
     @classmethod
@@ -622,7 +648,9 @@ class DynamicObstacleXMLNode:
             dynamic_obstacle.obstacle_type,
         )
         shape_node = etree.Element("shape")
-        shape_node.extend(ShapeXMLNode.create_node(dynamic_obstacle.obstacle_shape, dynamic_obstacle_shape=True))
+        shape_node.extend(
+            ShapeXMLNode.create_node(dynamic_obstacle.obstacle_shape, dynamic_obstacle_shape=True)
+        )
         obstacle_node.append(shape_node)
 
         # write intial state
@@ -646,9 +674,13 @@ class DynamicObstacleXMLNode:
 
         # write prediction depending on type
         if isinstance(dynamic_obstacle.prediction, SetBasedPrediction):
-            obstacle_node.append(cls.create_occupancy_node(dynamic_obstacle.prediction.occupancy_set))
+            obstacle_node.append(
+                cls.create_occupancy_node(dynamic_obstacle.prediction.occupancy_set)
+            )
         elif isinstance(dynamic_obstacle.prediction, TrajectoryPrediction):
-            obstacle_node.append(cls._create_trajectory_node(dynamic_obstacle.prediction.trajectory))
+            obstacle_node.append(
+                cls._create_trajectory_node(dynamic_obstacle.prediction.trajectory)
+            )
 
         # write signal series if it exists
         if dynamic_obstacle.signal_series is not None and len(dynamic_obstacle.signal_series) > 0:
@@ -692,7 +724,9 @@ class DynamicObstacleXMLNode:
         for signal_state in signal_series:
             signal_state_node = etree.Element("signalState")
             series_node.append(
-                SignalStateXMLNode.create_signal_state_node(signal_state, signal_state_node, signal_state.time_step)
+                SignalStateXMLNode.create_signal_state_node(
+                    signal_state, signal_state_node, signal_state.time_step
+                )
             )
         return series_node
 
@@ -766,7 +800,9 @@ class ShapeXMLNode:
 
 class RectangleXMLNode:
     @classmethod
-    def create_rectangle_node(cls, rectangle: Rectangle, dynamic_obstacle_shape=False) -> etree.Element:
+    def create_rectangle_node(
+        cls, rectangle: Rectangle, dynamic_obstacle_shape=False
+    ) -> etree.Element:
         """
         Create XML-Node for a rectangle
         :param rectangle: rectangle for creating a node
@@ -827,7 +863,9 @@ class CircleXMLNode:
 
 class PolygonXMLNode:
     @classmethod
-    def create_polygon_node(cls, polygon: Polygon, dynamic_obstacle_shape: bool = False) -> etree.Element:
+    def create_polygon_node(
+        cls, polygon: Polygon, dynamic_obstacle_shape: bool = False
+    ) -> etree.Element:
         """
         Create XML-Node for a polygon
         :param polygon: polygon for creating a node
@@ -888,15 +926,23 @@ class StateXMLNode:
             lanelet = etree.Element("lanelet")
             lanelet.set("ref", str(position))
             node.append(lanelet)
-        elif isinstance(position, Rectangle) or isinstance(position, Circle) or isinstance(position, Polygon):
+        elif (
+            isinstance(position, Rectangle)
+            or isinstance(position, Circle)
+            or isinstance(position, Polygon)
+        ):
             node.extend(ShapeXMLNode.create_node(position))
         elif isinstance(position, ShapeGroup):
             node.extend(ShapeXMLNode.create_node(position))
         elif type(position) is list:
-            raise ValueError("A goal state cannot contain multiple items. Use a list of goal states instead.")
+            raise ValueError(
+                "A goal state cannot contain multiple items. Use a list of goal states instead."
+            )
         else:
             raise ValueError(
-                "Case should not occur, position={}, goal_lanelet_ids={}.".format(position, goal_lanelet_ids)
+                "Case should not occur, position={}, goal_lanelet_ids={}.".format(
+                    position, goal_lanelet_ids
+                )
             )
         return node
 
@@ -935,7 +981,9 @@ class StateXMLNode:
         return node
 
     @classmethod
-    def create_state_node(cls, state: State, state_node: etree.Element, time_step: int) -> etree.Element:
+    def create_state_node(
+        cls, state: State, state_node: etree.Element, time_step: int
+    ) -> etree.Element:
         """
         Create XML-Node for a state
         :param state: value of the state
@@ -1002,17 +1050,23 @@ class PlanningProblemXMLNode:
                 planning_problem.goal.lanelets_of_goal_position is not None
                 and state_id in planning_problem.goal.lanelets_of_goal_position
             ):
-                goal_lanelet_ids: List[int] = planning_problem.goal.lanelets_of_goal_position[state_id]
+                goal_lanelet_ids: List[int] = planning_problem.goal.lanelets_of_goal_position[
+                    state_id
+                ]
             else:
                 goal_lanelet_ids = []
 
-            planning_problem_node.append(StateXMLNode.create_goal_state_node(goal_state, goal_lanelet_ids))
+            planning_problem_node.append(
+                StateXMLNode.create_goal_state_node(goal_state, goal_lanelet_ids)
+            )
 
         return planning_problem_node
 
 
 class Point:
-    def __init__(self, x: Union[int, float], y: Union[int, float], z: Union[int, float, None] = None):
+    def __init__(
+        self, x: Union[int, float], y: Union[int, float], z: Union[int, float, None] = None
+    ):
         self.x: Union[int, float] = x
         self.y: Union[int, float] = y
         self.z: Union[int, float] = z
@@ -1137,7 +1191,9 @@ class TrafficSignXMLNode:
 
         if traffic_sign.position is not None:
             position_node = etree.Element("position")
-            position_node.append(Point(traffic_sign.position[0], traffic_sign.position[1]).create_node())
+            position_node.append(
+                Point(traffic_sign.position[0], traffic_sign.position[1]).create_node()
+            )
             traffic_sign_node.append(position_node)
 
         if traffic_sign.virtual is not None:
@@ -1159,13 +1215,17 @@ class TrafficLightXMLNode:
         traffic_light_node = etree.Element("trafficLight")
         traffic_light_node.set("id", str(traffic_light.traffic_light_id))
         if traffic_light.traffic_light_cycle is not None:
-            traffic_light_cycle_node = TrafficLightCycleXMLNode.create_node(traffic_light.traffic_light_cycle)
+            traffic_light_cycle_node = TrafficLightCycleXMLNode.create_node(
+                traffic_light.traffic_light_cycle
+            )
 
             traffic_light_node.append(traffic_light_cycle_node)
 
         if traffic_light.position is not None:
             position_node = etree.Element("position")
-            position_node.append(Point(traffic_light.position[0], traffic_light.position[1]).create_node())
+            position_node.append(
+                Point(traffic_light.position[0], traffic_light.position[1]).create_node()
+            )
             traffic_light_node.append(position_node)
 
         if traffic_light.direction is not TrafficLightDirection.ALL:

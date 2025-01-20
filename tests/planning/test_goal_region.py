@@ -51,7 +51,9 @@ class TestIsReached(unittest.TestCase):
         :return:
         """
         goal_state_1 = KSState(
-            time_step=Interval(3.0, 3.2), orientation=AngleInterval(0.1, 1), velocity=Interval(20, 30.5)
+            time_step=Interval(3.0, 3.2),
+            orientation=AngleInterval(0.1, 1),
+            velocity=Interval(20, 30.5),
         )
         # goal_state_2 = KSState(
         #     time_step=Interval(3.0, 3.1), orientation=AngleInterval(0.1, 1), velocity=Interval(15, 25.5)
@@ -71,10 +73,14 @@ class TestIsReached(unittest.TestCase):
 
     def test_intervals_reached(self):
         goal_state_1 = KSState(
-            time_step=Interval(3.0, 3.2), orientation=AngleInterval(0.1, 1), velocity=Interval(20, 30.5)
+            time_step=Interval(3.0, 3.2),
+            orientation=AngleInterval(0.1, 1),
+            velocity=Interval(20, 30.5),
         )
         goal_state_2 = KSState(
-            time_step=Interval(3.0, 3.1), orientation=AngleInterval(0.1, 1), velocity=Interval(15, 25.5)
+            time_step=Interval(3.0, 3.1),
+            orientation=AngleInterval(0.1, 1),
+            velocity=Interval(15, 25.5),
         )
 
         goal_region = GoalRegion([goal_state_1, goal_state_2])
@@ -99,7 +105,9 @@ class TestIsReached(unittest.TestCase):
 
         # Regression tests
         goal_state = KSState(
-            time_step=Interval(3.0, 3.2), orientation=AngleInterval(-0.1965, 0.2034), velocity=Interval(20, 30.5)
+            time_step=Interval(3.0, 3.2),
+            orientation=AngleInterval(-0.1965, 0.2034),
+            velocity=Interval(20, 30.5),
         )
         goal_region = GoalRegion([goal_state])
         state = KSState(time_step=3.1, orientation=0.0034, velocity=25)

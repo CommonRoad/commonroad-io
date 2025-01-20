@@ -40,7 +40,9 @@ def rotate_translate(
     )
 
 
-def rotation_translation_matrix(translation: Union[np.array, List[float]], angle: Union[float, int]) -> np.ndarray:
+def rotation_translation_matrix(
+    translation: Union[np.array, List[float]], angle: Union[float, int]
+) -> np.ndarray:
     """
     Creates a matrix that first rotates a vector around the origin and then translates it.
 
@@ -55,10 +57,14 @@ def rotation_translation_matrix(translation: Union[np.array, List[float]], angle
         cos_angle = math.cos(angle)
         sin_angle = math.sin(angle)
 
-    return np.array([[cos_angle, -sin_angle, translation[0]], [sin_angle, cos_angle, translation[1]], [0, 0, 1]])
+    return np.array(
+        [[cos_angle, -sin_angle, translation[0]], [sin_angle, cos_angle, translation[1]], [0, 0, 1]]
+    )
 
 
-def translation_rotation_matrix(translation: Union[np.array, List[float]], angle: Union[float, int]) -> np.ndarray:
+def translation_rotation_matrix(
+    translation: Union[np.array, List[float]], angle: Union[float, int]
+) -> np.ndarray:
     """
     Creates a matrix that first translates a homogeneous point, and then rotates it around the origin.
 
@@ -77,7 +83,8 @@ def translation_rotation_matrix(translation: Union[np.array, List[float]], angle
         sin_angle = math.sin(angle)
 
     rotation_matrix = np.array(
-        [[cos_angle, -sin_angle, 0.0], [sin_angle, cos_angle, 0.0], [0.0, 0.0, 1.0]], dtype=np.float64
+        [[cos_angle, -sin_angle, 0.0], [sin_angle, cos_angle, 0.0], [0.0, 0.0, 1.0]],
+        dtype=np.float64,
     )
     return rotation_matrix.dot(translation_matrix)
 

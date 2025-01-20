@@ -12,7 +12,9 @@ from commonroad.scenario.trajectory import Trajectory
 
 
 class TestPlanner(TrajectoryPlannerInterface):
-    def plan(self, sc: Scenario, pp: PlanningProblem, ref_path: Optional[np.ndarray] = None) -> Trajectory:
+    def plan(
+        self, sc: Scenario, pp: PlanningProblem, ref_path: Optional[np.ndarray] = None
+    ) -> Trajectory:
         return Trajectory(
             0,
             [
@@ -30,7 +32,12 @@ class TestMotionPlannerInterface(unittest.TestCase):
             PlanningProblem(
                 planning_problem_id=1,
                 initial_state=InitialState(
-                    position=np.array([0, 0]), velocity=00.0, orientation=0.0, yaw_rate=0, slip_angle=0, time_step=1
+                    position=np.array([0, 0]),
+                    velocity=00.0,
+                    orientation=0.0,
+                    yaw_rate=0,
+                    slip_angle=0,
+                    time_step=1,
                 ),
                 goal_region=GoalRegion([PMState(time_step=Interval(1, 4))]),
             ),

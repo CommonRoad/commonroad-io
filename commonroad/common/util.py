@@ -66,7 +66,9 @@ class Interval:
 
     def __eq__(self, other):
         if not isinstance(other, Interval):
-            warnings.warn(f"Inequality between Interval {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between Interval {repr(self)} and different type {type(other)}"
+            )
             return False
 
         return self._start == other.start and self._end == other.end
@@ -106,10 +108,9 @@ class Interval:
     @start.setter
     def start(self, start: Union[int, float]):
         if self._end is not None:
-            assert (
-                start <= self._end
-            ), "<common.util/Interval> start of interval must be <= end, " "but start {} > end {}".format(
-                start, self._end
+            assert start <= self._end, (
+                "<common.util/Interval> start of interval must be <= end, "
+                "but start {} > end {}".format(start, self._end)
             )
         self._start = start
 
@@ -120,10 +121,9 @@ class Interval:
     @end.setter
     def end(self, end: Union[int, float]):
         if self._start is not None:
-            assert (
-                end >= self._start
-            ), "<common.util/Interval> start of interval must be <= end, " "but start {} > end {}".format(
-                self._start, end
+            assert end >= self._start, (
+                "<common.util/Interval> start of interval must be <= end, "
+                "but start {} > end {}".format(self._start, end)
             )
         self._end = end
 
@@ -178,7 +178,9 @@ class AngleInterval(Interval):
 
     def __init__(self, start: Union[int, float], end: Union[int, float]):
         start, end = make_valid_orientation_interval(start, end)
-        assert end - start < TWO_PI, "<common.util/AngleInterval> Interval must not be |start-end| > 2pi"
+        assert (
+            end - start < TWO_PI
+        ), "<common.util/AngleInterval> Interval must not be |start-end| > 2pi"
         Interval.__init__(self, start, end)
 
     @property
@@ -187,12 +189,13 @@ class AngleInterval(Interval):
 
     @start.setter
     def start(self, start: Union[int, float]):
-        assert is_valid_orientation(start), "<common.util/AngleInterval> start angle needs to be in interval [-2pi,2pi]"
+        assert is_valid_orientation(
+            start
+        ), "<common.util/AngleInterval> start angle needs to be in interval [-2pi,2pi]"
         if self._end is not None:
-            assert (
-                start <= self._end
-            ), "<common.util/Interval> start of interval must be <= end, " "but start {} > end {}".format(
-                start, self._end
+            assert start <= self._end, (
+                "<common.util/Interval> start of interval must be <= end, "
+                "but start {} > end {}".format(start, self._end)
             )
         self._start = start
 
@@ -202,12 +205,13 @@ class AngleInterval(Interval):
 
     @end.setter
     def end(self, end: Union[int, float]):
-        assert is_valid_orientation(end), "<common.util/AngleInterval> end angle needs to be in interval [-2pi,2pi]"
+        assert is_valid_orientation(
+            end
+        ), "<common.util/AngleInterval> end angle needs to be in interval [-2pi,2pi]"
         if self._start is not None:
-            assert (
-                end >= self._start
-            ), "<common.util/Interval> start of interval must be <= end, " "but start {} > end {}".format(
-                self._start, end
+            assert end >= self._start, (
+                "<common.util/Interval> start of interval must be <= end, "
+                "but start {} > end {}".format(self._start, end)
             )
         self._end = end
 
@@ -244,7 +248,9 @@ class Time:
     Class which describes the fictive time when a scenario starts.
     """
 
-    def __init__(self, hours: int, minutes: int, day: int = None, month: int = None, year: int = None):
+    def __init__(
+        self, hours: int, minutes: int, day: int = None, month: int = None, year: int = None
+    ):
         """
         Constructor of a time object
 
