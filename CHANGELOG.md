@@ -1,12 +1,10 @@
 # Changelog
 
-<<<<<<< CHANGELOG.md
 ## [2025.1] -
 ### Changed
 - Update to new template-repository structure
 
 ## [2024.3] - 2024-12-20
->>>>>>> CHANGELOG.md
 ### Added
 - New Australia and US traffic signs
 - New lanelet type: `restricted_area`
