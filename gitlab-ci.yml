@@ -16,7 +16,7 @@ default:
   - coverage run --source ./commonroad tests/run_tests.py
   - coverage report -m || true
 
-lint_flake8:
+pre_commit:
   stage: style_check
   before_script:
     - pip install pre-commit
