@@ -13,7 +13,9 @@ class TestTranslationRotationMatrix(unittest.TestCase):
         homogenous_initial_vector = np.array([1, 1, 1])
         expected_transposed_vector = np.array([-1, 1, 1])
 
-        transposed_vector = translation_rotation_matrix(translation, rotation_angle).dot(homogenous_initial_vector)
+        transposed_vector = translation_rotation_matrix(translation, rotation_angle).dot(
+            homogenous_initial_vector
+        )
 
         for i, elt in enumerate(transposed_vector):
             self.assertAlmostEqual(elt, expected_transposed_vector[i])
@@ -25,7 +27,9 @@ class TestTranslationRotationMatrix(unittest.TestCase):
         homogenous_initial_vector = np.array([1, 1, 1])
         expected_transposed_vector = np.array([6.52, -1.2, 1])
 
-        transposed_vector = translation_rotation_matrix(translation, rotation_angle).dot(homogenous_initial_vector)
+        transposed_vector = translation_rotation_matrix(translation, rotation_angle).dot(
+            homogenous_initial_vector
+        )
 
         for i, elt in enumerate(transposed_vector):
             self.assertAlmostEqual(elt, expected_transposed_vector[i])

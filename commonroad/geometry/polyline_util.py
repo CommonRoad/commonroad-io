@@ -44,7 +44,9 @@ def compute_polyline_curvatures(polyline: np.ndarray) -> np.ndarray:
     :param polyline: Polyline with 2D points [[x_0, y_0], [x_1, y_1], ...]
     :return: Curvatures of the polyline for each coordinate [1/rad]
     """
-    assert is_valid_polyline(polyline) and len(polyline) >= 3, "Polyline p={} is malformed!".format(polyline)
+    assert is_valid_polyline(polyline) and len(polyline) >= 3, "Polyline p={} is malformed!".format(
+        polyline
+    )
 
     x_d = np.gradient(polyline[:, 0])
     x_dd = np.gradient(x_d)
@@ -142,26 +144,46 @@ def compute_polyline_intersections(polyline_1: np.ndarray, polyline_2: np.ndarra
 
     for i in range(0, len(polyline_1) - 1):
         for j in range(0, len(polyline_2) - 1):
-            x_diff = [polyline_1[i][0] - polyline_1[i + 1][0], polyline_2[j][0] - polyline_2[j + 1][0]]
-            y_diff = [polyline_1[i][1] - polyline_1[i + 1][1], polyline_2[j][1] - polyline_2[j + 1][1]]
+            x_diff = [
+                polyline_1[i][0] - polyline_1[i + 1][0],
+                polyline_2[j][0] - polyline_2[j + 1][0],
+            ]
+            y_diff = [
+                polyline_1[i][1] - polyline_1[i + 1][1],
+                polyline_2[j][1] - polyline_2[j + 1][1],
+            ]
 
             div = np.linalg.det(np.array([x_diff, y_diff]))
             if math.isclose(div, 0.0):
                 continue
 
             d_1 = np.linalg.det(
-                np.array([[polyline_1[i][0], polyline_1[i][1]], [polyline_1[i + 1][0], polyline_1[i + 1][1]]])
+                np.array(
+                    [
+                        [polyline_1[i][0], polyline_1[i][1]],
+                        [polyline_1[i + 1][0], polyline_1[i + 1][1]],
+                    ]
+                )
             )
             d_2 = np.linalg.det(
-                np.array([[polyline_2[j][0], polyline_2[j][1]], [polyline_2[j + 1][0], polyline_2[j + 1][1]]])
+                np.array(
+                    [
+                        [polyline_2[j][0], polyline_2[j][1]],
+                        [polyline_2[j + 1][0], polyline_2[j + 1][1]],
+                    ]
+                )
             )
             d = [d_1, d_2]
             x = np.linalg.det(np.array([d, x_diff])) / div
             y = np.linalg.det(np.array([d, y_diff])) / div
 
             point = np.array([x, y])
-            between_polyline_1 = is_point_on_polyline(np.array([polyline_1[i], polyline_1[i + 1]]), point)
-            between_polyline_2 = is_point_on_polyline(np.array([polyline_2[j], polyline_2[j + 1]]), point)
+            between_polyline_1 = is_point_on_polyline(
+                np.array([polyline_1[i], polyline_1[i + 1]]), point
+            )
+            between_polyline_2 = is_point_on_polyline(
+                np.array([polyline_2[j], polyline_2[j + 1]]), point
+            )
             if [x, y] not in intersection_points and between_polyline_1 and between_polyline_2:
                 intersection_points.append([x, y])
 
@@ -184,7 +206,9 @@ def is_polyline_self_intersection(polyline: np.ndarray) -> bool:
     return not line_string.is_simple
 
 
-def compare_polylines_equality(polyline_1: np.ndarray, polyline_2: np.ndarray, threshold=1e-10) -> bool:
+def compare_polylines_equality(
+    polyline_1: np.ndarray, polyline_2: np.ndarray, threshold=1e-10
+) -> bool:
     """
     Compares two polylines for equality. For equality of the values a threshold can be given.
 
@@ -256,12 +280,15 @@ def equalize_polyline_length(long_polyline: np.ndarray, short_polyline: np.ndarr
     :param short_polyline: Polyline with lower number of vertices
     :return: Short polyline with equal length as long polyline
     """
-    assert is_valid_polyline(long_polyline), "Long polyline p={} is malformed!".format(long_polyline)
-    assert is_valid_polyline(short_polyline), "Short polyline p={} is malformed!".format(short_polyline)
-    assert len(long_polyline) > len(
+    assert is_valid_polyline(long_polyline), "Long polyline p={} is malformed!".format(
+        long_polyline
+    )
+    assert is_valid_polyline(short_polyline), "Short polyline p={} is malformed!".format(
         short_polyline
-    ), "The number of vertices of long polyline p={} must be greater " "compared to short polyline p={}!".format(
-        long_polyline, short_polyline
+    )
+    assert len(long_polyline) > len(short_polyline), (
+        "The number of vertices of long polyline p={} must be greater "
+        "compared to short polyline p={}!".format(long_polyline, short_polyline)
     )
 
     path_length_long = compute_polyline_lengths(long_polyline)
@@ -272,7 +299,9 @@ def equalize_polyline_length(long_polyline: np.ndarray, short_polyline: np.ndarr
     else:
         path_length_percentage_short = [0, 1]
 
-    index_mapping = create_indices_mapping(path_length_percentage_long, path_length_percentage_short)
+    index_mapping = create_indices_mapping(
+        path_length_percentage_long, path_length_percentage_short
+    )
 
     org_polyline = short_polyline
     last_key = 0
@@ -285,7 +314,8 @@ def equalize_polyline_length(long_polyline: np.ndarray, short_polyline: np.ndarr
             lb = short_polyline[last_key]
             for idx in range(1, counter + 1):
                 insertion_factor = (
-                    path_length_percentage_long[last_key + idx] - path_length_percentage_long[last_key]
+                    path_length_percentage_long[last_key + idx]
+                    - path_length_percentage_long[last_key]
                 ) / (path_length_percentage_long[key] - path_length_percentage_long[last_key])
                 new_vertex = insertion_factor * (ub - lb) + lb
                 short_polyline_updated = np.insert(short_polyline, last_key + idx, new_vertex, 0)
@@ -340,12 +370,19 @@ def create_indices_mapping(
         threshold = 0.01
         while key not in index_mapping and not finished:
             for idx_long in range(
-                last_idx_long, len(path_length_percentage_long) - (len(path_length_percentage_short) - key) + 1
+                last_idx_long,
+                len(path_length_percentage_long) - (len(path_length_percentage_short) - key) + 1,
             ):
-                if abs(path_length_percentage_long[idx_long] - value) < threshold and index_mapping[idx_long] == -1:
+                if (
+                    abs(path_length_percentage_long[idx_long] - value) < threshold
+                    and index_mapping[idx_long] == -1
+                ):
                     index_mapping[idx_long] = key
                     last_idx_long = idx_long
-                    if len(path_length_percentage_short) - key + 1 == len(index_mapping) - idx_long + 1:
+                    if (
+                        len(path_length_percentage_short) - key + 1
+                        == len(index_mapping) - idx_long + 1
+                    ):
                         for idx in range(idx_long + 1, len(index_mapping)):
                             index_mapping[idx] = key + 1
                             key += 1

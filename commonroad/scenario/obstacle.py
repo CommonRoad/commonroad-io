@@ -113,21 +113,31 @@ class Obstacle(IDrawable):
 
     def __eq__(self, other):
         if not isinstance(other, Obstacle):
-            warnings.warn(f"Inequality between Obstacle {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between Obstacle {repr(self)} and different type {type(other)}"
+            )
             return False
 
         initial_center_lanelet_ids = (
-            list() if self._initial_center_lanelet_ids is None else list(self._initial_center_lanelet_ids)
+            list()
+            if self._initial_center_lanelet_ids is None
+            else list(self._initial_center_lanelet_ids)
         )
         initial_center_lanelet_ids_other = (
-            list() if other.initial_center_lanelet_ids is None else list(other.initial_center_lanelet_ids)
+            list()
+            if other.initial_center_lanelet_ids is None
+            else list(other.initial_center_lanelet_ids)
         )
 
         initial_shape_lanelet_ids = (
-            list() if self._initial_shape_lanelet_ids is None else list(self._initial_shape_lanelet_ids)
+            list()
+            if self._initial_shape_lanelet_ids is None
+            else list(self._initial_shape_lanelet_ids)
         )
         initial_shape_lanelet_ids_other = (
-            list() if other.initial_shape_lanelet_ids is None else list(other.initial_shape_lanelet_ids)
+            list()
+            if other.initial_shape_lanelet_ids is None
+            else list(other.initial_shape_lanelet_ids)
         )
 
         obstacle_eq = (
@@ -146,10 +156,14 @@ class Obstacle(IDrawable):
 
     def __hash__(self):
         initial_center_lanelet_ids = (
-            None if self.initial_center_lanelet_ids is None else frozenset(self.initial_center_lanelet_ids)
+            None
+            if self.initial_center_lanelet_ids is None
+            else frozenset(self.initial_center_lanelet_ids)
         )
         initial_shape_lanelet_ids = (
-            None if self.initial_shape_lanelet_ids is None else frozenset(self.initial_shape_lanelet_ids)
+            None
+            if self.initial_shape_lanelet_ids is None
+            else frozenset(self.initial_shape_lanelet_ids)
         )
         signal_series = None if self.signal_series is None else frozenset(self.signal_series)
         return hash(
@@ -173,11 +187,13 @@ class Obstacle(IDrawable):
 
     @obstacle_id.setter
     def obstacle_id(self, obstacle_id: int):
-        assert isinstance(
-            obstacle_id, int
-        ), "<Obstacle/obstacle_id>: argument obstacle_id of wrong type." "Expected type: %s. Got type: %s." % (
-            int,
-            type(obstacle_id),
+        assert isinstance(obstacle_id, int), (
+            "<Obstacle/obstacle_id>: argument obstacle_id of wrong type."
+            "Expected type: %s. Got type: %s."
+            % (
+                int,
+                type(obstacle_id),
+            )
         )
         if not hasattr(self, "_obstacle_id"):
             self._obstacle_id = obstacle_id
@@ -191,11 +207,13 @@ class Obstacle(IDrawable):
 
     @obstacle_role.setter
     def obstacle_role(self, obstacle_role: ObstacleRole):
-        assert isinstance(
-            obstacle_role, ObstacleRole
-        ), "<Obstacle/obstacle_role>: argument obstacle_role of wrong " "type. Expected type: %s. Got type: %s." % (
-            ObstacleRole,
-            type(obstacle_role),
+        assert isinstance(obstacle_role, ObstacleRole), (
+            "<Obstacle/obstacle_role>: argument obstacle_role of wrong "
+            "type. Expected type: %s. Got type: %s."
+            % (
+                ObstacleRole,
+                type(obstacle_role),
+            )
         )
         if not hasattr(self, "_obstacle_role"):
             self._obstacle_role = obstacle_role
@@ -209,11 +227,13 @@ class Obstacle(IDrawable):
 
     @obstacle_type.setter
     def obstacle_type(self, obstacle_type: ObstacleType):
-        assert isinstance(
-            obstacle_type, ObstacleType
-        ), "<Obstacle/obstacle_type>: argument obstacle_type of wrong " "type. Expected type: %s. Got type: %s." % (
-            ObstacleType,
-            type(obstacle_type),
+        assert isinstance(obstacle_type, ObstacleType), (
+            "<Obstacle/obstacle_type>: argument obstacle_type of wrong "
+            "type. Expected type: %s. Got type: %s."
+            % (
+                ObstacleType,
+                type(obstacle_type),
+            )
         )
         if not hasattr(self, "_obstacle_type"):
             self._obstacle_type = obstacle_type
@@ -227,11 +247,13 @@ class Obstacle(IDrawable):
 
     @obstacle_shape.setter
     def obstacle_shape(self, shape: Union[Shape, Rectangle, Circle, Polygon]):
-        assert isinstance(
-            shape, (type(None), Shape)
-        ), "<Obstacle/obstacle_shape>: argument shape of wrong type. Expected " "type %s. Got type %s." % (
-            Shape,
-            type(shape),
+        assert isinstance(shape, (type(None), Shape)), (
+            "<Obstacle/obstacle_shape>: argument shape of wrong type. Expected "
+            "type %s. Got type %s."
+            % (
+                Shape,
+                type(shape),
+            )
         )
 
         if not hasattr(self, "_obstacle_shape"):
@@ -246,14 +268,18 @@ class Obstacle(IDrawable):
 
     @initial_state.setter
     def initial_state(self, initial_state: InitialState):
-        assert isinstance(
-            initial_state, InitialState
-        ), "<Obstacle/initial_state>: argument initial_state of wrong type. " "Expected types: %s. Got type: %s." % (
-            InitialState,
-            type(initial_state),
+        assert isinstance(initial_state, InitialState), (
+            "<Obstacle/initial_state>: argument initial_state of wrong type. "
+            "Expected types: %s. Got type: %s."
+            % (
+                InitialState,
+                type(initial_state),
+            )
         )
         self._initial_state = initial_state
-        self._initial_occupancy_shape = occupancy_shape_from_state(self._obstacle_shape, initial_state)
+        self._initial_occupancy_shape = occupancy_shape_from_state(
+            self._obstacle_shape, initial_state
+        )
         if not hasattr(self, "wheelbase_lengths"):
             return
         shapes = self.obstacle_shape.shapes
@@ -270,7 +296,8 @@ class Obstacle(IDrawable):
     def initial_center_lanelet_ids(self, initial_center_lanelet_ids: Union[None, Set[int]]):
         assert isinstance(initial_center_lanelet_ids, (set, type(None))), (
             "<Obstacle/initial_center_lanelet_ids>: argument initial_lanelet_ids of wrong type. "
-            "Expected types: %s, %s. Got type: %s." % (set, type(None), type(initial_center_lanelet_ids))
+            "Expected types: %s, %s. Got type: %s."
+            % (set, type(None), type(initial_center_lanelet_ids))
         )
         if initial_center_lanelet_ids is not None:
             for lanelet_id in initial_center_lanelet_ids:
@@ -289,7 +316,8 @@ class Obstacle(IDrawable):
     def initial_shape_lanelet_ids(self, initial_shape_lanelet_ids: Union[None, Set[int]]):
         assert isinstance(initial_shape_lanelet_ids, (set, type(None))), (
             "<Obstacle/initial_shape_lanelet_ids>: argument initial_lanelet_ids of wrong type. "
-            "Expected types: %s, %s. Got type: %s." % (set, type(None), type(initial_shape_lanelet_ids))
+            "Expected types: %s, %s. Got type: %s."
+            % (set, type(None), type(initial_shape_lanelet_ids))
         )
         if initial_shape_lanelet_ids is not None:
             for lanelet_id in initial_shape_lanelet_ids:
@@ -309,7 +337,8 @@ class Obstacle(IDrawable):
         assert isinstance(initial_signal_state, (SignalState, type(None))), (
             "<Obstacle/initial_signal_state>: "
             "argument initial_signal_state of wrong "
-            "type. Expected types: %s, %s. Got type: %s." % (SignalState, type(None), type(initial_signal_state))
+            "type. Expected types: %s, %s. Got type: %s."
+            % (SignalState, type(None), type(initial_signal_state))
         )
         self._initial_signal_state = initial_signal_state
 
@@ -346,7 +375,10 @@ class Obstacle(IDrawable):
         :param time_step: time step of interest
         :returns: signal state or None if time step does not exist
         """
-        if self.initial_signal_state is not None and time_step == self.initial_signal_state.time_step:
+        if (
+            self.initial_signal_state is not None
+            and time_step == self.initial_signal_state.time_step
+        ):
             return self.initial_signal_state
         elif self.signal_series is None:
             return None
@@ -397,7 +429,9 @@ class StaticObstacle(Obstacle):
 
     def __eq__(self, other):
         if not isinstance(other, StaticObstacle):
-            warnings.warn(f"Inequality between StaticObstacle {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between StaticObstacle {repr(self)} and different type {type(other)}"
+            )
             return False
 
         return Obstacle.__eq__(self, other)
@@ -412,10 +446,12 @@ class StaticObstacle(Obstacle):
         :param angle: rotation angle in radian (counter-clockwise)
         """
         assert is_real_number_vector(translation, 2), (
-            "<StaticObstacle/translate_rotate>: argument translation is " "not a vector of real numbers of length 2."
+            "<StaticObstacle/translate_rotate>: argument translation is "
+            "not a vector of real numbers of length 2."
         )
         assert is_real_number(angle), (
-            "<StaticObstacle/translate_rotate>: argument angle must be a scalar. " "angle = %s" % angle
+            "<StaticObstacle/translate_rotate>: argument angle must be a scalar. "
+            "angle = %s" % angle
         )
         assert is_valid_orientation(angle), (
             "<StaticObstacle/translate_rotate>: argument angle must be within the "
@@ -448,7 +484,11 @@ class StaticObstacle(Obstacle):
         obs_str += "\ninitial state: {}".format(self.initial_state)
         return obs_str
 
-    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[StaticObstacleParams] = None):
+    def draw(
+        self,
+        renderer: IRenderer,
+        draw_params: OptionalSpecificOrAllDrawParams[StaticObstacleParams] = None,
+    ):
         renderer.draw_static_obstacle(self, draw_params)
 
 
@@ -519,7 +559,9 @@ class DynamicObstacle(Obstacle):
 
     def __eq__(self, other):
         if not isinstance(other, DynamicObstacle):
-            warnings.warn(f"Inequality between DynamicObstacle {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between DynamicObstacle {repr(self)} and different type {type(other)}"
+            )
             return False
 
         return (
@@ -569,7 +611,9 @@ class DynamicObstacle(Obstacle):
         return self._prediction
 
     @prediction.setter
-    def prediction(self, prediction: Union[Prediction, TrajectoryPrediction, SetBasedPrediction, None]):
+    def prediction(
+        self, prediction: Union[Prediction, TrajectoryPrediction, SetBasedPrediction, None]
+    ):
         assert isinstance(prediction, (Prediction, type(None))), (
             "<DynamicObstacle/prediction>: argument prediction "
             "of wrong type. Expected types: %s, %s. Got type: "
@@ -583,7 +627,9 @@ class DynamicObstacle(Obstacle):
         return self._initial_meta_information_state
 
     @initial_meta_information_state.setter
-    def initial_meta_information_state(self, initial_meta_information_state: Union[MetaInformationState, None]):
+    def initial_meta_information_state(
+        self, initial_meta_information_state: Union[MetaInformationState, None]
+    ):
         assert isinstance(initial_meta_information_state, (MetaInformationState, type(None))), (
             "<DynamicObstacle/initial_meta_information_state>: argument prediction "
             "of wrong type. Expected types: %s, %s. Got type: %s."
@@ -598,10 +644,13 @@ class DynamicObstacle(Obstacle):
         return self._meta_information_series
 
     @meta_information_series.setter
-    def meta_information_series(self, meta_information_series: Union[List[MetaInformationState], None]):
+    def meta_information_series(
+        self, meta_information_series: Union[List[MetaInformationState], None]
+    ):
         assert isinstance(meta_information_series, (List, type(None))), (
             "<DynamicObstacle/meta_information_series>: argument prediction "
-            "of wrong type. Expected types: %s, %s. Got type: %s." % (List, type(None), type(meta_information_series))
+            "of wrong type. Expected types: %s, %s. Got type: %s."
+            % (List, type(None), type(meta_information_series))
         )
 
         self._meta_information_series = meta_information_series
@@ -644,7 +693,9 @@ class DynamicObstacle(Obstacle):
         if time_step == self.initial_state.time_step:
             return self.initial_state
         elif type(self._prediction) is SetBasedPrediction:
-            warnings.warn("<DynamicObstacle/state_at_time>: Set-based prediction is used. State cannot be returned!")
+            warnings.warn(
+                "<DynamicObstacle/state_at_time>: Set-based prediction is used. State cannot be returned!"
+            )
             return None
         elif time_step > self.initial_state.time_step and self._prediction is not None:
             return self.prediction.trajectory.state_at_time_step(time_step)
@@ -658,10 +709,12 @@ class DynamicObstacle(Obstacle):
         :param angle: rotation angle in radian (counter-clockwise)
         """
         assert is_real_number_vector(translation, 2), (
-            "<DynamicObstacle/translate_rotate>: argument translation is " "not a vector of real numbers of length 2."
+            "<DynamicObstacle/translate_rotate>: argument translation is "
+            "not a vector of real numbers of length 2."
         )
         assert is_real_number(angle), (
-            "<DynamicObstacle/translate_rotate>: argument angle must be a scalar. " "angle = %s" % angle
+            "<DynamicObstacle/translate_rotate>: argument angle must be a scalar. "
+            "angle = %s" % angle
         )
         assert is_valid_orientation(angle), (
             "<DynamicObstacle/translate_rotate>: argument angle must be within the "
@@ -741,7 +794,11 @@ class DynamicObstacle(Obstacle):
         obs_str += "\ninitial state: {}".format(self.initial_state)
         return obs_str
 
-    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[DynamicObstacleParams] = None):
+    def draw(
+        self,
+        renderer: IRenderer,
+        draw_params: OptionalSpecificOrAllDrawParams[DynamicObstacleParams] = None,
+    ):
         renderer.draw_dynamic_obstacle(self, draw_params)
 
 
@@ -763,7 +820,9 @@ class PhantomObstacle(IDrawable):
 
     def __eq__(self, other):
         if not isinstance(other, PhantomObstacle):
-            warnings.warn(f"Inequality between PhantomObstacle {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between PhantomObstacle {repr(self)} and different type {type(other)}"
+            )
             return False
 
         obstacle_eq = self.obstacle_id == other.obstacle_id and self.prediction == other.prediction
@@ -779,7 +838,9 @@ class PhantomObstacle(IDrawable):
         return self._prediction
 
     @prediction.setter
-    def prediction(self, prediction: Union[Prediction, TrajectoryPrediction, SetBasedPrediction, None]):
+    def prediction(
+        self, prediction: Union[Prediction, TrajectoryPrediction, SetBasedPrediction, None]
+    ):
         assert isinstance(prediction, (SetBasedPrediction, type(None))), (
             "<PhantomObstacle/prediction>: argument prediction of wrong type. Expected types: %s, %s. Got type: "
             "%s." % (SetBasedPrediction, type(None), type(prediction))
@@ -793,11 +854,13 @@ class PhantomObstacle(IDrawable):
 
     @obstacle_role.setter
     def obstacle_role(self, obstacle_role: ObstacleRole):
-        assert isinstance(
-            obstacle_role, ObstacleRole
-        ), "<Obstacle/obstacle_role>: argument obstacle_role of wrong " "type. Expected type: %s. Got type: %s." % (
-            ObstacleRole,
-            type(obstacle_role),
+        assert isinstance(obstacle_role, ObstacleRole), (
+            "<Obstacle/obstacle_role>: argument obstacle_role of wrong "
+            "type. Expected type: %s. Got type: %s."
+            % (
+                ObstacleRole,
+                type(obstacle_role),
+            )
         )
         if not hasattr(self, "_obstacle_role"):
             self._obstacle_role = obstacle_role
@@ -812,7 +875,10 @@ class PhantomObstacle(IDrawable):
         :return: predicted occupancy of the obstacle at time step
         """
         occupancy = None
-        if self._prediction is not None and self._prediction.occupancy_at_time_step(time_step) is not None:
+        if (
+            self._prediction is not None
+            and self._prediction.occupancy_at_time_step(time_step) is not None
+        ):
             occupancy = self._prediction.occupancy_at_time_step(time_step)
         else:
             warnings.warn("<PhantomObstacle/occupancy_at_time>: Time step does not exist!")
@@ -826,7 +892,9 @@ class PhantomObstacle(IDrawable):
 
         :return: predicted state of the obstacle at time step
         """
-        warnings.warn("<PhantomObstacle/state_at_time>: Set-based prediction is used. State cannot be returned!")
+        warnings.warn(
+            "<PhantomObstacle/state_at_time>: Set-based prediction is used. State cannot be returned!"
+        )
         return None
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
@@ -836,10 +904,12 @@ class PhantomObstacle(IDrawable):
         :param angle: rotation angle in radian (counter-clockwise)
         """
         assert is_real_number_vector(translation, 2), (
-            "<DynamicObstacle/translate_rotate>: argument translation is " "not a vector of real numbers of length 2."
+            "<DynamicObstacle/translate_rotate>: argument translation is "
+            "not a vector of real numbers of length 2."
         )
         assert is_real_number(angle), (
-            "<DynamicObstacle/translate_rotate>: argument angle must be a scalar. " "angle = %s" % angle
+            "<DynamicObstacle/translate_rotate>: argument angle must be a scalar. "
+            "angle = %s" % angle
         )
         assert is_valid_orientation(angle), (
             "<DynamicObstacle/translate_rotate>: argument angle must be within the "
@@ -853,7 +923,11 @@ class PhantomObstacle(IDrawable):
         obs_str += "\nid: {}".format(self.obstacle_id)
         return obs_str
 
-    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[PhantomObstacleParams] = None):
+    def draw(
+        self,
+        renderer: IRenderer,
+        draw_params: OptionalSpecificOrAllDrawParams[PhantomObstacleParams] = None,
+    ):
         renderer.draw_phantom_obstacle(self, draw_params)
 
 
@@ -873,7 +947,9 @@ class EnvironmentObstacle(IDrawable):
 
     def __eq__(self, other):
         if not isinstance(other, EnvironmentObstacle):
-            warnings.warn(f"Inequality between EnvironmentObstacle {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between EnvironmentObstacle {repr(self)} and different type {type(other)}"
+            )
             return False
 
         obstacle_eq = (
@@ -886,7 +962,9 @@ class EnvironmentObstacle(IDrawable):
         return obstacle_eq
 
     def __hash__(self):
-        return hash((self._obstacle_id, self._obstacle_role, self._obstacle_type, self._obstacle_shape))
+        return hash(
+            (self._obstacle_id, self._obstacle_role, self._obstacle_type, self._obstacle_shape)
+        )
 
     @property
     def obstacle_id(self) -> int:
@@ -895,11 +973,13 @@ class EnvironmentObstacle(IDrawable):
 
     @obstacle_id.setter
     def obstacle_id(self, obstacle_id: int):
-        assert isinstance(
-            obstacle_id, int
-        ), "<Obstacle/obstacle_id>: argument obstacle_id of wrong type." "Expected type: %s. Got type: %s." % (
-            int,
-            type(obstacle_id),
+        assert isinstance(obstacle_id, int), (
+            "<Obstacle/obstacle_id>: argument obstacle_id of wrong type."
+            "Expected type: %s. Got type: %s."
+            % (
+                int,
+                type(obstacle_id),
+            )
         )
         if not hasattr(self, "_obstacle_id"):
             self._obstacle_id = obstacle_id
@@ -913,11 +993,13 @@ class EnvironmentObstacle(IDrawable):
 
     @obstacle_role.setter
     def obstacle_role(self, obstacle_role: ObstacleRole):
-        assert isinstance(
-            obstacle_role, ObstacleRole
-        ), "<Obstacle/obstacle_role>: argument obstacle_role of wrong " "type. Expected type: %s. Got type: %s." % (
-            ObstacleRole,
-            type(obstacle_role),
+        assert isinstance(obstacle_role, ObstacleRole), (
+            "<Obstacle/obstacle_role>: argument obstacle_role of wrong "
+            "type. Expected type: %s. Got type: %s."
+            % (
+                ObstacleRole,
+                type(obstacle_role),
+            )
         )
         if not hasattr(self, "_obstacle_role"):
             self._obstacle_role = obstacle_role
@@ -931,11 +1013,13 @@ class EnvironmentObstacle(IDrawable):
 
     @obstacle_type.setter
     def obstacle_type(self, obstacle_type: ObstacleType):
-        assert isinstance(
-            obstacle_type, ObstacleType
-        ), "<Obstacle/obstacle_type>: argument obstacle_type of wrong " "type. Expected type: %s. Got type: %s." % (
-            ObstacleType,
-            type(obstacle_type),
+        assert isinstance(obstacle_type, ObstacleType), (
+            "<Obstacle/obstacle_type>: argument obstacle_type of wrong "
+            "type. Expected type: %s. Got type: %s."
+            % (
+                ObstacleType,
+                type(obstacle_type),
+            )
         )
         if not hasattr(self, "_obstacle_type"):
             self._obstacle_type = obstacle_type
@@ -949,11 +1033,13 @@ class EnvironmentObstacle(IDrawable):
 
     @obstacle_shape.setter
     def obstacle_shape(self, shape: Union[Shape, Polygon, Circle, Rectangle]):
-        assert isinstance(
-            shape, (type(None), Shape)
-        ), "<Obstacle/obstacle_shape>: argument shape of wrong type. Expected " "type %s. Got type %s." % (
-            Shape,
-            type(shape),
+        assert isinstance(shape, (type(None), Shape)), (
+            "<Obstacle/obstacle_shape>: argument shape of wrong type. Expected "
+            "type %s. Got type %s."
+            % (
+                Shape,
+                type(shape),
+            )
         )
 
         if not hasattr(self, "_obstacle_shape"):
@@ -975,5 +1061,9 @@ class EnvironmentObstacle(IDrawable):
         obs_str += "\nid: {}".format(self.obstacle_id)
         return obs_str
 
-    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[EnvironmentObstacleParams] = None):
+    def draw(
+        self,
+        renderer: IRenderer,
+        draw_params: OptionalSpecificOrAllDrawParams[EnvironmentObstacleParams] = None,
+    ):
         renderer.draw_environment_obstacle(self, draw_params)

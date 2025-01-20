@@ -15,7 +15,9 @@ class GroundTruthPredictor(PredictorInterface):
         """
         for obstacle in sc.dynamic_obstacles:
             state_list = [
-                state for state in obstacle.prediction.trajectory.state_list if state.time_step >= initial_time_step
+                state
+                for state in obstacle.prediction.trajectory.state_list
+                if state.time_step >= initial_time_step
             ]
             traj = Trajectory(state_list[0].time_step, state_list)
             obstacle.prediction.trajectory = traj

@@ -108,7 +108,15 @@ class StateFields(Enum):
     """
 
     PM = ["position", "velocity", "velocity_y", "time_step"]
-    ST = ["position", "steering_angle", "velocity", "orientation", "yaw_rate", "slip_angle", "time_step"]
+    ST = [
+        "position",
+        "steering_angle",
+        "velocity",
+        "orientation",
+        "yaw_rate",
+        "slip_angle",
+        "time_step",
+    ]
     KS = ["position", "steering_angle", "velocity", "orientation", "time_step"]
     KST = ["position", "steering_angle", "velocity", "orientation", "hitch_angle", "time_step"]
     MB = [
@@ -227,7 +235,9 @@ class StateType(Enum):
         return XMLStateFields[self.name].value
 
     @classmethod
-    def get_state_type(cls, state: TraceState, desired_vehicle_model: VehicleModel = None) -> "StateType":
+    def get_state_type(
+        cls, state: TraceState, desired_vehicle_model: VehicleModel = None
+    ) -> "StateType":
         """
         Returns the corresponding StateType for the given State object by matching State object's attributes
         to the state fields.
@@ -240,7 +250,11 @@ class StateType(Enum):
         attrs = state.attributes
 
         if desired_vehicle_model is not None:
-            state_fields_all = [StateFields[str(desired_vehicle_model.name)], StateFields.Input, StateFields.PMInput]
+            state_fields_all = [
+                StateFields[str(desired_vehicle_model.name)],
+                StateFields.Input,
+                StateFields.PMInput,
+            ]
             state_fields_add = []
             for sf in StateFields:
                 if sf not in state_fields_all:
@@ -321,7 +335,8 @@ class TrajectoryType(Enum):
         """
         return any(
             [
-                self.name == "Input" and vehicle_model in [VehicleModel.KS, VehicleModel.ST, VehicleModel.MB],
+                self.name == "Input"
+                and vehicle_model in [VehicleModel.KS, VehicleModel.ST, VehicleModel.MB],
                 self.name == "PMInput" and vehicle_model == VehicleModel.PM,
                 self.name == vehicle_model.name,
             ]
@@ -364,7 +379,9 @@ class PlanningProblemSolution:
         self.vehicle_type = vehicle_type
         self._cost_function = cost_function
         self._trajectory = trajectory
-        self._trajectory_type = TrajectoryType.get_trajectory_type(self._trajectory, self.vehicle_model)
+        self._trajectory_type = TrajectoryType.get_trajectory_type(
+            self._trajectory, self.vehicle_model
+        )
 
         self._check_trajectory_supported(self._vehicle_model, self._trajectory_type)
         self._check_cost_supported(self._vehicle_model, self._cost_function)
@@ -381,11 +398,14 @@ class PlanningProblemSolution:
         supported_costs = SupportedCostFunctions[vehicle_model.name].value
         if cost_function not in supported_costs:
             raise SolutionException(
-                "Cost function %s isn't supported for %s model!" % (cost_function.name, vehicle_model.name)
+                "Cost function %s isn't supported for %s model!"
+                % (cost_function.name, vehicle_model.name)
             )
         return True
 
-    def _check_trajectory_supported(self, vehicle_model: VehicleModel, trajectory_type: TrajectoryType) -> bool:
+    def _check_trajectory_supported(
+        self, vehicle_model: VehicleModel, trajectory_type: TrajectoryType
+    ) -> bool:
         """
         Checks whether given vehicle model is valid for the given trajectory type.
 
@@ -395,7 +415,8 @@ class PlanningProblemSolution:
         """
         if not trajectory_type.valid_vehicle_model(vehicle_model):
             raise SolutionException(
-                "Vehicle model %s is not valid for the trajectory type %s!" % (vehicle_model.name, trajectory_type.name)
+                "Vehicle model %s is not valid for the trajectory type %s!"
+                % (vehicle_model.name, trajectory_type.name)
             )
         return True
 
@@ -502,7 +523,9 @@ class Solution:
 
     @planning_problem_solutions.setter
     def planning_problem_solutions(self, planning_problem_solutions: List[PlanningProblemSolution]):
-        self._planning_problem_solutions = {s.planning_problem_id: s for s in planning_problem_solutions}
+        self._planning_problem_solutions = {
+            s.planning_problem_id: s for s in planning_problem_solutions
+        }
 
     @property
     def benchmark_id(self) -> str:
@@ -534,7 +557,12 @@ class Solution:
         cost_ids = self.cost_ids
         vehicles_str = vehicle_ids[0] if len(vehicle_ids) == 1 else "[%s]" % ",".join(vehicle_ids)
         costs_str = cost_ids[0] if len(cost_ids) == 1 else "[%s]" % ",".join(cost_ids)
-        return "%s:%s:%s:%s" % (vehicles_str, costs_str, str(self.scenario_id), self.scenario_id.scenario_version)
+        return "%s:%s:%s:%s" % (
+            vehicles_str,
+            costs_str,
+            str(self.scenario_id),
+            self.scenario_id.scenario_version,
+        )
 
     @property
     def vehicle_ids(self) -> List[str]:
@@ -607,7 +635,9 @@ class Solution:
                 "but expected type float,"
                 "measured in seconds!".format(type(computation_time))
             )
-            assert is_positive(computation_time), "<Solution> computation_time needs to be positive!"
+            assert is_positive(
+                computation_time
+            ), "<Solution> computation_time needs to be positive!"
         self._computation_time = computation_time
 
     def create_dynamic_obstacle(self) -> Dict[int, DynamicObstacle]:
@@ -617,7 +647,8 @@ class Solution:
         obs = {}
         for pp_id, solution in self._planning_problem_solutions.items():
             shape = Rectangle(
-                length=vehicle_parameters[solution.vehicle_type].l, width=vehicle_parameters[solution.vehicle_type].w
+                length=vehicle_parameters[solution.vehicle_type].l,
+                width=vehicle_parameters[solution.vehicle_type].w,
             )
             trajectory = Trajectory(
                 initial_time_step=solution.trajectory.initial_time_step + 1,
@@ -676,7 +707,9 @@ class CommonRoadSolutionReader:
         return Solution(scenario_id, pp_solutions, date, computation_time, processor_name)
 
     @staticmethod
-    def _parse_header(root_node: et.Element) -> Tuple[str, Union[None, datetime], Union[None, float], Union[None, str]]:
+    def _parse_header(
+        root_node: et.Element,
+    ) -> Tuple[str, Union[None, datetime], Union[None, float], Union[None, str]]:
         """Parses the header attributes for the given Solution XML root node."""
         benchmark_id = root_node.get("benchmark_id")
         if not benchmark_id:
@@ -710,7 +743,9 @@ class CommonRoadSolutionReader:
         cost_function = CostFunction[cost_id]
 
         pp_id, trajectory = cls._parse_trajectory(trajectory_node)
-        return PlanningProblemSolution(pp_id, vehicle_model, vehicle_type, cost_function, trajectory)
+        return PlanningProblemSolution(
+            pp_id, vehicle_model, vehicle_type, cost_function, trajectory
+        )
 
     @classmethod
     def _parse_trajectory(cls, trajectory_node: et.Element) -> Tuple[int, Trajectory]:
@@ -721,12 +756,19 @@ class CommonRoadSolutionReader:
         trajectory_type = TrajectoryType(trajectory_node.tag)
 
         planning_problem_id = int(trajectory_node.get("planningProblem"))
-        state_list = [cls._parse_state(trajectory_type.state_type, state_node) for state_node in trajectory_node]
+        state_list = [
+            cls._parse_state(trajectory_type.state_type, state_node)
+            for state_node in trajectory_node
+        ]
         state_list = sorted(state_list, key=lambda state: state.time_step)
-        return planning_problem_id, Trajectory(initial_time_step=state_list[0].time_step, state_list=state_list)
+        return planning_problem_id, Trajectory(
+            initial_time_step=state_list[0].time_step, state_list=state_list
+        )
 
     @classmethod
-    def _parse_sub_element(cls, state_node: et.Element, name: str, as_float: bool = True) -> Union[float, int]:
+    def _parse_sub_element(
+        cls, state_node: et.Element, name: str, as_float: bool = True
+    ) -> Union[float, int]:
         """Parses the sub elements from the given XML node."""
         elem = state_node.find(name)
         if elem is None:
@@ -754,9 +796,13 @@ class CommonRoadSolutionReader:
             xml_name = mapping[0]
             field_name = mapping[1]
             if isinstance(xml_name, tuple):
-                state_vals[field_name] = np.array([cls._parse_sub_element(state_node, name) for name in xml_name])
+                state_vals[field_name] = np.array(
+                    [cls._parse_sub_element(state_node, name) for name in xml_name]
+                )
             else:
-                state_vals[field_name] = cls._parse_sub_element(state_node, xml_name, as_float=(not xml_name == "time"))
+                state_vals[field_name] = cls._parse_sub_element(
+                    state_node, xml_name, as_float=(not xml_name == "time")
+                )
 
         return state_types[state_type](**state_vals)
 
@@ -780,10 +826,10 @@ class CommonRoadSolutionReader:
         if not len(vehicle_id) == 3 and not len(vehicle_id) == 4:
             raise SolutionReaderException("Invalid Vehicle ID: " + vehicle_id)
 
-        if not vehicle_id[:-1] in [vmodel.name for vmodel in VehicleModel]:
+        if vehicle_id[:-1] not in [vmodel.name for vmodel in VehicleModel]:
             raise SolutionReaderException("Invalid Vehicle ID: " + vehicle_id)
 
-        if not int(vehicle_id[-1]) in [vtype.value for vtype in VehicleType]:
+        if int(vehicle_id[-1]) not in [vtype.value for vtype in VehicleType]:
             raise SolutionReaderException("Invalid Vehicle ID: " + vehicle_id)
 
         return VehicleModel[vehicle_id[:-1]], VehicleType(int(vehicle_id[-1]))
@@ -849,13 +895,19 @@ class CommonRoadSolutionWriter:
             root_node.set("computation_time", str(solution.computation_time))
         if solution.date is not None:
             root_node.set("date", solution.date.strftime("%Y-%m-%dT%H:%M:%S"))
-        processor_name = cls._get_processor_name() if solution.processor_name == "auto" else solution.processor_name
+        processor_name = (
+            cls._get_processor_name()
+            if solution.processor_name == "auto"
+            else solution.processor_name
+        )
         if processor_name is not None:
             root_node.set("processor_name", processor_name)
         return root_node
 
     @classmethod
-    def _create_trajectory_node(cls, trajectory_type: TrajectoryType, pp_id: int, trajectory: Trajectory) -> et.Element:
+    def _create_trajectory_node(
+        cls, trajectory_type: TrajectoryType, pp_id: int, trajectory: Trajectory
+    ) -> et.Element:
         """Creates the Trajectory XML Node for the given trajectory."""
         trajectory_node = et.Element(trajectory_type.value)
         trajectory_node.set("planningProblem", str(pp_id))
@@ -901,7 +953,11 @@ class CommonRoadSolutionWriter:
         return parsed.toprettyxml(indent="  ")
 
     def write_to_file(
-        self, output_path: str = "./", filename: str = None, overwrite: bool = False, pretty: bool = True
+        self,
+        output_path: str = "./",
+        filename: str = None,
+        overwrite: bool = False,
+        pretty: bool = True,
     ):
         """
         Writes the Solution XML to a file.
@@ -913,14 +969,22 @@ class CommonRoadSolutionWriter:
         :param overwrite: If set to True, overwrites the file if it already exists.
         :param pretty: If set to True, prettifies the Solution XML string before writing to file.
         """
-        filename = filename if filename is not None else "solution_%s.xml" % self.solution.benchmark_id
-        fullpath = os.path.join(output_path, filename) if filename is not None else os.path.join(output_path, filename)
+        filename = (
+            filename if filename is not None else "solution_%s.xml" % self.solution.benchmark_id
+        )
+        fullpath = (
+            os.path.join(output_path, filename)
+            if filename is not None
+            else os.path.join(output_path, filename)
+        )
 
         if not os.path.exists(os.path.dirname(fullpath)):
             raise NotADirectoryError("Directory %s does not exist." % os.path.dirname(fullpath))
 
         if os.path.exists(fullpath) and not overwrite:
-            raise FileExistsError("File %s already exists. If you want to overwrite it set overwrite=True." % fullpath)
+            raise FileExistsError(
+                "File %s already exists. If you want to overwrite it set overwrite=True." % fullpath
+            )
 
         with open(fullpath, "w") as f:
             f.write(self.dump(pretty))

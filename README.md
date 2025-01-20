@@ -1,27 +1,27 @@
 # CommonRoad
-[![PyPI pyversions](https://img.shields.io/pypi/pyversions/commonroad-io.svg)](https://pypi.python.org/pypi/commonroad-io/)  
+[![PyPI pyversions](https://img.shields.io/pypi/pyversions/commonroad-io.svg)](https://pypi.python.org/pypi/commonroad-io/)
 ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
 ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
-![macOS](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=macos&logoColor=F0F0F0)  
+![macOS](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=macos&logoColor=F0F0F0)
 [![PyPI version fury.io](https://badge.fury.io/py/commonroad-io.svg)](https://pypi.python.org/pypi/commonroad-io/)
-[![PyPI download month](https://img.shields.io/pypi/dm/commonroad-io.svg?label=PyPI%20downloads)](https://pypi.python.org/pypi/commonroad-io/) 
-[![PyPI download week](https://img.shields.io/pypi/dw/commonroad-io.svg?label=PyPI%20downloads)](https://pypi.python.org/pypi/commonroad-io/)   
+[![PyPI download month](https://img.shields.io/pypi/dm/commonroad-io.svg?label=PyPI%20downloads)](https://pypi.python.org/pypi/commonroad-io/)
+[![PyPI download week](https://img.shields.io/pypi/dw/commonroad-io.svg?label=PyPI%20downloads)](https://pypi.python.org/pypi/commonroad-io/)
 [![PyPI license](https://img.shields.io/pypi/l/commonroad-io.svg)](https://pypi.python.org/pypi/commonroad-io/)
 
 
-Numerical experiments for motion planning of road vehicles require numerous ingredients: vehicle dynamics, 
-a road network, static obstacles, dynamic obstacles and their movement over time, goal regions, a cost function, etc. 
-Providing a description of the numerical experiment precise enough to reproduce it might require several pages of 
-information. 
-Thus, only key aspects are typically described in scientific publications, making it impossible to reproduce 
+Numerical experiments for motion planning of road vehicles require numerous ingredients: vehicle dynamics,
+a road network, static obstacles, dynamic obstacles and their movement over time, goal regions, a cost function, etc.
+Providing a description of the numerical experiment precise enough to reproduce it might require several pages of
+information.
+Thus, only key aspects are typically described in scientific publications, making it impossible to reproduce
 results - yet, reproducibility is an important asset of good science.
 
-Composable benchmarks for motion planning on roads (CommonRoad) are proposed so that numerical experiments are fully 
+Composable benchmarks for motion planning on roads (CommonRoad) are proposed so that numerical experiments are fully
 defined by a unique ID; all required information to reconstruct the experiment can be found on [commonroad.in.tum.de](https://commonroad.in.tum.de/).
-Each benchmark is composed of a [vehicle model](https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models/blob/master/vehicleModels_commonRoad.pdf), 
-a [cost function](https://gitlab.lrz.de/tum-cps/commonroad-cost-functions/blob/master/costFunctions_commonRoad.pdf), 
-and a [scenario](https://commonroad.in.tum.de/scenarios/) (including goals and constraints). 
-The scenarios are partly recorded from real traffic and partly hand-crafted to create dangerous situations. 
+Each benchmark is composed of a [vehicle model](https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models/blob/master/vehicleModels_commonRoad.pdf),
+a [cost function](https://gitlab.lrz.de/tum-cps/commonroad-cost-functions/blob/master/costFunctions_commonRoad.pdf),
+and a [scenario](https://commonroad.in.tum.de/scenarios/) (including goals and constraints).
+The scenarios are partly recorded from real traffic and partly hand-crafted to create dangerous situations.
 Solutions to the benchmarks can be uploaded and ranked on the CommonRoad Website.
 Learn more about the scenario specification [here](https://gitlab.lrz.de/tum-cps/commonroad-scenarios/blob/master/documentation/XML_commonRoad_2020a.pdf).
 
@@ -83,8 +83,8 @@ and add the folder commonroad-io to your Python environment.
 A detailed overview about the changes in each version is provided in the [Changelog](https://github.com/CommonRoad/commonroad-io/blob/master/CHANGELOG.md).
 
 ## Authors
-Contribution (in alphabetic order by last name): Yannick Ballnath, Behtarin Ferdousi, Luis Gressenbuch, Moritz Klischat, 
-Markus Koschi, Sebastian Maierhofer, Stefanie Manzinger, Christina Miller, Christian Pek, Anna-Katharina Rettinger, 
+Contribution (in alphabetic order by last name): Yannick Ballnath, Behtarin Ferdousi, Luis Gressenbuch, Moritz Klischat,
+Markus Koschi, Sebastian Maierhofer, Stefanie Manzinger, Christina Miller, Christian Pek, Anna-Katharina Rettinger,
 Simon Sagmeister, Moritz Untersperger, Murat Üste, Xiao Wang
 
 ## Credits
@@ -103,18 +103,18 @@ We gratefully acknowledge partial financial support by
 	booktitle = {Proc. of the IEEE Intelligent Vehicles Symposium},
 	year = {2017},
 	pages={719-726},
-	abstract = {Numerical experiments for motion planning of road vehicles require numerous components: vehicle 
-	            dynamics, a road network, static obstacles, dynamic obstacles and their movement over time, goal 
-	            regions, a cost function, etc. Providing a description of the numerical experiment precise enough to 
-	            reproduce it might require several pages of information. Thus, only key aspects are typically described 
-	            in scientific publications, making it impossible to reproduce results—yet, re- producibility is an 
-	            important asset of good science. Composable benchmarks for motion planning on roads (CommonRoad) are 
-	            proposed so that numerical experiments are fully defined by a unique ID; all information required to 
-	            reconstruct the experiment can be found on the CommonRoad website. Each benchmark is composed by a 
-	            vehicle model, a cost function, and a scenario (including goals and constraints). The scenarios are 
-	            partly recorded from real traffic and partly hand-crafted to create dangerous situations. We hope that 
-	            CommonRoad saves researchers time since one does not have to search for realistic parameters of vehicle 
-	            dynamics or realistic traffic situations, yet provides the freedom to compose a benchmark that fits 
+	abstract = {Numerical experiments for motion planning of road vehicles require numerous components: vehicle
+	            dynamics, a road network, static obstacles, dynamic obstacles and their movement over time, goal
+	            regions, a cost function, etc. Providing a description of the numerical experiment precise enough to
+	            reproduce it might require several pages of information. Thus, only key aspects are typically described
+	            in scientific publications, making it impossible to reproduce results—yet, re- producibility is an
+	            important asset of good science. Composable benchmarks for motion planning on roads (CommonRoad) are
+	            proposed so that numerical experiments are fully defined by a unique ID; all information required to
+	            reconstruct the experiment can be found on the CommonRoad website. Each benchmark is composed by a
+	            vehicle model, a cost function, and a scenario (including goals and constraints). The scenarios are
+	            partly recorded from real traffic and partly hand-crafted to create dangerous situations. We hope that
+	            CommonRoad saves researchers time since one does not have to search for realistic parameters of vehicle
+	            dynamics or realistic traffic situations, yet provides the freedom to compose a benchmark that fits
 	            one’s needs.},
 }
 ```

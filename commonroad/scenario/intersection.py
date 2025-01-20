@@ -43,7 +43,8 @@ class IntersectionIncomingElement:
     def __eq__(self, other):
         if not isinstance(other, IntersectionIncomingElement):
             warnings.warn(
-                f"Inequality between IntersectionIncomingElement " f"{repr(self)} and different type {type(other)}"
+                f"Inequality between IntersectionIncomingElement "
+                f"{repr(self)} and different type {type(other)}"
             )
             return False
 
@@ -95,9 +96,10 @@ class IntersectionIncomingElement:
         """
         :param i_id ID of incoming
         """
-        assert is_natural_number(
-            i_id
-        ), "<IntersectionIncomingElement/incoming_id>: Provided incoming_id is not " "valid! id={}".format(i_id)
+        assert is_natural_number(i_id), (
+            "<IntersectionIncomingElement/incoming_id>: Provided incoming_id is not "
+            "valid! id={}".format(i_id)
+        )
         self._incoming_id = i_id
 
     @property
@@ -187,7 +189,12 @@ class Intersection:
     The crossing element models lanelets which cross other lanelets, e.g., these are usually lanelets of type crosswalk.
     """
 
-    def __init__(self, intersection_id: int, incomings: List[IntersectionIncomingElement], crossings: Set[int] = None):
+    def __init__(
+        self,
+        intersection_id: int,
+        incomings: List[IntersectionIncomingElement],
+        crossings: Set[int] = None,
+    ):
         """
         :param intersection_id: ID of intersection element
         :param incomings: set of incoming elements in intersection
@@ -203,7 +210,9 @@ class Intersection:
 
     def __eq__(self, other):
         if not isinstance(other, Intersection):
-            warnings.warn(f"Inequality between Intersection {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between Intersection {repr(self)} and different type {type(other)}"
+            )
             return False
 
         list_elements_eq = True
@@ -251,9 +260,10 @@ class Intersection:
         """
         :param i_id ID of intersection element
         """
-        assert is_natural_number(
-            i_id
-        ), "<Intersection/intersection_id>: Provided intersection_id is not " "valid! id={}".format(i_id)
+        assert is_natural_number(i_id), (
+            "<Intersection/intersection_id>: Provided intersection_id is not "
+            "valid! id={}".format(i_id)
+        )
         self._intersection_id = i_id
 
     @property

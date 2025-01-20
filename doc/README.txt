@@ -15,6 +15,3 @@ Sphinx and ReST is used to write the documentation. All source files are in the 
 * source/conf.py - the sphinx configuration
 
 * Makefile - entry points for building the docs
-
-
-

@@ -89,14 +89,23 @@ def draw_polygon_as_patch(
     verts.append((0, 0))
 
     path = Path(verts, codes)
-    patch = patches.PathPatch(path, facecolor=facecolor, edgecolor=edgecolor, lw=lw, zorder=zorder, alpha=alpha)
+    patch = patches.PathPatch(
+        path, facecolor=facecolor, edgecolor=edgecolor, lw=lw, zorder=zorder, alpha=alpha
+    )
     ax.add_patch(patch)
 
     return patch
 
 
 def draw_polygon_collection_as_patch(
-    vertices: List[list], ax, zorder=5, facecolor="#ffffff", edgecolor="#000000", lw=0.5, alpha=1.0, antialiased=True
+    vertices: List[list],
+    ax,
+    zorder=5,
+    facecolor="#ffffff",
+    edgecolor="#000000",
+    lw=0.5,
+    alpha=1.0,
+    antialiased=True,
 ) -> mpl.collections.Collection:
     """
     vertices are no closed polygon (first element != last element)
@@ -137,7 +146,8 @@ def collect_center_line_colors(
         for lanelet_id, new_state in new_dict.items():
             if lanelet_id in l2state:
                 if new_state == TrafficLightState.INACTIVE or (
-                    new_state == TrafficLightState.RED and l2state[lanelet_id] == TrafficLightState.GREEN
+                    new_state == TrafficLightState.RED
+                    and l2state[lanelet_id] == TrafficLightState.GREEN
                 ):
                     continue
 
