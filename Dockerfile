@@ -4,7 +4,7 @@ FROM python:3.10 AS build
 RUN pip install poetry
 WORKDIR /app
 
-COPY crtemplate /app/crtemplate
+COPY commonroad /app/commonroad
 COPY pyproject.toml /app/
 COPY README.md /app/
 
