@@ -16,20 +16,12 @@ default:
   - coverage run --source ./commonroad tests/run_tests.py
   - coverage report -m || true
 
-formatting_check:
+pre_commit:
   stage: style_check
-  before_script: [ ]
+  before_script:
+    - pip install pre-commit
   script:
-    - pip install black isort
-    - black --check .
-    - isort --check-only .
-
-lint_flake8:
-  stage: style_check
-  before_script: [ ]
-  script:
-    - pip install flake8
-    - flake8 .
+    - pre-commit run --all-files --show-diff-on-failure
 
 build_and_test_python:
   image : python:$PYTHON_VERSIONS
@@ -110,20 +102,20 @@ validate_tutorials:
 
 pages:
   # Push the latest documentation of the development branch to the GitLab Pages
-  # at https://cps.pages.gitlab.lrz.de/commonroad-io/
+  # available at https://cps.pages.gitlab.lrz.de/commonroad-template
   stage: deploy
+  only:
+    - dev
+  publish: site
   script:
-    - apt-get update && apt-get install -y graphviz
     - poetry install --with docs
-    - cd doc/source && sphinx-build -b html . ../../public
+    - mkdocs build
   artifacts:
     paths:
-      - public
+      - site
   environment:
     name: Gitlab Pages
     url: https://cps.pages.gitlab.lrz.de/commonroad-io/
-  only:
-    - develop
 
 push_to_internal_pipy_registry:
   # push the development version to the internal pipy registry https://gitlab.lrz.de/cps/commonroad-io/-/packages
