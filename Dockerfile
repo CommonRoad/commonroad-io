@@ -1,5 +1,5 @@
 # taken from commonroad-dataset-converters
-FROM python:3.10 AS build
+FROM python:3.11 AS build
 
 RUN pip install poetry
 WORKDIR /app
@@ -22,5 +22,5 @@ RUN poetry build -f wheel
 # COPY --from=build /app/dist/${WHEEL_NAME} /app/
 # RUN pip install /app/${WHEEL_NAME} && rm /app/${WHEEL_NAME}
 
-ENTRYPOINT ["crtemplate"]
+ENTRYPOINT ["commonroad"]
 CMD ["--help"]
