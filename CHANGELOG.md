@@ -1,5 +1,9 @@
 # Changelog
 
+## [2025.1] -
+### Changed
+- Update to new template-repository structure
+
 ## [2024.3] - 2024-10-XX
 ### Added
 - New Australia and US traffic signs
