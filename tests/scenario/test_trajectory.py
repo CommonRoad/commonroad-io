@@ -192,11 +192,16 @@ class TestTrajectory(unittest.TestCase):
         states.append(KSState(position=np.array([2.35, -2.4]), orientation=0.97, time_step=6))
         states.append(KSState(position=np.array([3.35, -2.4]), orientation=1.07, time_step=7))
         states.append(KSState(position=np.array([4.35, -2.4]), orientation=1.17, time_step=8))
-        trajectory3 = Trajectory(5, states)
-
         states.append(KSState(position=np.array([5.35, -2.4]), orientation=1.27, time_step=9))
         trajectory1 = Trajectory(5, states)
         trajectory2 = Trajectory(5, states)
+
+        states_new = list()
+        states_new.append(KSState(position=np.array([1.35, -2.4]), orientation=0.87, time_step=5))
+        states_new.append(KSState(position=np.array([2.35, -2.4]), orientation=0.97, time_step=6))
+        states_new.append(KSState(position=np.array([3.35, -2.4]), orientation=1.07, time_step=7))
+        states_new.append(KSState(position=np.array([4.35, -2.4]), orientation=1.17, time_step=8))
+        trajectory3 = Trajectory(5, states_new)
 
         self.assertEqual(trajectory1.__hash__(), trajectory2.__hash__())
         self.assertNotEqual(trajectory1.__hash__(), trajectory3.__hash__())
@@ -207,11 +212,16 @@ class TestTrajectory(unittest.TestCase):
         states.append(KSState(position=np.array([2.35, -2.4]), orientation=0.97, time_step=6))
         states.append(KSState(position=np.array([3.35, -2.4]), orientation=1.07, time_step=7))
         states.append(KSState(position=np.array([4.35, -2.4]), orientation=1.17, time_step=8))
-        trajectory3 = Trajectory(5, states)
-
         states.append(KSState(position=np.array([5.35, -2.4]), orientation=1.27, time_step=9))
         trajectory1 = Trajectory(5, states)
         trajectory2 = Trajectory(5, states)
+
+        states_new = list()
+        states_new.append(KSState(position=np.array([1.35, -2.4]), orientation=0.87, time_step=5))
+        states_new.append(KSState(position=np.array([2.35, -2.4]), orientation=0.97, time_step=6))
+        states_new.append(KSState(position=np.array([3.35, -2.4]), orientation=1.07, time_step=7))
+        states_new.append(KSState(position=np.array([4.35, -2.4]), orientation=1.17, time_step=8))
+        trajectory3 = Trajectory(5, states_new)
 
         self.assertTrue(trajectory1.__eq__(trajectory2))
         self.assertFalse(trajectory1.__eq__(trajectory3))
