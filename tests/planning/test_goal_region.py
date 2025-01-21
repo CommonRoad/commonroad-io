@@ -43,6 +43,28 @@ class TestInitialization(unittest.TestCase):
         goal_region.lanelets_of_goal_position = new_dict
         self.assertDictEqual(goal_region.lanelets_of_goal_position, original_dict)
 
+    def test_hash_goal_region(self):
+        goal_state_1 = STState(time_step=Interval(5, 6))
+        goal_state_2 = STState(time_step=Interval(5, 6), orientation=AngleInterval(1.5, 1.8))
+        goal_state_3 = STState(time_step=Interval(2, 3))
+        goal_state_4 = STState(time_step=Interval(1, 8), position=Rectangle(3, 5))
+        goal_state_5 = STState(time_step=Interval(5, 6))
+        input_states = [goal_state_1, goal_state_2, goal_state_3, goal_state_4, goal_state_5]
+        goal_region_1 = GoalRegion(input_states)
+        goal_region_2 = GoalRegion(input_states)
+        self.assertEqual(goal_region_1.__hash__(), goal_region_2.__hash__())
+
+    def test_goal_region_equality(self):
+        goal_state_1 = STState(time_step=Interval(5, 6))
+        goal_state_2 = STState(time_step=Interval(5, 6), orientation=AngleInterval(1.5, 1.8))
+        goal_state_3 = STState(time_step=Interval(2, 3))
+        goal_state_4 = STState(time_step=Interval(1, 8), position=Rectangle(3, 5))
+        goal_state_5 = STState(time_step=Interval(5, 6))
+        input_states = [goal_state_1, goal_state_2, goal_state_3, goal_state_4, goal_state_5]
+        goal_region_1 = GoalRegion(input_states)
+        goal_region_2 = GoalRegion(input_states)
+        self.assertTrue(goal_region_1.__eq__(goal_region_2))
+
 
 class TestIsReached(unittest.TestCase):
     def test_pm_model_goal_reached(self):
