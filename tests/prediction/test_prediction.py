@@ -50,6 +50,20 @@ class TestOccupancy(unittest.TestCase):
         self.assertAlmostEqual(occ1.shape.orientation, np.pi / 2)
         self.assertEqual(occ1.time_step, 2)
 
+    def test_hash(self):
+        occ1 = Occupancy(2, self.s1)
+        occ2 = Occupancy(2, self.s1)
+        occ3 = Occupancy(Interval(0, 4), self.s2)
+        self.assertEqual(occ1.__hash__(), occ2.__hash__())
+        self.assertNotEqual(occ1.__hash__(), occ3.__hash__())
+
+    def test_euality(self):
+        occ1 = Occupancy(2, self.s1)
+        occ2 = Occupancy(2, self.s1)
+        occ3 = Occupancy(Interval(0, 4), self.s2)
+        self.assertTrue(occ1.__eq__(occ2))
+        self.assertFalse(occ1.__eq__(occ3))
+
 
 class TestTrajectoryPrediction(unittest.TestCase):
     """
@@ -182,6 +196,20 @@ class TestTrajectoryPrediction(unittest.TestCase):
         self.assertAlmostEqual(tp.occupancy_set[2].shape.center[0], -5.0)
         self.assertAlmostEqual(tp.occupancy_set[2].shape.center[1], -3.2)
 
+    def test_hash(self):
+        tp1 = TrajectoryPrediction(self.trajectory, self.shape)
+        tp2 = TrajectoryPrediction(self.trajectory, self.shape)
+        tp3 = TrajectoryPrediction(self.reverse_trajectory, self.shape)
+        self.assertEqual(tp1.__hash__(), tp2.__hash__())
+        self.assertNotEqual(tp1.__hash__(), tp3.__hash__())
+
+    def test_equality(self):
+        tp1 = TrajectoryPrediction(self.trajectory, self.shape)
+        tp2 = TrajectoryPrediction(self.trajectory, self.shape)
+        tp3 = TrajectoryPrediction(self.reverse_trajectory, self.shape)
+        self.assertTrue(tp1.__eq__(tp2))
+        self.assertFalse(tp1.__eq__(tp3))
+
 
 class TestSetBasedPrediction(unittest.TestCase):
     """
@@ -195,6 +223,7 @@ class TestSetBasedPrediction(unittest.TestCase):
         s3 = ShapeGroup([s1, s2])
         self.occ1 = Occupancy(2, s1)
         self.occ2 = Occupancy(3, s3)
+        self.occ3 = Occupancy(3, s2)
 
     def test_initialization(self):
         """test if SetBasedPrediction initializes correctly and setter and getter work"""
@@ -217,6 +246,20 @@ class TestSetBasedPrediction(unittest.TestCase):
         self.assertIsInstance(sp.occupancy_set[1].shape.shapes[1], Circle)
         self.assertAlmostEqual(sp.occupancy_set[1].shape.shapes[1].center[0], -2.0)
         self.assertAlmostEqual(sp.occupancy_set[1].shape.shapes[1].center[1], 1.0)
+
+    def test_hash(self):
+        sp1 = SetBasedPrediction(2, [self.occ1, self.occ2])
+        sp2 = SetBasedPrediction(2, [self.occ1, self.occ2])
+        sp3 = SetBasedPrediction(2, [self.occ1, self.occ3])
+        self.assertEqual(sp1.__hash__(), sp2.__hash__())
+        self.assertNotEqual(sp1.__hash__(), sp3.__hash__())
+
+    def test_equality(self):
+        sp1 = SetBasedPrediction(2, [self.occ1, self.occ2])
+        sp2 = SetBasedPrediction(2, [self.occ1, self.occ2])
+        sp3 = SetBasedPrediction(2, [self.occ1, self.occ3])
+        self.assertTrue(sp1.__eq__(sp2))
+        self.assertFalse(sp1.__eq__(sp3))
 
 
 if __name__ == "__main__":

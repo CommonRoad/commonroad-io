@@ -146,7 +146,7 @@ class PlanningProblemSet(IDrawable):
         return self.planning_problem_dict.items() == other.planning_problem_dict.items()
 
     def __hash__(self):
-        return hash(self.planning_problem_dict.items())
+        return hash(tuple(self.planning_problem_dict.items()))
 
     @property
     def planning_problem_dict(self) -> Dict[int, PlanningProblem]:

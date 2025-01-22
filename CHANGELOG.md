@@ -3,6 +3,7 @@
 ## [2025.1] -
 ### Changed
 - Update to new template-repository structure
+- Add test cases for all hash and equality functions，check all CommonRoad element classes
 
 ## [2024.3] - 2024-12-20
 ### Added

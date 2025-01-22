@@ -67,7 +67,7 @@ class GoalRegion(IDrawable):
             if self.lanelets_of_goal_position is None
             else self.lanelets_of_goal_position.items()
         )
-        return hash((self.state_list, lanelets_of_goal_position))
+        return hash((tuple(self.state_list), lanelets_of_goal_position))
 
     @property
     def state_list(self) -> List[TraceState]:

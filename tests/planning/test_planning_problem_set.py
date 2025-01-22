@@ -201,6 +201,122 @@ class TestPlanningProblemSet(unittest.TestCase):
             problem_set.planning_problem_dict[1].goal.state_list[1].orientation.end, angle + np.pi
         )
 
+    def test_hash_problem(self):
+        state_1 = InitialState(
+            time_step=1,
+            position=np.array([3, 5]),
+            velocity=14,
+            orientation=0,
+            yaw_rate=2,
+            slip_angle=4,
+        )
+        state_2 = InitialState(
+            time_step=2,
+            position=np.array([3, 5]),
+            velocity=14,
+            orientation=0,
+            yaw_rate=2,
+            slip_angle=4,
+        )
+        planning_problem_1 = PlanningProblem(
+            1, state_1, GoalRegion([State(time_step=Interval(2, 3))])
+        )
+        planning_problem_2 = PlanningProblem(
+            1, state_1, GoalRegion([State(time_step=Interval(2, 3))])
+        )
+        planning_problem_3 = PlanningProblem(
+            2, state_2, GoalRegion([State(time_step=Interval(1, 5))])
+        )
+        self.assertEqual(planning_problem_1.__hash__(), planning_problem_2.__hash__())
+        self.assertNotEqual(planning_problem_1.__hash__(), planning_problem_3.__hash__())
+
+    def test_equality_problem(self):
+        state_1 = InitialState(
+            time_step=1,
+            position=np.array([3, 5]),
+            velocity=14,
+            orientation=0,
+            yaw_rate=2,
+            slip_angle=4,
+        )
+        state_2 = InitialState(
+            time_step=2,
+            position=np.array([3, 5]),
+            velocity=14,
+            orientation=0,
+            yaw_rate=2,
+            slip_angle=4,
+        )
+        planning_problem_1 = PlanningProblem(
+            1, state_1, GoalRegion([State(time_step=Interval(2, 3))])
+        )
+        planning_problem_2 = PlanningProblem(
+            1, state_1, GoalRegion([State(time_step=Interval(2, 3))])
+        )
+        planning_problem_3 = PlanningProblem(
+            2, state_2, GoalRegion([State(time_step=Interval(1, 5))])
+        )
+        self.assertTrue(planning_problem_1.__eq__(planning_problem_2))
+        self.assertFalse(planning_problem_1.__eq__(planning_problem_3))
+
+    def test_hash_problem_set(self):
+        state_1 = InitialState(
+            time_step=1,
+            position=np.array([3, 5]),
+            velocity=14,
+            orientation=0,
+            yaw_rate=2,
+            slip_angle=4,
+        )
+        state_2 = InitialState(
+            time_step=2,
+            position=np.array([3, 5]),
+            velocity=14,
+            orientation=0,
+            yaw_rate=2,
+            slip_angle=4,
+        )
+        planning_problem = PlanningProblem(
+            1, state_1, GoalRegion([State(time_step=Interval(2, 3))])
+        )
+        planning_problem_new = PlanningProblem(
+            2, state_2, GoalRegion([State(time_step=Interval(1, 5))])
+        )
+        problem_set_1 = PlanningProblemSet([planning_problem])
+        problem_set_2 = PlanningProblemSet([planning_problem])
+        problem_set_3 = PlanningProblemSet([planning_problem_new])
+        self.assertEqual(problem_set_1.__hash__(), problem_set_2.__hash__())
+        self.assertNotEqual(problem_set_1.__hash__(), problem_set_3.__hash__())
+
+    def test_equality_problem_set(self):
+        state_1 = InitialState(
+            time_step=1,
+            position=np.array([3, 5]),
+            velocity=14,
+            orientation=0,
+            yaw_rate=2,
+            slip_angle=4,
+        )
+        state_2 = InitialState(
+            time_step=2,
+            position=np.array([3, 5]),
+            velocity=14,
+            orientation=0,
+            yaw_rate=2,
+            slip_angle=4,
+        )
+        planning_problem = PlanningProblem(
+            1, state_1, GoalRegion([State(time_step=Interval(2, 3))])
+        )
+        planning_problem_new = PlanningProblem(
+            2, state_2, GoalRegion([State(time_step=Interval(1, 5))])
+        )
+        problem_set_1 = PlanningProblemSet([planning_problem])
+        problem_set_2 = PlanningProblemSet([planning_problem])
+        problem_set_3 = PlanningProblemSet([planning_problem_new])
+        self.assertTrue(problem_set_1.__eq__(problem_set_2))
+        self.assertFalse(problem_set_1.__eq__(problem_set_3))
+
 
 if __name__ == "__main__":
     unittest.main()
