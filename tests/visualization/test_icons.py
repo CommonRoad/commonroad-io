@@ -126,7 +126,9 @@ class TestIcons(unittest.TestCase):
             vehicle_types = icons.supported_icons()
             for counter, vehicle_type in enumerate(vehicle_types):
                 # Draw the bounding box
-                ax.add_patch(patches.Rectangle((110 * counter - 50, -50), 100, 100, color="#0065BD"))
+                ax.add_patch(
+                    patches.Rectangle((110 * counter - 50, -50), 100, 100, color="#0065BD")
+                )
 
                 # Add vehicle type as text.
                 ax.text(110 * counter, 80, vehicle_type.name.replace("_", "\n"), ha="center")

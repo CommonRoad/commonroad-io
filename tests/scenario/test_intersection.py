@@ -12,7 +12,12 @@ class TestIntersection(unittest.TestCase):
         successors_left_1 = {16, 17}
         left_of_1 = 18
         self._incoming_1 = IntersectionIncomingElement(
-            self._incoming_id_1, lanelets_1, successors_right_1, successors_straight_1, successors_left_1, left_of_1
+            self._incoming_id_1,
+            lanelets_1,
+            successors_right_1,
+            successors_straight_1,
+            successors_left_1,
+            left_of_1,
         )
 
         self._incoming_id_2 = 3
@@ -22,7 +27,12 @@ class TestIntersection(unittest.TestCase):
         successors_left_2 = {26, 27}
         left_of_2 = 28
         self._incoming_2 = IntersectionIncomingElement(
-            self._incoming_id_2, lanelets_2, successors_right_2, successors_straight_2, successors_left_2, left_of_2
+            self._incoming_id_2,
+            lanelets_2,
+            successors_right_2,
+            successors_straight_2,
+            successors_left_2,
+            left_of_2,
         )
 
         incoming_id_3 = 4
@@ -32,12 +42,19 @@ class TestIntersection(unittest.TestCase):
         successors_left_3 = {46, 47}
         left_of_3 = 48
         self._incoming_3 = IntersectionIncomingElement(
-            incoming_id_3, lanelets_3, successors_right_3, successors_straight_3, successors_left_3, left_of_3
+            incoming_id_3,
+            lanelets_3,
+            successors_right_3,
+            successors_straight_3,
+            successors_left_3,
+            left_of_3,
         )
 
         self._intersection_id_1 = 1
         self._crossings = {30, 31}
-        self._intersection_1 = Intersection(1, [self._incoming_1, self._incoming_2], self._crossings)
+        self._intersection_1 = Intersection(
+            1, [self._incoming_1, self._incoming_2], self._crossings
+        )
 
     def test_initialization_intersection(self):
         self.assertEqual(self._intersection_1.intersection_id, self._intersection_id_1)
@@ -59,9 +76,12 @@ class TestIntersection(unittest.TestCase):
             21: self._incoming_2.incoming_id,
         }
 
-        self.assertListEqual(list(exp_result.keys()), list(self._intersection_1.map_incoming_lanelets.keys()))
         self.assertListEqual(
-            list(exp_result.values()), [val.incoming_id for val in self._intersection_1.map_incoming_lanelets.values()]
+            list(exp_result.keys()), list(self._intersection_1.map_incoming_lanelets.keys())
+        )
+        self.assertListEqual(
+            list(exp_result.values()),
+            [val.incoming_id for val in self._intersection_1.map_incoming_lanelets.values()],
         )
 
     def test_equality(self):
@@ -100,7 +120,12 @@ class TestIntersectionIncomingElement(unittest.TestCase):
         successors_left_1 = {16, 17}
         left_of_1 = 18
         incoming_1 = IntersectionIncomingElement(
-            incoming_id_1, lanelets_1, successors_right_1, successors_straight_1, successors_left_1, left_of_1
+            incoming_id_1,
+            lanelets_1,
+            successors_right_1,
+            successors_straight_1,
+            successors_left_1,
+            left_of_1,
         )
 
         self.assertEqual(incoming_1.incoming_id, incoming_id_1)

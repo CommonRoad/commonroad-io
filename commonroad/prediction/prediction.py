@@ -39,7 +39,9 @@ class Occupancy(IDrawable):
 
     def __eq__(self, other):
         if not isinstance(other, Occupancy):
-            warnings.warn(f"Inequality between Occupancy {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between Occupancy {repr(self)} and different type {type(other)}"
+            )
             return False
 
         return self._time_step == other.time_step and self._shape == other.shape
@@ -54,11 +56,13 @@ class Occupancy(IDrawable):
 
     @shape.setter
     def shape(self, shape: Union[Shape, Rectangle, Circle, Polygon, ShapeGroup]):
-        assert isinstance(
-            shape, Shape
-        ), '<Occupancy/shape>: argument "shape" of wrong type. Expected type: %s. ' "Got type: %s." % (
-            Shape,
-            type(shape),
+        assert isinstance(shape, Shape), (
+            '<Occupancy/shape>: argument "shape" of wrong type. Expected type: %s. '
+            "Got type: %s."
+            % (
+                Shape,
+                type(shape),
+            )
         )
         self._shape = shape
 
@@ -69,12 +73,14 @@ class Occupancy(IDrawable):
 
     @time_step.setter
     def time_step(self, time_step: Union[int, Interval]):
-        assert isinstance(
-            time_step, (int, Interval)
-        ), '<Occupancy/time_step>: argument "time_step" of ' "wrong type. Expected type: %s or %s. Got type: %s." % (
-            int,
-            Interval,
-            type(time_step),
+        assert isinstance(time_step, (int, Interval)), (
+            '<Occupancy/time_step>: argument "time_step" of '
+            "wrong type. Expected type: %s or %s. Got type: %s."
+            % (
+                int,
+                Interval,
+                type(time_step),
+            )
         )
         self._time_step = time_step
 
@@ -85,9 +91,14 @@ class Occupancy(IDrawable):
         :param angle: rotation angle in radian (counter-clockwise)
         """
         assert is_real_number_vector(translation, 2), (
-            "<Occupancy/translate_rotate>: " 'argument "translation" is ' "not a vector of real numbers of " "length 2."
+            "<Occupancy/translate_rotate>: "
+            'argument "translation" is '
+            "not a vector of real numbers of "
+            "length 2."
         )
-        assert is_valid_orientation(angle), '<Occupancy/translate_rotate>: argument "orientation" ' "is " "not valid."
+        assert is_valid_orientation(angle), (
+            '<Occupancy/translate_rotate>: argument "orientation" ' "is " "not valid."
+        )
 
         self._shape = self._shape.translate_rotate(translation, angle)
 
@@ -158,10 +169,15 @@ class SetBasedPrediction(Prediction):
 
     def __eq__(self, other):
         if not isinstance(other, SetBasedPrediction):
-            warnings.warn(f"Inequality between SetBasedPrediction {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between SetBasedPrediction {repr(self)} and different type {type(other)}"
+            )
             return False
 
-        return self._initial_time_step == other.initial_time_step and self._occupancy_set == other.occupancy_set
+        return (
+            self._initial_time_step == other.initial_time_step
+            and self._occupancy_set == other.occupancy_set
+        )
 
     def __hash__(self):
         return hash((self._initial_time_step, frozenset(self._occupancy_set)))
@@ -246,7 +262,9 @@ class TrajectoryPrediction(Prediction):
 
     def __eq__(self, other):
         if not isinstance(other, TrajectoryPrediction):
-            warnings.warn(f"Inequality between TrajectoryPrediction {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between TrajectoryPrediction {repr(self)} and different type {type(other)}"
+            )
             return False
 
         return (
@@ -258,12 +276,16 @@ class TrajectoryPrediction(Prediction):
 
     def __hash__(self):
         center_lanelet_assignment = (
-            frozenset((key, frozenset(value)) for key, value in self._center_lanelet_assignment.items())
+            frozenset(
+                (key, frozenset(value)) for key, value in self._center_lanelet_assignment.items()
+            )
             if self._center_lanelet_assignment is not None
             else None
         )
         shape_lanelet_assignment = (
-            frozenset((key, frozenset(value)) for key, value in self._shape_lanelet_assignment.items())
+            frozenset(
+                (key, frozenset(value)) for key, value in self._shape_lanelet_assignment.items()
+            )
             if self._shape_lanelet_assignment is not None
             else None
         )
@@ -304,11 +326,13 @@ class TrajectoryPrediction(Prediction):
 
     @shape.setter
     def shape(self, shape: Shape):
-        assert isinstance(
-            shape, Shape
-        ), '<TrajectoryPrediction/shape>: argument "shape" of wrong type. Expected ' "type: %s. Got type: %s." % (
-            Shape,
-            type(shape),
+        assert isinstance(shape, Shape), (
+            '<TrajectoryPrediction/shape>: argument "shape" of wrong type. Expected '
+            "type: %s. Got type: %s."
+            % (
+                Shape,
+                type(shape),
+            )
         )
         self._shape = shape
         self._invalidate_occupancy_set()
@@ -349,7 +373,9 @@ class TrajectoryPrediction(Prediction):
         return self._center_lanelet_assignment
 
     @center_lanelet_assignment.setter
-    def center_lanelet_assignment(self, center_lanelet_assignment: Union[None, Dict[int, Set[int]]]):
+    def center_lanelet_assignment(
+        self, center_lanelet_assignment: Union[None, Dict[int, Set[int]]]
+    ):
         if center_lanelet_assignment is not None:
             assert isinstance(center_lanelet_assignment, dict), (
                 "<TrajectoryPrediction/center_lanelet_assignment>: "
@@ -396,7 +422,9 @@ class TrajectoryPrediction(Prediction):
 
             if self.wheelbase_lengths is not None:
                 shapes = self._shape.shapes
-                occupied_region = shape_group_occupancy_shape_from_state(shapes, state, self.wheelbase_lengths)
+                occupied_region = shape_group_occupancy_shape_from_state(
+                    shapes, state, self.wheelbase_lengths
+                )
             else:
                 occupied_region = occupancy_shape_from_state(self._shape, state)
 

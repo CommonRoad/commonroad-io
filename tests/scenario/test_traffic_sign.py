@@ -48,13 +48,17 @@ class TestTrafficSign(unittest.TestCase):
         traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {4}, np.array([10.0, 7.0]))
         self.assertFalse(traffic_sign_one == traffic_sign_two)
 
-        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 6.99999999999]))
+        traffic_sign_two = TrafficSign(
+            1, [traffic_sign_max_speed], {3}, np.array([10.0, 6.99999999999])
+        )
         self.assertTrue(traffic_sign_one == traffic_sign_two)
 
         traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.1]))
         self.assertFalse(traffic_sign_one == traffic_sign_two)
 
-        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0]), True)
+        traffic_sign_two = TrafficSign(
+            1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0]), True
+        )
         self.assertFalse(traffic_sign_one == traffic_sign_two)
 
         traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1.0, 1.0]), True)
@@ -71,7 +75,9 @@ class TestTrafficSign(unittest.TestCase):
         traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0, 7.0]))
         self.assertEqual(hash(traffic_sign_one), hash(traffic_sign_two))
 
-        traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([10.0000000001, 7.0]))
+        traffic_sign_two = TrafficSign(
+            1, [traffic_sign_max_speed], {3}, np.array([10.0000000001, 7.0])
+        )
         self.assertNotEqual(hash(traffic_sign_one), hash(traffic_sign_two))
 
         traffic_sign_two = TrafficSign(1, [traffic_sign_max_speed], {3}, np.array([1.0, 1.0]))
@@ -103,7 +109,9 @@ class TestTrafficSignElement(unittest.TestCase):
         traffic_sign_element_2 = TrafficSignElement(TrafficSignIDGermany.MAX_SPEED, ["15", "16"])
         self.assertEqual(hash(traffic_sign_element_1), hash(traffic_sign_element_2))
 
-        traffic_sign_element_2 = TrafficSignElement(TrafficSignIDGermany.DIRECTIONS_SIGN, ["15", "16"])
+        traffic_sign_element_2 = TrafficSignElement(
+            TrafficSignIDGermany.DIRECTIONS_SIGN, ["15", "16"]
+        )
         self.assertNotEqual(hash(traffic_sign_element_1), hash(traffic_sign_element_2))
 
     def test_traffic_sign_ids(self):

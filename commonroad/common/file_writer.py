@@ -43,11 +43,25 @@ class CommonRoadFileWriter:
         self._file_writer = None
         if file_format == FileFormat.XML:
             self._file_writer = XMLFileWriter(
-                scenario, planning_problem_set, author, affiliation, source, tags, location, decimal_precision
+                scenario,
+                planning_problem_set,
+                author,
+                affiliation,
+                source,
+                tags,
+                location,
+                decimal_precision,
             )
         elif file_format == FileFormat.PROTOBUF:
             self._file_writer = ProtobufFileWriter(
-                scenario, planning_problem_set, author, affiliation, source, tags, location, decimal_precision
+                scenario,
+                planning_problem_set,
+                author,
+                affiliation,
+                source,
+                tags,
+                location,
+                decimal_precision,
             )
 
     def write_to_file(

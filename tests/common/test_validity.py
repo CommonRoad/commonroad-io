@@ -379,11 +379,15 @@ class TestValidity(unittest.TestCase):
         self.assertTrue(is_valid_polyline(np.array([[-1, -2], [-3, -4], [5, 6], [7, 8]])))
         self.assertTrue(is_valid_polyline(np.array([[0, 0], [3, 4], [5, 6], [7, 8]])))
         self.assertTrue(is_valid_polyline(np.array([[100000, 2], [3, 4], [5, 6], [7, 8]])))
-        self.assertTrue(is_valid_polyline(np.array([[1, 2.2345], [3, 4.234234], [5, 6.23], [7, 8]])))
+        self.assertTrue(
+            is_valid_polyline(np.array([[1, 2.2345], [3, 4.234234], [5, 6.23], [7, 8]]))
+        )
         self.assertTrue(is_valid_polyline(np.array([[1.12, 2.34], [3.56, 4.78], [5, 6], [-7, 8]])))
         self.assertTrue(is_valid_polyline(np.array([[-1, 2], [-3, 4], [5, -6], [7, -8]])))
         self.assertTrue(is_valid_polyline(np.array([[-1, 2], [3, 4], [10, 5], [23, 12]])))
-        self.assertTrue(is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose()))
+        self.assertTrue(
+            is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose())
+        )
         self.assertTrue(is_valid_polyline(np.array([np.zeros(100), np.ones(100)]).transpose()))
         self.assertTrue(is_valid_polyline(np.array([[-1, 2, 3, 4], np.zeros(4)]).transpose()))
         self.assertTrue(is_valid_polyline(np.array([[-1, 2], [10, 5]]).transpose()))
@@ -391,7 +395,9 @@ class TestValidity(unittest.TestCase):
         #  test cases for true with z-coordinate
         self.assertTrue(is_valid_polyline(np.array([[1, 2, 3], [1, 2, 3], [1, 2, 3]])))
         self.assertTrue(is_valid_polyline(np.array([[-1, 0.2, 3], [11, -22, 3], [1, 2, 3]])))
-        self.assertTrue(is_valid_polyline(np.array([[-1, 0.2, 3], [11, -22, 3], [1, 2, 3], [0, 0, 0]])))
+        self.assertTrue(
+            is_valid_polyline(np.array([[-1, 0.2, 3], [11, -22, 3], [1, 2, 3], [0, 0, 0]]))
+        )
         self.assertTrue(is_valid_polyline(np.array([[-1, 0.2, 3], [11, -22, 3]])))
 
         #  test cases for false
@@ -442,32 +448,66 @@ class TestValidity(unittest.TestCase):
 
         # test cases for true with desired length
         self.assertTrue(is_valid_polyline(np.array([[1, 2], [3, 4], [5, 6], [7, 8]]), length=4))
-        self.assertTrue(is_valid_polyline(np.array([[-1, -2], [-3, -4], [-5, 5], [6, 7], [8, 9]]), length=5))
+        self.assertTrue(
+            is_valid_polyline(np.array([[-1, -2], [-3, -4], [-5, 5], [6, 7], [8, 9]]), length=5)
+        )
         self.assertTrue(is_valid_polyline(np.array([[0, 0], [5, 8]]), length=2))
-        self.assertTrue(is_valid_polyline(np.array([[-1, 2, 3, 4], [10, 5, 23, 12]]).transpose(), length=4))
-        self.assertTrue(is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=9))
-        self.assertTrue(is_valid_polyline(np.array([np.zeros(100), np.ones(100)]).transpose(), length=100))
+        self.assertTrue(
+            is_valid_polyline(np.array([[-1, 2, 3, 4], [10, 5, 23, 12]]).transpose(), length=4)
+        )
+        self.assertTrue(
+            is_valid_polyline(
+                np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=9
+            )
+        )
+        self.assertTrue(
+            is_valid_polyline(np.array([np.zeros(100), np.ones(100)]).transpose(), length=100)
+        )
 
         #  test cases for true with desired length and z-coordinate
         self.assertTrue(is_valid_polyline(np.array([[1, 2, 3], [1, 2, 3], [1, 2, 3]]), length=3))
-        self.assertTrue(is_valid_polyline(np.array([[-1, 0.2, 3], [11, -22, 3], [1, 2, 3], [-1, -2, 0.5]]), length=4))
+        self.assertTrue(
+            is_valid_polyline(
+                np.array([[-1, 0.2, 3], [11, -22, 3], [1, 2, 3], [-1, -2, 0.5]]), length=4
+            )
+        )
         self.assertTrue(is_valid_polyline(np.array([[-1, 0.2, 3], [11, -22, 3]]), length=2))
 
         # test cases for false with desired length
-        self.assertFalse(is_valid_polyline(np.array([[-1, 2, 3, 4], [10, 5, 23, 12]]).transpose(), length=2))
         self.assertFalse(
-            is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=10)
+            is_valid_polyline(np.array([[-1, 2, 3, 4], [10, 5, 23, 12]]).transpose(), length=2)
         )
-        self.assertFalse(is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=1))
         self.assertFalse(
-            is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=1909)
+            is_valid_polyline(
+                np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=10
+            )
         )
-        self.assertFalse(is_valid_polyline(np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=1))
-        self.assertFalse(is_valid_polyline(np.array([np.zeros(100), np.ones(100)]).transpose(), length=99))
+        self.assertFalse(
+            is_valid_polyline(
+                np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=1
+            )
+        )
+        self.assertFalse(
+            is_valid_polyline(
+                np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=1909
+            )
+        )
+        self.assertFalse(
+            is_valid_polyline(
+                np.array([np.arange(1, 10), np.arange(-1, 3.5, 0.5)]).transpose(), length=1
+            )
+        )
+        self.assertFalse(
+            is_valid_polyline(np.array([np.zeros(100), np.ones(100)]).transpose(), length=99)
+        )
 
         #  test cases for false with desired length and z-coordinate
         self.assertFalse(is_valid_polyline(np.array([[1, 2, 3], [1, 2, 3], [1, 2, 3]]), length=22))
-        self.assertFalse(is_valid_polyline(np.array([[-1, 0.2, 3], [11, -22, 3], [1, 2, 3], [-1, -2, 0.5]]), length=3))
+        self.assertFalse(
+            is_valid_polyline(
+                np.array([[-1, 0.2, 3], [11, -22, 3], [1, 2, 3], [-1, -2, 0.5]]), length=3
+            )
+        )
         self.assertFalse(is_valid_polyline(np.array([[-1, 0.2, 3], [11, -22, 3]]), length=99))
         self.assertFalse(is_valid_polyline(np.array([[-1, 0.2, 3]]), length=1))
 
@@ -491,7 +531,9 @@ class TestValidity(unittest.TestCase):
         #  test cases for true with z-coordinate
         self.assertTrue(is_valid_list_of_vertices([[1, 2, 3], [1, 2, 3], [1, 2, 3]]))
         self.assertTrue(is_valid_list_of_vertices([[-1, 0.2, 3], [11, -22, 3], [1, 2, 3]]))
-        self.assertTrue(is_valid_list_of_vertices([[-1, 0.2, 3], [11, -22, 3], [1, 2, 3], [0, 0, 0]]))
+        self.assertTrue(
+            is_valid_list_of_vertices([[-1, 0.2, 3], [11, -22, 3], [1, 2, 3], [0, 0, 0]])
+        )
         self.assertTrue(is_valid_list_of_vertices([[-1, 0.2, 3], [11, -22, 3]]))
 
         #  test cases for true with z-coordinate with only 1 point
@@ -505,24 +547,38 @@ class TestValidity(unittest.TestCase):
         self.assertFalse(is_valid_list_of_vertices([[0, "a"], [1, 2]]))
 
         #  test cases for true with desired number of vertices
-        self.assertTrue(is_valid_list_of_vertices([[1, 2], [3, 4], [5, 6], [7, 8]], number_of_vertices=4))
-        self.assertTrue(is_valid_list_of_vertices([[-1, -2], [-3, -4], [5, 6], [7, 8]], number_of_vertices=4))
+        self.assertTrue(
+            is_valid_list_of_vertices([[1, 2], [3, 4], [5, 6], [7, 8]], number_of_vertices=4)
+        )
+        self.assertTrue(
+            is_valid_list_of_vertices([[-1, -2], [-3, -4], [5, 6], [7, 8]], number_of_vertices=4)
+        )
         self.assertTrue(is_valid_list_of_vertices([[0, 0], [3, 4]], number_of_vertices=2))
         self.assertTrue(is_valid_list_of_vertices([[0, 0]], number_of_vertices=1))
 
         #  test cases for true with desired number of vertices with z-coordinate
         self.assertTrue(is_valid_list_of_vertices([[0, 0, 1], [3, 4, 3]], number_of_vertices=2))
-        self.assertTrue(is_valid_list_of_vertices([[0, -0, 1], [3, -4, 0.3], [-1, -2, -3]], number_of_vertices=3))
+        self.assertTrue(
+            is_valid_list_of_vertices(
+                [[0, -0, 1], [3, -4, 0.3], [-1, -2, -3]], number_of_vertices=3
+            )
+        )
         self.assertTrue(is_valid_list_of_vertices([[0, -0, 1]], number_of_vertices=1))
 
         #  test cases for false with desired number of vertices
-        self.assertFalse(is_valid_list_of_vertices([[1, 2], [3, 4], [5, 6], [7, 8]], number_of_vertices=2))
-        self.assertFalse(is_valid_list_of_vertices([[-1, -2], [-3, -4], [5, 6], [7, 8]], number_of_vertices=6))
+        self.assertFalse(
+            is_valid_list_of_vertices([[1, 2], [3, 4], [5, 6], [7, 8]], number_of_vertices=2)
+        )
+        self.assertFalse(
+            is_valid_list_of_vertices([[-1, -2], [-3, -4], [5, 6], [7, 8]], number_of_vertices=6)
+        )
         self.assertFalse(is_valid_list_of_vertices([[0, 0], [3, 4]], number_of_vertices=1))
         self.assertFalse(is_valid_list_of_vertices([[0, 0, 1], [3, 4, 3]], number_of_vertices=3))
 
         #  test cases for false with desired number of vertices with z-coordinate
-        self.assertFalse(is_valid_list_of_vertices([[0, 0, 3], [3, 0.4, 0.4]], number_of_vertices=22))
+        self.assertFalse(
+            is_valid_list_of_vertices([[0, 0, 3], [3, 0.4, 0.4]], number_of_vertices=22)
+        )
         self.assertFalse(is_valid_list_of_vertices([[0, 0, 1], [3, 4, 3]], number_of_vertices=101))
 
     def test_valid_array_of_vertices(self):

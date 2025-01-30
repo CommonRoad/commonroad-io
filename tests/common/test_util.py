@@ -155,6 +155,20 @@ class TestInterval(unittest.TestCase):
         self.assertFalse(-1.0 in Interval(0, 2))
         self.assertFalse(3.0 in Interval(0, 2))
 
+    def test_hash(self):
+        a = Interval(0, 2)
+        b = Interval(0, 2)
+        c = Interval(0, 3)
+        self.assertEqual(a.__hash__(), b.__hash__())
+        self.assertNotEqual(a.__hash__(), c.__hash__())
+
+    def test_equality(self):
+        a = Interval(0, 2)
+        b = Interval(0, 2)
+        c = Interval(0, 3)
+        self.assertTrue(a.__eq__(b))
+        self.assertFalse(a.__eq__(c))
+
 
 class TestAngleInterval(unittest.TestCase):
     def test__contains__(self):

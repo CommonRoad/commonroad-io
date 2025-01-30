@@ -56,16 +56,28 @@ class TestTrafficSignInterpreter(unittest.TestCase):
             user_one_way={RoadUser.VEHICLE},
         )
         traffic_sign_one = TrafficSign(
-            201, [TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, ["20"])], {100}, np.array([0.0, 2])
+            201,
+            [TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, ["20"])],
+            {100},
+            np.array([0.0, 2]),
         )
         traffic_sign_two = TrafficSign(
-            202, [TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, ["30"])], {101}, np.array([0.0, 4])
+            202,
+            [TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, ["30"])],
+            {101},
+            np.array([0.0, 4]),
         )
         traffic_sign_three = TrafficSign(
-            203, [TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, ["40"])], {102}, np.array([0.0, 5])
+            203,
+            [TrafficSignElement(TrafficSignIDZamunda.MAX_SPEED, ["40"])],
+            {102},
+            np.array([0.0, 5]),
         )
         traffic_sign_four = TrafficSign(
-            204, [TrafficSignElement(TrafficSignIDZamunda.MIN_SPEED, ["50"])], {103}, np.array([0.0, 5])
+            204,
+            [TrafficSignElement(TrafficSignIDZamunda.MIN_SPEED, ["50"])],
+            {103},
+            np.array([0.0, 5]),
         )
 
         lanelet_network = LaneletNetwork().create_from_lanelet_list(
@@ -76,7 +88,9 @@ class TestTrafficSignInterpreter(unittest.TestCase):
         lanelet_network.add_traffic_sign(traffic_sign_three, {102})
         lanelet_network.add_traffic_sign(traffic_sign_four, {103})
 
-        self.interpreter = TrafficSignInterpreter(SupportedTrafficSignCountry.ZAMUNDA, lanelet_network)
+        self.interpreter = TrafficSignInterpreter(
+            SupportedTrafficSignCountry.ZAMUNDA, lanelet_network
+        )
 
     def test_speed_limit(self):
         self.assertEqual(20, self.interpreter.speed_limit(frozenset({100, 101, 102})))

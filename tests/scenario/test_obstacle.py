@@ -49,7 +49,10 @@ class TestObstacle(unittest.TestCase):
         initial_shape_lanelet_ids = {1, 2}
         initial_center_lanelet_ids = {3, 4}
         initial_signal_state = SignalState(braking_lights=True, time_step=1)
-        signal_series = [SignalState(braking_lights=True, time_step=2), SignalState(indicator_right=True, time_step=3)]
+        signal_series = [
+            SignalState(braking_lights=True, time_step=2),
+            SignalState(indicator_right=True, time_step=3),
+        ]
         obstacle_id = 100
         obstacle_type = ObstacleType.CAR
         obstacle_role = ObstacleRole.DYNAMIC
@@ -66,7 +69,9 @@ class TestObstacle(unittest.TestCase):
         initial_state = state_list[1]
         shape = Rectangle(5.1, 2.6, np.array([0, 0]), 0)
         initial_meta_information_state = MetaInformationState(meta_data_int={"1": 1, "2": 2})
-        another_meta_information_state = MetaInformationState(meta_data_bool={"1": True, "2": False})
+        another_meta_information_state = MetaInformationState(
+            meta_data_bool={"1": True, "2": False}
+        )
         meta_information_series = [initial_meta_information_state, another_meta_information_state]
         external_dataset_id = 3
         history = state_list[:1]
@@ -101,7 +106,9 @@ class TestObstacle(unittest.TestCase):
         self.assertEqual(dynamic_obstacle.initial_center_lanelet_ids, initial_center_lanelet_ids)
         self.assertEqual(dynamic_obstacle.initial_signal_state, initial_signal_state)
         self.assertEqual(dynamic_obstacle.signal_series, signal_series)
-        self.assertEqual(dynamic_obstacle.initial_meta_information_state, initial_meta_information_state)
+        self.assertEqual(
+            dynamic_obstacle.initial_meta_information_state, initial_meta_information_state
+        )
         self.assertEqual(dynamic_obstacle.meta_information_series, meta_information_series)
         self.assertEqual(dynamic_obstacle.external_dataset_id, external_dataset_id)
         self.assertEqual(dynamic_obstacle.history, history)
@@ -112,7 +119,10 @@ class TestObstacle(unittest.TestCase):
 
     def test_signal_state_at_time_step(self):
         initial_signal_state = SignalState(braking_lights=True, time_step=0)
-        signal_series = [SignalState(braking_lights=True, time_step=1), SignalState(indicator_right=True, time_step=2)]
+        signal_series = [
+            SignalState(braking_lights=True, time_step=1),
+            SignalState(indicator_right=True, time_step=2),
+        ]
         obstacle_id = 100
         obstacle_type = ObstacleType.CAR
 
@@ -176,7 +186,9 @@ class TestObstacle(unittest.TestCase):
             obstacle_id=30,
             obstacle_type=ObstacleType.PARKED_VEHICLE,
             prediction=prediction,
-            initial_state=InitialState(**{"position": np.array([0, 0]), "orientation": 0, "time_step": 0}),
+            initial_state=InitialState(
+                **{"position": np.array([0, 0]), "orientation": 0, "time_step": 0}
+            ),
             obstacle_shape=rect,
         )
 
@@ -193,7 +205,9 @@ class TestObstacle(unittest.TestCase):
 
         # check transformation of occupancies
         for i in range(3):
-            np.testing.assert_array_almost_equal(dynamic_obs.occupancy_at_time(i).shape.center, target_statelist[i])
+            np.testing.assert_array_almost_equal(
+                dynamic_obs.occupancy_at_time(i).shape.center, target_statelist[i]
+            )
 
         # rotation
         dynamic_obs.translate_rotate(np.array([0, 0]), -0.3)
@@ -204,7 +218,10 @@ class TestObstacle(unittest.TestCase):
         initial_state = InitialState(**{"position": np.array([10.1, 5.1]), "orientation": 0.33})
         rect = Rectangle(5.1, 2.6)
         static_obs = StaticObstacle(
-            obstacle_id=30, obstacle_type=ObstacleType.PARKED_VEHICLE, obstacle_shape=rect, initial_state=initial_state
+            obstacle_id=30,
+            obstacle_type=ObstacleType.PARKED_VEHICLE,
+            obstacle_shape=rect,
+            initial_state=initial_state,
         )
         time_step = 10
 
@@ -226,14 +243,18 @@ class TestObstacle(unittest.TestCase):
         dynamic_obs = DynamicObstacle(
             obstacle_id=30,
             obstacle_type=ObstacleType.PARKED_VEHICLE,
-            initial_state=InitialState(**{"position": np.array([0, 0]), "orientation": 0.0, "time_step": 0}),
+            initial_state=InitialState(
+                **{"position": np.array([0, 0]), "orientation": 0.0, "time_step": 0}
+            ),
             obstacle_shape=rect,
             prediction=prediction,
         )
 
         for i in range(5):
             if i <= 3:
-                np.testing.assert_array_equal(dynamic_obs.occupancy_at_time(i).shape.center, state_list[i].position)
+                np.testing.assert_array_equal(
+                    dynamic_obs.occupancy_at_time(i).shape.center, state_list[i].position
+                )
             else:
                 assert dynamic_obs.occupancy_at_time(i) is None
 
@@ -245,7 +266,9 @@ class TestObstacle(unittest.TestCase):
             KSState(position=np.array([1.0, 1.0]), orientation=0.3, time_step=2),
             KSState(position=np.array([2.0, 1.0]), orientation=0.3, time_step=3),
         ]
-        initial_state = InitialState(**{"position": np.array([0, 0]), "orientation": 0.0, "time_step": 0})
+        initial_state = InitialState(
+            **{"position": np.array([0, 0]), "orientation": 0.0, "time_step": 0}
+        )
         trajectory = Trajectory(1, state_list[1:])
         prediction = TrajectoryPrediction(trajectory, rect)
 
@@ -259,11 +282,19 @@ class TestObstacle(unittest.TestCase):
 
         for i in range(5):
             if i == 0:
-                np.testing.assert_array_equal(dynamic_obs.state_at_time(i).position, initial_state.position)
-                self.assertEqual(dynamic_obs.state_at_time(i).orientation, initial_state.orientation)
+                np.testing.assert_array_equal(
+                    dynamic_obs.state_at_time(i).position, initial_state.position
+                )
+                self.assertEqual(
+                    dynamic_obs.state_at_time(i).orientation, initial_state.orientation
+                )
             elif 1 <= i <= 3:
-                np.testing.assert_array_equal(dynamic_obs.state_at_time(i).position, state_list[i].position)
-                self.assertEqual(dynamic_obs.state_at_time(i).orientation, state_list[i].orientation)
+                np.testing.assert_array_equal(
+                    dynamic_obs.state_at_time(i).position, state_list[i].position
+                )
+                self.assertEqual(
+                    dynamic_obs.state_at_time(i).orientation, state_list[i].orientation
+                )
             else:
                 assert dynamic_obs.state_at_time(i) is None
 
@@ -298,7 +329,9 @@ class TestObstacle(unittest.TestCase):
 
         self.assertEqual(phantom_obstacle.obstacle_id, phantom_obstacle_id)
         self.assertEqual(phantom_obstacle.obstacle_role, phantom_obstacle_role)
-        np.testing.assert_array_almost_equal(s1.vertices, phantom_obstacle.occupancy_at_time(2).shape.vertices)
+        np.testing.assert_array_almost_equal(
+            s1.vertices, phantom_obstacle.occupancy_at_time(2).shape.vertices
+        )
         np.testing.assert_array_almost_equal(
             s3.shapes[0].vertices, phantom_obstacle.occupancy_at_time(3).shape.shapes[0].vertices
         )
@@ -308,11 +341,15 @@ class TestObstacle(unittest.TestCase):
 
     def test_update_initial_state(self):
         rect = Rectangle(5.1, 2.6)
-        trajectory = Trajectory(1, [KSState(position=np.array([0.0, 1.0]), orientation=0.3, time_step=1)])
+        trajectory = Trajectory(
+            1, [KSState(position=np.array([0.0, 1.0]), orientation=0.3, time_step=1)]
+        )
         prediction = TrajectoryPrediction(trajectory, rect)
         signal_series = [SignalState(indicator_right=True, time_step=1)]
 
-        initial_state = InitialState(**{"position": np.array([0, 0]), "orientation": 0.0, "time_step": 0})
+        initial_state = InitialState(
+            **{"position": np.array([0, 0]), "orientation": 0.0, "time_step": 0}
+        )
         initial_signal_state = SignalState(braking_lights=True, time_step=0)
         initial_center_lanelet_ids = {1, 2}
         initial_shape_lanelet_ids = {3, 4}
@@ -329,19 +366,26 @@ class TestObstacle(unittest.TestCase):
             signal_series=signal_series,
         )
 
-        current_state = KSState(position=np.array([1.0, 1.0]), orientation=0.3, time_step=1).convert_state_to_state(
-            InitialState()
-        )
+        current_state = KSState(
+            position=np.array([1.0, 1.0]), orientation=0.3, time_step=1
+        ).convert_state_to_state(InitialState())
         current_signal_state = SignalState(braking_lights=False, time_step=1)
         current_center_lanelet_ids = {11, 22}
         current_shape_lanelet_ids = {33, 44}
         dynamic_obs.update_initial_state(
-            current_state, current_signal_state, current_center_lanelet_ids, current_shape_lanelet_ids
+            current_state,
+            current_signal_state,
+            current_center_lanelet_ids,
+            current_shape_lanelet_ids,
         )
         self.assertIsNone(dynamic_obs.prediction, "Prediction should be deleted")
-        self.assertEqual(dynamic_obs.initial_state, current_state, "Initial state should be updated")
         self.assertEqual(
-            dynamic_obs.initial_signal_state, current_signal_state, "Initial signal state should be updated"
+            dynamic_obs.initial_state, current_state, "Initial state should be updated"
+        )
+        self.assertEqual(
+            dynamic_obs.initial_signal_state,
+            current_signal_state,
+            "Initial signal state should be updated",
         )
         self.assertEqual(
             dynamic_obs.initial_center_lanelet_ids,
@@ -353,9 +397,13 @@ class TestObstacle(unittest.TestCase):
             current_shape_lanelet_ids,
             "Initial shape lanelet ids should be updated",
         )
-        self.assertEqual(dynamic_obs.history, [initial_state], "Old initial state should be appended to history")
         self.assertEqual(
-            dynamic_obs.signal_history, [initial_signal_state], "Old initial signal state should be appended to history"
+            dynamic_obs.history, [initial_state], "Old initial state should be appended to history"
+        )
+        self.assertEqual(
+            dynamic_obs.signal_history,
+            [initial_signal_state],
+            "Old initial signal state should be appended to history",
         )
         self.assertEqual(
             dynamic_obs.center_lanelet_ids_history[-1],
@@ -370,7 +418,9 @@ class TestObstacle(unittest.TestCase):
 
     def test_update_initial_state_delete(self):
         rect = Rectangle(5.1, 2.6)
-        initial_state = InitialState(**{"position": np.array([2.0, 2.0]), "orientation": 0.3, "time_step": 2})
+        initial_state = InitialState(
+            **{"position": np.array([2.0, 2.0]), "orientation": 0.3, "time_step": 2}
+        )
         initial_signal_state = SignalState(braking_lights=True, time_step=2)
         initial_center_lanelet_ids = {1, 2}
         initial_shape_lanelet_ids = {3, 4}
@@ -413,7 +463,9 @@ class TestObstacle(unittest.TestCase):
         )
         self.assertLessEqual(len(dynamic_obs.history), max_length, "History should be truncated")
         self.assertEqual(
-            dynamic_obs.history, history[1:] + [initial_state], "History should be shifted to include current state"
+            dynamic_obs.history,
+            history[1:] + [initial_state],
+            "History should be shifted to include current state",
         )
         self.assertEqual(
             dynamic_obs.signal_history,
@@ -433,9 +485,14 @@ class TestObstacle(unittest.TestCase):
 
     def test_update_initial_state_assertion(self):
         rect = Rectangle(5.1, 2.6)
-        initial_state = InitialState(**{"position": np.array([2.0, 2.0]), "orientation": 0.3, "time_step": 0})
+        initial_state = InitialState(
+            **{"position": np.array([2.0, 2.0]), "orientation": 0.3, "time_step": 0}
+        )
         dynamic_obs = DynamicObstacle(
-            obstacle_id=30, obstacle_type=ObstacleType.CAR, obstacle_shape=rect, initial_state=initial_state
+            obstacle_id=30,
+            obstacle_type=ObstacleType.CAR,
+            obstacle_shape=rect,
+            initial_state=initial_state,
         )
         current_state = KSState(position=np.array([3.0, 3.0]), orientation=0.3, time_step=1)
 
@@ -444,7 +501,9 @@ class TestObstacle(unittest.TestCase):
 
     def test_update_prediction(self):
         rect = Rectangle(5.1, 2.6)
-        initial_state = InitialState(**{"position": np.array([2.0, 2.0]), "orientation": 0.3, "time_step": 0})
+        initial_state = InitialState(
+            **{"position": np.array([2.0, 2.0]), "orientation": 0.3, "time_step": 0}
+        )
         initial_signal_state = SignalState(braking_lights=True, time_step=0)
         dynamic_obs = DynamicObstacle(
             obstacle_id=30,
@@ -454,14 +513,18 @@ class TestObstacle(unittest.TestCase):
             initial_signal_state=initial_signal_state,
         )
 
-        trajectory = Trajectory(1, [KSState(position=np.array([0.0, 1.0]), orientation=0.3, time_step=1)])
+        trajectory = Trajectory(
+            1, [KSState(position=np.array([0.0, 1.0]), orientation=0.3, time_step=1)]
+        )
         prediction = TrajectoryPrediction(trajectory, rect)
 
         signal_series = [SignalState(braking_lights=False, time_step=1)]
 
         dynamic_obs.update_prediction(prediction, signal_series)
         self.assertEqual(dynamic_obs.prediction, prediction, "Prediction should be updated")
-        self.assertEqual(dynamic_obs.signal_series, signal_series, "Signal series should be updated")
+        self.assertEqual(
+            dynamic_obs.signal_series, signal_series, "Signal series should be updated"
+        )
 
     def test_hash(self):
         state_list = [
