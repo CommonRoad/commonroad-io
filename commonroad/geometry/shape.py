@@ -594,6 +594,66 @@ class ShapeGroup(Shape):
             s.draw(renderer, draw_params)
 
 
+class SemiTrailerTruck(Shape):
+    """represents the shape of a truck-trailer-system. The origin is the position of the truck's rear axle"""
+
+    def __init__(self,
+                 truck: Rectangle = Rectangle(5.1, 2.55),
+                 trailer: Rectangle = Rectangle(13.6, 2.55),
+                 truck_dist_from_rear_to_rear_axle: float = 0.5,
+                 truck_dist_from_rear_to_hitch: float = 1.0,
+                 trailer_dist_from_front_to_hitch: float = 0.9,
+                 cabin_length: float = 2.5):
+        """
+        :param truck: shape of the truck.
+        :param trailer: shape of the trailer.
+        """
+        self.truck = truck
+        self.trailer = trailer
+        self.truck_dist_from_rear_to_rear_axle = truck_dist_from_rear_to_rear_axle
+        self.truck_dist_from_rear_to_hitch = truck_dist_from_rear_to_hitch
+        self.trailer_dist_from_front_to_hitch = trailer_dist_from_front_to_hitch
+        self.cabin_length = cabin_length
+        self._shape_group = ShapeGroup([truck, trailer])
+
+    def __eq__(self, other):
+        if not isinstance(other, SemiTrailerTruck):
+            warnings.warn(f"Inequality between TruckTrailer {repr(self)} and different type {type(other)}")
+            return False
+
+        return self._shape_group == other._shape_group  # TODO add
+
+    def __hash__(self):
+        return self._shape_group.__hash__() # TODO add
+
+    def translate_rotate(self, translation: np.ndarray, angle: float) -> "TruckTrailer":
+        # If there is a good reason to support this operation, they can be implemented here.
+        # As this class is only intended to be used to represent a vehicle shape, this operation
+        # does not make sense. Same holds for :rotate_translate_local.
+        raise NotImplementedError("TruckTrailer does not support rotation and translation")
+
+    def rotate_translate_local(self, translation: np.ndarray, angle: float) -> "TruckTrailer":
+        return SemiTrailerTruck(
+                self.truck.rotate_translate_local(translation, angle),
+                self.trailer.rotate_translate_local(translation, angle),
+                self.truck_dist_from_rear_to_rear_axle,
+                self.truck_dist_from_rear_to_hitch,
+                self.trailer_dist_from_front_to_hitch,
+                self.cabin_length
+        )
+
+    def contains_point(self, point: np.array):
+        return self._shape_group.contains_point(point)
+
+    def __str__(self):
+        output = "TruckTrailer: \n"
+        # FIXME add stuff
+        return output
+
+    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None):
+        self._shape_group.draw(renderer, draw_params)
+
+
 def occupancy_shape_from_state(shape, state):
     if state.is_uncertain_position or state.is_uncertain_orientation:
         # From M. Althoff and J. M. Dolan, “Online Verification of Automated Road Vehicles Using Reachability Analysis,”
