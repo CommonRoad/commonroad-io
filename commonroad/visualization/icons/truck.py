@@ -99,7 +99,7 @@ def create_origin_patch(origin: np.ndarray):
 
 def draw_truck_icon(
     state: TraceState,
-    shape: Shape,
+    shape: Shape = SemiTrailerTruck.create_default(),
     zorder: float = 5,
     vehicle_color: str = "#ffffff",
     edgecolor="black",

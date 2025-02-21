@@ -16,7 +16,7 @@ rnd = MPRenderer()
 
 shape = SemiTrailerTruck.create_default()
 # You can also use a normal rectangle as vehicle shape:
-shape = Rectangle(width=2.0, length=10.0)
+# shape = Rectangle(width=2.0, length=10.0)
 
 initial_state = InitialState(position=np.array([0, 0]), orientation=0, velocity=0, time_step=0)
 ego_veh = DynamicObstacle(0, ObstacleType.TRUCK, shape, initial_state)
