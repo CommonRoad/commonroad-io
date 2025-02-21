@@ -63,7 +63,7 @@ from commonroad.visualization.draw_params import (
     VehicleSignalParams,
 )
 from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.icons import get_obstacle_icon_patch, supported_icons
+from commonroad.visualization.icons.icons import get_obstacle_icon_patch, supported_icons
 from commonroad.visualization.renderer import IRenderer
 from commonroad.visualization.traffic_sign import draw_traffic_light_signs
 from commonroad.visualization.util import (
