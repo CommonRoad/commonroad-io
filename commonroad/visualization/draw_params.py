@@ -96,6 +96,8 @@ class ShapeParams(BaseParam):
     # NOTE: This parameter is currently only valid for Collision Polygons created by the CommonRoad-Drivability-Checker
     # and has no effect for the Polygon class defined in commonroad-io.geometry.shape
     draw_mesh: bool = False
+    # Add x to vehicle's icon at its reference position. Currently only implemented for trucks.
+    show_ref_position: bool = False
 
 
 @dataclass

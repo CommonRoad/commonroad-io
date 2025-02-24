@@ -105,6 +105,7 @@ def draw_truck_icon(
     edgecolor="black",
     lw=0.5,
     opacity=1,
+    show_ref_position: bool = False,
 ):
     """Return the patches of the truck icon.
 
@@ -141,7 +142,8 @@ def draw_truck_icon(
         for part in truck_components_transformed + trailer_components_transformed
     ]
 
-    patch_list += [create_origin_patch(state.position)]
+    if show_ref_position:
+        patch_list += [create_origin_patch(state.position)]
 
     hitch_point = np.array(
         [[shape.truck_dist_from_rear_to_hitch - shape.truck_dist_from_rear_to_rear_axle, 0]]

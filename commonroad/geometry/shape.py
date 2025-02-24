@@ -704,7 +704,7 @@ class SemiTrailerTruck(Shape):
     def translate_rotate(self, translation: np.ndarray, angle: float) -> "TruckTrailer":
         # If there is a good reason to support this operation, they can be implemented here.
         # As this class is only intended to be used to represent a vehicle shape, this operation
-        # does not make sense. Same holds for :rotate_translate_local.
+        # does not make sense.
         raise NotImplementedError("TruckTrailer does not support rotation and translation")
 
     def rotate_translate_local(self, translation: np.ndarray, angle: float) -> "TruckTrailer":
@@ -723,9 +723,10 @@ class SemiTrailerTruck(Shape):
         return self._shape_group.contains_point(point)
 
     def __str__(self):
-        output = "TruckTrailer: \n"
-        # FIXME add stuff
-        return output
+        return (
+            f"Truck ({self.truck.width:.2f}x{self.truck.length:.2f}) "
+            f"with semi-trailer ({self.trailer.width:.2f}x{self.trailer.length:.2f})\n"
+        )
 
     def draw(
         self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None

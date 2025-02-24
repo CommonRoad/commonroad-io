@@ -588,6 +588,7 @@ class MPRenderer(IRenderer):
             if inital_state is not None:
                 vehicle_color = draw_params.vehicle_shape.occupancy.shape.facecolor
                 vehicle_edge_color = draw_params.vehicle_shape.occupancy.shape.edgecolor
+                show_ref_position = draw_params.vehicle_shape.occupancy.shape.show_ref_position
                 self.obstacle_patches.extend(
                     get_obstacle_icon_patch(
                         obj.obstacle_type,
@@ -597,6 +598,7 @@ class MPRenderer(IRenderer):
                         edgecolor=vehicle_edge_color,
                         zorder=zorder,
                         opacity=opacity,
+                        show_ref_position=show_ref_position,
                     )
                 )
         elif draw_icon is True:

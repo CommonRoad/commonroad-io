@@ -14,6 +14,7 @@ def draw_car_icon(
     edgecolor="black",
     lw=0.5,
     opacity=1,
+    show_ref_position: bool = False,
 ):
     """Return the patches of the car icon.
 

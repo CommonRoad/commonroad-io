@@ -45,13 +45,16 @@ ego_params.time_begin = 1
 ego_params.time_end = 1
 ego_params.draw_icon = True
 ego_params.trajectory.draw_trajectory = False
-ego_params.vehicle_shape.occupancy.shape.facecolor = "orange"
+ego_params.vehicle_shape.occupancy.shape.facecolor = "#00ff00"
 ego_params.vehicle_shape.occupancy.shape.zorder = 105
+ego_params.vehicle_shape.occupancy.shape.show_ref_position = False
 ego_veh.draw(rnd, draw_params=ego_params)
 
 rnd.render()
 plt.axis("equal")
-# rnd.ax.axis('off')
+rnd.ax.axis("off")
+
+plt.savefig("truck_1.svg")
 
 plt.show()
 
