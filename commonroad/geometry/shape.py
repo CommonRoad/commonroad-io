@@ -594,6 +594,146 @@ class ShapeGroup(Shape):
             s.draw(renderer, draw_params)
 
 
+class SemiTrailerTruck(Shape):
+    """represents the shape of a truck-trailer-system. The origin is the position of the truck's rear axle"""
+
+    def __init__(
+        self,
+        truck: Rectangle,
+        trailer: Rectangle,
+        truck_dist_from_front_to_front_axle: float,
+        truck_dist_from_rear_to_rear_axle: float,
+        truck_dist_from_rear_to_hitch: float,
+        trailer_dist_from_front_to_hitch: float,
+        truck_wheelbase: float,
+        cabin_length: float,
+    ):
+        """
+        :param truck: shape of the truck.
+        :param trailer: shape of the trailer.
+        """
+        assert np.allclose(
+            truck_wheelbase
+            + truck_dist_from_front_to_front_axle
+            + truck_dist_from_rear_to_rear_axle,
+            truck.length,
+        )
+
+        self.truck = truck
+        self.trailer = trailer
+        self.truck_dist_from_front_to_front_axle = truck_dist_from_front_to_front_axle
+        self.truck_dist_from_rear_to_rear_axle = truck_dist_from_rear_to_rear_axle
+        self.truck_dist_from_rear_to_hitch = truck_dist_from_rear_to_hitch
+        self.trailer_dist_from_front_to_hitch = trailer_dist_from_front_to_hitch
+        self.truck_wheelbase = truck_wheelbase
+        self.cabin_length = cabin_length
+        self._shape_group = ShapeGroup([truck, trailer])
+
+    @staticmethod
+    def create_default() -> "SemiTrailerTruck":
+        return SemiTrailerTruck(
+            truck=Rectangle(5.1, 2.55),
+            trailer=Rectangle(13.6, 2.55),
+            truck_dist_from_front_to_front_axle=1.0,
+            truck_dist_from_rear_to_rear_axle=0.5,
+            truck_dist_from_rear_to_hitch=1.0,
+            trailer_dist_from_front_to_hitch=0.9,
+            truck_wheelbase=3.6,
+            cabin_length=2.5,
+        )
+
+    @staticmethod
+    def from_rectangle(rect: Rectangle) -> "SemiTrailerTruck":
+        default_truck = SemiTrailerTruck.create_default()
+        length_scale = rect.length / default_truck.total_length
+        truck = Rectangle(length_scale * default_truck.truck.length, rect.width)
+        trailer = Rectangle(length_scale * default_truck.trailer.length, rect.width)
+        return SemiTrailerTruck(
+            truck,
+            trailer,
+            length_scale * default_truck.truck_dist_from_front_to_front_axle,
+            length_scale * default_truck.truck_dist_from_rear_to_rear_axle,
+            length_scale * default_truck.truck_dist_from_rear_to_hitch,
+            length_scale * default_truck.trailer_dist_from_front_to_hitch,
+            length_scale * default_truck.truck_wheelbase,
+            length_scale * default_truck.cabin_length,
+        )
+
+    @property
+    def total_length(self):
+        return (
+            self.truck.length
+            + self.trailer.length
+            - self.truck_dist_from_rear_to_hitch
+            - self.trailer_dist_from_front_to_hitch
+        )
+
+    def __eq__(self, other):
+        if not isinstance(other, SemiTrailerTruck):
+            warnings.warn(
+                f"Inequality between TruckTrailer {repr(self)} and different type {type(other)}"
+            )
+            return False
+
+        return (
+            self.truck == other.truck
+            and self.trailer == other.trailer
+            and self.truck_dist_from_front_to_front_axle
+            == other.truck_dist_from_front_to_front_axle
+            and self.truck_dist_from_rear_to_rear_axle == other.truck_dist_from_rear_to_rear_axle
+            and self.truck_dist_from_rear_to_hitch == other.truck_dist_from_rear_to_hitch
+            and self.trailer_dist_from_front_to_hitch == other.trailer_dist_from_front_to_hitch
+            and self.truck_wheelbase == other.truck_wheelbase
+            and self.cabin_length == other.cabin_length
+        )
+
+    def __hash__(self):
+        return hash(
+            (
+                self.truck,
+                self.trailer,
+                self.truck_dist_from_front_to_front_axle,
+                self.truck_dist_from_rear_to_rear_axle,
+                self.truck_dist_from_rear_to_hitch,
+                self.trailer_dist_from_front_to_hitch,
+                self.truck_wheelbase,
+                self.cabin_length,
+            )
+        )
+
+    def translate_rotate(self, translation: np.ndarray, angle: float) -> "TruckTrailer":
+        # If there is a good reason to support this operation, they can be implemented here.
+        # As this class is only intended to be used to represent a vehicle shape, this operation
+        # does not make sense.
+        raise NotImplementedError("TruckTrailer does not support rotation and translation")
+
+    def rotate_translate_local(self, translation: np.ndarray, angle: float) -> "TruckTrailer":
+        return SemiTrailerTruck(
+            self.truck.rotate_translate_local(translation, angle),
+            self.trailer.rotate_translate_local(translation, angle),
+            self.truck_dist_from_front_to_front_axle,
+            self.truck_dist_from_rear_to_rear_axle,
+            self.truck_dist_from_rear_to_hitch,
+            self.trailer_dist_from_front_to_hitch,
+            self.truck_wheelbase,
+            self.cabin_length,
+        )
+
+    def contains_point(self, point: np.array):
+        return self._shape_group.contains_point(point)
+
+    def __str__(self):
+        return (
+            f"Truck ({self.truck.width:.2f}x{self.truck.length:.2f}) "
+            f"with semi-trailer ({self.trailer.width:.2f}x{self.trailer.length:.2f})\n"
+        )
+
+    def draw(
+        self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[ShapeParams] = None
+    ):
+        self._shape_group.draw(renderer, draw_params)
+
+
 def occupancy_shape_from_state(shape, state):
     if state.is_uncertain_position or state.is_uncertain_orientation:
         # From M. Althoff and J. M. Dolan, “Online Verification of Automated Road Vehicles Using Reachability Analysis,”

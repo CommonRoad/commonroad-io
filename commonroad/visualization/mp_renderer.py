@@ -63,7 +63,7 @@ from commonroad.visualization.draw_params import (
     VehicleSignalParams,
 )
 from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.icons import get_obstacle_icon_patch, supported_icons
+from commonroad.visualization.icons.icons import get_obstacle_icon_patch, supported_icons
 from commonroad.visualization.renderer import IRenderer
 from commonroad.visualization.traffic_sign import draw_traffic_light_signs
 from commonroad.visualization.util import (
@@ -580,36 +580,27 @@ class MPRenderer(IRenderer):
             and obj.obstacle_type in supported_icons()
             and isinstance(obj.prediction, commonroad.prediction.prediction.TrajectoryPrediction)
         ):
-            try:
-                length = obj.obstacle_shape.length
-                width = obj.obstacle_shape.width
-            except AttributeError:
-                draw_shape = True
-                draw_icon = False
-
-            if draw_icon:
-                draw_shape = False
-                if time_begin == obj.initial_state.time_step:
-                    inital_state = obj.initial_state
-                else:
-                    inital_state = obj.prediction.trajectory.state_at_time_step(time_begin)
-                if inital_state is not None:
-                    vehicle_color = draw_params.vehicle_shape.occupancy.shape.facecolor
-                    vehicle_edge_color = draw_params.vehicle_shape.occupancy.shape.edgecolor
-                    self.obstacle_patches.extend(
-                        get_obstacle_icon_patch(
-                            obj.obstacle_type,
-                            inital_state.position[0],
-                            inital_state.position[1],
-                            inital_state.orientation,
-                            vehicle_length=length,
-                            vehicle_width=width,
-                            vehicle_color=vehicle_color,
-                            edgecolor=vehicle_edge_color,
-                            zorder=zorder,
-                            opacity=opacity,
-                        )
+            draw_shape = False
+            if time_begin == obj.initial_state.time_step:
+                inital_state = obj.initial_state
+            else:
+                inital_state = obj.prediction.trajectory.state_at_time_step(time_begin)
+            if inital_state is not None:
+                vehicle_color = draw_params.vehicle_shape.occupancy.shape.facecolor
+                vehicle_edge_color = draw_params.vehicle_shape.occupancy.shape.edgecolor
+                show_ref_position = draw_params.vehicle_shape.occupancy.shape.show_ref_position
+                self.obstacle_patches.extend(
+                    get_obstacle_icon_patch(
+                        obj.obstacle_type,
+                        state=inital_state,
+                        shape=obj.obstacle_shape,
+                        vehicle_color=vehicle_color,
+                        edgecolor=vehicle_edge_color,
+                        zorder=zorder,
+                        opacity=opacity,
+                        show_ref_position=show_ref_position,
                     )
+                )
         elif draw_icon is True:
             draw_shape = True
 
