@@ -4,6 +4,10 @@
 ### Changed
 - Update to new template-repository structure
 - Add test cases for all hash and equality functions，check all CommonRoad element classes
+- Improved icon rendering for semi-trailer truck
+
+### Fixed
+- Github actions static code evaluation and python versions
 
 ## [2024.3] - 2024-12-20
 ### Added
