@@ -106,3 +106,4 @@ select = ["E4", "E7", "E9", "I"]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E402", "F401"]
+"commonroad/common/protobuf/*.py" = ["E402"]
