@@ -854,23 +854,8 @@ class StaticObstacleFactory:
 
         static_obstacle = StaticObstacle(static_obstacle_id, obstacle_type, shape, initial_state)
 
-        if lanelet_assignment is True:
-            rotated_shape = shape.rotate_translate_local(
-                initial_state.position, initial_state.orientation
-            )
-            initial_shape_lanelet_ids = set(lanelet_network.find_lanelet_by_shape(rotated_shape))
-            initial_center_lanelet_ids = set(
-                lanelet_network.find_lanelet_by_position([initial_state.position])[0]
-            )
-            for l_id in initial_shape_lanelet_ids:
-                lanelet_network.find_lanelet_by_id(l_id).add_static_obstacle_to_lanelet(
-                    obstacle_id=static_obstacle_id
-                )
-        else:
-            initial_center_lanelet_ids = None
-            initial_shape_lanelet_ids = None
-        static_obstacle.initial_center_lanelet_ids = initial_center_lanelet_ids
-        static_obstacle.initial_shape_lanelet_ids = initial_shape_lanelet_ids
+        static_obstacle.initial_center_lanelet_ids = None
+        static_obstacle.initial_shape_lanelet_ids = None
 
         if static_obstacle_msg.HasField("initial_signal_state"):
             initial_signal_state = SignalStateFactory.create_from_message(
@@ -906,30 +891,8 @@ class DynamicObstacleFactory:
 
         prediction = None
         if dynamic_obstacle_msg.HasField("trajectory_prediction"):
-            if lanelet_assignment is True:
-                rotated_shape = shape.rotate_translate_local(
-                    initial_state.position, initial_state.orientation
-                )
-                initial_shape_lanelet_ids = set(
-                    lanelet_network.find_lanelet_by_shape(rotated_shape)
-                )
-                initial_center_lanelet_ids = set(
-                    lanelet_network.find_lanelet_by_position([initial_state.position])[0]
-                )
-                for l_id in initial_shape_lanelet_ids:
-                    lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet(
-                        obstacle_id=dynamic_obstacle_id, time_step=initial_state.time_step
-                    )
-            else:
-                initial_shape_lanelet_ids = None
-                initial_center_lanelet_ids = None
-
             prediction = TrajectoryPredictionFactory.create_from_message(
-                dynamic_obstacle_msg.trajectory_prediction,
-                initial_state,
-                lanelet_network,
-                dynamic_obstacle_id,
-                lanelet_assignment,
+                dynamic_obstacle_msg.trajectory_prediction
             )
         elif dynamic_obstacle_msg.HasField("set_based_prediction"):
             prediction = SetBasedPredictionFactory.create_from_message(
@@ -1170,12 +1133,7 @@ class TrajectoryFactory:
 class TrajectoryPredictionFactory:
     @classmethod
     def create_from_message(
-        cls,
-        trajectory_prediction_msg: obstacle_pb2.TrajectoryPrediction,
-        initial_state: InitialState,
-        lanelet_network: LaneletNetwork,
-        obstacle_id: int,
-        lanelet_assignment: bool,
+        cls, trajectory_prediction_msg: obstacle_pb2.TrajectoryPrediction
     ) -> TrajectoryPrediction:
         trajectory = TrajectoryFactory.create_from_message(trajectory_prediction_msg.trajectory)
 
@@ -1183,19 +1141,8 @@ class TrajectoryPredictionFactory:
 
         trajectory_prediction = TrajectoryPrediction(trajectory, shape)
 
-        if lanelet_assignment is True:
-            shape_lanelet_assignment = cls.find_obstacle_shape_lanelets(
-                initial_state, trajectory.state_list, lanelet_network, obstacle_id, shape
-            )
-            center_lanelet_assignment = cls.find_obstacle_center_lanelets(
-                initial_state, trajectory.state_list, lanelet_network
-            )
-        else:
-            shape_lanelet_assignment = None
-            center_lanelet_assignment = None
-
-        trajectory_prediction.center_lanelet_assignment = center_lanelet_assignment
-        trajectory_prediction.shape_lanelet_assignment = shape_lanelet_assignment
+        trajectory_prediction.center_lanelet_assignment = None
+        trajectory_prediction.shape_lanelet_assignment = None
 
         return trajectory_prediction
 
