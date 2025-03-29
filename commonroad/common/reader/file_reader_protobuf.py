@@ -188,9 +188,13 @@ class ProtobufFileReaderDynamic(FileReaderDynamic):
 
 class CommonRoadDynamicFactory:
     @classmethod
-    def create_from_message(cls, commonroad_dynamic_msg: commonroad_dynamic_pb2.CommonRoadDynamic) -> DynamicInterface:
+    def create_from_message(
+        cls, commonroad_dynamic_msg: commonroad_dynamic_pb2.CommonRoadDynamic
+    ) -> DynamicInterface:
         dynamic_information_msg = commonroad_dynamic_msg.dynamic_meta_information
-        dynamic_information = ScenarioMetaInformationFactory.create_from_message(dynamic_information_msg)
+        dynamic_information = ScenarioMetaInformationFactory.create_from_message(
+            dynamic_information_msg
+        )
         environment_msg = commonroad_dynamic_msg.environment
         dynamic_environment = EnvironmentFactory.create_from_message(environment_msg)
 
@@ -216,7 +220,9 @@ class CommonRoadDynamicFactory:
         light_cycle_light_id_dict = dict()
 
         for traffic_light_cycle_msg in commonroad_dynamic_msg.traffic_light_cycle:
-            traffic_light_cycle, tl_id = TrafficLightCycleFactory.create_from_message(traffic_light_cycle_msg)
+            traffic_light_cycle, tl_id = TrafficLightCycleFactory.create_from_message(
+                traffic_light_cycle_msg
+            )
             dynamic.traffic_light_cycle.append(traffic_light_cycle)
             light_cycle_light_id_dict[tl_id] = traffic_light_cycle
 
@@ -272,7 +278,9 @@ class CommonRoadMapFactory:
 
         environment_obstacles = []
         for environment_obstacle_msg in commonroad_map_msg.environment_obstacles:
-            environment_obstacle = EnvironmentObstacleFactory.create_from_message(environment_obstacle_msg)
+            environment_obstacle = EnvironmentObstacleFactory.create_from_message(
+                environment_obstacle_msg
+            )
             environment_obstacles.append(environment_obstacle)
 
         return lanelet_network, environment_obstacles
@@ -285,7 +293,9 @@ class CommonRoadScenarioFactory:
     ) -> ScenarioInterface:
         scenario_meta_information_msg = commonroad_scenario_msg.scenario_meta_information
 
-        information = ScenarioMetaInformationFactory.create_from_message(scenario_meta_information_msg)
+        information = ScenarioMetaInformationFactory.create_from_message(
+            scenario_meta_information_msg
+        )
         map_id = commonroad_scenario_msg.map_id
         dynamic_id = commonroad_scenario_msg.dynamic_id
         scenario = ScenarioInterface(information, map_id, dynamic_id)
@@ -294,7 +304,9 @@ class CommonRoadScenarioFactory:
             planning_problem = PlanningProblemFactory.create_from_message(planning_problem_msg)
             scenario.planning_problems.append(planning_problem)
 
-        for cooperative_planning_problem_msg in commonroad_scenario_msg.cooperative_planning_problems:
+        for (
+            cooperative_planning_problem_msg
+        ) in commonroad_scenario_msg.cooperative_planning_problems:
             cooperative_planning_problem = CooperativePlanningProblemFactory.create_from_message(
                 cooperative_planning_problem_msg
             )
@@ -305,9 +317,13 @@ class CommonRoadScenarioFactory:
 
 class MapMetaInformationFactory:
     @classmethod
-    def create_from_message(cls, map_meta_information_msg: commonroad_map_pb2.MapInformation) -> MapMetaInformation:
+    def create_from_message(
+        cls, map_meta_information_msg: commonroad_map_pb2.MapInformation
+    ) -> MapMetaInformation:
         map_id = MapIDFactory.create_from_message(map_meta_information_msg.map_id)
-        file_information = FileInformationFactory.create_from_message(map_meta_information_msg.file_information)
+        file_information = FileInformationFactory.create_from_message(
+            map_meta_information_msg.file_information
+        )
 
         return MapMetaInformation(map_id, file_information)
 
@@ -317,15 +333,21 @@ class ScenarioMetaInformationFactory:
     def create_from_message(
         cls, scenario_meta_information_msg: scenario_meta_information_pb2.ScenarioMetaInformation
     ) -> ScenarioMetaInformation:
-        scenario_id = ScenarioIDFactory.create_from_message(scenario_meta_information_msg.benchmark_id)
-        file_information = FileInformationFactory.create_from_message(scenario_meta_information_msg.file_information)
+        scenario_id = ScenarioIDFactory.create_from_message(
+            scenario_meta_information_msg.benchmark_id
+        )
+        file_information = FileInformationFactory.create_from_message(
+            scenario_meta_information_msg.file_information
+        )
         time_step_size = scenario_meta_information_msg.time_step_size
         return ScenarioMetaInformation(scenario_id, file_information, time_step_size)
 
 
 class ScenarioIDFactory:
     @classmethod
-    def create_from_message(cls, scenario_id_msg: scenario_meta_information_pb2.ScenarioID) -> ScenarioID:
+    def create_from_message(
+        cls, scenario_id_msg: scenario_meta_information_pb2.ScenarioID
+    ) -> ScenarioID:
         cooperative = scenario_id_msg.cooperative
         scenario_id = MapIDFactory.create_from_message(scenario_id_msg.map_id)
         configuration_id = scenario_id_msg.configuration_id
@@ -353,7 +375,9 @@ class ScenarioIDFactory:
 class MapIDFactory:
     @classmethod
     def create_from_message(cls, map_msg: scenario_meta_information_pb2.MapID) -> ScenarioID:
-        return ScenarioID(country_id=map_msg.country_id, map_name=map_msg.map_name, map_id=map_msg.map_id)
+        return ScenarioID(
+            country_id=map_msg.country_id, map_name=map_msg.map_name, map_id=map_msg.map_id
+        )
 
 
 class FileInformationFactory:
@@ -447,7 +471,9 @@ class EnvironmentFactory:
             environment.weather = Weather[weather]
 
         if environment_msg.HasField("underground"):
-            underground = environment_pb2.UndergroundEnum.Underground.Name(environment_msg.underground)
+            underground = environment_pb2.UndergroundEnum.Underground.Name(
+                environment_msg.underground
+            )
             environment.underground = Underground[underground]
 
         return environment
@@ -555,7 +581,9 @@ class BoundFactory:
         bound = Bound(
             boundary_id,
             np.array(points),
-            LineMarking(str.lower(lanelet_pb2.LineMarkingEnum.LineMarking.Name(bound_msg.line_marking))),
+            LineMarking(
+                str.lower(lanelet_pb2.LineMarkingEnum.LineMarking.Name(bound_msg.line_marking))
+            ),
         )
 
         return bound
@@ -585,7 +613,9 @@ class TrafficSignFactory:
 
         traffic_sign_elements = list()
         for traffic_sign_element_msg in traffic_sign_msg.traffic_sign_elements:
-            traffic_sign_element = TrafficSignElementFactory.create_from_message(traffic_sign_element_msg, country)
+            traffic_sign_element = TrafficSignElementFactory.create_from_message(
+                traffic_sign_element_msg, country
+            )
             traffic_sign_elements.append(traffic_sign_element)
 
         point = PointFactory.create_from_message(traffic_sign_msg.position)
@@ -604,7 +634,9 @@ class TrafficSignValueFactory:
         traffic_sign_id = traffic_sign_value_msg.traffic_sign_id
         traffic_sign_elements = list()
         for traffic_sign_element_msg in traffic_sign_value_msg.traffic_sign_elements:
-            traffic_sign_element = TrafficSignElementFactory.create_from_message(traffic_sign_element_msg)
+            traffic_sign_element = TrafficSignElementFactory.create_from_message(
+                traffic_sign_element_msg
+            )
             traffic_sign_elements.append(traffic_sign_element)
 
         return TrafficSignValue(traffic_sign_id, traffic_sign_elements)
@@ -613,10 +645,14 @@ class TrafficSignValueFactory:
 class TrafficSignElementFactory:
     @classmethod
     def create_from_message(
-        cls, traffic_sign_element_msg: traffic_sign_element_pb2.TrafficSignElement, country: str = "ZAM"
+        cls,
+        traffic_sign_element_msg: traffic_sign_element_pb2.TrafficSignElement,
+        country: str = "ZAM",
     ):
         element_id = TrafficSignIDCountries[country][
-            traffic_sign_element_pb2.TrafficSignIDEnum.TrafficSignID.Name(traffic_sign_element_msg.element_id)
+            traffic_sign_element_pb2.TrafficSignIDEnum.TrafficSignID.Name(
+                traffic_sign_element_msg.element_id
+            )
         ]
         traffic_sign_element = TrafficSignElement(element_id)
 
@@ -642,7 +678,9 @@ class TrafficLightFactory:
 
         for color in traffic_light_msg.color:
             traffic_light.color.append(
-                TrafficLightState[traffic_light_state_pb2.TrafficLightStateEnum.TrafficLightState.Name(color)]
+                TrafficLightState[
+                    traffic_light_state_pb2.TrafficLightStateEnum.TrafficLightState.Name(color)
+                ]
             )
 
         return traffic_light
@@ -672,10 +710,14 @@ class TrafficLightCycleFactory:
 
 class CycleElementFactory:
     @classmethod
-    def create_from_message(cls, cycle_element_msg: traffic_light_cycle_pb2.CycleElement) -> TrafficLightCycleElement:
+    def create_from_message(
+        cls, cycle_element_msg: traffic_light_cycle_pb2.CycleElement
+    ) -> TrafficLightCycleElement:
         duration = cycle_element_msg.duration
         color = TrafficLightState[
-            traffic_light_state_pb2.TrafficLightStateEnum.TrafficLightState.Name(cycle_element_msg.color)
+            traffic_light_state_pb2.TrafficLightStateEnum.TrafficLightState.Name(
+                cycle_element_msg.color
+            )
         ]
         return TrafficLightCycleElement(color, duration)
 
@@ -716,7 +758,9 @@ class AreaBorderFactory:
             area_border.adjacent = adjacent
 
         if area_border_msg.HasField("line_marking"):
-            line_marking = LineMarking[lanelet_pb2.LineMarkingEnum.LineMarking.Name(area_border_msg.line_marking)]
+            line_marking = LineMarking[
+                lanelet_pb2.LineMarkingEnum.LineMarking.Name(area_border_msg.line_marking)
+            ]
             area_border.line_marking = line_marking
 
         return area_border
@@ -749,7 +793,9 @@ class IntersectionFactory:
 
 class IncomingGroupFactory:
     @classmethod
-    def create_from_message(cls, incoming_group_msg: intersection_pb2.IncomingGroup) -> IncomingGroup:
+    def create_from_message(
+        cls, incoming_group_msg: intersection_pb2.IncomingGroup
+    ) -> IncomingGroup:
         incoming = IncomingGroup(incoming_group_msg.incoming_group_id)
         incoming.incoming_lanelets = set(incoming_group_msg.incoming_lanelets)
         if incoming_group_msg.HasField("outgoing_group_id"):
@@ -762,7 +808,9 @@ class IncomingGroupFactory:
 
 class OutgoingGroupFactory:
     @classmethod
-    def create_from_message(cls, outgoing_group_msg: intersection_pb2.OutgoingGroup) -> OutgoingGroup:
+    def create_from_message(
+        cls, outgoing_group_msg: intersection_pb2.OutgoingGroup
+    ) -> OutgoingGroup:
         outgoing_id = outgoing_group_msg.outgoing_group_id
         outgoing_lanelets = set(outgoing_group_msg.outgoing_lanelets)
         incoming_group_id = None
@@ -773,7 +821,9 @@ class OutgoingGroupFactory:
 
 class CrossingGroupFactory:
     @classmethod
-    def create_from_message(cls, crossing_group_msg: intersection_pb2.CrossingGroup) -> CrossingGroup:
+    def create_from_message(
+        cls, crossing_group_msg: intersection_pb2.CrossingGroup
+    ) -> CrossingGroup:
         crossing_id = crossing_group_msg.crossing_group_id
         crossing_lanelets = set(crossing_group_msg.crossing_lanelets)
         incoming_group_id = None
@@ -787,7 +837,9 @@ class CrossingGroupFactory:
 
 class StaticObstacleFactory:
     @classmethod
-    def create_from_message(cls, static_obstacle_msg: static_obstacle_pb2.StaticObstacle) -> StaticObstacle:
+    def create_from_message(
+        cls, static_obstacle_msg: static_obstacle_pb2.StaticObstacle
+    ) -> StaticObstacle:
         static_obstacle_id = static_obstacle_msg.static_obstacle_id
 
         obstacle_type = ObstacleType[
@@ -804,15 +856,15 @@ class StaticObstacleFactory:
 
         if lanelet_assignment is True:
             rotated_shape = shape.rotate_translate_local(
-                    initial_state.position, initial_state.orientation
+                initial_state.position, initial_state.orientation
             )
             initial_shape_lanelet_ids = set(lanelet_network.find_lanelet_by_shape(rotated_shape))
             initial_center_lanelet_ids = set(
-                    lanelet_network.find_lanelet_by_position([initial_state.position])[0]
+                lanelet_network.find_lanelet_by_position([initial_state.position])[0]
             )
             for l_id in initial_shape_lanelet_ids:
                 lanelet_network.find_lanelet_by_id(l_id).add_static_obstacle_to_lanelet(
-                        obstacle_id=static_obstacle_id
+                    obstacle_id=static_obstacle_id
                 )
         else:
             initial_center_lanelet_ids = None
@@ -837,7 +889,9 @@ class StaticObstacleFactory:
 
 class DynamicObstacleFactory:
     @classmethod
-    def create_from_message(cls, dynamic_obstacle_msg: dynamic_obstacle_pb2.DynamicObstacle) -> DynamicObstacle:
+    def create_from_message(
+        cls, dynamic_obstacle_msg: dynamic_obstacle_pb2.DynamicObstacle
+    ) -> DynamicObstacle:
         dynamic_obstacle_id = dynamic_obstacle_msg.dynamic_obstacle_id
 
         obstacle_type = ObstacleType[
@@ -854,28 +908,28 @@ class DynamicObstacleFactory:
         if dynamic_obstacle_msg.HasField("trajectory_prediction"):
             if lanelet_assignment is True:
                 rotated_shape = shape.rotate_translate_local(
-                        initial_state.position, initial_state.orientation
+                    initial_state.position, initial_state.orientation
                 )
                 initial_shape_lanelet_ids = set(
-                        lanelet_network.find_lanelet_by_shape(rotated_shape)
+                    lanelet_network.find_lanelet_by_shape(rotated_shape)
                 )
                 initial_center_lanelet_ids = set(
-                        lanelet_network.find_lanelet_by_position([initial_state.position])[0]
+                    lanelet_network.find_lanelet_by_position([initial_state.position])[0]
                 )
                 for l_id in initial_shape_lanelet_ids:
                     lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet(
-                            obstacle_id=dynamic_obstacle_id, time_step=initial_state.time_step
+                        obstacle_id=dynamic_obstacle_id, time_step=initial_state.time_step
                     )
             else:
                 initial_shape_lanelet_ids = None
                 initial_center_lanelet_ids = None
 
             prediction = TrajectoryPredictionFactory.create_from_message(
-                    dynamic_obstacle_msg.trajectory_prediction,
-                    initial_state,
-                    lanelet_network,
-                    dynamic_obstacle_id,
-                    lanelet_assignment,
+                dynamic_obstacle_msg.trajectory_prediction,
+                initial_state,
+                lanelet_network,
+                dynamic_obstacle_id,
+                lanelet_assignment,
             )
         elif dynamic_obstacle_msg.HasField("set_based_prediction"):
             prediction = SetBasedPredictionFactory.create_from_message(
@@ -901,12 +955,16 @@ class DynamicObstacleFactory:
         dynamic_obstacle.signal_series = signal_states
 
         if dynamic_obstacle_msg.HasField("initial_meta_information_state"):
-            dynamic_obstacle.initial_meta_information_state = MetaInformationStateFactory.create_from_message(
-                dynamic_obstacle_msg.meta_information_state
+            dynamic_obstacle.initial_meta_information_state = (
+                MetaInformationStateFactory.create_from_message(
+                    dynamic_obstacle_msg.meta_information_state
+                )
             )
 
         for meta_information_state_msg in dynamic_obstacle_msg.meta_information_series:
-            meta_information_state = MetaInformationStateFactory.create_from_message(meta_information_state_msg)
+            meta_information_state = MetaInformationStateFactory.create_from_message(
+                meta_information_state_msg
+            )
             dynamic_obstacle.meta_information_series.append(meta_information_state)
 
         if dynamic_obstacle_msg.HasField("external_dataset_id"):
@@ -979,7 +1037,9 @@ class MetaInformationStateFactory:
 
 class StateFactory:
     @classmethod
-    def create_from_message(cls, state_msg: state_pb2.State, is_initial_state: bool = False) -> TraceState:
+    def create_from_message(
+        cls, state_msg: state_pb2.State, is_initial_state: bool = False
+    ) -> TraceState:
         states = [state_class() for state_class in SpecificStateClasses]
 
         used_fields = list()
@@ -1194,12 +1254,18 @@ class CooperativePlanningProblemFactory:
     def create_from_message(
         cls, cooperative_planning_problem_msg: planning_problem_pb2.CooperativePlanningProblem
     ) -> CooperativePlanningProblem:
-        cooperative_planning_problem_id = cooperative_planning_problem_msg.cooperative_planning_problem_id
+        cooperative_planning_problem_id = (
+            cooperative_planning_problem_msg.cooperative_planning_problem_id
+        )
         single_planning_problem_id_list = set()
-        for single_planning_problem_id in cooperative_planning_problem_msg.single_planning_problem_id:
+        for (
+            single_planning_problem_id
+        ) in cooperative_planning_problem_msg.single_planning_problem_id:
             single_planning_problem_id_list.add(single_planning_problem_id)
 
-        return CooperativePlanningProblem(cooperative_planning_problem_id, single_planning_problem_id_list)
+        return CooperativePlanningProblem(
+            cooperative_planning_problem_id, single_planning_problem_id_list
+        )
 
 
 class PlanningProblemFactory:
@@ -1227,7 +1293,9 @@ class PlanningProblemFactory:
 
         scenario_tags = ScenarioTagsFactory.create_from_message(planning_problem_msg.scenario_tags)
 
-        planning_problem = PlanningProblem(planning_problem_id, initial_state, goal_region, scenario_tags)
+        planning_problem = PlanningProblem(
+            planning_problem_id, initial_state, goal_region, scenario_tags
+        )
 
         if planning_problem_msg.HasField("ego_id"):
             planning_problem.ego_id = planning_problem_msg.ego_id

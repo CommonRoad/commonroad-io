@@ -18,7 +18,12 @@ class TestIntersection(unittest.TestCase):
         self._crossing_group1 = CrossingGroup(1231, {1}, self._incoming_id_1, 19)
         self._outgoing_group1 = OutgoingGroup(19, {12, 13, 14, 15, 16, 17})
         self._incoming_1 = IncomingGroup(
-            self._incoming_id_1, lanelets_1, 19, outgoing_right_1, outgoing_straight_1, outgoing_left_1
+            self._incoming_id_1,
+            lanelets_1,
+            19,
+            outgoing_right_1,
+            outgoing_straight_1,
+            outgoing_left_1,
         )
 
         self._incoming_id_2 = 3
@@ -29,7 +34,12 @@ class TestIntersection(unittest.TestCase):
         self._crossing_group2 = CrossingGroup(1232, {2}, self._incoming_id_2, 29)
         self._outgoing_group2 = OutgoingGroup(29, {22, 23, 24, 25, 26, 27})
         self._incoming_2 = IncomingGroup(
-            self._incoming_id_2, lanelets_2, 29, outgoing_right_2, outgoing_straight_2, outgoing_left_2
+            self._incoming_id_2,
+            lanelets_2,
+            29,
+            outgoing_right_2,
+            outgoing_straight_2,
+            outgoing_left_2,
         )
 
         incoming_id_3 = 4
@@ -83,8 +93,12 @@ class TestIntersection(unittest.TestCase):
         outgoing_2 = OutgoingGroup(29, {22, 23, 24, 25, 26, 27})
         crossing_1 = CrossingGroup(1234, {625}, 2, 19)
         crossing_2 = CrossingGroup(1235, {812}, 3, 29)
-        intersection_1 = Intersection(1, [incoming_1, incoming_2], [outgoing_1, outgoing_2], [crossing_1, crossing_2])
-        intersection_2 = Intersection(1, [incoming_1, incoming_2], [outgoing_1, outgoing_2], [crossing_1, crossing_2])
+        intersection_1 = Intersection(
+            1, [incoming_1, incoming_2], [outgoing_1, outgoing_2], [crossing_1, crossing_2]
+        )
+        intersection_2 = Intersection(
+            1, [incoming_1, incoming_2], [outgoing_1, outgoing_2], [crossing_1, crossing_2]
+        )
         self.assertTrue(intersection_1 == intersection_2)
 
         intersection_2 = Intersection(5, [incoming_1, incoming_2], [outgoing_1, outgoing_2])

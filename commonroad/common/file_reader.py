@@ -54,7 +54,9 @@ class CommonRoadFileReader:
     @property
     def file_reader(
         self,
-    ) -> Union[XMLFileReader, ProtobufFileReaderDynamic, ProtobufFileReaderMap, ProtobufFileReaderScenario]:
+    ) -> Union[
+        XMLFileReader, ProtobufFileReaderDynamic, ProtobufFileReaderMap, ProtobufFileReaderScenario
+    ]:
         """
         File reader that reads the file depending on its format.
         """
@@ -63,7 +65,12 @@ class CommonRoadFileReader:
     @file_reader.setter
     def file_reader(
         self,
-        file_reader: Union[XMLFileReader, ProtobufFileReaderDynamic, ProtobufFileReaderScenario, ProtobufFileReaderMap],
+        file_reader: Union[
+            XMLFileReader,
+            ProtobufFileReaderDynamic,
+            ProtobufFileReaderScenario,
+            ProtobufFileReaderMap,
+        ],
     ):
         self._file_reader = file_reader
 
@@ -230,7 +237,9 @@ class CommonRoadFileReader:
             raise NameError("Filename of the 2024 scenario file is missing")
 
         # this function only works with 2024 protobuf files
-        road_network, environment_obstacles = ProtobufFileReaderMap(filename=self.filename_map).open()
+        road_network, environment_obstacles = ProtobufFileReaderMap(
+            filename=self.filename_map
+        ).open()
         scenario = ProtobufFileReaderScenario(filename=self.filename_scenario).open()
         dynamic_pb = ProtobufFileReaderDynamic(filename=self.filename_dynamic).open()
 
@@ -240,7 +249,9 @@ class CommonRoadFileReader:
 
 
 def combine_map_dynamic(
-    road_network: LaneletNetwork, dynamic_interface: DynamicInterface, lanelet_assignment: bool = False
+    road_network: LaneletNetwork,
+    dynamic_interface: DynamicInterface,
+    lanelet_assignment: bool = False,
 ):
     """
     Combines map and dynamic into one scenario.
@@ -280,9 +291,13 @@ def combine_map_dynamic(
             rotated_shape = static_obstacle.obstacle_shape.rotate_translate_local(
                 static_obstacle.initial_state.position, static_obstacle.initial_state.orientation
             )
-            initial_shape_lanelet_ids = set(scenario.lanelet_network.find_lanelet_by_shape(rotated_shape))
+            initial_shape_lanelet_ids = set(
+                scenario.lanelet_network.find_lanelet_by_shape(rotated_shape)
+            )
             initial_center_lanelet_ids = set(
-                scenario.lanelet_network.find_lanelet_by_position([static_obstacle.initial_state.position])[0]
+                scenario.lanelet_network.find_lanelet_by_position(
+                    [static_obstacle.initial_state.position]
+                )[0]
             )
             for l_id in initial_shape_lanelet_ids:
                 scenario.lanelet_network.find_lanelet_by_id(l_id).add_static_obstacle_to_lanelet(
@@ -300,13 +315,18 @@ def combine_map_dynamic(
             rotated_shape = dynamic_obstacle.obstacle_shape.rotate_translate_local(
                 dynamic_obstacle.initial_state.position, dynamic_obstacle.initial_state.orientation
             )
-            initial_shape_lanelet_ids = set(scenario.lanelet_network.find_lanelet_by_shape(rotated_shape))
+            initial_shape_lanelet_ids = set(
+                scenario.lanelet_network.find_lanelet_by_shape(rotated_shape)
+            )
             initial_center_lanelet_ids = set(
-                scenario.lanelet_network.find_lanelet_by_position([dynamic_obstacle.initial_state.position])[0]
+                scenario.lanelet_network.find_lanelet_by_position(
+                    [dynamic_obstacle.initial_state.position]
+                )[0]
             )
             for l_id in initial_shape_lanelet_ids:
                 scenario.lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet(
-                    obstacle_id=dynamic_obstacle.obstacle_id, time_step=dynamic_obstacle.initial_state.time_step
+                    obstacle_id=dynamic_obstacle.obstacle_id,
+                    time_step=dynamic_obstacle.initial_state.time_step,
                 )
             dynamic_obstacle.initial_shape_lanelet_ids = initial_shape_lanelet_ids
             dynamic_obstacle.initial_center_lanelet_ids = initial_center_lanelet_ids

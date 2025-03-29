@@ -30,10 +30,12 @@ for file in xml_files_2020a:
         overwrite_existing_file=OverwriteExistingFile.ALWAYS,
     )
     fw.write_scenario_to_file(
-        os.path.join(output_path, file + "-SC.pb"), overwrite_existing_file=OverwriteExistingFile.ALWAYS
+        os.path.join(output_path, file + "-SC.pb"),
+        overwrite_existing_file=OverwriteExistingFile.ALWAYS,
     )
     fw.write_dynamic_to_file(
-        os.path.join(output_path, file + ".pb"), overwrite_existing_file=OverwriteExistingFile.ALWAYS
+        os.path.join(output_path, file + ".pb"),
+        overwrite_existing_file=OverwriteExistingFile.ALWAYS,
     )
 
 for file in xml_files_2018b:
@@ -44,8 +46,10 @@ for file in xml_files_2018b:
         overwrite_existing_file=OverwriteExistingFile.ALWAYS,
     )
     fw.write_scenario_to_file(
-        os.path.join(output_path, file + "-SC.pb"), overwrite_existing_file=OverwriteExistingFile.ALWAYS
+        os.path.join(output_path, file + "-SC.pb"),
+        overwrite_existing_file=OverwriteExistingFile.ALWAYS,
     )
     fw.write_dynamic_to_file(
-        os.path.join(output_path, file + ".pb"), overwrite_existing_file=OverwriteExistingFile.ALWAYS
+        os.path.join(output_path, file + ".pb"),
+        overwrite_existing_file=OverwriteExistingFile.ALWAYS,
     )

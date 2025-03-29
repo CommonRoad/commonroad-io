@@ -53,7 +53,9 @@ class FileWriter(ABC):
         self.scenario: Scenario = scenario
         self.planning_problem_set: Optional[PlanningProblemSet] = planning_problem_set
         self.author = author if author is not None else scenario.file_information.author
-        self.affiliation = affiliation if affiliation is not None else scenario.file_information.affiliation
+        self.affiliation = (
+            affiliation if affiliation is not None else scenario.file_information.affiliation
+        )
         self.source = source if source is not None else scenario.file_information.source
         self.tags = tags if tags is not None else scenario.tags
 
@@ -158,14 +160,20 @@ class FileWriter(ABC):
         pass
 
     def _handle_file_path(
-        self, filename: Union[str, None], overwrite_existing_file: OverwriteExistingFile, file_type: FileType
+        self,
+        filename: Union[str, None],
+        overwrite_existing_file: OverwriteExistingFile,
+        file_type: FileType,
     ) -> str:
         if filename is None and file_type is FileType.DYNAMIC:
             filename = str(self.scenario.scenario_id) + self._get_suffix()
         if filename is None and file_type is FileType.SCENARIO:
             filename = str(self.scenario.scenario_id) + "-SC" + self._get_suffix()
         if filename is None and file_type is FileType.MAP:
-            filename = str(self.scenario.lanelet_network.meta_information.complete_map_name) + self._get_suffix()
+            filename = (
+                str(self.scenario.lanelet_network.meta_information.complete_map_name)
+                + self._get_suffix()
+            )
 
         if pathlib.Path(filename).is_file():
             if overwrite_existing_file is OverwriteExistingFile.ASK_USER_INPUT:

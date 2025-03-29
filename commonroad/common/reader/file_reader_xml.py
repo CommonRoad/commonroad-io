@@ -274,7 +274,9 @@ class ScenarioFactory:
 
         scenario_id = ScenarioID.from_benchmark_id(benchmark_id, commonroad_version)
         file_information = FileInformation(
-            author=meta_data["author"], affiliation=meta_data["affiliation"], source=meta_data["source"]
+            author=meta_data["author"],
+            affiliation=meta_data["affiliation"],
+            source=meta_data["source"],
         )
         scenario = Scenario(dt, scenario_id, file_information, meta_data["tags"])
 
@@ -319,10 +321,14 @@ class ScenarioFactory:
         for la in scenario.lanelet_network.lanelets:
             if la.left_bound is None:
                 la.left_bound = scenario.generate_object_id()
-                scenario.add_objects([Bound(la.left_bound, la.left_vertices, la.line_marking_left_vertices)])
+                scenario.add_objects(
+                    [Bound(la.left_bound, la.left_vertices, la.line_marking_left_vertices)]
+                )
             if la.right_bound is None:
                 la.right_bound = scenario.generate_object_id()
-                scenario.add_objects([Bound(la.right_bound, la.right_vertices, la.line_marking_right_vertices)])
+                scenario.add_objects(
+                    [Bound(la.right_bound, la.right_vertices, la.line_marking_right_vertices)]
+                )
             if la.stop_line is not None:
                 la.stop_line.stop_line_id = scenario.generate_object_id()
                 scenario.add_objects([la.stop_line])
@@ -412,7 +418,9 @@ class LocationFactory:
     """Class to create a location from an XML element."""
 
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Tuple[Location, Optional[Environment]]:
+    def create_from_xml_node(
+        cls, xml_node: ElementTree.Element
+    ) -> Tuple[Location, Optional[Environment]]:
         """
         :param xml_node: XML element
         :return: location object
@@ -435,7 +443,9 @@ class LocationFactory:
             else:
                 environment = None
 
-            return Location(geo_name_id, gps_latitude, gps_longitude, geo_transformation), environment
+            return Location(
+                geo_name_id, gps_latitude, gps_longitude, geo_transformation
+            ), environment
         else:
             return Location(), None
 
@@ -1205,7 +1215,10 @@ class IntersectionFactory:
             outgoings.append(OutgoingGroupFactory.create_from_xml_node(outgoing_node))
 
         return Intersection(
-            intersection_id=intersection_id, incomings=incomings, outgoings=outgoings, crossings=crossings
+            intersection_id=intersection_id,
+            incomings=incomings,
+            outgoings=outgoings,
+            crossings=crossings,
         )
 
 

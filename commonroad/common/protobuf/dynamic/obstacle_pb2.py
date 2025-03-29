@@ -2,377 +2,470 @@
 # source: obstacle.proto
 
 import sys
-_b=sys.version_info[0]<3 and (lambda x:x) or (lambda x:x.encode('latin1'))
+
+_b = sys.version_info[0] < 3 and (lambda x: x) or (lambda x: x.encode("latin1"))
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
+
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
 
 
-import commonroad.common.protobuf.common.util_pb2 as util__pb2
 import commonroad.common.protobuf.common.state_pb2 as state__pb2
-
+import commonroad.common.protobuf.common.util_pb2 as util__pb2
 
 DESCRIPTOR = _descriptor.FileDescriptor(
-  name='obstacle.proto',
-  package='commonroad_dynamic',
-  syntax='proto2',
-  serialized_options=_b('H\003'),
-  serialized_pb=_b('\n\x0eobstacle.proto\x12\x12\x63ommonroad_dynamic\x1a\nutil.proto\x1a\x0bstate.proto\"\x9c\x02\n\x10ObstacleTypeEnum\"\x87\x02\n\x0cObstacleType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x0b\n\x07\x42ICYCLE\x10\x04\x12\x0e\n\nPEDESTRIAN\x10\x05\x12\x14\n\x10PRIORITY_VEHICLE\x10\x06\x12\x12\n\x0ePARKED_VEHICLE\x10\x07\x12\x15\n\x11\x43ONSTRUCTION_ZONE\x10\x08\x12\t\n\x05TRAIN\x10\t\x12\x11\n\rROAD_BOUNDARY\x10\n\x12\x0e\n\nMOTORCYCLE\x10\x0b\x12\x08\n\x04TAXI\x10\x0c\x12\x0c\n\x08\x42UILDING\x10\r\x12\n\n\x06PILLAR\x10\x0e\x12\x10\n\x0cMEDIAN_STRIP\x10\x0f\x12\x0b\n\x07VEHICLE\x10\x10\"r\n\tOccupancy\x12<\n\ttime_step\x18\x01 \x02(\x0b\x32).commonroad_common.IntegerExactOrInterval\x12\'\n\x05shape\x18\x02 \x02(\x0b\x32\x18.commonroad_common.Shape\"B\n\x0cOccupancySet\x12\x32\n\x0boccupancies\x18\x01 \x03(\x0b\x32\x1d.commonroad_dynamic.Occupancy\"Q\n\nTrajectory\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12(\n\x06states\x18\x02 \x03(\x0b\x32\x18.commonroad_common.State\"s\n\x14TrajectoryPrediction\x12\x32\n\ntrajectory\x18\x01 \x02(\x0b\x32\x1e.commonroad_dynamic.Trajectory\x12\'\n\x05shape\x18\x02 \x02(\x0b\x32\x18.commonroad_common.Shape\"h\n\x12SetBasedPrediction\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12\x37\n\roccupancy_set\x18\x02 \x02(\x0b\x32 .commonroad_dynamic.OccupancySetB\x02H\x03')
-  ,
-  dependencies=[util__pb2.DESCRIPTOR,state__pb2.DESCRIPTOR,])
-
+    name="obstacle.proto",
+    package="commonroad_dynamic",
+    syntax="proto2",
+    serialized_options=_b("H\003"),
+    serialized_pb=_b(
+        '\n\x0eobstacle.proto\x12\x12\x63ommonroad_dynamic\x1a\nutil.proto\x1a\x0bstate.proto"\x9c\x02\n\x10ObstacleTypeEnum"\x87\x02\n\x0cObstacleType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x0b\n\x07\x42ICYCLE\x10\x04\x12\x0e\n\nPEDESTRIAN\x10\x05\x12\x14\n\x10PRIORITY_VEHICLE\x10\x06\x12\x12\n\x0ePARKED_VEHICLE\x10\x07\x12\x15\n\x11\x43ONSTRUCTION_ZONE\x10\x08\x12\t\n\x05TRAIN\x10\t\x12\x11\n\rROAD_BOUNDARY\x10\n\x12\x0e\n\nMOTORCYCLE\x10\x0b\x12\x08\n\x04TAXI\x10\x0c\x12\x0c\n\x08\x42UILDING\x10\r\x12\n\n\x06PILLAR\x10\x0e\x12\x10\n\x0cMEDIAN_STRIP\x10\x0f\x12\x0b\n\x07VEHICLE\x10\x10"r\n\tOccupancy\x12<\n\ttime_step\x18\x01 \x02(\x0b\x32).commonroad_common.IntegerExactOrInterval\x12\'\n\x05shape\x18\x02 \x02(\x0b\x32\x18.commonroad_common.Shape"B\n\x0cOccupancySet\x12\x32\n\x0boccupancies\x18\x01 \x03(\x0b\x32\x1d.commonroad_dynamic.Occupancy"Q\n\nTrajectory\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12(\n\x06states\x18\x02 \x03(\x0b\x32\x18.commonroad_common.State"s\n\x14TrajectoryPrediction\x12\x32\n\ntrajectory\x18\x01 \x02(\x0b\x32\x1e.commonroad_dynamic.Trajectory\x12\'\n\x05shape\x18\x02 \x02(\x0b\x32\x18.commonroad_common.Shape"h\n\x12SetBasedPrediction\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12\x37\n\roccupancy_set\x18\x02 \x02(\x0b\x32 .commonroad_dynamic.OccupancySetB\x02H\x03'
+    ),
+    dependencies=[
+        util__pb2.DESCRIPTOR,
+        state__pb2.DESCRIPTOR,
+    ],
+)
 
 
 _OBSTACLETYPEENUM_OBSTACLETYPE = _descriptor.EnumDescriptor(
-  name='ObstacleType',
-  full_name='commonroad_dynamic.ObstacleTypeEnum.ObstacleType',
-  filename=None,
-  file=DESCRIPTOR,
-  values=[
-    _descriptor.EnumValueDescriptor(
-      name='UNKNOWN', index=0, number=0,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='CAR', index=1, number=1,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='TRUCK', index=2, number=2,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='BUS', index=3, number=3,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='BICYCLE', index=4, number=4,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='PEDESTRIAN', index=5, number=5,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='PRIORITY_VEHICLE', index=6, number=6,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='PARKED_VEHICLE', index=7, number=7,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='CONSTRUCTION_ZONE', index=8, number=8,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='TRAIN', index=9, number=9,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='ROAD_BOUNDARY', index=10, number=10,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='MOTORCYCLE', index=11, number=11,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='TAXI', index=12, number=12,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='BUILDING', index=13, number=13,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='PILLAR', index=14, number=14,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='MEDIAN_STRIP', index=15, number=15,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='VEHICLE', index=16, number=16,
-      serialized_options=None,
-      type=None),
-  ],
-  containing_type=None,
-  serialized_options=None,
-  serialized_start=85,
-  serialized_end=348,
+    name="ObstacleType",
+    full_name="commonroad_dynamic.ObstacleTypeEnum.ObstacleType",
+    filename=None,
+    file=DESCRIPTOR,
+    values=[
+        _descriptor.EnumValueDescriptor(
+            name="UNKNOWN", index=0, number=0, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="CAR", index=1, number=1, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="TRUCK", index=2, number=2, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="BUS", index=3, number=3, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="BICYCLE", index=4, number=4, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="PEDESTRIAN", index=5, number=5, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="PRIORITY_VEHICLE", index=6, number=6, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="PARKED_VEHICLE", index=7, number=7, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="CONSTRUCTION_ZONE", index=8, number=8, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="TRAIN", index=9, number=9, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="ROAD_BOUNDARY", index=10, number=10, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="MOTORCYCLE", index=11, number=11, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="TAXI", index=12, number=12, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="BUILDING", index=13, number=13, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="PILLAR", index=14, number=14, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="MEDIAN_STRIP", index=15, number=15, serialized_options=None, type=None
+        ),
+        _descriptor.EnumValueDescriptor(
+            name="VEHICLE", index=16, number=16, serialized_options=None, type=None
+        ),
+    ],
+    containing_type=None,
+    serialized_options=None,
+    serialized_start=85,
+    serialized_end=348,
 )
 _sym_db.RegisterEnumDescriptor(_OBSTACLETYPEENUM_OBSTACLETYPE)
 
 
 _OBSTACLETYPEENUM = _descriptor.Descriptor(
-  name='ObstacleTypeEnum',
-  full_name='commonroad_dynamic.ObstacleTypeEnum',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-    _OBSTACLETYPEENUM_OBSTACLETYPE,
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=64,
-  serialized_end=348,
+    name="ObstacleTypeEnum",
+    full_name="commonroad_dynamic.ObstacleTypeEnum",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[],
+    extensions=[],
+    nested_types=[],
+    enum_types=[
+        _OBSTACLETYPEENUM_OBSTACLETYPE,
+    ],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=64,
+    serialized_end=348,
 )
 
 
 _OCCUPANCY = _descriptor.Descriptor(
-  name='Occupancy',
-  full_name='commonroad_dynamic.Occupancy',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='time_step', full_name='commonroad_dynamic.Occupancy.time_step', index=0,
-      number=1, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='shape', full_name='commonroad_dynamic.Occupancy.shape', index=1,
-      number=2, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=350,
-  serialized_end=464,
+    name="Occupancy",
+    full_name="commonroad_dynamic.Occupancy",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="time_step",
+            full_name="commonroad_dynamic.Occupancy.time_step",
+            index=0,
+            number=1,
+            type=11,
+            cpp_type=10,
+            label=2,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="shape",
+            full_name="commonroad_dynamic.Occupancy.shape",
+            index=1,
+            number=2,
+            type=11,
+            cpp_type=10,
+            label=2,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=350,
+    serialized_end=464,
 )
 
 
 _OCCUPANCYSET = _descriptor.Descriptor(
-  name='OccupancySet',
-  full_name='commonroad_dynamic.OccupancySet',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='occupancies', full_name='commonroad_dynamic.OccupancySet.occupancies', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=466,
-  serialized_end=532,
+    name="OccupancySet",
+    full_name="commonroad_dynamic.OccupancySet",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="occupancies",
+            full_name="commonroad_dynamic.OccupancySet.occupancies",
+            index=0,
+            number=1,
+            type=11,
+            cpp_type=10,
+            label=3,
+            has_default_value=False,
+            default_value=[],
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=466,
+    serialized_end=532,
 )
 
 
 _TRAJECTORY = _descriptor.Descriptor(
-  name='Trajectory',
-  full_name='commonroad_dynamic.Trajectory',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='initial_time_step', full_name='commonroad_dynamic.Trajectory.initial_time_step', index=0,
-      number=1, type=13, cpp_type=3, label=2,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='states', full_name='commonroad_dynamic.Trajectory.states', index=1,
-      number=2, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=534,
-  serialized_end=615,
+    name="Trajectory",
+    full_name="commonroad_dynamic.Trajectory",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="initial_time_step",
+            full_name="commonroad_dynamic.Trajectory.initial_time_step",
+            index=0,
+            number=1,
+            type=13,
+            cpp_type=3,
+            label=2,
+            has_default_value=False,
+            default_value=0,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="states",
+            full_name="commonroad_dynamic.Trajectory.states",
+            index=1,
+            number=2,
+            type=11,
+            cpp_type=10,
+            label=3,
+            has_default_value=False,
+            default_value=[],
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=534,
+    serialized_end=615,
 )
 
 
 _TRAJECTORYPREDICTION = _descriptor.Descriptor(
-  name='TrajectoryPrediction',
-  full_name='commonroad_dynamic.TrajectoryPrediction',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='trajectory', full_name='commonroad_dynamic.TrajectoryPrediction.trajectory', index=0,
-      number=1, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='shape', full_name='commonroad_dynamic.TrajectoryPrediction.shape', index=1,
-      number=2, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=617,
-  serialized_end=732,
+    name="TrajectoryPrediction",
+    full_name="commonroad_dynamic.TrajectoryPrediction",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="trajectory",
+            full_name="commonroad_dynamic.TrajectoryPrediction.trajectory",
+            index=0,
+            number=1,
+            type=11,
+            cpp_type=10,
+            label=2,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="shape",
+            full_name="commonroad_dynamic.TrajectoryPrediction.shape",
+            index=1,
+            number=2,
+            type=11,
+            cpp_type=10,
+            label=2,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=617,
+    serialized_end=732,
 )
 
 
 _SETBASEDPREDICTION = _descriptor.Descriptor(
-  name='SetBasedPrediction',
-  full_name='commonroad_dynamic.SetBasedPrediction',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='initial_time_step', full_name='commonroad_dynamic.SetBasedPrediction.initial_time_step', index=0,
-      number=1, type=13, cpp_type=3, label=2,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='occupancy_set', full_name='commonroad_dynamic.SetBasedPrediction.occupancy_set', index=1,
-      number=2, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=734,
-  serialized_end=838,
+    name="SetBasedPrediction",
+    full_name="commonroad_dynamic.SetBasedPrediction",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="initial_time_step",
+            full_name="commonroad_dynamic.SetBasedPrediction.initial_time_step",
+            index=0,
+            number=1,
+            type=13,
+            cpp_type=3,
+            label=2,
+            has_default_value=False,
+            default_value=0,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="occupancy_set",
+            full_name="commonroad_dynamic.SetBasedPrediction.occupancy_set",
+            index=1,
+            number=2,
+            type=11,
+            cpp_type=10,
+            label=2,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=734,
+    serialized_end=838,
 )
 
 _OBSTACLETYPEENUM_OBSTACLETYPE.containing_type = _OBSTACLETYPEENUM
-_OCCUPANCY.fields_by_name['time_step'].message_type = util__pb2._INTEGEREXACTORINTERVAL
-_OCCUPANCY.fields_by_name['shape'].message_type = util__pb2._SHAPE
-_OCCUPANCYSET.fields_by_name['occupancies'].message_type = _OCCUPANCY
-_TRAJECTORY.fields_by_name['states'].message_type = state__pb2._STATE
-_TRAJECTORYPREDICTION.fields_by_name['trajectory'].message_type = _TRAJECTORY
-_TRAJECTORYPREDICTION.fields_by_name['shape'].message_type = util__pb2._SHAPE
-_SETBASEDPREDICTION.fields_by_name['occupancy_set'].message_type = _OCCUPANCYSET
-DESCRIPTOR.message_types_by_name['ObstacleTypeEnum'] = _OBSTACLETYPEENUM
-DESCRIPTOR.message_types_by_name['Occupancy'] = _OCCUPANCY
-DESCRIPTOR.message_types_by_name['OccupancySet'] = _OCCUPANCYSET
-DESCRIPTOR.message_types_by_name['Trajectory'] = _TRAJECTORY
-DESCRIPTOR.message_types_by_name['TrajectoryPrediction'] = _TRAJECTORYPREDICTION
-DESCRIPTOR.message_types_by_name['SetBasedPrediction'] = _SETBASEDPREDICTION
+_OCCUPANCY.fields_by_name["time_step"].message_type = util__pb2._INTEGEREXACTORINTERVAL
+_OCCUPANCY.fields_by_name["shape"].message_type = util__pb2._SHAPE
+_OCCUPANCYSET.fields_by_name["occupancies"].message_type = _OCCUPANCY
+_TRAJECTORY.fields_by_name["states"].message_type = state__pb2._STATE
+_TRAJECTORYPREDICTION.fields_by_name["trajectory"].message_type = _TRAJECTORY
+_TRAJECTORYPREDICTION.fields_by_name["shape"].message_type = util__pb2._SHAPE
+_SETBASEDPREDICTION.fields_by_name["occupancy_set"].message_type = _OCCUPANCYSET
+DESCRIPTOR.message_types_by_name["ObstacleTypeEnum"] = _OBSTACLETYPEENUM
+DESCRIPTOR.message_types_by_name["Occupancy"] = _OCCUPANCY
+DESCRIPTOR.message_types_by_name["OccupancySet"] = _OCCUPANCYSET
+DESCRIPTOR.message_types_by_name["Trajectory"] = _TRAJECTORY
+DESCRIPTOR.message_types_by_name["TrajectoryPrediction"] = _TRAJECTORYPREDICTION
+DESCRIPTOR.message_types_by_name["SetBasedPrediction"] = _SETBASEDPREDICTION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-ObstacleTypeEnum = _reflection.GeneratedProtocolMessageType('ObstacleTypeEnum', (_message.Message,), dict(
-  DESCRIPTOR = _OBSTACLETYPEENUM,
-  __module__ = 'obstacle_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad_dynamic.ObstacleTypeEnum)
-  ))
+ObstacleTypeEnum = _reflection.GeneratedProtocolMessageType(
+    "ObstacleTypeEnum",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_OBSTACLETYPEENUM,
+        __module__="obstacle_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad_dynamic.ObstacleTypeEnum)
+    ),
+)
 _sym_db.RegisterMessage(ObstacleTypeEnum)
 
-Occupancy = _reflection.GeneratedProtocolMessageType('Occupancy', (_message.Message,), dict(
-  DESCRIPTOR = _OCCUPANCY,
-  __module__ = 'obstacle_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad_dynamic.Occupancy)
-  ))
+Occupancy = _reflection.GeneratedProtocolMessageType(
+    "Occupancy",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_OCCUPANCY,
+        __module__="obstacle_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad_dynamic.Occupancy)
+    ),
+)
 _sym_db.RegisterMessage(Occupancy)
 
-OccupancySet = _reflection.GeneratedProtocolMessageType('OccupancySet', (_message.Message,), dict(
-  DESCRIPTOR = _OCCUPANCYSET,
-  __module__ = 'obstacle_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad_dynamic.OccupancySet)
-  ))
+OccupancySet = _reflection.GeneratedProtocolMessageType(
+    "OccupancySet",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_OCCUPANCYSET,
+        __module__="obstacle_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad_dynamic.OccupancySet)
+    ),
+)
 _sym_db.RegisterMessage(OccupancySet)
 
-Trajectory = _reflection.GeneratedProtocolMessageType('Trajectory', (_message.Message,), dict(
-  DESCRIPTOR = _TRAJECTORY,
-  __module__ = 'obstacle_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad_dynamic.Trajectory)
-  ))
+Trajectory = _reflection.GeneratedProtocolMessageType(
+    "Trajectory",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_TRAJECTORY,
+        __module__="obstacle_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad_dynamic.Trajectory)
+    ),
+)
 _sym_db.RegisterMessage(Trajectory)
 
-TrajectoryPrediction = _reflection.GeneratedProtocolMessageType('TrajectoryPrediction', (_message.Message,), dict(
-  DESCRIPTOR = _TRAJECTORYPREDICTION,
-  __module__ = 'obstacle_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad_dynamic.TrajectoryPrediction)
-  ))
+TrajectoryPrediction = _reflection.GeneratedProtocolMessageType(
+    "TrajectoryPrediction",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_TRAJECTORYPREDICTION,
+        __module__="obstacle_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad_dynamic.TrajectoryPrediction)
+    ),
+)
 _sym_db.RegisterMessage(TrajectoryPrediction)
 
-SetBasedPrediction = _reflection.GeneratedProtocolMessageType('SetBasedPrediction', (_message.Message,), dict(
-  DESCRIPTOR = _SETBASEDPREDICTION,
-  __module__ = 'obstacle_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad_dynamic.SetBasedPrediction)
-  ))
+SetBasedPrediction = _reflection.GeneratedProtocolMessageType(
+    "SetBasedPrediction",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_SETBASEDPREDICTION,
+        __module__="obstacle_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad_dynamic.SetBasedPrediction)
+    ),
+)
 _sym_db.RegisterMessage(SetBasedPrediction)
 
 

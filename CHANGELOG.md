@@ -12,7 +12,7 @@
 ### Removed
 - Writing 2020a XML and Protobuf scenarios
 - Reading 2020a Protobuf scenarios
-- 
+-
 ## [2025.1] -
 ### Changed
 - Update to new template-repository structure

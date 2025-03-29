@@ -846,7 +846,9 @@ class TrafficSignElement:
 class TrafficSignValue:
     """Class which represents a list of traffic sign elements related to the traffic sign"""
 
-    def __init__(self, traffic_sign_id: int, traffic_sign_elements: List[TrafficSignElement] = None):
+    def __init__(
+        self, traffic_sign_id: int, traffic_sign_elements: List[TrafficSignElement] = None
+    ):
         """
         :param traffic_sign_id: id of the traffic sign
         :param traffic_sign_elements: list of traffic sign elements related to the traffic sign id
@@ -859,7 +861,9 @@ class TrafficSignValue:
 
     def __eq__(self, other):
         if not isinstance(other, TrafficSignValue):
-            warnings.warn(f"Inequality between TrafficSignValue {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between TrafficSignValue {repr(self)} and different type {type(other)}"
+            )
             return False
 
         return (
@@ -877,10 +881,9 @@ class TrafficSignValue:
 
     @traffic_sign_id.setter
     def traffic_sign_id(self, traffic_sign_id: int):
-        assert isinstance(
-            traffic_sign_id, int
-        ), "<TrafficSignValue/traffic_sign_id>: provided traffic sign id is" "not a int! type = {}".format(
-            type(traffic_sign_id)
+        assert isinstance(traffic_sign_id, int), (
+            "<TrafficSignValue/traffic_sign_id>: provided traffic sign id is"
+            "not a int! type = {}".format(type(traffic_sign_id))
         )
         self._traffic_sign_id = traffic_sign_id
 

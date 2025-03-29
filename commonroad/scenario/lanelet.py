@@ -145,7 +145,9 @@ class Lanelet:
         self.center_vertices = center_vertices
         # check if length of each polyline is the same
         assert (
-            len(self.left_vertices[0]) == len(self.center_vertices[0]) == len(self.right_vertices[0])
+            len(self.left_vertices[0])
+            == len(self.center_vertices[0])
+            == len(self.right_vertices[0])
         ), "<Lanelet/init>: Provided polylines do not share the same length! {}/{}/{}".format(
             len(self.left_vertices[0]), len(self.center_vertices[0]), len(self.right_vertices[0])
         )
@@ -1222,7 +1224,11 @@ class LaneletNetwork(IDrawable):
     Class which represents a network of connected lanelets
     """
 
-    def __init__(self, information: MapMetaInformation = MapMetaInformation(), location: Location = Location()):
+    def __init__(
+        self,
+        information: MapMetaInformation = MapMetaInformation(),
+        location: Location = Location(),
+    ):
         """
         Constructor for LaneletNetwork
 
@@ -1545,7 +1551,10 @@ class LaneletNetwork(IDrawable):
                 new_outgoing_left = old_incoming.outgoing_left.intersection(lanelet_ids)
                 new_outgoing_straight = old_incoming.outgoing_straight.intersection(lanelet_ids)
 
-                if len(new_outgoing_left) + len(new_outgoing_straight) + len(new_outgoings_right) < 1:
+                if (
+                    len(new_outgoing_left) + len(new_outgoing_straight) + len(new_outgoings_right)
+                    < 1
+                ):
                     continue
 
                 new_incoming = IncomingGroup(
@@ -1605,10 +1614,14 @@ class LaneletNetwork(IDrawable):
                 copy.deepcopy(lanelet_network.find_traffic_light_by_id(light_id)), set()
             )
         for area_id in area_ids:
-            new_lanelet_network.add_area(copy.deepcopy(lanelet_network.find_area_by_id(area_id)), set())
+            new_lanelet_network.add_area(
+                copy.deepcopy(lanelet_network.find_area_by_id(area_id)), set()
+            )
         for boundary_id in boundary_ids:
             if lanelet_network.find_boundary_by_id(boundary_id) is not None:
-                new_lanelet_network.add_boundary(copy.deepcopy(lanelet_network.find_boundary_by_id(boundary_id)))
+                new_lanelet_network.add_boundary(
+                    copy.deepcopy(lanelet_network.find_boundary_by_id(boundary_id))
+                )
 
         for stop_line_id in stop_line_ids:
             if lanelet_network.find_stop_line_by_id(stop_line_id) is not None:
@@ -1914,10 +1927,16 @@ class LaneletNetwork(IDrawable):
         :param inc_group_id: The id of the incoming group to find
         :return: The incoming group object if the id exists and None otherwise
         """
-        assert is_natural_number(
-            inc_group_id
-        ), "<LaneletNetwork/find_incoming_group_by_id>: " "provided id is not valid! id = {}".format(inc_group_id)
-        incoming = [incg for isec in self.intersections for incg in isec.incomings if incg.incoming_id == inc_group_id]
+        assert is_natural_number(inc_group_id), (
+            "<LaneletNetwork/find_incoming_group_by_id>: "
+            "provided id is not valid! id = {}".format(inc_group_id)
+        )
+        incoming = [
+            incg
+            for isec in self.intersections
+            for incg in isec.incomings
+            if incg.incoming_id == inc_group_id
+        ]
         return incoming[0] if len(incoming) > 0 else None
 
     def find_outgoing_group_by_id(self, outg_group_id: int) -> OutgoingGroup:
@@ -1927,10 +1946,16 @@ class LaneletNetwork(IDrawable):
         :param outg_group_id: The id of the outgoing group to find
         :return: The outgoing group object if the id exists and None otherwise
         """
-        assert is_natural_number(
-            outg_group_id
-        ), "<LaneletNetwork/find_outgoing_group_by_id>: " "provided id is not valid! id = {}".format(outg_group_id)
-        incoming = [incg for isec in self.intersections for incg in isec.incomings if incg.incoming_id == outg_group_id]
+        assert is_natural_number(outg_group_id), (
+            "<LaneletNetwork/find_outgoing_group_by_id>: "
+            "provided id is not valid! id = {}".format(outg_group_id)
+        )
+        incoming = [
+            incg
+            for isec in self.intersections
+            for incg in isec.incomings
+            if incg.incoming_id == outg_group_id
+        ]
         return incoming[0] if len(incoming) > 0 else None
 
     def add_lanelet(self, lanelet: Lanelet, rtree: bool = True):
@@ -2061,10 +2086,9 @@ class LaneletNetwork(IDrawable):
         :param boundary: The boundary to add
         :return: True if the boundary has successfully been added to the network, false otherwise
         """
-        assert isinstance(
-            boundary, Bound
-        ), "<LaneletNetwork/add_boundary>: provided boundary is " "not of type boundary! type = {}".format(
-            type(boundary)
+        assert isinstance(boundary, Bound), (
+            "<LaneletNetwork/add_boundary>: provided boundary is "
+            "not of type boundary! type = {}".format(type(boundary))
         )
 
         # check if boundary already exists in network and warn user
@@ -2083,10 +2107,9 @@ class LaneletNetwork(IDrawable):
         :param lanelet_ids: Lanelets the traffic sign should be referenced from
         :return: True if the stop line has successfully been added to the network, false otherwise
         """
-        assert isinstance(
-            stop_line, StopLine
-        ), "<LaneletNetwork/add_stop_line>: provided stop line is " "not of type stop line! type = {}".format(
-            type(stop_line)
+        assert isinstance(stop_line, StopLine), (
+            "<LaneletNetwork/add_stop_line>: provided stop line is "
+            "not of type stop line! type = {}".format(type(stop_line))
         )
 
         # check if stop line already exists in network and warn user
@@ -2100,7 +2123,9 @@ class LaneletNetwork(IDrawable):
                 if lanelet is not None:
                     lanelet.stop_line = stop_line
                 else:
-                    warnings.warn("Stop line cannot be referenced to lanelet because the lanelet does not exist.")
+                    warnings.warn(
+                        "Stop line cannot be referenced to lanelet because the lanelet does not exist."
+                    )
             return True
 
     def add_intersection(self, intersection: Intersection):

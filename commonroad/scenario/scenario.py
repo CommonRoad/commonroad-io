@@ -106,7 +106,9 @@ class Scenario(IDrawable):
         self.dt: float = dt
         assert isinstance(scenario_id, ScenarioID)
         self.scenario_id = scenario_id
-        self._lanelet_network: LaneletNetwork = LaneletNetwork(MapMetaInformation(scenario_id, file_information))
+        self._lanelet_network: LaneletNetwork = LaneletNetwork(
+            MapMetaInformation(scenario_id, file_information)
+        )
         self._file_information = file_information
 
         self._static_obstacles: Dict[int, StaticObstacle] = defaultdict()
@@ -1066,7 +1068,9 @@ class Scenario(IDrawable):
                 tmp_lanelet = tmp_lanelets.pop()
                 if tmp_lanelet not in outgoing_lanelets:
                     intermediate_lanelets.append(tmp_lanelet)
-                    tmp_succesor_lanelets = self._lanelet_network.find_lanelet_by_id(tmp_lanelet).successor
+                    tmp_succesor_lanelets = self._lanelet_network.find_lanelet_by_id(
+                        tmp_lanelet
+                    ).successor
                     if tmp_succesor_lanelets is not None:
                         for tmp_suc_lanelet in tmp_succesor_lanelets:
                             if tmp_suc_lanelet not in outgoing_lanelets:

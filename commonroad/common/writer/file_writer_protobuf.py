@@ -122,7 +122,9 @@ class ProtobufFileWriter(FileWriter):
         tags: Optional[Set[Tag]] = None,
         decimal_precision: int = 4,
     ):
-        super().__init__(scenario, planning_problem_set, author, affiliation, source, tags, decimal_precision)
+        super().__init__(
+            scenario, planning_problem_set, author, affiliation, source, tags, decimal_precision
+        )
 
         self._commonroad_dynamic_msg = commonroad_dynamic_pb2.CommonRoadDynamic()
         self._commonroad_map_msg = commonroad_map_pb2.CommonRoadMap()
@@ -200,7 +202,9 @@ class ProtobufFileWriter(FileWriter):
                     # We assign the lanelet id as the stop_line_id, as there the stop_line does not contain its own
                     # id as the attribute in the xml format
                     lanelet.stop_line_id = lanelet.lanelet_id
-                stop_line_msg = StopLineMessage.create_message(lanelet.stop_line_id, lanelet.stop_line)
+                stop_line_msg = StopLineMessage.create_message(
+                    lanelet.stop_line_id, lanelet.stop_line
+                )
                 self._commonroad_map_msg.stop_lines.append(stop_line_msg)
 
             self._commonroad_map_msg.lanelets.append(lanelet_msg)
@@ -220,7 +224,9 @@ class ProtobufFileWriter(FileWriter):
             self._commonroad_map_msg.intersections.append(intersection_msg)
 
         for environment_obstacle in self.scenario.environment_obstacle:
-            environment_obstacle_msg = EnvironmentObstacleMessage.create_message(environment_obstacle)
+            environment_obstacle_msg = EnvironmentObstacleMessage.create_message(
+                environment_obstacle
+            )
             self._commonroad_map_msg.environment_obstacles.append(environment_obstacle_msg)
 
     def _add_all_objects_from_scenario_to_dynamic(self):
@@ -248,12 +254,18 @@ class ProtobufFileWriter(FileWriter):
 
         for traffic_sign in self.scenario.lanelet_network.traffic_signs:
             if traffic_sign.traffic_sign_elements is not None:
-                traffic_sign_value = TrafficSignValue(traffic_sign.traffic_sign_id, traffic_sign.traffic_sign_elements)
+                traffic_sign_value = TrafficSignValue(
+                    traffic_sign.traffic_sign_id, traffic_sign.traffic_sign_elements
+                )
                 traffic_sign_value_msg = TrafficSignValueMessage.create_message(traffic_sign_value)
                 self._commonroad_dynamic_msg.traffic_sign_value.append(traffic_sign_value_msg)
 
-        environment = self.scenario.environment if self.scenario.environment is not None else Environment()
-        self._commonroad_dynamic_msg.environment.CopyFrom(EnvironmentMessage.create_message(environment))
+        environment = (
+            self.scenario.environment if self.scenario.environment is not None else Environment()
+        )
+        self._commonroad_dynamic_msg.environment.CopyFrom(
+            EnvironmentMessage.create_message(environment)
+        )
 
     def _add_all_planning_problems_from_planning_problem_set(self):
         """
@@ -358,7 +370,9 @@ class ProtobufFileWriter(FileWriter):
 
         self._write_header_scenario()
         self._add_all_planning_problems_from_planning_problem_set()
-        self._commonroad_scenario_msg.map_id = self.scenario.lanelet_network.meta_information.complete_map_name
+        self._commonroad_scenario_msg.map_id = (
+            self.scenario.lanelet_network.meta_information.complete_map_name
+        )
         self._commonroad_scenario_msg.dynamic_id = str(self.scenario.scenario_id)
 
         self._serialize_write_msg(None, None, filename)
@@ -423,7 +437,13 @@ class MapIDMessage:
 class FileInformationMessage:
     @classmethod
     def create_message(
-        cls, date: Time, author: str, affiliation: str, source: str, license_name: str, license_text: str
+        cls,
+        date: Time,
+        author: str,
+        affiliation: str,
+        source: str,
+        license_name: str,
+        license_text: str,
     ) -> scenario_meta_information_pb2.FileInformation:
         file_information_msg = scenario_meta_information_pb2.FileInformation()
         time_stamp_msg = TimeStampMessage.create_message(
@@ -575,9 +595,13 @@ class EnvironmentMessage:
             time_stamp_msg = TimeStampMessage.create_message(environment.time)
             environment_msg.time.CopyFrom(time_stamp_msg)
         if environment.time_of_day is not None:
-            environment_msg.time_of_day = environment_pb2.TimeOfDayEnum.TimeOfDay.Value(environment.time_of_day.name)
+            environment_msg.time_of_day = environment_pb2.TimeOfDayEnum.TimeOfDay.Value(
+                environment.time_of_day.name
+            )
         if environment.weather is not None:
-            environment_msg.weather = environment_pb2.WeatherEnum.Weather.Value(environment.weather.name)
+            environment_msg.weather = environment_pb2.WeatherEnum.Weather.Value(
+                environment.weather.name
+            )
         if environment.underground is not None:
             environment_msg.underground = environment_pb2.UndergroundEnum.Underground.Value(
                 environment.underground.name
@@ -593,7 +617,9 @@ class AreaBorderMessage:
         area_border_msg.area_border_id = area_border.area_border_id
         area_border_msg.boundary = area_border.boundary
         area_border_msg.adjacent = area_border.adjacent
-        area_border_msg.line_marking = lanelet_pb2.LineMarkingEnum.LineMarking.Value(area_border.line_marking.name)
+        area_border_msg.line_marking = lanelet_pb2.LineMarkingEnum.LineMarking.Value(
+            area_border.line_marking.name
+        )
 
         return area_border_msg
 
@@ -679,7 +705,9 @@ class LaneletMessage:
 
 class BoundMessage:
     @classmethod
-    def create_message(cls, boundary_id: int, vertices: np.ndarray, line_marking: LineMarking) -> lanelet_pb2.Bound:
+    def create_message(
+        cls, boundary_id: int, vertices: np.ndarray, line_marking: LineMarking
+    ) -> lanelet_pb2.Bound:
         bound_msg = lanelet_pb2.Bound()
 
         bound_msg.boundary_id = boundary_id
@@ -707,7 +735,9 @@ class StopLineMessage:
             point_msg = PointMessage.create_message(stop_line.end)
             stop_line_msg.end_point.CopyFrom(point_msg)
 
-        stop_line_msg.line_marking = lanelet_pb2.LineMarkingEnum.LineMarking.Value(stop_line.line_marking.name)
+        stop_line_msg.line_marking = lanelet_pb2.LineMarkingEnum.LineMarking.Value(
+            stop_line.line_marking.name
+        )
         return stop_line_msg
 
 
@@ -736,12 +766,16 @@ class TrafficSignMessage:
 
 class TrafficSignValueMessage:
     @classmethod
-    def create_message(cls, traffic_sign_value: TrafficSignValue) -> traffic_sign_value_pb2.TrafficSignValue:
+    def create_message(
+        cls, traffic_sign_value: TrafficSignValue
+    ) -> traffic_sign_value_pb2.TrafficSignValue:
         traffic_sign_value_msg = traffic_sign_value_pb2.TrafficSignValue()
 
         traffic_sign_value_msg.traffic_sign_id = traffic_sign_value.traffic_sign_id
         for traffic_sign_element in traffic_sign_value.traffic_sign_elements:
-            traffic_sign_element_msg = TrafficSignElementMessage.create_message(traffic_sign_element)
+            traffic_sign_element_msg = TrafficSignElementMessage.create_message(
+                traffic_sign_element
+            )
             traffic_sign_value_msg.traffic_sign_elements.append(traffic_sign_element_msg)
 
         return traffic_sign_value_msg
@@ -749,13 +783,15 @@ class TrafficSignValueMessage:
 
 class TrafficSignElementMessage:
     @classmethod
-    def create_message(cls, traffic_sign_element: TrafficSignElement) -> traffic_sign_element_pb2.TrafficSignElement:
+    def create_message(
+        cls, traffic_sign_element: TrafficSignElement
+    ) -> traffic_sign_element_pb2.TrafficSignElement:
         traffic_sign_element_msg = traffic_sign_element_pb2.TrafficSignElement()
 
         element_id = traffic_sign_element.traffic_sign_element_id
 
-        traffic_sign_element_msg.element_id = traffic_sign_element_pb2.TrafficSignIDEnum.TrafficSignID.Value(
-            element_id.name
+        traffic_sign_element_msg.element_id = (
+            traffic_sign_element_pb2.TrafficSignIDEnum.TrafficSignID.Value(element_id.name)
         )
 
         for additional_value in traffic_sign_element.additional_values:
@@ -814,11 +850,15 @@ class TrafficLightCycleMessage:
 
 class CycleElementMessage:
     @classmethod
-    def create_message(cls, cycle_element: TrafficLightCycleElement) -> traffic_light_cycle_pb2.CycleElement:
+    def create_message(
+        cls, cycle_element: TrafficLightCycleElement
+    ) -> traffic_light_cycle_pb2.CycleElement:
         cycle_element_msg = traffic_light_cycle_pb2.CycleElement()
         cycle_element_msg.duration = cycle_element.duration
-        cycle_element_msg.color = traffic_light_state_pb2.TrafficLightStateEnum.TrafficLightState.Value(
-            cycle_element.state.name
+        cycle_element_msg.color = (
+            traffic_light_state_pb2.TrafficLightStateEnum.TrafficLightState.Value(
+                cycle_element.state.name
+            )
         )
 
         return cycle_element_msg

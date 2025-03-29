@@ -13,7 +13,7 @@ An overview about the structure of the dynamic element is given in \cref{fig:str
 		.2 [0..1] environment.
 		.2 [0..N] traffic\_light\_cycles.
 		.2 [0..N] traffic\_sign\_values.
-		.2 [0..N] static\_obstacles. 
+		.2 [0..N] static\_obstacles.
 		.2 [0..N] dynamic\_obstacles.
 		.2 [0..N] phantom\_obstacles.
 	}
@@ -47,10 +47,10 @@ Some map elements might change between real-world recordings dynamically, e.g., 
 If one would integrate them in the map directly, map sharing between scenarios is not possible.
 
 \subsubsection{Traffic Light Cycle}
-Each phase/color of a \textit{trafficLight} and its duration is defined by the element \textit{cycleElement}. 
-Similarly to the \textit{time} elements, the duration is not given as numeric value, but as integer. 
-The color value inactive indicates that currently no phase is activated, e.g. a green right arrow traffic light can be activated iteratively. 
-The order of the different phases is determined by the order of the \textit{cycleElements} in the element \textit{cycle}. By specifying the element \textit{timeOffset}, the cycle is shifted by this value. 
+Each phase/color of a \textit{trafficLight} and its duration is defined by the element \textit{cycleElement}.
+Similarly to the \textit{time} elements, the duration is not given as numeric value, but as integer.
+The color value inactive indicates that currently no phase is activated, e.g. a green right arrow traffic light can be activated iteratively.
+The order of the different phases is determined by the order of the \textit{cycleElements} in the element \textit{cycle}. By specifying the element \textit{timeOffset}, the cycle is shifted by this value.
 The element \textit{active} can be used to determine whether a traffic light is active or not.
 Each traffic light cycle references the ID of the physical traffic light it corresponds to.
 
@@ -81,7 +81,7 @@ Therefore, we provide the option to specify a concrete sign in the dynamic infor
 	}
 	\caption{Element \textit{trafficSignValue}.}
 	\label{fig:trafficSign}
-\end{figure} 
+\end{figure}
 
 The definition of a \textit{trafficSignElement} can be found in \cref{fig:trafficSignElement}.
 
@@ -89,7 +89,7 @@ The definition of a \textit{trafficSignElement} can be found in \cref{fig:traffi
 \subsection{Dynamic Obstacles}
 Each dynamic obstacle element can have a \textit{type}, where we currently support the following types: \textit{car, truck, bus, motorcycle, bicycle, pedestrian, priorityVehicle, train, phantom, unknown}.
 The structure of a dynamic obstacle is shown in \cref{fig:dynamicObstacle}.
-Please note that only elements of either of the following three behavior models may be present: with known behavior, with unknown behavior, or with unknown stochastic behavior. 
+Please note that only elements of either of the following three behavior models may be present: with known behavior, with unknown behavior, or with unknown stochastic behavior.
 We do not use these different behavior models together for dynamic obstacles within one traffic scenario.
 Dynamic obstacle can also contain additional meta information for each time step and an ID to an obstacle from another dateset.
 This information might be helpful when working with CommonRoad scenarios created from external datasets.
@@ -107,10 +107,10 @@ This information might be helpful when working with CommonRoad scenarios created
 		.2 [0..1] occupancySet \quad \# dynamic with unknown behavior.
 		.3 [1..N] occupancy\\\hspace*{-0.5cm}OR.
 		.2 [0..1] probabilityDistribution \quad \# dynamic with unknown stochastic behavior.
-		.2 [0..1] initialSignalState. 
+		.2 [0..1] initialSignalState.
 		.2 [0..1] signalSeries.
 		.3 [1..N] signalState.
-		.2 [0..1] initialMetaInformationState. 
+		.2 [0..1] initialMetaInformationState.
 		.2 [0..1] metaInformationSeries.
 		.3 [1..N] metaInformationState.
 		.2 [0..1] externalDatasetID.
@@ -119,18 +119,18 @@ This information might be helpful when working with CommonRoad scenarios created
 	\label{fig:dynamicObstacle}
 \end{figure}
 
-The dimensions of an obstacle is specified by the element \textit{shape} (cf. \cref{subsec:auxiliary}), and its initial configuration by the element \textit{initialState}. 
+The dimensions of an obstacle is specified by the element \textit{shape} (cf. \cref{subsec:auxiliary}), and its initial configuration by the element \textit{initialState}.
 Additionally, the element \textit{initialSignalState} and \textit{initialMetaInformationState} can be included, to account for properties which are not related to the movement of an obstacle, e.g., whether the indicators are turned on or off or metrics like the safe distance to the preceding vehicle.
 
 \paragraph{Initial state}
-The configuration of an obstacle at the initial time ($ t = 0$) is specified by the element \textit{initialState} with the following state variables: \textit{position}, \textit{orientation}, \textit{time}, \textit{velocity} (scalar),  \textit{acceleration} (scalar), \textit{yawRate}, and \textit{slipAngle}, as shown in Fig.~\ref{fig:initialState}. 
+The configuration of an obstacle at the initial time ($ t = 0$) is specified by the element \textit{initialState} with the following state variables: \textit{position}, \textit{orientation}, \textit{time}, \textit{velocity} (scalar),  \textit{acceleration} (scalar), \textit{yawRate}, and \textit{slipAngle}, as shown in Fig.~\ref{fig:initialState}.
 
 \begin{figure}[!htpb]
 	\small
 	\dirtree{%
 		.1 /.
 		.2 initialState.
-		.3 [1] position.		
+		.3 [1] position.
 		.3 [1] orientation.
 		.3 [1] time.
 		.4 [1] exact.
@@ -148,12 +148,12 @@ The configuration of an obstacle at the initial time ($ t = 0$) is specified by 
 
 
 \subsection{Dynamic Obstacles with Known Behavior}
-A dynamic obstacle with known behavior contains a trajectory of states a series of signals, and meta-information series (cf. \cref{fig:dynamicObstacle}). 
-The trajectory allows us to represent the states of a dynamic traffic participant along a path for $t > 0$. 
+A dynamic obstacle with known behavior contains a trajectory of states a series of signals, and meta-information series (cf. \cref{fig:dynamicObstacle}).
+The trajectory allows us to represent the states of a dynamic traffic participant along a path for $t > 0$.
 The signal series allows to model non-physical properties of a dynamic obstacle, e.g. horn or lights for $t > 0$.
 
 \paragraph{States}
-The time-discrete states of a trajectory are specified by the element \textit{state}, e.g., with the following state variables: \textit{position}, \textit{orientation}, and \textit{time}, \textit{velocity} (scalar),  \textit{acceleration} (scalar), \textit{yawRate}, and \textit{slipAngle}, as shown in Fig.~\ref{fig:state}. 
+The time-discrete states of a trajectory are specified by the element \textit{state}, e.g., with the following state variables: \textit{position}, \textit{orientation}, and \textit{time}, \textit{velocity} (scalar),  \textit{acceleration} (scalar), \textit{yawRate}, and \textit{slipAngle}, as shown in Fig.~\ref{fig:state}.
 The available states are based on the CommonRoad vehicle-models.
 The CommonRoad vehicle-model documentation contains all available state elements.
 %Note that we optionally include acceleration as a state variable for obstacles to provide additional information, e.g. for motion prediction, even though acceleration is often used as input for vehicle models.
@@ -199,7 +199,7 @@ The \textit{initialSignalState} is defined as the signal series state, except th
 
 \paragraph{Meta Information Series State}
 The time-discrete states of a meta information series are specified by the element \textit{metaInformationState} (cf. \cref{fig:metaInformationState}).
-Since the meta data might be different for each scenario, i.e., name and type of the meta-data, we define it as dictionaries (aka maps) for the data types string, boolean, float, and int, where the name of the data is the key. 
+Since the meta data might be different for each scenario, i.e., name and type of the meta-data, we define it as dictionaries (aka maps) for the data types string, boolean, float, and int, where the name of the data is the key.
 The \textit{initialMetaInformationState} is defined as the meta information series state, except that the initial time is pre-defined ($ t = 0$) as for normal and signal series states.
 
 \begin{figure}[!htpb]
@@ -218,8 +218,8 @@ The \textit{initialMetaInformationState} is defined as the meta information seri
 
 
 \subsubsection{Dynamic Obstacles with Unknown Behavior}
-For motion planning, we often do not know the exact future behavior of dynamic obstacles, but we instead represent their future behavior by bounded sets. 
-Thus, dynamic obstacles with a unknown behavior are specified by an \textit{occupancy set}, which represents the occupied area over time by bounded sets. 
+For motion planning, we often do not know the exact future behavior of dynamic obstacles, but we instead represent their future behavior by bounded sets.
+Thus, dynamic obstacles with a unknown behavior are specified by an \textit{occupancy set}, which represents the occupied area over time by bounded sets.
 As shown in Fig.~\ref{fig:dynamicObstacle}, an \textit{occupancy set} contains a list of \textit{occupancy} elements.
 
 
@@ -235,7 +235,7 @@ The \textit{occupancy} element consists of a shape (occupied area) and a time, a
 		.3 [1] time.
 		.4 [1] exact\\OR.
 		.4 [1] intervalStart.
-		.4 [1] intervalEnd.		
+		.4 [1] intervalEnd.
 	}
 	\caption{Element \textit{occupancy} of an occupancy set.}
 	\label{fig:occupancy}
@@ -243,10 +243,10 @@ The \textit{occupancy} element consists of a shape (occupied area) and a time, a
 
 
 \subsubsection{Dynamic Obstacles with Unknown Stochastic Behavior}
-One can describe unknown stochastic behavior by probability distributions of states. 
-Since many different probability distributions are used, we only provide a placeholder for probability distributions. 
+One can describe unknown stochastic behavior by probability distributions of states.
+Since many different probability distributions are used, we only provide a placeholder for probability distributions.
 \todo{Note that this element needs further refinement.}
-\todo{Further details will follow.} 
+\todo{Further details will follow.}
 
 %\begin{lstlisting}
 %<obstacle id='60'>
@@ -301,10 +301,10 @@ We support the following types for static obstacles: pillar, road cone, ...
 	}
 	\caption{Element \textit{staticObstacle}.}
 	\label{fig:staticObstacle}
-\end{figure} 
+\end{figure}
 
 \subsection{Phantom Obstalces}
-The element \textit{phantomObstacle} is used to specify potential occluded obstacles. 
+The element \textit{phantomObstacle} is used to specify potential occluded obstacles.
 They are not specified by a trajectory, but an occupancy set, similar as dynamic obstacles with unknown behavior.
 They do not have an initial state.
 The initial state is included in the occupancy set.
@@ -320,4 +320,4 @@ The initial state is included in the occupancy set.
 	}
 	\caption{Element \textit{phantomObstacle}.}
 	\label{fig:phantomObstacle}
-\end{figure} 
+\end{figure}

@@ -3,9 +3,9 @@
 \section{Introduction}
 \label{sec:introduction}
 \subsection{Overview about CommonRoad}
-With \textit{CommonRoad}\cite{Althoff2017a}\footnote{\href{https://commonroad.in.tum.de}{commonroad.in.tum.de}} one can store driving scenarios. The scenarios can be loaded and processed by many tools available in the CommonRoad framework, e.g., drivability-checker, route planner, motion planners.  
-The scenarios can be stored in two formats which are Protocol Buffers\footnote{https://protobuf.dev/} and XML files (currently only up to version 2020a). 
-In this documentation, we present the definition of CommonRoad scenarios, which are composed of (1) a formal representation of the road network (see Section~\ref{subsec:lanelets}-\ref{subsec:intersections}), (2) static and dynamic obstacles (see Section~\ref{subsec:obstacles}), and (3) the planning problem of the ego vehicle(s) (see Section~\ref{subsec:egoVehicles}). 
+With \textit{CommonRoad}\cite{Althoff2017a}\footnote{\href{https://commonroad.in.tum.de}{commonroad.in.tum.de}} one can store driving scenarios. The scenarios can be loaded and processed by many tools available in the CommonRoad framework, e.g., drivability-checker, route planner, motion planners.
+The scenarios can be stored in two formats which are Protocol Buffers\footnote{https://protobuf.dev/} and XML files (currently only up to version 2020a).
+In this documentation, we present the definition of CommonRoad scenarios, which are composed of (1) a formal representation of the road network (see Section~\ref{subsec:lanelets}-\ref{subsec:intersections}), (2) static and dynamic obstacles (see Section~\ref{subsec:obstacles}), and (3) the planning problem of the ego vehicle(s) (see Section~\ref{subsec:egoVehicles}).
 Additionally, all of the mentioned components consists of meta information describing the element (see Section~\ref{subsec:meta}).
 %In non-collaborative scenarios, only one planning problem exists, while in collaborating scenarios several planning problems have to be solved.
 
@@ -22,10 +22,9 @@ The attribute names might vary between the different representations (XML, Proto
 For a quick reference, we summarize the major changes of version 2024a compared to version 2020a:
 \begin{itemize}
 \item New intersection definition
-\item Separation into three files: map, dynamic, scenario 
+\item Separation into three files: map, dynamic, scenario
 \item Additional elements for link to licenses and license text
 \item Area for modelling parking lots, bus stops, or any other "drivable area" which is difficult to model via lanelets (concept derived from lanelet2 format)
 \item Meta-information series for obstacles
-\item Boundary definition separated from lanelet 
+\item Boundary definition separated from lanelet
 \end{itemize}
-

@@ -72,14 +72,22 @@ from commonroad.scenario.trajectory import Trajectory
 class TestXMLFileReader(unittest.TestCase):
     def setUp(self):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
-        self.filename_all = self.cwd_path + "/../test_scenarios/xml/2020a/ZAM_TestReadingAll-1_1_T-1.xml"
-        self.filename_urban = (
-            self.cwd_path + "/../test_scenarios/xml/2020a/ZAM_TestReadingIntersectionTrafficSign-1_1_T-1.xml"
+        self.filename_all = (
+            self.cwd_path + "/../test_scenarios/xml/2020a/ZAM_TestReadingAll-1_1_T-1.xml"
         )
-        self.filename_lanelets = self.cwd_path + "/../test_scenarios/xml/2020a/ZAM_TestReadingLanelets-1_1_T-1.xml"
-        self.filename_obstacle = self.cwd_path + "/../test_scenarios/xml/2020a/ZAM_TestReadingObstacles-1_1_T-1.xml"
+        self.filename_urban = (
+            self.cwd_path
+            + "/../test_scenarios/xml/2020a/ZAM_TestReadingIntersectionTrafficSign-1_1_T-1.xml"
+        )
+        self.filename_lanelets = (
+            self.cwd_path + "/../test_scenarios/xml/2020a/ZAM_TestReadingLanelets-1_1_T-1.xml"
+        )
+        self.filename_obstacle = (
+            self.cwd_path + "/../test_scenarios/xml/2020a/ZAM_TestReadingObstacles-1_1_T-1.xml"
+        )
         self.filename_planning_problem = (
-            self.cwd_path + "/../test_scenarios/xml/2018b/ZAM_TestReadingPlanningProblem-1_1_T-1.xml"
+            self.cwd_path
+            + "/../test_scenarios/xml/2018b/ZAM_TestReadingPlanningProblem-1_1_T-1.xml"
         )
         self.filename_2018b = self.cwd_path + "/../test_scenarios/xml/2018b/USA_Lanker-1_1_T-1.xml"
 
@@ -252,7 +260,9 @@ class TestXMLFileReader(unittest.TestCase):
 
         self.scenario = Scenario(
             0.1,
-            ScenarioID.from_benchmark_id("ZAM_TestReadingAll-1_1_T-1", scenario_version=SCENARIO_VERSION),
+            ScenarioID.from_benchmark_id(
+                "ZAM_TestReadingAll-1_1_T-1", scenario_version=SCENARIO_VERSION
+            ),
             tags=tags,
         )
         self.lanelet_network.location = location
@@ -379,7 +389,12 @@ class TestXMLFileReader(unittest.TestCase):
                     outgoing_left={25},
                 ),
             ],
-            outgoings=[OutgoingGroup(1, {1}), OutgoingGroup(2, {2}), OutgoingGroup(3, {3}), OutgoingGroup(4, {4})],
+            outgoings=[
+                OutgoingGroup(1, {1}),
+                OutgoingGroup(2, {2}),
+                OutgoingGroup(3, {3}),
+                OutgoingGroup(4, {4}),
+            ],
             crossings=[CrossingGroup(401, {32}, 302, 1)],
         )
 
@@ -989,10 +1004,18 @@ class TestXMLFileReader(unittest.TestCase):
 
         exp_intersection_301_id = self.intersection_301.intersection_id
         exp_intersection_301_incoming_zero_id = self.intersection_301.incomings[0].incoming_id
-        exp_intersection_301_incoming_zero_incoming_lanelets = self.intersection_301.incomings[0].incoming_lanelets
-        exp_intersection_301_incoming_zero_successors_left = self.intersection_301.incomings[0].outgoing_left
-        exp_intersection_301_incoming_zero_successors_right = self.intersection_301.incomings[0].outgoing_right
-        exp_intersection_301_incoming_zero_successors_straight = self.intersection_301.incomings[0].outgoing_straight
+        exp_intersection_301_incoming_zero_incoming_lanelets = self.intersection_301.incomings[
+            0
+        ].incoming_lanelets
+        exp_intersection_301_incoming_zero_successors_left = self.intersection_301.incomings[
+            0
+        ].outgoing_left
+        exp_intersection_301_incoming_zero_successors_right = self.intersection_301.incomings[
+            0
+        ].outgoing_right
+        exp_intersection_301_incoming_zero_successors_straight = self.intersection_301.incomings[
+            0
+        ].outgoing_straight
 
         xml_file = CommonRoadFileReader(self.filename_urban).open()
         np.testing.assert_array_equal(
@@ -1391,70 +1414,134 @@ class TestProtobufFileReader(unittest.TestCase):
         self.out_path = self.cwd_path + "/../.pytest_cache"
 
         #  Carcarana
-        self.filename_carcarana_xml = self.cwd_path + "/../test_scenarios/xml/2020a/ARG_Carcarana-4_5_T-1.xml"
-        self.filename_carcarana_map_pb = self.cwd_path + "/../test_scenarios/protobuf/ARG_Carcarana-4.pb"
-        self.filename_carcarana_scenario_pb = self.cwd_path + "/../test_scenarios/protobuf/ARG_Carcarana-4_5_T-1-SC.pb"
-        self.filename_carcarana_dynamic_pb = self.cwd_path + "/../test_scenarios/protobuf/ARG_Carcarana-4_5_T-1.pb"
+        self.filename_carcarana_xml = (
+            self.cwd_path + "/../test_scenarios/xml/2020a/ARG_Carcarana-4_5_T-1.xml"
+        )
+        self.filename_carcarana_map_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/ARG_Carcarana-4.pb"
+        )
+        self.filename_carcarana_scenario_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/ARG_Carcarana-4_5_T-1-SC.pb"
+        )
+        self.filename_carcarana_dynamic_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/ARG_Carcarana-4_5_T-1.pb"
+        )
 
         #  Starnberg
-        self.filename_starnberg_xml = self.cwd_path + "/../test_scenarios/xml/2020a/DEU_Starnberg-1_1_T-1.xml"
-        self.filename_starnberg_map_pb = self.cwd_path + "/../test_scenarios/protobuf/DEU_Starnberg-1.pb"
-        self.filename_starnberg_scenario_pb = self.cwd_path + "/../test_scenarios/protobuf/DEU_Starnberg-1_1_T-1-SC.pb"
-        self.filename_starnberg_dynamic_pb = self.cwd_path + "/../test_scenarios/protobuf/DEU_Starnberg-1_1_T-1.pb"
+        self.filename_starnberg_xml = (
+            self.cwd_path + "/../test_scenarios/xml/2020a/DEU_Starnberg-1_1_T-1.xml"
+        )
+        self.filename_starnberg_map_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/DEU_Starnberg-1.pb"
+        )
+        self.filename_starnberg_scenario_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/DEU_Starnberg-1_1_T-1-SC.pb"
+        )
+        self.filename_starnberg_dynamic_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/DEU_Starnberg-1_1_T-1.pb"
+        )
 
         #  Anglet
-        self.filename_anglet_xml = self.cwd_path + "/../test_scenarios/xml/2020a/FRA_Anglet-1_1_T-1.xml"
+        self.filename_anglet_xml = (
+            self.cwd_path + "/../test_scenarios/xml/2020a/FRA_Anglet-1_1_T-1.xml"
+        )
         self.filename_anglet_map_pb = self.cwd_path + "/../test_scenarios/protobuf/FRA_Anglet-1.pb"
-        self.filename_anglet_scenario_pb = self.cwd_path + "/../test_scenarios/protobuf/FRA_Anglet-1_1_T-1-SC.pb"
-        self.filename_anglet_dynamic_pb = self.cwd_path + "/../test_scenarios/protobuf/FRA_Anglet-1_1_T-1.pb"
+        self.filename_anglet_scenario_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/FRA_Anglet-1_1_T-1-SC.pb"
+        )
+        self.filename_anglet_dynamic_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/FRA_Anglet-1_1_T-1.pb"
+        )
 
         #  Peach
-        self.filename_peach_xml = self.cwd_path + "/../test_scenarios/xml/2020a/USA_Peach-4_8_T-1.xml"
+        self.filename_peach_xml = (
+            self.cwd_path + "/../test_scenarios/xml/2020a/USA_Peach-4_8_T-1.xml"
+        )
         self.filename_peach_map_pb = self.cwd_path + "/../test_scenarios/protobuf/USA_Peach-4.pb"
-        self.filename_peach_scenario_pb = self.cwd_path + "/../test_scenarios/protobuf/USA_Peach-4_8_T-1-SC.pb"
-        self.filename_peach_dynamic_pb = self.cwd_path + "/../test_scenarios/protobuf/USA_Peach-4_8_T-1.pb"
+        self.filename_peach_scenario_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/USA_Peach-4_8_T-1-SC.pb"
+        )
+        self.filename_peach_dynamic_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/USA_Peach-4_8_T-1.pb"
+        )
 
         #  All
-        self.filename_all_xml = self.cwd_path + "/../test_scenarios/xml/2020a/ZAM_TestReadingAll-1_1_T-1.xml"
-        self.filename_all_map_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingAll-1.pb"
-        self.filename_all_scenario_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingAll-1_1_T-1-SC.pb"
-        self.filename_all_dynamic_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingAll-1_1_T-1.pb"
+        self.filename_all_xml = (
+            self.cwd_path + "/../test_scenarios/xml/2020a/ZAM_TestReadingAll-1_1_T-1.xml"
+        )
+        self.filename_all_map_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingAll-1.pb"
+        )
+        self.filename_all_scenario_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingAll-1_1_T-1-SC.pb"
+        )
+        self.filename_all_dynamic_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingAll-1_1_T-1.pb"
+        )
 
         #  KS State
-        self.filename_ks_xml = self.cwd_path + "/../test_scenarios/2018b/ZAM_TestReadingKsState-1_1_T-1.xml"
-        self.filename_ks_map_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingKsState-1.pb"
+        self.filename_ks_xml = (
+            self.cwd_path + "/../test_scenarios/2018b/ZAM_TestReadingKsState-1_1_T-1.xml"
+        )
+        self.filename_ks_map_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingKsState-1.pb"
+        )
         self.filename_ks_scenario_pb = (
             self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingKsState-1_1_T-1-SC.pb"
         )
-        self.filename_ks_dynamic_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingKsState-1_1_T-1.pb"
+        self.filename_ks_dynamic_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingKsState-1_1_T-1.pb"
+        )
 
         #  PM State
-        self.filename_pm_xml = self.cwd_path + "/../test_scenarios/ZAM_TestReadingPmState-1_1_T-1.xml"
-        self.filename_pm_map_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingPmState-1.pb"
+        self.filename_pm_xml = (
+            self.cwd_path + "/../test_scenarios/ZAM_TestReadingPmState-1_1_T-1.xml"
+        )
+        self.filename_pm_map_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingPmState-1.pb"
+        )
         self.filename_pm_scenario_pb = (
             self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingPmState-1_1_T-1-SC.pb"
         )
-        self.filename_pm_dynamic_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingPmState-1_1_T-1.pb"
+        self.filename_pm_dynamic_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingPmState-1_1_T-1.pb"
+        )
 
         #  ST State
-        self.filename_st_xml = self.cwd_path + "/../test_scenarios/ZAM_TestReadingStState-1_1_T-1.xml"
-        self.filename_st_map_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingStState-1.pb"
+        self.filename_st_xml = (
+            self.cwd_path + "/../test_scenarios/ZAM_TestReadingStState-1_1_T-1.xml"
+        )
+        self.filename_st_map_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingStState-1.pb"
+        )
         self.filename_st_scenario_pb = (
             self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingStState-1_1_T-1-SC.pb"
         )
-        self.filename_st_dynamic_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingStState-1_1_T-1.pb"
+        self.filename_st_dynamic_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingStState-1_1_T-1.pb"
+        )
 
         #  STD State
-        self.filename_std_xml = self.cwd_path + "/../test_scenarios/ZAM_TestReadingStdState-1_1_T-1.xml"
-        self.filename_std_map_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingStdState-1.pb"
+        self.filename_std_xml = (
+            self.cwd_path + "/../test_scenarios/ZAM_TestReadingStdState-1_1_T-1.xml"
+        )
+        self.filename_std_map_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingStdState-1.pb"
+        )
         self.filename_std_scenario_pb = (
             self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingStdState-1_1_T-1-SC.pb"
         )
-        self.filename_std_dynamic_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingStdState-1_1_T-1.pb"
+        self.filename_std_dynamic_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingStdState-1_1_T-1.pb"
+        )
 
         #  Custom State
-        self.filename_custom_xml = self.cwd_path + "/../test_scenarios/ZAM_TestReadingCustomState-1_1_T-1.xml"
-        self.filename_custom_map_pb = self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingCustomState-1.pb"
+        self.filename_custom_xml = (
+            self.cwd_path + "/../test_scenarios/ZAM_TestReadingCustomState-1_1_T-1.xml"
+        )
+        self.filename_custom_map_pb = (
+            self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingCustomState-1.pb"
+        )
         self.filename_custom_scenario_pb = (
             self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingCustomState-1_1_T-1-SC.pb"
         )
@@ -1464,85 +1551,131 @@ class TestProtobufFileReader(unittest.TestCase):
 
     def test_open_map(self):
         #  Carcarana
-        self.assertTrue(read_compare_old_scenario_new_map(self.filename_carcarana_xml, self.filename_carcarana_map_pb))
+        self.assertTrue(
+            read_compare_old_scenario_new_map(
+                self.filename_carcarana_xml, self.filename_carcarana_map_pb
+            )
+        )
 
         #  Starnberg
-        self.assertTrue(read_compare_old_scenario_new_map(self.filename_starnberg_xml, self.filename_starnberg_map_pb))
+        self.assertTrue(
+            read_compare_old_scenario_new_map(
+                self.filename_starnberg_xml, self.filename_starnberg_map_pb
+            )
+        )
 
         #  Anglet
-        self.assertTrue(read_compare_old_scenario_new_map(self.filename_anglet_xml, self.filename_anglet_map_pb))
+        self.assertTrue(
+            read_compare_old_scenario_new_map(self.filename_anglet_xml, self.filename_anglet_map_pb)
+        )
 
         #  Peach
-        self.assertTrue(read_compare_old_scenario_new_map(self.filename_peach_xml, self.filename_peach_map_pb))
+        self.assertTrue(
+            read_compare_old_scenario_new_map(self.filename_peach_xml, self.filename_peach_map_pb)
+        )
 
         #  All
-        self.assertTrue(read_compare_old_scenario_new_map(self.filename_all_xml, self.filename_all_map_pb))
+        self.assertTrue(
+            read_compare_old_scenario_new_map(self.filename_all_xml, self.filename_all_map_pb)
+        )
 
     def test_open_dynamic(self):
         #  Carcarana
         self.assertTrue(
-            read_compare_old_scenario_new_dynamic(self.filename_carcarana_xml, self.filename_carcarana_dynamic_pb)
+            read_compare_old_scenario_new_dynamic(
+                self.filename_carcarana_xml, self.filename_carcarana_dynamic_pb
+            )
         )
 
         #  Starnberg
         self.assertTrue(
-            read_compare_old_scenario_new_dynamic(self.filename_starnberg_xml, self.filename_starnberg_dynamic_pb)
+            read_compare_old_scenario_new_dynamic(
+                self.filename_starnberg_xml, self.filename_starnberg_dynamic_pb
+            )
         )
 
         #  Anglet
         self.assertTrue(
-            read_compare_old_scenario_new_dynamic(self.filename_anglet_xml, self.filename_anglet_dynamic_pb)
+            read_compare_old_scenario_new_dynamic(
+                self.filename_anglet_xml, self.filename_anglet_dynamic_pb
+            )
         )
 
         #  Peach
-        self.assertTrue(read_compare_old_scenario_new_dynamic(self.filename_peach_xml, self.filename_peach_dynamic_pb))
+        self.assertTrue(
+            read_compare_old_scenario_new_dynamic(
+                self.filename_peach_xml, self.filename_peach_dynamic_pb
+            )
+        )
 
         #  All
-        self.assertTrue(read_compare_old_scenario_new_dynamic(self.filename_all_xml, self.filename_all_dynamic_pb))
+        self.assertTrue(
+            read_compare_old_scenario_new_dynamic(
+                self.filename_all_xml, self.filename_all_dynamic_pb
+            )
+        )
 
     def test_open_scenario(self):
         #  Carcarana
         self.assertTrue(
-            read_compare_old_scenario_new_scenario(self.filename_carcarana_xml, self.filename_carcarana_scenario_pb)
+            read_compare_old_scenario_new_scenario(
+                self.filename_carcarana_xml, self.filename_carcarana_scenario_pb
+            )
         )
 
         #  Starnberg
         self.assertTrue(
-            read_compare_old_scenario_new_scenario(self.filename_starnberg_xml, self.filename_starnberg_scenario_pb)
+            read_compare_old_scenario_new_scenario(
+                self.filename_starnberg_xml, self.filename_starnberg_scenario_pb
+            )
         )
 
         #  Anglet
         self.assertTrue(
-            read_compare_old_scenario_new_scenario(self.filename_anglet_xml, self.filename_anglet_scenario_pb)
+            read_compare_old_scenario_new_scenario(
+                self.filename_anglet_xml, self.filename_anglet_scenario_pb
+            )
         )
 
         #  Peach
         self.assertTrue(
-            read_compare_old_scenario_new_scenario(self.filename_peach_xml, self.filename_peach_scenario_pb)
+            read_compare_old_scenario_new_scenario(
+                self.filename_peach_xml, self.filename_peach_scenario_pb
+            )
         )
 
         #  All
-        self.assertTrue(read_compare_old_scenario_new_scenario(self.filename_all_xml, self.filename_all_scenario_pb))
+        self.assertTrue(
+            read_compare_old_scenario_new_scenario(
+                self.filename_all_xml, self.filename_all_scenario_pb
+            )
+        )
 
     def test_combine_map_dynamic(self):
         #  Carcarana
         self.assertTrue(
             read_compare_old_scenario_new_dynamic_map(
-                self.filename_carcarana_xml, self.filename_carcarana_map_pb, self.filename_carcarana_dynamic_pb
+                self.filename_carcarana_xml,
+                self.filename_carcarana_map_pb,
+                self.filename_carcarana_dynamic_pb,
             )
         )
 
         #  Starnberg
         self.assertTrue(
             read_compare_old_scenario_new_dynamic_map(
-                self.filename_starnberg_xml, self.filename_starnberg_map_pb, self.filename_starnberg_dynamic_pb
+                self.filename_starnberg_xml,
+                self.filename_starnberg_map_pb,
+                self.filename_starnberg_dynamic_pb,
             )
         )
 
         #  Anglet
         self.assertTrue(
             read_compare_old_scenario_new_dynamic_map(
-                self.filename_anglet_xml, self.filename_anglet_map_pb, self.filename_anglet_dynamic_pb
+                self.filename_anglet_xml,
+                self.filename_anglet_map_pb,
+                self.filename_anglet_dynamic_pb,
             )
         )
 
@@ -1612,10 +1745,18 @@ class TestProtobufFileReader(unittest.TestCase):
         )
 
     def test_read_correct_matched_state(self):
-        self._check_correct_matched_state_pb(self.filename_ks_map_pb, self.filename_ks_dynamic_pb, KSState)
-        self._check_correct_matched_state_pb(self.filename_st_map_pb, self.filename_st_dynamic_pb, STState)
-        self._check_correct_matched_state_pb(self.filename_std_map_pb, self.filename_std_dynamic_pb, STDState)
-        self._check_correct_matched_state_pb(self.filename_custom_map_pb, self.filename_custom_dynamic_pb, CustomState)
+        self._check_correct_matched_state_pb(
+            self.filename_ks_map_pb, self.filename_ks_dynamic_pb, KSState
+        )
+        self._check_correct_matched_state_pb(
+            self.filename_st_map_pb, self.filename_st_dynamic_pb, STState
+        )
+        self._check_correct_matched_state_pb(
+            self.filename_std_map_pb, self.filename_std_dynamic_pb, STDState
+        )
+        self._check_correct_matched_state_pb(
+            self.filename_custom_map_pb, self.filename_custom_dynamic_pb, CustomState
+        )
         #  self._check_correct_matched_state_pb(self.filename_pm_map_pb, self.filename_pm_dynamic_pb,
         #                                       FileFormat.PROTOBUF, PMState)
 
@@ -1663,8 +1804,12 @@ class TestProtobufFileReader(unittest.TestCase):
             reader.open_all()
         assert str(exc_info.value) == "Filename of the 2024 scenario file is missing"
 
-    def _check_correct_matched_state_pb(self, file_name_map: str, file_name_dynamic: str, state_type: type):
-        road_network, environment_obstacles = CommonRoadFileReader(filename_map=file_name_map).open_map()
+    def _check_correct_matched_state_pb(
+        self, file_name_map: str, file_name_dynamic: str, state_type: type
+    ):
+        road_network, environment_obstacles = CommonRoadFileReader(
+            filename_map=file_name_map
+        ).open_map()
         dynamic = CommonRoadFileReader(filename_dynamic=file_name_dynamic).open_dynamic()
         dynamic.environment_obstacles = environment_obstacles
 
@@ -1674,7 +1819,9 @@ class TestProtobufFileReader(unittest.TestCase):
         for state in obstacle.prediction.trajectory.state_list:
             self.assertIsInstance(state, state_type)
 
-    def _check_correct_matched_state_xml(self, file_name: str, file_format: FileFormat, state_type: type):
+    def _check_correct_matched_state_xml(
+        self, file_name: str, file_format: FileFormat, state_type: type
+    ):
         scenario, _ = CommonRoadFileReader(file_name).open()
         obstacle = scenario.obstacles[0]
         self.assertIsInstance(obstacle.initial_state, InitialState)
@@ -1706,7 +1853,9 @@ def read_compare_old_scenario_new_map(xml_file_path: str, pb_map_file_path: str)
     map_pb, environment_obstacles = CommonRoadFileReader(filename_map=pb_map_file_path).open_map()
 
     # Make dates the same as they are dependent on the creation of the file
-    scenario_xml.lanelet_network.meta_information.file_information.date = map_pb.meta_information.file_information.date
+    scenario_xml.lanelet_network.meta_information.file_information.date = (
+        map_pb.meta_information.file_information.date
+    )
 
     # As the location is added to the lanelet network in the new format, we have to assign it to the old format scenario
     scenario_xml.lanelet_network.location = map_pb.location
@@ -1731,7 +1880,8 @@ def read_compare_old_scenario_new_map(xml_file_path: str, pb_map_file_path: str)
 
     return (
         scenario_xml.lanelet_network.lanelets == map_pb.lanelets
-        and scenario_xml.lanelet_network.meta_information.file_information == map_pb.meta_information.file_information
+        and scenario_xml.lanelet_network.meta_information.file_information
+        == map_pb.meta_information.file_information
         and scenario_xml.lanelet_network.traffic_signs == map_pb.traffic_signs
         and scenario_xml.lanelet_network.areas == map_pb.areas
         and scenario_xml.lanelet_network.intersections == map_pb.intersections
@@ -1809,7 +1959,9 @@ def read_compare_old_scenario_new_all(
     """
     scenario_xml, planning_problems = CommonRoadFileReader(xml_file_path).open()
     scenario_pb, planning_problems_pb, _ = CommonRoadFileReader(
-        filename_dynamic=pb_dynamic_file_path, filename_map=pb_map_file_path, filename_scenario=pb_scenario_file_path
+        filename_dynamic=pb_dynamic_file_path,
+        filename_map=pb_map_file_path,
+        filename_scenario=pb_scenario_file_path,
     ).open_all()
 
     scenario_pb.lanelet_network.meta_information.file_information.date = (

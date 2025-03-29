@@ -77,7 +77,9 @@ class DynamicInterface:
 
     def __eq__(self, other):
         if not isinstance(other, DynamicInterface):
-            warnings.warn(f"Inequality between DynamicInterface {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between DynamicInterface {repr(self)} and different type {type(other)}"
+            )
             return False
 
         return (
@@ -125,10 +127,9 @@ class DynamicInterface:
 
     @environment.setter
     def environment(self, environment: Environment):
-        assert isinstance(
-            environment, Environment
-        ), "<DynamicInterface/environment>: provided environment is not an " "Environment! type = {},".format(
-            type(environment)
+        assert isinstance(environment, Environment), (
+            "<DynamicInterface/environment>: provided environment is not an "
+            "Environment! type = {},".format(type(environment))
         )
         self._environment = environment
 

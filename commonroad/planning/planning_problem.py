@@ -52,7 +52,13 @@ class PlanningProblem(IDrawable):
 
     def __hash__(self):
         return hash(
-            (self.planning_problem_id, self.initial_state, self.goal, frozenset(self.scenario_tags), self.ego_id)
+            (
+                self.planning_problem_id,
+                self.initial_state,
+                self.goal,
+                frozenset(self.scenario_tags),
+                self.ego_id,
+            )
         )
 
     @property
@@ -269,7 +275,9 @@ class CooperativePlanningProblem:
     Class that represents the cooperative planning problem, a combination of "standard" planning problems.
     """
 
-    def __init__(self, cooperative_planning_problem_id: int, single_planning_problem_id: Set[int] = None):
+    def __init__(
+        self, cooperative_planning_problem_id: int, single_planning_problem_id: Set[int] = None
+    ):
         """
         :param cooperative_planning_problem_id: id of the cooperative planning problem
         :param single_planning_problem_id: set of standard planning problems
@@ -283,7 +291,8 @@ class CooperativePlanningProblem:
     def __eq__(self, other):
         if not isinstance(other, CooperativePlanningProblem):
             warnings.warn(
-                f"Inequality between CooperativePlanningProblem {repr(self)} " f"and different type {type(other)}"
+                f"Inequality between CooperativePlanningProblem {repr(self)} "
+                f"and different type {type(other)}"
             )
             return False
 
@@ -293,7 +302,9 @@ class CooperativePlanningProblem:
         )
 
     def __hash__(self):
-        return hash((self._cooperative_planning_problem_id, frozenset(self._single_planning_problem_id)))
+        return hash(
+            (self._cooperative_planning_problem_id, frozenset(self._single_planning_problem_id))
+        )
 
     @property
     def cooperative_planning_problem_id(self) -> int:
@@ -302,11 +313,13 @@ class CooperativePlanningProblem:
 
     @cooperative_planning_problem_id.setter
     def cooperative_planning_problem_id(self, cooperative_planning_problem_id: int):
-        assert isinstance(
-            cooperative_planning_problem_id, int
-        ), 'argument "cooperative_planning_problem_id" ' "of wrong type. Expected type: %s. Got type: %s." % (
-            int,
-            type(cooperative_planning_problem_id),
+        assert isinstance(cooperative_planning_problem_id, int), (
+            'argument "cooperative_planning_problem_id" '
+            "of wrong type. Expected type: %s. Got type: %s."
+            % (
+                int,
+                type(cooperative_planning_problem_id),
+            )
         )
         self._cooperative_planning_problem_id = cooperative_planning_problem_id
 

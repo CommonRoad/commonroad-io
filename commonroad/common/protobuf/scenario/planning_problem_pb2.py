@@ -2,11 +2,13 @@
 # source: planning_problem.proto
 
 import sys
-_b=sys.version_info[0]<3 and (lambda x:x) or (lambda x:x.encode('latin1'))
+
+_b = sys.version_info[0] < 3 and (lambda x: x) or (lambda x: x.encode("latin1"))
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
+
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
@@ -15,181 +17,285 @@ _sym_db = _symbol_database.Default()
 import commonroad.common.protobuf.common.state_pb2 as state__pb2
 import commonroad.common.protobuf.scenario.scenario_tags_pb2 as scenario__tags__pb2
 
-
 DESCRIPTOR = _descriptor.FileDescriptor(
-  name='planning_problem.proto',
-  package='commonroad_scenario',
-  syntax='proto2',
-  serialized_options=_b('H\003'),
-  serialized_pb=_b('\n\x16planning_problem.proto\x12\x13\x63ommonroad_scenario\x1a\x0bstate.proto\x1a\x13scenario_tags.proto\"T\n\tGoalState\x12\'\n\x05state\x18\x01 \x02(\x0b\x32\x18.commonroad_common.State\x12\x1e\n\x16goal_position_lanelets\x18\x02 \x03(\r\"\xde\x01\n\x0fPlanningProblem\x12\x1b\n\x13planning_problem_id\x18\x01 \x02(\r\x12/\n\rinitial_state\x18\x02 \x02(\x0b\x32\x18.commonroad_common.State\x12\x33\n\x0bgoal_states\x18\x03 \x03(\x0b\x32\x1e.commonroad_scenario.GoalState\x12\x0e\n\x06\x65go_id\x18\x04 \x01(\r\x12\x38\n\rscenario_tags\x18\x05 \x02(\x0b\x32!.commonroad_scenario.ScenarioTags\"i\n\x1a\x43ooperativePlanningProblem\x12\'\n\x1f\x63ooperative_planning_problem_id\x18\x01 \x02(\r\x12\"\n\x1asingle_planning_problem_id\x18\x02 \x03(\rB\x02H\x03')
-  ,
-  dependencies=[state__pb2.DESCRIPTOR,scenario__tags__pb2.DESCRIPTOR,])
-
-
+    name="planning_problem.proto",
+    package="commonroad_scenario",
+    syntax="proto2",
+    serialized_options=_b("H\003"),
+    serialized_pb=_b(
+        '\n\x16planning_problem.proto\x12\x13\x63ommonroad_scenario\x1a\x0bstate.proto\x1a\x13scenario_tags.proto"T\n\tGoalState\x12\'\n\x05state\x18\x01 \x02(\x0b\x32\x18.commonroad_common.State\x12\x1e\n\x16goal_position_lanelets\x18\x02 \x03(\r"\xde\x01\n\x0fPlanningProblem\x12\x1b\n\x13planning_problem_id\x18\x01 \x02(\r\x12/\n\rinitial_state\x18\x02 \x02(\x0b\x32\x18.commonroad_common.State\x12\x33\n\x0bgoal_states\x18\x03 \x03(\x0b\x32\x1e.commonroad_scenario.GoalState\x12\x0e\n\x06\x65go_id\x18\x04 \x01(\r\x12\x38\n\rscenario_tags\x18\x05 \x02(\x0b\x32!.commonroad_scenario.ScenarioTags"i\n\x1a\x43ooperativePlanningProblem\x12\'\n\x1f\x63ooperative_planning_problem_id\x18\x01 \x02(\r\x12"\n\x1asingle_planning_problem_id\x18\x02 \x03(\rB\x02H\x03'
+    ),
+    dependencies=[
+        state__pb2.DESCRIPTOR,
+        scenario__tags__pb2.DESCRIPTOR,
+    ],
+)
 
 
 _GOALSTATE = _descriptor.Descriptor(
-  name='GoalState',
-  full_name='commonroad_scenario.GoalState',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='state', full_name='commonroad_scenario.GoalState.state', index=0,
-      number=1, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='goal_position_lanelets', full_name='commonroad_scenario.GoalState.goal_position_lanelets', index=1,
-      number=2, type=13, cpp_type=3, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=81,
-  serialized_end=165,
+    name="GoalState",
+    full_name="commonroad_scenario.GoalState",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="state",
+            full_name="commonroad_scenario.GoalState.state",
+            index=0,
+            number=1,
+            type=11,
+            cpp_type=10,
+            label=2,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="goal_position_lanelets",
+            full_name="commonroad_scenario.GoalState.goal_position_lanelets",
+            index=1,
+            number=2,
+            type=13,
+            cpp_type=3,
+            label=3,
+            has_default_value=False,
+            default_value=[],
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=81,
+    serialized_end=165,
 )
 
 
 _PLANNINGPROBLEM = _descriptor.Descriptor(
-  name='PlanningProblem',
-  full_name='commonroad_scenario.PlanningProblem',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='planning_problem_id', full_name='commonroad_scenario.PlanningProblem.planning_problem_id', index=0,
-      number=1, type=13, cpp_type=3, label=2,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='initial_state', full_name='commonroad_scenario.PlanningProblem.initial_state', index=1,
-      number=2, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='goal_states', full_name='commonroad_scenario.PlanningProblem.goal_states', index=2,
-      number=3, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='ego_id', full_name='commonroad_scenario.PlanningProblem.ego_id', index=3,
-      number=4, type=13, cpp_type=3, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='scenario_tags', full_name='commonroad_scenario.PlanningProblem.scenario_tags', index=4,
-      number=5, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=168,
-  serialized_end=390,
+    name="PlanningProblem",
+    full_name="commonroad_scenario.PlanningProblem",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="planning_problem_id",
+            full_name="commonroad_scenario.PlanningProblem.planning_problem_id",
+            index=0,
+            number=1,
+            type=13,
+            cpp_type=3,
+            label=2,
+            has_default_value=False,
+            default_value=0,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="initial_state",
+            full_name="commonroad_scenario.PlanningProblem.initial_state",
+            index=1,
+            number=2,
+            type=11,
+            cpp_type=10,
+            label=2,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="goal_states",
+            full_name="commonroad_scenario.PlanningProblem.goal_states",
+            index=2,
+            number=3,
+            type=11,
+            cpp_type=10,
+            label=3,
+            has_default_value=False,
+            default_value=[],
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="ego_id",
+            full_name="commonroad_scenario.PlanningProblem.ego_id",
+            index=3,
+            number=4,
+            type=13,
+            cpp_type=3,
+            label=1,
+            has_default_value=False,
+            default_value=0,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="scenario_tags",
+            full_name="commonroad_scenario.PlanningProblem.scenario_tags",
+            index=4,
+            number=5,
+            type=11,
+            cpp_type=10,
+            label=2,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=168,
+    serialized_end=390,
 )
 
 
 _COOPERATIVEPLANNINGPROBLEM = _descriptor.Descriptor(
-  name='CooperativePlanningProblem',
-  full_name='commonroad_scenario.CooperativePlanningProblem',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='cooperative_planning_problem_id', full_name='commonroad_scenario.CooperativePlanningProblem.cooperative_planning_problem_id', index=0,
-      number=1, type=13, cpp_type=3, label=2,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='single_planning_problem_id', full_name='commonroad_scenario.CooperativePlanningProblem.single_planning_problem_id', index=1,
-      number=2, type=13, cpp_type=3, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=392,
-  serialized_end=497,
+    name="CooperativePlanningProblem",
+    full_name="commonroad_scenario.CooperativePlanningProblem",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="cooperative_planning_problem_id",
+            full_name="commonroad_scenario.CooperativePlanningProblem.cooperative_planning_problem_id",
+            index=0,
+            number=1,
+            type=13,
+            cpp_type=3,
+            label=2,
+            has_default_value=False,
+            default_value=0,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="single_planning_problem_id",
+            full_name="commonroad_scenario.CooperativePlanningProblem.single_planning_problem_id",
+            index=1,
+            number=2,
+            type=13,
+            cpp_type=3,
+            label=3,
+            has_default_value=False,
+            default_value=[],
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=392,
+    serialized_end=497,
 )
 
-_GOALSTATE.fields_by_name['state'].message_type = state__pb2._STATE
-_PLANNINGPROBLEM.fields_by_name['initial_state'].message_type = state__pb2._STATE
-_PLANNINGPROBLEM.fields_by_name['goal_states'].message_type = _GOALSTATE
-_PLANNINGPROBLEM.fields_by_name['scenario_tags'].message_type = scenario__tags__pb2._SCENARIOTAGS
-DESCRIPTOR.message_types_by_name['GoalState'] = _GOALSTATE
-DESCRIPTOR.message_types_by_name['PlanningProblem'] = _PLANNINGPROBLEM
-DESCRIPTOR.message_types_by_name['CooperativePlanningProblem'] = _COOPERATIVEPLANNINGPROBLEM
+_GOALSTATE.fields_by_name["state"].message_type = state__pb2._STATE
+_PLANNINGPROBLEM.fields_by_name["initial_state"].message_type = state__pb2._STATE
+_PLANNINGPROBLEM.fields_by_name["goal_states"].message_type = _GOALSTATE
+_PLANNINGPROBLEM.fields_by_name["scenario_tags"].message_type = scenario__tags__pb2._SCENARIOTAGS
+DESCRIPTOR.message_types_by_name["GoalState"] = _GOALSTATE
+DESCRIPTOR.message_types_by_name["PlanningProblem"] = _PLANNINGPROBLEM
+DESCRIPTOR.message_types_by_name["CooperativePlanningProblem"] = _COOPERATIVEPLANNINGPROBLEM
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-GoalState = _reflection.GeneratedProtocolMessageType('GoalState', (_message.Message,), dict(
-  DESCRIPTOR = _GOALSTATE,
-  __module__ = 'planning_problem_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad_scenario.GoalState)
-  ))
+GoalState = _reflection.GeneratedProtocolMessageType(
+    "GoalState",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_GOALSTATE,
+        __module__="planning_problem_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad_scenario.GoalState)
+    ),
+)
 _sym_db.RegisterMessage(GoalState)
 
-PlanningProblem = _reflection.GeneratedProtocolMessageType('PlanningProblem', (_message.Message,), dict(
-  DESCRIPTOR = _PLANNINGPROBLEM,
-  __module__ = 'planning_problem_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad_scenario.PlanningProblem)
-  ))
+PlanningProblem = _reflection.GeneratedProtocolMessageType(
+    "PlanningProblem",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_PLANNINGPROBLEM,
+        __module__="planning_problem_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad_scenario.PlanningProblem)
+    ),
+)
 _sym_db.RegisterMessage(PlanningProblem)
 
-CooperativePlanningProblem = _reflection.GeneratedProtocolMessageType('CooperativePlanningProblem', (_message.Message,), dict(
-  DESCRIPTOR = _COOPERATIVEPLANNINGPROBLEM,
-  __module__ = 'planning_problem_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad_scenario.CooperativePlanningProblem)
-  ))
+CooperativePlanningProblem = _reflection.GeneratedProtocolMessageType(
+    "CooperativePlanningProblem",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_COOPERATIVEPLANNINGPROBLEM,
+        __module__="planning_problem_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad_scenario.CooperativePlanningProblem)
+    ),
+)
 _sym_db.RegisterMessage(CooperativePlanningProblem)
 
 

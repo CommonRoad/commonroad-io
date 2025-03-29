@@ -157,7 +157,9 @@ class XMLFileWriter(FileWriter):
         tags: Set[Tag] = None,
         decimal_precision: int = 4,
     ):
-        super().__init__(scenario, planning_problem_set, author, affiliation, source, tags, decimal_precision)
+        super().__init__(
+            scenario, planning_problem_set, author, affiliation, source, tags, decimal_precision
+        )
 
         self._root_node = etree.Element("commonRoad")
 
@@ -189,7 +191,9 @@ class XMLFileWriter(FileWriter):
 
     def _add_all_objects_from_scenario(self):
         location = (
-            self.scenario.lanelet_network.location if self.scenario.lanelet_network.location is not None else Location()
+            self.scenario.lanelet_network.location
+            if self.scenario.lanelet_network.location is not None
+            else Location()
         )
         environment = self.scenario.environment if self.scenario.environment is not None else None
         self._root_node.append(LocationXMLNode.create_node(location, environment))
@@ -296,7 +300,8 @@ class XMLFileWriter(FileWriter):
 
         """
         with open(
-            os.path.dirname(os.path.abspath(__file__)) + "/../../common/xml_definition_files/XML_commonRoad_XSD.xsd",
+            os.path.dirname(os.path.abspath(__file__))
+            + "/../../common/xml_definition_files/XML_commonRoad_XSD.xsd",
             "rb",
         ) as schema_file:
             schema = etree.XMLSchema(etree.parse(schema_file))
@@ -799,7 +804,9 @@ class ShapeXMLNode:
 
 class RectangleXMLNode:
     @classmethod
-    def create_rectangle_node(cls, rectangle: Rectangle, dynamic_obstacle_shape: bool = False) -> etree.Element:
+    def create_rectangle_node(
+        cls, rectangle: Rectangle, dynamic_obstacle_shape: bool = False
+    ) -> etree.Element:
         """
         Create XML-Node for a rectangle
         :param rectangle: rectangle for creating a node
@@ -1148,21 +1155,27 @@ class IntersectionXMLNode:
             if incoming.outgoing_right:
                 for outgoing_right in incoming.outgoing_right:
                     outgoing_right_node = etree.Element("successorsRight")
-                    logger.warning("After 2020a format, 'successorsRight' is replaced by 'outgoingRight'")
+                    logger.warning(
+                        "After 2020a format, 'successorsRight' is replaced by 'outgoingRight'"
+                    )
                     outgoing_right_node.set("ref", str(outgoing_right))
                     incoming_node.append(outgoing_right_node)
 
             if incoming.outgoing_straight:
                 for outgoing_straight in incoming.outgoing_straight:
                     outgoing_straight_node = etree.Element("successorsStraight")
-                    logger.warning("After 2020a format, 'successorsStraight' is replaced by 'outgoingStraight'")
+                    logger.warning(
+                        "After 2020a format, 'successorsStraight' is replaced by 'outgoingStraight'"
+                    )
                     outgoing_straight_node.set("ref", str(outgoing_straight))
                     incoming_node.append(outgoing_straight_node)
 
             if incoming.outgoing_left:
                 for outgoing_left in incoming.outgoing_left:
                     outgoing_left_node = etree.Element("successorsLeft")
-                    logger.warning("After 2020a format, 'successorsLeft' is replaced by 'outgoingLeft'")
+                    logger.warning(
+                        "After 2020a format, 'successorsLeft' is replaced by 'outgoingLeft'"
+                    )
                     outgoing_left_node.set("ref", str(outgoing_left))
                     incoming_node.append(outgoing_left_node)
 

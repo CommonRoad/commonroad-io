@@ -45,9 +45,9 @@ class ScenarioID:
         :param prediction_id: enumerates different predictions for the same initial configuration (e.g. 1)
         :param scenario_version: scenario version identifier (e.g. 2020a)
         """
-        assert scenario_version in SUPPORTED_COMMONROAD_VERSIONS, "Scenario_version {} not supported.".format(
-            scenario_version
-        )
+        assert (
+            scenario_version in SUPPORTED_COMMONROAD_VERSIONS
+        ), "Scenario_version {} not supported.".format(scenario_version)
         self.scenario_version: str = scenario_version
         self.cooperative: bool = cooperative
         self._country_id = None
@@ -73,16 +73,21 @@ class ScenarioID:
 
         # Validate object
         assert self.obstacle_behavior in [None, "S", "T", "P", "I"], (
-            f"Unsupported prediction type '{obstacle_behavior}'! " f"Available prediction types: S, T, P, I"
+            f"Unsupported prediction type '{obstacle_behavior}'! "
+            f"Available prediction types: S, T, P, I"
         )
         assert self.map_id > 0, f"Map id {configuration_id} <= 0!"
         assert is_map or self.configuration_id > 0, f"Configuration id {configuration_id} <= 0!"
         prediction_id = prediction_id if isinstance(prediction_id, list) else [prediction_id]
-        assert not has_prediction or all(p > 0 for p in prediction_id), f"Prediction id {configuration_id} <= 0!"
+        assert not has_prediction or all(
+            p > 0 for p in prediction_id
+        ), f"Prediction id {configuration_id} <= 0!"
 
     def __eq__(self, other):
         if not isinstance(other, ScenarioID):
-            warnings.warn(f"Inequality between ScenarioID {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between ScenarioID {repr(self)} and different type {type(other)}"
+            )
             return False
 
         id_eq = (
@@ -149,7 +154,9 @@ class ScenarioID:
         elif country_id in iso3166.countries_by_alpha3 or country_id == "ZAM":
             self._country_id = country_id
         else:
-            raise ValueError("Country ID {} is not in the ISO-3166 three-letter format. ".format(country_id))
+            raise ValueError(
+                "Country ID {} is not in the ISO-3166 three-letter format. ".format(country_id)
+            )
 
     @property
     def prediction_type(self):
@@ -183,7 +190,9 @@ class ScenarioID:
         map_name = match["map_name"]
         map_id = int(match["map_id"])
 
-        configuration_id = int(match["configuration_id"]) if match["configuration_id"] is not None else None
+        configuration_id = (
+            int(match["configuration_id"]) if match["configuration_id"] is not None else None
+        )
         prediction_type = match["prediction_type"]
         prediction_id = match["prediction_ids"]
         if prediction_id is not None:
@@ -242,7 +251,9 @@ class FileInformation:
 
     def __eq__(self, other):
         if not isinstance(other, FileInformation):
-            warnings.warn(f"Inequality between FileInformation {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between FileInformation {repr(self)} and different type {type(other)}"
+            )
             return False
 
         return (
@@ -255,7 +266,16 @@ class FileInformation:
         )
 
     def __hash__(self):
-        return hash((self._date, self._author, self._affiliation, self._source, self._license_name, self._license_text))
+        return hash(
+            (
+                self._date,
+                self._author,
+                self._affiliation,
+                self._source,
+                self._license_name,
+                self._license_text,
+            )
+        )
 
     @property
     def license_name(self) -> str:
@@ -320,7 +340,11 @@ class MapMetaInformation:
     Class that contains meta information for a map
     """
 
-    def __init__(self, scenario_id: ScenarioID = ScenarioID(), file_information: FileInformation = FileInformation()):
+    def __init__(
+        self,
+        scenario_id: ScenarioID = ScenarioID(),
+        file_information: FileInformation = FileInformation(),
+    ):
         """
         :param scenario_id: CommonRoad scenario ID containing only map information
         :param file_information: CommonRoad file information
@@ -330,10 +354,15 @@ class MapMetaInformation:
 
     def __eq__(self, other):
         if not isinstance(other, MapMetaInformation):
-            warnings.warn(f"Inequality between MapMetaInformation {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between MapMetaInformation {repr(self)} and different type {type(other)}"
+            )
             return False
 
-        return self._scenario_id == other.scenario_id and self._file_information == other.file_information
+        return (
+            self._scenario_id == other.scenario_id
+            and self._file_information == other.file_information
+        )
 
     def __hash__(self):
         return hash((self._scenario_id, self._file_information))
@@ -367,7 +396,9 @@ class ScenarioMetaInformation:
     Class that contains meta information for a scenario
     """
 
-    def __init__(self, scenario_id: ScenarioID, file_information: FileInformation, time_step_size: double):
+    def __init__(
+        self, scenario_id: ScenarioID, file_information: FileInformation, time_step_size: double
+    ):
         """
         :param scenario_id: CommonRoad scenario ID
         :param time_step_size: global time step size of the time-discrete scenario
@@ -379,7 +410,9 @@ class ScenarioMetaInformation:
 
     def __eq__(self, other):
         if not isinstance(other, ScenarioMetaInformation):
-            warnings.warn(f"Inequality between ScenarioMetaInformation {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between ScenarioMetaInformation {repr(self)} and different type {type(other)}"
+            )
             return False
 
         return (
@@ -465,7 +498,11 @@ class Environment:
     """
 
     def __init__(
-        self, time: Time = None, time_of_day: TimeOfDay = None, weather: Weather = None, underground: Underground = None
+        self,
+        time: Time = None,
+        time_of_day: TimeOfDay = None,
+        weather: Weather = None,
+        underground: Underground = None,
     ):
         """
         Constructor of an environment object
@@ -569,7 +606,15 @@ class GeoTransformation:
         )
 
     def __hash__(self):
-        return hash((self._geo_reference, self._x_translation, self._y_translation, self._z_rotation, self._scaling))
+        return hash(
+            (
+                self._geo_reference,
+                self._x_translation,
+                self._y_translation,
+                self._z_rotation,
+                self._scaling,
+            )
+        )
 
     @property
     def geo_reference(self) -> str:
@@ -649,7 +694,9 @@ class Location:
         )
 
     def __hash__(self):
-        return hash((self._geo_name_id, self._gps_latitude, self._gps_longitude, self._geo_transformation))
+        return hash(
+            (self._geo_name_id, self._gps_latitude, self._gps_longitude, self._geo_transformation)
+        )
 
     @property
     def geo_name_id(self) -> int:
@@ -721,9 +768,10 @@ class MetaInformationState:
 
     @meta_data_str.setter
     def meta_data_str(self, meta_data_str: Dict[str, str]):
-        assert isinstance(
-            meta_data_str, Dict
-        ), "<MetaInformationState/meta_data_str>: Provided meta_data_str " "is not valid! id={}".format(meta_data_str)
+        assert isinstance(meta_data_str, Dict), (
+            "<MetaInformationState/meta_data_str>: Provided meta_data_str "
+            "is not valid! id={}".format(meta_data_str)
+        )
         self._meta_data_str = meta_data_str
 
     @property
@@ -733,9 +781,10 @@ class MetaInformationState:
 
     @meta_data_int.setter
     def meta_data_int(self, meta_data_int: Dict[str, int]):
-        assert isinstance(
-            meta_data_int, Dict
-        ), "<MetaInformationState/meta_data_int>: Provided meta_data_int " "is not valid! id={}".format(meta_data_int)
+        assert isinstance(meta_data_int, Dict), (
+            "<MetaInformationState/meta_data_int>: Provided meta_data_int "
+            "is not valid! id={}".format(meta_data_int)
+        )
         self._meta_data_int = meta_data_int
 
     @property
@@ -745,10 +794,9 @@ class MetaInformationState:
 
     @meta_data_float.setter
     def meta_data_float(self, meta_data_float: Dict[str, float]):
-        assert isinstance(
-            meta_data_float, Dict
-        ), "<MetaInformationState/meta_data_float>: Provided meta_data_float " "is not valid! id={}".format(
-            meta_data_float
+        assert isinstance(meta_data_float, Dict), (
+            "<MetaInformationState/meta_data_float>: Provided meta_data_float "
+            "is not valid! id={}".format(meta_data_float)
         )
         self._meta_data_float = meta_data_float
 
@@ -759,10 +807,9 @@ class MetaInformationState:
 
     @meta_data_bool.setter
     def meta_data_bool(self, meta_data_bool: Dict[str, bool]):
-        assert isinstance(
-            meta_data_bool, Dict
-        ), "<MetaInformationState/meta_data_bool>: Provided meta_data_bool " "is not valid! id={}".format(
-            meta_data_bool
+        assert isinstance(meta_data_bool, Dict), (
+            "<MetaInformationState/meta_data_bool>: Provided meta_data_bool "
+            "is not valid! id={}".format(meta_data_bool)
         )
         self._meta_data_bool = meta_data_bool
 

@@ -15,7 +15,7 @@ The \textit{CommonRoad} dynamic meta information has the following attributes (i
 	\item \texttt{source}: if applicable, description of the data source of the scenario, e.g., name of dataset or map service,
 	\item \texttt{sourceLink}: link(s) to source of the scenario,
 	\item \texttt{license}: name or link to license of scenario,
-	\item \texttt{timeStepSize}: global step size of the time-discrete scenario. 
+	\item \texttt{timeStepSize}: global step size of the time-discrete scenario.
 \end{itemize}
 
 \begin{figure}[!htpb]
@@ -107,7 +107,7 @@ Additionally, the filtering based on the number of static obstacles, dynamic obs
 %\end{align*}
 
 \subsection{Planning Problem} \label{subsec:egoVehicles}
-%The aim of the \textit{CommonRoad} benchmarks is to compare trajectory planners. Thus, 
+%The aim of the \textit{CommonRoad} benchmarks is to compare trajectory planners. Thus,
 The element \textit{planningProblem} is used to specify the initial state and one or more goal state(s) for the motion planning problem.
 Note that the shape of the ego vehicle is not included in the scenario description, since this property depends on which vehicle parameter set is chosen (see the \textit{vehicle model documentation} on our website).
 %\begin{lstlisting}
@@ -125,14 +125,14 @@ Note that the shape of the ego vehicle is not included in the scenario descripti
 %\end{lstlisting}
 
 \paragraph{Initial States}
-We use the element \textit{initial state} to describe the initial state of the planning problem. In contrast to the general element \textit{state}, all state variables are mandatory and must be given exact, as shown in Fig.~\ref{fig:initialState_planningProblem}. 
+We use the element \textit{initial state} to describe the initial state of the planning problem. In contrast to the general element \textit{state}, all state variables are mandatory and must be given exact, as shown in Fig.~\ref{fig:initialState_planningProblem}.
 The element \textit{initial state} of each planning problem allows the initialization of each vehicle model, as described in more detail in our \textit{vehicle model documentation}.
 
 %\begin{lstlisting}
 %<initialState>
 %	<position>
 %		...
-%	</position>	
+%	</position>
 %	<velocity>
 %		...
 %	</velocity>
@@ -159,7 +159,7 @@ The element \textit{initial state} of each planning problem allows the initializ
 		.3 [1] position.
 		.4 [1] point.
 		.3 [1] velocity.
-		.4 [1] exact.		
+		.4 [1] exact.
 		.3 [1] orientation.
 		.4 [1] exact.
 		.3 [1] yawRate.
@@ -202,5 +202,3 @@ A planning problem may contain several elements \textit{goal state} (cf. Fig.~\r
 	\caption{Element \textit{goal state} of a planning problem}
 	\label{fig:goalState}
 \end{figure}
-
-

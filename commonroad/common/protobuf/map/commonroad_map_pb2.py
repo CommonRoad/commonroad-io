@@ -2,197 +2,345 @@
 # source: commonroad_map.proto
 
 import sys
-_b=sys.version_info[0]<3 and (lambda x:x) or (lambda x:x.encode('latin1'))
+
+_b = sys.version_info[0] < 3 and (lambda x: x) or (lambda x: x.encode("latin1"))
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
+
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
 
 
-import commonroad.common.protobuf.map.location_pb2 as location__pb2
-import commonroad.common.protobuf.map.lanelet_pb2 as lanelet__pb2
-import commonroad.common.protobuf.map.area_pb2 as area__pb2
-import commonroad.common.protobuf.map.traffic_sign_pb2 as traffic__sign__pb2
-import commonroad.common.protobuf.map.traffic_light_pb2 as traffic__light__pb2
-import commonroad.common.protobuf.map.intersection_pb2 as intersection__pb2
-import commonroad.common.protobuf.map.environment_obstacle_pb2 as environment__obstacle__pb2
 import commonroad.common.protobuf.common.scenario_meta_information_pb2 as scenario__meta__information__pb2
-
+import commonroad.common.protobuf.map.area_pb2 as area__pb2
+import commonroad.common.protobuf.map.environment_obstacle_pb2 as environment__obstacle__pb2
+import commonroad.common.protobuf.map.intersection_pb2 as intersection__pb2
+import commonroad.common.protobuf.map.lanelet_pb2 as lanelet__pb2
+import commonroad.common.protobuf.map.location_pb2 as location__pb2
+import commonroad.common.protobuf.map.traffic_light_pb2 as traffic__light__pb2
+import commonroad.common.protobuf.map.traffic_sign_pb2 as traffic__sign__pb2
 
 DESCRIPTOR = _descriptor.FileDescriptor(
-  name='commonroad_map.proto',
-  package='commonroad_map',
-  syntax='proto2',
-  serialized_options=_b('H\003'),
-  serialized_pb=_b('\n\x14\x63ommonroad_map.proto\x12\x0e\x63ommonroad_map\x1a\x0elocation.proto\x1a\rlanelet.proto\x1a\narea.proto\x1a\x12traffic_sign.proto\x1a\x13traffic_light.proto\x1a\x12intersection.proto\x1a\x1a\x65nvironment_obstacle.proto\x1a\x1fscenario_meta_information.proto\"x\n\x0eMapInformation\x12(\n\x06map_id\x18\x01 \x02(\x0b\x32\x18.commonroad_common.MapID\x12<\n\x10\x66ile_information\x18\x02 \x02(\x0b\x32\".commonroad_common.FileInformation\"\x85\x04\n\rCommonRoadMap\x12<\n\x14map_meta_information\x18\x01 \x02(\x0b\x32\x1e.commonroad_map.MapInformation\x12*\n\x08location\x18\x02 \x02(\x0b\x32\x18.commonroad_map.Location\x12)\n\x08lanelets\x18\x03 \x03(\x0b\x32\x17.commonroad_map.Lanelet\x12,\n\nstop_lines\x18\x04 \x03(\x0b\x32\x18.commonroad_map.StopLine\x12)\n\nboundaries\x18\x05 \x03(\x0b\x32\x15.commonroad_map.Bound\x12#\n\x05\x61reas\x18\x06 \x03(\x0b\x32\x14.commonroad_map.Area\x12\x32\n\rtraffic_signs\x18\x07 \x03(\x0b\x32\x1b.commonroad_map.TrafficSign\x12\x34\n\x0etraffic_lights\x18\x08 \x03(\x0b\x32\x1c.commonroad_map.TrafficLight\x12\x33\n\rintersections\x18\t \x03(\x0b\x32\x1c.commonroad_map.Intersection\x12\x42\n\x15\x65nvironment_obstacles\x18\n \x03(\x0b\x32#.commonroad_map.EnvironmentObstacleB\x02H\x03')
-  ,
-  dependencies=[location__pb2.DESCRIPTOR,lanelet__pb2.DESCRIPTOR,area__pb2.DESCRIPTOR,traffic__sign__pb2.DESCRIPTOR,traffic__light__pb2.DESCRIPTOR,intersection__pb2.DESCRIPTOR,environment__obstacle__pb2.DESCRIPTOR,scenario__meta__information__pb2.DESCRIPTOR,])
-
-
+    name="commonroad_map.proto",
+    package="commonroad_map",
+    syntax="proto2",
+    serialized_options=_b("H\003"),
+    serialized_pb=_b(
+        '\n\x14\x63ommonroad_map.proto\x12\x0e\x63ommonroad_map\x1a\x0elocation.proto\x1a\rlanelet.proto\x1a\narea.proto\x1a\x12traffic_sign.proto\x1a\x13traffic_light.proto\x1a\x12intersection.proto\x1a\x1a\x65nvironment_obstacle.proto\x1a\x1fscenario_meta_information.proto"x\n\x0eMapInformation\x12(\n\x06map_id\x18\x01 \x02(\x0b\x32\x18.commonroad_common.MapID\x12<\n\x10\x66ile_information\x18\x02 \x02(\x0b\x32".commonroad_common.FileInformation"\x85\x04\n\rCommonRoadMap\x12<\n\x14map_meta_information\x18\x01 \x02(\x0b\x32\x1e.commonroad_map.MapInformation\x12*\n\x08location\x18\x02 \x02(\x0b\x32\x18.commonroad_map.Location\x12)\n\x08lanelets\x18\x03 \x03(\x0b\x32\x17.commonroad_map.Lanelet\x12,\n\nstop_lines\x18\x04 \x03(\x0b\x32\x18.commonroad_map.StopLine\x12)\n\nboundaries\x18\x05 \x03(\x0b\x32\x15.commonroad_map.Bound\x12#\n\x05\x61reas\x18\x06 \x03(\x0b\x32\x14.commonroad_map.Area\x12\x32\n\rtraffic_signs\x18\x07 \x03(\x0b\x32\x1b.commonroad_map.TrafficSign\x12\x34\n\x0etraffic_lights\x18\x08 \x03(\x0b\x32\x1c.commonroad_map.TrafficLight\x12\x33\n\rintersections\x18\t \x03(\x0b\x32\x1c.commonroad_map.Intersection\x12\x42\n\x15\x65nvironment_obstacles\x18\n \x03(\x0b\x32#.commonroad_map.EnvironmentObstacleB\x02H\x03'
+    ),
+    dependencies=[
+        location__pb2.DESCRIPTOR,
+        lanelet__pb2.DESCRIPTOR,
+        area__pb2.DESCRIPTOR,
+        traffic__sign__pb2.DESCRIPTOR,
+        traffic__light__pb2.DESCRIPTOR,
+        intersection__pb2.DESCRIPTOR,
+        environment__obstacle__pb2.DESCRIPTOR,
+        scenario__meta__information__pb2.DESCRIPTOR,
+    ],
+)
 
 
 _MAPINFORMATION = _descriptor.Descriptor(
-  name='MapInformation',
-  full_name='commonroad_map.MapInformation',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='map_id', full_name='commonroad_map.MapInformation.map_id', index=0,
-      number=1, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='file_information', full_name='commonroad_map.MapInformation.file_information', index=1,
-      number=2, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=205,
-  serialized_end=325,
+    name="MapInformation",
+    full_name="commonroad_map.MapInformation",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="map_id",
+            full_name="commonroad_map.MapInformation.map_id",
+            index=0,
+            number=1,
+            type=11,
+            cpp_type=10,
+            label=2,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="file_information",
+            full_name="commonroad_map.MapInformation.file_information",
+            index=1,
+            number=2,
+            type=11,
+            cpp_type=10,
+            label=2,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=205,
+    serialized_end=325,
 )
 
 
 _COMMONROADMAP = _descriptor.Descriptor(
-  name='CommonRoadMap',
-  full_name='commonroad_map.CommonRoadMap',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='map_meta_information', full_name='commonroad_map.CommonRoadMap.map_meta_information', index=0,
-      number=1, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='location', full_name='commonroad_map.CommonRoadMap.location', index=1,
-      number=2, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='lanelets', full_name='commonroad_map.CommonRoadMap.lanelets', index=2,
-      number=3, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='stop_lines', full_name='commonroad_map.CommonRoadMap.stop_lines', index=3,
-      number=4, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='boundaries', full_name='commonroad_map.CommonRoadMap.boundaries', index=4,
-      number=5, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='areas', full_name='commonroad_map.CommonRoadMap.areas', index=5,
-      number=6, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='traffic_signs', full_name='commonroad_map.CommonRoadMap.traffic_signs', index=6,
-      number=7, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='traffic_lights', full_name='commonroad_map.CommonRoadMap.traffic_lights', index=7,
-      number=8, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='intersections', full_name='commonroad_map.CommonRoadMap.intersections', index=8,
-      number=9, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='environment_obstacles', full_name='commonroad_map.CommonRoadMap.environment_obstacles', index=9,
-      number=10, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=328,
-  serialized_end=845,
+    name="CommonRoadMap",
+    full_name="commonroad_map.CommonRoadMap",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="map_meta_information",
+            full_name="commonroad_map.CommonRoadMap.map_meta_information",
+            index=0,
+            number=1,
+            type=11,
+            cpp_type=10,
+            label=2,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="location",
+            full_name="commonroad_map.CommonRoadMap.location",
+            index=1,
+            number=2,
+            type=11,
+            cpp_type=10,
+            label=2,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="lanelets",
+            full_name="commonroad_map.CommonRoadMap.lanelets",
+            index=2,
+            number=3,
+            type=11,
+            cpp_type=10,
+            label=3,
+            has_default_value=False,
+            default_value=[],
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="stop_lines",
+            full_name="commonroad_map.CommonRoadMap.stop_lines",
+            index=3,
+            number=4,
+            type=11,
+            cpp_type=10,
+            label=3,
+            has_default_value=False,
+            default_value=[],
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="boundaries",
+            full_name="commonroad_map.CommonRoadMap.boundaries",
+            index=4,
+            number=5,
+            type=11,
+            cpp_type=10,
+            label=3,
+            has_default_value=False,
+            default_value=[],
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="areas",
+            full_name="commonroad_map.CommonRoadMap.areas",
+            index=5,
+            number=6,
+            type=11,
+            cpp_type=10,
+            label=3,
+            has_default_value=False,
+            default_value=[],
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="traffic_signs",
+            full_name="commonroad_map.CommonRoadMap.traffic_signs",
+            index=6,
+            number=7,
+            type=11,
+            cpp_type=10,
+            label=3,
+            has_default_value=False,
+            default_value=[],
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="traffic_lights",
+            full_name="commonroad_map.CommonRoadMap.traffic_lights",
+            index=7,
+            number=8,
+            type=11,
+            cpp_type=10,
+            label=3,
+            has_default_value=False,
+            default_value=[],
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="intersections",
+            full_name="commonroad_map.CommonRoadMap.intersections",
+            index=8,
+            number=9,
+            type=11,
+            cpp_type=10,
+            label=3,
+            has_default_value=False,
+            default_value=[],
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="environment_obstacles",
+            full_name="commonroad_map.CommonRoadMap.environment_obstacles",
+            index=9,
+            number=10,
+            type=11,
+            cpp_type=10,
+            label=3,
+            has_default_value=False,
+            default_value=[],
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=328,
+    serialized_end=845,
 )
 
-_MAPINFORMATION.fields_by_name['map_id'].message_type = scenario__meta__information__pb2._MAPID
-_MAPINFORMATION.fields_by_name['file_information'].message_type = scenario__meta__information__pb2._FILEINFORMATION
-_COMMONROADMAP.fields_by_name['map_meta_information'].message_type = _MAPINFORMATION
-_COMMONROADMAP.fields_by_name['location'].message_type = location__pb2._LOCATION
-_COMMONROADMAP.fields_by_name['lanelets'].message_type = lanelet__pb2._LANELET
-_COMMONROADMAP.fields_by_name['stop_lines'].message_type = lanelet__pb2._STOPLINE
-_COMMONROADMAP.fields_by_name['boundaries'].message_type = lanelet__pb2._BOUND
-_COMMONROADMAP.fields_by_name['areas'].message_type = area__pb2._AREA
-_COMMONROADMAP.fields_by_name['traffic_signs'].message_type = traffic__sign__pb2._TRAFFICSIGN
-_COMMONROADMAP.fields_by_name['traffic_lights'].message_type = traffic__light__pb2._TRAFFICLIGHT
-_COMMONROADMAP.fields_by_name['intersections'].message_type = intersection__pb2._INTERSECTION
-_COMMONROADMAP.fields_by_name['environment_obstacles'].message_type = environment__obstacle__pb2._ENVIRONMENTOBSTACLE
-DESCRIPTOR.message_types_by_name['MapInformation'] = _MAPINFORMATION
-DESCRIPTOR.message_types_by_name['CommonRoadMap'] = _COMMONROADMAP
+_MAPINFORMATION.fields_by_name["map_id"].message_type = scenario__meta__information__pb2._MAPID
+_MAPINFORMATION.fields_by_name[
+    "file_information"
+].message_type = scenario__meta__information__pb2._FILEINFORMATION
+_COMMONROADMAP.fields_by_name["map_meta_information"].message_type = _MAPINFORMATION
+_COMMONROADMAP.fields_by_name["location"].message_type = location__pb2._LOCATION
+_COMMONROADMAP.fields_by_name["lanelets"].message_type = lanelet__pb2._LANELET
+_COMMONROADMAP.fields_by_name["stop_lines"].message_type = lanelet__pb2._STOPLINE
+_COMMONROADMAP.fields_by_name["boundaries"].message_type = lanelet__pb2._BOUND
+_COMMONROADMAP.fields_by_name["areas"].message_type = area__pb2._AREA
+_COMMONROADMAP.fields_by_name["traffic_signs"].message_type = traffic__sign__pb2._TRAFFICSIGN
+_COMMONROADMAP.fields_by_name["traffic_lights"].message_type = traffic__light__pb2._TRAFFICLIGHT
+_COMMONROADMAP.fields_by_name["intersections"].message_type = intersection__pb2._INTERSECTION
+_COMMONROADMAP.fields_by_name[
+    "environment_obstacles"
+].message_type = environment__obstacle__pb2._ENVIRONMENTOBSTACLE
+DESCRIPTOR.message_types_by_name["MapInformation"] = _MAPINFORMATION
+DESCRIPTOR.message_types_by_name["CommonRoadMap"] = _COMMONROADMAP
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-MapInformation = _reflection.GeneratedProtocolMessageType('MapInformation', (_message.Message,), dict(
-  DESCRIPTOR = _MAPINFORMATION,
-  __module__ = 'commonroad_map_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad_map.MapInformation)
-  ))
+MapInformation = _reflection.GeneratedProtocolMessageType(
+    "MapInformation",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_MAPINFORMATION,
+        __module__="commonroad_map_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad_map.MapInformation)
+    ),
+)
 _sym_db.RegisterMessage(MapInformation)
 
-CommonRoadMap = _reflection.GeneratedProtocolMessageType('CommonRoadMap', (_message.Message,), dict(
-  DESCRIPTOR = _COMMONROADMAP,
-  __module__ = 'commonroad_map_pb2'
-  # @@protoc_insertion_point(class_scope:commonroad_map.CommonRoadMap)
-  ))
+CommonRoadMap = _reflection.GeneratedProtocolMessageType(
+    "CommonRoadMap",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_COMMONROADMAP,
+        __module__="commonroad_map_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad_map.CommonRoadMap)
+    ),
+)
 _sym_db.RegisterMessage(CommonRoadMap)
 
 

@@ -119,10 +119,13 @@ class TestTrafficSignElement(unittest.TestCase):
 
     def test_foreign_country(self):
         scenario, _ = CommonRoadFileReader(
-            Path(__file__).parent.parent / Path("test_scenarios/xml/2020a/ARG_Carcarana-4_5_T-1.xml")
+            Path(__file__).parent.parent
+            / Path("test_scenarios/xml/2020a/ARG_Carcarana-4_5_T-1.xml")
         ).open()
         self.assertEqual(
-            scenario.lanelet_network.find_traffic_sign_by_id(6357).traffic_sign_elements[0].traffic_sign_element_id,
+            scenario.lanelet_network.find_traffic_sign_by_id(6357)
+            .traffic_sign_elements[0]
+            .traffic_sign_element_id,
             TrafficSignIDArgentina.MAX_SPEED,
         )
 

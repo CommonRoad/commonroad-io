@@ -42,7 +42,9 @@ class ScenarioInterface:
 
     def __eq__(self, other):
         if not isinstance(other, ScenarioInterface):
-            warnings.warn(f"Inequality between ScenarioInterface {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between ScenarioInterface {repr(self)} and different type {type(other)}"
+            )
             return False
 
         return (

@@ -37,7 +37,9 @@ from commonroad.scenario.traffic_sign import (
 
 class TestMapMetaInformation(unittest.TestCase):
     def test_initialization(self):
-        file_information = FileInformation(Time(12, 0, 1, 1, 2023), "author", "affiliation", "source")
+        file_information = FileInformation(
+            Time(12, 0, 1, 1, 2023), "author", "affiliation", "source"
+        )
         scenario_id = ScenarioID(country_id="DEU", map_name="MUC", map_id=1)
 
         map_information = MapMetaInformation(scenario_id, file_information)
@@ -48,7 +50,9 @@ class TestMapMetaInformation(unittest.TestCase):
         self.assertEqual(map_information.file_information.source, "source")
 
     def test_basic_properties(self):
-        file_information = FileInformation(Time(12, 0, 1, 1, 2023), "author", "affiliation", "source")
+        file_information = FileInformation(
+            Time(12, 0, 1, 1, 2023), "author", "affiliation", "source"
+        )
         scenario_id = ScenarioID(country_id="DEU", map_name="MUC", map_id=1)
         map_information = MapMetaInformation(scenario_id, file_information)
 
@@ -151,7 +155,9 @@ class TestLaneletNetwork(unittest.TestCase):
             LineMarking.UNKNOWN,
         )
 
-        file_information = FileInformation(Time(12, 0, 1, 1, 2024), "Max Mustermann", "TUM", "EDGAR", "GPL3")
+        file_information = FileInformation(
+            Time(12, 0, 1, 1, 2024), "Max Mustermann", "TUM", "EDGAR", "GPL3"
+        )
         scenario_id = ScenarioID(country_id="DEU", map_name="MUC", map_id=1)
         self.lanelet_network = LaneletNetwork(MapMetaInformation(scenario_id, file_information))
         self.lanelet_network.add_lanelet(self.lanelet)
@@ -233,7 +239,33 @@ class TestLaneletNetwork(unittest.TestCase):
         self.lanelet_network.add_lanelet(lanelet_5)
 
         lanelets = self.intersection.compute_member_lanelets(self.lanelet_network)
-        gt_lanelets = {1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31}
+        gt_lanelets = {
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+        }
         self.assertEqual(lanelets, gt_lanelets)
 
     def test_initialize_lanelets(self):
@@ -269,7 +301,9 @@ class TestLaneletNetwork(unittest.TestCase):
         self.assertEqual(self.lanelet_network.lanelets[0].lanelet_id, self.lanelet.lanelet_id)
 
     def test_map_information_initialization(self):
-        file_information = FileInformation(Time(12, 0, 1, 1, 2024), "Max Mustermann", "TUM", "EDGAR", "GPL3")
+        file_information = FileInformation(
+            Time(12, 0, 1, 1, 2024), "Max Mustermann", "TUM", "EDGAR", "GPL3"
+        )
         scenario_id = ScenarioID(country_id="DEU", map_name="MUC", map_id=1)
         map_information = MapMetaInformation(scenario_id, file_information)
         self.assertEqual(self.lanelet_network.meta_information, map_information)
@@ -330,7 +364,9 @@ class TestLaneletNetwork(unittest.TestCase):
         lanelet_network.add_lanelet(lanelet3)
 
         incoming_element1 = IncomingGroup(8, {lanelet3.lanelet_id}, 13, {lanelet1.lanelet_id})
-        incoming_element2 = IncomingGroup(9, {lanelet1.lanelet_id}, 14, {lanelet3.lanelet_id}, {lanelet2.lanelet_id})
+        incoming_element2 = IncomingGroup(
+            9, {lanelet1.lanelet_id}, 14, {lanelet3.lanelet_id}, {lanelet2.lanelet_id}
+        )
         outgoing_1 = OutgoingGroup(13)
         outgoing_2 = OutgoingGroup(14)
         crossing_1 = CrossingGroup(15, {lanelet3.lanelet_id, lanelet2.lanelet_id}, 8, 13)
@@ -360,7 +396,9 @@ class TestLaneletNetwork(unittest.TestCase):
         )
         self.assertIsNotNone(new_network_intersection)
         self.assertIn(lanelet2.lanelet_id, new_network_intersection.crossings[0].crossing_lanelets)
-        self.assertNotIn(lanelet3.lanelet_id, new_network_intersection.crossings[0].crossing_lanelets)
+        self.assertNotIn(
+            lanelet3.lanelet_id, new_network_intersection.crossings[0].crossing_lanelets
+        )
         self.assertEqual(len(new_network_intersection.incomings), 1)
         new_network_intersection_incoming = new_network_intersection.incomings[0]
         self.assertIn(lanelet1.lanelet_id, new_network_intersection_incoming.incoming_lanelets)
@@ -860,8 +898,12 @@ class TestLaneletNetwork(unittest.TestCase):
         lanelet_network.add_lanelet(lanelet_3)
 
         # Test for existing traffic Signs/Lights
-        self.assertEqual(lanelet_network.get_traffic_sign_referenced_lanelets(19), [lanelet_1, lanelet_2])
-        self.assertEqual(lanelet_network.get_traffic_lights_referenced_lanelets(20), [lanelet_1, lanelet_2])
+        self.assertEqual(
+            lanelet_network.get_traffic_sign_referenced_lanelets(19), [lanelet_1, lanelet_2]
+        )
+        self.assertEqual(
+            lanelet_network.get_traffic_lights_referenced_lanelets(20), [lanelet_1, lanelet_2]
+        )
         # Test for non-existing Traffic Signs/Lights
         self.assertEqual(lanelet_network.get_traffic_sign_referenced_lanelets(1), [])
         self.assertEqual(lanelet_network.get_traffic_lights_referenced_lanelets(2), [])

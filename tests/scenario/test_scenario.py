@@ -192,7 +192,9 @@ class TestScenario(unittest.TestCase):
         self.outgoing_1 = OutgoingGroup(1, {1, 2, 3})
         self.outgoing_2 = OutgoingGroup(2, {4, 5, 6})
         self.outgoing_3 = OutgoingGroup(3, {7, 8, 9})
-        self.intersection = Intersection(21, [self.incoming_1, self.incoming_2], [self.outgoing_1, self.outgoing_2])
+        self.intersection = Intersection(
+            21, [self.incoming_1, self.incoming_2], [self.outgoing_1, self.outgoing_2]
+        )
         self.intersection2 = Intersection(736, [self.incoming_3], [self.outgoing_3])
         self.lanelet_network.add_intersection(self.intersection)
 
@@ -933,8 +935,12 @@ class TestScenario(unittest.TestCase):
         )
 
     def test_location_and_environment(self):
-        self.scenario.environment = Environment(Time(12, 15), TimeOfDay.NIGHT, Weather.SNOW, Underground.ICE)
-        self.scenario.lanelet_network.location = Location(geo_name_id=123, gps_latitude=456, gps_longitude=789)
+        self.scenario.environment = Environment(
+            Time(12, 15), TimeOfDay.NIGHT, Weather.SNOW, Underground.ICE
+        )
+        self.scenario.lanelet_network.location = Location(
+            geo_name_id=123, gps_latitude=456, gps_longitude=789
+        )
         exp_geo_name_id = 123
         exp_gps_latitude = 456
         exp_gps_longitude = 789

@@ -180,7 +180,7 @@ Traffic Sign Interpreter
 
 
 .. automodule:: commonroad.scenario.intersection
-   
+
 
 Intersection
 ------------
@@ -198,7 +198,7 @@ Intersection
    :members:
    :undoc-members:
    :member-order: bysource
-   
+
 ``OutgoingGroup`` class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: OutgoingGroup

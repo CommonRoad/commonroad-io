@@ -59,4 +59,3 @@ message SignalState {
     optional bool hazard_warning_lights = 6;
     optional bool flashing_blue_lights = 7;
 }
-

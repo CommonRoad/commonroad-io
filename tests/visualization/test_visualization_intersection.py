@@ -25,7 +25,8 @@ class TestVisualizationV2(unittest.TestCase):
     def setUp(self):
         self.full_path = os.path.dirname(os.path.abspath(__file__))
         self.filename_urban = os.path.join(
-            self.full_path, "../test_scenarios/xml/2020a/ZAM_TestReadingIntersectionTrafficSign-1_1_T-1.xml"
+            self.full_path,
+            "../test_scenarios/xml/2020a/ZAM_TestReadingIntersectionTrafficSign-1_1_T-1.xml",
         )
         self.filename_complex_tl = os.path.join(
             self.full_path, "../test_scenarios/xml/2020a/ZAM_TestReadingComplexTl-1_1_T-1.xml"

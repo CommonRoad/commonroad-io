@@ -3,19 +3,19 @@
 
 \section{Specification of the Format}
 
-We designed our format such that it can represent all features, is unambiguous, and is easy to use. 
+We designed our format such that it can represent all features, is unambiguous, and is easy to use.
 We put additional emphasis to augment the road description by its implications, i.e., our format does not just describe a traffic situation, but already provides the meaning for motion planning.
 As a result, our scenarios can directly be used by a motion planner and do not require much additional computations in terms of pre-processing.
 Subsequently, we describe our specification.
 Note that it may differ in some cases to the data structures used in our tools, e.g., commonroad-io.
 
-All variables are given by decimal numbers based on SI units. We use a common Cartesian coordinate frame with x-, y-, and z-axis to be able to represent all road networks including bridges and tunnels. 
+All variables are given by decimal numbers based on SI units. We use a common Cartesian coordinate frame with x-, y-, and z-axis to be able to represent all road networks including bridges and tunnels.
 If a scenario is only defined in a two-dimensional plane (which is often the case), we use the convention that all z-coordinates are zero.
 Angles are measured counter-clockwise around the positive z-axis with the zero angle along the x-axis.
 
 \colorbox{red}{Add figure for orientation since this often leads to questions.}
 
-The overall structure of the CommonRoad format is shown by Fig.~\ref{fig:structureMap}, Fig.~\ref{fig:structureDynamic}, and Fig.~\ref{fig:structureScenario}. 
+The overall structure of the CommonRoad format is shown by Fig.~\ref{fig:structureMap}, Fig.~\ref{fig:structureDynamic}, and Fig.~\ref{fig:structureScenario}.
 Each scenario element has a unique\footnote{Unique within the whole scenario.} ID (of type positive integer) making it possible to reference it.
 The numbers in square brackets denote the number of allowed elements (while \texttt{N} can be different for each element).
 %If an element is omitted (number of allowed elements is $ \geq 0$), the default value is none or its default value is specified in the description of this element.
@@ -45,7 +45,7 @@ The numbers in square brackets denote the number of allowed elements (while \tex
 	\dirtree{%
 		.1 [1] commonRoa\_scenario.
 		.2 [1] scenario\_meta\_information.
-		.2 [1] map\_id. 
+		.2 [1] map\_id.
 		.2 [1] dynamic\_id.
 		.2 [1..N] planning\_problems.
 		.2 [0..N] coopearative\_planning\_problems.
@@ -129,8 +129,8 @@ Analogously to the rectangle, the center can be omitted if all its coordinates a
 \end{figure}
 
 \paragraph{Polygon}
-The element \textit{polygon} can be used to model any other two-dimensional obstacle. 
-A polygon is defined by an ordered list of points, in which the first one is its reference point. 
+The element \textit{polygon} can be used to model any other two-dimensional obstacle.
+A polygon is defined by an ordered list of points, in which the first one is its reference point.
 We adhere to the convention that the polygon points are ordered clockwise.
 \begin{figure}[!htpb]
 	\small
@@ -168,7 +168,7 @@ The position of an object is specified by the element \emph{position} which cont
 	\small
 	\dirtree{%
 		.1 /.
-		.2 [1] position.		
+		.2 [1] position.
 		.3 [1] point\\OR.
 		.3 [1..N] rectangle/circle/polygon\\OR.
 		.3 [1..N] lanelet (\textrm{ref to} lanelet).

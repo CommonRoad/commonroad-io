@@ -1005,9 +1005,9 @@ class MPRenderer(IRenderer):
             outgoings_right_color = draw_params.intersection.outgoings_right_color
             show_intersection_labels = draw_params.intersection.show_label
         else:
-            draw_incoming_lanelets = draw_outgoing_group_lanelets = draw_crossings = draw_outgoings = (
-                show_intersection_labels
-            ) = False
+            draw_incoming_lanelets = draw_outgoing_group_lanelets = draw_crossings = (
+                draw_outgoings
+            ) = show_intersection_labels = False
 
         left_bound_color = draw_params.lanelet.left_bound_color
         right_bound_color = draw_params.lanelet.right_bound_color
@@ -1078,15 +1078,21 @@ class MPRenderer(IRenderer):
 
             if draw_outgoings:
                 tmp_list: List[set] = [
-                    incoming.outgoing_left for intersection in intersections for incoming in intersection.incomings
+                    incoming.outgoing_left
+                    for intersection in intersections
+                    for incoming in intersection.incomings
                 ]
                 outgoings_left: Set[int] = set.union(*tmp_list)
                 tmp_list: List[set] = [
-                    incoming.outgoing_straight for intersection in intersections for incoming in intersection.incomings
+                    incoming.outgoing_straight
+                    for intersection in intersections
+                    for incoming in intersection.incomings
                 ]
                 outgoings_straight: Set[int] = set.union(*tmp_list)
                 tmp_list: List[set] = [
-                    incoming.outgoing_right for intersection in intersections for incoming in intersection.incomings
+                    incoming.outgoing_right
+                    for intersection in intersections
+                    for incoming in intersection.incomings
                 ]
                 outgoings_right: Set[int] = set.union(*tmp_list)
                 all_outgoings = set.union(outgoings_straight, outgoings_right, outgoings_left)
@@ -1284,7 +1290,9 @@ class MPRenderer(IRenderer):
 
             # draw colored center bound. Hierarchy or colors: outgoings > usual
             # center bound
-            is_outgoing = draw_intersections and draw_outgoings and lanelet.lanelet_id in all_outgoings
+            is_outgoing = (
+                draw_intersections and draw_outgoings and lanelet.lanelet_id in all_outgoings
+            )
             if is_outgoing:
                 if lanelet.lanelet_id in outgoings_left:
                     out_left_paths.append(Path(center_vertices_2d, closed=False))
@@ -1328,14 +1336,20 @@ class MPRenderer(IRenderer):
                 and (lanelet.lanelet_id in incoming_lanelets)
             )
             is_outgoing_group_lanelet = (
-                draw_intersections and draw_outgoing_group_lanelets and (lanelet.lanelet_id in outgoing_group_lanelets)
+                draw_intersections
+                and draw_outgoing_group_lanelets
+                and (lanelet.lanelet_id in outgoing_group_lanelets)
             )
-            is_crossing = draw_intersections and draw_crossings and (lanelet.lanelet_id in crossings)
+            is_crossing = (
+                draw_intersections and draw_crossings and (lanelet.lanelet_id in crossings)
+            )
 
             # Draw lanelet area
             if fill_lanelet:
                 if not is_incoming_lanelet and not is_crossing and not is_outgoing_group_lanelet:
-                    vertices_fill.append(np.concatenate((right_vertices_2d, np.flip(left_vertices_2d, 0))))
+                    vertices_fill.append(
+                        np.concatenate((right_vertices_2d, np.flip(left_vertices_2d, 0)))
+                    )
 
             # collect incoming lanelets in separate list for plotting in
             # different color
@@ -1344,9 +1358,13 @@ class MPRenderer(IRenderer):
                     np.concatenate((right_vertices_2d, np.flip(left_vertices_2d, 0)))
                 )
             elif is_crossing:
-                crossing_vertices_fill.append(np.concatenate((right_vertices_2d, np.flip(left_vertices_2d, 0))))
+                crossing_vertices_fill.append(
+                    np.concatenate((right_vertices_2d, np.flip(left_vertices_2d, 0)))
+                )
             elif is_outgoing_group_lanelet:
-                outgoing_group_vertices_fill.append(np.concatenate((right_vertices_2d, np.flip(left_vertices_2d, 0))))
+                outgoing_group_vertices_fill.append(
+                    np.concatenate((right_vertices_2d, np.flip(left_vertices_2d, 0)))
+                )
 
             # Draw labels
             if show_label or show_intersection_labels or draw_traffic_signs:
@@ -1359,7 +1377,9 @@ class MPRenderer(IRenderer):
                     )
                     strings.append("inc_id: " + str(incomings_id[lanelet.lanelet_id]))
                 if is_outgoing_group_lanelet and show_intersection_labels:
-                    strings.append(f"int_id: {outgg_2_intersections[lanelet.lanelet_id].intersection_id}")
+                    strings.append(
+                        f"int_id: {outgg_2_intersections[lanelet.lanelet_id].intersection_id}"
+                    )
                     strings.append("outgg_id: " + str(outgoing_groups_id[lanelet.lanelet_id]))
                 if draw_traffic_signs and show_traffic_sign_label:
                     traffic_signs_tmp = [obj._traffic_signs[id] for id in lanelet.traffic_signs]
