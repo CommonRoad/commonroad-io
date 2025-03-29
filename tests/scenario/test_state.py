@@ -49,7 +49,10 @@ class TestState(unittest.TestCase):
     def test_translate_rotate(self):
         def translate_rotate(point):
             b = np.array(point) + np.array(translation)
-            return [b[0] * math.cos(angle) - b[1] * math.sin(angle), b[0] * math.sin(angle) + b[1] * math.cos(angle)]
+            return [
+                b[0] * math.cos(angle) - b[1] * math.sin(angle),
+                b[0] * math.sin(angle) + b[1] * math.cos(angle),
+            ]
 
         # test assertions
         state_elements = {"position": Interval(-3.456, 1.0), "orientation": 0.87, "time_step": 0}
@@ -59,7 +62,9 @@ class TestState(unittest.TestCase):
         state_elements = {"position": np.array([1.35, -2.4]), "orientation": 0.87, "time_step": 0}
         state = InitialState(**state_elements)
         self.assertRaises(AssertionError, state.translate_rotate, np.array([-0.2, 1.4, 3.3]), 0.0)
-        self.assertRaises(AssertionError, state.translate_rotate, np.array([-0.2, 1.4]), [0.0, -0.7])
+        self.assertRaises(
+            AssertionError, state.translate_rotate, np.array([-0.2, 1.4]), [0.0, -0.7]
+        )
         self.assertRaises(AssertionError, state.translate_rotate, np.array([0.0, 0.0]), -7.10)
 
         # exact position and orientation
@@ -87,10 +92,16 @@ class TestState(unittest.TestCase):
         angle = 1.77 * np.pi
         state = InitialState(**state_elements)
         state_prime = state.translate_rotate(translation, angle)
-        self.assertAlmostEqual(state_prime.orientation.end - state_prime.orientation.start, 3.01 + 0.02)
+        self.assertAlmostEqual(
+            state_prime.orientation.end - state_prime.orientation.start, 3.01 + 0.02
+        )
 
         # uncertain position
-        state_elements = {"position": Rectangle(length=4.0, width=2.0, center=np.array([1.5, 3.6]), orientation=0.13)}
+        state_elements = {
+            "position": Rectangle(
+                length=4.0, width=2.0, center=np.array([1.5, 3.6]), orientation=0.13
+            )
+        }
         angle = 0.87
         state = InitialState(**state_elements)
         state_prime = state.translate_rotate(translation, angle)
@@ -188,7 +199,9 @@ class TestState(unittest.TestCase):
         states_1 = set()
         states_2 = set()
         for i in range(10):
-            pm_state = PMState(time_step=i, position=np.array([i, i]), velocity=i * 0.01, velocity_y=i * 0.02)
+            pm_state = PMState(
+                time_step=i, position=np.array([i, i]), velocity=i * 0.01, velocity_y=i * 0.02
+            )
             states_1.add(pm_state)
             states_2.add(copy.copy(pm_state))
         self.assertEqual(states_1, states_2)
@@ -212,13 +225,21 @@ class TestState(unittest.TestCase):
         self.assertEqual(custom_state_2.time_step.end, 1)
 
     def test_extra_state_properties(self):
-        state = PMState(time_step=Interval(0, 1), velocity=0.0, velocity_y=0.0, position=np.array([0, 0]))
+        state = PMState(
+            time_step=Interval(0, 1), velocity=0.0, velocity_y=0.0, position=np.array([0, 0])
+        )
         self.assertEqual(state.orientation, 0.0)
-        state = PMState(time_step=Interval(0, 1), velocity=0.0, velocity_y=1.0, position=np.array([0, 0]))
+        state = PMState(
+            time_step=Interval(0, 1), velocity=0.0, velocity_y=1.0, position=np.array([0, 0])
+        )
         self.assertAlmostEqual(state.orientation, 1.57079, 3)
 
         state = ExtendedPMState(
-            time_step=Interval(0, 1), velocity=0.0, acceleration=1.0, position=np.array([0, 0]), orientation=0.0
+            time_step=Interval(0, 1),
+            velocity=0.0,
+            acceleration=1.0,
+            position=np.array([0, 0]),
+            orientation=0.0,
         )
         self.assertEqual(state.velocity_y, 0.0)
 

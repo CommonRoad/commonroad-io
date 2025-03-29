@@ -30,6 +30,93 @@ AngleExactOrInterval = Union[float, AngleInterval]
 ExactOrShape = Union[np.ndarray, Shape]
 
 
+class MetaInformationState:
+    """
+    Class that keeps the meta information state of an obstacle.
+    It freely allows to set attributes on a dynamic obstacle.
+    """
+
+    def __init__(
+        self,
+        meta_data_str: Dict[str, str] = None,
+        meta_data_int: Dict[str, int] = None,
+        meta_data_float: Dict[str, float] = None,
+        meta_data_bool: Dict[str, bool] = None,
+    ):
+        """
+        :param meta_data_str: dictionary of a key and a string
+        :param meta_data_int: dictionary of a key and an int
+        :param meta_data_float: dictionary of a key and a float
+        :param meta_data_bool: dictionary of a key and a bool
+        """
+        self._meta_data_str = meta_data_str
+        self._meta_data_int = meta_data_int
+        self._meta_data_float = meta_data_float
+        self._meta_data_bool = meta_data_bool
+
+    @property
+    def meta_data_str(self) -> Dict[str, str]:
+        """Dictionary of a key and a string."""
+        return self._meta_data_str
+
+    @meta_data_str.setter
+    def meta_data_str(self, meta_data_str: Dict[str, str]):
+        assert isinstance(meta_data_str, Dict), (
+            "<MetaInformationState/meta_data_str>: Provided meta_data_str "
+            "is not valid! id={}".format(meta_data_str)
+        )
+        self._meta_data_str = meta_data_str
+
+    @property
+    def meta_data_int(self) -> Dict[str, int]:
+        """Dictionary of a key and an int."""
+        return self._meta_data_int
+
+    @meta_data_int.setter
+    def meta_data_int(self, meta_data_int: Dict[str, int]):
+        assert isinstance(meta_data_int, Dict), (
+            "<MetaInformationState/meta_data_int>: Provided meta_data_int "
+            "is not valid! id={}".format(meta_data_int)
+        )
+        self._meta_data_int = meta_data_int
+
+    @property
+    def meta_data_float(self) -> Dict[str, float]:
+        """Dictionary of a key and a float."""
+        return self._meta_data_float
+
+    @meta_data_float.setter
+    def meta_data_float(self, meta_data_float: Dict[str, float]):
+        assert isinstance(meta_data_float, Dict), (
+            "<MetaInformationState/meta_data_float>: Provided meta_data_float "
+            "is not valid! id={}".format(meta_data_float)
+        )
+        self._meta_data_float = meta_data_float
+
+    @property
+    def meta_data_bool(self) -> Dict[str, bool]:
+        """Dictionary of a key and a bool."""
+        return self._meta_data_bool
+
+    @meta_data_bool.setter
+    def meta_data_bool(self, meta_data_bool: Dict[str, bool]):
+        assert isinstance(meta_data_bool, Dict), (
+            "<MetaInformationState/meta_data_bool>: Provided meta_data_bool "
+            "is not valid! id={}".format(meta_data_bool)
+        )
+        self._meta_data_bool = meta_data_bool
+
+    def __hash__(self):
+        return hash(
+            (
+                json.dumps(self._meta_data_str),
+                json.dumps(self._meta_data_int),
+                json.dumps(self._meta_data_float),
+                json.dumps(self._meta_data_bool),
+            )
+        )
+
+
 @dataclass
 class State(abc.ABC):
     """
@@ -51,7 +138,9 @@ class State(abc.ABC):
             val_self = getattr(self, attr)
             val_other = getattr(other, attr)
 
-            if attr == "position" and (isinstance(val_self, np.ndarray) or isinstance(val_other, np.ndarray)):
+            if attr == "position" and (
+                isinstance(val_self, np.ndarray) or isinstance(val_other, np.ndarray)
+            ):
                 if isinstance(val_self, np.ndarray) and isinstance(val_other, np.ndarray):
                     val_self = tuple(np.around(self.position.astype(float), dec))
                     val_other = tuple(np.around(self.position.astype(float), dec))
@@ -165,11 +254,15 @@ class State(abc.ABC):
         :return: Transformed state
         """
         assert is_real_number_vector(translation, 2), (
-            "<State/translate_rotate>: argument translation is not " "a vector of real numbers of length 2."
+            "<State/translate_rotate>: argument translation is not "
+            "a vector of real numbers of length 2."
         )
-        assert is_real_number(angle), "<State/translate_rotate>: argument angle must be a scalar. " "angle = %s" % angle
+        assert is_real_number(angle), (
+            "<State/translate_rotate>: argument angle must be a scalar. " "angle = %s" % angle
+        )
         assert is_valid_orientation(angle), (
-            "<State/translate_rotate>: argument angle must be within the " "interval [-2pi,2pi]. angle = %s." % angle
+            "<State/translate_rotate>: argument angle must be within the "
+            "interval [-2pi,2pi]. angle = %s." % angle
         )
 
         transformed_state = copy.copy(self)
@@ -226,7 +319,9 @@ class State(abc.ABC):
             else:
                 setattr(self, field, 0.0)
 
-    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[StateParams] = None):
+    def draw(
+        self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[StateParams] = None
+    ):
         """
         Draws state.
 
@@ -577,7 +672,9 @@ class SignalState:
 
     def __eq__(self, other):
         if not isinstance(other, SignalState):
-            warnings.warn(f"Inequality between SignalState {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between SignalState {repr(self)} and different type {type(other)}"
+            )
             return False
 
         for attr in SignalState.__slots__:

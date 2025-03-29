@@ -12,13 +12,27 @@
 ### Removed
 - Writing 2020a XML and Protobuf scenarios
 - Reading 2020a Protobuf scenarios
+- 
+## [2025.1] -
+### Changed
+- Update to new template-repository structure
+- Add test cases for all hash and equality functions，check all CommonRoad element classes
+- Improved icon rendering for semi-trailer truck
 
-## [2024.3] - 2024-10-XX
+### Fixed
+- Github actions static code evaluation and python versions
+
+## [2024.3] - 2024-12-20
 ### Added
 - New Australia and US traffic signs
 - New lanelet type: `restricted_area`
 - `LaneletNetwork.create_from_lanelet_network` now also includes intersections
 - Support for Python 3.13
+- TR2 cost function enum value
+
+### Fixed
+- `DynamicObstacle` cannot be hashed if some optional attributes are missing
+- `TrafficLightCycle` does not invalidate cached cycle init timesteps after modification
 
 ## [2024.2] - 2024-07-22
 
@@ -121,7 +135,7 @@
 ### Added
 - Area for modelling drivable areas which cannot be represented by lanelets
 - New weather and time of day options
-- Allow file reader to determine format based on suffix 
+- Allow file reader to determine format based on suffix
 
 ### Fixed
 
@@ -134,9 +148,9 @@
 - Visualization of direction arrow of narrow lanelets
 - Traffic light cycle optional
 - Traffic light in separate python file
-- Allow file reader to determine format based on suffix 
-- Broaden types allowed as file names 
-- Open files safely by using a context manager 
+- Allow file reader to determine format based on suffix
+- Broaden types allowed as file names
+- Open files safely by using a context manager
 - Use correct suffix when inferring filename from scenario id
 
 ### Removed
@@ -261,10 +275,10 @@
 - Spatial indexing via STRTree in LaneletNetwork for faster computation of lanelet queries via positions or shapes
 
 ### Changed
-- The function LaneletNetwork.create_from_lanelet_network accepts now a shape 
+- The function LaneletNetwork.create_from_lanelet_network accepts now a shape
 and set of lanelet types which should be excluded
 - Shapely polygon for lanelets is created by default
-- Function convert_to_polygon() within Lanelet class is deprecated 
+- Function convert_to_polygon() within Lanelet class is deprecated
 and will be removed in the next release
 
 ### Fixed
@@ -311,7 +325,7 @@ The lanelet assignment can still be performed manually after loading a scenario.
 ### Fixed
 - Docstrings for properties
 - Autoscaling visualization when plotting trajectories.
-- Function *generate_object_id* works now if no element has been added before and reserves ID if object 
+- Function *generate_object_id* works now if no element has been added before and reserves ID if object
 will be added later
 - Runtime warning during calls to find_lanelet_by_position
 - Various small bug fixes
@@ -334,7 +348,7 @@ will be added later
 - Support of 2020a Scenarios with TrafficLights, TrafficSigns, and Intersection objects
 - SignalStates store information on turn lights, horn, hazard lights, and blue lights of DynamicObstacles
 - New Solution object simplifies creating solution xml files and automatically checks the validity of benchmark IDs
-- GeoTransformation object stores location and transformation information for lanelet networks extracted 
+- GeoTransformation object stores location and transformation information for lanelet networks extracted
 from the real world
 
 ###Changed
@@ -345,8 +359,8 @@ from the real world
 ### Fixed
 - Various small bug fixes
 
-### Removed 
-- The old commonroad.common.solution_writer.CommonRoadSolutionWriter is deprecated and replaced by 
+### Removed
+- The old commonroad.common.solution_writer.CommonRoadSolutionWriter is deprecated and replaced by
 commonroad.common.solution.CommonRoadSolutionWriter
 
 
@@ -364,4 +378,3 @@ when lanelets join into or split from other lanelets
 ## [2019.1] - 2019-05-21
 ### Added
 - Initial version
-

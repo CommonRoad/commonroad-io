@@ -86,7 +86,9 @@ class TextAreaAutoscale(TextArea):
             self._text.figure = f
             self._children = [self._text]
             self._text.set_transform(self.offset_transform + self._baseline_transform)
-        _, h_, d_ = renderer.get_text_width_height_descent("lp", self._text._fontproperties, ismath=False)
+        _, h_, d_ = renderer.get_text_width_height_descent(
+            "lp", self._text._fontproperties, ismath=False
+        )
 
         bbox, info, d = self._text._get_layout(renderer)
         w, h = bbox.width, bbox.height
@@ -151,7 +153,9 @@ class OffsetImageAutoscale(OffsetImage):
             **kwargs,
         )
 
-        self.text_area = TextAreaAutoscale(text, px_per_metre=px_per_metre_text, textprops=textprops)
+        self.text_area = TextAreaAutoscale(
+            text, px_per_metre=px_per_metre_text, textprops=textprops
+        )
         self.txt_offset_x = txt_offset_x
         self.txt_offset_y = txt_offset_y
         self.px_per_metre = px_per_metre
@@ -254,13 +258,41 @@ def text_prop_dict() -> dict:
         (proportional to traffic sign size)
     """
     return {
-        "default": {"mpl_args": {"weight": "bold", "size": 13.5}, "rescale_threshold": 2, "position_offset_y": 0.45},
-        "262": {"mpl_args": {"weight": "bold", "size": 8}, "rescale_threshold": 2, "position_offset_y": 0.53},
-        "264": {"mpl_args": {"weight": "bold", "size": 12}, "rescale_threshold": 2, "position_offset_y": 0.47},
-        "265": {"mpl_args": {"weight": "normal", "size": 13}, "rescale_threshold": 2, "position_offset_y": 0.45},
-        "266": {"mpl_args": {"weight": "bold", "size": 5}, "rescale_threshold": 2, "position_offset_y": 0.37},
-        "274": {"mpl_args": {"weight": "bold", "size": 13.5}, "rescale_threshold": 2, "position_offset_y": 0.45},
-        "274.1": {"mpl_args": {"weight": "bold", "size": 8.5}, "rescale_threshold": 2, "position_offset_y": 0.65},
+        "default": {
+            "mpl_args": {"weight": "bold", "size": 13.5},
+            "rescale_threshold": 2,
+            "position_offset_y": 0.45,
+        },
+        "262": {
+            "mpl_args": {"weight": "bold", "size": 8},
+            "rescale_threshold": 2,
+            "position_offset_y": 0.53,
+        },
+        "264": {
+            "mpl_args": {"weight": "bold", "size": 12},
+            "rescale_threshold": 2,
+            "position_offset_y": 0.47,
+        },
+        "265": {
+            "mpl_args": {"weight": "normal", "size": 13},
+            "rescale_threshold": 2,
+            "position_offset_y": 0.45,
+        },
+        "266": {
+            "mpl_args": {"weight": "bold", "size": 5},
+            "rescale_threshold": 2,
+            "position_offset_y": 0.37,
+        },
+        "274": {
+            "mpl_args": {"weight": "bold", "size": 13.5},
+            "rescale_threshold": 2,
+            "position_offset_y": 0.45,
+        },
+        "274.1": {
+            "mpl_args": {"weight": "bold", "size": 8.5},
+            "rescale_threshold": 2,
+            "position_offset_y": 0.65,
+        },
         "275": {
             "mpl_args": {"weight": "bold", "color": "white", "size": 13.5},
             "rescale_threshold": 2,
@@ -284,13 +316,35 @@ def text_prop_dict() -> dict:
             },
             "position_offset_y": -0.55,
         },
-        "380": {"mpl_args": {"weight": "bold", "color": "white", "size": 10}, "position_offset_y": 0.45},
-        "381": {"mpl_args": {"weight": "bold", "color": "white", "size": 10}, "position_offset_y": 0.45},
-        "1040-30": {"mpl_args": {"weight": "normal", "color": "black", "size": 8}, "position_offset_y": 0.4},
-        "1001-30": {"mpl_args": {"weight": "normal", "color": "black", "size": 8}, "position_offset_y": 0.4},
-        "1004-31": {"mpl_args": {"weight": "normal", "color": "black", "size": 8}, "position_offset_y": 0.4},
-        "R2-1": {"mpl_args": {"weight": "normal", "color": "black", "size": 10.5}, "position_offset_y": 0.3},
-        "r301": {"mpl_args": {"weight": "bold", "size": 13.5}, "rescale_threshold": 2, "position_offset_y": 0.45},
+        "380": {
+            "mpl_args": {"weight": "bold", "color": "white", "size": 10},
+            "position_offset_y": 0.45,
+        },
+        "381": {
+            "mpl_args": {"weight": "bold", "color": "white", "size": 10},
+            "position_offset_y": 0.45,
+        },
+        "1040-30": {
+            "mpl_args": {"weight": "normal", "color": "black", "size": 8},
+            "position_offset_y": 0.4,
+        },
+        "1001-30": {
+            "mpl_args": {"weight": "normal", "color": "black", "size": 8},
+            "position_offset_y": 0.4,
+        },
+        "1004-31": {
+            "mpl_args": {"weight": "normal", "color": "black", "size": 8},
+            "position_offset_y": 0.4,
+        },
+        "R2-1": {
+            "mpl_args": {"weight": "normal", "color": "black", "size": 10.5},
+            "position_offset_y": 0.3,
+        },
+        "r301": {
+            "mpl_args": {"weight": "bold", "size": 13.5},
+            "rescale_threshold": 2,
+            "position_offset_y": 0.45,
+        },
     }
 
 
@@ -375,8 +429,9 @@ def create_img_boxes_traffic_sign(
                 # plot traffic sign
                 sign_img = Image.open(path)
                 if len(element.additional_values) > 0:
-                    if element.traffic_sign_element_id.value in unit_conversion_required and isfloat(
-                        element.additional_values[0]
+                    if (
+                        element.traffic_sign_element_id.value in unit_conversion_required
+                        and isfloat(element.additional_values[0])
                     ):
                         if speed_limit_unit == "auto":
                             speed_factor = speed_limit_factor(element.traffic_sign_element_id)
@@ -387,10 +442,14 @@ def create_img_boxes_traffic_sign(
                     else:
                         add_text = "\n".join(element.additional_values)
 
-                    props = prop_dict[el_id.value] if el_id.value in prop_dict else prop_dict["default"]
+                    props = (
+                        prop_dict[el_id.value] if el_id.value in prop_dict else prop_dict["default"]
+                    )
                     props = rescale_text(add_text, props, scale_factor, scale_factor_default)
                     props_txt = props["mpl_args"]
-                    txt_offset_y = props["position_offset_y"] if "position_offset_y" in props else -0.2
+                    txt_offset_y = (
+                        props["position_offset_y"] if "position_offset_y" in props else -0.2
+                    )
                 else:
                     txt_offset_y = -0.2
                     props_txt = None
@@ -438,7 +497,9 @@ def create_img_boxes_traffic_sign(
                 props = rescale_text(add_text, props, scale_factor, scale_factor_default)
                 boxes.append(
                     TextAreaAutoscale(
-                        add_text, px_per_metre=px_per_metre_text * scale_factor, textprops=props["mpl_args"]
+                        add_text,
+                        px_per_metre=px_per_metre_text * scale_factor,
+                        textprops=props["mpl_args"],
                     )
                 )
                 # add callback for automatic rescaling of text
@@ -464,7 +525,7 @@ def _get_traffic_sign_img_path(
         TrafficSignIDGermany,
         TrafficSignIDChina,
         TrafficSignIDRussia,
-    ]
+    ],
 ) -> str:
     """
     Returns the path to the image corresponding to the given traffic sign element ID.
@@ -508,14 +569,18 @@ def create_img_boxes_traffic_lights(
             continue
         if traffic_light.active:
             state = traffic_light.get_state_at_time_step(time_begin)
-            path = os.path.join(traffic_sign_path, "traffic_light_state_" + str(state.value) + ".png")
+            path = os.path.join(
+                traffic_sign_path, "traffic_light_state_" + str(state.value) + ".png"
+            )
         else:
             path = os.path.join(traffic_sign_path, "traffic_light_state_inactive.png")
 
         boxes = []  # collect matplotlib offset boxes for text and images
         sign_img = Image.open(path)
         boxes.append(
-            OffsetImageAutoscale(sign_img, px_per_metre=px_per_metre * scale_factor, zorder=zorder, resample=True)
+            OffsetImageAutoscale(
+                sign_img, px_per_metre=px_per_metre * scale_factor, zorder=zorder, resample=True
+            )
         )
         rnd.add_callback("xlim_changed", boxes[-1].ax_update)
 
@@ -568,7 +633,11 @@ def draw_traffic_light_signs(
         elif isinstance(obj, TrafficLight):
             traffic_lights.append(obj)
         else:
-            warnings.warn("Object of type {}, but expected type TrafficSign or " "TrafficLight".format(type(obj)))
+            warnings.warn(
+                "Object of type {}, but expected type TrafficSign or " "TrafficLight".format(
+                    type(obj)
+                )
+            )
 
     # collect ImageBoxes of traffic signs/lights grouped by their positions
     boxes_tl = create_img_boxes_traffic_lights(traffic_lights, traffic_light_params, rnd)

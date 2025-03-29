@@ -542,7 +542,9 @@ class LocationMessage:
         location_msg.gps_latitude = location.gps_latitude
         location_msg.gps_longitude = location.gps_longitude
         if location.geo_transformation is not None:
-            geo_transformation_msg = GeoTransformationMessage.create_message(location.geo_transformation)
+            geo_transformation_msg = GeoTransformationMessage.create_message(
+                location.geo_transformation
+            )
             location_msg.geo_transformation.CopyFrom(geo_transformation_msg)
 
         return location_msg
@@ -550,7 +552,9 @@ class LocationMessage:
 
 class GeoTransformationMessage:
     @classmethod
-    def create_message(cls, geo_transformation: GeoTransformation) -> location_pb2.GeoTransformation:
+    def create_message(
+        cls, geo_transformation: GeoTransformation
+    ) -> location_pb2.GeoTransformation:
         geo_transformation_msg = location_pb2.GeoTransformation()
 
         geo_transformation_msg.geo_reference = geo_transformation.geo_reference
@@ -647,13 +651,19 @@ class LaneletMessage:
             lanelet_msg.stop_line = lanelet.stop_line_id
 
         for lanelet_type in lanelet.lanelet_type:
-            lanelet_msg.lanelet_types.append(lanelet_pb2.LaneletTypeEnum.LaneletType.Value(lanelet_type.name))
+            lanelet_msg.lanelet_types.append(
+                lanelet_pb2.LaneletTypeEnum.LaneletType.Value(lanelet_type.name)
+            )
 
         for user_one_way in lanelet.user_one_way:
-            lanelet_msg.user_one_way.append(lanelet_pb2.RoadUserEnum.RoadUser.Value(user_one_way.name))
+            lanelet_msg.user_one_way.append(
+                lanelet_pb2.RoadUserEnum.RoadUser.Value(user_one_way.name)
+            )
 
         for user_bidirectional in lanelet.user_bidirectional:
-            lanelet_msg.user_bidirectional.append(lanelet_pb2.RoadUserEnum.RoadUser.Value(user_bidirectional.name))
+            lanelet_msg.user_bidirectional.append(
+                lanelet_pb2.RoadUserEnum.RoadUser.Value(user_bidirectional.name)
+            )
 
         for ts_ref in lanelet.traffic_signs:
             lanelet_msg.traffic_sign_refs.append(ts_ref)
@@ -709,7 +719,9 @@ class TrafficSignMessage:
         traffic_sign_msg.traffic_sign_id = traffic_sign.traffic_sign_id
 
         for traffic_sign_element in traffic_sign.traffic_sign_elements:
-            traffic_sign_element_msg = TrafficSignElementMessage.create_message(traffic_sign_element)
+            traffic_sign_element_msg = TrafficSignElementMessage.create_message(
+                traffic_sign_element
+            )
             traffic_sign_msg.traffic_sign_elements.append(traffic_sign_element_msg)
 
         if traffic_sign.position is not None:
@@ -769,8 +781,10 @@ class TrafficLightMessage:
             )
 
         if traffic_light.direction is not None:
-            traffic_light_msg.direction = traffic_light_pb2.TrafficLightDirectionEnum.TrafficLightDirection.Value(
-                traffic_light.direction.name
+            traffic_light_msg.direction = (
+                traffic_light_pb2.TrafficLightDirectionEnum.TrafficLightDirection.Value(
+                    traffic_light.direction.name
+                )
             )
 
         return traffic_light_msg
@@ -933,11 +947,17 @@ class StateMessage:
                 else:
                     state_msg.shape.CopyFrom(ShapeMessage.create_message(state.position))
             elif attr == "time_step":
-                integer_exact_or_interval_msg = IntegerExactOrIntervalMessage.create_message(state.time_step)
+                integer_exact_or_interval_msg = IntegerExactOrIntervalMessage.create_message(
+                    state.time_step
+                )
                 state_msg.time_step.CopyFrom(integer_exact_or_interval_msg)
             else:
-                float_exact_or_interval_msg = FloatExactOrIntervalMessage.create_message(getattr(state, attr))
-                getattr(state_msg, StateMessage._map_to_pb_prop(attr)).CopyFrom(float_exact_or_interval_msg)
+                float_exact_or_interval_msg = FloatExactOrIntervalMessage.create_message(
+                    getattr(state, attr)
+                )
+                getattr(state_msg, StateMessage._map_to_pb_prop(attr)).CopyFrom(
+                    float_exact_or_interval_msg
+                )
 
         return state_msg
 
@@ -957,7 +977,9 @@ class SignalStateMessage:
                     continue
 
                 if attr == "time_step":
-                    integer_exact_or_interval_msg = IntegerExactOrIntervalMessage.create_message(signal_state.time_step)
+                    integer_exact_or_interval_msg = IntegerExactOrIntervalMessage.create_message(
+                        signal_state.time_step
+                    )
                     signal_state_msg.time_step.CopyFrom(integer_exact_or_interval_msg)
                 else:
                     setattr(signal_state_msg, attr, getattr(signal_state, attr))
@@ -967,7 +989,9 @@ class SignalStateMessage:
 
 class DynamicObstacleMessage:
     @classmethod
-    def create_message(cls, dynamic_obstacle: DynamicObstacle) -> dynamic_obstacle_pb2.DynamicObstacle:
+    def create_message(
+        cls, dynamic_obstacle: DynamicObstacle
+    ) -> dynamic_obstacle_pb2.DynamicObstacle:
         dynamic_obstacle_msg = dynamic_obstacle_pb2.DynamicObstacle()
 
         dynamic_obstacle_msg.dynamic_obstacle_id = dynamic_obstacle.obstacle_id
@@ -982,14 +1006,20 @@ class DynamicObstacleMessage:
         dynamic_obstacle_msg.initial_state.CopyFrom(state_msg)
 
         if isinstance(dynamic_obstacle.prediction, TrajectoryPrediction):
-            trajectory_prediction_msg = TrajectoryPredictionMessage.create_message(dynamic_obstacle.prediction)
+            trajectory_prediction_msg = TrajectoryPredictionMessage.create_message(
+                dynamic_obstacle.prediction
+            )
             dynamic_obstacle_msg.trajectory_prediction.CopyFrom(trajectory_prediction_msg)
         elif isinstance(dynamic_obstacle.prediction, SetBasedPrediction):
-            set_based_prediction_msg = SetBasedPredictionMessage.create_message(dynamic_obstacle.prediction)
+            set_based_prediction_msg = SetBasedPredictionMessage.create_message(
+                dynamic_obstacle.prediction
+            )
             dynamic_obstacle_msg.set_based_prediction.CopyFrom(set_based_prediction_msg)
 
         if dynamic_obstacle.initial_signal_state is not None:
-            signal_state_msg = SignalStateMessage.create_message(dynamic_obstacle.initial_signal_state)
+            signal_state_msg = SignalStateMessage.create_message(
+                dynamic_obstacle.initial_signal_state
+            )
             dynamic_obstacle_msg.initial_signal_state.CopyFrom(signal_state_msg)
 
         if dynamic_obstacle.signal_series is not None:
@@ -1031,7 +1061,9 @@ class OccupancyMessage:
     def create_message(cls, occupancy: Occupancy) -> obstacle_pb2.Occupancy:
         occupancy_msg = obstacle_pb2.Occupancy()
 
-        integer_exact_or_interval_msg = IntegerExactOrIntervalMessage.create_message(occupancy.time_step)
+        integer_exact_or_interval_msg = IntegerExactOrIntervalMessage.create_message(
+            occupancy.time_step
+        )
         occupancy_msg.time_step.CopyFrom(integer_exact_or_interval_msg)
 
         shape_msg = ShapeMessage.create_message(occupancy.shape)
@@ -1042,7 +1074,9 @@ class OccupancyMessage:
 
 class TrajectoryPredictionMessage:
     @classmethod
-    def create_message(cls, trajectory_prediction: TrajectoryPrediction) -> obstacle_pb2.TrajectoryPrediction:
+    def create_message(
+        cls, trajectory_prediction: TrajectoryPrediction
+    ) -> obstacle_pb2.TrajectoryPrediction:
         trajectory_prediction_msg = obstacle_pb2.TrajectoryPrediction()
 
         trajectory_msg = TrajectoryMessage.create_message(trajectory_prediction.trajectory)
@@ -1056,7 +1090,9 @@ class TrajectoryPredictionMessage:
 
 class SetBasedPredictionMessage:
     @classmethod
-    def create_message(cls, set_based_prediction: SetBasedPrediction) -> obstacle_pb2.SetBasedPrediction:
+    def create_message(
+        cls, set_based_prediction: SetBasedPrediction
+    ) -> obstacle_pb2.SetBasedPrediction:
         set_based_prediction_msg = obstacle_pb2.SetBasedPrediction()
 
         set_based_prediction_msg.initial_time_step = set_based_prediction.initial_time_step
@@ -1069,7 +1105,9 @@ class SetBasedPredictionMessage:
 
 class EnvironmentObstacleMessage:
     @classmethod
-    def create_message(cls, environment_obstacle: EnvironmentObstacle) -> environment_obstacle_pb2.EnvironmentObstacle:
+    def create_message(
+        cls, environment_obstacle: EnvironmentObstacle
+    ) -> environment_obstacle_pb2.EnvironmentObstacle:
         environment_obstacle_msg = environment_obstacle_pb2.EnvironmentObstacle()
 
         environment_obstacle_msg.environment_obstacle_id = environment_obstacle.obstacle_id
@@ -1087,13 +1125,17 @@ class EnvironmentObstacleMessage:
 
 class PhantomObstacleMessage:
     @classmethod
-    def create_message(cls, phantom_obstacle: PhantomObstacle) -> phantom_obstacle_pb2.PhantomObstacle:
+    def create_message(
+        cls, phantom_obstacle: PhantomObstacle
+    ) -> phantom_obstacle_pb2.PhantomObstacle:
         phantom_obstacle_msg = phantom_obstacle_pb2.PhantomObstacle()
 
         phantom_obstacle_msg.obstacle_id = phantom_obstacle.obstacle_id
 
         if phantom_obstacle.prediction is not None:
-            set_based_prediction_msg = SetBasedPredictionMessage.create_message(phantom_obstacle.prediction)
+            set_based_prediction_msg = SetBasedPredictionMessage.create_message(
+                phantom_obstacle.prediction
+            )
             phantom_obstacle_msg.prediction.CopyFrom(set_based_prediction_msg)
 
         return phantom_obstacle_msg
@@ -1101,7 +1143,9 @@ class PhantomObstacleMessage:
 
 class PlanningProblemMessage:
     @classmethod
-    def create_message(cls, planning_problem: PlanningProblem) -> planning_problem_pb2.PlanningProblem:
+    def create_message(
+        cls, planning_problem: PlanningProblem
+    ) -> planning_problem_pb2.PlanningProblem:
         planning_problem_msg = planning_problem_pb2.PlanningProblem()
 
         planning_problem_msg.planning_problem_id = planning_problem.planning_problem_id
@@ -1123,7 +1167,9 @@ class PlanningProblemMessage:
 
 class GoalStateMessage:
     @classmethod
-    def create_message(cls, state: State, lanelets_of_goal_position: List[int]) -> planning_problem_pb2.GoalState:
+    def create_message(
+        cls, state: State, lanelets_of_goal_position: List[int]
+    ) -> planning_problem_pb2.GoalState:
         goal_state_msg = planning_problem_pb2.GoalState()
 
         state_msg = StateMessage.create_message(state)

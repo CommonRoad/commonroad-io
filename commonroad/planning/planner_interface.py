@@ -11,7 +11,9 @@ from commonroad.scenario.trajectory import Trajectory
 class TrajectoryPlannerInterface(ABC):
     """Base class for trajectory planner."""
 
-    def plan(self, sc: Scenario, pp: PlanningProblem, ref_path: Optional[np.ndarray] = None) -> Trajectory:
+    def plan(
+        self, sc: Scenario, pp: PlanningProblem, ref_path: Optional[np.ndarray] = None
+    ) -> Trajectory:
         """
         Interface method for planning.
 

@@ -413,7 +413,9 @@ class Intersection:
 
     def __eq__(self, other):
         if not isinstance(other, Intersection):
-            warnings.warn(f"Inequality between Intersection {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between Intersection {repr(self)} and different type {type(other)}"
+            )
             return False
 
         list_elements_eq = True
@@ -480,9 +482,10 @@ class Intersection:
         """
         :param i_id: ID of intersection element
         """
-        assert is_natural_number(
-            i_id
-        ), "<Intersection/intersection_id>: Provided intersection_id is not " "valid! id={}".format(i_id)
+        assert is_natural_number(i_id), (
+            "<Intersection/intersection_id>: Provided intersection_id is not "
+            "valid! id={}".format(i_id)
+        )
         self._intersection_id = i_id
 
     @property

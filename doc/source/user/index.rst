@@ -14,5 +14,3 @@ User Manual
 
     getting_started.rst
     visualization.rst
-
-

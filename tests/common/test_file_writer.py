@@ -83,9 +83,9 @@ class TestXMLFileWriter(unittest.TestCase):
 
         xml_file_path = self.out_path + "/" + str(scenario.scenario_id) + ".xml"
 
-        CommonRoadFileWriter(scenario, PlanningProblemSet(), file_format=FileFormat.XML).write_scenario_to_file(
-            xml_file_path, OverwriteExistingFile.ALWAYS
-        )
+        CommonRoadFileWriter(
+            scenario, PlanningProblemSet(), file_format=FileFormat.XML
+        ).write_scenario_to_file(xml_file_path, OverwriteExistingFile.ALWAYS)
 
         self.assertTrue(os.path.exists(xml_file_path))
 
@@ -148,7 +148,9 @@ class TestXMLFileWriter(unittest.TestCase):
         )
 
         lanelet_network = LaneletNetwork().create_from_lanelet_list(list([lanelet1, lanelet2]))
-        scenario = Scenario(0.1, ScenarioID.from_benchmark_id("ZAM_test_0-1", scenario_version=SCENARIO_VERSION))
+        scenario = Scenario(
+            0.1, ScenarioID.from_benchmark_id("ZAM_test_0-1", scenario_version=SCENARIO_VERSION)
+        )
         scenario.add_objects([static_obs, lanelet_network])
 
         goal_region = GoalRegion(
@@ -161,7 +163,12 @@ class TestXMLFileWriter(unittest.TestCase):
         planning_problem = PlanningProblem(
             1000,
             InitialState(
-                velocity=0.1, position=np.array([[0], [0]]), orientation=0, yaw_rate=0, slip_angle=0, time_step=0
+                velocity=0.1,
+                position=np.array([[0], [0]]),
+                orientation=0,
+                yaw_rate=0,
+                slip_angle=0,
+                time_step=0,
             ),
             goal_region,
         )
@@ -309,11 +316,15 @@ class TestXMLFileWriter(unittest.TestCase):
     def test_check_validity_of_commonroad_file(self):
         commonroad_str = open(self.filename_read_1, mode="r").read()
 
-        self.assertTrue(CommonRoadFileWriter.check_validity_of_commonroad_file(commonroad_str, FileFormat.XML))
+        self.assertTrue(
+            CommonRoadFileWriter.check_validity_of_commonroad_file(commonroad_str, FileFormat.XML)
+        )
 
         commonroad_str = open(self.filename_invalid, mode="rb").read()
 
-        self.assertFalse(CommonRoadFileWriter.check_validity_of_commonroad_file(commonroad_str, FileFormat.XML))
+        self.assertFalse(
+            CommonRoadFileWriter.check_validity_of_commonroad_file(commonroad_str, FileFormat.XML)
+        )
 
     # def test_all_scenarios(self):
     #     scenarios_2020a = "TODO"

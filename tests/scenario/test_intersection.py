@@ -68,9 +68,12 @@ class TestIntersection(unittest.TestCase):
             21: self._incoming_2.incoming_id,
         }
 
-        self.assertListEqual(list(exp_result.keys()), list(self._intersection_1.map_incoming_lanelets.keys()))
         self.assertListEqual(
-            list(exp_result.values()), [val.incoming_id for val in self._intersection_1.map_incoming_lanelets.values()]
+            list(exp_result.keys()), list(self._intersection_1.map_incoming_lanelets.keys())
+        )
+        self.assertListEqual(
+            list(exp_result.values()),
+            [val.incoming_id for val in self._intersection_1.map_incoming_lanelets.values()],
         )
 
     def test_equality(self):

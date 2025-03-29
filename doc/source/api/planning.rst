@@ -35,7 +35,3 @@ Trajectory Planner Interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: TrajectoryPlannerInterface
    :members:
-
-
-
-

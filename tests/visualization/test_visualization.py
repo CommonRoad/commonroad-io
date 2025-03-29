@@ -63,7 +63,9 @@ class TestVisualizationV2(unittest.TestCase):
         params = MPDrawParams()
 
         rect = Rectangle(1, 2, np.array([1.5, 2.0]), math.pi * 0.25)
-        poly = Polygon(np.array([[0.2, 0.2], [0.2, 0.4], [0.3, 0.6], [0.4, 0.4], [0.4, 0.2], [0.2, 0.2]]))
+        poly = Polygon(
+            np.array([[0.2, 0.2], [0.2, 0.4], [0.3, 0.6], [0.4, 0.4], [0.4, 0.2], [0.2, 0.2]])
+        )
         circ = Circle(2, np.array([3, 3]))
 
         rect.draw(self.rnd, params)
@@ -85,7 +87,10 @@ class TestVisualizationV2(unittest.TestCase):
             # visualization
             circ = Circle(2.0, np.array([10.0, 0.0]))
             obs = StaticObstacle(
-                1000, ObstacleType.CAR, circ, initial_state=InitialState(position=np.array([0, 0]), orientation=0.4)
+                1000,
+                ObstacleType.CAR,
+                circ,
+                initial_state=InitialState(position=np.array([0, 0]), orientation=0.4),
             )
             scenario.add_objects(obs)
             for obs in scenario.static_obstacles:
@@ -144,7 +149,9 @@ class TestVisualizationV2(unittest.TestCase):
         scenario, planning_problem_set = CommonRoadFileReader(self.ngsim_scen_1).open()
         scenario: Scenario = scenario
         x0 = -40
-        rnd = MPRenderer(plot_limits=[x0, 40, -40, 40], focus_obstacle=scenario.obstacle_by_id(1239))
+        rnd = MPRenderer(
+            plot_limits=[x0, 40, -40, 40], focus_obstacle=scenario.obstacle_by_id(1239)
+        )
         rnd.draw_params.dynamic_obstacle.occupancy.draw_occupancies = True
         with warnings.catch_warnings(record=True):
             scenario.lanelet_network.draw(
@@ -162,7 +169,12 @@ class TestVisualizationV2(unittest.TestCase):
         plt.close("all")
 
     def test_plotting_all_traffic_signs(self):
-        traffic_sign_types = [TrafficSignIDZamunda, TrafficSignIDGermany, TrafficSignIDUsa, TrafficSignIDSpain]
+        traffic_sign_types = [
+            TrafficSignIDZamunda,
+            TrafficSignIDGermany,
+            TrafficSignIDUsa,
+            TrafficSignIDSpain,
+        ]
         rnd = MPRenderer()
         with warnings.catch_warnings(record=True) as w:
             for ts_type in traffic_sign_types:
@@ -182,7 +194,10 @@ class TestVisualizationV2(unittest.TestCase):
                     )
 
             self.assertEqual(
-                len(w), 0, msg="The following warnings were raised:\n" + "\n".join(str(w_tmp.message) for w_tmp in w)
+                len(w),
+                0,
+                msg="The following warnings were raised:\n"
+                + "\n".join(str(w_tmp.message) for w_tmp in w),
             )
 
     def test_planning(self):
@@ -232,7 +247,9 @@ class TestVisualizationV2(unittest.TestCase):
         inch_in_cm = 2.54
         figsize = [20, 15]
         plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
-        plt.gca().set(title="occupancies should be be plotted with opacity, " "plot limits: [-50,60,-50,50]")
+        plt.gca().set(
+            title="occupancies should be be plotted with opacity, " "plot limits: [-50,60,-50,50]"
+        )
         plt.gca().autoscale_view(False, False, False)
         self.rnd = MPRenderer(plot_limits=[-50, 60, -50, 50])
         for i in range(0, nrun):
@@ -242,7 +259,9 @@ class TestVisualizationV2(unittest.TestCase):
             draw_params.time_end = 25
             draw_params.dynamic_obstacle.occupancy.draw_occupancies = True
             draw_params.dynamic_obstacle.occupancy.shape.facecolor = "g"
-            draw_params.planning_problem_set.draw_ids = [list(planning_problem_set.planning_problem_dict.keys())[0]]
+            draw_params.planning_problem_set.draw_ids = [
+                list(planning_problem_set.planning_problem_dict.keys())[0]
+            ]
             scenario.draw(self.rnd, draw_params=draw_params)
             # plt.tight_layout()
             planning_problem_set.draw(self.rnd, draw_params=draw_params)
@@ -295,7 +314,9 @@ class TestVisualizationV2(unittest.TestCase):
     def is_ffmpeg_installed():
         """Check if ffmpeg is installed. Only relevant for github macos-latest runner."""
         try:
-            subprocess.run(["ffmpeg", "-version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            subprocess.run(
+                ["ffmpeg", "-version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
             return True
         except (subprocess.CalledProcessError, FileNotFoundError):
             return False
@@ -313,13 +334,18 @@ class TestVisualizationV2(unittest.TestCase):
             draw_params.dynamic_obstacle.draw_icon = True
             draw_params.dynamic_obstacle.draw_shape = True
             self.rnd.create_video(
-                [scenario], os.path.join(self.out_path, str(scenario.scenario_id) + ".mp4"), draw_params=draw_params
+                [scenario],
+                os.path.join(self.out_path, str(scenario.scenario_id) + ".mp4"),
+                draw_params=draw_params,
             )
 
         print(time.time() - t0)
 
     def test_phantom_obstacle(self):
-        occupancy = [Occupancy(0, Rectangle(10, 10)), Occupancy(1, Rectangle(10, 10, np.array([10.0, 10.0])))]
+        occupancy = [
+            Occupancy(0, Rectangle(10, 10)),
+            Occupancy(1, Rectangle(10, 10, np.array([10.0, 10.0]))),
+        ]
         pred = SetBasedPrediction(0, occupancy)
         phantom_obs = PhantomObstacle(0, pred)
         phantom_obs.draw(

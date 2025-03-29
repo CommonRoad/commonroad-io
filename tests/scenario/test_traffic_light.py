@@ -82,6 +82,33 @@ class TestTrafficLightCycle(unittest.TestCase):
         light_cycle2 = TrafficLightCycle(cycle_elements=cycle, time_offset=10)
         assert light_cycle2.get_state_at_time_step(12) == cycle[1].state
 
+    def test_update_cycle_elements(self):
+        # Verify that get_state_at_time_step is still correct after the cycle was updated
+        cycle = [
+            TrafficLightCycleElement(TrafficLightState.GREEN, 2),
+            TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
+            TrafficLightCycleElement(TrafficLightState.RED, 2),
+        ]
+        light_cycle = TrafficLightCycle(cycle_elements=cycle, time_offset=0)
+        assert light_cycle.get_state_at_time_step(7) == cycle[0].state
+
+        new_cycle = cycle + [TrafficLightCycleElement(TrafficLightState.RED_YELLOW, 1)]
+        light_cycle.cycle_elements = new_cycle
+        assert light_cycle.get_state_at_time_step(7) == new_cycle[-1].state
+
+    def test_update_time_offset(self):
+        # Verify that get_state_at_time_step is still correct after the time offset was updated
+        cycle = [
+            TrafficLightCycleElement(TrafficLightState.GREEN, 2),
+            TrafficLightCycleElement(TrafficLightState.YELLOW, 3),
+            TrafficLightCycleElement(TrafficLightState.RED, 2),
+        ]
+        light_cycle = TrafficLightCycle(cycle_elements=cycle, time_offset=0)
+        assert light_cycle.get_state_at_time_step(1) == cycle[0].state
+
+        light_cycle.time_offset = 5
+        assert light_cycle.get_state_at_time_step(1) == cycle[1].state
+
 
 class TestTrafficLight(unittest.TestCase):
     def test_translate_rotate(self):
@@ -112,7 +139,9 @@ class TestTrafficLight(unittest.TestCase):
         np.testing.assert_array_almost_equal(traffic_light.position, np.array([10.0, 7.0]))
 
     def test_equality(self):
-        traffic_light_cycle = TrafficLightCycle([TrafficLightCycleElement(TrafficLightState.RED, 1)])
+        traffic_light_cycle = TrafficLightCycle(
+            [TrafficLightCycleElement(TrafficLightState.RED, 1)]
+        )
         color = [TrafficLightState.GREEN]
         traffic_light_1 = TrafficLight(
             234, np.array([10.0, 10.0]), None, color, shape=Rectangle(0.5, 0.2, np.array([2, 3]))
@@ -150,13 +179,19 @@ class TestTrafficLight(unittest.TestCase):
         traffic_light_2 = TrafficLight(234, np.array([10.0, 9.95]), None, color)
         self.assertFalse(traffic_light_1 == traffic_light_2)
 
-        traffic_light_2 = TrafficLight(234, np.array([10.0, 10.0]), None, color, True, TrafficLightDirection.LEFT)
+        traffic_light_2 = TrafficLight(
+            234, np.array([10.0, 10.0]), None, color, True, TrafficLightDirection.LEFT
+        )
         self.assertFalse(traffic_light_1 == traffic_light_2)
 
-        traffic_light_2 = TrafficLight(234, np.array([10.0, 10.0]), None, color, True, TrafficLightDirection.STRAIGHT)
+        traffic_light_2 = TrafficLight(
+            234, np.array([10.0, 10.0]), None, color, True, TrafficLightDirection.STRAIGHT
+        )
         self.assertFalse(traffic_light_1 == traffic_light_2)
 
-        traffic_light_2 = TrafficLight(234, np.array([10.0, 10.0]), None, color, False, TrafficLightDirection.ALL)
+        traffic_light_2 = TrafficLight(
+            234, np.array([10.0, 10.0]), None, color, False, TrafficLightDirection.ALL
+        )
         self.assertFalse(traffic_light_1 == traffic_light_2)
 
         traffic_light_1 = TrafficLight(234, np.array([10.0, 10.0]), traffic_light_cycle, color)
@@ -164,7 +199,9 @@ class TestTrafficLight(unittest.TestCase):
         self.assertFalse(traffic_light_1 == traffic_light_2)
 
     def test_hash(self):
-        traffic_light_cycle = TrafficLightCycle([TrafficLightCycleElement(TrafficLightState.RED, 1)])
+        traffic_light_cycle = TrafficLightCycle(
+            [TrafficLightCycleElement(TrafficLightState.RED, 1)]
+        )
         color = [TrafficLightState.RED]
         traffic_light_1 = TrafficLight(234, np.array([10, 10]), None, color)
         traffic_light_2 = TrafficLight(234, np.array([10.0, 10.0]), None, color)

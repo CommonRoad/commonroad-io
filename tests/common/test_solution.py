@@ -46,7 +46,9 @@ class DummyDataGenerator:
     @classmethod
     def create_random_pm_state(cls, time_step=0):
         return PMState(
-            position=np.array([cls.create_random_float(-100, 100), cls.create_random_float(-100, 100)]),
+            position=np.array(
+                [cls.create_random_float(-100, 100), cls.create_random_float(-100, 100)]
+            ),
             velocity=cls.create_random_float(-5, 5),
             velocity_y=cls.create_random_float(-5, 5),
             time_step=time_step,
@@ -55,7 +57,9 @@ class DummyDataGenerator:
     @classmethod
     def create_random_ks_state(cls, time_step=0):
         return KSState(
-            position=np.array([cls.create_random_float(-100, 100), cls.create_random_float(-100, 100)]),
+            position=np.array(
+                [cls.create_random_float(-100, 100), cls.create_random_float(-100, 100)]
+            ),
             steering_angle=cls.create_random_float(-np.pi / 10, np.pi / 10),
             velocity=cls.create_random_float(-5, 5),
             orientation=cls.create_random_float(-np.pi, np.pi),
@@ -65,7 +69,9 @@ class DummyDataGenerator:
     @classmethod
     def create_random_st_state(cls, time_step=0):
         return STState(
-            position=np.array([cls.create_random_float(-100, 100), cls.create_random_float(-100, 100)]),
+            position=np.array(
+                [cls.create_random_float(-100, 100), cls.create_random_float(-100, 100)]
+            ),
             steering_angle=cls.create_random_float(-np.pi / 10, np.pi / 10),
             velocity=cls.create_random_float(-5, 5),
             orientation=cls.create_random_float(-np.pi, np.pi),
@@ -77,7 +83,9 @@ class DummyDataGenerator:
     @classmethod
     def create_random_mb_state(cls, time_step=0):
         return MBState(
-            position=np.array([cls.create_random_float(-100, 100), cls.create_random_float(-100, 100)]),
+            position=np.array(
+                [cls.create_random_float(-100, 100), cls.create_random_float(-100, 100)]
+            ),
             steering_angle=cls.create_random_float(-np.pi / 10, np.pi / 10),
             velocity=cls.create_random_float(-5, 5),
             orientation=cls.create_random_float(-np.pi, np.pi),
@@ -127,27 +135,45 @@ class DummyDataGenerator:
 
     @classmethod
     def create_random_pm_trajectory(cls, state_count=5):
-        return Trajectory(initial_time_step=0, state_list=[cls.create_random_pm_state(ts) for ts in range(state_count)])
+        return Trajectory(
+            initial_time_step=0,
+            state_list=[cls.create_random_pm_state(ts) for ts in range(state_count)],
+        )
 
     @classmethod
     def create_random_ks_trajectory(cls, state_count=5):
-        return Trajectory(initial_time_step=0, state_list=[cls.create_random_ks_state(ts) for ts in range(state_count)])
+        return Trajectory(
+            initial_time_step=0,
+            state_list=[cls.create_random_ks_state(ts) for ts in range(state_count)],
+        )
 
     @classmethod
     def create_random_st_trajectory(cls, state_count=5):
-        return Trajectory(initial_time_step=0, state_list=[cls.create_random_st_state(ts) for ts in range(state_count)])
+        return Trajectory(
+            initial_time_step=0,
+            state_list=[cls.create_random_st_state(ts) for ts in range(state_count)],
+        )
 
     @classmethod
     def create_random_mb_trajectory(cls, state_count=5):
-        return Trajectory(initial_time_step=0, state_list=[cls.create_random_mb_state(ts) for ts in range(state_count)])
+        return Trajectory(
+            initial_time_step=0,
+            state_list=[cls.create_random_mb_state(ts) for ts in range(state_count)],
+        )
 
     @classmethod
     def create_random_input_vector(cls, input_count=5):
-        return Trajectory(initial_time_step=0, state_list=[cls.create_random_input(ts) for ts in range(input_count)])
+        return Trajectory(
+            initial_time_step=0,
+            state_list=[cls.create_random_input(ts) for ts in range(input_count)],
+        )
 
     @classmethod
     def create_random_pm_input_vector(cls, input_count=5):
-        return Trajectory(initial_time_step=0, state_list=[cls.create_random_pm_input(ts) for ts in range(input_count)])
+        return Trajectory(
+            initial_time_step=0,
+            state_list=[cls.create_random_pm_input(ts) for ts in range(input_count)],
+        )
 
     @classmethod
     def create_pm_state_xml(cls, state: PMState):
@@ -308,7 +334,9 @@ class DummyDataGenerator:
         )
 
     @classmethod
-    def create_trajectory_xml(cls, trajectory_type: str, planning_problem_id: int, trajectory: Trajectory):
+    def create_trajectory_xml(
+        cls, trajectory_type: str, planning_problem_id: int, trajectory: Trajectory
+    ):
         state_serializer = None
         if trajectory_type == "pmTrajectory":
             state_serializer = cls.create_pm_state_xml
@@ -337,12 +365,20 @@ class DummyDataGenerator:
     def create_solution_xml(cls, solution: Solution):
         benchmark_id = solution.benchmark_id
         date_str = 'date="%s"' % solution.date.strftime("%Y-%m-%dT%H:%M:%S")
-        processor_str = "" if solution.processor_name is None else 'processor_name="%s"' % solution.processor_name
+        processor_str = (
+            ""
+            if solution.processor_name is None
+            else 'processor_name="%s"' % solution.processor_name
+        )
         computation_str = (
-            "" if solution.computation_time is None else 'computation_time="%s"' % str(solution.computation_time)
+            ""
+            if solution.computation_time is None
+            else 'computation_time="%s"' % str(solution.computation_time)
         )
         trajectory_xmls = [
-            cls.create_trajectory_xml(pp_sol.trajectory_type.value, pp_sol.planning_problem_id, pp_sol.trajectory)
+            cls.create_trajectory_xml(
+                pp_sol.trajectory_type.value, pp_sol.planning_problem_id, pp_sol.trajectory
+            )
             for pp_sol in solution.planning_problem_solutions
         ]
         solution_xml = """
@@ -363,12 +399,20 @@ class DummyDataGenerator:
     def create_solution_xml_old_date(cls, solution: Solution):
         benchmark_id = solution.benchmark_id
         date_str = 'date="%s"' % solution.date.strftime("%Y-%m-%d")
-        processor_str = "" if solution.processor_name is None else 'processor_name="%s"' % solution.processor_name
+        processor_str = (
+            ""
+            if solution.processor_name is None
+            else 'processor_name="%s"' % solution.processor_name
+        )
         computation_str = (
-            "" if solution.computation_time is None else 'computation_time="%s"' % str(solution.computation_time)
+            ""
+            if solution.computation_time is None
+            else 'computation_time="%s"' % str(solution.computation_time)
         )
         trajectory_xmls = [
-            cls.create_trajectory_xml(pp_sol.trajectory_type.value, pp_sol.planning_problem_id, pp_sol.trajectory)
+            cls.create_trajectory_xml(
+                pp_sol.trajectory_type.value, pp_sol.planning_problem_id, pp_sol.trajectory
+            )
             for pp_sol in solution.planning_problem_solutions
         ]
         solution_xml = """
@@ -407,7 +451,13 @@ class TestStateFields(unittest.TestCase):
         ]
 
     def test_ks_state_fields(self):
-        assert StateFields.KS.value == ["position", "steering_angle", "velocity", "orientation", "time_step"]
+        assert StateFields.KS.value == [
+            "position",
+            "steering_angle",
+            "velocity",
+            "orientation",
+            "time_step",
+        ]
 
     def test_mb_state_fields(self):
         assert StateFields.MB.value == [
@@ -470,7 +520,13 @@ class TestXMLStateFields(unittest.TestCase):
         ]
 
     def test_ks_xml_state_fields(self):
-        assert XMLStateFields.KS.value == [("x", "y"), "steeringAngle", "velocity", "orientation", "time"]
+        assert XMLStateFields.KS.value == [
+            ("x", "y"),
+            "steeringAngle",
+            "velocity",
+            "orientation",
+            "time",
+        ]
 
     def test_mb_xml_state_fields(self):
         assert XMLStateFields.MB.value == [
@@ -719,7 +775,9 @@ class TestSolution(unittest.TestCase):
             trajectory=DummyDataGenerator.create_random_st_trajectory(),
         )
 
-        solution_single = Solution(scenario_id=self.scenario_id, planning_problem_solutions=[pp_solution_1])
+        solution_single = Solution(
+            scenario_id=self.scenario_id, planning_problem_solutions=[pp_solution_1]
+        )
         solution_collab = Solution(
             scenario_id=self.scenario_id, planning_problem_solutions=[pp_solution_1, pp_solution_2]
         )
@@ -744,7 +802,9 @@ class TestSolution(unittest.TestCase):
             trajectory=DummyDataGenerator.create_random_st_trajectory(),
         )
 
-        solution_single = Solution(scenario_id=self.scenario_id, planning_problem_solutions=[pp_solution_1])
+        solution_single = Solution(
+            scenario_id=self.scenario_id, planning_problem_solutions=[pp_solution_1]
+        )
         solution_collab = Solution(
             scenario_id=self.scenario_id, planning_problem_solutions=[pp_solution_1, pp_solution_2]
         )
@@ -769,7 +829,9 @@ class TestSolution(unittest.TestCase):
             trajectory=DummyDataGenerator.create_random_st_trajectory(),
         )
 
-        solution_single = Solution(scenario_id=self.scenario_id, planning_problem_solutions=[pp_solution_1])
+        solution_single = Solution(
+            scenario_id=self.scenario_id, planning_problem_solutions=[pp_solution_1]
+        )
         solution_collab = Solution(
             scenario_id=self.scenario_id, planning_problem_solutions=[pp_solution_1, pp_solution_2]
         )
@@ -786,9 +848,12 @@ class TestSolution(unittest.TestCase):
             trajectory=DummyDataGenerator.create_random_pm_trajectory(),
         )
 
-        solution_single = Solution(scenario_id=self.scenario_id, planning_problem_solutions=[pp_solution_1])
+        solution_single = Solution(
+            scenario_id=self.scenario_id, planning_problem_solutions=[pp_solution_1]
+        )
         assert all(
-            hasattr(s, "orientation") for s in solution_single.planning_problem_solutions[0]._trajectory.state_list
+            hasattr(s, "orientation")
+            for s in solution_single.planning_problem_solutions[0]._trajectory.state_list
         )
 
 
@@ -818,7 +883,8 @@ class TestCommonRoadSolutionWriter(unittest.TestCase):
             scenario_id=self.scenario_id, planning_problem_solutions=[self.pp_solution1]
         )
         self.solution_collab: Solution = Solution(
-            scenario_id=self.scenario_id, planning_problem_solutions=[self.pp_solution1, self.pp_solution2]
+            scenario_id=self.scenario_id,
+            planning_problem_solutions=[self.pp_solution1, self.pp_solution2],
         )
 
     def tearDown(self):
@@ -831,8 +897,12 @@ class TestCommonRoadSolutionWriter(unittest.TestCase):
         solution_xml_single = CommonRoadSolutionWriter(self.solution_single).dump()
         solution_xml_collab = CommonRoadSolutionWriter(self.solution_collab).dump()
 
-        assert self.remove_whitespaces(solution_xml_single) == self.remove_whitespaces(expected_solution_xml_single)
-        assert self.remove_whitespaces(solution_xml_collab) == self.remove_whitespaces(expected_solution_xml_collab)
+        assert self.remove_whitespaces(solution_xml_single) == self.remove_whitespaces(
+            expected_solution_xml_single
+        )
+        assert self.remove_whitespaces(solution_xml_collab) == self.remove_whitespaces(
+            expected_solution_xml_collab
+        )
 
     def test_dump_with_attribs(self):
         self.solution_single.processor_name = "TEST_CPU"
@@ -844,8 +914,12 @@ class TestCommonRoadSolutionWriter(unittest.TestCase):
         solution_xml_single = CommonRoadSolutionWriter(self.solution_single).dump()
         solution_xml_collab = CommonRoadSolutionWriter(self.solution_collab).dump()
 
-        assert self.remove_whitespaces(solution_xml_single) == self.remove_whitespaces(expected_solution_xml_single)
-        assert self.remove_whitespaces(solution_xml_collab) == self.remove_whitespaces(expected_solution_xml_collab)
+        assert self.remove_whitespaces(solution_xml_single) == self.remove_whitespaces(
+            expected_solution_xml_single
+        )
+        assert self.remove_whitespaces(solution_xml_collab) == self.remove_whitespaces(
+            expected_solution_xml_collab
+        )
 
     def test_write_to_file(self):
         CommonRoadSolutionWriter(self.solution_single).write_to_file()
@@ -866,7 +940,9 @@ class TestCommonRoadSolutionWriter(unittest.TestCase):
 
     def test_write_to_file_invalid_output_path(self):
         with self.assertRaises(NotADirectoryError):
-            CommonRoadSolutionWriter(self.solution_single).write_to_file(output_path="./commonroad/tests/")
+            CommonRoadSolutionWriter(self.solution_single).write_to_file(
+                output_path="./commonroad/tests/"
+            )
 
     def test_write_version(self):
         self.solution_single.scenario_id.scenario_version = "2018b"
@@ -874,7 +950,10 @@ class TestCommonRoadSolutionWriter(unittest.TestCase):
         CommonRoadSolutionWriter(self.solution_single).write_to_file(filename=path, overwrite=True)
         parsed_solution_single = CommonRoadSolutionReader.open("./" + path)
 
-        assert parsed_solution_single.scenario_id.scenario_version == self.solution_single.scenario_id.scenario_version
+        assert (
+            parsed_solution_single.scenario_id.scenario_version
+            == self.solution_single.scenario_id.scenario_version
+        )
 
 
 class TestCommonRoadSolutionReader(unittest.TestCase):
@@ -894,9 +973,12 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
             trajectory=DummyDataGenerator.create_random_ks_trajectory(),
         )
         self.scenario_id = ScenarioID.from_benchmark_id("USA_US101-33_2_T-1", "2020a")
-        self.solution_single = Solution(scenario_id=self.scenario_id, planning_problem_solutions=[self.pp_solution1])
+        self.solution_single = Solution(
+            scenario_id=self.scenario_id, planning_problem_solutions=[self.pp_solution1]
+        )
         self.solution_collab = Solution(
-            scenario_id=self.scenario_id, planning_problem_solutions=[self.pp_solution1, self.pp_solution2]
+            scenario_id=self.scenario_id,
+            planning_problem_solutions=[self.pp_solution1, self.pp_solution2],
         )
 
         CommonRoadSolutionWriter(self.solution_single).write_to_file(overwrite=True)
@@ -918,24 +1000,34 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
 
         assert str(parsed_solution_single.scenario_id) == str(self.solution_single.scenario_id)
         assert str(parsed_solution_collab.scenario_id) == str(self.solution_collab.scenario_id)
-        assert parsed_solution_single.date.strftime("%Y-%m-%dT%H:%M:%S") == self.solution_single.date.strftime(
+        assert parsed_solution_single.date.strftime(
             "%Y-%m-%dT%H:%M:%S"
-        )
-        assert parsed_solution_collab.date.strftime("%Y-%m-%dT%H:%M:%S") == self.solution_collab.date.strftime(
+        ) == self.solution_single.date.strftime("%Y-%m-%dT%H:%M:%S")
+        assert parsed_solution_collab.date.strftime(
             "%Y-%m-%dT%H:%M:%S"
-        )
+        ) == self.solution_collab.date.strftime("%Y-%m-%dT%H:%M:%S")
         assert parsed_solution_single.computation_time == self.solution_single.computation_time
         assert parsed_solution_collab.computation_time == self.solution_collab.computation_time
         assert parsed_solution_single.processor_name == self.solution_single.processor_name
         assert parsed_solution_collab.processor_name == self.solution_collab.processor_name
-        assert parsed_solution_single.scenario_id.scenario_version == self.solution_single.scenario_id.scenario_version
-        assert parsed_solution_collab.scenario_id.scenario_version == self.solution_collab.scenario_id.scenario_version
+        assert (
+            parsed_solution_single.scenario_id.scenario_version
+            == self.solution_single.scenario_id.scenario_version
+        )
+        assert (
+            parsed_solution_collab.scenario_id.scenario_version
+            == self.solution_collab.scenario_id.scenario_version
+        )
         assert parsed_solution_single.vehicle_ids == self.solution_single.vehicle_ids
         assert parsed_solution_collab.vehicle_ids == self.solution_collab.vehicle_ids
         assert parsed_solution_single.cost_ids == self.solution_single.cost_ids
         assert parsed_solution_collab.cost_ids == self.solution_collab.cost_ids
-        assert parsed_solution_single.planning_problem_ids == self.solution_single.planning_problem_ids
-        assert parsed_solution_collab.planning_problem_ids == self.solution_collab.planning_problem_ids
+        assert (
+            parsed_solution_single.planning_problem_ids == self.solution_single.planning_problem_ids
+        )
+        assert (
+            parsed_solution_collab.planning_problem_ids == self.solution_collab.planning_problem_ids
+        )
         assert parsed_solution_single.trajectory_types == self.solution_single.trajectory_types
         assert parsed_solution_collab.trajectory_types == self.solution_collab.trajectory_types
         assert parsed_solution_single.scenario_id == self.solution_single.scenario_id
@@ -976,24 +1068,34 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
 
         assert str(parsed_solution_single.scenario_id) == str(self.solution_single.scenario_id)
         assert str(parsed_solution_collab.scenario_id) == str(self.solution_collab.scenario_id)
-        assert parsed_solution_single.date.strftime("%Y-%m-%dT%H:%M:%S") == self.solution_single.date.strftime(
+        assert parsed_solution_single.date.strftime(
             "%Y-%m-%dT%H:%M:%S"
-        )
-        assert parsed_solution_collab.date.strftime("%Y-%m-%dT%H:%M:%S") == self.solution_collab.date.strftime(
+        ) == self.solution_single.date.strftime("%Y-%m-%dT%H:%M:%S")
+        assert parsed_solution_collab.date.strftime(
             "%Y-%m-%dT%H:%M:%S"
-        )
+        ) == self.solution_collab.date.strftime("%Y-%m-%dT%H:%M:%S")
         assert parsed_solution_single.computation_time == self.solution_single.computation_time
         assert parsed_solution_collab.computation_time == self.solution_collab.computation_time
         assert parsed_solution_single.processor_name == self.solution_single.processor_name
         assert parsed_solution_collab.processor_name == self.solution_collab.processor_name
-        assert parsed_solution_single.scenario_id.scenario_version == self.solution_single.scenario_id.scenario_version
-        assert parsed_solution_collab.scenario_id.scenario_version == self.solution_collab.scenario_id.scenario_version
+        assert (
+            parsed_solution_single.scenario_id.scenario_version
+            == self.solution_single.scenario_id.scenario_version
+        )
+        assert (
+            parsed_solution_collab.scenario_id.scenario_version
+            == self.solution_collab.scenario_id.scenario_version
+        )
         assert parsed_solution_single.vehicle_ids == self.solution_single.vehicle_ids
         assert parsed_solution_collab.vehicle_ids == self.solution_collab.vehicle_ids
         assert parsed_solution_single.cost_ids == self.solution_single.cost_ids
         assert parsed_solution_collab.cost_ids == self.solution_collab.cost_ids
-        assert parsed_solution_single.planning_problem_ids == self.solution_single.planning_problem_ids
-        assert parsed_solution_collab.planning_problem_ids == self.solution_collab.planning_problem_ids
+        assert (
+            parsed_solution_single.planning_problem_ids == self.solution_single.planning_problem_ids
+        )
+        assert (
+            parsed_solution_collab.planning_problem_ids == self.solution_collab.planning_problem_ids
+        )
         assert parsed_solution_single.trajectory_types == self.solution_single.trajectory_types
         assert parsed_solution_collab.trajectory_types == self.solution_collab.trajectory_types
         assert parsed_solution_single.benchmark_id == self.solution_single.benchmark_id
@@ -1005,24 +1107,34 @@ class TestCommonRoadSolutionReader(unittest.TestCase):
 
         assert str(parsed_solution_single.scenario_id) == str(self.solution_single.scenario_id)
         assert str(parsed_solution_collab.scenario_id) == str(self.solution_collab.scenario_id)
-        assert parsed_solution_single.date.strftime("%Y-%m-%dT%H:%M:%S") == self.solution_single.date.strftime(
+        assert parsed_solution_single.date.strftime(
             "%Y-%m-%dT%H:%M:%S"
-        )
-        assert parsed_solution_collab.date.strftime("%Y-%m-%dT%H:%M:%S") == self.solution_collab.date.strftime(
+        ) == self.solution_single.date.strftime("%Y-%m-%dT%H:%M:%S")
+        assert parsed_solution_collab.date.strftime(
             "%Y-%m-%dT%H:%M:%S"
-        )
+        ) == self.solution_collab.date.strftime("%Y-%m-%dT%H:%M:%S")
         assert parsed_solution_single.computation_time == self.solution_single.computation_time
         assert parsed_solution_collab.computation_time == self.solution_collab.computation_time
         assert parsed_solution_single.processor_name == self.solution_single.processor_name
         assert parsed_solution_collab.processor_name == self.solution_collab.processor_name
-        assert parsed_solution_single.scenario_id.scenario_version == self.solution_single.scenario_id.scenario_version
-        assert parsed_solution_collab.scenario_id.scenario_version == self.solution_collab.scenario_id.scenario_version
+        assert (
+            parsed_solution_single.scenario_id.scenario_version
+            == self.solution_single.scenario_id.scenario_version
+        )
+        assert (
+            parsed_solution_collab.scenario_id.scenario_version
+            == self.solution_collab.scenario_id.scenario_version
+        )
         assert parsed_solution_single.vehicle_ids == self.solution_single.vehicle_ids
         assert parsed_solution_collab.vehicle_ids == self.solution_collab.vehicle_ids
         assert parsed_solution_single.cost_ids == self.solution_single.cost_ids
         assert parsed_solution_collab.cost_ids == self.solution_collab.cost_ids
-        assert parsed_solution_single.planning_problem_ids == self.solution_single.planning_problem_ids
-        assert parsed_solution_collab.planning_problem_ids == self.solution_collab.planning_problem_ids
+        assert (
+            parsed_solution_single.planning_problem_ids == self.solution_single.planning_problem_ids
+        )
+        assert (
+            parsed_solution_collab.planning_problem_ids == self.solution_collab.planning_problem_ids
+        )
         assert parsed_solution_single.trajectory_types == self.solution_single.trajectory_types
         assert parsed_solution_collab.trajectory_types == self.solution_collab.trajectory_types
         assert parsed_solution_single.benchmark_id == self.solution_single.benchmark_id

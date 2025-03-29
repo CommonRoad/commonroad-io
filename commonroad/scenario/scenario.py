@@ -124,7 +124,9 @@ class Scenario(IDrawable):
 
     def __eq__(self, other):
         if not isinstance(other, Scenario):
-            warnings.warn(f"Inequality between Scenario {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between Scenario {repr(self)} and different type {type(other)}"
+            )
             return False
 
         scenario_eq = (
@@ -165,9 +167,10 @@ class Scenario(IDrawable):
 
     @dt.setter
     def dt(self, dt: float):
-        assert is_real_number(
-            dt
-        ), '<Scenario/dt> argument "dt" of wrong type. ' "Expected a real number. Got type: %s." % type(dt)
+        assert is_real_number(dt), (
+            '<Scenario/dt> argument "dt" of wrong type. '
+            "Expected a real number. Got type: %s." % type(dt)
+        )
         self._dt = dt
 
     @property
@@ -213,7 +216,11 @@ class Scenario(IDrawable):
         return list(self._static_obstacles.values())
 
     @property
-    def obstacles(self) -> List[Union[Obstacle, StaticObstacle, DynamicObstacle, EnvironmentObstacle, PhantomObstacle]]:
+    def obstacles(
+        self,
+    ) -> List[
+        Union[Obstacle, StaticObstacle, DynamicObstacle, EnvironmentObstacle, PhantomObstacle]
+    ]:
         """Returns a list of all obstacles roles in the scenario."""
         return list(
             itertools.chain(
@@ -343,7 +350,9 @@ class Scenario(IDrawable):
         if lanelet_ids is None or len(self.lanelet_network.lanelets) == 0:
             return
         for l_id in lanelet_ids:
-            self.lanelet_network.find_lanelet_by_id(l_id).static_obstacles_on_lanelet.add(obstacle_id)
+            self.lanelet_network.find_lanelet_by_id(l_id).static_obstacles_on_lanelet.add(
+                obstacle_id
+            )
 
     def _remove_static_obstacle_from_lanelets(self, obstacle_id: int, lanelet_ids: Set[int]):
         """Remove a static obstacle reference from all lanelets the obstacle is on.
@@ -357,26 +366,38 @@ class Scenario(IDrawable):
         l_ids = obs.initial_center_lanelet_ids
         if l_ids is not None:
             for l_id in lanelet_ids:
-                self.lanelet_network.find_lanelet_by_id(l_id).static_obstacles_on_lanelet.remove(obstacle_id)
+                self.lanelet_network.find_lanelet_by_id(l_id).static_obstacles_on_lanelet.remove(
+                    obstacle_id
+                )
 
     def _remove_dynamic_obstacle_from_lanelets(self, obstacle: DynamicObstacle):
         """Removes a dynamic obstacle reference from all lanelets the obstacle is on.
 
         :param obstacle: obstacle to be removed
         """
-        if isinstance(obstacle.prediction, SetBasedPrediction) or len(self.lanelet_network.lanelets) == 0:
+        if (
+            isinstance(obstacle.prediction, SetBasedPrediction)
+            or len(self.lanelet_network.lanelets) == 0
+        ):
             return
         # delete obstacle references from initial time step
         if obstacle.initial_shape_lanelet_ids is not None:
             for lanelet_id in obstacle.initial_shape_lanelet_ids:
-                lanelet_dict = self.lanelet_network.find_lanelet_by_id(lanelet_id).dynamic_obstacles_on_lanelet
+                lanelet_dict = self.lanelet_network.find_lanelet_by_id(
+                    lanelet_id
+                ).dynamic_obstacles_on_lanelet
                 lanelet_dict[obstacle.initial_state.time_step].discard(obstacle.obstacle_id)
 
         # delete obstacle references from prediction
-        if obstacle.prediction is not None and obstacle.prediction.shape_lanelet_assignment is not None:
+        if (
+            obstacle.prediction is not None
+            and obstacle.prediction.shape_lanelet_assignment is not None
+        ):
             for time_step, ids in obstacle.prediction.shape_lanelet_assignment.items():
                 for lanelet_id in ids:
-                    lanelet_dict = self.lanelet_network.find_lanelet_by_id(lanelet_id).dynamic_obstacles_on_lanelet
+                    lanelet_dict = self.lanelet_network.find_lanelet_by_id(
+                        lanelet_id
+                    ).dynamic_obstacles_on_lanelet
                     lanelet_dict[time_step].discard(obstacle.obstacle_id)
 
     def _add_dynamic_obstacle_to_lanelets(self, obstacle: DynamicObstacle):
@@ -384,21 +405,31 @@ class Scenario(IDrawable):
 
         :param obstacle: obstacle to be added
         """
-        if isinstance(obstacle.prediction, SetBasedPrediction) or len(self.lanelet_network.lanelets) == 0:
+        if (
+            isinstance(obstacle.prediction, SetBasedPrediction)
+            or len(self.lanelet_network.lanelets) == 0
+        ):
             return
         # add obstacle references to initial time step
         if obstacle.initial_shape_lanelet_ids is not None:
             for lanelet_id in obstacle.initial_shape_lanelet_ids:
-                lanelet_dict = self.lanelet_network.find_lanelet_by_id(lanelet_id).dynamic_obstacles_on_lanelet
+                lanelet_dict = self.lanelet_network.find_lanelet_by_id(
+                    lanelet_id
+                ).dynamic_obstacles_on_lanelet
                 if lanelet_dict.get(obstacle.initial_state.time_step) is None:
                     lanelet_dict[obstacle.initial_state.time_step] = set()
                 lanelet_dict[obstacle.initial_state.time_step].add(obstacle.obstacle_id)
 
         # add obstacle references to prediction
-        if obstacle.prediction is not None and obstacle.prediction.shape_lanelet_assignment is not None:
+        if (
+            obstacle.prediction is not None
+            and obstacle.prediction.shape_lanelet_assignment is not None
+        ):
             for time_step, ids in obstacle.prediction.shape_lanelet_assignment.items():
                 for lanelet_id in ids:
-                    lanelet_dict = self.lanelet_network.find_lanelet_by_id(lanelet_id).dynamic_obstacles_on_lanelet
+                    lanelet_dict = self.lanelet_network.find_lanelet_by_id(
+                        lanelet_id
+                    ).dynamic_obstacles_on_lanelet
                     if lanelet_dict.get(time_step) is None:
                         lanelet_dict[time_step] = set()
                     lanelet_dict[time_step].add(obstacle.obstacle_id)
@@ -411,7 +442,11 @@ class Scenario(IDrawable):
             PhantomObstacle,
             EnvironmentObstacle,
             StaticObstacle,
-            List[Union[Obstacle, DynamicObstacle, PhantomObstacle, EnvironmentObstacle, StaticObstacle]],
+            List[
+                Union[
+                    Obstacle, DynamicObstacle, PhantomObstacle, EnvironmentObstacle, StaticObstacle
+                ]
+            ],
         ],
     ):
         """Removes an obstacle or a list of obstacles from the scenario. If the obstacle ID is not assigned,
@@ -420,7 +455,8 @@ class Scenario(IDrawable):
         :param obstacle: obstacle to be removed
         """
         assert isinstance(
-            obstacle, (list, Obstacle, DynamicObstacle, PhantomObstacle, EnvironmentObstacle, StaticObstacle)
+            obstacle,
+            (list, Obstacle, DynamicObstacle, PhantomObstacle, EnvironmentObstacle, StaticObstacle),
         ), (
             "<Scenario/remove_obstacle> argument "
             '"obstacle" of wrong type. '
@@ -432,7 +468,9 @@ class Scenario(IDrawable):
             return
 
         if obstacle.obstacle_id in self._static_obstacles:
-            self._remove_static_obstacle_from_lanelets(obstacle.obstacle_id, obstacle.initial_shape_lanelet_ids)
+            self._remove_static_obstacle_from_lanelets(
+                obstacle.obstacle_id, obstacle.initial_shape_lanelet_ids
+            )
             del self._static_obstacles[obstacle.obstacle_id]
             self._id_set.remove(obstacle.obstacle_id)
         elif obstacle.obstacle_id in self._dynamic_obstacles:
@@ -499,27 +537,35 @@ class Scenario(IDrawable):
 
         for t in self.lanelet_network.traffic_signs:
             if t.traffic_sign_id in set(traffic_signs_to_delete - traffic_signs_to_save):
-                remove_traffic_signs.append(self.lanelet_network.find_traffic_sign_by_id(t.traffic_sign_id))
+                remove_traffic_signs.append(
+                    self.lanelet_network.find_traffic_sign_by_id(t.traffic_sign_id)
+                )
 
         for t in self.lanelet_network.traffic_lights:
             if t.traffic_light_id in set(traffic_lights_to_delete - traffic_lights_to_save):
-                remove_traffic_lights.append(self.lanelet_network.find_traffic_light_by_id(t.traffic_light_id))
+                remove_traffic_lights.append(
+                    self.lanelet_network.find_traffic_light_by_id(t.traffic_light_id)
+                )
 
         self.remove_traffic_sign(remove_traffic_signs)
         self.remove_traffic_light(remove_traffic_lights)
 
-    def remove_lanelet(self, lanelet: Union[List[Lanelet], Lanelet], referenced_elements: bool = True):
+    def remove_lanelet(
+        self, lanelet: Union[List[Lanelet], Lanelet], referenced_elements: bool = True
+    ):
         """
         Removes a lanelet or a list of lanelets from a scenario.
 
         :param lanelet: Lanelet which should be removed from scenario.
         :param referenced_elements: Boolean indicating whether references of lanelet should also be removed.
         """
-        assert isinstance(
-            lanelet, (list, Lanelet)
-        ), '<Scenario/remove_lanelet> argument "lanelet" of wrong type. ' "Expected type: %s. Got type: %s." % (
-            Lanelet,
-            type(lanelet),
+        assert isinstance(lanelet, (list, Lanelet)), (
+            '<Scenario/remove_lanelet> argument "lanelet" of wrong type. '
+            "Expected type: %s. Got type: %s."
+            % (
+                Lanelet,
+                type(lanelet),
+            )
         )
         assert isinstance(referenced_elements, bool), (
             '<Scenario/remove_lanelet> argument "referenced_elements" of wrong type. '
@@ -660,11 +706,13 @@ class Scenario(IDrawable):
         :param obstacle_role: obstacle role as defined in CommonRoad, e.g., static or dynamic
         :return: list of occupancies of the obstacles
         """
-        assert is_natural_number(
-            time_step
-        ), '<Scenario/occupancies_at_time> argument "time_step" of wrong type. ' "Expected type: %s. Got type: %s." % (
-            int,
-            type(time_step),
+        assert is_natural_number(time_step), (
+            '<Scenario/occupancies_at_time> argument "time_step" of wrong type. '
+            "Expected type: %s. Got type: %s."
+            % (
+                int,
+                type(time_step),
+            )
         )
         assert isinstance(obstacle_role, (ObstacleRole, type(None))), (
             '<Scenario/obstacles_by_role_and_type> argument "obstacle_role" of wrong type. Expected types: '
@@ -672,24 +720,28 @@ class Scenario(IDrawable):
         )
         occupancies = list()
         for obstacle in self.obstacles:
-            if (obstacle_role is None or obstacle.obstacle_role == obstacle_role) and obstacle.occupancy_at_time(
-                time_step
-            ):
+            if (
+                obstacle_role is None or obstacle.obstacle_role == obstacle_role
+            ) and obstacle.occupancy_at_time(time_step):
                 occupancies.append(obstacle.occupancy_at_time(time_step))
         return occupancies
 
-    def obstacle_by_id(self, obstacle_id: int) -> Union[Obstacle, DynamicObstacle, StaticObstacle, None]:
+    def obstacle_by_id(
+        self, obstacle_id: int
+    ) -> Union[Obstacle, DynamicObstacle, StaticObstacle, None]:
         """
         Finds an obstacle for a given obstacle_id
 
         :param obstacle_id: ID of the queried obstacle
         :return: the obstacle object if the ID exists, otherwise None
         """
-        assert is_integer_number(
-            obstacle_id
-        ), '<Scenario/obstacle_by_id> argument "obstacle_id" of wrong type. ' "Expected type: %s. Got type: %s." % (
-            int,
-            type(obstacle_id),
+        assert is_integer_number(obstacle_id), (
+            '<Scenario/obstacle_by_id> argument "obstacle_id" of wrong type. '
+            "Expected type: %s. Got type: %s."
+            % (
+                int,
+                type(obstacle_id),
+            )
         )
         obstacle = None
         if obstacle_id in self._static_obstacles:
@@ -702,12 +754,15 @@ class Scenario(IDrawable):
             obstacle = self._environment_obstacle[obstacle_id]
         else:
             warnings.warn(
-                "<Scenario/obstacle_by_id> Obstacle with ID %s is not contained in the scenario." % obstacle_id
+                "<Scenario/obstacle_by_id> Obstacle with ID %s is not contained in the scenario."
+                % obstacle_id
             )
         return obstacle
 
     def obstacles_by_role_and_type(
-        self, obstacle_role: Union[None, ObstacleRole] = None, obstacle_type: Union[None, ObstacleType] = None
+        self,
+        obstacle_role: Union[None, ObstacleRole] = None,
+        obstacle_type: Union[None, ObstacleType] = None,
     ) -> List[Obstacle]:
         """
         Filters the obstacles by their role and type.
@@ -748,7 +803,9 @@ class Scenario(IDrawable):
         """
 
         def contained_in_interval(position: np.ndarray):
-            if position_intervals[0].contains(position[0]) and position_intervals[1].contains(position[1]):
+            if position_intervals[0].contains(position[0]) and position_intervals[1].contains(
+                position[1]
+            ):
                 return True
             return False
 
@@ -867,7 +924,9 @@ class Scenario(IDrawable):
             if not use_center_only:
                 lanelet_ids = set(self.lanelet_network.find_lanelet_by_shape(shape))
                 obstacle.initial_shape_lanelet_ids = lanelet_ids
-            lanelet_ids = set(self.lanelet_network.find_lanelet_by_position([obstacle.initial_state.position])[0])
+            lanelet_ids = set(
+                self.lanelet_network.find_lanelet_by_position([obstacle.initial_state.position])[0]
+            )
             obstacle.initial_center_lanelet_ids = lanelet_ids
 
             for l_id in lanelet_ids:
@@ -877,7 +936,9 @@ class Scenario(IDrawable):
 
         if obstacle_ids is None:
             # assign all obstacles
-            obstacle_ids = set(self._static_obstacles.keys()).union(set(self._dynamic_obstacles.keys()))
+            obstacle_ids = set(self._static_obstacles.keys()).union(
+                set(self._dynamic_obstacles.keys())
+            )
 
         for obs_id in obstacle_ids:
             obs = self.obstacle_by_id(obs_id)
@@ -887,7 +948,9 @@ class Scenario(IDrawable):
                     if obs.prediction is None:
                         time_steps_tmp = [obs.initial_state.time_step]
                     else:
-                        time_steps_tmp = range(obs.initial_state.time_step, obs.prediction.final_time_step + 1)
+                        time_steps_tmp = range(
+                            obs.initial_state.time_step, obs.prediction.final_time_step + 1
+                        )
                 else:
                     time_steps_tmp = time_steps
 
@@ -913,9 +976,10 @@ class Scenario(IDrawable):
             "not a vector of real numbers of length 2. "
             "translation = {}.".format(translation)
         )
-        assert is_valid_orientation(
-            angle
-        ), '<Scenario/translate_rotate>: argument "orientation" is not valid. ' "angle = {}.".format(angle)
+        assert is_valid_orientation(angle), (
+            '<Scenario/translate_rotate>: argument "orientation" is not valid. '
+            "angle = {}.".format(angle)
+        )
 
         self._lanelet_network.translate_rotate(translation, angle)
         for obstacle in self.obstacles:
@@ -965,7 +1029,9 @@ class Scenario(IDrawable):
         traffic_str += str(self._lanelet_network)
         return traffic_str
 
-    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[MPDrawParams] = None):
+    def draw(
+        self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[MPDrawParams] = None
+    ):
         renderer.draw_scenario(self, draw_params)
 
     def compute_member_lanelets(self, intersection: Intersection):

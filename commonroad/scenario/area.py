@@ -49,7 +49,9 @@ class AreaBorder:
 
     @area_border_id.setter
     def area_border_id(self, value: int):
-        assert isinstance(value, int), "<AreaBorder/area_border_id>: Provided id is not valid! id={}".format(value)
+        assert isinstance(
+            value, int
+        ), "<AreaBorder/area_border_id>: Provided id is not valid! id={}".format(value)
         self._area_border_id = value
 
     @property
@@ -83,14 +85,17 @@ class AreaBorder:
 
     @line_marking.setter
     def line_marking(self, value: LineMarking):
-        assert isinstance(
-            value, LineMarking
-        ), "<AreaBorder/line_marking>: Provided lane marking type" "is not valid! type = {}".format(type(value))
+        assert isinstance(value, LineMarking), (
+            "<AreaBorder/line_marking>: Provided lane marking type"
+            "is not valid! type = {}".format(type(value))
+        )
         self._line_marking = value
 
     def __eq__(self, other):
         if not isinstance(other, AreaBorder):
-            warnings.warn(f"Inequality between AreaBorder {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between AreaBorder {repr(self)} and different type {type(other)}"
+            )
             return False
         return (
             self._area_border_id == other.area_border_id
@@ -108,7 +113,9 @@ class Area:
     Class which describes an area
     """
 
-    def __init__(self, area_id: int, border: List[AreaBorder] = None, area_types: Set[AreaType] = None):
+    def __init__(
+        self, area_id: int, border: List[AreaBorder] = None, area_types: Set[AreaType] = None
+    ):
         """
         Constructor of an Area object.
 
@@ -127,7 +134,9 @@ class Area:
 
     @area_id.setter
     def area_id(self, value: int):
-        assert isinstance(value, int), "<Area/area_id>: Provided area_id is not valid! id={}".format(value)
+        assert isinstance(
+            value, int
+        ), "<Area/area_id>: Provided area_id is not valid! id={}".format(value)
         self._area_id = value
 
     @property
@@ -137,11 +146,15 @@ class Area:
 
     @border.setter
     def border(self, value: List[AreaBorder]):
-        assert isinstance(
-            value, list
-        ), "<Area/border>: provided list of area borders is not a " "list! type = {}".format(type(value))
+        assert isinstance(value, list), (
+            "<Area/border>: provided list of area borders is not a " "list! type = {}".format(
+                type(value)
+            )
+        )
         for val in value:
-            assert isinstance(val, AreaBorder), "<Area/border>: Provided border list is not valid! id={}".format(value)
+            assert isinstance(
+                val, AreaBorder
+            ), "<Area/border>: Provided border list is not valid! id={}".format(value)
         self._border = value
 
     @property
@@ -151,22 +164,32 @@ class Area:
 
     @area_types.setter
     def area_types(self, value: Set[AreaType]):
-        assert isinstance(
-            value, set
-        ), "<Area/area_types>: provided set of area types is not a " "set! type = {}".format(type(value))
-        for val in value:
-            assert isinstance(val, AreaType), "<Area/area_types>: Provided area type set is not valid! id={}".format(
-                value
+        assert isinstance(value, set), (
+            "<Area/area_types>: provided set of area types is not a " "set! type = {}".format(
+                type(value)
             )
+        )
+        for val in value:
+            assert isinstance(
+                val, AreaType
+            ), "<Area/area_types>: Provided area type set is not valid! id={}".format(value)
         self._area_types = value
 
     def __eq__(self, other):
         if not isinstance(other, Area):
             warnings.warn(f"Inequality between Area {repr(self)} and different type {type(other)}")
             return False
-        return self._area_id == other.area_id and self._border == other.border and self._area_types == other.area_types
+        return (
+            self._area_id == other.area_id
+            and self._border == other.border
+            and self._area_types == other.area_types
+        )
 
     def __hash__(self):
         return hash(
-            (self._area_id, tuple(self._border), frozenset(self._area_types if self._area_types is not None else set()))
+            (
+                self._area_id,
+                tuple(self._border),
+                frozenset(self._area_types if self._area_types is not None else set()),
+            )
         )

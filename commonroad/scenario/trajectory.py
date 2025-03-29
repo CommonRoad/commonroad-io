@@ -44,39 +44,52 @@ class Trajectory(IDrawable):
         :param state_list: state list which should be evaluated
         :return: evaluated state list
         """
-        assert isinstance(
-            state_list, list
-        ), "<Trajectory/state_list>: argument state_list of wrong type. " "Expected type: %s. Got type: %s." % (
-            list,
-            type(state_list),
+        assert isinstance(state_list, list), (
+            "<Trajectory/state_list>: argument state_list of wrong type. "
+            "Expected type: %s. Got type: %s."
+            % (
+                list,
+                type(state_list),
+            )
         )
         assert len(state_list) >= 1, (
             "<Trajectory/state_list>: argument state_list must contain at least one state."
             " length of state_list: %s." % len(state_list)
         )
         assert all(isinstance(state, State) for state in state_list), (
-            "<Trajectory/state_list>: element of " "state_list is of wrong type. Expected type: " "%s." % List[State]
+            "<Trajectory/state_list>: element of "
+            "state_list is of wrong type. Expected type: "
+            "%s." % List[State]
         )
         assert all(
-            is_natural_number(state.time_step) for state in state_list if hasattr(state, "time_step")
+            is_natural_number(state.time_step)
+            for state in state_list
+            if hasattr(state, "time_step")
         ), "<Trajectory/state_list>: Element time_step of each state must be an integer."
-        assert all(set(state_list[0].used_attributes) == set(state.used_attributes) for state in state_list), (
+        assert all(
+            set(state_list[0].used_attributes) == set(state.used_attributes) for state in state_list
+        ), (
             "<Trajectory/state_list>: all states must have the same attributes. Attributes of first state: %s."
             % state_list[0].attributes
         )
 
         assert state_list[0].time_step == self.initial_time_step, (
-            f"state_list[0].time_step={state_list[0].time_step} != " f"self.initial_time_step={self.initial_time_step}"
+            f"state_list[0].time_step={state_list[0].time_step} != "
+            f"self.initial_time_step={self.initial_time_step}"
         )
 
         return state_list
 
     def __eq__(self, other):
         if not isinstance(other, Trajectory):
-            warnings.warn(f"Inequality between Trajectory {repr(self)} and different type {type(other)}")
+            warnings.warn(
+                f"Inequality between Trajectory {repr(self)} and different type {type(other)}"
+            )
             return False
 
-        return self._initial_time_step == other.initial_time_step and list(self._state_list) == list(other.state_list)
+        return self._initial_time_step == other.initial_time_step and list(
+            self._state_list
+        ) == list(other.state_list)
 
     def __hash__(self):
         return hash((self._initial_time_step, tuple(self._state_list)))
@@ -99,16 +112,18 @@ class Trajectory(IDrawable):
 
         :param state: The new state. It's time step must be larger than the time step of the last state in the trajectory
         """
-        assert isinstance(
-            state, State
-        ), "<Trajectory/append_state>: argument state of wrong type. Expected type: %s. Got type: %s." % (
-            State,
-            type(state),
+        assert isinstance(state, State), (
+            "<Trajectory/append_state>: argument state of wrong type. Expected type: %s. Got type: %s."
+            % (
+                State,
+                type(state),
+            )
         )
         assert set(self._state_list[0].used_attributes) == set(state.used_attributes), (
             "<Trajectory/append_state>: attributes of the argument state do not match"
             " the attributes of the other states in the state list."
-            " Expected attributes: '%s'. Got attributes: '%s'" % (self._state_list[0].attributes, state.attributes)
+            " Expected attributes: '%s'. Got attributes: '%s'"
+            % (self._state_list[0].attributes, state.attributes)
         )
 
         assert state.time_step > self.final_state.time_step, (
@@ -142,7 +157,9 @@ class Trajectory(IDrawable):
             state = self._state_list[time_step - self._initial_time_step]
         return state
 
-    def states_in_time_interval(self, time_begin: int, time_end: int) -> List[Union[TraceState, None]]:
+    def states_in_time_interval(
+        self, time_begin: int, time_end: int
+    ) -> List[Union[TraceState, None]]:
         """
         Function to get the states of a trajectory at a specific time interval.
 
@@ -161,7 +178,8 @@ class Trajectory(IDrawable):
         :param angle: rotation angle in radian (counter-clockwise)
         """
         assert is_real_number_vector(translation, 2), (
-            "<Trajectory/translate_rotate>: argument translation is not " "a vector of real numbers of length 2."
+            "<Trajectory/translate_rotate>: argument translation is not "
+            "a vector of real numbers of length 2."
         )
         assert is_real_number(angle), (
             "<Trajectory/translate_rotate>: argument angle must be a scalar. " "angle = %s" % angle
@@ -194,10 +212,9 @@ class Trajectory(IDrawable):
         :param initial_time_cont: The initial continuous time stamp (default 0). It must hold t\\in time interval
         :return: The resampled trajectory
         """
-        assert is_positive(
-            resampled_dt
-        ), "<Trajectory/interpolate_state_list>: Time step size must be a positive number! " "dT = {}".format(
-            resampled_dt
+        assert is_positive(resampled_dt), (
+            "<Trajectory/interpolate_state_list>: Time step size must be a positive number! "
+            "dT = {}".format(resampled_dt)
         )
         assert isinstance(states, list) and all(isinstance(x, State) for x in states), (
             "<Trajectory/interpolate_state_list>: Provided state list "
@@ -209,22 +226,23 @@ class Trajectory(IDrawable):
         )
         assert len(states) == len(time_stamps_cont), (
             "<Trajectory/interpolate_state_list>: Provided time and state lists do not "
-            "share the same length! Time = {} / States = {}".format(len(time_stamps_cont), len(states))
+            "share the same length! Time = {} / States = {}".format(
+                len(time_stamps_cont), len(states)
+            )
         )
-        assert is_positive(num_resampled_states) and is_natural_number(
-            num_resampled_states
-        ), "<Trajectory/interpolate_state_list>: Provided state horizon must be a " "positive Integer! N = {}".format(
-            num_resampled_states
+        assert is_positive(num_resampled_states) and is_natural_number(num_resampled_states), (
+            "<Trajectory/interpolate_state_list>: Provided state horizon must be a "
+            "positive Integer! N = {}".format(num_resampled_states)
         )
-        assert is_real_number(
-            initial_time_cont
-        ), "<Trajectory/interpolate_state_list>: Provided initial time must be a " "real number! t_0 = {}".format(
-            initial_time_cont
+        assert is_real_number(initial_time_cont), (
+            "<Trajectory/interpolate_state_list>: Provided initial time must be a "
+            "real number! t_0 = {}".format(initial_time_cont)
         )
         assert any(time_stamps_cont <= initial_time_cont) and any(
             initial_time_cont <= time_stamps_cont
-        ), "<Trajectory/interpolate_state_list>: Provided initial " "time is not within time vector! t_0 = {}".format(
-            initial_time_cont
+        ), (
+            "<Trajectory/interpolate_state_list>: Provided initial "
+            "time is not within time vector! t_0 = {}".format(initial_time_cont)
         )
         assert any(
             initial_time_cont + num_resampled_states * resampled_dt <= time_stamps_cont
@@ -243,7 +261,9 @@ class Trajectory(IDrawable):
 
         # create interpolation vector
         t_i = np.arange(
-            initial_time_cont, initial_time_cont + num_resampled_states * resampled_dt + resampled_dt, resampled_dt
+            initial_time_cont,
+            initial_time_cont + num_resampled_states * resampled_dt + resampled_dt,
+            resampled_dt,
         )
         values_i = list()
 
@@ -307,5 +327,9 @@ class Trajectory(IDrawable):
         traffic_str += "State elements: {}".format(self.state_list[0].attributes)
         return traffic_str
 
-    def draw(self, renderer: IRenderer, draw_params: OptionalSpecificOrAllDrawParams[TrajectoryParams] = None):
+    def draw(
+        self,
+        renderer: IRenderer,
+        draw_params: OptionalSpecificOrAllDrawParams[TrajectoryParams] = None,
+    ):
         renderer.draw_trajectory(self, draw_params)
