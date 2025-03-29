@@ -89,13 +89,6 @@ jupyter = ">=1.0.0"
 jupyterlab = ">=4.0.11"  # https://github.com/CommonRoad/commonroad-io/security/dependabot/22
 jupyter-lsp = ">=2.2.2" # https://github.com/CommonRoad/commonroad-io/security/dependabot/18
 
-[tool.black]
-extend-exclude = "(traffic_signs/)|(generated_scripts/)|common/protobuf/"
-line-length = 120
-
-[tool.isort]
-profile = "black"
-extend_skip = ["traffic_signs", "generated_scripts", "protobuf"]
 
 [build-system]
 requires = ["poetry-core"]
