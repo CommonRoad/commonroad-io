@@ -1,6 +1,6 @@
 # Changelog
 
-## [202X.X] - 202X-XX-XX
+## [2026.1] - 2026-01-XX
 
 ### Added
 - Support for CommonRoad format 202Xa
@@ -12,7 +12,7 @@
 ### Removed
 - Writing 2020a XML and Protobuf scenarios
 - Reading 2020a Protobuf scenarios
--
+
 ## [2025.1] -
 ### Changed
 - Update to new template-repository structure
