@@ -75,12 +75,14 @@ __status__ = "released"
       <xs:element name="z" type="xs:decimal" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
+    <!--Hint: for legacy reasons, we use the same type for rectangle and absoluteRectangle (same for circle and polygon) -->
   <xs:complexType name="rectangle">
     <xs:sequence>
       <xs:element name="length" type="positiveDecimal"/>
       <xs:element name="width" type="positiveDecimal"/>
       <xs:element name="orientation" type="xs:decimal" minOccurs="0"/>
       <xs:element name="center" type="point" minOccurs="0"/>
+      <xs:element name="originXShift" type="xs:decimal" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="circle">
@@ -94,11 +96,62 @@ __status__ = "released"
       <xs:element name="point" type="point" minOccurs="3" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
+  <xs:complexType name="shapeGroup">
+    <xs:sequence>
+      <xs:element name="shape" type="shape" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="truckDims">
+    <xs:all>
+      <xs:element name="length" type="positiveDecimal"/>
+      <xs:element name="width" type="positiveDecimal"/>
+      <xs:element name="wheelbase" type="positiveDecimal"/>
+      <xs:element name="distFromRearToRearAxle" type="positiveDecimal"/>
+      <xs:element name="cabinLength" type="positiveDecimal"/>
+      <xs:element name="distFromRearAxleToHitch" type="xs:decimal"/>
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="trailerDims">
+    <xs:all>
+      <xs:element name="length" type="positiveDecimal"/>
+      <xs:element name="width" type="positiveDecimal"/>
+      <xs:element name="wheelbase" type="positiveDecimal"/>
+      <xs:element name="distFromFrontToHitch" type="positiveDecimal"/>
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="truckShape">
+    <xs:all>
+      <xs:element name="truckDims" type="truckDims"/>
+      <xs:element name="originXShift" type="xs:decimal"/>
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="semiTrailerTruckShape">
+    <xs:all>
+      <xs:element name="truckShape" type="truckShape"/>
+      <xs:element name="trailerDims" type="trailerDims"/>
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="absoluteShapeGroup">
+    <xs:sequence>
+      <xs:element name="shape" type="absoluteShape" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
   <xs:complexType name="shape">
     <xs:choice maxOccurs="unbounded">
       <xs:element name="rectangle" type="rectangle"/>
       <xs:element name="circle" type="circle"/>
       <xs:element name="polygon" type="polygon"/>
+      <xs:element name="shapeGroup" type="shapeGroup"/>
+      <xs:element name="truckShape" type="truckShape"/>
+      <xs:element name="semiTrailerTruckShape" type="semiTrailerTruckShape"/>
+    </xs:choice>
+  </xs:complexType>
+ <xs:complexType name="absoluteShape">
+    <xs:choice maxOccurs="unbounded">
+      <xs:element name="rectangle" type="rectangle"/>
+      <xs:element name="circle" type="circle"/>
+      <xs:element name="polygon" type="polygon"/>
+      <xs:element name="absoluteShapeGroup" type="absoluteShapeGroup"/>
     </xs:choice>
   </xs:complexType>
   <xs:complexType name="position">
@@ -133,6 +186,7 @@ __status__ = "released"
       <xs:element name="yawRate" type="decimalExactOrInterval" minOccurs="0"/>
       <xs:element name="slipAngle" type="decimalExactOrInterval" minOccurs="0"/>
       <xs:element name="steeringAngle" type="decimalExactOrInterval" minOccurs="0"/>
+      <xs:element name="hitchAngle" type="decimalExactOrInterval" minOccurs="0"/>
       <xs:element name="rollAngle" type="decimalExactOrInterval" minOccurs="0"/>
       <xs:element name="rollRate" type="decimalExactOrInterval" minOccurs="0"/>
       <xs:element name="pitchAngle" type="decimalExactOrInterval" minOccurs="0"/>
@@ -244,7 +298,7 @@ __status__ = "released"
   </xs:complexType>
   <xs:complexType name="occupancy">
     <xs:sequence>
-      <xs:element name="shape" type="shape"/>
+      <xs:element name="shape" type="absoluteShape"/>
       <xs:element name="time" type="integerExactOrIntervalGreaterZero"/>
     </xs:sequence>
   </xs:complexType>
@@ -802,7 +856,7 @@ __status__ = "released"
   <xs:complexType name="environmentObstacle">
     <xs:sequence>
       <xs:element name="type" type="obstacleTypeEnvironment"/>
-      <xs:element name="shape" type="shape"/>
+      <xs:element name="shape" type="absoluteShape"/>
     </xs:sequence>
     <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
   </xs:complexType>

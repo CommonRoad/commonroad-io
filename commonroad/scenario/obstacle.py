@@ -10,16 +10,9 @@ from commonroad.common.validity import (
     is_real_number_vector,
     is_valid_orientation,
 )
-from commonroad.geometry.shape import (
-    Circle,
-    Polygon,
-    Rectangle,
-    Shape,
-    occupancy_shape_from_state,
-    shape_group_occupancy_shape_from_state,
-)
+from commonroad.geometry.obstacle_shapes.obstacle_shape import ObstacleShape
+from commonroad.geometry.occupancy.occupancy import Occupancy
 from commonroad.prediction.prediction import (
-    Occupancy,
     Prediction,
     SetBasedPrediction,
     TrajectoryPrediction,
@@ -82,7 +75,7 @@ class Obstacle(IDrawable):
         obstacle_id: int,
         obstacle_role: ObstacleRole,
         obstacle_type: ObstacleType,
-        obstacle_shape: Shape,
+        obstacle_shape: ObstacleShape,
         initial_state: InitialState = None,
         initial_center_lanelet_ids: Optional[Set[int]] = None,
         initial_shape_lanelet_ids: Optional[Set[int]] = None,
@@ -100,11 +93,12 @@ class Obstacle(IDrawable):
         :param initial_signal_state: initial signal state of obstacle
         :param signal_series: list of signal states over time
         """
-        self._initial_occupancy_shape: Optional[Shape] = None
+        self._initial_occupancy_shape: Optional[Occupancy] = None
         self.obstacle_id: int = obstacle_id
         self.obstacle_role: ObstacleRole = obstacle_role
         self.obstacle_type: ObstacleType = obstacle_type
-        self.obstacle_shape: Shape = obstacle_shape
+        self.obstacle_shape: ObstacleShape = obstacle_shape
+        # FIXME why do we distinguish between the initial state and the state list in the trajectory prediction?
         self.initial_state: InitialState = initial_state
         self.initial_center_lanelet_ids: Optional[Set[int]] = initial_center_lanelet_ids
         self.initial_shape_lanelet_ids: Optional[Set[int]] = initial_shape_lanelet_ids
@@ -241,17 +235,17 @@ class Obstacle(IDrawable):
             warnings.warn("<Obstacle/obstacle_type>: Obstacle type is immutable.")
 
     @property
-    def obstacle_shape(self) -> Union[Shape, Rectangle, Circle, Polygon]:
+    def obstacle_shape(self) -> ObstacleShape:
         """Obstacle shape as defined in CommonRoad."""
         return self._obstacle_shape
 
     @obstacle_shape.setter
-    def obstacle_shape(self, shape: Union[Shape, Rectangle, Circle, Polygon]):
-        assert isinstance(shape, (type(None), Shape)), (
+    def obstacle_shape(self, shape: ObstacleShape):
+        assert isinstance(shape, (type(None), ObstacleShape)), (
             "<Obstacle/obstacle_shape>: argument shape of wrong type. Expected "
             "type %s. Got type %s."
             % (
-                Shape,
+                ObstacleShape,
                 type(shape),
             )
         )
@@ -277,15 +271,7 @@ class Obstacle(IDrawable):
             )
         )
         self._initial_state = initial_state
-        self._initial_occupancy_shape = occupancy_shape_from_state(
-            self._obstacle_shape, initial_state
-        )
-        if not hasattr(self, "wheelbase_lengths"):
-            return
-        shapes = self.obstacle_shape.shapes
-        self._initial_occupancy_shape = shape_group_occupancy_shape_from_state(
-            shapes, initial_state, self.wheelbase_lengths
-        )
+        self._initial_occupancy_shape = self._obstacle_shape.compute_occupancy(initial_state)
 
     @property
     def initial_center_lanelet_ids(self) -> Union[None, Set[int]]:
@@ -397,7 +383,7 @@ class StaticObstacle(Obstacle):
         self,
         obstacle_id: int,
         obstacle_type: ObstacleType,
-        obstacle_shape: Shape,
+        obstacle_shape: ObstacleShape,
         initial_state: InitialState,
         initial_center_lanelet_ids: Union[None, Set[int]] = None,
         initial_shape_lanelet_ids: Union[None, Set[int]] = None,
@@ -466,7 +452,7 @@ class StaticObstacle(Obstacle):
         :param time_step: discrete time step
         :return: occupancy of the static obstacle at time step
         """
-        return Occupancy(time_step=time_step, shape=self._initial_occupancy_shape)
+        return self._initial_occupancy_shape
 
     def state_at_time(self, time_step: int) -> TraceState:
         """
@@ -501,7 +487,7 @@ class DynamicObstacle(Obstacle):
         self,
         obstacle_id: int,
         obstacle_type: ObstacleType,
-        obstacle_shape: Shape,
+        obstacle_shape: ObstacleShape,
         initial_state: InitialState,
         prediction: Union[None, Prediction, TrajectoryPrediction, SetBasedPrediction] = None,
         initial_center_lanelet_ids: Optional[Set[int]] = None,
@@ -515,7 +501,6 @@ class DynamicObstacle(Obstacle):
         signal_history: Optional[List[SignalState]] = None,
         center_lanelet_ids_history: Optional[List[Set[int]]] = None,
         shape_lanelet_ids_history: Optional[List[Set[int]]] = None,
-        **kwargs,
     ):
         """
         :param obstacle_id: unique ID of the obstacle
@@ -527,15 +512,12 @@ class DynamicObstacle(Obstacle):
         :param initial_shape_lanelet_ids: initial IDs of lanelets the obstacle shape is on
         :param initial_signal_state: initial signal state of static obstacle
         :param signal_series: list of signal states over time
-        :param wheelbase: list of wheelbase lengths
         :param initial_meta_information_state: meta information of the dynamic obstacle
         :param meta_information_series: list of meta information
         :param external_dataset_id: ID of the external dataset
         :param history: History of actual states
         :param signal_history: History of signal states
         """
-        for field, value in kwargs.items():
-            setattr(self, field, value)
         Obstacle.__init__(
             self,
             obstacle_id=obstacle_id,
@@ -675,13 +657,12 @@ class DynamicObstacle(Obstacle):
         :param time_step: discrete time step
         :return: predicted occupancy of the obstacle at time step
         """
-        occupancy = None
 
         if time_step == self.initial_state.time_step:
-            occupancy = Occupancy(time_step, self._initial_occupancy_shape)
+            return self._initial_occupancy_shape
         elif time_step > self.initial_state.time_step and self._prediction is not None:
-            occupancy = self._prediction.occupancy_at_time_step(time_step)
-        return occupancy
+            return self._prediction.occupancy_at_time_step(time_step)
+        return None
 
     def state_at_time(self, time_step: int) -> Union[None, TraceState]:
         """
@@ -874,16 +855,14 @@ class PhantomObstacle(IDrawable):
         :param time_step: discrete time step
         :return: predicted occupancy of the obstacle at time step
         """
-        occupancy = None
         if (
             self._prediction is not None
             and self._prediction.occupancy_at_time_step(time_step) is not None
         ):
-            occupancy = self._prediction.occupancy_at_time_step(time_step)
+            return self._prediction.occupancy_at_time_step(time_step)
         else:
             warnings.warn("<PhantomObstacle/occupancy_at_time>: Time step does not exist!")
-
-        return occupancy
+        return None
 
     @staticmethod
     def state_at_time() -> Union[None, TraceState]:
@@ -934,16 +913,16 @@ class PhantomObstacle(IDrawable):
 class EnvironmentObstacle(IDrawable):
     """Class representing environment obstacles as defined in CommonRoad."""
 
-    def __init__(self, obstacle_id: int, obstacle_type: ObstacleType, obstacle_shape: Shape):
+    def __init__(self, obstacle_id: int, obstacle_type: ObstacleType, occupancy: Occupancy):
         """
         :param obstacle_id: unique ID of the obstacle
         :param obstacle_type: type of obstacle (e.g. BUILDING)
-        :param obstacle_shape: shape of the static obstacle
+        :param occupancy: shape of the static obstacle
         """
         self.obstacle_id: int = obstacle_id
         self.obstacle_role: ObstacleRole = ObstacleRole.ENVIRONMENT
         self.obstacle_type: ObstacleType = obstacle_type
-        self.obstacle_shape: Shape = obstacle_shape
+        self.occupancy: Occupancy = occupancy
 
     def __eq__(self, other):
         if not isinstance(other, EnvironmentObstacle):
@@ -956,15 +935,13 @@ class EnvironmentObstacle(IDrawable):
             self._obstacle_id == other.obstacle_id
             and self._obstacle_role == other.obstacle_role
             and self._obstacle_type == other.obstacle_type
-            and self._obstacle_shape == other.obstacle_shape
+            and self._occupancy == other.occupancy
         )
 
         return obstacle_eq
 
     def __hash__(self):
-        return hash(
-            (self._obstacle_id, self._obstacle_role, self._obstacle_type, self._obstacle_shape)
-        )
+        return hash((self._obstacle_id, self._obstacle_role, self._obstacle_type, self._occupancy))
 
     @property
     def obstacle_id(self) -> int:
@@ -1027,25 +1004,25 @@ class EnvironmentObstacle(IDrawable):
             warnings.warn("<Obstacle/obstacle_type>: Obstacle type is immutable.")
 
     @property
-    def obstacle_shape(self) -> Union[Shape, Polygon, Circle, Rectangle]:
+    def occupancy(self) -> Occupancy:
         """Obstacle shape as defined in CommonRoad."""
-        return self._obstacle_shape
+        return self._occupancy
 
-    @obstacle_shape.setter
-    def obstacle_shape(self, shape: Union[Shape, Polygon, Circle, Rectangle]):
-        assert isinstance(shape, (type(None), Shape)), (
-            "<Obstacle/obstacle_shape>: argument shape of wrong type. Expected "
+    @occupancy.setter
+    def occupancy(self, occupancy: Occupancy):
+        assert isinstance(occupancy, (type(None), Occupancy)), (
+            "<Obstacle/occupancy>: argument shape of wrong type. Expected "
             "type %s. Got type %s."
             % (
-                Shape,
-                type(shape),
+                Occupancy,
+                type(occupancy),
             )
         )
 
-        if not hasattr(self, "_obstacle_shape"):
-            self._obstacle_shape = shape
+        if not hasattr(self, "_occupancy"):
+            self._occupancy = occupancy
         else:
-            warnings.warn("<Obstacle/obstacle_shape>: Obstacle shape is immutable.")
+            warnings.warn("<Obstacle/occupancy>: Obstacle shape is immutable.")
 
     def occupancy_at_time(self, time_step: int) -> Occupancy:
         """
@@ -1054,7 +1031,7 @@ class EnvironmentObstacle(IDrawable):
         :param time_step: discrete time step
         :return: occupancy of the static obstacle at time step
         """
-        return Occupancy(time_step=time_step, shape=self._obstacle_shape)
+        return self._occupancy
 
     def __str__(self):
         obs_str = "Environment Obstacle:\n"

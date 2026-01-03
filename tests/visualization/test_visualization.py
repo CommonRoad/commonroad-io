@@ -8,11 +8,16 @@ import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
+import shapely
 
 from commonroad.common.file_reader import CommonRoadFileReader
-from commonroad.geometry.shape import Circle, Polygon, Rectangle, ShapeGroup
+from commonroad.geometry.obstacle_shapes.circle_obstacle_shape import CircleObstacleShape
+from commonroad.geometry.occupancy.circle_occupancy import CircleOccupancy
+from commonroad.geometry.occupancy.occupancy_group import OccupancyGroup
+from commonroad.geometry.occupancy.polygon_occupancy import PolygonOccupancy
+from commonroad.geometry.occupancy.rect_occupancy import RectOccupancy
 from commonroad.planning.planning_problem import PlanningProblemSet
-from commonroad.prediction.prediction import Occupancy, SetBasedPrediction
+from commonroad.prediction.prediction import SetBasedPrediction
 from commonroad.scenario.obstacle import (
     EnvironmentObstacle,
     ObstacleType,
@@ -42,6 +47,17 @@ from commonroad.visualization.traffic_sign import (
 )
 
 
+def is_ffmpeg_installed():
+    """Check if ffmpeg is installed. Only relevant for github macos-latest runner."""
+    try:
+        subprocess.run(
+            ["ffmpeg", "-version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
+        return True
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return False
+
+
 class TestVisualizationV2(unittest.TestCase):
     def setUp(self) -> None:
         self.rnd = MPRenderer()
@@ -62,11 +78,18 @@ class TestVisualizationV2(unittest.TestCase):
     def test_primitive(self):
         params = MPDrawParams()
 
-        rect = Rectangle(1, 2, np.array([1.5, 2.0]), math.pi * 0.25)
-        poly = Polygon(
-            np.array([[0.2, 0.2], [0.2, 0.4], [0.3, 0.6], [0.4, 0.4], [0.4, 0.2], [0.2, 0.2]])
+        rect = RectOccupancy(
+            length=1,
+            width=2,
+            rect_center=shapely.Point([1.5, 2.0]),
+            orientation=math.pi * 0.25,
         )
-        circ = Circle(2, np.array([3, 3]))
+        poly = PolygonOccupancy(
+            shapely.Polygon(
+                [[0.2, 0.2], [0.2, 0.4], [0.3, 0.6], [0.4, 0.4], [0.4, 0.2], [0.2, 0.2]]
+            )
+        )
+        circ = CircleOccupancy(radius=2, circle_center=shapely.Point([3, 3]))
 
         rect.draw(self.rnd, params)
         poly.draw(self.rnd, params)
@@ -85,11 +108,12 @@ class TestVisualizationV2(unittest.TestCase):
             )
             rnd.render()
             # visualization
-            circ = Circle(2.0, np.array([10.0, 0.0]))
+            circ = CircleOccupancy(radius=2.0, circle_center=shapely.Point([10.0, 0.0]))
+            circle_shape = CircleObstacleShape(radius=2.0)
             obs = StaticObstacle(
                 1000,
                 ObstacleType.CAR,
-                circ,
+                circle_shape,
                 initial_state=InitialState(position=np.array([0, 0]), orientation=0.4),
             )
             scenario.add_objects(obs)
@@ -105,7 +129,7 @@ class TestVisualizationV2(unittest.TestCase):
             rnd.draw_list(scenario.dynamic_obstacles, draw_params=draw_params)
             rnd.render()
 
-            rnd.draw_list(scenario.dynamic_obstacles[0].prediction.occupancy_set)
+            rnd.draw_list(list(scenario.dynamic_obstacles[0].prediction.occupancies.values()))
             scenario.draw(rnd)
             rnd.render()
 
@@ -114,22 +138,25 @@ class TestVisualizationV2(unittest.TestCase):
             rnd.render()
 
             rnd.clear()
-            rect = Rectangle(2.0, 4.0, np.array([2.0, 2.0]))
+            rect = RectOccupancy(
+                length=2.0, width=4.0, rect_center=shapely.Point([2.0, 2.0]), orientation=0.0
+            )
             rect.draw(rnd)
             rnd.render()
 
             rnd.clear()
-            poly = Polygon(np.array([[0.0, 0.0], [0.0, 1.0], [1.0, 1.0], [1.0, 0.0]]))
+            poly = PolygonOccupancy(
+                shapely.Polygon([[0.0, 0.0], [0.0, 1.0], [1.0, 1.0], [1.0, 0.0]])
+            )
             poly.draw(rnd)
             rnd.render()
 
-            sg = ShapeGroup([circ, rect])
+            sg = OccupancyGroup(occupancies=(circ, rect))
             sg.draw(rnd)
             rnd.render()
 
             rnd.clear()
-            occ = Occupancy(1, rect)
-            occ.draw(rnd)
+            rect.draw(rnd)
             rnd.render()
 
         # plt.close('all')
@@ -311,16 +338,6 @@ class TestVisualizationV2(unittest.TestCase):
         self.assertEqual(params.dynamic_obstacle.time_end, 2)
         self.assertEqual(params.time_end, 2)
 
-    def is_ffmpeg_installed():
-        """Check if ffmpeg is installed. Only relevant for github macos-latest runner."""
-        try:
-            subprocess.run(
-                ["ffmpeg", "-version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
-            return True
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            return False
-
     @unittest.skipIf(not is_ffmpeg_installed(), "ffmpeg is not installed; check your setup")
     def test_video(self):
         scenario, _ = CommonRoadFileReader(self.ngsim_scen_1).open()  #
@@ -342,11 +359,15 @@ class TestVisualizationV2(unittest.TestCase):
         print(time.time() - t0)
 
     def test_phantom_obstacle(self):
-        occupancy = [
-            Occupancy(0, Rectangle(10, 10)),
-            Occupancy(1, Rectangle(10, 10, np.array([10.0, 10.0]))),
-        ]
-        pred = SetBasedPrediction(0, occupancy)
+        occs = {
+            0: RectOccupancy(
+                length=10, width=10, rect_center=shapely.Point([0.0, 0.0]), orientation=0
+            ),
+            1: RectOccupancy(
+                length=10, width=10, rect_center=shapely.Point([10.0, 10.0]), orientation=0
+            ),
+        }
+        pred = SetBasedPrediction(0, occs)
         phantom_obs = PhantomObstacle(0, pred)
         phantom_obs.draw(
             self.rnd,
@@ -363,7 +384,9 @@ class TestVisualizationV2(unittest.TestCase):
         self.rnd.render(show=True)
 
     def test_environment_obstacle(self):
-        shape = Rectangle(20, 10)
+        shape = RectOccupancy(
+            length=20, width=10, rect_center=shapely.Point([0.0, 0.0]), orientation=0
+        )
         env_obs = EnvironmentObstacle(0, ObstacleType.BUILDING, shape)
         env_obs.draw(self.rnd)
         self.rnd.render(show=True)

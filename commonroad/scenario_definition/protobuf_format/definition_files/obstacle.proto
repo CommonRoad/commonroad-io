@@ -28,7 +28,7 @@ message ObstacleTypeEnum {
 message State {
     oneof position {
         Point point = 1;
-        Shape shape = 2;
+        Occupancy shape = 2;
     }
     optional FloatExactOrInterval orientation = 3;
     optional FloatExactOrInterval velocity = 4;
@@ -79,13 +79,13 @@ message SignalState {
     optional bool flashing_blue_lights = 7;
 }
 
-message Occupancy {
+message OccupancyWithTime {
     required IntegerExactOrInterval time_step = 1;
-    required Shape shape = 2;
+    required Occupancy shape = 2;
 }
 
 message OccupancySet {
-    repeated Occupancy occupancies = 1;
+    repeated OccupancyWithTime occupancies = 1;
 }
 
 message Trajectory {

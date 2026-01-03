@@ -3,13 +3,17 @@ import unittest.mock as mock
 from copy import deepcopy
 
 import numpy as np
+import shapely
 
 from commonroad import SCENARIO_VERSION
 from commonroad.common.common_lanelet import LineMarking
 from commonroad.common.util import Interval, Time
-from commonroad.geometry.shape import Circle, Polygon, Rectangle
+from commonroad.geometry.obstacle_shapes.circle_obstacle_shape import CircleObstacleShape
+from commonroad.geometry.obstacle_shapes.rect_obstacle_shape import RectObstacleShape
+from commonroad.geometry.occupancy.circle_occupancy import CircleOccupancy
+from commonroad.geometry.occupancy.polygon_occupancy import PolygonOccupancy
+from commonroad.geometry.occupancy.rect_occupancy import RectOccupancy
 from commonroad.prediction.prediction import (
-    Occupancy,
     SetBasedPrediction,
     TrajectoryPrediction,
 )
@@ -48,25 +52,22 @@ from commonroad.scenario.trajectory import Trajectory
 
 class TestScenario(unittest.TestCase):
     def setUp(self):
-        self.rectangle = Rectangle(4, 5)
-        polygon = Polygon(
-            np.array(
+        self.rectangle = RectOccupancy(
+            length=4, width=5, rect_center=shapely.Point([0.0, 0.0]), orientation=0
+        )
+        polygon = PolygonOccupancy(
+            shapely.Polygon(
                 [
-                    np.array((0.0, 0.0)),
-                    np.array((0.0, 1.0)),
-                    np.array((1.0, 1.0)),
-                    np.array((1.0, 0.0)),
+                    (0.0, 0.0),
+                    (0.0, 1.0),
+                    (1.0, 1.0),
+                    (1.0, 0.0),
                 ]
             )
         )
-        self.circ = Circle(2.0)
+        self.circ = CircleOccupancy(radius=2.0, circle_center=shapely.Point([0.0, 0.0]))
         # sg = ShapeGroup([self.circ, self.rectangle])
-        occupancy_list = list()
-
-        occupancy_list.append(Occupancy(0, self.rectangle))
-        occupancy_list.append(Occupancy(1, self.circ))
-        occupancy_list.append(Occupancy(2, polygon))
-        occupancy_list.append(Occupancy(3, self.circ))
+        occupancy_dict = {0: self.rectangle, 1: self.circ, 2: polygon, 3: self.circ}
 
         self.lanelet1 = Lanelet(
             np.array([[0.0, 0.0], [1.0, 0.0], [2, 0]]),
@@ -133,7 +134,7 @@ class TestScenario(unittest.TestCase):
         self.traffic_light102 = TrafficLight(202, np.array([10.0, 10.0]), cycle)
         self.traffic_light103 = TrafficLight(203, np.array([10.0, 10.0]), cycle)
 
-        self.set_pred = SetBasedPrediction(0, occupancy_list)
+        self.set_pred = SetBasedPrediction(0, occupancy_dict)
 
         states = list()
         states.append(KSState(time_step=0, orientation=0, position=np.array([0, 0]), velocity=5))
@@ -144,21 +145,24 @@ class TestScenario(unittest.TestCase):
             time_step=0, orientation=0, position=np.array([0, 0]), velocity=15
         )
 
+        self.rect_shape = RectObstacleShape(length=4, width=5)
+        self.circle_shape = CircleObstacleShape(radius=2.0)
+
         self.traj_pred = TrajectoryPrediction(
-            trajectory, self.rectangle, {0: {100, 101}, 1: {100, 101}}
+            trajectory, self.rect_shape, {0: {100, 101}, 1: {100, 101}}
         )
 
         self.static_obs_on_lanelet = StaticObstacle(
             0,
             ObstacleType("unknown"),
-            obstacle_shape=self.circ,
+            obstacle_shape=self.circle_shape,
             initial_state=self.init_state,
             initial_shape_lanelet_ids={100, 101},
         )
         self.static_obs = StaticObstacle(
             0,
             ObstacleType("unknown"),
-            obstacle_shape=self.circ,
+            obstacle_shape=self.circle_shape,
             initial_state=self.init_state,
             initial_shape_lanelet_ids={100, 101},
         )
@@ -169,7 +173,7 @@ class TestScenario(unittest.TestCase):
                 InitialState()
             ),
             prediction=self.set_pred,
-            obstacle_shape=self.rectangle,
+            obstacle_shape=self.rect_shape,
         )
         self.dyn_traj_obs = DynamicObstacle(
             2,
@@ -178,7 +182,7 @@ class TestScenario(unittest.TestCase):
                 InitialState()
             ),
             prediction=self.traj_pred,
-            obstacle_shape=self.rectangle,
+            obstacle_shape=self.rect_shape,
             initial_shape_lanelet_ids={100, 101},
         )
 
@@ -463,7 +467,10 @@ class TestScenario(unittest.TestCase):
 
     def test_generate_object_id_negative(self):
         self.static_obs = StaticObstacle(
-            -5, ObstacleType("unknown"), obstacle_shape=self.circ, initial_state=self.init_state
+            -5,
+            ObstacleType("unknown"),
+            obstacle_shape=self.circle_shape,
+            initial_state=self.init_state,
         )
 
         expected_generated_id = -4
@@ -482,9 +489,9 @@ class TestScenario(unittest.TestCase):
         expected_position_static_obs_time_step_2 = self.init_state.position
         expected_position_static_obs_time_step_3 = self.init_state.position
         expected_position_dyn_set_obs_time_step_0 = self.dyn_set_obs.initial_state.position
-        expected_position_dyn_set_obs_time_step_1 = self.set_pred.occupancy_set[1].shape.center
-        expected_position_dyn_set_obs_time_step_2 = self.set_pred.occupancy_set[2].shape.center
-        expected_position_dyn_set_obs_time_step_3 = self.set_pred.occupancy_set[3].shape.center
+        expected_position_dyn_set_obs_time_step_1 = self.set_pred.occupancies[1].center
+        expected_position_dyn_set_obs_time_step_2 = self.set_pred.occupancies[2].center
+        expected_position_dyn_set_obs_time_step_3 = self.set_pred.occupancies[3].center
 
         occupancy_at_0 = self.scenario.occupancies_at_time_step(0)
         occupancy_at_1 = self.scenario.occupancies_at_time_step(1)
@@ -492,39 +499,53 @@ class TestScenario(unittest.TestCase):
         occupancy_at_3 = self.scenario.occupancies_at_time_step(3)
 
         np.testing.assert_array_equal(
-            expected_position_static_obs_time_step_0, occupancy_at_0[0].shape.center
+            expected_position_static_obs_time_step_0,
+            np.array(occupancy_at_0[0].center.xy).squeeze(),
         )
         np.testing.assert_array_equal(
-            expected_position_static_obs_time_step_1, occupancy_at_1[0].shape.center
+            expected_position_static_obs_time_step_1,
+            np.array(occupancy_at_1[0].center.xy).squeeze(),
         )
         np.testing.assert_array_equal(
-            expected_position_static_obs_time_step_2, occupancy_at_2[0].shape.center
+            expected_position_static_obs_time_step_2,
+            np.array(occupancy_at_2[0].center.xy).squeeze(),
         )
         np.testing.assert_array_equal(
-            expected_position_static_obs_time_step_3, occupancy_at_3[0].shape.center
+            expected_position_static_obs_time_step_3,
+            np.array(occupancy_at_3[0].center.xy).squeeze(),
         )
         np.testing.assert_array_equal(
-            expected_position_dyn_set_obs_time_step_0, occupancy_at_0[1].shape.center
+            expected_position_dyn_set_obs_time_step_0,
+            np.array(occupancy_at_0[1].center.xy).squeeze(),
         )
         np.testing.assert_array_equal(
-            expected_position_dyn_set_obs_time_step_1, occupancy_at_1[1].shape.center
+            expected_position_dyn_set_obs_time_step_1, occupancy_at_1[1].center
         )
         np.testing.assert_array_equal(
-            expected_position_dyn_set_obs_time_step_2, occupancy_at_2[1].shape.center
+            expected_position_dyn_set_obs_time_step_2, occupancy_at_2[1].center
         )
         np.testing.assert_array_equal(
-            expected_position_dyn_set_obs_time_step_3, occupancy_at_3[1].shape.center
+            expected_position_dyn_set_obs_time_step_3, occupancy_at_3[1].center
         )
 
     def test_obstacle_by_id(self):
         static_obs1 = StaticObstacle(
-            -100, ObstacleType("unknown"), obstacle_shape=self.circ, initial_state=self.init_state
+            -100,
+            ObstacleType("unknown"),
+            obstacle_shape=self.circle_shape,
+            initial_state=self.init_state,
         )
         static_obs2 = StaticObstacle(
-            0, ObstacleType("unknown"), obstacle_shape=self.circ, initial_state=self.init_state
+            0,
+            ObstacleType("unknown"),
+            obstacle_shape=self.circle_shape,
+            initial_state=self.init_state,
         )
         static_obs3 = StaticObstacle(
-            5000, ObstacleType("car"), obstacle_shape=self.circ, initial_state=self.init_state
+            5000,
+            ObstacleType("car"),
+            obstacle_shape=self.circle_shape,
+            initial_state=self.init_state,
         )
         dyn_set_obs1 = DynamicObstacle(
             20,
@@ -533,7 +554,7 @@ class TestScenario(unittest.TestCase):
                 InitialState()
             ),
             prediction=self.set_pred,
-            obstacle_shape=self.rectangle,
+            obstacle_shape=self.rect_shape,
         )
         dyn_set_obs2 = DynamicObstacle(
             -20,
@@ -542,7 +563,7 @@ class TestScenario(unittest.TestCase):
                 InitialState()
             ),
             prediction=self.set_pred,
-            obstacle_shape=self.rectangle,
+            obstacle_shape=self.rect_shape,
         )
 
         self.scenario.add_objects(static_obs1)
@@ -606,13 +627,19 @@ class TestScenario(unittest.TestCase):
 
     def test_obstacles_by_role_and_type(self):
         static_obs1 = StaticObstacle(
-            1, ObstacleType("unknown"), obstacle_shape=self.circ, initial_state=self.init_state
+            1,
+            ObstacleType("unknown"),
+            obstacle_shape=self.circle_shape,
+            initial_state=self.init_state,
         )
         static_obs2 = StaticObstacle(
-            2, ObstacleType("unknown"), obstacle_shape=self.circ, initial_state=self.init_state
+            2,
+            ObstacleType("unknown"),
+            obstacle_shape=self.circle_shape,
+            initial_state=self.init_state,
         )
         static_obs3 = StaticObstacle(
-            3, ObstacleType("car"), obstacle_shape=self.circ, initial_state=self.init_state
+            3, ObstacleType("car"), obstacle_shape=self.circle_shape, initial_state=self.init_state
         )
         dyn_set_obs1 = DynamicObstacle(
             4,
@@ -621,7 +648,7 @@ class TestScenario(unittest.TestCase):
                 InitialState()
             ),
             prediction=self.set_pred,
-            obstacle_shape=self.rectangle,
+            obstacle_shape=self.rect_shape,
         )
         dyn_set_obs2 = DynamicObstacle(
             5,
@@ -630,7 +657,7 @@ class TestScenario(unittest.TestCase):
                 InitialState()
             ),
             prediction=self.set_pred,
-            obstacle_shape=self.rectangle,
+            obstacle_shape=self.rect_shape,
         )
 
         expected_obstacle_num_static_obstacles = 3
@@ -670,16 +697,16 @@ class TestScenario(unittest.TestCase):
         init_state3 = InitialState(time_step=0, orientation=0, position=np.array([13, 13]))
         init_state4 = InitialState(time_step=0, orientation=0, position=np.array([-13, -13]))
         static_obs1 = StaticObstacle(
-            1, ObstacleType("unknown"), obstacle_shape=self.circ, initial_state=init_state1
+            1, ObstacleType("unknown"), obstacle_shape=self.circle_shape, initial_state=init_state1
         )
         static_obs2 = StaticObstacle(
-            2, ObstacleType("unknown"), obstacle_shape=self.circ, initial_state=init_state2
+            2, ObstacleType("unknown"), obstacle_shape=self.circle_shape, initial_state=init_state2
         )
         static_obs3 = StaticObstacle(
-            3, ObstacleType("car"), obstacle_shape=self.circ, initial_state=init_state3
+            3, ObstacleType("car"), obstacle_shape=self.circle_shape, initial_state=init_state3
         )
         static_obs4 = StaticObstacle(
-            4, ObstacleType("car"), obstacle_shape=self.circ, initial_state=init_state4
+            4, ObstacleType("car"), obstacle_shape=self.circle_shape, initial_state=init_state4
         )
         dyn_set_obs1 = DynamicObstacle(
             5,
@@ -688,7 +715,7 @@ class TestScenario(unittest.TestCase):
                 InitialState()
             ),
             prediction=self.set_pred,
-            obstacle_shape=self.rectangle,
+            obstacle_shape=self.rect_shape,
         )
 
         expected_obstacle_ids_in_interval = {1, 2, 5}
@@ -753,14 +780,14 @@ class TestScenario(unittest.TestCase):
         static_obs1 = StaticObstacle(
             10,
             ObstacleType("unknown"),
-            obstacle_shape=self.circ,
+            obstacle_shape=self.circle_shape,
             initial_state=self.init_state,
             initial_shape_lanelet_ids={100, 101},
         )
         static_obs2 = StaticObstacle(
             -10,
             ObstacleType("unknown"),
-            obstacle_shape=self.circ,
+            obstacle_shape=self.circle_shape,
             initial_state=self.init_state,
             initial_shape_lanelet_ids={100, 101},
         )
@@ -830,7 +857,10 @@ class TestScenario(unittest.TestCase):
         self.scenario.add_objects(self.static_obs)
 
         static_obs1 = StaticObstacle(
-            -50, ObstacleType("unknown"), obstacle_shape=self.circ, initial_state=self.init_state
+            -50,
+            ObstacleType("unknown"),
+            obstacle_shape=self.circle_shape,
+            initial_state=self.init_state,
         )
 
         with self.assertRaises(ValueError):
@@ -964,7 +994,7 @@ class TestScenario(unittest.TestCase):
             time_step=0, orientation=0, position=np.array([0, 0]), velocity=15
         )
 
-        traj_pred = TrajectoryPrediction(trajectory, self.rectangle)
+        traj_pred = TrajectoryPrediction(trajectory, self.rect_shape)
         dyn_traj_obs = DynamicObstacle(
             2,
             ObstacleType("unknown"),
@@ -972,7 +1002,7 @@ class TestScenario(unittest.TestCase):
                 InitialState()
             ),
             prediction=traj_pred,
-            obstacle_shape=self.rectangle,
+            obstacle_shape=self.rect_shape,
             initial_shape_lanelet_ids=None,
         )
         sc = Scenario(dt=0.1)
@@ -1058,7 +1088,7 @@ class TestScenario(unittest.TestCase):
                 InitialState()
             ),
             prediction=traj_pred,
-            obstacle_shape=self.rectangle,
+            obstacle_shape=self.rect_shape,
             initial_shape_lanelet_ids=None,
         )
         scenario_tmp.add_objects(dyn_traj_obs_3)

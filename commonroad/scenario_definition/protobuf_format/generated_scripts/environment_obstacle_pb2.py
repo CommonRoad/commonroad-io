@@ -8,13 +8,11 @@ from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
 
+# @@protoc_insertion_point(imports)
 import commonroad.scenario_definition.protobuf_format.generated_scripts.obstacle_pb2 as obstacle__pb2
 import commonroad.scenario_definition.protobuf_format.generated_scripts.util_pb2 as util__pb2
 
 _b = sys.version_info[0] < 3 and (lambda x: x) or (lambda x: x.encode("latin1"))
-
-# @@protoc_insertion_point(imports)
-
 _sym_db = _symbol_database.Default()
 
 
@@ -24,7 +22,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
     syntax="proto2",
     serialized_options=None,
     serialized_pb=_b(
-        '\n\x1a\x65nvironment_obstacle.proto\x12\ncommonroad\x1a\x0eobstacle.proto\x1a\nutil.proto"\xa3\x01\n\x13\x45nvironmentObstacle\x12\x1f\n\x17\x65nvironment_obstacle_id\x18\x01 \x02(\r\x12@\n\robstacle_type\x18\x02 \x02(\x0e\x32).commonroad.ObstacleTypeEnum.ObstacleType\x12)\n\x0eobstacle_shape\x18\x03 \x02(\x0b\x32\x11.commonroad.Shape'
+        '\n\x1a\x65nvironment_obstacle.proto\x12\ncommonroad\x1a\x0eobstacle.proto\x1a\nutil.proto"\xa7\x01\n\x13\x45nvironmentObstacle\x12\x1f\n\x17\x65nvironment_obstacle_id\x18\x01 \x02(\r\x12@\n\robstacle_type\x18\x02 \x02(\x0e\x32).commonroad.ObstacleTypeEnum.ObstacleType\x12-\n\x0eobstacle_shape\x18\x03 \x02(\x0b\x32\x15.commonroad.Occupancy'
     ),
     dependencies=[
         obstacle__pb2.DESCRIPTOR,
@@ -104,13 +102,13 @@ _ENVIRONMENTOBSTACLE = _descriptor.Descriptor(
     extension_ranges=[],
     oneofs=[],
     serialized_start=71,
-    serialized_end=234,
+    serialized_end=238,
 )
 
 _ENVIRONMENTOBSTACLE.fields_by_name[
     "obstacle_type"
 ].enum_type = obstacle__pb2._OBSTACLETYPEENUM_OBSTACLETYPE
-_ENVIRONMENTOBSTACLE.fields_by_name["obstacle_shape"].message_type = util__pb2._SHAPE
+_ENVIRONMENTOBSTACLE.fields_by_name["obstacle_shape"].message_type = util__pb2._OCCUPANCY
 DESCRIPTOR.message_types_by_name["EnvironmentObstacle"] = _ENVIRONMENTOBSTACLE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 

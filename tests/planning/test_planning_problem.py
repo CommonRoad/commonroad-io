@@ -1,9 +1,11 @@
 import unittest
 
 import numpy as np
+import shapely
 
 from commonroad.common.util import AngleInterval, Interval
-from commonroad.geometry.shape import Circle, Rectangle
+from commonroad.geometry.occupancy.circle_occupancy import CircleOccupancy
+from commonroad.geometry.occupancy.rect_occupancy import RectOccupancy
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblem
 from commonroad.scenario.state import InitialState, KSState, STState
@@ -19,8 +21,10 @@ class TestTranslateRotate(unittest.TestCase):
             position=pos, velocity=10.0, orientation=0.0, yaw_rate=0, slip_angle=0, time_step=1
         )
 
-        shape1 = Rectangle(2.0, 4.0, np.array((2.0, 2.0)))
-        shape2 = Circle(2.5, np.array((-1.0, 1.0)))
+        shape1 = RectOccupancy(
+            length=2.0, width=4.0, rect_center=shapely.Point((2.0, 2.0)), orientation=0
+        )
+        shape2 = CircleOccupancy(radius=2.5, circle_center=shapely.Point((-1.0, 1.0)))
 
         goal_state_1 = KSState(position=shape1, time_step=Interval(0, 5))
         goal_state_2 = KSState(position=shape2, time_step=Interval(0, 2))
@@ -34,20 +38,20 @@ class TestTranslateRotate(unittest.TestCase):
         self.assertAlmostEqual(planning_problem.initial_state.orientation, 0.0)
 
         self.assertAlmostEqual(
-            planning_problem.goal.state_list[0].position.center[0],
-            shape1.center[0] + translation[0],
+            planning_problem.goal.state_list[0].position.center.x,
+            shape1.center.x + translation[0],
         )
         self.assertAlmostEqual(
-            planning_problem.goal.state_list[0].position.center[1],
-            shape1.center[1] + translation[1],
+            planning_problem.goal.state_list[0].position.center.y,
+            shape1.center.y + translation[1],
         )
         self.assertAlmostEqual(
-            planning_problem.goal.state_list[1].position.center[0],
-            shape2.center[0] + translation[0],
+            planning_problem.goal.state_list[1].position.center.x,
+            shape2.center.x + translation[0],
         )
         self.assertAlmostEqual(
-            planning_problem.goal.state_list[1].position.center[1],
-            shape2.center[1] + translation[1],
+            planning_problem.goal.state_list[1].position.center.y,
+            shape2.center.y + translation[1],
         )
 
     def test_rotate(self):
@@ -63,8 +67,10 @@ class TestTranslateRotate(unittest.TestCase):
             time_step=2,
         )
 
-        shape1 = Rectangle(2.0, 4.0, np.array((2.0, 2.0)))
-        shape2 = Circle(2.5, np.array((-1.0, 1.0)))
+        shape1 = RectOccupancy(
+            length=2.0, width=4.0, rect_center=shapely.Point((2.0, 2.0)), orientation=0
+        )
+        shape2 = CircleOccupancy(radius=2.5, circle_center=shapely.Point((-1.0, 1.0)))
 
         goal_state_1 = STState(
             position=shape1,
@@ -100,8 +106,10 @@ class TestTranslateRotate(unittest.TestCase):
             position=pos, velocity=10.0, orientation=0.0, yaw_rate=0, slip_angle=0, time_step=1
         )
 
-        shape1 = Rectangle(2.0, 4.0, np.array((2.0, 2.0)))
-        shape2 = Circle(2.5, np.array((-1.0, 1.0)))
+        shape1 = RectOccupancy(
+            length=2.0, width=4.0, rect_center=shapely.Point((2.0, 2.0)), orientation=0
+        )
+        shape2 = CircleOccupancy(radius=2.5, circle_center=shapely.Point((-1.0, 1.0)))
 
         goal_state_1 = STState(
             position=shape1, time_step=Interval(0, 5), orientation=AngleInterval(0.0, 0.1)

@@ -3,14 +3,14 @@ import math
 import matplotlib as mpl
 import numpy as np
 
-from commonroad.geometry.shape import Rectangle, Shape
+from commonroad.geometry.obstacle_shapes.rect_obstacle_shape import RectObstacleShape
 from commonroad.scenario.state import TraceState
 from commonroad.visualization.icons.transform_to_global import transform_to_global
 
 
 def draw_bicycle_icon(
     state: TraceState,
-    shape: Shape = Rectangle(width=0.8, length=2.5),
+    shape: RectObstacleShape = RectObstacleShape(width=0.8, length=2.5),
     zorder: float = 5,
     vehicle_color: str = "#ffffff",
     edgecolor="black",

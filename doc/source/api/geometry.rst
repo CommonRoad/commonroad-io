@@ -1,36 +1,80 @@
 Module Geometry
 =================
 
-Shape
------
-.. automodule:: commonroad.geometry.shape
-
-.. inheritance-diagram:: Shape Rectangle Circle Polygon ShapeGroup
+ObstacleShape
+-------------
+.. inheritance-diagram:: commonroad.geometry.obstacle_shapes.obstacle_shape.ObstacleShape commonroad.geometry.obstacle_shapes.rect_obstacle_shape.RectObstacleShape commonroad.geometry.obstacle_shapes.circle_obstacle_shape.CircleObstacleShape commonroad.geometry.obstacle_shapes.polygon_obstacle_shape.PolygonObstacleShape commonroad.geometry.obstacle_shapes.truck_shape.TruckShape commonroad.geometry.obstacle_shapes.semi_trailer_truck_shape.SemiTrailerTruckShape
    :parts: 1
 
-``Shape`` class
-^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: Shape
+``ObstacleShape`` class
+^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: commonroad.geometry.obstacle_shapes.obstacle_shape
+.. autoclass:: ObstacleShape
    :members:
 
-``Rectangle`` class
-^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: Rectangle
+``RectObstacleShape`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: commonroad.geometry.obstacle_shapes.rect_obstacle_shape
+.. autoclass:: RectObstacleShape
    :members:
 
-``Circle`` class
-^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: Circle
+``CircleObstacleShape`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: commonroad.geometry.obstacle_shapes.circle_obstacle_shape
+.. autoclass:: CircleObstacleShape
    :members:
 
-``Polygon`` class
-^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: Polygon
+``PolygonObstacleShape`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: commonroad.geometry.obstacle_shapes.polygon_obstacle_shape
+.. autoclass:: PolygonObstacleShape
    :members:
 
-``ShapeGroup`` class
+``TruckShape`` class
 ^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: ShapeGroup
+.. automodule:: commonroad.geometry.obstacle_shapes.truck_shape
+.. autoclass:: TruckShape
+   :members:
+
+``SemiTrailerTruckShape`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: commonroad.geometry.obstacle_shapes.semi_trailer_truck_shape
+.. autoclass:: SemiTrailerTruckShape
+   :members:
+
+Occupancy
+---------
+.. inheritance-diagram:: commonroad.geometry.occupancy.occupancy.Occupancy commonroad.geometry.occupancy.rect_occupancy.RectOccupancy commonroad.geometry.occupancy.circle_occupancy.CircleOccupancy commonroad.geometry.occupancy.polygon_occupancy.PolygonOccupancy commonroad.geometry.occupancy.occupancy_group.OccupancyGroup
+   :parts: 1
+
+``Occupancy`` class
+^^^^^^^^^^^^^^^^^^^
+.. automodule:: commonroad.geometry.occupancy.occupancy
+.. autoclass:: Occupancy
+   :members:
+
+``RectOccupancy`` class
+^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: commonroad.geometry.occupancy.rect_occupancy
+.. autoclass:: RectOccupancy
+   :members:
+
+``CircleOccupancy`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: commonroad.geometry.occupancy.circle_occupancy
+.. autoclass:: CircleOccupancy
+   :members:
+
+``PolygonOccupancy`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: commonroad.geometry.occupancy.polygon_occupancy
+.. autoclass:: PolygonOccupancy
+   :members:
+
+``OccupancyGroup`` class
+^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: commonroad.geometry.occupancy.occupancy_group
+.. autoclass:: OccupancyGroup
    :members:
 
 Transform

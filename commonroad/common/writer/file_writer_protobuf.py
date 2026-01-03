@@ -1,7 +1,7 @@
 import datetime
 import logging
 import re
-from typing import List, Set, Union
+from typing import Dict, List, Set, Union
 
 import numpy as np
 from google.protobuf.message import DecodeError
@@ -12,11 +12,14 @@ from commonroad.common.writer.file_writer_interface import (
     FileWriter,
     OverwriteExistingFile,
 )
-from commonroad.geometry.shape import Circle, Polygon, Rectangle, Shape, ShapeGroup
+from commonroad.common.writer.protobuf_messages.occupancy_messages import OccupancyMessage
+from commonroad.common.writer.protobuf_messages.point_message import PointMessage
+from commonroad.common.writer.protobuf_messages.shape_messages import ShapeMessage
+from commonroad.geometry.occupancy.occupancy import Occupancy
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet
 from commonroad.prediction.prediction import (
-    Occupancy,
     SetBasedPrediction,
+    TimeType,
     TrajectoryPrediction,
 )
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
@@ -704,7 +707,7 @@ class StateMessage:
                 if isinstance(state.position, np.ndarray):
                     state_msg.point.CopyFrom(PointMessage.create_message(state.position))
                 else:
-                    state_msg.shape.CopyFrom(ShapeMessage.create_message(state.position))
+                    state_msg.shape.CopyFrom(OccupancyMessage.create_message(state.position))
             elif attr == "time_step":
                 integer_exact_or_interval_msg = IntegerExactOrIntervalMessage.create_message(
                     state.time_step
@@ -805,27 +808,25 @@ class TrajectoryMessage:
 
 class OccupancySetMessage:
     @classmethod
-    def create_message(cls, occupancy_set: List[Occupancy]) -> obstacle_pb2.OccupancySet:
+    def create_message(cls, occupancies: Dict[TimeType, Occupancy]) -> obstacle_pb2.OccupancySet:
         occupancy_set_msg = obstacle_pb2.OccupancySet()
 
-        for occupancy in occupancy_set:
-            occupancy_msg = OccupancyMessage.create_message(occupancy)
+        for t, occ in occupancies.items():
+            occupancy_msg = OccupancyWithTimeMessage.create_message(t, occ)
             occupancy_set_msg.occupancies.append(occupancy_msg)
 
         return occupancy_set_msg
 
 
-class OccupancyMessage:
+class OccupancyWithTimeMessage:
     @classmethod
-    def create_message(cls, occupancy: Occupancy) -> obstacle_pb2.Occupancy:
-        occupancy_msg = obstacle_pb2.Occupancy()
+    def create_message(cls, t: TimeType, occ: Occupancy) -> obstacle_pb2.OccupancyWithTime:
+        occupancy_msg = obstacle_pb2.OccupancyWithTime()
 
-        integer_exact_or_interval_msg = IntegerExactOrIntervalMessage.create_message(
-            occupancy.time_step
-        )
+        integer_exact_or_interval_msg = IntegerExactOrIntervalMessage.create_message(t)
         occupancy_msg.time_step.CopyFrom(integer_exact_or_interval_msg)
 
-        shape_msg = ShapeMessage.create_message(occupancy.shape)
+        shape_msg = OccupancyMessage.create_message(occ)
         occupancy_msg.shape.CopyFrom(shape_msg)
 
         return occupancy_msg
@@ -856,7 +857,7 @@ class SetBasedPredictionMessage:
 
         set_based_prediction_msg.initial_time_step = set_based_prediction.initial_time_step
 
-        occupancy_set_msg = OccupancySetMessage.create_message(set_based_prediction.occupancy_set)
+        occupancy_set_msg = OccupancySetMessage.create_message(set_based_prediction.occupancies)
         set_based_prediction_msg.occupancy_set.CopyFrom(occupancy_set_msg)
 
         return set_based_prediction_msg
@@ -874,7 +875,7 @@ class EnvironmentObstacleMessage:
             environment_obstacle.obstacle_type.name
         )
 
-        shape_msg = ShapeMessage.create_message(environment_obstacle.obstacle_shape)
+        shape_msg = OccupancyMessage.create_message(environment_obstacle.occupancy)
         environment_obstacle_msg.obstacle_shape.CopyFrom(shape_msg)
 
         return environment_obstacle_msg
@@ -936,90 +937,6 @@ class GoalStateMessage:
             goal_state_msg.goal_position_lanelets.append(lanelet_id)
 
         return goal_state_msg
-
-
-class PointMessage:
-    @classmethod
-    def create_message(cls, point: np.ndarray) -> util_pb2.Point:
-        point_msg = util_pb2.Point()
-
-        point_msg.x = point[0]
-        point_msg.y = point[1]
-
-        return point_msg
-
-
-class ShapeMessage:
-    @classmethod
-    def create_message(cls, shape: Shape) -> util_pb2.Shape:
-        shape_msg = util_pb2.Shape()
-
-        if isinstance(shape, Rectangle):
-            shape_msg.rectangle.CopyFrom(RectangleMessage.create_message(shape))
-        elif isinstance(shape, Circle):
-            shape_msg.circle.CopyFrom(CircleMessage.create_message(shape))
-        elif isinstance(shape, Polygon):
-            shape_msg.polygon.CopyFrom(PolygonMessage.create_message(shape))
-        elif isinstance(shape, ShapeGroup):
-            shape_msg.shape_group.CopyFrom(ShapeGroupMessage.create_message(shape))
-
-        return shape_msg
-
-
-class RectangleMessage:
-    @classmethod
-    def create_message(cls, rectangle: Rectangle) -> util_pb2.Rectangle:
-        rectangle_msg = util_pb2.Rectangle()
-
-        rectangle_msg.length = rectangle.length
-        rectangle_msg.width = rectangle.width
-
-        if rectangle.center is not None:
-            point_msg = PointMessage.create_message(rectangle.center)
-            rectangle_msg.center.CopyFrom(point_msg)
-
-        if rectangle.orientation is not None:
-            rectangle_msg.orientation = rectangle.orientation
-
-        return rectangle_msg
-
-
-class CircleMessage:
-    @classmethod
-    def create_message(cls, circle: Circle) -> util_pb2.Circle:
-        circle_msg = util_pb2.Circle()
-
-        circle_msg.radius = circle.radius
-
-        if circle.center is not None:
-            point_msg = PointMessage.create_message(circle.center)
-            circle_msg.center.CopyFrom(point_msg)
-
-        return circle_msg
-
-
-class PolygonMessage:
-    @classmethod
-    def create_message(cls, polygon: Polygon) -> util_pb2.Polygon:
-        polygon_msg = util_pb2.Polygon()
-
-        for vertex in polygon.vertices:
-            point_msg = PointMessage.create_message(vertex)
-            polygon_msg.vertices.append(point_msg)
-
-        return polygon_msg
-
-
-class ShapeGroupMessage:
-    @classmethod
-    def create_message(cls, shape_group: ShapeGroup) -> util_pb2.ShapeGroup:
-        shape_group_msg = util_pb2.ShapeGroup()
-
-        for shape in shape_group.shapes:
-            shape_msg = ShapeMessage.create_message(shape)
-            shape_group_msg.shapes.append(shape_msg)
-
-        return shape_group_msg
 
 
 class IntegerIntervalMessage:

@@ -1,8 +1,10 @@
 import logging
+import math
 import os
 import unittest
 
 import numpy as np
+import shapely
 from lxml import etree
 
 from commonroad import SCENARIO_VERSION
@@ -15,21 +17,28 @@ from commonroad.common.writer.file_writer_interface import (
     precision,
 )
 from commonroad.common.writer.file_writer_xml import (
-    CircleXMLNode,
     Point,
-    RectangleXMLNode,
     float_to_str,
 )
-from commonroad.geometry.shape import Circle, Rectangle
+from commonroad.common.writer.xml_nodes.occupancy_nodes import (
+    CircleOccupancyXMLNode,
+    RectOccupancyXMLNode,
+)
+from commonroad.geometry.obstacle_shapes.circle_obstacle_shape import CircleObstacleShape
+from commonroad.geometry.obstacle_shapes.semi_trailer_truck_shape import SemiTrailerTruckShape
+from commonroad.geometry.occupancy.circle_occupancy import CircleOccupancy
+from commonroad.geometry.occupancy.rect_occupancy import RectOccupancy
 from commonroad.planning.planning_problem import (
     GoalRegion,
     PlanningProblem,
     PlanningProblemSet,
 )
+from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
-from commonroad.scenario.obstacle import ObstacleType, StaticObstacle
+from commonroad.scenario.obstacle import DynamicObstacle, ObstacleType, StaticObstacle
 from commonroad.scenario.scenario import Location, Scenario, ScenarioID, Tag
-from commonroad.scenario.state import InitialState, KSState
+from commonroad.scenario.state import InitialState, KSState, KSTState
+from commonroad.scenario.trajectory import Trajectory
 
 
 class TestXMLFileWriter(unittest.TestCase):
@@ -117,17 +126,39 @@ class TestXMLFileWriter(unittest.TestCase):
         assert self.validate_with_xsd(self.out_path + "/USA_Lanker-1_1_T-1.xml")
 
     def test_writing_shapes(self):
-        rectangle = Rectangle(4.3, 8.9, center=np.array([2.5, -1.8]), orientation=1.7)
-        circ = Circle(2.0, np.array([10.0, 0.0]))
+        rectangle = RectOccupancy(
+            length=4.3,
+            width=8.9,
+            rect_center=shapely.Point([2.5, -1.8]),
+            orientation=1.7,
+        )
+        circ = CircleOccupancy(radius=2.0, circle_center=shapely.Point([10.0, 0.0]))
 
         states = list()
         states.append(KSState(time_step=0, orientation=0, position=np.array([0, 0])))
         states.append(KSState(time_step=1, orientation=0, position=np.array([0, 1])))
 
         init_state = InitialState(time_step=0, orientation=0, position=np.array([0, 0]))
+        circle_shape = CircleObstacleShape(radius=2.0)
         static_obs = StaticObstacle(
-            3, ObstacleType("unknown"), obstacle_shape=circ, initial_state=init_state
+            3, ObstacleType("unknown"), obstacle_shape=circle_shape, initial_state=init_state
         )
+
+        truck_shape = SemiTrailerTruckShape.create_default()
+        s = InitialState(position=np.array([0.0, 10.0]), orientation=0, velocity=0, time_step=0)
+        truck = DynamicObstacle(4, ObstacleType.TRUCK, truck_shape, s)
+        state_1 = KSTState(
+            time_step=1,
+            position=s.position,
+            steering_angle=0,
+            velocity=s.velocity,
+            orientation=-math.pi / 10,
+            hitch_angle=math.pi / 5,
+        )
+        truck.prediction = TrajectoryPrediction(
+            trajectory=Trajectory(initial_time_step=1, state_list=[state_1]), shape=truck_shape
+        )
+
         lanelet1 = Lanelet(
             np.array([[12345.12, 0.0], [1.0, 0.0], [2, 0]]),
             np.array([[0.0, 1], [1.0, 1], [2, 1]]),
@@ -163,7 +194,7 @@ class TestXMLFileWriter(unittest.TestCase):
         scenario = Scenario(
             0.1, ScenarioID.from_benchmark_id("ZAM_test_0-1", scenario_version=SCENARIO_VERSION)
         )
-        scenario.add_objects([static_obs, lanelet_network])
+        scenario.add_objects([static_obs, truck, lanelet_network])
 
         goal_region = GoalRegion(
             [
@@ -236,6 +267,7 @@ class TestXMLFileWriter(unittest.TestCase):
         xmlschema = etree.XMLSchema(xmlschema_doc)
 
         xml_doc = etree.parse(xml_path)
+
         try:
             xmlschema.assert_(xml_doc)
             return True
@@ -301,9 +333,14 @@ class TestXMLFileWriter(unittest.TestCase):
                 self.assertEqual(expected, child.text)
 
         # Test Rectangle
-        rect_writer = RectangleXMLNode()
+        rect_writer = RectOccupancyXMLNode()
         for value, expected in zip(values, expecteds):
-            rectangle = Rectangle(1.0, 1.0, center=np.array([value, value]), orientation=1.0)
+            rectangle = RectOccupancy(
+                length=1.0,
+                width=1.0,
+                rect_center=shapely.Point([value, value]),
+                orientation=1.0,
+            )
             node = rect_writer.create_rectangle_node(rectangle)
             for child in node:
                 if not child.tag == "center":
@@ -312,9 +349,9 @@ class TestXMLFileWriter(unittest.TestCase):
                     self.assertEqual(expected, pos.text)
 
         # Test Circle
-        circ_writer = CircleXMLNode()
+        circ_writer = CircleOccupancyXMLNode()
         for value, expected in zip(values, expecteds):
-            circle = Circle(2.0, np.array([value, value]))
+            circle = CircleOccupancy(radius=2.0, circle_center=shapely.Point([value, value]))
             node = circ_writer.create_circle_node(circle)
             for child in node:
                 if not child.tag == "center":
@@ -484,8 +521,10 @@ class TestProtobufFileWriter(unittest.TestCase):
         self.filename_carcarana_xml = self.cwd_path + "/../test_scenarios/ARG_Carcarana-4_5_T-1.xml"
         self.filename_starnberg_xml = self.cwd_path + "/../test_scenarios/DEU_Starnberg-1_1_T-1.xml"
         self.filename_anglet_xml = self.cwd_path + "/../test_scenarios/FRA_Anglet-1_1_T-1.xml"
+        self.filename_zam_xml = self.cwd_path + "/../test_scenarios/ZAM_Tutorial-1_1_T-1.xml"
         self.filename_carcarana_pb = self.cwd_path + "/../test_scenarios/ARG_Carcarana-4_5_T-1.pb"
         self.filename_invalid_pb = self.cwd_path + "/../test_scenarios/test_invalid.pb"
+        self.filename_zam_pb = self.cwd_path + "/../test_scenarios/ZAM_Tutorial-1_1_T-1.pb"
         handle_pytest_cache(self.out_path)
 
     def test_write_to_file(self):
@@ -498,6 +537,8 @@ class TestProtobufFileWriter(unittest.TestCase):
         self.assertTrue(write_read_compare(self.filename_starnberg_xml, self.out_path))
 
         self.assertTrue(write_read_compare(self.filename_anglet_xml, self.out_path))
+
+        self.assertTrue(write_read_compare(self.filename_zam_xml, self.out_path))
 
     def test_write_scenario(self):
         scenario_xml, planning_problems_xml = CommonRoadFileReader(

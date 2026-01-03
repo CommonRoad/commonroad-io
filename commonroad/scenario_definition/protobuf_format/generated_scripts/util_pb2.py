@@ -8,11 +8,9 @@ from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
 
-_b = sys.version_info[0] < 3 and (lambda x: x) or (lambda x: x.encode("latin1"))
-
-
 # @@protoc_insertion_point(imports)
 
+_b = sys.version_info[0] < 3 and (lambda x: x) or (lambda x: x.encode("latin1"))
 _sym_db = _symbol_database.Default()
 
 
@@ -22,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
     syntax="proto2",
     serialized_options=None,
     serialized_pb=_b(
-        '\n\nutil.proto\x12\ncommonroad"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x02(\x01\x12\t\n\x01y\x18\x02 \x02(\x01"b\n\tRectangle\x12\x0e\n\x06length\x18\x01 \x02(\x01\x12\r\n\x05width\x18\x02 \x02(\x01\x12!\n\x06\x63\x65nter\x18\x03 \x01(\x0b\x32\x11.commonroad.Point\x12\x13\n\x0borientation\x18\x04 \x01(\x01";\n\x06\x43ircle\x12\x0e\n\x06radius\x18\x01 \x02(\x01\x12!\n\x06\x63\x65nter\x18\x02 \x01(\x0b\x32\x11.commonroad.Point".\n\x07Polygon\x12#\n\x08vertices\x18\x01 \x03(\x0b\x32\x11.commonroad.Point"/\n\nShapeGroup\x12!\n\x06shapes\x18\x01 \x03(\x0b\x32\x11.commonroad.Shape"\xb9\x01\n\x05Shape\x12*\n\trectangle\x18\x01 \x01(\x0b\x32\x15.commonroad.RectangleH\x00\x12$\n\x06\x63ircle\x18\x02 \x01(\x0b\x32\x12.commonroad.CircleH\x00\x12&\n\x07polygon\x18\x03 \x01(\x0b\x32\x13.commonroad.PolygonH\x00\x12-\n\x0bshape_group\x18\x04 \x01(\x0b\x32\x16.commonroad.ShapeGroupH\x00\x42\x07\n\x05shape"-\n\x0fIntegerInterval\x12\r\n\x05start\x18\x01 \x02(\x05\x12\x0b\n\x03\x65nd\x18\x02 \x02(\x05"+\n\rFloatInterval\x12\r\n\x05start\x18\x01 \x02(\x01\x12\x0b\n\x03\x65nd\x18\x02 \x02(\x01"o\n\x16IntegerExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x05H\x00\x12/\n\x08interval\x18\x02 \x01(\x0b\x32\x1b.commonroad.IntegerIntervalH\x00\x42\x13\n\x11\x65xact_or_interval"k\n\x14\x46loatExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x01H\x00\x12-\n\x08interval\x18\x02 \x01(\x0b\x32\x19.commonroad.FloatIntervalH\x00\x42\x13\n\x11\x65xact_or_interval"\x1d\n\x0bIntegerList\x12\x0e\n\x06values\x18\x01 \x03(\x05"\x1b\n\tFloatList\x12\x0e\n\x06values\x18\x01 \x03(\x05"S\n\tTimeStamp\x12\x0c\n\x04year\x18\x01 \x01(\r\x12\r\n\x05month\x18\x02 \x01(\r\x12\x0b\n\x03\x64\x61y\x18\x03 \x01(\r\x12\x0c\n\x04hour\x18\x04 \x01(\r\x12\x0e\n\x06minute\x18\x05 \x01(\r'
+        '\n\nutil.proto\x12\ncommonroad"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x02(\x01\x12\t\n\x01y\x18\x02 \x02(\x01"%\n\x04Rect\x12\x0e\n\x06length\x18\x01 \x02(\x01\x12\r\n\x05width\x18\x02 \x02(\x01"\x18\n\x06\x43ircle\x12\x0e\n\x06radius\x18\x01 \x02(\x01".\n\x07Polygon\x12#\n\x08vertices\x18\x01 \x03(\x0b\x32\x11.commonroad.Point"\x9e\x01\n\tTruckDims\x12\x0e\n\x06length\x18\x01 \x02(\x01\x12\r\n\x05width\x18\x02 \x02(\x01\x12\x11\n\twheelbase\x18\x03 \x02(\x01\x12#\n\x1b\x64ist_from_rear_to_rear_axle\x18\x04 \x02(\x01\x12\x14\n\x0c\x63\x61\x62in_length\x18\x05 \x02(\x01\x12$\n\x1c\x64ist_from_rear_axle_to_hitch\x18\x06 \x02(\x01"O\n\nTruckShape\x12)\n\ntruck_dims\x18\x01 \x02(\x0b\x32\x15.commonroad.TruckDims\x12\x16\n\x0eorigin_x_shift\x18\x02 \x02(\x01"a\n\x0bTrailerDims\x12\x0e\n\x06length\x18\x01 \x02(\x01\x12\r\n\x05width\x18\x02 \x02(\x01\x12\x11\n\twheelbase\x18\x03 \x02(\x01\x12 \n\x18\x64ist_from_front_to_hitch\x18\x04 \x02(\x01"s\n\x15SemiTrailerTruckShape\x12+\n\x0btruck_shape\x18\x01 \x02(\x0b\x32\x16.commonroad.TruckShape\x12-\n\x0ctrailer_dims\x18\x02 \x02(\x0b\x32\x17.commonroad.TrailerDims"\xfb\x01\n\x05Shape\x12%\n\trectangle\x18\x01 \x01(\x0b\x32\x10.commonroad.RectH\x00\x12$\n\x06\x63ircle\x18\x02 \x01(\x0b\x32\x12.commonroad.CircleH\x00\x12&\n\x07polygon\x18\x03 \x01(\x0b\x32\x13.commonroad.PolygonH\x00\x12-\n\x0btruck_shape\x18\x04 \x01(\x0b\x32\x16.commonroad.TruckShapeH\x00\x12\x45\n\x18semi_trailer_truck_shape\x18\x05 \x01(\x0b\x32!.commonroad.SemiTrailerTruckShapeH\x00\x42\x07\n\x05shape"f\n\rRectOccupancy\x12\x0e\n\x06length\x18\x01 \x02(\x01\x12\r\n\x05width\x18\x02 \x02(\x01\x12!\n\x06\x63\x65nter\x18\x03 \x01(\x0b\x32\x11.commonroad.Point\x12\x13\n\x0borientation\x18\x04 \x01(\x01"D\n\x0f\x43ircleOccupancy\x12\x0e\n\x06radius\x18\x01 \x02(\x01\x12!\n\x06\x63\x65nter\x18\x02 \x01(\x0b\x32\x11.commonroad.Point"7\n\x10PolygonOccupancy\x12#\n\x08vertices\x18\x01 \x03(\x0b\x32\x11.commonroad.Point"7\n\x0eOccupancyGroup\x12%\n\x06shapes\x18\x01 \x03(\x0b\x32\x15.commonroad.Occupancy"\xd7\x01\n\tOccupancy\x12.\n\trectangle\x18\x01 \x01(\x0b\x32\x19.commonroad.RectOccupancyH\x00\x12-\n\x06\x63ircle\x18\x02 \x01(\x0b\x32\x1b.commonroad.CircleOccupancyH\x00\x12/\n\x07polygon\x18\x03 \x01(\x0b\x32\x1c.commonroad.PolygonOccupancyH\x00\x12\x31\n\x0bshape_group\x18\x04 \x01(\x0b\x32\x1a.commonroad.OccupancyGroupH\x00\x42\x07\n\x05shape"-\n\x0fIntegerInterval\x12\r\n\x05start\x18\x01 \x02(\x05\x12\x0b\n\x03\x65nd\x18\x02 \x02(\x05"+\n\rFloatInterval\x12\r\n\x05start\x18\x01 \x02(\x01\x12\x0b\n\x03\x65nd\x18\x02 \x02(\x01"o\n\x16IntegerExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x05H\x00\x12/\n\x08interval\x18\x02 \x01(\x0b\x32\x1b.commonroad.IntegerIntervalH\x00\x42\x13\n\x11\x65xact_or_interval"k\n\x14\x46loatExactOrInterval\x12\x0f\n\x05\x65xact\x18\x01 \x01(\x01H\x00\x12-\n\x08interval\x18\x02 \x01(\x0b\x32\x19.commonroad.FloatIntervalH\x00\x42\x13\n\x11\x65xact_or_interval"\x1d\n\x0bIntegerList\x12\x0e\n\x06values\x18\x01 \x03(\x05"\x1b\n\tFloatList\x12\x0e\n\x06values\x18\x01 \x03(\x05"S\n\tTimeStamp\x12\x0c\n\x04year\x18\x01 \x01(\r\x12\r\n\x05month\x18\x02 \x01(\r\x12\x0b\n\x03\x64\x61y\x18\x03 \x01(\r\x12\x0c\n\x04hour\x18\x04 \x01(\r\x12\x0e\n\x06minute\x18\x05 \x01(\r'
     ),
 )
 
@@ -84,16 +82,16 @@ _POINT = _descriptor.Descriptor(
 )
 
 
-_RECTANGLE = _descriptor.Descriptor(
-    name="Rectangle",
-    full_name="commonroad.Rectangle",
+_RECT = _descriptor.Descriptor(
+    name="Rect",
+    full_name="commonroad.Rect",
     filename=None,
     file=DESCRIPTOR,
     containing_type=None,
     fields=[
         _descriptor.FieldDescriptor(
             name="length",
-            full_name="commonroad.Rectangle.length",
+            full_name="commonroad.Rect.length",
             index=0,
             number=1,
             type=1,
@@ -111,48 +109,12 @@ _RECTANGLE = _descriptor.Descriptor(
         ),
         _descriptor.FieldDescriptor(
             name="width",
-            full_name="commonroad.Rectangle.width",
+            full_name="commonroad.Rect.width",
             index=1,
             number=2,
             type=1,
             cpp_type=5,
             label=2,
-            has_default_value=False,
-            default_value=float(0),
-            message_type=None,
-            enum_type=None,
-            containing_type=None,
-            is_extension=False,
-            extension_scope=None,
-            serialized_options=None,
-            file=DESCRIPTOR,
-        ),
-        _descriptor.FieldDescriptor(
-            name="center",
-            full_name="commonroad.Rectangle.center",
-            index=2,
-            number=3,
-            type=11,
-            cpp_type=10,
-            label=1,
-            has_default_value=False,
-            default_value=None,
-            message_type=None,
-            enum_type=None,
-            containing_type=None,
-            is_extension=False,
-            extension_scope=None,
-            serialized_options=None,
-            file=DESCRIPTOR,
-        ),
-        _descriptor.FieldDescriptor(
-            name="orientation",
-            full_name="commonroad.Rectangle.orientation",
-            index=3,
-            number=4,
-            type=1,
-            cpp_type=5,
-            label=1,
             has_default_value=False,
             default_value=float(0),
             message_type=None,
@@ -173,7 +135,7 @@ _RECTANGLE = _descriptor.Descriptor(
     extension_ranges=[],
     oneofs=[],
     serialized_start=57,
-    serialized_end=155,
+    serialized_end=94,
 )
 
 
@@ -202,24 +164,6 @@ _CIRCLE = _descriptor.Descriptor(
             serialized_options=None,
             file=DESCRIPTOR,
         ),
-        _descriptor.FieldDescriptor(
-            name="center",
-            full_name="commonroad.Circle.center",
-            index=1,
-            number=2,
-            type=11,
-            cpp_type=10,
-            label=1,
-            has_default_value=False,
-            default_value=None,
-            message_type=None,
-            enum_type=None,
-            containing_type=None,
-            is_extension=False,
-            extension_scope=None,
-            serialized_options=None,
-            file=DESCRIPTOR,
-        ),
     ],
     extensions=[],
     nested_types=[],
@@ -229,8 +173,8 @@ _CIRCLE = _descriptor.Descriptor(
     syntax="proto2",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=157,
-    serialized_end=216,
+    serialized_start=96,
+    serialized_end=120,
 )
 
 
@@ -268,28 +212,118 @@ _POLYGON = _descriptor.Descriptor(
     syntax="proto2",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=218,
-    serialized_end=264,
+    serialized_start=122,
+    serialized_end=168,
 )
 
 
-_SHAPEGROUP = _descriptor.Descriptor(
-    name="ShapeGroup",
-    full_name="commonroad.ShapeGroup",
+_TRUCKDIMS = _descriptor.Descriptor(
+    name="TruckDims",
+    full_name="commonroad.TruckDims",
     filename=None,
     file=DESCRIPTOR,
     containing_type=None,
     fields=[
         _descriptor.FieldDescriptor(
-            name="shapes",
-            full_name="commonroad.ShapeGroup.shapes",
+            name="length",
+            full_name="commonroad.TruckDims.length",
             index=0,
             number=1,
-            type=11,
-            cpp_type=10,
-            label=3,
+            type=1,
+            cpp_type=5,
+            label=2,
             has_default_value=False,
-            default_value=[],
+            default_value=float(0),
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="width",
+            full_name="commonroad.TruckDims.width",
+            index=1,
+            number=2,
+            type=1,
+            cpp_type=5,
+            label=2,
+            has_default_value=False,
+            default_value=float(0),
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="wheelbase",
+            full_name="commonroad.TruckDims.wheelbase",
+            index=2,
+            number=3,
+            type=1,
+            cpp_type=5,
+            label=2,
+            has_default_value=False,
+            default_value=float(0),
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="dist_from_rear_to_rear_axle",
+            full_name="commonroad.TruckDims.dist_from_rear_to_rear_axle",
+            index=3,
+            number=4,
+            type=1,
+            cpp_type=5,
+            label=2,
+            has_default_value=False,
+            default_value=float(0),
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="cabin_length",
+            full_name="commonroad.TruckDims.cabin_length",
+            index=4,
+            number=5,
+            type=1,
+            cpp_type=5,
+            label=2,
+            has_default_value=False,
+            default_value=float(0),
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="dist_from_rear_axle_to_hitch",
+            full_name="commonroad.TruckDims.dist_from_rear_axle_to_hitch",
+            index=5,
+            number=6,
+            type=1,
+            cpp_type=5,
+            label=2,
+            has_default_value=False,
+            default_value=float(0),
             message_type=None,
             enum_type=None,
             containing_type=None,
@@ -307,8 +341,215 @@ _SHAPEGROUP = _descriptor.Descriptor(
     syntax="proto2",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=266,
-    serialized_end=313,
+    serialized_start=171,
+    serialized_end=329,
+)
+
+
+_TRUCKSHAPE = _descriptor.Descriptor(
+    name="TruckShape",
+    full_name="commonroad.TruckShape",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="truck_dims",
+            full_name="commonroad.TruckShape.truck_dims",
+            index=0,
+            number=1,
+            type=11,
+            cpp_type=10,
+            label=2,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="origin_x_shift",
+            full_name="commonroad.TruckShape.origin_x_shift",
+            index=1,
+            number=2,
+            type=1,
+            cpp_type=5,
+            label=2,
+            has_default_value=False,
+            default_value=float(0),
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=331,
+    serialized_end=410,
+)
+
+
+_TRAILERDIMS = _descriptor.Descriptor(
+    name="TrailerDims",
+    full_name="commonroad.TrailerDims",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="length",
+            full_name="commonroad.TrailerDims.length",
+            index=0,
+            number=1,
+            type=1,
+            cpp_type=5,
+            label=2,
+            has_default_value=False,
+            default_value=float(0),
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="width",
+            full_name="commonroad.TrailerDims.width",
+            index=1,
+            number=2,
+            type=1,
+            cpp_type=5,
+            label=2,
+            has_default_value=False,
+            default_value=float(0),
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="wheelbase",
+            full_name="commonroad.TrailerDims.wheelbase",
+            index=2,
+            number=3,
+            type=1,
+            cpp_type=5,
+            label=2,
+            has_default_value=False,
+            default_value=float(0),
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="dist_from_front_to_hitch",
+            full_name="commonroad.TrailerDims.dist_from_front_to_hitch",
+            index=3,
+            number=4,
+            type=1,
+            cpp_type=5,
+            label=2,
+            has_default_value=False,
+            default_value=float(0),
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=412,
+    serialized_end=509,
+)
+
+
+_SEMITRAILERTRUCKSHAPE = _descriptor.Descriptor(
+    name="SemiTrailerTruckShape",
+    full_name="commonroad.SemiTrailerTruckShape",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="truck_shape",
+            full_name="commonroad.SemiTrailerTruckShape.truck_shape",
+            index=0,
+            number=1,
+            type=11,
+            cpp_type=10,
+            label=2,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="trailer_dims",
+            full_name="commonroad.SemiTrailerTruckShape.trailer_dims",
+            index=1,
+            number=2,
+            type=11,
+            cpp_type=10,
+            label=2,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=511,
+    serialized_end=626,
 )
 
 
@@ -374,10 +615,28 @@ _SHAPE = _descriptor.Descriptor(
             file=DESCRIPTOR,
         ),
         _descriptor.FieldDescriptor(
-            name="shape_group",
-            full_name="commonroad.Shape.shape_group",
+            name="truck_shape",
+            full_name="commonroad.Shape.truck_shape",
             index=3,
             number=4,
+            type=11,
+            cpp_type=10,
+            label=1,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="semi_trailer_truck_shape",
+            full_name="commonroad.Shape.semi_trailer_truck_shape",
+            index=4,
+            number=5,
             type=11,
             cpp_type=10,
             label=1,
@@ -408,8 +667,337 @@ _SHAPE = _descriptor.Descriptor(
             fields=[],
         ),
     ],
-    serialized_start=316,
-    serialized_end=501,
+    serialized_start=629,
+    serialized_end=880,
+)
+
+
+_RECTOCCUPANCY = _descriptor.Descriptor(
+    name="RectOccupancy",
+    full_name="commonroad.RectOccupancy",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="length",
+            full_name="commonroad.RectOccupancy.length",
+            index=0,
+            number=1,
+            type=1,
+            cpp_type=5,
+            label=2,
+            has_default_value=False,
+            default_value=float(0),
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="width",
+            full_name="commonroad.RectOccupancy.width",
+            index=1,
+            number=2,
+            type=1,
+            cpp_type=5,
+            label=2,
+            has_default_value=False,
+            default_value=float(0),
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="center",
+            full_name="commonroad.RectOccupancy.center",
+            index=2,
+            number=3,
+            type=11,
+            cpp_type=10,
+            label=1,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="orientation",
+            full_name="commonroad.RectOccupancy.orientation",
+            index=3,
+            number=4,
+            type=1,
+            cpp_type=5,
+            label=1,
+            has_default_value=False,
+            default_value=float(0),
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=882,
+    serialized_end=984,
+)
+
+
+_CIRCLEOCCUPANCY = _descriptor.Descriptor(
+    name="CircleOccupancy",
+    full_name="commonroad.CircleOccupancy",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="radius",
+            full_name="commonroad.CircleOccupancy.radius",
+            index=0,
+            number=1,
+            type=1,
+            cpp_type=5,
+            label=2,
+            has_default_value=False,
+            default_value=float(0),
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="center",
+            full_name="commonroad.CircleOccupancy.center",
+            index=1,
+            number=2,
+            type=11,
+            cpp_type=10,
+            label=1,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=986,
+    serialized_end=1054,
+)
+
+
+_POLYGONOCCUPANCY = _descriptor.Descriptor(
+    name="PolygonOccupancy",
+    full_name="commonroad.PolygonOccupancy",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="vertices",
+            full_name="commonroad.PolygonOccupancy.vertices",
+            index=0,
+            number=1,
+            type=11,
+            cpp_type=10,
+            label=3,
+            has_default_value=False,
+            default_value=[],
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=1056,
+    serialized_end=1111,
+)
+
+
+_OCCUPANCYGROUP = _descriptor.Descriptor(
+    name="OccupancyGroup",
+    full_name="commonroad.OccupancyGroup",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="shapes",
+            full_name="commonroad.OccupancyGroup.shapes",
+            index=0,
+            number=1,
+            type=11,
+            cpp_type=10,
+            label=3,
+            has_default_value=False,
+            default_value=[],
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=1113,
+    serialized_end=1168,
+)
+
+
+_OCCUPANCY = _descriptor.Descriptor(
+    name="Occupancy",
+    full_name="commonroad.Occupancy",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="rectangle",
+            full_name="commonroad.Occupancy.rectangle",
+            index=0,
+            number=1,
+            type=11,
+            cpp_type=10,
+            label=1,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="circle",
+            full_name="commonroad.Occupancy.circle",
+            index=1,
+            number=2,
+            type=11,
+            cpp_type=10,
+            label=1,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="polygon",
+            full_name="commonroad.Occupancy.polygon",
+            index=2,
+            number=3,
+            type=11,
+            cpp_type=10,
+            label=1,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+        _descriptor.FieldDescriptor(
+            name="shape_group",
+            full_name="commonroad.Occupancy.shape_group",
+            index=3,
+            number=4,
+            type=11,
+            cpp_type=10,
+            label=1,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=None,
+    is_extendable=False,
+    syntax="proto2",
+    extension_ranges=[],
+    oneofs=[
+        _descriptor.OneofDescriptor(
+            name="shape",
+            full_name="commonroad.Occupancy.shape",
+            index=0,
+            containing_type=None,
+            fields=[],
+        ),
+    ],
+    serialized_start=1171,
+    serialized_end=1386,
 )
 
 
@@ -465,8 +1053,8 @@ _INTEGERINTERVAL = _descriptor.Descriptor(
     syntax="proto2",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=503,
-    serialized_end=548,
+    serialized_start=1388,
+    serialized_end=1433,
 )
 
 
@@ -522,8 +1110,8 @@ _FLOATINTERVAL = _descriptor.Descriptor(
     syntax="proto2",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=550,
-    serialized_end=593,
+    serialized_start=1435,
+    serialized_end=1478,
 )
 
 
@@ -587,8 +1175,8 @@ _INTEGEREXACTORINTERVAL = _descriptor.Descriptor(
             fields=[],
         ),
     ],
-    serialized_start=595,
-    serialized_end=706,
+    serialized_start=1480,
+    serialized_end=1591,
 )
 
 
@@ -652,8 +1240,8 @@ _FLOATEXACTORINTERVAL = _descriptor.Descriptor(
             fields=[],
         ),
     ],
-    serialized_start=708,
-    serialized_end=815,
+    serialized_start=1593,
+    serialized_end=1700,
 )
 
 
@@ -691,8 +1279,8 @@ _INTEGERLIST = _descriptor.Descriptor(
     syntax="proto2",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=817,
-    serialized_end=846,
+    serialized_start=1702,
+    serialized_end=1731,
 )
 
 
@@ -730,8 +1318,8 @@ _FLOATLIST = _descriptor.Descriptor(
     syntax="proto2",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=848,
-    serialized_end=875,
+    serialized_start=1733,
+    serialized_end=1760,
 )
 
 
@@ -841,26 +1429,45 @@ _TIMESTAMP = _descriptor.Descriptor(
     syntax="proto2",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=877,
-    serialized_end=960,
+    serialized_start=1762,
+    serialized_end=1845,
 )
 
-_RECTANGLE.fields_by_name["center"].message_type = _POINT
-_CIRCLE.fields_by_name["center"].message_type = _POINT
 _POLYGON.fields_by_name["vertices"].message_type = _POINT
-_SHAPEGROUP.fields_by_name["shapes"].message_type = _SHAPE
-_SHAPE.fields_by_name["rectangle"].message_type = _RECTANGLE
+_TRUCKSHAPE.fields_by_name["truck_dims"].message_type = _TRUCKDIMS
+_SEMITRAILERTRUCKSHAPE.fields_by_name["truck_shape"].message_type = _TRUCKSHAPE
+_SEMITRAILERTRUCKSHAPE.fields_by_name["trailer_dims"].message_type = _TRAILERDIMS
+_SHAPE.fields_by_name["rectangle"].message_type = _RECT
 _SHAPE.fields_by_name["circle"].message_type = _CIRCLE
 _SHAPE.fields_by_name["polygon"].message_type = _POLYGON
-_SHAPE.fields_by_name["shape_group"].message_type = _SHAPEGROUP
+_SHAPE.fields_by_name["truck_shape"].message_type = _TRUCKSHAPE
+_SHAPE.fields_by_name["semi_trailer_truck_shape"].message_type = _SEMITRAILERTRUCKSHAPE
 _SHAPE.oneofs_by_name["shape"].fields.append(_SHAPE.fields_by_name["rectangle"])
 _SHAPE.fields_by_name["rectangle"].containing_oneof = _SHAPE.oneofs_by_name["shape"]
 _SHAPE.oneofs_by_name["shape"].fields.append(_SHAPE.fields_by_name["circle"])
 _SHAPE.fields_by_name["circle"].containing_oneof = _SHAPE.oneofs_by_name["shape"]
 _SHAPE.oneofs_by_name["shape"].fields.append(_SHAPE.fields_by_name["polygon"])
 _SHAPE.fields_by_name["polygon"].containing_oneof = _SHAPE.oneofs_by_name["shape"]
-_SHAPE.oneofs_by_name["shape"].fields.append(_SHAPE.fields_by_name["shape_group"])
-_SHAPE.fields_by_name["shape_group"].containing_oneof = _SHAPE.oneofs_by_name["shape"]
+_SHAPE.oneofs_by_name["shape"].fields.append(_SHAPE.fields_by_name["truck_shape"])
+_SHAPE.fields_by_name["truck_shape"].containing_oneof = _SHAPE.oneofs_by_name["shape"]
+_SHAPE.oneofs_by_name["shape"].fields.append(_SHAPE.fields_by_name["semi_trailer_truck_shape"])
+_SHAPE.fields_by_name["semi_trailer_truck_shape"].containing_oneof = _SHAPE.oneofs_by_name["shape"]
+_RECTOCCUPANCY.fields_by_name["center"].message_type = _POINT
+_CIRCLEOCCUPANCY.fields_by_name["center"].message_type = _POINT
+_POLYGONOCCUPANCY.fields_by_name["vertices"].message_type = _POINT
+_OCCUPANCYGROUP.fields_by_name["shapes"].message_type = _OCCUPANCY
+_OCCUPANCY.fields_by_name["rectangle"].message_type = _RECTOCCUPANCY
+_OCCUPANCY.fields_by_name["circle"].message_type = _CIRCLEOCCUPANCY
+_OCCUPANCY.fields_by_name["polygon"].message_type = _POLYGONOCCUPANCY
+_OCCUPANCY.fields_by_name["shape_group"].message_type = _OCCUPANCYGROUP
+_OCCUPANCY.oneofs_by_name["shape"].fields.append(_OCCUPANCY.fields_by_name["rectangle"])
+_OCCUPANCY.fields_by_name["rectangle"].containing_oneof = _OCCUPANCY.oneofs_by_name["shape"]
+_OCCUPANCY.oneofs_by_name["shape"].fields.append(_OCCUPANCY.fields_by_name["circle"])
+_OCCUPANCY.fields_by_name["circle"].containing_oneof = _OCCUPANCY.oneofs_by_name["shape"]
+_OCCUPANCY.oneofs_by_name["shape"].fields.append(_OCCUPANCY.fields_by_name["polygon"])
+_OCCUPANCY.fields_by_name["polygon"].containing_oneof = _OCCUPANCY.oneofs_by_name["shape"]
+_OCCUPANCY.oneofs_by_name["shape"].fields.append(_OCCUPANCY.fields_by_name["shape_group"])
+_OCCUPANCY.fields_by_name["shape_group"].containing_oneof = _OCCUPANCY.oneofs_by_name["shape"]
 _INTEGEREXACTORINTERVAL.fields_by_name["interval"].message_type = _INTEGERINTERVAL
 _INTEGEREXACTORINTERVAL.oneofs_by_name["exact_or_interval"].fields.append(
     _INTEGEREXACTORINTERVAL.fields_by_name["exact"]
@@ -888,11 +1495,19 @@ _FLOATEXACTORINTERVAL.fields_by_name[
     "interval"
 ].containing_oneof = _FLOATEXACTORINTERVAL.oneofs_by_name["exact_or_interval"]
 DESCRIPTOR.message_types_by_name["Point"] = _POINT
-DESCRIPTOR.message_types_by_name["Rectangle"] = _RECTANGLE
+DESCRIPTOR.message_types_by_name["Rect"] = _RECT
 DESCRIPTOR.message_types_by_name["Circle"] = _CIRCLE
 DESCRIPTOR.message_types_by_name["Polygon"] = _POLYGON
-DESCRIPTOR.message_types_by_name["ShapeGroup"] = _SHAPEGROUP
+DESCRIPTOR.message_types_by_name["TruckDims"] = _TRUCKDIMS
+DESCRIPTOR.message_types_by_name["TruckShape"] = _TRUCKSHAPE
+DESCRIPTOR.message_types_by_name["TrailerDims"] = _TRAILERDIMS
+DESCRIPTOR.message_types_by_name["SemiTrailerTruckShape"] = _SEMITRAILERTRUCKSHAPE
 DESCRIPTOR.message_types_by_name["Shape"] = _SHAPE
+DESCRIPTOR.message_types_by_name["RectOccupancy"] = _RECTOCCUPANCY
+DESCRIPTOR.message_types_by_name["CircleOccupancy"] = _CIRCLEOCCUPANCY
+DESCRIPTOR.message_types_by_name["PolygonOccupancy"] = _POLYGONOCCUPANCY
+DESCRIPTOR.message_types_by_name["OccupancyGroup"] = _OCCUPANCYGROUP
+DESCRIPTOR.message_types_by_name["Occupancy"] = _OCCUPANCY
 DESCRIPTOR.message_types_by_name["IntegerInterval"] = _INTEGERINTERVAL
 DESCRIPTOR.message_types_by_name["FloatInterval"] = _FLOATINTERVAL
 DESCRIPTOR.message_types_by_name["IntegerExactOrInterval"] = _INTEGEREXACTORINTERVAL
@@ -913,16 +1528,16 @@ Point = _reflection.GeneratedProtocolMessageType(
 )
 _sym_db.RegisterMessage(Point)
 
-Rectangle = _reflection.GeneratedProtocolMessageType(
-    "Rectangle",
+Rect = _reflection.GeneratedProtocolMessageType(
+    "Rect",
     (_message.Message,),
     dict(
-        DESCRIPTOR=_RECTANGLE,
+        DESCRIPTOR=_RECT,
         __module__="util_pb2",
-        # @@protoc_insertion_point(class_scope:commonroad.Rectangle)
+        # @@protoc_insertion_point(class_scope:commonroad.Rect)
     ),
 )
-_sym_db.RegisterMessage(Rectangle)
+_sym_db.RegisterMessage(Rect)
 
 Circle = _reflection.GeneratedProtocolMessageType(
     "Circle",
@@ -946,16 +1561,49 @@ Polygon = _reflection.GeneratedProtocolMessageType(
 )
 _sym_db.RegisterMessage(Polygon)
 
-ShapeGroup = _reflection.GeneratedProtocolMessageType(
-    "ShapeGroup",
+TruckDims = _reflection.GeneratedProtocolMessageType(
+    "TruckDims",
     (_message.Message,),
     dict(
-        DESCRIPTOR=_SHAPEGROUP,
+        DESCRIPTOR=_TRUCKDIMS,
         __module__="util_pb2",
-        # @@protoc_insertion_point(class_scope:commonroad.ShapeGroup)
+        # @@protoc_insertion_point(class_scope:commonroad.TruckDims)
     ),
 )
-_sym_db.RegisterMessage(ShapeGroup)
+_sym_db.RegisterMessage(TruckDims)
+
+TruckShape = _reflection.GeneratedProtocolMessageType(
+    "TruckShape",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_TRUCKSHAPE,
+        __module__="util_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad.TruckShape)
+    ),
+)
+_sym_db.RegisterMessage(TruckShape)
+
+TrailerDims = _reflection.GeneratedProtocolMessageType(
+    "TrailerDims",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_TRAILERDIMS,
+        __module__="util_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad.TrailerDims)
+    ),
+)
+_sym_db.RegisterMessage(TrailerDims)
+
+SemiTrailerTruckShape = _reflection.GeneratedProtocolMessageType(
+    "SemiTrailerTruckShape",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_SEMITRAILERTRUCKSHAPE,
+        __module__="util_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad.SemiTrailerTruckShape)
+    ),
+)
+_sym_db.RegisterMessage(SemiTrailerTruckShape)
 
 Shape = _reflection.GeneratedProtocolMessageType(
     "Shape",
@@ -967,6 +1615,61 @@ Shape = _reflection.GeneratedProtocolMessageType(
     ),
 )
 _sym_db.RegisterMessage(Shape)
+
+RectOccupancy = _reflection.GeneratedProtocolMessageType(
+    "RectOccupancy",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_RECTOCCUPANCY,
+        __module__="util_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad.RectOccupancy)
+    ),
+)
+_sym_db.RegisterMessage(RectOccupancy)
+
+CircleOccupancy = _reflection.GeneratedProtocolMessageType(
+    "CircleOccupancy",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_CIRCLEOCCUPANCY,
+        __module__="util_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad.CircleOccupancy)
+    ),
+)
+_sym_db.RegisterMessage(CircleOccupancy)
+
+PolygonOccupancy = _reflection.GeneratedProtocolMessageType(
+    "PolygonOccupancy",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_POLYGONOCCUPANCY,
+        __module__="util_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad.PolygonOccupancy)
+    ),
+)
+_sym_db.RegisterMessage(PolygonOccupancy)
+
+OccupancyGroup = _reflection.GeneratedProtocolMessageType(
+    "OccupancyGroup",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_OCCUPANCYGROUP,
+        __module__="util_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad.OccupancyGroup)
+    ),
+)
+_sym_db.RegisterMessage(OccupancyGroup)
+
+Occupancy = _reflection.GeneratedProtocolMessageType(
+    "Occupancy",
+    (_message.Message,),
+    dict(
+        DESCRIPTOR=_OCCUPANCY,
+        __module__="util_pb2",
+        # @@protoc_insertion_point(class_scope:commonroad.Occupancy)
+    ),
+)
+_sym_db.RegisterMessage(Occupancy)
 
 IntegerInterval = _reflection.GeneratedProtocolMessageType(
     "IntegerInterval",

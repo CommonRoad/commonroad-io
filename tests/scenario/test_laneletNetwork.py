@@ -3,11 +3,13 @@ import unittest
 import unittest.mock as mock
 
 import numpy as np
+import shapely
 from numpy import double
 
 from commonroad.common.common_lanelet import LaneletType, StopLine
 from commonroad.common.util import Time
-from commonroad.geometry.shape import Rectangle
+from commonroad.geometry.obstacle_shapes.rect_obstacle_shape import RectObstacleShape
+from commonroad.geometry.occupancy.rect_occupancy import RectOccupancy
 from commonroad.scenario.area import Area
 from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
 from commonroad.scenario.lanelet import (
@@ -294,7 +296,10 @@ class TestLaneletNetwork(unittest.TestCase):
         )
         lanelet_network.add_intersection(intersection2)
 
-        new_network = lanelet_network.create_from_lanelet_network(lanelet_network, Rectangle(2, 2))
+        new_network = lanelet_network.create_from_lanelet_network(
+            lanelet_network,
+            RectOccupancy(length=2, width=2, rect_center=shapely.Point([0, 0]), orientation=0),
+        )
         new_network_la_ids = [la.lanelet_id for la in new_network.lanelets]
         self.assertIn(lanelet1.lanelet_id, new_network_la_ids)
         self.assertIn(lanelet2.lanelet_id, new_network_la_ids)
@@ -318,7 +323,9 @@ class TestLaneletNetwork(unittest.TestCase):
         self.assertIsNone(new_network.find_intersection_by_id(intersection2.intersection_id))
 
         new_network_lanelet_types = lanelet_network.create_from_lanelet_network(
-            lanelet_network, Rectangle(2, 2), {LaneletType.URBAN}
+            lanelet_network,
+            RectOccupancy(length=2, width=2, rect_center=shapely.Point([0, 0]), orientation=0),
+            {LaneletType.URBAN},
         )
         lanelets_in_network = [la.lanelet_id for la in new_network_lanelet_types.lanelets]
         self.assertNotIn(lanelet2.lanelet_id, lanelets_in_network)
@@ -330,7 +337,10 @@ class TestLaneletNetwork(unittest.TestCase):
         )
 
         new_network = lanelet_network.create_from_lanelet_network(
-            lanelet_network, Rectangle(0.25, 0.25, np.array([5.5, 1.5]))
+            lanelet_network,
+            RectOccupancy(
+                length=0.25, width=0.25, rect_center=shapely.Point([5.5, 1.5]), orientation=0
+            ),
         )
         new_network_la_ids = [la.lanelet_id for la in new_network.lanelets]
         new_ts_ids = [ts.traffic_sign_id for ts in new_network.traffic_signs]
@@ -551,15 +561,21 @@ class TestLaneletNetwork(unittest.TestCase):
         assert_pos(np.array([lanelet_0.center_vertices[-1][0] + tolerance, 0.0]), [])
 
     def test_find_lanelet_by_shape(self):
-        rectangle1 = Rectangle(2, 2)
-        rectangle2 = Rectangle(2, 2, np.array([100.0, 100.0]))
-        rectangle3 = Rectangle(2, 2, np.array([9.0, 0.0]))
+        rectangle1 = RectOccupancy(
+            length=2, width=2, rect_center=shapely.Point([0, 0]), orientation=0
+        )
+        rectangle2 = RectOccupancy(
+            length=2, width=2, rect_center=shapely.Point([100.0, 100.0]), orientation=0
+        )
+        rectangle3 = RectOccupancy(
+            length=2, width=2, rect_center=shapely.Point([9.0, 0.0]), orientation=0
+        )
 
-        observed_lanelet = self.lanelet_network.find_lanelet_by_shape(rectangle1)
+        observed_lanelet = self.lanelet_network.find_lanelet_by_occupancy(rectangle1)
         self.assertEqual(observed_lanelet[0], self.lanelet.lanelet_id)
-        observed_lanelet = self.lanelet_network.find_lanelet_by_shape(rectangle2)
+        observed_lanelet = self.lanelet_network.find_lanelet_by_occupancy(rectangle2)
         self.assertEqual(observed_lanelet, [])
-        observed_lanelets = self.lanelet_network.find_lanelet_by_shape(rectangle3)
+        observed_lanelets = self.lanelet_network.find_lanelet_by_occupancy(rectangle3)
         self.assertEqual([self.lanelet_2.lanelet_id, self.lanelet.lanelet_id], observed_lanelets)
 
     def test_find_most_likely_lanelet_by_state(self):
@@ -589,7 +605,7 @@ class TestLaneletNetwork(unittest.TestCase):
 
     def test_filter_obstacles_in_network_positive_map_obstacles_to_lanelet_postive(self):
         initial_state = InitialState(**{"position": np.array([0, 0]), "orientation": 0.0})
-        rect_shape = Rectangle(2, 2)
+        rect_shape = RectObstacleShape(length=2, width=2)
         expected_obstacle = StaticObstacle(
             obstacle_id=1,
             obstacle_type=ObstacleType.CAR,
@@ -606,7 +622,7 @@ class TestLaneletNetwork(unittest.TestCase):
 
     def test_filter_obstacles_in_network_positive_map_obstacles_to_lanelet_negative(self):
         initial_state = InitialState(**{"position": np.array([-50, -50]), "orientation": 0.0})
-        rect_shape = Rectangle(2, 2)
+        rect_shape = RectObstacleShape(length=2, width=2)
         expected_obstacle = StaticObstacle(
             obstacle_id=1,
             obstacle_type=ObstacleType.CAR,

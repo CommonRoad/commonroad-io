@@ -5,7 +5,8 @@ import unittest.mock as mock
 import numpy as np
 
 from commonroad.common.common_lanelet import StopLine
-from commonroad.geometry.shape import Polygon, Rectangle
+from commonroad.geometry.obstacle_shapes.rect_obstacle_shape import RectObstacleShape
+from commonroad.geometry.occupancy.polygon_occupancy import PolygonOccupancy
 from commonroad.prediction.prediction import Trajectory, TrajectoryPrediction
 from commonroad.scenario.area import Area
 from commonroad.scenario.lanelet import Lanelet, LaneletNetwork, LineMarking
@@ -230,7 +231,7 @@ class TestLanelet(unittest.TestCase):
 
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, 1)
 
-        rect = Rectangle(5, 3)
+        rect = RectObstacleShape(length=5, width=3)
         state_list = [
             STState(position=np.array([0.0, 2]), orientation=0.0, time_step=1),
             STState(position=np.array([10.0, 5]), orientation=0.0, time_step=2),
@@ -263,7 +264,7 @@ class TestLanelet(unittest.TestCase):
         lanelet = Lanelet(left_vertices, center_vertices, right_vertices, 1)
 
         polygon = lanelet.convert_to_polygon()
-        self.assertTrue(isinstance(polygon, Polygon))
+        self.assertTrue(isinstance(polygon, PolygonOccupancy))
         vertices = np.append(right_vertices, np.flip(left_vertices, axis=0), axis=0)
         vertices = np.concatenate((vertices, np.array([[0, 0]])), axis=0)
         vertices = vertices[::-1]
