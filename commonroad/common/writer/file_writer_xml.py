@@ -4,7 +4,7 @@ import os
 import pathlib
 import re
 import warnings
-from typing import List, Set, Union
+from typing import Dict, List, Set, Union
 
 import numpy as np
 from lxml import etree, objectify
@@ -15,13 +15,16 @@ from commonroad.common.util import FileFormat, Interval
 from commonroad.common.writer.file_writer_interface import (
     FileWriter,
     OverwriteExistingFile,
-    precision,
 )
-from commonroad.geometry.shape import Circle, Polygon, Rectangle, Shape, ShapeGroup
+from commonroad.common.writer.xml_nodes.float_to_str import float_to_str
+from commonroad.common.writer.xml_nodes.occupancy_nodes import OccupancyXMLNode
+from commonroad.common.writer.xml_nodes.point import Point
+from commonroad.common.writer.xml_nodes.shape_nodes import ShapeXMLNode
+from commonroad.geometry.occupancy.occupancy import Occupancy
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet
 from commonroad.prediction.prediction import (
-    Occupancy,
     SetBasedPrediction,
+    TimeType,
     TrajectoryPrediction,
 )
 from commonroad.scenario.intersection import Intersection
@@ -57,21 +60,6 @@ from commonroad.scenario.traffic_sign import TrafficSign
 from commonroad.scenario.trajectory import Trajectory
 
 logger = logging.getLogger(__name__)
-
-
-def float_to_str(f):
-    """
-    Convert the given float to a string,
-    without resorting to scientific notation
-    """
-    fstring = str(f)
-    if "e" in fstring:
-        return format(f, ".{}f".format(precision.decimals))
-    f_list = fstring.split(".")
-    if len(f_list) > 1:
-        return f_list[0] + "." + f_list[1][: precision.decimals]
-    else:
-        return f_list[0]
 
 
 def create_exact_node_float(value: Union[int, float]) -> etree.Element:
@@ -573,7 +561,7 @@ class EnvironmentObstacleXMLNode:
             environment_obstacle.obstacle_type,
         )
         shape_node = etree.Element("shape")
-        shape_node.extend(ShapeXMLNode.create_node(environment_obstacle.obstacle_shape))
+        shape_node.extend(OccupancyXMLNode.create_node(environment_obstacle.occupancy))
         node.append(shape_node)
 
         return node
@@ -593,7 +581,7 @@ class PhantomObstacleXMLNode:
         if isinstance(phantom_obstacle.prediction, SetBasedPrediction):
             node.append(
                 DynamicObstacleXMLNode.create_occupancy_node(
-                    phantom_obstacle.prediction.occupancy_set
+                    phantom_obstacle.prediction.occupancies
                 )
             )
         return node
@@ -648,9 +636,7 @@ class DynamicObstacleXMLNode:
             dynamic_obstacle.obstacle_type,
         )
         shape_node = etree.Element("shape")
-        shape_node.extend(
-            ShapeXMLNode.create_node(dynamic_obstacle.obstacle_shape, dynamic_obstacle_shape=True)
-        )
+        shape_node.extend(ShapeXMLNode.create_node(dynamic_obstacle.obstacle_shape))
         obstacle_node.append(shape_node)
 
         # write intial state
@@ -674,9 +660,7 @@ class DynamicObstacleXMLNode:
 
         # write prediction depending on type
         if isinstance(dynamic_obstacle.prediction, SetBasedPrediction):
-            obstacle_node.append(
-                cls.create_occupancy_node(dynamic_obstacle.prediction.occupancy_set)
-            )
+            obstacle_node.append(cls.create_occupancy_node(dynamic_obstacle.prediction.occupancies))
         elif isinstance(dynamic_obstacle.prediction, TrajectoryPrediction):
             obstacle_node.append(
                 cls._create_trajectory_node(dynamic_obstacle.prediction.trajectory)
@@ -702,15 +686,15 @@ class DynamicObstacleXMLNode:
         return traj_node
 
     @classmethod
-    def create_occupancy_node(cls, occupancy_set: List[Occupancy]) -> etree.Element:
+    def create_occupancy_node(cls, occupancies: Dict[TimeType, Occupancy]) -> etree.Element:
         """
-        Create XML-Node for an occupancy_set
-        :param occupancy_set: occupancy_set for creating a node
+        Create XML-Node for occupancies
+        :param occupancies:
         :return: node
         """
         occupancy_set_node = etree.Element("occupancySet")
-        for occupancy in occupancy_set:
-            occupancy_set_node.append(OccupancyXMLNode.create_node(occupancy))
+        for t, occ in occupancies.items():
+            occupancy_set_node.append(OccupancyWithTimeXMLNode.create_node(t, occ))
         return occupancy_set_node
 
     @classmethod
@@ -731,9 +715,9 @@ class DynamicObstacleXMLNode:
         return series_node
 
 
-class OccupancyXMLNode:
+class OccupancyWithTimeXMLNode:
     @classmethod
-    def create_node(cls, occupancy: Occupancy) -> etree.Element:
+    def create_node(cls, t: TimeType, occ: Occupancy) -> etree.Element:
         """
         Create XML-Node for an Occupancy
         :param occupancy: occupancy for creating a node
@@ -742,140 +726,17 @@ class OccupancyXMLNode:
         occupancy_node = etree.Element("occupancy")
 
         shape_node = etree.Element("shape")
-        shape_node.extend(ShapeXMLNode.create_node(occupancy.shape))
+        shape_node.extend(OccupancyXMLNode.create_node(occ))
         occupancy_node.append(shape_node)
 
         time_node = etree.Element("time")
-        time = occupancy.time_step
-        if isinstance(occupancy.time_step, Interval):
-            time_node.extend(create_interval_node_int(time))
+        if isinstance(t, Interval):
+            time_node.extend(create_interval_node_int(t))
         else:
-            time_node.append(create_exact_node_int(time))
+            time_node.append(create_exact_node_int(t))
         occupancy_node.append(time_node)
 
         return occupancy_node
-
-
-class ShapeXMLNode:
-    @classmethod
-    def create_node(cls, shape, dynamic_obstacle_shape=False) -> List[etree.Element]:
-        """
-        Create XML-Node for a shape
-        :param shape: shape for creating a node
-        :param dynamic_obstacle_shape: specify whether the shape belongs to an dynamic obstacle or not
-        :return: node
-        """
-        if isinstance(shape, ShapeGroup):
-            shape_node_list = []
-            for s in shape.shapes:
-                shape_node_list.append(cls._create_single_element(s, dynamic_obstacle_shape))
-        else:
-            shape_node = cls._create_single_element(shape, dynamic_obstacle_shape)
-            shape_node_list = [shape_node]
-        return shape_node_list
-
-    @classmethod
-    def _create_single_element(
-        cls, shape: Union[Shape, Circle, Rectangle, Polygon], dynamic_obstacle_shape: bool
-    ) -> etree.Element:
-        """
-        Create XML-Node for a single shape element
-        :param shape: shape for creating a node
-        :param dynamic_obstacle_shape: specify whether the shape belongs to an dynamic obstacle or not
-        :return: node
-        """
-        if isinstance(shape, Rectangle):
-            node = RectangleXMLNode.create_rectangle_node(shape, dynamic_obstacle_shape)
-        elif isinstance(shape, Circle):
-            node = CircleXMLNode.create_circle_node(shape, dynamic_obstacle_shape)
-        elif isinstance(shape, Polygon):
-            node = PolygonXMLNode.create_polygon_node(shape, dynamic_obstacle_shape)
-        else:
-            raise TypeError(
-                "<ShapeXMLNode/_create_single_element> Expected type Polygon, Circle or Rectangle but got %s"
-                % (type(shape))
-            )
-        return node
-
-
-class RectangleXMLNode:
-    @classmethod
-    def create_rectangle_node(
-        cls, rectangle: Rectangle, dynamic_obstacle_shape=False
-    ) -> etree.Element:
-        """
-        Create XML-Node for a rectangle
-        :param rectangle: rectangle for creating a node
-        :param dynamic_obstacle_shape: specify whether the shape belongs to an dynamic obstacle or not
-        :return: node
-        """
-        rectangle_node = etree.Element("rectangle")
-        length_node = etree.Element("length")
-        length_node.text = str(rectangle.length)
-        rectangle_node.append(length_node)
-
-        width_node = etree.Element("width")
-        width_node.text = str(rectangle.width)
-        rectangle_node.append(width_node)
-
-        if not dynamic_obstacle_shape:
-            orientation_node = etree.Element("orientation")
-            orientation_node.text = str(np.float64(rectangle.orientation))
-            rectangle_node.append(orientation_node)
-
-            center_node = etree.Element("center")
-            x_node = etree.Element("x")
-            x_node.text = float_to_str(np.float64(rectangle.center[0]))
-            center_node.append(x_node)
-            y_node = etree.Element("y")
-            y_node.text = float_to_str(np.float64(rectangle.center[1]))
-            center_node.append(y_node)
-            rectangle_node.append(center_node)
-        return rectangle_node
-
-
-class CircleXMLNode:
-    @classmethod
-    def create_circle_node(cls, circle: Circle, dynamic_obstacle_shape=False) -> etree.Element:
-        """
-        Create XML-Node for a circle
-        :param circle: circle for creating a node
-        :param dynamic_obstacle_shape: specify whether the shape belongs to an dynamic obstacle or not
-        :return: node
-        """
-        circle_node = etree.Element("circle")
-
-        radius_node = etree.Element("radius")
-        radius_node.text = str(np.float64(circle.radius))
-        circle_node.append(radius_node)
-
-        if not dynamic_obstacle_shape:
-            center_node = etree.Element("center")
-            x_node = etree.Element("x")
-            x_node.text = float_to_str(np.float64(circle.center[0]))
-            center_node.append(x_node)
-            y_node = etree.Element("y")
-            y_node.text = float_to_str(np.float64(circle.center[1]))
-            center_node.append(y_node)
-            circle_node.append(center_node)
-        return circle_node
-
-
-class PolygonXMLNode:
-    @classmethod
-    def create_polygon_node(
-        cls, polygon: Polygon, dynamic_obstacle_shape: bool = False
-    ) -> etree.Element:
-        """
-        Create XML-Node for a polygon
-        :param polygon: polygon for creating a node
-        :param dynamic_obstacle_shape: specify whether the shape belongs to an dynamic obstacle or not
-        :return: node
-        """
-        polygon_node = etree.Element("polygon")
-        for p in polygon.vertices:
-            polygon_node.append(Point(p[0], p[1]).create_node())
-        return polygon_node
 
 
 class StateXMLNode:
@@ -908,7 +769,7 @@ class StateXMLNode:
     def _write_goal_position(
         cls,
         node: etree.Element,
-        position: Union[Shape, int, list],
+        position: Union[Occupancy, int, list],
         goal_lanelet_ids: List[int],
     ) -> etree.Element:
         """
@@ -926,14 +787,8 @@ class StateXMLNode:
             lanelet = etree.Element("lanelet")
             lanelet.set("ref", str(position))
             node.append(lanelet)
-        elif (
-            isinstance(position, Rectangle)
-            or isinstance(position, Circle)
-            or isinstance(position, Polygon)
-        ):
-            node.extend(ShapeXMLNode.create_node(position))
-        elif isinstance(position, ShapeGroup):
-            node.extend(ShapeXMLNode.create_node(position))
+        elif isinstance(position, Occupancy):
+            node.extend(OccupancyXMLNode.create_node(position))
         elif type(position) is list:
             raise ValueError(
                 "A goal state cannot contain multiple items. Use a list of goal states instead."
@@ -997,8 +852,8 @@ class StateXMLNode:
                 if type(state.position) in [np.ndarray, list]:
                     position.append(Point.create_from_numpy_array(state.position).create_node())
                     state_node.append(position)
-                elif isinstance(state.position, Shape):
-                    position.extend(ShapeXMLNode.create_node(state.position))
+                elif isinstance(state.position, Occupancy):
+                    position.extend(OccupancyXMLNode.create_node(state.position))
                     state_node.append(position)
             elif attr == "time_step":
                 time_node = etree.Element("time")
@@ -1061,43 +916,6 @@ class PlanningProblemXMLNode:
             )
 
         return planning_problem_node
-
-
-class Point:
-    def __init__(
-        self, x: Union[int, float], y: Union[int, float], z: Union[int, float, None] = None
-    ):
-        self.x: Union[int, float] = x
-        self.y: Union[int, float] = y
-        self.z: Union[int, float] = z
-
-    def as_numpy_array(self):
-        if self.z is None:
-            return np.array([self.x, self.y])
-        else:
-            return np.array([self.x, self.y, self.z])
-
-    @classmethod
-    def create_from_numpy_array(cls, point: Union[np.array, list]):
-        assert 2 <= len(point) <= 3
-        if len(point) == 2:
-            return cls(point[0], point[1])
-        else:
-            return cls(point[0], point[1], point[2])
-
-    def create_node(self):
-        point_node = etree.Element("point")
-        x = etree.Element("x")
-        x.text = float_to_str(np.float64(self.x))
-        point_node.append(x)
-        y = etree.Element("y")
-        y.text = float_to_str(np.float64(self.y))
-        point_node.append(y)
-        if self.z is not None:
-            z = etree.Element("z")
-            z.text = float_to_str(np.float64(self.z))
-            point_node.append(z)
-        return point_node
 
 
 class Pointlist:

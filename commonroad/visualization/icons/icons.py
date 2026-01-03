@@ -1,6 +1,6 @@
 """Module for drawing obstacle icons."""
 
-from commonroad.geometry.shape import Shape
+from commonroad.geometry.obstacle_shapes.obstacle_shape import ObstacleShape
 from commonroad.scenario.obstacle import ObstacleType
 from commonroad.scenario.state import TraceState
 from commonroad.visualization.icons.bicycle import draw_bicycle_icon
@@ -31,7 +31,7 @@ def supported_icons():
 def get_obstacle_icon_patch(
     obstacle_type: ObstacleType,
     state: TraceState,
-    shape: Shape,
+    shape: ObstacleShape,
     zorder: float = 5,
     vehicle_color: str = "#ffffff",
     edgecolor="black",

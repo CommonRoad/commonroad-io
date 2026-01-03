@@ -15,7 +15,7 @@ import vehiclemodels.parameters_vehicle3 as p3
 import vehiclemodels.parameters_vehicle4 as p4
 
 from commonroad.common.validity import is_positive, is_real_number
-from commonroad.geometry.shape import Rectangle
+from commonroad.geometry.obstacle_shapes.rect_obstacle_shape import RectObstacleShape
 from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad.scenario.obstacle import DynamicObstacle, ObstacleType
 from commonroad.scenario.scenario import ScenarioID
@@ -646,7 +646,7 @@ class Solution:
         """
         obs = {}
         for pp_id, solution in self._planning_problem_solutions.items():
-            shape = Rectangle(
+            shape = RectObstacleShape(
                 length=vehicle_parameters[solution.vehicle_type].l,
                 width=vehicle_parameters[solution.vehicle_type].w,
             )

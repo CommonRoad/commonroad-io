@@ -3,6 +3,7 @@ import os
 import warnings
 from collections import defaultdict
 from copy import deepcopy
+from numbers import Number
 from typing import Callable, List, Optional, Set, Tuple, Union
 
 import matplotlib as mpl
@@ -19,15 +20,15 @@ from matplotlib.colors import hsv_to_rgb, rgb_to_hsv, to_hex, to_rgb
 from matplotlib.path import Path
 from tqdm import tqdm
 
-import commonroad.geometry.shape
 import commonroad.prediction.prediction
 import commonroad.scenario.obstacle
 from commonroad.common.common_lanelet import LineMarking
 from commonroad.common.util import Interval
-from commonroad.geometry.shape import Rectangle
+from commonroad.geometry.occupancy.occupancy import Occupancy
+from commonroad.geometry.occupancy.rect_occupancy import RectOccupancy
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet
-from commonroad.prediction.prediction import Occupancy, TrajectoryPrediction
+from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.obstacle import (
     DynamicObstacle,
@@ -175,12 +176,22 @@ class MPRenderer(IRenderer):
             return self._plot_limits
 
     @plot_limits.setter
-    def plot_limits(self, val: List[Union[float, int, List[Union[float, int]]]]):
-        if val is not None and isinstance(val[0], List):
-            self._plot_limits = val[0] + val[1]
-        elif isinstance(val, List) or val == "auto":
+    def plot_limits(
+        self,
+        val: Optional[
+            Union[
+                Tuple[Tuple[Number, Number], Tuple[Number, Number]],
+                Tuple[Number, Number, Number, Number],
+            ]
+        ],
+    ):
+        if val is None:
+            self._plot_limits = None
+        elif len(val) == 4:
             self._plot_limits = val
-        elif val is not None:
+        elif len(val) == 2 and len(val[0]) == 2 and len(val[1]) == 2:
+            self._plot_limits = val[0] + val[1]
+        else:
             raise ValueError(f"Invalid plot_limit: {val}")
 
     @property
@@ -521,7 +532,7 @@ class MPRenderer(IRenderer):
         elif isinstance(draw_params, MPDrawParams):
             draw_params = draw_params.occupancy
         if occ is not None:
-            occ.draw(self, draw_params)
+            occ.draw(self, draw_params.shape)
         if state is not None and state.is_uncertain_position:
             shape_params = deepcopy(draw_params.uncertain_position)
             shape_params.zorder = 0.1 + draw_params.shape.zorder
@@ -611,7 +622,11 @@ class MPRenderer(IRenderer):
                 self._draw_occupancy(
                     veh_occ, obj.initial_state, draw_params.vehicle_shape.occupancy
                 )
-                if draw_direction and veh_occ is not None and isinstance(veh_occ.shape, Rectangle):
+                if (
+                    draw_direction
+                    and veh_occ is not None
+                    and isinstance(veh_occ.shape, RectOccupancy)
+                ):
                     v_tri = get_vehicle_direction_triangle(veh_occ.shape)
                     self.draw_polygon(v_tri, draw_params.vehicle_shape.direction)
 
@@ -696,7 +711,7 @@ class MPRenderer(IRenderer):
         if draw_params.draw_shape:
             occ = obj.occupancy_at_time(time_begin)
             if occ is not None:
-                occ.draw(self, draw_params.occupancy)
+                occ.draw(self, draw_params.occupancy.shape)
 
         # draw occupancies
         if draw_params.occupancy.draw_occupancies:
@@ -726,7 +741,7 @@ class MPRenderer(IRenderer):
             draw_params = draw_params.environment_obstacle
 
         time_begin = draw_params.time_begin
-        obj.occupancy_at_time(time_begin).draw(self, draw_params.occupancy)
+        obj.occupancy_at_time(time_begin).draw(self, draw_params.occupancy.shape)
 
     def _draw_history(self, dyn_obs: DynamicObstacle, draw_params: DynamicObstacleParams):
         """
@@ -1720,40 +1735,40 @@ class MPRenderer(IRenderer):
         braking = []
 
         # indicators
-        if isinstance(occ.shape, Rectangle):
+        if isinstance(occ, RectOccupancy):
             if hasattr(sig, "hazard_warning_lights") and sig.hazard_warning_lights is True:
                 indicators.extend(
                     [
-                        occ.shape.vertices[0],
-                        occ.shape.vertices[1],
-                        occ.shape.vertices[2],
-                        occ.shape.vertices[3],
+                        occ.vertices[0],
+                        occ.vertices[1],
+                        occ.vertices[2],
+                        occ.vertices[3],
                     ]
                 )
             else:
                 if hasattr(sig, "indicator_left") and sig.indicator_left is True:
-                    indicators.extend([occ.shape.vertices[1], occ.shape.vertices[2]])
+                    indicators.extend([occ.vertices[1], occ.vertices[2]])
                 if hasattr(sig, "indicator_right") and sig.indicator_right is True:
-                    indicators.extend([occ.shape.vertices[0], occ.shape.vertices[3]])
+                    indicators.extend([occ.vertices[0], occ.vertices[3]])
 
             for e in indicators:
                 self.draw_ellipse(e, signal_radius, signal_radius, draw_params.indicator)
 
             # braking lights
             if hasattr(sig, "braking_lights") and sig.braking_lights is True:
-                braking.extend([occ.shape.vertices[0], occ.shape.vertices[1]])
+                braking.extend([occ.vertices[0], occ.vertices[1]])
 
             for e in braking:
                 self.draw_ellipse(e, signal_radius * 1.5, signal_radius * 1.5, draw_params.braking)
 
             # blue lights
             if hasattr(sig, "flashing_blue_lights") and sig.flashing_blue_lights is True:
-                pos = occ.shape.center
+                pos = (occ.center.x, occ.center.y)
                 self.draw_ellipse(pos, signal_radius, signal_radius, draw_params.bluelight)
 
             # horn
             if hasattr(sig, "horn") and sig.horn is True:
-                pos = occ.shape.center
+                pos = (occ.center.x, occ.center.y)
                 self.draw_ellipse(pos, signal_radius * 1.5, signal_radius * 1.5, draw_params.horn)
 
         else:

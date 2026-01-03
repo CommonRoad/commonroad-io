@@ -1,14 +1,14 @@
 import matplotlib as mpl
 import numpy as np
 
-from commonroad.geometry.shape import Rectangle, Shape
+from commonroad.geometry.obstacle_shapes.rect_obstacle_shape import RectObstacleShape
 from commonroad.scenario.state import TraceState
 from commonroad.visualization.icons.transform_to_global import transform_to_global
 
 
 def draw_car_icon(
     state: TraceState,
-    shape: Shape = Rectangle(length=5.0, width=2.0),
+    shape: RectObstacleShape = RectObstacleShape(length=5.0, width=2.0),
     zorder: float = 5,
     vehicle_color: str = "#ffffff",
     edgecolor="black",

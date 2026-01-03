@@ -8,12 +8,10 @@ from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
 
+# @@protoc_insertion_point(imports)
 import commonroad.scenario_definition.protobuf_format.generated_scripts.util_pb2 as util__pb2
 
 _b = sys.version_info[0] < 3 and (lambda x: x) or (lambda x: x.encode("latin1"))
-
-# @@protoc_insertion_point(imports)
-
 _sym_db = _symbol_database.Default()
 
 

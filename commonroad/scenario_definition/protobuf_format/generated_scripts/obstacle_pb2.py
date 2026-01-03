@@ -8,12 +8,10 @@ from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
 
+# @@protoc_insertion_point(imports)
 import commonroad.scenario_definition.protobuf_format.generated_scripts.util_pb2 as util__pb2
 
 _b = sys.version_info[0] < 3 and (lambda x: x) or (lambda x: x.encode("latin1"))
-
-# @@protoc_insertion_point(imports)
-
 _sym_db = _symbol_database.Default()
 
 
@@ -23,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
     syntax="proto2",
     serialized_options=None,
     serialized_pb=_b(
-        '\n\x0eobstacle.proto\x12\ncommonroad\x1a\nutil.proto"\x8f\x02\n\x10ObstacleTypeEnum"\xfa\x01\n\x0cObstacleType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x0b\n\x07\x42ICYCLE\x10\x04\x12\x0e\n\nPEDESTRIAN\x10\x05\x12\x14\n\x10PRIORITY_VEHICLE\x10\x06\x12\x12\n\x0ePARKED_VEHICLE\x10\x07\x12\x15\n\x11\x43ONSTRUCTION_ZONE\x10\x08\x12\t\n\x05TRAIN\x10\t\x12\x11\n\rROAD_BOUNDARY\x10\n\x12\x0e\n\nMOTORCYCLE\x10\x0b\x12\x08\n\x04TAXI\x10\x0c\x12\x0c\n\x08\x42UILDING\x10\r\x12\n\n\x06PILLAR\x10\x0e\x12\x10\n\x0cMEDIAN_STRIP\x10\x0f"\xd8\x11\n\x05State\x12"\n\x05point\x18\x01 \x01(\x0b\x32\x11.commonroad.PointH\x00\x12"\n\x05shape\x18\x02 \x01(\x0b\x32\x11.commonroad.ShapeH\x00\x12\x35\n\x0borientation\x18\x03 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x32\n\x08velocity\x18\x04 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0esteering_angle\x18\x05 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12>\n\x14steering_angle_speed\x18\x06 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x32\n\x08yaw_rate\x18\x07 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nslip_angle\x18\x08 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nroll_angle\x18\t \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\troll_rate\x18\n \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x35\n\x0bpitch_angle\x18\x0b \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\npitch_rate\x18\x0c \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nvelocity_y\x18\r \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nposition_z\x18\x0e \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nvelocity_z\x18\x0f \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10roll_angle_front\x18\x10 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0froll_rate_front\x18\x11 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10velocity_y_front\x18\x12 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10position_z_front\x18\x13 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10velocity_z_front\x18\x14 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0froll_angle_rear\x18\x15 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0eroll_rate_rear\x18\x16 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fvelocity_y_rear\x18\x17 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fposition_z_rear\x18\x18 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fvelocity_z_rear\x18\x19 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x43\n\x19\x66ront_wheel_angular_speed\x18\x1a \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x42\n\x18rear_wheel_angular_speed\x18\x1b \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12H\n\x1eleft_front_wheel_angular_speed\x18\x1c \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12I\n\x1fright_front_wheel_angular_speed\x18\x1d \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12G\n\x1dleft_rear_wheel_angular_speed\x18\x1e \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12H\n\x1eright_rear_wheel_angular_speed\x18\x1f \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\tdelta_y_f\x18  \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\tdelta_y_r\x18! \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x36\n\x0c\x61\x63\x63\x65leration\x18" \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0e\x61\x63\x63\x65leration_y\x18# \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12.\n\x04jerk\x18$ \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\tcurvature\x18% \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0e\x63urvature_rate\x18& \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x35\n\ttime_step\x18\' \x02(\x0b\x32".commonroad.IntegerExactOrIntervalB\n\n\x08position"\xd8\x01\n\x0bSignalState\x12\x35\n\ttime_step\x18\x01 \x01(\x0b\x32".commonroad.IntegerExactOrInterval\x12\x0c\n\x04horn\x18\x02 \x01(\x08\x12\x16\n\x0eindicator_left\x18\x03 \x01(\x08\x12\x17\n\x0findicator_right\x18\x04 \x01(\x08\x12\x16\n\x0e\x62raking_lights\x18\x05 \x01(\x08\x12\x1d\n\x15hazard_warning_lights\x18\x06 \x01(\x08\x12\x1c\n\x14\x66lashing_blue_lights\x18\x07 \x01(\x08"d\n\tOccupancy\x12\x35\n\ttime_step\x18\x01 \x02(\x0b\x32".commonroad.IntegerExactOrInterval\x12 \n\x05shape\x18\x02 \x02(\x0b\x32\x11.commonroad.Shape":\n\x0cOccupancySet\x12*\n\x0boccupancies\x18\x01 \x03(\x0b\x32\x15.commonroad.Occupancy"J\n\nTrajectory\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12!\n\x06states\x18\x02 \x03(\x0b\x32\x11.commonroad.State"d\n\x14TrajectoryPrediction\x12*\n\ntrajectory\x18\x01 \x02(\x0b\x32\x16.commonroad.Trajectory\x12 \n\x05shape\x18\x02 \x02(\x0b\x32\x11.commonroad.Shape"`\n\x12SetBasedPrediction\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12/\n\roccupancy_set\x18\x02 \x02(\x0b\x32\x18.commonroad.OccupancySet'
+        '\n\x0eobstacle.proto\x12\ncommonroad\x1a\nutil.proto"\x8f\x02\n\x10ObstacleTypeEnum"\xfa\x01\n\x0cObstacleType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x07\n\x03\x43\x41R\x10\x01\x12\t\n\x05TRUCK\x10\x02\x12\x07\n\x03\x42US\x10\x03\x12\x0b\n\x07\x42ICYCLE\x10\x04\x12\x0e\n\nPEDESTRIAN\x10\x05\x12\x14\n\x10PRIORITY_VEHICLE\x10\x06\x12\x12\n\x0ePARKED_VEHICLE\x10\x07\x12\x15\n\x11\x43ONSTRUCTION_ZONE\x10\x08\x12\t\n\x05TRAIN\x10\t\x12\x11\n\rROAD_BOUNDARY\x10\n\x12\x0e\n\nMOTORCYCLE\x10\x0b\x12\x08\n\x04TAXI\x10\x0c\x12\x0c\n\x08\x42UILDING\x10\r\x12\n\n\x06PILLAR\x10\x0e\x12\x10\n\x0cMEDIAN_STRIP\x10\x0f"\xdc\x11\n\x05State\x12"\n\x05point\x18\x01 \x01(\x0b\x32\x11.commonroad.PointH\x00\x12&\n\x05shape\x18\x02 \x01(\x0b\x32\x15.commonroad.OccupancyH\x00\x12\x35\n\x0borientation\x18\x03 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x32\n\x08velocity\x18\x04 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0esteering_angle\x18\x05 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12>\n\x14steering_angle_speed\x18\x06 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x32\n\x08yaw_rate\x18\x07 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nslip_angle\x18\x08 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nroll_angle\x18\t \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\troll_rate\x18\n \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x35\n\x0bpitch_angle\x18\x0b \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\npitch_rate\x18\x0c \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nvelocity_y\x18\r \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nposition_z\x18\x0e \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x34\n\nvelocity_z\x18\x0f \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10roll_angle_front\x18\x10 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0froll_rate_front\x18\x11 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10velocity_y_front\x18\x12 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10position_z_front\x18\x13 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12:\n\x10velocity_z_front\x18\x14 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0froll_angle_rear\x18\x15 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0eroll_rate_rear\x18\x16 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fvelocity_y_rear\x18\x17 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fposition_z_rear\x18\x18 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x39\n\x0fvelocity_z_rear\x18\x19 \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x43\n\x19\x66ront_wheel_angular_speed\x18\x1a \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x42\n\x18rear_wheel_angular_speed\x18\x1b \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12H\n\x1eleft_front_wheel_angular_speed\x18\x1c \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12I\n\x1fright_front_wheel_angular_speed\x18\x1d \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12G\n\x1dleft_rear_wheel_angular_speed\x18\x1e \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12H\n\x1eright_rear_wheel_angular_speed\x18\x1f \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\tdelta_y_f\x18  \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\tdelta_y_r\x18! \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x36\n\x0c\x61\x63\x63\x65leration\x18" \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0e\x61\x63\x63\x65leration_y\x18# \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12.\n\x04jerk\x18$ \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x33\n\tcurvature\x18% \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x38\n\x0e\x63urvature_rate\x18& \x01(\x0b\x32 .commonroad.FloatExactOrInterval\x12\x35\n\ttime_step\x18\' \x02(\x0b\x32".commonroad.IntegerExactOrIntervalB\n\n\x08position"\xd8\x01\n\x0bSignalState\x12\x35\n\ttime_step\x18\x01 \x01(\x0b\x32".commonroad.IntegerExactOrInterval\x12\x0c\n\x04horn\x18\x02 \x01(\x08\x12\x16\n\x0eindicator_left\x18\x03 \x01(\x08\x12\x17\n\x0findicator_right\x18\x04 \x01(\x08\x12\x16\n\x0e\x62raking_lights\x18\x05 \x01(\x08\x12\x1d\n\x15hazard_warning_lights\x18\x06 \x01(\x08\x12\x1c\n\x14\x66lashing_blue_lights\x18\x07 \x01(\x08"p\n\x11OccupancyWithTime\x12\x35\n\ttime_step\x18\x01 \x02(\x0b\x32".commonroad.IntegerExactOrInterval\x12$\n\x05shape\x18\x02 \x02(\x0b\x32\x15.commonroad.Occupancy"B\n\x0cOccupancySet\x12\x32\n\x0boccupancies\x18\x01 \x03(\x0b\x32\x1d.commonroad.OccupancyWithTime"J\n\nTrajectory\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12!\n\x06states\x18\x02 \x03(\x0b\x32\x11.commonroad.State"d\n\x14TrajectoryPrediction\x12*\n\ntrajectory\x18\x01 \x02(\x0b\x32\x16.commonroad.Trajectory\x12 \n\x05shape\x18\x02 \x02(\x0b\x32\x11.commonroad.Shape"`\n\x12SetBasedPrediction\x12\x19\n\x11initial_time_step\x18\x01 \x02(\r\x12/\n\roccupancy_set\x18\x02 \x02(\x0b\x32\x18.commonroad.OccupancySet'
     ),
     dependencies=[
         util__pb2.DESCRIPTOR,
@@ -843,7 +841,7 @@ _STATE = _descriptor.Descriptor(
         ),
     ],
     serialized_start=317,
-    serialized_end=2581,
+    serialized_end=2585,
 )
 
 
@@ -989,21 +987,21 @@ _SIGNALSTATE = _descriptor.Descriptor(
     syntax="proto2",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=2584,
-    serialized_end=2800,
+    serialized_start=2588,
+    serialized_end=2804,
 )
 
 
-_OCCUPANCY = _descriptor.Descriptor(
-    name="Occupancy",
-    full_name="commonroad.Occupancy",
+_OCCUPANCYWITHTIME = _descriptor.Descriptor(
+    name="OccupancyWithTime",
+    full_name="commonroad.OccupancyWithTime",
     filename=None,
     file=DESCRIPTOR,
     containing_type=None,
     fields=[
         _descriptor.FieldDescriptor(
             name="time_step",
-            full_name="commonroad.Occupancy.time_step",
+            full_name="commonroad.OccupancyWithTime.time_step",
             index=0,
             number=1,
             type=11,
@@ -1021,7 +1019,7 @@ _OCCUPANCY = _descriptor.Descriptor(
         ),
         _descriptor.FieldDescriptor(
             name="shape",
-            full_name="commonroad.Occupancy.shape",
+            full_name="commonroad.OccupancyWithTime.shape",
             index=1,
             number=2,
             type=11,
@@ -1046,8 +1044,8 @@ _OCCUPANCY = _descriptor.Descriptor(
     syntax="proto2",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=2802,
-    serialized_end=2902,
+    serialized_start=2806,
+    serialized_end=2918,
 )
 
 
@@ -1085,8 +1083,8 @@ _OCCUPANCYSET = _descriptor.Descriptor(
     syntax="proto2",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=2904,
-    serialized_end=2962,
+    serialized_start=2920,
+    serialized_end=2986,
 )
 
 
@@ -1142,8 +1140,8 @@ _TRAJECTORY = _descriptor.Descriptor(
     syntax="proto2",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=2964,
-    serialized_end=3038,
+    serialized_start=2988,
+    serialized_end=3062,
 )
 
 
@@ -1199,8 +1197,8 @@ _TRAJECTORYPREDICTION = _descriptor.Descriptor(
     syntax="proto2",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=3040,
-    serialized_end=3140,
+    serialized_start=3064,
+    serialized_end=3164,
 )
 
 
@@ -1256,13 +1254,13 @@ _SETBASEDPREDICTION = _descriptor.Descriptor(
     syntax="proto2",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=3142,
-    serialized_end=3238,
+    serialized_start=3166,
+    serialized_end=3262,
 )
 
 _OBSTACLETYPEENUM_OBSTACLETYPE.containing_type = _OBSTACLETYPEENUM
 _STATE.fields_by_name["point"].message_type = util__pb2._POINT
-_STATE.fields_by_name["shape"].message_type = util__pb2._SHAPE
+_STATE.fields_by_name["shape"].message_type = util__pb2._OCCUPANCY
 _STATE.fields_by_name["orientation"].message_type = util__pb2._FLOATEXACTORINTERVAL
 _STATE.fields_by_name["velocity"].message_type = util__pb2._FLOATEXACTORINTERVAL
 _STATE.fields_by_name["steering_angle"].message_type = util__pb2._FLOATEXACTORINTERVAL
@@ -1313,9 +1311,9 @@ _STATE.fields_by_name["point"].containing_oneof = _STATE.oneofs_by_name["positio
 _STATE.oneofs_by_name["position"].fields.append(_STATE.fields_by_name["shape"])
 _STATE.fields_by_name["shape"].containing_oneof = _STATE.oneofs_by_name["position"]
 _SIGNALSTATE.fields_by_name["time_step"].message_type = util__pb2._INTEGEREXACTORINTERVAL
-_OCCUPANCY.fields_by_name["time_step"].message_type = util__pb2._INTEGEREXACTORINTERVAL
-_OCCUPANCY.fields_by_name["shape"].message_type = util__pb2._SHAPE
-_OCCUPANCYSET.fields_by_name["occupancies"].message_type = _OCCUPANCY
+_OCCUPANCYWITHTIME.fields_by_name["time_step"].message_type = util__pb2._INTEGEREXACTORINTERVAL
+_OCCUPANCYWITHTIME.fields_by_name["shape"].message_type = util__pb2._OCCUPANCY
+_OCCUPANCYSET.fields_by_name["occupancies"].message_type = _OCCUPANCYWITHTIME
 _TRAJECTORY.fields_by_name["states"].message_type = _STATE
 _TRAJECTORYPREDICTION.fields_by_name["trajectory"].message_type = _TRAJECTORY
 _TRAJECTORYPREDICTION.fields_by_name["shape"].message_type = util__pb2._SHAPE
@@ -1323,7 +1321,7 @@ _SETBASEDPREDICTION.fields_by_name["occupancy_set"].message_type = _OCCUPANCYSET
 DESCRIPTOR.message_types_by_name["ObstacleTypeEnum"] = _OBSTACLETYPEENUM
 DESCRIPTOR.message_types_by_name["State"] = _STATE
 DESCRIPTOR.message_types_by_name["SignalState"] = _SIGNALSTATE
-DESCRIPTOR.message_types_by_name["Occupancy"] = _OCCUPANCY
+DESCRIPTOR.message_types_by_name["OccupancyWithTime"] = _OCCUPANCYWITHTIME
 DESCRIPTOR.message_types_by_name["OccupancySet"] = _OCCUPANCYSET
 DESCRIPTOR.message_types_by_name["Trajectory"] = _TRAJECTORY
 DESCRIPTOR.message_types_by_name["TrajectoryPrediction"] = _TRAJECTORYPREDICTION
@@ -1363,16 +1361,16 @@ SignalState = _reflection.GeneratedProtocolMessageType(
 )
 _sym_db.RegisterMessage(SignalState)
 
-Occupancy = _reflection.GeneratedProtocolMessageType(
-    "Occupancy",
+OccupancyWithTime = _reflection.GeneratedProtocolMessageType(
+    "OccupancyWithTime",
     (_message.Message,),
     dict(
-        DESCRIPTOR=_OCCUPANCY,
+        DESCRIPTOR=_OCCUPANCYWITHTIME,
         __module__="obstacle_pb2",
-        # @@protoc_insertion_point(class_scope:commonroad.Occupancy)
+        # @@protoc_insertion_point(class_scope:commonroad.OccupancyWithTime)
     ),
 )
-_sym_db.RegisterMessage(Occupancy)
+_sym_db.RegisterMessage(OccupancyWithTime)
 
 OccupancySet = _reflection.GeneratedProtocolMessageType(
     "OccupancySet",
