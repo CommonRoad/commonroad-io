@@ -1,5 +1,6 @@
+from dataclasses import dataclass
+
 import shapely
-from attr import dataclass
 
 from commonroad.common.util import make_valid_orientation
 from commonroad.geometry.obstacle_shapes.obstacle_shape import ObstacleShape
