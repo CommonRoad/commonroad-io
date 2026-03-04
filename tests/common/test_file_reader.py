@@ -2,6 +2,7 @@ import os
 import unittest
 
 import numpy as np
+import shapely
 import pytest
 
 from commonroad import SCENARIO_VERSION
@@ -20,14 +21,17 @@ from commonroad.common.common_scenario import (
 )
 from commonroad.common.file_reader import CommonRoadFileReader, combine_map_dynamic
 from commonroad.common.util import FileFormat, Interval
-from commonroad.geometry.shape import Circle, Polygon, Rectangle
+from commonroad.geometry.obstacle_shapes.circle_obstacle_shape import CircleObstacleShape
+from commonroad.geometry.obstacle_shapes.rect_obstacle_shape import RectObstacleShape
+from commonroad.geometry.occupancy.circle_occupancy import CircleOccupancy
+from commonroad.geometry.occupancy.polygon_occupancy import PolygonOccupancy
+from commonroad.geometry.occupancy.rect_occupancy import RectOccupancy
 from commonroad.planning.planning_problem import (
     GoalRegion,
     PlanningProblem,
     PlanningProblemSet,
 )
 from commonroad.prediction.prediction import (
-    Occupancy,
     SetBasedPrediction,
     TrajectoryPrediction,
 )
@@ -92,25 +96,26 @@ class TestXMLFileReader(unittest.TestCase):
         self.filename_2018b = self.cwd_path + "/../test_scenarios/xml/2018b/USA_Lanker-1_1_T-1.xml"
 
         # setup for reading obstacles, lanelets, planning problem and all (without intersection)
-        rectangle = Rectangle(4.3, 8.9, center=np.array([0.1, 0.5]), orientation=1.7)
-        polygon = Polygon(
-            np.array(
+        rectangle = RectOccupancy(
+            length=4.3,
+            width=8.9,
+            rect_center=shapely.Point(0.1, 0.5),
+            orientation=1.7,
+        )
+        polygon = PolygonOccupancy(
+            shapely.Polygon(
                 [
-                    np.array((0.0, 0.0)),
-                    np.array((0.0, 1.0)),
-                    np.array((1.0, 1.0)),
-                    np.array((1.0, 0.0)),
+                    (0.0, 0.0),
+                    (0.0, 1.0),
+                    (1.0, 1.0),
+                    (1.0, 0.0),
                 ]
             )
         )
-        circ = Circle(2.0, np.array([0.0, 0.0]))
-        occupancy_list = list()
-        occupancy_list.append(Occupancy(0, rectangle))
-        occupancy_list.append(Occupancy(1, circ))
-        occupancy_list.append(Occupancy(2, polygon))
-        occupancy_list.append(Occupancy(3, circ))
+        circ = CircleOccupancy(radius=2.0, circle_center=shapely.Point(0.0, 0.0))
+        occupancies = {0: rectangle, 1: circ, 2: polygon, 3: circ}
 
-        set_pred = SetBasedPrediction(0, occupancy_list)
+        set_pred = SetBasedPrediction(0, occupancies)
 
         states = []
         state = CustomState()
@@ -120,7 +125,8 @@ class TestXMLFileReader(unittest.TestCase):
         states.append(state)
         trajectory = Trajectory(1, states)
         init_state = InitialState(time_step=0, orientation=0, position=np.array([0, 0]))
-        traj_pred = TrajectoryPrediction(trajectory, rectangle)
+        rect_shape = RectObstacleShape(length=4.3, width=8.9)
+        traj_pred = TrajectoryPrediction(trajectory, rect_shape)
 
         initial_signal_state = SignalState(
             time_step=0, horn=True, hazard_warning_lights=True, braking_lights=False
@@ -129,27 +135,28 @@ class TestXMLFileReader(unittest.TestCase):
             SignalState(time_step=1, horn=False, hazard_warning_lights=False, braking_lights=True)
         ]
 
+        circ_shape = CircleObstacleShape(radius=2.0)
         static_obs = StaticObstacle(
-            3, ObstacleType("unknown"), obstacle_shape=circ, initial_state=init_state
+            3, ObstacleType("unknown"), obstacle_shape=circ_shape, initial_state=init_state
         )
         dyn_set_obs = DynamicObstacle(
             1,
             ObstacleType("unknown"),
             initial_state=init_state,
             prediction=set_pred,
-            obstacle_shape=rectangle,
+            obstacle_shape=rect_shape,
         )
         dyn_traj_obs = DynamicObstacle(
             2,
             ObstacleType("unknown"),
             initial_state=init_state,
             prediction=traj_pred,
-            obstacle_shape=rectangle,
+            obstacle_shape=rect_shape,
             initial_signal_state=initial_signal_state,
             signal_series=signal_series,
         )
 
-        environment_obstacle_shape = Polygon(np.array([[0, 0], [8, 0], [4, -4]]))
+        environment_obstacle_shape = PolygonOccupancy(shapely.Polygon([[0, 0], [8, 0], [4, -4]]))
         environment_obstacle_id = 1234
         self._environment_obstacle = EnvironmentObstacle(
             environment_obstacle_id, ObstacleType.BUILDING, environment_obstacle_shape
@@ -486,7 +493,6 @@ class TestXMLFileReader(unittest.TestCase):
         exp_obstacle_zero_role = self.scenario.obstacles[0].obstacle_role
         exp_obstacle_zero_shape = self.scenario.obstacles[0].obstacle_shape.__class__
         exp_obstacle_zero_radius = self.scenario.obstacles[0].obstacle_shape.radius
-        exp_obstacle_zero_center = self.scenario.obstacles[0].obstacle_shape.center
 
         exp_obstacle_one_id = self.scenario.obstacles[1].obstacle_id
         exp_obstacle_one_type = self.scenario.obstacles[1].obstacle_type
@@ -495,7 +501,7 @@ class TestXMLFileReader(unittest.TestCase):
         exp_obstacle_one_attributes = len(self.scenario.obstacles[1].initial_state.attributes)
         exp_obstacle_one_orientation = self.scenario.obstacles[1].initial_state.orientation
         exp_obstacle_one_prediction_zero_shape_center = (
-            self.scenario.obstacles[1].prediction.occupancy_set[0].shape.center
+            self.scenario.obstacles[1].prediction.occupancies[0].center
         )
 
         exp_obstacle_two_id = self.scenario.obstacles[2].obstacle_id
@@ -516,12 +522,6 @@ class TestXMLFileReader(unittest.TestCase):
             exp_obstacle_zero_shape, obstacles[0].obstacles[0].obstacle_shape.__class__
         )
         self.assertEqual(exp_obstacle_zero_radius, obstacles[0].obstacles[0].obstacle_shape.radius)
-        self.assertEqual(
-            exp_obstacle_zero_center[0], obstacles[0].obstacles[0].obstacle_shape.center[0]
-        )
-        self.assertEqual(
-            exp_obstacle_zero_center[1], obstacles[0].obstacles[0].obstacle_shape.center[1]
-        )
 
         self.assertEqual(exp_obstacle_one_id, obstacles[0].obstacles[1].obstacle_id)
         self.assertEqual(exp_obstacle_one_type, obstacles[0].obstacles[1].obstacle_type)
@@ -534,12 +534,12 @@ class TestXMLFileReader(unittest.TestCase):
             exp_obstacle_one_orientation, obstacles[0].obstacles[1].initial_state.orientation
         )
         self.assertEqual(
-            exp_obstacle_one_prediction_zero_shape_center[0],
-            obstacles[0].obstacles[1].prediction.occupancy_set[0].shape.center[0],
+            exp_obstacle_one_prediction_zero_shape_center.x,
+            obstacles[0].obstacles[1].prediction.occupancies[0].center.x,
         )
         self.assertEqual(
-            exp_obstacle_one_prediction_zero_shape_center[1],
-            obstacles[0].obstacles[1].prediction.occupancy_set[0].shape.center[1],
+            exp_obstacle_one_prediction_zero_shape_center.y,
+            obstacles[0].obstacles[1].prediction.occupancies[0].center.y,
         )
 
         self.assertEqual(exp_obstacle_two_id, obstacles[0].obstacles[2].obstacle_id)
@@ -600,7 +600,6 @@ class TestXMLFileReader(unittest.TestCase):
         exp_obstacle_zero_role = self.scenario.obstacles[0].obstacle_role
         exp_obstacle_zero_shape = self.scenario.obstacles[0].obstacle_shape.__class__
         exp_obstacle_zero_radius = self.scenario.obstacles[0].obstacle_shape.radius
-        exp_obstacle_zero_center = self.scenario.obstacles[0].obstacle_shape.center
 
         exp_obstacle_one_id = self.scenario.obstacles[1].obstacle_id
         exp_obstacle_one_type = self.scenario.obstacles[1].obstacle_type
@@ -609,7 +608,7 @@ class TestXMLFileReader(unittest.TestCase):
         exp_obstacle_one_attributes = len(self.scenario.obstacles[1].initial_state.attributes)
         exp_obstacle_one_orientation = self.scenario.obstacles[1].initial_state.orientation
         exp_obstacle_one_prediction_zero_shape_center = (
-            self.scenario.obstacles[1].prediction.occupancy_set[0].shape.center
+            self.scenario.obstacles[1].prediction.occupancies[0].center
         )
 
         exp_obstacle_two_id = self.scenario.obstacles[2].obstacle_id
@@ -738,12 +737,6 @@ class TestXMLFileReader(unittest.TestCase):
         self.assertEqual(exp_obstacle_zero_role, xml_file[0].obstacles[0].obstacle_role)
         self.assertEqual(exp_obstacle_zero_shape, xml_file[0].obstacles[0].obstacle_shape.__class__)
         self.assertEqual(exp_obstacle_zero_radius, xml_file[0].obstacles[0].obstacle_shape.radius)
-        self.assertEqual(
-            exp_obstacle_zero_center[0], xml_file[0].obstacles[0].obstacle_shape.center[0]
-        )
-        self.assertEqual(
-            exp_obstacle_zero_center[1], xml_file[0].obstacles[0].obstacle_shape.center[1]
-        )
 
         self.assertEqual(exp_obstacle_one_id, xml_file[0].obstacles[1].obstacle_id)
         self.assertEqual(exp_obstacle_one_type, xml_file[0].obstacles[1].obstacle_type)
@@ -755,13 +748,14 @@ class TestXMLFileReader(unittest.TestCase):
         self.assertEqual(
             exp_obstacle_one_orientation, xml_file[0].obstacles[1].initial_state.orientation
         )
+        init_time_step = xml_file[0].obstacles[1].prediction.initial_time_step
         self.assertEqual(
-            exp_obstacle_one_prediction_zero_shape_center[0],
-            xml_file[0].obstacles[1].prediction.occupancy_set[0].shape.center[0],
+            exp_obstacle_one_prediction_zero_shape_center.x,
+            xml_file[0].obstacles[1].prediction.occupancies[init_time_step].center.x,
         )
         self.assertEqual(
-            exp_obstacle_one_prediction_zero_shape_center[1],
-            xml_file[0].obstacles[1].prediction.occupancy_set[0].shape.center[1],
+            exp_obstacle_one_prediction_zero_shape_center.y,
+            xml_file[0].obstacles[1].prediction.occupancies[init_time_step].center.y,
         )
 
         self.assertEqual(exp_obstacle_two_id, xml_file[0].obstacles[2].obstacle_id)
@@ -1300,7 +1294,7 @@ class TestXMLFileReader(unittest.TestCase):
         exp_environment_obstacle_id = self._environment_obstacle.obstacle_id
         exp_environment_obstacle_role = self._environment_obstacle.obstacle_role
         exp_environment_obstacle_type = self._environment_obstacle.obstacle_type
-        exp_environment_obstacle_shape = self._environment_obstacle.obstacle_shape
+        exp_environment_obstacle_shape = self._environment_obstacle.occupancy
 
         xml_file = CommonRoadFileReader(self.filename_all).open(lanelet_assignment=False)
         self.assertEqual(
@@ -1314,26 +1308,28 @@ class TestXMLFileReader(unittest.TestCase):
         )
         np.testing.assert_array_almost_equal(
             exp_environment_obstacle_shape.vertices,
-            xml_file[0].environment_obstacle[0].obstacle_shape.vertices,
+            xml_file[0].environment_obstacle[0].occupancy.vertices,
         )
 
     def test_read_phantom_obstacle(self):
         exp_phantom_obstacle_id = self._phantom_obstacle.obstacle_id
         exp_phantom_obstacle_role = self._phantom_obstacle.obstacle_role
         exp_obstacle_one_prediction_zero_shape_center = (
-            self.scenario.obstacles[1].prediction.occupancy_set[0].shape.center
+            self.scenario.obstacles[1].prediction.occupancies[0].center
         )
 
         xml_file = CommonRoadFileReader(self.filename_all).open(lanelet_assignment=False)
         self.assertEqual(exp_phantom_obstacle_id, xml_file[0].phantom_obstacle[0].obstacle_id)
         self.assertEqual(exp_phantom_obstacle_role, xml_file[0].phantom_obstacle[0].obstacle_role)
+
+        init_time_step = xml_file[0].obstacles[1].prediction.initial_time_step
         self.assertEqual(
-            exp_obstacle_one_prediction_zero_shape_center[0],
-            xml_file[0].obstacles[1].prediction.occupancy_set[0].shape.center[0],
+            exp_obstacle_one_prediction_zero_shape_center.x,
+            xml_file[0].obstacles[1].prediction.occupancies[init_time_step].center.x,
         )
         self.assertEqual(
-            exp_obstacle_one_prediction_zero_shape_center[1],
-            xml_file[0].obstacles[1].prediction.occupancy_set[0].shape.center[1],
+            exp_obstacle_one_prediction_zero_shape_center.y,
+            xml_file[0].obstacles[1].prediction.occupancies[init_time_step].center.y,
         )
 
     # def test_open_all_scenarios(self):
@@ -1548,6 +1544,9 @@ class TestProtobufFileReader(unittest.TestCase):
         self.filename_custom_dynamic_pb = (
             self.cwd_path + "/../test_scenarios/protobuf/ZAM_TestReadingCustomState-1_1_T-1.pb"
         )
+
+        self.filename_zam_xml = self.cwd_path + "/../test_scenarios/ZAM_Tutorial-1_1_T-1.xml"
+        self.filename_zam_pb = self.cwd_path + "/../test_scenarios/ZAM_Tutorial-1_1_T-1.pb"
 
     def test_open_map(self):
         #  Carcarana

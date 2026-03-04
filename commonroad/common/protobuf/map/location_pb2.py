@@ -11,6 +11,7 @@ from google.protobuf import symbol_database as _symbol_database
 
 # @@protoc_insertion_point(imports)
 
+_b = sys.version_info[0] < 3 and (lambda x: x) or (lambda x: x.encode("latin1"))
 _sym_db = _symbol_database.Default()
 
 

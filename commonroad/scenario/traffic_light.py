@@ -10,7 +10,7 @@ from commonroad.common.validity import (
     is_real_number_vector,
     is_valid_orientation,
 )
-from commonroad.geometry.shape import Rectangle
+from commonroad.geometry.occupancy.rect_occupancy import RectOccupancy
 from commonroad.visualization.draw_params import (
     OptionalSpecificOrAllDrawParams,
     TrafficLightParams,
@@ -202,7 +202,7 @@ class TrafficLight(IDrawable):
         color: List[TrafficLightState] = None,
         active: bool = True,
         direction: TrafficLightDirection = TrafficLightDirection.ALL,
-        shape: Optional[Rectangle] = None,
+        shape: Optional[RectOccupancy] = None,
     ):
         """
         :param traffic_light_id: ID of the traffic light
@@ -339,12 +339,12 @@ class TrafficLight(IDrawable):
         self._direction = direction
 
     @property
-    def shape(self) -> Rectangle:
+    def shape(self) -> RectOccupancy:
         """Shape of rectangle."""
         return self._shape
 
     @shape.setter
-    def shape(self, shape: Rectangle):
+    def shape(self, shape: RectOccupancy):
         self._shape = shape
 
     def translate_rotate(self, translation: np.ndarray, angle: float):

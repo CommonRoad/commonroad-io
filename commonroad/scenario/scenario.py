@@ -5,6 +5,7 @@ from collections import defaultdict
 from typing import Dict, List, Optional, Set, Tuple, Union
 
 import numpy as np
+import shapely
 
 from commonroad.common.common_scenario import Environment, FileInformation, ScenarioID
 from commonroad.common.util import Interval
@@ -15,8 +16,8 @@ from commonroad.common.validity import (
     is_real_number_vector,
     is_valid_orientation,
 )
+from commonroad.geometry.occupancy.occupancy import Occupancy
 from commonroad.prediction.prediction import (
-    Occupancy,
     SetBasedPrediction,
     TrajectoryPrediction,
 )
@@ -720,13 +721,11 @@ class Scenario(IDrawable):
             '<Scenario/obstacles_by_role_and_type> argument "obstacle_role" of wrong type. Expected types: '
             " %s or %s. Got type: %s." % (ObstacleRole, None, type(obstacle_role))
         )
-        occupancies = list()
-        for obstacle in self.obstacles:
-            if (
-                obstacle_role is None or obstacle.obstacle_role == obstacle_role
-            ) and obstacle.occupancy_at_time(time_step):
-                occupancies.append(obstacle.occupancy_at_time(time_step))
-        return occupancies
+        return [
+            obs.occupancy_at_time(time_step)
+            for obs in self.obstacles
+            if obstacle_role is None or obs.obstacle_role == obstacle_role
+        ]
 
     def obstacle_by_id(
         self, obstacle_id: int
@@ -804,12 +803,10 @@ class Scenario(IDrawable):
         :return: list of obstacles in the position intervals
         """
 
-        def contained_in_interval(position: np.ndarray):
-            if position_intervals[0].contains(position[0]) and position_intervals[1].contains(
-                position[1]
-            ):
-                return True
-            return False
+        def contained_in_interval(position: shapely.Point):
+            return position_intervals[0].contains(position.x) and position_intervals[1].contains(
+                position.y
+            )
 
         if time_step is None:
             time_step = 0
@@ -819,30 +816,30 @@ class Scenario(IDrawable):
             for obstacle in self.dynamic_obstacles:
                 occ = obstacle.occupancy_at_time(time_step)
                 if occ is not None:
-                    if not hasattr(occ.shape, "center"):
+                    if not hasattr(occ, "center"):
                         obstacle_list.append(obstacle)
-                    elif contained_in_interval(occ.shape.center):
+                    elif contained_in_interval(occ.center):
                         obstacle_list.append(obstacle)
 
         if ObstacleRole.Phantom in obstacle_role:
             for obstacle in self.phantom_obstacle:
                 occ = obstacle.occupancy_at_time(time_step)
                 if occ is not None:
-                    if not hasattr(occ.shape, "center"):
+                    if not hasattr(occ, "center"):
                         obstacle_list.append(obstacle)
-                    elif contained_in_interval(occ.shape.center):
+                    elif contained_in_interval(occ.center):
                         obstacle_list.append(obstacle)
 
         if ObstacleRole.STATIC in obstacle_role:
             for obstacle in self.static_obstacles:
-                if contained_in_interval(obstacle.initial_state.position):
+                if contained_in_interval(shapely.Point(obstacle.initial_state.position)):
                     obstacle_list.append(obstacle)
 
         if ObstacleRole.ENVIRONMENT in obstacle_role:
             for obstacle in self.environment_obstacle:
-                if not hasattr(obstacle.obstacle_shape, "center"):
+                if not hasattr(obstacle.occupancy, "center"):
                     obstacle_list.append(obstacle)
-                elif contained_in_interval(obstacle.obstacle_shape.center):
+                elif contained_in_interval(obstacle.occupancy.center):
                     obstacle_list.append(obstacle)
 
         return obstacle_list
@@ -905,8 +902,8 @@ class Scenario(IDrawable):
                 lanelet_ids = lanelet_ids_center
             else:
                 # assign shape of obstacle
-                shape = obstacle.occupancy_at_time(time_step).shape
-                lanelet_ids = set(self.lanelet_network.find_lanelet_by_shape(shape))
+                shape = obstacle.occupancy_at_time(time_step)
+                lanelet_ids = set(self.lanelet_network.find_lanelet_by_occupancy(shape))
                 if obstacle.prediction is not None:
                     obstacle.prediction.shape_lanelet_assignment[time_step] = lanelet_ids
 
@@ -922,9 +919,9 @@ class Scenario(IDrawable):
             return True
 
         def assign_static_obstacle(obstacle: StaticObstacle):
-            shape = obstacle.occupancy_at_time(0).shape
+            shape = obstacle.occupancy_at_time(0)
             if not use_center_only:
-                lanelet_ids = set(self.lanelet_network.find_lanelet_by_shape(shape))
+                lanelet_ids = set(self.lanelet_network.find_lanelet_by_occupancy(shape))
                 obstacle.initial_shape_lanelet_ids = lanelet_ids
             lanelet_ids = set(
                 self.lanelet_network.find_lanelet_by_position([obstacle.initial_state.position])[0]

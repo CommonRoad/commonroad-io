@@ -60,16 +60,21 @@ from commonroad.common.reader.file_reader_interface import (
     FileReaderScenario,
 )
 from commonroad.common.reader.scenario_interface import ScenarioInterface
+from commonroad.common.reader.file_reader_interface import FileReader
+from commonroad.common.reader.protobuf_factories.occupancy_factory import OccupancyFactory
+from commonroad.common.reader.protobuf_factories.point_factory import PointFactory
+from commonroad.common.reader.protobuf_factories.shape_factory import ObstacleShapeFactory
 from commonroad.common.util import AngleInterval, Interval, Path_T, Time
-from commonroad.geometry.shape import Circle, Polygon, Rectangle, Shape, ShapeGroup
+from commonroad.geometry.obstacle_shapes.obstacle_shape import ObstacleShape
+from commonroad.geometry.occupancy.occupancy import Occupancy
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import (
     CooperativePlanningProblem,
     PlanningProblem,
 )
 from commonroad.prediction.prediction import (
-    Occupancy,
     SetBasedPrediction,
+    TimeType,
     TrajectoryPrediction,
 )
 from commonroad.scenario.area import Area, AreaBorder, AreaType
@@ -846,7 +851,7 @@ class StaticObstacleFactory:
             obstacle_pb2.ObstacleTypeEnum.ObstacleType.Name(static_obstacle_msg.obstacle_type)
         ]
 
-        shape = ShapeFactory.create_from_message(static_obstacle_msg.shape)
+        shape = ObstacleShapeFactory.create_from_message(static_obstacle_msg.shape)
 
         initial_state = StateFactory.create_from_message(
             static_obstacle_msg.initial_state, is_initial_state=True
@@ -883,7 +888,7 @@ class DynamicObstacleFactory:
             obstacle_pb2.ObstacleTypeEnum.ObstacleType.Name(dynamic_obstacle_msg.obstacle_type)
         ]
 
-        shape = ShapeFactory.create_from_message(dynamic_obstacle_msg.shape)
+        shape = ObstacleShapeFactory.create_from_message(dynamic_obstacle_msg.shape)
 
         initial_state = StateFactory.create_from_message(
             dynamic_obstacle_msg.initial_state, is_initial_state=True
@@ -949,9 +954,9 @@ class EnvironmentObstacleFactory:
             )
         ]
 
-        shape = ShapeFactory.create_from_message(environment_obstacle_msg.obstacle_shape)
+        occupancy = OccupancyFactory.create_from_message(environment_obstacle_msg.obstacle_shape)
 
-        return EnvironmentObstacle(environment_obstacle_id, obstacle_type, shape)
+        return EnvironmentObstacle(environment_obstacle_id, obstacle_type, occupancy)
 
 
 class PhantomObstacleFactory:
@@ -1052,7 +1057,7 @@ class StateFactory:
                     if state_msg.HasField("point"):
                         setattr(state, attr, PointFactory.create_from_message(state_msg.point))
                     elif state_msg.HasField("shape"):
-                        setattr(state, attr, ShapeFactory.create_from_message(state_msg.shape))
+                        setattr(state, attr, OccupancyFactory.create_from_message(state_msg.shape))
                 elif attr == "orientation":
                     setattr(
                         state,
@@ -1097,24 +1102,27 @@ class SignalStateFactory:
         return SignalState(**kwargs) if kwargs else None
 
 
-class OccupancyFactory:
+class OccupancyWithTimeFactory:
     @classmethod
-    def create_from_message(cls, occupancy_msg: obstacle_pb2.Occupancy) -> Occupancy:
-        time_step = IntegerExactOrIntervalFactory.create_from_message(occupancy_msg.time_step)
-        shape = ShapeFactory.create_from_message(occupancy_msg.shape)
-
-        return Occupancy(time_step, shape)
+    def create_from_message(
+        cls, occupancy_msg: obstacle_pb2.OccupancyWithTime
+    ) -> Tuple[TimeType, Occupancy]:
+        t = IntegerExactOrIntervalFactory.create_from_message(occupancy_msg.time_step)
+        occupancy = OccupancyFactory.create_from_message(occupancy_msg.shape)
+        return t, occupancy
 
 
 class OccupancySetFactory:
     @classmethod
-    def create_from_message(cls, occupancy_set_msg: obstacle_pb2.OccupancySet) -> List[Occupancy]:
-        occupancies = list()
-        for occupancy_msg in occupancy_set_msg.occupancies:
-            occupancy = OccupancyFactory.create_from_message(occupancy_msg)
-            occupancies.append(occupancy)
-
-        return occupancies
+    def create_from_message(
+        cls, occupancy_set_msg: obstacle_pb2.OccupancySet
+    ) -> Dict[TimeType, Occupancy]:
+        return dict(
+            [
+                OccupancyWithTimeFactory.create_from_message(occupancy_msg)
+                for occupancy_msg in occupancy_set_msg.occupancies
+            ]
+        )
 
 
 class TrajectoryFactory:
@@ -1137,7 +1145,7 @@ class TrajectoryPredictionFactory:
     ) -> TrajectoryPrediction:
         trajectory = TrajectoryFactory.create_from_message(trajectory_prediction_msg.trajectory)
 
-        shape = ShapeFactory.create_from_message(trajectory_prediction_msg.shape)
+        shape = ObstacleShapeFactory.create_from_message(trajectory_prediction_msg.shape)
 
         trajectory_prediction = TrajectoryPrediction(trajectory, shape)
 
@@ -1152,14 +1160,14 @@ class TrajectoryPredictionFactory:
         state_list: List[TraceState],
         lanelet_network: LaneletNetwork,
         obstacle_id: int,
-        shape: Shape,
+        shape: ObstacleShape,
     ) -> Dict[int, Set[int]]:
         compl_state_list = [initial_state] + state_list
         lanelet_ids_per_state = {}
 
         for state in compl_state_list:
-            rotated_shape = shape.rotate_translate_local(state.position, state.orientation)
-            lanelet_ids = lanelet_network.find_lanelet_by_shape(rotated_shape)
+            occ = shape.compute_occupancy(state)
+            lanelet_ids = lanelet_network.find_lanelet_by_occupancy(occ)
             for l_id in lanelet_ids:
                 lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet(
                     obstacle_id=obstacle_id, time_step=state.time_step
@@ -1262,78 +1270,6 @@ class GoalStateFactory:
             goal_position_lanelets = list(goal_state_msg.goal_position_lanelets)
 
         return state, goal_position_lanelets
-
-
-class PointFactory:
-    @classmethod
-    def create_from_message(cls, point_msg: util_pb2.Point) -> np.ndarray:
-        return np.array([point_msg.x, point_msg.y])
-
-
-class RectangleFactory:
-    @classmethod
-    def create_from_message(cls, rectangle_msg: util_pb2.Rectangle) -> Rectangle:
-        rectangle = Rectangle(rectangle_msg.length, rectangle_msg.width)
-
-        if rectangle_msg.HasField("center"):
-            point = PointFactory.create_from_message(rectangle_msg.center)
-            rectangle.center = point
-
-        if rectangle_msg.HasField("orientation"):
-            rectangle.orientation = rectangle_msg.orientation
-
-        return rectangle
-
-
-class CircleFactory:
-    @classmethod
-    def create_from_message(cls, circle_msg: util_pb2.Circle) -> Circle:
-        circle = Circle(circle_msg.radius)
-
-        if circle_msg.HasField("center"):
-            point = PointFactory.create_from_message(circle_msg.center)
-            circle.center = point
-
-        return circle
-
-
-class PolygonFactory:
-    @classmethod
-    def create_from_message(cls, polygon_msg: util_pb2.Polygon) -> Polygon:
-        vertices = list()
-        for point_msg in polygon_msg.vertices:
-            point = PointFactory.create_from_message(point_msg)
-            vertices.append(point)
-        polygon = Polygon(np.array(vertices))
-
-        return polygon
-
-
-class ShapeGroupFactory:
-    @classmethod
-    def create_from_message(cls, shape_group_msg: util_pb2.ShapeGroup) -> ShapeGroup:
-        shapes = list()
-        for shape_msg in shape_group_msg.shapes:
-            shape = ShapeFactory.create_from_message(shape_msg)
-            shapes.append(shape)
-        shape_group = ShapeGroup(shapes)
-
-        return shape_group
-
-
-class ShapeFactory:
-    @classmethod
-    def create_from_message(cls, shape_msg: util_pb2.Shape) -> Shape:
-        if shape_msg.HasField("rectangle"):
-            shape = RectangleFactory.create_from_message(shape_msg.rectangle)
-        elif shape_msg.HasField("circle"):
-            shape = CircleFactory.create_from_message(shape_msg.circle)
-        elif shape_msg.HasField("polygon"):
-            shape = PolygonFactory.create_from_message(shape_msg.polygon)
-        else:
-            shape = ShapeGroupFactory.create_from_message(shape_msg.shape_group)
-
-        return shape
 
 
 class IntegerIntervalFactory:

@@ -3,9 +3,10 @@ import math
 import unittest
 
 import numpy as np
+import shapely
 
 from commonroad.common.util import AngleInterval, Interval
-from commonroad.geometry.shape import Rectangle
+from commonroad.geometry.occupancy.rect_occupancy import RectOccupancy
 from commonroad.scenario.state import (
     CustomState,
     ExtendedPMState,
@@ -27,7 +28,11 @@ class TestState(unittest.TestCase):
         self.assertEqual(state.used_attributes, used_attrs)
 
     def test_is_uncertain_position(self):
-        state = PMState(position=Rectangle(10.0, 10.0))
+        state = PMState(
+            position=RectOccupancy(
+                length=10.0, width=10.0, rect_center=shapely.Point([0.0, 0.0]), orientation=0.0
+            )
+        )
         self.assertTrue(state.is_uncertain_position)
 
         state = PMState(position=np.array([5.0, 5.0]))
@@ -98,25 +103,30 @@ class TestState(unittest.TestCase):
 
         # uncertain position
         state_elements = {
-            "position": Rectangle(
-                length=4.0, width=2.0, center=np.array([1.5, 3.6]), orientation=0.13
+            "position": RectOccupancy(
+                length=4.0,
+                width=2.0,
+                rect_center=shapely.Point([1.5, 3.6]),
+                orientation=0.13,
             )
         }
         angle = 0.87
         state = InitialState(**state_elements)
         state_prime = state.translate_rotate(translation, angle)
 
-        new_center = translate_rotate(state_elements["position"].center)
-        self.assertEqual(len(state_prime.position.center), len(new_center))
-        for ii in range(0, len(new_center)):
-            self.assertAlmostEqual(new_center[ii], state_prime.position.center[ii])
+        new_center = translate_rotate(np.array(state_elements["position"].center.xy).squeeze())
+        self.assertAlmostEqual(new_center[0], state_prime.position.center.x)
+        self.assertAlmostEqual(new_center[1], state_prime.position.center.y)
+
         self.assertAlmostEqual(state_prime.position.orientation, 1.0)
         self.assertAlmostEqual(state_prime.position.length, 4.0)
         self.assertAlmostEqual(state_prime.position.width, 2.0)
 
     def test_convert_state_to_state(self):
         initial_state = InitialState(
-            position=Rectangle(20.0, 5.0),
+            position=RectOccupancy(
+                length=20.0, width=5.0, rect_center=shapely.Point([0.0, 0.0]), orientation=0.0
+            ),
             orientation=0.1,
             velocity=10.0,
             acceleration=5.0,
@@ -131,7 +141,9 @@ class TestState(unittest.TestCase):
 
         custom_state = CustomState(
             time_step=0,
-            position=Rectangle(20.0, 5.0),
+            position=RectOccupancy(
+                length=20.0, width=5.0, rect_center=shapely.Point([0.0, 0.0]), orientation=0.0
+            ),
             orientation=0.1,
             velocity=10.0,
             acceleration=5.0,
@@ -169,7 +181,9 @@ class TestState(unittest.TestCase):
         )
         self.assertEqual(ks_state_1, ks_state_2)
 
-        ks_state_2.position = Rectangle(10.0, 4.0)
+        ks_state_2.position = RectOccupancy(
+            length=10.0, width=4.0, rect_center=shapely.Point([0.0, 0.0]), orientation=0.0
+        )
         self.assertNotEqual(ks_state_1, ks_state_2)
 
         pm_state_1 = PMState(time_step=1)

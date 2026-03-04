@@ -2,9 +2,11 @@ import math
 import unittest
 
 import numpy as np
+import shapely
 
 from commonroad.common.util import AngleInterval, Interval
-from commonroad.geometry.shape import Rectangle
+from commonroad.geometry.obstacle_shapes.rect_obstacle_shape import RectObstacleShape
+from commonroad.geometry.occupancy.rect_occupancy import RectOccupancy
 from commonroad.planning.goal import GoalRegion
 from commonroad.scenario.state import KSState, PMState, STState
 
@@ -14,7 +16,12 @@ class TestInitialization(unittest.TestCase):
         goal_state_1 = STState(time_step=Interval(5, 6))
         goal_state_2 = STState(time_step=Interval(5, 6), orientation=AngleInterval(1.5, 1.8))
         goal_state_3 = STState(time_step=Interval(2, 3))
-        goal_state_4 = STState(time_step=Interval(1, 8), position=Rectangle(3, 5))
+        goal_state_4 = STState(
+            time_step=Interval(1, 8),
+            position=RectOccupancy(
+                length=3, width=5, rect_center=shapely.Point([0.0, 0.0]), orientation=0.0
+            ),
+        )
         goal_state_5 = STState(time_step=Interval(5, 6))
         input_states = [goal_state_1, goal_state_2, goal_state_3, goal_state_4, goal_state_5]
         goal_region = GoalRegion(input_states)
@@ -47,7 +54,12 @@ class TestInitialization(unittest.TestCase):
         goal_state_1 = STState(time_step=Interval(5, 6))
         goal_state_2 = STState(time_step=Interval(5, 6), orientation=AngleInterval(1.5, 1.8))
         goal_state_3 = STState(time_step=Interval(2, 3))
-        goal_state_4 = STState(time_step=Interval(1, 8), position=Rectangle(3, 5))
+        goal_state_4 = STState(
+            time_step=Interval(1, 8),
+            position=RectOccupancy(
+                length=3, width=5, rect_center=shapely.Point([0.0, 0.0]), orientation=0.0
+            ),
+        )
         goal_state_5 = STState(time_step=Interval(5, 6))
         input_states = [goal_state_1, goal_state_2, goal_state_3, goal_state_4, goal_state_5]
         goal_region_1 = GoalRegion(input_states)
@@ -58,7 +70,12 @@ class TestInitialization(unittest.TestCase):
         goal_state_1 = STState(time_step=Interval(5, 6))
         goal_state_2 = STState(time_step=Interval(5, 6), orientation=AngleInterval(1.5, 1.8))
         goal_state_3 = STState(time_step=Interval(2, 3))
-        goal_state_4 = STState(time_step=Interval(1, 8), position=Rectangle(3, 5))
+        goal_state_4 = STState(
+            time_step=Interval(1, 8),
+            position=RectOccupancy(
+                length=3, width=5, rect_center=shapely.Point([0.0, 0.0]), orientation=0
+            ),
+        )
         goal_state_5 = STState(time_step=Interval(5, 6))
         input_states = [goal_state_1, goal_state_2, goal_state_3, goal_state_4, goal_state_5]
         goal_region_1 = GoalRegion(input_states)

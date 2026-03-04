@@ -5,6 +5,7 @@ from collections import defaultdict
 from typing import Dict, List, Optional, Set, Tuple, Union
 
 import numpy as np
+import shapely.geometry.base
 from shapely.geometry import Point as ShapelyPoint
 from shapely.geometry import Polygon as ShapelyPolygon
 from shapely.strtree import STRtree
@@ -28,7 +29,8 @@ from commonroad.common.validity import (
     is_valid_orientation,
     is_valid_polyline,
 )
-from commonroad.geometry.shape import Circle, Polygon, Rectangle, Shape, ShapeGroup
+from commonroad.geometry.occupancy.occupancy import Occupancy
+from commonroad.geometry.occupancy.polygon_occupancy import PolygonOccupancy
 from commonroad.scenario.area import Area
 from commonroad.scenario.intersection import (
     CrossingGroup,
@@ -179,8 +181,10 @@ class Lanelet:
         self._distance = None
         self._inner_distance = None
         # create empty polygon
-        self._polygon = Polygon(
-            np.concatenate((self.right_vertices, np.flip(self.left_vertices, 0)))
+        self._polygon = PolygonOccupancy(
+            polygon=shapely.Polygon(
+                np.concatenate((self.right_vertices, np.flip(self.left_vertices, 0)))
+            )
         )
 
         self._dynamic_obstacles_on_lanelet = {}
@@ -639,7 +643,7 @@ class Lanelet:
         self._adjacent_areas = value
 
     @property
-    def polygon(self) -> Polygon:
+    def polygon(self) -> PolygonOccupancy:
         return self._polygon
 
     @property
@@ -736,8 +740,10 @@ class Lanelet:
             self._stop_line.translate_rotate(translation, angle)
 
         # recreate polygon in case it existed
-        self._polygon = Polygon(
-            np.concatenate((self.right_vertices, np.flip(self.left_vertices, 0)))
+        self._polygon = PolygonOccupancy(
+            polygon=shapely.Polygon(
+                np.concatenate((self.right_vertices, np.flip(self.left_vertices, 0)))
+            )
         )
 
     def convert_to_2d(self) -> None:
@@ -754,8 +760,10 @@ class Lanelet:
             self._stop_line.convert_to_2d()
 
         # recreate polygon in 2D
-        self._polygon = Polygon(
-            np.concatenate((self.right_vertices, np.flip(self.left_vertices, 0)))
+        self._polygon = PolygonOccupancy(
+            polygon=shapely.Polygon(
+                np.concatenate((self.right_vertices, np.flip(self.left_vertices, 0)))
+            )
         )
 
     def interpolate_position(
@@ -787,7 +795,7 @@ class Lanelet:
             idx,
         )
 
-    def convert_to_polygon(self) -> Polygon:
+    def convert_to_polygon(self) -> PolygonOccupancy:
         """
         Converts the given lanelet to a polygon representation
 
@@ -835,22 +843,10 @@ class Lanelet:
         lanelet_shapely_obj = self._polygon.shapely_object
         # look at each obstacle
         for o in obstacles:
-            o_shape = o.occupancy_at_time(time_step).shape
-
-            # vertices to check
-            shape_shapely_objects = list()
-
-            # distinguish between shape and shape group and extract vertices
-            if isinstance(o_shape, ShapeGroup):
-                shape_shapely_objects.extend([sh.shapely_object for sh in o_shape.shapes])
-            else:
-                shape_shapely_objects.append(o_shape.shapely_object)
-
+            o_shape = o.occupancy_at_time(time_step)
             # check if obstacle is in lane
-            for shapely_obj in shape_shapely_objects:
-                if lanelet_shapely_obj.intersects(shapely_obj):
-                    res.append(o)
-                    break
+            if lanelet_shapely_obj.intersects(o_shape.shapely_object):
+                res.append(o)
 
         return res
 
@@ -1376,7 +1372,7 @@ class LaneletNetwork(IDrawable):
         return list(self._lanelets.values())
 
     @property
-    def lanelet_polygons(self) -> List[Polygon]:
+    def lanelet_polygons(self) -> List[PolygonOccupancy]:
         """List of polygons of the lanelet network."""
         return [la.polygon for la in self.lanelets]
 
@@ -1488,7 +1484,7 @@ class LaneletNetwork(IDrawable):
     def create_from_lanelet_network(
         cls,
         lanelet_network: "LaneletNetwork",
-        shape_input: Optional[Shape] = None,
+        shape_input: Optional[Occupancy] = None,
         exclude_lanelet_types: Optional[Set[LaneletType]] = None,
         cleanup_ids: bool = True,
     ):
@@ -1517,7 +1513,7 @@ class LaneletNetwork(IDrawable):
             if (
                 len(la.lanelet_type.intersection(exclude_lanelet_types)) > 0
                 or shape_input is not None
-                and not shape_input.shapely_object.intersects(la.polygon.shapely_object)
+                and not shapely.intersects(shape_input.shapely_object, la.polygon.shapely_object)
             ):
                 continue
 
@@ -2230,22 +2226,36 @@ class LaneletNetwork(IDrawable):
         res = [lanelet_ids[i] for i, _ in enumerate(point_list)]
         return res
 
-    def find_lanelet_by_shape(self, shape: Shape) -> List[int]:
+    def find_lanelet_by_occupancy(self, occcupancy: Occupancy) -> List[int]:
         """
-        Finds the lanelet id of a given shape
+        Finds the lanelet id of a given occupancy
+
+        :param occcupancy: The shape to check
+        :return: A list of lanelet ids. If the position could not be matched to a lanelet, an empty list is returned
+        """
+        assert isinstance(occcupancy, Occupancy), (
+            "<Lanelet/find_lanelet_by_shape>: "
+            "provided shape is not a shape! "
+            "type = {}".format(type(occcupancy))
+        )
+        return self.find_lanelet_by_shapely_shape(occcupancy.shapely_object)
+
+    def find_lanelet_by_shapely_shape(self, shape: shapely.Geometry) -> List[int]:
+        """
+        Finds the lanelet id of a given shapely shape
 
         :param shape: The shape to check
         :return: A list of lanelet ids. If the position could not be matched to a lanelet, an empty list is returned
         """
-        assert isinstance(shape, (Circle, Polygon, Rectangle)), (
+        assert isinstance(shape, shapely.Geometry), (
             "<Lanelet/find_lanelet_by_shape>: "
-            "provided shape is not a shape! "
+            "provided shape is not a shapely shape! "
             "type = {}".format(type(shape))
         )
         res = []
-        for idx in self._strtee.query(shape.shapely_object):
+        for idx in self._strtee.query(shape):
             lanelet_shapely_polygon = self._strtee.geometries[idx]
-            if lanelet_shapely_polygon.intersects(shape.shapely_object):
+            if lanelet_shapely_polygon.intersects(shape):
                 res.append(self._get_lanelet_id_by_shapely_polygon(lanelet_shapely_polygon))
         return res
 

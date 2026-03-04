@@ -9,7 +9,7 @@ import "util.proto";
 message State {
     oneof position {
         Point point = 1;
-        Shape shape = 2;
+        Occupancy shape = 2;
     }
     optional FloatExactOrInterval orientation = 3;
     optional FloatExactOrInterval velocity = 4;
@@ -58,4 +58,28 @@ message SignalState {
     optional bool braking_lights = 5;
     optional bool hazard_warning_lights = 6;
     optional bool flashing_blue_lights = 7;
+}
+
+message OccupancyWithTime {
+    required IntegerExactOrInterval time_step = 1;
+    required Occupancy shape = 2;
+}
+
+message OccupancySet {
+    repeated OccupancyWithTime occupancies = 1;
+}
+
+message Trajectory {
+    required uint32 initial_time_step = 1;
+    repeated State states = 2;
+}
+
+message TrajectoryPrediction {
+    required Trajectory trajectory = 1;
+    required Shape shape = 2;
+}
+
+message SetBasedPrediction {
+    required uint32 initial_time_step = 1;
+    required OccupancySet occupancy_set = 2;
 }
