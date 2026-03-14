@@ -1,12 +1,13 @@
 import shapely
 
+# from commonroad.scenario_definition.protobuf_format.generated_scripts import util_pb2
+from commonroad.common.protobuf.common import util_pb2
 from commonroad.common.reader.protobuf_factories.point_factory import PointFactory
 from commonroad.geometry.occupancy.circle_occupancy import CircleOccupancy
 from commonroad.geometry.occupancy.occupancy import Occupancy
 from commonroad.geometry.occupancy.occupancy_group import OccupancyGroup
 from commonroad.geometry.occupancy.polygon_occupancy import PolygonOccupancy
 from commonroad.geometry.occupancy.rect_occupancy import RectOccupancy
-from commonroad.scenario_definition.protobuf_format.generated_scripts import util_pb2
 
 
 class OccupancyFactory:

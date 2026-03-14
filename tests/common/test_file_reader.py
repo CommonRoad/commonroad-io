@@ -2,8 +2,8 @@ import os
 import unittest
 
 import numpy as np
-import shapely
 import pytest
+import shapely
 
 from commonroad import SCENARIO_VERSION
 from commonroad.common.common_lanelet import (

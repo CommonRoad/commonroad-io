@@ -55,15 +55,15 @@ from commonroad.common.protobuf.scenario import (
 )
 from commonroad.common.reader.dynamic_interface import DynamicInterface
 from commonroad.common.reader.file_reader_interface import (
+    FileReader,
     FileReaderDynamic,
     FileReaderMap,
     FileReaderScenario,
 )
-from commonroad.common.reader.scenario_interface import ScenarioInterface
-from commonroad.common.reader.file_reader_interface import FileReader
 from commonroad.common.reader.protobuf_factories.occupancy_factory import OccupancyFactory
 from commonroad.common.reader.protobuf_factories.point_factory import PointFactory
 from commonroad.common.reader.protobuf_factories.shape_factory import ObstacleShapeFactory
+from commonroad.common.reader.scenario_interface import ScenarioInterface
 from commonroad.common.util import AngleInterval, Interval, Path_T, Time
 from commonroad.geometry.obstacle_shapes.obstacle_shape import ObstacleShape
 from commonroad.geometry.occupancy.occupancy import Occupancy

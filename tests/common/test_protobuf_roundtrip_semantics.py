@@ -144,8 +144,8 @@ def _diff_commonroad(label_a, scn_a, pps_a, label_b, scn_b, pps_b) -> List[str]:
 
     # Lanelets
     net_a, net_b = scn_a.lanelet_network, scn_b.lanelet_network
-    ids_a = {l.lanelet_id for l in net_a.lanelets}
-    ids_b = {l.lanelet_id for l in net_b.lanelets}
+    ids_a = {lane.lanelet_id for lane in net_a.lanelets}
+    ids_b = {lane.lanelet_id for lane in net_b.lanelets}
 
     for i in ids_a ^ ids_b:
         add(f"Lanelet {'removed' if i in ids_a else 'added'}: {i}")
@@ -218,9 +218,7 @@ class TestProtobufRoundtripSemantics(unittest.TestCase):
             xml_rewrite = os.path.join(tmp_dir, "USA_Lanker-1_1_T-1-roundtrip.xml")
 
             # 2) Write protobuf split files
-            fw_pb = CommonRoadFileWriter(
-                scn_xml1, pps_xml1, file_format=FileFormat.PROTOBUF
-            )
+            fw_pb = CommonRoadFileWriter(scn_xml1, pps_xml1, file_format=FileFormat.PROTOBUF)
             fw_pb.write_map_to_file(pb_map, overwrite_existing_file=OverwriteExistingFile.ALWAYS)
             fw_pb.write_dynamic_to_file(
                 pb_dynamic, overwrite_existing_file=OverwriteExistingFile.ALWAYS
@@ -271,12 +269,19 @@ class TestProtobufRoundtripSemantics(unittest.TestCase):
             # Ignore known metadata loss in protobuf split files (tags are not preserved there)
             diffs_xml_pb = [d for d in diffs_xml_pb if "tags differ" not in d]
 
-            self.assertEqual([], diffs_xml_pb,
-                    msg="XML vs PB semantic differences found:\n" + "\n".join(diffs_xml_pb), )
+            self.assertEqual(
+                [],
+                diffs_xml_pb,
+                msg="XML vs PB semantic differences found:\n" + "\n".join(diffs_xml_pb),
+            )
 
             # Optional diagnostic only (do not fail test): XML writer may inject defaults / lose metadata
-            diffs_pb_xml = _diff_commonroad("PB", scn_pb, pps_pb, "XML(rewrite)", scn_xml2, pps_xml2)
-            diffs_xml_xml = _diff_commonroad("XML(orig)", scn_xml1, pps_xml1, "XML(rewrite)", scn_xml2, pps_xml2)
+            diffs_pb_xml = _diff_commonroad(
+                "PB", scn_pb, pps_pb, "XML(rewrite)", scn_xml2, pps_xml2
+            )
+            diffs_xml_xml = _diff_commonroad(
+                "XML(orig)", scn_xml1, pps_xml1, "XML(rewrite)", scn_xml2, pps_xml2
+            )
 
             if diffs_pb_xml or diffs_xml_xml:
                 print("\n[INFO] Non-failing roundtrip XML differences (expected/known):")
@@ -284,6 +289,7 @@ class TestProtobufRoundtripSemantics(unittest.TestCase):
                     print(d)
                 if len(diffs_pb_xml) > 20:
                     print(f"... and {len(diffs_pb_xml) - 20} more")
+
 
 if __name__ == "__main__":
     unittest.main()
