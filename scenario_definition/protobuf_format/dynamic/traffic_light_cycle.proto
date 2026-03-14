@@ -4,7 +4,7 @@ option optimize_for = LITE_RUNTIME;
 
 package commonroad_dynamic;
 
-import "traffic_light_state.proto";
+import "common/traffic_light_state.proto";
 
 message CycleElement {
     required uint32 duration = 1;

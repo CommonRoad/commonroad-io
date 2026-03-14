@@ -4,8 +4,8 @@ option optimize_for = LITE_RUNTIME;
 
 package commonroad_map;
 
-import "util.proto";
-import "traffic_sign_element.proto";
+import "common/util.proto";
+import "common/traffic_sign_element.proto";
 
 message TrafficSign {
     required uint32  traffic_sign_id = 1;

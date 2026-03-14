@@ -4,8 +4,8 @@ option optimize_for = LITE_RUNTIME;
 
 package commonroad_scenario;
 
-import "planning_problem.proto";
-import "scenario_meta_information.proto";
+import "scenario/planning_problem.proto";
+import "common/scenario_meta_information.proto";
 
 message CommonRoadScenario {
     required commonroad_common.ScenarioMetaInformation scenario_meta_information = 1;

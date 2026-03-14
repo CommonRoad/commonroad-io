@@ -4,8 +4,8 @@ option optimize_for = LITE_RUNTIME;
 
 package commonroad_dynamic;
 
-import "util.proto";
-import "state.proto";
+import "common/util.proto";
+import "common/state.proto";
 
 message ObstacleTypeEnum {
     enum ObstacleType {
@@ -29,13 +29,67 @@ message ObstacleTypeEnum {
     }
 }
 
-message Occupancy {
+message State {
+    oneof position {
+        commonroad_common.Point point = 1;
+        commonroad_common.Occupancy shape = 2;
+    }
+    optional commonroad_common.FloatExactOrInterval orientation = 3;
+    optional commonroad_common.FloatExactOrInterval velocity = 4;
+    optional commonroad_common.FloatExactOrInterval steering_angle = 5;
+    optional commonroad_common.FloatExactOrInterval steering_angle_speed = 6;
+    optional commonroad_common.FloatExactOrInterval yaw_rate = 7;
+    optional commonroad_common.FloatExactOrInterval slip_angle = 8;
+    optional commonroad_common.FloatExactOrInterval roll_angle = 9;
+    optional commonroad_common.FloatExactOrInterval roll_rate = 10;
+    optional commonroad_common.FloatExactOrInterval pitch_angle = 11;
+    optional commonroad_common.FloatExactOrInterval pitch_rate = 12;
+    optional commonroad_common.FloatExactOrInterval velocity_y = 13;
+    optional commonroad_common.FloatExactOrInterval position_z = 14;
+    optional commonroad_common.FloatExactOrInterval velocity_z = 15;
+    optional commonroad_common.FloatExactOrInterval roll_angle_front = 16;
+    optional commonroad_common.FloatExactOrInterval roll_rate_front = 17;
+    optional commonroad_common.FloatExactOrInterval velocity_y_front = 18;
+    optional commonroad_common.FloatExactOrInterval position_z_front = 19;
+    optional commonroad_common.FloatExactOrInterval velocity_z_front = 20;
+    optional commonroad_common.FloatExactOrInterval roll_angle_rear = 21;
+    optional commonroad_common.FloatExactOrInterval roll_rate_rear = 22;
+    optional commonroad_common.FloatExactOrInterval velocity_y_rear = 23;
+    optional commonroad_common.FloatExactOrInterval position_z_rear = 24;
+    optional commonroad_common.FloatExactOrInterval velocity_z_rear = 25;
+    optional commonroad_common.FloatExactOrInterval front_wheel_angular_speed = 26;
+    optional commonroad_common.FloatExactOrInterval rear_wheel_angular_speed = 27;
+    optional commonroad_common.FloatExactOrInterval left_front_wheel_angular_speed = 28;
+    optional commonroad_common.FloatExactOrInterval right_front_wheel_angular_speed = 29;
+    optional commonroad_common.FloatExactOrInterval left_rear_wheel_angular_speed = 30;
+    optional commonroad_common.FloatExactOrInterval right_rear_wheel_angular_speed = 31;
+    optional commonroad_common.FloatExactOrInterval delta_y_f = 32;
+    optional commonroad_common.FloatExactOrInterval delta_y_r = 33;
+    optional commonroad_common.FloatExactOrInterval acceleration = 34;
+    optional commonroad_common.FloatExactOrInterval acceleration_y = 35;
+    optional commonroad_common.FloatExactOrInterval jerk = 36;
+    optional commonroad_common.FloatExactOrInterval curvature = 37;
+    optional commonroad_common.FloatExactOrInterval curvature_rate = 38;
+    required commonroad_common.IntegerExactOrInterval time_step = 39;
+}
+
+message SignalState {
+    optional commonroad_common.IntegerExactOrInterval time_step = 1;
+    optional bool horn = 2;
+    optional bool indicator_left = 3;
+    optional bool indicator_right = 4;
+    optional bool braking_lights = 5;
+    optional bool hazard_warning_lights = 6;
+    optional bool flashing_blue_lights = 7;
+}
+
+message OccupancyWithTime {
     required commonroad_common.IntegerExactOrInterval time_step = 1;
-    required commonroad_common.Shape shape = 2;
+    required commonroad_common.Occupancy shape = 2;
 }
 
 message OccupancySet {
-    repeated Occupancy occupancies = 1;
+    repeated commonroad_common.OccupancyWithTime occupancies = 1;
 }
 
 message Trajectory {

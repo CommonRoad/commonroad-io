@@ -4,7 +4,7 @@ option optimize_for = LITE_RUNTIME;
 
 package commonroad_dynamic;
 
-import "util.proto";
+import "common/util.proto";
 
 message TimeOfDayEnum {
     enum TimeOfDay {

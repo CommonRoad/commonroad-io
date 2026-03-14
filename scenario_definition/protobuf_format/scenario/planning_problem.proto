@@ -4,8 +4,8 @@ option optimize_for = LITE_RUNTIME;
 
 package commonroad_scenario;
 
-import "state.proto";
-import "scenario_tags.proto";
+import "common/state.proto";
+import "scenario/scenario_tags.proto";
 
 message GoalState {
     required commonroad_common.State state = 1;

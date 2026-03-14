@@ -4,13 +4,13 @@ option optimize_for = LITE_RUNTIME;
 
 package commonroad_dynamic;
 
-import "environment.proto";
-import "traffic_sign_value.proto";
-import "traffic_light_cycle.proto";
-import "static_obstacle.proto";
-import "dynamic_obstacle.proto";
-import "phantom_obstacle.proto";
-import "scenario_meta_information.proto";
+import "dynamic/environment.proto";
+import "dynamic/traffic_sign_value.proto";
+import "dynamic/traffic_light_cycle.proto";
+import "dynamic/static_obstacle.proto";
+import "dynamic/dynamic_obstacle.proto";
+import "dynamic/phantom_obstacle.proto";
+import "common/scenario_meta_information.proto";
 
 
 message CommonRoadDynamic {

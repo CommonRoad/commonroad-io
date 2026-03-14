@@ -4,14 +4,14 @@ option optimize_for = LITE_RUNTIME;
 
 package commonroad_map;
 
-import "location.proto";
-import "lanelet.proto";
-import "area.proto";
-import "traffic_sign.proto";
-import "traffic_light.proto";
-import "intersection.proto";
-import "environment_obstacle.proto";
-import "scenario_meta_information.proto";
+import "map/location.proto";
+import "map/lanelet.proto";
+import "map/area.proto";
+import "map/traffic_sign.proto";
+import "map/traffic_light.proto";
+import "map/intersection.proto";
+import "dynamic/environment_obstacle.proto";
+import "common/scenario_meta_information.proto";
 
 message MapInformation {
     required commonroad_common.MapID map_id = 1;
@@ -28,5 +28,5 @@ message CommonRoadMap {
     repeated TrafficSign traffic_signs = 7;
     repeated TrafficLight traffic_lights = 8;
     repeated Intersection intersections = 9;
-    repeated EnvironmentObstacle environment_obstacles = 10;
+    repeated commonroad_dynamic.EnvironmentObstacle environment_obstacles = 10;
 }

@@ -4,8 +4,8 @@ option optimize_for = LITE_RUNTIME;
 
 package commonroad_map;
 
-import "util.proto";
-import "traffic_light_state.proto";
+import "common/util.proto";
+import "common/traffic_light_state.proto";
 
 message TrafficLightDirectionEnum {
     enum TrafficLightDirection {

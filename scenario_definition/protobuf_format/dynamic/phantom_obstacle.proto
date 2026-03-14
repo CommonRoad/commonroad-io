@@ -4,7 +4,7 @@ option optimize_for = LITE_RUNTIME;
 
 package commonroad_dynamic;
 
-import "obstacle.proto";
+import "dynamic/obstacle.proto";
 
 message PhantomObstacle {
     required uint32 obstacle_id = 1;
