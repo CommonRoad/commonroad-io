@@ -178,9 +178,9 @@ class AngleInterval(Interval):
 
     def __init__(self, start: Union[int, float], end: Union[int, float]):
         start, end = make_valid_orientation_interval(start, end)
-        assert end - start < TWO_PI, (
-            "<common.util/AngleInterval> Interval must not be |start-end| > 2pi"
-        )
+        assert (
+            end - start < TWO_PI
+        ), "<common.util/AngleInterval> Interval must not be |start-end| > 2pi"
         Interval.__init__(self, start, end)
 
     @property
@@ -189,9 +189,9 @@ class AngleInterval(Interval):
 
     @start.setter
     def start(self, start: Union[int, float]):
-        assert is_valid_orientation(start), (
-            "<common.util/AngleInterval> start angle needs to be in interval [-2pi,2pi]"
-        )
+        assert is_valid_orientation(
+            start
+        ), "<common.util/AngleInterval> start angle needs to be in interval [-2pi,2pi]"
         if self._end is not None:
             assert start <= self._end, (
                 "<common.util/Interval> start of interval must be <= end, "
@@ -205,9 +205,9 @@ class AngleInterval(Interval):
 
     @end.setter
     def end(self, end: Union[int, float]):
-        assert is_valid_orientation(end), (
-            "<common.util/AngleInterval> end angle needs to be in interval [-2pi,2pi]"
-        )
+        assert is_valid_orientation(
+            end
+        ), "<common.util/AngleInterval> end angle needs to be in interval [-2pi,2pi]"
         if self._start is not None:
             assert end >= self._start, (
                 "<common.util/Interval> start of interval must be <= end, "

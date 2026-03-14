@@ -244,10 +244,10 @@ class Trajectory(IDrawable):
             "<Trajectory/interpolate_state_list>: Provided initial "
             "time is not within time vector! t_0 = {}".format(initial_time_cont)
         )
-        assert any(initial_time_cont + num_resampled_states * resampled_dt <= time_stamps_cont), (
-            "<Trajectory/interpolate_state_list>: Provided end time is not within time vector! t_h = {}".format(
-                initial_time_cont + num_resampled_states * resampled_dt
-            )
+        assert any(
+            initial_time_cont + num_resampled_states * resampled_dt <= time_stamps_cont
+        ), "<Trajectory/interpolate_state_list>: Provided end time is not within time vector! t_h = {}".format(
+            initial_time_cont + num_resampled_states * resampled_dt
         )
 
         # prepare interpolation by determining all slots with values

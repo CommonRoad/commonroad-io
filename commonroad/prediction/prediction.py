@@ -117,9 +117,9 @@ class SetBasedPrediction(Prediction):
             '<SetBasedPrediction/translate_rotate>: argument "translation" '
             "is not a vector of real numbers of length 2."
         )
-        assert is_valid_orientation(angle), (
-            '<SetBasedPrediction/translate_rotate>: argument "orientation" is not valid.'
-        )
+        assert is_valid_orientation(
+            angle
+        ), '<SetBasedPrediction/translate_rotate>: argument "orientation" is not valid.'
         self._occupancies = {
             time_step: occ.translate_rotate(translation[0], translation[1], angle)
             for time_step, occ in self._occupancies.items()
@@ -289,9 +289,9 @@ class TrajectoryPrediction(Prediction):
             "<TrajectoryPrediction/translate_rotate>: argument "
             '"translation" is not a vector of real numbers of length 2.'
         )
-        assert is_valid_orientation(angle), (
-            '<TrajectoryPrediction/translate_rotate>: argument "orientation" is not valid.'
-        )
+        assert is_valid_orientation(
+            angle
+        ), '<TrajectoryPrediction/translate_rotate>: argument "orientation" is not valid.'
 
         self._trajectory.translate_rotate(translation, angle)
 

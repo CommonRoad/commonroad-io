@@ -975,10 +975,10 @@ class Scenario(IDrawable):
             "not a vector of real numbers of length 2. "
             "translation = {}.".format(translation)
         )
-        assert is_valid_orientation(angle), (
-            '<Scenario/translate_rotate>: argument "orientation" is not valid. angle = {}.'.format(
-                angle
-            )
+        assert is_valid_orientation(
+            angle
+        ), '<Scenario/translate_rotate>: argument "orientation" is not valid. angle = {}.'.format(
+            angle
         )
 
         self._lanelet_network.translate_rotate(translation, angle)

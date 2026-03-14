@@ -214,9 +214,9 @@ class PlanningProblemSet(IDrawable):
             )
         )
 
-        assert all(isinstance(p, PlanningProblem) for p in planning_problem_list), (
-            'Elements of "planning_problem_list" of wrong type.'
-        )
+        assert all(
+            isinstance(p, PlanningProblem) for p in planning_problem_list
+        ), 'Elements of "planning_problem_list" of wrong type.'
 
     def add_planning_problem(self, planning_problem: PlanningProblem):
         """

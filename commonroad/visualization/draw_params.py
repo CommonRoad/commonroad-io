@@ -67,9 +67,9 @@ class BaseParam:
     @classmethod
     def load(cls, file_path: Union[pathlib.Path, str], validate_types: bool = True):
         file_path = pathlib.Path(file_path)
-        assert file_path.suffix == ".yaml", (
-            f"File type {file_path.suffix} is unsupported! Please use .yaml!"
-        )
+        assert (
+            file_path.suffix == ".yaml"
+        ), f"File type {file_path.suffix} is unsupported! Please use .yaml!"
         loaded_yaml = OmegaConf.load(file_path)
         if validate_types:
             OmegaConf.merge(OmegaConf.structured(MPDrawParams), loaded_yaml)

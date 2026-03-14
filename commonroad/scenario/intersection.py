@@ -101,9 +101,9 @@ class IncomingGroup:
         """
         :param i_id: ID of incoming
         """
-        assert is_natural_number(i_id), (
-            "<IncomingGroup/incoming_id>: Provided incoming_id is not valid! id={}".format(i_id)
-        )
+        assert is_natural_number(
+            i_id
+        ), "<IncomingGroup/incoming_id>: Provided incoming_id is not valid! id={}".format(i_id)
         self._incoming_id = i_id
 
     @property
@@ -240,10 +240,10 @@ class OutgoingGroup:
 
     @outgoing_id.setter
     def outgoing_id(self, outgoing_id: int):
-        assert is_natural_number(outgoing_id), (
-            "<OutgoingGroup/outgoing_id>: Provided outgoing_id is not valid! id={}".format(
-                outgoing_id
-            )
+        assert is_natural_number(
+            outgoing_id
+        ), "<OutgoingGroup/outgoing_id>: Provided outgoing_id is not valid! id={}".format(
+            outgoing_id
         )
         self._outgoing_id = outgoing_id
 
@@ -344,9 +344,9 @@ class CrossingGroup:
         """
         :param c_id: ID of crossing
         """
-        assert is_natural_number(c_id), (
-            "<CrossingGroup/incoming_id>: Provided crossing_id is not valid! id={}".format(c_id)
-        )
+        assert is_natural_number(
+            c_id
+        ), "<CrossingGroup/incoming_id>: Provided crossing_id is not valid! id={}".format(c_id)
         self._crossing_id = c_id
 
     @property
@@ -505,10 +505,10 @@ class Intersection:
         """
         :param i_id: ID of intersection element
         """
-        assert is_natural_number(i_id), (
-            "<Intersection/intersection_id>: Provided intersection_id is not valid! id={}".format(
-                i_id
-            )
+        assert is_natural_number(
+            i_id
+        ), "<Intersection/intersection_id>: Provided intersection_id is not valid! id={}".format(
+            i_id
         )
         self._intersection_id = i_id
 
