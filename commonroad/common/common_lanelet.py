@@ -195,9 +195,9 @@ class StopLine:
             "<Lanelet/translate_rotate>: provided translation "
             "is not valid! translation = {}".format(translation)
         )
-        assert is_valid_orientation(
-            angle
-        ), "<Lanelet/translate_rotate>: provided angle is not valid! angle = {}".format(angle)
+        assert is_valid_orientation(angle), (
+            "<Lanelet/translate_rotate>: provided angle is not valid! angle = {}".format(angle)
+        )
 
         # create transformation matrix
         t_m = commonroad.geometry.transform.translation_rotation_matrix(translation, angle)

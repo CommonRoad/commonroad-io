@@ -17,7 +17,7 @@ from commonroad.common.protobuf.common import (
 )
 from commonroad.common.protobuf.map import area_pb2 as map_dot_area__pb2
 from commonroad.common.protobuf.map import (
-    environment_obstacle_pb2 as dynamic_dot_environment__obstacle__pb2,
+    environment_obstacle_pb2 as map_dot_environment__obstacle__pb2,
 )
 from commonroad.common.protobuf.map import intersection_pb2 as map_dot_intersection__pb2
 from commonroad.common.protobuf.map import lanelet_pb2 as map_dot_lanelet__pb2
@@ -31,7 +31,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
     syntax="proto2",
     serialized_options=b"H\003",
     create_key=_descriptor._internal_create_key,
-    serialized_pb=b'\n\x18map/commonroad_map.proto\x12\x0e\x63ommonroad_map\x1a\x12map/location.proto\x1a\x11map/lanelet.proto\x1a\x0emap/area.proto\x1a\x16map/traffic_sign.proto\x1a\x17map/traffic_light.proto\x1a\x16map/intersection.proto\x1a"dynamic/environment_obstacle.proto\x1a&common/scenario_meta_information.proto"x\n\x0eMapInformation\x12(\n\x06map_id\x18\x01 \x02(\x0b\x32\x18.commonroad_common.MapID\x12<\n\x10\x66ile_information\x18\x02 \x02(\x0b\x32".commonroad_common.FileInformation"\x89\x04\n\rCommonRoadMap\x12<\n\x14map_meta_information\x18\x01 \x02(\x0b\x32\x1e.commonroad_map.MapInformation\x12*\n\x08location\x18\x02 \x02(\x0b\x32\x18.commonroad_map.Location\x12)\n\x08lanelets\x18\x03 \x03(\x0b\x32\x17.commonroad_map.Lanelet\x12,\n\nstop_lines\x18\x04 \x03(\x0b\x32\x18.commonroad_map.StopLine\x12)\n\nboundaries\x18\x05 \x03(\x0b\x32\x15.commonroad_map.Bound\x12#\n\x05\x61reas\x18\x06 \x03(\x0b\x32\x14.commonroad_map.Area\x12\x32\n\rtraffic_signs\x18\x07 \x03(\x0b\x32\x1b.commonroad_map.TrafficSign\x12\x34\n\x0etraffic_lights\x18\x08 \x03(\x0b\x32\x1c.commonroad_map.TrafficLight\x12\x33\n\rintersections\x18\t \x03(\x0b\x32\x1c.commonroad_map.Intersection\x12\x46\n\x15\x65nvironment_obstacles\x18\n \x03(\x0b\x32\'.commonroad_dynamic.EnvironmentObstacleB\x02H\x03',
+    serialized_pb=b'\n\x18map/commonroad_map.proto\x12\x0e\x63ommonroad_map\x1a\x12map/location.proto\x1a\x11map/lanelet.proto\x1a\x0emap/area.proto\x1a\x16map/traffic_sign.proto\x1a\x17map/traffic_light.proto\x1a\x16map/intersection.proto\x1a\x1emap/environment_obstacle.proto\x1a&common/scenario_meta_information.proto"x\n\x0eMapInformation\x12(\n\x06map_id\x18\x01 \x02(\x0b\x32\x18.commonroad_common.MapID\x12<\n\x10\x66ile_information\x18\x02 \x02(\x0b\x32".commonroad_common.FileInformation"\x85\x04\n\rCommonRoadMap\x12<\n\x14map_meta_information\x18\x01 \x02(\x0b\x32\x1e.commonroad_map.MapInformation\x12*\n\x08location\x18\x02 \x02(\x0b\x32\x18.commonroad_map.Location\x12)\n\x08lanelets\x18\x03 \x03(\x0b\x32\x17.commonroad_map.Lanelet\x12,\n\nstop_lines\x18\x04 \x03(\x0b\x32\x18.commonroad_map.StopLine\x12)\n\nboundaries\x18\x05 \x03(\x0b\x32\x15.commonroad_map.Bound\x12#\n\x05\x61reas\x18\x06 \x03(\x0b\x32\x14.commonroad_map.Area\x12\x32\n\rtraffic_signs\x18\x07 \x03(\x0b\x32\x1b.commonroad_map.TrafficSign\x12\x34\n\x0etraffic_lights\x18\x08 \x03(\x0b\x32\x1c.commonroad_map.TrafficLight\x12\x33\n\rintersections\x18\t \x03(\x0b\x32\x1c.commonroad_map.Intersection\x12\x42\n\x15\x65nvironment_obstacles\x18\n \x03(\x0b\x32#.commonroad_map.EnvironmentObstacleB\x02H\x03',
     dependencies=[
         map_dot_location__pb2.DESCRIPTOR,
         map_dot_lanelet__pb2.DESCRIPTOR,
@@ -39,7 +39,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
         map_dot_traffic__sign__pb2.DESCRIPTOR,
         map_dot_traffic__light__pb2.DESCRIPTOR,
         map_dot_intersection__pb2.DESCRIPTOR,
-        dynamic_dot_environment__obstacle__pb2.DESCRIPTOR,
+        map_dot_environment__obstacle__pb2.DESCRIPTOR,
         common_dot_scenario__meta__information__pb2.DESCRIPTOR,
     ],
 )
@@ -100,8 +100,8 @@ _MAPINFORMATION = _descriptor.Descriptor(
     syntax="proto2",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=248,
-    serialized_end=368,
+    serialized_start=244,
+    serialized_end=364,
 )
 
 
@@ -312,8 +312,8 @@ _COMMONROADMAP = _descriptor.Descriptor(
     syntax="proto2",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=371,
-    serialized_end=892,
+    serialized_start=367,
+    serialized_end=884,
 )
 
 _MAPINFORMATION.fields_by_name[
@@ -339,7 +339,7 @@ _COMMONROADMAP.fields_by_name[
 ].message_type = map_dot_intersection__pb2._INTERSECTION
 _COMMONROADMAP.fields_by_name[
     "environment_obstacles"
-].message_type = dynamic_dot_environment__obstacle__pb2._ENVIRONMENTOBSTACLE
+].message_type = map_dot_environment__obstacle__pb2._ENVIRONMENTOBSTACLE
 DESCRIPTOR.message_types_by_name["MapInformation"] = _MAPINFORMATION
 DESCRIPTOR.message_types_by_name["CommonRoadMap"] = _COMMONROADMAP
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)

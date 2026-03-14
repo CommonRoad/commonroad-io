@@ -1049,9 +1049,7 @@ class TrafficSign(IDrawable):
             "numbers of length 2."
         )
         assert is_real_number(angle), (
-            "<TrafficSign/translate_rotate>: argument angle must be a "
-            "scalar. "
-            "angle = %s" % angle
+            "<TrafficSign/translate_rotate>: argument angle must be a scalar. angle = %s" % angle
         )
         assert is_valid_orientation(angle), (
             "<TrafficSign/translate_rotate>: argument angle must "

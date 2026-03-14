@@ -49,9 +49,9 @@ class AreaBorder:
 
     @area_border_id.setter
     def area_border_id(self, value: int):
-        assert isinstance(
-            value, int
-        ), "<AreaBorder/area_border_id>: Provided id is not valid! id={}".format(value)
+        assert isinstance(value, int), (
+            "<AreaBorder/area_border_id>: Provided id is not valid! id={}".format(value)
+        )
         self._area_border_id = value
 
     @property
@@ -61,9 +61,9 @@ class AreaBorder:
 
     @boundary.setter
     def boundary(self, boundary: int):
-        assert isinstance(
-            boundary, int
-        ), "<AreaBorder/boundary>: Provided boundary id is not valid! adjacent={}".format(boundary)
+        assert isinstance(boundary, int), (
+            "<AreaBorder/boundary>: Provided boundary id is not valid! adjacent={}".format(boundary)
+        )
         self._boundary = boundary
 
     @property
@@ -73,9 +73,9 @@ class AreaBorder:
 
     @adjacent.setter
     def adjacent(self, val: List[int]):
-        assert isinstance(val, list) and all(
-            isinstance(x, int) for x in val
-        ), "<AreaBorder/adjacent>: Provided adjacent is not valid! adjacent={}".format(val)
+        assert isinstance(val, list) and all(isinstance(x, int) for x in val), (
+            "<AreaBorder/adjacent>: Provided adjacent is not valid! adjacent={}".format(val)
+        )
         self._adjacent = val
 
     @property
@@ -86,8 +86,9 @@ class AreaBorder:
     @line_marking.setter
     def line_marking(self, value: LineMarking):
         assert isinstance(value, LineMarking), (
-            "<AreaBorder/line_marking>: Provided lane marking type"
-            "is not valid! type = {}".format(type(value))
+            "<AreaBorder/line_marking>: Provided lane marking typeis not valid! type = {}".format(
+                type(value)
+            )
         )
         self._line_marking = value
 
@@ -134,9 +135,9 @@ class Area:
 
     @area_id.setter
     def area_id(self, value: int):
-        assert isinstance(
-            value, int
-        ), "<Area/area_id>: Provided area_id is not valid! id={}".format(value)
+        assert isinstance(value, int), (
+            "<Area/area_id>: Provided area_id is not valid! id={}".format(value)
+        )
         self._area_id = value
 
     @property
@@ -147,14 +148,14 @@ class Area:
     @border.setter
     def border(self, value: List[AreaBorder]):
         assert isinstance(value, list), (
-            "<Area/border>: provided list of area borders is not a " "list! type = {}".format(
+            "<Area/border>: provided list of area borders is not a list! type = {}".format(
                 type(value)
             )
         )
         for val in value:
-            assert isinstance(
-                val, AreaBorder
-            ), "<Area/border>: Provided border list is not valid! id={}".format(value)
+            assert isinstance(val, AreaBorder), (
+                "<Area/border>: Provided border list is not valid! id={}".format(value)
+            )
         self._border = value
 
     @property
@@ -165,14 +166,14 @@ class Area:
     @area_types.setter
     def area_types(self, value: Set[AreaType]):
         assert isinstance(value, set), (
-            "<Area/area_types>: provided set of area types is not a " "set! type = {}".format(
+            "<Area/area_types>: provided set of area types is not a set! type = {}".format(
                 type(value)
             )
         )
         for val in value:
-            assert isinstance(
-                val, AreaType
-            ), "<Area/area_types>: Provided area type set is not valid! id={}".format(value)
+            assert isinstance(val, AreaType), (
+                "<Area/area_types>: Provided area type set is not valid! id={}".format(value)
+            )
         self._area_types = value
 
     def __eq__(self, other):

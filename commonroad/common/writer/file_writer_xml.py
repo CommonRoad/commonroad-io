@@ -80,7 +80,7 @@ def create_exact_node_int(value: Union[int]) -> etree.Element:
     :return: node for exact value
     """
     assert np.issubdtype(type(value), np.integer), (
-        "<util/create_exact_node_int> expected type int for value but" " got %s" % (type(value))
+        "<util/create_exact_node_int> expected type int for value but got %s" % (type(value))
     )
     node = etree.Element("exact")
     node.text = str(value)

@@ -68,7 +68,7 @@ class FileWriter(ABC):
     @author.setter
     def author(self, author):
         assert isinstance(author, str), (
-            "<CommonRoadFileWriter/author> author must be a string, " "but has type {}".format(
+            "<CommonRoadFileWriter/author> author must be a string, but has type {}".format(
                 type(author)
             )
         )
@@ -93,7 +93,7 @@ class FileWriter(ABC):
     @source.setter
     def source(self, source):
         assert isinstance(source, str), (
-            "<CommonRoadFileWriter/source> source must be a string, " "but has type {}".format(
+            "<CommonRoadFileWriter/source> source must be a string, but has type {}".format(
                 type(source)
             )
         )

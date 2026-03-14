@@ -275,7 +275,7 @@ class TestVisualizationV2(unittest.TestCase):
         figsize = [20, 15]
         plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
         plt.gca().set(
-            title="occupancies should be be plotted with opacity, " "plot limits: [-50,60,-50,50]"
+            title="occupancies should be be plotted with opacity, plot limits: [-50,60,-50,50]"
         )
         plt.gca().autoscale_view(False, False, False)
         self.rnd = MPRenderer(plot_limits=[-50, 60, -50, 50])

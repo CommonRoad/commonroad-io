@@ -976,8 +976,9 @@ class Scenario(IDrawable):
             "translation = {}.".format(translation)
         )
         assert is_valid_orientation(angle), (
-            '<Scenario/translate_rotate>: argument "orientation" is not valid. '
-            "angle = {}.".format(angle)
+            '<Scenario/translate_rotate>: argument "orientation" is not valid. angle = {}.'.format(
+                angle
+            )
         )
 
         self._lanelet_network.translate_rotate(translation, angle)

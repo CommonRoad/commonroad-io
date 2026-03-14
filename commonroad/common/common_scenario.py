@@ -45,9 +45,9 @@ class ScenarioID:
         :param prediction_id: enumerates different predictions for the same initial configuration (e.g. 1)
         :param scenario_version: scenario version identifier (e.g. 2020a)
         """
-        assert (
-            scenario_version in SUPPORTED_COMMONROAD_VERSIONS
-        ), "Scenario_version {} not supported.".format(scenario_version)
+        assert scenario_version in SUPPORTED_COMMONROAD_VERSIONS, (
+            "Scenario_version {} not supported.".format(scenario_version)
+        )
         self.scenario_version: str = scenario_version
         self.cooperative: bool = cooperative
         self._country_id = None
@@ -61,7 +61,7 @@ class ScenarioID:
         # Obstacle behavior has to be defined if a prediction id is given. We can't recover from this!
         # prediction id is not None => obstacle_behavior is not None
         assert prediction_id is None or obstacle_behavior is not None, (
-            "Prediction id was given, but obstacle " "behavior undefined!"
+            "Prediction id was given, but obstacle behavior undefined!"
         )
         if not is_map:
             if has_prediction:
@@ -79,9 +79,9 @@ class ScenarioID:
         assert self.map_id > 0, f"Map id {configuration_id} <= 0!"
         assert is_map or self.configuration_id > 0, f"Configuration id {configuration_id} <= 0!"
         prediction_id = prediction_id if isinstance(prediction_id, list) else [prediction_id]
-        assert not has_prediction or all(
-            p > 0 for p in prediction_id
-        ), f"Prediction id {configuration_id} <= 0!"
+        assert not has_prediction or all(p > 0 for p in prediction_id), (
+            f"Prediction id {configuration_id} <= 0!"
+        )
 
     def __eq__(self, other):
         if not isinstance(other, ScenarioID):

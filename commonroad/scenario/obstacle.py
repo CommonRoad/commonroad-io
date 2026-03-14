@@ -432,8 +432,7 @@ class StaticObstacle(Obstacle):
             "not a vector of real numbers of length 2."
         )
         assert is_real_number(angle), (
-            "<StaticObstacle/translate_rotate>: argument angle must be a scalar. "
-            "angle = %s" % angle
+            "<StaticObstacle/translate_rotate>: argument angle must be a scalar. angle = %s" % angle
         )
         assert is_valid_orientation(angle), (
             "<StaticObstacle/translate_rotate>: argument angle must be within the "

@@ -283,9 +283,9 @@ class TrafficLight(IDrawable):
     @traffic_light_id.setter
     def traffic_light_id(self, traffic_light_id: int):
         assert isinstance(traffic_light_id, int), (
-            "<TrafficLight/traffic_light_id>: "
-            "Provided traffic_light_id is not valid! "
-            "id={}".format(traffic_light_id)
+            "<TrafficLight/traffic_light_id>: Provided traffic_light_id is not valid! id={}".format(
+                traffic_light_id
+            )
         )
         self._traffic_light_id = traffic_light_id
 
@@ -362,10 +362,7 @@ class TrafficLight(IDrawable):
             "length 2."
         )
         assert is_real_number(angle), (
-            "<TrafficLight/translate_rotate>: argument angle must "
-            "be "
-            "a scalar. "
-            "angle = %s" % angle
+            "<TrafficLight/translate_rotate>: argument angle must be a scalar. angle = %s" % angle
         )
         assert is_valid_orientation(angle), (
             "<TrafficLight/translate_rotate>: argument angle must "

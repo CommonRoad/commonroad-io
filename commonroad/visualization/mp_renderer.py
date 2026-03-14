@@ -1816,6 +1816,4 @@ class MPRenderer(IRenderer):
                 self.draw_ellipse(pos, signal_radius * 1.5, signal_radius * 1.5, draw_params.horn)
 
         else:
-            warnings.warn(
-                "Plotting signal states only implemented for " "obstacle_shapes Rectangle."
-            )
+            warnings.warn("Plotting signal states only implemented for obstacle_shapes Rectangle.")
