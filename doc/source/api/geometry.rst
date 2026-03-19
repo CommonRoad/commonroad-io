@@ -8,9 +8,13 @@ The class :class:`~commonroad.geometry.obstacle_shapes.obstacle_shape.ObstacleSh
 and its subclasses in the module :py:mod:`commonroad.geometry.obstacle_shapes`
 are used to represent the general shape of an obstacle, while the class
 :class:`~commonroad.geometry.occupancy.occupancy.Occupancy` and its subclasses in the module
-:py:mod:`commonroad.geometry.occupancy` are used to represent the
-occupancy of an obstacle in a certain state.
-The method :meth:`~commonroad.geometry.obstacle_shapes.obstacle_shape.ObstacleShape.compute_occupancy_for_state`
+:py:mod:`commonroad.geometry.occupancy` are used to represent
+an occupied area, e.g.,
+the occupancy of an obstacle in a certain state.
+All these classes are immutable dataclasses.
+The method
+:class:`~commonroad.geometry.obstacle_shapes.obstacle_shape.ObstacleShape`.
+:meth:`~commonroad.geometry.obstacle_shapes.obstacle_shape.ObstacleShape.compute_occupancy_for_state`
 computes the :class:`~commonroad.geometry.occupancy.occupancy.Occupancy` of an obstacle for a given state.
 The following diagram visualizes both the :class:`~commonroad.geometry.obstacle_shapes.obstacle_shape.ObstacleShape`
 and :class:`~commonroad.geometry.occupancy.occupancy.Occupancy` class hierarchies:

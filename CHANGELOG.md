@@ -1,5 +1,71 @@
 # Changelog
 
+## [2026.4] - 2026-03-18
+### Changed
+
+#### Created separate data structures for obstacle shapes and occupancies
+Previously, the class Shape and its subclasses Rectangle, Circle, Polygon, ShapeGroup and SemiTrailerTruck
+in the module [commonroad.geometry.shape](https://github.com/CommonRoad/commonroad-io/blob/bdfab5ccc14d1362050d565c88f2a98d6cabdf67/commonroad/geometry/shape.py)
+were used to represent both the general shape of an obstacle and the occupancy of an obstacle at a certain time step.
+Due to the semantic differences (the shape of an obstacle does not have an absolute position and orientation
+but the occupancy does), we created separate data structures for them:
+- **Obstacle shape**: The class [ObstacleShape](commonroad/geometry/obstacle_shapes/obstacle_shape.py)
+and its subclasses
+in the module [commonroad.geometry.obstacle_shapes](commonroad/geometry/obstacle_shapes/)
+are used to represent the general shape of an obstacle.
+- **Occupancy**: The class [Occupancy](commonroad/geometry/occupancy/occupancy.py) and its subclasses
+in the module [commonroad.geometry.occupancy](commonroad/geometry/occupancy/)
+are used to represent an occupied area, e.g., the occupancy of an obstacle at a certain time step.
+
+Please take a look at the class diagram in the
+[documentation](https://cps.pages.gitlab.lrz.de/commonroad/commonroad-io/develop/api/geometry.html#obstacleshape-and-occupancy)
+for more details.
+The [ObstacleShape](commonroad/geometry/obstacle_shapes/obstacle_shape.py) classes offer methods
+to compute the [Occupancy](commonroad/geometry/occupancy/occupancy.py) of the shape at a
+given state, e.g., for [RectObstacleShape](commonroad/geometry/obstacle_shapes/rect_obstacle_shape.py),
+this involves rotation by the state's orientation and translation by the state's position.
+These methods correspond the `rotate_translate_local` method of the old [commonroad.geometry.shape](https://github.com/CommonRoad/commonroad-io/blob/bdfab5ccc14d1362050d565c88f2a98d6cabdf67/commonroad/geometry/shape.py)
+classes.
+The [Occupancy](commonroad/geometry/occupancy/occupancy.py) classes offer geometric operations and conversion
+to a shapely object.
+They also implement [IDrawable](commonroad/visualization/drawable.py) like the old
+[commonroad.geometry.shape](https://github.com/CommonRoad/commonroad-io/blob/bdfab5ccc14d1362050d565c88f2a98d6cabdf67/commonroad/geometry/shape.py)
+classes.
+
+The following additional changes were made as part of this class separation:
+- The old [Occupany](https://github.com/CommonRoad/commonroad-io/blob/bdfab5ccc14d1362050d565c88f2a98d6cabdf67/commonroad/prediction/prediction.py)
+class in the module `commonroad.prediction.prediction`
+was removed and its usages were replaced by the new [Occupancy](commonroad/geometry/occupancy/occupancy.py) class.
+The main difference is that the new Occupancy class does not have a time step anymore.
+- Therefore, the class [Prediction](commonroad/prediction/prediction.py) now has the property ``occupancies``
+providing a dictionary mapping each time step to the occupancy,
+instead of the old property `occupancy_set` which provided a list.
+- The method ``find_lanelet_by_shape`` of the class [Lanelet](commonroad/scenario/lanelet.py) was removed
+and replaced by ``find_lanelet_by_occupancy`` (which does the same but takes
+an instance of the new
+[Occupancy](commonroad/geometry/occupancy/occupancy.py) class as argument
+instead of the old Shape class). Furthermore, the
+method ``find_lanelet_by_shapely_shape`` was added which takes a shapely geometry as argument.
+- The [Obstacle](commonroad/scenario/obstacle.py) class and its subclasses were adjusted accordingly,
+i.e., they use the new [ObstacleShape](commonroad/geometry/obstacle_shapes/obstacle_shape.py) classes
+now for storing their basic shape, and the [Occupancy](commonroad/geometry/occupancy/occupancy.py) classes
+for their occupancy at a certain time step.
+
+If you are using a Shape class from [commonroad.geometry.shape](https://github.com/CommonRoad/commonroad-io/blob/bdfab5ccc14d1362050d565c88f2a98d6cabdf67/commonroad/geometry/shape.py)
+in your own CommonRoad related project, you need to replace it by
+- [ObstacleShape](commonroad/geometry/obstacle_shapes/obstacle_shape.py) or its desired subclass, if
+your shape does not have an absolute position and orientation in the plane, but rather describes the general shape of
+object.
+- [Occupancy](commonroad/geometry/occupancy/occupancy.py) or its desired subclass, if
+your shape describes an occupied area with an absolute position and orientation in the plane.
+
+#### New format
+With this release, commonroad-io supports protobuf as file format for scenarios
+(additionally to the existing XML format).
+Moreover, the internal representation for intersections was improved and allows for modeling
+more sophisticated intersections.
+
+
 ## [2025.1] -
 ### Changed
 - Update to new template-repository structure
