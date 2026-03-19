@@ -1,12 +1,13 @@
 import numpy as np
 import shapely
 
-from commonroad.geometry.occupancy.occupancy import Occupancy
 from commonroad.geometry.occupancy.rect_occupancy import RectOccupancy
 from commonroad.scenario.state import TraceState
 
 
-def compute_rect_occupancy_for_state_set(state: TraceState, w_v: float, l_v: float) -> Occupancy:
+def compute_rect_occupancy_for_state_set(
+    state: TraceState, w_v: float, l_v: float
+) -> RectOccupancy:
     # From M. Althoff and J. M. Dolan, “Online Verification of Automated Road Vehicles Using Reachability Analysis,”
     # IEEE Transactions on Robotics, vol. 30, no. 4, pp. 903–918, Aug. 2014, doi: 10.1109/TRO.2014.2312453.
     # Section IV.C

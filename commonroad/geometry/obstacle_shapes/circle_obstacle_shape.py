@@ -15,6 +15,9 @@ from commonroad.scenario.state import TraceState
 class CircleObstacleShape(ObstacleShape):
     """
     Circle obstacle shape defined by its radius. The origin is at the center of the circle.
+
+    :param radius: Radius of the circle.
+    :type radius: float
     """
 
     radius: float

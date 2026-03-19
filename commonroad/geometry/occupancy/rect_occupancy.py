@@ -18,10 +18,22 @@ from commonroad.visualization.renderer import IRenderer
 
 @dataclass(frozen=True)
 class RectOccupancy(Occupancy):
+    """A rectangular occupancy.
+
+    :param rect_center: center of the rectangle
+    :type rect_center: shapely.Point
+    :param width: width of the rectangle
+    :type width: float
+    :param length: length of the rectangle
+    :type length: float
+    :param orientation: orientation of the rectangle in radians, counter-clockwise from x-axis
+    :type orientation: float
+    """
+
     rect_center: shapely.Point
     width: float
     length: float
-    orientation: float  # in radians, counter-clockwise from x-axis
+    orientation: float
 
     def __post_init__(self):
         assert is_valid_orientation(self.orientation), (
@@ -50,6 +62,8 @@ class RectOccupancy(Occupancy):
     def vertices(self) -> Tuple[Tuple[float, float], ...]:
         """Vertices of the rectangle: ((x_0, y_0), (x_1, y_1), ...).
         The vertices are sorted clockwise and the first and last point are the same.
+
+        :return: vertices of the rectangle
         """
         return tuple(self.shapely_object.exterior.coords)
 
@@ -79,6 +93,10 @@ class RectOccupancy(Occupancy):
 
     @property
     def center(self) -> shapely.Point:
+        """Center of the rectangle.
+
+        :return: center of the rectangle
+        """
         return self.rect_center
 
     def draw(

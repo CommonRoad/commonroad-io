@@ -16,6 +16,14 @@ from commonroad.visualization.renderer import IRenderer
 
 @dataclass(frozen=True)
 class CircleOccupancy(Occupancy):
+    """Occupancy of a circle shape.
+
+    :param radius: Radius of the circle.
+    :type radius: float
+    :param circle_center: Center point of the circle.
+    :type circle_center: shapely.Point
+    """
+
     radius: float
     circle_center: shapely.Point
 

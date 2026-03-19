@@ -17,6 +17,12 @@ from commonroad.visualization.renderer import IRenderer
 
 @dataclass(frozen=True)
 class PolygonOccupancy(Occupancy):
+    """Occupancy represented by a polygon.
+
+    :param polygon: The polygon representing the occupancy.
+    :type polygon: shapely.geometry.Polygon
+    """
+
     polygon: shapely.geometry.Polygon
 
     def __post_init__(self):
@@ -37,6 +43,10 @@ class PolygonOccupancy(Occupancy):
 
     @functools.cached_property
     def vertices(self) -> Tuple[Tuple[float, float], ...]:
+        """Returns the vertices of the polygon as a tuple of (x, y) coordinates.
+
+        :return: A tuple of (x, y) coordinates representing the vertices of the polygon.
+        """
         return tuple(self.shapely_object.exterior.coords)
 
     @property
