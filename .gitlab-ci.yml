@@ -111,14 +111,18 @@ pages:
   artifacts:
     paths:
       - public
-  pages:
-    path_prefix: "$CI_COMMIT_BRANCH"
-  environment:
-    name: Gitlab Pages $CI_COMMIT_BRANCH
-    url: https://cps.pages.gitlab.lrz.de/commonroad-io/
   rules :
     - if : $CI_COMMIT_BRANCH == "master"
+      variables :
+        path_prefix : ""
     - if : $CI_COMMIT_BRANCH == "develop"
+      variables :
+        path_prefix : "develop"
+  pages:
+    path_prefix : "$path_prefix"
+  environment :
+    name : Gitlab Pages $CI_COMMIT_BRANCH
+    url : https://cps.pages.gitlab.lrz.de/commonroad-io/$path_prefix
 
 push_to_internal_pipy_registry:
   # push the development version to the internal pipy registry https://gitlab.lrz.de/cps/commonroad-io/-/packages
