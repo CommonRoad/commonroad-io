@@ -1,10 +1,77 @@
 Module Geometry
 =================
 
-ObstacleShape
--------------
-.. inheritance-diagram:: commonroad.geometry.obstacle_shapes.obstacle_shape.ObstacleShape commonroad.geometry.obstacle_shapes.rect_obstacle_shape.RectObstacleShape commonroad.geometry.obstacle_shapes.circle_obstacle_shape.CircleObstacleShape commonroad.geometry.obstacle_shapes.polygon_obstacle_shape.PolygonObstacleShape commonroad.geometry.obstacle_shapes.truck_shape.TruckShape commonroad.geometry.obstacle_shapes.semi_trailer_truck_shape.SemiTrailerTruckShape
-   :parts: 1
+ObstacleShape and Occupancy
+-------------------------------------
+
+The class :class:`~commonroad.geometry.obstacle_shapes.obstacle_shape.ObstacleShape`
+and its subclasses in the module :py:mod:`commonroad.geometry.obstacle_shapes`
+are used to represent the general shape of an obstacle, while the class
+:class:`~commonroad.geometry.occupancy.occupancy.Occupancy` and its subclasses in the module
+:py:mod:`commonroad.geometry.occupancy` are used to represent the
+occupancy of an obstacle in a certain state.
+The method :meth:`~commonroad.geometry.obstacle_shapes.obstacle_shape.ObstacleShape.compute_occupancy_for_state`
+computes the :class:`~commonroad.geometry.occupancy.occupancy.Occupancy` of an obstacle for a given state.
+The following diagram visualizes both the :class:`~commonroad.geometry.obstacle_shapes.obstacle_shape.ObstacleShape`
+and :class:`~commonroad.geometry.occupancy.occupancy.Occupancy` class hierarchies:
+
+.. graphviz::
+
+   digraph {
+      rankdir=TB
+      splines=ortho
+      nodesep=0.3
+      ranksep=1.0
+
+      node [shape=box, style=filled, fillcolor=white, fontname=Helvetica, fontsize=10]
+      edge [fontname=Helvetica, fontsize=9]
+
+      // ObstacleShape hierarchy
+      ObstacleShape [label="ObstacleShape", fillcolor="#E8F4F8"]
+      RectObstacleShape [label="RectObstacleShape"]
+      CircleObstacleShape [label="CircleObstacleShape"]
+      PolygonObstacleShape [label="PolygonObstacleShape"]
+      TruckShape [label="TruckShape"]
+      SemiTrailerTruckShape [label="SemiTrailerTruckShape"]
+
+      // Occupancy hierarchy
+      Occupancy [label="Occupancy", fillcolor="#E8F4F8"]
+      RectOccupancy [label="RectOccupancy"]
+      CircleOccupancy [label="CircleOccupancy"]
+      PolygonOccupancy [label="PolygonOccupancy"]
+      OccupancyGroup [label="OccupancyGroup"]
+
+      // ObstacleShape inheritance
+      RectObstacleShape -> ObstacleShape [arrowhead=vee]
+      CircleObstacleShape -> ObstacleShape [arrowhead=vee]
+      PolygonObstacleShape -> ObstacleShape [arrowhead=vee]
+      TruckShape -> ObstacleShape [arrowhead=vee]
+      SemiTrailerTruckShape -> ObstacleShape [arrowhead=vee]
+
+      // Occupancy inheritance
+      RectOccupancy -> Occupancy [arrowhead=vee]
+      CircleOccupancy -> Occupancy [arrowhead=vee]
+      PolygonOccupancy -> Occupancy [arrowhead=vee]
+      OccupancyGroup -> Occupancy [arrowhead=vee]
+
+      // Relationships
+      ObstacleShape -> Occupancy [style=dashed, arrowhead=open, label="compute_occupancy_for_state(state)"]
+
+      newrank=true
+
+        { rank=same; RectObstacleShape; CircleObstacleShape; PolygonObstacleShape; TruckShape; SemiTrailerTruckShape }
+        { rank=same; ObstacleShape }
+        { rank=same; Occupancy }
+        { rank=same; RectOccupancy; CircleOccupancy; PolygonOccupancy; OccupancyGroup }
+
+        // Chain one invisible edge per level transition to enforce ordering
+        RectObstacleShape    ->  ObstacleShape [style=invis]
+        RectObstacleShape    ->  RectOccupancy     [style=invis]
+        Occupancy            ->  RectOccupancy       [style=invis]
+   }
+
+Module obstacle_shapes
+----------------------
 
 ``ObstacleShape`` class
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -35,17 +102,19 @@ ObstacleShape
 .. automodule:: commonroad.geometry.obstacle_shapes.truck_shape
 .. autoclass:: TruckShape
    :members:
+.. autoclass:: TruckDimensions
+    :members:
 
 ``SemiTrailerTruckShape`` class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. automodule:: commonroad.geometry.obstacle_shapes.semi_trailer_truck_shape
 .. autoclass:: SemiTrailerTruckShape
    :members:
+.. autoclass:: TrailerDimensions
+   :members:
 
-Occupancy
----------
-.. inheritance-diagram:: commonroad.geometry.occupancy.occupancy.Occupancy commonroad.geometry.occupancy.rect_occupancy.RectOccupancy commonroad.geometry.occupancy.circle_occupancy.CircleOccupancy commonroad.geometry.occupancy.polygon_occupancy.PolygonOccupancy commonroad.geometry.occupancy.occupancy_group.OccupancyGroup
-   :parts: 1
+Module occupancy
+----------------
 
 ``Occupancy`` class
 ^^^^^^^^^^^^^^^^^^^

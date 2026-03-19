@@ -17,7 +17,12 @@ from commonroad.scenario.state import TraceState
 
 @dataclass(frozen=True)
 class PolygonObstacleShape(ObstacleShape):
-    # ordered points (clockwise or counterclockwise); the translation of the vertices is considered
+    """Obstacle shape defined by a polygon with vertices
+
+    :param vertices: ordered points (clockwise or counterclockwise); the translation of the vertices is considered
+    :type vertices: Tuple[Tuple[float, float], ...]
+    """
+
     vertices: Tuple[Tuple[float, float], ...]
     _polygon: shapely.Polygon = dataclasses.field(init=False, repr=False, compare=False)
 

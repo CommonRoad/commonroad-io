@@ -15,13 +15,22 @@ from commonroad.scenario.state import TraceState
 
 @dataclass(frozen=True)
 class SemiTrailerTruckShape(ObstacleShape):
-    """represents the shape of a truck-trailer-system. The state's position refers to the truck's rear axle"""
+    """Shape of a semi-trailer truck, consisting of a truck and a trailer.
+
+    :param truck_shape: shape of the truck part of the semi-trailer truck
+    :type truck_shape: :class:`TruckShape`
+    :param trailer_dims: dimensions of the trailer part of the semi-trailer truck
+    :type trailer_dims: :class:`TrailerDimensions`
+    """
 
     truck_shape: TruckShape
     trailer_dims: TrailerDimensions
 
     @property
     def total_length(self) -> float:
+        """
+        Length of the whole sytem.
+        """
         return (
             self.truck_shape.total_length
             + self.trailer_dims.length
@@ -32,6 +41,10 @@ class SemiTrailerTruckShape(ObstacleShape):
 
     @staticmethod
     def create_default() -> SemiTrailerTruckShape:
+        """Creates a :class:`SemiTrailerTruckShape` with default dimensions.
+
+        :return: a :class:`SemiTrailerTruckShape` object with default dimensions
+        """
         return SemiTrailerTruckShape(
             truck_shape=TruckShape.create_default(),
             trailer_dims=TrailerDimensions.create_default(),
@@ -40,9 +53,11 @@ class SemiTrailerTruckShape(ObstacleShape):
     @staticmethod
     def with_length(length: float) -> SemiTrailerTruckShape:
         """
-        Create a :SemiTrailerTruckShape with total length :length by scaling a default semi-trailer truck shape.
+        Create a :class:`SemiTrailerTruckShape` with the given total length by scaling a default
+        semi-trailer truck shape.
 
         :param length: desired total length of the semi-trailer truck shape
+        :return: a :class:`SemiTrailerTruckShape` object with the given total length
         """
         default_truck = SemiTrailerTruckShape.create_default()
         length_scale = length / default_truck.total_length
@@ -58,7 +73,16 @@ class SemiTrailerTruckShape(ObstacleShape):
             default_truck_x_shift - self.truck_shape.origin_x_shift
         )
 
-    def compute_occupancy_for_state(self, state: TraceState) -> Occupancy:
+    def compute_occupancy_for_state(self, state: TraceState) -> OccupancyGroup:
+        """
+        Compute the occupancy of the semi-trailer truck for a given state, considering
+        the position, orientation, and hitch angle of the state.
+
+        :param state: the state for which to compute the occupancy
+        :return: the occupancy group of the semi-trailer truck for the given state, consisting
+            of two rectangles: one for the truck and one for the trailer.
+        """
+
         truck_rect = self.truck_shape.compute_occupancy_for_state(state)
 
         # Trailer: the origin is the hitch point first for rotating by the hitch angle...
@@ -97,6 +121,18 @@ class SemiTrailerTruckShape(ObstacleShape):
 
 @dataclass(frozen=True)
 class TrailerDimensions:
+    """Dimensions of the trailer part of a semi-trailer truck.
+
+    :param length: length of the trailer
+    :type length: float
+    :param width: width of the trailer
+    :type width: float
+    :param wheelbase: distance between the front and rear axles of the trailer
+    :type wheelbase: float
+    :param dist_from_front_to_hitch: distance from the front of the trailer to the hitch point
+    :type dist_from_front_to_hitch: float
+    """
+
     length: float
     width: float
     wheelbase: float
@@ -104,6 +140,10 @@ class TrailerDimensions:
 
     @staticmethod
     def create_default() -> TrailerDimensions:
+        """Creates a :class:`TrailerDimensions` object with default dimensions.
+
+        :return: a :class:`TrailerDimensions` object with default dimensions
+        """
         return TrailerDimensions(
             length=13.6,
             width=2.55,
@@ -112,6 +152,11 @@ class TrailerDimensions:
         )
 
     def scale(self, length_scale: float) -> TrailerDimensions:
+        """Scales the trailer dimensions by a given length scale.
+
+        :param length_scale: the scale factor for the length dimensions
+        :return: a new :class:`TrailerDimensions` object with scaled dimensions
+        """
         return TrailerDimensions(
             length=length_scale * self.length,
             width=self.width,
