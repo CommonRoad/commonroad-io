@@ -55,7 +55,7 @@ class Occupancy(IDrawable):
     def contains_point(self, point: shapely.Point) -> bool:
         """Checks if a point is contained in this occupancy.
 
-        :param point: 2D point as array [x, y]
+        :param point: 2D point
         :return: true if the occupancy’s interior or boundary intersects with the given point, otherwise false
         """
         return shapely.intersects(self.shapely_object, point)
