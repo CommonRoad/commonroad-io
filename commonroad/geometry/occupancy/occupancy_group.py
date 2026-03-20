@@ -14,6 +14,12 @@ from commonroad.visualization.renderer import IRenderer
 
 @dataclass(frozen=True)
 class OccupancyGroup(Occupancy):
+    """Occupancy consisting of multiple other occupancies.
+
+    :param occupancies: Tuple of occupancies that are part of this occupancy group.
+    :type occupancies: Tuple[:class:`Occupancy`, ...]
+    """
+
     occupancies: Tuple[Occupancy, ...]
 
     def __hash__(self) -> int:

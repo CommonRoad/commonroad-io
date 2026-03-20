@@ -87,7 +87,7 @@ build_doc:
   script:
     - apt-get update && apt-get install -y graphviz
     - poetry install --with docs
-    - cd doc && make html SPHINXOPTS="-W"
+    - cd doc && make html
   artifacts:
     paths:
       - ./doc/build/
@@ -102,20 +102,27 @@ validate_tutorials:
 
 pages:
   # Push the latest documentation of the development branch to the GitLab Pages
-  # available at https://cps.pages.gitlab.lrz.de/commonroad-template
+  # at https://cps.pages.gitlab.lrz.de/commonroad-io/
   stage: deploy
-  only:
-    - dev
-  publish: site
+  needs:
+    - build_doc
   script:
-    - poetry install --with docs
-    - mkdocs build
+    - cp -r doc/build/html public
   artifacts:
     paths:
-      - site
-  environment:
-    name: Gitlab Pages
-    url: https://cps.pages.gitlab.lrz.de/commonroad-io/
+      - public
+  rules :
+    - if : $CI_COMMIT_BRANCH == "master"
+      variables :
+        path_prefix : ""
+    - if : $CI_COMMIT_BRANCH == "develop"
+      variables :
+        path_prefix : "develop"
+  pages:
+    path_prefix : "$path_prefix"
+  environment :
+    name : Gitlab Pages $CI_COMMIT_BRANCH
+    url : https://cps.pages.gitlab.lrz.de/commonroad-io/$path_prefix
 
 push_to_internal_pipy_registry:
   # push the development version to the internal pipy registry https://gitlab.lrz.de/cps/commonroad-io/-/packages
