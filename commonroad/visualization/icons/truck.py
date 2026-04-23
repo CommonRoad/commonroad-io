@@ -86,6 +86,7 @@ def draw_semi_trailer_truck_icon(
     lw=0.5,
     opacity=1,
     show_ref_position: bool = False,
+    show_hitch_point: bool = True,
 ):
     """Return the patches of the truck icon.
 
@@ -120,11 +121,14 @@ def draw_semi_trailer_truck_icon(
     if show_ref_position:
         patch_list += [create_origin_patch(state.position)]
 
-    hitch_point = shapely.Point(shape.hitch_shift_from_origin, 0)
-    hitch_point = rotate_and_translate(
-        hitch_point, state.orientation, state.position[0], state.position[1]
-    )
-    patch_list += [mpl.patches.Circle(hitch_point.xy, 0.1, color="black", alpha=0.5, zorder=200)]
+    if show_hitch_point:
+        hitch_point = shapely.Point(shape.hitch_shift_from_origin, 0)
+        hitch_point = rotate_and_translate(
+            hitch_point, state.orientation, state.position[0], state.position[1]
+        )
+        patch_list += [
+            mpl.patches.Circle(hitch_point.xy, 0.1, color="black", alpha=0.5, zorder=200)
+        ]
 
     return patch_list
 
@@ -183,6 +187,7 @@ def draw_truck_icon(
     lw=0.5,
     opacity=1,
     show_ref_position: bool = False,
+    show_hitch_point: bool = True,
 ):
     if isinstance(shape, SemiTrailerTruckShape) or (
         isinstance(shape, RectObstacleShape) and shape.length > 7.0
@@ -196,6 +201,7 @@ def draw_truck_icon(
             lw=lw,
             opacity=opacity,
             show_ref_position=show_ref_position,
+            show_hitch_point=show_hitch_point,
         )
     else:
         return draw_truck_only_icon(
