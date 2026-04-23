@@ -38,6 +38,7 @@ def get_obstacle_icon_patch(
     lw=0.5,
     opacity=1,
     show_ref_position: bool = False,
+    show_hitch_point: bool = True,
 ):
     """Get a list of mpl.patches to draw a obstacle specific icon."""
     if obstacle_type not in supported_icons():
@@ -58,5 +59,6 @@ def get_obstacle_icon_patch(
         lw=lw,
         opacity=opacity,
         show_ref_position=show_ref_position,
+        show_hitch_point=show_hitch_point,
     )
     return patch
