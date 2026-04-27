@@ -4,7 +4,6 @@ from typing import List, Union
 import matplotlib as mpl
 import numpy as np
 import shapely
-from matplotlib.path import Path
 
 from commonroad.geometry.obstacle_shapes.rect_obstacle_shape import RectObstacleShape
 from commonroad.geometry.obstacle_shapes.semi_trailer_truck_shape import SemiTrailerTruckShape
@@ -14,6 +13,7 @@ from commonroad.geometry.occupancy.rect_occupancy import RectOccupancy
 from commonroad.geometry.transform import rotate_translate
 from commonroad.geometry.transform_shapely_shape import rotate_and_translate
 from commonroad.scenario.state import TraceState
+from commonroad.visualization.icons.create_origin_patch import create_origin_patch
 
 
 def _create_additional_truck_components(
@@ -68,13 +68,6 @@ def _create_additional_truck_components(
         rotate_translate(part, state.position, state.orientation)
         for part in additional_truck_components
     ]
-
-
-def create_origin_patch(origin: np.ndarray):
-    vertices = origin + 0.1 * np.array([(-0.5, -0.5), (0.5, 0.5), (0, 0), (0.5, -0.5), (-0.5, 0.5)])
-    codes = [Path.MOVETO, Path.LINETO, Path.MOVETO, Path.LINETO, Path.LINETO]
-    path = Path(vertices, codes)
-    return mpl.patches.PathPatch(path, facecolor="none", edgecolor="black", lw=1, zorder=200)
 
 
 def draw_semi_trailer_truck_icon(
