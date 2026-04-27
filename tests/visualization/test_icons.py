@@ -6,15 +6,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import patches
 
-from commonroad.geometry.shape import Rectangle
+from commonroad.geometry.obstacle_shapes.rect_obstacle_shape import RectObstacleShape
 from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad.scenario.lanelet import Lanelet
 from commonroad.scenario.obstacle import DynamicObstacle, ObstacleType
 from commonroad.scenario.scenario import Scenario, ScenarioID
 from commonroad.scenario.state import InitialState, KSState
 from commonroad.scenario.trajectory import Trajectory
-from commonroad.visualization import icons
 from commonroad.visualization.draw_params import MPDrawParams
+from commonroad.visualization.icons import icons
 from commonroad.visualization.mp_renderer import MPRenderer
 
 
@@ -69,7 +69,7 @@ class TestIcons(unittest.TestCase):
         lanelets = parallel_lanelets(1)
         scn = Scenario(0.1, ScenarioID())
         scn.lanelet_network.add_lanelet(lanelets[0])
-        shape = Rectangle(5, 2)
+        shape = RectObstacleShape(length=5, width=2)
         state = KSState(time_step=0, position=np.array((0, 2)), orientation=0.0)
         for i, veh_type in enumerate(icons.supported_icons()):
             init_state = copy.deepcopy(state).convert_state_to_state(InitialState())
@@ -91,10 +91,9 @@ class TestIcons(unittest.TestCase):
         """Test if the icons return patches without raising an exception."""
 
         for draw_func in self._get_draw_funcs():
+            state = KSState(position=np.array((0, 0)), orientation=0.0)
             patch_list = draw_func(
-                pos_x=0,
-                pos_y=0,
-                orientation=0,
+                state=state,
             )
             for patch in patch_list:
                 assert isinstance(patch, patches.Patch)
@@ -106,10 +105,9 @@ class TestIcons(unittest.TestCase):
             ax = fig.gca()
             draw_funcs = self._get_draw_funcs()
             for counter, draw_func in enumerate(draw_funcs):
+                state = KSState(position=np.array((10 * counter, 0)), orientation=np.pi / 4)
                 patch_list = draw_func(
-                    pos_x=10 * counter,
-                    pos_y=0,
-                    orientation=np.pi / 4,
+                    state=state,
                 )
                 for patch in patch_list:
                     ax.add_patch(patch)
@@ -132,14 +130,12 @@ class TestIcons(unittest.TestCase):
 
                 # Add vehicle type as text.
                 ax.text(110 * counter, 80, vehicle_type.name.replace("_", "\n"), ha="center")
-
+                state = KSState(position=np.array((110 * counter, 0)), orientation=0.0)
+                shape = RectObstacleShape(length=100, width=100)
                 patch_list = icons.get_obstacle_icon_patch(
                     obstacle_type=vehicle_type,
-                    pos_x=110 * counter,
-                    pos_y=0,
-                    orientation=0,
-                    vehicle_length=100,
-                    vehicle_width=100,
+                    state=state,
+                    shape=shape,
                 )
                 for patch in patch_list:
                     ax.add_patch(patch)

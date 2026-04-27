@@ -1,6 +1,6 @@
 import enum
 import warnings
-from typing import Set
+from typing import Set, Union
 
 import numpy as np
 
@@ -81,12 +81,14 @@ class StopLine:
         line_marking: LineMarking,
         traffic_sign_ref: Set[int] = None,
         traffic_light_ref: Set[int] = None,
+        stop_line_id: int = None,
     ):
         self._start = start
         self._end = end
         self._line_marking = line_marking
         self._traffic_sign_ref = traffic_sign_ref
         self._traffic_light_ref = traffic_light_ref
+        self._stop_line_id = stop_line_id
 
     def __eq__(self, other):
         if not isinstance(other, StopLine):
@@ -172,6 +174,14 @@ class StopLine:
     @traffic_light_ref.setter
     def traffic_light_ref(self, references: Set[int]):
         self._traffic_light_ref = references
+
+    @property
+    def stop_line_id(self) -> Union[int, None]:
+        return self._stop_line_id
+
+    @stop_line_id.setter
+    def stop_line_id(self, stop_line_id: Union[int, None]):
+        self._stop_line_id = stop_line_id
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """

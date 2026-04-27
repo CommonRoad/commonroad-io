@@ -634,9 +634,7 @@ def draw_traffic_light_signs(
             traffic_lights.append(obj)
         else:
             warnings.warn(
-                "Object of type {}, but expected type TrafficSign or " "TrafficLight".format(
-                    type(obj)
-                )
+                "Object of type {}, but expected type TrafficSign or TrafficLight".format(type(obj))
             )
 
     # collect ImageBoxes of traffic signs/lights grouped by their positions

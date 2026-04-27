@@ -25,11 +25,6 @@ The CommonRoad XML-specification provides three possibilities to describe the mo
    :members:
    :inherited-members:
 
-``Occupancy`` class
--------------------
-.. autoclass:: Occupancy
-   :members:
-
 
 Predictor Interface
 -------------------

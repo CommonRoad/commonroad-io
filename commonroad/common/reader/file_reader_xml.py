@@ -1,8 +1,9 @@
 import logging
+import random
 import re
 from abc import ABC
 from collections import defaultdict
-from typing import Dict, List, Set, Tuple, Union
+from typing import Dict, List, Optional, Set, Tuple, Union
 from xml.etree import ElementTree
 
 import numpy as np
@@ -14,18 +15,37 @@ from commonroad.common.common_lanelet import (
     RoadUser,
     StopLine,
 )
+from commonroad.common.common_scenario import (
+    Environment,
+    FileInformation,
+    GeoTransformation,
+    Location,
+    TimeOfDay,
+    Underground,
+    Weather,
+)
 from commonroad.common.reader.file_reader_interface import FileReader
+from commonroad.common.reader.xml_factories.obstacle_shape_factory import ObstacleShapeFactory
+from commonroad.common.reader.xml_factories.occupancy_factory import OccupancyFactory
+from commonroad.common.reader.xml_factories.point_factory import PointFactory, PointListFactory
 from commonroad.common.util import AngleInterval, Interval, Path_T, Time
-from commonroad.geometry.shape import Circle, Polygon, Rectangle, Shape, ShapeGroup
+from commonroad.geometry.obstacle_shapes.obstacle_shape import ObstacleShape
+from commonroad.geometry.occupancy.occupancy import Occupancy
+from commonroad.geometry.occupancy.occupancy_group import OccupancyGroup
 from commonroad.planning.goal import GoalRegion
 from commonroad.planning.planning_problem import PlanningProblem, PlanningProblemSet
 from commonroad.prediction.prediction import (
-    Occupancy,
     SetBasedPrediction,
+    TimeType,
     TrajectoryPrediction,
 )
-from commonroad.scenario.intersection import Intersection, IntersectionIncomingElement
-from commonroad.scenario.lanelet import Lanelet, LaneletNetwork
+from commonroad.scenario.intersection import (
+    CrossingGroup,
+    IncomingGroup,
+    Intersection,
+    OutgoingGroup,
+)
+from commonroad.scenario.lanelet import Bound, Lanelet, LaneletNetwork
 from commonroad.scenario.obstacle import (
     DynamicObstacle,
     EnvironmentObstacle,
@@ -35,17 +55,7 @@ from commonroad.scenario.obstacle import (
     SignalState,
     StaticObstacle,
 )
-from commonroad.scenario.scenario import (
-    Environment,
-    GeoTransformation,
-    Location,
-    Scenario,
-    ScenarioID,
-    Tag,
-    TimeOfDay,
-    Underground,
-    Weather,
-)
+from commonroad.scenario.scenario import Scenario, ScenarioID, Tag
 from commonroad.scenario.state import (
     CustomState,
     InitialState,
@@ -261,14 +271,29 @@ class ScenarioFactory:
         """
         if commonroad_version != "2018b":
             meta_data["tags"] = TagsFactory.create_from_xml_node(xml_node)
-            meta_data["location"] = LocationFactory.create_from_xml_node(xml_node)
+            location, environment = LocationFactory.create_from_xml_node(xml_node)
         else:
+            location = Location()
+            environment = None
             LaneletFactory._speed_limits = {}
 
         scenario_id = ScenarioID.from_benchmark_id(benchmark_id, commonroad_version)
-        scenario = Scenario(dt, scenario_id, **meta_data)
+        file_information = FileInformation(
+            author=meta_data["author"],
+            affiliation=meta_data["affiliation"],
+            source=meta_data["source"],
+        )
+        scenario = Scenario(dt, scenario_id, file_information, meta_data["tags"])
 
         scenario.add_objects(LaneletNetworkFactory.create_from_xml_node(xml_node))
+        scenario.lanelet_network.meta_information.file_information = file_information
+        scenario.lanelet_network.location = location
+        scenario.environment = environment
+        scenario.lanelet_network.meta_information.scenario_id = ScenarioID(
+            country_id=scenario.scenario_id.country_id,
+            map_name=scenario.scenario_id.map_name,
+            map_id=scenario.scenario_id.map_id,
+        )
         if commonroad_version == "2018b":
             large_num = 10000
             scenario.add_objects(
@@ -297,6 +322,21 @@ class ScenarioFactory:
             scenario.add_objects(
                 cls._obstacles(xml_node, scenario.lanelet_network, lanelet_assignment)
             )
+
+        for la in scenario.lanelet_network.lanelets:
+            if la.left_bound is None:
+                la.left_bound = scenario.generate_object_id()
+                scenario.add_objects(
+                    [Bound(la.left_bound, la.left_vertices, la.line_marking_left_vertices)]
+                )
+            if la.right_bound is None:
+                la.right_bound = scenario.generate_object_id()
+                scenario.add_objects(
+                    [Bound(la.right_bound, la.right_vertices, la.line_marking_right_vertices)]
+                )
+            if la.stop_line is not None:
+                la.stop_line.stop_line_id = scenario.generate_object_id()
+                scenario.add_objects([la.stop_line])
 
         return scenario
 
@@ -383,7 +423,9 @@ class LocationFactory:
     """Class to create a location from an XML element."""
 
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Union[Location, None]:
+    def create_from_xml_node(
+        cls, xml_node: ElementTree.Element
+    ) -> Tuple[Location, Optional[Environment]]:
         """
         :param xml_node: XML element
         :return: location object
@@ -407,10 +449,10 @@ class LocationFactory:
                 environment = None
 
             return Location(
-                geo_name_id, gps_latitude, gps_longitude, geo_transformation, environment
-            )
+                geo_name_id, gps_latitude, gps_longitude, geo_transformation
+            ), environment
         else:
-            return None
+            return Location(), None
 
 
 class GeoTransformationFactory:
@@ -1155,55 +1197,113 @@ class IntersectionFactory:
         :return: object of class Intersection according to the CommonRoad specification.
         """
         intersection_id = int(xml_node.get("id"))
+
+        # In 2020a format, crossing is directly in the intersection, so we keep the incoming/outgoing group reference
+        # empty and generate a warning to the user. We also map all crossing lanelets to only one crossing group.
+        crossings = []
+        if xml_node.find("crossing") is not None:
+            logger.warning(
+                "After 2020a format, crossing is no longer mapped directly into intersection, "
+                "thus it has been remapped to the first incoming element"
+            )
+            crossing_lanelets = set()
+            for crossing_ref in xml_node.find("crossing").findall("crossingLanelet"):
+                crossing_lanelets.add(int(crossing_ref.get("ref")))
+            crossings.append(CrossingGroup(random.randint(1000000, 100000000), crossing_lanelets))
+
         incomings = []
         for incoming_node in xml_node.findall("incoming"):
             incomings.append(IntersectionIncomingFactory.create_from_xml_node(incoming_node))
 
-        if xml_node.find("crossing") is not None:
-            crossings = set()
-            for crossing_ref in xml_node.find("crossing").findall("crossingLanelet"):
-                crossings.add(int(crossing_ref.get("ref")))
-        else:
-            crossings = None
+        outgoings = []
+        for outgoing_node in xml_node.findall("outgoing"):
+            outgoings.append(OutgoingGroupFactory.create_from_xml_node(outgoing_node))
 
         return Intersection(
-            intersection_id=intersection_id, incomings=incomings, crossings=crossings
+            intersection_id=intersection_id,
+            incomings=incomings,
+            outgoings=outgoings,
+            crossings=crossings,
         )
+
+
+class OutgoingGroupFactory:
+    """Class to create an object of class OutgoingGroup from an XML element."""
+
+    @classmethod
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> OutgoingGroup:
+        """
+        :param xml_node: XML element
+        :return: object of class OutgoingGroupElement according to the CommonRoad specification.
+        """
+        outgoing_id = int(xml_node.get("id"))
+        outgoing_lanelets = set()
+        for outgoing_lanelet_ref in xml_node.findall("outgoingLanelet"):
+            outgoing_lanelets.add(int(outgoing_lanelet_ref.get("ref")))
+
+        return OutgoingGroup(outgoing_id=outgoing_id, outgoing_lanelets=outgoing_lanelets)
 
 
 class IntersectionIncomingFactory:
     """Class to create an object of class IntersectionIncomingElement from an XML element."""
 
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> IntersectionIncomingElement:
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> IncomingGroup:
         """
         :param xml_node: XML element
         :return: object of class IntersectionIncomingElement according to the CommonRoad specification.
         """
         incoming_id = int(xml_node.get("id"))
         incoming_lanelets = set()
-        successors_right = set()
-        successors_straight = set()
-        successors_left = set()
-        left_of = None
+        if xml_node.get("outgoingId") is None:
+            outgoing_id = None
+        else:
+            outgoing_id = int(xml_node.get("outgoingId"))
+        outgoing_right = set()
+        outgoing_straight = set()
+        outgoing_left = set()
+
         for incoming_lanelet_ref in xml_node.findall("incomingLanelet"):
             incoming_lanelets.add(int(incoming_lanelet_ref.get("ref")))
-        for successor_right_ref in xml_node.findall("successorsRight"):
-            successors_right.add(int(successor_right_ref.get("ref")))
-        for successor_straight_ref in xml_node.findall("successorsStraight"):
-            successors_straight.add(int(successor_straight_ref.get("ref")))
-        for successor_left_ref in xml_node.findall("successorsLeft"):
-            successors_left.add(int(successor_left_ref.get("ref")))
-        for left_of_ref in xml_node.findall("isLeftOf"):
-            left_of = int(left_of_ref.get("ref"))
 
-        return IntersectionIncomingElement(
+        for outgoing_right_ref in xml_node.findall("outgoingRight"):
+            outgoing_right.add(int(outgoing_right_ref.get("ref")))
+        for outgoing_straight_ref in xml_node.findall("outgoingStraight"):
+            outgoing_straight.add(int(outgoing_straight_ref.get("ref")))
+        for outgoing_left_ref in xml_node.findall("outgoingLeft"):
+            outgoing_left.add(int(outgoing_left_ref.get("ref")))
+
+        # if we are reading intersections of old (2020a) format, successors are mapped as outgoings, and we issue
+        # a warning to the user
+        for successor_right_ref in xml_node.findall("successorsRight"):
+            logger.warning(
+                "successorRight "
+                + successor_right_ref.get("ref")
+                + " is of deprecated format, thus mapped to outgoingRight"
+            )
+            outgoing_right.add(int(successor_right_ref.get("ref")))
+        for successor_straight_ref in xml_node.findall("successorsStraight"):
+            logger.warning(
+                "successorStraight "
+                + successor_straight_ref.get("ref")
+                + " is of deprecated format, thus mapped to outgoingStraight"
+            )
+            outgoing_straight.add(int(successor_straight_ref.get("ref")))
+        for successor_left_ref in xml_node.findall("successorsLeft"):
+            logger.warning(
+                "successorLeft "
+                + successor_left_ref.get("ref")
+                + " is of deprecated format, thus mapped to outgoingLeft"
+            )
+            outgoing_left.add(int(successor_left_ref.get("ref")))
+
+        return IncomingGroup(
             incoming_id=incoming_id,
+            outgoing_group_id=outgoing_id,
             incoming_lanelets=incoming_lanelets,
-            successors_right=successors_right,
-            successors_straight=successors_straight,
-            successors_left=successors_left,
-            left_of=left_of,
+            outgoing_right=outgoing_right,
+            outgoing_straight=outgoing_straight,
+            outgoing_left=outgoing_left,
         )
 
 
@@ -1232,22 +1332,13 @@ class ObstacleFactory(ABC):
         return initial_state
 
     @classmethod
-    def read_shape(cls, xml_node: ElementTree.Element) -> Shape:
-        shape = ShapeFactory.create_from_xml_node(xml_node)
-        return shape
+    def read_shape(cls, xml_node: ElementTree.Element) -> ObstacleShape:
+        return ObstacleShapeFactory.create_from_xml_node(xml_node)
 
     @classmethod
     def read_initial_signal_state(cls, xml_node: ElementTree.Element) -> SignalState:
         initial_signal_state = SignalStateFactory.create_from_xml_node(xml_node)
         return initial_signal_state
-
-    @classmethod
-    def read_wheelbase(cls, xml_node: ElementTree.Element) -> List:
-        wheelbase_xml_node = xml_node.find("wheelbase")
-        if not wheelbase_xml_node:
-            return None
-        wheelbase_list = [float(w.text) for w in list(wheelbase_xml_node)]
-        return wheelbase_list
 
 
 class StaticObstacleFactory(ObstacleFactory):
@@ -1267,11 +1358,12 @@ class StaticObstacleFactory(ObstacleFactory):
         signal_series = SignalSeriesFactory.create_from_xml_node((xml_node.find("signalSeries")))
         shape = StaticObstacleFactory.read_shape(xml_node.find("shape"))
 
+        # FIXME WTF should we not always do the lanelet assignment??!
         if lanelet_assignment is True:
-            rotated_shape = shape.rotate_translate_local(
-                initial_state.position, initial_state.orientation
+            rotated_shape = shape.compute_occupancy(initial_state)
+            initial_shape_lanelet_ids = set(
+                lanelet_network.find_lanelet_by_occupancy(rotated_shape)
             )
-            initial_shape_lanelet_ids = set(lanelet_network.find_lanelet_by_shape(rotated_shape))
             initial_center_lanelet_ids = set(
                 lanelet_network.find_lanelet_by_position([initial_state.position])[0]
             )
@@ -1302,7 +1394,7 @@ class DynamicObstacleFactory(ObstacleFactory):
         state_list: List[TraceState],
         lanelet_network: LaneletNetwork,
         obstacle_id: int,
-        shape: Shape,
+        shape: ObstacleShape,
     ) -> Dict[int, Set[int]]:
         """
         Extracts for each shape the corresponding lanelets it is on
@@ -1318,8 +1410,8 @@ class DynamicObstacleFactory(ObstacleFactory):
         lanelet_ids_per_state = {}
 
         for state in compl_state_list:
-            rotated_shape = shape.rotate_translate_local(state.position, state.orientation)
-            lanelet_ids = lanelet_network.find_lanelet_by_shape(rotated_shape)
+            rotated_shape = shape.compute_occupancy(state)
+            lanelet_ids = lanelet_network.find_lanelet_by_occupancy(rotated_shape)
             for l_id in lanelet_ids:
                 lanelet_network.find_lanelet_by_id(l_id).add_dynamic_obstacle_to_lanelet(
                     obstacle_id=obstacle_id, time_step=state.time_step
@@ -1359,7 +1451,6 @@ class DynamicObstacleFactory(ObstacleFactory):
         obstacle_type = DynamicObstacleFactory.read_type(xml_node)
         obstacle_id = DynamicObstacleFactory.read_id(xml_node)
         shape = DynamicObstacleFactory.read_shape(xml_node.find("shape"))
-        wheelbase = DynamicObstacleFactory.read_wheelbase(xml_node)
         initial_state = DynamicObstacleFactory.read_initial_state(xml_node.find("initialState"))
         initial_signal_state = DynamicObstacleFactory.read_initial_signal_state(
             xml_node.find("initialSignalState")
@@ -1370,11 +1461,9 @@ class DynamicObstacleFactory(ObstacleFactory):
 
         if xml_node.find("trajectory") is not None:
             if lanelet_assignment is True:
-                rotated_shape = shape.rotate_translate_local(
-                    initial_state.position, initial_state.orientation
-                )
+                rotated_shape = shape.compute_occupancy(initial_state)
                 initial_shape_lanelet_ids = set(
-                    lanelet_network.find_lanelet_by_shape(rotated_shape)
+                    lanelet_network.find_lanelet_by_occupancy(rotated_shape)
                 )
                 initial_center_lanelet_ids = set(
                     lanelet_network.find_lanelet_by_position([initial_state.position])[0]
@@ -1402,7 +1491,6 @@ class DynamicObstacleFactory(ObstacleFactory):
                 shape,
                 center_lanelet_assignment,
                 shape_lanelet_assignment,
-                wheelbase=wheelbase,
             )
         elif xml_node.find("occupancySet") is not None:
             prediction = SetBasedPredictionFactory.create_from_xml_node(
@@ -1439,84 +1527,26 @@ class TrajectoryFactory:
 class SetBasedPredictionFactory:
     @classmethod
     def create_from_xml_node(cls, xml_node: ElementTree.Element) -> SetBasedPrediction:
-        occupancies = list()
-        for occupancy in xml_node.findall("occupancy"):
-            occupancies.append(OccupancyFactory.create_from_xml_node(occupancy))
-        if isinstance(occupancies[0].time_step, Interval):
-            t0 = min(occupancies[0].time_step)
+        occupancies = dict(
+            [
+                OccupancyWithTimeFactory.create_from_xml_node(occupancy)
+                for occupancy in xml_node.findall("occupancy")
+            ]
+        )
+        first_time = next(iter(occupancies.keys()))
+        if isinstance(first_time, Interval):
+            t0 = min(first_time)
         else:
-            t0 = occupancies[0].time_step
+            t0 = first_time
         return SetBasedPrediction(t0, occupancies)
 
 
-class OccupancyFactory:
+class OccupancyWithTimeFactory:
     @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Occupancy:
-        shape = ShapeFactory.create_from_xml_node(xml_node.find("shape"))
+    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Tuple[TimeType, Occupancy]:
+        occ = OccupancyFactory.create_from_xml_node(xml_node.find("shape"))
         time = read_time(xml_node.find("time"))
-        return Occupancy(time, shape)
-
-
-class ShapeFactory:
-    @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Shape:
-        shape_list = list()
-        for c in list(xml_node):
-            shape_list.append(cls._read_single_shape(c))
-        shape = cls._create_shape_group_if_needed(shape_list)
-        return shape
-
-    @classmethod
-    def _read_single_shape(cls, xml_node: ElementTree.Element) -> Shape:
-        tag_string = xml_node.tag
-        if tag_string == "rectangle":
-            return RectangleFactory.create_from_xml_node(xml_node)
-        elif tag_string == "circle":
-            return CircleFactory.create_from_xml_node(xml_node)
-        elif tag_string == "polygon":
-            return PolygonFactory.create_from_xml_node(xml_node)
-
-    @classmethod
-    def _create_shape_group_if_needed(cls, shape_list: List[Shape]) -> Shape:
-        if len(shape_list) > 1:
-            sg = ShapeGroup(shape_list)
-            return sg
-        else:
-            return shape_list[0]
-
-
-class RectangleFactory:
-    @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Rectangle:
-        length = float(xml_node.find("length").text)
-        width = float(xml_node.find("width").text)
-        if xml_node.find("orientation") is not None:
-            orientation = float(xml_node.find("orientation").text)
-        else:
-            orientation = 0.0
-        if xml_node.find("center") is not None:
-            center = PointFactory.create_from_xml_node(xml_node.find("center"))
-        else:
-            center = np.array([0.0, 0.0])
-        return Rectangle(length, width, center, orientation)
-
-
-class CircleFactory:
-    @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Circle:
-        radius = float(xml_node.find("radius").text)
-        if xml_node.find("center") is not None:
-            center = PointFactory.create_from_xml_node(xml_node.find("center"))
-        else:
-            center = np.array([0.0, 0.0])
-        return Circle(radius, center)
-
-
-class PolygonFactory:
-    @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> Polygon:
-        vertices = PointListFactory.create_from_xml_node(xml_node)
-        return Polygon(vertices)
+        return time, occ
 
 
 class PlanningProblemSetFactory:
@@ -1638,7 +1668,7 @@ class StateFactory:
     @classmethod
     def _read_position(
         cls, xml_node: ElementTree.Element, lanelet_network: Union[LaneletNetwork, None] = None
-    ) -> Union[np.ndarray, Shape]:
+    ) -> Union[np.ndarray, ObstacleShape]:
         if xml_node.find("point") is not None:
             position = PointFactory.create_from_xml_node(xml_node.find("point"))
         elif (
@@ -1646,13 +1676,13 @@ class StateFactory:
             or xml_node.find("circle") is not None
             or xml_node.find("polygon") is not None
         ):
-            position = ShapeFactory.create_from_xml_node(xml_node)
+            position = OccupancyFactory.create_from_xml_node(xml_node)
         elif lanelet_network is not None and xml_node.find("lanelet") is not None:
             position_list = list()
             for let in xml_node.findall("lanelet"):
                 lanelet = lanelet_network.find_lanelet_by_id(int(let.get("ref")))
                 position_list.append(lanelet.polygon)
-            position = ShapeGroup(position_list)
+            position = OccupancyGroup(occupancies=tuple(position_list))
         else:
             raise Exception()
         return position
@@ -1750,27 +1780,6 @@ class SignalSeriesFactory:
         return signal_state_list
 
 
-class PointListFactory:
-    @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> np.ndarray:
-        point_list = []
-        for point_node in xml_node.findall("point"):
-            point_list.append(PointFactory.create_from_xml_node(point_node))
-        return np.array(point_list)
-
-
-class PointFactory:
-    @classmethod
-    def create_from_xml_node(cls, xml_node: ElementTree.Element) -> np.ndarray:
-        x = float(xml_node.find("x").text)
-        y = float(xml_node.find("y").text)
-        if xml_node.find("z") is None:
-            return np.array([x, y])
-        else:
-            z = float(xml_node.find("z").text)
-            return np.array([x, y, z])
-
-
 class EnvironmentObstacleFactory(ObstacleFactory):
     """Class to create a list of objects of type EnvironmentObstacle from an XML element."""
 
@@ -1778,10 +1787,10 @@ class EnvironmentObstacleFactory(ObstacleFactory):
     def create_from_xml_node(cls, xml_node: ElementTree.Element) -> EnvironmentObstacle:
         obstacle_type = EnvironmentObstacleFactory.read_type(xml_node)
         obstacle_id = EnvironmentObstacleFactory.read_id(xml_node)
-        shape = EnvironmentObstacleFactory.read_shape(xml_node.find("shape"))
+        occ = OccupancyFactory.create_from_xml_node(xml_node.find("shape"))
 
         return EnvironmentObstacle(
-            obstacle_id=obstacle_id, obstacle_type=obstacle_type, obstacle_shape=shape
+            obstacle_id=obstacle_id, obstacle_type=obstacle_type, occupancy=occ
         )
 
 

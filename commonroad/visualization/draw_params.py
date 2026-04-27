@@ -96,6 +96,10 @@ class ShapeParams(BaseParam):
     # NOTE: This parameter is currently only valid for Collision Polygons created by the CommonRoad-Drivability-Checker
     # and has no effect for the Polygon class defined in commonroad-io.geometry.shape
     draw_mesh: bool = False
+    # Add x to vehicle's icon at its reference position. Currently only implemented for trucks.
+    show_ref_position: bool = False
+    # Only relevant for truck
+    show_hitch_point: bool = True
 
 
 @dataclass
@@ -212,12 +216,14 @@ class IntersectionParams(BaseParam):
     draw_intersections: bool = False
     draw_incoming_lanelets: bool = True
     incoming_lanelets_color: Color = "#3ecbcf"
+    draw_outgoing_group_lanelets: bool = True
+    outgoing_lanelets_color: Color = "#deeb34"
     draw_crossings: bool = True
     crossings_color: Color = "#b62a55"
-    draw_successors: bool = True
-    successors_left_color: Color = "#ff00ff"
-    successors_straight_color: Color = "blue"
-    successors_right_color: Color = "#ccff00"
+    draw_outgoings: bool = True
+    outgoings_left_color: Color = "#ff00ff"
+    outgoings_straight_color: Color = "blue"
+    outgoings_right_color: Color = "#ccff00"
     #: Show the ID of the intersection
     show_label: bool = False
 

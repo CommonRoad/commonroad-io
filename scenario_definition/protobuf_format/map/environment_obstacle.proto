@@ -1,0 +1,23 @@
+syntax = "proto2";
+
+option optimize_for = LITE_RUNTIME;
+
+package commonroad_map;
+
+import "common/util.proto";
+
+message EnvironmentObstacleTypeEnum {
+    enum EnvironmentObstacleType {
+        UNKNOWN = 0;
+        BUILDING = 1;
+        ROAD_BOUNDARY = 2;
+        PILLAR = 3;
+        MEDIAN_STRIP = 4;
+    }
+}
+
+message EnvironmentObstacle {
+    required uint32 environment_obstacle_id = 1;
+    required EnvironmentObstacleTypeEnum.EnvironmentObstacleType obstacle_type = 2;
+    required commonroad_common.Occupancy obstacle_shape = 3;
+}
