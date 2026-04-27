@@ -62,6 +62,9 @@ your shape describes an occupied area with an absolute position and orientation 
 #### New format
 With this release, commonroad-io supports protobuf as file format for scenarios
 (additionally to the existing XML format).
+For protobuf format, static properties of scenarios such as road network and other frequently changed properties like dynamic obstacles/
+planning problems are stored separately.
+(XML format remains unchanged.)
 Moreover, the internal representation for intersections was improved and allows for modeling
 more sophisticated intersections.
 
