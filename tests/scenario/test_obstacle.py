@@ -4,6 +4,7 @@ import unittest
 import numpy as np
 import shapely
 
+from commonroad.common.common_scenario import MetaInformationState
 from commonroad.geometry.obstacle_shapes.circle_obstacle_shape import CircleObstacleShape
 from commonroad.geometry.obstacle_shapes.rect_obstacle_shape import RectObstacleShape
 from commonroad.geometry.occupancy.circle_occupancy import CircleOccupancy
@@ -22,12 +23,7 @@ from commonroad.scenario.obstacle import (
     PhantomObstacle,
     StaticObstacle,
 )
-from commonroad.scenario.state import (
-    InitialState,
-    KSState,
-    MetaInformationState,
-    SignalState,
-)
+from commonroad.scenario.state import InitialState, KSState, SignalState
 from commonroad.scenario.trajectory import Trajectory
 
 

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 1280 1024" style="enable-background:new 0 0 1280 1024;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:10;}
+	.st1{fill:none;stroke:#FF3333;stroke-width:2;stroke-miterlimit:10;}
+	.st2{fill:none;stroke:#FF3333;stroke-width:2;stroke-miterlimit:10;stroke-dasharray:20.4254,5.1064;}
+	.st3{fill:none;stroke:#FF3333;stroke-width:2;stroke-miterlimit:10;stroke-dasharray:20.3137,5.0784;}
+	.st4{font-family:'MyriadPro-Regular';}
+	.st5{font-size:23px;}
+	.st6{fill:#FF3333;}
+</style>
+<line class="st0" x1="261" y1="199" x2="1135" y2="199"/>
+<line class="st0" x1="261" y1="334" x2="1135" y2="334"/>
+<line class="st0" x1="261" y1="478" x2="1135" y2="478"/>
+<path class="st0" d="M173,721c13-36,74.9-133.8,130-174c58-42.3,124-69,162-69"/>
+<path class="st0" d="M314,736c13.2-31.9,40.3-66.4,100-106c43.5-28.9,148.9-44.7,136-43c26.9-3.6,65.3-7,126-4
+	c71.5,3.5,163.9,8.8,191-8c28.4-17.7,67-63,83.1-97"/>
+<path class="st0" d="M766,478c61,0.6,67.4-32.7,76-48c10.6-18.7,21.7-45.3,42-63c14.6-12.7,52-29,66.1-33"/>
+<g>
+	<g>
+		<line class="st1" x1="470" y1="606.1" x2="470" y2="596.1"/>
+		<line class="st2" x1="470" y1="591" x2="470" y2="210.6"/>
+		<line class="st1" x1="470" y1="208" x2="470" y2="198"/>
+	</g>
+</g>
+<g>
+	<g>
+		<line class="st1" x1="950.1" y1="478" x2="950.1" y2="468"/>
+		<line class="st3" x1="950.1" y1="462.9" x2="950.1" y2="211.5"/>
+		<line class="st1" x1="950.1" y1="209" x2="950.1" y2="199"/>
+	</g>
+</g>
+<text transform="matrix(1 0 0 1 465 123)" class="st4 st5">a</text>
+<text transform="matrix(1 0 0 1 314 274)" class="st4 st5">lanelet1</text>
+<text transform="matrix(1 0 0 1 314 410)" class="st4 st5">lanelet2</text>
+<text transform="matrix(1 0 0 1 657 274)" class="st4 st5">lanelet4</text>
+<text transform="matrix(1 0 0 1 657 406)" class="st4 st5">lanelet5</text>
+<text transform="matrix(1 0 0 1 1022 274)" class="st4 st5">lanelet7</text>
+<text transform="matrix(1 0 0 1 1022 410)" class="st4 st5">lanelet8</text>
+<text transform="matrix(1 0 0 1 657 532)" class="st4 st5">lanelet6</text>
+<text transform="matrix(0.7779 -0.6284 0.6284 0.7779 291.9935 662.9977)" class="st4 st5">lanelet3</text>
+<circle class="st6" cx="470" cy="199" r="10.8"/>
+<circle class="st6" cx="950.1" cy="334" r="10.8"/>
+<circle class="st6" cx="950.1" cy="199" r="10.8"/>
+<circle class="st6" cx="470" cy="606.1" r="10.8"/>
+<circle class="st6" cx="470" cy="478" r="10.8"/>
+<circle class="st6" cx="470" cy="334" r="10.8"/>
+<circle class="st6" cx="950.1" cy="478" r="10.8"/>
+<circle cx="173" cy="721" r="10.8"/>
+<circle cx="314" cy="736" r="10.8"/>
+<circle cx="1135" cy="478" r="10.8"/>
+<circle cx="1135" cy="334" r="10.8"/>
+<circle cx="1135" cy="198" r="10.8"/>
+<circle cx="261" cy="199" r="10.8"/>
+<circle cx="261" cy="334" r="10.8"/>
+<circle cx="261" cy="479.8" r="10.8"/>
+<text transform="matrix(1 0 0 1 1130 123)" class="st4 st5">b</text>
+<g>
+	<g>
+		<line class="st0" x1="470" y1="140.5" x2="470" y2="173.4"/>
+		<g>
+			<path d="M470,185.5c-2.1-5.7-5.7-12.7-9.5-17.1l9.5,3.4l9.5-3.4C475.7,172.8,472.1,179.8,470,185.5z"/>
+		</g>
+	</g>
+</g>
+<g>
+	<g>
+		<line class="st0" x1="1135" y1="142" x2="1135" y2="174.9"/>
+		<g>
+			<path d="M1135,187c-2.1-5.7-5.7-12.7-9.5-17.1l9.5,3.4l9.5-3.4C1140.7,174.3,1137.1,181.3,1135,187z"/>
+		</g>
+	</g>
+</g>
+</svg>

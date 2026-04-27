@@ -36,9 +36,10 @@ class RectOccupancy(Occupancy):
     orientation: float
 
     def __post_init__(self):
-        assert is_valid_orientation(self.orientation), (
-            '<Rectangle/orientation>: argument "orientation" is not valid. '
-            "orientation = {}".format(self.orientation)
+        assert is_valid_orientation(
+            self.orientation
+        ), '<Rectangle/orientation>: argument "orientation" is not valid. orientation = {}'.format(
+            self.orientation
         )
 
     def __eq__(self, other) -> bool:

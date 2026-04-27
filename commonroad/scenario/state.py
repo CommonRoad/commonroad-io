@@ -3,11 +3,10 @@ from __future__ import annotations
 import abc
 import copy
 import dataclasses
-import json
 import math
 import warnings
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, List, Optional, Union
 
 import numpy as np
 
@@ -261,7 +260,7 @@ class State(abc.ABC):
             "a vector of real numbers of length 2."
         )
         assert is_real_number(angle), (
-            "<State/translate_rotate>: argument angle must be a scalar. " "angle = %s" % angle
+            "<State/translate_rotate>: argument angle must be a scalar. angle = %s" % angle
         )
         assert is_valid_orientation(angle), (
             "<State/translate_rotate>: argument angle must be within the "

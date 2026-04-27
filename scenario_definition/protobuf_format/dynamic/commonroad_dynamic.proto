@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+option optimize_for = LITE_RUNTIME;
+
+package commonroad_dynamic;
+
+import "dynamic/environment.proto";
+import "dynamic/traffic_sign_value.proto";
+import "dynamic/traffic_light_cycle.proto";
+import "dynamic/static_obstacle.proto";
+import "dynamic/dynamic_obstacle.proto";
+import "dynamic/phantom_obstacle.proto";
+import "common/scenario_meta_information.proto";
+
+
+message CommonRoadDynamic {
+    required commonroad_common.ScenarioMetaInformation dynamic_meta_information = 1;
+    required Environment environment = 2;
+    repeated TrafficLightCycle traffic_light_cycle = 3;
+    repeated TrafficSignValue traffic_sign_value = 4;
+    repeated StaticObstacle static_obstacles = 5;
+    repeated DynamicObstacle dynamic_obstacles = 6;
+    repeated PhantomObstacle phantom_obstacles = 7;
+}

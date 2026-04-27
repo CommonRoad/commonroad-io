@@ -64,9 +64,9 @@ class TestVisualizationV2(unittest.TestCase):
         self.cwd_path = os.path.dirname(os.path.abspath(__file__))
         full_path = os.path.dirname(os.path.abspath(__file__))
         self.out_path = self.cwd_path + "/../.pytest_cache"
-        self.ngsim_scen_1 = full_path + "/../test_scenarios/USA_Peach-4_8_T-1.xml"
-        self.ngsim_scen_2 = full_path + "/../test_scenarios/USA_US101-4_1_T-1.xml"
-        self.scenario_3d_points = full_path + "/../test_scenarios/test_3d_points.xml"
+        self.ngsim_scen_1 = full_path + "/../test_scenarios/xml/2020a/USA_Peach-4_8_T-1.xml"
+        self.ngsim_scen_2 = full_path + "/../test_scenarios/xml/2020a/USA_US101-4_1_T-1.xml"
+        self.scenario_3d_points = full_path + "/../test_scenarios/xml/2020a/test_3d_points.xml"
         if not os.path.isdir(self.out_path):
             os.makedirs(self.out_path)
         else:
@@ -230,7 +230,7 @@ class TestVisualizationV2(unittest.TestCase):
     def test_planning(self):
         # test draw_object for all possible object types
         full_path = os.path.dirname(os.path.abspath(__file__))
-        filename = full_path + "/../test_scenarios/test_reading_all.xml"
+        filename = full_path + "/../test_scenarios/xml/2020a/ZAM_TestReadingAll-1_1_T-1.xml"
         scenario, planning_problem_set = CommonRoadFileReader(filename).open()
         planning_problem_set: PlanningProblemSet = planning_problem_set
 
@@ -275,7 +275,7 @@ class TestVisualizationV2(unittest.TestCase):
         figsize = [20, 15]
         plt.figure(figsize=(figsize[0] / inch_in_cm, figsize[1] / inch_in_cm))
         plt.gca().set(
-            title="occupancies should be be plotted with opacity, " "plot limits: [-50,60,-50,50]"
+            title="occupancies should be be plotted with opacity, plot limits: [-50,60,-50,50]"
         )
         plt.gca().autoscale_view(False, False, False)
         self.rnd = MPRenderer(plot_limits=[-50, 60, -50, 50])

@@ -1,3 +1,4 @@
+from commonroad.common.protobuf.common import util_pb2
 from commonroad.common.writer.protobuf_messages.point_message import PointMessage
 from commonroad.geometry.obstacle_shapes.circle_obstacle_shape import CircleObstacleShape
 from commonroad.geometry.obstacle_shapes.obstacle_shape import ObstacleShape
@@ -8,7 +9,6 @@ from commonroad.geometry.obstacle_shapes.semi_trailer_truck_shape import (
     TrailerDimensions,
 )
 from commonroad.geometry.obstacle_shapes.truck_shape import TruckDimensions, TruckShape
-from commonroad.scenario_definition.protobuf_format.generated_scripts import util_pb2
 
 
 class ShapeMessage:

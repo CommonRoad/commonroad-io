@@ -1,6 +1,6 @@
 import numpy as np
 
-from commonroad.scenario_definition.protobuf_format.generated_scripts import util_pb2
+from commonroad.common.protobuf.common import util_pb2
 
 
 class PointFactory:

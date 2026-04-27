@@ -2,10 +2,7 @@ import enum
 import warnings
 from typing import List, Optional, Set
 
-import numpy as np
-
 from commonroad.common.common_lanelet import LineMarking
-from commonroad.common.validity import is_valid_polyline
 
 
 class AreaType(enum.Enum):
@@ -28,7 +25,7 @@ class AreaBorder:
     def __init__(
         self,
         area_border_id: int,
-        border_vertices: np.ndarray,
+        boundary: int,
         adjacent: Optional[List[int]] = None,
         line_marking: Optional[LineMarking] = None,
     ):
@@ -36,12 +33,12 @@ class AreaBorder:
         Constructor of an AreaBorder object
 
         :param area_border_id: id of the area border
-        :param border_vertices: array that contains the coordinates of the border's vertices
+        :param boundary: id of the area border boundary
         :param adjacent: id of lanelets adjacent to the border
         :param line_marking: line marking of the area border
         """
         self._area_border_id = area_border_id
-        self._border_vertices = border_vertices
+        self._boundary = boundary
         self._adjacent = adjacent
         self._line_marking = line_marking
 
@@ -58,17 +55,16 @@ class AreaBorder:
         self._area_border_id = value
 
     @property
-    def border_vertices(self) -> np.ndarray:
-        """Array that contains the coordinates of the border's vertices."""
-        return self._border_vertices
+    def boundary(self) -> int:
+        """Id of the area border boundary"""
+        return self._boundary
 
-    @border_vertices.setter
-    def border_vertices(self, value: np.ndarray):
-        assert is_valid_polyline(value), (
-            "<AreaBorder/border_vertices>: The provided polyline "
-            "is not valid! id = {} polyline = {}".format(self._area_border_id, value)
-        )
-        self._border_vertices = value
+    @boundary.setter
+    def boundary(self, boundary: int):
+        assert isinstance(
+            boundary, int
+        ), "<AreaBorder/boundary>: Provided boundary id is not valid! adjacent={}".format(boundary)
+        self._boundary = boundary
 
     @property
     def adjacent(self) -> Optional[List[int]]:
@@ -89,9 +85,10 @@ class AreaBorder:
 
     @line_marking.setter
     def line_marking(self, value: LineMarking):
-        assert isinstance(value, LineMarking), (
-            "<AreaBorder/line_marking>: Provided lane marking type"
-            "is not valid! type = {}".format(type(value))
+        assert isinstance(
+            value, LineMarking
+        ), "<AreaBorder/line_marking>: Provided lane marking typeis not valid! type = {}".format(
+            type(value)
         )
         self._line_marking = value
 
@@ -101,28 +98,15 @@ class AreaBorder:
                 f"Inequality between AreaBorder {repr(self)} and different type {type(other)}"
             )
             return False
-        polyline_string = np.array2string(
-            np.around(self._border_vertices.astype(float), 10), precision=10
-        )
-        polyline_other_string = np.array2string(
-            np.around(other.border_vertices.astype(float), 10), precision=10
-        )
         return (
             self._area_border_id == other.area_border_id
-            and polyline_string == polyline_other_string
+            and self._boundary == other.boundary
             and self._adjacent == other.adjacent
             and self._line_marking == other.line_marking
         )
 
     def __hash__(self):
-        return hash(
-            (
-                self._area_border_id,
-                np.array2string(np.around(self._border_vertices.astype(float), 10), precision=10),
-                self._adjacent,
-                self._line_marking,
-            )
-        )
+        return hash((self._area_border_id, self.boundary, self._adjacent, self._line_marking))
 
 
 class Area:
@@ -163,10 +147,10 @@ class Area:
 
     @border.setter
     def border(self, value: List[AreaBorder]):
-        assert isinstance(value, list), (
-            "<Area/border>: provided list of area borders is not a " "list! type = {}".format(
-                type(value)
-            )
+        assert isinstance(
+            value, list
+        ), "<Area/border>: provided list of area borders is not a list! type = {}".format(
+            type(value)
         )
         for val in value:
             assert isinstance(
@@ -181,10 +165,10 @@ class Area:
 
     @area_types.setter
     def area_types(self, value: Set[AreaType]):
-        assert isinstance(value, set), (
-            "<Area/area_types>: provided set of area types is not a " "set! type = {}".format(
-                type(value)
-            )
+        assert isinstance(
+            value, set
+        ), "<Area/area_types>: provided set of area types is not a set! type = {}".format(
+            type(value)
         )
         for val in value:
             assert isinstance(
