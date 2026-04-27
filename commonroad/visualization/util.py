@@ -1,6 +1,6 @@
 import math
 import warnings
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Optional, Tuple
 
 import matplotlib as mpl
 import matplotlib.cm as cm
@@ -8,12 +8,13 @@ import matplotlib.collections as collections
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
+import shapely
 from matplotlib.axes import Axes
 from matplotlib.lines import Line2D
 from matplotlib.path import Path
 
 from commonroad.common.common_lanelet import LineMarking
-from commonroad.geometry.shape import Rectangle
+from commonroad.geometry.occupancy.rect_occupancy import RectOccupancy
 from commonroad.geometry.transform import rotate_translate
 from commonroad.scenario.lanelet import LaneletNetwork
 from commonroad.scenario.obstacle import DynamicObstacle
@@ -170,19 +171,19 @@ def collect_center_line_colors(
                     TrafficLightDirection.LEFT_RIGHT,
                     TrafficLightDirection.STRAIGHT_RIGHT,
                 ):
-                    update_state_dict({l_id: state for l_id in inc_ele.successors_right})
+                    update_state_dict({la: state for la in inc_ele.outgoing_right})
                 if direction in (
                     TrafficLightDirection.LEFT,
                     TrafficLightDirection.LEFT_RIGHT,
                     TrafficLightDirection.LEFT_STRAIGHT,
                 ):
-                    update_state_dict({l_id: state for l_id in inc_ele.successors_left})
+                    update_state_dict({la: state for la in inc_ele.outgoing_left})
                 if direction in (
                     TrafficLightDirection.STRAIGHT,
                     TrafficLightDirection.STRAIGHT_RIGHT,
                     TrafficLightDirection.LEFT_STRAIGHT,
                 ):
-                    update_state_dict({l_id: state for l_id in inc_ele.successors_straight})
+                    update_state_dict({la: state for la in inc_ele.outgoing_straight})
             elif len(lanelet.successor) == 1:
                 update_state_dict({lanelet.successor[0]: state})
             else:
@@ -191,26 +192,14 @@ def collect_center_line_colors(
     return l2state
 
 
-def approximate_bounding_box_dyn_obstacles(obj: list, time_step=0) -> Union[Tuple[list], None]:
+def approximate_bounding_box_dyn_obstacles(
+    obj: list, time_step=0
+) -> Optional[Tuple[Tuple[float, float], Tuple[float, float]]]:
     """
     Compute bounding box of dynamic obstacles at time step
     :param obj: All possible objects. DynamicObstacles are filtered.
     :return:
     """
-
-    def update_bounds(new_point: np.ndarray, bounds: List[list]):
-        """Update bounds with new point"""
-        if new_point[0] < bounds[0][0]:
-            bounds[0][0] = new_point[0]
-        if new_point[1] < bounds[1][0]:
-            bounds[1][0] = new_point[1]
-        if new_point[0] > bounds[0][1]:
-            bounds[0][1] = new_point[0]
-        if new_point[1] > bounds[1][1]:
-            bounds[1][1] = new_point[1]
-
-        return bounds
-
     dynamic_obstacles_filtered = []
     for o in obj:
         if isinstance(o, DynamicObstacle):
@@ -218,34 +207,16 @@ def approximate_bounding_box_dyn_obstacles(obj: list, time_step=0) -> Union[Tupl
         elif isinstance(o, Scenario):
             dynamic_obstacles_filtered.extend(o.dynamic_obstacles)
 
-    x_int = [np.inf, -np.inf]
-    y_int = [np.inf, -np.inf]
-    bounds = [x_int, y_int]
-    shapely_set = None
-    for obs in dynamic_obstacles_filtered:
-        occ = obs.occupancy_at_time(time_step)
-        if occ is None:
-            continue
-        shape = occ.shape
-        if hasattr(shape, "_shapely_polygon"):
-            if shapely_set is None:
-                shapely_set = shape._shapely_polygon
-            else:
-                shapely_set = shapely_set.union(shape._shapely_polygon)
-        elif hasattr(shape, "center"):  # Rectangle, Circle
-            bounds = update_bounds(shape.center, bounds=bounds)
-        elif hasattr(shape, "vertices"):  # Polygon, Triangle
-            v = shape.vertices
-            bounds = update_bounds(np.min(v, axis=0), bounds=bounds)
-            bounds = update_bounds(np.max(v, axis=0), bounds=bounds)
-    envelope_bounds = shapely_set.envelope.bounds
-    envelope_bounds = np.array(envelope_bounds).reshape((2, 2))
-    bounds = update_bounds(envelope_bounds[0], bounds)
-    bounds = update_bounds(envelope_bounds[1], bounds)
-    if np.inf in bounds[0] or -np.inf in bounds[0] or np.inf in bounds[1] or -np.inf in bounds[1]:
+    occs = [o.occupancy_at_time(time_step) for o in dynamic_obstacles_filtered]
+
+    shapes = [occ.shapely_object for occ in occs if occ is not None]
+
+    if not shapes:
         return None
-    else:
-        return tuple(bounds)
+
+    union_of_all_shapes = shapely.union_all(shapes)
+    min_x, min_y, max_x, max_y = shapely.bounds(union_of_all_shapes)
+    return (min_x, max_x), (min_y, max_y)
 
 
 def get_arrow_path_at(x: float, y: float, angle: float, scale_direction: float = 1.5) -> Path:
@@ -270,13 +241,13 @@ def colormap_idx(max_x):
     return lambda x: colormap.to_rgba(x)
 
 
-def get_vehicle_direction_triangle(rect: Rectangle) -> np.ndarray:
+def get_vehicle_direction_triangle(rect: RectOccupancy) -> np.ndarray:
     """
     :returns vertices of triangle pointing in the driving direction
     """
-    length = rect.length * 0.49
-    width = rect.width * 0.49
-    dist = min(length + 1.0, 0.65 * rect.width)
+    length = rect.rect.length * 0.49
+    width = rect.rect.width * 0.49
+    dist = min(length + 1.0, 0.65 * rect.rect.width)
     vertices = np.array([[length - dist, width], [length - dist, -width], [length, 0.0]])
     return rotate_translate(vertices, rect.center, rect.orientation)
 

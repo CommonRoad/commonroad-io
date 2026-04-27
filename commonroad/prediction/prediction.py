@@ -2,108 +2,17 @@ import abc
 import functools
 import math
 import warnings
-from typing import Dict, List, Optional, Set, Union
+from typing import Dict, Optional, Set, Union
 
 import numpy as np
 
 from commonroad.common.util import Interval
 from commonroad.common.validity import is_real_number_vector, is_valid_orientation
-from commonroad.geometry.shape import (
-    Circle,
-    Polygon,
-    Rectangle,
-    Shape,
-    ShapeGroup,
-    occupancy_shape_from_state,
-    shape_group_occupancy_shape_from_state,
-)
+from commonroad.geometry.obstacle_shapes.obstacle_shape import ObstacleShape
+from commonroad.geometry.occupancy.occupancy import Occupancy
 from commonroad.scenario.trajectory import Trajectory
-from commonroad.visualization.draw_params import OccupancyParams
-from commonroad.visualization.drawable import IDrawable
-from commonroad.visualization.renderer import IRenderer
 
-
-class Occupancy(IDrawable):
-    """Class describing an occupied area in the position domain. The
-    occupied area can be defined for a certain time
-    step or a time interval."""
-
-    def __init__(self, time_step: Union[int, Interval], shape: Shape):
-        """
-        :param time_step: a time interval or time step for which the
-        occupancy is defined
-        :param shape: occupied region in the position domain
-        """
-        self.time_step: Union[int, Interval] = time_step
-        self.shape: Shape = shape
-
-    def __eq__(self, other):
-        if not isinstance(other, Occupancy):
-            warnings.warn(
-                f"Inequality between Occupancy {repr(self)} and different type {type(other)}"
-            )
-            return False
-
-        return self._time_step == other.time_step and self._shape == other.shape
-
-    def __hash__(self):
-        return hash((self._time_step, self._shape))
-
-    @property
-    def shape(self) -> Union[Shape, Rectangle, Circle, Polygon, ShapeGroup]:
-        """Shape representing an occupied area in the position domain."""
-        return self._shape
-
-    @shape.setter
-    def shape(self, shape: Union[Shape, Rectangle, Circle, Polygon, ShapeGroup]):
-        assert isinstance(shape, Shape), (
-            '<Occupancy/shape>: argument "shape" of wrong type. Expected type: %s. '
-            "Got type: %s."
-            % (
-                Shape,
-                type(shape),
-            )
-        )
-        self._shape = shape
-
-    @property
-    def time_step(self) -> Union[int, Interval]:
-        """The occupied area is either defined for a certain time step or a time interval."""
-        return self._time_step
-
-    @time_step.setter
-    def time_step(self, time_step: Union[int, Interval]):
-        assert isinstance(time_step, (int, Interval)), (
-            '<Occupancy/time_step>: argument "time_step" of '
-            "wrong type. Expected type: %s or %s. Got type: %s."
-            % (
-                int,
-                Interval,
-                type(time_step),
-            )
-        )
-        self._time_step = time_step
-
-    def translate_rotate(self, translation: np.ndarray, angle: float):
-        """Translates and rotates the occupied area.
-
-        :param translation: translation vector [x_off, y_off] in x- and y-direction
-        :param angle: rotation angle in radian (counter-clockwise)
-        """
-        assert is_real_number_vector(translation, 2), (
-            "<Occupancy/translate_rotate>: "
-            'argument "translation" is '
-            "not a vector of real numbers of "
-            "length 2."
-        )
-        assert is_valid_orientation(angle), (
-            '<Occupancy/translate_rotate>: argument "orientation" ' "is " "not valid."
-        )
-
-        self._shape = self._shape.translate_rotate(translation, angle)
-
-    def draw(self, renderer: IRenderer, draw_params: Optional[OccupancyParams] = None):
-        self.shape.draw(renderer, draw_params.shape if draw_params is not None else None)
+TimeType = Union[int, Interval]
 
 
 class Prediction(abc.ABC):
@@ -119,14 +28,15 @@ class Prediction(abc.ABC):
 
     @property
     @abc.abstractmethod
-    def final_time_step(self) -> Union[int, Interval]:
+    def final_time_step(self) -> TimeType:
         """Final time step of the prediction."""
         pass
 
+    # TODO: maybe use the type frozendict (https://pypi.org/project/frozendict), it is immutable
     @property
     @abc.abstractmethod
-    def occupancy_set(self) -> List[Occupancy]:
-        """List of occupancies over time."""
+    def occupancies(self) -> Dict[TimeType, Occupancy]:
+        """Occupancies over time."""
         pass
 
     def occupancy_at_time_step(self, time_step: int) -> Union[None, Occupancy]:
@@ -139,12 +49,12 @@ class Prediction(abc.ABC):
             '<Prediction/occupancy_at_time_step>: argument "time_step" of '
             "wrong type. Expected type: %s. Got type: %s." % (int, type(time_step))
         )
-        for occ in self.occupancy_set:
-            if isinstance(occ.time_step, Interval):
-                if occ.time_step.contains(time_step):
-                    return occ
-            elif isinstance(occ.time_step, int):
-                if occ.time_step == time_step:
+        if time_step in self.occupancies:
+            return self.occupancies[time_step]
+
+        for t, occ in self.occupancies.items():
+            if isinstance(t, Interval):
+                if t.contains(time_step):
                     return occ
         return None
 
@@ -157,15 +67,15 @@ class SetBasedPrediction(Prediction):
     """Class to represent the future behavior of obstacles by bounded occupancy sets."""
 
     _initial_time_step: int
-    _occupancy_set: List[Occupancy]
+    _occupancies: Dict[TimeType, Occupancy]
 
-    def __init__(self, initial_time_step: int, occupancy_set: List[Occupancy]):
+    def __init__(self, initial_time_step: int, occupancies: Dict[TimeType, Occupancy]):
         """
         :param initial_time_step: initial time step of the set-based prediction
-        :param occupancy_set: list of occupancies defined for different time steps or time intervals.
+        :param occupancies: list of occupancies defined for different time steps or time intervals.
         """
         self._initial_time_step = initial_time_step
-        self._occupancy_set = occupancy_set
+        self._occupancies = occupancies
 
     def __eq__(self, other):
         if not isinstance(other, SetBasedPrediction):
@@ -176,11 +86,11 @@ class SetBasedPrediction(Prediction):
 
         return (
             self._initial_time_step == other.initial_time_step
-            and self._occupancy_set == other.occupancy_set
+            and self._occupancies == other._occupancies
         )
 
     def __hash__(self):
-        return hash((self._initial_time_step, frozenset(self._occupancy_set)))
+        return hash((self._initial_time_step, frozenset(self._occupancies.items())))
 
     @property
     def initial_time_step(self) -> int:
@@ -188,28 +98,14 @@ class SetBasedPrediction(Prediction):
         return self._initial_time_step
 
     @property
-    def final_time_step(self) -> Union[int, Interval]:
+    def final_time_step(self) -> TimeType:
         """Final time step of the prediction."""
-        return max(occ.time_step for occ in self.occupancy_set)
+        return max(self._occupancies.keys())
 
     @property
-    def occupancy_set(self) -> List[Occupancy]:
+    def occupancies(self) -> Dict[TimeType, Occupancy]:
         """List of occupancies over time."""
-        return self._occupancy_set
-
-    @occupancy_set.setter
-    def occupancy_set(self, occupancy_set: List[Occupancy]):
-        assert isinstance(occupancy_set, list), (
-            '<Prediction/occupancy_set>: argument "occupancy_set" of wrong type. '
-            "Expected type: %s. Got type: %s." % (list, type(occupancy_set))
-        )
-        assert all(isinstance(occupancy, Occupancy) for occupancy in occupancy_set), (
-            "<Prediction/occupancy_set>: "
-            'element of "occupancy_set" is '
-            "of wrong type. Expected type: "
-            "%s." % Occupancy
-        )
-        self._occupancy_set = occupancy_set
+        return self._occupancies
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """Translates and rotates the occupancy set.
@@ -221,30 +117,30 @@ class SetBasedPrediction(Prediction):
             '<SetBasedPrediction/translate_rotate>: argument "translation" '
             "is not a vector of real numbers of length 2."
         )
-        assert is_valid_orientation(angle), (
-            '<SetBasedPrediction/translate_rotate>: argument "orientation" ' "is not valid."
-        )
-        for occ in self._occupancy_set:
-            occ.translate_rotate(translation, angle)
+        assert is_valid_orientation(
+            angle
+        ), '<SetBasedPrediction/translate_rotate>: argument "orientation" is not valid.'
+        self._occupancies = {
+            time_step: occ.translate_rotate(translation[0], translation[1], angle)
+            for time_step, occ in self._occupancies.items()
+        }
 
 
 class TrajectoryPrediction(Prediction):
     """Class to represent the predicted movement of an obstacle using a trajectory. A trajectory is modeled as a
     state sequence over time. The occupancy of an obstacle along a trajectory is uniquely defined given its shape."""
 
-    _shape: Shape
+    _shape: ObstacleShape
     _trajectory: Trajectory
     _shape_lanelet_assignment: Optional[Dict[int, Set[int]]]
     _center_lanelet_assignment: Optional[Dict[int, Set[int]]]
-    _wheelbase_lengths: Optional[List[float]]
 
     def __init__(
         self,
         trajectory: Trajectory,
-        shape: Shape,
+        shape: ObstacleShape,
         center_lanelet_assignment: Optional[Dict[int, Set[int]]] = None,
         shape_lanelet_assignment: Optional[Dict[int, Set[int]]] = None,
-        **kwargs,
     ):
         """
         :param trajectory: predicted trajectory of the obstacle
@@ -256,9 +152,6 @@ class TrajectoryPrediction(Prediction):
         self._trajectory = trajectory
         self._shape_lanelet_assignment = shape_lanelet_assignment
         self._center_lanelet_assignment = center_lanelet_assignment
-        self._wheelbase_lengths = None
-        for field, value in kwargs.items():
-            setattr(self, field, value)
 
     def __eq__(self, other):
         if not isinstance(other, TrajectoryPrediction):
@@ -310,27 +203,27 @@ class TrajectoryPrediction(Prediction):
         return self._trajectory.final_state.time_step
 
     @functools.cached_property
-    def occupancy_set(self) -> List[Occupancy]:
+    def occupancies(self) -> Dict[int, Occupancy]:
         """List of occupancies over time."""
-        return self._create_occupancy_set()
+        return self._create_occupancies()
 
     def _invalidate_occupancy_set(self):
-        # Don't use hasattr for checking whether occupancy_set has been cached, since that would always compute the property
-        if "occupancy_set" in self.__dict__:
-            del self.occupancy_set
+        # Don't use hasattr for checking whether occupancies has been cached, since that would always compute the property
+        if "occupancies" in self.__dict__:
+            del self.occupancies
 
     @property
-    def shape(self) -> Shape:
+    def shape(self) -> ObstacleShape:
         """Shape of the predicted object."""
         return self._shape
 
     @shape.setter
-    def shape(self, shape: Shape):
-        assert isinstance(shape, Shape), (
+    def shape(self, shape: ObstacleShape):
+        assert isinstance(shape, ObstacleShape), (
             '<TrajectoryPrediction/shape>: argument "shape" of wrong type. Expected '
             "type: %s. Got type: %s."
             % (
-                Shape,
+                ObstacleShape,
                 type(shape),
             )
         )
@@ -385,16 +278,6 @@ class TrajectoryPrediction(Prediction):
             )
         self._center_lanelet_assignment = center_lanelet_assignment
 
-    @property
-    def wheelbase_lengths(self) -> Optional[List[float]]:
-        """List of wheelbase lengths corresponding to the shape."""
-        return self._wheelbase_lengths
-
-    @wheelbase_lengths.setter
-    def wheelbase_lengths(self, wheelbase_lenghts: List[float]):
-        self._wheelbase_lenghts = wheelbase_lenghts
-        self._invalidate_occupancy_set()
-
     def translate_rotate(self, translation: np.ndarray, angle: float):
         """Translates and rotates all states of the trajectory and re-computes the translated and rotated occupancy
         set.
@@ -406,27 +289,21 @@ class TrajectoryPrediction(Prediction):
             "<TrajectoryPrediction/translate_rotate>: argument "
             '"translation" is not a vector of real numbers of length 2.'
         )
-        assert is_valid_orientation(angle), (
-            '<TrajectoryPrediction/translate_rotate>: argument "orientation" is ' "not valid."
-        )
+        assert is_valid_orientation(
+            angle
+        ), '<TrajectoryPrediction/translate_rotate>: argument "orientation" is not valid.'
 
         self._trajectory.translate_rotate(translation, angle)
 
-    def _create_occupancy_set(self) -> List[Occupancy]:
-        """Computes the occupancy set over time given the predicted trajectory and shape of the object."""
-        occupancy_set = []
+    def _create_occupancies(self) -> Dict[int, Occupancy]:
+        """Computes the occupancy for each time step given the predicted trajectory and shape of the object."""
+        return {
+            state.time_step: self._shape.compute_occupancy(with_orientation(state))
+            for state in self._trajectory.state_list
+        }
 
-        for state in self._trajectory.state_list:
-            if not hasattr(state, "orientation"):
-                state.orientation = math.atan2(getattr(state, "velocity_y"), state.velocity)
 
-            if self.wheelbase_lengths is not None:
-                shapes = self._shape.shapes
-                occupied_region = shape_group_occupancy_shape_from_state(
-                    shapes, state, self.wheelbase_lengths
-                )
-            else:
-                occupied_region = occupancy_shape_from_state(self._shape, state)
-
-            occupancy_set.append(Occupancy(state.time_step, occupied_region))
-        return occupancy_set
+def with_orientation(state):
+    if not hasattr(state, "orientation"):
+        state.orientation = math.atan2(getattr(state, "velocity_y"), state.velocity)
+    return state

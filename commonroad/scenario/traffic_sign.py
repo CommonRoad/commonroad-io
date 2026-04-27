@@ -781,6 +781,7 @@ class TrafficSignElement:
     def __init__(
         self,
         traffic_sign_element_id: Union[
+            TrafficSignID,
             TrafficSignIDZamunda,
             TrafficSignIDUsa,
             TrafficSignIDSpain,
@@ -842,6 +843,60 @@ class TrafficSignElement:
         self._additional_values = additional_values
 
 
+class TrafficSignValue:
+    """Class which represents a list of traffic sign elements related to the traffic sign"""
+
+    def __init__(
+        self, traffic_sign_id: int, traffic_sign_elements: List[TrafficSignElement] = None
+    ):
+        """
+        :param traffic_sign_id: id of the traffic sign
+        :param traffic_sign_elements: list of traffic sign elements related to the traffic sign id
+        """
+        self._traffic_sign_id = traffic_sign_id
+        if traffic_sign_elements is None:
+            self._traffic_sign_elements = []
+        else:
+            self._traffic_sign_elements = traffic_sign_elements
+
+    def __eq__(self, other):
+        if not isinstance(other, TrafficSignValue):
+            warnings.warn(
+                f"Inequality between TrafficSignValue {repr(self)} and different type {type(other)}"
+            )
+            return False
+
+        return (
+            self._traffic_sign_id == other.traffic_sign_id
+            and self._traffic_sign_elements == other.traffic_sign_elements
+        )
+
+    def __hash__(self):
+        return hash((self._traffic_sign_id, frozenset(self._traffic_sign_elements)))
+
+    @property
+    def traffic_sign_id(self) -> int:
+        """id of the traffic sign."""
+        return self._traffic_sign_id
+
+    @traffic_sign_id.setter
+    def traffic_sign_id(self, traffic_sign_id: int):
+        assert isinstance(traffic_sign_id, int), (
+            "<TrafficSignValue/traffic_sign_id>: provided traffic sign id is"
+            "not a int! type = {}".format(type(traffic_sign_id))
+        )
+        self._traffic_sign_id = traffic_sign_id
+
+    @property
+    def traffic_sign_elements(self) -> Union[None, List[TrafficSignElement]]:
+        """list of traffic sign elements related to the traffic sign id."""
+        return self._traffic_sign_elements
+
+    @traffic_sign_elements.setter
+    def traffic_sign_elements(self, traffic_sign_elements: Union[None, List[TrafficSignElement]]):
+        self._traffic_sign_elements = traffic_sign_elements
+
+
 class TrafficSign(IDrawable):
     """Class to represent a traffic sign"""
 
@@ -887,12 +942,21 @@ class TrafficSign(IDrawable):
             for traffic_sign_element in other._traffic_sign_elements
         }
         traffic_sign_eq = len(traffic_sign_elements) == len(traffic_sign_elements_other)
+
+        # As there are different enum values in the old and the new format, equality of traffic sign elements should be
+        # checked by only the name of the enum
+
+        traffic_sign_names = list()
+        traffic_sign_names_other = list()
+
         for k in traffic_sign_elements.keys():
-            if k not in traffic_sign_elements_other:
-                traffic_sign_eq = False
-                continue
-            if traffic_sign_elements.get(k) != traffic_sign_elements_other.get(k):
-                list_elements_eq = False
+            traffic_sign_names.append(k.name)
+
+        for k in traffic_sign_elements_other.keys():
+            traffic_sign_names_other.append(k.name)
+
+        if traffic_sign_names != traffic_sign_names_other:
+            traffic_sign_eq = False
 
         position_string = np.array2string(np.around(self._position.astype(float), 10), precision=10)
         position_other_string = np.array2string(
@@ -985,9 +1049,7 @@ class TrafficSign(IDrawable):
             "numbers of length 2."
         )
         assert is_real_number(angle), (
-            "<TrafficSign/translate_rotate>: argument angle must be a "
-            "scalar. "
-            "angle = %s" % angle
+            "<TrafficSign/translate_rotate>: argument angle must be a scalar. angle = %s" % angle
         )
         assert is_valid_orientation(angle), (
             "<TrafficSign/translate_rotate>: argument angle must "

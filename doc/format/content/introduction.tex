@@ -1,0 +1,30 @@
+% !TeX root = ../CommonRoad_Format.tex
+
+\section{Introduction}
+\label{sec:introduction}
+\subsection{Overview about CommonRoad}
+With \textit{CommonRoad}\cite{Althoff2017a}\footnote{\href{https://commonroad.in.tum.de}{commonroad.in.tum.de}} one can store driving scenarios. The scenarios can be loaded and processed by many tools available in the CommonRoad framework, e.g., drivability-checker, route planner, motion planners.
+The scenarios can be stored in two formats which are Protocol Buffers\footnote{https://protobuf.dev/} and XML files (currently only up to version 2020a).
+In this documentation, we present the definition of CommonRoad scenarios, which are composed of (1) a formal representation of the road network (see Section~\ref{subsec:lanelets}-\ref{subsec:intersections}), (2) static and dynamic obstacles (see Section~\ref{subsec:obstacles}), and (3) the planning problem of the ego vehicle(s) (see Section~\ref{subsec:egoVehicles}).
+Additionally, all of the mentioned components consists of meta information describing the element (see Section~\ref{subsec:meta}).
+%In non-collaborative scenarios, only one planning problem exists, while in collaborating scenarios several planning problems have to be solved.
+
+A visualization of all scenarios is on our website\footnote{\href{https://commonroad.in.tum.de/scenarios/}{commonroad.in.tum.de/scenarios}}, where you can also search for specific types of scenarios.
+
+Since CommonRoad version 2024a, the default representation of a CommonRoad scenario consists of three Protobuf files instead of a  single (Protobuf/XML) file.
+However, for a better exchange of files it is possible to write and read all information in just one file.
+
+The attribute names might vary between the different representations (XML, Protobuf, Python, C++, Matlab) to align with the corresponding naming conventions, e.g., timeStep or time\_step.
+
+
+\subsection{Changes Compared to Version 2020a}
+
+For a quick reference, we summarize the major changes of version 2024a compared to version 2020a:
+\begin{itemize}
+\item New intersection definition
+\item Separation into three files: map, dynamic, scenario
+\item Additional elements for link to licenses and license text
+\item Area for modelling parking lots, bus stops, or any other "drivable area" which is difficult to model via lanelets (concept derived from lanelet2 format)
+\item Meta-information series for obstacles
+\item Boundary definition separated from lanelet
+\end{itemize}

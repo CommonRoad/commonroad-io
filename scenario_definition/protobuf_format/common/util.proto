@@ -1,0 +1,129 @@
+syntax = "proto2";
+
+option optimize_for = LITE_RUNTIME;
+
+package commonroad_common;
+
+message Point {
+    required double x = 1;
+    required double y = 2;
+    optional double z = 3;
+}
+
+message Rect {
+    required double length = 1;
+    required double width = 2;
+}
+
+message Circle {
+    required double radius = 1;
+}
+
+message Polygon {
+    repeated Point vertices = 1;
+}
+
+message TruckDims {
+    required double length = 1;
+    required double width = 2;
+    required double wheelbase = 3;
+    required double dist_from_rear_to_rear_axle = 4;
+    required double cabin_length = 5;
+    required double dist_from_rear_axle_to_hitch = 6;
+}
+
+message TruckShape {
+    required TruckDims truck_dims = 1;
+    required double origin_x_shift = 2;
+}
+
+message TrailerDims {
+    required double length = 1;
+    required double width = 2;
+    required double wheelbase = 3;
+    required double dist_from_front_to_hitch = 4;
+}
+
+message SemiTrailerTruckShape {
+    required TruckShape truck_shape = 1;
+    required TrailerDims trailer_dims = 2;
+}
+
+message Shape {
+    oneof shape {
+        Rect rectangle = 1;
+        Circle circle = 2;
+        Polygon polygon = 3;
+        TruckShape truck_shape = 4;
+        SemiTrailerTruckShape semi_trailer_truck_shape = 5;
+    }
+}
+
+message RectOccupancy {
+    required double length = 1;
+    required double width = 2;
+    optional Point center = 3;
+    optional double orientation = 4;
+}
+
+message CircleOccupancy {
+    required double radius = 1;
+    optional Point center = 2;
+}
+
+message PolygonOccupancy {
+    repeated Point vertices = 1;
+}
+
+message OccupancyGroup {
+    repeated Occupancy shapes = 1;
+}
+
+message Occupancy {
+    oneof shape {
+        RectOccupancy rectangle = 1;
+        CircleOccupancy circle = 2;
+        PolygonOccupancy polygon = 3;
+        OccupancyGroup shape_group = 4;
+    }
+}
+
+message IntegerInterval {
+    required int32 start = 1;
+    required int32 end = 2;
+}
+
+message FloatInterval {
+    required double start = 1;
+    required double end = 2;
+}
+
+message IntegerExactOrInterval {
+    oneof exact_or_interval {
+        int32 exact = 1;
+        IntegerInterval interval = 2;
+    }
+}
+
+message FloatExactOrInterval {
+    oneof exact_or_interval {
+        double exact = 1;
+        FloatInterval interval = 2;
+    }
+}
+
+message IntegerList {
+    repeated int32 values = 1;
+}
+
+message FloatList {
+    repeated int32 values = 1;
+}
+
+message TimeStamp {
+    optional uint32 year = 1;
+    optional uint32 month = 2;
+    optional uint32 day = 3;
+    optional uint32 hour = 4;
+    optional uint32 minute = 5;
+}

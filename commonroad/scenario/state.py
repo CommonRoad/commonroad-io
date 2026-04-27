@@ -3,11 +3,10 @@ from __future__ import annotations
 import abc
 import copy
 import dataclasses
-import json
 import math
 import warnings
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, List, Optional, Union
 
 import numpy as np
 
@@ -19,7 +18,7 @@ from commonroad.common.validity import (
     is_real_number_vector,
     is_valid_orientation,
 )
-from commonroad.geometry.shape import Shape
+from commonroad.geometry.occupancy.occupancy import Occupancy
 from commonroad.visualization.draw_params import (
     OptionalSpecificOrAllDrawParams,
     StateParams,
@@ -28,7 +27,9 @@ from commonroad.visualization.renderer import IRenderer
 
 FloatExactOrInterval = Union[float, Interval]
 AngleExactOrInterval = Union[float, AngleInterval]
-ExactOrShape = Union[np.ndarray, Shape]
+# FIXME replace AbsoluteShape here by new set representation when available;
+#   also think about only supporting exact values
+ExactOrShape = Union[np.ndarray, Occupancy]
 
 
 class MetaInformationState:
@@ -224,7 +225,7 @@ class State(abc.ABC):
         Uncertain or not
         """
         if hasattr(self, "position"):
-            return isinstance(getattr(self, "position"), Shape)
+            return isinstance(getattr(self, "position"), Occupancy)
         return False
 
     @property
@@ -259,7 +260,7 @@ class State(abc.ABC):
             "a vector of real numbers of length 2."
         )
         assert is_real_number(angle), (
-            "<State/translate_rotate>: argument angle must be a scalar. " "angle = %s" % angle
+            "<State/translate_rotate>: argument angle must be a scalar. angle = %s" % angle
         )
         assert is_valid_orientation(angle), (
             "<State/translate_rotate>: argument angle must be within the "
@@ -272,12 +273,14 @@ class State(abc.ABC):
                 transformed_state.position = commonroad.geometry.transform.translate_rotate(
                     np.array([self.position]), translation, angle
                 )[0]
-            elif isinstance(self.position, Shape):
-                transformed_state.position = self.position.translate_rotate(translation, angle)
+            elif isinstance(self.position, Occupancy):
+                transformed_state.position = self.position.translate_rotate(
+                    translation[0], translation[1], angle
+                )
             else:
                 raise TypeError(
                     "<State/translate_rotate> Expected instance of %s or %s. Got %s instead."
-                    % (ValidTypes.ARRAY, Shape, self.position.__class__)
+                    % (ValidTypes.ARRAY, Occupancy, self.position.__class__)
                 )
 
         if hasattr(self, "orientation") and getattr(self, "orientation") is not None:

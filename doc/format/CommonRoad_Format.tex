@@ -1,0 +1,242 @@
+\documentclass[11pt,a4paper]{article}
+
+%% More layout: Get rid of indenting throughout entire document
+\setlength{\parindent}{0in}
+
+%Changes from Matthias Althoff and Markus Koschi:
+\usepackage{array}
+\usepackage{color,hyperref}
+\usepackage{fancyvrb}
+\usepackage{eurosym}
+%\usepackage[a4paper,left=2.5cm,right=2.5cm,nohead]{geometry}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{fancyhdr} %for header
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{lastpage}
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{psfrag}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathrsfs}
+\usepackage{cite}
+\usepackage{pifont} %for circled numbers
+\usepackage{caption}
+\usepackage[amsmath,hyperref,thmmarks]{ntheorem}  %better package for proof environment
+\usepackage{booktabs}
+\usepackage{dirtree} % required for directory tree
+\usepackage{import}
+\usepackage{graphicx}
+%\usepackage{caption}
+\usepackage{textcomp} % for upright quotation marks
+\usepackage{xspace} % for intelligent spaces
+
+
+\newcommand{\sep}[1]{{\large\textbf{#1}} \vspace{0.3cm}} %seperator
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}} %to change the row spacing in tables
+\newcommand{\brake}{\mbox{} \vspace{0cm} \mbox{}} %seperator
+\newcommand{\todo}[1]{}%{\textcolor{red}{#1\xspace}} %todo (use {} if todo output should be omitted)
+
+%\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+
+\graphicspath{{./figures/}} %Where the figures folder is located
+
+\pagestyle{fancy} %set differnt page style for header
+\fancyhead[L]{\rightmark}
+\fancyhead[C]{}
+\fancyhead[R]{}
+\fancyfoot[L]{}
+\fancyfoot[C]{\thepage}
+\fancyfoot[R]{}
+
+
+\fancypagestyle{firststyle}
+{
+   \addtolength{\headheight}{-1.05cm}
+   \addtolength{\headsep}{1.05cm}
+}
+
+
+% % easychair.tex,v 3.4 2015/12/10
+%
+% \documentclass{easychair}
+% %\documentclass[EPiC]{easychair}
+% %\documentclass[debug]{easychair}
+% %\documentclass[verbose]{easychair}
+% %\documentclass[notimes]{easychair}
+% %\documentclass[withtimes]{easychair}
+% %\documentclass[a4paper]{easychair}
+% %\documentclass[letterpaper]{easychair}
+%
+% \usepackage{doc}
+%
+% % use this if you have a long article and want to create an index
+% % \usepackage{makeidx}
+%
+% % In order to save space or manage large tables or figures in a
+% % landcape-like text, you can use the rotating and pdflscape
+% % packages. Uncomment the desired from the below.
+% %
+% % \usepackage{rotating}
+% % \usepackage{pdflscape}
+%
+% % Some of our commands for this guide.
+% %
+% \newcommand{\easychair}{\textsf{easychair}}
+% \newcommand{\miktex}{MiK{\TeX}}
+% \newcommand{\texniccenter}{{\TeX}nicCenter}
+% \newcommand{\makefile}{\texttt{Makefile}}
+% \newcommand{\latexeditor}{LEd}
+%
+% %Changes from Matthias Althoff:
+% \usepackage{color,hyperref}
+% \usepackage{fancyvrb}
+% \usepackage{eurosym}
+% \usepackage{titlesec}
+% \usepackage{enumitem}
+% \usepackage{tabularx}
+% \usepackage{lastpage}
+% \usepackage{parskip}
+% \usepackage{graphicx}
+% \usepackage{subfigure}
+% \usepackage{psfrag}
+% \usepackage{amsmath,amssymb,amsfonts}
+% \usepackage{mathrsfs}
+% \usepackage{cite}
+% \usepackage{pifont} %for circled numbers
+% \usepackage{caption}
+% \usepackage{booktabs}
+% %\usepackage{breakurl}
+
+% \newtheorem{lemma}{Lemma}
+% \newtheorem{definition}{Definition}[]
+% \newtheorem{proposition}{Proposition}[]
+\usepackage[para,online,flushleft]{threeparttable}
+\DeclareMathOperator{\arccosh}{arccosh}
+\DeclareMathOperator{\arcsinh}{arcsinh}
+\DeclareMathOperator{\arctanh}{arctanh}
+\DeclareMathOperator{\abs}{abs}
+\DeclareMathOperator{\sign}{sgn}
+
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}
+\renewcommand{\a}{l_f} %vehicle parameter
+\renewcommand{\b}{l_r} %vehicle parameter
+\newcommand{\prho}{\rho} %vehicle parameter
+\newcommand{\pA}{A} %vehicle parameter
+\newcommand{\sX}{\sum X} %auxiliary vehicle variable
+\newcommand{\sN}{\sum N} %auxiliary vehicle variable
+\newcommand{\sY}{\sum Y} %auxiliary vehicle variable
+\newcommand{\sL}{\sum L} %auxiliary vehicle variable
+\newcommand{\sZ}{\sum Z} %auxiliary vehicle variable
+\newcommand{\sM}{\sum M} %auxiliary vehicle variable
+
+
+
+%References
+\usepackage{cleveref} % enables \cref{}
+% cref abbreviations
+\crefname{equation}{}{}
+\crefname{figure}{Fig.}{Figs.}
+\crefname{section}{Sec.}{Secs.}
+\crefname{tabular}{Tab.}{Tabs.}
+\crefname{table}{Tab.}{Tabs.}
+\crefname{algorithm}{Alg.}{Algs.}
+
+
+
+%For XML---------------------------------------------------
+\usepackage{listings}
+
+\usepackage{color}
+\definecolor{gray}{rgb}{0.4,0.4,0.4}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.7}
+\definecolor{cyan}{rgb}{0.0,0.6,0.6}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+
+\lstset{
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  showstringspaces=false,
+  commentstyle=\color{darkgreen}\upshape, %commentstyle=\color{gray}\upshape,
+  upquote=true
+}
+
+\lstdefinelanguage{XML}
+{
+  morestring=[b]",
+  morestring=[b]',
+  %moredelim=[s][\bfseries\color{black}]{>}{<},
+  morestring=[s]{>}{<},
+  morecomment=[s]{<?}{?>},
+  morecomment=[s]{!--}{--},
+  stringstyle=\color{black},
+  identifierstyle=\color{darkblue},
+  keywordstyle=\color{cyan},
+  morekeywords={xmlns,version,ref,k,v,id,lat,lon,commonRoadVersion,benchmarkID,date,timeStepSize,author,affiliation,source,tags}% list your attributes here
+}
+\lstset{language=XML}
+%----------------------------------------------------------
+
+
+\begin{document}
+
+\mbox{} \vspace{0.8cm} \mbox{}
+\begin{center} {\Huge\textbf{CommonRoad: Documentation of the Format} \\[0.3cm] \huge(Version 2023a)} \end{center}
+\vspace{0.2cm}
+\begin{center} {\large Sebastian Maierhofer, Markus Koschi, Anna-Katharina Rettinger, Stefanie Manzinger, and Matthias Althoff} \\[0.2cm] Technical University of Munich, 85748 Garching, Germany
+\end{center}
+\vspace{0.2cm}
+
+\noindent
+
+\begin{abstract}
+This document presents the \textit{CommonRoad} format for specifying road traffic scenarios.
+%The provided scenarios in \textit{CommonRoad} are described in the scenario documentation.
+The \textit{CommonRoad} format is composed of (1) meta information about the scenario, (2) a formal representation of the road network, (3) obstacles, and (4) planning problems for the ego vehicle(s).
+So far, we have not discovered any limitations when building scenarios using the proposed format.
+\end{abstract}
+
+
+\setcounter{tocdepth}{3}
+{\small
+\tableofcontents}
+
+
+\include{content/introduction}
+
+\include{content/format_overview}
+
+\include{content/format_map}
+
+\include{content/format_dynamic}
+
+\include{content/format_scenario}
+
+\include{content/conclusion}
+
+\section*{Acknowledgment}
+
+\vspace{-0.2cm}
+The author gratefully acknowledge financial support by the BMW Group within the Car@TUM project and by the Free State of Bavaria.
+
+
+
+\label{sec:bib}
+\bibliographystyle{plain}
+%\bibliographystyle{alpha}
+%\bibliographystyle{unsrt}
+%\bibliographystyle{abbrv}
+\bibliography{references}
+
+
+\end{document}
+
+% EOF
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

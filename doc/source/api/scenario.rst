@@ -19,21 +19,6 @@ Scenario
   :members:
   :member-order: bysource
 
-``GeoTransformation`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: GeoTransformation
-  :undoc-members:
-  :members:
-  :member-order: bysource
-
-``Location`` class
-^^^^^^^^^^^^^^^^^^
-.. autoclass:: Location
-  :undoc-members:
-  :members:
-  :member-order: bysource
-
-
 Road network
 ------------
 
@@ -196,13 +181,6 @@ Traffic Sign Interpreter
 
 .. automodule:: commonroad.scenario.intersection
 
-``IntersectionIncomingElement`` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: IntersectionIncomingElement
-   :members:
-   :undoc-members:
-   :member-order: bysource
-
 
 Intersection
 ------------
@@ -214,6 +192,19 @@ Intersection
    :undoc-members:
    :member-order: bysource
 
+``IncomingGroup`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: IncomingGroup
+   :members:
+   :undoc-members:
+   :member-order: bysource
+
+``OutgoingGroup`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: OutgoingGroup
+   :members:
+   :undoc-members:
+   :member-order: bysource
 
 
 Obstacles

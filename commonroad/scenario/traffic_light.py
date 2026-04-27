@@ -10,7 +10,7 @@ from commonroad.common.validity import (
     is_real_number_vector,
     is_valid_orientation,
 )
-from commonroad.geometry.shape import Rectangle
+from commonroad.geometry.occupancy.rect_occupancy import RectOccupancy
 from commonroad.visualization.draw_params import (
     OptionalSpecificOrAllDrawParams,
     TrafficLightParams,
@@ -202,7 +202,7 @@ class TrafficLight(IDrawable):
         color: List[TrafficLightState] = None,
         active: bool = True,
         direction: TrafficLightDirection = TrafficLightDirection.ALL,
-        shape: Optional[Rectangle] = None,
+        shape: Optional[RectOccupancy] = None,
     ):
         """
         :param traffic_light_id: ID of the traffic light
@@ -282,10 +282,10 @@ class TrafficLight(IDrawable):
 
     @traffic_light_id.setter
     def traffic_light_id(self, traffic_light_id: int):
-        assert isinstance(traffic_light_id, int), (
-            "<TrafficLight/traffic_light_id>: "
-            "Provided traffic_light_id is not valid! "
-            "id={}".format(traffic_light_id)
+        assert isinstance(
+            traffic_light_id, int
+        ), "<TrafficLight/traffic_light_id>: Provided traffic_light_id is not valid! id={}".format(
+            traffic_light_id
         )
         self._traffic_light_id = traffic_light_id
 
@@ -306,6 +306,10 @@ class TrafficLight(IDrawable):
     @traffic_light_cycle.setter
     def traffic_light_cycle(self, traffic_light_cycle: Union[None, TrafficLightCycle]):
         self._traffic_light_cycle = traffic_light_cycle
+        if self._traffic_light_cycle is None or len(self._traffic_light_cycle.cycle_elements) == 0:
+            self._active = False
+        else:
+            self._active = traffic_light_cycle.active
 
     @property
     def color(self) -> List[TrafficLightState]:
@@ -335,12 +339,12 @@ class TrafficLight(IDrawable):
         self._direction = direction
 
     @property
-    def shape(self) -> Rectangle:
+    def shape(self) -> RectOccupancy:
         """Shape of rectangle."""
         return self._shape
 
     @shape.setter
-    def shape(self, shape: Rectangle):
+    def shape(self, shape: RectOccupancy):
         self._shape = shape
 
     def translate_rotate(self, translation: np.ndarray, angle: float):
@@ -358,10 +362,7 @@ class TrafficLight(IDrawable):
             "length 2."
         )
         assert is_real_number(angle), (
-            "<TrafficLight/translate_rotate>: argument angle must "
-            "be "
-            "a scalar. "
-            "angle = %s" % angle
+            "<TrafficLight/translate_rotate>: argument angle must be a scalar. angle = %s" % angle
         )
         assert is_valid_orientation(angle), (
             "<TrafficLight/translate_rotate>: argument angle must "
@@ -389,4 +390,16 @@ class TrafficLight(IDrawable):
         renderer.draw_traffic_light_sign(self, draw_params)
 
     def get_state_at_time_step(self, time_step: int) -> TrafficLightState:
-        return self.traffic_light_cycle.get_state_at_time_step(time_step)
+        """
+        Extract current traffic light state.
+        If traffic light has no cycle (e.g. only map loaded), then the first color is returned.
+
+        :param time_step: Time step of interest.
+        :return: Traffic light state (color)
+        """
+        if self._traffic_light_cycle is not None:
+            return self.traffic_light_cycle.get_state_at_time_step(time_step)
+        elif len(self.color) > 0:
+            return self.color[0]
+        else:
+            return TrafficLightState.RED

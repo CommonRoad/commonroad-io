@@ -1,0 +1,20 @@
+syntax = "proto2";
+
+option optimize_for = LITE_RUNTIME;
+
+package commonroad_map;
+
+message GeoTransformation {
+    optional string geo_reference = 1;
+    optional double x_translation = 2;
+    optional double y_translation = 3;
+    optional double z_rotation = 4;
+    optional double scaling = 5;
+}
+
+message Location {
+    required int32 geo_name_id = 1;
+    required double gps_latitude = 2;
+    required double gps_longitude = 3;
+    optional GeoTransformation geo_transformation = 4;
+}

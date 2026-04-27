@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+option optimize_for = LITE_RUNTIME;
+
+package commonroad_dynamic;
+
+import "dynamic/obstacle.proto";
+
+message PhantomObstacle {
+    required uint32 obstacle_id = 1;
+    optional SetBasedPrediction prediction = 2;
+}

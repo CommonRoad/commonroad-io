@@ -1,8 +1,9 @@
 import unittest
 
 import numpy as np
+import shapely
 
-from commonroad.geometry.shape import Rectangle
+from commonroad.geometry.occupancy.rect_occupancy import RectOccupancy
 from commonroad.scenario.traffic_light import (
     TrafficLight,
     TrafficLightCycle,
@@ -122,11 +123,15 @@ class TestTrafficLight(unittest.TestCase):
 
     def test_shape(self):
         color = [TrafficLightState.GREEN, TrafficLightState.YELLOW, TrafficLightState.RED]
-        shape = Rectangle(0.5, 0.2, np.array([2, 3]))
+        shape = RectOccupancy(
+            length=0.5, width=0.2, rect_center=shapely.Point([2, 3]), orientation=0
+        )
         traffic_light = TrafficLight(1, position=np.array([1.0, 1.0]), color=color, shape=shape)
 
         self.assertEqual(traffic_light.shape.width, 0.2)
-        traffic_light.shape = Rectangle(0.4, 0.3, np.array([1, 4]))
+        traffic_light.shape = RectOccupancy(
+            length=0.4, width=0.3, rect_center=shapely.Point([1, 4]), orientation=0
+        )
         self.assertEqual(traffic_light.shape.width, 0.3)
 
     def test_convert_to_2d(self):
@@ -143,12 +148,11 @@ class TestTrafficLight(unittest.TestCase):
             [TrafficLightCycleElement(TrafficLightState.RED, 1)]
         )
         color = [TrafficLightState.GREEN]
-        traffic_light_1 = TrafficLight(
-            234, np.array([10.0, 10.0]), None, color, shape=Rectangle(0.5, 0.2, np.array([2, 3]))
+        shape = RectOccupancy(
+            length=0.5, width=0.2, rect_center=shapely.Point([2, 3]), orientation=0
         )
-        traffic_light_2 = TrafficLight(
-            234, np.array([10.0, 10.0]), None, color, shape=Rectangle(0.5, 0.2, np.array([2, 3]))
-        )
+        traffic_light_1 = TrafficLight(234, np.array([10.0, 10.0]), None, color, shape=shape)
+        traffic_light_2 = TrafficLight(234, np.array([10.0, 10.0]), None, color, shape=shape)
         self.assertTrue(traffic_light_1 == traffic_light_2)
 
         traffic_light_2 = TrafficLight(235, np.array([10.0, 10.0]), None, color)

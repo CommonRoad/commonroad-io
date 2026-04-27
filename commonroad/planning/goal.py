@@ -3,9 +3,10 @@ import warnings
 from typing import Dict, List, Set, Union
 
 import numpy as np
+import shapely
 
 from commonroad.common.util import AngleInterval, Interval
-from commonroad.geometry.shape import Shape
+from commonroad.geometry.occupancy.occupancy import Occupancy
 from commonroad.scenario.state import TraceState
 from commonroad.visualization.draw_params import (
     OccupancyParams,
@@ -131,7 +132,9 @@ class GoalRegion(IDrawable):
                     state_new.time_step, goal_state.time_step
                 )
             if goal_state.has_value("position") and state_new.has_value("position"):
-                is_reached = is_reached and goal_state.position.contains_point(state_new.position)
+                is_reached = is_reached and goal_state.position.contains_point(
+                    shapely.Point(state_new.position)
+                )
             if goal_state.has_value("orientation") and state_new.has_value("orientation"):
                 is_reached = is_reached and self._check_value_in_interval(
                     state_new.orientation, goal_state.orientation
@@ -200,10 +203,11 @@ class GoalRegion(IDrawable):
                     '[time_step, position, velocity, orientation]; "%s" detected' % attr
                 )
             elif attr == "position":
-                if not isinstance(getattr(state, attr), Shape):
+                if not isinstance(getattr(state, attr), Occupancy):
                     raise ValueError(
                         "<GoalRegion/_goal_state_is_valid> position needs to be an instance of "
-                        "%s; got instance of %s instead" % (Shape, getattr(state, attr).__class__)
+                        "%s; got instance of %s instead"
+                        % (Occupancy, getattr(state, attr).__class__)
                     )
             elif attr == "orientation":
                 if not isinstance(getattr(state, attr), AngleInterval):

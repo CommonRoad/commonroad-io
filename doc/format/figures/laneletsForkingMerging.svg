@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 1280 1024" style="enable-background:new 0 0 1280 1024;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:10;}
+	.st1{fill:none;stroke:#FF3333;stroke-width:2;stroke-miterlimit:10;}
+	.st2{fill:none;stroke:#FF3333;stroke-width:2;stroke-miterlimit:10;stroke-dasharray:19.0769,4.7692;}
+	.st3{font-family:'MyriadPro-Regular';}
+	.st4{font-size:23px;}
+	.st5{fill:#FFFFFF;stroke:#000000;stroke-width:2;stroke-miterlimit:10;}
+	.st6{fill:none;stroke:#FF3333;stroke-width:2;stroke-miterlimit:10;stroke-dasharray:20.0827,5.0207;}
+	.st7{fill:#FF3333;}
+</style>
+<line class="st0" x1="62" y1="153" x2="543" y2="153"/>
+<line class="st0" x1="65" y1="297" x2="543" y2="297"/>
+<path class="st0" d="M62,424c71.5,3.5,185.9-13.2,213-30c28.4-17.7,67-63,83.1-97"/>
+<path class="st0" d="M174,297c61,0.6,67.4-32.7,76-48c10.6-18.7,21.7-45.3,42-63c14.6-12.7,52-29,66.1-33"/>
+<g>
+	<g>
+		<line class="st1" x1="358.1" y1="297" x2="358.1" y2="287"/>
+		<line class="st2" x1="358.1" y1="282.2" x2="358.1" y2="165.4"/>
+		<line class="st1" x1="358.1" y1="163" x2="358.1" y2="153"/>
+	</g>
+</g>
+<text transform="matrix(1 0 0 1 122 229)" class="st3 st4">lanelet1</text>
+<text transform="matrix(1 0 0 1 122 360.7359)" class="st3 st4">lanelet2</text>
+<text transform="matrix(1 0 0 1 96 804)" class="st3 st4">lanelet4</text>
+<text transform="matrix(0.8855 -0.4647 0.4647 0.8855 376.0291 665.9515)" class="st3 st4">lanelet5</text>
+<text transform="matrix(1 0 0 1 421.0003 804)" class="st3 st4">lanelet6</text>
+<text transform="matrix(1 8.250000e-03 -8.250000e-03 1 420.9955 225.066)" class="st3 st4">lanelet3</text>
+<text transform="matrix(1 0 0 1 260 80)" class="st3 st4">correct</text>
+<text transform="matrix(1 0 0 1 921 80)" class="st3 st4">notAdvisable</text>
+<line class="st5" x1="544.5" y1="863.5" x2="63.5" y2="863.5"/>
+<line class="st5" x1="541.5" y1="719.5" x2="63.5" y2="719.5"/>
+<path class="st5" d="M524,530c-68,13-138.4,58.8-165.4,75.7c-28.4,17.7-94.1,79.8-110.1,113.8"/>
+<path class="st0" d="M555,642c-15-0.1-92.8,44.4-103,54c-21.8,20.5-49,51.7-61,68c-12.8,17.3-56.2,48.8-76.5,66.5
+	c-14.6,12.7-52,29-66.1,33"/>
+<g>
+	<g>
+		<line class="st1" x1="248.4" y1="719.5" x2="248.4" y2="729.5"/>
+		<line class="st2" x1="248.4" y1="734.2" x2="248.4" y2="851.1"/>
+		<line class="st1" x1="248.4" y1="853.5" x2="248.4" y2="863.5"/>
+	</g>
+</g>
+<line class="st0" x1="713" y1="153" x2="1194" y2="153"/>
+<line class="st0" x1="712.6" y1="297" x2="921" y2="297"/>
+<path class="st0" d="M921,425.1c54,0.6,72-2.7,103-14.1c22.4-8.2,33.5-24,46-41c14.2-19.3,34.2-31.4,52-52c11.2-12.9,27-21,72-21"/>
+<path class="st0" d="M712.6,424.5c60.4,0,131.5,1.7,158.4,0.8c20.5-0.7,31.9,1.4,50-0.2"/>
+<g>
+	<g>
+		<line class="st1" x1="921" y1="425.1" x2="921" y2="415.1"/>
+		<line class="st6" x1="921" y1="410" x2="921" y2="161.5"/>
+		<line class="st1" x1="921" y1="159" x2="921" y2="149"/>
+	</g>
+</g>
+<text transform="matrix(1 0 0 1 773 229)" class="st3 st4">lanelet7</text>
+<text transform="matrix(1 0 0 1 773 360.7359)" class="st3 st4">lanelet8</text>
+<text transform="matrix(1 8.250000e-03 -8.250000e-03 1 996.9955 287.0932)" class="st3 st4">lanelet9</text>
+<text transform="matrix(1 0 0 1 735 804)" class="st3 st4">lanelet10</text>
+<text transform="matrix(0.8855 -0.4647 0.4647 0.8855 1015.0291 665.9515)" class="st3 st4">lanelet11</text>
+<text transform="matrix(1 0 0 1 1060.0002 804)" class="st3 st4">lanelet12</text>
+<line class="st5" x1="1183.5" y1="863.5" x2="702.5" y2="863.5"/>
+<line class="st5" x1="1180.5" y1="719.5" x2="702.5" y2="719.5"/>
+<path class="st5" d="M1163,530c-68,13-138.4,58.8-165.4,75.7c-28.4,17.7-94.1,79.8-110.1,113.8"/>
+<path class="st0" d="M1194,642c-15-0.1-126.3,67.9-136.5,77.5"/>
+<g>
+	<g>
+		<line class="st1" x1="887.4" y1="719.5" x2="887.4" y2="729.5"/>
+		<line class="st2" x1="887.4" y1="734.2" x2="887.4" y2="851.1"/>
+		<line class="st1" x1="887.4" y1="853.5" x2="887.4" y2="863.5"/>
+	</g>
+</g>
+<circle cx="65" cy="153" r="10.8"/>
+<circle cx="1180.5" cy="719.5" r="10.8"/>
+<circle cx="1194" cy="642" r="10.8"/>
+<circle cx="1163" cy="533.6" r="10.8"/>
+<circle cx="1194" cy="297" r="10.8"/>
+<circle cx="1194" cy="153" r="10.8"/>
+<circle cx="712.6" cy="424.5" r="10.8"/>
+<circle cx="713" cy="297" r="10.8"/>
+<circle cx="713" cy="153" r="10.8"/>
+<circle cx="541.5" cy="153" r="10.8"/>
+<circle cx="541.5" cy="297" r="10.8"/>
+<circle cx="66.7" cy="719.5" r="10.8"/>
+<circle cx="541.5" cy="863.5" r="10.8"/>
+<circle cx="541.5" cy="719.5" r="10.8"/>
+<circle cx="524" cy="530" r="10.8"/>
+<circle cx="552.3" cy="642" r="10.8"/>
+<circle cx="709.1" cy="863.5" r="10.8"/>
+<circle cx="705.7" cy="719.5" r="10.8"/>
+<circle cx="1180.5" cy="863.5" r="10.8"/>
+<circle cx="63.5" cy="863.5" r="10.8"/>
+<circle cx="62" cy="297" r="10.8"/>
+<circle cx="62" cy="424.5" r="10.8"/>
+<circle class="st7" cx="921" cy="425.1" r="10.8"/>
+<circle class="st7" cx="921" cy="297" r="10.8"/>
+<circle class="st7" cx="921" cy="153" r="10.8"/>
+<circle class="st7" cx="358.1" cy="297" r="10.8"/>
+<circle class="st7" cx="359.3" cy="153" r="10.8"/>
+<circle class="st7" cx="887.4" cy="863.5" r="10.8"/>
+<circle class="st7" cx="887.4" cy="719.5" r="10.8"/>
+<circle class="st7" cx="1060" cy="719.5" r="10.8"/>
+<circle class="st7" cx="248.4" cy="863.5" r="10.8"/>
+<circle class="st7" cx="248.4" cy="719.5" r="10.8"/>
+</svg>
