@@ -52,6 +52,7 @@ def draw_semi_trailer_truck_icon(shape: SemiTrailerTruckShape):
     ego_params.vehicle_shape.occupancy.shape.facecolor = "#00ff00"
     ego_params.vehicle_shape.occupancy.shape.zorder = 105
     ego_params.vehicle_shape.occupancy.shape.show_ref_position = True
+    ego_params.vehicle_shape.occupancy.shape.show_hitch_point = True
     ego_veh.draw(rnd, draw_params=ego_params)
 
     rnd.render()

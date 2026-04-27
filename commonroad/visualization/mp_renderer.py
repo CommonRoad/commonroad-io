@@ -600,6 +600,7 @@ class MPRenderer(IRenderer):
                 vehicle_color = draw_params.vehicle_shape.occupancy.shape.facecolor
                 vehicle_edge_color = draw_params.vehicle_shape.occupancy.shape.edgecolor
                 show_ref_position = draw_params.vehicle_shape.occupancy.shape.show_ref_position
+                show_hitch_point = draw_params.vehicle_shape.occupancy.shape.show_hitch_point
                 self.obstacle_patches.extend(
                     get_obstacle_icon_patch(
                         obj.obstacle_type,
@@ -610,6 +611,7 @@ class MPRenderer(IRenderer):
                         zorder=zorder,
                         opacity=opacity,
                         show_ref_position=show_ref_position,
+                        show_hitch_point=show_hitch_point,
                     )
                 )
         elif draw_icon is True:

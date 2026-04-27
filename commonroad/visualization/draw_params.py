@@ -98,6 +98,8 @@ class ShapeParams(BaseParam):
     draw_mesh: bool = False
     # Add x to vehicle's icon at its reference position. Currently only implemented for trucks.
     show_ref_position: bool = False
+    # Only relevant for truck
+    show_hitch_point: bool = True
 
 
 @dataclass

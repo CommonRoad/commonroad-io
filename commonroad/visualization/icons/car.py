@@ -3,6 +3,7 @@ import numpy as np
 
 from commonroad.geometry.obstacle_shapes.rect_obstacle_shape import RectObstacleShape
 from commonroad.scenario.state import TraceState
+from commonroad.visualization.icons.create_origin_patch import create_origin_patch
 from commonroad.visualization.icons.transform_to_global import transform_to_global
 
 
@@ -15,6 +16,7 @@ def draw_car_icon(
     lw=0.5,
     opacity=1,
     show_ref_position: bool = False,
+    **kwargs,
 ):
     """Return the patches of the car icon.
 
@@ -199,4 +201,9 @@ def draw_car_icon(
         for part in car
     ]
 
-    return car_patches + window_patches
+    patch_list = car_patches + window_patches
+
+    if show_ref_position:
+        patch_list += [create_origin_patch(state.position, scale=0.5)]
+
+    return patch_list
